@@ -1,0 +1,5 @@
+include LICENSE *.txt
+recursive-include matminer *
+recursive-exclude matminer *.pyc
+recursive-include docs *
+recursive-exclude docs *.pyc
