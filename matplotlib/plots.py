@@ -226,20 +226,3 @@ class XYPlot():
             plt.savefig(export_filename)
         else:
             plt.show()
-
-
-
-
-if __name__ == '__main__':
-    pass
-    """
-    # HEAT MAP
-    data = [[1, 2], [3, 4], [5, 6]]
-    hmp = HeatMapPlot(data, ['I', 'II'], ['A', 'B', 'C'])
-    hmp.plot()
-    """
-
-    # XY Scatter
-    #data = [{'x': [1, 2, 3], 'y': [1, 4, 9]}, {'x': [1, 2], 'y': [7, 8]}, {'x': [3, 4], 'y': [6, 3]}, {'x': [5, 6], 'y': [6, 3]}]
-    #sp = ScatterPlot(data)
-    #sp.plot()
