@@ -9,7 +9,7 @@ This is a skeleton of how a model might look like
 # TODO: base class useful?
 class SoundVelocityModel():
     """
-    The docstring is important
+    This is an example model
     """
 
     def __init__(self):
