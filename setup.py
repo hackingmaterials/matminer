@@ -19,7 +19,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         package_data={},
         zip_safe=False,
-        install_requires=[],
+        install_requires=['pyyaml>=3.1.0', 'pymatgen>=3.2.10'],
         extras_require={},
         classifiers=['Programming Language :: Python :: 2.7',
                      'Development Status :: 4 - Beta',
