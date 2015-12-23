@@ -1,7 +1,5 @@
-from pymatgen import Composition, Element, MPRester, periodic_table
-#from sklearn import linear_model, cross_validation, metrics, ensemble
+from pymatgen import Composition, Element, MPRester
 import pandas as pd
-#import matplotlib.pyplot as plt
 
 # Initializing MPRester. Note that you can call MPRester. MPRester looks for the API key in two places:
 # - Supplying it directly as an __init__ arg.
@@ -27,11 +25,17 @@ class MPDataRetrieval():
     def print_output(self):
         return self.data
 
-    def to_pandas(self):
-        df = pd.DataFrame(self.data, columns=self.properties)
-        return df
+    def to_pandas(self, index_mpid=True):
+        if index_mpid:
+            if "material_id" not in self.properties:
+                self.properties.append("material_id")
+                self.data = m.query(self.criteria, self.properties, self.mp_decode)   ## Think about querying again!
+            df = pd.DataFrame(self.data, columns=self.properties)
+            indexed_df = df.set_index("material_id")
+            return indexed_df
+        return pd.DataFrame(self.data, columns=self.properties)
+
+
 
 # TODO: the user has no way to set their API key!! The code will return an error unless the API is set as an environment variable. The MPDataRetrieval should take in the API key as an argument.
 # TODO: add an example in an 'examples' package. This exercise would have probably caught some of the errors.
-# TODO: make it easy to set the task_id as the default index frame. This should be done in almost all instances unless the user asks not to do it.
-# TODO: clean up unused import statements. PyCharm should help you identify what is not needed (greyed out). Others are red underlined (periodic table)
