@@ -1,5 +1,6 @@
 from citrination_client import CitrinationClient
 import pandas as pd
+import json
 
 client = CitrinationClient('hpqULmumJMAsqvk8VtifQgtt', 'http://citrination.com')
 
@@ -41,4 +42,7 @@ class CitrineDataRetrieval:
         return self.data.json()
 
     def to_pandas(self):
-        return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
+        #return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
+        self.json_data = self.data.json()
+        #self.data_json = json.dumps(self.json_data)
+        return pd.io.json.json_normalize(self.json_data['results'])
