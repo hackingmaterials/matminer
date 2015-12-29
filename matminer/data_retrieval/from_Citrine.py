@@ -2,8 +2,6 @@ from citrination_client import CitrinationClient
 import pandas as pd
 import json
 
-client = CitrinationClient('hpqULmumJMAsqvk8VtifQgtt', 'http://citrination.com')
-
 
 class CitrineDataRetrieval:
 
@@ -33,16 +31,17 @@ class CitrineDataRetrieval:
         self.per_page = per_page
         self.data_set_id = data_set_id
 
+        client = CitrinationClient('hpqULmumJMAsqvk8VtifQgtt', 'http://citrination.com')
         self.data = client.search(term=self.term, formula=self.formula, property=self.property,
                                   contributor=self.contributor, reference=self.reference,
                                   min_measurement=self.min_measurement, max_measurement=self.max_measurement,
                                   from_record=self.from_record, per_page=self.per_page, data_set_id=self.data_set_id)
+        self.json_data = self.data.json()
 
     def print_output(self):
         return self.data.json()
 
     def to_pandas(self):
-        #return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
-        self.json_data = self.data.json()
-        #self.data_json = json.dumps(self.json_data)
+        # return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
+        # self.data_json = json.dumps(self.json_data)
         return pd.io.json.json_normalize(self.json_data['results'])
