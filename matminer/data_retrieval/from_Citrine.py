@@ -1,6 +1,5 @@
 from citrination_client import CitrinationClient
 import pandas as pd
-import json
 
 
 class CitrineDataRetrieval:
