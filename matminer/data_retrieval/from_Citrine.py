@@ -1,9 +1,10 @@
 from citrination_client import CitrinationClient
 import pandas as pd
+import time
+import json
 
 
 class CitrineDataRetrieval:
-
     def __init__(self, term=None, formula=None, property=None, contributor=None, reference=None, min_measurement=None,
                  max_measurement=None, from_record=None, per_page=None, data_set_id=None):
         """
@@ -31,14 +32,24 @@ class CitrineDataRetrieval:
         self.data_set_id = data_set_id
 
         client = CitrinationClient('hpqULmumJMAsqvk8VtifQgtt', 'http://citrination.com')
-        self.data = client.search(term=self.term, formula=self.formula, property=self.property,
-                                  contributor=self.contributor, reference=self.reference,
-                                  min_measurement=self.min_measurement, max_measurement=self.max_measurement,
-                                  from_record=self.from_record, per_page=self.per_page, data_set_id=self.data_set_id)
-        self.json_data = self.data.json()
+        self.json_data = []
+        self.size = 1
+        self.start = 0
+        while self.size > 0:
+            self.data = client.search(term=self.term, formula=self.formula, property=self.property,
+                                      contributor=self.contributor, reference=self.reference,
+                                      min_measurement=self.min_measurement, max_measurement=self.max_measurement,
+                                      from_record=self.start, per_page=100, data_set_id=self.data_set_id)
+            self.size = len(self.data.json()['results'])
+            self.start += self.size
+            self.json_data.append(self.data.json()['results'])
+            time.sleep(3)
+        c = self.json_data
+        with open("jenkins.json", "w") as outfile:
+            json.dump(c, outfile)
 
     def print_output(self):
-        return self.data.json()
+        return self.json_data
 
     def to_pandas(self):
         # return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
