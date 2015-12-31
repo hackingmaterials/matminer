@@ -44,14 +44,19 @@ class CitrineDataRetrieval:
             self.start += self.size
             self.json_data.append(self.data.json()['results'])
             time.sleep(3)
+        self.hits = self.data.json()['hits']
         c = self.json_data
-        with open("jenkins.json", "w") as outfile:
+        with open('jenkins.json', 'w') as outfile:
             json.dump(c, outfile)
 
     def print_output(self):
         return self.json_data
 
     def to_pandas(self):
+        # for set in self.json_data:
+        #    for hit in set:
+        # return pd.read_json('jenkins.json')
         # return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
         # self.data_json = json.dumps(self.json_data)
-        return pd.io.json.json_normalize(self.json_data['results'])
+        return pd.io.json.json_normalize(self.json_data)
+
