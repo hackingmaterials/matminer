@@ -43,6 +43,8 @@ class CitrineDataRetrieval:
             self.size = len(self.data.json()['results'])
             self.start += self.size
             self.json_data.append(self.data.json()['results'])
+            if self.size < 100:           # break out of last loop of results
+                break
             time.sleep(3)
         self.hits = self.data.json()['hits']
         c = self.json_data
