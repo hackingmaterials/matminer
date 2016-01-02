@@ -63,6 +63,8 @@ class CitrineDataRetrieval:
         matdbid = []
         icsdid = []
         cif = []
+        icsd_spacegroup = []
+        final_spacegroup = []
         conditions = []
 
         # material = []
@@ -86,17 +88,25 @@ class CitrineDataRetrieval:
                         for id in material_value['id']:
                             if 'MatDB ID' in id.values():
                                 matdbid.append(id['value'])
-                            elif 'ICSD ID' in id.values():
+                                continue
+                            if 'ICSD ID' in id.values():
                                 icsdid.append(id['value'])
+                                continue
                     if 'cif' in material_value:
                         cif.append(material_value['cif'])
                     if 'condition' in material_value:
-                        stability
+                        stability_conditions = {}
                         for cond in material_value['condition']:
                             if 'Qhull stability' in cond.values():
-                                stability = {}
-                                cond['scalar'][0]['value']
-                                conditions.append()
+                                stability_conditions['Qhull stability'] = cond['scalar'][0]['value']
+                                continue
+                            if 'ICSD space group' in cond.values():
+                                icsd_spacegroup.append(cond['scalar'][0]['value'])
+                                continue
+                            if 'Final space group' in cond.values():
+                                final_spacegroup.append(cond['scalar'][0]['value'])
+                                continue
+                        conditions.append(stability_conditions)
                     measurement_value = sample_value['measurement']
                     reference_value = sample_value['reference']
 
