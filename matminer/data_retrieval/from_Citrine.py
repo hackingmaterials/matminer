@@ -93,7 +93,7 @@ class CitrineDataRetrieval:
                     if 'condition' in material_value:
                         for cond in material_value['condition']:
                             if 'Qhull stability' in cond:
-                                conditions.append
+                                conditions.appen
                     measurement_value = sample_value['measurement']
                     reference_value = sample_value['reference']
 
