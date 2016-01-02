@@ -91,9 +91,12 @@ class CitrineDataRetrieval:
                     if 'cif' in material_value:
                         cif.append(material_value['cif'])
                     if 'condition' in material_value:
+                        stability
                         for cond in material_value['condition']:
-                            if 'Qhull stability' in cond:
-                                conditions.appen
+                            if 'Qhull stability' in cond.values():
+                                stability = {}
+                                cond['scalar'][0]['value']
+                                conditions.append()
                     measurement_value = sample_value['measurement']
                     reference_value = sample_value['reference']
 
