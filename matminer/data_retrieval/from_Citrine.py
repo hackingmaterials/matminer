@@ -59,42 +59,60 @@ class CitrineDataRetrieval:
         data_set_id = []
         chemicalFormula = []
         commonName = []
+        composition = []
+        matdbid = []
+        icsdid = []
+        cif = []
+        conditions = []
 
-        material = []
-        measurement = []
-        reference = []
+        # material = []
+        # measurement = []
+        # reference = []
         for set in self.json_data:
             for hit in set:
                 if hit.keys() == ['sample']:
                     sample_value = hit['sample']
                     if 'data_set_id' in sample_value:
                         data_set_id.append(sample_value['data_set_id'])
-                    if 'material' in sample_value:
-                        material_value = sample_value['material']
-                        if 'chemicalFormula' in material_value:
-                            chemicalFormula.append(material_value['chemicalFormula'])
-                        if 'commonName' in material_value:
-                            for name in material_value['commonName']:
-                                commonName.append(name)
-                        if 'composition' in material_value:
-                            pass
-                        if
-                    for each_value in values_in_each_hit:
-                        sub_keys = each_value.keys()
-                        print "Sub keys: ", sub_keys
-                        sub_values = each_value.values()
-                        print "Sub values: ", sub_values
-                        datasetid.append(sub_values[0])
-                        material.append(sub_values[1])
-                        measurement.append(sub_values[2])
-                        #reference.append(sub_values[3])
-                        print datasetid, material, measurement, reference
-        df = pd.DataFrame(columns=sub_keys)
-        # df.columns = sub_keys
-        df['data_set_id'] = datasetid
-        df['material'] = material
-        df['measurement'] = measurement
-        return df
+                    material_value = sample_value['material']
+                    if 'chemicalFormula' in material_value:
+                        chemicalFormula.append(material_value['chemicalFormula'])
+                    if 'commonName' in material_value:
+                        for name in material_value['commonName']:
+                            commonName.append(name)
+                    if 'composition' in material_value:
+                        composition.append(material_value['composition'])
+                    if 'id' in material_value:
+                        for id in material_value['id']:
+                            if 'MatDB ID' in id.values():
+                                matdbid.append(id['value'])
+                            elif 'ICSD ID' in id.values():
+                                icsdid.append(id['value'])
+                    if 'cif' in material_value:
+                        cif.append(material_value['cif'])
+                    if 'condition' in material_value:
+                        for cond in material_value['condition']:
+                            if 'Qhull stability' in cond:
+                                conditions.append()
+                    measurement_value = sample_value['measurement']
+                    reference_value = sample_value['reference']
+
+        #             for each_value in values_in_each_hit:
+        #                 sub_keys = each_value.keys()
+        #                 print "Sub keys: ", sub_keys
+        #                 sub_values = each_value.values()
+        #                 print "Sub values: ", sub_values
+        #                 datasetid.append(sub_values[0])
+        #                 material.append(sub_values[1])
+        #                 measurement.append(sub_values[2])
+        #                 #reference.append(sub_values[3])
+        #                 print datasetid, material, measurement, reference
+        # df = pd.DataFrame(columns=sub_keys)
+        # # df.columns = sub_keys
+        # df['data_set_id'] = datasetid
+        # df['material'] = material
+        # df['measurement'] = measurement
+        # return df
 
 
 
