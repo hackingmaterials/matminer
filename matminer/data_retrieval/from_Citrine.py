@@ -1,7 +1,7 @@
 from citrination_client import CitrinationClient
-import pandas as pd
 import time
 import json
+import pandas as pd
 
 
 class CitrineDataRetrieval:
@@ -55,10 +55,36 @@ class CitrineDataRetrieval:
         return self.json_data
 
     def to_pandas(self):
-        # for set in self.json_data:
-        #    for hit in set:
+        datasetid = []
+        material = []
+        measurement = []
+        reference = []
+        df = pd.DataFrame
+        for set in self.json_data:
+            for hit in set:
+                keys_in_each_hit = hit.keys()
+                print "Keys in each hit: ", keys_in_each_hit
+                if len(keys_in_each_hit) > 1:
+                    continue  # TODO: Do something here about adding to DF
+                values_in_each_hit = hit.values()
+                print "Values in each hit: ", values_in_each_hit
+                for each_value in values_in_each_hit:
+                    sub_keys = each_value.keys()
+                    print "Sub keys: ", sub_keys
+                    sub_values = each_value.values()
+                    print "Sub values: ", sub_values
+                    datasetid.append(sub_values[0])
+                    material.append(sub_values[1])
+                    measurement.append(sub_values[2])
+                    #reference.append(sub_values[3])
+                    print datasetid, material, measurement, reference
+        df.columns = sub_keys
+        print df
+
+
+
         # return pd.read_json('jenkins.json')
         # return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
         # self.data_json = json.dumps(self.json_data)
-        return pd.io.json.json_normalize(self.json_data)
+        # return pd.io.json.json_normalize(self.json_data)
 
