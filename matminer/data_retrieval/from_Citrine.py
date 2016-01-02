@@ -55,11 +55,11 @@ class CitrineDataRetrieval:
         return self.json_data
 
     def to_pandas(self):
+        global sub_keys
         datasetid = []
         material = []
         measurement = []
         reference = []
-        df = pd.DataFrame
         for set in self.json_data:
             for hit in set:
                 keys_in_each_hit = hit.keys()
@@ -78,8 +78,12 @@ class CitrineDataRetrieval:
                     measurement.append(sub_values[2])
                     #reference.append(sub_values[3])
                     print datasetid, material, measurement, reference
-        df.columns = sub_keys
-        print df
+        df = pd.DataFrame(columns=sub_keys)
+        # df.columns = sub_keys
+        df['data_set_id'] = datasetid
+        df['material'] = material
+        df['measurement'] = measurement
+        return df
 
 
 
