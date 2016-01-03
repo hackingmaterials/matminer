@@ -69,7 +69,8 @@ class CitrineDataRetrieval:
         measurement = []
         external_conditions = []
         method = []
-        # reference = []
+        datatype = []
+        reference = []
         for set in self.json_data:
             for hit in set:
                 if hit.keys() == ['sample']:
@@ -126,7 +127,8 @@ class CitrineDataRetrieval:
                             if 'dataType' in measure:
                                 datatype.append(measure['dataType'])   # TODO: Need to verify this
                             if 'reference' in measure:
-
+                                for item in measure['reference']:
+                                    reference.append(item)
 
                     reference_value = sample_value['reference']
 
