@@ -123,6 +123,10 @@ class CitrineDataRetrieval:
                                 external_conditions.append(external)
                             if 'method' in measure:
                                 method.append(measure['method'])
+                            if 'dataType' in measure:
+                                datatype.append(measure['dataType'])   # TODO: Need to verify this
+                            if 'reference' in measure:
+
 
                     reference_value = sample_value['reference']
 
