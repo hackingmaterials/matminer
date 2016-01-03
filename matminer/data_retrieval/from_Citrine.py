@@ -43,7 +43,7 @@ class CitrineDataRetrieval:
             self.size = len(self.data.json()['results'])
             self.start += self.size
             self.json_data.append(self.data.json()['results'])
-            if self.size < 100:           # break out of last loop of results
+            if self.size < 100:  # break out of last loop of results
                 break
             time.sleep(3)
         self.hits = self.data.json()['hits']
@@ -55,7 +55,7 @@ class CitrineDataRetrieval:
         return self.json_data
 
     def to_pandas(self):
-        global sub_keys
+        # global sub_keys
         data_set_id = []
         chemicalFormula = []
         commonName = []
@@ -65,10 +65,9 @@ class CitrineDataRetrieval:
         cif = []
         icsd_spacegroup = []
         final_spacegroup = []
-        conditions = []
-
-        # material = []
-        # measurement = []
+        material_conditions = []
+        measurement = []
+        external_conditions = []
         # reference = []
         for set in self.json_data:
             for hit in set:
@@ -76,61 +75,75 @@ class CitrineDataRetrieval:
                     sample_value = hit['sample']
                     if 'data_set_id' in sample_value:
                         data_set_id.append(sample_value['data_set_id'])
-                    material_value = sample_value['material']
-                    if 'chemicalFormula' in material_value:
-                        chemicalFormula.append(material_value['chemicalFormula'])
-                    if 'commonName' in material_value:
-                        for name in material_value['commonName']:
-                            commonName.append(name)
-                    if 'composition' in material_value:
-                        composition.append(material_value['composition'])
-                    if 'id' in material_value:
-                        for id in material_value['id']:
-                            if 'MatDB ID' in id.values():
-                                matdbid.append(id['value'])
-                                continue
-                            if 'ICSD ID' in id.values():
-                                icsdid.append(id['value'])
-                                continue
-                    if 'cif' in material_value:
-                        cif.append(material_value['cif'])
-                    if 'condition' in material_value:
-                        stability_conditions = {}
-                        for cond in material_value['condition']:
-                            if 'Qhull stability' in cond.values():
-                                stability_conditions['Qhull stability'] = cond['scalar'][0]['value']
-                                continue
-                            if 'ICSD space group' in cond.values():
-                                icsd_spacegroup.append(cond['scalar'][0]['value'])
-                                continue
-                            if 'Final space group' in cond.values():
-                                final_spacegroup.append(cond['scalar'][0]['value'])
-                                continue
-                        conditions.append(stability_conditions)
-                    measurement_value = sample_value['measurement']
+                    if 'material' in sample_value:
+                        material_value = sample_value['material']
+                        if 'chemicalFormula' in material_value:
+                            chemicalFormula.append(material_value['chemicalFormula'])
+                        if 'commonName' in material_value:
+                            for name in material_value['commonName']:
+                                commonName.append(name)
+                        if 'composition' in material_value:
+                            composition.append(material_value['composition'])
+                        if 'id' in material_value:
+                            for id in material_value['id']:
+                                if 'MatDB ID' in id.values():
+                                    matdbid.append(id['value'])
+                                    continue
+                                if 'ICSD ID' in id.values():
+                                    icsdid.append(id['value'])
+                                    continue
+                        if 'cif' in material_value:
+                            cif.append(material_value['cif'])
+                        if 'condition' in material_value:
+                            stability_conditions = {}
+                            for cond in material_value['condition']:
+                                if 'Qhull stability' in cond.values():
+                                    stability_conditions['Qhull stability'] = cond['scalar'][0]['value']
+                                    continue
+                                if 'ICSD space group' in cond.values():
+                                    icsd_spacegroup.append(cond['scalar'][0]['value'])
+                                    continue
+                                if 'Final space group' in cond.values():
+                                    final_spacegroup.append(cond['scalar'][0]['value'])
+                                    continue
+                            material_conditions.append(stability_conditions)
+                    if 'measurement' in sample_value:
+                        measurement_values = sample_value['measurement']
+                        properties = {}
+                        for measure in measurement_values:
+                            if 'property' in measure:
+                                properties[measure['property']['name']] = measure['property']['scalar'][0]['value'] + \
+                                                                          measure['property']['units']
+                            measurement.append(properties)
+                            if 'condition' in measure:
+                                external = {}
+                                for ext_cond in measure['condition']:
+                                    external[ext_cond['name']] = ext_cond['scalar'][0]['value']
+                                external_conditions.append(external)
+                            # if 'condition' in measure:
+
                     reference_value = sample_value['reference']
 
-        #             for each_value in values_in_each_hit:
-        #                 sub_keys = each_value.keys()
-        #                 print "Sub keys: ", sub_keys
-        #                 sub_values = each_value.values()
-        #                 print "Sub values: ", sub_values
-        #                 datasetid.append(sub_values[0])
-        #                 material.append(sub_values[1])
-        #                 measurement.append(sub_values[2])
-        #                 #reference.append(sub_values[3])
-        #                 print datasetid, material, measurement, reference
-        # df = pd.DataFrame(columns=sub_keys)
-        # # df.columns = sub_keys
-        # df['data_set_id'] = datasetid
-        # df['material'] = material
-        # df['measurement'] = measurement
-        # return df
+                    #             for each_value in values_in_each_hit:
+                    #                 sub_keys = each_value.keys()
+                    #                 print "Sub keys: ", sub_keys
+                    #                 sub_values = each_value.values()
+                    #                 print "Sub values: ", sub_values
+                    #                 datasetid.append(sub_values[0])
+                    #                 material.append(sub_values[1])
+                    #                 measurement.append(sub_values[2])
+                    #                 #reference.append(sub_values[3])
+                    #                 print datasetid, material, measurement, reference
+                    # df = pd.DataFrame(columns=sub_keys)
+                    # # df.columns = sub_keys
+                    # df['data_set_id'] = datasetid
+                    # df['material'] = material
+                    # df['measurement'] = measurement
+                    # return df
 
 
 
-        # return pd.read_json('jenkins.json')
-        # return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
-        # self.data_json = json.dumps(self.json_data)
-        # return pd.io.json.json_normalize(self.json_data)
-
+                    # return pd.read_json('jenkins.json')
+                    # return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
+                    # self.data_json = json.dumps(self.json_data)
+                    # return pd.io.json.json_normalize(self.json_data)
