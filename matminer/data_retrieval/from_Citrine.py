@@ -68,6 +68,7 @@ class CitrineDataRetrieval:
         material_conditions = []
         measurement = []
         external_conditions = []
+        method = []
         # reference = []
         for set in self.json_data:
             for hit in set:
@@ -120,7 +121,8 @@ class CitrineDataRetrieval:
                                 for ext_cond in measure['condition']:
                                     external[ext_cond['name']] = ext_cond['scalar'][0]['value']
                                 external_conditions.append(external)
-                            # if 'condition' in measure:
+                            if 'method' in measure:
+                                method.append(measure['method'])
 
                     reference_value = sample_value['reference']
 
