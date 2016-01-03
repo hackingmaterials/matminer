@@ -70,6 +70,8 @@ class CitrineDataRetrieval:
         external_conditions = []
         method = []
         datatype = []
+        contacts = []
+        licenses = []
         reference = []
         for set in self.json_data:
             for hit in set:
@@ -129,10 +131,19 @@ class CitrineDataRetrieval:
                             if 'reference' in measure:
                                 for item in measure['reference']:
                                     reference.append(item)
+                            if 'contact' in measure:
+                                contacts.append(measure['contact'])
+                            if 'license' in measure:
+                                licenses.append(measure['license'])
                     if 'reference' in sample_value:
                         reference_values = sample_value['reference']
                         for item in reference_values:
                             reference.append(item)
+                    if 'contact' in sample_value:
+                        contacts.append(sample_value['contact'])
+                    if 'license' in sample_value:
+                        licenses.append(sample_value['license'])
+
 
 
                     #             for each_value in values_in_each_hit:
