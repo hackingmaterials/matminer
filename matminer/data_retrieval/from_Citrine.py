@@ -129,8 +129,11 @@ class CitrineDataRetrieval:
                             if 'reference' in measure:
                                 for item in measure['reference']:
                                     reference.append(item)
+                    if 'reference' in sample_value:
+                        reference_values = sample_value['reference']
+                        for item in reference_values:
+                            reference.append(item)
 
-                    reference_value = sample_value['reference']
 
                     #             for each_value in values_in_each_hit:
                     #                 sub_keys = each_value.keys()
