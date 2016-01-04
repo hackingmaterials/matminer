@@ -20,6 +20,8 @@ class CitrineDataRetrieval:
         :param data_set_id:
         :rtype: object
         """
+
+        # TODO: It is unclear that these variables need to be stored inside the class. You can probably remove these lines of code
         self.term = term
         self.formula = formula
         self.property = property
@@ -31,10 +33,13 @@ class CitrineDataRetrieval:
         self.per_page = per_page
         self.data_set_id = data_set_id
 
+        #TODO: don't commit your API key! We had already discussed that the API key should be a parameter for the class and NOT hard coded. You can also default to an environment var if the user doesn't set the API key.
         client = CitrinationClient('hpqULmumJMAsqvk8VtifQgtt', 'http://citrination.com')
         self.json_data = []
         self.size = 1
         self.start = 0
+
+        # TODO: use tqdm to show progressbar
         while self.size > 0:
             self.data = client.search(term=self.term, formula=self.formula, property=self.property,
                                       contributor=self.contributor, reference=self.reference,
@@ -48,6 +53,8 @@ class CitrineDataRetrieval:
             time.sleep(3)
         self.hits = self.data.json()['hits']
         c = self.json_data
+
+        # TODO: why jenkins.json? Why dumping the results to a file when the user didn't request it?
         with open('jenkins.json', 'w') as outfile:
             json.dump(c, outfile)
 
@@ -56,6 +63,8 @@ class CitrineDataRetrieval:
 
     def to_pandas(self):
         # global sub_keys
+
+        # TODO: anytime you find yourself defining a dozen variables, you are likely doing something inefficiently. In this case, just create a single dataframe object and append to it as needed.
         data_set_id = []
         chemicalFormula = []
         commonName = []
@@ -143,6 +152,8 @@ class CitrineDataRetrieval:
                         contacts.append(sample_value['contact'])
                     if 'license' in sample_value:
                         licenses.append(sample_value['license'])
+
+        # TODO: need to return a DataFrame
 
 
 
