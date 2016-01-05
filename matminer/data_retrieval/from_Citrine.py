@@ -3,6 +3,8 @@ import os
 import time
 import json
 import pandas as pd
+from tqdm import tqdm
+from pandas.io.json import json_normalize
 
 
 class CitrineDataRetrieval:
@@ -59,7 +61,7 @@ class CitrineDataRetrieval:
                 break
             time.sleep(3)
         self.hits = self.data.json()['hits']
-        # c = self.json_data
+        c = self.json_data
 
         # TODO: why jenkins.json? Why dumping the results to a file when the user didn't request it?
         # with open('jenkins.json', 'w') as outfile:
@@ -88,104 +90,87 @@ class CitrineDataRetrieval:
         contacts = []
         licenses = []
         reference = []
-        for set in self.json_data:
-            for hit in set:
+        #return json_normalize(self.json_data[0])
+        df = pd.DataFrame()
+        for set in tqdm(self.json_data):
+            for hit in tqdm(set):
                 if hit.keys() == ['sample']:
                     sample_value = hit['sample']
-                    if 'data_set_id' in sample_value:
-                        data_set_id.append(sample_value['data_set_id'])
-                    if 'material' in sample_value:
-                        material_value = sample_value['material']
+                    # data = json.loads(sample_value)
+                    df_row = json_normalize(sample_value)
+                    df = pd.DataFrame.append(df, df_row)
+        return df
 
-                        # if 'chemicalFormula' in material_value:
-                        #     chemicalFormula.append(material_value['chemicalFormula'])
-                        # if 'commonName' in material_value:
-                        #     for name in material_value['commonName']:
-                        #         commonName.append(name)
-                        # if 'composition' in material_value:
-                        #     composition.append(material_value['composition'])
-                        # if 'id' in material_value:
-                        #     for id in material_value['id']:
-                        #         if 'MatDB ID' in id.values():
-                        #             matdbid.append(id['value'])
-                        #             continue
-                        #         if 'ICSD ID' in id.values():
-                        #             icsdid.append(id['value'])
-                        #             continue
-                        # if 'cif' in material_value:
-                        #     cif.append(material_value['cif'])
-                        # if 'condition' in material_value:
-                        #     stability_conditions = {}
-                        #     for cond in material_value['condition']:
-                        #         if 'Qhull stability' in cond.values():
-                        #             stability_conditions['Qhull stability'] = cond['scalar'][0]['value']
-                        #             continue
-                        #         if 'ICSD space group' in cond.values():
-                        #             icsd_spacegroup.append(cond['scalar'][0]['value'])
-                        #             continue
-                        #         if 'Final space group' in cond.values():
-                        #             final_spacegroup.append(cond['scalar'][0]['value'])
-                        #             continue
-                        #     material_conditions.append(stability_conditions)
-                    if 'measurement' in sample_value:
-                        measurement_values = sample_value['measurement']
-                        properties = {}
-                        for measure in measurement_values:
-                            if 'property' in measure:
-                                properties[measure['property']['name']] = measure['property']['scalar'][0]['value'] + \
-                                                                          measure['property']['units']
-                            measurement.append(properties)
-                            if 'condition' in measure:
-                                external = {}
-                                for ext_cond in measure['condition']:
-                                    external[ext_cond['name']] = ext_cond['scalar'][0]['value']
-                                external_conditions.append(external)
-                            if 'method' in measure:
-                                method.append(measure['method'])
-                            if 'dataType' in measure:
-                                datatype.append(measure['dataType'])   # TODO: Need to verify this
-                            if 'reference' in measure:
-                                for item in measure['reference']:
-                                    reference.append(item)
-                            if 'contact' in measure:
-                                contacts.append(measure['contact'])
-                            if 'license' in measure:
-                                licenses.append(measure['license'])
-                    if 'reference' in sample_value:
-                        reference_values = sample_value['reference']
-                        for item in reference_values:
-                            reference.append(item)
-                    if 'contact' in sample_value:
-                        contacts.append(sample_value['contact'])
-                    if 'license' in sample_value:
-                        licenses.append(sample_value['license'])
+        #             if 'data_set_id' in sample_value:
+        #                 data_set_id.append(sample_value['data_set_id'])
+        #             if 'material' in sample_value:
+        #                 material_value = sample_value['material']
+        #                 # return json_normalize(material_value)
+        #
+        #                 # if 'chemicalFormula' in material_value:
+        #                 #     chemicalFormula.append(material_value['chemicalFormula'])
+        #                 # if 'commonName' in material_value:
+        #                 #     for name in material_value['commonName']:
+        #                 #         commonName.append(name)
+        #                 # if 'composition' in material_value:
+        #                 #     composition.append(material_value['composition'])
+        #                 # if 'id' in material_value:
+        #                 #     for id in material_value['id']:
+        #                 #         if 'MatDB ID' in id.values():
+        #                 #             matdbid.append(id['value'])
+        #                 #             continue
+        #                 #         if 'ICSD ID' in id.values():
+        #                 #             icsdid.append(id['value'])
+        #                 #             continue
+        #                 # if 'cif' in material_value:
+        #                 #     cif.append(material_value['cif'])
+        #                 # if 'condition' in material_value:
+        #                 #     stability_conditions = {}
+        #                 #     for cond in material_value['condition']:
+        #                 #         if 'Qhull stability' in cond.values():
+        #                 #             stability_conditions['Qhull stability'] = cond['scalar'][0]['value']
+        #                 #             continue
+        #                 #         if 'ICSD space group' in cond.values():
+        #                 #             icsd_spacegroup.append(cond['scalar'][0]['value'])
+        #                 #             continue
+        #                 #         if 'Final space group' in cond.values():
+        #                 #             final_spacegroup.append(cond['scalar'][0]['value'])
+        #                 #             continue
+        #                 #     material_conditions.append(stability_conditions)
+        #             if 'measurement' in sample_value:
+        #                 measurement_values = sample_value['measurement']
+        #                 properties = {}
+        #                 for measure in measurement_values:
+        #                     if 'property' in measure:
+        #                         properties[measure['property']['name']] = measure['property']['scalar'][0]['value'] + \
+        #                                                                   measure['property']['units']
+        #                     measurement.append(properties)
+        #                     if 'condition' in measure:
+        #                         external = {}
+        #                         for ext_cond in measure['condition']:
+        #                             external[ext_cond['name']] = ext_cond['scalar'][0]['value']
+        #                         external_conditions.append(external)
+        #                     if 'method' in measure:
+        #                         method.append(measure['method'])
+        #                     if 'dataType' in measure:
+        #                         datatype.append(measure['dataType'])   # TODO: Need to verify this
+        #                     if 'reference' in measure:
+        #                         for item in measure['reference']:
+        #                             reference.append(item)
+        #                     if 'contact' in measure:
+        #                         contacts.append(measure['contact'])
+        #                     if 'license' in measure:
+        #                         licenses.append(measure['license'])
+        #             if 'reference' in sample_value:
+        #                 reference_values = sample_value['reference']
+        #                 for item in reference_values:
+        #                     reference.append(item)
+        #             if 'contact' in sample_value:
+        #                 contacts.append(sample_value['contact'])
+        #             if 'license' in sample_value:
+        #                 licenses.append(sample_value['license'])
 
-        # TODO: need to return a DataFrame
+c = CitrineDataRetrieval(contributor='Carrico')
+print c.print_output()
+print c.to_pandas()
 
-
-
-                    #             for each_value in values_in_each_hit:
-                    #                 sub_keys = each_value.keys()
-                    #                 print "Sub keys: ", sub_keys
-                    #                 sub_values = each_value.values()
-                    #                 print "Sub values: ", sub_values
-                    #                 datasetid.append(sub_values[0])
-                    #                 material.append(sub_values[1])
-                    #                 measurement.append(sub_values[2])
-                    #                 #reference.append(sub_values[3])
-                    #                 print datasetid, material, measurement, reference
-                    # df = pd.DataFrame(columns=sub_keys)
-                    # # df.columns = sub_keys
-                    # df['data_set_id'] = datasetid
-                    # df['material'] = material
-                    # df['measurement'] = measurement
-                    # return df
-
-# c = CitrineDataRetrieval(contributor='Carrico')
-# print c.print_output()
-
-
-                    # return pd.read_json('jenkins.json')
-                    # return pd.DataFrame(self.data.json(), columns=self.data.json().keys())
-                    # self.data_json = json.dumps(self.json_data)
-                    # return pd.io.json.json_normalize(self.json_data)
