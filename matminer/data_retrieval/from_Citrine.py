@@ -1,4 +1,5 @@
 from citrination_client import CitrinationClient
+import os
 import time
 import json
 import pandas as pd
@@ -33,8 +34,7 @@ class CitrineDataRetrieval:
         self.per_page = per_page
         self.data_set_id = data_set_id
 
-        #TODO: don't commit your API key! We had already discussed that the API key should be a parameter for the class and NOT hard coded. You can also default to an environment var if the user doesn't set the API key.
-        client = CitrinationClient('hpqULmumJMAsqvk8VtifQgtt', 'http://citrination.com')
+        client = CitrinationClient(os.environ['CITRINE_KEY'], 'http://citrination.com')
         self.json_data = []
         self.size = 1
         self.start = 0
@@ -52,17 +52,15 @@ class CitrineDataRetrieval:
                 break
             time.sleep(3)
         self.hits = self.data.json()['hits']
-        c = self.json_data
 
         # TODO: why jenkins.json? Why dumping the results to a file when the user didn't request it?
-        with open('jenkins.json', 'w') as outfile:
-            json.dump(c, outfile)
+        # with open('jenkins.json', 'w') as outfile:
+        #    json.dump(c, outfile)
 
     def print_output(self):
         return self.json_data
 
     def to_pandas(self):
-        # global sub_keys
 
         # TODO: anytime you find yourself defining a dozen variables, you are likely doing something inefficiently. In this case, just create a single dataframe object and append to it as needed.
         data_set_id = []
