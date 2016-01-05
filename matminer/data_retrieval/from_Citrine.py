@@ -6,7 +6,7 @@ import pandas as pd
 
 
 class CitrineDataRetrieval:
-    def __init__(self, term=None, formula=None, property=None, contributor=None, reference=None, min_measurement=None,
+    def __init__(self, api_key=None, term=None, formula=None, property=None, contributor=None, reference=None, min_measurement=None,
                  max_measurement=None, from_record=None, per_page=None, data_set_id=None):
         """
         :param term:
@@ -23,6 +23,7 @@ class CitrineDataRetrieval:
         """
 
         # TODO: It is unclear that these variables need to be stored inside the class. You can probably remove these lines of code
+        self.api_key = api_key
         self.term = term
         self.formula = formula
         self.property = property
@@ -34,7 +35,13 @@ class CitrineDataRetrieval:
         self.per_page = per_page
         self.data_set_id = data_set_id
 
-        client = CitrinationClient(os.environ['CITRINE_KEY'], 'http://citrination.com')
+        # TODO: Need to describe setting CITRINE_KEY as an environment variable to the user
+        if self.api_key is None:
+            client = CitrinationClient(os.environ['CITRINE_KEY'], 'http://citrination.com')
+        else:
+            client = CitrinationClient(self.api_key, 'http://citrination.com')
+
+
         self.json_data = []
         self.size = 1
         self.start = 0
@@ -52,6 +59,7 @@ class CitrineDataRetrieval:
                 break
             time.sleep(3)
         self.hits = self.data.json()['hits']
+        # c = self.json_data
 
         # TODO: why jenkins.json? Why dumping the results to a file when the user didn't request it?
         # with open('jenkins.json', 'w') as outfile:
@@ -88,36 +96,37 @@ class CitrineDataRetrieval:
                         data_set_id.append(sample_value['data_set_id'])
                     if 'material' in sample_value:
                         material_value = sample_value['material']
-                        if 'chemicalFormula' in material_value:
-                            chemicalFormula.append(material_value['chemicalFormula'])
-                        if 'commonName' in material_value:
-                            for name in material_value['commonName']:
-                                commonName.append(name)
-                        if 'composition' in material_value:
-                            composition.append(material_value['composition'])
-                        if 'id' in material_value:
-                            for id in material_value['id']:
-                                if 'MatDB ID' in id.values():
-                                    matdbid.append(id['value'])
-                                    continue
-                                if 'ICSD ID' in id.values():
-                                    icsdid.append(id['value'])
-                                    continue
-                        if 'cif' in material_value:
-                            cif.append(material_value['cif'])
-                        if 'condition' in material_value:
-                            stability_conditions = {}
-                            for cond in material_value['condition']:
-                                if 'Qhull stability' in cond.values():
-                                    stability_conditions['Qhull stability'] = cond['scalar'][0]['value']
-                                    continue
-                                if 'ICSD space group' in cond.values():
-                                    icsd_spacegroup.append(cond['scalar'][0]['value'])
-                                    continue
-                                if 'Final space group' in cond.values():
-                                    final_spacegroup.append(cond['scalar'][0]['value'])
-                                    continue
-                            material_conditions.append(stability_conditions)
+
+                        # if 'chemicalFormula' in material_value:
+                        #     chemicalFormula.append(material_value['chemicalFormula'])
+                        # if 'commonName' in material_value:
+                        #     for name in material_value['commonName']:
+                        #         commonName.append(name)
+                        # if 'composition' in material_value:
+                        #     composition.append(material_value['composition'])
+                        # if 'id' in material_value:
+                        #     for id in material_value['id']:
+                        #         if 'MatDB ID' in id.values():
+                        #             matdbid.append(id['value'])
+                        #             continue
+                        #         if 'ICSD ID' in id.values():
+                        #             icsdid.append(id['value'])
+                        #             continue
+                        # if 'cif' in material_value:
+                        #     cif.append(material_value['cif'])
+                        # if 'condition' in material_value:
+                        #     stability_conditions = {}
+                        #     for cond in material_value['condition']:
+                        #         if 'Qhull stability' in cond.values():
+                        #             stability_conditions['Qhull stability'] = cond['scalar'][0]['value']
+                        #             continue
+                        #         if 'ICSD space group' in cond.values():
+                        #             icsd_spacegroup.append(cond['scalar'][0]['value'])
+                        #             continue
+                        #         if 'Final space group' in cond.values():
+                        #             final_spacegroup.append(cond['scalar'][0]['value'])
+                        #             continue
+                        #     material_conditions.append(stability_conditions)
                     if 'measurement' in sample_value:
                         measurement_values = sample_value['measurement']
                         properties = {}
@@ -172,6 +181,8 @@ class CitrineDataRetrieval:
                     # df['measurement'] = measurement
                     # return df
 
+# c = CitrineDataRetrieval(contributor='Carrico')
+# print c.print_output()
 
 
                     # return pd.read_json('jenkins.json')
