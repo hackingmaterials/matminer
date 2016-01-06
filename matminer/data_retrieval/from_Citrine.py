@@ -206,8 +206,7 @@ class CitrineDataRetrieval:
         # icsdID = pd.Series(icsdid, name='ICSD ID')
         # CIF = pd.Series(cif, name='CIF')
         # matCond = pd.Series(material_conditions, name='material.conditions')
-        # print material_conditions
-        print matCond
+        # print matCond
 
         df1 = pd.concat([dsi, cN, measMent, sampleRef, cont, lic], axis=1)
         df = pd.concat([df1, matCond], axis=1, join_axes=[df1.index])
