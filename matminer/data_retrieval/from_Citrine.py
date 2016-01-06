@@ -103,8 +103,19 @@ class CitrineDataRetrieval:
                         if 'chemicalFormula' in material_value:
                             chemicalFormula.append(material_value['chemicalFormula'])
                         if 'commonName' in material_value:
-                            for name in material_value['commonName']:
-                                commonName.append(name)
+                            commonName.append(material_value['commonName'])
+                        # if 'composition' in material_value:
+        #                 #     composition.append(material_value['composition'])
+        #                 # if 'id' in material_value:
+        #                 #     for id in material_value['id']:
+        #                 #         if 'MatDB ID' in id.values():
+        #                 #             matdbid.append(id['value'])
+        #                 #             continue
+        #                 #         if 'ICSD ID' in id.values():
+        #                 #             icsdid.append(id['value'])
+        #                 #             continue
+        #                 # if 'cif' in material_value:
+        #                 #     cif.append(material_value['cif'])
                         # if 'condition' in material_value:
                         #     df = json_normalize(hit['sample']['material'])
                             # df = pd.concat((json_normalize(cond) for cond in material_value['condition']))
@@ -130,18 +141,7 @@ class CitrineDataRetrieval:
         #                 # return json_normalize(material_value)
         #
         #
-        #                 # if 'composition' in material_value:
-        #                 #     composition.append(material_value['composition'])
-        #                 # if 'id' in material_value:
-        #                 #     for id in material_value['id']:
-        #                 #         if 'MatDB ID' in id.values():
-        #                 #             matdbid.append(id['value'])
-        #                 #             continue
-        #                 #         if 'ICSD ID' in id.values():
-        #                 #             icsdid.append(id['value'])
-        #                 #             continue
-        #                 # if 'cif' in material_value:
-        #                 #     cif.append(material_value['cif'])
+        #
         #                 # if 'condition' in material_value:
         #                 #     stability_conditions = {}
         #                 #     for cond in material_value['condition']:
