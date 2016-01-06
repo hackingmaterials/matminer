@@ -93,7 +93,7 @@ class CitrineDataRetrieval:
         counter = 0
         dsi = pd.Series(name='data_set_id')
         cN = pd.Series(name='commonName')
-        matCond = pd.Series(name='material.condition')
+        matCond = pd.DataFrame()
         measMent = pd.Series(name='measurement')
         sampleRef = pd.Series(name='reference')
         cont = pd.Series(name='contacts')
@@ -128,7 +128,11 @@ class CitrineDataRetrieval:
                         if 'cif' in material_value:
                             cif.append(material_value['cif'])
                         if 'condition' in material_value:
-                            matCond.set_value(counter, material_value['condition'])
+                            condition_row = json_normalize(material_value['condition'], 'scalar', ['name'])        # TODO: Need to modify this for multiple conditions
+                            matCond = matCond.append(condition_row)
+                            # matCond.columns = ['material.condition.name', 'material.condition.scalar']       # TODO: Need to modify this if more fields are present in 'condition'
+                            # matCond.set_index()
+                            # matCond.set_value(counter, material_value['condition'])
                             # material_conditions.append(material_value['condition'])
         #                 #     stability_conditions = {}
         #                 #     for cond in material_value['condition']:
@@ -201,9 +205,10 @@ class CitrineDataRetrieval:
         # CIF = pd.Series(cif, name='CIF')
         # matCond = pd.Series(material_conditions, name='material.conditions')
         # print material_conditions
-        # print matCond
+        matCond.columns = ['material.condition.name', 'material.condition.scalar']
 
-        df = pd.concat([dsi, cN, matCond, measMent, sampleRef, cont, lic], axis=1)
+        df1 = pd.concat([dsi, cN, measMent, sampleRef, cont, lic], axis=1)
+        df = pd.concat([df1, matCond])
         return df
 
         #
