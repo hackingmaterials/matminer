@@ -90,59 +90,42 @@ class CitrineDataRetrieval:
         licenses = []
         reference = []
         df = pd.DataFrame()
+        counter = 0
+        dsi = pd.Series(name='data_set_id')
+        cN = pd.Series()
+        matCond = pd.Series()
         for set in tqdm(self.json_data):
             # df = pd.DataFrame.append(df, json_normalize(set))
             # df = pd.concat((json_normalize(hit) for hit in set))
             for hit in tqdm(set):
+                counter += 1
                 if 'sample' in hit.keys():
                     sample_value = hit['sample']
                     if 'data_set_id' in sample_value:
-                        data_set_id.append(sample_value['data_set_id'])
+                        dsi.set_value(counter, sample_value['data_set_id'])
+                        # data_set_id.append(sample_value['data_set_id'])
                     if 'material' in sample_value:
                         material_value = sample_value['material']
                         if 'chemicalFormula' in material_value:
                             chemicalFormula.append(material_value['chemicalFormula'])
                         if 'commonName' in material_value:
-                            commonName.append(material_value['commonName'])
-                        # if 'composition' in material_value:
-        #                 #     composition.append(material_value['composition'])
-        #                 # if 'id' in material_value:
-        #                 #     for id in material_value['id']:
-        #                 #         if 'MatDB ID' in id.values():
-        #                 #             matdbid.append(id['value'])
-        #                 #             continue
-        #                 #         if 'ICSD ID' in id.values():
-        #                 #             icsdid.append(id['value'])
-        #                 #             continue
-        #                 # if 'cif' in material_value:
-        #                 #     cif.append(material_value['cif'])
-                        # if 'condition' in material_value:
-                        #     df = json_normalize(hit['sample']['material'])
-                            # df = pd.concat((json_normalize(cond) for cond in material_value['condition']))
-                            # for cond in material_value['condition']:
-            #                     # df_row = json_normalize(cond['scalar'])
-            #                     # df = pd.DataFrame.append(df, df_row)
-            #         if 'measurement' in sample_value:
-            #             measurement_values = sample_value['measurement']
-            #             for measure in measurement_values:
-            #                 df_row = json_normalize(measure['condition'])
-            #                 df = pd.DataFrame.append(df, df_row)
-        dsi = pd.Series(data_set_id, name='data_set_id')
-        cF = pd.Series(chemicalFormula, name='chemicalFormula')
-        cN = pd.Series(commonName, name='commonName')
-        df = pd.concat([dsi, cF, cN], axis=1)
-
-        return df
-
-        #
-        #
-        #             if 'material' in sample_value:
-        #                 material_value = sample_value['material']
-        #                 # return json_normalize(material_value)
-        #
-        #
-        #
-        #                 # if 'condition' in material_value:
+                            cN.set_value(counter, material_value['commonName'])
+                            # commonName.append(material_value['commonName'])
+                        if 'composition' in material_value:   # TODO: json_normalize the 'composition' object
+                            composition.append(material_value['composition'])
+                        if 'id' in material_value:
+                            for id in material_value['id']:
+                                if 'MatDB ID' in id.values():
+                                    matdbid.append(id['value'])
+                                    # continue               # TODO: check different databases (eg: Lany) to see if 'continue' statement is needed here and below
+                                if 'ICSD ID' in id.values():
+                                    icsdid.append(id['value'])
+                                    # continue
+                        if 'cif' in material_value:
+                            cif.append(material_value['cif'])
+                        if 'condition' in material_value:
+                            matCond.set_value(counter, material_value['condition'])
+                            # material_conditions.append(material_value['condition'])
         #                 #     stability_conditions = {}
         #                 #     for cond in material_value['condition']:
         #                 #         if 'Qhull stability' in cond.values():
@@ -155,6 +138,41 @@ class CitrineDataRetrieval:
         #                 #             final_spacegroup.append(cond['scalar'][0]['value'])
         #                 #             continue
         #                 #     material_conditions.append(stability_conditions)
+
+                        # if 'condition' in material_value:
+                        #     df = json_normalize(hit['sample']['material'])
+                            # df = pd.concat((json_normalize(cond) for cond in material_value['condition']))
+                            # for cond in material_value['condition']:
+            #                     # df_row = json_normalize(cond['scalar'])
+            #                     # df = pd.DataFrame.append(df, df_row)
+            #         if 'measurement' in sample_value:
+            #             measurement_values = sample_value['measurement']
+            #             for measure in measurement_values:
+            #                 df_row = json_normalize(measure['condition'])
+            #                 df = pd.DataFrame.append(df, df_row)
+        # dsi = pd.Series(data_set_id, name='data_set_id')
+        # cF = pd.Series(chemicalFormula, name='chemicalFormula')
+        # cN = pd.Series(commonName, name='commonName')
+        # cmP = pd.Series(composition, name='composition')
+        # matID = pd.Series(matdbid, name='MatDB ID')
+        # icsdID = pd.Series(icsdid, name='ICSD ID')
+        # CIF = pd.Series(cif, name='CIF')
+        # matCond = pd.Series(material_conditions, name='material.conditions')
+        # print material_conditions
+        # print matCond
+
+        df = pd.concat([dsi, cN, matCond], axis=1)
+        return df
+
+        #
+        #
+        #             if 'material' in sample_value:
+        #                 material_value = sample_value['material']
+        #                 # return json_normalize(material_value)
+        #
+        #
+        #
+        #
         #             if 'measurement' in sample_value:
         #                 measurement_values = sample_value['measurement']
         #                 properties = {}
