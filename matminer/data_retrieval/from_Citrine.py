@@ -1,7 +1,6 @@
 from citrination_client import CitrinationClient
 import os
 import time
-import json
 import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
@@ -90,28 +89,47 @@ class CitrineDataRetrieval:
         contacts = []
         licenses = []
         reference = []
-        #return json_normalize(self.json_data[0])
         df = pd.DataFrame()
         for set in tqdm(self.json_data):
+            # df = pd.DataFrame.append(df, json_normalize(set))
+            # df = pd.concat((json_normalize(hit) for hit in set))
             for hit in tqdm(set):
-                if hit.keys() == ['sample']:
+                if 'sample' in hit.keys():
                     sample_value = hit['sample']
-                    # data = json.loads(sample_value)
-                    df_row = json_normalize(sample_value)
-                    df = pd.DataFrame.append(df, df_row)
+                    if 'data_set_id' in sample_value:
+                        data_set_id.append(sample_value['data_set_id'])
+                    if 'material' in sample_value:
+                        material_value = sample_value['material']
+                        if 'chemicalFormula' in material_value:
+                            chemicalFormula.append(material_value['chemicalFormula'])
+                        if 'commonName' in material_value:
+                            for name in material_value['commonName']:
+                                commonName.append(name)
+                        # if 'condition' in material_value:
+                        #     df = json_normalize(hit['sample']['material'])
+                            # df = pd.concat((json_normalize(cond) for cond in material_value['condition']))
+                            # for cond in material_value['condition']:
+            #                     # df_row = json_normalize(cond['scalar'])
+            #                     # df = pd.DataFrame.append(df, df_row)
+            #         if 'measurement' in sample_value:
+            #             measurement_values = sample_value['measurement']
+            #             for measure in measurement_values:
+            #                 df_row = json_normalize(measure['condition'])
+            #                 df = pd.DataFrame.append(df, df_row)
+        dsi = pd.Series(data_set_id, name='data_set_id')
+        cF = pd.Series(chemicalFormula, name='chemicalFormula')
+        cN = pd.Series(commonName, name='commonName')
+        df = pd.concat([dsi, cF, cN], axis=1)
+
         return df
 
-        #             if 'data_set_id' in sample_value:
-        #                 data_set_id.append(sample_value['data_set_id'])
+        #
+        #
         #             if 'material' in sample_value:
         #                 material_value = sample_value['material']
         #                 # return json_normalize(material_value)
         #
-        #                 # if 'chemicalFormula' in material_value:
-        #                 #     chemicalFormula.append(material_value['chemicalFormula'])
-        #                 # if 'commonName' in material_value:
-        #                 #     for name in material_value['commonName']:
-        #                 #         commonName.append(name)
+        #
         #                 # if 'composition' in material_value:
         #                 #     composition.append(material_value['composition'])
         #                 # if 'id' in material_value:
