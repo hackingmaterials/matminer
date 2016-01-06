@@ -129,6 +129,7 @@ class CitrineDataRetrieval:
                             cif.append(material_value['cif'])
                         if 'condition' in material_value:
                             condition_row = json_normalize(sample_value['material'], 'condition')
+                            condition_row = condition_row.set_index([[counter]])
                             # condition_row = json_normalize(material_value['condition'], 'scalar', ['name'])        # TODO: Need to modify this for multiple conditions
                             matCond = matCond.append(condition_row)
                             # matCond.columns = ['material.condition.name', 'material.condition.scalar']
@@ -206,10 +207,11 @@ class CitrineDataRetrieval:
         # CIF = pd.Series(cif, name='CIF')
         # matCond = pd.Series(material_conditions, name='material.conditions')
         # print material_conditions
-        # matCond.columns = ['material.condition.name', 'material.condition.scalar']
+        print matCond
 
         df1 = pd.concat([dsi, cN, measMent, sampleRef, cont, lic], axis=1)
-        df = pd.concat([df1, matCond])
+        df = pd.concat([df1, matCond], axis=1, join_axes=[df1.index])
+        df.index.name = 'Hit'
         return df
 
         #
