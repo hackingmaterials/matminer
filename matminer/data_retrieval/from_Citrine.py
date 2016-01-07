@@ -96,7 +96,9 @@ class CitrineDataRetrieval:
         matCond = pd.DataFrame()
         measMent = pd.Series(name='measurement')
         measMentProp = pd.Series(name='mesaurement.property')
-        sampleRef = pd.Series(name='reference')
+        measCond = pd.DataFrame()
+        measMentRef = pd.Series(name='mesaurement.reference')
+        sampleRef = pd.Series(name='sample.reference')
         cont = pd.Series(name='contacts')
         lic = pd.Series(name='licenses')
         for set in tqdm(self.json_data):
@@ -162,6 +164,26 @@ class CitrineDataRetrieval:
                         for measure in measurement_values:                # TODO: Need to modify this for multiple fields within
                             if 'property' in measure:
                                 measMentProp.set_value(counter, measure['property'])
+                            if 'condition' in measure:
+                                meascondition_row = json_normalize(measure, 'condition')
+                                meascondition_row = meascondition_row.set_index([[counter]*len(meascondition_row.index)])
+                                print meascondition_row
+                                # condition_row = json_normalize(material_value['condition'], 'scalar', ['name'])        # TODO: Need to modify this for multiple conditions
+                                # measCond.set_value(counter, measure['condition'])
+                            if 'reference' in measure:
+                                measMentRef.set_value(counter, measure['reference'])
+                    if 'reference' in sample_value:
+                        sampleRef.set_value(counter, sample_value['reference'])
+        #                 reference_values = sample_value['reference']
+        #                 for item in reference_values:
+        #                     reference.append(item)
+                    if 'contact' in sample_value:
+                        cont.set_value(counter, sample_value['contact'])
+                        # contacts.append(sample_value['contact'])
+                    if 'license' in sample_value:
+                        lic.set_value(counter, sample_value['license'])
+                        # licenses.append(sample_value['license'])
+
 
                         # measMent.set_value(counter, sample_value['measurement'])
 
@@ -192,22 +214,10 @@ class CitrineDataRetrieval:
         #                         contacts.append(measure['contact'])
         #                     if 'license' in measure:
         #                         licenses.append(measure['license'])
-                    if 'reference' in sample_value:
-                        sampleRef.set_value(counter, sample_value['reference'])
-        #                 reference_values = sample_value['reference']
-        #                 for item in reference_values:
-        #                     reference.append(item)
-                    if 'contact' in sample_value:
-                        cont.set_value(counter, sample_value['contact'])
-                        # contacts.append(sample_value['contact'])
-                    if 'license' in sample_value:
-                        lic.set_value(counter, sample_value['license'])
-                        # licenses.append(sample_value['license'])
 
-        # print matCond
-
-        df1 = pd.concat([dsi, cN, sampleRef, measMentProp], axis=1)
-        df = pd.concat([df1, matCond], axis=1, join_axes=[df1.index])
+        matCond.columns = ['material.condition.name', 'material.condition.scalar']  # TODO: need to account for the possibility of fields other than these, eg: matrix, vector, ...
+        df1 = pd.concat([dsi, cN, sampleRef, measMentProp, measMentRef], axis=1)
+        df = pd.concat([df1, matCond, measCond], axis=1, join_axes=[df1.index])
         df.index.name = 'Hit'
         return df
 
