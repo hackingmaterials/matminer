@@ -92,8 +92,9 @@ class CitrineDataRetrieval:
         df = pd.DataFrame()
         counter = 0
         dsi = pd.Series(name='data_set_id')
-        cN = pd.Series(name='commonName')
-        matCond = pd.DataFrame()
+        commonName = pd.Series(name='material.commonName')
+        chemForm = pd.Series(name='material.chemicalFormula')
+        matCond = pd.Series(name='material.conditions')
         measMent = pd.Series(name='measurement')
         measMentProp = pd.Series(name='mesaurement.property')
         measCond = pd.DataFrame()
@@ -114,9 +115,10 @@ class CitrineDataRetrieval:
                     if 'material' in sample_value:
                         material_value = sample_value['material']
                         if 'chemicalFormula' in material_value:
-                            chemicalFormula.append(material_value['chemicalFormula'])
+                            chemForm.set_value(counter, material_value['chemicalFormula'])
+                            # chemicalFormula.append(material_value['chemicalFormula'])
                         if 'commonName' in material_value:
-                            cN.set_value(counter, material_value['commonName'])
+                            commonName.set_value(counter, material_value['commonName'])
                             # commonName.append(material_value['commonName'])
                         if 'composition' in material_value:   # TODO: json_normalize the 'composition' object
                             composition.append(material_value['composition'])
@@ -131,10 +133,12 @@ class CitrineDataRetrieval:
                         if 'cif' in material_value:
                             cif.append(material_value['cif'])
                         if 'condition' in material_value:
-                            condition_row = json_normalize(sample_value['material'], 'condition')
-                            condition_row = condition_row.set_index([[counter]])
-                            # condition_row = json_normalize(material_value['condition'], 'scalar', ['name'])        # TODO: Need to modify this for multiple conditions
-                            matCond = matCond.append(condition_row)
+                            matCond.set_value(counter, material_value['condition'])
+                            # condition_row = pd.Series(material_value['condition'], name='material.conditions', index=[counter])
+                            # condition_row = json_normalize(sample_value['material'], 'condition')
+                            # condition_row = condition_row.set_index([[counter]])
+                            # condition_row = json_normalize(material_value['condition'], 'scalar', ['name'])
+                            # matCond = matCond.append(condition_row)
                             # matCond.columns = ['material.condition.name', 'material.condition.scalar']
                             # matCond.set_index()
                             # matCond.set_value(counter, material_value['condition'])
@@ -167,7 +171,7 @@ class CitrineDataRetrieval:
                             if 'condition' in measure:
                                 meascondition_row = json_normalize(measure, 'condition')
                                 meascondition_row = meascondition_row.set_index([[counter]*len(meascondition_row.index)])
-                                print meascondition_row
+                                # print meascondition_row
                                 # condition_row = json_normalize(material_value['condition'], 'scalar', ['name'])        # TODO: Need to modify this for multiple conditions
                                 # measCond.set_value(counter, measure['condition'])
                             if 'reference' in measure:
@@ -215,9 +219,8 @@ class CitrineDataRetrieval:
         #                     if 'license' in measure:
         #                         licenses.append(measure['license'])
 
-        matCond.columns = ['material.condition.name', 'material.condition.scalar']  # TODO: need to account for the possibility of fields other than these, eg: matrix, vector, ...
-        df1 = pd.concat([dsi, cN, sampleRef, measMentProp, measMentRef], axis=1)
-        df = pd.concat([df1, matCond, measCond], axis=1, join_axes=[df1.index])
+        df1 = pd.concat([dsi, commonName, chemForm, matCond, sampleRef, measMentProp, measMentRef], axis=1)
+        df = pd.concat([df1, measCond], axis=1, join_axes=[df1.index])
         df.index.name = 'Hit'
         return df
 
