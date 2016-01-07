@@ -7,7 +7,8 @@ from pandas.io.json import json_normalize
 
 
 class CitrineDataRetrieval:
-    def __init__(self, api_key=None, term=None, formula=None, property=None, contributor=None, reference=None, min_measurement=None,
+    def __init__(self, api_key=None, term=None, formula=None, property=None, contributor=None, reference=None,
+                 min_measurement=None,
                  max_measurement=None, from_record=None, per_page=None, data_set_id=None):
         """
         :param term:
@@ -23,7 +24,8 @@ class CitrineDataRetrieval:
         :rtype: object
         """
 
-        # TODO: It is unclear that these variables need to be stored inside the class. You can probably remove these lines of code
+        # TODO: It is unclear that these variables need to be stored inside the class. You can probably remove these
+        # lines of code
         self.api_key = api_key
         self.term = term
         self.formula = formula
@@ -41,7 +43,6 @@ class CitrineDataRetrieval:
             client = CitrinationClient(os.environ['CITRINE_KEY'], 'http://citrination.com')
         else:
             client = CitrinationClient(self.api_key, 'http://citrination.com')
-
 
         self.json_data = []
         self.size = 1
@@ -71,39 +72,24 @@ class CitrineDataRetrieval:
 
     def to_pandas(self):
 
-        # TODO: anytime you find yourself defining a dozen variables, you are likely doing something inefficiently. In this case, just create a single dataframe object and append to it as needed.
-        data_set_id = []
-        chemicalFormula = []
-        commonName = []
-        composition = []
-        matdbid = []
-        icsdid = []
-        cif = []
-        icsd_spacegroup = []
-        final_spacegroup = []
-        material_conditions = []
-        measurement = []
-        external_conditions = []
-        method = []
-        datatype = []
-        contacts = []
-        licenses = []
-        reference = []
+        # TODO: anytime you find yourself defining a dozen variables, you are likely doing something inefficiently.
+        # In this case, just create a single dataframe object and append to it as needed.
         df = pd.DataFrame()
-        counter = 0
         dsi = pd.Series(name='data_set_id')
-        commonName = pd.Series(name='material.commonName')
         chemForm = pd.Series(name='material.chemicalFormula')
+        commonName = pd.Series(name='material.commonName')
         matCond = pd.Series(name='material.conditions')
-        measMent = pd.Series(name='measurement')
-        measMentProp = pd.Series(name='mesaurement.property')
-        measCond = pd.DataFrame()
-        measMentRef = pd.Series(name='mesaurement.reference')
+        measpropname = pd.Series(name='measurement.property.name')
+        measpropscalar = pd.Series(name='measurement.property.scalar')
+        measpropunits = pd.Series(name='measurement.property.units')
+        measCond = pd.Series(name='measurement.condition')
+        measref = pd.Series(name='measurement.reference')
         sampleRef = pd.Series(name='sample.reference')
         cont = pd.Series(name='contacts')
         lic = pd.Series(name='licenses')
+        counter = 0
+
         for set in tqdm(self.json_data):
-            # df = pd.DataFrame.append(df, json_normalize(set))
             # df = pd.concat((json_normalize(hit) for hit in set))
             for hit in tqdm(set):
                 counter += 1
@@ -111,120 +97,55 @@ class CitrineDataRetrieval:
                     sample_value = hit['sample']
                     if 'data_set_id' in sample_value:
                         dsi.set_value(counter, sample_value['data_set_id'])
-                        # data_set_id.append(sample_value['data_set_id'])
                     if 'material' in sample_value:
                         material_value = sample_value['material']
                         if 'chemicalFormula' in material_value:
                             chemForm.set_value(counter, material_value['chemicalFormula'])
-                            # chemicalFormula.append(material_value['chemicalFormula'])
                         if 'commonName' in material_value:
                             commonName.set_value(counter, material_value['commonName'])
-                            # commonName.append(material_value['commonName'])
-                        if 'composition' in material_value:   # TODO: json_normalize the 'composition' object
-                            composition.append(material_value['composition'])
-                        if 'id' in material_value:
-                            for id in material_value['id']:
-                                if 'MatDB ID' in id.values():
-                                    matdbid.append(id['value'])
-                                    # continue               # TODO: check different databases (eg: Lany) to see if 'continue' statement is needed here and below
-                                if 'ICSD ID' in id.values():
-                                    icsdid.append(id['value'])
-                                    # continue
-                        if 'cif' in material_value:
-                            cif.append(material_value['cif'])
-                        if 'condition' in material_value:
+                        if 'condition' in material_value:  # TODO: Incorporate capibility to handle multiple conditions
                             matCond.set_value(counter, material_value['condition'])
-                            # condition_row = pd.Series(material_value['condition'], name='material.conditions', index=[counter])
-                            # condition_row = json_normalize(sample_value['material'], 'condition')
-                            # condition_row = condition_row.set_index([[counter]])
-                            # condition_row = json_normalize(material_value['condition'], 'scalar', ['name'])
-                            # matCond = matCond.append(condition_row)
-                            # matCond.columns = ['material.condition.name', 'material.condition.scalar']
-                            # matCond.set_index()
-                            # matCond.set_value(counter, material_value['condition'])
-                            # material_conditions.append(material_value['condition'])
-        #                 #     stability_conditions = {}
-        #                 #     for cond in material_value['condition']:
-        #                 #         if 'Qhull stability' in cond.values():
-        #                 #             stability_conditions['Qhull stability'] = cond['scalar'][0]['value']
-        #                 #             continue
-        #                 #         if 'ICSD space group' in cond.values():
-        #                 #             icsd_spacegroup.append(cond['scalar'][0]['value'])
-        #                 #             continue
-        #                 #         if 'Final space group' in cond.values():
-        #                 #             final_spacegroup.append(cond['scalar'][0]['value'])
-        #                 #             continue
-        #                 #     material_conditions.append(stability_conditions)
-
-                        # if 'condition' in material_value:
-                        #     df = json_normalize(hit['sample']['material'])
-                            # df = pd.concat((json_normalize(cond) for cond in material_value['condition']))
-                            # for cond in material_value['condition']:
-            #                     # df_row = json_normalize(cond['scalar'])
-            #                     # df = pd.DataFrame.append(df, df_row)
-
                     if 'measurement' in sample_value:
-                        measurement_values = sample_value['measurement']
-                        for measure in measurement_values:                # TODO: Need to modify this for multiple fields within
-                            if 'property' in measure:
-                                measMentProp.set_value(counter, measure['property'])
-                            if 'condition' in measure:
-                                meascondition_row = json_normalize(measure, 'condition')
-                                meascondition_row = meascondition_row.set_index([[counter]*len(meascondition_row.index)])
-                                # print meascondition_row
-                                # condition_row = json_normalize(material_value['condition'], 'scalar', ['name'])        # TODO: Need to modify this for multiple conditions
-                                # measCond.set_value(counter, measure['condition'])
-                            if 'reference' in measure:
-                                measMentRef.set_value(counter, measure['reference'])
-                    if 'reference' in sample_value:
-                        sampleRef.set_value(counter, sample_value['reference'])
-        #                 reference_values = sample_value['reference']
-        #                 for item in reference_values:
-        #                     reference.append(item)
-                    if 'contact' in sample_value:
-                        cont.set_value(counter, sample_value['contact'])
-                        # contacts.append(sample_value['contact'])
-                    if 'license' in sample_value:
-                        lic.set_value(counter, sample_value['license'])
-                        # licenses.append(sample_value['license'])
+                        measurement_normdf = json_normalize(sample_value['measurement'])
+                        if 'property.name' in measurement_normdf.columns:
+                            measpropname = measpropname.append(pd.Series(measurement_normdf['property.name'].tolist(),
+                                                                         index=[counter] * len(measurement_normdf),
+                                                                         name='measurement.property.name'))
+                            # TODO: check why NOT having name here doesn't insert column names
+                            if 'property.scalar' in measurement_normdf.columns:
+                                measpropscalar = measpropscalar.append(
+                                        pd.Series(measurement_normdf['property.scalar'].tolist(),
+                                                  index=[counter] * len(measurement_normdf),
+                                                  name='measurement.property.scalar'))
+                            if 'property.units' in measurement_normdf.columns:
+                                measpropunits = measpropunits.append(
+                                        pd.Series(measurement_normdf['property.units'].tolist(),
+                                                  index=[counter] * len(measurement_normdf),
+                                                  name='measurement.property.units'))
+                            if 'condition' in measurement_normdf.columns:
+                                measCond = measCond.append(
+                                        pd.Series(measurement_normdf['condition'].tolist(),
+                                                  index=[counter] * len(measurement_normdf),
+                                                  name='measurement.condition'))
+                            if 'reference' in measurement_normdf.columns:
+                                measref = measref.append(
+                                        pd.Series(measurement_normdf['reference'].tolist(),
+                                                  index=[counter] * len(measurement_normdf),
+                                                  name='measurement.reference'))
+                            if 'reference' in sample_value:
+                                sampleRef.set_value(counter, sample_value['reference'])
+                            if 'contact' in sample_value:
+                                cont.set_value(counter, sample_value['contact'])
+                            if 'license' in sample_value:
+                                lic.set_value(counter, sample_value['license'])
 
-
-                        # measMent.set_value(counter, sample_value['measurement'])
-
-            #             for measure in measurement_values:
-            #                 df_row = json_normalize(measure['condition'])
-            #                 df = pd.DataFrame.append(df, df_row)
-                            #             if 'measurement' in sample_value:
-                        # measurement_values = sample_value['measurement']
-        #                 properties = {}
-        #                 for measure in measurement_values:
-        #                     if 'property' in measure:
-        #                         properties[measure['property']['name']] = measure['property']['scalar'][0]['value'] + \
-        #                                                                   measure['property']['units']
-        #                     measurement.append(properties)
-        #                     if 'condition' in measure:
-        #                         external = {}
-        #                         for ext_cond in measure['condition']:
-        #                             external[ext_cond['name']] = ext_cond['scalar'][0]['value']
-        #                         external_conditions.append(external)
-        #                     if 'method' in measure:
-        #                         method.append(measure['method'])
-        #                     if 'dataType' in measure:
-        #                         datatype.append(measure['dataType'])   # TODO: Need to verify this
-        #                     if 'reference' in measure:
-        #                         for item in measure['reference']:
-        #                             reference.append(item)
-        #                     if 'contact' in measure:
-        #                         contacts.append(measure['contact'])
-        #                     if 'license' in measure:
-        #                         licenses.append(measure['license'])
-
-        df1 = pd.concat([dsi, commonName, chemForm, matCond, sampleRef, measMentProp, measMentRef], axis=1)
-        df = pd.concat([df1, measCond], axis=1, join_axes=[df1.index])
+        df = pd.concat(
+                [dsi, chemForm, commonName, matCond, sampleRef, cont, lic, measpropname, measpropscalar, measpropunits,
+                 measCond, measref], axis=1)
         df.index.name = 'Hit'
         return df
+
 
 c = CitrineDataRetrieval(contributor='Carrico')
 print c.print_output()
 print c.to_pandas()
-
