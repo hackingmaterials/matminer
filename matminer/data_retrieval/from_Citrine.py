@@ -95,6 +95,7 @@ class CitrineDataRetrieval:
         cN = pd.Series(name='commonName')
         matCond = pd.DataFrame()
         measMent = pd.Series(name='measurement')
+        measMentProp = pd.Series(name='mesaurement.property')
         sampleRef = pd.Series(name='reference')
         cont = pd.Series(name='contacts')
         lic = pd.Series(name='licenses')
@@ -157,8 +158,13 @@ class CitrineDataRetrieval:
             #                     # df = pd.DataFrame.append(df, df_row)
 
                     if 'measurement' in sample_value:
-                        measMent.set_value(counter, sample_value['measurement'])
-                        # measurement_values = sample_value['measurement']
+                        measurement_values = sample_value['measurement']
+                        for measure in measurement_values:                # TODO: Need to modify this for multiple fields within
+                            if 'property' in measure:
+                                measMentProp.set_value(counter, measure['property'])
+
+                        # measMent.set_value(counter, sample_value['measurement'])
+
             #             for measure in measurement_values:
             #                 df_row = json_normalize(measure['condition'])
             #                 df = pd.DataFrame.append(df, df_row)
@@ -198,30 +204,12 @@ class CitrineDataRetrieval:
                         lic.set_value(counter, sample_value['license'])
                         # licenses.append(sample_value['license'])
 
-        # dsi = pd.Series(data_set_id, name='data_set_id')
-        # cF = pd.Series(chemicalFormula, name='chemicalFormula')
-        # cN = pd.Series(commonName, name='commonName')
-        # cmP = pd.Series(composition, name='composition')
-        # matID = pd.Series(matdbid, name='MatDB ID')
-        # icsdID = pd.Series(icsdid, name='ICSD ID')
-        # CIF = pd.Series(cif, name='CIF')
-        # matCond = pd.Series(material_conditions, name='material.conditions')
         # print matCond
 
-        df1 = pd.concat([dsi, cN, measMent, sampleRef, cont, lic], axis=1)
+        df1 = pd.concat([dsi, cN, sampleRef, measMentProp], axis=1)
         df = pd.concat([df1, matCond], axis=1, join_axes=[df1.index])
         df.index.name = 'Hit'
         return df
-
-        #
-        #
-        #             if 'material' in sample_value:
-        #                 material_value = sample_value['material']
-        #                 # return json_normalize(material_value)
-        #
-        #
-        #
-        #
 
 c = CitrineDataRetrieval(contributor='Carrico')
 print c.print_output()
