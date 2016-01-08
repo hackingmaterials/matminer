@@ -61,19 +61,13 @@ class CitrineDataRetrieval:
                 break
             time.sleep(3)
         self.hits = self.data.json()['hits']
-        c = self.json_data
-
-        # TODO: why jenkins.json? Why dumping the results to a file when the user didn't request it?
-        # with open('jenkins.json', 'w') as outfile:
-        #    json.dump(c, outfile)
 
     def print_output(self):
         return self.json_data
 
     def to_pandas(self):
 
-        # TODO: anytime you find yourself defining a dozen variables, you are likely doing something inefficiently.
-        # In this case, just create a single dataframe object and append to it as needed.
+        # TODO: anytime you find yourself defining a dozen variables, you are likely doing something inefficiently. In this case, just create a single dataframe object and append to it as needed.
         df = pd.DataFrame()
         dsi = pd.Series(name='data_set_id')
         chemForm = pd.Series(name='material.chemicalFormula')
@@ -103,7 +97,7 @@ class CitrineDataRetrieval:
                             chemForm.set_value(counter, material_value['chemicalFormula'])
                         if 'commonName' in material_value:
                             commonName.set_value(counter, material_value['commonName'])
-                        if 'condition' in material_value:  # TODO: Incorporate capibility to handle multiple conditions
+                        if 'condition' in material_value:
                             matCond.set_value(counter, material_value['condition'])
                     if 'measurement' in sample_value:
                         measurement_normdf = json_normalize(sample_value['measurement'])
@@ -146,6 +140,6 @@ class CitrineDataRetrieval:
         return df
 
 
-c = CitrineDataRetrieval(contributor='Carrico')
-print c.print_output()
-print c.to_pandas()
+# c = CitrineDataRetrieval(contributor='Lany', term='ag2ba')
+# print c.print_output()
+# print c.to_pandas()
