@@ -82,6 +82,8 @@ class CitrineDataRetrieval:
         measdataType = pd.Series(name='measurement.dataType')
         measref = pd.Series(name='measurement.reference')
         measurement_df = pd.DataFrame()
+        p_measurement_df = pd.DataFrame()
+        np_measurement_df = pd.DataFrame()
         sampleRef = pd.Series(name='sample.reference')
         cont = pd.Series(name='contacts')
         lic = pd.Series(name='licenses')
@@ -108,14 +110,17 @@ class CitrineDataRetrieval:
                             matCond.set_value(counter, material_value['condition'])
                     if 'measurement' in sample_value:
                         meas_normdf = json_normalize(sample_value['measurement'])
-                        non_properties = [cols for cols in meas_normdf.columns if "property" not in cols]
-                        properties = [cols for cols in meas_normdf.columns if "property" in cols]
+                        non_property_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
+                        property_cols = [cols for cols in meas_normdf.columns if "property" in cols]
                         non_properties_df = pd.DataFrame()
-                        for i in non_properties:
+                        for i in non_property_cols:
                             non_properties_df[i] = meas_normdf[i]
                         non_properties_df.index = [counter]*len(meas_normdf)
-                        measurement_df = measurement_df.append(non_properties_df)
-        df = pd.concat([dsi, chemForm, commonName, matCond, measurement_df], axis=1)
+                        properties_df = meas_normdf.pivot(columns='property.name', values='property.scalar')
+                        properties_df.index = [counter]*len(meas_normdf)
+                        np_measurement_df = np_measurement_df.append(non_properties_df)
+                        p_measurement_df = p_measurement_df.append(properties_df)
+        df = pd.concat([dsi, chemForm, commonName, matCond, np_measurement_df, p_measurement_df], axis=1)
         return df
                         # properties_df.columns = [cols for cols in meas_normdf.columns if "property" in cols]
 
