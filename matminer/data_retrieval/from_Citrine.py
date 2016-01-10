@@ -4,6 +4,7 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
+from matminer.data_retrieval.utils import flattenDict
 
 
 class CitrineDataRetrieval:
@@ -48,7 +49,6 @@ class CitrineDataRetrieval:
         self.size = 1
         self.start = 0
 
-        # TODO: use tqdm to show progressbar
         while self.size > 0:
             self.data = client.search(term=self.term, formula=self.formula, property=self.property,
                                       contributor=self.contributor, reference=self.reference,
@@ -67,7 +67,8 @@ class CitrineDataRetrieval:
 
     def to_pandas(self):
 
-        # TODO: anytime you find yourself defining a dozen variables, you are likely doing something inefficiently. In this case, just create a single dataframe object and append to it as needed.
+        # TODO: anytime you find yourself defining a dozen variables, you are likely doing something inefficiently.
+        # In this case, just create a single dataframe object and append to it as needed.
         df = pd.DataFrame()
         dsi = pd.Series(name='data_set_id')
         chemForm = pd.Series(name='material.chemicalFormula')
@@ -77,10 +78,16 @@ class CitrineDataRetrieval:
         measpropscalar = pd.Series(name='measurement.property.scalar')
         measpropunits = pd.Series(name='measurement.property.units')
         measCond = pd.Series(name='measurement.condition')
+        measMeth = pd.Series(name='measurement.method')
+        measdataType = pd.Series(name='measurement.dataType')
         measref = pd.Series(name='measurement.reference')
+        measurement_df = pd.DataFrame()
         sampleRef = pd.Series(name='sample.reference')
         cont = pd.Series(name='contacts')
         lic = pd.Series(name='licenses')
+        pd.set_option('display.width', 1000)
+        pd.set_option('display.max_colwidth', -1)
+
         counter = 0
 
         for set in tqdm(self.json_data):
@@ -100,46 +107,79 @@ class CitrineDataRetrieval:
                         if 'condition' in material_value:
                             matCond.set_value(counter, material_value['condition'])
                     if 'measurement' in sample_value:
-                        measurement_normdf = json_normalize(sample_value['measurement'])
-                        if 'property.name' in measurement_normdf.columns:
-                            measpropname = measpropname.append(pd.Series(measurement_normdf['property.name'].tolist(),
-                                                                         index=[counter] * len(measurement_normdf),
-                                                                         name='measurement.property.name'))
-                            # TODO: check why NOT having name here doesn't insert column names
-                            if 'property.scalar' in measurement_normdf.columns:
-                                measpropscalar = measpropscalar.append(
-                                        pd.Series(measurement_normdf['property.scalar'].tolist(),
-                                                  index=[counter] * len(measurement_normdf),
-                                                  name='measurement.property.scalar'))
-                            if 'property.units' in measurement_normdf.columns:
-                                measpropunits = measpropunits.append(
-                                        pd.Series(measurement_normdf['property.units'].tolist(),
-                                                  index=[counter] * len(measurement_normdf),
-                                                  name='measurement.property.units'))
-                            if 'condition' in measurement_normdf.columns:
-                                measCond = measCond.append(
-                                        pd.Series(measurement_normdf['condition'].tolist(),
-                                                  index=[counter] * len(measurement_normdf),
-                                                  name='measurement.condition'))
-                            if 'reference' in measurement_normdf.columns:
-                                measref = measref.append(
-                                        pd.Series(measurement_normdf['reference'].tolist(),
-                                                  index=[counter] * len(measurement_normdf),
-                                                  name='measurement.reference'))
-                            if 'reference' in sample_value:
-                                sampleRef.set_value(counter, sample_value['reference'])
-                            if 'contact' in sample_value:
-                                cont.set_value(counter, sample_value['contact'])
-                            if 'license' in sample_value:
-                                lic.set_value(counter, sample_value['license'])
-
-        df = pd.concat(
-                [dsi, chemForm, commonName, matCond, sampleRef, cont, lic, measpropname, measpropscalar, measpropunits,
-                 measCond, measref], axis=1)
-        df.index.name = 'Hit'
+                        meas_normdf = json_normalize(sample_value['measurement'])
+                        non_properties = [cols for cols in meas_normdf.columns if "property" not in cols]
+                        properties = [cols for cols in meas_normdf.columns if "property" in cols]
+                        non_properties_df = pd.DataFrame()
+                        for i in non_properties:
+                            non_properties_df[i] = meas_normdf[i]
+                        non_properties_df.index = [counter]*len(meas_normdf)
+                        measurement_df = measurement_df.append(non_properties_df)
+        df = pd.concat([dsi, chemForm, commonName, matCond, measurement_df], axis=1)
         return df
+                        # properties_df.columns = [cols for cols in meas_normdf.columns if "property" in cols]
 
+                    #     for measurement in sample_value['measurement']:
+                    #         meas_normdf = json_normalize(measurement)
+                        # measurement_normdf = json_normalize(sample_value['measurement'])
+                        # if 'property.name' in measurement_normdf.columns:
+                        #     measpropname = measpropname.append(pd.Series(measurement_normdf['property.name'].tolist(),
+                        #                                                  index=[counter] * len(measurement_normdf),
+                        #                                                  name='measurement.property.name'))
+                        #     # pd.concat([measurement_df, measpropname], axis=1, join_axes=[measurement_df.index])
+                        #     # TODO: check why NOT having name here doesn't insert column names
+                        # if 'property.scalar' in measurement_normdf.columns:
+                        #     measpropscalar = measpropscalar.append(
+                        #             pd.Series(measurement_normdf['property.scalar'].tolist(),
+                        #                       index=[counter] * len(measurement_normdf),
+                        #                       name='measurement.property.scalar'))
+                        #     # measurement_df = measurement_df.append(measpropscalar)
+                        # if 'property.units' in measurement_normdf.columns:
+                        #     measpropunits = measpropunits.append(
+                        #             pd.Series(measurement_normdf['property.units'].tolist(),
+                        #                       index=[counter] * len(measurement_normdf),
+                        #                       name='measurement.property.units'))
+                        #     # measurement_df = measurement_df.append(measpropunits)
+                        # if 'condition' in measurement_normdf.columns:
+                        #     measCond = measCond.append(
+                        #             pd.Series(measurement_normdf['condition'].tolist(),
+                        #                       index=[counter] * len(measurement_normdf),
+                        #                       name='measurement.condition'))
+                        #     # measurement_df = measurement_df.append(measpropunits)
+                        # if 'method' in measurement_normdf.columns:
+                        #     measMeth = measMeth.append(
+                        #             pd.Series(measurement_normdf['method'].tolist(),
+                        #                       index=[counter] * len(measurement_normdf),
+                        #                       name='measurement.method'))
+                        #     # measurement_df = measurement_df.append(measCond)
+                        # if 'dataType' in measurement_normdf.columns:
+                        #     measdataType = measdataType.append(
+                        #             pd.Series(measurement_normdf['dataType'].tolist(),
+                        #                       index=[counter] * len(measurement_normdf),
+                        #                       name='measurement.dataType'))
+                        # if 'reference' in measurement_normdf.columns:
+                        #     measref = measref.append(
+                        #             pd.Series(measurement_normdf['reference'].tolist(),
+                        #                       index=[counter] * len(measurement_normdf),
+                        #                       name='measurement.reference'))
+                    # if 'reference' in sample_value:
+                    #     sampleRef.set_value(counter, sample_value['reference'])
+                    # if 'contact' in sample_value:
+                    #     cont.set_value(counter, sample_value['contact'])
+                    # if 'license' in sample_value:
+                    #     lic.set_value(counter, sample_value['license'])
 
-# c = CitrineDataRetrieval(contributor='Lany', term='ag2ba')
+        # print sampleRef
+        # df = pd.concat(
+        #         [dsi, chemForm, commonName, matCond, sampleRef, cont, lic, measpropname, measpropscalar, measpropunits,
+        #          measCond, measMeth, measdataType, measref], axis=1)
+        # df = pd.concat(
+        #         [dsi, chemForm, commonName, matCond, sampleRef, measpropname, measpropscalar, measpropunits, measCond], axis=1)
+        # df.index.name = 'Sample'
+        # return pd.concat([measdataType, measCond], axis=1)
+        # return measurement_df
+
+c = CitrineDataRetrieval(contributor='Lany', formula='PbTe')
+# c = CitrineDataRetrieval(property='band gap', formula='PbTe')
 # print c.print_output()
-# print c.to_pandas()
+print c.to_pandas()
