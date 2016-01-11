@@ -79,7 +79,7 @@ class CitrineDataRetrieval:
                         non_prop_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
                         non_prop_df = pd.DataFrame()
                         for i in non_prop_cols:
-                            non_prop_df[i] = meas_normdf[i]
+                            non_prop_df['measurement.'+i] = meas_normdf[i]
                         non_prop_df.index = [counter] * len(meas_normdf)
                         prop_df = meas_normdf.pivot(columns='property.name',
                                                     values='property.scalar')  # TODO: get property units
@@ -87,7 +87,7 @@ class CitrineDataRetrieval:
                         meas_nonprop_df = meas_nonprop_df.append(non_prop_df)
                         meas_prop_df = meas_prop_df.append(prop_df)
         df = pd.concat([non_meas_df, meas_nonprop_df, meas_prop_df], axis=1)
-        df.index.name = 'Sample'
+        df.index.name = 'sample'
         return df
 
 
