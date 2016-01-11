@@ -1,2 +1,3 @@
+tqdm
 pandas>=0.17
 pymatgen>=3.2.10

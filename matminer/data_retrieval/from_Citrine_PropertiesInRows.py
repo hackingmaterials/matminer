@@ -158,8 +158,8 @@ class CitrineDataRetrieval:
         print df.iloc[7,5]
         return df
 
-
-c = CitrineDataRetrieval(contributor='Lany', formula='PbTe')
+c = CitrineDataRetrieval(contributor='Carrico')
+# c = CitrineDataRetrieval(contributor='Lany', formula='PbTe')
 # # c = CitrineDataRetrieval(property='band gap', formula='PbTe')   # TODO: check why you receive an error (ValueError("cannot reindex from a duplicate axis") when running this query (problem with measCond and measref).
 # # print c.print_output()
 print c.to_pandas()
