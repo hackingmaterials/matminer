@@ -52,40 +52,41 @@ class CitrineDataRetrieval:
 
     def to_pandas(self):
 
-        dsi = pd.Series(name='data_set_id')
-        material_df = pd.DataFrame()
-        p_measurement_df = pd.DataFrame()
-        np_measurement_df = pd.DataFrame()
+        non_meas_df = pd.DataFrame()
+        meas_prop_df = pd.DataFrame()
+        meas_nonprop_df = pd.DataFrame()
         pd.set_option('display.width', 1000)
         pd.set_option('display.max_colwidth', -1)
         pd.set_option('display.max_rows', 1000)
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for set in tqdm(self.json_data):
+        for page in tqdm(self.json_data):
             # df = pd.concat((json_normalize(hit) for hit in set))
-            for hit in tqdm(set):
+            for hit in tqdm(page):
                 counter += 1
                 if 'sample' in hit.keys():
                     sample_value = hit['sample']
-                    dsi.set_value(counter, sample_value['data_set_id'])
-                    material_row = json_normalize(sample_value['material'])
-                    material_row.index = [counter] * len(material_row)
-                    material_df = material_df.append(material_row)
+                    sample_normdf = json_normalize(sample_value)
+                    non_meas_cols = [cols for cols in sample_normdf.columns if "measurement" not in cols]
+                    non_meas_row = pd.DataFrame()
+                    for i in non_meas_cols:
+                        non_meas_row[i] = sample_normdf[i]
+                    non_meas_row.index = [counter] * len(sample_normdf)
+                    non_meas_df = non_meas_df.append(non_meas_row)
                     if 'measurement' in sample_value:
                         meas_normdf = json_normalize(sample_value['measurement'])
-                        non_property_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
-                        # property_cols = [cols for cols in meas_normdf.columns if "property" in cols]
-                        non_properties_df = pd.DataFrame()
-                        for i in non_property_cols:
-                            non_properties_df[i] = meas_normdf[i]
-                        non_properties_df.index = [counter] * len(meas_normdf)
-                        properties_df = meas_normdf.pivot(columns='property.name',
-                                                          values='property.scalar')  # TODO: get property units
-                        properties_df.index = [counter] * len(meas_normdf)
-                        np_measurement_df = np_measurement_df.append(non_properties_df)
-                        p_measurement_df = p_measurement_df.append(properties_df)
-        df = pd.concat([material_df, np_measurement_df, p_measurement_df], axis=1)
+                        non_prop_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
+                        non_prop_df = pd.DataFrame()
+                        for i in non_prop_cols:
+                            non_prop_df[i] = meas_normdf[i]
+                        non_prop_df.index = [counter] * len(meas_normdf)
+                        prop_df = meas_normdf.pivot(columns='property.name',
+                                                    values='property.scalar')  # TODO: get property units
+                        prop_df.index = [counter] * len(meas_normdf)
+                        meas_nonprop_df = meas_nonprop_df.append(non_prop_df)
+                        meas_prop_df = meas_prop_df.append(prop_df)
+        df = pd.concat([non_meas_df, meas_nonprop_df, meas_prop_df], axis=1)
         df.index.name = 'Sample'
         return df
 
