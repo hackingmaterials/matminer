@@ -7,7 +7,7 @@ from pandas.io.json import json_normalize
 
 
 class CitrineDataRetrieval:
-    def __init__(self, api_key=None, term=None, formula=None, prop=None, contributor=None, reference=None,
+    def __init__(self, api_key=None, term=None, formula=None, property=None, contributor=None, reference=None,
                  min_measurement=None,
                  max_measurement=None, from_record=None, per_page=None, data_set_id=None):
         """
@@ -35,7 +35,7 @@ class CitrineDataRetrieval:
             client = CitrinationClient(self.api_key, 'http://citrination.com')
 
         while self.size > 0:
-            self.data = client.search(term=term, formula=formula, property=prop,
+            self.data = client.search(term=term, formula=formula, property=property,
                                       contributor=contributor, reference=reference,
                                       min_measurement=min_measurement, max_measurement=max_measurement,
                                       from_record=self.start, per_page=100, data_set_id=data_set_id)
@@ -76,11 +76,12 @@ class CitrineDataRetrieval:
                     non_meas_df = non_meas_df.append(non_meas_row)
                     if 'measurement' in sample_value:
                         meas_normdf = json_normalize(sample_value['measurement'])
-                        non_prop_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
+                        non_prop_cols = [meascols for meascols in meas_normdf.columns if "property" not in meascols]
                         non_prop_df = pd.DataFrame()
                         for i in non_prop_cols:
                             non_prop_df['measurement.'+i] = meas_normdf[i]
-                        non_prop_df.index = [counter] * len(meas_normdf)
+                        if len(non_prop_df) > 0:
+                            non_prop_df.index = [counter] * len(meas_normdf)
                         prop_df = meas_normdf.pivot(columns='property.name',
                                                     values='property.scalar')  # TODO: get property units
                         prop_df.index = [counter] * len(meas_normdf)
