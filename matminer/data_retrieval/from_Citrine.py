@@ -79,6 +79,13 @@ class CitrineDataRetrieval:
                     non_meas_df = non_meas_df.append(non_meas_row)
                     if 'measurement' in sample_value:
                         meas_normdf = json_normalize(sample_value['measurement'])
+                        # Extract numbers of properties
+                        for row,col in enumerate(meas_normdf['property.scalar']):
+                            for item in col:
+                                if 'value' in item:
+                                    meas_normdf.xs(row)['property.scalar'] = item['value']
+                                elif 'minimum' in item and 'maximum' in item:   # TODO: ask Anubhav how to deal with these and rest of formats
+                                    meas_normdf.xs(row)['property.scalar'] = 'Minimum = ' + item['minimum'] + ', ' + 'Maximum = ' + item['maximum']
                         non_prop_cols = [meascols for meascols in meas_normdf.columns if "property" not in meascols]
                         non_prop_df = pd.DataFrame()
                         for col in non_prop_cols:
