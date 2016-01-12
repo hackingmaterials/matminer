@@ -75,3 +75,7 @@ class MPDataRetrieval:
         return pd.DataFrame(self.data, columns=self.properties)
 
         # TODO: add an example in an 'examples' package. This exercise would have probably caught some of the errors.
+
+m = MPDataRetrieval(criteria='mp-19717', properties=['cif'])
+print m.return_output()
+print m.to_pandas()
