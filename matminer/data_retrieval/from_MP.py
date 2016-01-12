@@ -10,7 +10,8 @@ class MPDataRetrieval:
 
     def __init__(self, criteria, properties, api_key=None, mp_decode=True):
         """
-        :param criteria (str/dict): Criteria of the query as a string or mongo-style dict.
+        :param criteria (str/dict): See MPRester docs for more details.
+            Criteria of the query as a string or mongo-style dict.
             If string, it supports a powerful but simple string criteria.
             E.g., "Fe2O3" means search for materials with reduced_formula
             Fe2O3. Wild cards are also supported. E.g., "\*2O" means get
@@ -31,14 +32,17 @@ class MPDataRetrieval:
             "Na", "K"], "$all": ["O"]}, "nelements":2} selects all Li, Na
             and K oxides. {"band_gap": {"$gt": 1}} selects all materials
             with band gaps greater than 1 eV.
-        :param properties (list): Properties to request for as a list. For example, ["formula",
+        :param properties (list): See MPRester docs for more details.
+            Properties to request for as a list. For example, ["formula",
             "formation_energy_per_atom"] returns the formula and formation energy per atom.
-        :param api_key (str): A String API key for accessing the MaterialsProject. Note that when you call MPRester,
+        :param api_key (str): See MPRester docs for more details.
+            A String API key for accessing the MaterialsProject. Note that when you call MPRester,
             it looks for the API key in two places:
             - Supplying it directly as an __init__ arg.
             - Setting the "MAPI_KEY" environment variable.
               Please obtain your API key at https://www.materialsproject.org/dashboard
-        :param mp_decode (bool): Whether to do a decoding to a Pymatgen object
+        :param mp_decode (bool): See MPRester docs for more details.
+            Whether to do a decoding to a Pymatgen object
             where possible. In some cases, it might be useful to just get
             the raw python dict, i.e., set to False.
         """
