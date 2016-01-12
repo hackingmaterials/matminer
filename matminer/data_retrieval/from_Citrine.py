@@ -56,7 +56,6 @@ class CitrineDataRetrieval:
         non_meas_df = pd.DataFrame()
         meas_prop_df = pd.DataFrame()
         meas_nonprop_df = pd.DataFrame()
-        # units = pd.DataFrame()
         units = {}
         pd.set_option('display.width', 3000)
         pd.set_option('display.max_colwidth', -1)
@@ -71,40 +70,46 @@ class CitrineDataRetrieval:
                 if 'sample' in hit.keys():
                     sample_value = hit['sample']
                     sample_normdf = json_normalize(sample_value)
+                    # Make a DF of all non-'measurement' fields
                     non_meas_cols = [cols for cols in sample_normdf.columns if "measurement" not in cols]
                     non_meas_row = pd.DataFrame()
                     for col in non_meas_cols:
                         non_meas_row[col] = sample_normdf[col]
                     non_meas_row.index = [counter] * len(sample_normdf)
                     non_meas_df = non_meas_df.append(non_meas_row)
+                    # Make a DF of the 'measurement' array
                     if 'measurement' in sample_value:
                         meas_normdf = json_normalize(sample_value['measurement'])
                         # Extract numbers of properties
-                        for row,col in enumerate(meas_normdf['property.scalar']):
+                        for row, col in enumerate(meas_normdf['property.scalar']):
                             for item in col:
                                 if 'value' in item:
                                     meas_normdf.xs(row)['property.scalar'] = item['value']
-                                elif 'minimum' in item and 'maximum' in item:   # TODO: ask Anubhav how to deal with these and rest of formats
-                                    meas_normdf.xs(row)['property.scalar'] = 'Minimum = ' + item['minimum'] + ', ' + 'Maximum = ' + item['maximum']
+                                # TODO: ask Anubhav how to deal with these and rest of formats
+                                elif 'minimum' in item and 'maximum' in item:
+                                    meas_normdf.xs(row)['property.scalar'] = 'Minimum = ' + item[
+                                        'minimum'] + ', ' + 'Maximum = ' + item['maximum']
+                        # Make a DF of all non-'property' containing fields in 'measurement'
                         non_prop_cols = [meascols for meascols in meas_normdf.columns if "property" not in meascols]
                         non_prop_df = pd.DataFrame()
                         for col in non_prop_cols:
                             non_prop_df['measurement.' + col] = meas_normdf[col]
                         if len(non_prop_df) > 0:
                             non_prop_df.index = [counter] * len(meas_normdf)
+                        # Pivot the DF to convert properties to columns
                         prop_df = meas_normdf.pivot(columns='property.name',
-                                                    values='property.scalar')  # TODO: Extract values from property.scalar
+                                                    values='property.scalar')
                         prop_df.index = [counter] * len(meas_normdf)
                         meas_nonprop_df = meas_nonprop_df.append(non_prop_df)
                         meas_prop_df = meas_prop_df.append(prop_df)
                         # Extracting units
-                        if 'property.units' in meas_normdf.columns:  # Need to check to avoid an error with databases that don't contain this field
+                        # Check to avoid an error with databases that don't contain this field
+                        if 'property.units' in meas_normdf.columns:
                             curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
                         for prop in curr_units:
                             if prop not in units:
                                 units[prop] = curr_units[prop]
-        units_lst = []
-        units_lst.append(units)
+        units_lst = [units]
         df = pd.concat(
                 [non_meas_df, meas_nonprop_df, meas_prop_df, pd.Series(units_lst, index=[1], name='property.units')],
                 axis=1)
@@ -112,10 +117,10 @@ class CitrineDataRetrieval:
         return df
 
 
-c = CitrineDataRetrieval(contributor='Carrico')
+# c = CitrineDataRetrieval(contributor='Carrico')
 # c = CitrineDataRetrieval(contributor='Citrine', term='Wikipedia')
 # c = CitrineDataRetrieval(contributor='aflow', formula='te')
-# c = CitrineDataRetrieval(contributor='Lany', formula='PbTe')
+c = CitrineDataRetrieval(contributor='Lany', formula='PbTe')
 # c = CitrineDataRetrieval(contributor='Citrine', term='NIST', formula='al2o3')
 # c = CitrineDataRetrieval(contributor='Gaultois', formula='pbte')
 # c = CitrineDataRetrieval(contributor='Harada', formula='li3v2p3o12')
