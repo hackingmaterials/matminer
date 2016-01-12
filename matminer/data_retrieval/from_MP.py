@@ -9,7 +9,7 @@ class MPDataRetrieval:
 
     def __init__(self, mprester):
         """
-        :param mprester (MPRester): A pymatgen MPRester object
+        :param mprester (MPRester): A pymatgen MPRester object. See MPRester docs for more details.
         """
         self.mprester = mprester
 
