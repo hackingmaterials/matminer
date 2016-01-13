@@ -1,4 +1,3 @@
-from pymatgen import MPRester
 import pandas as pd
 
 
@@ -8,9 +7,16 @@ class MPDataRetrieval:
     into an indexed/unindexed Pandas dataframe.
     """
 
-    def __init__(self, criteria, properties, api_key=None, mp_decode=True):
+    def __init__(self, mprester):
         """
-        :param criteria (str/dict): Criteria of the query as a string or mongo-style dict.
+        :param mprester (MPRester): A pymatgen MPRester object. See MPRester docs for more details.
+        """
+        self.mprester = mprester
+
+    def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True):
+        """
+        :param criteria (str/dict): See MPRester docs for more details.
+            Criteria of the query as a string or mongo-style dict.
             If string, it supports a powerful but simple string criteria.
             E.g., "Fe2O3" means search for materials with reduced_formula
             Fe2O3. Wild cards are also supported. E.g., "\*2O" means get
@@ -31,51 +37,23 @@ class MPDataRetrieval:
             "Na", "K"], "$all": ["O"]}, "nelements":2} selects all Li, Na
             and K oxides. {"band_gap": {"$gt": 1}} selects all materials
             with band gaps greater than 1 eV.
-        :param properties (list): Properties to request for as a list. For example, ["formula",
+        :param properties (list): See MPRester docs for more details.
+            Properties to request for as a list. For example, ["formula",
             "formation_energy_per_atom"] returns the formula and formation energy per atom.
-        :param api_key (str): A String API key for accessing the MaterialsProject. Note that when you call MPRester,
-            it looks for the API key in two places:
-            - Supplying it directly as an __init__ arg.
-            - Setting the "MAPI_KEY" environment variable.
-              Please obtain your API key at https://www.materialsproject.org/dashboard
-        :param mp_decode (bool): Whether to do a decoding to a Pymatgen object
+        :param mp_decode (bool): See MPRester docs for more details.
+            Whether to do a decoding to a Pymatgen object
             where possible. In some cases, it might be useful to just get
             the raw python dict, i.e., set to False.
+        :param index_mpid (bool): Whether to set the materials_id as the dataframe index
         """
-        self.criteria = criteria
-        self.properties = properties
-        self.api_key = api_key
-        self.mp_decode = mp_decode
 
-        if self.api_key is None:
-            mprest = MPRester()
-        else:
-            mprest = MPRester(self.api_key)
+        if index_mpid and "material_id" not in properties:
+            properties.append("material_id")
 
-        if "material_id" not in self.properties:
-            self.properties.append("material_id")
-        self.data = mprest.query(self.criteria, self.properties, self.mp_decode)
+        data = self.mprester.query(criteria, properties, mp_decode)
+        df = pd.DataFrame(data, columns=properties)
 
-    def return_output(self):
-        """
-        :return: results of the query command of pymatgen
-        """
-        return self.data
-
-    def to_pandas(self, index_mpid=True):
-        """
-        :param index_mpid (bool): Whether to index the data frame on MPID or not. Defaults to True.
-        :return: An indexed or unindexed Pandas data frame of the results.
-        """
-        self.index_mpid = index_mpid
         if index_mpid:
-            df = pd.DataFrame(self.data, columns=self.properties)
-            indexed_df = df.set_index("material_id")
-            return indexed_df
-        return pd.DataFrame(self.data, columns=self.properties)
+            df = df.set_index("material_id")
 
-        # TODO: add an example in an 'examples' package. This exercise would have probably caught some of the errors.
-
-m = MPDataRetrieval(criteria='mp-19717', properties=['cif'])
-print m.return_output()
-print m.to_pandas()
+        return df
