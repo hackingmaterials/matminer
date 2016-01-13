@@ -10,4 +10,4 @@ To cite MatMiner, you can cite the following two papers::
 
     (2) Ong, S. P.; Richards, W. D.; Jain, A.; Hautier, G.; Kocher, M.; Cholia, S.; Gunter, D.; Chevrier, V. L.; Persson, K. a.; Ceder, G. Python Materials Genomics (pymatgen): A robust, open-source python library for materials analysis, Comput. Mater. Sci., 2013, 68, 314–319, doi:10.1016/j.commatsci.2012.10.028.
     
-[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/hackingmaterials/MatMiner)    
+.. image:: http://mybinder.org/badge.svg :target: http://mybinder.org/repo/hackingmaterials/MatMiner   
