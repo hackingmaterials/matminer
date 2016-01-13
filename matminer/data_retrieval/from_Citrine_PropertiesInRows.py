@@ -1,10 +1,9 @@
-from citrination_client import CitrinationClient
 import os
 import time
 import pandas as pd
-from tqdm import tqdm
+from citrination_client import CitrinationClient
 from pandas.io.json import json_normalize
-from matminer.data_retrieval.utils import flattenDict
+from tqdm import tqdm
 
 
 class CitrineDataRetrieval:

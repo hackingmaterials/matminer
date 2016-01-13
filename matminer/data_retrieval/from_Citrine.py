@@ -55,9 +55,9 @@ class CitrineDataRetrieval:
         meas_nonprop_df = pd.DataFrame()   # df w/o measurement.property columns
         meas_df = pd.DataFrame()   # df containing only measurement column
         units = {}  # dict for containing units
-        pd.set_option('display.width', 3000)
+        # pd.set_option('display.width', 1000)
         pd.set_option('display.max_colwidth', -1)
-        pd.set_option('display.max_rows', 3000)
+        # pd.set_option('display.max_rows', 1000)
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
@@ -121,8 +121,8 @@ class CitrineDataRetrieval:
 
 if __name__ == '__main__':
     # c = CitrineDataRetrieval(contributor='Carrico')
-    # c = CitrineDataRetrieval(contributor='Citrine', term='Wikipedia')
-    # c = CitrineDataRetrieval(contributor='aflow', formula='te')
+    # c = CitrineDataRetrieval(contributor='Citrine', term='Wikipedia', formula='PbTe')
+    # c = CitrineDataRetrieval(contributor='aflow', formula='Si')
     # c = CitrineDataRetrieval(contributor='Lany', formula='Pb2Pd3Te2')
     # c = CitrineDataRetrieval(contributor='Citrine', term='NIST', formula='al2o3')
     # c = CitrineDataRetrieval(contributor='Gaultois', formula='pbte')
