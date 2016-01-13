@@ -133,4 +133,5 @@ if __name__ == '__main__':
     #  of empty DF of non-measurement properties (occurs with TE design lab sample)
     # print c.print_output()
     d = c.to_pandas()
+    print 'test'
     print d
