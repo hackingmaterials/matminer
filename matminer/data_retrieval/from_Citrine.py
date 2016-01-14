@@ -133,6 +133,5 @@ class CitrineDataRetrieval:
 # no non-'property' columns in its 'measurement', i.e. empty 'non_prop_df
 
 if __name__ == '__main__':
-    # TODO: move these into an "Examples" file (either Python file or .ipynb). Don't leave the code here.
     CITRINE_KEY = None
     c = CitrineDataRetrieval(CITRINE_KEY)
