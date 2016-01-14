@@ -10,11 +10,11 @@ def get_mass_list(comp):
         el_mass.append(Element(el).atomic_mass)
     return el_mass
 
+
 def get_max_min(lst):
-    maxmin_dict = {}
-    maxmin_dict['Max'] = max(lst)
-    maxmin_dict['Min'] = min(lst)
+    maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
+
 
 if __name__ == '__main__':
     m = get_mass_list('LiFePO4')
