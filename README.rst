@@ -10,7 +10,7 @@ To cite MatMiner, you can cite the following two papers::
 
     (2) Ong, S. P.; Richards, W. D.; Jain, A.; Hautier, G.; Kocher, M.; Cholia, S.; Gunter, D.; Chevrier, V. L.; Persson, K. a.; Ceder, G. Python Materials Genomics (pymatgen): A robust, open-source python library for materials analysis, Comput. Mater. Sci., 2013, 68, 314–319, doi:10.1016/j.commatsci.2012.10.028.
 
-# Example notebooks
+**Example notebooks**
 
 A few examples demonstrating the features of the data retrieval code 'from_Citrine.py' (in MatMiner/matminer/data_retrieval) have been added in the form of ipython notebooks. You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to matminer/data_retrieval/example_notebooks to use/edit the notebook right away!
 
