@@ -17,10 +17,11 @@ class CitrineDataRetrieval:
         :param api_key: (str) Your Citrine API key, or None if you've set the CITRINE_KEY environment variable
         """
 
-        self.client = CitrinationClient(api_key, 'http://citrination.com') if api_key else CitrinationClient(os.environ['CITRINE_KEY'], 'http://citrination.com')
+        self.client = CitrinationClient(api_key, 'http://citrination.com') if api_key else CitrinationClient(
+                os.environ['CITRINE_KEY'], 'http://citrination.com')
 
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
-                 min_measurement=None, max_measurement=None, from_record=None, per_page=None, data_set_id=None):
+                      min_measurement=None, max_measurement=None, from_record=None, per_page=None, data_set_id=None):
         # TODO: create/format docstrings for this and all other functions
         """
         :param term:
@@ -56,8 +57,8 @@ class CitrineDataRetrieval:
 
         non_meas_df = pd.DataFrame()  # df w/o measurement column
         meas_prop_df = pd.DataFrame()  # df w/only measurement.property columns
-        meas_nonprop_df = pd.DataFrame()   # df w/o measurement.property columns
-        meas_df = pd.DataFrame()   # df containing only measurement column
+        meas_nonprop_df = pd.DataFrame()  # df w/o measurement.property columns
+        meas_df = pd.DataFrame()  # df containing only measurement column
         units = {}  # dict for containing units
         pd.set_option('display.width', 1000)
         pd.set_option('display.max_colwidth', -1)
@@ -65,7 +66,8 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        # TODO: tqdm is probably not needed here unless you find that processing the data takes a long time. When I had mentioned to use tqdm, I thought it was possible to do so for the query itself
+        # TODO: tqdm is probably not needed here unless you find that processing the data takes a long time. When I
+        # had mentioned to use tqdm, I thought it was possible to do so for the query itself
         for page in tqdm(json_data):
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
             for hit in tqdm(page):
@@ -105,7 +107,7 @@ class CitrineDataRetrieval:
                                                     values='property.scalar')
                         prop_df.index = [counter] * len(meas_normdf)
                         meas_prop_df = meas_prop_df.append(prop_df)
-                        m_df = pd.concat([non_prop_df,prop_df], axis=1)
+                        m_df = pd.concat([non_prop_df, prop_df], axis=1)
                         meas_df = meas_df.append(m_df)
                         # Extracting units
                         # Check to avoid an error with databases that don't contain this field
@@ -124,6 +126,11 @@ class CitrineDataRetrieval:
         df.index.name = 'sample'
         return df
 
+
+# c = CitrineDataRetrieval(formula='PbTe', property='band gap')     # 'ValueError: shape indices do not match' error
+# occurs with this query when 'concat' is used on two DFs with all rows having the same index but the DFs themselves
+# have different number os rows, which happens with the PbTe sample from 'TE design lab' which has 17 properties but
+# no non-'property' columns in its 'measurement', i.e. empty 'non_prop_df
 
 if __name__ == '__main__':
     # TODO: move these into an "Examples" file (either Python file or .ipynb). Don't leave the code here.
