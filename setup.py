@@ -20,7 +20,7 @@ if __name__ == "__main__":
         package_data={},
         zip_safe=False,
         install_requires=['pymatgen>=3.2.10', 'tqdm>=3.7.1', 'pandas>=0.17.1'],
-        extras_require={'citrination': ['citrination_client']},
+        extras_require={},
         classifiers=['Programming Language :: Python :: 2.7',
                      'Development Status :: 4 - Beta',
                      'Intended Audience :: Science/Research',

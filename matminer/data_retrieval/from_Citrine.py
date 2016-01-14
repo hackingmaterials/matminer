@@ -1,3 +1,8 @@
+"""
+This package requires downloading an installing the citrination client:
+https://github.com/CitrineInformatics/python-citrination-client
+
+"""
 from citrination_client import CitrinationClient
 import os
 import time
@@ -7,7 +12,14 @@ from pandas.io.json import json_normalize
 
 
 class CitrineDataRetrieval:
-    def __init__(self, api_key=None, term=None, formula=None, property=None, contributor=None, reference=None,
+    def __init__(self, api_key=None):
+        """
+        :param api_key: (str) Your Citrine API key, or None if you've set the CITRINE_KEY environment variable
+        """
+
+        self.client = CitrinationClient(api_key, 'http://citrination.com') if api_key else CitrinationClient(os.environ['CITRINE_KEY'], 'http://citrination.com')
+
+    def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
                  min_measurement=None, max_measurement=None, from_record=None, per_page=None, data_set_id=None):
         # TODO: create/format docstrings for this and all other functions
         """
@@ -18,36 +30,29 @@ class CitrineDataRetrieval:
         :param reference:
         :param min_measurement:
         :param max_measurement:3
-        :param from_record: 
+        :param from_record:
         :param per_page:
         :param data_set_id:
         :rtype: object
         """
 
-        self.api_key = api_key
-        self.json_data = []
-        self.size = 1
-        self.start = 0
+        json_data = []
+        start = 0
+        per_page = 100
 
-        if self.api_key is None:
-            client = CitrinationClient(os.environ['CITRINE_KEY'], 'http://citrination.com')
-        else:
-            client = CitrinationClient(self.api_key, 'http://citrination.com')
-
-        while self.size > 0:
-            self.data = client.search(term=term, formula=formula, property=property,
+        while True:
+            data = self.client.search(term=term, formula=formula, property=property,
                                       contributor=contributor, reference=reference,
                                       min_measurement=min_measurement, max_measurement=max_measurement,
-                                      from_record=self.start, per_page=100, data_set_id=data_set_id)
-            self.size = len(self.data.json()['results'])
-            self.start += self.size
-            self.json_data.append(self.data.json()['results'])
-            if self.size < 100:  # break out of last loop of results
+                                      from_record=start, per_page=per_page, data_set_id=data_set_id)
+            size = len(data.json()['results'])
+            start += size
+            json_data.append(data.json()['results'])
+            if size < per_page:  # break out of last loop of results
                 break
             time.sleep(3)
-        self.hits = self.data.json()['hits']
 
-    def to_pandas(self):
+        hits = data.json()['hits']  # TODO: what is the point of this line of code?
 
         non_meas_df = pd.DataFrame()  # df w/o measurement column
         meas_prop_df = pd.DataFrame()  # df w/only measurement.property columns
@@ -60,7 +65,8 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in tqdm(self.json_data):
+        # TODO: tqdm is probably not needed here unless you find that processing the data takes a long time. When I had mentioned to use tqdm, I thought it was possible to do so for the query itself
+        for page in tqdm(json_data):
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
             for hit in tqdm(page):
                 counter += 1
@@ -121,16 +127,13 @@ class CitrineDataRetrieval:
 
 if __name__ == '__main__':
     # TODO: move these into an "Examples" file (either Python file or .ipynb). Don't leave the code here.
-
-    # c = CitrineDataRetrieval(contributor='aflow', formula='Si')
-    # c = CitrineDataRetrieval(contributor='Lany', formula='PbTe')
-    # c = CitrineDataRetrieval(contributor='Citrine', term='NIST', formula='al2o3')
-    # c = CitrineDataRetrieval(contributor='Gaultois', formula='pbte')
-    # c = CitrineDataRetrieval(contributor='Harada', formula='li3v2p3o12')
-    c = CitrineDataRetrieval(contributor='oqmd', formula='GaN')
-    # c = CitrineDataRetrieval(formula='PbTe', contributor='TE design lab')
-    # c = CitrineDataRetrieval(formula='PbTe', property='band gap')     # 'ValueError: shape indices do not match' error occurs with this query when 'concat' is used on two DFs with all rows having the same index but the DFs themselves have different number os rows, which happens with the PbTe sample from 'TE design lab' which has 17 properties but no non-'property' columns in its 'measurement', i.e. empty 'non_prop_df
-    #  of empty DF of non-measurement properties (occurs with TE design lab sample)
-    # print c.print_output()
-    d = c.to_pandas()
-    print d
+    CITRINE_KEY = None
+    c = CitrineDataRetrieval(CITRINE_KEY)
+    # c.get_dataframe(contributor='aflow', formula='Si')
+    # c.get_dataframe(contributor='Lany', formula='PbTe')
+    # c.get_dataframe(contributor='Citrine', term='NIST', formula='al2o3')
+    # c.get_dataframe(contributor='Gaultois', formula='pbte')
+    # c.get_dataframe(contributor='Harada', formula='li3v2p3o12')
+    # c.get_dataframe(contributor='oqmd', formula='GaN')
+    # c.get_dataframe(formula='Pb1Te1', contributor='TE design lab')
+    # print c.get_dataframe(term='Pb1Te1', property='band gap')
