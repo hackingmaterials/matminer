@@ -129,11 +129,3 @@ if __name__ == '__main__':
     # TODO: move these into an "Examples" file (either Python file or .ipynb). Don't leave the code here.
     CITRINE_KEY = None
     c = CitrineDataRetrieval(CITRINE_KEY)
-    # c.get_dataframe(contributor='aflow', formula='Si')
-    # c.get_dataframe(contributor='Lany', formula='PbTe')
-    # c.get_dataframe(contributor='Citrine', term='NIST', formula='al2o3')
-    # c.get_dataframe(contributor='Gaultois', formula='pbte')
-    # c.get_dataframe(contributor='Harada', formula='li3v2p3o12')
-    # c.get_dataframe(contributor='oqmd', formula='GaN')
-    # c.get_dataframe(formula='Pb1Te1', contributor='TE design lab')
-    # print c.get_dataframe(term='Pb1Te1', property='band gap')
