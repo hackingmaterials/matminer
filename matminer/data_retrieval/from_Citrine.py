@@ -57,7 +57,7 @@ class CitrineDataRetrieval:
         meas_df = pd.DataFrame()   # df containing only measurement column
         units = {}  # dict for containing units
         pd.set_option('display.width', 1000)
-        pd.set_option('display.max_colwidth', -1)
+        # pd.set_option('display.max_colwidth', -1)
         # pd.set_option('display.max_rows', 1000)
 
         counter = 0  # variable to keep count of sample hit and set indexes
