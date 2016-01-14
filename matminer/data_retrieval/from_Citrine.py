@@ -4,13 +4,11 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
-from pymatgen import Composition, Element
 
 
 class CitrineDataRetrieval:
     def __init__(self, api_key=None, term=None, formula=None, property=None, contributor=None, reference=None,
-                 min_measurement=None,
-                 max_measurement=None, from_record=None, per_page=None, data_set_id=None):
+                 min_measurement=None, max_measurement=None, from_record=None, per_page=None, data_set_id=None):
         # TODO: create/format docstrings for this and all other functions
         """
         :param term:
@@ -122,6 +120,8 @@ class CitrineDataRetrieval:
 
 
 if __name__ == '__main__':
+    # TODO: move these into an "Examples" file (either Python file or .ipynb). Don't leave the code here.
+
     # c = CitrineDataRetrieval(contributor='aflow', formula='Si')
     # c = CitrineDataRetrieval(contributor='Lany', formula='PbTe')
     # c = CitrineDataRetrieval(contributor='Citrine', term='NIST', formula='al2o3')
