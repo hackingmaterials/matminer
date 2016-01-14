@@ -4,6 +4,7 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
+from pymatgen import Composition, Element
 
 
 class CitrineDataRetrieval:
@@ -56,7 +57,7 @@ class CitrineDataRetrieval:
         meas_df = pd.DataFrame()   # df containing only measurement column
         units = {}  # dict for containing units
         pd.set_option('display.width', 1000)
-        pd.set_option('display.max_colwidth', -1)
+        # pd.set_option('display.max_colwidth', -1)
         # pd.set_option('display.max_rows', 1000)
 
         counter = 0  # variable to keep count of sample hit and set indexes
@@ -119,6 +120,13 @@ class CitrineDataRetrieval:
         df.index.name = 'sample'
         return df
 
+def get_mass(x):
+        mass = 0
+        el_amt = Composition(x).get_el_amt_dict()
+        for el in el_amt:
+            mass += Element(el).atomic_mass*el_amt[el]
+        return mass
+
 if __name__ == '__main__':
     # c = CitrineDataRetrieval(contributor='Carrico')
     # c = CitrineDataRetrieval(contributor='Citrine', term='Wikipedia', formula='PbTe')
@@ -134,3 +142,11 @@ if __name__ == '__main__':
     # print c.print_output()
     d = c.to_pandas()
     print d
+    # c = Composition('Li3V2P3O12')
+    e = Element('Pb')
+    # print c.get_el_amt_dict()
+    print e.atomic_mass
+    print 'Elec = '+ str(e.X)
+    print d['material.chemicalFormula'].apply(get_mass)
+    print d.loc[d['material.chemicalFormula'] == 'GaN']
+    # print d.query['material.chemicalFormula == GaN']
