@@ -96,6 +96,7 @@ class CitrineDataRetrieval:
                         for col in prop_cols:
                             prop_df[col] = meas_normdf[col]
                         prop_df.index = [counter] * len(meas_normdf)
+                        prop_df = prop_df.drop_duplicates(['property.name'])
                         prop_df = prop_df.pivot(columns='property.name', values='property.scalar')
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()
@@ -105,8 +106,6 @@ class CitrineDataRetrieval:
                         if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
                             non_prop_df.index = [counter] * len(meas_normdf)
                         non_prop_df = non_prop_df[:1]    # Take only first row - does not collect non-unique rows
-                        # meas_df = meas_df.append([prop_df, non_prop_df])
-                        # m_df = pd.concat([prop_df, non_prop_df], axis=1)
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df], axis=1))
                         # Extracting units
                         # Check to avoid an error with databases that don't contain this field
@@ -131,3 +130,5 @@ if __name__ == '__main__':
     # print c.get_dataframe(formula='PbTe', contributor='TE Design Lab')
     # print c.get_dataframe(formula='PbTe', property='band gap')
     # print c.get_dataframe(contributor='Lany', formula='PbTe')
+    # print c.get_dataframe(contributor='Jaye Harada', formula='LiFePO4')
+    print c.get_dataframe(contributor='aflow', formula='Si')
