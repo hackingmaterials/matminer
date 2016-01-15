@@ -54,12 +54,10 @@ class CitrineDataRetrieval:
             time.sleep(3)
 
         non_meas_df = pd.DataFrame()  # df w/o measurement column
-        meas_prop_df = pd.DataFrame()  # df w/only measurement.property columns
-        meas_nonprop_df = pd.DataFrame()  # df w/o measurement.property columns
         meas_df = pd.DataFrame()  # df containing only measurement column
         units = {}  # dict for containing units
         pd.set_option('display.width', 1000)
-        # pd.set_option('display.max_colwidth', -1)
+        pd.set_option('display.max_colwidth', -1)
         # pd.set_option('display.max_rows', 1000)
 
         counter = 0  # variable to keep count of sample hit and set indexes
@@ -99,11 +97,17 @@ class CitrineDataRetrieval:
                             prop_df[col] = meas_normdf[col]
                         prop_df.index = [counter] * len(meas_normdf)
                         prop_df = prop_df.pivot(columns='property.name', values='property.scalar')
-                        meas_df = meas_df.append(prop_df)
-
-
+                        # Making a single row DF of non-'measurement.property' columns
+                        non_prop_df = pd.DataFrame()
                         non_prop_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
-
+                        for col in non_prop_cols:
+                            non_prop_df['measurement.' + col] = meas_normdf[col]
+                        if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
+                            non_prop_df.index = [counter] * len(meas_normdf)
+                        non_prop_df = non_prop_df[:1]    # Take only first row - does not collect non-unique rows
+                        # meas_df = meas_df.append([prop_df, non_prop_df])
+                        # m_df = pd.concat([prop_df, non_prop_df], axis=1)
+                        meas_df = meas_df.append(pd.concat([prop_df, non_prop_df], axis=1))
                         # Extracting units
                         # Check to avoid an error with databases that don't contain this field
                         if 'property.units' in meas_normdf.columns:
@@ -111,30 +115,6 @@ class CitrineDataRetrieval:
                         for prop in curr_units:
                             if prop not in units:
                                 units[prop] = curr_units[prop]
-
-
-
-                        # meas_normdf.index = [counter] * len(meas_normdf)
-
-                        # Make a DF of all non-'property' containing fields in 'measurement'
-                        # non_prop_cols = [meascols for meascols in meas_normdf.columns if "property" not in meascols]
-                        # non_prop_df = pd.DataFrame()
-                        # for col in non_prop_cols:
-                        #     non_prop_df['measurement.' + col] = meas_normdf[col]
-                        # if len(non_prop_df) > 0:
-                        #     non_prop_df.index = [counter] * len(meas_normdf)
-                        # # meas_nonprop_df = meas_nonprop_df.append(non_prop_df)
-                        # # Pivot the DF to convert properties to columns
-                        # prop_cols = [measpropcols for measpropcols in meas_normdf.columns if "property" in measpropcols]
-                        # prop_df = pd.DataFrame()
-                        # for col in prop_cols:
-                        #     prop_df[col] = meas_normdf[col]
-                        # prop_df.index = [counter] * len(meas_normdf)
-                        # prop_df = prop_df.pivot(columns='property.name',
-                        #                             values='property.scalar')
-                        # meas_prop_df = meas_prop_df.append(prop_df)
-                        # m_df = pd.concat([non_prop_df, prop_df], axis=1)
-                        # meas_df = meas_df.append(m_df)
 
         units_lst = [units]
         df = pd.concat(
@@ -144,13 +124,10 @@ class CitrineDataRetrieval:
         return df
 
 
-# c = CitrineDataRetrieval(formula='PbTe', property='band gap')     # 'ValueError: shape indices do not match' error
-# occurs with this query when 'concat' is used on two DFs with all rows having the same index but the DFs themselves
-# have different number os rows, which happens with the PbTe sample from 'TE design lab' which has 17 properties but
-# no non-'property' columns in its 'measurement', i.e. empty 'non_prop_df
-
 if __name__ == '__main__':
     CITRINE_KEY = None
     c = CitrineDataRetrieval(CITRINE_KEY)
-    print c.get_dataframe(contributor='OQMD', formula='GaN')
-    print c.get_dataframe(formula='PbTe', contributor='TE Design Lab')
+    # print c.get_dataframe(contributor='OQMD', formula='GaN')
+    # print c.get_dataframe(formula='PbTe', contributor='TE Design Lab')
+    # print c.get_dataframe(formula='PbTe', property='band gap')
+    # print c.get_dataframe(contributor='Lany', formula='PbTe')
