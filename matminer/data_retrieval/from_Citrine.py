@@ -126,9 +126,3 @@ class CitrineDataRetrieval:
 if __name__ == '__main__':
     CITRINE_KEY = None
     c = CitrineDataRetrieval(CITRINE_KEY)
-    # print c.get_dataframe(contributor='OQMD', formula='GaN')
-    # print c.get_dataframe(formula='PbTe', contributor='TE Design Lab')
-    # print c.get_dataframe(formula='PbTe', property='band gap')
-    # print c.get_dataframe(contributor='Lany', formula='PbTe')
-    # print c.get_dataframe(contributor='Jaye Harada', formula='LiFePO4')
-    print c.get_dataframe(contributor='aflow', formula='Si')
