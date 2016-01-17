@@ -22,6 +22,9 @@ def get_mean(lst):
 def get_std(lst):
     return np.std(lst)
 
+def get_med(lst):
+    return np.median(lst)
+
 if __name__ == '__main__':
     m = get_mass_list('LiFePO4')
     print m
@@ -31,3 +34,5 @@ if __name__ == '__main__':
     print m_m
     m_s = get_std(m)
     print m_s
+    m_md = get_med(m)
+    print m_md
