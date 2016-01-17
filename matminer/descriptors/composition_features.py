@@ -19,6 +19,8 @@ def get_max_min(lst):
 def get_mean(lst):
     return np.mean(lst)
 
+def get_std(lst):
+    return np.std(lst)
 
 if __name__ == '__main__':
     m = get_mass_list('LiFePO4')
@@ -27,3 +29,5 @@ if __name__ == '__main__':
     print m_n
     m_m = get_mean(m)
     print m_m
+    m_s = get_std(m)
+    print m_s
