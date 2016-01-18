@@ -5,12 +5,18 @@ __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
 def get_mass_list(comp):
-    el_mass = []
+    elmass = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        el_mass.append(Element(el).atomic_mass)
-    return el_mass
+        elmass.append(Element(el).atomic_mass)
+    return elmass
 
+def get_atomic_numbers(comp):
+    elatomno = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        elatomno.append(Element(el).Z)
+    return elatomno
 
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
@@ -36,3 +42,5 @@ if __name__ == '__main__':
     print m_s
     m_md = get_med(m)
     print m_md
+    m_a = get_atomic_numbers('LiFePO4')
+    print m_a
