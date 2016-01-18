@@ -18,6 +18,14 @@ def get_atomic_numbers(comp):
         elatomno.append(Element(el).Z)
     return elatomno
 
+def get_pauling_elect(comp):
+    electroneg = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        electroneg.append(Element(el).X)
+    return electroneg
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -44,3 +52,5 @@ if __name__ == '__main__':
     print m_md
     m_a = get_atomic_numbers('LiFePO4')
     print m_a
+    m_e = get_pauling_elect('LiFePO4')
+    print m_e
