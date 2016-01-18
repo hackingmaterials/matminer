@@ -25,6 +25,13 @@ def get_pauling_elect(comp):
         electroneg.append(Element(el).X)
     return electroneg
 
+def get_melting_pt(comp):
+    melt_pts = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        melt_pts.append(Element(el).melting_point)
+    return melt_pts
+
 
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
@@ -54,3 +61,5 @@ if __name__ == '__main__':
     print m_a
     m_e = get_pauling_elect('LiFePO4')
     print m_e
+    m_me = get_melting_pt('LiFePO4')
+    print m_me
