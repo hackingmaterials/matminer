@@ -7,9 +7,11 @@ __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 def get_mass_list(comp):
     elmass = []
     el_amt = Composition(comp).get_el_amt_dict()
+    print el_amt
     for el in el_amt:
         elmass.append(Element(el).atomic_mass)
     return elmass
+
 
 def get_atomic_numbers(comp):
     elatomno = []
@@ -18,12 +20,14 @@ def get_atomic_numbers(comp):
         elatomno.append(Element(el).Z)
     return elatomno
 
+
 def get_pauling_elect(comp):
     electroneg = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
         electroneg.append(Element(el).X)
     return electroneg
+
 
 def get_melting_pt(comp):
     melt_pts = []
@@ -33,15 +37,25 @@ def get_melting_pt(comp):
     return melt_pts
 
 
+def get_atomic_fraction(comp):
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        el_amt[el] = Composition(comp).get_atomic_fraction(el)
+    return el_amt
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
 
+
 def get_mean(lst):
     return np.mean(lst)
 
+
 def get_std(lst):
     return np.std(lst)
+
 
 def get_med(lst):
     return np.median(lst)
@@ -63,3 +77,5 @@ if __name__ == '__main__':
     print m_e
     m_me = get_melting_pt('LiFePO4')
     print m_me
+    m_af = get_atomic_fraction('LiFePO4')
+    print m_af
