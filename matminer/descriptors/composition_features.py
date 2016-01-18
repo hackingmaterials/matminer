@@ -44,6 +44,13 @@ def get_atomic_fraction(comp):
     return el_amt
 
 
+def get_wt_fraction(comp):
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        el_amt[el] = Composition(comp).get_wt_fraction(el)
+    return el_amt
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -79,3 +86,5 @@ if __name__ == '__main__':
     print m_me
     m_af = get_atomic_fraction('LiFePO4')
     print m_af
+    m_wf = get_wt_fraction('LiFePO4')
+    print m_wf
