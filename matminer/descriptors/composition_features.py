@@ -67,6 +67,14 @@ def get_atomic_radius(comp):
     return atomic_radii
 
 
+def get_vanderwaals_radius(comp):
+    vanderwaals_radii = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        vanderwaals_radii.append(Element(el).van_der_waals_radius)
+    return vanderwaals_radii
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -114,3 +122,5 @@ if __name__ == '__main__':
     print m_v
     m_ar = get_atomic_radius('LiFePO4')
     print m_ar
+    m_vr = get_vanderwaals_radius('LiFePO4')
+    print m_vr
