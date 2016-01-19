@@ -59,6 +59,14 @@ def get_molar_volume(comp):
     return molar_volumes
 
 
+def get_atomic_radius(comp):
+    atomic_radii = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        atomic_radii.append(Element(el).atomic_radius)
+    return atomic_radii
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -104,3 +112,5 @@ if __name__ == '__main__':
     print m_s
     m_v = get_molar_volume('LiFePO4')
     print m_v
+    m_ar = get_atomic_radius('LiFePO4')
+    print m_ar
