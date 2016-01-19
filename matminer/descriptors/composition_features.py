@@ -77,12 +77,20 @@ def get_vanderwaals_radius(comp):
     return vanderwaals_radii
 
 
-def get_averageionic_radium(comp):
+def get_averageionic_radius(comp):
     avgionic_radii = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
         avgionic_radii.append(Element(el).average_ionic_radius)
     return avgionic_radii
+
+
+def get_ionic_radius(comp):
+    ionic_radii = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        ionic_radii.append(Element(el).ionic_radii)
+    return ionic_radii
 
 
 def get_max_min(lst):
@@ -134,6 +142,9 @@ if __name__ == '__main__':
     print m_ar
     m_vr = get_vanderwaals_radius('LiFePO4')
     print m_vr
-    m_ir = get_averageionic_radium('LiFePO4')
+    m_air = get_averageionic_radius('LiFePO4')
+    print m_air
+    m_ir = get_ionic_radius('LiFePO4')
     print m_ir
+
 
