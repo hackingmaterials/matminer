@@ -69,6 +69,14 @@ def get_atomic_radius(comp):
     return atomic_radii
 
 
+def get_calc_atomic_radius(comp):
+    calc_atomic_radii = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        calc_atomic_radii.append(Element(el).atomic_radius_calculated)
+    return calc_atomic_radii
+
+
 def get_vanderwaals_radius(comp):
     vanderwaals_radii = []
     el_amt = Composition(comp).get_el_amt_dict()
@@ -140,6 +148,8 @@ if __name__ == '__main__':
     print m_v
     m_ar = get_atomic_radius('LiFePO4')
     print m_ar
+    m_car = get_calc_atomic_radius('LiFePO4')
+    print m_car
     m_vr = get_vanderwaals_radius('LiFePO4')
     print m_vr
     m_air = get_averageionic_radius('LiFePO4')
