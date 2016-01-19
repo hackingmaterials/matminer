@@ -51,6 +51,14 @@ def get_wt_fraction(comp):
     return el_amt
 
 
+def get_molar_volume(comp):
+    molar_volumes = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        molar_volumes.append(Element(el).molar_volume)
+    return molar_volumes
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -66,6 +74,7 @@ def get_std(lst):
 
 def get_med(lst):
     return np.median(lst)
+
 
 def get_total(lst):
     return sum(lst)
@@ -93,3 +102,5 @@ if __name__ == '__main__':
     print m_wf
     m_s = get_total(m)
     print m_s
+    m_v = get_molar_volume('LiFePO4')
+    print m_v
