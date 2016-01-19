@@ -67,6 +67,9 @@ def get_std(lst):
 def get_med(lst):
     return np.median(lst)
 
+def get_total(lst):
+    return sum(lst)
+
 if __name__ == '__main__':
     m = get_mass_list('LiFePO4')
     print m
@@ -88,3 +91,5 @@ if __name__ == '__main__':
     print m_af
     m_wf = get_wt_fraction('LiFePO4')
     print m_wf
+    m_s = get_total(m)
+    print m_s
