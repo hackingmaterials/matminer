@@ -22,19 +22,41 @@ class CitrineDataRetrieval:
 
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
                       min_measurement=None, max_measurement=None, from_record=None, per_page=None, data_set_id=None):
-        # TODO: create/format docstrings for this and all other functions
         """
-        :param term:
-        :param formula:
-        :param prop:
-        :param contributor:
-        :param reference:
-        :param min_measurement:
-        :param max_measurement:3
-        :param from_record:
-        :param per_page:
-        :param data_set_id:
-        :rtype: object
+        :param term: (str) See client docs at https://github.com/CitrineInformatics/python-citrination-client for more
+        details.
+        General search string. This is searched against all fields.
+        :param formula: (str) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
+        more details.
+        Filter for the chemical formula field. Only those results that have chemical formulas that
+        contain this string will be returned.
+        :param property: (str) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
+        more details.
+        Name of the property to search for.
+        :param contributor: (str) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
+        more details.
+        Filter for the contributor field. Only those results that have contributors that contain
+        this string will be returned.
+        :param reference: (str) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
+        more details.
+        Filter for the reference field. Only those results that have contributors that contain this string will be
+        returned.
+        :param min_measurement: (str/num) See client doc at
+        https://github.com/CitrineInformatics/python-citrination-client for more details.
+        Minimum of the property value range.
+        :param max_measurement: (str/num) See client doc at
+        https://github.com/CitrineInformatics/python-citrination-client for more details.
+        Maximum of the property value range.
+        :param from_record: (int) See client doc at https://github.com/CitrineInformatics/python-citrination-client
+        for more details.
+        Index of the first record to return (indexed from 0).
+        :param per_page: (int) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
+        more details.
+        Number of results to return.
+        :param data_set_id: (int) See client doc at https://github.com/CitrineInformatics/python-citrination-client
+        for more details.
+        Id of the particular data set to search on.
+        :rtype: object: Pandas dataframe object containing the results
         """
 
         json_data = []
@@ -62,8 +84,6 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        # TODO: tqdm is probably not needed here unless you find that processing the data takes a long time. When I
-        # had mentioned to use tqdm, I thought it was possible to do so for the query itself
         for page in tqdm(json_data):
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
             for hit in tqdm(page):
@@ -105,7 +125,7 @@ class CitrineDataRetrieval:
                             non_prop_df['measurement.' + col] = meas_normdf[col]
                         if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
                             non_prop_df.index = [counter] * len(meas_normdf)
-                        non_prop_df = non_prop_df[:1]    # Take only first row - does not collect non-unique rows
+                        non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df], axis=1))
                         # Extracting units
                         # Check to avoid an error with databases that don't contain this field
