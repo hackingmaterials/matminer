@@ -4,10 +4,13 @@ import numpy as np
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
-def get_mass_list(comp):
+def get_el_amt(comp):
+    return Composition(comp).get_el_amt_dict()
+
+
+def get_masses(comp):
     elmass = []
     el_amt = Composition(comp).get_el_amt_dict()
-    print el_amt
     for el in el_amt:
         elmass.append(Element(el).atomic_mass)
     return elmass
@@ -150,44 +153,22 @@ def get_total(lst):
     return sum(lst)
 
 if __name__ == '__main__':
-    m = get_mass_list('LiFePO4')
-    print m
-    m_n = get_max_min(m)
-    print m_n
-    m_m = get_mean(m)
-    print m_m
-    m_s = get_std(m)
-    print m_s
-    m_md = get_med(m)
-    print m_md
-    m_a = get_atomic_numbers('LiFePO4')
-    print m_a
-    m_e = get_pauling_elect('LiFePO4')
-    print m_e
-    m_me = get_melting_pt('LiFePO4')
-    print m_me
-    m_af = get_atomic_fraction('LiFePO4')
-    print m_af
-    m_wf = get_wt_fraction('LiFePO4')
-    print m_wf
-    m_s = get_total(m)
-    print m_s
-    m_v = get_molar_volume('LiFePO4')
-    print m_v
-    m_ar = get_atomic_radius('LiFePO4')
-    print m_ar
-    m_car = get_calc_atomic_radius('LiFePO4')
-    print m_car
-    m_vr = get_vanderwaals_radius('LiFePO4')
-    print m_vr
-    m_air = get_averageionic_radius('LiFePO4')
-    print m_air
-    m_ir = get_ionic_radius('LiFePO4')
-    print m_ir
-    m_mgd = get_magpie_descriptor('LiFePO4', 'AtomicVolume')
-    print m_mgd
-    min_oxi = get_min_oxidation_state('LiFePO4')
-    print min_oxi
+    print get_el_amt('LiFePO4')
+    print get_masses('LiFePO4')
+    print get_atomic_numbers('LiFePO4')
+    print get_pauling_elect('LiFePO4')
+    print get_melting_pt('LiFePO4')
+    print get_atomic_fraction('LiFePO4')
+    print get_wt_fraction('LiFePO4')
+    print get_molar_volume('LiFePO4')
+    print get_atomic_radius('LiFePO4')
+    print get_calc_atomic_radius('LiFePO4')
+    print get_vanderwaals_radius('LiFePO4')
+    print get_averageionic_radius('LiFePO4')
+    print get_ionic_radius('LiFePO4')
+    print get_magpie_descriptor('LiFePO4', 'AtomicVolume')
+    print get_max_oxidation_state('LiFePO4')
+    print get_min_oxidation_state('LiFePO4')
 
 
 
