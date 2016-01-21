@@ -20,7 +20,7 @@ class CitrineDataRetrieval:
         self.client = CitrinationClient(api_key, 'http://citrination.com')
 
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
-                      min_measurement=None, max_measurement=None, from_record=None, per_page=None, data_set_id=None):
+                      min_measurement=None, max_measurement=None, from_record=None, data_set_id=None):
         """
         See client docs at https://github.com/CitrineInformatics/python-citrination-client for more
         details on these parameters.
@@ -35,7 +35,6 @@ class CitrineDataRetrieval:
         :param min_measurement: (str/num) Minimum of the property value range.
         :param max_measurement: (str/num) Maximum of the property value range.
         :param from_record: (int) Index of the first record to return (indexed from 0).
-        :param per_page: (int) Number of results to return.
         :param data_set_id: (int) id of the particular data set to search on.
         :rtype: object: Pandas dataframe object containing the results
         """
