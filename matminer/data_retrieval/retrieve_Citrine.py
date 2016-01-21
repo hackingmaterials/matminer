@@ -95,6 +95,7 @@ class CitrineDataRetrieval:
                             prop_df[col] = meas_normdf[col]
                         prop_df.index = [counter] * len(meas_normdf)
                         prop_df = prop_df.drop_duplicates(['property.name'])
+                        prop_df['property.scalar'] = prop_df['property.scalar'].astype(float)
                         prop_df = prop_df.pivot(columns='property.name', values='property.scalar')
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()

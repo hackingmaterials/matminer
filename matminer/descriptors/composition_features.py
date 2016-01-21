@@ -159,8 +159,8 @@ def get_full_elect_struct(comp):
 
 
 def get_max_min(lst):
-    maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
-    return maxmin_dict
+    maxmin = {'Max': max(lst), 'Min': min(lst)}
+    return maxmin
 
 
 def get_mean(lst):
