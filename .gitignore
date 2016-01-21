@@ -39,5 +39,8 @@ nosetests.xml
 .project
 .pydevproject
 
+# IPython checkpoints
+*-checkpoint.ipynb
+
 # Pycharm
 .idea/*
