@@ -22,39 +22,21 @@ class CitrineDataRetrieval:
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
                       min_measurement=None, max_measurement=None, from_record=None, per_page=None, data_set_id=None):
         """
-        :param term: (str) See client docs at https://github.com/CitrineInformatics/python-citrination-client for more
-        details.
-        General search string. This is searched against all fields.
-        :param formula: (str) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
-        more details.
-        Filter for the chemical formula field. Only those results that have chemical formulas that
+        See client docs at https://github.com/CitrineInformatics/python-citrination-client for more
+        details on these parameters.
+        :param term: (str) General search string. This is searched against all fields.
+        :param formula: (str) Filter for the chemical formula field. Only those results that have chemical formulas that
         contain this string will be returned.
-        :param property: (str) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
-        more details.
-        Name of the property to search for.
-        :param contributor: (str) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
-        more details.
-        Filter for the contributor field. Only those results that have contributors that contain
+        :param property: (str) Name of the property to search for.
+        :param contributor: (str) Filter for the contributor field. Only those results that have contributors that contain
         this string will be returned.
-        :param reference: (str) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
-        more details.
-        Filter for the reference field. Only those results that have contributors that contain this string will be
+        :param reference: (str) Filter for the reference field. Only those results that have contributors that contain this string will be
         returned.
-        :param min_measurement: (str/num) See client doc at
-        https://github.com/CitrineInformatics/python-citrination-client for more details.
-        Minimum of the property value range.
-        :param max_measurement: (str/num) See client doc at
-        https://github.com/CitrineInformatics/python-citrination-client for more details.
-        Maximum of the property value range.
-        :param from_record: (int) See client doc at https://github.com/CitrineInformatics/python-citrination-client
-        for more details.
-        Index of the first record to return (indexed from 0).
-        :param per_page: (int) See client doc at https://github.com/CitrineInformatics/python-citrination-client for
-        more details.
-        Number of results to return.
-        :param data_set_id: (int) See client doc at https://github.com/CitrineInformatics/python-citrination-client
-        for more details.
-        Id of the particular data set to search on.
+        :param min_measurement: (str/num) Minimum of the property value range.
+        :param max_measurement: (str/num) Maximum of the property value range.
+        :param from_record: (int) Index of the first record to return (indexed from 0).
+        :param per_page: (int) Number of results to return.
+        :param data_set_id: (int) id of the particular data set to search on.
         :rtype: object: Pandas dataframe object containing the results
         """
 
