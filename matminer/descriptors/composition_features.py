@@ -132,6 +132,14 @@ def get_min_oxidation_state(comp):
     return min_oxi
 
 
+def get_oxidation_state(comp):
+    oxi_states = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        oxi_states.append(Element(el).oxidation_states)
+    return oxi_states
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -169,6 +177,7 @@ if __name__ == '__main__':
     print get_magpie_descriptor('LiFePO4', 'AtomicVolume')
     print get_max_oxidation_state('LiFePO4')
     print get_min_oxidation_state('LiFePO4')
+    print get_oxidation_state('LiFePO4')
 
 
 
