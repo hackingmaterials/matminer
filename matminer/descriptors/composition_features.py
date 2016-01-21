@@ -101,6 +101,18 @@ def get_ionic_radius(comp):
     return ionic_radii
 
 
+def get_magpie_descriptor(comp, descriptor_name):
+    descriptor_list = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    descp_file = open('data/magpie_elementdata/' + descriptor_name + '.table', 'r')
+    lines = descp_file.readlines()
+    for el in el_amt:
+        atomic_no = get_atomic_numbers(el)[0]
+        descriptor_list.append(float(lines[atomic_no-1]))
+    descp_file.close()
+    return descriptor_list
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -156,5 +168,7 @@ if __name__ == '__main__':
     print m_air
     m_ir = get_ionic_radius('LiFePO4')
     print m_ir
+    m_mgd = get_magpie_descriptor('LiFePO4', 'AtomicVolume')
+    print m_mgd
 
 
