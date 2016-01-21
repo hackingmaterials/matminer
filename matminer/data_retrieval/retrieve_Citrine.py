@@ -42,6 +42,7 @@ class CitrineDataRetrieval:
         json_data = []
         start = 0
         per_page = 100
+        refresh_time = 3  # seconds to wait between search calls
 
         while True:
             data = self.client.search(term=term, formula=formula, property=property,
@@ -53,14 +54,11 @@ class CitrineDataRetrieval:
             json_data.append(data.json()['results'])
             if size < per_page:  # break out of last loop of results
                 break
-            time.sleep(3)
+            time.sleep(refresh_time)
 
         non_meas_df = pd.DataFrame()  # df w/o measurement column
         meas_df = pd.DataFrame()  # df containing only measurement column
         units = {}  # dict for containing units
-        pd.set_option('display.width', 1000)
-        # pd.set_option('display.max_colwidth', -1)
-        # pd.set_option('display.max_rows', 1000)
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
