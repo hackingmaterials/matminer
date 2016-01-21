@@ -148,6 +148,14 @@ def get_common_oxidation_state(comp):
     return oxi_states
 
 
+def get_full_elect_struct(comp):
+    elect_config = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        elect_config.append(Element(el).full_electronic_structure)
+    return elect_config
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -187,7 +195,4 @@ if __name__ == '__main__':
     print get_min_oxidation_state('LiFePO4')
     print get_oxidation_state('LiFePO4')
     print get_common_oxidation_state('LiFePO4')
-
-
-
-
+    print get_full_elect_struct('LiFePO4')
