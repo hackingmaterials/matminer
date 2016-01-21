@@ -113,6 +113,14 @@ def get_magpie_descriptor(comp, descriptor_name):
     return descriptor_list
 
 
+def get_max_oxidation_state(comp):
+    max_oxi = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        max_oxi.append(Element(el).max_oxidation_state)
+    return max_oxi
+
+
 def get_max_min(lst):
     maxmin_dict = {'Max': max(lst), 'Min': min(lst)}
     return maxmin_dict
@@ -170,5 +178,7 @@ if __name__ == '__main__':
     print m_ir
     m_mgd = get_magpie_descriptor('LiFePO4', 'AtomicVolume')
     print m_mgd
+    max_oxi = get_max_oxidation_state('LiFePO4')
+    print max_oxi
 
 
