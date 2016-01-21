@@ -119,8 +119,3 @@ class CitrineDataRetrieval:
                 axis=1)
         df.index.name = 'sample'
         return df
-
-
-if __name__ == '__main__':
-    CITRINE_KEY = None
-    c = CitrineDataRetrieval(CITRINE_KEY)
