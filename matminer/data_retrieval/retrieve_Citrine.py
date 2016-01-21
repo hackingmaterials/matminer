@@ -16,9 +16,8 @@ class CitrineDataRetrieval:
         """
         :param api_key: (str) Your Citrine API key, or None if you've set the CITRINE_KEY environment variable
         """
-
-        self.client = CitrinationClient(api_key, 'http://citrination.com') if api_key else CitrinationClient(
-                os.environ['CITRINE_KEY'], 'http://citrination.com')
+        api_key = api_key if api_key else os.environ['CITRINE_KEY']
+        self.client = CitrinationClient(api_key, 'http://citrination.com')
 
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
                       min_measurement=None, max_measurement=None, from_record=None, per_page=None, data_set_id=None):
