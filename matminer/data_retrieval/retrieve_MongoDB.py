@@ -40,7 +40,7 @@ class MongoDataRetrieval():
 
         print 'DONE PRE-PROCESSING'
 
-    def to_pandas(self, idx_field=None):
+    def get_dataframe(self, idx_field=None):
         df = pd.DataFrame(self.data, columns=self.projection)
         if idx_field:
             df.index = df[idx_field]
