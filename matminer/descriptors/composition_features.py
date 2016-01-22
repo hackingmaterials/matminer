@@ -158,6 +158,14 @@ def get_full_elect_struct(comp):
     return elect_config
 
 
+def get_row(comp):
+    row = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        row.append(Element(el).row)
+    return row
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -198,3 +206,4 @@ if __name__ == '__main__':
     print get_oxidation_state('LiFePO4')
     print get_common_oxidation_state('LiFePO4')
     print get_full_elect_struct('LiFePO4')
+    print get_row('LiFePO4')
