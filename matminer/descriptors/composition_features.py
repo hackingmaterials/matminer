@@ -61,7 +61,7 @@ def get_molar_volume(comp):
     for el in el_amt:
         str_vol = Element(el).molar_volume
         volume = float(str_vol.split()[0])
-        molar_volumes.append(volume)
+        molar_volumes.append(volume * el_amt[el])
     return molar_volumes
 
 
