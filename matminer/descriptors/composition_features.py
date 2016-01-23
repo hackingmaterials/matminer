@@ -174,6 +174,14 @@ def get_group(comp):
     return group
 
 
+def get_block(comp):
+    block = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        block.append(Element(el).block)
+    return block
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -216,3 +224,4 @@ if __name__ == '__main__':
     print get_full_elect_struct('LiFePO4')
     print get_row('LiFePO4')
     print get_group('LiFePO4')
+    print get_block('LiFePO4')
