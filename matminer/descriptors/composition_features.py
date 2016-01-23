@@ -29,7 +29,7 @@ def get_pauling_elect(comp):
     electroneg = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        electroneg.append(Element(el).X)
+        electroneg.append(Element(el).X * el_amt[el])
     return electroneg
 
 
