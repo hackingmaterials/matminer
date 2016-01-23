@@ -4,17 +4,16 @@ import numpy as np
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
-#TODO: what is the purpose of this function? Discuss w/AJ
+# TODO: what is the purpose of this function? Discuss w/AJ
 def get_el_amt(comp):
     return Composition(comp).get_el_amt_dict()
 
-# TODO: most of the functions like the one below will not give the correct result when passed through something like "get_mean()".
-# TODO: Think about why this might be...
+
 def get_masses(comp):
     elmass = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        elmass.append(Element(el).atomic_mass)
+        elmass.append(Element(el).atomic_mass * el_amt[el])
     return elmass
 
 
