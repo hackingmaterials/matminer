@@ -181,6 +181,14 @@ def get_block(comp):
     return block
 
 
+def get_mendeleev_no(comp):
+    mendeleev = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        mendeleev.append(Element(el).mendeleev_no)
+    return mendeleev
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -224,3 +232,4 @@ if __name__ == '__main__':
     print get_row('LiFePO4')
     print get_group('LiFePO4')
     print get_block('LiFePO4')
+    print get_mendeleev_no('LiFePO4')
