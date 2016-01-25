@@ -1,5 +1,6 @@
 from pymatgen import Element, Composition
 import numpy as np
+import re
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
@@ -37,7 +38,7 @@ def get_melting_pt(comp):
     melt_pts = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        melt_pts.append(Element(el).melting_point)
+        melt_pts.append(float(re.findall('[-+]?\d+[\.]?\d*', Element(el).melting_point)[0]))
     return melt_pts
 
 
