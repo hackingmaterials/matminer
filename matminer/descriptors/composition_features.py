@@ -197,6 +197,14 @@ def get_elec_res(comp):
     return elec_res
 
 
+def get_reflectivity(comp):
+    reflectivity = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        reflectivity.append(Element(el).reflectivity)
+    return reflectivity
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -242,3 +250,4 @@ if __name__ == '__main__':
     print get_block('LiFePO4')
     print get_mendeleev_no('LiFePO4')
     print get_elec_res('LiFePO4')
+    print get_reflectivity('LiFePO4')
