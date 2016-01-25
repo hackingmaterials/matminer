@@ -197,6 +197,7 @@ def get_elec_res(comp):
         elec_res.append(Element(el).electrical_resistivity)
     return elec_res
 
+
 # TODO: Check if this needs to be converted to a number
 def get_reflectivity(comp):
     reflectivity = []
@@ -217,6 +218,17 @@ def get_refractive_idx(comp):
             refac_idx.append(idx)
     return refac_idx
 
+
+def get_poissons_ratio(comp):
+    p_ratio = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        poissons = Element(el).poissons_ratio
+        if poissons is not None:
+            p_ratio.append(float(poissons))
+        else:
+            p_ratio.append(poissons)
+    return p_ratio
 
 
 def get_max_min(lst):
@@ -266,3 +278,4 @@ if __name__ == '__main__':
     print get_elec_res('LiFePO4')
     print get_reflectivity('LiFePO4')
     print get_refractive_idx('PbTe')
+    print get_poissons_ratio('LiFePO4')
