@@ -189,6 +189,14 @@ def get_mendeleev_no(comp):
     return mendeleev
 
 
+def get_elec_res(comp):
+    elec_res = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        elec_res.append(Element(el).electrical_resistivity)
+    return elec_res
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -233,3 +241,4 @@ if __name__ == '__main__':
     print get_group('LiFePO4')
     print get_block('LiFePO4')
     print get_mendeleev_no('LiFePO4')
+    print get_elec_res('LiFePO4')
