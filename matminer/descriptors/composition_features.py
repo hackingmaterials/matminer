@@ -231,6 +231,15 @@ def get_poissons_ratio(comp):
     return p_ratio
 
 
+def get_thermal_cond(comp):
+    thermalcond = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        tc = Element(el).thermal_conductivity
+        thermalcond.append(float(tc.split()[0]))
+    return thermalcond
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -279,3 +288,4 @@ if __name__ == '__main__':
     print get_reflectivity('LiFePO4')
     print get_refractive_idx('PbTe')
     print get_poissons_ratio('LiFePO4')
+    print get_thermal_cond('LiFePO4')
