@@ -240,6 +240,16 @@ def get_thermal_cond(comp):
     return thermalcond
 
 
+def get_boiling_pt(comp):
+    boiling_pts = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        bp = Element(el).boiling_point
+        # boiling_pts.append(bp)
+        boiling_pts.append(float(bp.split()[0]))
+    return boiling_pts
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -289,3 +299,4 @@ if __name__ == '__main__':
     print get_refractive_idx('PbTe')
     print get_poissons_ratio('LiFePO4')
     print get_thermal_cond('LiFePO4')
+    print get_boiling_pt('LiFePO4')
