@@ -245,9 +245,24 @@ def get_boiling_pt(comp):
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
         bp = Element(el).boiling_point
-        # boiling_pts.append(bp)
-        boiling_pts.append(float(bp.split()[0]))
+        if bp is not None:
+            boiling_pts.append(float(bp.split()[0]))
+        else:
+            boiling_pts.append(bp)
     return boiling_pts
+
+
+def get_critical_temp(comp):
+    critical_t = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        ct = Element(el).critical_temperature
+        # critical_t.append(ct)
+        if ct is not None:
+            critical_t.append(float(ct.split()[0]))
+        else:
+            critical_t.append(ct)
+    return critical_t
 
 
 def get_max_min(lst):
@@ -300,3 +315,4 @@ if __name__ == '__main__':
     print get_poissons_ratio('LiFePO4')
     print get_thermal_cond('LiFePO4')
     print get_boiling_pt('LiFePO4')
+    print get_critical_temp('LiFePO4')
