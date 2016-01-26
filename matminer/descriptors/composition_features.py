@@ -265,6 +265,19 @@ def get_critical_temp(comp):
     return critical_t
 
 
+def get_supercond_temp(comp):
+    supercond_t = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        sct = Element(el).superconduction_temperature
+        # supercond_t.append(sct)
+        if sct is not None:
+            supercond_t.append(float(sct.split()[0]))
+        else:
+            supercond_t.append(sct)
+    return supercond_t
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -316,3 +329,4 @@ if __name__ == '__main__':
     print get_thermal_cond('LiFePO4')
     print get_boiling_pt('LiFePO4')
     print get_critical_temp('LiFePO4')
+    print get_supercond_temp('MgB2')
