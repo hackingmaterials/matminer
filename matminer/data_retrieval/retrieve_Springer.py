@@ -2,6 +2,8 @@ import requests
 from lxml import html
 import sys
 import urlparse
+import urllib2
+from bs4 import BeautifulSoup
 
 page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_0456276')
 print page.raise_for_status()
@@ -12,9 +14,9 @@ print parsed_body
 print type(page)
 print page.status_code == requests.codes.ok
 print len(page.text)
-print page.text[:500]
+print page.text[:100]
 
-cif = parsed_body.xpath('//*[@id="action-download-cif-link"]')
+cif = parsed_body.xpath('//*[@id="action-download-cif-link"]/text()')
 print cif
 
 labels = parsed_body.xpath('//*[@id="general_information"]/div[1]/div/div/ul/li[1]/strong/text()')
@@ -35,3 +37,8 @@ for url in images[0:10]:
     f = open('%s' % url.split('/')[-1], 'w')
     f.write(r.content)
     f.close()
+
+resp = urllib2.urlopen('http://materials.springer.com/isp/crystallographic/docs/sd_0456276')
+soup = BeautifulSoup(resp.read(), 'lxml')
+links = soup.find_all('a')
+print links[5].get('href')
