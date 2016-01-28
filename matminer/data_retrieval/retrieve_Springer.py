@@ -5,3 +5,6 @@ page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_
 tree = html.fromstring(page.content)
 
 print tree
+
+cif = tree.xpath('//*[@id="action-download-cif-link"]')
+print cif
