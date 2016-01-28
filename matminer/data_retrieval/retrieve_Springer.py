@@ -4,6 +4,7 @@ import sys
 import urlparse
 import urllib2
 from bs4 import BeautifulSoup
+import urllib
 
 page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_0456276')
 print page.raise_for_status()
@@ -42,3 +43,11 @@ resp = urllib2.urlopen('http://materials.springer.com/isp/crystallographic/docs/
 soup = BeautifulSoup(resp.read(), 'lxml')
 links = soup.find_all('a')
 print links[5].get('href')
+
+# res = urllib.urlopen('http://materials.springer.com' + links[5].get('href'))
+res = requests.get('http://materials.springer.com' + links[5].get('href'))
+
+with open('CifFile', 'wb') as cif_file:
+    cif_file.write(res.content)
+
+cif_file.close()
