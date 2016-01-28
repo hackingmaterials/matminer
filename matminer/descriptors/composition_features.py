@@ -112,7 +112,7 @@ def get_magpie_descriptor(comp, descriptor_name):
     descp_file = open('data/magpie_elementdata/' + descriptor_name + '.table', 'r')
     lines = descp_file.readlines()
     for el in el_amt:
-        atomic_no = get_atomic_numbers(el)[0]
+        atomic_no = Element(el).Z
         descriptor_list.append(float(lines[atomic_no-1]))
     descp_file.close()
     return descriptor_list
