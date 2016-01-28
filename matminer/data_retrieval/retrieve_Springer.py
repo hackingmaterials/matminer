@@ -2,6 +2,7 @@ from lxml import html
 import requests
 
 page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_0456276')
+print page.raise_for_status()
 tree = html.fromstring(page.content)
 
 print type(page)
