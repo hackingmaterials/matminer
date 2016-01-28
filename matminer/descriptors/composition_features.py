@@ -38,7 +38,7 @@ def get_melting_pt(comp):
     melt_pts = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        melt_pts.append(float(re.findall('[-+]?\d+[\.]?\d*', Element(el).melting_point)[0]))
+        melt_pts.append(float(re.findall('[-+]?\d+[\.]?\d*', Element(el).melting_point)[0]) * el_amt[el])
     return melt_pts
 
 
