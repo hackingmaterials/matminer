@@ -22,7 +22,7 @@ def get_atomic_numbers(comp):
     elatomno = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        elatomno.append(Element(el).Z)
+        elatomno.append(Element(el).Z * el_amt[el])
     return elatomno
 
 
