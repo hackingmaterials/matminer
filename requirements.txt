@@ -1,3 +1,4 @@
+lxml
 tqdm>=3.7.1
 pandas>=0.17.1
 pymatgen>=3.2.10
