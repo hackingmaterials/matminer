@@ -5,7 +5,7 @@ from pymatgen.matproj.snl import StructureNL
 from matminer.pyCookieCheat import chrome_cookies
 
 i = 0
-j = 1402650
+j = 1402653
 
 while i <= 0:
     try:
@@ -24,7 +24,13 @@ while i <= 0:
                     with open('ciffile.txt', 'w') as cif_file:
                         cif_file.write(res.content)
                     a = CifParser.from_string(res.content).get_structures()[0]
-                    print StructureNL(a, authors=[])
+                    auth_namelist = (parsed_body.xpath('//*[@id="globalReference"]/div/div/text()')[0].strip()[:-1]).split(',')
+                    print auth_namelist
+                    auth_nameemaillist = []
+                    for name in auth_namelist:
+                        c = name + ' <email@domain.com>'
+                        auth_nameemaillist.append(c)
+                    print StructureNL(a, authors=auth_nameemaillist)
     except Exception as e:
         print e
     j += 1
