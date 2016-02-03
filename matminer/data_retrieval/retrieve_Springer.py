@@ -1,15 +1,15 @@
 import requests
-import os
 from lxml import html
 from pymatgen.io.cif import CifParser
 from pymatgen.matproj.snl import StructureNL
+from matminer.pyCookieCheat import chrome_cookies
 
 i = 0
 j = 1402650
 
 while i <= 0:
     try:
-        sim_user_token = os.environ['SPRINGER_KEY']
+        sim_user_token = chrome_cookies('http://materials.springer.com')['sim-user-token']
         page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_' + str(j),
                             cookies={'sim-user-token': sim_user_token})
         if page.raise_for_status() is None:  # Check if getting data from above was successful or now
