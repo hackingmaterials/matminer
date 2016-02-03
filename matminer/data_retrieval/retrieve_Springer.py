@@ -24,27 +24,8 @@ while i <= 0:
                     with open('ciffile.txt', 'w') as cif_file:
                         cif_file.write(res.content)
                     a = CifParser.from_string(res.content).get_structures()[0]
-                    auth_namelist = (parsed_body.xpath('//*[@id="globalReference"]/div/div/text()')[0].strip()[:-1]).split(',')
-                    print auth_namelist
-                    auth_nameemaillist = []
-                    for name in auth_namelist:
-                        c = name + ' <email@domain.com>'
-                        auth_nameemaillist.append(c)
-                    print StructureNL(a, authors=auth_nameemaillist)
+                    print parsed_body.xpath('//*[@id="globalReference"]/div/div/text()')[0].strip()[:-1]
+                    print StructureNL(a, authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
     except Exception as e:
         print e
     j += 1
-
-
-# print page.status_code == requests.codes.ok      # Check if getting data from above was successful or now
-
-# labels = parsed_body.xpath('//*[@id="general_information"]/div[1]/div/div/ul/li[1]/strong/text()')
-# print labels
-
-# Grab links to all images
-# images = parsed_body.xpath('//img/@src')
-# if not images:
-#     sys.exit("Found No Images")
-# Convert any relative urls to absolute urls
-# images = [urlparse.urljoin(page.url, url) for url in images]
-# print 'Found %s images' % len(images)
