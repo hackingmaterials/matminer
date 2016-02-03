@@ -3,6 +3,7 @@ from lxml import html
 from pymatgen.io.cif import CifParser
 from pymatgen.matproj.snl import StructureNL
 from matminer.pyCookieCheat import chrome_cookies
+from BeautifulSoup import BeautifulSoup
 
 i = 0
 j = 1402653
@@ -16,6 +17,7 @@ while i <= 0:
             print 'Success at getting sd_' + str(j)
             i += 1
             parsed_body = html.fromstring(page.content)
+            soup = BeautifulSoup(page.content)
             for a_link in parsed_body.xpath('//a/@href'):
                 if '.cif' in a_link:
                     cif_link = a_link
@@ -23,9 +25,11 @@ while i <= 0:
                                        cookies={'sim-user-token': sim_user_token})
                     with open('ciffile.txt', 'w') as cif_file:
                         cif_file.write(res.content)
-                    a = CifParser.from_string(res.content).get_structures()[0]
-                    print parsed_body.xpath('//*[@id="globalReference"]/div/div/text()')[0].strip()[:-1]
-                    print StructureNL(a, authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
+                    cif_struct = CifParser.from_string(res.content).get_structures()[0]
+                    ref = soup.find('div', {'id': 'globalReference'}).find('div', 'accordion__bd')
+                    data_dict = {'_globalReference': ''.join([(str(item)).strip() for item in ref.contents])}
+                    print StructureNL(cif_struct, data=data_dict,
+                                      authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
     except Exception as e:
         print e
     j += 1
