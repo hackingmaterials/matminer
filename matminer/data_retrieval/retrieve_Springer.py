@@ -1,28 +1,34 @@
 import requests
+import os
 from lxml import html
+from pymatgen.io.cif import CifParser
+from pymatgen.matproj.snl import StructureNL
 
 i = 0
 j = 1402650
-while i <= 25000:
+
+while i <= 0:
     try:
-        page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_' + str(j))
-        if page.raise_for_status() is None:      # Check if getting data from above was successful or now
+        sim_user_token = os.environ['SPRINGER_KEY']
+        page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_' + str(j),
+                            cookies={'sim-user-token': sim_user_token})
+        if page.raise_for_status() is None:  # Check if getting data from above was successful or now
             print 'Success at getting sd_' + str(j)
             i += 1
             parsed_body = html.fromstring(page.content)
             for a_link in parsed_body.xpath('//a/@href'):
                 if '.cif' in a_link:
                     cif_link = a_link
-                    res = requests.get('http://materials.springer.com' + cif_link)
-                    with open('ciffile.txt', 'a') as cif_file:
+                    res = requests.get('http://materials.springer.com' + cif_link,
+                                       cookies={'sim-user-token': sim_user_token})
+                    with open('ciffile.txt', 'w') as cif_file:
                         cif_file.write(res.content)
+                    a = CifParser.from_string(res.content).get_structures()[0]
+                    print StructureNL(a, authors=[])
     except Exception as e:
         print e
-        print 'Error in getting sd_' + str(j)
     j += 1
 
-
-cif_file.close()
 
 # print page.status_code == requests.codes.ok      # Check if getting data from above was successful or now
 
