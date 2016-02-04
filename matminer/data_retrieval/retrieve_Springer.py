@@ -38,7 +38,8 @@ while i <= 0:
                     # geninfo = soup.findAll('li', 'data-list__item')
                     # print geninfo.contents
                     ref = soup.find('div', {'id': 'globalReference'}).find('div', 'accordion__bd')
-                    data_dict = {'_globalReference' : ''.join([(str(item)).strip() for item in ref.contents]), '_entireWebpage' : soup.get_text(), '_cif' : res.content}
+                    data_dict = {'_globalReference': ''.join([(str(item)).strip() for item in ref.contents]),
+                                 '_entireWebpage': soup.get_text(), '_cif': res.content}
                     print StructureNL(cif_struct, data=data_dict,
                                       authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
     except Exception as e:
