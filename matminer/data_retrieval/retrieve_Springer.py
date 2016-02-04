@@ -48,9 +48,8 @@ if __name__ == "__main__":
                             print("! Could not parse structure for: sd_{}".format(sd_id))
                             print(traceback.format_exc())
                         break
-
-                    else:
-                        print("!! Could not get CIF file for: sd_{}".format(sd_id))
+                if len(data_dict) < 3:
+                    print("!! Could not get CIF file for: sd_{}".format(sd_id))
                 collection.insert(data_dict)
                 i += 1
         except:

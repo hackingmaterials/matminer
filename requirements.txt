@@ -1,3 +1,4 @@
+pymongo
 BeautifulSoup
 lxml
 tqdm>=3.7.1
