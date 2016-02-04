@@ -49,8 +49,12 @@ while i <= 0:
                         struct_dic['structure'] = CifParser.from_string(res.content).get_structures()[0].as_dict()
                     except:
                         print("Could not parse structure for: sd_{}".format(j))
-
                     print struct_dic
+                    print struct_dic.keys()
+                    soup = BeautifulSoup(struct_dic['webpage_str'], 'lxml')
+                    print soup.find('div', {'id': 'globalReference'}).find('div', 'accordion__bd')
+                    print CifParser.from_string(struct_dic['cif_string']).get_structures()[0]
+                    print pymatgen.Structure.from_dict(struct_dic['structure'])
     except Exception as e:
         print e
     j += 1
