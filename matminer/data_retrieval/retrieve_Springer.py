@@ -27,7 +27,7 @@ while i <= 0:
                     # with open('ciffile.txt', 'w') as cif_file:
                     #     cif_file.write(res.content)
                     # cif_struct = CifParser.from_string(res.content).get_structures()[0]
-                    cif_struct = CifParser.from_string(res.content).as_dict()
+
                     # geninfo = soup.find('div', {'id': 'general_information'})
                     # print geninfo.get_text()
                     # for i in soup.findAll('li', 'data-list__item'):
@@ -44,7 +44,12 @@ while i <= 0:
                     #              '_entireWebpage': soup.get_text(), '_cif': res.content}
                     # print StructureNL(cif_struct, data=data_dict,
                     #                   authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
-                    struct_dic = {'cif_string' : res.content, 'webpage_str' : soup.get_text, 'structure' : cif_struct}
+                    struct_dic = {'cif_string' : res.content, 'webpage_str' : soup.get_text}
+                    try:
+                        struct_dic['structure'] = CifParser.from_string(res.content).as_dict()
+                    except:
+                        print("Could not parse structure for: sd_{}".format(j))
+
                     print struct_dic
     except Exception as e:
         print e
