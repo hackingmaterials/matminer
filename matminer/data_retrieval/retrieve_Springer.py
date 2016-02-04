@@ -18,7 +18,7 @@ while i <= 0:
             print 'Success at getting sd_' + str(j)
             i += 1
             parsed_body = html.fromstring(page.content)
-            soup = BeautifulSoup(page.content, 'lxml')
+            # soup = BeautifulSoup(page.content, 'lxml')
             for a_link in parsed_body.xpath('//a/@href'):
                 if '.cif' in a_link:
                     cif_link = a_link
@@ -44,7 +44,7 @@ while i <= 0:
                     #              '_entireWebpage': soup.get_text(), '_cif': res.content}
                     # print StructureNL(cif_struct, data=data_dict,
                     #                   authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
-                    struct_dic = {'cif_string' : res.content, 'webpage_str' : soup.get_text()}
+                    struct_dic = {'cif_string' : res.content, 'webpage_str' : page.content}
                     try:
                         struct_dic['structure'] = CifParser.from_string(res.content).get_structures()[0].as_dict()
                     except:
