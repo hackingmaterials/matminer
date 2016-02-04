@@ -4,6 +4,7 @@ from lxml import html
 from pymatgen.io.cif import CifParser
 from pymatgen.matproj.snl import StructureNL
 from matminer.pyCookieCheat import chrome_cookies
+import pymatgen
 
 i = 0
 j = 1402653
@@ -23,9 +24,10 @@ while i <= 0:
                     cif_link = a_link
                     res = requests.get('http://materials.springer.com' + cif_link,
                                        cookies={'sim-user-token': sim_user_token})
-                    with open('ciffile.txt', 'w') as cif_file:
-                        cif_file.write(res.content)
-                    cif_struct = CifParser.from_string(res.content).get_structures()[0]
+                    # with open('ciffile.txt', 'w') as cif_file:
+                    #     cif_file.write(res.content)
+                    # cif_struct = CifParser.from_string(res.content).get_structures()[0]
+                    cif_struct = CifParser.from_string(res.content).as_dict()
                     # geninfo = soup.find('div', {'id': 'general_information'})
                     # print geninfo.get_text()
                     # for i in soup.findAll('li', 'data-list__item'):
@@ -37,11 +39,13 @@ while i <= 0:
                     # print sellers
                     # geninfo = soup.findAll('li', 'data-list__item')
                     # print geninfo.contents
-                    ref = soup.find('div', {'id': 'globalReference'}).find('div', 'accordion__bd')
-                    data_dict = {'_globalReference': ''.join([(str(item)).strip() for item in ref.contents]),
-                                 '_entireWebpage': soup.get_text(), '_cif': res.content}
-                    print StructureNL(cif_struct, data=data_dict,
-                                      authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
+                    # ref = soup.find('div', {'id': 'globalReference'}).find('div', 'accordion__bd')
+                    # data_dict = {'_globalReference': ''.join([(str(item)).strip() for item in ref.contents]),
+                    #              '_entireWebpage': soup.get_text(), '_cif': res.content}
+                    # print StructureNL(cif_struct, data=data_dict,
+                    #                   authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
+                    struct_dic = {'cif_string' : res.content, 'webpage_str' : soup.get_text, 'structure' : cif_struct}
+                    print struct_dic
     except Exception as e:
         print e
     j += 1
