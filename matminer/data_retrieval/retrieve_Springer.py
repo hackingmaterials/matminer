@@ -44,9 +44,9 @@ while i <= 0:
                     #              '_entireWebpage': soup.get_text(), '_cif': res.content}
                     # print StructureNL(cif_struct, data=data_dict,
                     #                   authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
-                    struct_dic = {'cif_string' : res.content, 'webpage_str' : soup.get_text}
+                    struct_dic = {'cif_string' : res.content, 'webpage_str' : soup.get_text()}
                     try:
-                        struct_dic['structure'] = CifParser.from_string(res.content).as_dict()
+                        struct_dic['structure'] = CifParser.from_string(res.content).get_structures()[0].as_dict()
                     except:
                         print("Could not parse structure for: sd_{}".format(j))
 
