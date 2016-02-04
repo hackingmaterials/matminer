@@ -1,9 +1,9 @@
 import requests
+from bs4 import BeautifulSoup
 from lxml import html
 from pymatgen.io.cif import CifParser
 from pymatgen.matproj.snl import StructureNL
 from matminer.pyCookieCheat import chrome_cookies
-from BeautifulSoup import BeautifulSoup
 
 i = 0
 j = 1402653
@@ -17,7 +17,7 @@ while i <= 0:
             print 'Success at getting sd_' + str(j)
             i += 1
             parsed_body = html.fromstring(page.content)
-            soup = BeautifulSoup(page.content)
+            soup = BeautifulSoup(page.content, 'lxml')
             for a_link in parsed_body.xpath('//a/@href'):
                 if '.cif' in a_link:
                     cif_link = a_link
@@ -26,8 +26,19 @@ while i <= 0:
                     with open('ciffile.txt', 'w') as cif_file:
                         cif_file.write(res.content)
                     cif_struct = CifParser.from_string(res.content).get_structures()[0]
+                    # geninfo = soup.find('div', {'id': 'general_information'})
+                    # print geninfo.get_text()
+                    # for i in soup.findAll('li', 'data-list__item'):
+                    #     print i.contents[0].strip()
+                    # print ''.join([(str(item)).strip() for item in geninfo.contents])
+                    # buyers = parsed_body.xpath('//li[@class="data-list__item"]/text()')
+                    # sellers = parsed_body.xpath('//li[@class="data-list__item"]/span/text()')
+                    # print buyers
+                    # print sellers
+                    # geninfo = soup.findAll('li', 'data-list__item')
+                    # print geninfo.contents
                     ref = soup.find('div', {'id': 'globalReference'}).find('div', 'accordion__bd')
-                    data_dict = {'_globalReference': ''.join([(str(item)).strip() for item in ref.contents])}
+                    data_dict = {'_globalReference' : ''.join([(str(item)).strip() for item in ref.contents]), '_entireWebpage' : soup.get_text(), '_cif' : res.content}
                     print StructureNL(cif_struct, data=data_dict,
                                       authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
     except Exception as e:
