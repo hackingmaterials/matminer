@@ -5,9 +5,15 @@ from pymatgen.io.cif import CifParser
 from pymatgen.matproj.snl import StructureNL
 from matminer.pyCookieCheat import chrome_cookies
 import pymatgen
+import pymongo
 
 i = 0
 j = 1402653
+
+client = pymongo.MongoClient()
+db = client['test-database']
+collection = db['test-collection']
+print db
 
 while i <= 0:
     try:
@@ -44,17 +50,24 @@ while i <= 0:
                     #              '_entireWebpage': soup.get_text(), '_cif': res.content}
                     # print StructureNL(cif_struct, data=data_dict,
                     #                   authors=['Saurabh Bajaj <sbajaj@lbl.gov>', 'Anubhav Jain <ajain@lbl.gov>'])
-                    struct_dic = {'cif_string' : res.content, 'webpage_str' : page.content}
+                    struct_dic = {'cif_string': res.content, 'webpage_str': page.content}
                     try:
                         struct_dic['structure'] = CifParser.from_string(res.content).get_structures()[0].as_dict()
                     except:
                         print("Could not parse structure for: sd_{}".format(j))
                     print struct_dic
                     print struct_dic.keys()
-                    soup = BeautifulSoup(struct_dic['webpage_str'], 'lxml')
-                    print soup.find('div', {'id': 'globalReference'}).find('div', 'accordion__bd')
-                    print CifParser.from_string(struct_dic['cif_string']).get_structures()[0]
-                    print pymatgen.Structure.from_dict(struct_dic['structure'])
+                    collection.insert(struct_dic)
+                    # soup = BeautifulSoup(struct_dic['webpage_str'], 'lxml')
+                    # print soup.find('div', {'id': 'globalReference'}).find('div', 'accordion__bd')
+                    # print CifParser.from_string(struct_dic['cif_string']).get_structures()[0]
+                    # print pymatgen.Structure.from_dict(struct_dic['structure'])
+                    for record in collection.find():
+                        print record
+
     except Exception as e:
         print e
     j += 1
+
+d = db['test-collection'].delete_many({})
+print d.deleted_count
