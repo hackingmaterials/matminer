@@ -38,10 +38,9 @@ if __name__ == "__main__":
                 data_dict = {"webpage_str": page.content, "key": "sd_{}".format(sd_id)}
                 for a_link in parsed_body.xpath('//a/@href'):
                     if '.cif' in a_link:
-                        cif_link = a_link
-                        res = requests.get('http://materials.springer.com' + cif_link,
+                        res = requests.get('http://materials.springer.com' + a_link,
                                            cookies={'sim-user-token': sim_user_token})
-                        data_dict = {'cif_string': res.content}
+                        data_dict = {'cif_string': res.content, 'cif_link': a_link}
                         try:
                             data_dict['structure'] = CifParser.from_string(res.content).get_structures()[0].as_dict()
                         except:
