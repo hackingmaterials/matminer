@@ -12,17 +12,16 @@ if __name__ == "__main__":
     # max_to_parse = 4
     total_pages = 1
     sleep_time = 0.5
-    clear_production_database = False
-    testing_mode = True
+    production_mode = False
 
-    db_name = "test-database" if testing_mode == "testing" else "springer"
-    coll_name = "test-collection" if testing_mode == "testing" else "pauling_file"
+    db_name = "test-database" if not production_mode else "springer"
+    coll_name = "test-collection" if not production_mode else "pauling_file"
 
     client = pymongo.MongoClient()
     db = client[db_name]
     collection = db[coll_name]
 
-    if testing_mode == "testing" or clear_production_database:
+    if not production_mode:
         d = db[coll_name].delete_many({})
 
     sim_user_token = chrome_cookies('http://materials.springer.com')['sim-user-token']
