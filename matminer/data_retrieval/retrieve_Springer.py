@@ -8,27 +8,28 @@ import time
 
 if __name__ == '__main__':
     starting_page = 1
-    total_pages = 1
+    total_pages = 100000000
     sleep_time = 0.5
     page_sleep_time = 1
-    production_mode = False
+    production_mode = True
+    clear_production_db = False
 
-    db_name = 'test-database' if not production_mode else 'springer'
-    coll_name = 'test-collection' if not production_mode else 'pauling_file'
+    db_name = 'test_database' if not production_mode else 'springer'
+    coll_name = 'test_collection' if not production_mode else 'pauling_file'
 
     print("Connecting to database...")
     client = pymongo.MongoClient()
     db = client[db_name]
     collection = db[coll_name]
 
-    if not production_mode:
+    if not production_mode or clear_production_db:
         d = db[coll_name].delete_many({})
 
     print("Getting user token...")
     sim_user_token = chrome_cookies('http://materials.springer.com')['sim-user-token']
 
     print("Starting data collection")
-    for page_no in range(starting_page, total_pages + 1):
+    for page_no in range(starting_page, starting_page + total_pages):
         print("Starting page: {}".format(page_no))
         time.sleep(page_sleep_time)
         url = 'http://materials.springer.com/search?searchTerm=&pageNumber={}&propertyFacet=' \
