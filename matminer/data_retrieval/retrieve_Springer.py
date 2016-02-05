@@ -41,7 +41,8 @@ if __name__ == '__main__':
                         if '.cif' in a_link:
                             res = requests.get('http://materials.springer.com' + a_link,
                                                cookies={'sim-user-token': sim_user_token})
-                            data_dict = {'cif_string': res.content, 'cif_link': a_link}
+                            data_dict['cif_string'] = res.content
+                            data_dict['cif_link'] = a_link
                             try:
                                 data_dict['structure'] = CifParser.from_string(res.content).get_structures()[
                                     0].as_dict()
@@ -60,5 +61,8 @@ if __name__ == '__main__':
 
     # quick check
     print collection.find_one()
+    print collection.find_one().keys()
+    print collection.find_one()['key']
     print collection.count()
+    print db['pauling_file'].find_one()
     print("FINISHED!")
