@@ -1,5 +1,4 @@
 import traceback
-
 import requests
 from lxml import html
 from pymatgen.io.cif import CifParser
@@ -7,11 +6,11 @@ from matminer.pyCookieCheat import chrome_cookies
 import pymongo
 import time
 
-
 if __name__ == "__main__":
     i = 0
     sd_id = 1402650
-    max_to_parse = 20
+    max_to_parse = 4
+    total_pages = 1
     sleep_time = 0.5
     clear_production_database = False
     testing_mode = True
@@ -28,15 +27,24 @@ if __name__ == "__main__":
 
     sim_user_token = chrome_cookies('http://materials.springer.com')['sim-user-token']
 
+    for page_no in range(1, total_pages + 1):
+        url = 'http://materials.springer.com/search?searchTerm=&pageNumber={' \
+              '}&propertyFacet=crystal%20structure&datasourceFacet=sm_isp&substanceId='.format(
+            page_no)
+        result_page = requests.get(url)
+        parsed_resbody = html.fromstring(result_page.content)
+        for struc_link in parsed_resbody.xpath('//a/@href'):
+            print struc_link
+
     while i < max_to_parse:
         try:
-            page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_' + str(sd_id),
-                                cookies={'sim-user-token': sim_user_token})
-            if page.raise_for_status() is None:  # Check if getting data from above was successful or now
+            struct_page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_' + str(sd_id),
+                                       cookies={'sim-user-token': sim_user_token})
+            if struct_page.raise_for_status() is None:  # Check if getting data from above was successful or now
                 print 'Success at getting sd_{}'.format(sd_id)
-                parsed_body = html.fromstring(page.content)
-                data_dict = {"webpage_str": page.content, "key": "sd_{}".format(sd_id)}
-                for a_link in parsed_body.xpath('//a/@href'):
+                parsed_strucbody = html.fromstring(struct_page.content)
+                data_dict = {"webpage_str": struct_page.content, "key": "sd_{}".format(sd_id)}
+                for a_link in parsed_strucbody.xpath('//a/@href'):
                     if '.cif' in a_link:
                         res = requests.get('http://materials.springer.com' + a_link,
                                            cookies={'sim-user-token': sim_user_token})
