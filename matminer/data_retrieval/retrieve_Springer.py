@@ -7,9 +7,9 @@ import pymongo
 import time
 
 if __name__ == "__main__":
-    i = 0
-    sd_id = 1402650
-    max_to_parse = 4
+    # i = 0
+    # sd_id = 1402650
+    # max_to_parse = 4
     total_pages = 1
     sleep_time = 0.5
     clear_production_database = False
@@ -27,45 +27,45 @@ if __name__ == "__main__":
 
     sim_user_token = chrome_cookies('http://materials.springer.com')['sim-user-token']
 
+    # while i < max_to_parse:
     for page_no in range(1, total_pages + 1):
         url = 'http://materials.springer.com/search?searchTerm=&pageNumber={' \
-              '}&propertyFacet=crystal%20structure&datasourceFacet=sm_isp&substanceId='.format(
-            page_no)
+              '}&propertyFacet=crystal%20structure&datasourceFacet=sm_isp&substanceId='.format(page_no)
         result_page = requests.get(url)
         parsed_resbody = html.fromstring(result_page.content)
-        for struc_link in parsed_resbody.xpath('//a/@href'):
-            print struc_link
+        for link in parsed_resbody.xpath('//a/@href'):
+            if 'sd_' in link:
+                sd_id = link[-10:]
+                try:
+                    struct_page = requests.get(
+                        'http://materials.springer.com/' + str(link), cookies={'sim-user-token': sim_user_token})
+                    print 'Success at getting sd_{}'.format(sd_id)
+                    parsed_strucbody = html.fromstring(struct_page.content)
+                    data_dict = {"webpage_str": struct_page.content, "key": "sd_{}".format(sd_id)}
+                    for a_link in parsed_strucbody.xpath('//a/@href'):
+                        if '.cif' in a_link:
+                            res = requests.get('http://materials.springer.com' + a_link,
+                                               cookies={'sim-user-token': sim_user_token})
+                            data_dict = {'cif_string': res.content, 'cif_link': a_link}
+                            try:
+                                data_dict['structure'] = CifParser.from_string(res.content).get_structures()[
+                                    0].as_dict()
+                            except:
+                                data_dict['structure'] = None
+                                print("! Could not parse structure for: sd_{}".format(sd_id))
+                                print(traceback.format_exc())
+                            break
+                    if len(data_dict) < 3:
+                        print("!! Could not get CIF file for: sd_{}".format(sd_id))
+                    collection.insert(data_dict)
+                    # i += 1
+                except:
+                    print(traceback.format_exc())
 
-    while i < max_to_parse:
-        try:
-            struct_page = requests.get('http://materials.springer.com/isp/crystallographic/docs/sd_' + str(sd_id),
-                                       cookies={'sim-user-token': sim_user_token})
-            if struct_page.raise_for_status() is None:  # Check if getting data from above was successful or now
-                print 'Success at getting sd_{}'.format(sd_id)
-                parsed_strucbody = html.fromstring(struct_page.content)
-                data_dict = {"webpage_str": struct_page.content, "key": "sd_{}".format(sd_id)}
-                for a_link in parsed_strucbody.xpath('//a/@href'):
-                    if '.cif' in a_link:
-                        res = requests.get('http://materials.springer.com' + a_link,
-                                           cookies={'sim-user-token': sim_user_token})
-                        data_dict = {'cif_string': res.content, 'cif_link': a_link}
-                        try:
-                            data_dict['structure'] = CifParser.from_string(res.content).get_structures()[0].as_dict()
-                        except:
-                            data_dict['structure'] = None
-                            print("! Could not parse structure for: sd_{}".format(sd_id))
-                            print(traceback.format_exc())
-                        break
-                if len(data_dict) < 3:
-                    print("!! Could not get CIF file for: sd_{}".format(sd_id))
-                collection.insert(data_dict)
-                i += 1
-        except:
-            print(traceback.format_exc())
-
-        sd_id += 1
-        time.sleep(sleep_time)
+                # sd_id += 1
+                time.sleep(sleep_time)
 
     # quick check
     print collection.find_one()
+    print collection.count()
     print("FINISHED!")
