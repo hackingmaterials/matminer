@@ -7,10 +7,10 @@ import pymongo
 import time
 
 if __name__ == '__main__':
-    starting_page = 1
+    starting_page = 10403
     total_pages = 100000000
-    sleep_time = 0.5
-    page_sleep_time = 1
+    sleep_time = 0.25
+    page_sleep_time = 0.5
     production_mode = True
     clear_production_db = False
 
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     sim_user_token = chrome_cookies('http://materials.springer.com')['sim-user-token']
 
     print("Starting data collection")
-    for page_no in range(starting_page, starting_page + total_pages):
+    for page_no in range(starting_page, 11255):
         print("Starting page: {}".format(page_no))
         time.sleep(page_sleep_time)
         url = 'http://materials.springer.com/search?searchTerm=&pageNumber={}&propertyFacet=' \
