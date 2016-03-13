@@ -5,11 +5,6 @@ import re
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
-# TODO: what is the purpose of this function? Discuss w/AJ
-def get_el_amt(comp):
-    return Composition(comp).get_el_amt_dict()
-
-
 def get_masses(comp):
     elmass = []
     el_amt = Composition(comp).get_el_amt_dict()
@@ -299,7 +294,6 @@ def get_total(lst):
     return sum(lst)
 
 if __name__ == '__main__':
-    print get_el_amt('LiFePO4')
     print get_masses('LiFePO4')
     print get_atomic_numbers('LiFePO4')
     print get_pauling_elect('LiFePO4')
