@@ -61,6 +61,15 @@ def get_molar_volume(comp):
     return molar_volumes
 
 
+def get_number_density(structure):
+    """
+    Calculates number density of a structure
+    :param structure: pymatgen structure object
+    :return: (float) number density
+    """
+    return structure.num_sites/structure.volume
+
+
 def get_atomic_radius(comp):
     atomic_radii = []
     el_amt = Composition(comp).get_el_amt_dict()
