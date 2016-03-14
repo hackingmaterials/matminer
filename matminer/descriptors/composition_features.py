@@ -282,6 +282,18 @@ def get_supercond_temp(comp):
     return supercond_t
 
 
+def get_linear_thermal_expansion(comp):
+    thermal_exp = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        exp = Element(el).coefficient_of_linear_thermal_expansion
+        if exp is not None:
+            thermal_exp.append(float(exp.split()[0]))
+        # else:
+        #     thermal_exp.append(exp)
+    return thermal_exp
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -333,3 +345,4 @@ if __name__ == '__main__':
     print get_boiling_pt('LiFePO4')
     print get_critical_temp('LiFePO4')
     print get_supercond_temp('MgB2')
+    print get_linear_thermal_expansion('LiFePO4')
