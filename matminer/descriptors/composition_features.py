@@ -294,6 +294,18 @@ def get_linear_thermal_expansion(comp):
     return thermal_exp
 
 
+def get_rigidity_modulus(comp):
+    rig_mod = []
+    el_amt = Composition(comp).get_el_amt_dict()
+    for el in el_amt:
+        mod = Element(el).rigidity_modulus
+        if mod is not None:
+            rig_mod.append(float(mod.split()[0]))
+        # else:
+        #     thermal_exp.append(exp)
+    return rig_mod
+
+
 def get_max_min(lst):
     maxmin = {'Max': max(lst), 'Min': min(lst)}
     return maxmin
@@ -346,3 +358,4 @@ if __name__ == '__main__':
     print get_critical_temp('LiFePO4')
     print get_supercond_temp('MgB2')
     print get_linear_thermal_expansion('LiFePO4')
+    print get_rigidity_modulus('LiFePO4')
