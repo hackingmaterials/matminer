@@ -6,6 +6,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 # AJ says: I am 90% sure that 90% of these methods are completely pointless if you just support pymatgen w/units inside Pandas dataframes
+# AJ says: Plus, 90% of these methods are completely wrong. e.g. elmass.append(Element(el).atomic_mass * el_amt[el]) is WRONG
 
 def get_masses(comp):
     elmass = []
