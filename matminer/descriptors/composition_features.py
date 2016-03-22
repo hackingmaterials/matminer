@@ -2,8 +2,10 @@ from pymatgen import Element, Composition
 import numpy as np
 import re
 
-__author__ = 'Anubhav Jain <ajain@lbl.gov>'
+__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
+
+# AJ says: I am 90% sure that 90% of these methods are completely pointless if you just support pymatgen w/units inside Pandas dataframes
 
 def get_masses(comp):
     elmass = []
