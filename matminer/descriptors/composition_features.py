@@ -1,6 +1,7 @@
 from pymatgen import Element, Composition
 import numpy as np
 import re
+import math
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -8,12 +9,19 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # AJ says: I am 90% sure that 90% of these methods are completely pointless if you just support pymatgen w/units inside Pandas dataframes
 # AJ says: Plus, 90% of these methods are completely wrong. e.g. elmass.append(Element(el).atomic_mass * el_amt[el]) is WRONG
 
+# TODO: merge almost all methods to 1
+# TODO: read Magpie file only once
+# TODO: NamedTuple or tuple
+# TODO: unit tests
+# TODO: use pymatgen Units class to handle units well (don't parse strings manually)
+
+
 def get_masses(comp):
-    elmass = []
+    mass_amt = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        elmass.append(Element(el).atomic_mass * el_amt[el])
-    return elmass
+        mass_amt.append([Element(el).atomic_mass, el_amt[el]])
+    return mass_amt
 
 
 def get_atomic_numbers(comp):
@@ -25,11 +33,11 @@ def get_atomic_numbers(comp):
 
 
 def get_pauling_elect(comp):
-    electroneg = []
+    electroneg_amt = []
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        electroneg.append(Element(el).X * el_amt[el])
-    return electroneg
+        electroneg_amt.append([Element(el).X, el_amt[el]])
+    return electroneg_amt
 
 
 def get_melting_pt(comp):
@@ -315,11 +323,22 @@ def get_max_min(lst):
 
 
 def get_mean(lst):
-    return np.mean(lst)
+    total_propamt = 0
+    total_amt = 0
+    for prop_amt in lst:
+        total_propamt += (prop_amt[0] * prop_amt[1])
+        total_amt += prop_amt[1]
+    return total_propamt/total_amt
 
 
 def get_std(lst):
-    return np.std(lst)
+    mean = get_mean(lst)
+    total_weighted_squares = 0
+    total_amt = 0
+    for prop_amt in lst:
+        total_weighted_squares += (prop_amt[1] * (prop_amt[0] - mean)**2)
+        total_amt += prop_amt[1]
+    return math.sqrt(total_weighted_squares/total_amt)
 
 
 def get_med(lst):
@@ -330,35 +349,5 @@ def get_total(lst):
     return sum(lst)
 
 if __name__ == '__main__':
-    print get_masses('LiFePO4')
-    print get_atomic_numbers('LiFePO4')
     print get_pauling_elect('LiFePO4')
-    print get_melting_pt('LiFePO4')
-    print get_atomic_fraction('LiFePO4')
-    print get_wt_fraction('LiFePO4')
-    print get_molar_volume('LiFePO4')
-    print get_atomic_radius('LiFePO4')
-    print get_calc_atomic_radius('LiFePO4')
-    print get_vanderwaals_radius('LiFePO4')
-    print get_averageionic_radius('LiFePO4')
-    print get_ionic_radius('LiFePO4')
-    print get_magpie_descriptor('LiFePO4', 'AtomicVolume')
-    print get_max_oxidation_state('LiFePO4')
-    print get_min_oxidation_state('LiFePO4')
-    print get_oxidation_state('LiFePO4')
-    print get_common_oxidation_state('LiFePO4')
-    print get_full_elect_struct('LiFePO4')
-    print get_row('LiFePO4')
-    print get_group('LiFePO4')
-    print get_block('LiFePO4')
-    print get_mendeleev_no('LiFePO4')
-    print get_elec_res('LiFePO4')
-    print get_reflectivity('LiFePO4')
-    print get_refractive_idx('PbTe')
-    print get_poissons_ratio('LiFePO4')
-    print get_thermal_cond('LiFePO4')
-    print get_boiling_pt('LiFePO4')
-    print get_critical_temp('LiFePO4')
-    print get_supercond_temp('MgB2')
-    print get_linear_thermal_expansion('LiFePO4')
-    print get_rigidity_modulus('LiFePO4')
+    print get_std(get_pauling_elect('LiFePO4'))
