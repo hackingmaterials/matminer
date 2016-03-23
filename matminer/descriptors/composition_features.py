@@ -299,9 +299,7 @@ def get_linear_thermal_expansion(comp):
     for el in el_amt:
         exp = Element(el).coefficient_of_linear_thermal_expansion
         if exp is not None:
-            thermal_exp.append(float(exp.split()[0]))
-        # else:
-        #     thermal_exp.append(exp)
+            thermal_exp.append([float(exp.split()[0]), el_amt[el]])
     return thermal_exp
 
 
@@ -351,3 +349,4 @@ def get_total(lst):
 if __name__ == '__main__':
     print get_pauling_elect('LiFePO4')
     print get_std(get_pauling_elect('LiFePO4'))
+    print get_std(get_linear_thermal_expansion('LiFePO4'))
