@@ -19,10 +19,10 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 def get_masses(comp):
     mass_amt = []
-    Eldata = collections.namedtuple('Eldata', 'element mass amt')
+    massdata = collections.namedtuple('massdata', 'element mass amt')
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        mass_amt.append(Eldata(element=el, mass=Element(el).atomic_mass, amt=el_amt[el]))
+        mass_amt.append(massdata(element=el, mass=Element(el).atomic_mass, amt=el_amt[el]))
     return mass_amt
 
 
@@ -36,9 +36,10 @@ def get_atomic_numbers(comp):
 
 def get_pauling_elect(comp):
     electroneg_amt = []
+    electnegdata = collections.namedtuple('electnegdata', 'element electronegativity amt')
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        electroneg_amt.append([Element(el).X, el_amt[el]])
+        electroneg_amt.append(electnegdata(element=el, electronegativity=Element(el).X, amt=el_amt[el]))
     return electroneg_amt
 
 
@@ -350,6 +351,6 @@ def get_total(lst):
 
 if __name__ == '__main__':
     print get_masses('LiFePO4')
-    # print get_pauling_elect('LiFePO4')
+    print get_pauling_elect('LiFePO4')
     # print get_std(get_pauling_elect('LiFePO4'))
     # print get_std(get_linear_thermal_expansion('LiFePO4'))
