@@ -2,6 +2,7 @@ from pymatgen import Element, Composition
 import numpy as np
 import re
 import math
+import collections
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -18,9 +19,10 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 def get_masses(comp):
     mass_amt = []
+    Eldata = collections.namedtuple('Eldata', 'element mass amt')
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        mass_amt.append([Element(el).atomic_mass, el_amt[el]])
+        mass_amt.append(Eldata(element=el, mass=Element(el).atomic_mass, amt=el_amt[el]))
     return mass_amt
 
 
@@ -347,6 +349,7 @@ def get_total(lst):
     return sum(lst)
 
 if __name__ == '__main__':
-    print get_pauling_elect('LiFePO4')
-    print get_std(get_pauling_elect('LiFePO4'))
-    print get_std(get_linear_thermal_expansion('LiFePO4'))
+    print get_masses('LiFePO4')
+    # print get_pauling_elect('LiFePO4')
+    # print get_std(get_pauling_elect('LiFePO4'))
+    # print get_std(get_linear_thermal_expansion('LiFePO4'))
