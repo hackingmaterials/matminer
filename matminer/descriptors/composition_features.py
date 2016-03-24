@@ -19,10 +19,10 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 def get_masses(comp):
     mass_amt = []
-    massdata = collections.namedtuple('massdata', 'element mass amt')
+    massdata = collections.namedtuple('massdata', 'element property amt')
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        mass_amt.append(massdata(element=el, mass=Element(el).atomic_mass, amt=el_amt[el]))
+        mass_amt.append(massdata(element=el, property=Element(el).atomic_mass, amt=el_amt[el]))
     return mass_amt
 
 
@@ -36,10 +36,10 @@ def get_atomic_numbers(comp):
 
 def get_pauling_elect(comp):
     electroneg_amt = []
-    electnegdata = collections.namedtuple('electnegdata', 'element electronegativity amt')
+    electnegdata = collections.namedtuple('electnegdata', 'element property amt')
     el_amt = Composition(comp).get_el_amt_dict()
     for el in el_amt:
-        electroneg_amt.append(electnegdata(element=el, electronegativity=Element(el).X, amt=el_amt[el]))
+        electroneg_amt.append(electnegdata(element=el, property=Element(el).X, amt=el_amt[el]))
     return electroneg_amt
 
 
@@ -326,9 +326,9 @@ def get_max_min(lst):
 def get_mean(lst):
     total_propamt = 0
     total_amt = 0
-    for prop_amt in lst:
-        total_propamt += (prop_amt[0] * prop_amt[1])
-        total_amt += prop_amt[1]
+    for element in lst:
+        total_propamt += (element.property * element.amt)
+        total_amt += element.amt
     return total_propamt/total_amt
 
 
@@ -336,9 +336,9 @@ def get_std(lst):
     mean = get_mean(lst)
     total_weighted_squares = 0
     total_amt = 0
-    for prop_amt in lst:
-        total_weighted_squares += (prop_amt[1] * (prop_amt[0] - mean)**2)
-        total_amt += prop_amt[1]
+    for element in lst:
+        total_weighted_squares += (element.amt * (element.property - mean)**2)
+        total_amt += element.amt
     return math.sqrt(total_weighted_squares/total_amt)
 
 
@@ -352,5 +352,5 @@ def get_total(lst):
 if __name__ == '__main__':
     print get_masses('LiFePO4')
     print get_pauling_elect('LiFePO4')
-    # print get_std(get_pauling_elect('LiFePO4'))
-    # print get_std(get_linear_thermal_expansion('LiFePO4'))
+    print get_mean(get_pauling_elect('LiFePO4'))
+    print get_std(get_pauling_elect('LiFePO4'))
