@@ -340,7 +340,7 @@ def get_mean(lst):
     total_propamt = 0
     total_amt = 0
     for element in lst:
-        total_propamt += (element.property * element.amt)
+        total_propamt += (element.propvalue * element.amt)
         total_amt += element.amt
     return total_propamt/total_amt
 
@@ -350,7 +350,7 @@ def get_std(lst):
     total_weighted_squares = 0
     total_amt = 0
     for element in lst:
-        total_weighted_squares += (element.amt * (element.property - mean)**2)
+        total_weighted_squares += (element.amt * (element.propvalue - mean)**2)
         total_amt += element.amt
     return math.sqrt(total_weighted_squares/total_amt)
 
@@ -365,6 +365,7 @@ def get_total(lst):
 if __name__ == '__main__':
     print get_pymatgen_eldata_lst('LiFePO4', 'ionic_radii')
     print get_pymatgen_eldata_lst('LiFePO4', 'atomic_mass')
+    print get_mean(get_pymatgen_eldata_lst('LiFePO4', 'X'))
     # print get_masses('LiFePO4')
     # print get_pauling_elect('LiFePO4')
     # print get_mean(get_pauling_elect('LiFePO4'))
