@@ -21,11 +21,11 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 def get_pymatgen_eldata_lst(comp, prop):
     eldata_lst = []
     eldata = collections.namedtuple('eldata', 'element propname propvalue amt')
-    if callable(getattr(Element, prop)) is None:
-        print 'Invalid pymatgen Element attribute(property)'
-        return
     el_amt_dict = Composition(comp).get_el_amt_dict()
     for el in el_amt_dict:
+        if callable(getattr(Element(el), prop)) is None:
+            print 'Invalid pymatgen Element attribute(property)'
+            return
         eldata_lst.append(eldata(element=el, propname=prop, propvalue=getattr(Element(el), prop), amt=el_amt_dict[el]))
     return eldata_lst
 
@@ -364,6 +364,7 @@ def get_total(lst):
 
 if __name__ == '__main__':
     print get_pymatgen_eldata_lst('LiFePO4', 'ionic_radii')
+    print get_pymatgen_eldata_lst('LiFePO4', 'atomic_mass')
     # print get_masses('LiFePO4')
     # print get_pauling_elect('LiFePO4')
     # print get_mean(get_pauling_elect('LiFePO4'))
