@@ -78,11 +78,11 @@ def get_linear_thermal_expansion(comp):
     return thermal_exp
 
 
-def get_max_min(lst):
+def get_stats(lst):
     propvalues = []
     for element in lst:
         propvalues.append(element.propvalue)
-    return {'max': max(propvalues), 'min': min(propvalues)}
+    return {'max': max(propvalues), 'min': min(propvalues), 'median': np.median(propvalues), 'sum': sum(propvalues)}
 
 
 def get_mean(lst):
@@ -102,14 +102,6 @@ def get_std(lst):
         total_weighted_squares += (element.amt * (element.propvalue - mean) ** 2)
         total_amt += element.amt
     return math.sqrt(total_weighted_squares / total_amt)
-
-
-def get_med(lst):
-    return np.median(lst)
-
-
-def get_total(lst):
-    return sum(lst)
 
 
 if __name__ == '__main__':
