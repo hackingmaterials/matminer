@@ -79,8 +79,10 @@ def get_linear_thermal_expansion(comp):
 
 
 def get_max_min(lst):
-    maxmin = {'Max': max(lst), 'Min': min(lst)}
-    return maxmin
+    propvalues = []
+    for element in lst:
+        propvalues.append(element.propvalue)
+    return {'max': max(propvalues), 'min': min(propvalues)}
 
 
 def get_mean(lst):
