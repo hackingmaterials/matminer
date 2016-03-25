@@ -8,8 +8,10 @@ import inspect
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
-# AJ says: I am 90% sure that 90% of these methods are completely pointless if you just support pymatgen w/units inside Pandas dataframes
-# AJ says: Plus, 90% of these methods are completely wrong. e.g. elmass.append(Element(el).atomic_mass * el_amt[el]) is WRONG
+# AJ says: I am 90% sure that 90% of these methods are completely pointless if you just support pymatgen w/units
+# inside Pandas dataframes
+# AJ says: Plus, 90% of these methods are completely wrong. e.g. elmass.append(Element(el).atomic_mass * el_amt[el])
+# is WRONG
 
 # TODO: merge almost all methods to 1
 # TODO: read Magpie file only once
@@ -17,9 +19,10 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # TODO: unit tests
 # TODO: use pymatgen Units class to handle units well (don't parse strings manually)
 
-# Handle dictionaries in case of atomic radii
-# Handle numbers with units, eg. thermal_conductivity
-# Handle None values
+# TODO: Handle numbers with units, eg. thermal_conductivity
+# TODO: Handle dictionaries in case of atomic radii
+# TODO: Handle None values
+
 def get_pymatgen_eldata_lst(comp, prop):
     eldata_lst = []
     eldata = collections.namedtuple('eldata', 'element propname propvalue amt')
@@ -57,18 +60,21 @@ def get_magpie_descriptor(comp, descriptor_name):
     lines = descp_file.readlines()
     for el in el_amt:
         atomic_no = Element(el).Z
-        descriptor_list.append(float(lines[atomic_no-1]))
+        descriptor_list.append(float(lines[atomic_no - 1]))
     descp_file.close()
     return descriptor_list
 
 
 def get_linear_thermal_expansion(comp):
     thermal_exp = []
-    el_amt = Composition(comp).get_el_amt_dict()
-    for el in el_amt:
+    thermaldata = collections.namedtuple('thermaldata', 'element propname propvalue amt')
+    el_amt_dict = Composition(comp).get_el_amt_dict()
+    for el in el_amt_dict:
         exp = Element(el).coefficient_of_linear_thermal_expansion
         if exp is not None:
-            thermal_exp.append([float(exp.split()[0]), el_amt[el]])
+            # thermal_exp.append([float(exp.split()[0]), el_amt_dict[el]])
+            thermal_exp.append(thermaldata(element=el, propname='coefficient_of_linear_thermal_expansion',
+                                           propvalue=float(exp.split()[0]), amt=el_amt_dict[el]))
     return thermal_exp
 
 
@@ -83,7 +89,7 @@ def get_mean(lst):
     for element in lst:
         total_propamt += (element.propvalue * element.amt)
         total_amt += element.amt
-    return total_propamt/total_amt
+    return total_propamt / total_amt
 
 
 def get_std(lst):
@@ -91,9 +97,9 @@ def get_std(lst):
     total_weighted_squares = 0
     total_amt = 0
     for element in lst:
-        total_weighted_squares += (element.amt * (element.propvalue - mean)**2)
+        total_weighted_squares += (element.amt * (element.propvalue - mean) ** 2)
         total_amt += element.amt
-    return math.sqrt(total_weighted_squares/total_amt)
+    return math.sqrt(total_weighted_squares / total_amt)
 
 
 def get_med(lst):
@@ -103,8 +109,9 @@ def get_med(lst):
 def get_total(lst):
     return sum(lst)
 
+
 if __name__ == '__main__':
     descriptors = ['ionic_radii', 'atomic_mass', 'X', 'Z']
     for desc in descriptors:
         print get_pymatgen_eldata_lst('LiFePO4', desc)
-    print get_thermal_cond('LiFePO4')
+    print get_std(get_linear_thermal_expansion('LiFePO4'))
