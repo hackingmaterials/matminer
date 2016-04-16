@@ -19,7 +19,6 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # TODO: unit tests
 # TODO: use pymatgen Units class to handle units well (don't parse strings manually)
 
-# TODO: Handle numbers with units, eg. thermal_conductivity
 # TODO: Handle dictionaries in case of atomic radii
 # TODO: Handle None values
 
@@ -31,26 +30,14 @@ def get_pymatgen_eldata_lst(comp, prop):
         if callable(getattr(Element(el), prop)) is None:
             print 'Invalid pymatgen Element attribute(property)'
             return
-        eldata_lst.append(eldata(element=el, propname=prop, propvalue=getattr(Element(el), prop), amt=el_amt_dict[el]))
+        try:
+            eldata_lst.append(eldata(element=el, propname=prop,
+                                     propvalue=FloatWithUnit.from_string(getattr(Element(el), prop)).__float__(),
+                                     amt=el_amt_dict[el]))
+        except AttributeError:
+            eldata_lst.append(
+                eldata(element=el, propname=prop, propvalue=getattr(Element(el), prop), amt=el_amt_dict[el]))
     return eldata_lst
-
-
-def get_thermal_cond(comp):
-    thermalcond = []
-    el_amt = Composition(comp).get_el_amt_dict()
-    for el in el_amt:
-        print FloatWithUnit.from_string(Element(el).thermal_conductivity)
-        # tc = Element(el).thermal_conductivity
-        # thermalcond.append(float(tc.split()[0]))
-    return thermalcond
-
-
-def get_melting_pt(comp):
-    melt_pts = []
-    el_amt = Composition(comp).get_el_amt_dict()
-    for el in el_amt:
-        melt_pts.append(float(re.findall('[-+]?\d+[\.]?\d*', Element(el).melting_point)[0]) * el_amt[el])
-    return melt_pts
 
 
 def get_magpie_descriptor(comp, descriptor_name):
@@ -63,19 +50,6 @@ def get_magpie_descriptor(comp, descriptor_name):
         descriptor_list.append(float(lines[atomic_no - 1]))
     descp_file.close()
     return descriptor_list
-
-
-def get_linear_thermal_expansion(comp):
-    thermal_exp = []
-    thermaldata = collections.namedtuple('thermaldata', 'element propname propvalue amt')
-    el_amt_dict = Composition(comp).get_el_amt_dict()
-    for el in el_amt_dict:
-        exp = Element(el).coefficient_of_linear_thermal_expansion
-        if exp is not None:
-            # thermal_exp.append([float(exp.split()[0]), el_amt_dict[el]])
-            thermal_exp.append(thermaldata(element=el, propname='coefficient_of_linear_thermal_expansion',
-                                           propvalue=float(exp.split()[0]), amt=el_amt_dict[el]))
-    return thermal_exp
 
 
 def get_stats(lst):
@@ -105,7 +79,7 @@ def get_std(lst):
 
 
 if __name__ == '__main__':
-    descriptors = ['ionic_radii', 'atomic_mass', 'X', 'Z']
+    descriptors = ['ionic_radii', 'atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
+                   'coefficient_of_linear_thermal_expansion']
     for desc in descriptors:
-        print get_pymatgen_eldata_lst('LiFePO4', desc)
-    print get_std(get_linear_thermal_expansion('LiFePO4'))
+        print get_std(get_pymatgen_eldata_lst('LiFePO4', desc))
