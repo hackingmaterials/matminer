@@ -53,7 +53,8 @@ def get_magpie_descriptor(comp, descriptor_name):
 def get_stats(lst):
     propvalues = []
     for element in lst:
-        propvalues.append(element.propvalue)
+        if element.propvalue is not None:
+            propvalues.append(element.propvalue)
     return {'max': max(propvalues), 'min': min(propvalues), 'median': np.median(propvalues), 'sum': sum(propvalues)}
 
 
@@ -61,8 +62,9 @@ def get_mean(lst):
     total_propamt = 0
     total_amt = 0
     for element in lst:
-        total_propamt += (element.propvalue * element.amt)
-        total_amt += element.amt
+        if element.propvalue is not None:
+            total_propamt += (element.propvalue * element.amt)
+            total_amt += element.amt
     return total_propamt / total_amt
 
 
@@ -71,8 +73,9 @@ def get_std(lst):
     total_weighted_squares = 0
     total_amt = 0
     for element in lst:
-        total_weighted_squares += (element.amt * (element.propvalue - mean) ** 2)
-        total_amt += element.amt
+        if element.propvalue is not None:
+            total_weighted_squares += (element.amt * (element.propvalue - mean) ** 2)
+            total_amt += element.amt
     return math.sqrt(total_weighted_squares / total_amt)
 
 
@@ -81,4 +84,4 @@ if __name__ == '__main__':
                    'coefficient_of_linear_thermal_expansion']
     # 'ionic_radii',
     for desc in descriptors:
-        print get_pymatgen_eldata_lst('LiFePO4', desc)
+        print get_std(get_pymatgen_eldata_lst('LiFePO4', desc))
