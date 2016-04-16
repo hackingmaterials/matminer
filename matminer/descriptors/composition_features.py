@@ -24,17 +24,22 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 def get_pymatgen_eldata_lst(comp, prop):
     eldata_lst = []
-    eldata = collections.namedtuple('eldata', 'element propname propvalue amt')
+    eldata = collections.namedtuple('eldata', 'element propname propvalue propunit amt')
     el_amt_dict = Composition(comp).get_el_amt_dict()
     for el in el_amt_dict:
         if callable(getattr(Element(el), prop)) is None:
             print 'Invalid pymatgen Element attribute(property)'
             return
         if getattr(Element(el), prop) is not None:
+            if prop in ['X', 'Z', 'ionic_radii']:
+                units = None
+            else:
+                units = getattr(Element(el), prop).unit
             eldata_lst.append(
-                eldata(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), amt=el_amt_dict[el]))
+                eldata(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
+                       amt=el_amt_dict[el]))
         else:
-            eldata_lst.append(eldata(element=el, propname=prop, propvalue=None, amt=el_amt_dict[el]))
+            eldata_lst.append(eldata(element=el, propname=prop, propvalue=None, propunit=None, amt=el_amt_dict[el]))
     return eldata_lst
 
 
@@ -84,4 +89,4 @@ if __name__ == '__main__':
                    'coefficient_of_linear_thermal_expansion']
     # 'ionic_radii',
     for desc in descriptors:
-        print get_std(get_pymatgen_eldata_lst('LiFePO4', desc))
+        print get_pymatgen_eldata_lst('LiFePO4', desc)
