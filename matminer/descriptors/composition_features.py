@@ -1,4 +1,4 @@
-from pymatgen import Element, Composition, FloatWithUnit
+from pymatgen import Element, Composition
 import numpy as np
 import re
 import math
@@ -30,13 +30,11 @@ def get_pymatgen_eldata_lst(comp, prop):
         if callable(getattr(Element(el), prop)) is None:
             print 'Invalid pymatgen Element attribute(property)'
             return
-        try:
-            eldata_lst.append(eldata(element=el, propname=prop,
-                                     propvalue=FloatWithUnit.from_string(getattr(Element(el), prop)).__float__(),
-                                     amt=el_amt_dict[el]))
-        except AttributeError:
+        if getattr(Element(el), prop) is not None:
             eldata_lst.append(
-                eldata(element=el, propname=prop, propvalue=getattr(Element(el), prop), amt=el_amt_dict[el]))
+                eldata(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), amt=el_amt_dict[el]))
+        else:
+            eldata_lst.append(eldata(element=el, propname=prop, propvalue=None, amt=el_amt_dict[el]))
     return eldata_lst
 
 
@@ -79,7 +77,8 @@ def get_std(lst):
 
 
 if __name__ == '__main__':
-    descriptors = ['ionic_radii', 'atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
+    descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
                    'coefficient_of_linear_thermal_expansion']
+    # 'ionic_radii',
     for desc in descriptors:
-        print get_std(get_pymatgen_eldata_lst('LiFePO4', desc))
+        print get_pymatgen_eldata_lst('LiFePO4', desc)
