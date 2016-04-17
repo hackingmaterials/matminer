@@ -1,26 +1,23 @@
 from pymatgen import Element, Composition
 import numpy as np
-import re
 import math
 import collections
-import inspect
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
-
-# AJ says: I am 90% sure that 90% of these methods are completely pointless if you just support pymatgen w/units
-# inside Pandas dataframes
-# AJ says: Plus, 90% of these methods are completely wrong. e.g. elmass.append(Element(el).atomic_mass * el_amt[el])
-# is WRONG
+# TODO: read Magpie file only once
+# TODO: Handle dictionaries in case of atomic radii. Aj says "You can require that getting the ionic_radii descriptor
+#  requires a valence-decorated Structure or valence-decorated Composition. Otherwise it does not work, i.e. returns
+# None. Other radii (e.g. covalent) won't require an oxidation state and people can and should use those for
+# non-ionic structures. You can also have a function that returns a mean of ionic_radii for all valences but that
+# should not be the default."
 
 # TODO: merge almost all methods to 1
-# TODO: read Magpie file only once
 # TODO: NamedTuple or tuple
 # TODO: unit tests
 # TODO: use pymatgen Units class to handle units well (don't parse strings manually)
-
-# TODO: Handle dictionaries in case of atomic radii
 # TODO: Handle None values
+
 
 def get_pymatgen_eldata_lst(comp, prop):
     eldata_lst = []
