@@ -58,7 +58,7 @@ def get_magpie_descriptor(comp, descriptor_name):
     return descriptor_list
 
 
-def get_stats(lst):
+def get_maxmin(lst):
     propvalues = []
     for element in lst:
         if element.propvalue is not None:
