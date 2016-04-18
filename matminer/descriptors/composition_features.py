@@ -42,6 +42,12 @@ def get_pymatgen_eldata_lst(comp, prop):
 
 
 def get_magpie_descriptor(comp, descriptor_name):
+    available_props = []
+    for file in os.listdir('data/magpie_elementdata'):
+         available_props.append(file.replace('.table', ''))
+    if descriptor_name not in available_props:
+        print 'This descriptor is not available from the Magpie repository. Choose from {}'.format(available_props)
+        return
     descriptor_list = []
     el_amt = Composition(comp).get_el_amt_dict()
     with open('data/magpie_elementdata/' + descriptor_name + '.table', 'r') as descp_file:
@@ -87,4 +93,4 @@ if __name__ == '__main__':
     # 'ionic_radii',
     for desc in descriptors:
         print get_pymatgen_eldata_lst('LiFePO4', desc)
-    print get_magpie_descriptor('LiFePO4', 'AtomicVolume')
+    print get_magpie_descriptor('LiFePO4', 'Atomicolume')
