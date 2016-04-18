@@ -2,6 +2,7 @@ from pymatgen import Element, Composition
 import numpy as np
 import math
 import collections
+import os
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -43,12 +44,11 @@ def get_pymatgen_eldata_lst(comp, prop):
 def get_magpie_descriptor(comp, descriptor_name):
     descriptor_list = []
     el_amt = Composition(comp).get_el_amt_dict()
-    descp_file = open('data/magpie_elementdata/' + descriptor_name + '.table', 'r')
-    lines = descp_file.readlines()
-    for el in el_amt:
-        atomic_no = Element(el).Z
-        descriptor_list.append(float(lines[atomic_no - 1]))
-    descp_file.close()
+    with open('data/magpie_elementdata/' + descriptor_name + '.table', 'r') as descp_file:
+        lines = descp_file.readlines()
+        for el in el_amt:
+            atomic_no = Element(el).Z
+            descriptor_list.append(float(lines[atomic_no - 1]))
     return descriptor_list
 
 
@@ -87,3 +87,4 @@ if __name__ == '__main__':
     # 'ionic_radii',
     for desc in descriptors:
         print get_pymatgen_eldata_lst('LiFePO4', desc)
+    print get_magpie_descriptor('LiFePO4', 'AtomicVolume')
