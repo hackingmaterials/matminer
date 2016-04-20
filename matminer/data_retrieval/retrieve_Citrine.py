@@ -40,7 +40,7 @@ class CitrineDataRetrieval:
         """
 
         json_data = []
-        start = 0
+        start = from_record if from_record else 0
         per_page = 100
         refresh_time = 3  # seconds to wait between search calls
 
