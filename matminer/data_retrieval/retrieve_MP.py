@@ -1,5 +1,7 @@
 import pandas as pd
 
+__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
+
 
 class MPDataRetrieval:
     """
@@ -15,7 +17,7 @@ class MPDataRetrieval:
 
     def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True):
         """
-        :param criteria (str/dict): See MPRester docs for more details.
+        :param criteria: (str/dict) See MPRester docs for more details.
             Criteria of the query as a string or mongo-style dict.
             If string, it supports a powerful but simple string criteria.
             E.g., "Fe2O3" means search for materials with reduced_formula
@@ -37,14 +39,14 @@ class MPDataRetrieval:
             "Na", "K"], "$all": ["O"]}, "nelements":2} selects all Li, Na
             and K oxides. {"band_gap": {"$gt": 1}} selects all materials
             with band gaps greater than 1 eV.
-        :param properties (list): See MPRester docs for more details.
+        :param properties: (list) See MPRester docs for more details.
             Properties to request for as a list. For example, ["formula",
             "formation_energy_per_atom"] returns the formula and formation energy per atom.
-        :param mp_decode (bool): See MPRester docs for more details.
+        :param mp_decode: (bool) See MPRester docs for more details.
             Whether to do a decoding to a Pymatgen object
             where possible. In some cases, it might be useful to just get
             the raw python dict, i.e., set to False.
-        :param index_mpid (bool): Whether to set the materials_id as the dataframe index
+        :param index_mpid: (bool) Whether to set the materials_id as the dataframe index
         """
 
         if index_mpid and "material_id" not in properties:

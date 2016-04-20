@@ -1,10 +1,14 @@
 import pandas as pd
 from matminer.descriptors.composition_features import *
 
+__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
+
 
 # TODO: Check how to automatically get stats (mean, median,..) from the descriptor column and use them to set limits
 # for plot colors
 # TODO: Check how to set legends in plots (return them here and pass them onto plot_xy()
+
+
 class AddDescriptor:
     def __init__(self, df=None, df_name=None):
         if df == df_name and df is None:

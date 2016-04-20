@@ -10,6 +10,8 @@ import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
 
+__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
+
 
 class CitrineDataRetrieval:
     def __init__(self, api_key=None):
@@ -28,9 +30,10 @@ class CitrineDataRetrieval:
         :param formula: (str) Filter for the chemical formula field. Only those results that have chemical formulas that
         contain this string will be returned.
         :param property: (str) Name of the property to search for.
-        :param contributor: (str) Filter for the contributor field. Only those results that have contributors that contain
-        this string will be returned.
-        :param reference: (str) Filter for the reference field. Only those results that have contributors that contain this string will be
+        :param contributor: (str) Filter for the contributor field. Only those results that have contributors that
+        contain this string will be returned.
+        :param reference: (str) Filter for the reference field. Only those results that have contributors that
+        contain this string will be
         returned.
         :param min_measurement: (str/num) Minimum of the property value range.
         :param max_measurement: (str/num) Maximum of the property value range.
@@ -116,7 +119,7 @@ class CitrineDataRetrieval:
 
         units_lst = [units]
         df = pd.concat(
-                [non_meas_df, meas_df, pd.Series(units_lst, index=[1], name='property.units')],
-                axis=1)
+            [non_meas_df, meas_df, pd.Series(units_lst, index=[1], name='property.units')],
+            axis=1)
         df.index.name = 'sample'
         return df
