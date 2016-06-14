@@ -68,8 +68,15 @@ class VolumePredictor(object):
         :param structure_bls: defaultdict(list) of bond lengths as output by the function "get_bondlengths()"
         :return: (float) root mean square error
         """
-        rmse = 0
+        y_actual = []
+        y_avg = []
         for bond in structure_bls:
+            try:
+                y_avg.extend([self.avg_bondlengths[bond]]*len(structure_bls[bond]))
+                y_actual.extend(structure_bls[bond])   # comes after
+            except KeyError:
+                continue
+            '''
             try:
                 rmse += mean_squared_error([min(structure_bls[bond])],
                                            [self.avg_bondlengths[bond]])**0.5
@@ -81,7 +88,8 @@ class VolumePredictor(object):
                 # rmse += mean_squared_error([min(structure_bls[bond])],
                 #                            [(r1+r2)])**0.5
                 continue
-        return rmse
+            '''
+        return mean_squared_error(y_actual, y_avg)**0.5
 
     def predict(self, structure):
         """
