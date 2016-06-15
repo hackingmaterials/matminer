@@ -57,7 +57,8 @@ class VolumePredictor(object):
         for struct in structures:
             struct_bls = self.get_bondlengths(struct)
             for bond in struct_bls:
-                self.bond_lengths[bond].extend(struct_bls[bond])
+                # self.bond_lengths[bond].extend(struct_bls[bond])         # Use all bls
+                self.bond_lengths[bond].append(min(struct_bls[bond]))      # Only use minimum bl for each bond type
         for bond in self.bond_lengths:
             self.avg_bondlengths[bond] = sum(self.bond_lengths[bond])/len(self.bond_lengths[bond])
 
@@ -103,7 +104,6 @@ class VolumePredictor(object):
         starting_volume = structure.volume
         predicted_volume = starting_volume
         min_rmse = self.get_rmse(self.get_bondlengths(structure))
-        # print self.get_bondlengths(structure)
         for i in range(81, 121):
             test_volume = (i * 0.01) * starting_volume
             structure.scale_lattice(test_volume)
@@ -111,7 +111,6 @@ class VolumePredictor(object):
             if test_rmse < min_rmse:
                 min_rmse = test_rmse
                 predicted_volume = test_volume
-
         return predicted_volume, min_rmse
 
     def save_avg_bondlengths(self, filename):
@@ -140,10 +139,20 @@ if __name__ == '__main__':
     starting_vol = new_struct.volume
     print 'Starting volume for {} = {}'.format(new_struct.composition, starting_vol)
     pv = VolumePredictor()
-    # pv.fit(mp_structs, mp_vols)
-    # pv.save_avg_bondlengths("nelements_2_avgbl_test.pkl")
-    pv.get_avg_bondlengths("nelements_2_avgbls.pkl")
-    a = pv.predict(new_struct)
-    percent_volume_change = ((a[0] - starting_vol)/starting_vol)*100
-    print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a[0], a[1], percent_volume_change)
+    '''
+    criteria = {'nelements': {'$lte': 2}}
+    mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
+    mp_structs = []
+    mp_vols = []
+    for i in mp_results:
+        if i['e_above_hull'] < 0.05:
+            mp_structs.append(i['structure'])
+            mp_vols.append(i['structure'].volume)
+    pv.fit(mp_structs, mp_vols)
+    pv.save_avg_bondlengths("nelements_2_minbls.pkl")
+    '''
+    pv.get_avg_bondlengths("nelements_2_minbls.pkl")
+    # a = pv.predict(new_struct)
+    # percent_volume_change = ((a[0] - starting_vol)/starting_vol)*100
+    # print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a[0], a[1], percent_volume_change)
 
