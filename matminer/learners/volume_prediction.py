@@ -74,12 +74,13 @@ class VolumePredictor(object):
         for bond in structure_bls:
             if bond in self.avg_bondlengths:
                 # y_avg.extend([self.avg_bondlengths[bond]]*len(structure_bls[bond]))     # Use avg from all bls
-                y_avg.extend([self.avg_bondlengths[bond]])                                # Use avg from only min bl
+                y_avg.append(self.avg_bondlengths[bond])                                # Use avg from only min bl
             else:
                 el1, el2 = bond.split("-")
                 r1 = float(Element(el1).atomic_radius)
                 r2 = float(Element(el2).atomic_radius)
-                y_avg.extend([(r1+r2)*0.75]*len(structure_bls[bond]))
+                # y_avg.extend([(r1+r2)*0.75]*len(structure_bls[bond]))     # Use all bls
+                y_avg.append((r1+r2)*0.75)                                  # Only use minimum bl for each bond type
             # y_actual.extend(structure_bls[bond])                          # Use all bls
             y_actual.append(min(structure_bls[bond]))                       # Only use minimum bl for each bond type
         return mean_squared_error(y_actual, y_avg)**0.5
@@ -106,7 +107,7 @@ class VolumePredictor(object):
                 predicted_volume = test_volume
                 min_percentage = i
         if 80 <= min_percentage < 85 or 115 < min_percentage <= 120:
-            self.predict(structure)
+            return self.predict(structure)
         else:
             return predicted_volume, min_rmse
 
