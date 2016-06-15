@@ -73,13 +73,15 @@ class VolumePredictor(object):
         y_avg = []
         for bond in structure_bls:
             if bond in self.avg_bondlengths:
-                y_avg.extend([self.avg_bondlengths[bond]]*len(structure_bls[bond]))
+                # y_avg.extend([self.avg_bondlengths[bond]]*len(structure_bls[bond]))     # Use avg from all bls
+                y_avg.extend([self.avg_bondlengths[bond]])                                # Use avg from only min bl
             else:
                 el1, el2 = bond.split("-")
                 r1 = float(Element(el1).atomic_radius)
                 r2 = float(Element(el2).atomic_radius)
                 y_avg.extend([(r1+r2)*0.75]*len(structure_bls[bond]))
-            y_actual.extend(structure_bls[bond])
+            # y_actual.extend(structure_bls[bond])                          # Use all bls
+            y_actual.append(min(structure_bls[bond]))                       # Only use minimum bl for each bond type
         return mean_squared_error(y_actual, y_avg)**0.5
 
     def predict(self, structure):
