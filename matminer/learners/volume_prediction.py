@@ -96,14 +96,19 @@ class VolumePredictor(object):
         starting_volume = structure.volume
         predicted_volume = starting_volume
         min_rmse = self.get_rmse(self.get_bondlengths(structure))
-        for i in range(81, 121):
+        min_percentage = 100
+        for i in range(80, 121):
             test_volume = (i * 0.01) * starting_volume
             structure.scale_lattice(test_volume)
             test_rmse = self.get_rmse(self.get_bondlengths(structure))
             if test_rmse < min_rmse:
                 min_rmse = test_rmse
                 predicted_volume = test_volume
-        return predicted_volume, min_rmse
+                min_percentage = i
+        if 80 <= min_percentage < 85 or 115 < min_percentage <= 120:
+            self.predict(structure)
+        else:
+            return predicted_volume, min_rmse
 
     def save_avg_bondlengths(self, filename):
         """
@@ -144,7 +149,7 @@ if __name__ == '__main__':
     pv.save_avg_bondlengths("nelements_2_minbls.pkl")
     '''
     pv.get_avg_bondlengths("nelements_2_minbls.pkl")
-    # a = pv.predict(new_struct)
-    # percent_volume_change = ((a[0] - starting_vol)/starting_vol)*100
-    # print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a[0], a[1], percent_volume_change)
+    a = pv.predict(new_struct)
+    percent_volume_change = ((a[0] - starting_vol)/starting_vol)*100
+    print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a[0], a[1], percent_volume_change)
 
