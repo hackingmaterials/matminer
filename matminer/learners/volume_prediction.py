@@ -40,8 +40,10 @@ class VolumePredictor(object):
                 continue
             for vsite in voronoi_sites:
                 s_dist = np.linalg.norm(vsite.coords - site.coords)
+                # TODO: avoid "continue" statements if possible - it is dead simply to write this code without "continue"
                 if s_dist < 0.1:
                     continue
+                # TODO: species_string can be something like "Li1+". Fix so that you get the element name only.
                 bond = '-'.join(sorted([site.species_string, vsite.species_string]))
                 bondlengths[bond].append(s_dist)
         return bondlengths
@@ -76,6 +78,7 @@ class VolumePredictor(object):
                 # y_avg.extend([self.avg_bondlengths[bond]]*len(structure_bls[bond]))     # Use avg from all bls
                 y_avg.append(self.avg_bondlengths[bond])                                # Use avg from only min bl
             else:
+                # TODO: you are just guessing here with 0.75 - figure out what the real factor should be
                 el1, el2 = bond.split("-")
                 r1 = float(Element(el1).atomic_radius)
                 r2 = float(Element(el2).atomic_radius)
@@ -106,8 +109,9 @@ class VolumePredictor(object):
                 min_rmse = test_rmse
                 predicted_volume = test_volume
                 min_percentage = i
+        # TODO: only need to check one value per bound. e.g. min_percentage < 85 or min_percentage > 115
         if 80 <= min_percentage < 85 or 115 < min_percentage <= 120:
-            return self.predict(structure)
+            return self.predict(structure)  # TODO: delete this comment; but just a note that calling predict() again is a nice choice for implementation. It is a little inefficient since some of the same volumes will be tested again, but the code should be so quick it doesn't matter.
         else:
             return predicted_volume, min_rmse
 
