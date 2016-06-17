@@ -1,4 +1,5 @@
 import os
+import re
 from pymatgen import MPRester, Element
 from collections import defaultdict
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder
@@ -38,13 +39,14 @@ class VolumePredictor(object):
             except ValueError as v:
                 print 'Error for site {} in {}: {}'.format(site, structure.composition, v)
                 continue
+            site_element_str = ''.join(re.findall(r'[A-Za-z]', site.species_string))
             for vsite in voronoi_sites:
                 s_dist = np.linalg.norm(vsite.coords - site.coords)
                 # TODO: avoid "continue" statements if possible - it is dead simply to write this code without "continue"
                 if s_dist < 0.1:
                     continue
-                # TODO: species_string can be something like "Li1+". Fix so that you get the element name only.
-                bond = '-'.join(sorted([site.species_string, vsite.species_string]))
+                vsite_element_str = ''.join(re.findall(r'[A-Za-z]', vsite.species_string))
+                bond = '-'.join(sorted([site_element_str, vsite_element_str]))
                 bondlengths[bond].append(s_dist)
         return bondlengths
 
