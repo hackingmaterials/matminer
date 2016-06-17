@@ -109,9 +109,8 @@ class VolumePredictor(object):
                 min_rmse = test_rmse
                 predicted_volume = test_volume
                 min_percentage = i
-        # TODO: only need to check one value per bound. e.g. min_percentage < 85 or min_percentage > 115
-        if 80 <= min_percentage < 85 or 115 < min_percentage <= 120:
-            return self.predict(structure)  # TODO: delete this comment; but just a note that calling predict() again is a nice choice for implementation. It is a little inefficient since some of the same volumes will be tested again, but the code should be so quick it doesn't matter.
+        if min_percentage < 85 or min_percentage > 115:
+            return self.predict(structure)
         else:
             return predicted_volume, min_rmse
 
@@ -157,4 +156,24 @@ if __name__ == '__main__':
     a = pv.predict(new_struct)
     percent_volume_change = ((a[0] - starting_vol)/starting_vol)*100
     print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a[0], a[1], percent_volume_change)
+    '''
+    df = pd.DataFrame()
+    for idx, structure in enumerate(mp_structs):
+        print mp_ids[idx]
+        try:
+            b = pv.predict(structure)
+        except RuntimeError as r:
+            print r
+            continue
+        except ValueError as v:
+            print v
+            continue
+        df = df.append(
+            {'task_id': mp_ids[idx], 'reduced_cell_formula': Composition(structure.composition).reduced_formula,
+             'actual_volume': structure.volume, 'predicted_volume': b[0]}, ignore_index=True)
+    df.to_pickle('test.pkl')
+    print pd.read_pickle('test.pkl')
+    df.plot(x='actual_volume', y='predicted_volume', kind='scatter')
+    plt.show()
+    # '''
 
