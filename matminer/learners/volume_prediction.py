@@ -1,11 +1,12 @@
 import os
 import re
-from pymatgen import MPRester, Element
+from pymatgen import MPRester, Element, Composition
 from collections import defaultdict, namedtuple
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder
 from sklearn.metrics import mean_squared_error
 import pickle
 import numpy as np
+import pandas as pd
 
 mpr = MPRester()
 
@@ -42,7 +43,8 @@ class VolumePredictor(object):
             site_element_str = ''.join(re.findall(r'[A-Za-z]', site.species_string))
             for vsite in voronoi_sites:
                 s_dist = np.linalg.norm(vsite.coords - site.coords)
-                # TODO: avoid "continue" statements if possible - it is dead simply to write this code without "continue"
+                # TODO: avoid "continue" statements if possible - it is dead simply to write this code without
+                # "continue"
                 if s_dist < 0.1:
                     continue
                 vsite_element_str = ''.join(re.findall(r'[A-Za-z]', vsite.species_string))
@@ -62,9 +64,9 @@ class VolumePredictor(object):
             struct_bls = self.get_bondlengths(struct)
             for bond in struct_bls:
                 # self.bond_lengths[bond].extend(struct_bls[bond])         # Use all bls
-                self.bond_lengths[bond].append(min(struct_bls[bond]))      # Only use minimum bl for each bond type
+                self.bond_lengths[bond].append(min(struct_bls[bond]))  # Only use minimum bl for each bond type
         for bond in self.bond_lengths:
-            self.avg_bondlengths[bond] = sum(self.bond_lengths[bond])/len(self.bond_lengths[bond])
+            self.avg_bondlengths[bond] = sum(self.bond_lengths[bond]) / len(self.bond_lengths[bond])
 
     def get_rmse(self, structure_bls):
         """
@@ -78,17 +80,17 @@ class VolumePredictor(object):
         for bond in structure_bls:
             if bond in self.avg_bondlengths:
                 # y_avg.extend([self.avg_bondlengths[bond]]*len(structure_bls[bond]))     # Use avg from all bls
-                y_avg.append(self.avg_bondlengths[bond])                                # Use avg from only min bl
+                y_avg.append(self.avg_bondlengths[bond])  # Use avg from only min bl
             else:
                 # TODO: you are just guessing here with 0.75 - figure out what the real factor should be
                 el1, el2 = bond.split("-")
                 r1 = float(Element(el1).atomic_radius)
                 r2 = float(Element(el2).atomic_radius)
                 # y_avg.extend([(r1+r2)*0.75]*len(structure_bls[bond]))     # Use all bls
-                y_avg.append((r1+r2)*0.75)                                  # Only use minimum bl for each bond type
+                y_avg.append((r1 + r2) * 0.75)  # Only use minimum bl for each bond type
             # y_actual.extend(structure_bls[bond])                          # Use all bls
-            y_actual.append(min(structure_bls[bond]))                       # Only use minimum bl for each bond type
-        return mean_squared_error(y_actual, y_avg)**0.5
+            y_actual.append(min(structure_bls[bond]))  # Only use minimum bl for each bond type
+        return mean_squared_error(y_actual, y_avg) ** 0.5
 
     def predict(self, structure):
         """
@@ -145,16 +147,37 @@ class VolumePredictor(object):
             self.avg_bondlengths = pickle.load(f)
 
     def get_data(self, nelements, e_above_hull):
-        data = namedtuple('data', 'structures volumes')
+        data = namedtuple('data', 'task_id structures volumes')
         criteria = {'nelements': {'$lte': nelements}}
         mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
+        mp_ids = []
         mp_structs = []
         mp_vols = []
         for i in mp_results:
             if i['e_above_hull'] < e_above_hull:
+                mp_ids.append(i['task_id'])
                 mp_structs.append(i['structure'])
                 mp_vols.append(i['structure'].volume)
-        return data(structures=mp_structs, volumes=mp_vols)
+        return data(task_ids=mp_ids, structures=mp_structs, volumes=mp_vols)
+
+    def save_predictions(self, structure_data):
+        df = pd.DataFrame()
+        for idx, structure in enumerate(structure_data.structures):
+            try:
+                b = pv.predict(structure)
+            except RuntimeError as r:
+                print r
+                continue
+            except ValueError as v:
+                print v
+                continue
+            df = df.append({'task_id': structure_data.task_ids[idx],
+                            'reduced_cell_formula': Composition(structure.composition).reduced_formula,
+                            'actual_volume': structure.volume, 'predicted_volume': b[0]}, ignore_index=True)
+        df.to_pickle(os.path.join(data_dir, 'test.pkl'))
+        # print pd.read_pickle('test.pkl')
+        # df.plot(x='actual_volume', y='predicted_volume', kind='scatter')
+        # plt.show()
 
 
 if __name__ == '__main__':
@@ -171,26 +194,7 @@ if __name__ == '__main__':
     # '''
     pv.get_avg_bondlengths("nelements_2_minbls.pkl")
     a = pv.predict(new_struct)
-    percent_volume_change = ((a[0] - starting_vol)/starting_vol)*100
+    percent_volume_change = ((a[0] - starting_vol) / starting_vol) * 100
     print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a[0], a[1], percent_volume_change)
     '''
-    df = pd.DataFrame()
-    for idx, structure in enumerate(mp_structs):
-        print mp_ids[idx]
-        try:
-            b = pv.predict(structure)
-        except RuntimeError as r:
-            print r
-            continue
-        except ValueError as v:
-            print v
-            continue
-        df = df.append(
-            {'task_id': mp_ids[idx], 'reduced_cell_formula': Composition(structure.composition).reduced_formula,
-             'actual_volume': structure.volume, 'predicted_volume': b[0]}, ignore_index=True)
-    df.to_pickle('test.pkl')
-    print pd.read_pickle('test.pkl')
-    df.plot(x='actual_volume', y='predicted_volume', kind='scatter')
-    plt.show()
     # '''
-
