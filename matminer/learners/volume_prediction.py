@@ -145,7 +145,7 @@ class VolumePredictor(object):
             self.avg_bondlengths = pickle.load(f)
 
     def get_data(self, nelements, e_above_hull):
-        data = namedtuple('data', 'structures', 'volumes')
+        data = namedtuple('data', 'structures volumes')
         criteria = {'nelements': {'$lte': nelements}}
         mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
         mp_structs = []
@@ -155,7 +155,6 @@ class VolumePredictor(object):
                 mp_structs.append(i['structure'])
                 mp_vols.append(i['structure'].volume)
         return data(structures=mp_structs, volumes=mp_vols)
-        # return mp_structs, mp_vols
 
 
 if __name__ == '__main__':
