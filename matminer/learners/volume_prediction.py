@@ -147,6 +147,13 @@ class VolumePredictor(object):
             self.avg_bondlengths = pickle.load(f)
 
     def get_data(self, nelements, e_above_hull):
+        """
+        Get data from MP that is to be included in the database
+
+        :param nelements: (int) maximum number of elements a material can have that is to be included in the dataset
+        :param e_above_hull: (float) energy above hull as defined by MP (in eV/atom)
+        :return: (namedtuple) of lists of task_ids, structures, and volumes
+        """
         data = namedtuple('data', 'task_id structures volumes')
         criteria = {'nelements': {'$lte': nelements}}
         mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
@@ -161,6 +168,12 @@ class VolumePredictor(object):
         return data(task_ids=mp_ids, structures=mp_structs, volumes=mp_vols)
 
     def save_predictions(self, structure_data):
+        """
+        Save results of the predict() function in a dataframe.
+
+        :param structure_data: (namedtuple) of lists of task_ids, structures, and volumes, as output by get_data()
+        :return:
+        """
         df = pd.DataFrame()
         for idx, structure in enumerate(structure_data.structures):
             try:
