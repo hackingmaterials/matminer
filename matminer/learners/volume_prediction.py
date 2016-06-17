@@ -1,7 +1,7 @@
 import os
 import re
 from pymatgen import MPRester, Element
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder
 from sklearn.metrics import mean_squared_error
 import pickle
@@ -118,12 +118,21 @@ class VolumePredictor(object):
 
     def save_avg_bondlengths(self, filename):
         """
-        Save the average bond lengths calculated by fit().
+        Save the class variable "self.avg_bondlengths" calculated by fit().
 
         :param filename: name of file to store to
         """
         with open(os.path.join(data_dir, filename), 'w') as f:
             pickle.dump(self.avg_bondlengths, f, pickle.HIGHEST_PROTOCOL)
+
+    def save_bondlengths(self, filename):
+        """
+        Save the class variable "self.bond_lengths" calculated by fit().
+
+        :param filename: name of file to store to
+        """
+        with open(os.path.join(data_dir, filename), 'w') as f:
+            pickle.dump(self.bond_lengths, f, pickle.HIGHEST_PROTOCOL)
 
     def get_avg_bondlengths(self, filename):
         """
@@ -135,25 +144,32 @@ class VolumePredictor(object):
         with open(os.path.join(data_dir, filename), 'r') as f:
             self.avg_bondlengths = pickle.load(f)
 
+    def get_data(self, nelements, e_above_hull):
+        data = namedtuple('data', 'structures', 'volumes')
+        criteria = {'nelements': {'$lte': nelements}}
+        mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
+        mp_structs = []
+        mp_vols = []
+        for i in mp_results:
+            if i['e_above_hull'] < e_above_hull:
+                mp_structs.append(i['structure'])
+                mp_vols.append(i['structure'].volume)
+        return data(structures=mp_structs, volumes=mp_vols)
+        # return mp_structs, mp_vols
+
 
 if __name__ == '__main__':
-    mpid = 'mp-628808'
+    mpid = 'mp-258'
+    # mpid = 'mp-628808'
     new_struct = mpr.get_structure_by_material_id(mpid)
     starting_vol = new_struct.volume
     print 'Starting volume for {} = {}'.format(new_struct.composition, starting_vol)
     pv = VolumePredictor()
-    '''
-    criteria = {'nelements': {'$lte': 2}}
-    mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
-    mp_structs = []
-    mp_vols = []
-    for i in mp_results:
-        if i['e_above_hull'] < 0.05:
-            mp_structs.append(i['structure'])
-            mp_vols.append(i['structure'].volume)
-    pv.fit(mp_structs, mp_vols)
+    mp_data = pv.get_data(2, 0.05)
+    pv.fit(mp_data.structures, mp_data.volumes)
     pv.save_avg_bondlengths("nelements_2_minbls.pkl")
-    '''
+    pv.save_bondlengths("nelements_2_bls.pkl")
+    # '''
     pv.get_avg_bondlengths("nelements_2_minbls.pkl")
     a = pv.predict(new_struct)
     percent_volume_change = ((a[0] - starting_vol)/starting_vol)*100
