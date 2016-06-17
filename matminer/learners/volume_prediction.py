@@ -101,6 +101,7 @@ class VolumePredictor(object):
         :param structure: (structure) pymatgen structure object to predict the volume of
         :return: (tuple) predited volume (float) and its rmse (float)
         """
+        prediction_results = namedtuple('prediction_results', 'volume rmse')
         starting_volume = structure.volume
         predicted_volume = starting_volume
         min_rmse = self.get_rmse(self.get_bondlengths(structure))
@@ -116,7 +117,7 @@ class VolumePredictor(object):
         if min_percentage < 85 or min_percentage > 115:
             return self.predict(structure)
         else:
-            return predicted_volume, min_rmse
+            return prediction_results(volume=predicted_volume, rmse=min_rmse)
 
     def save_avg_bondlengths(self, filename):
         """
@@ -186,7 +187,7 @@ class VolumePredictor(object):
                 continue
             df = df.append({'task_id': structure_data.task_ids[idx],
                             'reduced_cell_formula': Composition(structure.composition).reduced_formula,
-                            'actual_volume': structure.volume, 'predicted_volume': b[0]}, ignore_index=True)
+                            'actual_volume': structure.volume, 'predicted_volume': b.volume}, ignore_index=True)
         df.to_pickle(os.path.join(data_dir, 'test.pkl'))
         # print pd.read_pickle('test.pkl')
         # df.plot(x='actual_volume', y='predicted_volume', kind='scatter')
@@ -207,7 +208,7 @@ if __name__ == '__main__':
     # '''
     pv.get_avg_bondlengths("nelements_2_minbls.pkl")
     a = pv.predict(new_struct)
-    percent_volume_change = ((a[0] - starting_vol) / starting_vol) * 100
-    print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a[0], a[1], percent_volume_change)
+    percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
+    print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a.volume, a.rmse, percent_volume_change)
     '''
     # '''
