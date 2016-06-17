@@ -16,6 +16,14 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 def get_pymatgen_eldata_lst(comp, prop):
+    """
+    Get descriptor data for elements in a compound from pymatgen.
+
+    :param comp: (str) compound composition, eg: "NaCl"
+    :param prop: (str) pymatgen element attribute, as defined in the Element class at
+    http://pymatgen.org/_modules/pymatgen/core/periodic_table.html
+    :return: (list) of namedtuples containing element name, property name, property value, units, and amount of element
+    """
     eldata_lst = []
     eldata = collections.namedtuple('eldata', 'element propname propvalue propunit amt')
     el_amt_dict = Composition(comp).get_el_amt_dict()
@@ -37,6 +45,14 @@ def get_pymatgen_eldata_lst(comp, prop):
 
 
 def get_magpie_descriptor(comp, descriptor_name):
+    """
+    Get descriptor data for elements in a compound from the Magpie data repository.
+
+    :param comp: (str) compound composition, eg: "NaCl"
+    :param descriptor_name: name of Magpie descriptor needed. Find the entire list at
+    https://bitbucket.org/wolverton/magpie/src/6ecf8d3b79e03e06ef55c141c350a08fbc8da849/Lookup%20Data/?at=master
+    :return: (list) of descriptor values for each element in the composition
+    """
     available_props = []
     for file in os.listdir('data/magpie_elementdata'):
          available_props.append(file.replace('.table', ''))
@@ -54,6 +70,12 @@ def get_magpie_descriptor(comp, descriptor_name):
 
 
 def get_maxmin(lst):
+    """
+    Get maximum, minimum, median, and total of descriptor values.
+
+    :param lst: (list) of namedtuples as output by get_pymatgen_eldata_lst()
+    :return: (dict) containing maximum, minimum, median, and total of all property values
+    """
     propvalues = []
     for element in lst:
         if element.propvalue is not None:
@@ -62,6 +84,12 @@ def get_maxmin(lst):
 
 
 def get_mean(lst):
+    """
+    Get mean of descriptor values.
+
+    :param lst: (list) of namedtuples as output by get_pymatgen_eldata_lst()
+    :return: (float) weighted mean of property values
+    """
     total_propamt = 0
     total_amt = 0
     for element in lst:
@@ -72,6 +100,12 @@ def get_mean(lst):
 
 
 def get_std(lst):
+    """
+    Get standard deviation of descriptor values.
+
+    :param lst: (list) of namedtuples as output by get_pymatgen_eldata_lst()
+    :return: (float) weighted standard deviation of property values
+    """
     mean = get_mean(lst)
     total_weighted_squares = 0
     total_amt = 0
