@@ -12,12 +12,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # None. Other radii (e.g. covalent) won't require an oxidation state and people can and should use those for
 # non-ionic structures. You can also have a function that returns a mean of ionic_radii for all valences but that
 # should not be the default."
-
-# TODO: merge almost all methods to 1
-# TODO: NamedTuple or tuple
 # TODO: unit tests
-# TODO: use pymatgen Units class to handle units well (don't parse strings manually)
-# TODO: Handle None values
 
 
 def get_pymatgen_eldata_lst(comp, prop):
