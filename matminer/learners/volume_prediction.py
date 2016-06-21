@@ -23,6 +23,27 @@ class VolumePredictor(object):
         self.bond_lengths = defaultdict(list)
         self.avg_bondlengths = {}
 
+    def get_data(self, nelements, e_above_hull):
+        """
+        Get data from MP that is to be included in the database
+
+        :param nelements: (int) maximum number of elements a material can have that is to be included in the dataset
+        :param e_above_hull: (float) energy above hull as defined by MP (in eV/atom)
+        :return: (namedtuple) of lists of task_ids, structures, and volumes
+        """
+        data = namedtuple('data', 'task_ids structures volumes')
+        criteria = {'nelements': {'$lte': nelements}}
+        mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
+        mp_ids = []
+        mp_structs = []
+        mp_vols = []
+        for i in mp_results:
+            if i['e_above_hull'] < e_above_hull:
+                mp_ids.append(i['task_id'])
+                mp_structs.append(i['structure'])
+                mp_vols.append(i['structure'].volume)
+        return data(task_ids=mp_ids, structures=mp_structs, volumes=mp_vols)
+
     def get_bondlengths(self, structure):
         """
         Get all bond lengths in a structure by bond type.
@@ -33,7 +54,7 @@ class VolumePredictor(object):
         bondlengths = defaultdict(list)
         for site_idx, site in enumerate(structure.sites):
             try:
-                voronoi_sites = VoronoiCoordFinder(structure).get_coordinated_sites(site_idx)
+                voronoi_sites = VoronoiCoordFinder(structure).get_coordinated_sites(site_idx, tol=0.5)
             except RuntimeError as r:
                 print 'Error for site {} in {}: {}'.format(site, structure.composition, r)
                 continue
@@ -43,8 +64,7 @@ class VolumePredictor(object):
             site_element_str = ''.join(re.findall(r'[A-Za-z]', site.species_string))
             for vsite in voronoi_sites:
                 s_dist = np.linalg.norm(vsite.coords - site.coords)
-                # TODO: avoid "continue" statements if possible - it is dead simply to write this code without
-                # "continue"
+                # TODO: avoid "continue" statements if possible-it is dead simply to write this code without "continue"
                 if s_dist < 0.1:
                     continue
                 vsite_element_str = ''.join(re.findall(r'[A-Za-z]', vsite.species_string))
@@ -52,21 +72,27 @@ class VolumePredictor(object):
                 bondlengths[bond].append(s_dist)
         return bondlengths
 
-    def fit(self, structures, volumes):
+    def fit(self, structures, volumes, ids=None):
         """
         Given a set of input structures, it stores bond lengths in a defaultdict(list) and average bond lengths in a
         dictionary by bond type (keys).
 
         :param structures: (list) list of pymatgen structure objects
         :param volumes: (list) corresponding list of volumes of structures
+        :param ids: (list) corresponding list of MP task_ids. Default=None
         """
-        for struct in structures:
+        for idx, struct in enumerate(structures):
             struct_bls = self.get_bondlengths(struct)
             for bond in struct_bls:
-                # self.bond_lengths[bond].extend(struct_bls[bond])         # Use all bls
-                self.bond_lengths[bond].append(min(struct_bls[bond]))  # Only use minimum bl for each bond type
+                if ids is not None:      # TODO: add else statement
+                    # self.bond_lengths[bond].extend(struct_bls[bond])         # Use all bls
+                    self.bond_lengths[bond].append(struct_data(bond_length=min(struct_bls[bond]), task_id=ids[idx]))  # Only use minimum bl for each bond type
         for bond in self.bond_lengths:
-            self.avg_bondlengths[bond] = sum(self.bond_lengths[bond]) / len(self.bond_lengths[bond])
+            # self.avg_bondlengths[bond] = sum(self.bond_lengths[bond]) / len(self.bond_lengths[bond])
+            total = 0
+            for item in self.bond_lengths[bond]:
+                total += item.bond_length
+            self.avg_bondlengths[bond] = total / len(self.bond_lengths[bond])
 
     def get_rmse(self, structure_bls):
         """
@@ -83,6 +109,7 @@ class VolumePredictor(object):
                 y_avg.append(self.avg_bondlengths[bond])  # Use avg from only min bl
             else:
                 # TODO: you are just guessing here with 0.75 - figure out what the real factor should be
+                print 'Warning missing bond length for {}'.format(bond)
                 el1, el2 = bond.split("-")
                 r1 = float(Element(el1).atomic_radius)
                 r2 = float(Element(el2).atomic_radius)
@@ -147,27 +174,6 @@ class VolumePredictor(object):
         with open(os.path.join(data_dir, filename), 'r') as f:
             self.avg_bondlengths = pickle.load(f)
 
-    def get_data(self, nelements, e_above_hull):
-        """
-        Get data from MP that is to be included in the database
-
-        :param nelements: (int) maximum number of elements a material can have that is to be included in the dataset
-        :param e_above_hull: (float) energy above hull as defined by MP (in eV/atom)
-        :return: (namedtuple) of lists of task_ids, structures, and volumes
-        """
-        data = namedtuple('data', 'task_id structures volumes')
-        criteria = {'nelements': {'$lte': nelements}}
-        mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
-        mp_ids = []
-        mp_structs = []
-        mp_vols = []
-        for i in mp_results:
-            if i['e_above_hull'] < e_above_hull:
-                mp_ids.append(i['task_id'])
-                mp_structs.append(i['structure'])
-                mp_vols.append(i['structure'].volume)
-        return data(task_ids=mp_ids, structures=mp_structs, volumes=mp_vols)
-
     def save_predictions(self, structure_data):
         """
         Save results of the predict() function in a dataframe.
@@ -195,20 +201,17 @@ class VolumePredictor(object):
 
 
 if __name__ == '__main__':
-    mpid = 'mp-258'
-    # mpid = 'mp-628808'
+    struct_data = namedtuple('struct_data', 'bond_length task_id')
+    mpid = 'mp-1368'
     new_struct = mpr.get_structure_by_material_id(mpid)
     starting_vol = new_struct.volume
     print 'Starting volume for {} = {}'.format(new_struct.composition, starting_vol)
     pv = VolumePredictor()
     mp_data = pv.get_data(2, 0.05)
-    pv.fit(mp_data.structures, mp_data.volumes)
+    pv.fit(mp_data.structures, mp_data.volumes, mp_data.task_ids)
     pv.save_avg_bondlengths("nelements_2_minbls.pkl")
     pv.save_bondlengths("nelements_2_bls.pkl")
-    # '''
     pv.get_avg_bondlengths("nelements_2_minbls.pkl")
     a = pv.predict(new_struct)
     percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
     print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a.volume, a.rmse, percent_volume_change)
-    '''
-    # '''
