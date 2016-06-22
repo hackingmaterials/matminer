@@ -114,7 +114,7 @@ class VolumePredictor(object):
                 r1 = float(Element(el1).atomic_radius)
                 r2 = float(Element(el2).atomic_radius)
                 # y_avg.extend([(r1+r2)*0.75]*len(structure_bls[bond]))     # Use all bls
-                y_avg.append((r1 + r2) * 0.75)  # Only use minimum bl for each bond type
+                y_avg.append(r1 + r2)  # Only use minimum bl for each bond type
             # y_actual.extend(structure_bls[bond])                          # Use all bls
             y_actual.append(min(structure_bls[bond]))  # Only use minimum bl for each bond type
         return mean_squared_error(y_actual, y_avg) ** 0.5
@@ -202,15 +202,15 @@ class VolumePredictor(object):
 
 if __name__ == '__main__':
     struct_data = namedtuple('struct_data', 'bond_length task_id')
-    mpid = 'mp-1368'
+    mpid = 'mp-628808'
     new_struct = mpr.get_structure_by_material_id(mpid)
     starting_vol = new_struct.volume
     print 'Starting volume for {} = {}'.format(new_struct.composition, starting_vol)
     pv = VolumePredictor()
-    mp_data = pv.get_data(2, 0.05)
-    pv.fit(mp_data.structures, mp_data.volumes, mp_data.task_ids)
-    pv.save_avg_bondlengths("nelements_2_minbls.pkl")
-    pv.save_bondlengths("nelements_2_bls.pkl")
+    # mp_data = pv.get_data(2, 0.05)
+    # pv.fit(mp_data.structures, mp_data.volumes, mp_data.task_ids)
+    # pv.save_avg_bondlengths("nelements_2_minbls.pkl")
+    # pv.save_bondlengths("nelements_2_bls.pkl")
     pv.get_avg_bondlengths("nelements_2_minbls.pkl")
     a = pv.predict(new_struct)
     percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
