@@ -88,7 +88,6 @@ class VolumePredictor(object):
                     # self.bond_lengths[bond].extend(struct_bls[bond])         # Use all bls
                     self.bond_lengths[bond].append(struct_data(bond_length=min(struct_bls[bond]), task_id=ids[idx]))  # Only use minimum bl for each bond type
         for bond in self.bond_lengths:
-            # self.avg_bondlengths[bond] = sum(self.bond_lengths[bond]) / len(self.bond_lengths[bond])
             total = 0
             for item in self.bond_lengths[bond]:
                 total += item.bond_length
@@ -105,18 +104,14 @@ class VolumePredictor(object):
         y_avg = []
         for bond in structure_bls:
             if bond in self.avg_bondlengths:
-                # y_avg.extend([self.avg_bondlengths[bond]]*len(structure_bls[bond]))     # Use avg from all bls
-                y_avg.append(self.avg_bondlengths[bond])  # Use avg from only min bl
+                y_avg.extend([self.avg_bondlengths[bond]]*len(structure_bls[bond]))
             else:
-                # TODO: you are just guessing here with 0.75 - figure out what the real factor should be
                 print 'Warning missing bond length for {}'.format(bond)
                 el1, el2 = bond.split("-")
                 r1 = float(Element(el1).atomic_radius)
                 r2 = float(Element(el2).atomic_radius)
-                # y_avg.extend([(r1+r2)*0.75]*len(structure_bls[bond]))     # Use all bls
-                y_avg.append(r1 + r2)  # Only use minimum bl for each bond type
-            # y_actual.extend(structure_bls[bond])                          # Use all bls
-            y_actual.append(min(structure_bls[bond]))  # Only use minimum bl for each bond type
+                y_avg.extend([(r1+r2)]*len(structure_bls[bond]))
+            y_actual.extend([min(structure_bls[bond])]*len(structure_bls[bond]))
         return mean_squared_error(y_actual, y_avg) ** 0.5
 
     def predict(self, structure):
