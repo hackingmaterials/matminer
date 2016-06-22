@@ -52,6 +52,10 @@ class VolumePredictor(object):
         :return: (defaultdict(list)) with bond types in the format 'A-B' as keys, and bond lengths as values
         """
         bondlengths = defaultdict(list)
+        bondlengths_detailed = defaultdict(list)
+        sites_dist = namedtuple('sites_dist', 'sites dist')
+        min_bonds = {}
+        min_sites_dist = namedtuple('min_sites_dist', 'min_sites min_dist')
         for site_idx, site in enumerate(structure.sites):
             try:
                 voronoi_sites = VoronoiCoordFinder(structure).get_coordinated_sites(site_idx, tol=0.5)
@@ -70,6 +74,18 @@ class VolumePredictor(object):
                 vsite_element_str = ''.join(re.findall(r'[A-Za-z]', vsite.species_string))
                 bond = '-'.join(sorted([site_element_str, vsite_element_str]))
                 bondlengths[bond].append(s_dist)
+                bondlengths_detailed[bond].append(sites_dist(sites=[site, vsite], dist=s_dist))
+        for bl in bondlengths:
+            print bl, min(bondlengths[bl])
+        for bondtype in bondlengths_detailed:
+            min_dist = bondlengths_detailed[bondtype][0].dist
+            min_sites = bondlengths_detailed[bondtype][0].sites
+            for site_pair in bondlengths_detailed[bondtype]:
+                if site_pair.dist < min_dist:
+                    min_dist = site_pair.dist
+                    min_sites = site_pair.sites
+            min_bonds[bondtype] = min_sites_dist(min_sites=min_sites, min_dist=min_dist)
+        print min_bonds
         return bondlengths
 
     def fit(self, structures, volumes, ids=None):
@@ -197,16 +213,18 @@ class VolumePredictor(object):
 
 if __name__ == '__main__':
     struct_data = namedtuple('struct_data', 'bond_length task_id')
-    mpid = 'mp-628808'
-    new_struct = mpr.get_structure_by_material_id(mpid)
-    starting_vol = new_struct.volume
-    print 'Starting volume for {} = {}'.format(new_struct.composition, starting_vol)
-    pv = VolumePredictor()
-    # mp_data = pv.get_data(2, 0.05)
-    # pv.fit(mp_data.structures, mp_data.volumes, mp_data.task_ids)
-    # pv.save_avg_bondlengths("nelements_2_minbls.pkl")
-    # pv.save_bondlengths("nelements_2_bls.pkl")
-    pv.get_avg_bondlengths("nelements_2_minbls.pkl")
-    a = pv.predict(new_struct)
-    percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
-    print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a.volume, a.rmse, percent_volume_change)
+    # mpids = ['mp-628808', 'mp-19017', 'mp-258', 'mp-1368']
+    mpids = ['mp-1368']
+    for mpid in mpids:
+        new_struct = mpr.get_structure_by_material_id(mpid)
+        starting_vol = new_struct.volume
+        print 'Starting volume for {} = {}'.format(new_struct.composition, starting_vol)
+        pv = VolumePredictor()
+        # mp_data = pv.get_data(2, 0.05)
+        # pv.fit(mp_data.structures, mp_data.volumes, mp_data.task_ids)
+        # pv.save_avg_bondlengths("nelements_2_minbls.pkl")
+        # pv.save_bondlengths("nelements_2_bls.pkl")
+        pv.get_avg_bondlengths("nelements_2_minbls.pkl")
+        a = pv.predict(new_struct)
+        percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
+        print 'Predicted volume = {} with RMSE = {} and a volume change of {}%'.format(a.volume, a.rmse, percent_volume_change)
