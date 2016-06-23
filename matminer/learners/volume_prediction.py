@@ -1,6 +1,6 @@
 import os
 import re
-from pymatgen import MPRester, Element, Composition
+from pymatgen import MPRester, Element, Composition, Structure
 from collections import defaultdict, namedtuple
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder
 from sklearn.metrics import mean_squared_error
@@ -53,6 +53,7 @@ class VolumePredictor(object):
         """
         bondlengths = defaultdict(list)
         for site_idx, site in enumerate(structure.sites):
+            site_element_str = ''.join(re.findall(r'[A-Za-z]', site.species_string))
             try:
                 voronoi_sites = VoronoiCoordFinder(structure).get_coordinated_sites(site_idx, tol=0.5)
             except RuntimeError as r:
@@ -61,7 +62,6 @@ class VolumePredictor(object):
             except ValueError as v:
                 print 'Error for site {} in {}: {}'.format(site, structure.composition, v)
                 continue
-            site_element_str = ''.join(re.findall(r'[A-Za-z]', site.species_string))
             for vsite in voronoi_sites:
                 s_dist = np.linalg.norm(vsite.coords - site.coords)
                 # TODO: avoid "continue" statements if possible-it is dead simply to write this code without "continue"
@@ -83,10 +83,12 @@ class VolumePredictor(object):
         """
         bondlengths = defaultdict(list)
         bondlengths_detailed = defaultdict(list)
-        sites_dist = namedtuple('sites_dist', 'sites dist')
+        site_dist = namedtuple('site_dist', 'site dist')
         min_bonds = {}
-        bond_details = namedtuple('bond_details', 'min_sites min_dist no_of_bonds')
+        bond_details = namedtuple('bond_details', 'min_site min_dist no_of_bonds')
+        # print len(structure.sites), structure.sites
         for site_idx, site in enumerate(structure.sites):
+            site_element_str = ''.join(re.findall(r'[A-Za-z]', site.species_string))
             try:
                 voronoi_sites = VoronoiCoordFinder(structure).get_coordinated_sites(site_idx, tol=0.5)
             except RuntimeError as r:
@@ -95,7 +97,6 @@ class VolumePredictor(object):
             except ValueError as v:
                 print 'Error for site {} in {}: {}'.format(site, structure.composition, v)
                 continue
-            site_element_str = ''.join(re.findall(r'[A-Za-z]', site.species_string))
             for vsite in voronoi_sites:
                 s_dist = np.linalg.norm(vsite.coords - site.coords)
                 # TODO: avoid "continue" statements if possible-it is dead simply to write this code without "continue"
@@ -104,17 +105,15 @@ class VolumePredictor(object):
                 vsite_element_str = ''.join(re.findall(r'[A-Za-z]', vsite.species_string))
                 bond = '-'.join(sorted([site_element_str, vsite_element_str]))
                 bondlengths[bond].append(s_dist)
-                bondlengths_detailed[bond].append(sites_dist(sites=[site, vsite], dist=s_dist))
-        for bl in bondlengths:
-            print bl, min(bondlengths[bl]), len(bondlengths[bl])
+                bondlengths_detailed[bond].append(site_dist(site=[site_idx,site.frac_coords,vsite.frac_coords], dist=s_dist))
         for bondtype in bondlengths_detailed:
             min_dist = bondlengths_detailed[bondtype][0].dist
-            min_sites = bondlengths_detailed[bondtype][0].sites
+            min_site = bondlengths_detailed[bondtype][0].site
             for site_pair in bondlengths_detailed[bondtype]:
                 if site_pair.dist < min_dist:
                     min_dist = site_pair.dist
-                    min_sites = site_pair.sites
-            min_bonds[bondtype] = bond_details(min_sites=min_sites, min_dist=min_dist, no_of_bonds=len(bondlengths_detailed[bondtype]))
+                    min_site = site_pair.site
+            min_bonds[bondtype] = bond_details(min_site=min_site, min_dist=min_dist, no_of_bonds=len(bondlengths_detailed[bondtype]))
         print min_bonds
         return min_bonds
 
@@ -181,6 +180,35 @@ class VolumePredictor(object):
             y_actual.extend([min_bls[bond].min_dist]*min_bls[bond].no_of_bonds)
         return mean_squared_error(y_actual, y_avg) ** 0.5
 
+    def new1_get_rmse(self, orig_bls, struct):
+        """
+        Calculates root mean square error between bond lengths in a structure and the average expected bond lengths.
+
+        :param structure_bls: defaultdict(list) of bond lengths as output by the function "get_bondlengths()"
+        :return: (float) root mean square error
+        """
+        y_actual = []
+        y_avg = []
+        for bond in orig_bls:
+            if bond in self.avg_bondlengths:
+                y_avg.extend([self.avg_bondlengths[bond]]*orig_bls[bond].no_of_bonds)
+            else:
+                print 'Warning missing bond length for {}'.format(bond)
+                el1, el2 = bond.split("-")
+                r1 = float(Element(el1).atomic_radius)
+                r2 = float(Element(el2).atomic_radius)
+                y_avg.extend([(r1+r2)]*orig_bls[bond].no_of_bonds)
+            bonded_element = bond.split("-")[1]
+            for site_dist in struct.get_sites_in_sphere(struct.sites[orig_bls[bond].min_site].coords, 5):
+                if ''.join(re.findall(r'[A-Za-z]', site_dist[0].species_string)) == bonded_element:
+                    min_len = site_dist[1]
+                    break
+            # for site_dist in struct.get_sites_in_sphere(struct.sites[orig_bls[bond].min_site].coords, 5):
+            #     if ''.join(re.findall(r'[A-Za-z]', site_dist[0].species_string)) == bonded_element:
+            #         if site_dist[1] <
+            y_actual.extend([orig_bls[bond].min_dist]*orig_bls[bond].no_of_bonds)
+        return mean_squared_error(y_actual, y_avg) ** 0.5
+
     def predict(self, structure):
         """
         Predict volume of a given structure based on rmse against average bond lengths from a set of input structures.
@@ -195,12 +223,17 @@ class VolumePredictor(object):
         predicted_volume = starting_volume
         # min_rmse = self.get_rmse(self.get_bondlengths(structure))
         min_rmse = self.new_get_rmse(self.new_get_bondlengths(structure))
+        orig_bonds = self.new_get_bondlengths(structure)
         min_percentage = 100
         for i in range(80, 121):
             test_volume = (i * 0.01) * starting_volume
             structure.scale_lattice(test_volume)
             # test_rmse = self.get_rmse(self.get_bondlengths(structure))
             test_rmse = self.new_get_rmse(self.new_get_bondlengths(structure))
+            # test_rmse = self.new1_get_rmse(orig_bonds, structure)
+            # for bond in orig_bonds:
+            #     print orig_bonds[bond].min_site
+            #     print structure.get_sites_in_sphere(structure.sites[orig_bonds[bond].min_site].coords, 5)
             if test_rmse < min_rmse:
                 min_rmse = test_rmse
                 predicted_volume = test_volume
@@ -267,6 +300,7 @@ class VolumePredictor(object):
 if __name__ == '__main__':
     struct_data = namedtuple('struct_data', 'bond_length task_id')
     # mpids = ['mp-628808', 'mp-19017', 'mp-258', 'mp-1368']
+    # mpids = ['mp-258', 'mp-23210', 'mp-1138', 'mp-149', 'mp-22914']
     mpids = ['mp-258']
     for mpid in mpids:
         new_struct = mpr.get_structure_by_material_id(mpid)
