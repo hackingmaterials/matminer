@@ -182,34 +182,31 @@ class VolumePredictor(object):
         with open(os.path.join(data_dir, filename), 'r') as f:
             self.avg_bondlengths = pickle.load(f)
 
-    def save_predictions(self, structure_data):
-        """
-        Save results of the predict() function in a dataframe.
 
-        :param structure_data: (namedtuple) of lists of task_ids, structures, and volumes, as output by get_data()
-        :return:
-        """
-        df = pd.DataFrame()
-        for idx, structure in enumerate(structure_data.structures):
-            try:
-                b = pv.predict(structure)
-            except RuntimeError as r:
-                print r
-                continue
-            except ValueError as v:
-                print v
-                continue
-            df = df.append({'task_id': structure_data.task_ids[idx],
-                            'reduced_cell_formula': Composition(structure.composition).reduced_formula,
-                            'actual_volume': structure.volume, 'predicted_volume': b.volume}, ignore_index=True)
-        df.to_pickle(os.path.join(data_dir, 'test.pkl'))
-        # print pd.read_pickle('test.pkl')
-        # df.plot(x='actual_volume', y='predicted_volume', kind='scatter')
-        # plt.show()
+def save_predictions(structure_data):
+    """
+    Save results of the predict() function in a dataframe.
+
+    :param structure_data: (namedtuple) of lists of task_ids, structures, and volumes, as output by get_data()
+    :return:
+    """
+    df = pd.DataFrame()
+    cv = VolumePredictor()
+    cv.get_avg_bondlengths("nelements_2_minbls.pkl")
+    for idx, structure in enumerate(structure_data.structures):
+        b = cv.predict(structure)
+        df = df.append({'task_id': structure_data.task_ids[idx],
+                        'reduced_cell_formula': Composition(structure.composition).reduced_formula,
+                        'starting_volume': structure.volume, 'predicted_volume': b.volume}, ignore_index=True)
+    df.to_pickle(os.path.join(data_dir, 'test.pkl'))
+    # print pd.read_pickle('test.pkl')
+    # df.plot(x='actual_volume', y='predicted_volume', kind='scatter')
+    # plt.show()
 
 
 if __name__ == '__main__':
     struct_data = namedtuple('struct_data', 'bond_length task_id')
+    # '''
     mpids = ['mp-628808', 'mp-19017', 'mp-258', 'mp-1368']
     # mpids = ['mp-258', 'mp-23210', 'mp-1138', 'mp-149', 'mp-22914']
     for mpid in mpids:
@@ -226,3 +223,6 @@ if __name__ == '__main__':
         percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
         print 'Predicted volume = {}, structure = {}, with RMSE = {} and a volume change of {}%'.format(a.volume,
                                                                             a.structure, a.rmse, percent_volume_change)
+    # '''
+    # mp_data = VolumePredictor().get_data(2, 0.05)
+    # save_predictions(mp_data)
