@@ -7,11 +7,16 @@ from sklearn.metrics import mean_squared_error
 import pickle
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 mpr = MPRester()
 
 module_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-data_dir = os.path.join(module_dir, 'data_bondlengths')
+bl_dir = os.path.join(module_dir, 'data_bondlengths')
+data_dir = os.path.join(module_dir, 'data')
+
+data = namedtuple('data', 'task_ids structures volumes')
+struct_data = namedtuple('struct_data', 'min_bond_length task_id')
 
 
 class VolumePredictor(object):
@@ -31,7 +36,6 @@ class VolumePredictor(object):
         :param e_above_hull: (float) energy above hull as defined by MP (in eV/atom)
         :return: (namedtuple) of lists of task_ids, structures, and volumes
         """
-        data = namedtuple('data', 'task_ids structures volumes')
         criteria = {'nelements': {'$lte': nelements}}
         mp_results = mpr.query(criteria=criteria, properties=['task_id', 'e_above_hull', 'structure'])
         mp_ids = []
@@ -94,7 +98,8 @@ class VolumePredictor(object):
             struct_minbls = self.get_bondlengths(struct)
             for bond in struct_minbls:
                 if ids is not None:      # TODO: add else statement
-                    self.bond_lengths[bond].append(struct_data(min_bond_length=struct_minbls[bond], task_id=ids[idx]))
+                    self.bond_lengths[bond].append(struct_data(min_bond_length=struct_minbls[bond].min_dist,
+                                                               task_id=ids[idx]))
         for bond in self.bond_lengths:
             total = 0
             for item in self.bond_lengths[bond]:
@@ -139,9 +144,9 @@ class VolumePredictor(object):
         predicted_volume = starting_volume
         min_rmse = self.get_rmse(self.get_bondlengths(structure), 1)  # Get starting RMSE for original structure
         starting_minbls = self.get_bondlengths(structure)
-        min_percentage = 100
-        for i in range(80, 121):
-            vol_factor = (i * 0.01)
+        min_percentage = 1000
+        for i in range(800, 1201):
+            vol_factor = (i * 0.001)
             test_volume = vol_factor * starting_volume
             structure.scale_lattice(test_volume)
             test_rmse = self.get_rmse(starting_minbls, vol_factor)
@@ -149,7 +154,7 @@ class VolumePredictor(object):
                 min_rmse = test_rmse
                 predicted_volume = test_volume
                 min_percentage = i
-        if min_percentage < 85 or min_percentage > 115:
+        if min_percentage < 850 or min_percentage > 1150:
             return self.predict(structure)
         else:
             return prediction_results(volume=predicted_volume, structure=structure, rmse=min_rmse)
@@ -160,7 +165,7 @@ class VolumePredictor(object):
 
         :param filename: name of file to store to
         """
-        with open(os.path.join(data_dir, filename), 'w') as f:
+        with open(os.path.join(bl_dir, filename), 'w') as f:
             pickle.dump(self.avg_bondlengths, f, pickle.HIGHEST_PROTOCOL)
 
     def save_bondlengths(self, filename):
@@ -169,7 +174,7 @@ class VolumePredictor(object):
 
         :param filename: name of file to store to
         """
-        with open(os.path.join(data_dir, filename), 'w') as f:
+        with open(os.path.join(bl_dir, filename), 'w') as f:
             pickle.dump(self.bond_lengths, f, pickle.HIGHEST_PROTOCOL)
 
     def get_avg_bondlengths(self, filename):
@@ -179,7 +184,7 @@ class VolumePredictor(object):
         :param filename: name of file to extract average bond lengths from
         :return:
         """
-        with open(os.path.join(data_dir, filename), 'r') as f:
+        with open(os.path.join(bl_dir, filename), 'r') as f:
             self.avg_bondlengths = pickle.load(f)
 
 
@@ -193,15 +198,63 @@ def save_predictions(structure_data):
     df = pd.DataFrame()
     cv = VolumePredictor()
     cv.get_avg_bondlengths("nelements_2_minbls.pkl")
+    x = 0
+    y = 0
     for idx, structure in enumerate(structure_data.structures):
-        b = cv.predict(structure)
+        x += 1
+        if x % 10 == 0:
+            print 'Current completed = {}'.format(x)
+        try:
+            b = cv.predict(structure)
+        except ValueError as e:
+            print 'ValueError for {}: {}'.format(structure_data.task_ids[idx], e)
+            y += 1
+            print 'INCOMPLETE = {}'.format(y)
+            continue
         df = df.append({'task_id': structure_data.task_ids[idx],
                         'reduced_cell_formula': Composition(structure.composition).reduced_formula,
-                        'starting_volume': structure.volume, 'predicted_volume': b.volume}, ignore_index=True)
-    df.to_pickle(os.path.join(data_dir, 'test.pkl'))
-    # print pd.read_pickle('test.pkl')
-    # df.plot(x='actual_volume', y='predicted_volume', kind='scatter')
-    # plt.show()
+                        'starting_volume': structure_data.volumes[idx], 'predicted_volume': b.volume,
+                        'percentage_volume_change': ((b.volume - structure_data.volumes[idx])/structure_data.volumes[idx]) * 100},
+                       ignore_index=True)
+        print 'Done for {}'.format(structure_data.task_ids[idx])
+    df.to_pickle(os.path.join(data_dir, 'cv_1_on_2.pkl'))
+
+
+if __name__ == '__main__':
+    pd.set_option('display.width', 1000)
+    # pv = VolumePredictor()
+    # mp_data = pv.get_data(2, 0.05)
+    # pv.fit(mp_data.structures, mp_data.volumes, mp_data.task_ids)
+    # pv.save_avg_bondlengths("nelements_2_minbls.pkl")
+    # pv.save_bondlengths("nelements_2_bls.pkl")
+    '''
+    # mpids = ['mp-628808', 'mp-19017', 'mp-258', 'mp-1368']
+    # mpids = ['mp-258', 'mp-23210', 'mp-1138', 'mp-149', 'mp-22914']
+    mpids = ['mp-20745']
+    for mpid in mpids:
+        new_struct = mpr.get_structure_by_material_id(mpid)
+        starting_vol = new_struct.volume
+        print 'Starting volume for {} = {}'.format(new_struct.composition, starting_vol)
+        pv = VolumePredictor()
+        pv.get_avg_bondlengths("nelements_2_minbls.pkl")
+        try:
+            a = pv.predict(new_struct)
+        except ValueError:
+            continue
+        percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
+        print 'Predicted volume = {}, with RMSE = {} and a volume change of {}%'.format(a.volume,
+                                                                    a.rmse, percent_volume_change)
+    '''
+    # with open(os.path.join(data_dir, "mp_rawdata_1.pkl"), 'r') as f:
+    #     mp_data = pickle.load(f)
+    # save_predictions(mp_data)
+    # '''
+    df = pd.read_pickle(os.path.join(data_dir, 'cv_1_on_2.pkl'))
+    # print df
+    print df.sort(['percentage_volume_change'])
+    # df.plot(x='starting_volume', y='predicted_volume', kind='scatter')
+    df.plot(x='starting_volume', y='percentage_volume_change', kind='scatter')
+    plt.show()
 
 
 if __name__ == '__main__':
