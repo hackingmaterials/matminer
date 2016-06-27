@@ -229,7 +229,7 @@ if __name__ == '__main__':
 
 
 class VolumePredictorSimple:
-    def __init__(self, cutoff=8, max_cutoff=32):
+    def __init__(self, cutoff=8, max_cutoff=32, ionic_mix=0.2):
         """
         Predicts volume; given a structure, ensures that:
         (i) no two sites are closer than sum of their atomic radii
@@ -238,10 +238,12 @@ class VolumePredictorSimple:
         Args:
             cutoff: (float) initial cutoff for finding site pairs in Angstrom
             max_cutoff: (float) max cutoff for finding site pairs in Angstrom
+            ionic_mix: (float) mix factor for ionic radii (fudge factor)
 
         """
         self.cutoff = cutoff
         self.max_cutoff = max_cutoff
+        self.ionic_radii_mix = ionic_mix
 
     def predict(self, structure):
         """
@@ -268,7 +270,9 @@ class VolumePredictorSimple:
 
             for site2, dist in x:
                 el2 = site2.specie
-                expected_dist = float(el1.atomic_radius + el2.atomic_radius)
+                r1 = el1.average_ionic_radius * self.ionic_radii_mix + el1.atomic_radius * (1-self.ionic_radii_mix) if el1.average_ionic_radius else el1.atomic_radius
+                r2 = el2.average_ionic_radius * self.ionic_radii_mix + el2.atomic_radius * (1-self.ionic_radii_mix) if el2.average_ionic_radius else el2.atomic_radius
+                expected_dist = float(r1 + r2)
                 if not smallest_distance or dist/expected_dist < smallest_distance:
                     smallest_distance = dist/expected_dist
 
