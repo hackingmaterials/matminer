@@ -226,3 +226,56 @@ if __name__ == '__main__':
     # '''
     # mp_data = VolumePredictor().get_data(2, 0.05)
     # save_predictions(mp_data)
+
+
+class VolumePredictorSimple:
+    def __init__(self, cutoff=8, max_cutoff=32):
+        """
+        Predicts volume; given a structure, ensures that:
+        (i) no sites are closer than sum of atomic radii
+        (ii) at least one pair of sites is exactly equal to sum of atomic radii
+
+        Args:
+            cutoff: (float) initial cutoff for finding site pairs in Angstrom
+            max_cutoff: (float) max cutoff for finding site pairs in Angstrom
+
+        """
+        self.cutoff = cutoff
+        self.max_cutoff = max_cutoff
+
+    def predict(self, structure):
+        """
+        Given a structure, returns back a volume-predicted structure
+        Args:
+            structure: (Structure)
+
+        Returns:
+            Copy of structure with volume adjusted
+        """
+
+        smallest_distance = None
+
+        for site in structure:
+            el1 = site.specie
+            x = []
+            cutoff = self.cutoff
+            while not x and cutoff <= self.max_cutoff:
+                x = structure.get_neighbors(site, cutoff)
+                cutoff *= 2
+
+            for site2, dist in x:
+                el2 = site2.specie
+                expected_dist = float(el1.atomic_radius + el2.atomic_radius)
+                if not smallest_distance or dist/expected_dist < smallest_distance:
+                    smallest_distance = dist/expected_dist
+
+        if not smallest_distance:
+            raise ValueError("Could not find any appropriate bonds in this material; "
+                             "ensure structure validity or increase max_cutoff!")
+
+        vol_factor = (1/smallest_distance)**3
+
+        s2 = structure.copy()
+        s2.scale_lattice(structure.volume * vol_factor)
+
+        return s2
