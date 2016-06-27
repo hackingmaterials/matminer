@@ -232,7 +232,7 @@ class VolumePredictorSimple:
     def __init__(self, cutoff=8, max_cutoff=32):
         """
         Predicts volume; given a structure, ensures that:
-        (i) no sites are closer than sum of atomic radii
+        (i) no two sites are closer than sum of their atomic radii
         (ii) at least one pair of sites is exactly equal to sum of atomic radii
 
         Args:
@@ -253,11 +253,14 @@ class VolumePredictorSimple:
             Copy of structure with volume adjusted
         """
 
+        if not structure.is_ordered:
+            raise ValueError("VolumePredictorSimple only works with ordered structures!")
+
         smallest_distance = None
 
         for site in structure:
             el1 = site.specie
-            x = []
+            x = []  # array of (sites, distance) neighbors around site
             cutoff = self.cutoff
             while not x and cutoff <= self.max_cutoff:
                 x = structure.get_neighbors(site, cutoff)
