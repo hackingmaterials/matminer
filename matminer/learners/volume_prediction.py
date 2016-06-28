@@ -257,30 +257,6 @@ if __name__ == '__main__':
     plt.show()
 
 
-if __name__ == '__main__':
-    struct_data = namedtuple('struct_data', 'bond_length task_id')
-    # '''
-    mpids = ['mp-628808', 'mp-19017', 'mp-258', 'mp-1368']
-    # mpids = ['mp-258', 'mp-23210', 'mp-1138', 'mp-149', 'mp-22914']
-    for mpid in mpids:
-        new_struct = mpr.get_structure_by_material_id(mpid)
-        starting_vol = new_struct.volume
-        print 'Starting volume for {} = {}'.format(new_struct.composition, starting_vol)
-        pv = VolumePredictor()
-        # mp_data = pv.get_data(2, 0.05)
-        # pv.fit(mp_data.structures, mp_data.volumes, mp_data.task_ids)
-        # pv.save_avg_bondlengths("nelements_2_minbls.pkl")
-        # pv.save_bondlengths("nelements_2_bls.pkl")
-        pv.get_avg_bondlengths("nelements_2_minbls.pkl")
-        a = pv.predict(new_struct)
-        percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
-        print 'Predicted volume = {}, structure = {}, with RMSE = {} and a volume change of {}%'.format(a.volume,
-                                                                            a.structure, a.rmse, percent_volume_change)
-    # '''
-    # mp_data = VolumePredictor().get_data(2, 0.05)
-    # save_predictions(mp_data)
-
-
 class VolumePredictorSimple:
     def __init__(self, cutoff=8, max_cutoff=32, ionic_mix=0.2):
         """
