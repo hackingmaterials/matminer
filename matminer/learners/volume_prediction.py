@@ -260,9 +260,8 @@ if __name__ == '__main__':
 class VolumePredictorSimple:
     def __init__(self, cutoff=8, max_cutoff=32, ionic_mix=0.2):
         """
-        Predicts volume; given a structure, ensures that:
-        (i) no two sites are closer than sum of their atomic radii
-        (ii) at least one pair of sites is exactly equal to sum of atomic radii
+        Predicts volume; given a structure, finds the minimum volume such that
+        no two sites are closer than sum of their atomic radii.
 
         The ionic_mix factor will mix atomic and ionic radii - a value of
         0.2 is a rough fit. A *possible* improvement is to set this factor
@@ -288,7 +287,7 @@ class VolumePredictorSimple:
             structure: (Structure)
 
         Returns:
-            Copy of structure with volume adjusted
+            (float) expected volume of structure
         """
 
         if not structure.is_ordered:
@@ -316,9 +315,4 @@ class VolumePredictorSimple:
             raise ValueError("Could not find any appropriate bonds in this material; "
                              "ensure structure validity or increase max_cutoff!")
 
-        vol_factor = (1/smallest_distance)**3
-
-        s2 = structure.copy()
-        s2.scale_lattice(structure.volume * vol_factor)
-
-        return s2
+        return structure.volume * (1/smallest_distance)**3
