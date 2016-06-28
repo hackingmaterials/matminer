@@ -264,6 +264,10 @@ class VolumePredictorSimple:
         (i) no two sites are closer than sum of their atomic radii
         (ii) at least one pair of sites is exactly equal to sum of atomic radii
 
+        The ionic_mix factor will mix atomic and ionic radii - the value of
+        0.2 is a rough fit. A *possible* improvement is to set this factor
+        dynamically for each site based on its local environment.
+
         Args:
             cutoff: (float) initial cutoff for finding site pairs in Angstrom
             max_cutoff: (float) max cutoff for finding site pairs in Angstrom
