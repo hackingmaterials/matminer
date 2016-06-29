@@ -263,10 +263,9 @@ class VolumePredictorSimple:
     def __init__(self, cutoff=4, ionic_factor=0.125):
         """
         Predicts volume; given a structure, finds the minimum volume such that
-        no two sites are closer than sum of their atomic radii.
-
-        The sum of atomic radii is modified for ionicity using an ionic_factor
-        that depends on electronegativity difference.
+        no two sites are closer than sum of their atomic radii. The sum of
+        atomic radii is modified for ionicity using an ionic_factor that
+        depends on electronegativity difference.
 
         Args:
             cutoff: (float) cutoff for site pairs (added to site radius)
