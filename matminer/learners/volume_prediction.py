@@ -270,7 +270,9 @@ class VolumePredictorSimple:
 
         Args:
             cutoff: (float) cutoff for site pairs (added to site radius)
-                in Angstrom
+                in Angstrom. Increase if your initial structure guess
+                is extremely bad (atoms way too far apart). In all other cases,
+                increasing cutoff gives same answer but at lower performance.
         """
         self.cutoff = cutoff
         if ionic_factor > 0.25:
