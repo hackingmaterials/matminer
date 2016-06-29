@@ -260,24 +260,22 @@ if __name__ == '__main__':
 
 
 class VolumePredictorSimple:
-    def __init__(self, cutoff=4, ionic_mix=0.2):
+    def __init__(self, cutoff=4, ionic_factor=0.125):
         """
         Predicts volume; given a structure, finds the minimum volume such that
         no two sites are closer than sum of their atomic radii.
 
-        The ionic_mix factor will mix atomic and ionic radii - a value of
-        0.2 is a rough fit. A *possible* improvement is to set this factor
-        dynamically for each site based on its electronegativity difference
-        with surrounding atoms.
+        The sum of atomic radii is modified for ionicity using an ionic_factor
+        that depends on electronegativity difference.
 
         Args:
             cutoff: (float) cutoff for site pairs (added to site radius)
                 in Angstrom
-            ionic_mix: (float) mix factor for ionic radii (fudge factor)
-
         """
         self.cutoff = cutoff
-        self.ionic_radii_mix = ionic_mix
+        if ionic_factor > 0.25:
+            raise ValueError("specified ionic factor is out of range!")
+        self.ionic_factor = ionic_factor
 
     def predict(self, structure):
         """
@@ -303,15 +301,18 @@ class VolumePredictorSimple:
 
                 for site2, dist in x:
                     el2 = site2.specie
-                    r1 = el1.average_ionic_radius * self.ionic_radii_mix +\
-                         el1.atomic_radius * (1-self.ionic_radii_mix) if \
+                    ionic_mix = abs(el1.X - el2.X) * self.ionic_factor
+
+                    r1 = el1.average_ionic_radius * ionic_mix +\
+                         el1.atomic_radius * (1-ionic_mix) if \
                         el1.average_ionic_radius else el1.atomic_radius
 
-                    r2 = el2.average_ionic_radius * self.ionic_radii_mix +\
-                         el2.atomic_radius * (1-self.ionic_radii_mix) if \
+                    r2 = el2.average_ionic_radius * ionic_mix +\
+                         el2.atomic_radius * (1-ionic_mix) if \
                         el2.average_ionic_radius else el2.atomic_radius
 
                     expected_dist = float(r1 + r2)
+
                     if not smallest_distance or dist/expected_dist \
                             < smallest_distance:
                         smallest_distance = dist/expected_dist
