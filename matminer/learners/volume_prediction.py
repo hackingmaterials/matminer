@@ -1,5 +1,7 @@
 import os
 import re
+import warnings
+
 from pymatgen import MPRester, Element, Composition, Structure
 from collections import defaultdict, namedtuple
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder
@@ -295,18 +297,20 @@ class VolumePredictorSimple:
 
         for site in structure:
             el1 = site.specie
-            x = structure.get_neighbors(site, el1.atomic_radius + self.cutoff)
-            
-            for site2, dist in x:
-                el2 = site2.specie
-                r1 = el1.average_ionic_radius * self.ionic_radii_mix + el1.atomic_radius * (1-self.ionic_radii_mix) if el1.average_ionic_radius else el1.atomic_radius
-                r2 = el2.average_ionic_radius * self.ionic_radii_mix + el2.atomic_radius * (1-self.ionic_radii_mix) if el2.average_ionic_radius else el2.atomic_radius
-                expected_dist = float(r1 + r2)
-                if not smallest_distance or dist/expected_dist < smallest_distance:
-                    smallest_distance = dist/expected_dist
+            if el1.atomic_radius:
+                x = structure.get_neighbors(site, el1.atomic_radius + self.cutoff)
+
+                for site2, dist in x:
+                    el2 = site2.specie
+                    r1 = el1.average_ionic_radius * self.ionic_radii_mix + el1.atomic_radius * (1-self.ionic_radii_mix) if el1.average_ionic_radius else el1.atomic_radius
+                    r2 = el2.average_ionic_radius * self.ionic_radii_mix + el2.atomic_radius * (1-self.ionic_radii_mix) if el2.average_ionic_radius else el2.atomic_radius
+                    expected_dist = float(r1 + r2)
+                    if not smallest_distance or dist/expected_dist < smallest_distance:
+                        smallest_distance = dist/expected_dist
+            else:
+                warnings.warn("VolumePredictor: no atomic radius data for {}".format(el1))
 
         if not smallest_distance:
-            raise ValueError("Could not find any appropriate bonds in this material; "
-                             "ensure structure validity or increase max_cutoff!")
+            raise ValueError("Could not find any appropriate bonds in this material!")
 
         return structure.volume * (1/smallest_distance)**3
