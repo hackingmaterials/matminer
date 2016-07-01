@@ -8,6 +8,9 @@ import pickle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import warnings
+from matminer.descriptors.composition_features import get_pymatgen_eldata_lst, get_std
+import plotly.plotly as py
 
 mpr = MPRester()
 
@@ -69,7 +72,9 @@ class VolumePredictor(object):
             except ValueError as v:
                 print 'Error for site {} in {}: {}'.format(site, structure.composition, v)
                 continue
+            print 'Main {}'.format(site)
             for vsite in voronoi_sites:
+                print 'Neighbor {}'.format(vsite)
                 s_dist = np.linalg.norm(vsite.coords - site.coords)
                 # TODO: avoid "continue" statements if possible-it is dead simply to write this code without "continue"
                 if s_dist < 0.1:
@@ -220,6 +225,99 @@ def save_predictions(structure_data):
     df.to_pickle(os.path.join(data_dir, 'cv_1_on_2.pkl'))
 
 
+class VolumePredictorSimple:
+    def __init__(self, cutoff=4, ionic_factor=0.125):
+        """
+        Predicts volume; given a structure, finds the minimum volume such that
+        no two sites are closer than sum of their atomic radii. The sum of
+        atomic radii is modified for ionicity using an ionic_factor that
+        depends on electronegativity difference.
+        Args:
+            cutoff: (float) cutoff for site pairs (added to site radius)
+                in Angstrom. Increase if your initial structure guess
+                is extremely bad (atoms way too far apart). In all other cases,
+                increasing cutoff gives same answer but at lower performance.
+        """
+        self.cutoff = cutoff
+        if ionic_factor > 0.25:
+            raise ValueError("specified ionic factor is out of range!")
+        self.ionic_factor = ionic_factor
+
+    def predict(self, structure):
+        """
+        Given a structure, returns back a volume
+        Args:
+            structure: (Structure)
+        Returns:
+            (float) expected volume of structure
+        """
+
+        if not structure.is_ordered:
+            raise ValueError("VolumePredictorSimple requires "
+                             "ordered structures!")
+
+        smallest_distance = None
+        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * 0.25
+        # ionic_mix = abs(el1.X - el2.X) * self.ionic_factor
+
+        for site in structure:
+            el1 = site.specie
+            if el1.atomic_radius:
+                x = structure.get_neighbors(site,
+                                            el1.atomic_radius + self.cutoff)
+
+                for site2, dist in x:
+                    el2 = site2.specie
+                    if el2.atomic_radius:
+                        r1 = el1.average_ionic_radius * ionic_mix +\
+                             el1.atomic_radius * (1-ionic_mix) if \
+                            el1.average_ionic_radius else el1.atomic_radius
+
+                        r2 = el2.average_ionic_radius * ionic_mix +\
+                             el2.atomic_radius * (1-ionic_mix) if \
+                            el2.average_ionic_radius else el2.atomic_radius
+
+                        expected_dist = float(r1 + r2)
+
+                        if not smallest_distance or dist/expected_dist \
+                                < smallest_distance:
+                            smallest_distance = dist/expected_dist
+                    else:
+                        warnings.warn("VolumePredictor: no atomic radius data for {}".
+                              format(el2))
+
+            else:
+                warnings.warn("VolumePredictor: no atomic radius data for {}".
+                              format(el1))
+
+        if not smallest_distance:
+            raise ValueError("Could not find any bonds in this material!")
+
+        return structure.volume * (1/smallest_distance)**3
+
+
+def plot_plotly(dataframe):
+    fig = {
+        'data': [
+            {
+                'x': dataframe['starting_volume'],
+                'y': dataframe['predicted_volume'],
+                'text': dataframe['reduced_cell_formula'],
+                'mode': 'markers',
+                'name': '0.2*std(X_comp)'},
+        ],
+        'layout': {
+            'xaxis': {'title': "Expected volume"},
+            'yaxis': {'title': "Predicted volume"}
+        }
+    }
+
+    # IPython notebook
+    # py.iplot(fig, filename='aj_2')
+
+    url = py.plot(fig, filename='aj_02')
+
+
 if __name__ == '__main__':
     pd.set_option('display.width', 1000)
     # pv = VolumePredictor()
@@ -230,7 +328,7 @@ if __name__ == '__main__':
     '''
     # mpids = ['mp-628808', 'mp-19017', 'mp-258', 'mp-1368']
     # mpids = ['mp-258', 'mp-23210', 'mp-1138', 'mp-149', 'mp-22914']
-    mpids = ['mp-20745']
+    mpids = ['mvc-11598']
     for mpid in mpids:
         new_struct = mpr.get_structure_by_material_id(mpid)
         starting_vol = new_struct.volume
@@ -245,73 +343,47 @@ if __name__ == '__main__':
         print 'Predicted volume = {}, with RMSE = {} and a volume change of {}%'.format(a.volume,
                                                                     a.rmse, percent_volume_change)
     '''
-    # with open(os.path.join(data_dir, "mp_rawdata_1.pkl"), 'r') as f:
-    #     mp_data = pickle.load(f)
+    with open(os.path.join(data_dir, "mp_rawdata_2.pkl"), 'r') as f:
+        mp_data = pickle.load(f)
     # save_predictions(mp_data)
     # '''
-    df = pd.read_pickle(os.path.join(data_dir, 'cv_1_on_2.pkl'))
+    # df = pd.read_pickle(os.path.join(data_dir, 'aj_2_old1.pkl'))
     # print df
-    print df.sort(['percentage_volume_change'])
+    # print df.sort(['percentage_volume_change'])
+    # a = [x for x in df['percentage_volume_change'].tolist()]
+    # print(sum(a)/len(a))
     # df.plot(x='starting_volume', y='predicted_volume', kind='scatter')
-    df.plot(x='starting_volume', y='percentage_volume_change', kind='scatter')
-    plt.show()
+    # plt.plot([0,8000], [0,8000], 'k-')
+    # df.plot(x='starting_volume', y='percentage_volume_change', kind='scatter')
+    # plt.show()
+    # plot_plotly(df)
+    # '''
+    x = 0
+    df = pd.DataFrame()
+    for idx, structure in enumerate(mp_data.structures):
+        x += 1
+        if x % 10 == 0:
+            print 'Current completed = {}'.format(x)
+        try:
+            new_vol = VolumePredictorSimple().predict(structure)
+        except ValueError as e:
+            print e
+            continue
+        df = df.append({'task_id': mp_data.task_ids[idx],
+                        'reduced_cell_formula': Composition(structure.composition).reduced_formula,
+                        'starting_volume': mp_data.volumes[idx], 'predicted_volume': new_vol,
+                        'percentage_volume_change': ((new_vol - mp_data.volumes[idx])/mp_data.volumes[idx]) * 100},
+                       ignore_index=True)
+        print 'Done for {}'.format(mp_data.task_ids[idx])
+    df.to_pickle(os.path.join(data_dir, 'aj_025.pkl'))
+    print df.sort(['percentage_volume_change'])
+    # '''
+    # '''
+    # s = mpr.get_structure_by_material_id('mp-24972')
+    # print s.volume
+    # new_volume = VolumePredictorSimple().predict(s)
+    # print new_volume
 
 
-class VolumePredictorSimple:
-    def __init__(self, cutoff=8, max_cutoff=32, ionic_mix=0.2):
-        """
-        Predicts volume; given a structure, ensures that:
-        (i) no two sites are closer than sum of their atomic radii
-        (ii) at least one pair of sites is exactly equal to sum of atomic radii
 
-        Args:
-            cutoff: (float) initial cutoff for finding site pairs in Angstrom
-            max_cutoff: (float) max cutoff for finding site pairs in Angstrom
-            ionic_mix: (float) mix factor for ionic radii (fudge factor)
 
-        """
-        self.cutoff = cutoff
-        self.max_cutoff = max_cutoff
-        self.ionic_radii_mix = ionic_mix
-
-    def predict(self, structure):
-        """
-        Given a structure, returns back a volume-predicted structure
-        Args:
-            structure: (Structure)
-
-        Returns:
-            Copy of structure with volume adjusted
-        """
-
-        if not structure.is_ordered:
-            raise ValueError("VolumePredictorSimple only works with ordered structures!")
-
-        smallest_distance = None
-
-        for site in structure:
-            el1 = site.specie
-            x = []  # array of (sites, distance) neighbors around site
-            cutoff = self.cutoff
-            while not x and cutoff <= self.max_cutoff:
-                x = structure.get_neighbors(site, cutoff)
-                cutoff *= 2
-
-            for site2, dist in x:
-                el2 = site2.specie
-                r1 = el1.average_ionic_radius * self.ionic_radii_mix + el1.atomic_radius * (1-self.ionic_radii_mix) if el1.average_ionic_radius else el1.atomic_radius
-                r2 = el2.average_ionic_radius * self.ionic_radii_mix + el2.atomic_radius * (1-self.ionic_radii_mix) if el2.average_ionic_radius else el2.atomic_radius
-                expected_dist = float(r1 + r2)
-                if not smallest_distance or dist/expected_dist < smallest_distance:
-                    smallest_distance = dist/expected_dist
-
-        if not smallest_distance:
-            raise ValueError("Could not find any appropriate bonds in this material; "
-                             "ensure structure validity or increase max_cutoff!")
-
-        vol_factor = (1/smallest_distance)**3
-
-        s2 = structure.copy()
-        s2.scale_lattice(structure.volume * vol_factor)
-
-        return s2
