@@ -378,7 +378,6 @@ if __name__ == '__main__':
     df.to_pickle(os.path.join(data_dir, 'aj_025.pkl'))
     print df.sort(['percentage_volume_change'])
     # '''
-    # '''
     # s = mpr.get_structure_by_material_id('mp-24972')
     # print s.volume
     # new_volume = VolumePredictorSimple().predict(s)
