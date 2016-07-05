@@ -72,10 +72,14 @@ class VolumePredictor(object):
             except ValueError as v:
                 print 'Error for site {} in {}: {}'.format(site, structure.composition, v)
                 continue
-            print 'Main {}'.format(site)
             for vsite in voronoi_sites:
-                print 'Neighbor {}'.format(vsite)
-                s_dist = np.linalg.norm(vsite.coords - site.coords)
+                # s_dist = np.linalg.norm(vsite.coords - site.coords)
+                # s_dist = site.distance(vsite)
+                if site.distance(vsite) != 0:
+                    s_dist = site.distance(vsite)
+                else:
+                    s_dist = np.linalg.norm(vsite.coords - site.coords)
+                # print np.linalg.norm(vsite.coords - site.coords)
                 # TODO: avoid "continue" statements if possible-it is dead simply to write this code without "continue"
                 if s_dist < 0.1:
                     continue
@@ -202,7 +206,7 @@ def save_predictions(structure_data):
     """
     df = pd.DataFrame()
     cv = VolumePredictor()
-    cv.get_avg_bondlengths("nelements_2_minbls.pkl")
+    cv.get_avg_bondlengths("nelements_1_minbls.pkl")
     x = 0
     y = 0
     for idx, structure in enumerate(structure_data.structures):
@@ -222,7 +226,7 @@ def save_predictions(structure_data):
                         'percentage_volume_change': ((b.volume - structure_data.volumes[idx])/structure_data.volumes[idx]) * 100},
                        ignore_index=True)
         print 'Done for {}'.format(structure_data.task_ids[idx])
-    df.to_pickle(os.path.join(data_dir, 'cv_1_on_2.pkl'))
+    df.to_pickle(os.path.join(data_dir, 'cv_1_on_1.pkl'))
 
 
 class VolumePredictorSimple:
@@ -257,7 +261,7 @@ class VolumePredictorSimple:
                              "ordered structures!")
 
         smallest_distance = None
-        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * 0.25
+        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * 0.50
         # ionic_mix = abs(el1.X - el2.X) * self.ionic_factor
 
         for site in structure:
@@ -320,15 +324,17 @@ def plot_plotly(dataframe):
 
 if __name__ == '__main__':
     pd.set_option('display.width', 1000)
+    # with open(os.path.join(data_dir, "mp_rawdata_2.pkl"), 'r') as f:
+    #     mp_data = pickle.load(f)
+    # print mp_data.task_ids
     # pv = VolumePredictor()
-    # mp_data = pv.get_data(2, 0.05)
     # pv.fit(mp_data.structures, mp_data.volumes, mp_data.task_ids)
     # pv.save_avg_bondlengths("nelements_2_minbls.pkl")
     # pv.save_bondlengths("nelements_2_bls.pkl")
     '''
     # mpids = ['mp-628808', 'mp-19017', 'mp-258', 'mp-1368']
     # mpids = ['mp-258', 'mp-23210', 'mp-1138', 'mp-149', 'mp-22914']
-    mpids = ['mvc-11598']
+    mpids = ['mp-45']
     for mpid in mpids:
         new_struct = mpr.get_structure_by_material_id(mpid)
         starting_vol = new_struct.volume
@@ -337,27 +343,30 @@ if __name__ == '__main__':
         pv.get_avg_bondlengths("nelements_2_minbls.pkl")
         try:
             a = pv.predict(new_struct)
-        except ValueError:
+        except ValueError as e:
+            print e
             continue
         percent_volume_change = ((a.volume - starting_vol) / starting_vol) * 100
         print 'Predicted volume = {}, with RMSE = {} and a volume change of {}%'.format(a.volume,
                                                                     a.rmse, percent_volume_change)
     '''
-    with open(os.path.join(data_dir, "mp_rawdata_2.pkl"), 'r') as f:
-        mp_data = pickle.load(f)
     # save_predictions(mp_data)
     # '''
-    # df = pd.read_pickle(os.path.join(data_dir, 'aj_2_old1.pkl'))
+    df = pd.read_pickle(os.path.join(data_dir, 'aj_02.pkl'))
     # print df
-    # print df.sort(['percentage_volume_change'])
-    # a = [x for x in df['percentage_volume_change'].tolist()]
-    # print(sum(a)/len(a))
+    print df.sort(['percentage_volume_change'])
+    a = [x for x in df['percentage_volume_change'].tolist()]
+    print(sum(a)/len(a))
+    sum_of_squares = 0
+    for i, row in df.iterrows():
+        sum_of_squares += ((row['predicted_volume'] - row['starting_volume'])/row['starting_volume'])**2
+    print (sum_of_squares/len(df.index))**0.5
     # df.plot(x='starting_volume', y='predicted_volume', kind='scatter')
     # plt.plot([0,8000], [0,8000], 'k-')
-    # df.plot(x='starting_volume', y='percentage_volume_change', kind='scatter')
-    # plt.show()
+    df.plot(x='starting_volume', y='percentage_volume_change', kind='scatter')
+    plt.show()
     # plot_plotly(df)
-    # '''
+    '''
     x = 0
     df = pd.DataFrame()
     for idx, structure in enumerate(mp_data.structures):
@@ -375,7 +384,7 @@ if __name__ == '__main__':
                         'percentage_volume_change': ((new_vol - mp_data.volumes[idx])/mp_data.volumes[idx]) * 100},
                        ignore_index=True)
         print 'Done for {}'.format(mp_data.task_ids[idx])
-    df.to_pickle(os.path.join(data_dir, 'aj_025.pkl'))
+    df.to_pickle(os.path.join(data_dir, 'aj_05.pkl'))
     print df.sort(['percentage_volume_change'])
     # '''
     # s = mpr.get_structure_by_material_id('mp-24972')
