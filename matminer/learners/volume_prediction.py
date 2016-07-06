@@ -65,8 +65,7 @@ class VolumePredictor:
         if not smallest_distance:
             raise ValueError("Could not find any bonds in this material!")
 
-        new_structure = structure.copy()
         volume_factor = (1/smallest_distance)**3
-        new_structure.scale_lattice(structure.volume * volume_factor)
 
-        return new_structure
+        return structure.volume * volume_factor
+
