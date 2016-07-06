@@ -43,13 +43,12 @@ class VolumePredictor:
             if el1.atomic_radius:
                 x = structure.get_neighbors(site,
                                             el1.atomic_radius + self.cutoff)
+                r1 = el1.average_ionic_radius * ionic_mix + el1.atomic_radius * (1-ionic_mix) if \
+                    el1.average_ionic_radius else el1.atomic_radius
 
                 for site2, dist in x:
                     el2 = site2.specie
                     if el2.atomic_radius:
-                        r1 = el1.average_ionic_radius * ionic_mix + el1.atomic_radius * (1-ionic_mix) if \
-                            el1.average_ionic_radius else el1.atomic_radius
-
                         r2 = el2.average_ionic_radius * ionic_mix + el2.atomic_radius * (1-ionic_mix) if \
                             el2.average_ionic_radius else el2.atomic_radius
 
