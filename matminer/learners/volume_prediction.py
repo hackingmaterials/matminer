@@ -34,8 +34,7 @@ class VolumePredictor:
                              "ordered structures!")
 
         smallest_distance = None
-        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * 0.50
-        # ionic_mix = abs(el1.X - el2.X) * self.ionic_factor
+        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * 0.30
 
         for site in structure:
             el1 = site.specie
