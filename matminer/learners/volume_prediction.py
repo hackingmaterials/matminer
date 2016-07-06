@@ -67,5 +67,6 @@ class VolumePredictor:
 
         new_structure = structure.copy()
         volume_factor = (1/smallest_distance)**3
+        new_structure.scale_lattice(volume_factor)
 
-        return new_structure.scale_lattice(volume_factor)
+        return new_structure
