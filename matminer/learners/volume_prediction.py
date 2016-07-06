@@ -3,7 +3,7 @@ from matminer.descriptors.composition_features import get_pymatgen_eldata_lst, g
 
 
 class VolumePredictor:
-    def __init__(self, cutoff=4, ionic_factor=0.125):
+    def __init__(self, cutoff=4, ionic_factor=0.30):
         """
         Predicts volume; given a structure, finds the minimum volume such that
         no two sites are closer than sum of their atomic radii. The sum of
@@ -16,7 +16,7 @@ class VolumePredictor:
                 increasing cutoff gives same answer but at lower performance.
         """
         self.cutoff = cutoff
-        if ionic_factor > 0.25:
+        if ionic_factor > 0.40:
             raise ValueError("specified ionic factor is out of range!")
         self.ionic_factor = ionic_factor
 
@@ -34,7 +34,7 @@ class VolumePredictor:
                              "ordered structures!")
 
         smallest_distance = None
-        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * 0.30
+        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * self.ionic_factor
 
         for site in structure:
             el1 = site.specie
