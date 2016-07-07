@@ -15,7 +15,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # TODO: unit tests
 
 
-def get_pymatgen_eldata_lst(comp, prop):
+def get_element_data(comp, prop):
     """
     Get descriptor data for elements in a compound from pymatgen.
 
@@ -73,7 +73,7 @@ def get_maxmin(lst):
     """
     Get maximum, minimum, median, and total of descriptor values.
 
-    :param lst: (list) of namedtuples as output by get_pymatgen_eldata_lst()
+    :param lst: (list) of namedtuples as output by get_element_data()
     :return: (dict) containing maximum, minimum, median, and total of all property values
     """
     propvalues = []
@@ -87,7 +87,7 @@ def get_mean(lst):
     """
     Get mean of descriptor values.
 
-    :param lst: (list) of namedtuples as output by get_pymatgen_eldata_lst()
+    :param lst: (list) of namedtuples as output by get_element_data()
     :return: (float) weighted mean of property values
     """
     total_propamt = 0
@@ -103,7 +103,7 @@ def get_std(lst):
     """
     Get standard deviation of descriptor values.
 
-    :param lst: (list) of namedtuples as output by get_pymatgen_eldata_lst()
+    :param lst: (list) of namedtuples as output by get_element_data()
     :return: (float) weighted standard deviation of property values
     """
     mean = get_mean(lst)
@@ -121,5 +121,5 @@ if __name__ == '__main__':
                    'coefficient_of_linear_thermal_expansion']
     # 'ionic_radii',
     for desc in descriptors:
-        print get_pymatgen_eldata_lst('LiFePO4', desc)
+        print get_element_data('LiFePO4', desc)
     print get_magpie_descriptor('LiFePO4', 'Atomicolume')

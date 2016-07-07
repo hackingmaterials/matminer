@@ -1,5 +1,5 @@
 import warnings
-from matminer.descriptors.composition_features import get_pymatgen_eldata_lst, get_std
+from matminer.descriptors.composition_features import get_element_data, get_std
 
 
 class VolumePredictor:
@@ -41,8 +41,8 @@ class VolumePredictor:
             raise ValueError("VolumePredictorSimple requires "
                              "ordered structures!")
 
-        smallest_distance = None
-        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * self.ionic_factor
+        smallest_ratio = None
+        ionic_mix = get_std(get_element_data(structure.composition, 'X')) * self.ionic_factor
 
         for site in structure:
             el1 = site.specie
@@ -60,18 +60,18 @@ class VolumePredictor:
 
                         expected_dist = float(r1 + r2)
 
-                        if not smallest_distance or dist/expected_dist \
-                                < smallest_distance:
-                            smallest_distance = dist/expected_dist
+                        if not smallest_ratio or dist/expected_dist \
+                                < smallest_ratio:
+                            smallest_ratio = dist/expected_dist
                     else:
                         warnings.warn("VolumePredictor: no atomic radius data for {}".format(el2))
             else:
                 warnings.warn("VolumePredictor: no atomic radius data for {}".format(el1))
 
-        if not smallest_distance:
+        if not smallest_ratio:
             raise ValueError("Could not find any bonds in this material!")
 
-        volume_factor = (1/smallest_distance)**3
+        volume_factor = (1/smallest_ratio)**3
 
         return structure.volume * volume_factor
 
