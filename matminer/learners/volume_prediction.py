@@ -41,7 +41,7 @@ class VolumePredictor:
             raise ValueError("VolumePredictorSimple requires "
                              "ordered structures!")
 
-        smallest_ratio = None
+        smallest_ratio = None  # smallest ratio of observed vs expected bond distance
         ionic_mix = get_std(get_element_data(structure.composition, 'X')) * self.ionic_factor
 
         for site in structure:
