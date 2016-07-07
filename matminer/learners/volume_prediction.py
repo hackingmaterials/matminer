@@ -1,5 +1,5 @@
 import warnings
-from matminer.descriptors.composition_features import get_pymatgen_eldata_lst, get_std
+from matminer.descriptors.composition_features import get_element_data, get_std
 
 
 class VolumePredictor:
@@ -42,7 +42,7 @@ class VolumePredictor:
                              "ordered structures!")
 
         smallest_distance = None
-        ionic_mix = get_std(get_pymatgen_eldata_lst(structure.composition, 'X')) * self.ionic_factor
+        ionic_mix = get_std(get_element_data(structure.composition, 'X')) * self.ionic_factor
 
         for site in structure:
             el1 = site.specie
