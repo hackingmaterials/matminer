@@ -81,8 +81,8 @@ class VolumePredictor:
         """
         Given a structure, returns back the structure scaled to predicted volume
         using the "predict" method.
-        :param structure: pymatgen structure object
-        :return: scaled pymatgen structure object
+        :param structure: pymatgen Structure object
+        :return: scaled pymatgen Structure object
         """
         new_volume = self.predict(structure)
         new_structure = structure.copy()
