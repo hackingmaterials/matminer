@@ -29,7 +29,7 @@ class VolumePredictor:
 
     def predict(self, structure):
         """
-        Given a structure, returns back the structure scaled to predicted volume.
+        Given a structure, returns back the predicted volume.
         Volume is predicted based on minimum bond distance, which is determined using
         an ionic mix factor based on electronegativity spread in a structure.
 
@@ -73,3 +73,17 @@ class VolumePredictor:
         volume_factor = (1/smallest_distance)**3
 
         return structure.volume * volume_factor
+
+    def get_predicted_structure(self, structure):
+        """
+        Given a structure, returns back the structure scaled to predicted volume
+        using the "predict" method.
+        :param structure: pymatgen structure object
+        :return: scaled pymatgen structure object
+        """
+        new_volume = self.predict(structure)
+        new_structure = structure.copy()
+        new_structure.scale_lattice(new_volume)
+
+        return new_structure
+
