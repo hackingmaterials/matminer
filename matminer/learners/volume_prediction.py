@@ -6,6 +6,11 @@ class VolumePredictor:
     """
     Predicts volume; given a structure, finds the minimum volume such that
     no two sites are closer than a linear combination of their atomic and ionic radii.
+    When run over all stable elemental and binary structures from MP, it is found that:
+    (i) RMSE % error = 23.6 %
+    (ii) Average percentage difference in volume from initial volume = 2.88 %
+    (iii) Performs worst for materials that are gaseous at standard state conditions, eg: H2, N2,
+        and f-electron systems, eg: Np, Pu, etc.
     """
     def __init__(self, cutoff=4, ionic_factor=0.30):
         """
@@ -68,4 +73,3 @@ class VolumePredictor:
         volume_factor = (1/smallest_distance)**3
 
         return structure.volume * volume_factor
-
