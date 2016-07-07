@@ -4,6 +4,7 @@ from matminer.descriptors.composition_features import get_element_data, get_std
 # TODO: update error estimates in docstring after running further tests (e.g., no noble gases)
 # TODO: add unit tests!!
 
+
 class VolumePredictor:
     """
     Predicts volume; given a structure, finds the minimum volume such that
@@ -11,7 +12,8 @@ class VolumePredictor:
     When run over all stable elemental and binary structures from MP, it is found that:
     (i) RMSE % error = 23.6 %
     (ii) Average percentage difference in volume from initial volume = 2.88 %
-    (iii) Performs worst for materials that are gaseous eg: H2, N2,
+    (iii) Average absolute difference in volume from initial volume = 17.0 %
+    (iv) Performs worst for materials that are gaseous eg: H2, N2,
         and f-electron systems, eg: Np, Pu, etc. as well as noble gas compounds
     """
     def __init__(self, cutoff=4, ionic_factor=0.30):
