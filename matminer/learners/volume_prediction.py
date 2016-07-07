@@ -5,7 +5,12 @@ from matminer.descriptors.composition_features import get_pymatgen_eldata_lst, g
 class VolumePredictor:
     """
     Predicts volume; given a structure, finds the minimum volume such that
-    no two sites are closer than a weighted sum of their atomic and ionic radii.
+    two sites are closer than a weighted sum of their atomic and ionic radii..
+    When run over all stable elemental and binary structures from MP, it is found that:
+    (i) RMSE % error = 23.6 %
+    (ii) Average percentage difference in volume from initial volume = 2.88 %
+    (iii) Performs worst for materials that are gaseous eg: H2, N2,
+        and f-electron systems, eg: Np, Pu, etc. as well as noble gas compounds
     """
     def __init__(self, cutoff=4, ionic_factor=0.30):
         """
@@ -24,9 +29,9 @@ class VolumePredictor:
 
     def predict(self, structure):
         """
-        Given a structure, returns back the structure scaled to predicted volume.
-        Volume is predicted based on minimum bond distance, which is determined using
-        atomic radii, ionic radii, and an ionic mix factor based on
+        Given a structure, returns back the predicted volume.
+        Volume is predicted based on minimum bond distance, which is determined
+        using atomic radii, ionic radii, and an ionic mix factor based on
         electronegativity spread in a structure.
 
         :param structure: pymatgen structure object
@@ -66,8 +71,20 @@ class VolumePredictor:
         if not smallest_distance:
             raise ValueError("Could not find any bonds in this material!")
 
-        new_structure = structure.copy()
         volume_factor = (1/smallest_distance)**3
-        new_structure.scale_lattice(structure.volume * volume_factor)
+
+        return structure.volume * volume_factor
+
+    def get_predicted_structure(self, structure):
+        """
+        Given a structure, returns back the structure scaled to predicted volume
+        using the "predict" method.
+        :param structure: pymatgen structure object
+        :return: scaled pymatgen structure object
+        """
+        new_volume = self.predict(structure)
+        new_structure = structure.copy()
+        new_structure.scale_lattice(new_volume)
 
         return new_structure
+
