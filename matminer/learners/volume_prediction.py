@@ -5,7 +5,7 @@ from matminer.descriptors.composition_features import get_pymatgen_eldata_lst, g
 class VolumePredictor:
     """
     Predicts volume; given a structure, finds the minimum volume such that
-    no two sites are closer than a linear combination of their atomic and ionic radii.
+    no two sites are closer than a weighted sum of their atomic and ionic radii.
     """
     def __init__(self, cutoff=4, ionic_factor=0.30):
         """
@@ -26,7 +26,8 @@ class VolumePredictor:
         """
         Given a structure, returns back the structure scaled to predicted volume.
         Volume is predicted based on minimum bond distance, which is determined using
-        an ionic mix factor based on electronegativity spread in a structure.
+        atomic radii, ionic radii, and an ionic mix factor based on
+        electronegativity spread in a structure.
 
         :param structure: pymatgen structure object
         :return: scaled pymatgen structure object
