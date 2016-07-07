@@ -1,6 +1,8 @@
 import warnings
 from matminer.descriptors.composition_features import get_element_data, get_std
 
+# TODO: update error estimates in docstring after running further tests (e.g., no noble gases)
+# TODO: add unit tests!!
 
 class VolumePredictor:
     """
