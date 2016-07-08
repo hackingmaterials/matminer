@@ -1,6 +1,4 @@
 pymongo
-BeautifulSoup
-lxml
 tqdm>=3.7.1
 pandas>=0.17.1
 pymatgen>=4.0
