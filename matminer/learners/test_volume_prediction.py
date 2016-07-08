@@ -1,22 +1,20 @@
 import unittest
-from pymatgen import MPRester
 from matminer.learners.volume_prediction import VolumePredictor
-
-mpr = MPRester()
+from pymatgen.util.testing import PymatgenTest
 
 
 class TestVolumePredictor(unittest.TestCase):
     def test_Si(self):
-        s = mpr.get_structure_by_material_id('mp-149')
+        s = PymatgenTest.get_structure("Si")
         self.assertAlmostEqual(VolumePredictor().predict(s), 32.8, 1)
 
-    def test_CsF(self):
-        s = mpr.get_structure_by_material_id('mp-1784')
-        self.assertAlmostEqual(VolumePredictor().predict(s), 62.1, 1)
+    def test_CsCl(self):
+        s = PymatgenTest.get_structure("CsCl")
+        self.assertAlmostEqual(VolumePredictor().predict(s), 99.78, 1)
 
-    def test_CsF_ionic(self):
-        s = mpr.get_structure_by_material_id('mp-1784')
-        self.assertAlmostEqual(VolumePredictor(ionic_factor=0.20).predict(s), 73.2, 1)
+    def test_CsCl_ionic(self):
+        s = PymatgenTest.get_structure("CsCl")
+        self.assertAlmostEqual(VolumePredictor(ionic_factor=0.20).predict(s), 112.36, 1)
 
 if __name__ == '__main__':
     unittest.main()
