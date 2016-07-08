@@ -14,7 +14,8 @@ class TestVolumePredictor(unittest.TestCase):
 
     def test_CsCl_ionic(self):
         s = PymatgenTest.get_structure("CsCl")
-        self.assertAlmostEqual(VolumePredictor(ionic_factor=0.20).predict(s), 112.36, 1)
+        self.assertAlmostEqual(VolumePredictor(ionic_factor=0.20).predict(s),
+                               112.36, 1)
 
 if __name__ == '__main__':
     unittest.main()
