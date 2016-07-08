@@ -1,5 +1,5 @@
 import unittest
-from matminer.learners.volume_prediction import VolumePredictor
+from matminer.learners.volume_predictor import VolumePredictor
 from pymatgen.util.testing import PymatgenTest
 
 
