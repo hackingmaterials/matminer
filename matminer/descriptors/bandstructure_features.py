@@ -18,8 +18,6 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
     Returns: (int) branch point energy on same energy scale as BS eigenvalues
 
     """
-    # TODO: add kpoint weights properly!!
-
     if bs.is_metal():
         raise ValueError("Cannot define a branch point energy for metals!")
 
@@ -39,7 +37,7 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
             vb_energies.sort(reverse=True)
             cb_energies.sort()
             total_sum_energies += (sum(vb_energies[0:n_vb])/n_vb +
-                                   sum(cb_energies[0:n_cb])/n_cb) / 2
-            num_points += 1
+                                   sum(cb_energies[0:n_cb])/n_cb) / 2  # TODO: multiply by kpoint weight
+            num_points += 1  # TODO: set to kpoint weight
 
     return total_sum_energies/num_points
