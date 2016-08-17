@@ -11,7 +11,7 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
     TODO: incorporate kpoint weights!!
 
     Args:
-        bs: (BandStructure)
+        bs: (BandStructure) - uniform mesh bandstructure object
         n_vb: number of valence bands to include
         n_cb: number of conduction bands to include
 
@@ -41,3 +41,20 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
             num_points += 1  # TODO: set to kpoint weight
 
     return total_sum_energies/num_points
+
+
+def absolute_band_positions(bs, **kwargs):
+    """
+    Absolute VBM and CBM positions with respect to branch point energy
+
+    Args:
+        bs: Bandstructure object
+        **kwargs: arguments to feed into branch point energy code
+
+    Returns:
+        (vbm, cbm) - tuple of floats
+
+    """
+    bpe = branch_point_energy(bs, **kwargs)
+    return (bs.get_vbm()["energy"] - bpe), (bs.get_cbm()["energy"] - bpe)
+
