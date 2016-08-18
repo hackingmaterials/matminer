@@ -1,5 +1,7 @@
 import warnings
 from matminer.descriptors.composition_features import get_element_data, get_std
+from pymatgen.analysis.structure_matcher import StructureMatcher
+from pymatgen.analysis.bond_valence import BVAnalyzer
 
 
 class VolumePredictor:
@@ -84,6 +86,80 @@ class VolumePredictor:
         volume_factor = (1/smallest_ratio)**3
 
         return structure.volume * volume_factor
+
+    def get_predicted_structure(self, structure):
+        """
+        Given a structure, returns back the structure scaled to predicted
+        volume.
+
+        Args:
+            structure (Structure): structure w/unknown volume
+
+        Returns:
+            a Structure object with predicted volume
+        """
+        new_structure = structure.copy()
+        new_structure.scale_lattice(self.predict(structure))
+
+        return new_structure
+
+
+def is_ox(structure):
+    comp = structure.composition
+    for k in comp.keys():
+        try:
+            k.oxi_state
+        except AttributeError:
+            return False
+    return True
+
+
+class ConditionalVolumePredictor:
+    """
+    Unlike the above, the idea here is to predict the volume of a structure
+    based on an existing known structure. May integrate with above at a later
+    stage to improve overall predictions.
+    """
+    def __init__(self, max_vol_change=0.2):
+        """
+        Args:
+            max_vol_change (float): Maximum volume change allowed.
+        """
+        self.max_vol_change = max_vol_change
+
+    def predict(self, structure, ref_structure):
+        """
+        Given a structure, returns back the predicted volume.
+
+        Args:
+            structure (Structure): structure w/unknown volume
+
+        Returns:
+            a float value of the predicted volume
+        """
+        if not is_ox(structure):
+            a = BVAnalyzer()
+            structure = a.get_oxi_state_decorated_structure(structure)
+        if not is_ox(ref_structure):
+            a = BVAnalyzer()
+            ref_structure = a.get_oxi_state_decorated_structure(ref_structure)
+
+        m = StructureMatcher()
+        mapping = m.get_best_electronegativity_anonymous_mapping(structure,
+                                                                 ref_structure)
+        if mapping is None:
+            raise ValueError("Input structures do not match!")
+
+        comp = structure.composition
+        ref_comp = ref_structure.composition
+
+        numerator = 0
+        denominator = 0
+
+        for k, v in mapping.items():
+            numerator += k.ionic_radius ** 3 * comp[k]
+            denominator += v.ionic_radius ** 3 * ref_comp[v]
+        return ref_structure.volume * numerator / denominator
 
     def get_predicted_structure(self, structure):
         """
