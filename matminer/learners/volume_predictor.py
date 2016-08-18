@@ -120,12 +120,8 @@ class ConditionalVolumePredictor:
     based on an existing known structure. May integrate with above at a later
     stage to improve overall predictions.
     """
-    def __init__(self, max_vol_change=0.2):
-        """
-        Args:
-            max_vol_change (float): Maximum volume change allowed.
-        """
-        self.max_vol_change = max_vol_change
+    def __init__(self):
+        pass
 
     def predict(self, structure, ref_structure):
         """
@@ -133,6 +129,8 @@ class ConditionalVolumePredictor:
 
         Args:
             structure (Structure): structure w/unknown volume
+            ref_structure (Structure): A reference structure with a similar
+                structure but different species.
 
         Returns:
             a float value of the predicted volume
@@ -159,20 +157,23 @@ class ConditionalVolumePredictor:
         for k, v in mapping.items():
             numerator += k.ionic_radius ** 3 * comp[k]
             denominator += v.ionic_radius ** 3 * ref_comp[v]
+
         return ref_structure.volume * numerator / denominator
 
-    def get_predicted_structure(self, structure):
+    def get_predicted_structure(self, structure, ref_structure):
         """
         Given a structure, returns back the structure scaled to predicted
         volume.
 
         Args:
             structure (Structure): structure w/unknown volume
+            ref_structure (Structure): A reference structure with a similar
+                structure but different species.
 
         Returns:
             a Structure object with predicted volume
         """
         new_structure = structure.copy()
-        new_structure.scale_lattice(self.predict(structure))
+        new_structure.scale_lattice(self.predict(structure, ref_structure))
 
         return new_structure
