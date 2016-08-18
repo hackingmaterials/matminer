@@ -25,10 +25,10 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
     num_points = 0
 
     for spin in bs.bands:
-        for kpt_idx in xrange(len(bs.kpoints)):
+        for kpt_idx in range(len(bs.kpoints)):
             vb_energies = []
             cb_energies = []
-            for band_idx in xrange(bs.nb_bands):
+            for band_idx in range(bs.nb_bands):
                 e = bs.bands[spin][band_idx][kpt_idx]
                 if e > bs.efermi:
                     cb_energies.append(e)
