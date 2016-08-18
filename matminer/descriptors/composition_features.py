@@ -29,7 +29,7 @@ def get_element_data(comp, prop):
     el_amt_dict = Composition(comp).get_el_amt_dict()
     for el in el_amt_dict:
         if callable(getattr(Element(el), prop)) is None:
-            print 'Invalid pymatgen Element attribute(property)'
+            print('Invalid pymatgen Element attribute(property)')
             return
         if getattr(Element(el), prop) is not None:
             if prop in ['X', 'Z', 'ionic_radii']:
@@ -57,7 +57,8 @@ def get_magpie_descriptor(comp, descriptor_name):
     for file in os.listdir('data/magpie_elementdata'):
          available_props.append(file.replace('.table', ''))
     if descriptor_name not in available_props:
-        print 'This descriptor is not available from the Magpie repository. Choose from {}'.format(available_props)
+        print('This descriptor is not available from the Magpie repository. '
+              'Choose from {}'.format(available_props))
         return
     descriptor_list = []
     el_amt = Composition(comp).get_el_amt_dict()
@@ -121,5 +122,5 @@ if __name__ == '__main__':
                    'coefficient_of_linear_thermal_expansion']
     # 'ionic_radii',
     for desc in descriptors:
-        print get_element_data('LiFePO4', desc)
-    print get_magpie_descriptor('LiFePO4', 'Atomicolume')
+        print(get_element_data('LiFePO4', desc))
+    print(get_magpie_descriptor('LiFePO4', 'Atomicolume'))

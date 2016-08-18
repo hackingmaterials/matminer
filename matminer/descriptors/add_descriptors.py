@@ -36,10 +36,10 @@ class AddDescriptor:
             except ValueError:
                 self.df.loc[i, descriptor + '_' + stat] = None
             except AttributeError as e:
-                print e
-                print 'Invalid pymatgen Element attribute!'
+                print(e)
+                print('Invalid pymatgen Element attribute!')
         return self.df
 
 
 if __name__ == '__main__':
-    print AddDescriptor()
+    print(AddDescriptor())
