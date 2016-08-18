@@ -155,10 +155,13 @@ class ConditionalVolumePredictor:
         denominator = 0
 
         for k, v in mapping.items():
-            numerator += k.ionic_radius ** 3 * comp[k]
-            denominator += v.ionic_radius ** 3 * ref_comp[v]
+            # Here, the 1/3 factor on the composition accounts for atomic
+            # packing. We want the number per unit length.
+            numerator += k.ionic_radius * comp[k] ** (1/3)
+            denominator += v.ionic_radius * ref_comp[v] ** (1/3)
 
-        return ref_structure.volume * numerator / denominator
+        # The scaling factor is based on lengths. We apply a power of 3.
+        return ref_structure.volume * (numerator / denominator) ** 3
 
     def get_predicted_structure(self, structure, ref_structure):
         """
