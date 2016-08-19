@@ -46,18 +46,25 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
     return total_sum_energies/num_points
 
 
-def absolute_band_positions(bs, **kwargs):
+def absolute_band_positions(bs, target_gap=None, **kwargs):
     """
     Absolute VBM and CBM positions with respect to branch point energy
 
     Args:
         bs: Bandstructure object
+        target_gap: if a better band gap is known, shift band positions by this gap
         **kwargs: arguments to feed into branch point energy code
 
     Returns:
         (vbm, cbm) - tuple of floats
 
     """
-    bpe = branch_point_energy(bs, **kwargs)
-    return (bs.get_vbm()["energy"] - bpe), (bs.get_cbm()["energy"] - bpe)
+    vbm = bs.get_vbm()["energy"]
+    cbm = bs.get_cbm()["energy"]
+    shift = 0
+    if target_gap:
+        # for now, equal shift to VBM / CBM
+        shift = (target_gap - (cbm - vbm)) / 2
 
+    bpe = branch_point_energy(bs, **kwargs)
+    return (vbm - bpe - shift), (cbm - bpe + shift)
