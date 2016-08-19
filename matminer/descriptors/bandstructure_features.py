@@ -1,5 +1,7 @@
 from __future__ import division
 
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
@@ -7,8 +9,6 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
     """
     Get the branch point energy as defined by:
     Schleife, Fuchs, Rodi, Furthmuller, Bechstedt, APL 94, 012104 (2009)
-
-    TODO: incorporate kpoint weights!!
 
     Args:
         bs: (BandStructure) - uniform mesh bandstructure object
@@ -23,7 +23,8 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
 
     total_sum_energies = 0
     num_points = 0
-
+    kpt_wts = SpacegroupAnalyzer(bs.structure).get_kpoint_weights(
+        [k.frac_coords for k in bs.kpoints])
     for spin in bs.bands:
         for kpt_idx in range(len(bs.kpoints)):
             vb_energies = []
@@ -37,8 +38,10 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
             vb_energies.sort(reverse=True)
             cb_energies.sort()
             total_sum_energies += (sum(vb_energies[0:n_vb])/n_vb +
-                                   sum(cb_energies[0:n_cb])/n_cb) / 2  # TODO: multiply by kpoint weight
-            num_points += 1  # TODO: set to kpoint weight
+                                   sum(cb_energies[0:n_cb])/n_cb) \
+                                  * kpt_wts[kpt_idx]/2
+
+            num_points += kpt_wts[kpt_idx]
 
     return total_sum_energies/num_points
 
