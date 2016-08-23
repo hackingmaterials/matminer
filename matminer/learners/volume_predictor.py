@@ -125,7 +125,7 @@ class ConditionalVolumePredictor:
     def __init__(self):
         pass
 
-    def predict(self, structure, ref_structure):
+    def predict(self, structure, ref_structure, test_isostructural=True):
         """
         Given a structure, returns back the predicted volume.
 
@@ -133,6 +133,9 @@ class ConditionalVolumePredictor:
             structure (Structure): structure w/unknown volume
             ref_structure (Structure): A reference structure with a similar
                 structure but different species.
+            test_isostructural (bool): Whether to test that the two
+                structures are isostructural. This algo works best for
+                isostructural compounds. Defaults to True.
 
         Returns:
             a float value of the predicted volume
@@ -144,11 +147,12 @@ class ConditionalVolumePredictor:
             a = BVAnalyzer()
             ref_structure = a.get_oxi_state_decorated_structure(ref_structure)
 
-        m = StructureMatcher()
-        mapping = m.get_best_electronegativity_anonymous_mapping(structure,
-                                                                 ref_structure)
-        if mapping is None:
-            raise ValueError("Input structures do not match!")
+        if test_isostructural:
+            m = StructureMatcher()
+            mapping = m.get_best_electronegativity_anonymous_mapping(
+                structure, ref_structure)
+            if mapping is None:
+                raise ValueError("Input structures do not match!")
 
         comp = structure.composition
         ref_comp = ref_structure.composition
@@ -156,11 +160,12 @@ class ConditionalVolumePredictor:
         numerator = 0
         denominator = 0
 
-        for k, v in mapping.items():
-            # Here, the 1/3 factor on the composition accounts for atomic
-            # packing. We want the number per unit length.
-            numerator += k.ionic_radius * comp[k] ** (1/3)
-            denominator += v.ionic_radius * ref_comp[v] ** (1/3)
+        # Here, the 1/3 factor on the composition accounts for atomic
+        # packing. We want the number per unit length.
+        for k, v in comp.items():
+            numerator += k.ionic_radius * v ** (1 / 3)
+        for k, v in ref_comp.items():
+            denominator += k.ionic_radius * v ** (1/3)
 
         # The scaling factor is based on lengths. We apply a power of 3.
         return ref_structure.volume * (numerator / denominator) ** 3
