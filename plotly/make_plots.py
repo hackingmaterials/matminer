@@ -5,7 +5,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class ScatterPlot:
     def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest', filename=None,
-                 plot_mode='offline'):
+                 plot_mode='offline', username=None, api_key=None):
         self.title = plot_title
         self.x_title = x_title
         self.y_title = y_title
@@ -13,6 +13,14 @@ class ScatterPlot:
         self.hovermode = hovermode
         self.filename = filename
         self.plot_mode = plot_mode
+        self.username = username
+        self.api_key = api_key
+
+        if self.plot_mode == 'online':
+            if not self.username:
+                raise ValueError('field "username" must be filled in online plotting mode')
+            if not self.api_key:
+                raise ValueError('field "api_key" must be filled in online plotting mode')
 
     def plot_dataframe(self, dataframe, x_col, y_col, text_col=None):
         fig = {
@@ -39,4 +47,9 @@ class ScatterPlot:
         elif self.plot_mode == 'notebook':
             plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
             plotly.offline.iplot(fig)
-            # elif self.plot_mode == 'online':
+        elif self.plot_mode == 'online':
+            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
+            if self.filename:
+                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
+            else:
+                plotly.plotly.plot(fig, sharing='public')
