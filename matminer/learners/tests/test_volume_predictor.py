@@ -35,16 +35,13 @@ class ConditionalVolumePredictorTest(PymatgenTest):
         self.assertAlmostEqual(p.predict(lif, nacl), 74.268402413690467)
 
         lfpo = PymatgenTest.get_structure("LiFePO4")
-        print(lfpo.volume)
         lmpo = PymatgenTest.get_structure("LiFePO4")
         lmpo.replace_species({"Fe": "Mn"})
         self.assertAlmostEqual(p.predict(lmpo, lfpo), 310.08253254420134)
 
         sto = PymatgenTest.get_structure("SrTiO3")
-        print(sto.volume)
         scoo = PymatgenTest.get_structure("SrTiO3")
         scoo.replace_species({"Ti4+": "Co4+"})
-        print(scoo)
         self.assertAlmostEqual(p.predict(scoo, sto), 56.162534974936463)
 
 if __name__ == '__main__':
