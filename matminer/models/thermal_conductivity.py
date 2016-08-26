@@ -5,7 +5,7 @@ from scipy.integrate import quad
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
-def cahill_model(n, V, v_l, v_t1, v_t2):
+def cahill_simple_model(n, V, v_l, v_t1, v_t2):
     """
     Calculate Cahill thermal conductivity.
 
@@ -29,11 +29,52 @@ def cahill_model(n, V, v_l, v_t1, v_t2):
 
 
 def cahill_integrand(x):
+    """
+    Integrand function to calculate Cahill thermal conductivity.
+
+    Args:
+        x: (hbar * omega)/(k * T)   # hbar: reduced Planck's constant, omega = phonon frequency
+
+    Returns: (float) integral value
+
+    """
     return (x**3 * math.exp(x)) / ((math.exp(x) - 1)**2)
 
 
-def cahill_integrand_model(theta, T):
-    return (math.pi/6)**(1.0/3) * k * quad(cahill_integrand, 0, theta / T)
+def cahill_integrand_summation(v_i, T, theta):
+    """
+    Calculate the summation term for the Cahill thermal conductivity integrand model.
+    Use this function repeatedly to calculate the total sum over all acoustic modes.
+
+    References:
+        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
+        http://www.nature.com/nature/journal/v508/n7496/pdf/nature13184.pdf (full formula)
+
+    Args:
+        v_i: (float) sound velocity for the acoustic mode i (in SI units, i.e. m(s)^(-1))
+        T: (float) absolute temperature (in K)
+        theta: (float) Debye temperature (in K)
+
+    Returns: (float) summation term for only *one* acoustic mode i
+
+    """
+    return v_i * (T/theta)**2 * quad(cahill_integrand, 0, theta/T)
+
+
+def cahill_integrand_model(N, V, cahill_integrand_sum):
+    """
+    Calculate Cahill thermal conductivity using the intergrand model.
+
+    Args:
+        N: (int) number of atoms in primitive cell
+        V: (float) unit cell volume (in SI units, i.e. m^(-3))
+        cahill_integrand_sum: (float) *sum* of the term calculate using the above function "cahill_integrand_summation"
+
+    Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
+    """
+    n_d = (6 * math.pi**2 * (N/V)) ** (1.0/3)
+    return (math.pi/6)**(1.0/3) * k * (n_d)**(1.0/3) * cahill_integrand_sum
 
 
 def clarke_model(M, E, m, V):
@@ -90,7 +131,7 @@ def callaway_model(v_m, T, theta, t_ph):
     Returns: (float) Callaway thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0, theta / T, args=(t_ph,))
+    return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0, theta/T, args=(t_ph,))
 
 
 def slack_integrand(x, t_c):
@@ -130,7 +171,7 @@ def slack_integrand_model(v_m, T, theta, t_c):
     Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0, theta / T, args=(t_c,))
+    return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0, theta/T, args=(t_c,))
 
 
 def slack_simple_model(M, theta, v_a, gamma, n, T):
