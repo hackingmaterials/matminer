@@ -33,6 +33,7 @@ class ThermalConductivity:
             v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m(s)^(-1))
 
         Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
         """
         return (1.0 / 2) * ((math.pi / 6) ** (1.0 / 3)) * k * ((n / self.volume) ** (2.0 / 3)) * (v_l + v_t1 + v_t2)
 
@@ -50,6 +51,7 @@ class ThermalConductivity:
             m: (float) total mass (in SI units, i.e. Kg)
 
         Returns: (float) Clarke thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
         """
         return 0.87 * k * ((1 / M) ** (2.0 / 3)) * (E ** (1.0 / 2)) * ((m / self.volume) ** (1.0 / 6))
 
@@ -62,6 +64,7 @@ class ThermalConductivity:
             t_ph: phonon relaxation time (in SI units, s^(-1))
 
         Returns: (float) integral value
+
         """
         return (x**4 * math.exp(x)) / (t_ph**(-1) * (math.exp(x) - 1)**2)
 
@@ -72,6 +75,7 @@ class ThermalConductivity:
         # References:
         http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
         http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
+        http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
 
         Args:
             v_m: speed of sound in the material (in SI units, i.e. m(s)^(-1))
@@ -80,6 +84,7 @@ class ThermalConductivity:
             t_ph: phonon relaxation time (in SI units, s^(-1))
 
         Returns: (float) Callaway thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
         """
         return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(ThermalConductivity(1).callaway_integrand,
                                                                              0, theta / T, args=(t_ph,))
@@ -93,12 +98,13 @@ class ThermalConductivity:
             t_c: phonon relaxation time (in SI units, s^(-1))
 
         Returns: (float) integral value
+
         """
         return t_c * x**2
 
     def slack_integrand_model(self, v_m, T, theta, t_c):
         """
-        Calculate Slack thermal conductivity
+        Calculate Slack thermal conductivity using the integral model.
         (In high temperature regions, those higher than that of the Debye temperature of the material, the Callaway
         model is insufficient at predicting the lattice thermal conductivity. This shortfall must be addressed as many
         thermoelectric materials are designed to be used in conditions beyond the Debye temperature of the alloys and
@@ -117,10 +123,30 @@ class ThermalConductivity:
                 (see Ref. http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058)
 
         Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
         """
         return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(ThermalConductivity(1).callaway_integrand,
                                                                              0, theta / T, args=(t_c,))
 
+    def slack_simple_model(self, M, theta, v_a, gamma, n, T):
+        """
+        Calculate the simple Slack thermal conductivity
+
+        Args:
+            M: average atomic mass
+            theta: Debye temperature (in K)
+            v_a: (v_a)**3 is the volume per atom (in Angstroms)
+            gamma: Gruneisen parameter
+            n: number of atoms in primitive cell
+            T: absolute temperature (in K)
+
+        Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
+        """
+        A_0 = 3.1 * 10**(-8) # for v_a in Angstroms.
+        # Taken from http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
+        # This constant is 3.1 * 10**(-6) in http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
+        return (A_0 * M * theta**3 * v_a)/(gamma * n**(2.0/3) * T)
 
 if __name__ == "__main__":
     print ThermalConductivity(1).cahill_model(1, 1, 1, 1)
