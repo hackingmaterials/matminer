@@ -37,6 +37,12 @@ class ThermalConductivity:
         """
         return (1.0 / 2) * ((math.pi / 6) ** (1.0 / 3)) * k * ((n / self.volume) ** (2.0 / 3)) * (v_l + v_t1 + v_t2)
 
+    def cahill_integrand(self, x):
+        return (x**3 * math.exp(x)) / ((math.exp(x) - 1)**2)
+
+    def cahill_integrand_model(self, theta, T):
+        return (math.pi/6)**(1.0/3) * k * quad(ThermalConductivity(1).cahill_integrand, 0, theta / T)
+
     def clarke_model(self, M, E, m):
         """
         Calculate Clarke thermal conductivity.
