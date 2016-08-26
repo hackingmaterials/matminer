@@ -84,6 +84,43 @@ class ThermalConductivity:
         return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(ThermalConductivity(1).callaway_integrand,
                                                                              0, theta / T, args=(t_ph,))
 
+    def slack_integrand(self, x, t_c):
+        """
+        Integrand function to calculate Callaway thermal conductivity.
+
+        Args:
+            x: (hbar * omega)/(k * T)   # hbar: reduced Planck's constant, omega = phonon frequency
+            t_c: phonon relaxation time (in SI units, s^(-1))
+
+        Returns: (float) integral value
+        """
+        return t_c * x**2
+
+    def slack_integrand_model(self, v_m, T, theta, t_c):
+        """
+        Calculate Slack thermal conductivity
+        (In high temperature regions, those higher than that of the Debye temperature of the material, the Callaway
+        model is insufficient at predicting the lattice thermal conductivity. This shortfall must be addressed as many
+        thermoelectric materials are designed to be used in conditions beyond the Debye temperature of the alloys and
+        accurate predictions are required. At high temperatures, a modification suggested by Glassbrenner and Slack is
+        made to model thermal conductivity as shown here.)
+
+        # References:
+        http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
+        http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
+
+        Args:
+            v_m: speed of sound in the material (in SI units, i.e. m(s)^(-1))
+            T: absolute temperature (in K)
+            theta: Debye temperature (in K)
+            t_c: combined phonon relaxation time that includes higher-order processes (in SI units, s^(-1))
+                (see Ref. http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058)
+
+        Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
+        """
+        return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(ThermalConductivity(1).callaway_integrand,
+                                                                             0, theta / T, args=(t_c,))
+
 
 if __name__ == "__main__":
     print ThermalConductivity(1).cahill_model(1, 1, 1, 1)
