@@ -71,6 +71,8 @@ class ThermalConductivity:
     def callaway_model(self, v_m, T, theta, t_ph):
         """
         Calculate Callaway thermal conductivity
+        (In some circumstances, a second term may be required as seen in
+        http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1)
 
         # References:
         http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
@@ -131,6 +133,10 @@ class ThermalConductivity:
     def slack_simple_model(self, M, theta, v_a, gamma, n, T):
         """
         Calculate the simple Slack thermal conductivity
+
+        # References
+        http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
+        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
 
         Args:
             M: average atomic mass
