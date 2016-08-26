@@ -53,19 +53,19 @@ class ThermalConductivity:
         """
         return 0.87 * k * ((1 / M) ** (2.0 / 3)) * (E ** (1.0 / 2)) * ((m / self.volume) ** (1.0 / 6))
 
-    def callaway_integrand(self, x, t_c):
+    def callaway_integrand(self, x, t_ph):
         """
         Integrand function to calculate Callaway thermal conductivity.
 
         Args:
             x: (hbar * omega)/(k * T)   # hbar: reduced Planck's constant, omega = phonon frequency
-            t_c: phonon relaxation time (in SI units, s^(-1))
+            t_ph: phonon relaxation time (in SI units, s^(-1))
 
         Returns: (float) integral value
         """
-        return (x ** 4 * math.exp(x)) / (t_c * (math.exp(x) - 1) ** 2)
+        return (x**4 * math.exp(x)) / (t_ph**(-1) * (math.exp(x) - 1)**2)
 
-    def callaway_model(self, v_m, T, theta, t_c):
+    def callaway_model(self, v_m, T, theta, t_ph):
         """
         Calculate Callaway thermal conductivity
 
@@ -77,12 +77,12 @@ class ThermalConductivity:
             v_m: speed of sound in the material (in SI units, i.e. m(s)^(-1))
             T: absolute temperature (in K)
             theta: Debye temperature (in K)
-            t_c: phonon relaxation time (in SI units, s^(-1))
+            t_ph: phonon relaxation time (in SI units, s^(-1))
 
         Returns: (float) Callaway thermal conductivity (in SI units, i.e. W(mK)^(-1))
         """
         return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(ThermalConductivity(1).callaway_integrand,
-                                                                             0, theta / T, args=(t_c,))
+                                                                             0, theta / T, args=(t_ph,))
 
 
 if __name__ == "__main__":
