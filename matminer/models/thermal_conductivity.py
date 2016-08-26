@@ -10,10 +10,10 @@ def cahill_simple_model(n, V, v_l, v_t1, v_t2):
     Calculate Cahill thermal conductivity.
 
     References:
-    http://www.sciencedirect.com/science/article/pii/S0925838814021562
-    http://www.sciencedirect.com/science/article/pii/S0927025615004395
-    http://onlinelibrary.wiley.com/doi/10.1002/adma.201400515/epdf
-    http://www.nature.com/nature/journal/v508/n7496/pdf/nature13184.pdf (full formula)
+        http://www.sciencedirect.com/science/article/pii/S0925838814021562
+        http://www.sciencedirect.com/science/article/pii/S0927025615004395
+        http://onlinelibrary.wiley.com/doi/10.1002/adma.201400515/epdf
+        http://www.nature.com/nature/journal/v508/n7496/pdf/nature13184.pdf (full formula)
 
     Args:
         n: (int) number of atoms in unit cell
@@ -65,6 +65,10 @@ def cahill_integrand_model(N, V, cahill_integrand_sum):
     """
     Calculate Cahill thermal conductivity using the intergrand model.
 
+    References:
+        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
+        http://www.nature.com/nature/journal/v508/n7496/pdf/nature13184.pdf (full formula)
+
     Args:
         N: (int) number of atoms in primitive cell
         V: (float) unit cell volume (in SI units, i.e. m^(-3))
@@ -82,8 +86,8 @@ def clarke_model(M, E, m, V):
     Calculate Clarke thermal conductivity.
 
     References:
-    http://www.sciencedirect.com/science/article/pii/S0925838814021562
-    http://www.sciencedirect.com/science/article/pii/S0927025615004395
+        http://www.sciencedirect.com/science/article/pii/S0925838814021562
+        http://www.sciencedirect.com/science/article/pii/S0927025615004395
 
     Args:
         M: (float) molecular mass
@@ -117,10 +121,10 @@ def callaway_model(v_m, T, theta, t_ph):
     (In some circumstances, a second term may be required as seen in
     http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1)
 
-    # References:
-    http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
-    http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
-    http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
+    References:
+        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
+        http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
+        http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
 
     Args:
         v_m: speed of sound in the material (in SI units, i.e. m(s)^(-1))
@@ -132,6 +136,31 @@ def callaway_model(v_m, T, theta, t_ph):
 
     """
     return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0, theta/T, args=(t_ph,))
+
+
+def slack_simple_model(M, theta, v_a, gamma, n, T):
+    """
+    Calculate the simple Slack thermal conductivity
+
+    References
+        http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
+        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
+
+    Args:
+        M: average atomic mass
+        theta: Debye temperature (in K)
+        v_a: (v_a)**3 is the volume per atom (in Angstroms)
+        gamma: Gruneisen parameter
+        n: number of atoms in primitive cell
+        T: absolute temperature (in K)
+
+    Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
+    """
+    A_0 = 3.1 * 10**(-8)  # for v_a in Angstroms.
+    # Taken from http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
+    # This constant is 3.1 * 10**(-6) in http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
+    return (A_0 * M * theta**3 * v_a)/(gamma * n**(2.0/3) * T)
 
 
 def slack_integrand(x, t_c):
@@ -157,9 +186,9 @@ def slack_integrand_model(v_m, T, theta, t_c):
     accurate predictions are required. At high temperatures, a modification suggested by Glassbrenner and Slack is
     made to model thermal conductivity as shown here.)
 
-    # References:
-    http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
-    http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
+    References:
+        http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
+        http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
 
     Args:
         v_m: speed of sound in the material (in SI units, i.e. m(s)^(-1))
@@ -173,32 +202,7 @@ def slack_integrand_model(v_m, T, theta, t_c):
     """
     return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0, theta/T, args=(t_c,))
 
-
-def slack_simple_model(M, theta, v_a, gamma, n, T):
-    """
-    Calculate the simple Slack thermal conductivity
-
-    # References
-    http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
-    http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
-
-    Args:
-        M: average atomic mass
-        theta: Debye temperature (in K)
-        v_a: (v_a)**3 is the volume per atom (in Angstroms)
-        gamma: Gruneisen parameter
-        n: number of atoms in primitive cell
-        T: absolute temperature (in K)
-
-    Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
-
-    """
-    A_0 = 3.1 * 10**(-8)  # for v_a in Angstroms.
-    # Taken from http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
-    # This constant is 3.1 * 10**(-6) in http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
-    return (A_0 * M * theta**3 * v_a)/(gamma * n**(2.0/3) * T)
-
 if __name__ == "__main__":
-    print cahill_model(1, 1, 1, 1, 1)
+    print cahill_simple_model(1, 1, 1, 1, 1)
     # print unit('Boltzmann constant')
     print clarke_model(1, 1, 1, 1)
