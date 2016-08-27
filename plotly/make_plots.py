@@ -6,6 +6,23 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 class ScatterPlot:
     def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest', size=6,
                  filename=None, plot_mode='offline', username=None, api_key=None):
+        """
+
+        Args:
+            plot_title:
+            x_title:
+            y_title:
+            mode: 'markers'/'lines'/'lines+markers'
+            hovermode:
+            size:
+            filename:
+            plot_mode:
+            username:
+            api_key:
+
+        Returns:
+
+        """
         self.title = plot_title
         self.x_title = x_title
         self.y_title = y_title
