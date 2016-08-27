@@ -78,7 +78,7 @@ def cahill_integrand_model(N, V, cahill_integrand_sum):
 
     """
     n_d = (6 * math.pi**2 * (N/V)) ** (1.0/3)
-    return (math.pi/6)**(1.0/3) * k * (n_d)**(1.0/3) * cahill_integrand_sum
+    return (math.pi/6)**(1.0/3) * k * n_d**(1.0/3) * cahill_integrand_sum
 
 
 def clarke_model(M, E, m, V):
@@ -107,7 +107,7 @@ def callaway_integrand(x, t_ph):
 
     Args:
         x: (hbar * omega)/(k * T)   # hbar: reduced Planck's constant, omega = phonon frequency
-        t_ph: phonon relaxation time (in SI units, s^(-1))
+        t_ph: (float) phonon relaxation time (in SI units, s^(-1))
 
     Returns: (float) integral value
 
@@ -127,10 +127,10 @@ def callaway_model(v_m, T, theta, t_ph):
         http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
 
     Args:
-        v_m: speed of sound in the material (in SI units, i.e. m(s)^(-1))
-        T: absolute temperature (in K)
-        theta: Debye temperature (in K)
-        t_ph: phonon relaxation time (in SI units, s^(-1))
+        v_m: (float) speed of sound in the material (in SI units, i.e. m(s)^(-1))
+        T: (float) absolute temperature (in K)
+        theta: (float) Debye temperature (in K)
+        t_ph: (float) phonon relaxation time (in SI units, s^(-1))
 
     Returns: (float) Callaway thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
@@ -147,12 +147,12 @@ def slack_simple_model(M, theta, v_a, gamma, n, T):
         http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
 
     Args:
-        M: average atomic mass
-        theta: Debye temperature (in K)
-        v_a: (v_a)**3 is the volume per atom (in Angstroms)
-        gamma: Gruneisen parameter
-        n: number of atoms in primitive cell
-        T: absolute temperature (in K)
+        M: (float) average atomic mass
+        theta: (float) Debye temperature (K)
+        v_a: (float) (v_a)**3 is the volume per atom (Angstroms)
+        gamma: (float) Gruneisen parameter
+        n: (int) number of atoms in primitive cell
+        T: (float) absolute temperature (K)
 
     Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
@@ -169,7 +169,7 @@ def slack_integrand(x, t_c):
 
     Args:
         x: (hbar * omega)/(k * T)   # hbar: reduced Planck's constant, omega = phonon frequency
-        t_c: phonon relaxation time (in SI units, s^(-1))
+        t_c: (float) phonon relaxation time (in SI units, s^(-1))
 
     Returns: (float) integral value
 
@@ -191,16 +191,39 @@ def slack_integrand_model(v_m, T, theta, t_c):
         http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
 
     Args:
-        v_m: speed of sound in the material (in SI units, i.e. m(s)^(-1))
-        T: absolute temperature (in K)
-        theta: Debye temperature (in K)
-        t_c: combined phonon relaxation time that includes higher-order processes (in SI units, s^(-1))
+        v_m: (float) speed of sound in the material (in SI units, i.e. m(s)^(-1))
+        T: (float) absolute temperature (in K)
+        theta: (float) Debye temperature (in K)
+        t_c: (float) combined phonon relaxation time that includes higher-order processes (in SI units, s^(-1))
             (see Ref. http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058)
 
     Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
     return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0, theta/T, args=(t_c,))
+
+
+def keyes_model(gamma, e_m, T_m, m, V, T, A):
+    """
+    Calculate Keyes thermal conductivity
+
+    References:
+        http://journals.aps.org/pr/pdf/10.1103/PhysRev.115.564
+
+    Args:
+        gamma: (float) Gruneisen parameter
+        e_m: (float) amplitude of atomic vibrations as fraction of lattice constant at which melting takes place
+        T_m: (float) melting temperature (K)
+        m: (float) total mass (in SI units, i.e. Kg)
+        V: (float) unit cell volume (in SI units, i.e. m^(-3))
+        T: (float) absolute temperature (in K)
+        A: (float) average atomic weight
+
+    Returns: (float) Keyes thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
+    """
+    B = (R**(3.0/2))/(3 * gamma**2 * e_m**3 * (6.023*10**23)**(1.0/3))
+    return (B * T_m**(3.0/2) * (m/V)**(2.0/3))/(T * A**(7.0/6))
 
 if __name__ == "__main__":
     print cahill_simple_model(1, 1, 1, 1, 1)
