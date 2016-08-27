@@ -4,13 +4,14 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 class ScatterPlot:
-    def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest', filename=None,
-                 plot_mode='offline', username=None, api_key=None):
+    def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest', size=6,
+                 filename=None, plot_mode='offline', username=None, api_key=None):
         self.title = plot_title
         self.x_title = x_title
         self.y_title = y_title
         self.mode = mode
         self.hovermode = hovermode
+        self.size = size
         self.filename = filename
         self.plot_mode = plot_mode
         self.username = username
@@ -29,7 +30,11 @@ class ScatterPlot:
                     'x': dataframe[x_col],
                     'y': dataframe[y_col],
                     'text': dataframe[text_col],
-                    'mode': self.mode},
+                    'mode': self.mode,
+                    'marker': {
+                        'size': self.size
+                    }
+                },
             ],
             'layout': {
                 'title': self.title,
