@@ -26,6 +26,21 @@ class SoundVelocityModel():
 
     # maybe a helper method if you need to process an entire column of data, e.g. process Pandas dataframe
 
+
+def sound_velocity(C_eff, rho):
+    """
+    Calculate sound velocity (v) in a material from elastic constant.
+
+    Args:
+        C_eff: (float) effective elastic constant (N/m^2)
+        rho: (float) material density (kg/m^3)
+
+    Returns: (float) velocity of sound (m/s) in the material
+
+    """
+    return C_eff/rho
+
+
 if __name__ == "__main__":
 
     svm = SoundVelocityModel()
