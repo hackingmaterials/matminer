@@ -10,10 +10,12 @@ def cahill_simple_model(n, V, v_l, v_t1, v_t2):
     Calculate Cahill thermal conductivity.
 
     References:
-        http://www.sciencedirect.com/science/article/pii/S0925838814021562
-        http://www.sciencedirect.com/science/article/pii/S0927025615004395
-        http://onlinelibrary.wiley.com/doi/10.1002/adma.201400515/epdf
-        http://www.nature.com/nature/journal/v508/n7496/pdf/nature13184.pdf (full formula)
+        - DOI: 10.1016/j.jallcom.2014.09.022 (Title: "Electronic structure, elastic anisotropy,
+        thermal conductivity and optical properties of calcium apatite Ca5(PO4)3X (X = F, Cl or Br)")
+        - DOI: 10.1016/j.commatsci.2015.07.029 (Title: "Electronic structure, mechanical properties and
+        anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals")
+        - DOI: 10.1002/adma.201400515 (Title: "High Thermoelectric Performance in Non-Toxic Earth-Abundant
+        Copper Sulfide")
 
     Args:
         n: (int) number of atoms in unit cell
@@ -47,8 +49,10 @@ def cahill_integrand_summation(v_i, T, theta):
     Use this function repeatedly to calculate the total sum over all acoustic modes.
 
     References:
-        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
-        http://www.nature.com/nature/journal/v508/n7496/pdf/nature13184.pdf (full formula)
+        - DOI: 10.1002/adfm.201600718 (Title: "Minimum Thermal Conductivity in Weak Topological Insulators with
+        Bismuth-Based Stack Structure")
+        - DOI: 10.1038/nature13184 (Title: "Ultralow thermal conductivity and high thermoelectric figure of merit in
+        SnSe crystals") (full formula)
 
     Args:
         v_i: (float) sound velocity for the acoustic mode i (in SI units, i.e. m(s)^(-1))
@@ -66,8 +70,10 @@ def cahill_integrand_model(N, V, cahill_integrand_sum):
     Calculate Cahill thermal conductivity using the intergrand model.
 
     References:
-        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
-        http://www.nature.com/nature/journal/v508/n7496/pdf/nature13184.pdf (full formula)
+        - DOI: 10.1002/adfm.201600718 (Title: "Minimum Thermal Conductivity in Weak Topological Insulators with
+        Bismuth-Based Stack Structure")
+        - DOI: 10.1038/nature13184 (Title: "Ultralow thermal conductivity and high thermoelectric figure of merit in
+        SnSe crystals") (full formula)
 
     Args:
         N: (int) number of atoms in primitive cell
@@ -86,8 +92,10 @@ def clarke_model(M, E, m, V):
     Calculate Clarke thermal conductivity.
 
     References:
-        http://www.sciencedirect.com/science/article/pii/S0925838814021562
-        http://www.sciencedirect.com/science/article/pii/S0927025615004395
+        - DOI: 10.1016/j.jallcom.2014.09.022 (Title: "Electronic structure, elastic anisotropy,
+        thermal conductivity and optical properties of calcium apatite Ca5(PO4)3X (X = F, Cl or Br)")
+        - DOI: 10.1016/j.commatsci.2015.07.029 (Title: "Electronic structure, mechanical properties and
+        anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals")
 
     Args:
         M: (float) molecular mass
@@ -122,9 +130,12 @@ def callaway_model(v_m, T, theta, t_ph):
     http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1)
 
     References:
-        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
-        http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
-        http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
+        - DOI: 10.1002/adfm.201600718 (Title: "Minimum Thermal Conductivity in Weak Topological Insulators with
+        Bismuth-Based Stack Structure")
+        - DOI: 10.1063/1.4906225 (Title: "Critical analysis of lattice thermal conductivity of half-Heusler alloys
+        using variations of Callaway model")
+        - DOI: 10.1103/PhysRev.134.A1058 (Title: "Thermal Conductivity of Silicon and Germanium from 3 K to the Melting
+         Point")
 
     Args:
         v_m: (float) speed of sound in the material (in SI units, i.e. m(s)^(-1))
@@ -143,8 +154,9 @@ def slack_simple_model(M, theta, v_a, gamma, n, T):
     Calculate the simple Slack thermal conductivity
 
     References
-        http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
-        http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
+        - DOI: 10.1007/0-387-25100-6_2 (Title: "High Lattice Thermal Conductivity Solids")
+        - DOI: 10.1002/adfm.201600718 (Title: "Minimum Thermal Conductivity in Weak Topological Insulators with
+        Bismuth-Based Stack Structure")
 
     Args:
         M: (float) average atomic mass
@@ -159,7 +171,7 @@ def slack_simple_model(M, theta, v_a, gamma, n, T):
     """
     A_0 = 3.1 * 10**(-8)  # for v_a in Angstroms.
     # Taken from http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
-    # This constant is 3.1 * 10**(-6) in http://onlinelibrary.wiley.com/doi/10.1002/adfm.201600718/full
+    # This constant is 3.1 * 10**(-6) in Ref:- DOI: 10.1002/adfm.201600718
     return (A_0 * M * theta**3 * v_a)/(gamma * n**(2.0/3) * T)
 
 
@@ -187,15 +199,17 @@ def slack_integrand_model(v_m, T, theta, t_c):
     made to model thermal conductivity as shown here.)
 
     References:
-        http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058
-        http://scitation.aip.org/content/aip/journal/jap/117/3/10.1063/1.4906225
+        - DOI: 10.1103/PhysRev.134.A1058 (Title: "Thermal Conductivity of Silicon and Germanium from 3 K to the Melting
+         Point")
+        - DOI: 10.1063/1.4906225 (Title: "Critical analysis of lattice thermal conductivity of half-Heusler alloys
+        using variations of Callaway model")
 
     Args:
         v_m: (float) speed of sound in the material (in SI units, i.e. m(s)^(-1))
         T: (float) absolute temperature (in K)
         theta: (float) Debye temperature (in K)
         t_c: (float) combined phonon relaxation time that includes higher-order processes (in SI units, s^(-1))
-            (see Ref. http://journals.aps.org/pr/pdf/10.1103/PhysRev.134.A1058)
+            (see Ref:- DOI: 10.1103/PhysRev.134.A1058)
 
     Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
@@ -208,7 +222,8 @@ def keyes_model(gamma, e_m, T_m, m, V, T, A):
     Calculate Keyes thermal conductivity
 
     References:
-        http://journals.aps.org/pr/pdf/10.1103/PhysRev.115.564
+        - DOI: 10.1103/PhysRev.115.564 (Title: "High-Temperature Thermal Conductivity of Insulating Crystals:
+        Relationship to the Melting Point")
 
     Args:
         gamma: (float) Gruneisen parameter
