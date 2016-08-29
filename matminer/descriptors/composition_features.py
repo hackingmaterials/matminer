@@ -117,6 +117,24 @@ def get_std(lst):
     return math.sqrt(total_weighted_squares / total_amt)
 
 
+def band_center(comp):
+    """
+    Estimate absolution position of band center using geometric mean of electronegativity
+    Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at Semiconductor-Electrolyte Interfaces from Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).
+
+    Args:
+        comp: (Composition)
+
+    Returns: (float) band center
+
+    """
+    prod = 1.0
+    for el, amt in comp.get_el_amt_dict().iteritems():
+        prod = prod * (Element(el).X ** amt)
+
+    return -prod**(1/sum(comp.get_el_amt_dict().values()))
+
+
 if __name__ == '__main__':
     descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
                    'coefficient_of_linear_thermal_expansion']
