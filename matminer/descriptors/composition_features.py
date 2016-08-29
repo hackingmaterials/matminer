@@ -6,6 +6,7 @@ import os
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
+
 # TODO: read Magpie file only once
 # TODO: Handle dictionaries in case of atomic radii. Aj says "You can require that getting the ionic_radii descriptor
 #  requires a valence-decorated Structure or valence-decorated Composition. Otherwise it does not work, i.e. returns
@@ -54,8 +55,8 @@ def get_magpie_descriptor(comp, descriptor_name):
     :return: (list) of descriptor values for each element in the composition
     """
     available_props = []
-    for file in os.listdir('data/magpie_elementdata'):
-         available_props.append(file.replace('.table', ''))
+    for datafile in os.listdir('data/magpie_elementdata'):
+        available_props.append(datafile.replace('.table', ''))
     if descriptor_name not in available_props:
         print('This descriptor is not available from the Magpie repository. '
               'Choose from {}'.format(available_props))
@@ -120,7 +121,8 @@ def get_std(lst):
 def band_center(comp):
     """
     Estimate absolution position of band center using geometric mean of electronegativity
-    Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at Semiconductor-Electrolyte Interfaces from Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).
+    Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at Semiconductor-Electrolyte Interfaces from
+    Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).
 
     Args:
         comp: (Composition)
@@ -132,7 +134,7 @@ def band_center(comp):
     for el, amt in comp.get_el_amt_dict().iteritems():
         prod = prod * (Element(el).X ** amt)
 
-    return -prod**(1/sum(comp.get_el_amt_dict().values()))
+    return -prod ** (1 / sum(comp.get_el_amt_dict().values()))
 
 
 if __name__ == '__main__':
