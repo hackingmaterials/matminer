@@ -1,9 +1,13 @@
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
-def vickers_hardness(G, K):
+def vickers_hardness1(G, K):
     """
     Calculate Vickers hardness for a material.
+
+    References:
+        DOI: (not available yet) (Title: "A Statistical Learning Framework for Materials Science: Application to
+        Elastic Moduli of k-nary Inorganic Compounds")
 
     Args:
         G: (float) elastic bulk moduli
@@ -20,7 +24,8 @@ def thermal_stress(E_T, alpha_T, delta_T, nu_T):
     Calculate thermal stress.
 
     References:
-        DOI: 10.1007/s10853-013-7569-1 (Room temperature mechanical properties of natural-mineral-based thermoelectrics)
+        DOI: 10.1007/s10853-013-7569-1 (Title: "Room temperature mechanical properties of natural-mineral-based
+        thermoelectrics")
 
     Args:
         E_T: (float) temperature-dependent Young's modulus
@@ -34,4 +39,4 @@ def thermal_stress(E_T, alpha_T, delta_T, nu_T):
     return (E_T * alpha_T * delta_T)/(1 - nu_T)
 
 if __name__ == "__main__":
-    print vickers_hardness(3, 2)
+    print vickers_hardness1(3, 2)
