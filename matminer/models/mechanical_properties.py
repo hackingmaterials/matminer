@@ -57,7 +57,7 @@ def thermal_stress(E_T, alpha_T, delta_T, nu_T):
     return (E_T * alpha_T * delta_T)/(1 - nu_T)
 
 
-def fracture_toughness(F, a, E, c):
+def fracture_toughness(E, H, F, c):
     """
     Calculate fracture toughness (K_c) of a material.
 
@@ -66,15 +66,14 @@ def fracture_toughness(F, a, E, c):
         thermoelectrics")
 
     Args:
-        F: (float) indentation load (N)
-        a: (float) half of diagonal length of the indentation impression (m)
         E: (float) Young's modulus
+        H: (float) hardness
+        F: (float) indentation load (N)
         c: (float) hald of radial crack length (m)
 
     Returns: (float) fracture toughness (K_c) of a material
 
     """
-    H = vickers_hardness2(F, a)
     return (0.016 * (E/H)**0.5 * F)/(c**1.5)
 
 
