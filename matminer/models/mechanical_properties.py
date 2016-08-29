@@ -78,5 +78,18 @@ def fracture_toughness(F, a, E, c):
     return (0.016 * (E/H)**0.5 * F)/(c**1.5)
 
 
+def brittleness_index(H, E, K_c):
+    """
+    Calculate brittleness index (BI) of a material.
+    Args:
+        H: (float) hardness
+        E: (float) Young's modulus
+        K_c: (float) fracture toughness
+
+    Returns: (float) brittleness index (BI) of a material
+
+    """
+    return (H * E)/(K_c**2)
+
 if __name__ == "__main__":
     print vickers_hardness1(3, 2)
