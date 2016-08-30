@@ -91,6 +91,22 @@ def brittleness_index(H, E, K_c):
     return (H * E)/(K_c**2)
 
 
+def steadystate_heatflow(A, T2, T1, kappa, x):
+    """
+    Calulate steady state heat flow (Q)
+
+    Args:
+        A: (float) cross-sectional area (m^2)
+        T2: (float) temperature at cold end (K)
+        T1: (float) temperature at hot end (K)
+        kappa: (float) thermal conductivity (W(mK)^(-1))
+        x: (float) slab length at which heat flow is calculated (m)
+
+    Returns: steady state heat flow (Q) (W or J/s)
+
+    """
+    return (-A * (T2-T1) * kappa)/x
+
+
 if __name__ == "__main__":
     print vickers_hardness1(3, 2)
-
