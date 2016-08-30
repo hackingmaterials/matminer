@@ -1,3 +1,5 @@
+import math
+
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
@@ -158,6 +160,21 @@ def thermal_shock(sigma_tens, nu, kappa, E, cte):
     """
     return (sigma_tens * (1-nu) * kappa)/(E * cte)
 
+
+def critical_stress(E, gamma_s, a, gamma_p=0):
+    """
+    Calculate critical stress needed for crack propagation (sigma_c) according to Griffith theory of brittle fracture.
+
+    Args:
+        E: (float) Young's modulus (N/m^2)
+        gamma_s: (float) elastic strain energy released (N/m)
+        a: (float) one half crack length for internal cracks or crack length for edge cracks (m)
+        gamma_p: (float) plastic strain energy released (N/m)
+
+    Returns: critical stress needed for crack propagation (sigma_c) (N/m^2)
+
+    """
+    return ((2 * E * (gamma_s+gamma_p))/(math.pi * a)) ** 0.5
 
 if __name__ == "__main__":
     print vickers_hardness1(3, 2)
