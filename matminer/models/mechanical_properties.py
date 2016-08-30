@@ -46,7 +46,7 @@ def thermal_stress(E_T, cte_T, delta_T, nu_T):
         thermoelectrics")
 
     Args:
-        E_T: (float) temperature-dependent Young's modulus
+        E_T: (float) temperature-dependent Young's modulus (N/m^2)
         cte_T: (float) temperature-dependent thermal expansion coefficient (K^(-1))
         delta_T: (float) temperature difference (K)
         nu_T: (float) temperature-dependent Poisson's ratio
@@ -66,12 +66,12 @@ def fracture_toughness(E, H, F, c):
         thermoelectrics")
 
     Args:
-        E: (float) Young's modulus
-        H: (float) hardness
+        E: (float) Young's modulus (N/m^2)
+        H: (float) hardness (N/m^2)
         F: (float) indentation load (N)
         c: (float) hald of radial crack length (m)
 
-    Returns: (float) fracture toughness (K_c) of a material (Pa.m^(0.5) or N/m^(3/2))
+    Returns: (float) fracture toughness (K_c) of a material (Pa.m^(0.5) or N/m^(1.5))
 
     """
     return (0.016 * (E/H)**0.5 * F)/(c**1.5)
@@ -81,11 +81,11 @@ def brittleness_index(H, E, K_c):
     """
     Calculate brittleness index (BI) of a material.
     Args:
-        H: (float) hardness
-        E: (float) Young's modulus
-        K_c: (float) fracture toughness
+        H: (float) hardness (N/m^2)
+        E: (float) Young's modulus (N/m^2)
+        K_c: (float) fracture toughness  (N/m^(1.5))
 
-    Returns: (float) brittleness index (BI) of a material
+    Returns: (float) brittleness index (BI) of a material (m^(-1))
 
     """
     return (H * E)/(K_c**2)
@@ -108,6 +108,23 @@ def steadystate_heatflow(A, T2, T1, kappa, x):
     return (-A * (T2-T1) * kappa)/x
 
 
+def max_allowed_heatflow(nu, kappa, sigma, E, cte):
+    """
+    Calculate maximum allowable heat flow (QF)
+
+    Args:
+        nu: (float) Poisson's ratio
+        kappa: (float) thermal conductivity (W(mK)^(-1))
+        sigma: (float) tensile stress or strength (N/m^2)
+        E: (float) Young's modulus (N/m^2)
+        cte: (float) coefficient of thermal expansion (K^(-1))
+
+    Returns: maximum allowable heat flow (QF) (W/m)
+
+    """
+    return ((1-nu) * kappa * sigma)/(E * cte)
+
+
 def stress_from_tempgradient(T2, T1, E, cte, nu):
     """
     Calculate stress as a result of temperature gradient (sigma)
@@ -115,9 +132,9 @@ def stress_from_tempgradient(T2, T1, E, cte, nu):
     Args:
         T2: (float) temperature at cold end (K)
         T1: (float) temperature at hot end (K)
-        E: (float) Young's modulus
-        cte: coefficient of thermal expansion (K^(-1))
-        nu: Poisson's ratio
+        E: (float) Young's modulus (N/m^2)
+        cte: (float) coefficient of thermal expansion (K^(-1))
+        nu: (float) Poisson's ratio
 
     Returns: stress as a result of temperature gradient (sigma) (N/m^2)
 
