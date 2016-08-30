@@ -13,7 +13,7 @@ def vickers_hardness1(G, K):
         G: (float) elastic bulk moduli
         K: (float) elastic shear moduli
 
-    Returns: (float) Vickers hardness (H_v)
+    Returns: (float) Vickers hardness (H_v) (N/m^2)
 
     """
     return 2*(G**3.0/K**2.0)**0.585 - 3
@@ -31,7 +31,7 @@ def vickers_hardness2(F, a):
         F: (float) indentation load (N)
         a: (float) half of diagonal length of the indentation impression (m)
 
-    Returns: (float) Vickers hardness (H)
+    Returns: (float) Vickers hardness (H) (N/m^2)
 
     """
     return (1.8544 * F)/((2*a)**2.0)
@@ -71,7 +71,7 @@ def fracture_toughness(E, H, F, c):
         F: (float) indentation load (N)
         c: (float) hald of radial crack length (m)
 
-    Returns: (float) fracture toughness (K_c) of a material
+    Returns: (float) fracture toughness (K_c) of a material (Pa.m^(0.5) or N/m^(3/2))
 
     """
     return (0.016 * (E/H)**0.5 * F)/(c**1.5)
