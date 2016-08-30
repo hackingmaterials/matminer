@@ -176,5 +176,21 @@ def critical_stress(E, gamma_s, a, gamma_p=0):
     """
     return ((2 * E * (gamma_s+gamma_p))/(math.pi * a)) ** 0.5
 
+
+def critical_fracture_toughness(Y, sigma, a):
+    """
+    Calculate critical fracture toughness (K_IC) according to Griffith theory of brittle fracture.
+
+    Args:
+        Y: (float) Crack shape factor
+        sigma: (float) tensile stress or strength (N/m^2)
+        a: (float) one half crack length for internal cracks or crack length for edge cracks (m)
+
+    Returns: critical fracture toughness (K_IC) (Pa.m^(0.5) or N/m^(1.5))
+
+    """
+    return Y * sigma * (math.pi * a) ** 0.5
+
+
 if __name__ == "__main__":
     print vickers_hardness1(3, 2)
