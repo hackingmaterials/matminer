@@ -37,7 +37,7 @@ def vickers_hardness2(F, a):
     return (1.8544 * F)/((2*a)**2.0)
 
 
-def thermal_stress(E_T, alpha_T, delta_T, nu_T):
+def thermal_stress(E_T, cte_T, delta_T, nu_T):
     """
     Calculate thermal stress (sigma_T) in a material.
 
@@ -47,14 +47,14 @@ def thermal_stress(E_T, alpha_T, delta_T, nu_T):
 
     Args:
         E_T: (float) temperature-dependent Young's modulus
-        alpha_T: (float) temperature-dependent thermal expansion coefficient (K^(-1))
+        cte_T: (float) temperature-dependent thermal expansion coefficient (K^(-1))
         delta_T: (float) temperature difference (K)
         nu_T: (float) temperature-dependent Poisson's ratio
 
     Returns: (float) thermal stress (sigma_T) induced by thermal gradients or thermal transients
 
     """
-    return (E_T * alpha_T * delta_T)/(1 - nu_T)
+    return (E_T * cte_T * delta_T)/(1 - nu_T)
 
 
 def fracture_toughness(E, H, F, c):
@@ -90,5 +90,7 @@ def brittleness_index(H, E, K_c):
     """
     return (H * E)/(K_c**2)
 
+
 if __name__ == "__main__":
     print vickers_hardness1(3, 2)
+
