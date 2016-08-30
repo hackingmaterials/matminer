@@ -115,7 +115,7 @@ def max_allowed_heatflow(nu, kappa, sigma, E, cte):
     Args:
         nu: (float) Poisson's ratio
         kappa: (float) thermal conductivity (W(mK)^(-1))
-        sigma: (float) tensile stress or strength (N/m^2)
+        sigma: (float) stress as a result of temperature gradient (N/m^2)
         E: (float) Young's modulus (N/m^2)
         cte: (float) coefficient of thermal expansion (K^(-1))
 
@@ -140,6 +140,23 @@ def stress_from_tempgradient(T2, T1, E, cte, nu):
 
     """
     return ((T2-T1) * E * cte)/(1-nu)
+
+
+def thermal_shock(sigma_tens, nu, kappa, E, cte):
+    """
+    Calculate thermal shock resistance parameter (R_therm)
+
+    Args:
+        sigma_tens: (float) tensile stress or strength (N/m^2)
+        nu: (float) Poisson's ratio
+        kappa: (float) thermal conductivity (W(mK)^(-1))
+        E: (float) Young's modulus (N/m^2)
+        cte: (float) coefficient of thermal expansion (K^(-1))
+
+    Returns: thermal shock resistance parameter (R_therm)
+
+    """
+    return (sigma_tens * (1-nu) * kappa)/(E * cte)
 
 
 if __name__ == "__main__":
