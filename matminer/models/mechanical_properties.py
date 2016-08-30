@@ -93,7 +93,7 @@ def brittleness_index(H, E, K_c):
 
 def steadystate_heatflow(A, T2, T1, kappa, x):
     """
-    Calulate steady state heat flow (Q)
+    Calculate steady state heat flow (Q)
 
     Args:
         A: (float) cross-sectional area (m^2)
@@ -106,6 +106,23 @@ def steadystate_heatflow(A, T2, T1, kappa, x):
 
     """
     return (-A * (T2-T1) * kappa)/x
+
+
+def stress_from_tempgradient(T2, T1, E, cte, nu):
+    """
+    Calculate stress as a result of temperature gradient (sigma)
+
+    Args:
+        T2: (float) temperature at cold end (K)
+        T1: (float) temperature at hot end (K)
+        E: (float) Young's modulus
+        cte: coefficient of thermal expansion (K^(-1))
+        nu: Poisson's ratio
+
+    Returns: stress as a result of temperature gradient (sigma) (N/m^2)
+
+    """
+    return ((T2-T1) * E * cte)/(1-nu)
 
 
 if __name__ == "__main__":
