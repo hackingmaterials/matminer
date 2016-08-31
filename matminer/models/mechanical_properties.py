@@ -3,6 +3,26 @@ import math
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
+def youngs_modulus(nu, G=None, K=None):
+    """
+    Calculate Young's modulus (E) from other elastic constants.
+
+    Args:
+        nu: (float) Poisson's ratio
+        G: (float) shear or rigidity modulus (N/m^2)
+        K: (float) bulk modulus (N/m^2)
+
+    Returns: Young's modulus (E) (N/m^2)
+
+    """
+    if G and K is None:
+        return 2 * G * (1+nu)
+    elif K and G is None:
+        return 3 * K * (1-2*nu)
+    else:
+        raise ValueError("Enter one of G or K")
+
+
 def vickers_hardness1(G, K):
     """
     Calculate Vickers hardness (H_v) for a material.
