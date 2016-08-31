@@ -209,5 +209,23 @@ def critical_fracture_toughness(sigma, a, Y=1):
     return Y * sigma * (math.pi * a)**0.5
 
 
+def strain_energy_releaserate(K_I, E, nu=0):
+    """
+    Calculate strain energy release rate (G_I). Irwin was the first to observe that if the size of the plastic zone
+    around a crack is small compared to the size of the crack, the energy required to grow the crack will not be
+    critically dependent on the state of stress at the crack tip. Irwin showed that for a mode I crack (opening mode)
+    the strain energy release rate and the stress intensity factor are related by the following relation.
+
+    Args:
+        K_I: (float) stress intensity factor in mode 1 (N/m^(1.5))
+        E: (float) Young's modulus (N/m^2)
+        nu: (float) Poisson's ratio, used in plain strain condition, else default=0
+
+    Returns: strain energy release rate (G_I) (N/m)
+
+    """
+    return ((1-nu**2) * K_I**2)/E
+
+
 if __name__ == "__main__":
     print vickers_hardness1(3, 2)
