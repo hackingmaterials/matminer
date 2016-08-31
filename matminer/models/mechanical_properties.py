@@ -161,7 +161,7 @@ def thermal_shock(sigma_tens, nu, kappa, E, cte):
     return (sigma_tens * (1-nu) * kappa)/(E * cte)
 
 
-def critical_stress(E, gamma_s, a, gamma_p=0):
+def critical_stress(E, gamma_s, a, gamma_p=0, nu=0):
     """
     Calculate critical stress needed for crack propagation (sigma_c) according to Griffith theory of brittle fracture.
 
@@ -170,11 +170,12 @@ def critical_stress(E, gamma_s, a, gamma_p=0):
         gamma_s: (float) elastic strain energy released (N/m)
         a: (float) one half crack length for internal cracks or crack length for edge cracks (m)
         gamma_p: (float) plastic strain energy released (N/m)
+        nu: (float) Poisson's ratio, used in plain strain condition, else default=0
 
     Returns: critical stress needed for crack propagation (sigma_c) (N/m^2)
 
     """
-    return ((2 * E * (gamma_s+gamma_p))/(math.pi * a)) ** 0.5
+    return ((2 * E * (gamma_s+gamma_p))/((1-nu)**2 * math.pi * a)) ** 0.5
 
 
 def critical_fracture_toughness(sigma, a, Y=1):
