@@ -186,7 +186,17 @@ def critical_stress(E, gamma_s, a, gamma_p=0, nu=0):
 
 def critical_fracture_toughness(sigma, a, Y=1):
     """
-    Calculate critical fracture toughness (K_IC) according to Griffith theory of brittle fracture.
+    Calculate critical fracture toughness (K_IC) according to Griffith theory of brittle fracture. Also known as stress
+    intensity factor, and called fracture toughness nder conditions of:
+        (i) brittle fracture
+        (ii) in the presence of a sharp crack
+        (iii) under critical tensile loading
+
+    References:
+        - http://www4.ncsu.edu/~murty/NE509/NOTES/Ch4b-Fracture.pdf
+        - http://www.srmuniv.ac.in/sites/default/files/downloads/griffith_theory_of_brittle_fracture.pdf
+        - https://en.wikipedia.org/wiki/Fracture_mechanics
+        - https://www.fose1.plymouth.ac.uk/fatiguefracture/tutorials/FractureMechanics/Griffith/GriffTheory1.htm
 
     Args:
         sigma: (float) tensile stress or strength (N/m^2)
