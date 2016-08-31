@@ -165,6 +165,12 @@ def critical_stress(E, gamma_s, a, gamma_p=0, nu=0):
     """
     Calculate critical stress needed for crack propagation (sigma_c) according to Griffith theory of brittle fracture.
 
+    References:
+        - http://www4.ncsu.edu/~murty/NE509/NOTES/Ch4b-Fracture.pdf
+        - http://www.srmuniv.ac.in/sites/default/files/downloads/griffith_theory_of_brittle_fracture.pdf
+        - https://en.wikipedia.org/wiki/Fracture_mechanics
+        - https://www.fose1.plymouth.ac.uk/fatiguefracture/tutorials/FractureMechanics/Griffith/GriffTheory1.htm
+
     Args:
         E: (float) Young's modulus (N/m^2)
         gamma_s: (float) elastic strain energy released (N/m)
