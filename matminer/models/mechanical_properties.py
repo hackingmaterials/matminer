@@ -181,7 +181,7 @@ def critical_stress(E, gamma_s, a, gamma_p=0, nu=0):
     Returns: critical stress needed for crack propagation (sigma_c) (N/m^2)
 
     """
-    return ((2 * E * (gamma_s+gamma_p))/((1-nu)**2 * math.pi * a)) ** 0.5
+    return ((2 * E * (gamma_s+gamma_p))/((1-nu**2) * math.pi * a)) ** 0.5
 
 
 def critical_fracture_toughness(sigma, a, Y=1):
