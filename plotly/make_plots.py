@@ -39,7 +39,7 @@ class ScatterPlot:
                 raise ValueError('field "api_key" must be filled in online plotting mode')
 
     def plot_dataframe(self, dataframe, x_col, y_col, text_col=None, color_col=None, color_str='rgba(70, 130, 180, 1)',
-                       size=6):
+                       size_col=None, size_int=6):
         """
 
 
@@ -48,20 +48,30 @@ class ScatterPlot:
             x_col:
             y_col:
             text_col:
-            color_col: (column) name of a dataframe numeric column
+            color_col: (str) name of a dataframe numeric column to set the marker color scale to
             color_str: (str) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
             (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which must
             be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2").
-            size:
+            size_col: (str) name of a dataframe numeric column to set the marker sizes to
+            size_int: (int) marker size
 
         Returns:
 
         """
-        # If color column specified, override color_str
+        # If color column (color_col) specified, override color string (color_str)
         if color_col:
             color = dataframe[color_col]
         else:
             color = color_str
+
+        # If size column (size_col) specified, override size integer (size_int)
+        if size_col:
+            col_max = dataframe[size_col].max()
+            col_min = dataframe[size_col].min()
+            size = ((dataframe[size_col] - col_min)/(col_max - col_min)) * 100
+        else:
+            size = size_int
+
         fig = {
             'data': [
                 {
