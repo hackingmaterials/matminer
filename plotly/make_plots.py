@@ -4,8 +4,8 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 class ScatterPlot:
-    def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest', size=6,
-                 color='rgba(70, 130, 180, 1)', filename=None, plot_mode='offline', username=None, api_key=None):
+    def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest',
+                 filename=None, plot_mode='offline', username=None, api_key=None):
         """
 
         Args:
@@ -14,10 +14,6 @@ class ScatterPlot:
             y_title:
             mode: 'markers'/'lines'/'lines+markers'
             hovermode:
-            color: (str) in the format of a color name (eg: "red"), a RGB tuple, (eg: "rgba(255, 0, 0, 0.8)"), or a
-            hexagonal code (eg: "FFBAD2"). In the format of RGB tuple, the last number represents the marker
-            opacity/transparency, which must be between 0.0 and 1.0.
-            size:
             filename:
             plot_mode:
             username:
@@ -31,12 +27,10 @@ class ScatterPlot:
         self.y_title = y_title
         self.mode = mode
         self.hovermode = hovermode
-        self.size = size
         self.filename = filename
         self.plot_mode = plot_mode
         self.username = username
         self.api_key = api_key
-        self.color = color
 
         if self.plot_mode == 'online':
             if not self.username:
@@ -44,7 +38,30 @@ class ScatterPlot:
             if not self.api_key:
                 raise ValueError('field "api_key" must be filled in online plotting mode')
 
-    def plot_dataframe(self, dataframe, x_col, y_col, text_col=None):
+    def plot_dataframe(self, dataframe, x_col, y_col, text_col=None, color_col=None, color_str='rgba(70, 130, 180, 1)',
+                       size=6):
+        """
+
+
+        Args:
+            dataframe:
+            x_col:
+            y_col:
+            text_col:
+            color_col: (column) name of a dataframe numeric column
+            color_str: (str) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
+            (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which must
+            be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2").
+            size:
+
+        Returns:
+
+        """
+        # If color column specified, override color_str
+        if color_col:
+            color = dataframe[color_col]
+        else:
+            color = color_str
         fig = {
             'data': [
                 {
@@ -53,8 +70,10 @@ class ScatterPlot:
                     'text': dataframe[text_col],
                     'mode': self.mode,
                     'marker': {
-                        'size': self.size,
-                        'color': self.color
+                        'size': size,
+                        'color': color,
+                        'colorscale': 'Viridis',
+                        'showscale': True
                     }
                 },
             ],
