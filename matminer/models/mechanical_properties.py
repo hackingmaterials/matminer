@@ -23,6 +23,28 @@ def youngs_modulus(nu, G=None, K=None):
         raise ValueError("Enter one of G or K")
 
 
+def bulkmodulus_coordination(N_c, ionicity, d):
+    """
+    Calculate bulk modulus (K) from coordination number.
+
+    References:
+        - ISBN: 9780521523394 (Title: "Atomic and Electronic Structure of Solids")
+        - DOI: 10.1103/PhysRevB.32.7988 (Title: "Calculation of bulk moduli of diamond and zinc-blende solids")
+
+    Args:
+        N_c: (float) average coordination number of the solid
+        ionicity: (int) a dimensionless number which describes the ionicity a dimensionless number which describes the
+         ionicity; ionicity=0 for the homopolar crystals C, Si, Ge, Sn; ionicity=1 for III-V compounds (where the
+         valence of each element differs by 1 from the average valence of 4); ionicity=2 for II-VI compounds (where the
+         valence of each element differs by 2 from the average valence of 4).
+        d: (float) bond length
+
+    Returns: bulk modulus (K) (N/m^2)
+
+    """
+    return (N_c/4) * (1971-220*ionicity) * d**(-3.5)
+
+
 def vickers_hardness1(G, K):
     """
     Calculate Vickers hardness (H_v) for a material.
@@ -32,8 +54,8 @@ def vickers_hardness1(G, K):
         Elastic Moduli of k-nary Inorganic Compounds")
 
     Args:
-        G: (float) elastic bulk moduli
-        K: (float) elastic shear moduli
+        G: (float) elastic bulk modulus (N/m^2)
+        K: (float) elastic shear modulus (N/m^2)
 
     Returns: (float) Vickers hardness (H_v) (N/m^2)
 
