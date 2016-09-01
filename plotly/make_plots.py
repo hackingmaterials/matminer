@@ -5,7 +5,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class ScatterPlot:
     def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest', size=6,
-                 filename=None, plot_mode='offline', username=None, api_key=None):
+                 color='rgba(70, 130, 180, 1)', filename=None, plot_mode='offline', username=None, api_key=None):
         """
 
         Args:
@@ -14,6 +14,9 @@ class ScatterPlot:
             y_title:
             mode: 'markers'/'lines'/'lines+markers'
             hovermode:
+            color: (str) in the format of a color name (eg: "red"), a RGB tuple, (eg: "rgba(255, 0, 0, 0.8)"), or a
+            hexagonal code (eg: "FFBAD2"). In the format of RGB tuple, the last number represents the marker
+            opacity/transparency, which must be between 0.0 and 1.0.
             size:
             filename:
             plot_mode:
@@ -33,6 +36,7 @@ class ScatterPlot:
         self.plot_mode = plot_mode
         self.username = username
         self.api_key = api_key
+        self.color = color
 
         if self.plot_mode == 'online':
             if not self.username:
@@ -49,7 +53,8 @@ class ScatterPlot:
                     'text': dataframe[text_col],
                     'mode': self.mode,
                     'marker': {
-                        'size': self.size
+                        'size': self.size,
+                        'color': self.color
                     }
                 },
             ],
