@@ -38,14 +38,13 @@ class PlotlyPlot:
             if not self.api_key:
                 raise ValueError('field "api_key" must be filled in online plotting mode')
 
-    def xy_plot(self, x_col, y_col, dataframe=None, text=None, color='rgba(70, 130, 180, 1)', size=6):
+    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
         Args:
             x_col: (array) x-axis values
             y_col: (array) y-axis values
-            dataframe: pandas dataframe if using its columns to make plots
             text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a
             dataframe column containing text strings
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
