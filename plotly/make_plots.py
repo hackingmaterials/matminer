@@ -18,8 +18,8 @@ class PlotlyPlot:
             hovermode: (str) can be 'x'/'y'/'closest'
             filename: (str) name of plot file
             plot_mode: (str) (i) 'offline': creates and saves plots on the local disk, (ii) 'notebook': to embed plots
-            in a IPython/Jupyter notebook, or (iii) 'online': save the plot in your online plotly account (requires
-            the fields 'username' and 'api_key' to be set)
+                in a IPython/Jupyter notebook, or (iii) 'online': save the plot in your online plotly account (requires
+                the fields 'username' and 'api_key' to be set)
             username: (str) plotly account username
             api_key: (str) plotly account API key
 
@@ -50,13 +50,13 @@ class PlotlyPlot:
             x_col: (array) x-axis values
             y_col: (array) y-axis values
             text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a
-            dataframe column containing text strings
+                dataframe column containing text strings
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
-            (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which must
-            be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2"), or (iv) name of a dataframe numeric column
-            to set the marker color scale to
+                (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which
+                must be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2"), or (iv) name of a dataframe
+                numeric column to set the marker color scale to
             size: (int/array) marker size in the format of (i) a constant integer size, or (ii) name of a dataframe
-            numeric column to set the marker size scale to
+                numeric column to set the marker size scale to
 
         Returns: XY scatter plot
 
@@ -104,7 +104,7 @@ class PlotlyPlot:
             else:
                 plotly.plotly.plot(fig, sharing='public')
 
-    def heatmap_plot(self, data, x_labels=None, y_labels=None):
+    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis'):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
@@ -112,6 +112,12 @@ class PlotlyPlot:
             data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
             x_labels: (array) an array of strings to label the heatmap columns
             y_labels: (array) an array of strings to label the heatmap rows
+            colorscale: (str) Sets the colorscale. The colorscale must be an array containing arrays mapping a
+                normalized value to an rgb, rgba, hex, hsl, hsv, or named color string. At minimum, a mapping for the
+                lowest (0) and highest (1) values are required. For example, `[[0, 'rgb(0,0,255)',
+                [1, 'rgb(255,0,0)']]`. Alternatively, `colorscale` may be a palette name string of the following list:
+                Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot,
+                Blackbody, Earth, Electric, Viridis
 
         Returns: heatmap plot
 
@@ -120,7 +126,7 @@ class PlotlyPlot:
             'data': [go.Heatmap
                 (
                     z=data,
-                    colorscale='Viridis',
+                    colorscale=colorscale,
                     x=x_labels,
                     y=y_labels
                 ),
