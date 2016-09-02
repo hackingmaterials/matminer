@@ -64,7 +64,7 @@ class PlotlyPlot:
         if type(size) is not int:
             size_max = max(size)
             size_min = min(size)
-            size = (size - size_min)/(size_max - size_min) * 100
+            size = (size - size_min) / (size_max - size_min) * 100
 
         fig = {
             'data': [
@@ -119,10 +119,10 @@ class PlotlyPlot:
         fig = {
             'data': [go.Heatmap
                 (
-                    z = data,
-                    colorscale = 'Viridis',
-                    x = x_labels,
-                    y = y_labels
+                    z=data,
+                    colorscale='Viridis',
+                    x=x_labels,
+                    y=y_labels
                 ),
             ],
             'layout': {
@@ -147,4 +147,3 @@ class PlotlyPlot:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
-
