@@ -1,4 +1,5 @@
 import plotly
+import plotly.graph_objs as go
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -102,3 +103,48 @@ class PlotlyPlot:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
+
+    def heatmap_plot(self, data, x_labels=None, y_labels=None):
+        """
+        Make a heatmap plot, either using 2D arrays of values, or a dataframe.
+
+        Args:
+            data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
+            x_labels: (array) an array of strings to label the heatmap columns
+            y_labels: (array) an array of strings to label the heatmap rows
+
+        Returns: heatmap plot
+
+        """
+        fig = {
+            'data': [go.Heatmap
+                (
+                    z = data,
+                    colorscale = 'Viridis',
+                    x = x_labels,
+                    y = y_labels
+                ),
+            ],
+            'layout': {
+                'title': self.title,
+                'xaxis': {'title': self.x_title},
+                'yaxis': {'title': self.y_title},
+                'hovermode': self.hovermode
+            }
+        }
+
+        if self.plot_mode == 'offline':
+            if self.filename:
+                plotly.offline.plot(fig, filename=self.filename)
+            else:
+                plotly.offline.plot(fig)
+        elif self.plot_mode == 'notebook':
+            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
+            plotly.offline.iplot(fig)
+        elif self.plot_mode == 'online':
+            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
+            if self.filename:
+                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
+            else:
+                plotly.plotly.plot(fig, sharing='public')
+
