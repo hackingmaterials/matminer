@@ -40,21 +40,22 @@ class ScatterPlot:
 
     def plot_dataframe(self, x_col, y_col, dataframe=None, text=None, color='rgba(70, 130, 180, 1)', size=6):
         """
-
+        Make an XY scatter plot, either using arrays of values, or a dataframe.
 
         Args:
-            dataframe:
-            x_col:
-            y_col:
-            text: (str/array)
-            color_col: (str) name of a dataframe numeric column to set the marker color scale to
-            color_str: (str) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
+            x_col: (array) x-axis values
+            y_col: (array) y-axis values
+            dataframe: pandas dataframe if using its columns to make plots
+            text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a
+            dataframe column containing text strings
+            color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
             (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which must
-            be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2").
-            size_col: (str) name of a dataframe numeric column to set the marker sizes to
-            size_int: (int) marker size
+            be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2"), or (iv) name of a dataframe numeric column
+            to set the marker color scale to
+            size: (int/array) marker size in the format of (i) a constant integer size, or (ii) name of a dataframe
+            numeric column to set the marker size scale to
 
-        Returns:
+        Returns: XY scatter plot
 
         """
         fig = {
