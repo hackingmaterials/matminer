@@ -7,19 +7,22 @@ class PlotlyPlot:
     def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest',
                  filename=None, plot_mode='offline', username=None, api_key=None):
         """
+        Class for making Plotly plots
 
         Args:
-            plot_title:
-            x_title:
-            y_title:
-            mode: 'markers'/'lines'/'lines+markers'
-            hovermode:
-            filename:
-            plot_mode:
-            username:
-            api_key:
+            plot_title: (str) title of plot
+            x_title: (str) title of x-axis
+            y_title: (str) title of y-axis
+            mode: (str) marker style; can be 'markers'/'lines'/'lines+markers'
+            hovermode: (str) can be 'x'/'y'/'closest'
+            filename: (str) name of plot file
+            plot_mode: (str) (i) 'offline': creates and saves plots on the local disk, (ii) 'notebook': to embed plots
+            in a IPython/Jupyter notebook, or (iii) 'online': save the plot in your online plotly account (requires
+            the fields 'username' and 'api_key' to be set)
+            username: (str) plotly account username
+            api_key: (str) plotly account API key
 
-        Returns:
+        Returns: None
 
         """
         self.title = plot_title
