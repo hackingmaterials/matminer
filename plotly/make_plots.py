@@ -57,6 +57,11 @@ class PlotlyPlot:
         Returns: XY scatter plot
 
         """
+        if type(size) is not int:
+            size_max = max(size)
+            size_min = min(size)
+            size = (size - size_min)/(size_max - size_min) * 100
+
         fig = {
             'data': [
                 {
