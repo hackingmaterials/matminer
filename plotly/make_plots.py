@@ -67,7 +67,10 @@ class PlotlyPlot:
         Returns: XY scatter plot
 
         """
+        showscale = False
+
         if type(size) is not int:
+            showscale = True
             size_max = max(size)
             size_min = min(size)
             size = (size - size_min) / (size_max - size_min) * 100
@@ -83,7 +86,7 @@ class PlotlyPlot:
                         'size': size,
                         'color': color,
                         'colorscale': colorscale,
-                        'showscale': True
+                        'showscale': showscale
                     }
                 },
             ],
