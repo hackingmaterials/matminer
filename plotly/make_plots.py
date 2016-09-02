@@ -69,8 +69,10 @@ class PlotlyPlot:
         """
         showscale = False
 
-        if type(size) is not int:
+        if type(color) is not str:
             showscale = True
+
+        if type(size) is not int:
             size_max = max(size)
             size_min = min(size)
             size = (size - size_min) / (size_max - size_min) * 100
