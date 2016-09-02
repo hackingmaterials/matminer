@@ -3,7 +3,7 @@ import plotly
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
-class ScatterPlot:
+class PlotlyPlot:
     def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest',
                  filename=None, plot_mode='offline', username=None, api_key=None):
         """
@@ -38,7 +38,7 @@ class ScatterPlot:
             if not self.api_key:
                 raise ValueError('field "api_key" must be filled in online plotting mode')
 
-    def plot_dataframe(self, x_col, y_col, dataframe=None, text=None, color='rgba(70, 130, 180, 1)', size=6):
+    def xy_plot(self, x_col, y_col, dataframe=None, text=None, color='rgba(70, 130, 180, 1)', size=6):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
