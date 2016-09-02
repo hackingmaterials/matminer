@@ -42,7 +42,7 @@ class PlotlyPlot:
             if not self.api_key:
                 raise ValueError('field "api_key" must be filled in online plotting mode')
 
-    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6):
+    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis'):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -57,6 +57,12 @@ class PlotlyPlot:
                 numeric column to set the marker color scale to
             size: (int/array) marker size in the format of (i) a constant integer size, or (ii) name of a dataframe
                 numeric column to set the marker size scale to
+            colorscale: (str) Sets the colorscale. The colorscale must be an array containing arrays mapping a
+                normalized value to an rgb, rgba, hex, hsl, hsv, or named color string. At minimum, a mapping for the
+                lowest (0) and highest (1) values are required. For example, `[[0, 'rgb(0,0,255)',
+                [1, 'rgb(255,0,0)']]`. Alternatively, `colorscale` may be a palette name string of the following list:
+                Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot,
+                Blackbody, Earth, Electric, Viridis
 
         Returns: XY scatter plot
 
@@ -76,7 +82,7 @@ class PlotlyPlot:
                     'marker': {
                         'size': size,
                         'color': color,
-                        'colorscale': 'Viridis',
+                        'colorscale': colorscale,
                         'showscale': True
                     }
                 },
