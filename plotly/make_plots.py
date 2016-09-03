@@ -1,5 +1,6 @@
 import plotly
 import plotly.graph_objs as go
+from plotly.tools import FigureFactory as FF
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -164,3 +165,25 @@ class PlotlyPlot:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
+
+    def violin_plot(self, data, data_col=None, group_col=None, title=None, height=450, width=600,
+                    colors=None, use_colorscale=None, group_stats=None):
+        fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
+                               width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
+
+        if self.plot_mode == 'offline':
+            if self.filename:
+                plotly.offline.plot(fig, filename=self.filename)
+            else:
+                plotly.offline.plot(fig)
+        elif self.plot_mode == 'notebook':
+            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
+            plotly.offline.iplot(fig)
+        elif self.plot_mode == 'online':
+            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
+            if self.filename:
+                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
+            else:
+                plotly.plotly.plot(fig, sharing='public')
+
+
