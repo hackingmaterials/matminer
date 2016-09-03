@@ -167,7 +167,33 @@ class PlotlyPlot:
                 plotly.plotly.plot(fig, sharing='public')
 
     def violin_plot(self, data, data_col=None, group_col=None, title=None, height=450, width=600,
-                    colors=None, use_colorscale=None, group_stats=None):
+                    colors=None, use_colorscale=False, group_stats=None):
+        """
+        Create a violin plot using Plotly.
+
+        Args:
+            data: (list/array) accepts either a list of numerical values, a list of dictionaries all with identical keys
+                and at least one column of numeric values, or a pandas dataframe with at least one column of numbers
+            data_col: (str) the header of the data column to be used from an inputted pandas dataframe. Not applicable
+                if 'data' is a list of numeric values
+            group_col: (str) applicable if grouping data by a variable. 'group_header' must be set to the name of the
+                grouping variable
+            title: (str) the title of the violin plot
+            height: (float) the height of the violin plot
+            width: (float) the width of the violin plot
+            colors: (str/tuple/list/dict) either a plotly scale name, an rgb or hex color, a color tuple, a list of
+                colors or a dictionary. An rgb color is of the form 'rgb(x, y, z)' where x, y and z belong to the
+                interval [0, 255] and a color tuple is a tuple of the form (a, b, c) where a, b and c belong to [0, 1].
+                If colors is a list, it must contain valid color types as its members.
+            use_colorscale: (bool) Only applicable if grouping by another variable. Will implement a colorscale based
+                on the first 2 colors of param colors. This means colors must be a list with at least 2 colors in it
+                (Plotly colorscales are accepted since they map to a list of two rgb colors)
+            group_stats: (dict) a dictioanry where each key is a unique value from the group_header column in data.
+                Each value must be a number and will be used to color the violin plots if a colorscale is being used
+
+        Returns: a Plotly violin plot
+
+        """
         fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
                                width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
 
