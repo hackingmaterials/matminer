@@ -1,6 +1,8 @@
 import plotly
 import plotly.graph_objs as go
 from plotly.tools import FigureFactory as FF
+import pandas as pd
+import numpy as np
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -167,7 +169,7 @@ class PlotlyPlot:
                 plotly.plotly.plot(fig, sharing='public')
 
     def violin_plot(self, data, data_col=None, group_col=None, title=None, height=450, width=600,
-                    colors=None, use_colorscale=False, group_stats=None):
+                    colors=None, use_colorscale=False, group_stats=None, groups=None):
         """
         Create a violin plot using Plotly.
 
@@ -193,10 +195,21 @@ class PlotlyPlot:
                 (Plotly colorscales are accepted since they map to a list of two rgb colors)
             group_stats: (dict) a dictioanry where each key is a unique value from the group_header column in data.
                 Each value must be a number and will be used to color the violin plots if a colorscale is being used
+            groups: (list) list of group names (strings). This field is used when the same colorscale is required to be
+                used for all violins.
 
         Returns: a Plotly violin plot
 
         """
+        if groups and isinstance(data, pd.DataFrame):
+            use_colorscale=True
+            group_stats = {}
+            groupby_data = data.groupby([group_col])
+            for group in groups:
+                data_from_group = groupby_data.get_group(group)[data_col]
+                stat = np.median(data_from_group)
+                group_stats[group] = stat
+
         fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
                                width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
 
