@@ -181,11 +181,13 @@ class PlotlyPlot:
             title: (str) the title of the violin plot
             height: (float) the height of the violin plot
             width: (float) the width of the violin plot
-            colors: (str/tuple/list/dict) either a plotly scale name, an rgb or hex color, a color tuple, a list of
-                colors or a dictionary. An rgb color is of the form 'rgb(x, y, z)' where x, y and z belong to the
-                interval [0, 255] and a color tuple is a tuple of the form (a, b, c) where a, b and c belong to [0, 1].
-                If colors is a list, it must contain valid color types as its members. If colors is a dictionary, its
-                keys must represent group names, and corresponding values must be valid color types (str).
+            colors: (str/tuple/list/dict) either a plotly scale name (Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu,
+                Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot, Blackbody, Earth, Electric, Viridis), an rgb or hex
+                color, a color tuple, a list of colors or a dictionary. An rgb color is of the form 'rgb(x, y, z)'
+                where x, y and z belong to the interval [0, 255] and a color tuple is a tuple of the form (a, b, c)
+                where a, b and c belong to [0, 1]. If colors is a list, it must contain valid color types as its
+                members. If colors is a dictionary, its keys must represent group names, and corresponding values must
+                be valid color types (str).
             use_colorscale: (bool) Only applicable if grouping by another variable. Will implement a colorscale based
                 on the first 2 colors of param colors. This means colors must be a list with at least 2 colors in it
                 (Plotly colorscales are accepted since they map to a list of two rgb colors)
