@@ -241,3 +241,38 @@ class PlotlyPlot:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
+
+    def scatter_matrix(self, dataframe, index_colname=None, diag_kind='scatter',
+                       marker_size=10, height=800, width=1000):
+        """
+        Create a scatter matrix plot from dataframes using Plotly.
+
+        Args:
+            dataframe: (array) array of the data with column headers
+            index_colname: (str) name of the index column in data array
+            diag_kind: (str) sets the chart type for the main diagonal plots (default='scatter')
+                Choose from 'scatter'/'box'/'diagonal'
+            marker_size: (float) sets the marker size (in px)
+            height: (int/float) sets the height of the chart
+            width: (int/float) sets the width of the chart
+
+        Returns: a Plotly scatter matrix plot
+
+        """
+        fig = FF.create_scatterplotmatrix(dataframe, index=index_colname, diag=diag_kind,
+                                          size=marker_size, height=height, width=width)
+
+        if self.plot_mode == 'offline':
+            if self.filename:
+                plotly.offline.plot(fig, filename=self.filename)
+            else:
+                plotly.offline.plot(fig)
+        elif self.plot_mode == 'notebook':
+            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
+            plotly.offline.iplot(fig)
+        elif self.plot_mode == 'online':
+            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
+            if self.filename:
+                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
+            else:
+                plotly.plotly.plot(fig, sharing='public')
