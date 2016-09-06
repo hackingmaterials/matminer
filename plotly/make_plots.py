@@ -137,13 +137,12 @@ class PlotlyPlot:
 
         """
         fig = {
-            'data': [go.Heatmap
-                (
-                    z=data,
-                    colorscale=colorscale,
-                    x=x_labels,
-                    y=y_labels
-                ),
+            'data': [go.Heatmap(
+                z=data,
+                colorscale=colorscale,
+                x=x_labels,
+                y=y_labels
+            ),
             ],
             'layout': {
                 'title': self.title,
@@ -202,7 +201,7 @@ class PlotlyPlot:
 
         """
         if groups and isinstance(data, pd.DataFrame):
-            use_colorscale=True
+            use_colorscale = True
             group_stats = {}
             groupby_data = data.groupby([group_col])
             for group in groups:
@@ -212,6 +211,9 @@ class PlotlyPlot:
 
         fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
                                width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
+
+        fig.update({'layout': {
+            'yaxis': {'title': self.y_title}}})
 
         if self.plot_mode == 'offline':
             if self.filename:
@@ -227,5 +229,3 @@ class PlotlyPlot:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
-
-
