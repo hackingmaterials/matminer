@@ -9,7 +9,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class PlotlyPlot:
     def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest',
-                 filename=None, plot_mode='offline', username=None, api_key=None):
+                 filename=None, plot_mode='offline', username=None, api_key=None, textsize=35, ticksize=20):
         """
         Class for making Plotly plots
 
@@ -38,6 +38,8 @@ class PlotlyPlot:
         self.plot_mode = plot_mode
         self.username = username
         self.api_key = api_key
+        self.textsize = textsize
+        self.ticksize = ticksize
 
         if self.plot_mode == 'online':
             if not self.username:
@@ -97,8 +99,13 @@ class PlotlyPlot:
             ],
             'layout': {
                 'title': self.title,
-                'xaxis': {'title': self.x_title},
-                'yaxis': {'title': self.y_title},
+                'titlefont': {'size': self.textsize},
+                'xaxis': {'title': self.x_title,
+                          'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
+                          },
+                'yaxis': {'title': self.y_title,
+                          'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
+                          },
                 'hovermode': self.hovermode
             }
         }
@@ -146,8 +153,13 @@ class PlotlyPlot:
             ],
             'layout': {
                 'title': self.title,
-                'xaxis': {'title': self.x_title},
-                'yaxis': {'title': self.y_title},
+                'titlefont': {'size': self.textsize},
+                'xaxis': {'title': self.x_title,
+                          'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
+                          },
+                'yaxis': {'title': self.y_title,
+                          'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
+                          },
                 'hovermode': self.hovermode
             }
         }
