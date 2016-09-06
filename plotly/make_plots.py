@@ -179,7 +179,7 @@ class PlotlyPlot:
             else:
                 plotly.plotly.plot(fig, sharing='public')
 
-    def violin_plot(self, data, data_col=None, group_col=None, title=None, height=450, width=600,
+    def violin_plot(self, data, data_col=None, group_col=None, title=None, height=800, width=1000,
                     colors=None, use_colorscale=False, groups=None):
         """
         Create a violin plot using Plotly.
