@@ -297,9 +297,5 @@ def strain_energy_releaserate(K_I, E, nu=0):
     return ((1-nu**2) * K_I**2)/E
 
 
-def bulk_modulus_voigt():
-    return
-
-
 if __name__ == "__main__":
     print vickers_hardness1(3, 2)
