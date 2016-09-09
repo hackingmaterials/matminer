@@ -17,10 +17,38 @@ def youngs_modulus(nu, G=None, K=None):
     """
     if G and K is None:
         return 2 * G * (1+nu)
-    elif K and G is None:
+    elif G is None and K:
         return 3 * K * (1-2*nu)
     else:
         raise ValueError("Enter one of G or K")
+
+
+def shear_modulus(nu, E):
+    """
+    Calculate shear/rigidity modulus (G) from Young's modulus.
+
+    Args:
+        nu: (float) Poisson's ratio
+        E: (float) Young's modulus (N/m^2)
+
+    Returns: shear/rigidity modulus (G) (N/m^2)
+
+    """
+    return E/(2 * (1+nu))
+
+
+def bulk_modulus(nu, E):
+    """
+    Calculate bulk modulus (K) from Young's modulus.
+
+    Args:
+        nu: (float) Poisson's ratio
+        E: (float) Young's modulus (N/m^2)
+
+    Returns: bulk modulus (K) (N/m^2)
+
+    """
+    return E/(1 - 2*nu)
 
 
 def bulkmodulus_coordination(N_c, ionicity, d):
@@ -267,6 +295,10 @@ def strain_energy_releaserate(K_I, E, nu=0):
 
     """
     return ((1-nu**2) * K_I**2)/E
+
+
+def bulk_modulus_voigt():
+    return
 
 
 if __name__ == "__main__":
