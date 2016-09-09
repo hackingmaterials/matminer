@@ -240,6 +240,22 @@ def keyes_model(gamma, e_m, T_m, m, V, T, A):
     B = (R**(3.0/2))/(3 * gamma**2 * e_m**3 * (6.023*10**23)**(1.0/3))
     return (B * T_m**(3.0/2) * (m/V)**(2.0/3))/(T * A**(7.0/6))
 
+
+def debye_model(M, E, m, V):
+    """
+    Calculate Debye thermal conductivity.
+
+    Args:
+        M: (float) molecular mass
+        E: (float) Young's modules (in SI units, i.e. Kgm(s)^(-2))
+        m: (float) total mass (in SI units, i.e. Kg)
+        V: (float) unit cell volume (in SI units, i.e. m^(-3))
+
+    Returns: (float) Debye thermal conductivity (in SI units, i.e. W(mK)^(-1))
+
+    """
+    return 2.489e-11 * ((1/M)**(1./3.)) * (E**0.5) * ((m/V)**(-1./6.))
+
 if __name__ == "__main__":
     print cahill_simple_model(1, 1, 1, 1, 1)
     # print unit('Boltzmann constant')
