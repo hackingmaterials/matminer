@@ -1,26 +1,40 @@
 import math
+import pandas as pd
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
+df_catalog = pd.read_pickle('df_catalog.pkl')
 
-def youngs_modulus(nu, G=None, K=None):
+
+class YoungsModulus:
     """
-    Calculate Young's modulus (E) from other elastic constants.
-
-    Args:
-        nu: (float) Poisson's ratio
-        G: (float) shear or rigidity modulus (N/m^2)
-        K: (float) bulk modulus (N/m^2)
-
-    Returns: Young's modulus (E) (N/m^2)
-
+    Calculate Young's modulus (E) from other moduli.
     """
-    if G and K is None:
-        return 2 * G * (1+nu)
-    elif G is None and K:
-        return 3 * K * (1-2*nu)
-    else:
-        raise ValueError("Enter one of G or K")
+    def __init__(self, nu, G=None, K=None):
+        """
+        Args:
+            nu: (float) Poisson's ratio
+            G: (float) shear or rigidity modulus (N/m^2)
+            K: (float) bulk modulus (N/m^2)
+        """
+        self.nu = nu
+        self.G = G
+        self.K = K
+
+    def properties_involved(self):
+        prop_list = vars(YoungsModulus(nu=0)).keys()
+        return df_catalog.loc[df_catalog['symbol'].isin(prop_list)]
+
+    def calculation(self):
+        """
+        Returns: Young's modulus (E) (N/m^2)
+        """
+        if self.G and self.K is None:
+            return 2 * self.G * (1+self.nu)
+        elif self.G is None and self.K:
+            return 3 * self.K * (1-2*self.nu)
+        else:
+            raise ValueError("Enter one of G or K")
 
 
 def shear_modulus(nu, E):
@@ -299,3 +313,4 @@ def strain_energy_releaserate(K_I, E, nu=0):
 
 if __name__ == "__main__":
     print vickers_hardness1(3, 2)
+    print YoungsModulus(nu=1).properties_involved()
