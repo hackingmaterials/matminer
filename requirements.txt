@@ -1,3 +1,4 @@
+pint
 pymongo==3.2.2
 tqdm>=3.7.1
 pandas>=0.17.1
