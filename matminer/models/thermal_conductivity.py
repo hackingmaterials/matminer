@@ -24,9 +24,9 @@ class CahillSimpleModel:
         Args:
             n: (int) number of atoms in unit cell
             V: (float) unit cell volume (in SI units, i.e. m^(-3))
-            v_l: (float) longitudinal sound velocity (in SI units, i.e. m(s)^(-1))
-            v_t1: (float) transverse sound velocity in direction 1 (in SI units, i.e. m(s)^(-1))
-            v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m(s)^(-1))
+            v_l: (float) longitudinal sound velocity (in SI units, i.e. m/s)
+            v_t1: (float) transverse sound velocity in direction 1 (in SI units, i.e. m/s)
+            v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m/s)
 
         Returns: None
 
@@ -40,7 +40,7 @@ class CahillSimpleModel:
     @ureg.wraps('joule/m/s/kelvin', None, True)
     def calculate(self):
         """
-        Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))
+        Returns: (float) Cahill thermal conductivity (in SI units, i.e. joule/(m*s*kelvin))
         """
         return (1./2.) * ((math.pi/6)**(1./3.)) * k * ((self.n/self.V)**(2./3.)) * (self.v_l + self.v_t1 + self.v_t2)
 
