@@ -1,11 +1,12 @@
 import math
 from scipy.constants import *
 from scipy.integrate import quad
+from matminer.models import ureg, Q_
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
-def cahill_simple_model(n, V, v_l, v_t1, v_t2):
+class CahillSimpleModel:
     """
     Calculate Cahill thermal conductivity.
 
@@ -16,18 +17,32 @@ def cahill_simple_model(n, V, v_l, v_t1, v_t2):
         anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals")
         - DOI: 10.1002/adma.201400515 (Title: "High Thermoelectric Performance in Non-Toxic Earth-Abundant
         Copper Sulfide")
-
-    Args:
-        n: (int) number of atoms in unit cell
-        V: (float) unit cell volume (in SI units, i.e. m^(-3))
-        v_l: (float) longitudinal sound velocity (in SI units, i.e. m(s)^(-1))
-        v_t1: (float) transverse sound velocity in direction 1 (in SI units, i.e. m(s)^(-1))
-        v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m(s)^(-1))
-
-    Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))
-
     """
-    return (1./2.) * ((math.pi/6)**(1./3.)) * k * ((n/V)**(2./3.)) * (v_l + v_t1 + v_t2)
+    @ureg.wraps(None, (None, None, 'm**3', 'm/s', 'm/s', 'm/s'), True)
+    def __init__(self, n, V, v_l, v_t1, v_t2):
+        """
+        Args:
+            n: (int) number of atoms in unit cell
+            V: (float) unit cell volume (in SI units, i.e. m^(-3))
+            v_l: (float) longitudinal sound velocity (in SI units, i.e. m(s)^(-1))
+            v_t1: (float) transverse sound velocity in direction 1 (in SI units, i.e. m(s)^(-1))
+            v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m(s)^(-1))
+
+        Returns: None
+
+        """
+        self.n = n
+        self.V = V
+        self.v_l = v_l
+        self.v_t1 = v_t1
+        self.v_t2 = v_t2
+
+    @ureg.wraps('joule/m/s/kelvin', None, True)
+    def calculate(self):
+        """
+        Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))
+        """
+        return (1./2.) * ((math.pi/6)**(1./3.)) * k * ((self.n/self.V)**(2./3.)) * (self.v_l + self.v_t1 + self.v_t2)
 
 
 def cahill_integrand(x):
@@ -255,8 +270,3 @@ def debye_model(M, E, m, V):
 
     """
     return 2.489e-11 * ((1/M)**(1./3.)) * (E**0.5) * ((m/V)**(-1./6.))
-
-if __name__ == "__main__":
-    print cahill_simple_model(1, 1, 1, 1, 1)
-    # print unit('Boltzmann constant')
-    print clarke_model(1, 1, 1, 1)
