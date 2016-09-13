@@ -24,7 +24,7 @@ class CitrineDataRetrieval:
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
                       min_measurement=None, max_measurement=None, from_record=None, data_set_id=None):
         """
-        See client docs at https://github.com/CitrineInformatics/python-citrination-client for more
+        See client docs at http://citrineinformatics.github.io/api-documentation/ for more
         details on these parameters.
         :param term: (str) General search string. This is searched against all fields.
         :param formula: (str) Filter for the chemical formula field. Only those results that have chemical formulas that
