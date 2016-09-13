@@ -20,7 +20,7 @@ if __name__ == "__main__":
         package_data={},
         zip_safe=False,
         install_requires=['pymatgen>=4.0', 'tqdm>=3.7.1', 'pandas>=0.17.1',
-                          'unittest2==1.1.0', "pymongo==3.2.2"],
+                          'unittest2==1.1.0', "pymongo==3.2.2", 'pint'],
         extras_require={},
         classifiers=['Programming Language :: Python :: 2.7',
                      'Development Status :: 4 - Beta',
