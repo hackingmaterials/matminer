@@ -16,7 +16,10 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 class CitrineDataRetrieval:
     def __init__(self, api_key=None):
         """
-        :param api_key: (str) Your Citrine API key, or None if you've set the CITRINE_KEY environment variable
+        Args:
+            api_key: (str) Your Citrine API key, or None if you've set the CITRINE_KEY environment variable
+
+        Returns: None
         """
         api_key = api_key if api_key else os.environ['CITRINE_KEY']
         self.client = CitrinationClient(api_key, 'http://citrination.com')
@@ -24,23 +27,24 @@ class CitrineDataRetrieval:
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
                       min_measurement=None, max_measurement=None, from_record=None, data_set_id=None, num_records=None):
         """
-        See client docs at http://citrineinformatics.github.io/api-documentation/ for more
-        details on these parameters.
-        :param term: (str) General search string. This is searched against all fields.
-        :param formula: (str) Filter for the chemical formula field. Only those results that have chemical formulas that
-        contain this string will be returned.
-        :param property: (str) Name of the property to search for.
-        :param contributor: (str) Filter for the contributor field. Only those results that have contributors that
-        contain this string will be returned.
-        :param reference: (str) Filter for the reference field. Only those results that have contributors that
-        contain this string will be
-        returned.
-        :param min_measurement: (str/num) Minimum of the property value range.
-        :param max_measurement: (str/num) Maximum of the property value range.
-        :param from_record: (int) Index of the first record to return (indexed from 0).
-        :param data_set_id: (int) id of the particular data set to search on.
-        :param num_records: (int) number of records to limit the results to
-        :rtype: object: Pandas dataframe object containing the results
+        See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
+
+        Args:
+            term: (str) general search string; this is searched against all fields
+            formula: (str) filter for the chemical formula field; only those results that have chemical formulas that
+                contain this string will be returned
+            property: (str) name of the property to search for
+            contributor: (str) filter for the contributor field; only those results that have contributors that
+                contain this string will be returned
+            reference: (str) filter for the reference field; only those results that have contributors that
+                contain this string will be returned
+            min_measurement: (str/num) minimum of the property value range
+            max_measurement: (str/num) maximum of the property value range
+            from_record: (int) index of the first record to return (indexed from 0)
+            data_set_id: (int) id of the particular data set to search on
+            num_records: (int) number of records to limit the results to
+
+        Returns: (object) Pandas dataframe object containing the results
         """
 
         json_data = []
@@ -64,7 +68,7 @@ class CitrineDataRetrieval:
             json_data.append(data.json()['results'])
             if num_records and len(json_data)*100 > num_records:   # check if limit is reached
                 json_data = json_data[:(num_records/100)]          # get first multiple of 100 records
-                json_data.append(data.json()['results'][:num_records%100])    # get remaining records
+                json_data.append(data.json()['results'][:num_records % 100])    # get remaining records
                 break
             if size < per_page:  # break out of last loop of results
                 break
