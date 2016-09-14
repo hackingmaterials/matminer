@@ -22,7 +22,7 @@ class CitrineDataRetrieval:
         self.client = CitrinationClient(api_key, 'http://citrination.com')
 
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
-                      min_measurement=None, max_measurement=None, from_record=None, data_set_id=None):
+                      min_measurement=None, max_measurement=None, from_record=None, data_set_id=None, num_records=None):
         """
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more
         details on these parameters.
@@ -39,6 +39,7 @@ class CitrineDataRetrieval:
         :param max_measurement: (str/num) Maximum of the property value range.
         :param from_record: (int) Index of the first record to return (indexed from 0).
         :param data_set_id: (int) id of the particular data set to search on.
+        :param num_records: (int) number of records to limit the results to
         :rtype: object: Pandas dataframe object containing the results
         """
 
@@ -48,13 +49,23 @@ class CitrineDataRetrieval:
         refresh_time = 3  # seconds to wait between search calls
 
         while True:
-            data = self.client.search(term=term, formula=formula, property=property,
-                                      contributor=contributor, reference=reference,
-                                      min_measurement=min_measurement, max_measurement=max_measurement,
-                                      from_record=start, per_page=per_page, data_set_id=data_set_id)
+            if num_records and num_records < per_page:   # use per_page=num_records, eg: in case of num_records=68 < 100
+                data = self.client.search(term=term, formula=formula, property=property,
+                                          contributor=contributor, reference=reference,
+                                          min_measurement=min_measurement, max_measurement=max_measurement,
+                                          from_record=start, per_page=num_records, data_set_id=data_set_id)
+            else:
+                data = self.client.search(term=term, formula=formula, property=property,
+                                          contributor=contributor, reference=reference,
+                                          min_measurement=min_measurement, max_measurement=max_measurement,
+                                          from_record=start, per_page=per_page, data_set_id=data_set_id)
             size = len(data.json()['results'])
             start += size
             json_data.append(data.json()['results'])
+            if num_records and len(json_data)*100 > num_records:   # check if limit is reached
+                json_data = json_data[:(num_records/100)]          # get first multiple of 100 records
+                json_data.append(data.json()['results'][:num_records%100])    # get remaining records
+                break
             if size < per_page:  # break out of last loop of results
                 break
             time.sleep(refresh_time)
