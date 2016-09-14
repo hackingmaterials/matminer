@@ -25,7 +25,7 @@ class CitrineDataRetrieval:
         self.client = CitrinationClient(api_key, 'http://citrination.com')
 
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
-                      min_measurement=None, max_measurement=None, from_record=None, data_set_id=None, num_records=None):
+                      min_measurement=None, max_measurement=None, from_record=None, data_set_id=None, max_results=None):
         """
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
 
@@ -42,7 +42,7 @@ class CitrineDataRetrieval:
             max_measurement: (str/num) maximum of the property value range
             from_record: (int) index of the first record to return (indexed from 0)
             data_set_id: (int) id of the particular data set to search on
-            num_records: (int) number of records to limit the results to
+            max_results: (int) number of records to limit the results to
 
         Returns: (object) Pandas dataframe object containing the results
         """
@@ -53,11 +53,11 @@ class CitrineDataRetrieval:
         refresh_time = 3  # seconds to wait between search calls
 
         while True:
-            if num_records and num_records < per_page:   # use per_page=num_records, eg: in case of num_records=68 < 100
+            if max_results and max_results < per_page:   # use per_page=max_results, eg: in case of max_results=68 < 100
                 data = self.client.search(term=term, formula=formula, property=property,
                                           contributor=contributor, reference=reference,
                                           min_measurement=min_measurement, max_measurement=max_measurement,
-                                          from_record=start, per_page=num_records, data_set_id=data_set_id)
+                                          from_record=start, per_page=max_results, data_set_id=data_set_id)
             else:
                 data = self.client.search(term=term, formula=formula, property=property,
                                           contributor=contributor, reference=reference,
@@ -66,9 +66,9 @@ class CitrineDataRetrieval:
             size = len(data.json()['results'])
             start += size
             json_data.append(data.json()['results'])
-            if num_records and len(json_data)*100 > num_records:   # check if limit is reached
-                json_data = json_data[:(num_records/100)]          # get first multiple of 100 records
-                json_data.append(data.json()['results'][:num_records % 100])    # get remaining records
+            if max_results and len(json_data)*100 > max_results:   # check if limit is reached
+                json_data = json_data[:(max_results / 100)]          # get first multiple of 100 records
+                json_data.append(data.json()['results'][:max_results % 100])    # get remaining records
                 break
             if size < per_page:  # break out of last loop of results
                 break
