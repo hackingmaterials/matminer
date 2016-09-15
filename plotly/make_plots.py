@@ -10,7 +10,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 class PlotlyPlot:
     def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest',
                  filename=None, plot_mode='offline', username=None, api_key=None, textsize=35, ticksize=20,
-                 fileformat=None, height=None, width=None, scale=None):
+                 height=None, width=None, scale=None):
         """
         Class for making Plotly plots
 
@@ -28,7 +28,6 @@ class PlotlyPlot:
                 of the filename or as the supplied format.
             username: (str) plotly account username
             api_key: (str) plotly account API key
-            fileformat: (str) 'png', 'svg', 'jpeg', 'pdf'
             height: (float) output height (in pixels)
             width: (float) output width (in pixels)
             scale: (float) Increase the resolution of the image by `scale` amount, eg: 3. Only valid for PNG and
@@ -48,7 +47,6 @@ class PlotlyPlot:
         self.api_key = api_key
         self.textsize = textsize
         self.ticksize = ticksize
-        self.fileformat = fileformat
         self.height = height
         self.width = width
         self.scale = scale
@@ -59,11 +57,10 @@ class PlotlyPlot:
             if not self.api_key:
                 raise ValueError('field "api_key" must be filled in online plotting mode')
         elif self.plot_mode == 'static':
-            if not self.filename:
-                raise ValueError('field "filename" must be filled in static plotting mode')
-            if not self.fileformat:
-                raise ValueError('field "fileformat" must be filled in ("png", "svg", "jpeg", "pdf") static plotting  \
-                mode')
+            if not self.filename or not self.filename.lower().endswith(('.png', '.svg', '.jpeg', '.pdf')):
+                raise ValueError(
+                    'field "filename" must be filled in static plotting mode and must have an extension ending in ('
+                    '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis'):
         """
@@ -143,8 +140,8 @@ class PlotlyPlot:
             else:
                 plotly.plotly.plot(fig, sharing='public')
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, format=self.fileformat, height=self.height,
-                                        width=self.width, scale=self.scale)
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+                                        scale=self.scale)
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis'):
         """
@@ -200,8 +197,8 @@ class PlotlyPlot:
             else:
                 plotly.plotly.plot(fig, sharing='public')
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, format=self.fileformat, height=self.height,
-                                        width=self.width, scale=self.scale)
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+                                        scale=self.scale)
 
     def violin_plot(self, data, data_col=None, group_col=None, title=None, height=800, width=1000,
                     colors=None, use_colorscale=False, groups=None):
@@ -266,8 +263,8 @@ class PlotlyPlot:
             else:
                 plotly.plotly.plot(fig, sharing='public')
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, format=self.fileformat, height=self.height,
-                                        width=self.width, scale=self.scale)
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+                                        scale=self.scale)
 
     def scatter_matrix(self, dataframe, index_colname=None, diag_kind='scatter',
                        marker_size=10, height=800, width=1000):
@@ -304,5 +301,5 @@ class PlotlyPlot:
             else:
                 plotly.plotly.plot(fig, sharing='public')
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, format=self.fileformat, height=self.height,
-                                        width=self.width, scale=self.scale)
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+                                        scale=self.scale)
