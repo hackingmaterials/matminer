@@ -29,8 +29,8 @@ class PlotlyPlot:
             username: (str) plotly account username
             api_key: (str) plotly account API key
             fileformat: (str) 'png', 'svg', 'jpeg', 'pdf'
-            height: (float) output height
-            width: (float) output width
+            height: (float) output height (in pixels)
+            width: (float) output width (in pixels)
             scale: (float) Increase the resolution of the image by `scale` amount, eg: 3. Only valid for PNG and
                 JPEG images.
 
