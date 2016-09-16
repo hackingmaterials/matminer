@@ -185,6 +185,7 @@ class PlotlyPlot:
                             text=str(var),
                             x=x_labels[m], y=y_labels[n],
                             xref='x1', yref='y1',
+                            font=dict(color='white', size=self.textsize),
                             showarrow=False)
                         )
         else:
