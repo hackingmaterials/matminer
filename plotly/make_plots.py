@@ -143,7 +143,8 @@ class PlotlyPlot:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None):
+    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None,
+                     annotations_text=None):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
@@ -158,7 +159,9 @@ class PlotlyPlot:
                 Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot,
                 Blackbody, Earth, Electric, Viridis
             colorscale_range: (array) Sets the minimum (first array item) and maximum value (second array item)
-                of the colorscale.
+                of the colorscale
+            annotations_text: (array) an array of arrays, with each value being a string annotation to the corresponding
+                value in 'data'
 
         Returns: heatmap plot
 
@@ -171,6 +174,21 @@ class PlotlyPlot:
             colorscale_max = colorscale_range[1]
         else:
             raise ValueError("The field 'colorscale_range' must be a list with two values.")
+
+        if annotations_text:
+            annotations = []
+            for n, row in enumerate(data):
+                for m, val in enumerate(row):
+                    var = annotations_text[n][m]
+                    annotations.append(
+                        dict(
+                            text=str(var),
+                            x=x_labels[m], y=y_labels[n],
+                            xref='x1', yref='y1',
+                            showarrow=False)
+                        )
+        else:
+            annotations = []
 
         fig = {
             'data': [go.Heatmap(
@@ -190,7 +208,8 @@ class PlotlyPlot:
                 'yaxis': {'title': self.y_title,
                           'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
                           },
-                'hovermode': self.hovermode
+                'hovermode': self.hovermode,
+                'annotations': annotations
             }
         }
 
