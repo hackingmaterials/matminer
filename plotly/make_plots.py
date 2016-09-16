@@ -143,7 +143,7 @@ class PlotlyPlot:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis'):
+    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
@@ -151,22 +151,34 @@ class PlotlyPlot:
             data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
             x_labels: (array) an array of strings to label the heatmap columns
             y_labels: (array) an array of strings to label the heatmap rows
-            colorscale: (str) Sets the colorscale. The colorscale must be an array containing arrays mapping a
+            colorscale: (str/array) Sets the colorscale. The colorscale must be an array containing arrays mapping a
                 normalized value to an rgb, rgba, hex, hsl, hsv, or named color string. At minimum, a mapping for the
                 lowest (0) and highest (1) values are required. For example, `[[0, 'rgb(0,0,255)',
                 [1, 'rgb(255,0,0)']]`. Alternatively, `colorscale` may be a palette name string of the following list:
                 Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot,
                 Blackbody, Earth, Electric, Viridis
+            colorscale_range: (array) Sets the minimum (first array item) and maximum value (second array item)
+                of the colorscale.
 
         Returns: heatmap plot
 
         """
+        if not colorscale_range:
+            colorscale_min = None
+            colorscale_max = None
+        elif len(colorscale_range) == 2:
+            colorscale_min = colorscale_range[0]
+            colorscale_max = colorscale_range[1]
+        else:
+            raise ValueError("The field 'colorscale_range' must be a list with two values.")
+
         fig = {
             'data': [go.Heatmap(
                 z=data,
                 colorscale=colorscale,
                 x=x_labels,
-                y=y_labels
+                y=y_labels,
+                zmin=colorscale_min,zmax=colorscale_max
             ),
             ],
             'layout': {
