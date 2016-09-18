@@ -21,10 +21,10 @@ class MPDataRetrieval:
     def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True):
         """
         Gets data from MP in a dataframe format.
+        See API docs at https://materialsproject.org/wiki/index.php/The_Materials_API for more details.
 
         Args:
-            criteria: (str/dict) See API docs at https://materialsproject.org/wiki/index.php/The_Materials_API
-                for more details. Criteria of the query as a string or mongo-style dict. If string, it supports a
+            criteria: (str/dict) Criteria of the query as a string or mongo-style dict. If string, it supports a
                 powerful but simple string criteria. E.g., "Fe2O3" means search for materials with reduced_formula
                 Fe2O3. Wild cards are also supported. E.g., "\*2O" means get all materials whose formula can be formed
                 as \*2O, e.g., Li2O, K2O, etc.
@@ -41,11 +41,11 @@ class MPDataRetrieval:
                 {"elements":{"$in":["Li", "Na", "K"], "$all": ["O"]}, "nelements":2} selects all Li, Na and K oxides.
                 {"band_gap": {"$gt": 1}} selects all materials with band gaps greater than 1 eV.
 
-            properties: (list) See MPRester docs for more details. Properties to request for as a list. For example,
+            properties: (list) Properties to request for as a list. For example,
                 ["formula", "formation_energy_per_atom"] returns the formula and formation energy per atom.
 
-            mp_decode: (bool) See MPRester docs for more details. Whether to do a decoding to a Pymatgen object where
-                possible. In some cases, it might be useful to just get the raw python dict, i.e., set to False.
+            mp_decode: (bool) Whether to do a decoding to a Pymatgen object where possible. In some cases, it might be
+                useful to just get the raw python dict, i.e., set to False.
 
             index_mpid: (bool) Whether to set the materials_id as the dataframe inde
 
