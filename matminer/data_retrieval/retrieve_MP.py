@@ -23,10 +23,11 @@ class MPDataRetrieval:
         Gets data from MP in a dataframe format.
 
         Args:
-            criteria: (str/dict) See MPRester docs for more details. Criteria of the query as a string or mongo-style
-                dict. If string, it supports a powerful but simple string criteria. E.g., "Fe2O3" means search for
-                materials with reduced_formula Fe2O3. Wild cards are also supported. E.g., "\*2O" means get all
-                materials whose formula can be formed as \*2O, e.g., Li2O, K2O, etc.
+            criteria: (str/dict) See API docs at https://materialsproject.org/wiki/index.php/The_Materials_API
+                for more details. Criteria of the query as a string or mongo-style dict. If string, it supports a
+                powerful but simple string criteria. E.g., "Fe2O3" means search for materials with reduced_formula
+                Fe2O3. Wild cards are also supported. E.g., "\*2O" means get all materials whose formula can be formed
+                as \*2O, e.g., Li2O, K2O, etc.
 
                 Other syntax examples:
                     mp-1234: Interpreted as a Materials ID.
