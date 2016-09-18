@@ -42,10 +42,10 @@ class MPDataRetrieval:
                 {"band_gap": {"$gt": 1}} selects all materials with band gaps greater than 1 eV.
 
             properties: (list) See MPRester docs for more details. Properties to request for as a list. For example,
-            ["formula", "formation_energy_per_atom"] returns the formula and formation energy per atom.
+                ["formula", "formation_energy_per_atom"] returns the formula and formation energy per atom.
 
             mp_decode: (bool) See MPRester docs for more details. Whether to do a decoding to a Pymatgen object where
-            possible. In some cases, it might be useful to just get the raw python dict, i.e., set to False.
+                possible. In some cases, it might be useful to just get the raw python dict, i.e., set to False.
 
             index_mpid: (bool) Whether to set the materials_id as the dataframe inde
 
