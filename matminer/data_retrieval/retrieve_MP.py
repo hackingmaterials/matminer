@@ -1,4 +1,6 @@
+import os
 import pandas as pd
+from pymatgen.matproj.rest import MPRester
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -9,14 +11,15 @@ class MPDataRetrieval:
     into an indexed/unindexed Pandas dataframe.
     """
 
-    def __init__(self, mprester):
+    def __init__(self, api_key=None):
         """
         Args:
-            mprester: A pymatgen MPRester object. See MPRester docs for more details.
+            api_key: (str) Your Citrine API key, or None if you've set the CITRINE_KEY environment variable
 
         Returns: None
         """
-        self.mprester = mprester
+        api_key = api_key if api_key else os.environ['MAPI_KEY']
+        self.mprester = MPRester(api_key=api_key)
 
     def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True):
         """
