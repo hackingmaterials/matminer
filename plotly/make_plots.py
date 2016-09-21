@@ -67,8 +67,8 @@ class PlotlyPlot:
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
         Args:
-            x_col: (array) x-axis values
-            y_col: (array) y-axis values
+            x_col: (array) x-axis values, which can be a list/array/dataframe column
+            y_col: (array) y-axis values, which can be a list/array/dataframe column
             text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a
                 dataframe column containing text strings
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
