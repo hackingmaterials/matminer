@@ -1,7 +1,7 @@
 from __future__ import division
 
 import warnings
-from matminer.descriptors.composition_features import get_element_data, get_std
+from matminer.descriptors.composition_features import get_pymatgen_descriptor, get_std
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.analysis.bond_valence import BVAnalyzer
 
@@ -50,7 +50,7 @@ class VolumePredictor:
             raise ValueError("VolumePredictor requires ordered structures!")
 
         smallest_ratio = None  # ratio of observed vs expected bond distance
-        ionic_mix = min(get_std(get_element_data(structure.composition,
+        ionic_mix = min(get_std(get_pymatgen_descriptor(structure.composition,
                                                  'X')) * self.ionic_factor, 1)
 
         for site in structure:

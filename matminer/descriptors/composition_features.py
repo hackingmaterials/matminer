@@ -140,7 +140,7 @@ def band_center(comp):
 if __name__ == '__main__':
     descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
                    'coefficient_of_linear_thermal_expansion']
-    # 'ionic_radii',
+
     for desc in descriptors:
-        print(get_element_data('LiFePO4', desc))
+        print(get_pymatgen_descriptor('LiFePO4', desc))
     print(get_magpie_descriptor('LiFePO4', 'Atomicolume'))
