@@ -16,7 +16,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # TODO: unit tests
 
 
-def get_element_data(comp, prop):
+def get_pymatgen_descriptor(comp, prop):
     """
     Get descriptor data for elements in a compound from pymatgen.
 
