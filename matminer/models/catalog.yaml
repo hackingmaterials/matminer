@@ -1,0 +1,42 @@
+properties:
+ - id: 1
+   spec:
+      - symbol: ['n']
+      - name: ['number of atoms']
+      - units: ''
+ - id: 2
+   spec:
+      - symbol: ['m', 'w']
+      - name: ['mass', 'weight', 'molar mass', 'molar weight']
+      - units: 'kg'
+- id: 3
+   spec:
+      - symbol: ['v']
+      - name: ['volume', 'total volume']
+      - units: 'm**3'
+- id: 4
+   spec:
+      - symbol: ['rho', '\rho', 'n/v']
+      - name: ['density']
+      - units: 'kg/m**3'
+ - id: 5
+   spec:
+      - symbol: ['nu', '\nu']
+      - name: ['poissons ratio']
+      - units: ''
+ - id: 6
+   spec:
+      - symbol: ['E', 'Y']
+      - name: ['Youngs modulus', 'modulus of elasticity', 'elastic modulus', 'tensile modulus']
+      - units: 'Pa'
+ - id: 7
+   spec:
+      - symbol: ['G']
+      - name: ['shear modulus', 'modulus of rigidity']
+      - units: 'Pa'
+ - id: 8
+   spec:
+      - symbol: ['K', 'B']
+      - name: ['bulk modulus']
+      - units: 'Pa'
+
