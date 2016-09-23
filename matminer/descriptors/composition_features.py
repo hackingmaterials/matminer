@@ -54,7 +54,7 @@ def get_magpie_descriptor(comp, descriptor_name):
     Args:
         comp: (str) compound composition, eg: "NaCl"
         descriptor_name: name of Magpie descriptor needed. Find the entire list at
-        https://bitbucket.org/wolverton/magpie/src/6ecf8d3b79e03e06ef55c141c350a08fbc8da849/Lookup%20Data/?at=master
+            https://bitbucket.org/wolverton/magpie/src/6ecf8d3b79e03e06ef55c141c350a08fbc8da849/Lookup%20Data/?at=master
 
     Returns: (list) of descriptor values for each element in the composition
 
@@ -73,14 +73,14 @@ def get_magpie_descriptor(comp, descriptor_name):
         readme_file_line = readme_file.readlines()
         for lineno, line in enumerate(readme_file_line, 1):
             if descriptor_name + '.table' in line:
-                if 'Units: ' in readme_file_line[lineno+1]:
-                    unit = readme_file_line[lineno+1].split(':')[1].strip('\n')
+                if 'Units: ' in readme_file_line[lineno + 1]:
+                    unit = readme_file_line[lineno + 1].split(':')[1].strip('\n')
     with open('data/magpie_elementdata/' + descriptor_name + '.table', 'r') as descp_file:
         lines = descp_file.readlines()
         for el in el_amt:
             atomic_no = Element(el).Z
-            magpiedata_lst.append(magpiedata(element=el, propname=descriptor_name, propvalue=float(lines[atomic_no - 1])
-                                             , propunit=unit, amt=el_amt[el]))
+            magpiedata_lst.append(magpiedata(element=el, propname=descriptor_name,
+                                             propvalue=float(lines[atomic_no - 1]), propunit=unit, amt=el_amt[el]))
     return magpiedata_lst
 
 
@@ -167,4 +167,3 @@ if __name__ == '__main__':
         print(get_pymatgen_descriptor('LiFePO4', desc))
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
     print(get_magpie_descriptor('LiFePO4', 'Density'))
-
