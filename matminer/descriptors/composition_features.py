@@ -60,6 +60,8 @@ def get_magpie_descriptor(comp, descriptor_name):
     Returns: (list) of descriptor values for each element in the composition
 
     """
+    magpiedata_lst = []
+    magpiedata = collections.namedtuple('magpiedata', 'element propname propvalue propunit amt')
     available_props = []
     for datafile in os.listdir('data/magpie_elementdata'):
         available_props.append(datafile.replace('.table', ''))
@@ -67,14 +69,14 @@ def get_magpie_descriptor(comp, descriptor_name):
         print('This descriptor is not available from the Magpie repository. '
               'Choose from {}'.format(available_props))
         return
-    descriptor_list = []
     el_amt = Composition(comp).get_el_amt_dict()
     with open('data/magpie_elementdata/' + descriptor_name + '.table', 'r') as descp_file:
         lines = descp_file.readlines()
         for el in el_amt:
             atomic_no = Element(el).Z
-            descriptor_list.append(float(lines[atomic_no - 1]))
-    return descriptor_list
+            magpiedata_lst.append(magpiedata(element=el, propname=descriptor_name, propvalue=float(lines[atomic_no - 1])
+                                             , propunit=None, amt=el_amt[el]))
+    return magpiedata_lst
 
 
 def get_maxmin(lst):
@@ -158,4 +160,5 @@ if __name__ == '__main__':
 
     for desc in descriptors:
         print(get_pymatgen_descriptor('LiFePO4', desc))
-    print(get_magpie_descriptor('LiFePO4', 'Atomicolume'))
+    print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
+
