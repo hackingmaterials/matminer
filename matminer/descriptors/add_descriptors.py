@@ -32,7 +32,7 @@ class AddDescriptor:
         for i, row in self.df.iterrows():
             try:
                 self.df.loc[i, descriptor + '_' + stat] = stat_function(
-                    get_element_data(row['reduced_cell_formula'], descriptor))
+                    get_pymatgen_descriptor(row['reduced_cell_formula'], descriptor))
             except ValueError:
                 self.df.loc[i, descriptor + '_' + stat] = None
             except AttributeError as e:

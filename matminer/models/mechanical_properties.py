@@ -25,7 +25,7 @@ class YoungsModulus:
         prop_list = vars(YoungsModulus(nu=0)).keys()
         return df_catalog.loc[df_catalog['symbol'].isin(prop_list)]
 
-    def calculation(self):
+    def calculate(self):
         """
         Returns: Young's modulus (E) (N/m^2)
         """

@@ -14,7 +14,7 @@ class VolumePredictor:
     it is found that:
     (i) RMSE % error = 23.6 %
     (ii) Average percentage difference in volume from initial volume = 2.88 %
-    (iii) Average absolute difference in volume from initial volume = 17.0 %
+    (iii) Average absolute percentage difference in volume from initial volume = 17.0 %
     (iv) Performs worst for materials that are gaseous eg: H2, N2,
         and f-electron systems, eg: Np, Pu, etc. as well as noble gas compounds
     This is really intended for bonded systems!
