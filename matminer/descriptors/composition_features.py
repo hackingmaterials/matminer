@@ -68,12 +68,19 @@ def get_magpie_descriptor(comp, descriptor_name):
         raise ValueError(
             "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
     el_amt = Composition(comp).get_el_amt_dict()
+    unit = None
+    with open('data/magpie_elementdata/README.txt', 'r') as readme_file:
+        readme_file_line = readme_file.readlines()
+        for lineno, line in enumerate(readme_file_line, 1):
+            if descriptor_name + '.table' in line:
+                if 'Units: ' in readme_file_line[lineno+1]:
+                    unit = readme_file_line[lineno+1].split(':')[1].strip('\n')
     with open('data/magpie_elementdata/' + descriptor_name + '.table', 'r') as descp_file:
         lines = descp_file.readlines()
         for el in el_amt:
             atomic_no = Element(el).Z
             magpiedata_lst.append(magpiedata(element=el, propname=descriptor_name, propvalue=float(lines[atomic_no - 1])
-                                             , propunit=None, amt=el_amt[el]))
+                                             , propunit=unit, amt=el_amt[el]))
     return magpiedata_lst
 
 
@@ -159,4 +166,5 @@ if __name__ == '__main__':
     for desc in descriptors:
         print(get_pymatgen_descriptor('LiFePO4', desc))
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
+    print(get_magpie_descriptor('LiFePO4', 'Density'))
 
