@@ -33,8 +33,7 @@ def get_pymatgen_descriptor(comp, prop):
     el_amt_dict = Composition(comp).get_el_amt_dict()
     for el in el_amt_dict:
         if callable(getattr(Element(el), prop)) is None:
-            print('Invalid pymatgen Element attribute(property)')
-            return
+            raise ValueError('Invalid pymatgen Element attribute(property)')
         if getattr(Element(el), prop) is not None:
             if prop in ['X', 'Z', 'ionic_radii']:
                 units = None
@@ -66,9 +65,8 @@ def get_magpie_descriptor(comp, descriptor_name):
     for datafile in os.listdir('data/magpie_elementdata'):
         available_props.append(datafile.replace('.table', ''))
     if descriptor_name not in available_props:
-        print('This descriptor is not available from the Magpie repository. '
-              'Choose from {}'.format(available_props))
-        return
+        raise ValueError(
+            "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
     el_amt = Composition(comp).get_el_amt_dict()
     with open('data/magpie_elementdata/' + descriptor_name + '.table', 'r') as descp_file:
         lines = descp_file.readlines()
