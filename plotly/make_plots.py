@@ -62,7 +62,8 @@ class PlotlyPlot:
                     'field "filename" must be filled in static plotting mode and must have an extension ending in ('
                     '".png", ".svg", ".jpeg", ".pdf")')
 
-    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis'):
+    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
+                legends=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -97,33 +98,32 @@ class PlotlyPlot:
             size_min = min(size)
             size = (size - size_min) / (size_max - size_min) * 100
 
-        fig = {
-            'data': [
-                {
-                    'x': x_col,
-                    'y': y_col,
-                    'text': text,
-                    'mode': self.mode,
-                    'marker': {
-                        'size': size,
-                        'color': color,
-                        'colorscale': colorscale,
-                        'showscale': showscale
-                    }
-                },
-            ],
-            'layout': {
-                'title': self.title,
-                'titlefont': {'size': self.textsize},
-                'xaxis': {'title': self.x_title,
-                          'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
-                          },
-                'yaxis': {'title': self.y_title,
-                          'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
-                          },
-                'hovermode': self.hovermode
-            }
-        }
+        trace0 = go.Scatter(
+            x=x_col,
+            y=y_col,
+            text=text,
+            mode=self.mode,
+            name=legends,
+            marker=dict(
+                size=size,
+                color=color,
+                colorscale=colorscale,
+                showscale=showscale
+            )
+        )
+
+        layout = dict(
+            title=self.title,
+            titlefont=dict(size=self.textsize),
+            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize),
+                       tickfont=dict(size=self.ticksize)),
+            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
+                       tickfont=dict(size=self.ticksize)),
+            hovermode=self.hovermode
+        )
+
+        data = [trace0]
+        fig = dict(data=data, layout=layout)
 
         if self.plot_mode == 'offline':
             if self.filename:
@@ -187,7 +187,7 @@ class PlotlyPlot:
                             xref='x1', yref='y1',
                             font=dict(color='white', size=self.textsize),
                             showarrow=False)
-                        )
+                    )
         else:
             annotations = []
 
@@ -197,7 +197,7 @@ class PlotlyPlot:
                 colorscale=colorscale,
                 x=x_labels,
                 y=y_labels,
-                zmin=colorscale_min,zmax=colorscale_max
+                zmin=colorscale_min, zmax=colorscale_max
             ),
             ],
             'layout': {
