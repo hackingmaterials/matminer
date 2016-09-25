@@ -63,7 +63,7 @@ class PlotlyPlot:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legends=None):
+                legend=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -84,6 +84,7 @@ class PlotlyPlot:
                 [1, 'rgb(255,0,0)']]`. Alternatively, `colorscale` may be a palette name string of the following list:
                 Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot,
                 Blackbody, Earth, Electric, Viridis
+            legend: (str) plot legend
 
         Returns: XY scatter plot
 
@@ -103,7 +104,7 @@ class PlotlyPlot:
             y=y_col,
             text=text,
             mode=self.mode,
-            name=legends,
+            name=legend,
             marker=dict(
                 size=size,
                 color=color,
