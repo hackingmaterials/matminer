@@ -9,12 +9,12 @@ properties:
       - symbol: ['m', 'w']
       - name: ['mass', 'weight', 'molar mass', 'molar weight']
       - units: 'kg'
-- id: 3
+ - id: 3
    spec:
       - symbol: ['v']
       - name: ['volume', 'total volume']
       - units: 'm**3'
-- id: 4
+ - id: 4
    spec:
       - symbol: ['rho', '\rho', 'n/v']
       - name: ['density']
@@ -39,4 +39,3 @@ properties:
       - symbol: ['K', 'B']
       - name: ['bulk modulus']
       - units: 'Pa'
-
