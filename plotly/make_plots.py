@@ -7,9 +7,9 @@ import numpy as np
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
-class PlotlyPlot:
+class Plotly:
     def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest',
-                 filename=None, plot_mode='offline', username=None, api_key=None, textsize=35, ticksize=20,
+                 filename=None, plot_mode='offline', username=None, api_key=None, textsize=20, ticksize=15,
                  height=None, width=None, scale=None):
         """
         Class for making Plotly plots
@@ -94,9 +94,9 @@ class PlotlyPlot:
         if type(color) is not str:
             showscale = True
 
-        if type(size) is not int:
-            size_max = max(size)
-            size_min = min(size)
+        if isinstance(size, pd.Series):
+            size_max = size.min()
+            size_min = size.max()
             size = (size - size_min) / (size_max - size_min) * 100
 
         trace0 = go.Scatter(
