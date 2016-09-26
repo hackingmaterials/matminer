@@ -2,40 +2,56 @@ properties:
  - id: 1
    spec:
       - symbol: ['n']
+      - alternate_symbols: []
       - name: ['number of atoms']
+      - alternate_names: []
       - units: ''
  - id: 2
    spec:
-      - symbol: ['m', 'w']
-      - name: ['mass', 'weight', 'molar mass', 'molar weight']
+      - symbol: ['m']
+      - alternate_symbols: ['w']
+      - name: ['mass']
+      - alternate_names: ['weight', 'molar mass', 'molar weight']
       - units: 'kg'
  - id: 3
    spec:
       - symbol: ['v']
-      - name: ['volume', 'total volume']
+      - alternate_symbols: []
+      - name: ['volume']
+      - alternate_names: ['total volume']
       - units: 'm**3'
  - id: 4
    spec:
-      - symbol: ['rho', '\rho', 'n/v']
+      - symbol: ['rho']
+      - alternate_symbols: ['\rho', 'n/v']
       - name: ['density']
+      - alternate_names: []
       - units: 'kg/m**3'
  - id: 5
    spec:
-      - symbol: ['nu', '\nu']
+      - symbol: ['nu']
+      - alternate_symbols: ['\nu']
       - name: ['poissons ratio']
+      - alternate_names: []
       - units: ''
  - id: 6
    spec:
-      - symbol: ['E', 'Y']
-      - name: ['Youngs modulus', 'modulus of elasticity', 'elastic modulus', 'tensile modulus']
+      - symbol: ['E']
+      - alternate_symbols: ['Y']
+      - name: ['Youngs modulus']
+      - alternate_names: ['modulus of elasticity', 'elastic modulus', 'tensile modulus']
       - units: 'Pa'
  - id: 7
    spec:
       - symbol: ['G']
-      - name: ['shear modulus', 'modulus of rigidity']
+      - alternate_symbols: []
+      - name: ['shear modulus']
+      - alternate_names: ['modulus of rigidity']
       - units: 'Pa'
  - id: 8
    spec:
-      - symbol: ['K', 'B']
+      - symbol: ['K']
+      - alternate_symbols: ['B']
       - name: ['bulk modulus']
+      - alternate_names: []
       - units: 'Pa'
