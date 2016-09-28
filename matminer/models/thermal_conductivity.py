@@ -102,7 +102,7 @@ def cahill_integrand_model(N, V, cahill_integrand_sum):
     return (math.pi/6)**(1./3.) * k * n_d**(1./3.) * cahill_integrand_sum
 
 
-def clarke_model(M, E, m, V):
+def clarke_model(N, E, m, V):
     """
     Calculate Clarke thermal conductivity.
 
@@ -113,15 +113,15 @@ def clarke_model(M, E, m, V):
         anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals")
 
     Args:
-        M: (float) molecular mass
+        N: (int) number of atoms in primitive cell
         E: (float) Young's modules (in SI units, i.e. Kgm(s)^(-2))
-        m: (float) total mass (in SI units, i.e. Kg)
+        m: (float) total mass per unit cell (in SI units, i.e. Kg)
         V: (float) unit cell volume (in SI units, i.e. m^(-3))
 
     Returns: (float) Clarke thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    return 0.87 * k * ((1/M)**(2./3.)) * (E**(1./2.)) * ((m/V)**(1./6.))
+    return 0.87 * k * (((N*6.023*10**23)/m)**(2./3.)) * (E**(1./2.)) * ((m/V)**(1./6.))
 
 
 def callaway_integrand(x, t_ph):
