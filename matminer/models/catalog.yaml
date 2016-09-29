@@ -1,57 +1,57 @@
 properties:
  - id: 1
    spec:
-      symbol: ['n']
+      symbol: 'n'
       alternate_symbols: []
-      name: ['number of atoms']
+      name: 'number of atoms'
       alternate_names: []
       units: ''
  - id: 2
    spec:
-      symbol: ['m']
+      symbol: 'm'
       alternate_symbols: ['w']
-      name: ['mass']
+      name: 'mass'
       alternate_names: ['weight', 'molar mass', 'molar weight']
       units: 'kg'
  - id: 3
    spec:
-      symbol: ['v']
+      symbol: 'v'
       alternate_symbols: []
-      name: ['volume']
+      name: 'volume'
       alternate_names: ['total volume']
       units: 'm**3'
  - id: 4
    spec:
-      symbol: ['rho']
+      symbol: 'rho'
       alternate_symbols: ['\rho', 'n/v']
-      name: ['density']
+      name: 'density'
       alternate_names: []
       units: 'kg/m**3'
  - id: 5
    spec:
-      symbol: ['nu']
+      symbol: 'nu'
       alternate_symbols: ['\nu']
-      name: ['poissons ratio']
+      name: 'poissons ratio'
       alternate_names: []
       units: ''
  - id: 6
    spec:
-      symbol: ['E']
+      symbol: 'E'
       alternate_symbols: ['Y']
-      name: ['youngs modulus']
+      name: 'youngs modulus'
       alternate_names: ['modulus of elasticity', 'elastic modulus', 'tensile modulus']
       units: 'Pa'
  - id: 7
    spec:
-      symbol: ['G']
+      symbol: 'G'
       alternate_symbols: []
-      name: ['shear modulus']
+      name: 'shear modulus'
       alternate_names: ['modulus of rigidity']
       units: 'Pa'
  - id: 8
    spec:
-      symbol: ['K']
+      symbol: 'K'
       alternate_symbols: ['B']
-      name: ['bulk modulus']
+      name: 'bulk modulus'
       alternate_names: []
       units: 'Pa'
