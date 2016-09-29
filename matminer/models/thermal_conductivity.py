@@ -80,7 +80,7 @@ def cahill_integrand_summation(v_i, T, theta):
     return v_i * (T/theta)**2 * quad(cahill_integrand, 0, theta/T)
 
 
-def cahill_integrand_model(N, V, cahill_integrand_sum):
+def cahill_integrand_model(n, V, cahill_integrand_sum):
     """
     Calculate Cahill thermal conductivity using the intergrand model.
 
@@ -91,18 +91,18 @@ def cahill_integrand_model(N, V, cahill_integrand_sum):
         SnSe crystals") (full formula)
 
     Args:
-        N: (int) number of atoms in primitive cell
+        n: (int) number of atoms in primitive cell
         V: (float) unit cell volume (in SI units, i.e. m^(3))
         cahill_integrand_sum: (float) *sum* of the term calculate using the above function "cahill_integrand_summation"
 
     Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    n_d = (6 * math.pi**2 * (N/V)) ** (1./3.)
+    n_d = (6 * math.pi**2 * (n/V)) ** (1./3.)
     return (math.pi/6)**(1./3.) * k * n_d**(1./3.) * cahill_integrand_sum
 
 
-def clarke_model(N, E, m, V):
+def clarke_model(n, E, m, V):
     """
     Calculate Clarke thermal conductivity.
 
@@ -113,7 +113,7 @@ def clarke_model(N, E, m, V):
         anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals")
 
     Args:
-        N: (int) number of atoms in primitive cell
+        n: (int) number of atoms in primitive cell
         E: (float) Young's modules (in SI units, i.e. Kgm(s)^(-2))
         m: (float) total mass per unit cell (in SI units, i.e. Kg)
         V: (float) unit cell volume (in SI units, i.e. m^(3))
@@ -121,7 +121,7 @@ def clarke_model(N, E, m, V):
     Returns: (float) Clarke thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    return 0.87 * k * (((N*6.023*10**23)/m)**(2./3.)) * (E**(1./2.)) * ((m/V)**(1./6.))
+    return 0.87 * k * (((n*6.023*10**23)/m)**(2./3.)) * (E**(1./2.)) * ((m/V)**(1./6.))
 
 
 def callaway_integrand(x, t_ph):
