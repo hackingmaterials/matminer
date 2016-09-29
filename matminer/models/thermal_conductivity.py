@@ -23,7 +23,7 @@ class CahillSimpleModel:
         """
         Args:
             n: (int) number of atoms in unit cell
-            V: (float) unit cell volume (in SI units, i.e. m^(-3))
+            V: (float) unit cell volume (in SI units, i.e. m^(3))
             v_l: (float) longitudinal sound velocity (in SI units, i.e. m/s)
             v_t1: (float) transverse sound velocity in direction 1 (in SI units, i.e. m/s)
             v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m/s)
@@ -92,7 +92,7 @@ def cahill_integrand_model(N, V, cahill_integrand_sum):
 
     Args:
         N: (int) number of atoms in primitive cell
-        V: (float) unit cell volume (in SI units, i.e. m^(-3))
+        V: (float) unit cell volume (in SI units, i.e. m^(3))
         cahill_integrand_sum: (float) *sum* of the term calculate using the above function "cahill_integrand_summation"
 
     Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))
@@ -116,7 +116,7 @@ def clarke_model(N, E, m, V):
         N: (int) number of atoms in primitive cell
         E: (float) Young's modules (in SI units, i.e. Kgm(s)^(-2))
         m: (float) total mass per unit cell (in SI units, i.e. Kg)
-        V: (float) unit cell volume (in SI units, i.e. m^(-3))
+        V: (float) unit cell volume (in SI units, i.e. m^(3))
 
     Returns: (float) Clarke thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
@@ -245,7 +245,7 @@ def keyes_model(gamma, e_m, T_m, m, V, T, A):
         e_m: (float) amplitude of atomic vibrations as fraction of lattice constant at which melting takes place
         T_m: (float) melting temperature (K)
         m: (float) total mass (in SI units, i.e. Kg)
-        V: (float) unit cell volume (in SI units, i.e. m^(-3))
+        V: (float) unit cell volume (in SI units, i.e. m^(3))
         T: (float) absolute temperature (in K)
         A: (float) average atomic weight
 
@@ -264,7 +264,7 @@ def debye_model(M, E, m, V):
         M: (float) molecular mass
         E: (float) Young's modules (in SI units, i.e. Kgm(s)^(-2))
         m: (float) total mass (in SI units, i.e. Kg)
-        V: (float) unit cell volume (in SI units, i.e. m^(-3))
+        V: (float) unit cell volume (in SI units, i.e. m^(3))
 
     Returns: (float) Debye thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
