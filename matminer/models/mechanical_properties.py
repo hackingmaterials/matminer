@@ -1,12 +1,10 @@
 import math
-import pandas as pd
+import sympy as sp
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
-df_catalog = pd.read_pickle('df_catalog.pkl')
 
-
-class YoungsModulus:
+class YM:
     """
     Calculate Young's modulus (E) from other moduli.
     """
@@ -21,9 +19,8 @@ class YoungsModulus:
         self.G = G
         self.K = K
 
-    def properties_involved(self):
-        prop_list = vars(YoungsModulus(nu=0)).keys()
-        return df_catalog.loc[df_catalog['symbol'].isin(prop_list)]
+    def equation(self):
+        return 'E - 2 * G * (1+nu)'
 
     def calculate(self):
         """
@@ -35,6 +32,39 @@ class YoungsModulus:
             return 3 * self.K * (1-2*self.nu)
         else:
             raise ValueError("Enter one of G or K")
+
+
+class YoungsModulus:
+    def __init__(self):
+        pass
+
+    def properties_involved(self):
+        E, G, nu = sp.symbols('E G nu')
+        return E, G, nu
+
+    def equation(self):
+        E, G, nu = sp.symbols('E G nu')
+        # return 'E - (2 * G * (1+nu))'
+        return E - (2 * G * (1+nu))
+
+    def calculate(self, nu, G):
+        return 2 * G * (1+nu)
+
+
+class ShearModulus:
+    def __init__(self):
+        pass
+
+    def properties_involved(self):
+        G, E, nu = sp.symbols('G E nu')
+        return G, E, nu
+
+    def equation(self):
+        G, E, nu = sp.symbols('G E nu')
+        return G - (E/(2 * (1+nu)))
+
+    def calculate(self, E, nu):
+        return E/(2 * (1+nu))
 
 
 def shear_modulus(nu, E):
