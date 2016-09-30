@@ -35,7 +35,7 @@ def get_pymatgen_descriptor(comp, prop):
         if callable(getattr(Element(el), prop)) is None:
             raise ValueError('Invalid pymatgen Element attribute(property)')
         if getattr(Element(el), prop) is not None:
-            if prop in ['X', 'Z', 'ionic_radii']:
+            if prop in ['X', 'Z', 'ionic_radii', 'group', 'row', 'number']:
                 units = None
             else:
                 units = getattr(Element(el), prop).unit
