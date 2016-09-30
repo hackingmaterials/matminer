@@ -272,9 +272,12 @@ class Plotly:
                 data_from_group = groupby_data.get_group(group)[data_col]
                 stat = np.median(data_from_group)
                 group_stats[group] = stat
+                # TODO: filter out groups that have only 1 row. These causes errors in violin plot. Emit a warning when this is the case
         else:
             group_stats = None
 
+
+        print(group_stats)
         fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
                                width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
 
