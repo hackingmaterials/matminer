@@ -264,6 +264,8 @@ class Plotly:
         Returns: a Plotly violin plot
 
         """
+        # TODO: add a way to change font size. Default is way too small!! Note: textsize param does not work
+        # TODO: filter out groups that have only 1 row. These causes errors in violin plot. Emit a warning when this is the case
         if groups and isinstance(data, pd.DataFrame):
             use_colorscale = True
             group_stats = {}
@@ -272,7 +274,6 @@ class Plotly:
                 data_from_group = groupby_data.get_group(group)[data_col]
                 stat = np.median(data_from_group)
                 group_stats[group] = stat
-                # TODO: filter out groups that have only 1 row. These causes errors in violin plot. Emit a warning when this is the case
         else:
             group_stats = None
 
