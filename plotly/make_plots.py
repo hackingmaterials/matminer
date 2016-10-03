@@ -264,7 +264,6 @@ class Plotly:
         Returns: a Plotly violin plot
 
         """
-        # TODO: add a way to change font size. Default is way too small!! Note: textsize param does not work
         # TODO: filter out groups that have only 1 row. These causes errors in violin plot. Emit a warning when this is the case
         if groups and isinstance(data, pd.DataFrame):
             use_colorscale = True
@@ -281,7 +280,6 @@ class Plotly:
                                width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
 
         # Cannot add x-axis title as the above object populates it with group names.
-        print fig['layout']
         fig.update(dict(
             layout=dict(
             title=self.title,
@@ -290,6 +288,15 @@ class Plotly:
                        tickfont=dict(size=self.ticksize)),
             )
         ))
+
+        # Change sizes in all x-axis
+        for item in fig['layout']:
+            if item.startswith('xaxis'):
+                fig['layout'][item].update(
+                    dict(
+                        titlefont=dict(size=self.textsize), tickfont=dict(size=self.ticksize)
+                    )
+                )
 
         if self.plot_mode == 'offline':
             if self.filename:
