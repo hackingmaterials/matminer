@@ -3,6 +3,7 @@ import plotly.graph_objs as go
 from plotly.tools import FigureFactory as FF
 import pandas as pd
 import numpy as np
+import warnings
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -275,6 +276,14 @@ class Plotly:
                 group_stats[group] = stat
         else:
             group_stats = None
+
+        # Filter out groups from dataframe that have only 1 row.
+        if isinstance(data, pd.DataFrame):
+            group_value_counts = data[group_col].value_counts().to_dict()
+            for j in group_value_counts:
+                if group_value_counts[j] == 1:
+                    data = data[data[group_col] != j]
+                    warnings.warn('Omitting rows with group = ' + str(j) + ' which have only one row in the dataframe.')
 
         fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
                                width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
