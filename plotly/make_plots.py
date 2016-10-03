@@ -277,13 +277,14 @@ class Plotly:
         else:
             group_stats = None
 
-
-        print(group_stats)
         fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
                                width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
 
-        fig.update({'layout': {
-            'yaxis': {'title': self.y_title}}})
+        fig.update(dict(
+            layout=dict(
+                yaxis=dict(title=self.y_title)
+            )
+        ))
 
         if self.plot_mode == 'offline':
             if self.filename:
