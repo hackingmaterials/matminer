@@ -265,7 +265,6 @@ class Plotly:
         Returns: a Plotly violin plot
 
         """
-        # TODO: filter out groups that have only 1 row. These causes errors in violin plot. Emit a warning when this is the case
         if groups and isinstance(data, pd.DataFrame):
             use_colorscale = True
             group_stats = {}
