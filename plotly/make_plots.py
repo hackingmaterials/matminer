@@ -280,9 +280,14 @@ class Plotly:
         fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
                                width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
 
+        # Cannot add x-axis title as the above object populates it with group names.
+        print fig['layout']
         fig.update(dict(
             layout=dict(
-                yaxis=dict(title=self.y_title)
+            title=self.title,
+            titlefont=dict(size=self.textsize),
+            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
+                       tickfont=dict(size=self.ticksize)),
             )
         ))
 
