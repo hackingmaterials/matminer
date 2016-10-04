@@ -362,7 +362,7 @@ class Plotly:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1, color='rgba(70, 130, 180, 1)'):
+    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1, color='rgba(70, 130, 180, 1)', bargap=0):
         """
         Create a histogram using Plotly
 
@@ -382,6 +382,7 @@ class Plotly:
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
                 (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which
                 must be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2")
+            bargap: (float) gap between bars
 
         Returns: a Plotly histogram plot
 
@@ -396,7 +397,8 @@ class Plotly:
                        tickfont=dict(size=self.ticksize)),
             yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
                        tickfont=dict(size=self.ticksize)),
-            hovermode='x'
+            hovermode='x',
+            bargap=bargap
         )
 
         data = [trace0]
