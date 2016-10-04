@@ -392,7 +392,7 @@ class Plotly:
                        tickfont=dict(size=self.ticksize)),
             yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
                        tickfont=dict(size=self.ticksize)),
-            hovermode=self.hovermode
+            hovermode='x'
         )
 
         data = [trace0]
