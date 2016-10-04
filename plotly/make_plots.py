@@ -361,3 +361,45 @@ class Plotly:
         elif self.plot_mode == 'static':
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
+
+    def histogram(self, x, histnorm=""):
+        """
+        Create a histogram using Plotly
+
+        Args:
+            x: (list) sample data
+            histnorm: (str) Specifies the type of normalization used for this histogram trace. If "", the span of each
+                bar corresponds to the number of occurrences (i.e. the number of data points lying inside the bins). If
+                "percent", the span of each bar corresponds to the percentage of occurrences with respect to the total
+                number of sample points (here, the sum of all bin area equals 100%). If "density", the span of each bar
+                corresponds to the number of occurrences in a bin divided by the size of the bin interval (here, the
+                sum of all bin area equals the total number of sample points). If "probability density", the span of
+                each bar corresponds to the probability that an event will fall into the corresponding bin (here, the
+                sum of all bin area equals 1).
+
+        Returns: a Plotly histogram plot
+
+        """
+        trace0 = go.Histogram(x=x, histnorm=histnorm)
+
+        data = [trace0]
+        fig = dict(data=data)
+
+        if self.plot_mode == 'offline':
+            if self.filename:
+                plotly.offline.plot(fig, filename=self.filename)
+            else:
+                plotly.offline.plot(fig)
+        elif self.plot_mode == 'notebook':
+            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
+            plotly.offline.iplot(fig)
+        elif self.plot_mode == 'online':
+            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
+            if self.filename:
+                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
+            else:
+                plotly.plotly.plot(fig, sharing='public')
+        elif self.plot_mode == 'static':
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+                                        scale=self.scale)
+
