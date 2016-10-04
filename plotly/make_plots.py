@@ -362,7 +362,7 @@ class Plotly:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def histogram(self, x, histnorm="", color='rgba(70, 130, 180, 1)'):
+    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1, color='rgba(70, 130, 180, 1)'):
         """
         Create a histogram using Plotly
 
@@ -375,7 +375,10 @@ class Plotly:
                 corresponds to the number of occurrences in a bin divided by the size of the bin interval (here, the
                 sum of all bin area equals the total number of sample points). If "probability density", the span of
                 each bar corresponds to the probability that an event will fall into the corresponding bin (here, the
-                sum of all bin area equals 1).
+                sum of all bin area equals 1)
+            x_start: (float) starting value for x-axis bins
+            x_end: (float) end value for x-axis bins
+            bin_size: (float) step in-between value of each x axis bin
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
                 (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which
                 must be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2")
@@ -383,7 +386,8 @@ class Plotly:
         Returns: a Plotly histogram plot
 
         """
-        trace0 = go.Histogram(x=x, histnorm=histnorm, marker=dict(color=color))
+        trace0 = go.Histogram(x=x, histnorm=histnorm, xbins=dict(start=x_start, end=x_end, size=bin_size),
+                              marker=dict(color=color))
 
         layout = dict(
             title=self.title,
