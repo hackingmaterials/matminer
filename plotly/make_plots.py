@@ -75,7 +75,7 @@ class Plotly:
                 dataframe column containing text strings
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
                 (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which
-                must be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2"), or (iv) name of a dataframe
+                must be between 0.0 and 1.0., (iii) hexagonal code (eg: "FFBAD2"), or (iv) name of a dataframe
                 numeric column to set the marker color scale to
             size: (int/array) marker size in the format of (i) a constant integer size, or (ii) name of a dataframe
                 numeric column to set the marker size scale to
@@ -362,7 +362,7 @@ class Plotly:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def histogram(self, x, histnorm=""):
+    def histogram(self, x, histnorm="", color='rgba(70, 130, 180, 1)'):
         """
         Create a histogram using Plotly
 
@@ -376,14 +376,27 @@ class Plotly:
                 sum of all bin area equals the total number of sample points). If "probability density", the span of
                 each bar corresponds to the probability that an event will fall into the corresponding bin (here, the
                 sum of all bin area equals 1).
+            color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
+                (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which
+                must be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2")
 
         Returns: a Plotly histogram plot
 
         """
-        trace0 = go.Histogram(x=x, histnorm=histnorm)
+        trace0 = go.Histogram(x=x, histnorm=histnorm, marker=dict(color=color))
+
+        layout = dict(
+            title=self.title,
+            titlefont=dict(size=self.textsize),
+            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize),
+                       tickfont=dict(size=self.ticksize)),
+            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
+                       tickfont=dict(size=self.ticksize)),
+            hovermode=self.hovermode
+        )
 
         data = [trace0]
-        fig = dict(data=data)
+        fig = dict(data=data, layout=layout)
 
         if self.plot_mode == 'offline':
             if self.filename:
