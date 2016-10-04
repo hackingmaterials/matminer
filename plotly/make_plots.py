@@ -387,6 +387,12 @@ class Plotly:
         Returns: a Plotly histogram plot
 
         """
+        if not x_start:
+            x_start = min(x)
+
+        if not x_end:
+            x_end = max(x)
+
         trace0 = go.Histogram(x=x, histnorm=histnorm, xbins=dict(start=x_start, end=x_end, size=bin_size),
                               marker=dict(color=color))
 
