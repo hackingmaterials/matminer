@@ -51,11 +51,11 @@ def get_rdf(structure, cutoff=20.0, bin_size=0.1):
             rij = neighbor[1]
             rdf.append(1/(rij**2))
             dist.append(rij)
-    x = [0] * int(cutoff/bin_size)   # list to
+    rdf_by_bin = [0] * int(cutoff/bin_size)   # list to store rdf at appropriate bin
     for i, j in enumerate(dist):
         idx = int(j/bin_size)
-        x[idx] += rdf[i]
-    return rdf, dist, x
+        rdf_by_bin[idx] += rdf[i]
+    return rdf, dist, rdf_by_bin
 
 
 if __name__ == '__main__':
