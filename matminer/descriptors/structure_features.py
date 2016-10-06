@@ -1,11 +1,9 @@
 from __future__ import division
 import math
-import pymatgen as pmg
 from pymatgen import MPRester
-import plotly
-import plotly.graph_objs as go
+from figrecipes.plotly.make_plots import Plotly
 
-__author__ = 'Anubhav Jain <ajain@lbl.gov>'
+__authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 def get_packing_fraction(s):
@@ -43,26 +41,23 @@ def get_rdf(structure, cutoff=20.0, bin_size=0.1):
          number of bins and values corresponding to the sum of 'rdf' at that distance/bin.
 
     """
-    rdf = []
-    dist = []
+    dist_rdf = {}
     for site in structure:
         neighbors_lst = structure.get_neighbors(site, cutoff)
         for neighbor in neighbors_lst:
             rij = neighbor[1]
-            rdf.append(1/(rij**2))
-            dist.append(rij)
-    rdf_by_bin = [0] * int(cutoff/bin_size)   # list to store rdf at appropriate bin
-    for i, j in enumerate(dist):
-        idx = int(j/bin_size)
-        rdf_by_bin[idx] += rdf[i]
-    return rdf, dist, rdf_by_bin
+            bin_dist = int(rij/bin_size) * bin_size
+            if bin_dist in dist_rdf:
+                dist_rdf[bin_dist] += 1
+            else:
+                dist_rdf[bin_dist] = 1
+    for bin_idx in dist_rdf:
+        dist_rdf[bin_idx] /= structure.density * 4 * math.pi * (bin_idx**2) * bin_size
+    return dist_rdf
 
 
 if __name__ == '__main__':
-    struct = MPRester().get_structure_by_material_id('mp-70')
-    print get_rdf(struct)
-    """
-        data = [go.Histogram(x=dist, xbins=dict(start=0, end=25, size=0.1))]
-        fig = {'data': data}
-        plotly.offline.plot(fig)
-    """
+    struct = MPRester().get_structure_by_material_id('mp-1')
+    rdf_data = get_rdf(struct)
+    print rdf_data
+    Plotly().xy_plot(x_col=rdf_data.keys(), y_col=rdf_data.values())
