@@ -36,9 +36,7 @@ def get_rdf(structure, cutoff=20.0, bin_size=0.1):
         cutoff: (int/float) distance to calculate rdf up to
         bin_size: (int/float) size of bin to obtain rdf for
 
-    Returns: tuple (rdf, dist, x) where, 'rdf' is a list containing function values, eg: 1/r_ij, 'dist' is a list
-        containing distances of each neighbor from the atom being considered, and 'x' is a list of size equal to total
-         number of bins and values corresponding to the sum of 'rdf' at that distance/bin.
+    Returns: (dict) rdf in dict format where keys indicate bin distance and values are calculated rdf for that bin.
 
     """
     dist_rdf = {}
