@@ -54,8 +54,27 @@ def get_rdf(structure, cutoff=20.0, bin_size=0.1):
     return dist_rdf
 
 
+def get_rdf_peaks(dist_rdf):
+    """
+    Get location of highest and second highest peaks in rdf of a structure.
+
+    Args:
+        dist_rdf: (dict) as output by the function "get_rdf", keys correspond to distances and values correspond to rdf.
+
+    Returns: (tuple) of distances highest and second highest peaks.
+
+    """
+    distances = dist_rdf.keys()
+    sorted_rdfs = sorted(dist_rdf.values(), reverse=True)
+    max_rdf, second_highest_rdf = sorted_rdfs[0], sorted_rdfs[1]
+    max_idx = dist_rdf.values().index(max_rdf)
+    second_highest_idx = dist_rdf.values().index(second_highest_rdf)
+    return distances[max_idx], distances[second_highest_idx]
+
+
 if __name__ == '__main__':
     struct = MPRester().get_structure_by_material_id('mp-1')
     rdf_data = get_rdf(struct)
     print rdf_data
     Plotly().xy_plot(x_col=rdf_data.keys(), y_col=rdf_data.values())
+    print get_rdf_peaks(rdf_data)
