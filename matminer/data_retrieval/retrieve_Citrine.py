@@ -81,7 +81,7 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in tqdm(json_data):
+        for page in json_data:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
             for hit in tqdm(page):
                 counter += 1
