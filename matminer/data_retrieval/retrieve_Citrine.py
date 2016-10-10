@@ -99,14 +99,15 @@ class CitrineDataRetrieval:
                     if 'measurement' in sample_value:
                         meas_normdf = json_normalize(sample_value['measurement'])
                         # Extract numbers of properties
-                        for row, col in enumerate(meas_normdf['property.scalar']):
-                            for item in col:
-                                if 'value' in item:
-                                    meas_normdf.xs(row)['property.scalar'] = item['value']
-                                # TODO: ask Anubhav how to deal with these and rest of formats
-                                elif 'minimum' in item and 'maximum' in item:
-                                    meas_normdf.xs(row)['property.scalar'] = 'Minimum = ' + item[
-                                        'minimum'] + ', ' + 'Maximum = ' + item['maximum']
+                        if 'property.scalar' in meas_normdf.columns:
+                            for row, col in enumerate(meas_normdf['property.scalar']):
+                                for item in col:
+                                    if 'value' in item:
+                                        meas_normdf.xs(row)['property.scalar'] = item['value']
+                                    # TODO: ask Anubhav how to deal with these and rest of formats
+                                    elif 'minimum' in item and 'maximum' in item:
+                                        meas_normdf.xs(row)['property.scalar'] = 'Minimum = ' + item[
+                                            'minimum'] + ', ' + 'Maximum = ' + item['maximum']
                         # Take all property rows and convert them into columns
                         prop_df = pd.DataFrame()
                         prop_cols = [cols for cols in meas_normdf.columns if "property" in cols]
@@ -114,7 +115,8 @@ class CitrineDataRetrieval:
                             prop_df[col] = meas_normdf[col]
                         prop_df.index = [counter] * len(meas_normdf)
                         prop_df = prop_df.drop_duplicates(['property.name'])
-                        prop_df = prop_df.pivot(columns='property.name', values='property.scalar')
+                        if 'property.scalar' in meas_normdf.columns:
+                            prop_df = prop_df.pivot(columns='property.name', values='property.scalar')
                         prop_df = prop_df.convert_objects(convert_numeric=True)  # Convert columns from object to num
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()
