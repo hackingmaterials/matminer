@@ -55,3 +55,17 @@ properties:
       name: 'bulk modulus'
       alternate_names: []
       units: 'Pa'
+ - id: 9
+   spec:
+      symbol: 'lamda'
+      alternate_symbols: []
+      name: 'lame"s first parameter'
+      alternate_names: ['lames first parameter']
+      units: 'Pa'
+ - id: 10
+   spec:
+      symbol: 'M'
+      alternate_symbols: []
+      name: 'p-wave modulus'
+      alternate_names: []
+      units: 'Pa'
