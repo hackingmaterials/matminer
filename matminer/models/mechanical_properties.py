@@ -135,6 +135,53 @@ def vickers_hardness1(G, K):
     return 2*(G**3.0/K**2.0)**0.585 - 3
 
 
+class Lames1stParam:
+    """
+    In continuum mechanics, the Lames parameters (also called the Lame coefficients or Lame constants) are two
+    material-dependent quantities denoted by 'lamda' and 'mu' that arise in strain-stress relationships. In general,
+    'lamda' and 'mu' are individually referred to as Lames first parameter and Lames second parameter, respectively.
+
+    Reference:
+        https://en.wikipedia.org/wiki/Lam%C3%A9_parameters
+    """
+    def __init__(self):
+        pass
+
+    def properties_involved(self):
+        lamda, K, nu = sp.symbols('lamda K nu')
+        return lamda, K, nu
+
+    def equation(self):
+        lamda, K, nu = sp.symbols('lamda K nu')
+        return lamda - ((3 * K * nu)/(1 + nu))
+
+    def calculate(self, K, nu):
+        return (3 * K * nu)/(1 + nu)
+
+
+class PWaveModulus:
+    """
+    In linear elasticity, the P-wave modulus 'M', also known as the longitudinal modulus or the constrained modulus, is
+    one of the elastic moduli available to describe isotropic homogeneous materials.
+
+    Reference:
+        https://en.wikipedia.org/wiki/P-wave_modulus
+    """
+    def __init__(self):
+        pass
+
+    def properties_involved(self):
+        M, K, nu = sp.symbols('M K nu')
+        return M, K, nu
+
+    def equation(self):
+        M, K, nu = sp.symbols('M K nu')
+        return M - ((3 * K * (1-nu))/(1 + nu))
+
+    def calculate(self, K, nu):
+        return (3 * K * (1-nu))/(1 + nu)
+
+
 def vickers_hardness2(F, a):
     """
     Calculate Vickers hardness (H) for a material.
