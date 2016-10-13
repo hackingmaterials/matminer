@@ -77,7 +77,6 @@ class CitrineDataRetrieval:
 
         non_meas_df = pd.DataFrame()  # df w/o measurement column
         meas_df = pd.DataFrame()  # df containing only measurement column
-        units = {}  # dict for containing units
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
@@ -126,18 +125,13 @@ class CitrineDataRetrieval:
                         if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
                             non_prop_df.index = [counter] * len(meas_normdf)
                         non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
-                        meas_df = meas_df.append(pd.concat([prop_df, non_prop_df], axis=1))
-                        # Extracting units
-                        # Check to avoid an error with databases that don't contain this field
+                        units_df = pd.DataFrame()    # Get property unit and insert it as a dict
                         if 'property.units' in meas_normdf.columns:
                             curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
-                        for prop in curr_units:
-                            if prop not in units:
-                                units[prop] = curr_units[prop]
+                            units_df['property.units'] = [curr_units]
+                            units_df.index = [counter] * len(meas_normdf)
+                        meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
 
-        units_lst = [units]
-        df = pd.concat(
-            [non_meas_df, meas_df, pd.Series(units_lst, index=[1], name='property.units')],
-            axis=1)
+        df = pd.concat([non_meas_df, meas_df], axis=1)
         df.index.name = 'sample'
         return df
