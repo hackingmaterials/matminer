@@ -62,7 +62,7 @@ class Plotly:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None, mode='markers', add_xy_plot=None):
+                legend=None, mode='markers', showlegend=True, add_xy_plot=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -85,6 +85,7 @@ class Plotly:
                 Blackbody, Earth, Electric, Viridis
             legend: (str) plot legend
             mode: (str) marker style; can be 'markers'/'lines'/'lines+markers'
+            showlegend: (bool) show legend or not
             add_xy_plot: (list) of dictionaries, each of which contain additional data to add to the xy plot. Keys are
                 names of arguments to the original xy_plot method - required keys are 'x_col', 'y_col', 'text', 'mode',
                 'name', 'color', 'size'. Values are corresponding argument values in the same format as for the
@@ -124,7 +125,8 @@ class Plotly:
                        tickfont=dict(size=self.ticksize)),
             yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
                        tickfont=dict(size=self.ticksize)),
-            hovermode=self.hovermode
+            hovermode=self.hovermode,
+            showlegend=showlegend
         )
 
         data = [trace0]
