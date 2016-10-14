@@ -21,7 +21,7 @@ class MPDataRetrieval:
         api_key = api_key if api_key else os.environ['MAPI_KEY']
         self.mprester = MPRester(api_key=api_key)
 
-    def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True, include_structure=True):
+    def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True, include_structure=False):
         """
         Gets data from MP in a dataframe format.
         See API docs at https://materialsproject.org/wiki/index.php/The_Materials_API for more details.
