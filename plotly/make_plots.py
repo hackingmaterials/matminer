@@ -9,9 +9,9 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 class Plotly:
-    def __init__(self, plot_title=None, x_title=None, y_title=None, mode='markers', hovermode='closest',
-                 filename=None, plot_mode='offline', username=None, api_key=None, textsize=20, ticksize=15,
-                 height=None, width=None, scale=None):
+    def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
+                 plot_mode='offline', username=None, api_key=None, textsize=20, ticksize=15, height=None, width=None,
+                 scale=None):
         """
         Class for making Plotly plots
 
@@ -19,7 +19,6 @@ class Plotly:
             plot_title: (str) title of plot
             x_title: (str) title of x-axis
             y_title: (str) title of y-axis
-            mode: (str) marker style; can be 'markers'/'lines'/'lines+markers'
             hovermode: (str) can be 'x'/'y'/'closest'
             filename: (str) name/filepath of plot file
             plot_mode: (str) (i) 'offline': creates and saves plots on the local disk, (ii) 'notebook': to embed plots
@@ -40,7 +39,6 @@ class Plotly:
         self.title = plot_title
         self.x_title = x_title
         self.y_title = y_title
-        self.mode = mode
         self.hovermode = hovermode
         self.filename = filename
         self.plot_mode = plot_mode
@@ -64,7 +62,7 @@ class Plotly:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None, add_xy_plot=None):
+                legend=None, mode='markers', add_xy_plot=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -86,6 +84,8 @@ class Plotly:
                 Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot,
                 Blackbody, Earth, Electric, Viridis
             legend: (str) plot legend
+            mode: (str) marker style; can be 'markers'/'lines'/'lines+markers'
+
 
         Returns: XY scatter plot
 
@@ -104,7 +104,7 @@ class Plotly:
             x=x_col,
             y=y_col,
             text=text,
-            mode=self.mode,
+            mode=mode,
             name=legend,
             marker=dict(
                 size=size,
@@ -130,7 +130,7 @@ class Plotly:
             data.append(
                 go.Scatter(
                     x=plot_data['x_col'],
-                    y=plot_data['y_col'],
+                    y=plot_data['y_col']
                 )
             )
 
