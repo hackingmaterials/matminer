@@ -64,7 +64,7 @@ class Plotly:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None):
+                legend=None, add_xy_plot=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -125,6 +125,15 @@ class Plotly:
         )
 
         data = [trace0]
+
+        for plot_data in add_xy_plot:
+            data.append(
+                go.Scatter(
+                    x=plot_data['x_col'],
+                    y=plot_data['y_col'],
+                )
+            )
+
         fig = dict(data=data, layout=layout)
 
         if self.plot_mode == 'offline':
