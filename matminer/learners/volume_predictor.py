@@ -162,6 +162,9 @@ class ConditionalVolumePredictor:
 
         # Here, the 1/3 factor on the composition accounts for atomic
         # packing. We want the number per unit length.
+
+        # TODO: AJ doesn't understand the (1/3). It would make sense to him
+        # if you were doing atomic volume and not atomic radius
         for k, v in comp.items():
             numerator += k.ionic_radius * v ** (1 / 3)
         for k, v in ref_comp.items():
