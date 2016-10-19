@@ -82,20 +82,17 @@ def get_rdf_peaks(dist_rdf):
 
 class ElectronicRadialDistributionFunction(object):
     """
-    This class permits the calculation of the
-    crystal structure-inherent electronic radial distribution
-    function (ReDF) according to Willighagen et al., Acta Cryst., 2005,
-    B61, 29-36. The ReDF is a structure-integral RDF (i.e.,
-    computed using all sites) in which the positions of neighboring sites
-    are weighted by electrostatic interactions inferred from atomic partial
-    charges.
+    This class permits the
     """
 
-    def __init__(self, struct, cutoff=-1.0, dr=0.05):
+    def get_redf(self, struct, cutoff=-1.0, dr=0.05):
         """
-        Create an ElectronicRadialDistributionFunction instance.
-        The input Structure object 'struct' is converted to a
-        primitive unit cell.  Atomic charges are obtained from the
+        calculation of the crystal structure-inherent electronic radial
+        distribution function (ReDF) according to Willighagen et al.,
+        Acta Cryst., 2005, B61, 29-36. The ReDF is a structure-integral RDF
+        (i.e., summed over all sites) in which the positions of neighboring
+        sites are weighted by electrostatic interactions inferred from atomic 
+        partial charges. Atomic charges are obtained from the
         ValenceIonicRadiusEvaluator class.
 
         Args:
@@ -106,17 +103,17 @@ class ElectronicRadialDistributionFunction(object):
                     unit cell).
             dr (float): width of bins ("x"-axis) of ReDF (default: 0.05 A).
         """
-        self._prim_struct = SpacegroupAnalyzer(struct).find_primitive()
-        if self._prim_struct == None:
-            self._prim_struct = struct.copy()
-        valrad_eval = ValenceIonicRadiusEvaluator(self._prim_struct)
-        self._prim_struct = valrad_eval.structure
-        self._val = valrad_eval.valences
+        prim_struct = SpacegroupAnalyzer(struct).find_primitive()
+        if prim_struct == None:
+            prim_struct = struct.copy()
+        valrad_eval = ValenceIonicRadiusEvaluator(prim_struct)
+        prim_struct = valrad_eval.structure
+        val = valrad_eval.valences
 
         if cutoff <= 0.0:
-            a = self._prim_struct.lattice.matrix[0]
-            b = self._prim_struct.lattice.matrix[1]
-            c = self._prim_struct.lattice.matrix[2]
+            a = prim_struct.lattice.matrix[0]
+            b = prim_struct.lattice.matrix[1]
+            c = prim_struct.lattice.matrix[2]
             cutoff = max([np.linalg.norm(a+b+c), np.linalg.norm(-a+b+c), \
                     np.linalg.norm(a-b+c), np.linalg.norm(a+b-c)])
 
@@ -125,53 +122,21 @@ class ElectronicRadialDistributionFunction(object):
                     " must be larger than zero.")
 
         nbins = int(cutoff / dr) + 1
-        natoms_f = float(self._prim_struct.num_sites)
+        natoms_f = float(prim_struct.num_sites)
 
-        self._data = {}
-        self._data["distances"] = np.array(
+        data = {}
+        data["distances"] = np.array(
                 [(float(i) + 0.5) * dr for i in range(nbins)])
-        self._data["redf"] = np.zeros(nbins, dtype=np.float)
+        data["redf"] = np.zeros(nbins, dtype=np.float)
 
-        for site in self._prim_struct.sites:
+        for site in prim_struct.sites:
             this_charge = float(site.specie.oxi_state)
-            neighs_dists = self._prim_struct.get_neighbors(site, cutoff)
+            neighs_dists = prim_struct.get_neighbors(site, cutoff)
             for neigh, dist in neighs_dists:
                 neigh_charge = float(neigh.specie.oxi_state)
                 s = int(dist / dr)
-                self._data["redf"][s] = self._data["redf"][s] + \
+                data["redf"][s] = data["redf"][s] + \
                         (this_charge * neigh_charge) / (natoms_f * dist)
-
-    @property
-    def distributions(self):
-        """
-        Returns a copy of the electronic radial distribution functions
-        (ReDF) as a dictionary.  The distance list ("x"-axis values of
-        ReDF) can be accessed via key 'distances'; the ReDF
-        itself via key 'redf'.
-        """
-        return self._data.copy()
-
-    def write_distributions(self, filename="redf.dat"):
-        """
-        Writes out the structure-inherent electronic radial distribution
-        function (ReDF) to a file.
-
-        Args:
-            filename (string): name of file to which ReDF is
-                    to be written (default: 'redf.dat').
-        """
-        with open(filename, "w") as fout:
-            fout.write("# r/Angstrom R_eDF\n")
-            for i, r in enumerate(self._data["distances"]):
-                fout.write("{} {}\n".format(
-                        r, self._data["redf"][i]))
-
-    @property
-    def primitive_unit_cell(self):
-        """
-        Returns a copy of the primitive unit cell.
-        """
-        return self._prim_struct.copy()
 
 
 if __name__ == '__main__':
