@@ -2,7 +2,6 @@ from __future__ import division, unicode_literals
 import math
 import numpy as np
 from pymatgen import MPRester
-from figrecipes.plotly.make_plots import Plotly
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
@@ -78,13 +77,10 @@ def get_rdf_peaks(dist_rdf):
 
 def get_redf(struct, cutoff=None, dr=0.05):
     """
-    calculation of the crystal structure-inherent electronic radial
-    distribution function (ReDF) according to Willighagen et al.,
-    Acta Cryst., 2005, B61, 29-36. The ReDF is a structure-integral RDF
-    (i.e., summed over all sites) in which the positions of neighboring
-    sites are weighted by electrostatic interactions inferred from atomic
-    partial charges. Atomic charges are obtained from the
-    ValenceIonicRadiusEvaluator class.
+    This function permits the calculation of the crystal structure-inherent electronic radial distribution function
+    (ReDF) according to Willighagen et al., Acta Cryst., 2005, B61, 29-36. The ReDF is a structure-integral RDF (i.e.,
+    summed over all sites) in which the positions of neighboring sites are weighted by electrostatic interactions
+    inferred from atomic partial charges. Atomic charges are obtained from the ValenceIonicRadiusEvaluator class.
 
     Args:
         struct (Structure): input Structure object.
@@ -106,13 +102,11 @@ def get_redf(struct, cutoff=None, dr=0.05):
         a = struct.lattice.matrix[0]
         b = struct.lattice.matrix[1]
         c = struct.lattice.matrix[2]
-        cutoff = max([np.linalg.norm(a+b+c), np.linalg.norm(-a+b+c), \
-                np.linalg.norm(a-b+c), np.linalg.norm(a+b-c)])
+        cutoff = max([np.linalg.norm(a+b+c), np.linalg.norm(-a+b+c), np.linalg.norm(a-b+c), np.linalg.norm(a+b-c)])
 
     nbins = int(cutoff / dr) + 1
-    redf_dict = {}
-    redf_dict["distances"] = np.array([(i + 0.5) * dr for i in range(nbins)])
-    redf_dict["redf"] = np.zeros(nbins, dtype=np.float)
+    redf_dict = {"distances": np.array([(i + 0.5) * dr for i in range(nbins)]),
+                 "redf": np.zeros(nbins, dtype=np.float)}
 
     for site in struct.sites:
         this_charge = float(site.specie.oxi_state)
@@ -120,8 +114,7 @@ def get_redf(struct, cutoff=None, dr=0.05):
         for neigh, dist in neighs_dists:
             neigh_charge = float(neigh.specie.oxi_state)
             bin_index = int(dist / dr)
-            redf_dict["redf"][bin_index] += (this_charge * neigh_charge) / \
-                               (struct.num_sites * dist)
+            redf_dict["redf"][bin_index] += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
     return redf_dict
 
