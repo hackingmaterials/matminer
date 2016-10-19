@@ -87,6 +87,9 @@ def get_redf(struct, cutoff=None, dr=0.05):
         cutoff (float): distance up to which the ReDF is to be
                 calculated (default: longest diagaonal in primitive cell)
         dr (float): width of bins ("x"-axis) of ReDF (default: 0.05 A).
+
+    Returns: (dict) a copy of the electronic radial distribution functions (ReDF) as a dictionary. The distance list
+        ("x"-axis values of ReDF) can be accessed via key 'distances'; the ReDF itself via key 'redf'.
     """
     if dr <= 0:
         raise ValueError("width of bins for ReDF must be >0")
