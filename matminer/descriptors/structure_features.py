@@ -75,73 +75,60 @@ def get_rdf_peaks(dist_rdf):
     second_highest_idx = dist_rdf.values().index(second_highest_rdf)
     return distances[max_idx], distances[second_highest_idx]
 
-# coding: utf-8
-# Copyright (c) Pymatgen Development Team.
-# Distributed under the terms of the MIT License.
 
-
-class ElectronicRadialDistributionFunction(object):
+def get_redf(struct, cutoff=None, dr=0.05):
     """
-    This class permits the
+    calculation of the crystal structure-inherent electronic radial
+    distribution function (ReDF) according to Willighagen et al.,
+    Acta Cryst., 2005, B61, 29-36. The ReDF is a structure-integral RDF
+    (i.e., summed over all sites) in which the positions of neighboring
+    sites are weighted by electrostatic interactions inferred from atomic
+    partial charges. Atomic charges are obtained from the
+    ValenceIonicRadiusEvaluator class.
+
+    Args:
+        struct (Structure): input Structure object.
+        cutoff (float): distance up to which the ReDF is to be
+                calculated (default: longest diagaonal in primitive cell)
+        dr (float): width of bins ("x"-axis) of ReDF (default: 0.05 A).
     """
+    if dr <= 0:
+        raise ValueError("width of bins for ReDF must be >0")
 
-    def get_redf(self, struct, cutoff=-1.0, dr=0.05):
-        """
-        calculation of the crystal structure-inherent electronic radial
-        distribution function (ReDF) according to Willighagen et al.,
-        Acta Cryst., 2005, B61, 29-36. The ReDF is a structure-integral RDF
-        (i.e., summed over all sites) in which the positions of neighboring
-        sites are weighted by electrostatic interactions inferred from atomic 
-        partial charges. Atomic charges are obtained from the
-        ValenceIonicRadiusEvaluator class.
+    # make primitive
+    struct = SpacegroupAnalyzer(struct).find_primitive() or struct
 
-        Args:
-            struct (Structure): input Structure object.
-            cutoff (float): distance up to which the ReDF is to be
-                    calculated (default: -1.0; will trigger
-                    using length of longest diagonal in primitive
-                    unit cell).
-            dr (float): width of bins ("x"-axis) of ReDF (default: 0.05 A).
-        """
-        prim_struct = SpacegroupAnalyzer(struct).find_primitive()
-        if prim_struct == None:
-            prim_struct = struct.copy()
-        valrad_eval = ValenceIonicRadiusEvaluator(prim_struct)
-        prim_struct = valrad_eval.structure
-        val = valrad_eval.valences
+    # add oxidation states
+    struct = ValenceIonicRadiusEvaluator(struct).structure
 
-        if cutoff <= 0.0:
-            a = prim_struct.lattice.matrix[0]
-            b = prim_struct.lattice.matrix[1]
-            c = prim_struct.lattice.matrix[2]
-            cutoff = max([np.linalg.norm(a+b+c), np.linalg.norm(-a+b+c), \
-                    np.linalg.norm(a-b+c), np.linalg.norm(a+b-c)])
+    if cutoff is None:
+        # set cutoff to longest diagonal
+        a = struct.lattice.matrix[0]
+        b = struct.lattice.matrix[1]
+        c = struct.lattice.matrix[2]
+        cutoff = max([np.linalg.norm(a+b+c), np.linalg.norm(-a+b+c), \
+                np.linalg.norm(a-b+c), np.linalg.norm(a+b-c)])
 
-        if dr <= 0.0:
-            raise RuntimeError("width of bins for ReDF"
-                    " must be larger than zero.")
+    nbins = int(cutoff / dr) + 1
 
-        nbins = int(cutoff / dr) + 1
-        natoms_f = float(prim_struct.num_sites)
+    redf_dict = {}
+    redf_dict["distances"] = np.array([(i + 0.5) * dr for i in range(nbins)])
+    redf_dict["redf"] = np.zeros(nbins, dtype=np.float)
 
-        data = {}
-        data["distances"] = np.array(
-                [(float(i) + 0.5) * dr for i in range(nbins)])
-        data["redf"] = np.zeros(nbins, dtype=np.float)
+    for site in struct.sites:
+        this_charge = float(site.specie.oxi_state)
+        neighs_dists = struct.get_neighbors(site, cutoff)
+        for neigh, dist in neighs_dists:
+            neigh_charge = float(neigh.specie.oxi_state)
+            s = int(dist / dr)
+            redf_dict["redf"][s] += (this_charge * neigh_charge) / \
+                               (struct.num_sites * dist)
 
-        for site in prim_struct.sites:
-            this_charge = float(site.specie.oxi_state)
-            neighs_dists = prim_struct.get_neighbors(site, cutoff)
-            for neigh, dist in neighs_dists:
-                neigh_charge = float(neigh.specie.oxi_state)
-                s = int(dist / dr)
-                data["redf"][s] = data["redf"][s] + \
-                        (this_charge * neigh_charge) / (natoms_f * dist)
+    return redf_dict
 
 
 if __name__ == '__main__':
-    struct = MPRester().get_structure_by_material_id('mp-1')
-    rdf_data = get_rdf(struct)
-    print rdf_data
-    Plotly().xy_plot(x_col=rdf_data.keys(), y_col=rdf_data.values())
-    print get_rdf_peaks(rdf_data)
+    test_mpid = "mp-2534"
+    with MPRester() as mp:
+        test_struct = mp.get_structure_by_material_id(test_mpid)
+    print get_redf(test_struct)["redf"]
