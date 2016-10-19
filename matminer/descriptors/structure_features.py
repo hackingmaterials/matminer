@@ -110,7 +110,6 @@ def get_redf(struct, cutoff=None, dr=0.05):
                 np.linalg.norm(a-b+c), np.linalg.norm(a+b-c)])
 
     nbins = int(cutoff / dr) + 1
-
     redf_dict = {}
     redf_dict["distances"] = np.array([(i + 0.5) * dr for i in range(nbins)])
     redf_dict["redf"] = np.zeros(nbins, dtype=np.float)
@@ -120,8 +119,8 @@ def get_redf(struct, cutoff=None, dr=0.05):
         neighs_dists = struct.get_neighbors(site, cutoff)
         for neigh, dist in neighs_dists:
             neigh_charge = float(neigh.specie.oxi_state)
-            s = int(dist / dr)
-            redf_dict["redf"][s] += (this_charge * neigh_charge) / \
+            bin_index = int(dist / dr)
+            redf_dict["redf"][bin_index] += (this_charge * neigh_charge) / \
                                (struct.num_sites * dist)
 
     return redf_dict
