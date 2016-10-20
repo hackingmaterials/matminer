@@ -130,21 +130,21 @@ class Plotly:
         )
 
         data = [trace0]
-
-        for plot_data in add_xy_plot:
-            data.append(
-                go.Scatter(
-                    x=plot_data['x_col'],
-                    y=plot_data['y_col'],
-                    text=plot_data['text'],
-                    mode=plot_data['mode'],
-                    name=plot_data['legend'],
-                    marker=dict(
-                        color=plot_data['color'],
-                        size=plot_data['size']
+        if add_xy_plot:
+            for plot_data in add_xy_plot:
+                data.append(
+                    go.Scatter(
+                        x=plot_data['x_col'],
+                        y=plot_data['y_col'],
+                        text=plot_data['text'],
+                        mode=plot_data['mode'],
+                        name=plot_data['legend'],
+                        marker=dict(
+                            color=plot_data['color'],
+                            size=plot_data['size']
+                        )
                     )
                 )
-            )
 
         fig = dict(data=data, layout=layout)
 
