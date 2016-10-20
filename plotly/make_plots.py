@@ -130,6 +130,7 @@ class Plotly:
         )
 
         data = [trace0]
+
         if add_xy_plot:
             for plot_data in add_xy_plot:
                 data.append(
@@ -217,28 +218,19 @@ class Plotly:
         else:
             annotations = []
 
-        fig = {
-            'data': [go.Heatmap(
-                z=data,
-                colorscale=colorscale,
-                x=x_labels,
-                y=y_labels,
-                zmin=colorscale_min, zmax=colorscale_max
-            ),
-            ],
-            'layout': {
-                'title': self.title,
-                'titlefont': {'size': self.textsize},
-                'xaxis': {'title': self.x_title,
-                          'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
-                          },
-                'yaxis': {'title': self.y_title,
-                          'titlefont': {'size': self.textsize}, 'tickfont': {'size': self.ticksize}
-                          },
-                'hovermode': self.hovermode,
-                'annotations': annotations
-            }
-        }
+        trace0 = go.Heatmap(
+            z=data,
+            colorscale=colorscale,
+            x=x_labels,
+            y=y_labels,
+            zmin=colorscale_min, zmax=colorscale_max
+            )
+
+        data = [trace0]
+
+        self.layout['annotations'] = annotations
+
+        fig = dict(data=data, layout=self.layout)
 
         if self.plot_mode == 'offline':
             if self.filename:
