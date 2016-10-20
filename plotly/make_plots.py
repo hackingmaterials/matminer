@@ -10,7 +10,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class Plotly:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
-                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, height=None, width=None,
+                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, height=450, width=700,
                  scale=None):
         """
         Class for making Plotly plots
@@ -57,7 +57,9 @@ class Plotly:
                        tickfont=dict(size=self.ticksize)),
             yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
                        tickfont=dict(size=self.ticksize)),
-            hovermode=self.hovermode
+            hovermode=self.hovermode,
+            width=self.width,
+            height=self.height
         )
 
 
