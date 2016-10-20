@@ -51,5 +51,5 @@ class MongoDataRetrieval():
 
         df = pd.DataFrame(all_data, columns=projection)
         if idx_field:
-            df.index = df[idx_field]
+            df = df.set_index([idx_field])
         return df
