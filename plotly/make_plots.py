@@ -10,7 +10,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class Plotly:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
-                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, height=450, width=700,
+                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, height=None, width=None,
                  scale=None, margin_top=100, margin_bottom=80, margin_left=80, margin_right=80, pad=0):
         """
         Class for making Plotly plots
