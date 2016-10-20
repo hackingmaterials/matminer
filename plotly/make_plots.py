@@ -10,7 +10,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class Plotly:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
-                 plot_mode='offline', username=None, api_key=None, textsize=20, ticksize=15, height=None, width=None,
+                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, height=None, width=None,
                  scale=None):
         """
         Class for making Plotly plots
@@ -167,7 +167,7 @@ class Plotly:
                                         scale=self.scale)
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None,
-                     annotations_text=None):
+                     annotations_text=None, annotations_text_size=20):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
@@ -185,6 +185,7 @@ class Plotly:
                 of the colorscale
             annotations_text: (array) an array of arrays, with each value being a string annotation to the corresponding
                 value in 'data'
+            annotations_text_size: (int) size of annotation text
 
         Returns: heatmap plot
 
@@ -208,7 +209,7 @@ class Plotly:
                             text=str(var),
                             x=x_labels[m], y=y_labels[n],
                             xref='x1', yref='y1',
-                            font=dict(color='white', size=self.textsize),
+                            font=dict(color='white', size=annotations_text_size),
                             showarrow=False)
                     )
         else:
