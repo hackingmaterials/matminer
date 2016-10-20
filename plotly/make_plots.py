@@ -412,19 +412,12 @@ class Plotly:
         trace0 = go.Histogram(x=x, histnorm=histnorm, xbins=dict(start=x_start, end=x_end, size=bin_size),
                               marker=dict(color=color))
 
-        layout = dict(
-            title=self.title,
-            titlefont=dict(size=self.textsize),
-            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize),
-                       tickfont=dict(size=self.ticksize)),
-            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
-                       tickfont=dict(size=self.ticksize)),
-            hovermode='x',
-            bargap=bargap
-        )
-
         data = [trace0]
-        fig = dict(data=data, layout=layout)
+
+        self.layout['hovermode'] = 'x'
+        self.layout['bargap'] = bargap
+
+        fig = dict(data=data, layout=self.layout)
 
         if self.plot_mode == 'offline':
             if self.filename:
