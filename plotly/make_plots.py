@@ -11,7 +11,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 class Plotly:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
                  plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, height=450, width=700,
-                 scale=None):
+                 scale=None, margin_top=100, margin_bottom=80, margin_left=80, margin_right=80, pad=0):
         """
         Class for making Plotly plots
 
@@ -32,6 +32,11 @@ class Plotly:
             width: (float) output width (in pixels)
             scale: (float) Increase the resolution of the image by `scale` amount, eg: 3. Only valid for PNG and
                 JPEG images.
+            margin_top: (float) Sets the top margin (in px)
+            margin_bottom: (float) Sets the bottom margin (in px)
+            margin_left: (float) Sets the left margin (in px)
+            margin_right: (float) Sets the right margin (in px)
+            pad: (float) Sets the amount of padding (in px) between the plotting area and the axis lines
 
         Returns: None
 
@@ -59,9 +64,9 @@ class Plotly:
                        tickfont=dict(size=self.ticksize)),
             hovermode=self.hovermode,
             width=self.width,
-            height=self.height
+            height=self.height,
+            margin=dict(t=margin_top, b=margin_bottom, l=margin_left, r=margin_right, pad=pad)
         )
-
 
         if self.plot_mode == 'online':
             if not self.username:
