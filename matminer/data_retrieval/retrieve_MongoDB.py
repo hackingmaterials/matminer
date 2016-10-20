@@ -1,47 +1,55 @@
 import pandas as pd
+from tqdm import tqdm
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
 class MongoDataRetrieval():
 
-    def __init__(self, coll, query=None, projection=None, sort=None, limit=None, progressbar=100):
+    def __init__(self, coll):
+        """
+        Tool to retrieve data from a MongoDB collection and reformat for data analysis
+        Args:
+            coll: A MongoDB collection object
+        """
         self.coll = coll
-        self.projection = projection
 
-        # initialize data
-        # need to know columns of data frame; use a query to determine the fields
-        # this assumes the fields are homogeneous
-        # TODO: what to do with sub-keys?
-        if not self.projection:
-            d = self.coll.find_one(query, self.projection, sort=sort)
-            self.projection = d.keys()
+    def get_dataframe(self, projection, query=None, sort=None,
+                      limit=None, idx_field=None):
+        """
+        Args:
+            projection: (list) - a list of fields to grab; dot-notation is allowed.
+                Set to "None" to try to auto-detect the fields
+            query: (JSON) - a pymongo-style query to restrict data being gathered
+            sort: (tuple) - pymongo-style sort option
+            limit: (int) - int to limit the number of entries
+            idx_field: (str) - name of field to use as index field (must be unique)
+        """
+        # auto-detect projection as all root keys of any document
+        # assumes DB is uniform
+        if not projection:
+            d = self.coll.find_one(query, projection, sort=sort)
+            projection = d.keys()
 
-        self.data = []
-        r = self.coll.find(query, self.projection, sort=sort)
+        all_data = []   # matrix of row, column data
+        r = self.coll.find(query, projection, sort=sort)
         if limit:
             r.limit(limit)
 
         total = r.count()
 
-        idx=0
-
-        for d in r:
+        for d in tqdm(r):
             row_data = []
-            for key in self.projection:
+
+            # split up dot-notation keys
+            for key in projection:
                 vals = key.split('.')
                 data = reduce(lambda d, k: d[k], vals, d)
                 row_data.append(data)
 
-            self.data.append(row_data)
-            idx += 1
-            if idx % progressbar == 0:
-                print "{}/{} entries processed...".format(idx, total)
+            all_data.append(row_data)
 
-        print 'DONE PRE-PROCESSING'
-
-    def get_dataframe(self, idx_field=None):
-        df = pd.DataFrame(self.data, columns=self.projection)
+        df = pd.DataFrame(all_data, columns=projection)
         if idx_field:
             df.index = df[idx_field]
         return df
