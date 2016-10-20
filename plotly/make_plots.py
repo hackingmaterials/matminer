@@ -50,6 +50,17 @@ class Plotly:
         self.width = width
         self.scale = scale
 
+        self.layout = dict(
+            title=self.title,
+            titlefont=dict(size=self.textsize),
+            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize),
+                       tickfont=dict(size=self.ticksize)),
+            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
+                       tickfont=dict(size=self.ticksize)),
+            hovermode=self.hovermode
+        )
+
+
         if self.plot_mode == 'online':
             if not self.username:
                 raise ValueError('field "username" must be filled in online plotting mode')
@@ -118,17 +129,6 @@ class Plotly:
             )
         )
 
-        layout = dict(
-            title=self.title,
-            titlefont=dict(size=self.textsize),
-            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize),
-                       tickfont=dict(size=self.ticksize)),
-            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
-                       tickfont=dict(size=self.ticksize)),
-            hovermode=self.hovermode,
-            showlegend=showlegend
-        )
-
         data = [trace0]
         if add_xy_plot:
             for plot_data in add_xy_plot:
@@ -146,7 +146,9 @@ class Plotly:
                     )
                 )
 
-        fig = dict(data=data, layout=layout)
+        self.layout['showlegend'] = showlegend
+
+        fig = dict(data=data, layout=self.layout)
 
         if self.plot_mode == 'offline':
             if self.filename:
