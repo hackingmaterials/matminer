@@ -14,7 +14,7 @@ def get_packing_fraction(s):
         raise ValueError("Disordered structure support not built yet")
     total_rad = 0
     for site in s:
-        total_rad += site.specie.atomic_radius**2 * math.pi
+        total_rad += math.pi * site.specie.atomic_radius**2
 
     return total_rad/s.volume
 
