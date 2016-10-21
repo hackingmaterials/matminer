@@ -36,9 +36,9 @@ class MongoDataRetrieval():
         if limit:
             r.limit(limit)
 
-        total = r.count()
+        total = min(limit, r.count())
 
-        for d in tqdm(r):
+        for d in tqdm(r, total=total):
             row_data = []
 
             # split up dot-notation keys
