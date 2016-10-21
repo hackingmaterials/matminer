@@ -347,13 +347,14 @@ class Plotly:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def scatter_matrix(self, dataframe, index_colname=None, diag_kind='scatter',
+    def scatter_matrix(self, dataframe, select_columns=None, index_colname=None, diag_kind='scatter',
                        marker_size=10, height=800, width=1000):
         """
         Create a scatter matrix plot from dataframes using Plotly.
 
         Args:
             dataframe: (array) array of the data with column headers
+            select_columns: (list) names/headers of columns to plot from the dataframe
             index_colname: (str) name of the index column in data array
             diag_kind: (str) sets the chart type for the main diagonal plots (default='scatter')
                 Choose from 'scatter'/'box'/'diagonal'
@@ -364,8 +365,15 @@ class Plotly:
         Returns: a Plotly scatter matrix plot
 
         """
-        fig = FF.create_scatterplotmatrix(dataframe, index=index_colname, diag=diag_kind,
-                                          size=marker_size, height=height, width=width)
+        if select_columns:
+            df_select = pd.DataFrame()
+            for column in select_columns:
+                df_select[column] = dataframe[column]
+            fig = FF.create_scatterplotmatrix(df_select, index=index_colname, diag=diag_kind, size=marker_size,
+                                              height=height, width=width)
+        else:
+            fig = FF.create_scatterplotmatrix(dataframe, index=index_colname, diag=diag_kind, size=marker_size,
+                                              height=height, width=width)
 
         if self.plot_mode == 'offline':
             if self.filename:
