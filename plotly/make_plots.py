@@ -357,7 +357,7 @@ class PlotlyFig:
             select_columns: (list) names/headers of columns to plot from the dataframe
             index_colname: (str) name of the index column in data array
             diag_kind: (str) sets the chart type for the main diagonal plots (default='scatter')
-                Choose from 'scatter'/'box'/'diagonal'
+                Choose from 'scatter'/'box'/'histogram'
             marker_size: (float) sets the marker size (in px)
             height: (int/float) sets the height of the chart
             width: (int/float) sets the width of the chart
