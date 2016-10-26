@@ -118,9 +118,9 @@ class PlotlyFig:
             showscale = True
 
         if isinstance(size, pd.Series):
-            size_max = size.min()
-            size_min = size.max()
-            size = (size - size_min) / (size_max - size_min) * 100
+            size_min = size.min()
+            size_max = size.max()
+            size = ((size - size_min) + 5) / ((size_max - size_min) + 5) * 100
 
         trace0 = go.Scatter(
             x=x_col,
