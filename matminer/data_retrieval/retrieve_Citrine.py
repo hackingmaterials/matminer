@@ -25,7 +25,8 @@ class CitrineDataRetrieval:
         self.client = CitrinationClient(api_key, 'http://citrination.com')
 
     def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
-                      min_measurement=None, max_measurement=None, from_record=None, data_set_id=None, max_results=None):
+                      min_measurement=None, max_measurement=None, from_record=None, data_set_id=None, max_results=None,
+                      show_columns=None):
         """
         Gets data from MP in a dataframe format.
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
@@ -136,4 +137,9 @@ class CitrineDataRetrieval:
 
         df = pd.concat([non_meas_df, meas_df], axis=1)
         df.index.name = 'sample'
+        if show_columns:
+            for column in df.columns:
+                if column not in show_columns:
+                    df.drop(column, axis=1, inplace=True)
         return df
+        df.append
