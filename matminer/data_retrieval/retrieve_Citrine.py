@@ -45,6 +45,7 @@ class CitrineDataRetrieval:
             from_record: (int) index of the first record to return (indexed from 0)
             data_set_id: (int) id of the particular data set to search on
             max_results: (int) number of records to limit the results to
+            show_columns: (list) list of columns to show from the resulting dataframe
 
         Returns: (object) Pandas dataframe object containing the results
         """
@@ -142,4 +143,3 @@ class CitrineDataRetrieval:
                 if column not in show_columns:
                     df.drop(column, axis=1, inplace=True)
         return df
-        df.append
