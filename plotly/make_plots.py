@@ -80,7 +80,8 @@ class PlotlyFig:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None, mode='markers', showlegend=True, add_xy_plot=None):
+                legend=None, mode='markers', showlegend=True, add_xy_plot=None, marker_outline_width=0,
+                marker_outline_color='black'):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -108,6 +109,8 @@ class PlotlyFig:
                 names of arguments to the original xy_plot method - required keys are 'x_col', 'y_col', 'text', 'mode',
                 'name', 'color', 'size'. Values are corresponding argument values in the same format as for the
                 original xy_plot. Use None for values not to be set, else a KeyError will be raised.
+            marker_outline_width: (int) thickness of marker outline
+            marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
 
         Returns: XY scatter plot
 
@@ -132,7 +135,8 @@ class PlotlyFig:
                 size=size,
                 color=color,
                 colorscale=colorscale,
-                showscale=showscale
+                showscale=showscale,
+                line=dict(width=marker_outline_width, color=marker_outline_color)
             )
         )
 
