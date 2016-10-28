@@ -179,6 +179,8 @@ class PlotlyFig:
                         marker=dict(
                             color=plot_data['color'],
                             size=plot_data['size'],
+                            colorscale=colorscale,
+                            showscale=showscale,
                             line=dict(width=marker_outline_width, color=marker_outline_color),
                             symbol=plot_data['marker']
                         )
