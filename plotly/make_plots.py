@@ -55,6 +55,7 @@ class PlotlyFig:
         self.width = width
         self.scale = scale
 
+        # Make default layout
         self.layout = dict(
             title=self.title,
             titlefont=dict(size=self.textsize),
@@ -73,6 +74,7 @@ class PlotlyFig:
                 raise ValueError('field "username" must be filled in online plotting mode')
             if not self.api_key:
                 raise ValueError('field "api_key" must be filled in online plotting mode')
+
         elif self.plot_mode == 'static':
             if not self.filename or not self.filename.lower().endswith(('.png', '.svg', '.jpeg', '.pdf')):
                 raise ValueError(
@@ -157,12 +159,16 @@ class PlotlyFig:
 
         data = [trace0]
 
+        # Additional XY plots
         if add_xy_plot:
             for plot_data in add_xy_plot:
+
+                # Check for symbol parameters, if not present, assign defaults
                 if 'symbol' not in plot_data:
                     plot_data['symbol'] = 'circle'
                 if 'symbol_style' in plot_data:
                     plot_data['symbol'] += plot_data['symbol_style']
+
                 data.append(
                     go.Scatter(
                         x=plot_data['x_col'],
@@ -178,6 +184,7 @@ class PlotlyFig:
                     )
                 )
 
+        # Add legend
         self.layout['showlegend'] = showlegend
 
         fig = dict(data=data, layout=self.layout)
@@ -187,15 +194,18 @@ class PlotlyFig:
                 plotly.offline.plot(fig, filename=self.filename)
             else:
                 plotly.offline.plot(fig)
+
         elif self.plot_mode == 'notebook':
             plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
             plotly.offline.iplot(fig)
+
         elif self.plot_mode == 'online':
             plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
             if self.filename:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
+
         elif self.plot_mode == 'static':
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
@@ -236,6 +246,7 @@ class PlotlyFig:
 
         if annotations_text:
             annotations = []
+
             for n, row in enumerate(data):
                 for m, val in enumerate(row):
                     var = annotations_text[n][m]
@@ -260,6 +271,7 @@ class PlotlyFig:
 
         data = [trace0]
 
+        # Add annotations
         self.layout['annotations'] = annotations
 
         fig = dict(data=data, layout=self.layout)
@@ -269,15 +281,18 @@ class PlotlyFig:
                 plotly.offline.plot(fig, filename=self.filename)
             else:
                 plotly.offline.plot(fig)
+
         elif self.plot_mode == 'notebook':
             plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
             plotly.offline.iplot(fig)
+
         elif self.plot_mode == 'online':
             plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
             if self.filename:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
+
         elif self.plot_mode == 'static':
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
@@ -317,16 +332,19 @@ class PlotlyFig:
             use_colorscale = True
             group_stats = {}
             groupby_data = data.groupby([group_col])
+
             for group in groups:
                 data_from_group = groupby_data.get_group(group)[data_col]
                 stat = np.median(data_from_group)
                 group_stats[group] = stat
+
         else:
             group_stats = None
 
         # Filter out groups from dataframe that have only 1 row.
         if isinstance(data, pd.DataFrame):
             group_value_counts = data[group_col].value_counts().to_dict()
+
             for j in group_value_counts:
                 if group_value_counts[j] == 1:
                     data = data[data[group_col] != j]
@@ -359,15 +377,18 @@ class PlotlyFig:
                 plotly.offline.plot(fig, filename=self.filename)
             else:
                 plotly.offline.plot(fig)
+
         elif self.plot_mode == 'notebook':
             plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
             plotly.offline.iplot(fig)
+
         elif self.plot_mode == 'online':
             plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
             if self.filename:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
+
         elif self.plot_mode == 'static':
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
@@ -392,10 +413,12 @@ class PlotlyFig:
         """
         if select_columns:
             df_select = pd.DataFrame()
+
             for column in select_columns:
                 df_select[column] = dataframe[column]
             fig = FF.create_scatterplotmatrix(df_select, index=index_colname, diag=diag_kind, size=marker_size,
                                               height=height, width=width)
+
         else:
             fig = FF.create_scatterplotmatrix(dataframe, index=index_colname, diag=diag_kind, size=marker_size,
                                               height=height, width=width)
@@ -405,15 +428,18 @@ class PlotlyFig:
                 plotly.offline.plot(fig, filename=self.filename)
             else:
                 plotly.offline.plot(fig)
+
         elif self.plot_mode == 'notebook':
             plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
             plotly.offline.iplot(fig)
+
         elif self.plot_mode == 'online':
             plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
             if self.filename:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
+
         elif self.plot_mode == 'static':
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
@@ -464,15 +490,18 @@ class PlotlyFig:
                 plotly.offline.plot(fig, filename=self.filename)
             else:
                 plotly.offline.plot(fig)
+
         elif self.plot_mode == 'notebook':
             plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
             plotly.offline.iplot(fig)
+
         elif self.plot_mode == 'online':
             plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
             if self.filename:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
+
         elif self.plot_mode == 'static':
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
