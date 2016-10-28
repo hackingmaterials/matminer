@@ -131,7 +131,7 @@ class PlotlyFig:
             size_max = size.max()
             size = ((size - size_min) + 5) / ((size_max - size_min) + 5) * 100
 
-        if marker != 'fill':
+        if marker_fill != 'fill':
             if marker_fill == 'open':
                 marker_fill += '-open'
             elif marker_fill == 'dot':
@@ -139,7 +139,7 @@ class PlotlyFig:
             elif marker_fill == 'open-dot':
                 marker_fill += '-open-dot'
             else:
-                raise ValueError('Invalid symbol style')
+                raise ValueError('Invalid marker fill')
 
         trace0 = go.Scatter(
             x=x_col,
