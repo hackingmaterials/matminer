@@ -80,8 +80,8 @@ class PlotlyFig:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None, mode='markers', showlegend=False, add_xy_plot=None, marker_outline_width=0,
-                marker_outline_color='black'):
+                legend=None, mode='markers', symbol='circle', symbol_style='fill', showlegend=False, add_xy_plot=None,
+                marker_outline_width=0, marker_outline_color='black'):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -125,6 +125,16 @@ class PlotlyFig:
             size_max = size.max()
             size = ((size - size_min) + 5) / ((size_max - size_min) + 5) * 100
 
+        if symbol_style != 'fill':
+            if symbol_style == 'open':
+                symbol_style += '-open'
+            elif symbol_style == 'dot':
+                symbol_style += '-dot'
+            elif symbol_style == 'open-dot':
+                symbol_style += '-open-dot'
+            else:
+                raise ValueError('Invalid symbol style')
+
         trace0 = go.Scatter(
             x=x_col,
             y=y_col,
@@ -136,7 +146,8 @@ class PlotlyFig:
                 color=color,
                 colorscale=colorscale,
                 showscale=showscale,
-                line=dict(width=marker_outline_width, color=marker_outline_color)
+                line=dict(width=marker_outline_width, color=marker_outline_color),
+                symbol=symbol
             )
         )
 
