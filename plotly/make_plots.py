@@ -10,8 +10,9 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
-                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, height=None, width=None,
-                 scale=None, margin_top=100, margin_bottom=80, margin_left=80, margin_right=80, pad=0):
+                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, fontfamily="serif",
+                 height=None, width=None, scale=None,
+                 margin_top=100, margin_bottom=80, margin_left=80, margin_right=80, pad=0):
         """
         Class for making Plotly plots
 
@@ -58,11 +59,11 @@ class PlotlyFig:
         # Make default layout
         self.layout = dict(
             title=self.title,
-            titlefont=dict(size=self.textsize),
-            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize),
-                       tickfont=dict(size=self.ticksize)),
-            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
-                       tickfont=dict(size=self.ticksize)),
+            titlefont=dict(size=self.textsize, family=fontfamily),
+            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize, family=fontfamily),
+                       tickfont=dict(size=self.ticksize, family=fontfamily)),
+            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, family=fontfamily),
+                       tickfont=dict(size=self.ticksize, family=fontfamily)),
             hovermode=self.hovermode,
             width=self.width,
             height=self.height,
