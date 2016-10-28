@@ -180,6 +180,7 @@ class PlotlyFig:
                             color=plot_data['color'],
                             size=plot_data['size'],
                             line=dict(width=marker_outline_width, color=marker_outline_color),
+                            symbol=plot_data['marker']
                         )
                     )
                 )
