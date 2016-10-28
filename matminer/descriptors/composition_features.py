@@ -1,8 +1,10 @@
-from pymatgen import Element, Composition
+from pymatgen import Element, Composition, MPRester
 import numpy as np
 import math
 import collections
 import os
+import json
+
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -14,6 +16,11 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # non-ionic structures. You can also have a function that returns a mean of ionic_radii for all valences but that
 # should not be the default."
 # TODO: unit tests
+
+
+# Load elemental cohesive energy data from json file
+with open('cohesive_energies.json', 'r') as f:
+    ce_data = json.load(f)
 
 
 def get_pymatgen_descriptor(comp, prop):
@@ -82,6 +89,38 @@ def get_magpie_descriptor(comp, descriptor_name):
             magpiedata_lst.append(magpiedata(element=el, propname=descriptor_name,
                                              propvalue=float(lines[atomic_no - 1]), propunit=unit, amt=el_amt[el]))
     return magpiedata_lst
+
+
+def get_cohesive_energy(comp):
+    """
+    Get cohesive energy of compound by subtracting elemental cohesive energies from the formation energy of the compund.
+    Elemental cohesive energies are taken from http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html.
+    Most of them are taken from "Charles Kittel: Introduction to Solid State Physics, 8th edition. Hoboken, NJ:
+    John Wiley & Sons, Inc, 2005, p. 50."
+
+    Args:
+        comp: (str) compound composition, eg: "NaCl"
+
+    Returns: (float) cohesive energy of compound
+
+    """
+    el_amt_dict = Composition(comp).get_el_amt_dict()
+
+    # Get formation energy of most stable structure from MP
+    struct_lst = MPRester().get_data(comp)
+    if len(struct_lst) > 0:
+        struct_lst = sorted(struct_lst, key=lambda e: e['energy_per_atom'])
+        most_stable_entry = struct_lst[0]
+        formation_energy = most_stable_entry['formation_energy_per_atom']
+    else:
+        raise ValueError('No structure found in MP for {}'.format(comp))
+
+    # Subtract elemental cohesive energies from formation energy
+    cohesive_energy = formation_energy
+    for el in el_amt_dict:
+        cohesive_energy -= el_amt_dict[el] * ce_data[el]
+
+    return cohesive_energy
 
 
 def get_maxmin(lst):
@@ -167,3 +206,4 @@ if __name__ == '__main__':
         print(get_pymatgen_descriptor('LiFePO4', desc))
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
     print(get_magpie_descriptor('LiFePO4', 'Density'))
+
