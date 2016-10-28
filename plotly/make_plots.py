@@ -181,7 +181,7 @@ class PlotlyFig:
                                         scale=self.scale)
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None,
-                     annotations_text=None, annotations_text_size=20):
+                     annotations_text=None, annotations_text_size=20, annotations_color='white'):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
@@ -200,6 +200,7 @@ class PlotlyFig:
             annotations_text: (array) an array of arrays, with each value being a string annotation to the corresponding
                 value in 'data'
             annotations_text_size: (int) size of annotation text
+            annotations_color: (str/array) color of annotation text - accepts similar formats as other color variables
 
         Returns: heatmap plot
 
@@ -223,7 +224,7 @@ class PlotlyFig:
                             text=str(var),
                             x=x_labels[m], y=y_labels[n],
                             xref='x1', yref='y1',
-                            font=dict(color='white', size=annotations_text_size),
+                            font=dict(color=annotations_color, size=annotations_text_size),
                             showarrow=False)
                     )
         else:
