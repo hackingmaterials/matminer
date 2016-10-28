@@ -19,7 +19,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 # Load elemental cohesive energy data from json file
-with open('cohesive_energies.json', 'r') as f:
+with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
 
 
