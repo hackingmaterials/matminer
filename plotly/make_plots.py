@@ -167,7 +167,8 @@ class PlotlyFig:
                         name=plot_data['legend'],
                         marker=dict(
                             color=plot_data['color'],
-                            size=plot_data['size']
+                            size=plot_data['size'],
+                            line=dict(width=marker_outline_width, color=marker_outline_color),
                         )
                     )
                 )
