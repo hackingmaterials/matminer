@@ -104,6 +104,9 @@ class PlotlyFig:
                 Blackbody, Earth, Electric, Viridis
             legend: (str) plot legend
             mode: (str) marker style; can be 'markers'/'lines'/'lines+markers'
+            symbol: (str) Shape of marker symbol. For all options, please see
+                https://plot.ly/python/reference/#scatter-marker-symbol
+            symbol_style: (str) Shape fill of marker symbol. Options are "fill"/"open"/"dot"/"open-dot"
             showlegend: (bool) show legend or not
             add_xy_plot: (list) of dictionaries, each of which contain additional data to add to the xy plot. Keys are
                 names of arguments to the original xy_plot method - required keys are 'x_col', 'y_col', 'text', 'mode',
