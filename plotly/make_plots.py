@@ -111,7 +111,8 @@ class PlotlyFig:
             add_xy_plot: (list) of dictionaries, each of which contain additional data to add to the xy plot. Keys are
                 names of arguments to the original xy_plot method - required keys are 'x_col', 'y_col', 'text', 'mode',
                 'name', 'color', 'size'. Values are corresponding argument values in the same format as for the
-                original xy_plot. Use None for values not to be set, else a KeyError will be raised.
+                original xy_plot. Use None for values not to be set, else a KeyError will be raised. Optional keys are
+                'symbol' and 'symbol style' (same format as root keys).
             marker_outline_width: (int) thickness of marker outline
             marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
 
@@ -158,6 +159,10 @@ class PlotlyFig:
 
         if add_xy_plot:
             for plot_data in add_xy_plot:
+                if 'symbol' not in plot_data:
+                    plot_data['symbol'] = 'circle'
+                if 'symbol_style' in plot_data:
+                    plot_data['symbol'] += plot_data['symbol_style']
                 data.append(
                     go.Scatter(
                         x=plot_data['x_col'],
