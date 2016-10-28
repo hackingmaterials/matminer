@@ -80,7 +80,7 @@ class PlotlyFig:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None, mode='markers', symbol='circle', symbol_style='fill', showlegend=False, add_xy_plot=None,
+                legend=None, showlegend=False, mode='markers', symbol='circle', symbol_style='fill', add_xy_plot=None,
                 marker_outline_width=0, marker_outline_color='black'):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
