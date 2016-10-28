@@ -82,7 +82,7 @@ class PlotlyFig:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None, showlegend=False, mode='markers', symbol='circle', symbol_style='fill', add_xy_plot=None,
+                legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill', add_xy_plot=None,
                 marker_outline_width=0, marker_outline_color='black'):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
@@ -106,15 +106,15 @@ class PlotlyFig:
                 Blackbody, Earth, Electric, Viridis
             legend: (str) plot legend
             mode: (str) marker style; can be 'markers'/'lines'/'lines+markers'
-            symbol: (str) Shape of marker symbol. For all options, please see
+            marker: (str) Shape of marker symbol. For all options, please see
                 https://plot.ly/python/reference/#scatter-marker-symbol
-            symbol_style: (str) Shape fill of marker symbol. Options are "fill"/"open"/"dot"/"open-dot"
+            marker_fill: (str) Shape fill of marker symbol. Options are "fill"/"open"/"dot"/"open-dot"
             showlegend: (bool) show legend or not
             add_xy_plot: (list) of dictionaries, each of which contain additional data to add to the xy plot. Keys are
                 names of arguments to the original xy_plot method - required keys are 'x_col', 'y_col', 'text', 'mode',
                 'name', 'color', 'size'. Values are corresponding argument values in the same format as for the
                 original xy_plot. Use None for values not to be set, else a KeyError will be raised. Optional keys are
-                'symbol' and 'symbol style' (same format as root keys).
+                'marker' and 'marker_fill' (same format as root keys).
             marker_outline_width: (int) thickness of marker outline
             marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
 
@@ -131,13 +131,13 @@ class PlotlyFig:
             size_max = size.max()
             size = ((size - size_min) + 5) / ((size_max - size_min) + 5) * 100
 
-        if symbol_style != 'fill':
-            if symbol_style == 'open':
-                symbol_style += '-open'
-            elif symbol_style == 'dot':
-                symbol_style += '-dot'
-            elif symbol_style == 'open-dot':
-                symbol_style += '-open-dot'
+        if marker != 'fill':
+            if marker_fill == 'open':
+                marker_fill += '-open'
+            elif marker_fill == 'dot':
+                marker_fill += '-dot'
+            elif marker_fill == 'open-dot':
+                marker_fill += '-open-dot'
             else:
                 raise ValueError('Invalid symbol style')
 
@@ -153,7 +153,7 @@ class PlotlyFig:
                 colorscale=colorscale,
                 showscale=showscale,
                 line=dict(width=marker_outline_width, color=marker_outline_color),
-                symbol=symbol
+                symbol=marker
             )
         )
 
@@ -164,10 +164,10 @@ class PlotlyFig:
             for plot_data in add_xy_plot:
 
                 # Check for symbol parameters, if not present, assign defaults
-                if 'symbol' not in plot_data:
-                    plot_data['symbol'] = 'circle'
-                if 'symbol_style' in plot_data:
-                    plot_data['symbol'] += plot_data['symbol_style']
+                if 'marker' not in plot_data:
+                    plot_data['marker'] = 'circle'
+                    if 'marker_fill' in plot_data:
+                        plot_data['marker'] += plot_data['marker_fill']
 
                 data.append(
                     go.Scatter(
