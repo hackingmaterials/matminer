@@ -83,7 +83,9 @@ class PlotlyFig:
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
                 legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill', add_xy_plot=None,
-                marker_outline_width=0, marker_outline_color='black'):
+                marker_outline_width=0, marker_outline_color='black', error_type=None, error_direction=None,
+                error_array=None, error_value=None, error_symmetric=False, error_arrayminus=None,
+                error_valueminus=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -117,6 +119,25 @@ class PlotlyFig:
                 'marker' and 'marker_fill' (same format as root keys).
             marker_outline_width: (int) thickness of marker outline
             marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
+            error_type: (str) Determines the rule used to generate the error bars. Options are,
+                (i) "data": bar lengths are set in variable `error_array`/'error_arrayminus',
+                (ii) "percent": bar lengths correspond to a percentage of underlying data. Set this percentage in the
+                   variable 'error_value'/'error_valueminus',
+                (iii) "sqrt": bar lengths correspond to the sqaure of the underlying data,
+                (iv) "constant": bar lengths are of a constant value. Set this constant in the variable
+                'error_value'/'error_valueminus'
+            error_direction: (str) direction of error bar, "x"/"y"
+            error_array: (list/array/series) Sets the data corresponding the length of each error bar.
+                Values are plotted relative to the underlying data
+            error_value: (float) Sets the value of either the percentage (if `error_type` is set to "percent") or
+                the constant (if `error_type` is set to "constant") corresponding to the lengths of the error bars.
+            error_symmetric: (bool) Determines whether or not the error bars have the same length in both direction
+                (top/bottom for vertical bars, left/right for horizontal bars
+            error_arrayminus: (list/array/series) Sets the data corresponding the length of each error bar in the bottom
+                (left) direction for vertical (horizontal) bars Values are plotted relative to the underlying data.
+            error_valueminus: (float) Sets the value of either the percentage (if `error_type` is set to "percent") or
+                the constant (if `error_type` is set to "constant") corresponding to the lengths of the error bars in
+                the bottom (left) direction for vertical (horizontal) bars
 
         Returns: XY scatter plot
 
@@ -156,6 +177,12 @@ class PlotlyFig:
                 symbol=marker
             )
         )
+
+        # Add error bars
+        if error_type:
+            if error_direction is None:
+                raise ValueError("The field 'error_direction' must be populated")
+            trace0['error_' + error_direction] = dict(type=error_type, array=error_array)
 
         data = [trace0]
 
