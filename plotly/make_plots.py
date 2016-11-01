@@ -85,7 +85,7 @@ class PlotlyFig:
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
                 legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill', add_xy_plot=None,
                 marker_outline_width=0, marker_outline_color='black', error_type=None, error_direction=None,
-                error_array=None, error_value=None, error_symmetric=False, error_arrayminus=None,
+                error_array=None, error_value=None, error_symmetric=True, error_arrayminus=None,
                 error_valueminus=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
@@ -183,7 +183,8 @@ class PlotlyFig:
         if error_type:
             if error_direction is None:
                 raise ValueError("The field 'error_direction' must be populated")
-            trace0['error_' + error_direction] = dict(type=error_type, array=error_array)
+            if error_type == 'data' and error_symmetric:
+                trace0['error_' + error_direction] = dict(type=error_type, array=error_array)
 
         data = [trace0]
 
