@@ -10,7 +10,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
-                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, fontfamily="serif",
+                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, fontfamily=None,
                  height=800, width=1000, scale=None,
                  margin_top=100, margin_bottom=80, margin_left=80, margin_right=80, pad=0):
         """
@@ -60,10 +60,10 @@ class PlotlyFig:
         self.layout = dict(
             title=self.title,
             titlefont=dict(size=self.textsize),
-            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize, family=fontfamily),
-                       tickfont=dict(size=self.ticksize, family=fontfamily)),
-            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, family=fontfamily),
-                       tickfont=dict(size=self.ticksize, family=fontfamily)),
+            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize, fontfamily=fontfamily),
+                       tickfont=dict(size=self.ticksize, fontfamily=fontfamily)),
+            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, fontfamily=fontfamily),
+                       tickfont=dict(size=self.ticksize, fontfamily=fontfamily)),
             hovermode=self.hovermode,
             width=self.width,
             height=self.height,
