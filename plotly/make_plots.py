@@ -149,6 +149,7 @@ class PlotlyFig:
             showscale = True
 
         if isinstance(size, pd.Series):
+            # TODO: fix size normalization. Use Z-scores...
             size_min = size.min()
             size_max = size.max()
             size = ((size - size_min) + 5) / ((size_max - size_min) + 5) * 100
