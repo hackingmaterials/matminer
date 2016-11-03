@@ -8,7 +8,6 @@ import json
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
-
 # TODO: read Magpie file only once
 # TODO: Handle dictionaries in case of atomic radii. Aj says "You can require that getting the ionic_radii descriptor
 #  requires a valence-decorated Structure or valence-decorated Composition. Otherwise it does not work, i.e. returns
@@ -16,6 +15,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # non-ionic structures. You can also have a function that returns a mean of ionic_radii for all valences but that
 # should not be the default."
 # TODO: unit tests
+# TODO: most of this code needs to be rewritten ... AJ
 
 
 # Load elemental cohesive energy data from json file
@@ -130,6 +130,11 @@ def get_cohesive_energy(comp):
         cohesive_energy -= el_amt_dict[el] * ce_data[el]
 
     return cohesive_energy
+
+
+def get_range(lst):
+    x = get_maxmin(lst)
+    return x["max"] - x["min"]
 
 
 def get_maxmin(lst):

@@ -25,6 +25,8 @@ class AddDescriptor:
             stat_function = get_std
         elif stat == 'maxmin':
             stat_function = get_maxmin
+        elif stat == 'range':
+            stat_function = get_range
         else:
             raise ValueError('Invalid stat name. Must be one of "mean", "std", and "maxmin"')
         for i, row in self.df.iterrows():
