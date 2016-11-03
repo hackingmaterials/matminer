@@ -443,12 +443,8 @@ class PlotlyFig:
         Returns: a Plotly scatter matrix plot
 
         """
-        if select_columns:
-            fig = FF.create_scatterplotmatrix(dataframe[select_columns], index=index_colname, diag=diag_kind, size=marker_size,
-                                              height=height, width=width)
-
-        else:
-            fig = FF.create_scatterplotmatrix(dataframe, index=index_colname, diag=diag_kind, size=marker_size,
+        df = dataframe[select_columns] if select_columns else dataframe
+        fig = FF.create_scatterplotmatrix(df, index=index_colname, diag=diag_kind, size=marker_size,
                                               height=height, width=width)
 
         if self.plot_mode == 'offline':
