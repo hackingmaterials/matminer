@@ -444,10 +444,7 @@ class PlotlyFig:
 
         """
         if select_columns:
-            df_select = pd.DataFrame()
-
-            for column in select_columns:
-                df_select[column] = dataframe[column]
+            df_select = dataframe[select_columns]
             fig = FF.create_scatterplotmatrix(df_select, index=index_colname, diag=diag_kind, size=marker_size,
                                               height=height, width=width)
 
