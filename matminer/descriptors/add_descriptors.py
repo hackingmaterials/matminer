@@ -10,17 +10,15 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 class AddDescriptor:
-    def __init__(self, df=None, df_name=None):
-        if df == df_name and df is None:
-            raise ValueError('Atleast one of dataframe or pickled dataframe object are required')
-        elif df is not None and df_name is not None:
-            raise ValueError('Only one argument, dataframe or a pickled dataframe object, can be passed')
-        elif df is not None:
-            self.df = df
-        elif df_name is not None:
-            self.df = pd.read_pickle(df_name)
+    def __init__(self, df=None, formula_colname="reduced_cell_formula", separator=":"):
+        self.df = df
+        self.formula_colname=formula_colname
+        self.separator=separator
 
     def add_pmgdescriptor_column(self, descriptor, stat):
+        # TODO: requires lots of code cleanup
+        # TODO: this is likely super inefficient
+
         if stat == 'mean':
             stat_function = get_mean
         elif stat == 'std':
@@ -31,15 +29,14 @@ class AddDescriptor:
             raise ValueError('Invalid stat name. Must be one of "mean", "std", and "maxmin"')
         for i, row in self.df.iterrows():
             try:
-                self.df.loc[i, descriptor + '_' + stat] = stat_function(
-                    get_pymatgen_descriptor(row['reduced_cell_formula'], descriptor))
+                self.df.loc[i, descriptor + self.separator + stat] = stat_function(
+                    get_pymatgen_descriptor(row[self.formula_colname], descriptor))
             except ValueError:
-                self.df.loc[i, descriptor + '_' + stat] = None
+                self.df.loc[i, descriptor + self.separator + stat] = None
             except AttributeError as e:
                 print(e)
                 print('Invalid pymatgen Element attribute!')
         return self.df
-
 
 if __name__ == '__main__':
     print(AddDescriptor())
