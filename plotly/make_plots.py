@@ -84,9 +84,9 @@ class PlotlyFig:
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
                 legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill', add_xy_plot=None,
-                marker_outline_width=0, marker_outline_color='black', error_type=None, error_direction=None,
-                error_array=None, error_value=None, error_symmetric=True, error_arrayminus=None,
-                error_valueminus=None):
+                marker_outline_width=0, marker_outline_color='black', linedash='solid', linewidth=2, lineshape=None,
+                error_type=None, error_direction=None, error_array=None, error_value=None, error_symmetric=True,
+                error_arrayminus=None, error_valueminus=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -120,6 +120,7 @@ class PlotlyFig:
                 'marker' and 'marker_fill' (same format as root keys).
             marker_outline_width: (int) thickness of marker outline
             marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
+            dash: (str)
             error_type: (str) Determines the rule used to generate the error bars. Options are,
                 (i) "data": bar lengths are set in variable `error_array`/'error_arrayminus',
                 (ii) "percent": bar lengths correspond to a percentage of underlying data. Set this percentage in the
@@ -177,7 +178,8 @@ class PlotlyFig:
                 showscale=showscale,
                 line=dict(width=marker_outline_width, color=marker_outline_color),
                 symbol=marker
-            )
+            ),
+            line=dict(dash=linedash, width=linewidth, shape=lineshape)
         )
 
         # Add error bars
