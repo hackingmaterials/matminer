@@ -243,6 +243,7 @@ def fracture_toughness(E, H, F, c):
 def brittleness_index(H, E, K_c):
     """
     Calculate brittleness index (BI) of a material.
+
     Args:
         H: (float) hardness (N/m^2)
         E: (float) Young's modulus (N/m^2)
