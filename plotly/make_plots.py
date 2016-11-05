@@ -55,15 +55,16 @@ class PlotlyFig:
         self.height = height
         self.width = width
         self.scale = scale
+        self.fontfamily = fontfamily
 
         # Make default layout
         self.layout = dict(
             title=self.title,
-            titlefont=dict(size=self.textsize),
-            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize, family=fontfamily),
-                       tickfont=dict(size=self.ticksize, family=fontfamily)),
-            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, family=fontfamily),
-                       tickfont=dict(size=self.ticksize, family=fontfamily)),
+            titlefont=dict(size=self.textsize, family=self.fontfamily),
+            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize, family=self.fontfamily),
+                       tickfont=dict(size=self.ticksize, family=self.fontfamily)),
+            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, family=self.fontfamily),
+                       tickfont=dict(size=self.ticksize, family=self.fontfamily)),
             hovermode=self.hovermode,
             width=self.width,
             height=self.height,
@@ -290,7 +291,7 @@ class PlotlyFig:
                             text=str(var),
                             x=x_labels[m], y=y_labels[n],
                             xref='x1', yref='y1',
-                            font=dict(color=annotations_color, size=annotations_text_size),
+                            font=dict(color=annotations_color, size=annotations_text_size, family=self.fontfamily),
                             showarrow=False)
                     )
         else:
@@ -304,6 +305,7 @@ class PlotlyFig:
             zmin=colorscale_min, zmax=colorscale_max,
             colorbar = dict(
                 tickfont=dict(color="black", size=int(0.75*self.ticksize), family=self.fontfamily),
+                ticks=None, thickness=None, tickcolor=None, bordercolor=None
             )
         )
 
