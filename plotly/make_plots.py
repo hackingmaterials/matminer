@@ -10,8 +10,8 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
-                 plot_mode='offline', username=None, api_key=None, textsize=40, ticksize=30, fontfamily="serif",
-                 height=None, width=None, scale=None,
+                 plot_mode='offline', username=None, api_key=None, textsize=30, ticksize=25, fontfamily=None,
+                 height=800, width=1000, scale=None,
                  margin_top=100, margin_bottom=80, margin_left=80, margin_right=80, pad=0):
         """
         Class for making Plotly plots
@@ -59,7 +59,7 @@ class PlotlyFig:
         # Make default layout
         self.layout = dict(
             title=self.title,
-            titlefont=dict(size=self.textsize, family=fontfamily),
+            titlefont=dict(size=self.textsize),
             xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize, family=fontfamily),
                        tickfont=dict(size=self.ticksize, family=fontfamily)),
             yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, family=fontfamily),
@@ -84,7 +84,9 @@ class PlotlyFig:
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
                 legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill', add_xy_plot=None,
-                marker_outline_width=0, marker_outline_color='black'):
+                marker_outline_width=0, marker_outline_color='black', linedash='solid', linewidth=2, lineshape=None,
+                error_type=None, error_direction=None, error_array=None, error_value=None, error_symmetric=True,
+                error_arrayminus=None, error_valueminus=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -118,6 +120,26 @@ class PlotlyFig:
                 'marker' and 'marker_fill' (same format as root keys).
             marker_outline_width: (int) thickness of marker outline
             marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
+            dash: (str)
+            error_type: (str) Determines the rule used to generate the error bars. Options are,
+                (i) "data": bar lengths are set in variable `error_array`/'error_arrayminus',
+                (ii) "percent": bar lengths correspond to a percentage of underlying data. Set this percentage in the
+                   variable 'error_value'/'error_valueminus',
+                (iii) "sqrt": bar lengths correspond to the sqaure of the underlying data,
+                (iv) "constant": bar lengths are of a constant value. Set this constant in the variable
+                'error_value'/'error_valueminus'
+            error_direction: (str) direction of error bar, "x"/"y"
+            error_array: (list/array/series) Sets the data corresponding the length of each error bar.
+                Values are plotted relative to the underlying data
+            error_value: (float) Sets the value of either the percentage (if `error_type` is set to "percent") or
+                the constant (if `error_type` is set to "constant") corresponding to the lengths of the error bars.
+            error_symmetric: (bool) Determines whether or not the error bars have the same length in both direction
+                (top/bottom for vertical bars, left/right for horizontal bars
+            error_arrayminus: (list/array/series) Sets the data corresponding the length of each error bar in the bottom
+                (left) direction for vertical (horizontal) bars Values are plotted relative to the underlying data.
+            error_valueminus: (float) Sets the value of either the percentage (if `error_type` is set to "percent") or
+                the constant (if `error_type` is set to "constant") corresponding to the lengths of the error bars in
+                the bottom (left) direction for vertical (horizontal) bars
 
         Returns: XY scatter plot
 
@@ -128,6 +150,7 @@ class PlotlyFig:
             showscale = True
 
         if isinstance(size, pd.Series):
+            # TODO: fix size normalization. Use Z-scores...
             size_min = size.min()
             size_max = size.max()
             size = ((size - size_min) + 5) / ((size_max - size_min) + 5) * 100
@@ -155,8 +178,16 @@ class PlotlyFig:
                 showscale=showscale,
                 line=dict(width=marker_outline_width, color=marker_outline_color),
                 symbol=marker
-            )
+            ),
+            line=dict(dash=linedash, width=linewidth, shape=lineshape)
         )
+
+        # Add error bars
+        if error_type:
+            if error_direction is None:
+                raise ValueError("The field 'error_direction' must be populated")
+            if error_type == 'data' and error_symmetric:
+                trace0['error_' + error_direction] = dict(type=error_type, array=error_array)
 
         data = [trace0]
 
@@ -270,8 +301,11 @@ class PlotlyFig:
             colorscale=colorscale,
             x=x_labels,
             y=y_labels,
-            zmin=colorscale_min, zmax=colorscale_max
+            zmin=colorscale_min, zmax=colorscale_max,
+            colorbar = dict(
+                tickfont=dict(color="black", size=int(0.75*self.ticksize), family=self.fontfamily),
             )
+        )
 
         data = [trace0]
 
@@ -415,16 +449,8 @@ class PlotlyFig:
         Returns: a Plotly scatter matrix plot
 
         """
-        if select_columns:
-            df_select = pd.DataFrame()
-
-            for column in select_columns:
-                df_select[column] = dataframe[column]
-            fig = FF.create_scatterplotmatrix(df_select, index=index_colname, diag=diag_kind, size=marker_size,
-                                              height=height, width=width)
-
-        else:
-            fig = FF.create_scatterplotmatrix(dataframe, index=index_colname, diag=diag_kind, size=marker_size,
+        df = dataframe[select_columns] if select_columns else dataframe
+        fig = FF.create_scatterplotmatrix(df, index=index_colname, diag=diag_kind, size=marker_size,
                                               height=height, width=width)
 
         if self.plot_mode == 'offline':
