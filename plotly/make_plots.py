@@ -183,7 +183,7 @@ class PlotlyFig:
                 colorbar = dict(
                     tickfont=dict(color="black", size=int(self.bar_to_label_ratio * self.ticksize),
                                   family=self.fontfamily),
-                    ticks=None, thickness=None, tickcolor=None, bordercolor=None
+                    tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None,
                 )
             ),
             line=dict(dash=linedash, width=linewidth, shape=lineshape)
@@ -225,7 +225,7 @@ class PlotlyFig:
                             colorbar = dict(
                                 tickfont=dict(color="black", size=int(self.bar_to_label_ratio * self.ticksize),
                                               family=self.fontfamily),
-                                ticks=None, thickness=None, tickcolor=None, bordercolor=None
+                                tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None
                             )
                         )
                     )
@@ -316,7 +316,7 @@ class PlotlyFig:
             zmin=colorscale_min, zmax=colorscale_max,
             colorbar = dict(
                 tickfont=dict(color="black", size=int(self.bar_to_label_ratio*self.ticksize), family=self.fontfamily),
-                ticks=None, thickness=None, tickcolor=None, bordercolor=None
+                tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None
             )
         )
 
