@@ -178,7 +178,7 @@ class PlotlyFig:
                 color=color,
                 colorscale=colorscale,
                 showscale=showscale,
-                line=dict(width=marker_outline_width, color=marker_outline_color),
+                line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
                 symbol=marker,
                 colorbar = dict(
                     tickfont=dict(color="black", size=int(self.bar_to_label_ratio * self.ticksize),
@@ -218,9 +218,9 @@ class PlotlyFig:
                         marker=dict(
                             color=plot_data['color'],
                             size=plot_data['size'],
-                            colorscale=colorscale,
-                            showscale=showscale,
-                            line=dict(width=marker_outline_width, color=marker_outline_color),
+                            colorscale=colorscale, # colorscale is fixed to that of the main plot
+                            showscale=showscale, # showscale is fixed to that of the main plot
+                            line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
                             symbol=plot_data['marker'],
                             colorbar = dict(
                                 tickfont=dict(color="black", size=int(self.bar_to_label_ratio * self.ticksize),
