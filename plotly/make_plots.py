@@ -56,6 +56,7 @@ class PlotlyFig:
         self.width = width
         self.scale = scale
         self.fontfamily = fontfamily
+        self.bar_to_label_ratio = 0.75
 
         # Make default layout
         self.layout = dict(
@@ -178,7 +179,12 @@ class PlotlyFig:
                 colorscale=colorscale,
                 showscale=showscale,
                 line=dict(width=marker_outline_width, color=marker_outline_color),
-                symbol=marker
+                symbol=marker,
+                colorbar = dict(
+                    tickfont=dict(color="black", size=int(self.bar_to_label_ratio * self.ticksize),
+                                  family=self.fontfamily),
+                    ticks=None, thickness=None, tickcolor=None, bordercolor=None
+                )
             ),
             line=dict(dash=linedash, width=linewidth, shape=lineshape)
         )
@@ -215,7 +221,12 @@ class PlotlyFig:
                             colorscale=colorscale,
                             showscale=showscale,
                             line=dict(width=marker_outline_width, color=marker_outline_color),
-                            symbol=plot_data['marker']
+                            symbol=plot_data['marker'],
+                            colorbar = dict(
+                                tickfont=dict(color="black", size=int(self.bar_to_label_ratio * self.ticksize),
+                                              family=self.fontfamily),
+                                ticks=None, thickness=None, tickcolor=None, bordercolor=None
+                            )
                         )
                     )
                 )
@@ -304,7 +315,7 @@ class PlotlyFig:
             y=y_labels,
             zmin=colorscale_min, zmax=colorscale_max,
             colorbar = dict(
-                tickfont=dict(color="black", size=int(0.75*self.ticksize), family=self.fontfamily),
+                tickfont=dict(color="black", size=int(self.bar_to_label_ratio*self.ticksize), family=self.fontfamily),
                 ticks=None, thickness=None, tickcolor=None, bordercolor=None
             )
         )
