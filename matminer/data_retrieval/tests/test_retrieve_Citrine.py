@@ -7,15 +7,15 @@ import os
 
 from matminer.data_retrieval.retrieve_Citrine import CitrineDataRetrieval
 
-api_key = os.environ.get('CITRINE_KEY', None)
+citrine_key = os.environ.get('CITRINE_KEY', None)
 
-@unittest.skipIf(api_key is None,
+@unittest.skipIf(citrine_key is None,
                  "CITRINE_KEY environment variable not set.")
 
-class MPResterTest(unittest.TestCase):
+class CitrineDataRetrievalTest(unittest.TestCase):
 
     def setUp(self):
-        self.cdr = CitrineDataRetrieval(api_key)
+        self.cdr = CitrineDataRetrieval(citrine_key)
 
     def test_get_data(self):
         df = self.cdr.get_dataframe(contributor="OQMD", formula="GaN")

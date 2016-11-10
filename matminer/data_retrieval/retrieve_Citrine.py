@@ -133,7 +133,6 @@ class CitrineDataRetrieval:
                         if 'property.units' in meas_normdf.columns:
                             curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
                             units_df['property.units'] = [curr_units] * len(meas_normdf)
-                            #import pdb; pdb.set_trace()
                             units_df.index = [counter] * len(meas_normdf)
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
 
