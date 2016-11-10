@@ -4,3 +4,4 @@ pandas>=0.17.1
 pymatgen>=4.0
 unittest2==1.1.0
 pint
+citrination-client
