@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 This package requires downloading an installing the citrination client:
 https://github.com/CitrineInformatics/python-citrination-client

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import division, unicode_literals
+from __future__ import division, unicode_literals, absolute_import
 
 import unittest2 as unittest
 import os
