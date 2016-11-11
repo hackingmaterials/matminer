@@ -134,7 +134,7 @@ class CitrineDataRetrieval:
                         units_df = pd.DataFrame()    # Get property unit and insert it as a dict
                         if 'property.units' in meas_normdf.columns:
                             curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
-                            units_df['property.units'] = [curr_units] * len(meas_normdf)
+                            units_df['property.units'] = curr_units
                             units_df.index = [counter] * len(meas_normdf)
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
 
