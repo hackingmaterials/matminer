@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 This package requires downloading an installing the citrination client:
 https://github.com/CitrineInformatics/python-citrination-client
@@ -120,7 +122,7 @@ class CitrineDataRetrieval:
                             prop_df = prop_df.pivot(columns='property.name', values='property.scalar')
                         elif 'property.matrix' in meas_normdf.columns:
                             prop_df = prop_df.pivot(columns='property.name', values='property.matrix')
-                        prop_df = prop_df.convert_objects(convert_numeric=True)  # Convert columns from object to num
+                        prop_df = prop_df.apply(pd.to_numeric, errors='ignore') # Convert columns from object to num
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()
                         non_prop_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
@@ -132,7 +134,7 @@ class CitrineDataRetrieval:
                         units_df = pd.DataFrame()    # Get property unit and insert it as a dict
                         if 'property.units' in meas_normdf.columns:
                             curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
-                            units_df['property.units'] = [curr_units]
+                            units_df['property.units'] = curr_units
                             units_df.index = [counter] * len(meas_normdf)
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
 
