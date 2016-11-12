@@ -11,6 +11,7 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
+import json
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -134,8 +135,7 @@ class CitrineDataRetrieval:
                         units_df = pd.DataFrame()    # Get property unit and insert it as a dict
                         if 'property.units' in meas_normdf.columns:
                             curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
-                            units_df['property.units'] = curr_units
-                            units_df.index = [counter] * len(meas_normdf)
+                            units_df.set_value(counter, 'property.units', json.dumps(curr_units))
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
 
         df = pd.concat([non_meas_df, meas_df], axis=1)
