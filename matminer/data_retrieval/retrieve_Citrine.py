@@ -1,10 +1,4 @@
 from __future__ import absolute_import
-
-"""
-This package requires downloading an installing the citrination client:
-https://github.com/CitrineInformatics/python-citrination-client
-
-"""
 from citrination_client import CitrinationClient
 import os
 import time
@@ -14,6 +8,13 @@ from pandas.io.json import json_normalize
 import json
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
+
+
+"""
+This package requires downloading an installing the citrination client:
+https://github.com/CitrineInformatics/python-citrination-client
+
+"""
 
 
 class CitrineDataRetrieval:
@@ -92,6 +93,7 @@ class CitrineDataRetrieval:
                 if 'sample' in hit.keys():
                     sample_value = hit['sample']
                     sample_normdf = json_normalize(sample_value)
+
                     # Make a DF of all non-'measurement' fields
                     non_meas_cols = [cols for cols in sample_normdf.columns if "measurement" not in cols]
                     non_meas_row = pd.DataFrame()
@@ -99,9 +101,11 @@ class CitrineDataRetrieval:
                         non_meas_row[col] = sample_normdf[col]
                     non_meas_row.index = [counter] * len(sample_normdf)
                     non_meas_df = non_meas_df.append(non_meas_row)
+
                     # Make a DF of the 'measurement' array
                     if 'measurement' in sample_value:
                         meas_normdf = json_normalize(sample_value['measurement'])
+
                         # Extract numbers of properties
                         if 'property.scalar' in meas_normdf.columns:
                             for row, col in enumerate(meas_normdf['property.scalar']):
@@ -112,6 +116,7 @@ class CitrineDataRetrieval:
                                     elif 'minimum' in item and 'maximum' in item:
                                         meas_normdf.xs(row)['property.scalar'] = 'Minimum = ' + item[
                                             'minimum'] + ', ' + 'Maximum = ' + item['maximum']
+
                         # Take all property rows and convert them into columns
                         prop_df = pd.DataFrame()
                         prop_cols = [cols for cols in meas_normdf.columns if "property" in cols]
@@ -124,6 +129,7 @@ class CitrineDataRetrieval:
                         elif 'property.matrix' in meas_normdf.columns:
                             prop_df = prop_df.pivot(columns='property.name', values='property.matrix')
                         prop_df = prop_df.apply(pd.to_numeric, errors='ignore') # Convert columns from object to num
+
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()
                         non_prop_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
@@ -132,16 +138,21 @@ class CitrineDataRetrieval:
                         if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
                             non_prop_df.index = [counter] * len(meas_normdf)
                         non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
-                        units_df = pd.DataFrame()    # Get property unit and insert it as a dict
+
+                        # Get property unit and insert it as a dict
+                        units_df = pd.DataFrame()
                         if 'property.units' in meas_normdf.columns:
                             curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
                             units_df.set_value(counter, 'property.units', json.dumps(curr_units))
+
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
 
         df = pd.concat([non_meas_df, meas_df], axis=1)
         df.index.name = 'sample'
+
         if show_columns:
             for column in df.columns:
                 if column not in show_columns:
                     df.drop(column, axis=1, inplace=True)
+
         return df
