@@ -86,7 +86,7 @@ class PlotlyFig:
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
                 legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill', add_xy_plot=None,
-                marker_outline_width=0, marker_outline_color='black', linedash='solid', linewidth=2, lineshape=None,
+                marker_outline_width=0, marker_outline_color='black', linedash='solid', linewidth=2, lineshape='linear',
                 error_type=None, error_direction=None, error_array=None, error_value=None, error_symmetric=True,
                 error_arrayminus=None, error_valueminus=None):
         """
@@ -119,10 +119,12 @@ class PlotlyFig:
                 names of arguments to the original xy_plot method - required keys are 'x_col', 'y_col', 'text', 'mode',
                 'name', 'color', 'size'. Values are corresponding argument values in the same format as for the
                 original xy_plot. Use None for values not to be set, else a KeyError will be raised. Optional keys are
-                'marker' and 'marker_fill' (same format as root keys).
+                'marker' and 'marker_fill' (same format as root keys)
             marker_outline_width: (int) thickness of marker outline
             marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
-            dash: (str)
+            linedash: (str) sets the dash style of a line. Options are 'solid'/'dash'
+            linewidth: (int) sets the line width (in px)
+            lineshape: (str) determines the line shape. With "spline" the lines are drawn using spline interpolation
             error_type: (str) Determines the rule used to generate the error bars. Options are,
                 (i) "data": bar lengths are set in variable `error_array`/'error_arrayminus',
                 (ii) "percent": bar lengths correspond to a percentage of underlying data. Set this percentage in the
