@@ -445,7 +445,7 @@ class PlotlyFig:
                                         scale=self.scale)
 
     def scatter_matrix(self, dataframe, select_columns=None, index_colname=None, diag_kind='scatter',
-                       marker_size=10, height=800, width=1000):
+                       marker_size=10, height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
         """
         Create a scatter matrix plot from dataframes using Plotly.
 
@@ -458,6 +458,9 @@ class PlotlyFig:
             marker_size: (float) sets the marker size (in px)
             height: (int/float) sets the height of the chart
             width: (int/float) sets the width of the chart
+            marker_outline_width: (int) thickness of marker outline (currently affects the outline of histograms too
+                when "diag_kind" = 'histogram')
+            marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
 
         Returns: a Plotly scatter matrix plot
 
@@ -465,6 +468,10 @@ class PlotlyFig:
         df = dataframe[select_columns] if select_columns else dataframe
         fig = FF.create_scatterplotmatrix(df, index=index_colname, diag=diag_kind, size=marker_size,
                                               height=height, width=width)
+
+        # Add outline to markers
+        for trace in fig['data']:
+            trace['marker']['line'] = dict(width=marker_outline_width, color=marker_outline_color)
 
         if self.plot_mode == 'offline':
             if self.filename:
