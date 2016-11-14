@@ -194,7 +194,7 @@ class PlotlyFig:
         # Add error bars
         if error_type:
             if error_direction is None:
-                raise ValueError("The field 'error_direction' must be populated")
+                raise ValueError("The field 'error_direction' must be populated if 'err_type' is specified")
             if error_type == 'data' and error_symmetric:
                 trace0['error_' + error_direction] = dict(type=error_type, array=error_array)
 
