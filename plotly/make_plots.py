@@ -4,6 +4,8 @@ from plotly.tools import FigureFactory as FF
 import pandas as pd
 import numpy as np
 import warnings
+from scipy import stats
+
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -110,7 +112,7 @@ class PlotlyFig:
                 must be between 0.0 and 1.0., (iii) hexagonal code (eg: "FFBAD2"), or (iv) name of a dataframe
                 numeric column to set the marker color scale to
             size: (int/array) marker size in the format of (i) a constant integer size, or (ii) name of a dataframe
-                numeric column to set the marker size scale to
+                numeric column to set the marker size scale to. In the latter case, scaled Z-scores are used.
             colorscale: (str) Sets the colorscale. The colorscale must be an array containing arrays mapping a
                 normalized value to an rgb, rgba, hex, hsl, hsv, or named color string. At minimum, a mapping for the
                 lowest (0) and highest (1) values are required. For example, `[[0, 'rgb(0,0,255)',
@@ -160,11 +162,9 @@ class PlotlyFig:
         if type(color) is not str:
             showscale = True
 
+        # Use z-scores for sizes
         if isinstance(size, pd.Series):
-            # TODO: fix size normalization. Use Z-scores...
-            size_min = size.min()
-            size_max = size.max()
-            size = ((size - size_min) + 5) / ((size_max - size_min) + 5) * 100
+            size = (stats.zscore(size) + 5) * 3
 
         if marker_fill != 'fill':
             if marker_fill == 'open':
