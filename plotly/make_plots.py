@@ -129,8 +129,7 @@ class PlotlyFig:
                 (i) "data": bar lengths are set in variable `error_array`/'error_arrayminus',
                 (ii) "percent": bar lengths correspond to a percentage of underlying data. Set this percentage in the
                    variable 'error_value'/'error_valueminus',
-                (iii) "sqrt": bar lengths correspond to the sqaure of the underlying data,
-                (iv) "constant": bar lengths are of a constant value. Set this constant in the variable
+                (iii) "constant": bar lengths are of a constant value. Set this constant in the variable
                 'error_value'/'error_valueminus'
             error_direction: (str) direction of error bar, "x"/"y"
             error_array: (list/array/series) Sets the data corresponding the length of each error bar.
