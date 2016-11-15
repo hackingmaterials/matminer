@@ -202,6 +202,16 @@ class PlotlyFig:
                         raise ValueError("Please specify error bar lengths in the negative direction")
                     trace0['error_' + error_direction] = dict(type=error_type, array=error_array,
                                                               arrayminus=error_arrayminus)
+            elif error_type == 'constant' or error_type == 'percent':
+                if error_symmetric:
+                    trace0['error_' + error_direction] = dict(type=error_type, value=error_value)
+                else:
+                    if not error_valueminus:
+                        raise ValueError("Please specify error bar lengths in the negative direction")
+                    trace0['error_' + error_direction] = dict(type=error_type, value=error_value,
+                                                              valueminus=error_valueminus)
+            else:
+                raise ValueError("Invalid error bar type. Please choose from 'data'/'constant'/'percent'.")
 
         data = [trace0]
 
