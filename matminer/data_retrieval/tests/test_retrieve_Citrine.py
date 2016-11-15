@@ -9,9 +9,9 @@ from matminer.data_retrieval.retrieve_Citrine import CitrineDataRetrieval
 
 citrine_key = os.environ.get('CITRINE_KEY', None)
 
+
 @unittest.skipIf(citrine_key is None,
                  "CITRINE_KEY environment variable not set.")
-
 class CitrineDataRetrievalTest(unittest.TestCase):
 
     def setUp(self):
@@ -21,5 +21,5 @@ class CitrineDataRetrievalTest(unittest.TestCase):
         df = self.cdr.get_dataframe(contributor="OQMD", formula="GaN")
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     unittest.main()
