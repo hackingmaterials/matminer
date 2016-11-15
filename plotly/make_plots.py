@@ -29,6 +29,15 @@ class PlotlyFig:
                 of the filename or as the supplied format.
             username: (str) plotly account username
             api_key: (str) plotly account API key
+            textsize: (int) size of text of plot title and axis titles
+            ticksize: (int) size of ticks
+            fontfamily: (str) HTML font family - the typeface that will be applied by the web browser. The web browser
+                will only be able to apply a font if it is available on the system which it operates. Provide multiple
+                font families, separated by commas, to indicate the preference in which to apply fonts if they aren't
+                available on the system. The plotly service (at https://plot.ly or on-premise) generates images on a
+                server, where only a select number of fonts are installed and supported. These include "Arial", "Balto",
+                 "Courier New", "Droid Sans",, "Droid Serif", "Droid Sans Mono", "Gravitas One", "Old Standard TT",
+                 "Open Sans", "Overpass", "PT Sans Narrow", "Raleway", "Times New Roman".
             height: (float) output height (in pixels)
             width: (float) output width (in pixels)
             scale: (float) Increase the resolution of the image by `scale` amount, eg: 3. Only valid for PNG and
