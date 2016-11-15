@@ -190,8 +190,7 @@ class PlotlyFig:
                 line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
                 symbol=marker,
                 colorbar=dict(
-                    tickfont=dict(color="black", size=int(0.75 * self.ticksize),
-                                  family=self.fontfamily),
+                    tickfont=dict(color='black', size=int(0.75 * self.ticksize), family=self.fontfamily),
                     tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None,
                 )
             ),
@@ -248,8 +247,7 @@ class PlotlyFig:
                             line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
                             symbol=plot_data['marker'],
                             colorbar = dict(
-                                tickfont=dict(color="black", size=int(0.75 * self.ticksize),
-                                              family=self.fontfamily),
+                                tickfont=dict(color='black', size=int(0.75 * self.ticksize), family=self.fontfamily),
                                 tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None
                             )
                         )
@@ -340,7 +338,7 @@ class PlotlyFig:
             y=y_labels,
             zmin=colorscale_min, zmax=colorscale_max,
             colorbar = dict(
-                tickfont=dict(color="black", size=int(0.75 * self.ticksize), family=self.fontfamily),
+                tickfont=dict(color='black', size=int(0.75 * self.ticksize), family=self.fontfamily),
                 tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None
             )
         )
@@ -433,9 +431,9 @@ class PlotlyFig:
         fig.update(dict(
             layout=dict(
             title=self.title,
-            titlefont=dict(size=self.textsize),
-            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize),
-                       tickfont=dict(size=self.ticksize)),
+            titlefont=dict(size=self.textsize, family=self.fontfamily),
+            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, family=self.fontfamily),
+                       tickfont=dict(size=self.ticksize, family=self.fontfamily)),
             )
         ))
 
@@ -444,7 +442,8 @@ class PlotlyFig:
             if item.startswith('xaxis'):
                 fig['layout'][item].update(
                     dict(
-                        titlefont=dict(size=self.textsize), tickfont=dict(size=self.ticksize)
+                        titlefont=dict(size=self.textsize, family=self.fontfamily),
+                        tickfont=dict(size=self.ticksize, family=self.fontfamily)
                     )
                 )
 
