@@ -189,10 +189,7 @@ class PlotlyFig:
                 showscale=showscale,
                 line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
                 symbol=marker,
-                colorbar=dict(
-                    tickfont=dict(color='black', size=int(0.75 * self.ticksize), family=self.fontfamily),
-                    tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None,
-                )
+                colorbar=dict(tickfont=dict(size=int(0.75 * self.ticksize), family=self.fontfamily))
             ),
             line=dict(dash=linedash, width=linewidth, shape=lineshape)
         )
@@ -246,10 +243,7 @@ class PlotlyFig:
                             showscale=showscale, # showscale is fixed to that of the main plot
                             line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
                             symbol=plot_data['marker'],
-                            colorbar = dict(
-                                tickfont=dict(color='black', size=int(0.75 * self.ticksize), family=self.fontfamily),
-                                tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None
-                            )
+                            colorbar=dict(tickfont=dict(size=int(0.75 * self.ticksize), family=self.fontfamily))
                         )
                     )
                 )
@@ -337,10 +331,7 @@ class PlotlyFig:
             x=x_labels,
             y=y_labels,
             zmin=colorscale_min, zmax=colorscale_max,
-            colorbar = dict(
-                tickfont=dict(color='black', size=int(0.75 * self.ticksize), family=self.fontfamily),
-                tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None
-            )
+            colorbar=dict(tickfont=dict(size=int(0.75 * self.ticksize), family=self.fontfamily))
         )
 
         data = [trace0]
