@@ -11,8 +11,8 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
                  plot_mode='offline', username=None, api_key=None, textsize=30, ticksize=25, fontfamily=None,
-                 height=800, width=1000, scale=None,
-                 margin_top=100, margin_bottom=80, margin_left=80, margin_right=80, pad=0):
+                 height=800, width=1000, scale=None, margin_top=100, margin_bottom=80, margin_left=80, margin_right=80,
+                 pad=0):
         """
         Class for making Plotly plots
 
@@ -181,7 +181,7 @@ class PlotlyFig:
                 showscale=showscale,
                 line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
                 symbol=marker,
-                colorbar = dict(
+                colorbar=dict(
                     tickfont=dict(color="black", size=int(self.bar_to_label_ratio * self.ticksize),
                                   family=self.fontfamily),
                     tickvals=None, ticktext=None, thickness=None, tickcolor=None, bordercolor=None,
