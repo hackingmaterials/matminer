@@ -163,6 +163,9 @@ class PlotlyFig:
             showscale = True
 
         # Use z-scores for sizes
+        # If size is a list, convert to array for z-score calculation
+        if isinstance(size, list):
+            size = np.array(size)
         if isinstance(size, pd.Series):
             size = (stats.zscore(size) + 5) * 3
 
