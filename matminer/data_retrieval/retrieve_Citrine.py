@@ -35,12 +35,9 @@ class CitrineDataRetrieval:
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
 
         Args:
-            term: (str) general search string; this is searched against all fields
             formula: (str) filter for the chemical formula field; only those results that have chemical formulas that
                 contain this string will be returned
             property: (str) name of the property to search for
-            contributor: (str) filter for the contributor field; only those results that have contributors that
-                contain this string will be returned
             reference: (str) filter for the reference field; only those results that have contributors that
                 contain this string will be returned
             min_measurement: (str/num) minimum of the property value range
