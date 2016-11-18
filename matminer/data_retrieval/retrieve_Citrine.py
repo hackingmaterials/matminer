@@ -57,34 +57,24 @@ class CitrineDataRetrieval:
 
         while True:
             if max_results and max_results < per_page:   # use per_page=max_results, eg: in case of max_results=68 < 100
-                data = self.client.search(PifQuery(system=SystemQuery(
+                pif_query = PifQuery(system=SystemQuery(
                     chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
                     properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
                                              value=FieldOperation(filter=Filter(min=min_measurement,
                                                                                 max=max_measurement))),
                     references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
-                    include_datasets=[data_set_id], from_index=start, size=max_results))
+                    include_datasets=[data_set_id], from_index=start, size=max_results)
+
             else:
-                query = PifQuery(system=SystemQuery(
+                pif_query = PifQuery(system=SystemQuery(
                     chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
                     properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
                                              value=FieldOperation(filter=Filter(min=min_measurement,
                                                                                 max=max_measurement))),
                     references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=per_page)
-                # print query.as_dictionary()
-                data = self.client.search(query)
-            '''
-                data = self.client.search(term=term, formula=formula, property=property,
-                                          contributor=contributor, reference=reference,
-                                          min_measurement=min_measurement, max_measurement=max_measurement,
-                                          from_record=start, per_page=max_results, data_set_id=data_set_id)
-            else:
-                data = self.client.search(term=term, formula=formula, property=property,
-                                          contributor=contributor, reference=reference,
-                                          min_measurement=min_measurement, max_measurement=max_measurement,
-                                          from_record=start, per_page=per_page, data_set_id=data_set_id)
-            '''
+
+            data = self.client.search(pif_query)
             print data.as_dictionary()
             # size = len(data.json()['results'])
             size = len(data)
