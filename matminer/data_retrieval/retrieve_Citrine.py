@@ -28,9 +28,8 @@ class CitrineDataRetrieval:
         api_key = api_key if api_key else os.environ['CITRINE_KEY']
         self.client = CitrinationClient(api_key, 'https://citrination.com')
 
-    def get_dataframe(self, term=None, formula=None, property=None, contributor=None, reference=None,
-                      min_measurement=None, max_measurement=None, from_record=None, data_set_id=None, max_results=None,
-                      show_columns=None):
+    def get_dataframe(self, formula=None, property=None, reference=None, min_measurement=None, max_measurement=None,
+                      from_record=None, data_set_id=None, max_results=None, show_columns=None):
         """
         Gets data from MP in a dataframe format.
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
