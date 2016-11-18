@@ -74,8 +74,7 @@ class CitrineDataRetrieval:
                     references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=per_page)
 
-            data = self.client.search(pif_query)
-            print data.as_dictionary()
+            data = self.client.search(pif_query).as_dictionary()['hits']
             # size = len(data.json()['results'])
             size = len(data)
             start += size
