@@ -526,7 +526,8 @@ class PlotlyFig:
                 sum of all bin area equals the total number of sample points). If "probability density", the span of
                 each bar corresponds to the probability that an event will fall into the corresponding bin (here, the
                 sum of all bin area equals 1)
-            x_start: (float) starting value for x-axis bins
+            x_start: (float) starting value for x-axis bins. Note: after some testing, this variable does not seem to
+                be read by Plotly when set to 0 for the latest version of Plotly as of this commit (Nov'16).
             x_end: (float) end value for x-axis bins
             bin_size: (float) step in-between value of each x axis bin
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
