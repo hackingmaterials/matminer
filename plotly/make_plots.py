@@ -95,10 +95,10 @@ class PlotlyFig:
                     '".png", ".svg", ".jpeg", ".pdf")')
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill', add_xy_plot=None,
-                marker_outline_width=0, marker_outline_color='black', linedash='solid', linewidth=2, lineshape='linear',
-                error_type=None, error_direction=None, error_array=None, error_value=None, error_symmetric=True,
-                error_arrayminus=None, error_valueminus=None):
+                legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill',
+                hoverinfo='x+y+text', add_xy_plot=None, marker_outline_width=0, marker_outline_color='black',
+                linedash='solid', linewidth=2, lineshape='linear', error_type=None, error_direction=None,
+                error_array=None, error_value=None, error_symmetric=True, error_arrayminus=None, error_valueminus=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -124,6 +124,12 @@ class PlotlyFig:
             marker: (str) Shape of marker symbol. For all options, please see
                 https://plot.ly/python/reference/#scatter-marker-symbol
             marker_fill: (str) Shape fill of marker symbol. Options are "fill"/"open"/"dot"/"open-dot"
+            hoverinfo: (str) Any combination of "x", "y", "z", "text", "name" joined with a "+" OR "all" or "none" or
+                "skip".
+                Examples: "x", "y", "x+y", "x+y+z", "all"
+                default: "x+y+text"
+                Determines which trace information appear on hover. If `none` or `skip` are set, no information is
+                displayed upon hovering. But, if `none` is set, click and hover events are still fired.
             showlegend: (bool) show legend or not
             add_xy_plot: (list) of dictionaries, each of which contain additional data to add to the xy plot. Keys are
                 names of arguments to the original xy_plot method - required keys are 'x_col', 'y_col', 'text', 'mode',
@@ -185,6 +191,7 @@ class PlotlyFig:
             text=text,
             mode=mode,
             name=legend,
+            hoverinfo=hoverinfo,
             marker=dict(
                 size=size,
                 color=color,
@@ -239,6 +246,7 @@ class PlotlyFig:
                         text=plot_data['text'],
                         mode=plot_data['mode'],
                         name=plot_data['legend'],
+                        hoverinfo=hoverinfo,
                         marker=dict(
                             color=plot_data['color'],
                             size=plot_data['size'],
