@@ -575,3 +575,41 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
+    def bar_chart(self, x, y):
+        """
+        Create a bar chart using Plotly
+
+        Args:
+            x: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the x coordinates
+            y: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the y coordinates
+
+        Returns:
+
+        """
+
+        trace0 = go.Bar(x=x, y=y)
+
+        data = [trace0]
+
+        fig = dict(data=data, layout=self.layout)
+
+        if self.plot_mode == 'offline':
+            if self.filename:
+                plotly.offline.plot(fig, filename=self.filename)
+            else:
+                plotly.offline.plot(fig)
+
+        elif self.plot_mode == 'notebook':
+            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
+            plotly.offline.iplot(fig)
+
+        elif self.plot_mode == 'online':
+            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
+            if self.filename:
+                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
+            else:
+                plotly.plotly.plot(fig, sharing='public')
+
+        elif self.plot_mode == 'static':
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+                                        scale=self.scale)
