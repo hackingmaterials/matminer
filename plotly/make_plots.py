@@ -22,7 +22,7 @@ class PlotlyFig:
             plot_title: (str) title of plot
             x_title: (str) title of x-axis
             y_title: (str) title of y-axis
-            hovermode: (str) can be 'x'/'y'/'closest'
+            hovermode: (str) determines the mode of hover interactions. Can be 'x'/'y'/'closest'/False
             filename: (str) name/filepath of plot file
             plot_mode: (str) (i) 'offline': creates and saves plots on the local disk, (ii) 'notebook': to embed plots
                 in a IPython/Jupyter notebook, (iii) 'online': save the plot in your online plotly account (requires
