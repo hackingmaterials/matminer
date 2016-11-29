@@ -583,7 +583,7 @@ class PlotlyFig:
             x: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the x coordinates
             y: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the y coordinates
 
-        Returns:
+        Returns: a Plotly bar chart
 
         """
 
