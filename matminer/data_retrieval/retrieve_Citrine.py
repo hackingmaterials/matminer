@@ -75,16 +75,18 @@ class CitrineDataRetrieval:
                     include_datasets=[data_set_id], from_index=start, size=per_page)
 
             data = self.client.search(pif_query).as_dictionary()['hits']
-            # size = len(data.json()['results'])
             size = len(data)
             start += size
-            json_data.append(data.json()['results'])
+            json_data.append(data)
+
+
             if max_results and len(json_data)*per_page > max_results:   # check if limit is reached
                 json_data = json_data[:(max_results / per_page)]          # get first multiple of 100 records
                 json_data.append(data.json()['results'][:max_results % per_page])    # get remaining records
                 break
             if size < per_page:  # break out of last loop of results
                 break
+
             time.sleep(refresh_time)
 
         non_meas_df = pd.DataFrame()  # df w/o measurement column
