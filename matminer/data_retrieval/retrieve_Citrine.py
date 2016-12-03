@@ -110,19 +110,20 @@ class CitrineDataRetrieval:
                     non_meas_df = non_meas_df.append(non_meas_row)
 
                     # Make a DF of the 'measurement' array
-                    if 'measurement' in sample_value:
-                        meas_normdf = json_normalize(sample_value['measurement'])
+                    if 'properties' in sample_value:
+                        meas_normdf = json_normalize(sample_value['properties'])
 
                         # Extract numbers of properties
-                        if 'property.scalar' in meas_normdf.columns:
-                            for row, col in enumerate(meas_normdf['property.scalar']):
-                                for item in col:
-                                    if 'value' in item:
-                                        meas_normdf.xs(row)['property.scalar'] = item['value']
-                                    # TODO: ask Anubhav how to deal with these and rest of formats
-                                    elif 'minimum' in item and 'maximum' in item:
-                                        meas_normdf.xs(row)['property.scalar'] = 'Minimum = ' + item[
-                                            'minimum'] + ', ' + 'Maximum = ' + item['maximum']
+                        if 'scalars' in meas_normdf.columns:
+                            for row, col in enumerate(meas_normdf['scalars']):
+                                if type(col) is list:
+                                    for item in col:
+                                        if 'value' in item:
+                                            meas_normdf.xs(row)['scalars'] = item['value']
+                                        # TODO: ask Anubhav how to deal with these and rest of formats
+                                        elif 'minimum' in item and 'maximum' in item:
+                                            meas_normdf.xs(row)['scalars'] = 'Minimum = ' + item[
+                                                'minimum'] + ', ' + 'Maximum = ' + item['maximum']
 
                         # Take all property rows and convert them into columns
                         prop_df = pd.DataFrame()
