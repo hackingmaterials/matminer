@@ -126,8 +126,12 @@ class CitrineDataRetrieval:
                                                 'minimum'] + ', ' + 'Maximum = ' + item['maximum']
 
                         # Take all property rows and convert them into columns
+                        prop_cols = []
                         prop_df = pd.DataFrame()
-                        prop_cols = [cols for cols in meas_normdf.columns if "property" in cols]
+                        for col in meas_normdf.columns:
+                            if col in ['scalars', 'vectors', 'matrices']:
+                                prop_cols.append(col)
+                        # prop_cols = [cols for cols in meas_normdf.columns if "scalars" in cols]
                         for col in prop_cols:
                             prop_df[col] = meas_normdf[col]
                         prop_df.index = [counter] * len(meas_normdf)
