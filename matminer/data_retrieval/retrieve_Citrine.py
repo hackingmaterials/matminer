@@ -79,7 +79,6 @@ class CitrineDataRetrieval:
             start += size
             json_data.append(data)
 
-
             if max_results and len(json_data)*per_page > max_results:   # check if limit is reached
                 json_data = json_data[:(max_results / per_page)]          # get first multiple of 100 records
                 json_data.append(data.json()['results'][:max_results % per_page])    # get remaining records
@@ -98,12 +97,12 @@ class CitrineDataRetrieval:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
             for hit in tqdm(page):
                 counter += 1
-                if 'sample' in hit.keys():
-                    sample_value = hit['sample']
+                if 'system' in hit.keys():
+                    sample_value = hit['system']
                     sample_normdf = json_normalize(sample_value)
 
-                    # Make a DF of all non-'measurement' fields
-                    non_meas_cols = [cols for cols in sample_normdf.columns if "measurement" not in cols]
+                    # Make a DF of all non-'property' fields
+                    non_meas_cols = [cols for cols in sample_normdf.columns if "properties" not in cols]
                     non_meas_row = pd.DataFrame()
                     for col in non_meas_cols:
                         non_meas_row[col] = sample_normdf[col]
