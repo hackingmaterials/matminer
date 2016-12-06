@@ -9,7 +9,6 @@ import json
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
-
 """
 This package requires downloading an installing the citrination client:
 https://github.com/CitrineInformatics/python-citrination-client
@@ -56,7 +55,7 @@ class CitrineDataRetrieval:
         refresh_time = 3  # seconds to wait between search calls
 
         while True:
-            if max_results and max_results < per_page:   # use per_page=max_results, eg: in case of max_results=68 < 100
+            if max_results and max_results < per_page:  # use per_page=max_results, eg: in case of max_results=68 < 100
                 pif_query = PifQuery(system=SystemQuery(
                     chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
                     properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
@@ -79,9 +78,9 @@ class CitrineDataRetrieval:
             start += size
             json_data.append(data)
 
-            if max_results and len(json_data)*per_page > max_results:   # check if limit is reached
-                json_data = json_data[:(max_results / per_page)]          # get first multiple of 100 records
-                json_data.append(data.json()['results'][:max_results % per_page])    # get remaining records
+            if max_results and len(json_data) * per_page > max_results:  # check if limit is reached
+                json_data = json_data[:(max_results / per_page)]  # get first multiple of 100 records
+                json_data.append(data.json()['results'][:max_results % per_page])  # get remaining records
                 break
             if size < per_page:  # break out of last loop of results
                 break
@@ -113,16 +112,22 @@ class CitrineDataRetrieval:
                     if 'properties' in sample_value:
                         meas_normdf = json_normalize(sample_value['properties'])
 
+                        print meas_normdf
+                        meas_normdf['property_values'] = pd.concat(
+                            [meas_normdf['scalars'].dropna(), meas_normdf['vectors'].dropna(),
+                             meas_normdf['matrices'].dropna()])
+                        print meas_normdf.pivot(columns='name', values='property_values')
+
                         # Extract numbers of properties
                         if 'scalars' in meas_normdf.columns:
                             for row, col in enumerate(meas_normdf['scalars']):
                                 if type(col) is list:
                                     for item in col:
                                         if 'value' in item:
-                                            meas_normdf.xs(row)['scalars'] = item['value']
+                                            meas_normdf.xs(row)['value'] = item['value']
                                         # TODO: ask Anubhav how to deal with these and rest of formats
                                         elif 'minimum' in item and 'maximum' in item:
-                                            meas_normdf.xs(row)['scalars'] = 'Minimum = ' + item[
+                                            meas_normdf.xs(row)['value'] = 'Minimum = ' + item[
                                                 'minimum'] + ', ' + 'Maximum = ' + item['maximum']
 
                         # Take all property rows and convert them into columns
@@ -135,12 +140,13 @@ class CitrineDataRetrieval:
                         for col in prop_cols:
                             prop_df[col] = meas_normdf[col]
                         prop_df.index = [counter] * len(meas_normdf)
-                        prop_df = prop_df.drop_duplicates(['property.name'])
-                        if 'property.scalar' in meas_normdf.columns:
-                            prop_df = prop_df.pivot(columns='property.name', values='property.scalar')
-                        elif 'property.matrix' in meas_normdf.columns:
-                            prop_df = prop_df.pivot(columns='property.name', values='property.matrix')
-                        prop_df = prop_df.apply(pd.to_numeric, errors='ignore') # Convert columns from object to num
+                        # prop_df = prop_df.drop_duplicates(['name'])
+
+                        if 'scalars' in meas_normdf.columns:
+                            prop_df = prop_df.pivot(columns='name', values='scalars')
+                        elif 'matrices' in meas_normdf.columns:
+                            prop_df = prop_df.pivot(columns='name', values='matrices')
+                        prop_df = prop_df.apply(pd.to_numeric, errors='ignore')  # Convert columns from object to num
 
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()
