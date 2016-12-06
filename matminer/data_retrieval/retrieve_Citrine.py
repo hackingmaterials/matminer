@@ -149,7 +149,7 @@ class CitrineDataRetrieval:
                         '''
                         prop_df = meas_normdf.pivot(columns='name', values='property_values')
                         prop_df.index = [counter] * len(meas_normdf)
-                        print prop_df
+                        # print prop_df
                         # prop_df = prop_df.drop_duplicates(['name'])
 
                         '''
@@ -162,12 +162,13 @@ class CitrineDataRetrieval:
 
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()
-                        non_prop_cols = [col for col in meas_normdf.columns if col not in ['name', 'scalars', 'vectors', 'matrices']]
+                        non_prop_cols = [col for col in meas_normdf.columns if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']]
                         for col in non_prop_cols:
-                            non_prop_df['measurement.' + col] = meas_normdf[col]
+                            non_prop_df[col] = meas_normdf[col]
                         if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
                             non_prop_df.index = [counter] * len(meas_normdf)
-                        non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
+                        print non_prop_df
+                        # non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
 
                         # Get property unit and insert it as a dict
                         units_df = pd.DataFrame()
