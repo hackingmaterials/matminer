@@ -92,9 +92,9 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in json_data[:1]:
+        for page in json_data:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
-            for hit in tqdm(page[:1]):
+            for hit in tqdm(page):
                 counter += 1
                 if 'system' in hit.keys():
                     sample_value = hit['system']
@@ -112,7 +112,7 @@ class CitrineDataRetrieval:
                     if 'properties' in sample_value:
                         meas_normdf = json_normalize(sample_value['properties'])
 
-                        print meas_normdf
+                        # print meas_normdf
 
                         value_cols = []
                         for col in meas_normdf.columns:
@@ -167,16 +167,18 @@ class CitrineDataRetrieval:
                             non_prop_df[col] = meas_normdf[col]
                         if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
                             non_prop_df.index = [counter] * len(meas_normdf)
-                        print non_prop_df
                         # non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
 
+                        '''
                         # Get property unit and insert it as a dict
                         units_df = pd.DataFrame()
                         if 'property.units' in meas_normdf.columns:
                             curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
                             units_df.set_value(counter, 'property.units', json.dumps(curr_units))
+                        '''
 
-                        meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
+                        # meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
+                        meas_df = meas_df.append(pd.concat([prop_df, non_prop_df], axis=1))
 
         df = pd.concat([non_meas_df, meas_df], axis=1)
         df.index.name = 'sample'
@@ -185,5 +187,4 @@ class CitrineDataRetrieval:
             for column in df.columns:
                 if column not in show_columns:
                     df.drop(column, axis=1, inplace=True)
-
         return df
