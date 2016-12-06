@@ -92,9 +92,9 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in json_data:
+        for page in json_data[:1]:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
-            for hit in tqdm(page):
+            for hit in tqdm(page[:1]):
                 counter += 1
                 if 'system' in hit.keys():
                     sample_value = hit['system']
@@ -113,11 +113,16 @@ class CitrineDataRetrieval:
                         meas_normdf = json_normalize(sample_value['properties'])
 
                         print meas_normdf
-                        meas_normdf['property_values'] = pd.concat(
-                            [meas_normdf['scalars'].dropna(), meas_normdf['vectors'].dropna(),
-                             meas_normdf['matrices'].dropna()])
-                        print meas_normdf.pivot(columns='name', values='property_values')
 
+                        value_cols = []
+                        for col in meas_normdf.columns:
+                            if col in ['scalars', 'vectors', 'matrices']:
+                                value_cols.append(meas_normdf[col].dropna())
+
+                        meas_normdf['property_values'] = pd.concat(value_cols)
+                        # print meas_normdf.pivot(columns='name', values='property_values')
+
+                        '''
                         # Extract numbers of properties
                         if 'scalars' in meas_normdf.columns:
                             for row, col in enumerate(meas_normdf['scalars']):
@@ -129,7 +134,9 @@ class CitrineDataRetrieval:
                                         elif 'minimum' in item and 'maximum' in item:
                                             meas_normdf.xs(row)['value'] = 'Minimum = ' + item[
                                                 'minimum'] + ', ' + 'Maximum = ' + item['maximum']
+                        '''
 
+                        '''
                         # Take all property rows and convert them into columns
                         prop_cols = []
                         prop_df = pd.DataFrame()
@@ -139,18 +146,23 @@ class CitrineDataRetrieval:
                         # prop_cols = [cols for cols in meas_normdf.columns if "scalars" in cols]
                         for col in prop_cols:
                             prop_df[col] = meas_normdf[col]
+                        '''
+                        prop_df = meas_normdf.pivot(columns='name', values='property_values')
                         prop_df.index = [counter] * len(meas_normdf)
+                        print prop_df
                         # prop_df = prop_df.drop_duplicates(['name'])
 
+                        '''
                         if 'scalars' in meas_normdf.columns:
                             prop_df = prop_df.pivot(columns='name', values='scalars')
                         elif 'matrices' in meas_normdf.columns:
                             prop_df = prop_df.pivot(columns='name', values='matrices')
                         prop_df = prop_df.apply(pd.to_numeric, errors='ignore')  # Convert columns from object to num
+                        '''
 
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()
-                        non_prop_cols = [cols for cols in meas_normdf.columns if "property" not in cols]
+                        non_prop_cols = [col for col in meas_normdf.columns if col not in ['name', 'scalars', 'vectors', 'matrices']]
                         for col in non_prop_cols:
                             non_prop_df['measurement.' + col] = meas_normdf[col]
                         if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
