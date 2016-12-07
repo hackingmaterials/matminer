@@ -33,8 +33,7 @@ class MongoDataRetrieval():
             d = self.coll.find_one(query, projection, sort=sort)
             projection = d.keys()
 
-        cleaned_projections = clean_projection(projection)
-        r = self.coll.find(query, cleaned_projections, sort=sort)
+        r = self.coll.find(query, clean_projection(projection), sort=sort)
         if limit:
             r.limit(limit)
 
