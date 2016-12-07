@@ -70,8 +70,8 @@ class CitrineDataRetrieval:
             matrix_column.set_value(row, matrix_values)
         return matrix_values
 
-    def get_dataframe(self, formula=None, property=None, reference=None, min_measurement=None, max_measurement=None,
-                      from_record=None, data_set_id=None, max_results=None, show_columns=None):
+    def get_dataframe(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
+                      max_measurement=None, from_record=None, data_set_id=None, max_results=None, show_columns=None):
         """
         Gets data from MP in a dataframe format.
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
@@ -80,6 +80,8 @@ class CitrineDataRetrieval:
             formula: (str) filter for the chemical formula field; only those results that have chemical formulas that
                 contain this string will be returned
             property: (str) name of the property to search for
+            data_type: (str) 'EXPERIMENTAL'/'COMPUTATIONAL'/'MACHINE_LEARNING'; filter for properties obtained from
+                experimental work, computational methods, or machine learning.
             reference: (str) filter for the reference field; only those results that have contributors that
                 contain this string will be returned
             min_measurement: (str/num) minimum of the property value range
@@ -103,7 +105,9 @@ class CitrineDataRetrieval:
                     chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
                     properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
                                              value=FieldOperation(filter=Filter(min=min_measurement,
-                                                                                max=max_measurement))),
+                                                                                max=max_measurement)),
+                                             data_type=FieldOperation(filter=Filter(equal=data_type))
+                                             ),
                     references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=max_results)
 
@@ -112,7 +116,9 @@ class CitrineDataRetrieval:
                     chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
                     properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
                                              value=FieldOperation(filter=Filter(min=min_measurement,
-                                                                                max=max_measurement))),
+                                                                                max=max_measurement)),
+                                             data_type=FieldOperation(filter=Filter(equal=data_type))
+                                             ),
                     references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=per_page)
 
@@ -135,9 +141,9 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in json_data[:3]:
+        for page in json_data:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
-            for hit in tqdm(page[:3]):
+            for hit in tqdm(page):
                 counter += 1
                 if 'system' in hit.keys():
                     sample_value = hit['system']
