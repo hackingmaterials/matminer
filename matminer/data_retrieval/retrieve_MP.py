@@ -19,7 +19,7 @@ class MPDataRetrieval:
         """
         self.mprester = MPRester(api_key=api_key)
 
-    def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True, include_structure=False):
+    def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True):
         """
         Gets data from MP in a dataframe format.
         See API docs at https://materialsproject.org/wiki/index.php/The_Materials_API for more details.
@@ -50,17 +50,12 @@ class MPDataRetrieval:
 
             index_mpid: (bool) Whether to set the materials_id as the dataframe index.
 
-            include_structure: (bool) Whether to include pymatgen structure (in dict format) in the output dataframe.
-
         Returns: A Pandas dataframe object
 
         """
 
         if index_mpid and "material_id" not in properties:
             properties.append("material_id")
-
-        if include_structure and "structure" not in properties:
-            properties.append("structure")
 
         data = self.mprester.query(criteria, properties, mp_decode)
         df = pd.DataFrame(data, columns=properties)
