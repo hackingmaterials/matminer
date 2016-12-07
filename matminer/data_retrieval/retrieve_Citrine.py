@@ -27,6 +27,16 @@ class CitrineDataRetrieval:
         api_key = api_key if api_key else os.environ['CITRINE_KEY']
         self.client = CitrinationClient(api_key, 'https://citrination.com')
 
+    def parse_scalar(self, data_column):
+        for row, col in enumerate(data_column):
+            try:
+                for item in col:
+                    if 'value' in item:
+                        data_column.set_value(row, item['value'])
+            except TypeError:
+                print row, col
+        return data_column
+
     def get_dataframe(self, formula=None, property=None, reference=None, min_measurement=None, max_measurement=None,
                       from_record=None, data_set_id=None, max_results=None, show_columns=None):
         """
@@ -92,9 +102,9 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in json_data:
+        for page in json_data[:2]:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
-            for hit in tqdm(page):
+            for hit in tqdm(page[:2]):
                 counter += 1
                 if 'system' in hit.keys():
                     sample_value = hit['system']
@@ -113,6 +123,7 @@ class CitrineDataRetrieval:
                         meas_normdf = json_normalize(sample_value['properties'])
 
                         # print meas_normdf
+                        self.parse_scalar(meas_normdf['scalars'])
 
                         value_cols = []
                         for col in meas_normdf.columns:
