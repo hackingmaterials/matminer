@@ -18,7 +18,6 @@ class MPDataRetrieval:
 
         Returns: None
         """
-        api_key = api_key if api_key else os.environ['MAPI_KEY']
         self.mprester = MPRester(api_key=api_key)
 
     def get_dataframe(self, criteria, properties, mp_decode=False, index_mpid=True, include_structure=False):
