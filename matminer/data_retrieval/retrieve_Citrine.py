@@ -28,6 +28,17 @@ class CitrineDataRetrieval:
         self.client = CitrinationClient(api_key, 'https://citrination.com')
 
     def get_value(self, dict_item):
+        """
+        Extract values from 'Property' objects
+
+        Args:
+            dict_item: 'Property' object
+
+        Returns:
+            - if 'value', returns string/float
+            - if 'minimum' or 'maximum', returns string
+
+        """
         # TODO: deal with rest of formats in a scalar object
         if 'value' in dict_item:
             return dict_item['value']
@@ -35,6 +46,15 @@ class CitrineDataRetrieval:
             return 'Minimum = {}, Maximum = {}'.format(dict_item['minimum'], dict_item['maximum'])
 
     def parse_scalars(self, scalar_column):
+        """
+        Parse scalar/single value items from a 'Property' column
+
+        Args:
+            scalar_column: 'Property' column with scalar objects
+
+        Returns: column with extracted values
+
+        """
         for row, col in enumerate(scalar_column):
             try:
                 for i in col:
@@ -44,6 +64,15 @@ class CitrineDataRetrieval:
         return scalar_column
 
     def parse_vectors(self, vector_column):
+        """
+        Parse vector/array value items from a 'Property' column
+
+        Args:
+            vector_column: 'Property' column with vector objects
+
+        Returns: column with extracted arrays
+
+        """
         vector_values = []
         for row, col in enumerate(vector_column):
             try:
@@ -56,6 +85,15 @@ class CitrineDataRetrieval:
         return vector_column
 
     def parse_matrix(self, matrix_column):
+        """
+        Parse matrix/(array of array) value items from a 'Property' column
+
+        Args:
+            matrix_column: 'Property' column with array of array objects
+
+        Returns: column with extracted array of arrays
+
+        """
         matrix_values = []
         for row, col in enumerate(matrix_column):
             try:
@@ -73,7 +111,7 @@ class CitrineDataRetrieval:
     def get_dataframe(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
                       max_measurement=None, from_record=None, data_set_id=None, max_results=None, show_columns=None):
         """
-        Gets data from MP in a dataframe format.
+        Gets data from Citrine in a dataframe format.
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
 
         Args:
@@ -152,7 +190,7 @@ class CitrineDataRetrieval:
                     system_value = hit['system']
                     system_normdf = json_normalize(system_value)
 
-                    # Make a DF of all non-'property' fields
+                    # Make a DF of all non-'properties' fields
                     non_prop_cols = [cols for cols in system_normdf.columns if "properties" not in cols]
                     non_prop_row = pd.DataFrame()
                     for col in non_prop_cols:
@@ -197,10 +235,11 @@ class CitrineDataRetrieval:
                         # Concatenate values and non-values DF
                         prop_df = prop_df.append(pd.concat([values_df, non_values_df], axis=1))
 
-        # Concatenate 'property' and 'non-property' dataframes
+        # Concatenate 'properties' and 'non-properties' dataframes
         df = pd.concat([non_prop_df, prop_df], axis=1)
         df.index.name = 'system'
 
+        # Filter out columns not selected
         if show_columns:
             for column in df.columns:
                 if column not in show_columns:
