@@ -28,8 +28,11 @@ class CitrineDataRetrieval:
         self.client = CitrinationClient(api_key, 'https://citrination.com')
 
     def get_value(self, dict_item):
+        # TODO: deal with rest of formats in a scalar object
         if 'value' in dict_item:
             return dict_item['value']
+        elif 'minimum' in dict_item and 'maximum' in dict_item:
+            return 'Minimum = {}, Maximum = {}'.format(dict_item['minimum'], dict_item['maximum'])
 
     def parse_scalars(self, scalar_column):
         for row, col in enumerate(scalar_column):
@@ -175,10 +178,6 @@ class CitrineDataRetrieval:
                                     for item in col:
                                         if 'value' in item:
                                             meas_normdf.xs(row)['value'] = item['value']
-                                        # TODO: ask Anubhav how to deal with these and rest of formats
-                                        elif 'minimum' in item and 'maximum' in item:
-                                            meas_normdf.xs(row)['value'] = 'Minimum = ' + item[
-                                                'minimum'] + ', ' + 'Maximum = ' + item['maximum']
                         '''
 
                         '''
