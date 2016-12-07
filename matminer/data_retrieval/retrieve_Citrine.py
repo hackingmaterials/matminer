@@ -170,58 +170,23 @@ class CitrineDataRetrieval:
                         meas_normdf['property_values'] = pd.concat(value_cols)
                         # print meas_normdf.pivot(columns='name', values='property_values')
 
-                        '''
-                        # Extract numbers of properties
-                        if 'scalars' in meas_normdf.columns:
-                            for row, col in enumerate(meas_normdf['scalars']):
-                                if type(col) is list:
-                                    for item in col:
-                                        if 'value' in item:
-                                            meas_normdf.xs(row)['value'] = item['value']
-                        '''
-
-                        '''
-                        # Take all property rows and convert them into columns
-                        prop_cols = []
-                        prop_df = pd.DataFrame()
-                        for col in meas_normdf.columns:
-                            if col in ['scalars', 'vectors', 'matrices']:
-                                prop_cols.append(col)
-                        # prop_cols = [cols for cols in meas_normdf.columns if "scalars" in cols]
-                        for col in prop_cols:
-                            prop_df[col] = meas_normdf[col]
-                        '''
                         prop_df = meas_normdf.pivot(columns='name', values='property_values')
                         prop_df.index = [counter] * len(meas_normdf)
                         # print prop_df
                         # prop_df = prop_df.drop_duplicates(['name'])
 
-                        '''
-                        if 'scalars' in meas_normdf.columns:
-                            prop_df = prop_df.pivot(columns='name', values='scalars')
-                        elif 'matrices' in meas_normdf.columns:
-                            prop_df = prop_df.pivot(columns='name', values='matrices')
-                        prop_df = prop_df.apply(pd.to_numeric, errors='ignore')  # Convert columns from object to num
-                        '''
-
                         # Making a single row DF of non-'measurement.property' columns
                         non_prop_df = pd.DataFrame()
-                        non_prop_cols = [col for col in meas_normdf.columns if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']]
+                        non_prop_cols = []
+                        for col in meas_normdf.columns:
+                            if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']:
+                                non_prop_cols.append(col)
                         for col in non_prop_cols:
                             non_prop_df[col] = meas_normdf[col]
                         if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
                             non_prop_df.index = [counter] * len(meas_normdf)
                         # non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
 
-                        '''
-                        # Get property unit and insert it as a dict
-                        units_df = pd.DataFrame()
-                        if 'property.units' in meas_normdf.columns:
-                            curr_units = dict(zip(meas_normdf['property.name'], meas_normdf['property.units']))
-                            units_df.set_value(counter, 'property.units', json.dumps(curr_units))
-                        '''
-
-                        # meas_df = meas_df.append(pd.concat([prop_df, non_prop_df, units_df], axis=1))
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df], axis=1))
 
         df = pd.concat([non_meas_df, meas_df], axis=1)
