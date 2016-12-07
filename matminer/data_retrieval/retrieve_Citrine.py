@@ -27,15 +27,45 @@ class CitrineDataRetrieval:
         api_key = api_key if api_key else os.environ['CITRINE_KEY']
         self.client = CitrinationClient(api_key, 'https://citrination.com')
 
-    def parse_scalar(self, data_column):
-        for row, col in enumerate(data_column):
+    def get_value(self, dict_item):
+        if 'value' in dict_item:
+            return dict_item['value']
+
+    def parse_scalars(self, scalar_column):
+        for row, col in enumerate(scalar_column):
             try:
-                for item in col:
-                    if 'value' in item:
-                        data_column.set_value(row, item['value'])
+                for i in col:
+                    scalar_column.set_value(row, self.get_value(i))
             except TypeError:
-                print row, col
-        return data_column
+                continue
+        return scalar_column
+
+    def parse_vectors(self, vector_column):
+        vector_values = []
+        for row, col in enumerate(vector_column):
+            try:
+                for i in col:
+                    for j in i:
+                        vector_values.append(self.get_value(j))
+            except TypeError:
+                continue
+            vector_column.set_value(row, vector_values)
+        return vector_column
+
+    def parse_matrix(self, matrix_column):
+        matrix_values = []
+        for row, col in enumerate(matrix_column):
+            try:
+                for i in col:
+                    for j in i:
+                        row_values = []
+                        for k in j:
+                            row_values.append(self.get_value(k))
+                        matrix_values.append(row_values)
+            except TypeError:
+                continue
+            matrix_column.set_value(row, matrix_values)
+        return matrix_values
 
     def get_dataframe(self, formula=None, property=None, reference=None, min_measurement=None, max_measurement=None,
                       from_record=None, data_set_id=None, max_results=None, show_columns=None):
@@ -102,9 +132,9 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in json_data[:2]:
+        for page in json_data[:1]:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
-            for hit in tqdm(page[:2]):
+            for hit in tqdm(page[:1]):
                 counter += 1
                 if 'system' in hit.keys():
                     sample_value = hit['system']
@@ -122,8 +152,10 @@ class CitrineDataRetrieval:
                     if 'properties' in sample_value:
                         meas_normdf = json_normalize(sample_value['properties'])
 
-                        # print meas_normdf
-                        self.parse_scalar(meas_normdf['scalars'])
+                        print meas_normdf
+
+                        self.parse_scalars(meas_normdf['scalars'])
+                        self.parse_matrix(meas_normdf['matrices'])
 
                         value_cols = []
                         for col in meas_normdf.columns:
