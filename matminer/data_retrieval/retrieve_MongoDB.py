@@ -1,3 +1,5 @@
+from itertools import groupby
+
 import pandas as pd
 from tqdm import tqdm
 
@@ -31,28 +33,13 @@ class MongoDataRetrieval():
             d = self.coll.find_one(query, projection, sort=sort)
             projection = d.keys()
 
-        # filter projections - needed because projecting on both a.b and a can cause issues
-        # TODO: add unit test showing why this is needed
-        redundant_projections = []
-        for p in projection:
-            p_list = p.split(".")
-            potential_redundancies = [r for r in projection if
-                                      len(r.split(".")) < len(p.split("."))]
-            for r in potential_redundancies:
-                r_list = r.split(".")
-                if all([p_list[i] == r_list[i] for i in xrange(len(r_list))]):
-                    redundant_projections.append(p)
-
-        mongo_projections = [p for p in projection if p not in
-                             redundant_projections]
-
-        all_data = []   # matrix of row, column data
-        r = self.coll.find(query, mongo_projections, sort=sort)
+        r = self.coll.find(query, clean_projection(projection), sort=sort)
         if limit:
             r.limit(limit)
 
         total = min(limit, r.count())
 
+        all_data = []   # matrix of row, column data
         for d in tqdm(r, total=total):
             row_data = []
 
@@ -68,3 +55,14 @@ class MongoDataRetrieval():
         if idx_field:
             df = df.set_index([idx_field])
         return df
+
+
+def clean_projection(projection):
+    """
+    Projecting on e.g. 'a.b.' and 'a' is disallowed. Project inclusively.
+    Args:
+        projection: (list) - list of fields to grab; dot-notation is allowed.
+    """
+    return [
+        list(g)[0] for _, g in
+        groupby(sorted(projection), key=lambda p: p.split(".", 1)[0])]
