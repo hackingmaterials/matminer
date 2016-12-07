@@ -52,7 +52,7 @@ def get_pymatgen_descriptor(comp, prop):
             eldata_tup_lst.append(
                 eldata_tup(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
                        amt=el_amt_dict[el]))
-            for i in range(1, el_amt_dict[el]):
+            for i in range(int(el_amt_dict[el])):
                 eldata.append(float(getattr(Element(el), prop)))
 
         else:
