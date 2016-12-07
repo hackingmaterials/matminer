@@ -132,9 +132,9 @@ class CitrineDataRetrieval:
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in json_data[:1]:
+        for page in json_data[:3]:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
-            for hit in tqdm(page[:1]):
+            for hit in tqdm(page[:3]):
                 counter += 1
                 if 'system' in hit.keys():
                     sample_value = hit['system']
@@ -152,10 +152,12 @@ class CitrineDataRetrieval:
                     if 'properties' in sample_value:
                         meas_normdf = json_normalize(sample_value['properties'])
 
-                        print meas_normdf
-
-                        self.parse_scalars(meas_normdf['scalars'])
-                        self.parse_matrix(meas_normdf['matrices'])
+                        if 'scalars' in meas_normdf.columns:
+                            self.parse_scalars(meas_normdf['scalars'])
+                        if 'vectors' in meas_normdf.columns:
+                            self.parse_vectors(meas_normdf['vectors'])
+                        if 'matrices' in meas_normdf.columns:
+                            self.parse_matrix(meas_normdf['matrices'])
 
                         value_cols = []
                         for col in meas_normdf.columns:
