@@ -136,8 +136,8 @@ class CitrineDataRetrieval:
 
             time.sleep(refresh_time)
 
-        non_meas_df = pd.DataFrame()  # df w/o measurement column
-        meas_df = pd.DataFrame()  # df containing only measurement column
+        non_prop_df = pd.DataFrame()  # df w/o measurement column
+        prop_df = pd.DataFrame()  # df containing only measurement column
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
@@ -147,55 +147,55 @@ class CitrineDataRetrieval:
                 counter += 1
                 if 'system' in hit.keys():
                     system_value = hit['system']
-                    sample_normdf = json_normalize(system_value)
+                    system_normdf = json_normalize(system_value)
 
                     # Make a DF of all non-'property' fields
-                    non_meas_cols = [cols for cols in sample_normdf.columns if "properties" not in cols]
-                    non_meas_row = pd.DataFrame()
-                    for col in non_meas_cols:
-                        non_meas_row[col] = sample_normdf[col]
-                    non_meas_row.index = [counter] * len(sample_normdf)
-                    non_meas_df = non_meas_df.append(non_meas_row)
+                    non_prop_cols = [cols for cols in system_normdf.columns if "properties" not in cols]
+                    non_prop_row = pd.DataFrame()
+                    for col in non_prop_cols:
+                        non_prop_row[col] = system_normdf[col]
+                    non_prop_row.index = [counter] * len(system_normdf)
+                    non_prop_df = non_prop_df.append(non_prop_row)
 
                     # Make a DF of the 'measurement' array
                     if 'properties' in system_value:
-                        meas_normdf = json_normalize(system_value['properties'])
+                        prop_normdf = json_normalize(system_value['properties'])
 
-                        if 'scalars' in meas_normdf.columns:
-                            self.parse_scalars(meas_normdf['scalars'])
-                        if 'vectors' in meas_normdf.columns:
-                            self.parse_vectors(meas_normdf['vectors'])
-                        if 'matrices' in meas_normdf.columns:
-                            self.parse_matrix(meas_normdf['matrices'])
+                        if 'scalars' in prop_normdf.columns:
+                            self.parse_scalars(prop_normdf['scalars'])
+                        if 'vectors' in prop_normdf.columns:
+                            self.parse_vectors(prop_normdf['vectors'])
+                        if 'matrices' in prop_normdf.columns:
+                            self.parse_matrix(prop_normdf['matrices'])
 
                         value_cols = []
-                        for col in meas_normdf.columns:
+                        for col in prop_normdf.columns:
                             if col in ['scalars', 'vectors', 'matrices']:
-                                value_cols.append(meas_normdf[col].dropna())
+                                value_cols.append(prop_normdf[col].dropna())
 
-                        meas_normdf['property_values'] = pd.concat(value_cols)
+                        prop_normdf['property_values'] = pd.concat(value_cols)
                         # print meas_normdf.pivot(columns='name', values='property_values')
 
-                        prop_df = meas_normdf.pivot(columns='name', values='property_values')
-                        prop_df.index = [counter] * len(meas_normdf)
+                        values_df = prop_normdf.pivot(columns='name', values='property_values')
+                        values_df.index = [counter] * len(prop_normdf)
                         # print prop_df
                         # prop_df = prop_df.drop_duplicates(['name'])
 
                         # Making a single row DF of non-'measurement.property' columns
-                        non_prop_df = pd.DataFrame()
-                        non_prop_cols = []
-                        for col in meas_normdf.columns:
+                        non_values_df = pd.DataFrame()
+                        non_values_cols = []
+                        for col in prop_normdf.columns:
                             if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']:
-                                non_prop_cols.append(col)
-                        for col in non_prop_cols:
-                            non_prop_df[col] = meas_normdf[col]
-                        if len(non_prop_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
-                            non_prop_df.index = [counter] * len(meas_normdf)
+                                non_values_cols.append(col)
+                        for col in non_values_cols:
+                            non_values_df[col] = prop_normdf[col]
+                        if len(non_values_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
+                            non_values_df.index = [counter] * len(prop_normdf)
                         # non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
 
-                        meas_df = meas_df.append(pd.concat([prop_df, non_prop_df], axis=1))
+                        prop_df = prop_df.append(pd.concat([values_df, non_values_df], axis=1))
 
-        df = pd.concat([non_meas_df, meas_df], axis=1)
+        df = pd.concat([non_prop_df, prop_df], axis=1)
         df.index.name = 'system'
 
         if show_columns:
