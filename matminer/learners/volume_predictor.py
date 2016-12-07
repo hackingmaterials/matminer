@@ -4,6 +4,7 @@ import warnings
 from matminer.descriptors.composition_features import get_pymatgen_descriptor, get_std
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.analysis.bond_valence import BVAnalyzer
+import numpy as np
 
 
 class VolumePredictor:
@@ -50,25 +51,21 @@ class VolumePredictor:
             raise ValueError("VolumePredictor requires ordered structures!")
 
         smallest_ratio = None  # ratio of observed vs expected bond distance
-        ionic_mix = min(get_std(get_pymatgen_descriptor(structure.composition,
-                                                 'X')) * self.ionic_factor, 1)
+        ionic_mix = min(np.std(get_pymatgen_descriptor(structure.composition, 'X')) * self.ionic_factor, 1)
 
         for site in structure:
             el1 = site.specie
             if el1.atomic_radius:
                 r1 = el1.average_ionic_radius * ionic_mix + \
-                     el1.atomic_radius * (1-ionic_mix) if \
-                    el1.average_ionic_radius else el1.atomic_radius
+                     el1.atomic_radius * (1-ionic_mix) if el1.average_ionic_radius else el1.atomic_radius
 
-                neighbors = structure.get_neighbors(site,
-                                            el1.atomic_radius + self.cutoff)
+                neighbors = structure.get_neighbors(site, el1.atomic_radius + self.cutoff)
 
                 for site2, dist in neighbors:
                     el2 = site2.specie
                     if el2.atomic_radius:
                         r2 = el2.average_ionic_radius * ionic_mix + \
-                             el2.atomic_radius * (1-ionic_mix) if \
-                            el2.average_ionic_radius else el2.atomic_radius
+                             el2.atomic_radius * (1-ionic_mix) if el2.average_ionic_radius else el2.atomic_radius
 
                         expected_dist = float(r1 + r2)
 
@@ -149,8 +146,7 @@ class ConditionalVolumePredictor:
 
         if test_isostructural:
             m = StructureMatcher()
-            mapping = m.get_best_electronegativity_anonymous_mapping(
-                structure, ref_structure)
+            mapping = m.get_best_electronegativity_anonymous_mapping(structure, ref_structure)
             if mapping is None:
                 raise ValueError("Input structures do not match!")
 
