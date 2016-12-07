@@ -1,6 +1,4 @@
 from pymatgen import Element, Composition, MPRester
-import numpy as np
-import math
 import collections
 import os
 import json
