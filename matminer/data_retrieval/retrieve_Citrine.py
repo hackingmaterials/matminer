@@ -129,7 +129,7 @@ class CitrineDataRetrieval:
 
             if max_results and len(json_data) * per_page > max_results:  # check if limit is reached
                 json_data = json_data[:(max_results / per_page)]  # get first multiple of 100 records
-                json_data.append(data.json()['results'][:max_results % per_page])  # get remaining records
+                json_data.append(data[:max_results % per_page])  # get remaining records
                 break
             if size < per_page:  # break out of last loop of results
                 break
