@@ -146,8 +146,8 @@ class CitrineDataRetrieval:
             for hit in tqdm(page):
                 counter += 1
                 if 'system' in hit.keys():
-                    sample_value = hit['system']
-                    sample_normdf = json_normalize(sample_value)
+                    system_value = hit['system']
+                    sample_normdf = json_normalize(system_value)
 
                     # Make a DF of all non-'property' fields
                     non_meas_cols = [cols for cols in sample_normdf.columns if "properties" not in cols]
@@ -158,8 +158,8 @@ class CitrineDataRetrieval:
                     non_meas_df = non_meas_df.append(non_meas_row)
 
                     # Make a DF of the 'measurement' array
-                    if 'properties' in sample_value:
-                        meas_normdf = json_normalize(sample_value['properties'])
+                    if 'properties' in system_value:
+                        meas_normdf = json_normalize(system_value['properties'])
 
                         if 'scalars' in meas_normdf.columns:
                             self.parse_scalars(meas_normdf['scalars'])
@@ -196,10 +196,11 @@ class CitrineDataRetrieval:
                         meas_df = meas_df.append(pd.concat([prop_df, non_prop_df], axis=1))
 
         df = pd.concat([non_meas_df, meas_df], axis=1)
-        df.index.name = 'sample'
+        df.index.name = 'system'
 
         if show_columns:
             for column in df.columns:
                 if column not in show_columns:
                     df.drop(column, axis=1, inplace=True)
+
         return df
