@@ -18,8 +18,7 @@ class CitrineDataRetrievalTest(unittest.TestCase):
         self.cdr = CitrineDataRetrieval(citrine_key)
 
     def test_get_data(self):
-        df = self.cdr.get_dataframe(formula="W")
-        df = self.cdr.get_dataframe(formula="W", data_type='EXPERIMENTAL')
+        df = self.cdr.get_dataframe(formula="W", data_type='EXPERIMENTAL', max_results=10)
 
 if __name__ == "__main__":
     unittest.main()
