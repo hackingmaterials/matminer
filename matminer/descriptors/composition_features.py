@@ -30,9 +30,9 @@ def get_pymatgen_descriptor(comp, prop):
     Args:
         comp: (str) compound composition, eg: "NaCl"
         prop: (str) pymatgen element attribute, as defined in the Element class at
-    http://pymatgen.org/_modules/pymatgen/core/periodic_table.html
+            http://pymatgen.org/_modules/pymatgen/core/periodic_table.html
 
-    Returns: (list) of namedtuples containing element name, property name, property value, units, and amount of element
+    Returns: (list) of values containing descriptor floats
 
     """
     eldata = []
