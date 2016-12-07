@@ -5,7 +5,7 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
-import json
+
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -229,7 +229,7 @@ class CitrineDataRetrieval:
                                 non_values_cols.append(col)
                         for col in non_values_cols:
                             non_values_df[col] = prop_normdf[col]
-                        if len(non_values_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
+                        if len(non_values_df) > 0:  # Do not index empty DF (non-'measurement.property' columns absent)
                             non_values_df.index = [counter] * len(prop_normdf)
 
                         # Concatenate values and non-values DF
