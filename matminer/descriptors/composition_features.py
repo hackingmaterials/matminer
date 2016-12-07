@@ -152,67 +152,6 @@ def get_cohesive_energy(comp):
     return cohesive_energy
 
 
-def get_range(lst):
-    x = get_maxmin(lst)
-    return x["max"] - x["min"]
-
-
-def get_maxmin(lst):
-    """
-    Get maximum, minimum, median, and total of descriptor values.
-
-    Args:
-        lst: (list) of namedtuples as output by get_element_data()
-
-    Returns: (dict) containing maximum, minimum, median, and total of all property values
-
-    """
-    propvalues = []
-    for element in lst:
-        if element.propvalue is not None:
-            propvalues.append(element.propvalue)
-    return {'max': max(propvalues), 'min': min(propvalues), 'median': np.median(propvalues), 'sum': sum(propvalues)}
-
-
-def get_mean(lst):
-    """
-    Get mean of descriptor values.
-
-    Args:
-        lst: (list) of namedtuples as output by get_element_data()
-
-    Returns: (float) weighted mean of property values
-
-    """
-    total_propamt = 0
-    total_amt = 0
-    for element in lst:
-        if element.propvalue is not None:
-            total_propamt += (element.propvalue * element.amt)
-            total_amt += element.amt
-    return total_propamt / total_amt
-
-
-def get_std(lst):
-    """
-    Get standard deviation of descriptor values.
-
-    Args:
-        lst: (list) of namedtuples as output by get_element_data()
-
-    Returns: (float) weighted standard deviation of property values
-
-    """
-    mean = get_mean(lst)
-    total_weighted_squares = 0
-    total_amt = 0
-    for element in lst:
-        if element.propvalue is not None:
-            total_weighted_squares += (element.amt * (element.propvalue - mean) ** 2)
-            total_amt += element.amt
-    return math.sqrt(total_weighted_squares / total_amt)
-
-
 def band_center(comp):
     """
     Estimate absolution position of band center using geometric mean of electronegativity
