@@ -41,17 +41,24 @@ def get_pymatgen_descriptor(comp, prop):
     el_amt_dict = Composition(comp).get_el_amt_dict()
 
     for el in el_amt_dict:
+
         if callable(getattr(Element(el), prop)) is None:
             raise ValueError('Invalid pymatgen Element attribute(property)')
 
         if getattr(Element(el), prop) is not None:
+
+            # units are None for these pymatgen descriptors
             if prop in ['X', 'Z', 'ionic_radii', 'group', 'row', 'number']:
                 units = None
             else:
                 units = getattr(Element(el), prop).unit
+
+            # Make a named tuple out of all the available information
             eldata_tup_lst.append(
                 eldata_tup(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
                        amt=el_amt_dict[el]))
+
+            # Add descriptor values, one for each atom in the compound
             for i in range(int(el_amt_dict[el])):
                 eldata.append(float(getattr(Element(el), prop)))
 
