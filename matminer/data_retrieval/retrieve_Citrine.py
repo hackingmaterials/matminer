@@ -143,9 +143,12 @@ class CitrineDataRetrieval:
 
         for page in json_data:
             # df = pd.concat((json_normalize(hit) for hit in set))   # Useful tool for the future
+
             for hit in tqdm(page):
-                counter += 1
-                if 'system' in hit.keys():
+
+                counter += 1          # Keep a count to appropriately index the rows
+
+                if 'system' in hit.keys():       # Check if 'system' key exists, else skip
                     system_value = hit['system']
                     system_normdf = json_normalize(system_value)
 
@@ -157,10 +160,11 @@ class CitrineDataRetrieval:
                     non_prop_row.index = [counter] * len(system_normdf)
                     non_prop_df = non_prop_df.append(non_prop_row)
 
-                    # Make a DF of the 'measurement' array
+                    # Make a DF of the 'properties' array
                     if 'properties' in system_value:
                         prop_normdf = json_normalize(system_value['properties'])
 
+                        # Parse each type of property value
                         if 'scalars' in prop_normdf.columns:
                             self.parse_scalars(prop_normdf['scalars'])
                         if 'vectors' in prop_normdf.columns:
@@ -168,20 +172,18 @@ class CitrineDataRetrieval:
                         if 'matrices' in prop_normdf.columns:
                             self.parse_matrix(prop_normdf['matrices'])
 
+                        # Get non-Null property values, and merge them into a new single column 'property_values'
                         value_cols = []
                         for col in prop_normdf.columns:
                             if col in ['scalars', 'vectors', 'matrices']:
                                 value_cols.append(prop_normdf[col].dropna())
-
                         prop_normdf['property_values'] = pd.concat(value_cols)
-                        # print meas_normdf.pivot(columns='name', values='property_values')
 
+                        # Pivot to make properties into columns
                         values_df = prop_normdf.pivot(columns='name', values='property_values')
                         values_df.index = [counter] * len(prop_normdf)
-                        # print prop_df
-                        # prop_df = prop_df.drop_duplicates(['name'])
 
-                        # Making a single row DF of non-'measurement.property' columns
+                        # Making a single row DF of non-property columns
                         non_values_df = pd.DataFrame()
                         non_values_cols = []
                         for col in prop_normdf.columns:
@@ -191,10 +193,11 @@ class CitrineDataRetrieval:
                             non_values_df[col] = prop_normdf[col]
                         if len(non_values_df) > 0:  # Do not index empty DF (non-'measuremenet.property' columns absent)
                             non_values_df.index = [counter] * len(prop_normdf)
-                        # non_prop_df = non_prop_df[:1]  # Take only first row - does not collect non-unique rows
 
+                        # Concatenate values and non-values DF
                         prop_df = prop_df.append(pd.concat([values_df, non_values_df], axis=1))
 
+        # Concatenate 'property' and 'non-property' dataframes
         df = pd.concat([non_prop_df, prop_df], axis=1)
         df.index.name = 'system'
 
