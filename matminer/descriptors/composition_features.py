@@ -35,8 +35,9 @@ def get_pymatgen_descriptor(comp, prop):
     Returns: (list) of namedtuples containing element name, property name, property value, units, and amount of element
 
     """
-    eldata_lst = []
-    eldata = collections.namedtuple('eldata', 'element propname propvalue propunit amt')
+    eldata = []
+    eldata_tup_lst = []
+    eldata_tup = collections.namedtuple('eldata_tup', 'element propname propvalue propunit amt')
     el_amt_dict = Composition(comp).get_el_amt_dict()
 
     for el in el_amt_dict:
@@ -48,14 +49,17 @@ def get_pymatgen_descriptor(comp, prop):
                 units = None
             else:
                 units = getattr(Element(el), prop).unit
-            eldata_lst.append(
-                eldata(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
+            eldata_tup_lst.append(
+                eldata_tup(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
                        amt=el_amt_dict[el]))
+            for i in range(1, el_amt_dict[el]):
+                eldata.append(float(getattr(Element(el), prop)))
 
         else:
-            eldata_lst.append(eldata(element=el, propname=prop, propvalue=None, propunit=None, amt=el_amt_dict[el]))
+            eldata_tup_lst.append(eldata_tup(element=el, propname=prop, propvalue=None, propunit=None,
+                                             amt=el_amt_dict[el]))
 
-    return eldata_lst
+    return eldata
 
 
 def get_magpie_descriptor(comp, descriptor_name):
