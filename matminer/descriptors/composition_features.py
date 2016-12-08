@@ -201,4 +201,4 @@ if __name__ == '__main__':
         print(get_pymatgen_descriptor('LiFePO4', desc))
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
     print(get_magpie_descriptor('LiFePO4', 'Density'))
-    print get_holder_mean([1, 2, 3, 4], 0)
+    print(get_holder_mean([1, 2, 3, 4], 0))
