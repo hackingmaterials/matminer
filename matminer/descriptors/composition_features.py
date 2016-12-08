@@ -3,7 +3,6 @@ import collections
 import os
 import json
 
-
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 # TODO: read Magpie file only once
@@ -54,7 +53,7 @@ def get_pymatgen_descriptor(comp, prop):
             # Make a named tuple out of all the available information
             eldata_tup_lst.append(
                 eldata_tup(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
-                       amt=el_amt_dict[el]))
+                           amt=el_amt_dict[el]))
 
             # Add descriptor values, one for each atom in the compound
             for i in range(int(el_amt_dict[el])):
@@ -169,6 +168,31 @@ def band_center(comp):
     return -prod ** (1 / sum(comp.get_el_amt_dict().values()))
 
 
+def get_holder_mean(data_lst, power):
+    """
+    Get Holder mean
+
+    Args:
+        data_lst: (list/array) of values
+        power: (int/float) non-zero real number
+
+    Returns: Holder mean
+
+    """
+    # Function for calculating Geometric mean
+    geomean = lambda n: reduce(lambda x, y: x * y, n) ** (1.0 / len(n))
+
+    # If power=0, return geometric mean
+    if power == 0:
+        return geomean(data_lst)
+
+    else:
+        total = 0.0
+        for value in data_lst:
+            total += value ** power
+        return (total / len(data_lst)) ** (1 / float(power))
+
+
 if __name__ == '__main__':
     descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
                    'coefficient_of_linear_thermal_expansion']
@@ -177,4 +201,4 @@ if __name__ == '__main__':
         print(get_pymatgen_descriptor('LiFePO4', desc))
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
     print(get_magpie_descriptor('LiFePO4', 'Density'))
-
+    print get_holder_mean([1, 2, 3, 4], 0)
