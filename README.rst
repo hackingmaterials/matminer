@@ -2,7 +2,8 @@
 MatMiner
 ========
 
-MatMiner is a library for Materials Science data mining. It is currently in development and **unsupported**.
+MatMiner is an open-source Python library for performing data mining and analysis in the field of Materials Science. It
+is currently in development, however it is a **working code**.
 
 To cite MatMiner, you can cite the following two papers::
 
