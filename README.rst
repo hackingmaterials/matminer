@@ -2,8 +2,19 @@
 MatMiner
 ========
 
-MatMiner is an open-source Python library for performing data mining and analysis in the field of Materials Science. It
-is currently in development, however it is a **working code**.
+MatMiner is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is currently in development, however it is a **working code**.
+
+Overview
+--------
+
+It includes tools and utilities that make it easier to,
+
+- Retrieve data from the biggest materials databases, such as the Materials Project and Citrine's databases, in a Pandas dataframe format
+- Decorate the dataframe with composition, structural, and/or band structure descriptors/features
+- Solve for and add thermal and mechanical properties to the dataframe
+
+
+
 
 To cite MatMiner, you can cite the following two papers::
 
