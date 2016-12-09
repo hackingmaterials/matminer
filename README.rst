@@ -7,7 +7,9 @@ MatMiner is an open-source Python library for performing data mining and analysi
 Installation
 --------
 
-1. **Quick install**
+There are a few ways to install MatMiner:-
+
+- **Quick install**
 
 (Beware: this may not install the latest changes to MatMiner. To install the version with the latest commits, skip to the next steps)
 
@@ -23,9 +25,9 @@ or, to install MatMiner in your user $HOME folder, run the command:
 
     $ pip install matminer --user 
 
-2. **Full install**
+- **Install in developmental mode**
 
-To install the full and latest source of the MatMiner code, along with its important dependencies, clone the Git source in a folder of your choosing by entering the following command:
+To install the full and latest source of the MatMiner code in developmental mode, along with its important dependencies, clone the Git source in a folder of your choosing by entering the following command:
 
 .. code-block:: bash
 
