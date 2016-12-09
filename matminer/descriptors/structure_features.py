@@ -136,7 +136,8 @@ class CNBase:
 
     def __init__(self, params=None):
         """
-        :param params: (dict) of parameters to pass to compute method.
+        Args:
+            params: (dict) parameters to pass to compute method.
         """
         self._params = params if params else {}
         self._cns = {}
@@ -144,20 +145,23 @@ class CNBase:
     @abc.abstractmethod
     def compute(self, structure, n):
         """
-        :param structure: (Structure) a pymatgen Structure
-        :param n: (int) index of the atom in structure that the CN will be calculated
-            for.
-        :return: Dict of CN's for the site n. (e.g. {'O': 4.4, 'F': 2.1})
+        Args:
+            structure: (Structure) a pymatgen Structure
+            n: (int) index of the atom in structure that the CN will be calculated for.
+        Returns:
+            Dict of CN's for the site n. (e.g. {'O': 4.4, 'F': 2.1})
+
         """
         pass
 
 
-class OKeefes(CNBase):
+class OKeeffes(CNBase):
     """
-    O'Keefe's CN's as implemented in pymatgen.
+    O'Keeffe's CN's as implemented in pymatgen.
     Note: We only need to define the compute method using the CNBase class
         that returns a dict object.
         params can be accessed via ._params and passed to actual function.
+    **For Args and Returns see the base class CNBase.**
     """
     def compute(self, structure, n):
         params = self._params
@@ -175,6 +179,7 @@ class OKeefes(CNBase):
 class ECoN(CNBase):
     """
     Effective Coordination Number (ECON) of Hoppe.
+    **For Args and Returns see the base class CNBase.**
     """
     def compute(self, structure, n):
         params = self._params
@@ -182,14 +187,15 @@ class ECoN(CNBase):
         return x.get_cns(**params)
 
 
-class OKeefes_mod(CNBase):
+class OKeeffes_mod(CNBase):
     """
     Modified O'Keefe VoronoiCoordFinder that considers only neighbors
     with at least 50% weight of max(weight).
+    **For Args and Returns see the base class CNBase.**
     """
     def compute(self, structure, n):
         params = self._params
-        x = OKeefes_modified(structure, n)
+        x = OKeeffes_modified(structure, n)
         return x.get_cns(**params)
 
 
@@ -198,6 +204,7 @@ class VoronoiLegacy(CNBase):
     Plain Voronoi coordination numbers (i.e. number of facets of Voronoi polyhedra)
     Should not be used on its own, implemented only for comparison purposes.
     Base line for any Voronoi based CN algorithm.
+    **For Args and Returns see the base class CNBase.**
     """
     def compute(self, structure, n):
         pass
@@ -210,6 +217,7 @@ class BrunnerReciprocal(CNBase):
     Ref:
         G.O. Brunner, A definition of coordination and its relevance in structure types AlB2 and NiAs.
         Acta Crys. A33 (1977) 226.
+    **For Args and Returns see the base class CNBase.**
     """
     def compute(self, structure, n):
         params = self._params
@@ -224,6 +232,7 @@ class BrunnerRelative(CNBase):
     Ref:
         G.O. Brunner, A definition of coordination and its relevance in structure types AlB2 and NiAs.
         Acta Crys. A33 (1977) 226.
+    **For Args and Returns see the base class CNBase.**
     """
     def compute(self, structure, n):
         params = self._params
@@ -238,6 +247,7 @@ class BrunnerReal(CNBase):
     Ref:
         G.O. Brunner, A definition of coordination and its relevance in structure types AlB2 and NiAs.
         Acta Crys. A33 (1977) 226.
+    **For Args and Returns see the base class CNBase.**
     """
     def compute(self, structure, n):
         params = self._params
@@ -273,8 +283,9 @@ def Brunner(structure, n, mode="reciprocal", tol=1.0e-4, radius=8.0):
     return cn
 
 
-class OKeefes_modified(object):
+class OKeeffes_modified(object):
     """
+    Helper class for modified O'Keefe's method.
     Author: S. Bajaj (LBL)
     Modified: M. Aykol (LBL)
     """
@@ -305,6 +316,7 @@ class OKeefes_modified(object):
 class EffectiveCoordFinder_modified(object):
 
     """
+    Helper class for ECoN
     Author: S. Bajaj (LBL)
     Modified: M. Aykol (LBL)
     Finds the average effective coordination number for each cation in a given structure. It
@@ -350,10 +362,10 @@ class EffectiveCoordFinder_modified(object):
 
 def calculate_weighted_avg(bonds):
     """
-    Author: S. Bajaj (LBL)
-    Get the weighted average bond length given by the effective coordination number formula in Hoppe (1979)
-    :param bonds: (list) list of floats that are the bond distances between a cation and its peripheral ions
-    :return: (float) exponential weighted average
+    Args:
+        bonds: (list) list of floats that are the bond distances between a cation and its peripheral ions
+    Returns:
+        (float) exponential weighted average
     """
     minimum_bond = min(bonds)
     weighted_sum = 0.0
@@ -369,7 +381,7 @@ if __name__ == '__main__':
     with MPRester() as mp:
         test_struct = mp.get_structure_by_material_id(test_mpid)
     print get_redf(test_struct)["redf"]
-    cn_methods = [OKeefes, OKeefes_mod, ECoN, BrunnerReal, BrunnerReciprocal, BrunnerRelative]
+    cn_methods = [OKeeffes, OKeeffes_mod, ECoN, BrunnerReal, BrunnerReciprocal, BrunnerRelative]
     for cn_method in cn_methods:
         print cn_method
         r = cn_method()
