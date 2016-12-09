@@ -4,6 +4,24 @@ MatMiner
 
 MatMiner is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a **working code**.
 
+Installation
+--------
+
+1. Quick install
+
+(Beware: this may not install the latest changes to MatMiner. To install the version with the latest commits, skip to the next steps)
+
+For a quick install of MatMiner, and all of its dependencies, simply run the following command in a terminal,
+
+>>> pip install matminer
+
+or, to install MatMiner in your user $HOME folder, run the following command in a terminal,
+
+>>> pip install matminer --user 
+
+2. 
+
+
 Citing MatMiner
 --------
 
