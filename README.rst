@@ -42,6 +42,12 @@ and then entering the cloned repository/folder to install in developer mode:
     
 Depending on how many of the required dependencies were already installed on your system, you will see a few or many warnings, but everything should be installed successfully.
 
+- **Install in virtual environments**
+
+If you are working with many python packages and want to use separate configuration settings for each package, it is generally recommended to create and use a separate environment for each package. You can use either of the following two options to create a virtual environment, and then install MatMiner in it using any of the above two installation options.
+
+
+
 
 Citing MatMiner
 --------
