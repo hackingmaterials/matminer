@@ -155,7 +155,7 @@ class CNBase:
         pass
 
 
-class OKeeffes(CNBase):
+class CN_OKeeffes(CNBase):
     """
     O'Keeffe's CN's as implemented in pymatgen.
     Note: We only need to define the compute method using the CNBase class
@@ -176,7 +176,7 @@ class OKeeffes(CNBase):
         return cdict
 
 
-class ECoN(CNBase):
+class CN_ECoN(CNBase):
     """
     Effective Coordination Number (ECON) of Hoppe.
     **For Args and Returns see the base class CNBase.**
@@ -187,7 +187,7 @@ class ECoN(CNBase):
         return x.get_cns(**params)
 
 
-class OKeeffes_mod(CNBase):
+class CN_OKeeffes_mod(CNBase):
     """
     Modified O'Keefe VoronoiCoordFinder that considers only neighbors
     with at least 50% weight of max(weight).
@@ -199,7 +199,7 @@ class OKeeffes_mod(CNBase):
         return x.get_cns(**params)
 
 
-class VoronoiLegacy(CNBase):
+class CN_VoronoiLegacy(CNBase):
     """
     Plain Voronoi coordination numbers (i.e. number of facets of Voronoi polyhedra)
     Should not be used on its own, implemented only for comparison purposes.
@@ -210,7 +210,7 @@ class VoronoiLegacy(CNBase):
         pass
 
 
-class BrunnerReciprocal(CNBase):
+class CN_BrunnerReciprocal(CNBase):
     """
     Brunner's CN described as counting the atoms that are within the largest gap in
     differences in reciprocal interatomic distances.
@@ -224,7 +224,7 @@ class BrunnerReciprocal(CNBase):
         return Brunner(structure, n, mode="reciprocal", **params)
 
 
-class BrunnerRelative(CNBase):
+class CN_BrunnerRelative(CNBase):
     """
     Brunner's CN described as counting the atoms that are within the largest gap in
     differences in real space interatomic distances.
@@ -239,7 +239,7 @@ class BrunnerRelative(CNBase):
         return Brunner(structure, n, mode="relative", **params)
 
 
-class BrunnerReal(CNBase):
+class CN_BrunnerReal(CNBase):
     """
     Brunner's CN described as counting the atoms that are within the largest gap in
     differences in real space interatomic distances.
@@ -381,7 +381,7 @@ if __name__ == '__main__':
     with MPRester() as mp:
         test_struct = mp.get_structure_by_material_id(test_mpid)
     print get_redf(test_struct)["redf"]
-    cn_methods = [OKeeffes, OKeeffes_mod, ECoN, BrunnerReal, BrunnerReciprocal, BrunnerRelative]
+    cn_methods = [CN_OKeeffes, CN_OKeeffes_mod, CN_ECoN, CN_BrunnerReal, CN_BrunnerReciprocal, CN_BrunnerRelative]
     for cn_method in cn_methods:
         print cn_method
         r = cn_method()
