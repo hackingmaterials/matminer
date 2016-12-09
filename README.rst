@@ -77,6 +77,35 @@ Note: you may need to open a new terminal window after this step in order for th
 
 And then install MatMiner using any of the above options of :code:`pip install` or :code:`git clone`.
 
+2. Using virtualenv
+
+*virtualenv* creates a folder that contains all the necessary executables to use the packages that your Python project may require. It can be installed via:
+
+.. code-block:: bash
+
+    $ pip install virtualenv
+    
+To create a virtual environemt for MatMiner (or any other project) :
+
+.. code-block:: bash
+
+    $ mkdir [project_folder]
+    $ cd [project_folder]
+    $ virtualenv [virtualenv_name]
+
+where *[project_folder]* and *[virtualenv_name]* are names of the project folder containing the virtual environment, and could be for example, *matminer_project*, *matminer*. This will create a folder named *[virtualenv_name]* in the current directory, and will contain executable files for Python and the pip library. The virtual environemt can be activated using:
+
+.. code-block:: bash
+
+    $ source [virtualenv_name]/bin/activate
+    
+and deactivated using:
+
+.. code-block:: bash
+
+    $ deactivate
+
+When activated, the pip library can be used to install MatMiner (or any other package) using again one of the above two options :code:`pip install` or :code:`git clone`.
 
 
 Overview
