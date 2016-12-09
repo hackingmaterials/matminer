@@ -11,13 +11,17 @@ Installation
 
 (Beware: this may not install the latest changes to MatMiner. To install the version with the latest commits, skip to the next steps)
 
-For a quick install of MatMiner, and all of its dependencies, simply run the following command in a terminal,
+For a quick install of MatMiner, and all of its dependencies, simply run the command in a bash terminal:
 
->>> pip install matminer
+.. code-block:: bash
 
-or, to install MatMiner in your user $HOME folder, run the following command in a terminal,
+    $ pip install matminer
 
->>> pip install matminer --user 
+or, to install MatMiner in your user $HOME folder, run the command:
+
+.. code-block:: bash
+
+    $ pip install matminer --user 
 
 2. **Full install**
 
