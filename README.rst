@@ -75,7 +75,7 @@ You could also instead download and install an operating-system specific version
 
 Note: you may need to open a new terminal window after this step in order for the environmental variables added by conda to be loaded.
 
-And then install MatMiner using any of the above options of :code:`pip install` or :code:`git clone`.
+And then install MatMiner using any of the above options of :code:`pip install` or :code:`git clone` followed by :code:`python setup.py develop`.
 
 2. Using virtualenv
 
@@ -105,7 +105,7 @@ and deactivated using:
 
     $ deactivate
 
-When activated, the pip library can be used to install MatMiner (or any other package) using again one of the above two options :code:`pip install` or :code:`git clone`.
+When activated, the pip library can be used to install MatMiner (or any other package) using again one of the above two options :code:`pip install` or :code:`git clone` followed by :code:`python setup.py develop`.
 
 
 Overview
