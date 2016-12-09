@@ -53,7 +53,29 @@ Depending on how many of the required dependencies were already installed on you
 
 If you are working with many python packages and want to use separate configuration settings for each package, it is generally recommended to create and use a separate environment for each package. You can use either of the following two options to create a virtual environment, and then install MatMiner in it using any of the above two installation options.
 
+1. Conda-based install
 
+You can install conda using:
+
+.. code-block:: bash
+
+    $ pip install conda
+    
+(Note: depending on your operating system and other settings, you may also need to install other packages like *ruamel.yaml*, *pycosat*, etc.)
+
+You could also instead download and install an operating-system specific version of conda from `here <http://conda.pydata.org/miniconda.html>`_. For Windows, make sure it is the Miniconda3 installer, and simply double-click the exe file. For Linux or Mac, run the following in a bash terminal:
+
+.. code-block:: bash
+
+    # If Mac
+    $ bash Miniconda3-latest-MacOSX-x86_64.sh
+
+    # If Linux
+    $ bash Miniconda3-latest-Linux-x86_64.sh
+
+Note: you may need to open a new terminal window after this step in order for the environmental variables added by conda to be loaded.
+
+And then install MatMiner using any of the above options of :code:`pip install` or :code:`git clone`.
 
 
 
