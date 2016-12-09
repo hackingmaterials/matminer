@@ -9,7 +9,7 @@ Overview
 
 It includes tools and utilities that make it easier to,
 
-- Retrieve data from the biggest materials databases, such as the Materials Project and Citrine's databases, in a Pandas dataframe format
+- Retrieve data from the biggest materials databases, such as the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine's databases<https://citrination.com/>`_, in a Pandas dataframe format
 - Decorate the dataframe with composition, structural, and/or band structure descriptors/features
 - Solve for and add thermal and mechanical properties to the dataframe
 
