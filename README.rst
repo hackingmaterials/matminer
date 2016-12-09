@@ -75,7 +75,26 @@ You could also instead download and install an operating-system specific version
 
 Note: you may need to open a new terminal window after this step in order for the environmental variables added by conda to be loaded.
 
-And then install MatMiner using any of the above options of :code:`pip install` or :code:`git clone` followed by :code:`python setup.py develop`.
+To check if conda is successfully installed and in your *PATH*:
+
+.. code-block:: bash
+
+    $ conda -V
+    conda 4.2.7
+
+To create a virtual environemt for your project with Python 2.x (MatMiner is currently not supported for Python 3.x):
+
+.. code-block:: bash
+
+    $ conda create --name [virtualenv_name] python=2
+
+where, *[virtualenv_name]* is the name of the virtual environment. Press :code:`y` to proceed with installation. The installed environment can be activated using:
+
+.. code-block:: bash
+
+    $ source activate [virtualenv_name]
+    
+Once activated, MatMiner, or any other package, can be installed using any of the above options of :code:`pip install` or :code:`git clone` followed by :code:`python setup.py develop`.
 
 2. Using virtualenv
 
@@ -106,7 +125,6 @@ and deactivated using:
     $ deactivate
 
 When activated, the pip library can be used to install MatMiner (or any other package) using again one of the above two options :code:`pip install` or :code:`git clone` followed by :code:`python setup.py develop`.
-
 
 Overview
 --------
