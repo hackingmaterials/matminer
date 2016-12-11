@@ -160,6 +160,8 @@ class CitrineDataRetrieval:
                     references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=per_page)
 
+            if 'hits' not in self.client.search(pif_query).as_dictionary():
+                raise KeyError('No results found!')
             data = self.client.search(pif_query).as_dictionary()['hits']
             size = len(data)
             start += size
