@@ -11,6 +11,14 @@ We are currently in the process of revising the first draft of a paper on MatMin
 
     Bajaj, S.; Jain, A.; [MatMiner]
     
+Example notebooks
+-----------------
+
+A few examples demonstrating the features of the code in this repository have been added in the form of ipython notebooks. You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to matminer/data_retrieval/example_notebooks to use/edit the notebook right away!
+
+.. image:: http://mybinder.org/badge.svg 
+   :target: http://mybinder.org/repo/hackingmaterials/MatMiner  
+   
 Installation
 --------
 
@@ -134,11 +142,4 @@ It includes tools and utilities that make it easier to,
 - Retrieve data from the biggest materials databases, such as the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine's databases <https://citrination.com/>`_, in a Pandas dataframe format
 - Decorate the dataframe with composition, structural, and/or band structure descriptors/features
 - Solve for and add thermal and mechanical properties to the dataframe
-
-Example notebooks
------------------
-
-A few examples demonstrating the features of the code in this repository have been added in the form of ipython notebooks. You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to matminer/data_retrieval/example_notebooks to use/edit the notebook right away!
-
-.. image:: http://mybinder.org/badge.svg 
-   :target: http://mybinder.org/repo/hackingmaterials/MatMiner   
+ 
