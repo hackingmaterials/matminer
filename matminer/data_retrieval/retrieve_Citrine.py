@@ -249,4 +249,7 @@ class CitrineDataRetrieval:
         if show_columns:
             df = df[show_columns]
 
+        # Remove uninformative columns, such as 'category' and 'uid'
+        df.drop(['category', 'uid'], axis=1, inplace=True)
+
         return df
