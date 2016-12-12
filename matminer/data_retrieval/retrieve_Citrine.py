@@ -247,8 +247,6 @@ class CitrineDataRetrieval:
 
         # Filter out columns not selected
         if show_columns:
-            for column in df.columns:
-                if column not in show_columns:
-                    df.drop(column, axis=1, inplace=True)
+            df = df[show_columns]
 
         return df
