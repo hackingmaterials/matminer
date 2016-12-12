@@ -224,6 +224,8 @@ class CitrineDataRetrieval:
                         # Pivot to make properties into columns
                         values_df = prop_normdf.pivot(columns='name', values='property_values')
                         values_df.index = [counter] * len(prop_normdf)
+                        # Convert to float type whichever columns can be converted
+                        values_df = values_df.apply(pd.to_numeric, errors='ignore')
 
                         # Making a single row DF of non-property columns
                         non_values_df = pd.DataFrame()
