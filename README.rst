@@ -20,7 +20,7 @@ A few examples demonstrating some of the features available in MatMiner have bee
 
 2. Compare and plot experimentally band gaps from Citrine with computed values from Materials Project: `Notebook <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
 
-You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to matminer/data_retrieval/example_notebooks to use/edit the notebook right away!
+You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder **example_notebooks** in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to "File->Open" within the page and navigate to the notebook of your choice. 
 
 .. image:: http://mybinder.org/badge.svg 
    :target: http://mybinder.org/repo/hackingmaterials/MatMiner  
