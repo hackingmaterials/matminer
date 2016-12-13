@@ -16,7 +16,7 @@ Example notebooks
 
 A few examples demonstrating some of the features available in MatMiner have been created in the form of Jupyter notebooks: 
 
-1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Notebook <https://github.com/hackingmaterials/MatMiner/blob/master/matminer/data_retrieval/examples/Example1.ipynb>`_
+1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Notebook <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_
 
 
 You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to matminer/data_retrieval/example_notebooks to use/edit the notebook right away!
