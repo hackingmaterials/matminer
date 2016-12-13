@@ -18,6 +18,7 @@ A few examples demonstrating some of the features available in MatMiner have bee
 
 1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Notebook <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_
 
+2. Compare and plot experimentally band gaps from Citrine with computed values from Materials Project: `Notebook <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
 
 You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to matminer/data_retrieval/example_notebooks to use/edit the notebook right away!
 
