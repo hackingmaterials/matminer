@@ -245,11 +245,11 @@ class CitrineDataRetrieval:
         df = pd.concat([non_prop_df, prop_df], axis=1)
         df.index.name = 'system'
 
+        # Remove uninformative columns, such as 'category' and 'uid'
+        df.drop(['category', 'uid'], axis=1, inplace=True)
+
         # Filter out columns not selected
         if show_columns:
             df = df[show_columns]
-
-        # Remove uninformative columns, such as 'category' and 'uid'
-        df.drop(['category', 'uid'], axis=1, inplace=True)
 
         return df
