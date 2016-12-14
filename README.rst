@@ -30,11 +30,11 @@ You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launc
 Installation
 --------
 
-There are a few ways to install MatMiner:-
+There are a couple of quick and easy ways to install MatMiner:-
 
 - **Quick install**
 
-(Beware: this may not install the latest changes to MatMiner. To install the version with the latest commits, skip to the next steps)
+(Note: this may not install the latest changes to MatMiner. To install the version with the latest commits, skip to the next steps)
 
 For a quick install of MatMiner, and all of its dependencies, simply run the command in a bash terminal:
 
@@ -47,6 +47,8 @@ or, to install MatMiner in your user $HOME folder, run the command:
 .. code-block:: bash
 
     $ pip install matminer --user 
+
+One way to obtain :code:`pip` if not already installed is through :code:`conda`, which is useful when you are working with many python packages and want to use separate configuration settings and environment for each package. You can then install MatMiner and packages required by it in its own environment. Some useful links are `here <https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/20/conda/>`_ and `here <http://conda.pydata.org/docs/using/index.html>`_.
 
 - **Install in developmental mode**
 
