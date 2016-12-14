@@ -16,11 +16,13 @@ Example notebooks
 
 A few examples demonstrating some of the features available in MatMiner have been created in the form of Jupyter notebooks: 
 
-1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Notebook <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_
+(Note: the Jupyter (Binder) links below are recommended as Github does not render interactive Javascript code or images.)
 
-2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: `Notebook <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
+1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Jupyter <http://104.197.121.217/user/a1b5ef0fad8e4048fae4c4f7706597e0/notebooks/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_
 
-3. Use machine learning models to fit and predict band gaps by using MatMiner's tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: `Notebook <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_
+2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: `Jupyter <http://104.197.121.217/user/a1b5ef0fad8e4048fae4c4f7706597e0/notebooks/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
+
+3. Use machine learning models to fit and predict band gaps by using MatMiner's tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://104.197.121.217/user/a1b5ef0fad8e4048fae4c4f7706597e0/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_
 
 You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder **example_notebooks** in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to "File->Open" within the page and navigate to the notebook of your choice. 
 
