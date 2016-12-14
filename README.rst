@@ -30,11 +30,11 @@ You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launc
 Installation
 --------
 
-There are a few ways to install MatMiner:-
+There are a couple of quick and easy ways to install MatMiner:-
 
 - **Quick install**
 
-(Beware: this may not install the latest changes to MatMiner. To install the version with the latest commits, skip to the next steps)
+(Note: this may not install the latest changes to MatMiner. To install the version with the latest commits, skip to the next steps)
 
 For a quick install of MatMiner, and all of its dependencies, simply run the command in a bash terminal:
 
@@ -47,6 +47,8 @@ or, to install MatMiner in your user $HOME folder, run the command:
 .. code-block:: bash
 
     $ pip install matminer --user 
+
+One way to obtain :code:`pip` if not already installed is through :code:`conda`, which is useful when you are working with many python packages and want to use separate configuration settings and environment for each package. You can then install MatMiner and packages required by it in its own environment. Some useful links are `here <https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/20/conda/>`_ and `here <http://conda.pydata.org/docs/using/index.html>`_.
 
 - **Install in developmental mode**
 
@@ -64,83 +66,6 @@ and then entering the cloned repository/folder to install in developer mode:
     $ python setup.py develop
     
 Depending on how many of the required dependencies were already installed on your system, you will see a few or many warnings, but everything should be installed successfully.
-
-- **Install in virtual environments**
-
-If you are working with many python packages and want to use separate configuration settings for each package, it is generally recommended to create and use a separate environment for each package. You can use either of the following two options to create a virtual environment, and then install MatMiner in it using any of the above two installation options.
-
-1. Conda-based install
-
-You can install conda using:
-
-.. code-block:: bash
-
-    $ pip install conda
-    
-(Note: depending on your operating system and other settings, you may also need to install other packages like *ruamel.yaml*, *pycosat*, etc.)
-
-You could also instead download and install an operating-system specific version of conda from `here <http://conda.pydata.org/miniconda.html>`_. For Windows, make sure it is the Miniconda3 installer, and simply double-click the exe file. For Linux or Mac, run the following in a bash terminal:
-
-.. code-block:: bash
-
-    # If Mac
-    $ bash Miniconda3-latest-MacOSX-x86_64.sh
-
-    # If Linux
-    $ bash Miniconda3-latest-Linux-x86_64.sh
-
-Note: you may need to open a new terminal window after this step in order for the environmental variables added by conda to be loaded.
-
-To check if conda is successfully installed and in your *PATH*:
-
-.. code-block:: bash
-
-    $ conda -V
-    conda 4.2.7
-
-To create a virtual environemt for your project with Python 2.x (MatMiner is currently not supported for Python 3.x):
-
-.. code-block:: bash
-
-    $ conda create --name [virtualenv_name] python=2
-
-where, *[virtualenv_name]* is the name of the virtual environment. Press :code:`y` to proceed with installation. The installed environment can be activated using:
-
-.. code-block:: bash
-
-    $ source activate [virtualenv_name]
-    
-Once activated, MatMiner, or any other package, can be installed using any of the above options of :code:`pip install` or :code:`git clone` followed by :code:`python setup.py develop`.
-
-2. Using virtualenv
-
-*virtualenv* creates a folder that contains all the necessary executables to use the packages that your Python project may require. It can be installed via:
-
-.. code-block:: bash
-
-    $ pip install virtualenv
-    
-To create a virtual environemt for MatMiner (or any other project) :
-
-.. code-block:: bash
-
-    $ mkdir [project_folder]
-    $ cd [project_folder]
-    $ virtualenv [virtualenv_name]
-
-where *[project_folder]* and *[virtualenv_name]* are names of the project folder containing the virtual environment, and could be for example, *matminer_project*, *matminer*. This will create a folder named *[virtualenv_name]* in the current directory, and will contain executable files for Python and the pip library. The virtual environemt can be activated using:
-
-.. code-block:: bash
-
-    $ source [virtualenv_name]/bin/activate
-    
-and deactivated using:
-
-.. code-block:: bash
-
-    $ deactivate
-
-When activated, the pip library can be used to install MatMiner (or any other package) using again one of the above two options :code:`pip install` or :code:`git clone` followed by :code:`python setup.py develop`.
 
 Overview
 --------
