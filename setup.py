@@ -13,8 +13,8 @@ if __name__ == "__main__":
         description='MatMiner is a library that contains tools for data mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.rst')).read(),
         url='https://github.com/hackingmaterials/MatMiner',
-        author='Anubhav Jain, Saurabh Bajaj'
-        author_email='anubhavster@gmail.com, saurabhbajaj2@gmail.com'
+        author='Anubhav Jain, Saurabh Bajaj',
+        author_email='anubhavster@gmail.com, saurabhbajaj2@gmail.com',
         license='modified BSD',
         packages=find_packages(),
         package_data={},
