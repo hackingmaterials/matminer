@@ -166,7 +166,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'FireWorksdoc'
+htmlhelp_basename = 'MatMinerdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -185,8 +185,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'FireWorks.tex', u'FireWorks Documentation',
-   u'Anubhav Jain', 'manual'),
+  ('index', 'MatMiner.tex', u'MatMiner Documentation',
+   [u'Saurabh Bajaj', u'Anubhav Jain'], 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -215,8 +215,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'fireworks', u'FireWorks Documentation',
-     [u'Anubhav Jain'], 1)
+    ('index', 'matminer', u'MatMiner Documentation',
+     [u'Saurabh Bajaj', u'Anubhav Jain'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -248,9 +248,9 @@ texinfo_documents = [
 
 # Bibliographic Dublin Core info.
 epub_title = u'MatMiner'
-epub_author = u'Anubhav Jain'
-epub_publisher = u'Anubhav Jain'
-epub_copyright = u'2015, Anubhav Jain'
+epub_author = u'Saurabh Bajaj', u'Anubhav Jain'
+epub_publisher = u'Saurabh Bajaj', u'Anubhav Jain'
+epub_copyright = u'2015, Saurabh Bajaj, Anubhav Jain'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
