@@ -70,7 +70,14 @@ Depending on how many of the required dependencies were already installed on you
 Overview
 --------
 
-It includes tools and utilities that make it easier to,
+Below is a general workflow that shows the different tools and utilities available within MatMiner, and how they could be implemented with one another, as well as external libraries, in your own materials data analysis study. 
+
+|
+.. image:: https://github.com/hackingmaterials/MatMiner/blob/master/Flowchart.png
+|
+|
+
+It basically includes tools and utilities that make it easier to,
 
 - Retrieve data from the biggest materials databases, such as the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine's databases <https://citrination.com/>`_, in a Pandas dataframe format
 - Decorate the dataframe with composition, structural, and/or band structure descriptors/features
