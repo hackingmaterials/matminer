@@ -43,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'MatMiner'
-copyright = u'2015, Anubhav Jain'
+copyright = u'2015, Saurabh Bajaj, Anubhav Jain'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -230,7 +230,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'MatMiner', u'MatMiner Documentation',
-   u'Anubhav Jain', 'MatMiner has implementations of FireWorks workflows for Materials Science',
+   [u'Saurabh Bajaj', u'Anubhav Jain'], 'MatMiner is a library that contains tools for data mining in Materials Science',
    'Miscellaneous'),
 ]
 
