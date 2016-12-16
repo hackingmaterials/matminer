@@ -1,4 +1,4 @@
-matminer package
+MatMiner package
 ================
 
 Subpackages
@@ -6,58 +6,34 @@ Subpackages
 
 .. toctree::
 
-    matminer.data_retrieval
-    matminer.descriptors
-    matminer.learners
-    matminer.models
+    MatMiner.data_retrieval
+    MatMiner.descriptors
+    MatMiner.learners
+    MatMiner.models
 
 Submodules
 ----------
 
-matminer.decorate module
+MatMiner.decorate module
 ------------------------
 
-.. automodule:: matminer.decorate
+.. automodule:: MatMiner.decorate
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.pyCookieCheat module
+MatMiner.pyCookieCheat module
 -----------------------------
 
-.. automodule:: matminer.pyCookieCheat
+.. automodule:: MatMiner.pyCookieCheat
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.test module
---------------------
-
-.. automodule:: matminer.test
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matminer.test_ML_BulkMod module
--------------------------------
-
-.. automodule:: matminer.test_ML_BulkMod
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matminer.test_flask module
---------------------------
-
-.. automodule:: matminer.test_flask
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matminer.utils module
+MatMiner.utils module
 ---------------------
 
-.. automodule:: matminer.utils
+.. automodule:: MatMiner.utils
     :members:
     :undoc-members:
     :show-inheritance:
@@ -66,7 +42,7 @@ matminer.utils module
 Module contents
 ---------------
 
-.. automodule:: matminer
+.. automodule:: MatMiner
     :members:
     :undoc-members:
     :show-inheritance:

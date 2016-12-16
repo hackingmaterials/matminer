@@ -1,7 +1,7 @@
-matminer
+MatMiner
 ========
 
 .. toctree::
    :maxdepth: 4
 
-   matminer
+   MatMiner
