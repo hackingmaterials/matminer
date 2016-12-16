@@ -81,6 +81,7 @@ Below is a general workflow that shows the different tools and utilities availab
 
 |
 .. image:: https://github.com/hackingmaterials/MatMiner/blob/master/Flowchart.png
+   :align: center
 |
 |
 
