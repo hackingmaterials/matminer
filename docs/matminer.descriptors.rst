@@ -1,45 +1,37 @@
-matminer.descriptors package
+MatMiner.descriptors package
 ============================
 
 Submodules
 ----------
 
-matminer.descriptors.add_descriptors module
+MatMiner.descriptors.add_descriptors module
 -------------------------------------------
 
-.. automodule:: matminer.descriptors.add_descriptors
+.. automodule:: MatMiner.descriptors.add_descriptors
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.descriptors.bandstructure_features module
+MatMiner.descriptors.bandstructure_features module
 --------------------------------------------------
 
-.. automodule:: matminer.descriptors.bandstructure_features
+.. automodule:: MatMiner.descriptors.bandstructure_features
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.descriptors.composition_features module
+MatMiner.descriptors.composition_features module
 ------------------------------------------------
 
-.. automodule:: matminer.descriptors.composition_features
+.. automodule:: MatMiner.descriptors.composition_features
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.descriptors.create_cohesive_energy_json module
--------------------------------------------------------
-
-.. automodule:: matminer.descriptors.create_cohesive_energy_json
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matminer.descriptors.structure_features module
+MatMiner.descriptors.structure_features module
 ----------------------------------------------
 
-.. automodule:: matminer.descriptors.structure_features
+.. automodule:: MatMiner.descriptors.structure_features
     :members:
     :undoc-members:
     :show-inheritance:
@@ -48,7 +40,7 @@ matminer.descriptors.structure_features module
 Module contents
 ---------------
 
-.. automodule:: matminer.descriptors
+.. automodule:: MatMiner.descriptors
     :members:
     :undoc-members:
     :show-inheritance:

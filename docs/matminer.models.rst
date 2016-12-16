@@ -1,29 +1,29 @@
-matminer.models package
+MatMiner.models package
 =======================
 
 Submodules
 ----------
 
-matminer.models.mechanical_properties module
+MatMiner.models.mechanical_properties module
 --------------------------------------------
 
-.. automodule:: matminer.models.mechanical_properties
+.. automodule:: MatMiner.models.mechanical_properties
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.models.sound_velocity module
+MatMiner.models.sound_velocity module
 -------------------------------------
 
-.. automodule:: matminer.models.sound_velocity
+.. automodule:: MatMiner.models.sound_velocity
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.models.thermal_conductivity module
+MatMiner.models.thermal_conductivity module
 -------------------------------------------
 
-.. automodule:: matminer.models.thermal_conductivity
+.. automodule:: MatMiner.models.thermal_conductivity
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,7 +32,7 @@ matminer.models.thermal_conductivity module
 Module contents
 ---------------
 
-.. automodule:: matminer.models
+.. automodule:: MatMiner.models
     :members:
     :undoc-members:
     :show-inheritance:
