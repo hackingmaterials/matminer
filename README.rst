@@ -22,8 +22,11 @@ A few examples demonstrating some of the features available in MatMiner have bee
 
 2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: `Jupyter <http://104.197.121.217/user/d5deeff47ebddd2611570f3f9b7431ef/notebooks/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
 
-3. Use machine learning models to fit and predict band gaps by using MatMiner's tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://104.197.121.217/user/d5deeff47ebddd2611570f3f9b7431ef/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_
+3. Train and predict band gaps using MatMiner's tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://104.197.121.217/user/d5deeff47ebddd2611570f3f9b7431ef/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_
 
+4. Training and predict bulk moduli using MatMiner's tools to retrieve computed bulk moduli and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://104.197.121.217/user/d5deeff47ebddd2611570f3f9b7431ef/notebooks/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_ `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_
+
+|
 You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder **example_notebooks** in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to "File->Open" within the page and navigate to the notebook of your choice. 
 
 .. image:: http://mybinder.org/badge.svg 
