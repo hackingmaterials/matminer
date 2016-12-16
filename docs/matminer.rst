@@ -1,4 +1,4 @@
-MatMiner package
+matminer package
 ================
 
 Subpackages
@@ -6,34 +6,34 @@ Subpackages
 
 .. toctree::
 
-    MatMiner.data_retrieval
-    MatMiner.descriptors
-    MatMiner.learners
-    MatMiner.models
+    matminer.data_retrieval
+    matminer.descriptors
+    matminer.learners
+    matminer.models
 
 Submodules
 ----------
 
-MatMiner.decorate module
+matminer.decorate module
 ------------------------
 
-.. automodule:: MatMiner.decorate
+.. automodule:: matminer.decorate
     :members:
     :undoc-members:
     :show-inheritance:
 
-MatMiner.pyCookieCheat module
+matminer.pyCookieCheat module
 -----------------------------
 
-.. automodule:: MatMiner.pyCookieCheat
+.. automodule:: matminer.pyCookieCheat
     :members:
     :undoc-members:
     :show-inheritance:
 
-MatMiner.utils module
+matminer.utils module
 ---------------------
 
-.. automodule:: MatMiner.utils
+.. automodule:: matminer.utils
     :members:
     :undoc-members:
     :show-inheritance:
@@ -42,7 +42,7 @@ MatMiner.utils module
 Module contents
 ---------------
 
-.. automodule:: MatMiner
+.. automodule:: matminer
     :members:
     :undoc-members:
     :show-inheritance:

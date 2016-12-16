@@ -1,4 +1,4 @@
-MatMiner.learners package
+matminer.learners package
 =========================
 
 Subpackages
@@ -6,15 +6,15 @@ Subpackages
 
 .. toctree::
 
-    MatMiner.learners.tests
+    matminer.learners.tests
 
 Submodules
 ----------
 
-MatMiner.learners.volume_predictor module
+matminer.learners.volume_predictor module
 -----------------------------------------
 
-.. automodule:: MatMiner.learners.volume_predictor
+.. automodule:: matminer.learners.volume_predictor
     :members:
     :undoc-members:
     :show-inheritance:
@@ -23,7 +23,7 @@ MatMiner.learners.volume_predictor module
 Module contents
 ---------------
 
-.. automodule:: MatMiner.learners
+.. automodule:: matminer.learners
     :members:
     :undoc-members:
     :show-inheritance:
