@@ -7,10 +7,8 @@ MatMiner is an open-source Python library for performing data mining and analysi
 Citing MatMiner
 --------
 
-We are currently in the process of revising the first draft of a paper on MatMiner, so be on the lookout for a paper with the following cite structure::
+We are currently in the process of writing a paper on matminer
 
-    Bajaj, S.; Jain, A.; [MatMiner]
-    
 Example notebooks
 -----------------
 
