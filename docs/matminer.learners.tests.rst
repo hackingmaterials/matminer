@@ -1,13 +1,13 @@
-MatMiner.learners.tests package
+matminer.learners.tests package
 ===============================
 
 Submodules
 ----------
 
-MatMiner.learners.tests.test_volume_predictor module
+matminer.learners.tests.test_volume_predictor module
 ----------------------------------------------------
 
-.. automodule:: MatMiner.learners.tests.test_volume_predictor
+.. automodule:: matminer.learners.tests.test_volume_predictor
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ MatMiner.learners.tests.test_volume_predictor module
 Module contents
 ---------------
 
-.. automodule:: MatMiner.learners.tests
+.. automodule:: matminer.learners.tests
     :members:
     :undoc-members:
     :show-inheritance:
