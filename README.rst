@@ -77,7 +77,7 @@ Depending on how many of the required dependencies were already installed on you
 Overview
 --------
 
-Below is a general workflow that shows the different tools and utilities available within MatMiner, and how they could be implemented with one another, as well as external libraries, in your own materials data analysis study. 
+Below is a general workflow that shows the different tools and utilities available within MatMiner, and how they could be implemented with each other, as well as with external libraries, in your own materials data mining/analysis study. 
 
 |
 .. image:: https://github.com/hackingmaterials/MatMiner/blob/master/Flowchart.png
@@ -85,12 +85,19 @@ Below is a general workflow that shows the different tools and utilities availab
 |
 |
 
-Test
-------
+Here's a brief description of the available tools (please find implementation examples in a dedicated section elsewhere in this document):
 
-It basically includes tools and utilities that make it easier to,
+Data retrieval tools
+--------------------
 
-- Retrieve data from the biggest materials databases, such as the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine's databases <https://citrination.com/>`_, in a Pandas dataframe format
+The `MPDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MP.py>`_ and `CitrineDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_Citrine.py>`_ classes can be used to retrieve data from the biggest open-source materials database collections of the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine Informatics <https://citrination.com/>`_, respectively, in a `Pandas <http://pandas.pydata.org/>`_ dataframe format. The data contained in these databases are a variety of material properties, obtained in-house or from other external databases, that are either calculated, measured from experiments, or learned from trained algorithms. The :code:`get_dataframe` method of these classes executes the data retrieval by searching the respective database using user-specified filters, such as compound/material, property type, etc , extracting the selected data in a JSON/dictionary format through the API, parsing it and output the result to a Pandas dataframe with columns as properties/features measured or calculated and rows as data points. 
+
+`MongoDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MongoDB.py>`_ is another data retrieval tool developed that allows for the parsing of any `MongoDB <https://www.mongodb.com/>`_ collection (which follows a flexible JSON schema), into a Pandas dataframe that has a format similar to the output dataframe from the above data retrieval tools. Its arguments allow to utilize MongoDB's rich and powerful query/aggregation syntax structure. More information on customization of queries can be found in the `MongoDB documentation <https://docs.mongodb.com/manual/>`_.
+
+
+Descriptor tools
+----------------
+
 - Decorate the dataframe with composition, structural, and/or band structure descriptors/features
 - Solve for and add thermal and mechanical properties to the dataframe
  
