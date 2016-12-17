@@ -6,7 +6,7 @@ from tqdm import tqdm
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
-class MongoDataRetrieval():
+class MongoDataRetrieval:
 
     def __init__(self, coll):
         """
