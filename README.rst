@@ -62,13 +62,13 @@ To install the full and latest source of the MatMiner code in developmental mode
 
 .. code-block:: bash
 
-    $ git clone https://github.com/hackingmaterials/MatMiner.git
+    $ git clone https://github.com/hackingmaterials/matminer.git
 
 and then entering the cloned repository/folder to install in developer mode:
 
 .. code-block:: bash
 
-    $ cd MatMiner
+    $ cd matminer
     $ python setup.py develop
     
 Depending on how many of the required dependencies were already installed on your system, you will see a few or many warnings, but everything should be installed successfully.
