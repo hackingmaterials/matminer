@@ -147,6 +147,27 @@ Some other descriptors that can be obtained from MatMiner include:
    #. Branch point energy
    #. Absolute band positions
 
+#. Mechanical properties
 
-- Solve for and add thermal and mechanical properties to the dataframe
+   #. Thermal stress
+   #. Fracture toughness
+   #. Brittleness index
+   #. Critical stress
+   #. bulk/elastic, rigid, and shear moduli
+   #. bulk modulus from coordination number
+   #. Vicker's hardness
+   #. Lame's first parameter
+   #. p-wave modulus
+   #. Sound velocity from elastic constants
+   #. Steady-state and maximum allowed heatflow
+   #. Strain energy release rate
+   
+#. Thermal condutivity models
+
+   #. Cahill model
+   #. Clarke model
+   #. Callaway model
+   #. Slack model
+   #. Keyes model
+   
  
