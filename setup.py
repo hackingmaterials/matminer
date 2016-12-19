@@ -8,11 +8,11 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 
 if __name__ == "__main__":
     setup(
-        name='MatMiner',
+        name='matminer',
         version='0.0.3',
-        description='MatMiner is a library that contains tools for data mining in Materials Science',
+        description='matminer is a library that contains tools for data mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.rst')).read(),
-        url='https://github.com/hackingmaterials/MatMiner',
+        url='https://github.com/hackingmaterials/matminer',
         author='Anubhav Jain, Saurabh Bajaj',
         author_email='anubhavster@gmail.com, saurabhbajaj2@gmail.com',
         license='modified BSD',
