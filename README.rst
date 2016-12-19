@@ -1,11 +1,11 @@
 ========
-MatMiner
+matminer
 ========
 
-MatMiner is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a **working code**.
+matminer is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a **working code**.
 
 --------
-Citing MatMiner
+Citing matminer
 --------
 
 We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
@@ -14,51 +14,51 @@ We are currently in the process of writing a paper on matminer - we will update 
 Example notebooks
 -----------------
 
-A few examples demonstrating some of the features available in MatMiner have been created in the form of Jupyter notebooks: 
+A few examples demonstrating some of the features available in matminer have been created in the form of Jupyter notebooks:
 
 (Note: the Jupyter (Binder) links below are recommended as Github does not render interactive Javascript code or images.)
 
-1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_
+1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_
 
-2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
+2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
 
-3. Train and predict band gaps using MatMiner's tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_
+3. Train and predict band gaps using matminer's tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_
 
-4. Training and predict bulk moduli using MatMiner's tools to retrieve computed bulk moduli and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_ `Github <https://github.com/hackingmaterials/MatMiner/blob/master/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_
+4. Training and predict bulk moduli using matminer's tools to retrieve computed bulk moduli and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_ `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_
 
 |
 You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder **example_notebooks** in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to "File->Open" within the page and navigate to the notebook of your choice. 
 
 .. image:: http://mybinder.org/badge.svg 
-   :target: http://mybinder.org/repo/hackingmaterials/MatMiner  
+   :target: http://mybinder.org/repo/hackingmaterials/matminer
 
 --------
 Installation
 --------
 
-There are a couple of quick and easy ways to install MatMiner:-
+There are a couple of quick and easy ways to install matminer:-
 
 - **Quick install**
 
-(Note: this may not install the latest changes to MatMiner. To install the version with the latest commits, skip to the next steps)
+(Note: this may not install the latest changes to matminer. To install the version with the latest commits, skip to the next steps)
 
-For a quick install of MatMiner, and all of its dependencies, simply run the command in a bash terminal:
+For a quick install of matminer, and all of its dependencies, simply run the command in a bash terminal:
 
 .. code-block:: bash
 
     $ pip install matminer
 
-or, to install MatMiner in your user $HOME folder, run the command:
+or, to install matminer in your user $HOME folder, run the command:
 
 .. code-block:: bash
 
     $ pip install matminer --user 
 
-One way to obtain :code:`pip` if not already installed is through :code:`conda`, which is useful when you are working with many python packages and want to use separate configuration settings and environment for each package. You can then install MatMiner and packages required by it in its own environment. Some useful links are `here <https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/20/conda/>`_ and `here <http://conda.pydata.org/docs/using/index.html>`_.
+One way to obtain :code:`pip` if not already installed is through :code:`conda`, which is useful when you are working with many python packages and want to use separate configuration settings and environment for each package. You can then install matminer and packages required by it in its own environment. Some useful links are `here <https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/20/conda/>`_ and `here <http://conda.pydata.org/docs/using/index.html>`_.
 
 - **Install in developmental mode**
 
-To install the full and latest source of the MatMiner code in developmental mode, along with its important dependencies, clone the Git source in a folder of your choosing by entering the following command:
+To install the full and latest source of the matminer code in developmental mode, along with its important dependencies, clone the Git source in a folder of your choosing by entering the following command:
 
 .. code-block:: bash
 
@@ -77,10 +77,10 @@ Depending on how many of the required dependencies were already installed on you
 Overview
 --------
 
-Below is a general workflow that shows the different tools and utilities available within MatMiner, and how they could be implemented with each other, as well as with external libraries, in your own materials data mining/analysis study. 
+Below is a general workflow that shows the different tools and utilities available within matminer, and how they could be implemented with each other, as well as with external libraries, in your own materials data mining/analysis study.
 
 |
-.. image:: https://github.com/hackingmaterials/MatMiner/blob/master/Flowchart.png
+.. image:: https://github.com/hackingmaterials/matminer/blob/master/Flowchart.png
    :align: center
 |
 |
@@ -113,7 +113,7 @@ Data descriptor tools
 
 - Decorate the dataframe with composition, structural, and/or band structure descriptors/features
 
-In this module of the MatMiner library, we have developed utilities to help describe the material by their composition or structure, and represent them in a numeric format such that they are readily usable as features in a data analysis study to predict a target value. 
+In this module of the matminer library, we have developed utilities to help describe the material by their composition or structure, and represent them in a numeric format such that they are readily usable as features in a data analysis study to predict a target value.
 
 The :code:`get_pymatgen_descriptor` function is used to encode a material's composition using tabulated elemental properties in the `pymatgen <http://pymatgen.org/_modules/pymatgen/core/periodic_table.html>`_ library. There are about 50 attributes available in the pymatgen library for most elements in the periodic table, some of which include electronegativity, atomic numbers, atomic masses, sound velocity, boiling point, etc. The :code:`get_pymatgen_descriptor` function takes as input a material composition and name of the desired property, and returns a list of floating point property values for each atom in that composition. This list can than be fed into a statistical function to obtain a single heuristic quantity representative of the entire composition. The following code block shows a few example descriptors that can be obtained for LiFePO\ :sub:`4`:
 
@@ -129,7 +129,7 @@ The :code:`get_pymatgen_descriptor` function is used to encode a material's comp
 
 The function :code:`get_magpie_descriptor` operates in a similar way and obtains its data from the tables accumulated in the `Magpie repository <https://bitbucket.org/wolverton/magpie>`_, some of which are sourced from elemental data compiled by Mathematica (more information can be found `here <https://reference.wolfram.com/language/ref/ElementData.html>`_). Some properties that don't overlap with the pymatgen library include heat capacity, enthalpy of fusion of elements at melting points, pseudopotential radii, etc. 
 
-Some other descriptors that can be obtained from MatMiner include:
+Some other descriptors that can be obtained from matminer include:
 
 #. Composition descriptors
 

@@ -42,7 +42,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MatMiner'
+project = u'matminer'
 copyright = u'2015, Saurabh Bajaj, Anubhav Jain'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -166,7 +166,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'MatMinerdoc'
+htmlhelp_basename = 'matminerdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -185,7 +185,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'MatMiner.tex', u'MatMiner Documentation',
+  ('index', 'matminer.tex', u'matminer Documentation',
    [u'Saurabh Bajaj', u'Anubhav Jain'], 'manual'),
 ]
 
@@ -215,7 +215,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'matminer', u'MatMiner Documentation',
+    ('index', 'matminer', u'matminer Documentation',
      [u'Saurabh Bajaj', u'Anubhav Jain'], 1)
 ]
 
@@ -229,8 +229,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'MatMiner', u'MatMiner Documentation',
-   [u'Saurabh Bajaj', u'Anubhav Jain'], 'MatMiner is a library that contains tools for data mining in Materials Science',
+  ('index', 'matminer', u'matminer Documentation',
+   [u'Saurabh Bajaj', u'Anubhav Jain'], 'matminer is a library that contains tools for data mining in Materials Science',
    'Miscellaneous'),
 ]
 
@@ -247,7 +247,7 @@ texinfo_documents = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'MatMiner'
+epub_title = u'matminer'
 epub_author = u'Saurabh Bajaj', u'Anubhav Jain'
 epub_publisher = u'Saurabh Bajaj', u'Anubhav Jain'
 epub_copyright = u'2015, Saurabh Bajaj, Anubhav Jain'
