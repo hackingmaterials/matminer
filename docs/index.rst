@@ -83,7 +83,7 @@ Overview
 Below is a general workflow that shows the different tools and utilities available within matminer, and how they could be implemented with each other, as well as with external libraries, in your own materials data mining/analysis study.
 
 |
-.. image:: https://github.com/hackingmaterials/matminer/blob/master/Flowchart.png
+.. image:: _static/Flowchart.png
    :align: center
 |
 |
