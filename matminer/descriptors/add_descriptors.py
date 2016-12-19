@@ -1,44 +1,41 @@
-import pandas as pd
 from matminer.descriptors.composition_features import *
+import numpy as np
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
-# TODO: Check how to automatically get stats (mean, median,..) from the descriptor column and use them to set limits
-# for plot colors
-# TODO: Check how to set legends in plots (return them here and pass them onto plot_xy()
-
-
 class AddDescriptor:
-    def __init__(self, df=None, formula_colname="reduced_cell_formula", separator=":"):
+    """
+    Code to add a descriptor column to a dataframe
+    """
+    def __init__(self, df, formula_colname='pretty_formula', separator='_'):
+        """
+        Args:
+            df: dataframe to add the descriptor column to
+            formula_colname: (str) name of the column containing the formula/composition
+            separator: (str) separator to use in naming the new descriptor column
+
+        Returns: None
+        """
         self.df = df
-        self.formula_colname=formula_colname
-        self.separator=separator
+        self.formula_colname = formula_colname
+        self.separator = separator
 
-    def add_pmgdescriptor_column(self, descriptor, stat):
-        # TODO: requires lots of code cleanup
-        # TODO: this is likely super inefficient
+    def add_pmgdescriptor_column(self, descriptor, stat_function, stat_name):
+        """
+        Args:
+            descriptor: (str) name of descriptor - must match the name in the source library
+            stat_function: function to approximate the descriptor. For example, numpy.mean, numpy.std, etc.
+            stat_name: (str) name of stat function to append to new descriptor column name
 
-        if stat == 'mean':
-            stat_function = get_mean
-        elif stat == 'std':
-            stat_function = get_std
-        elif stat == 'maxmin':
-            stat_function = get_maxmin
-        elif stat == 'range':
-            stat_function = get_range
-        else:
-            raise ValueError('Invalid stat name. Must be one of "mean", "std", and "maxmin"')
-        for i, row in self.df.iterrows():
-            try:
-                self.df.loc[i, descriptor + self.separator + stat] = stat_function(
-                    get_pymatgen_descriptor(row[self.formula_colname], descriptor))
-            except ValueError:
-                self.df.loc[i, descriptor + self.separator + stat] = None
-            except AttributeError as e:
-                print(e)
-                print('Invalid pymatgen Element attribute!')
+        Returns: dataframe with appended descriptor column
+        """
+        try:
+            self.df[descriptor + self.separator + stat_name] = self.df[self.formula_colname].\
+                map(lambda x: stat_function(get_pymatgen_descriptor(Composition(x), descriptor)))
+        except ValueError:
+            self.df.loc[descriptor + self.separator + stat_name] = None
+        except AttributeError:
+            raise ValueError('Invalid pymatgen Element attribute!')
         return self.df
 
-if __name__ == '__main__':
-    print(AddDescriptor())
