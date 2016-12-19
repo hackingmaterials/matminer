@@ -6,7 +6,7 @@ from tqdm import tqdm
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
-class MongoDataRetrieval():
+class MongoDataRetrieval:
 
     def __init__(self, coll):
         """
@@ -46,7 +46,7 @@ class MongoDataRetrieval():
             # split up dot-notation keys
             for key in projection:
                 vals = key.split('.')
-                data = reduce(lambda d, k: d[k], vals, d)
+                data = reduce(lambda e, k: e[k], vals, d)
                 row_data.append(data)
 
             all_data.append(row_data)
