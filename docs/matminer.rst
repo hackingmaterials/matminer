@@ -30,6 +30,30 @@ matminer.pyCookieCheat module
     :undoc-members:
     :show-inheritance:
 
+matminer.test module
+--------------------
+
+.. automodule:: matminer.test
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matminer.test_ML_BulkMod module
+-------------------------------
+
+.. automodule:: matminer.test_ML_BulkMod
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matminer.test_flask module
+--------------------------
+
+.. automodule:: matminer.test_flask
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer.utils module
 ---------------------
 
