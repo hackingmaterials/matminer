@@ -28,26 +28,10 @@ matminer.descriptors.composition_features module
     :undoc-members:
     :show-inheritance:
 
-matminer.descriptors.create_cohesive_energy_json module
--------------------------------------------------------
-
-.. automodule:: matminer.descriptors.create_cohesive_energy_json
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 matminer.descriptors.structure_features module
 ----------------------------------------------
 
 .. automodule:: matminer.descriptors.structure_features
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matminer.descriptors.test_readme module
----------------------------------------
-
-.. automodule:: matminer.descriptors.test_readme
     :members:
     :undoc-members:
     :show-inheritance:
