@@ -11,14 +11,6 @@ Subpackages
 Submodules
 ----------
 
-matminer.learners.fit_radii module
-----------------------------------
-
-.. automodule:: matminer.learners.fit_radii
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 matminer.learners.volume_predictor module
 -----------------------------------------
 

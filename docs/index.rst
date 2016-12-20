@@ -1,4 +1,7 @@
-.. title:: matminer
+.. title:: matminer (Materials Data Mining)
+
+.. image:: _static/matminer_logo_small.png
+   :alt: matminer logo
 
 
 ========
