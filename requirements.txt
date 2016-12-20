@@ -4,4 +4,4 @@ pandas>=0.17.1
 pymatgen>=4.0
 unittest2==1.1.0
 pint
--e git+https://github.com/CitrineInformatics/python-citrination-client@legacy#egg=python-citrination-client
+citrination-client
