@@ -227,7 +227,7 @@ class CitrineDataRetrieval:
                         # Convert to float type whichever columns can be converted
                         values_df = values_df.apply(pd.to_numeric, errors='ignore')
 
-                        # Making a single row DF of non-property columns
+                        # Making a single row DF of columns that do not contain property values
                         non_values_df = pd.DataFrame()
                         non_values_cols = []
                         for col in prop_normdf.columns:
@@ -235,7 +235,7 @@ class CitrineDataRetrieval:
                                 non_values_cols.append(col)
                         for col in non_values_cols:
                             non_values_df[col] = prop_normdf[col]
-                        if len(non_values_df) > 0:  # Do not index empty DF (non-'measurement.property' columns absent)
+                        if len(non_values_df) > 0:  # Do not index empty DF (non-value columns absent)
                             non_values_df.index = [counter] * len(prop_normdf)
 
                         # Concatenate values and non-values DF
