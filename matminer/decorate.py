@@ -29,23 +29,16 @@ def decorate_dataframe(df):
                                               'units': prop['spec']['units']})
             # TODO: check for alternate names
 
-    # Get property class names and objects
+    # Get ALL available property class names and objects
     mech_props = {c[0].lower(): c[1] for c in inspect.getmembers(mechanical_properties, inspect.isclass)}
-
-    prop_clsobjects = []    # Store class objects of matched property names
-    df_matchedcols = {}     # Matched columns in df in 'catalog_symbol': 'col_name' format.
-    for cmp in catalog_matched_props:
-        if cmp['catalog_name'] in mech_props:
-            prop_clsobjects.append(mech_props[cmp['catalog_name']])
-            df_matchedcols[cmp['symbol']] = cmp['df_name']
-
-    print mech_props
-    print prop_clsobjects
 
     # Get equations of matched properties
     eqns = []
-    for matched_cls in prop_clsobjects:
-        eqns.append(sp.Eq(matched_cls().equation()))
+    df_matchedcols = {}     # Matched columns in df in 'catalog_symbol': 'col_name' format.
+    for cmp in catalog_matched_props:
+        if cmp['catalog_name'] in mech_props:
+            eqns.append(sp.Eq(mech_props[cmp['catalog_name']]().equation()))
+            df_matchedcols[cmp['symbol']] = cmp['df_name']
 
     for idx, row in df.iterrows():
 
