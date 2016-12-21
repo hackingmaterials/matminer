@@ -95,6 +95,22 @@ def bulk_modulus(nu, E):
     return E/(1 - 2*nu)
 
 
+class BulkModulus:
+    def __init__(self):
+        pass
+
+    def properties_involved(self):
+        K, E, nu = sp.symbols('K E nu')
+        return K, E, nu
+
+    def equation(self):
+        K, E, nu = sp.symbols('K E nu')
+        return K - (E/(1 - 2*nu))
+
+    def calculate(self, E, nu):
+        return E/(1 - 2*nu)
+
+
 def bulkmodulus_coordination(N_c, ionicity, d):
     """
     Calculate bulk modulus (K) from coordination number.
