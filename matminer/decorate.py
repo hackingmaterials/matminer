@@ -24,7 +24,8 @@ def decorate_dataframe(df):
 
         for prop in catalog['properties']:
             if mcol in prop['spec']['name']:
-                catalog_matched_props.append({'catalog_name': prop['spec']['name'].replace(' ', ''), 'df_name': col,
+                catalog_name = prop['spec']['name'].replace(' ', '')
+                catalog_matched_props.append({'catalog_name': catalog_name, 'df_name': col,
                                               'symbol': sp.symbols(prop['spec']['symbol']),
                                               'units': prop['spec']['units']})
             # TODO: check for alternate names
@@ -34,25 +35,27 @@ def decorate_dataframe(df):
 
     # Get equations of matched properties
     eqns = []
-    df_matchedcols = {}     # Matched columns in df in 'catalog_symbol': 'col_name' format.
+    df_sym_col = {}     # Matched columns in df in 'catalog_symbol': 'col_name' format.
     for cmp in catalog_matched_props:
         if cmp['catalog_name'] in mech_props:
             eqns.append(sp.Eq(mech_props[cmp['catalog_name']]().equation()))
-            df_matchedcols[cmp['symbol']] = cmp['df_name']
+            df_sym_col[cmp['symbol']] = cmp['df_name']
 
+    # Solve each row of the dataframe
     for idx, row in df.iterrows():
 
         eqns_tosolve = eqns[:]
 
         # add equation of symbol and its values from provided df
-        for df_col in df_matchedcols:
-            eqns_tosolve.append(sp.Eq(df_col, row[df_matchedcols[df_col]]))
+        for col in df_sym_col:
+            eqns_tosolve.append(sp.Eq(col, row[df_sym_col[col]]))
 
         soln = sp.solve(eqns_tosolve)
-        if soln:
 
+        if soln:
             print idx, eqns_tosolve, soln
             df.loc[idx, "Calculated Poisson's ratio"] = round(soln[0][sp.S('nu')], 2)
+
     return df
 
 
