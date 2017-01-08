@@ -86,7 +86,7 @@ Overview
 Below is a general workflow that shows the different tools and utilities available within matminer, and how they could be implemented with each other, as well as with external libraries, in your own materials data mining/analysis study.
 
 |
-.. image:: _static/Flowchart.png
+.. image:: https://github.com/hackingmaterials/matminer/blob/master/Flowchart.png
    :align: center
 |
 |
@@ -121,7 +121,8 @@ Data descriptor tools
 
 In this module of the matminer library, we have developed utilities to help describe the material by their composition or structure, and represent them in a numeric format such that they are readily usable as features in a data analysis study to predict a target value.
 
-The :code:`get_pymatgen_descriptor` function is used to encode a material's composition using tabulated elemental properties in the `pymatgen <http://pymatgen.org/_modules/pymatgen/core/periodic_table.html>`_ library. There are about 50 attributes available in the pymatgen library for most elements in the periodic table, some of which include electronegativity, atomic numbers, atomic masses, sound velocity, boiling point, etc. The :code:`get_pymatgen_descriptor` function takes as input a material composition and name of the desired property, and returns a list of floating point property values for each atom in that composition. This list can than be fed into a statistical function to obtain a single heuristic quantity representative of the entire composition. The following code block shows a few example descriptors that can be obtained for LiFePO\ :sub:`4`:
+The :code:`get_pymatgen_descriptor` function is used to encode a material's composition using tabulated elemental properties in the `pymatgen <http://pymatgen.org/_modules/pymatgen/core/periodic_table.html>`_ library. There are about 50 attributes available in the pymatgen library for most elements in the periodic table, some of which include electronegativity, atomic numbers, atomic masses, sound velocity, boiling point, etc. The :code:`get_pymatgen_descriptor` function takes as input a material composition and name of the desired property, and returns a list of floating point property values for each atom in that composition. This list can than be fed into a statistical function to obtain a single heuristic quantity representative of the entire composition. The following code block shows a few 
+descriptors that can be obtained for LiFePO\ :sub:`4`:
 
 .. code-block:: python
       
@@ -175,5 +176,15 @@ Some other descriptors that can be obtained from matminer include:
    #. Callaway model
    #. Slack model
    #. Keyes model
+   
+ 
+Plotting tools
+----------------
+
+- Plot data from either arrays or dataframes using either `Plotly <https://plot.ly/>`_ or `matplotlib <http://matplotlib.org/>`_
+
+In the figrecipes module of the matminer library, we have developed utilities that wrap around two popular plotting libraries, Plotly and matplotlib to produce various types of plots that plot data from either arrays or dataframes. The Plotly part of this module contains classes/functions that wrap around its Python API library and follows its JSON schema. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly and matplotlib, while at the same time sheilding the complexities involved. 
+
+A few examples demonstrating usage can be found in the notebook hosted on `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/matminer/figrecipes/plotly/examples/plotly_examples.ipynb>`_ and `Github <https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb>`_
    
  
