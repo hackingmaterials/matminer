@@ -122,8 +122,38 @@ def get_redf(struct, cutoff=None, dr=0.05):
     return redf_dict
 
 
+def get_min_relative_distances(struct, cutoff=10.0):
+    """
+    This function determines the relative distance of each site to its closest
+    neighbor. We use the relative distance,
+    f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the absolute
+    distances, r_ij, to account for the fact that different atoms/species
+    have different sizes.  The function uses the valence-ionic radius
+    estimator implemented in pymatgen.
+
+    Args:
+        struct (Structure): input structure.
+        cutoff (float): (absolute) distance up to which tentative closest
+                neighbors (on the basis of relative distances) are
+                to be determined.
+
+    Returns: ([float]) list of all minimum relative distances (i.e., for all
+        sites).
+    """
+    vire = ValenceIonicRadiusEvaluator(struct)
+    min_rel_dists = []
+    for site in vire.structure:
+        min_rel_dists.append(min([dist/(vire.radii[site.species_string]+\
+            vire.radii[neigh.species_string]) for neigh, dist in \
+            vire.structure.get_neighbors(site, cutoff)]))
+    return min_rel_dists[:]
+
+
 if __name__ == '__main__':
-    test_mpid = "mp-2534"
+    test_mpid = "mp-2534" # GaAs
+    test_mpid = "mp-3536" # normal spinel (Mg Al2 O4)
     with MPRester() as mp:
         test_struct = mp.get_structure_by_material_id(test_mpid)
     print get_redf(test_struct)["redf"]
+    print get_min_relative_distances(test_struct)
+
