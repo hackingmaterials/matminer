@@ -208,7 +208,7 @@ def get_neighbors_of_site_with_index(struct, n, p):
     return sites
 
 
-def get_order_parameters(struct, pneighs):
+def get_order_parameters(struct, pneighs, convert_none_to_zero=True):
     """
     Determine the neighbors around the site that has index n in the input
     Structure object struct, given a pre-defined approach.  So far,
@@ -221,6 +221,8 @@ def get_order_parameters(struct, pneighs):
                 neighbor-finding approach (see
                 get_neighbors_of_site_with_index function
                 for more details).
+        convert_none_to_zero (bool): flag indicating whether or not
+                to convert None values in OPs to zero.
 
     Returns: ([[float]]) matrix of all sites' (1st dimension)
             order parameters (2nd dimension).
@@ -242,6 +244,10 @@ def get_order_parameters(struct, pneighs):
         opvals.append(ops.get_order_parameters(
                 neighcent, len(neighcent)-1,
                 indeces_neighs=[j for j in range(len(neighcent)-1)]))
+        if convert_none_to_zero:
+            for j, opval in enumerate(opvals[i]):
+                if opval is None:
+                    opvals[i][j] = 0.0
     return opvals
 
 
