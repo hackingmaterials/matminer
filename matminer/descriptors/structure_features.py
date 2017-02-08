@@ -26,7 +26,7 @@ def get_vol_per_site(s):
     return s.volume / len(s)
 
 
-def density(s):
+def get_density(s):
     return s.density
 
 
@@ -149,6 +149,40 @@ def get_min_relative_distances(struct, cutoff=10.0):
     return min_rel_dists[:]
 
 
+def get_neighbors(struct, n, p={"approach": "scaledVIRE", "scale": 1.1, \
+        "scale_cut": 3.0}):
+    """
+    Determine the neighbors around the site that has index n in the input
+    Structure object (struct), given a pre-defined approach.  So far,
+    the only approach implemented is scaled valence ionic radius evaluator.
+
+    Args:
+        struct (Structure): input structure.
+        n (int): index of site in Structure object struct for which
+                neighbors are to be determined.
+        p (dict): specifications/parameters of neighbor-finding approach.
+
+    Returns: ([site]) list of sites that are considered to be nearest
+            neighbors to site with index n in Structure object struct.
+    """
+    sites = []
+    if p["approach"] == "scaledVIRE":
+        vire = ValenceIonicRadiusEvaluator(struct)
+        if np.linalg.norm(struct[n].coords-vire.structure[n].coords) > 1e-6:
+            raise RuntimeError("Mismatch between input structure and VIRE structure.")
+        maxr = p["scale_cut"] * 2.0 * max(vire.radii.values())
+        neighs_dists = vire.structure.get_neighbors(vire.structure[n], maxr)
+        rn = vire.radii[vire.structure[n].species_string]
+        for neigh, dist in neighs_dists:
+            dscale = p["scale"] * (vire.radii[neigh.species_string] + rn)
+            if dist < dscale:
+                sites.append(neigh)
+    else:
+        raise RuntimeError("Unsupported neighbor-finding approach"
+                " (\"{}\")".format(p["approach"]))
+    return sites
+
+
 if __name__ == '__main__':
     test_mpid = "mp-2534" # GaAs
     test_mpid = "mp-3536" # normal spinel (Mg Al2 O4)
@@ -156,4 +190,5 @@ if __name__ == '__main__':
         test_struct = mp.get_structure_by_material_id(test_mpid)
     print get_redf(test_struct)["redf"]
     print get_min_relative_distances(test_struct)
+    print len(get_neighbors(test_struct, 0))
 
