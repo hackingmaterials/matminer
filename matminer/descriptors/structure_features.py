@@ -149,7 +149,7 @@ def get_min_relative_distances(struct, cutoff=10.0):
     return min_rel_dists[:]
 
 
-def get_neighbors(struct, n, p):
+def get_neighbors_of_site_with_index(struct, n, p):
     """
     Determine the neighbors around the site that has index n in the input
     Structure object struct, given a pre-defined approach.  So far,
@@ -207,12 +207,37 @@ def get_neighbors(struct, n, p):
     return sites
 
 
+def get_order_parameters(struct, pneighs):
+    """
+    Determine the neighbors around the site that has index n in the input
+    Structure object struct, given a pre-defined approach.  So far,
+    "scaled_VIRE" and "min_relative_VIRE" are implemented
+    (VIRE = valence-ionic radius evaluator).
+
+    Args:
+        struct (Structure): input structure.
+        pneighs (dict): specification ("approach") and parameters of
+                neighbor-finding approach (see
+                get_neighbors_of_site_with_index function
+                for more details).
+
+    Returns: ([[float]]) matrix of all sites' (1st dimension)
+            order parameters (2nd dimension).
+    """
+    ops = []
+    return ops
+
+
 if __name__ == '__main__':
     test_mpid = "mp-2534" # GaAs
     with MPRester() as mp:
         test_struct = mp.get_structure_by_material_id(test_mpid)
-    print len(get_neighbors(test_struct, 0, p={
-            "approach": "min_relative_VIRE", "delta_scale": 0.1, "scale_cut": 4}))
+    #print len(get_neighbors_of_site_with_index(
+    #        test_struct, 0, {"approach": "min_relative_VIRE",
+    #        "delta_scale": 0.1, "scale_cut": 4}))
+    print(str(get_order_parameters(test_struct, {
+            "approach": "min_relative_VIRE", "delta_scale": 0.1,
+            "scale_cut": 4})))
     #test_mpid = "mp-3536" # normal spinel (Mg Al2 O4)
     #with MPRester() as mp:
     #    test_struct = mp.get_structure_by_material_id(test_mpid)
