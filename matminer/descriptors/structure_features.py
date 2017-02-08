@@ -149,28 +149,28 @@ def get_min_relative_distances(struct, cutoff=10.0):
     return min_rel_dists[:]
 
 
-def get_neighbors(struct, n, p={"approach": "scaledVIRE", "scale": 2, \
-        "scale_cut": 3.0}):
+def get_neighbors(struct, n, p):
     """
     Determine the neighbors around the site that has index n in the input
     Structure object struct, given a pre-defined approach.  So far,
-    "scaledVIRE" and "relativeVIRE" are implemented (VIRE = valence-ionic
-    radius evaluator).
+    "scaled_VIRE" and "min_relative_VIRE" are implemented
+    (VIRE = valence-ionic radius evaluator).
 
     Args:
         struct (Structure): input structure.
         n (int): index of site in Structure object for which
                 neighbors are to be determined.
         p (dict): specification ("approach") and parameters of
-                neighbor-finding approach.
-                scaledVIRE: "scale" (2) and "scale_cut" (3);
-                relativeVIRE: "delta_scale" (0.1).
+                neighbor-finding approach (suggestions in parantheses).
+                scaled_VIRE: "scale" (2) and "scale_cut" (4);
+                min_relative_VIRE: "delta_scale" (0.1) and "scale_cut" (4).
 
     Returns: ([site]) list of sites that are considered to be nearest
             neighbors to site with index n in Structure object struct.
     """
     sites = []
-    if p["approach"] == "scaledVIRE" or p["approach"] == "relativeVIRE":
+    
+    if p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
         vire = ValenceIonicRadiusEvaluator(struct)
         if np.linalg.norm(struct[n].coords-vire.structure[n].coords) > 1e-6:
             raise RuntimeError("Mismatch between input structure and VIRE structure.")
@@ -179,20 +179,28 @@ def get_neighbors(struct, n, p={"approach": "scaledVIRE", "scale": 2, \
         #print(len(neighs_dists))
         rn = vire.radii[vire.structure[n].species_string]
         #print(str(vire.structure[n]))
-        neighs_reldists = []
+        reldists_neighs = []
         for neigh, dist in neighs_dists:
-            if p["approach"] == "scaledVIRE":
+            if p["approach"] == "scaled_VIRE":
                 dscale = p["scale"] * (vire.radii[neigh.species_string] + rn)
                 #print("{} {}".format(dist, dscale))
                 if dist < dscale:
                     sites.append(neigh)
                     #print(str(neigh))
             else:
-                neighs_reldists.append([neigh, dist/(
-                        vire.radii[neigh.species_string] + rn)])
-         if p["approach"] == "relativeVIRE":
-xxx
-             minreld = min(neighs_reldists[:][1])
+                reldists_neighs.append([dist/(
+                        vire.radii[neigh.species_string] + rn), neigh])
+        if p["approach"] == "min_relative_VIRE":
+            reldists_neighs_sorted = sorted(reldists_neighs)
+            max_reldist = reldists_neighs_sorted[0][0] + p["delta_scale"]
+            for reldist, neigh in reldists_neighs_sorted:
+                if reldist < max_reldist:
+                    sites.append(neigh)
+                else:
+                    break
+            #for reldist, neigh in reldists_neighs_sorted:
+            #    print(str(reldist))
+            #print(str(sites))
     else:
         raise RuntimeError("Unsupported neighbor-finding approach"
                 " (\"{}\")".format(p["approach"]))
@@ -203,10 +211,11 @@ if __name__ == '__main__':
     test_mpid = "mp-2534" # GaAs
     with MPRester() as mp:
         test_struct = mp.get_structure_by_material_id(test_mpid)
-    print len(get_neighbors(test_struct, 0))
-    test_mpid = "mp-3536" # normal spinel (Mg Al2 O4)
-    with MPRester() as mp:
-        test_struct = mp.get_structure_by_material_id(test_mpid)
+    print len(get_neighbors(test_struct, 0, p={
+            "approach": "min_relative_VIRE", "delta_scale": 0.1, "scale_cut": 4}))
+    #test_mpid = "mp-3536" # normal spinel (Mg Al2 O4)
+    #with MPRester() as mp:
+    #    test_struct = mp.get_structure_by_material_id(test_mpid)
     #print get_redf(test_struct)["redf"]
     #print get_min_relative_distances(test_struct)
 
