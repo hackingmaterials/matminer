@@ -149,34 +149,50 @@ def get_min_relative_distances(struct, cutoff=10.0):
     return min_rel_dists[:]
 
 
-def get_neighbors(struct, n, p={"approach": "scaledVIRE", "scale": 1.1, \
+def get_neighbors(struct, n, p={"approach": "scaledVIRE", "scale": 2, \
         "scale_cut": 3.0}):
     """
     Determine the neighbors around the site that has index n in the input
-    Structure object (struct), given a pre-defined approach.  So far,
-    the only approach implemented is scaled valence ionic radius evaluator.
+    Structure object struct, given a pre-defined approach.  So far,
+    "scaledVIRE" and "relativeVIRE" are implemented (VIRE = valence-ionic
+    radius evaluator).
 
     Args:
         struct (Structure): input structure.
-        n (int): index of site in Structure object struct for which
+        n (int): index of site in Structure object for which
                 neighbors are to be determined.
-        p (dict): specifications/parameters of neighbor-finding approach.
+        p (dict): specification ("approach") and parameters of
+                neighbor-finding approach.
+                scaledVIRE: "scale" (2) and "scale_cut" (3);
+                relativeVIRE: "delta_scale" (0.1).
 
     Returns: ([site]) list of sites that are considered to be nearest
             neighbors to site with index n in Structure object struct.
     """
     sites = []
-    if p["approach"] == "scaledVIRE":
+    if p["approach"] == "scaledVIRE" or p["approach"] == "relativeVIRE":
         vire = ValenceIonicRadiusEvaluator(struct)
         if np.linalg.norm(struct[n].coords-vire.structure[n].coords) > 1e-6:
             raise RuntimeError("Mismatch between input structure and VIRE structure.")
         maxr = p["scale_cut"] * 2.0 * max(vire.radii.values())
         neighs_dists = vire.structure.get_neighbors(vire.structure[n], maxr)
+        #print(len(neighs_dists))
         rn = vire.radii[vire.structure[n].species_string]
+        #print(str(vire.structure[n]))
+        neighs_reldists = []
         for neigh, dist in neighs_dists:
-            dscale = p["scale"] * (vire.radii[neigh.species_string] + rn)
-            if dist < dscale:
-                sites.append(neigh)
+            if p["approach"] == "scaledVIRE":
+                dscale = p["scale"] * (vire.radii[neigh.species_string] + rn)
+                #print("{} {}".format(dist, dscale))
+                if dist < dscale:
+                    sites.append(neigh)
+                    #print(str(neigh))
+            else:
+                neighs_reldists.append([neigh, dist/(
+                        vire.radii[neigh.species_string] + rn)])
+         if p["approach"] == "relativeVIRE":
+xxx
+             minreld = min(neighs_reldists[:][1])
     else:
         raise RuntimeError("Unsupported neighbor-finding approach"
                 " (\"{}\")".format(p["approach"]))
@@ -185,10 +201,12 @@ def get_neighbors(struct, n, p={"approach": "scaledVIRE", "scale": 1.1, \
 
 if __name__ == '__main__':
     test_mpid = "mp-2534" # GaAs
+    with MPRester() as mp:
+        test_struct = mp.get_structure_by_material_id(test_mpid)
+    print len(get_neighbors(test_struct, 0))
     test_mpid = "mp-3536" # normal spinel (Mg Al2 O4)
     with MPRester() as mp:
         test_struct = mp.get_structure_by_material_id(test_mpid)
-    print get_redf(test_struct)["redf"]
-    print get_min_relative_distances(test_struct)
-    print len(get_neighbors(test_struct, 0))
+    #print get_redf(test_struct)["redf"]
+    #print get_min_relative_distances(test_struct)
 
