@@ -3,6 +3,7 @@ import math
 import numpy as np
 from pymatgen import MPRester
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
+from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
@@ -224,8 +225,24 @@ def get_order_parameters(struct, pneighs):
     Returns: ([[float]]) matrix of all sites' (1st dimension)
             order parameters (2nd dimension).
     """
-    ops = []
-    return ops
+    opvals = []
+    optypes = ["cn", "lin"]
+    opparas = [[], []]
+    for i in range(5, 180, 5):
+        optypes.append("bent")
+        opparas.append([float(i), 0.0667])
+    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
+            "sq_pyr"]:
+        optypes.append(t)
+        opparas.append([])
+    ops = OrderParameters(optypes, opparas, 100.0)
+    for i, s in enumerate(struct.sites):
+        neighcent = get_neighbors_of_site_with_index(struct, i, pneighs)
+        neighcent.append(s)
+        opvals.append(ops.get_order_parameters(
+                neighcent, len(neighcent)-1,
+                indeces_neighs=[j for j in range(len(neighcent)-1)]))
+    return opvals
 
 
 if __name__ == '__main__':
