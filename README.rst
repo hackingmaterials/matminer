@@ -73,6 +73,40 @@ and then entering the cloned repository/folder to install in developer mode:
     
 Depending on how many of the required dependencies were already installed on your system, you will see a few or many warnings, but everything should be installed successfully.
 
+- **Solutions to *some* errors that may be encountered during installation**
+
+#. *Error*:-
+
+.. code-block:: bash
+
+   ============================================================================
+                        * The following required packages can not be built:
+                        * freetype, png
+   error: Setup script exited with 1
+
+*Solution*:-
+
+.. code-block:: bash
+
+    $ # On Mac OS X, install brew if not available
+    $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    $ # Install "freetype" and "pkg-config" using brew (on Mac OS X; for other systems, see http://stackoverflow.com/a/20533455)
+    $ brew install freetype
+    $ brew install pkg-config
+
+#. *Error*:-
+
+.. code-block:: bash
+
+    error: Setup script exited with error: library dfftpack has Fortran sources but no Fortran compiler found
+
+*Solution*:-
+
+.. code-block:: bash
+
+    $ # On Mac OS X:
+    $ brew install gcc
+    
 --------
 Overview
 --------
