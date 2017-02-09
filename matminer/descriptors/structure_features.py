@@ -241,17 +241,15 @@ def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
         pneighs = {"approach": "min_relative_VIRE", "delta_scale": 0.05,
                 "scale_cut": 4}
     opvals = []
-    optypes = ["cn", "tet", "oct", "bcc", "q2", "q4", "q6"]
-    opparas = [[] for op in optypes]
-    #optypes = ["cn", "lin"]
-    #opparas = [[], []]
-    #for i in range(5, 180, 5):
-    #    optypes.append("bent")
-    #    opparas.append([float(i), 0.0667])
-    #for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-    #        "sq_pyr"]:
-    #    optypes.append(t)
-    #    opparas.append([])
+    optypes = ["cn", "lin"]
+    opparas = [[], []]
+    for i in range(5, 180, 5):
+        optypes.append("bent")
+        opparas.append([float(i), 0.0667])
+    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
+            "sq_pyr"]:
+        optypes.append(t)
+        opparas.append([])
     ops = OrderParameters(optypes, opparas, 100.0)
     for i, s in enumerate(struct.sites):
         neighcent = get_neighbors_of_site_with_index(struct, i, pneighs)
