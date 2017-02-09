@@ -1,10 +1,12 @@
 from __future__ import division, unicode_literals
+
 import math
 import numpy as np
-from pymatgen import MPRester
+
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
@@ -150,7 +152,7 @@ def get_min_relative_distances(struct, cutoff=10.0):
     return min_rel_dists[:]
 
 
-def get_neighbors_of_site_with_index(struct, n, p):
+def get_neighbors_of_site_with_index(struct, n, p={}):
     """
     Determine the neighbors around the site that has index n in the input
     Structure object struct, given a pre-defined approach.  So far,
@@ -162,15 +164,18 @@ def get_neighbors_of_site_with_index(struct, n, p):
         n (int): index of site in Structure object for which
                 neighbors are to be determined.
         p (dict): specification ("approach") and parameters of
-                neighbor-finding approach (suggestions in parantheses).
-                scaled_VIRE: "scale" (2) and "scale_cut" (4);
-                min_relative_VIRE: "delta_scale" (0.1) and "scale_cut" (4).
+                neighbor-finding approach.
+                min_relative_VIRE (default): "delta_scale" (0.05)
+                and "scale_cut" (4);
+                scaled_VIRE: "scale" (2) and "scale_cut" (4).
 
     Returns: ([site]) list of sites that are considered to be nearest
             neighbors to site with index n in Structure object struct.
     """
     sites = []
-    
+    if p == {}:
+        p = {"approach": "min_relative_VIRE", "delta_scale": 0.05,
+                "scale_cut": 4}
     if p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
         vire = ValenceIonicRadiusEvaluator(struct)
         if np.linalg.norm(struct[n].coords-vire.structure[n].coords) > 1e-6:
@@ -208,7 +213,7 @@ def get_neighbors_of_site_with_index(struct, n, p):
     return sites
 
 
-def get_order_parameters(struct, pneighs, convert_none_to_zero=True):
+def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
     """
     Determine the neighbors around the site that has index n in the input
     Structure object struct, given a pre-defined approach.  So far,
@@ -220,13 +225,21 @@ def get_order_parameters(struct, pneighs, convert_none_to_zero=True):
         pneighs (dict): specification ("approach") and parameters of
                 neighbor-finding approach (see
                 get_neighbors_of_site_with_index function
-                for more details).
+                for more details; default: min_relative_VIRE,
+                delta_scale = 0.05, scale_cut = 4).
         convert_none_to_zero (bool): flag indicating whether or not
                 to convert None values in OPs to zero.
 
     Returns: ([[float]]) matrix of all sites' (1st dimension)
-            order parameters (2nd dimension).
+            order parameters (2nd dimension). 46 order parameters are
+            computed per site: q_cn (coordination number), q_lin,
+            35 x q_bent (starting with a target angle of 5 degrees and,
+            increasing by 5 degrees, until 175 degrees), q_tet, q_oct,
+            q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
     """
+    if pneighs == {}:
+        pneighs = {"approach": "min_relative_VIRE", "delta_scale": 0.05,
+                "scale_cut": 4}
     opvals = []
     optypes = ["cn", "lin"]
     opparas = [[], []]
@@ -249,21 +262,3 @@ def get_order_parameters(struct, pneighs, convert_none_to_zero=True):
                 if opval is None:
                     opvals[i][j] = 0.0
     return opvals
-
-
-if __name__ == '__main__':
-    test_mpid = "mp-2534" # GaAs
-    with MPRester() as mp:
-        test_struct = mp.get_structure_by_material_id(test_mpid)
-    #print len(get_neighbors_of_site_with_index(
-    #        test_struct, 0, {"approach": "min_relative_VIRE",
-    #        "delta_scale": 0.1, "scale_cut": 4}))
-    print(str(get_order_parameters(test_struct, {
-            "approach": "min_relative_VIRE", "delta_scale": 0.1,
-            "scale_cut": 4})))
-    #test_mpid = "mp-3536" # normal spinel (Mg Al2 O4)
-    #with MPRester() as mp:
-    #    test_struct = mp.get_structure_by_material_id(test_mpid)
-    #print get_redf(test_struct)["redf"]
-    #print get_min_relative_distances(test_struct)
-
