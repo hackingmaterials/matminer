@@ -71,10 +71,11 @@ def get_rdf_peaks(dist_rdf):
 
     """
     distances = dist_rdf.keys()
-    sorted_rdfs = sorted(dist_rdf.values(), reverse=True)
+    dvals = dist_rdf.values()
+    sorted_rdfs = sorted(dvals.values(), reverse=True)
     max_rdf, second_highest_rdf = sorted_rdfs[0], sorted_rdfs[1]
-    max_idx = dist_rdf.values().index(max_rdf)
-    second_highest_idx = dist_rdf.values().index(second_highest_rdf)
+    max_idx = dvals.index(max_rdf)
+    second_highest_idx = dvals.index(second_highest_rdf)
     return distances[max_idx], distances[second_highest_idx]
 
 
