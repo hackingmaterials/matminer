@@ -20,19 +20,25 @@ class StructureFeaturesTest(PymatgenTest):
     def setUp(self):
         self.diamond = Structure(
                 Lattice([[2.189, 0, 1.264], [0.73, 2.064, 1.264],
+                [0, 0, 2.528]]), ["C0+", "C0+"], [[2.554, 1.806, 4.423],
+                [0.365, 0.258, 0.632]], validate_proximity=False,
+                to_unit_cell=False, coords_are_cartesian=True,
+                site_properties=None)
+        self.diamond_no_oxi = Structure(
+                Lattice([[2.189, 0, 1.264], [0.73, 2.064, 1.264],
                 [0, 0, 2.528]]), ["C", "C"], [[2.554, 1.806, 4.423],
                 [0.365, 0.258, 0.632]], validate_proximity=False,
                 to_unit_cell=False, coords_are_cartesian=True,
                 site_properties=None)
         self.nacl = Structure(
                 Lattice([[3.485, 0, 2.012], [1.162, 3.286, 2.012],
-                [0, 0, 4.025]]), ["Na", "Cl"], [[0, 0, 0],
+                [0, 0, 4.025]]), ["Na1+", "Cl1-"], [[0, 0, 0],
                 [2.324, 1.643, 4.025]], validate_proximity=False,
                 to_unit_cell=False, coords_are_cartesian=True,
                 site_properties=None)
         self.cscl = Structure(
                 Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
-                ["Cl", "Cs"], [[2.105,2.105, 2.105], [0, 0, 0]],
+                ["Cl1-", "Cs1+"], [[2.105,2.105, 2.105], [0, 0, 0]],
                 validate_proximity=False, to_unit_cell=False,
                 coords_are_cartesian=True, site_properties=None)
 
@@ -60,35 +66,68 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(int(100 * get_density(
                 self.cscl)), 374)
 
-    def test_get_rdf(self):
-        l = sorted([[k, v] for  k, v in get_rdf(self.diamond).items()])
+    def test_get_rdf_and_peaks(self):
+        d = get_rdf(self.diamond)
+        l = sorted([[k, v] for  k, v in d.items()])
         self.assertAlmostEqual(len(l), 116)
         self.assertAlmostEqual(int(10*l[0][0]), 15)
         self.assertAlmostEqual(int(1000*l[0][1]), 810)
         self.assertAlmostEqual(int(10*l[115][0]), 199)
         self.assertAlmostEqual(int(1000*l[115][1]), 41)
-        l = sorted([[k, v] for  k, v in get_rdf(self.nacl).items()])
+        l = get_rdf_peaks(d)
+        self.assertAlmostEqual(int(10 * l[0]), 25)
+        self.assertAlmostEqual(int(10 * l[1]), 15)
+        d = get_rdf(self.nacl)
+        l = sorted([[k, v] for  k, v in d.items()])
         self.assertAlmostEqual(len(l), 44)
         self.assertAlmostEqual(int(10*l[0][0]), 28)
         self.assertAlmostEqual(int(1000*l[0][1]), 578)
         self.assertAlmostEqual(int(10*l[43][0]), 199)
         self.assertAlmostEqual(int(1000*l[43][1]), 103)
-        l = sorted([[k, v] for  k, v in get_rdf(self.cscl).items()])
+        l = get_rdf_peaks(d)
+        self.assertAlmostEqual(int(10 * l[0]), 28)
+        self.assertAlmostEqual(int(10 * l[1]), 40)
+        d = get_rdf(self.cscl)
+        l = sorted([[k, v] for  k, v in d.items()])
         self.assertAlmostEqual(len(l), 32)
         self.assertAlmostEqual(int(10*l[0][0]), 36)
         self.assertAlmostEqual(int(1000*l[0][1]), 262)
         self.assertAlmostEqual(int(10*l[31][0]), 197)
         self.assertAlmostEqual(int(1000*l[31][1]), 26)
+        l = get_rdf_peaks(d)
+        self.assertAlmostEqual(int(10 * l[0]), 36)
+        self.assertAlmostEqual(int(10 * l[1]), 69)
 
-        #for s in [self.diamond, self.nacl, self.cscl]:
-        #    d = get_rdf(s)
-        #    l = sorted([[k, v] for  k, v in d.items()])
-        #    for i, j in l:
-        #        print("{} {}".format(i, j))
-        #    print("")
-        #    #print("{}".format(s.volume))
-        #    #for site in s.sites:
-        #    #    print("{} {}".format(site.species_string, site.specie.atomic_radius))
+    def test_get_redf(self):
+        d = get_redf(self.diamond)
+        self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
+        self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
+        self.assertAlmostEqual(int(1000 * d["distances"][len(
+                d["distances"])-1]), 6175)
+        self.assertAlmostEqual(int(1000 * d["redf"][len(
+                d["redf"])-1]), 0)
+        d = get_redf(self.nacl)
+        self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
+        self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
+        self.assertAlmostEqual(int(1000 * d["distances"][len(
+                d["distances"])-1]), 9875)
+        self.assertAlmostEqual(int(1000 * d["redf"][len(
+                d["redf"])-1]), 202)
+        d = get_redf(self.cscl)
+        self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
+        self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
+        self.assertAlmostEqual(int(1000 * d["distances"][len(
+                d["distances"])-1]), 7275)
+        self.assertAlmostEqual(int(1000 * d["redf"][len(
+                d["redf"])-1]), 1097)
+
+    def test_get_min_relative_distances(self):
+        self.assertAlmostEqual(int(1000*get_min_relative_distances(
+                self.diamond_no_oxi)[0]), 1105)
+        self.assertAlmostEqual(int(1000*get_min_relative_distances(
+                self.nacl)[0]), 1005)
+        self.assertAlmostEqual(int(1000*get_min_relative_distances(
+                self.cscl)[0]), 1006)
 
     def test_get_neighbors_of_site_with_index(self):
         self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
@@ -97,6 +136,7 @@ class StructureFeaturesTest(PymatgenTest):
                 self.nacl, 0)), 6)
         self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
                 self.cscl, 0)), 8)
+
 
     def test_get_order_parameters(self):
         opvals = get_order_parameters(self.diamond)
