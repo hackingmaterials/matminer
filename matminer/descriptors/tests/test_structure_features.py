@@ -100,14 +100,20 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_get_order_parameters(self):
         opvals = get_order_parameters(self.diamond)
-        self.assertAlmostEqual(int(opvals[0][37] * 1000), 999)
-        self.assertAlmostEqual(int(opvals[1][37] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[0][1] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[1][1] * 1000), 999)
+        #self.assertAlmostEqual(int(opvals[0][37] * 1000), 999)
+        #self.assertAlmostEqual(int(opvals[1][37] * 1000), 999)
         opvals = get_order_parameters(self.nacl)
-        self.assertAlmostEqual(int(opvals[0][38] * 1000), 999)
-        self.assertAlmostEqual(int(opvals[1][38] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[0][2] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[1][2] * 1000), 999)
+        #self.assertAlmostEqual(int(opvals[0][38] * 1000), 999)
+        #self.assertAlmostEqual(int(opvals[1][38] * 1000), 999)
         opvals = get_order_parameters(self.cscl)
-        self.assertAlmostEqual(int(opvals[0][39] * 1000), 975)
-        self.assertAlmostEqual(int(opvals[1][39] * 1000), 975)
+        self.assertAlmostEqual(int(opvals[0][3] * 1000), 975)
+        self.assertAlmostEqual(int(opvals[1][3] * 1000), 975)
+        #self.assertAlmostEqual(int(opvals[0][39] * 1000), 975)
+        #self.assertAlmostEqual(int(opvals[1][39] * 1000), 975)
 
     def tearDown(self):
         del self.diamond
