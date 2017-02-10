@@ -263,3 +263,44 @@ def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
                 if opval is None:
                     opvals[i][j] = 0.0
     return opvals
+
+def get_order_parameter_stats(
+        struct, pneighs={}, convert_none_to_zero=True):
+    """
+    Determine the order parameter statistics based on the
+    data from the get_order_parameters function.
+
+    Args:
+        struct (Structure): input structure.
+        pneighs (dict): specification ("approach") and parameters of
+                neighbor-finding approach (see
+                get_neighbors_of_site_with_index function
+                for more details; default: min_relative_VIRE,
+                delta_scale = 0.05, scale_cut = 4).
+        convert_none_to_zero (bool): flag indicating whether or not
+                to convert None values in OPs to zero.
+
+    Returns: ({}) dictionary, the keys of which represent
+            the order parameter type (e.g., "bent5", "tet", "sq_pyr")
+            and the values are another dictionary carring the
+            statistics ("min", "max", "mean", "std").
+    """
+    opstats = {}
+    optypes = ["cn", "lin"]
+    for i in range(5, 180, 5):
+        optypes.append("bent{}".format(i))
+    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
+            "sq_pyr"]:
+        optypes.append(t)
+    opvals = get_order_parameters(
+            struct, pneighs=pneighs, convert_none_to_zero=convert_none_to_zero)
+    opvals2 = [[] for t in optypes]
+    for i, opsite in enumerate(opvals):
+        for j, op in enumerate(opsite):
+            opvals2[j].append(op)
+    for i, opstype in enumerate(opvals2):
+        opstats[optypes[i]] = {
+                "min": min(opstype), "max": max(opstype),
+                "mean": np.mean(np.array(opstype)),
+                "std": np.std(np.array(opstype))}
+    return opstats
