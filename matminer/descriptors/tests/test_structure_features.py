@@ -12,7 +12,7 @@ from pymatgen.util.testing import PymatgenTest
 from matminer.descriptors.structure_features import get_packing_fraction, \
         get_vol_per_site, get_density, get_rdf, get_rdf_peaks, get_redf, \
         get_min_relative_distances, get_neighbors_of_site_with_index, \
-        get_order_parameters
+        get_order_parameters, get_order_parameter_stats
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -137,7 +137,6 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
                 self.cscl, 0)), 8)
 
-
     def test_get_order_parameters(self):
         opvals = get_order_parameters(self.diamond)
         self.assertAlmostEqual(int(opvals[0][37] * 1000), 999)
@@ -148,6 +147,23 @@ class StructureFeaturesTest(PymatgenTest):
         opvals = get_order_parameters(self.cscl)
         self.assertAlmostEqual(int(opvals[0][39] * 1000), 975)
         self.assertAlmostEqual(int(opvals[1][39] * 1000), 975)
+
+    def test_get_order_parameter_stats(self):
+        opstats = get_order_parameter_stats(self.diamond)
+        self.assertAlmostEqual(int(opstats["tet"]["min"] * 1000), 999)
+        self.assertAlmostEqual(int(opstats["tet"]["max"] * 1000), 999)
+        self.assertAlmostEqual(int(opstats["tet"]["mean"] * 1000), 999)
+        self.assertAlmostEqual(int(opstats["tet"]["std"] * 1000), 0)
+        opstats = get_order_parameter_stats(self.nacl)
+        self.assertAlmostEqual(int(opstats["oct"]["min"] * 1000), 999)
+        self.assertAlmostEqual(int(opstats["oct"]["max"] * 1000), 999)
+        self.assertAlmostEqual(int(opstats["oct"]["mean"] * 1000), 999)
+        self.assertAlmostEqual(int(opstats["oct"]["std"] * 1000), 0)
+        opstats = get_order_parameter_stats(self.cscl)
+        self.assertAlmostEqual(int(opstats["bcc"]["min"] * 1000), 975)
+        self.assertAlmostEqual(int(opstats["bcc"]["max"] * 1000), 975)
+        self.assertAlmostEqual(int(opstats["bcc"]["mean"] * 1000), 975)
+        self.assertAlmostEqual(int(opstats["bcc"]["std"] * 1000), 0)
 
     def tearDown(self):
         del self.diamond
