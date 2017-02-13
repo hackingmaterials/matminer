@@ -1,7 +1,7 @@
 pymongo==3.2.2
 tqdm>=3.7.1
 pandas>=0.17.1
-pymatgen>=4.6.1
+pymatgen>=4.6.2
 unittest2==1.1.0
 pint
 citrination-client
