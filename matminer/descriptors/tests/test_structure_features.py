@@ -137,6 +137,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
                 self.cscl, 0)), 8)
 
+
     def test_get_order_parameters(self):
         opvals = get_order_parameters(self.diamond)
         self.assertAlmostEqual(int(opvals[0][37] * 1000), 999)
