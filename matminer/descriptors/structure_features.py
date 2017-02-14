@@ -265,7 +265,7 @@ def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
     return opvals
 
 def get_order_parameter_stats(
-        struct, pneighs={}, convert_none_to_zero=True):
+        struct, pneighs={}, convert_none_to_zero=True, delta_op=0.01):
     """
     Determine the order parameter statistics based on the
     data from the get_order_parameters function.
@@ -279,11 +279,13 @@ def get_order_parameter_stats(
                 delta_scale = 0.05, scale_cut = 4).
         convert_none_to_zero (bool): flag indicating whether or not
                 to convert None values in OPs to zero.
+        delta_op (float): bin size of histogram that is computed
+                in order to identify peak locations.
 
     Returns: ({}) dictionary, the keys of which represent
             the order parameter type (e.g., "bent5", "tet", "sq_pyr")
             and the values are another dictionary carring the
-            statistics ("min", "max", "mean", "std").
+            statistics ("min", "max", "mean", "std", "peak1", "peak2").
     """
     opstats = {}
     optypes = ["cn", "lin"]
@@ -299,8 +301,29 @@ def get_order_parameter_stats(
         for j, op in enumerate(opsite):
             opvals2[j].append(op)
     for i, opstype in enumerate(opvals2):
+        ops_hist = {}
+        for op in opstype:
+            b = round(op / delta_op) * delta_op
+            if b in ops_hist.keys():
+                ops_hist[b] += 1
+            else:
+                ops_hist[b] = 1
+        ops =list(ops_hist.keys())
+        hist = list(ops_hist.values())
+        sorted_hist = sorted(hist, reverse=True)
+        if len(sorted_hist) > 1:
+            max1_hist, max2_hist = sorted_hist[0], sorted_hist[1]
+        elif len(sorted_hist) > 0:
+            max1_hist, max2_hist = sorted_hist[0], sorted_hist[0]
+        else:
+            raise RuntimeError("Could not compute OP histogram.")
+        max1_idx = hist.index(max1_hist)
+        max2_idx = hist.index(max2_hist)
         opstats[optypes[i]] = {
-                "min": min(opstype), "max": max(opstype),
+                "min": min(opstype),
+                "max": max(opstype),
                 "mean": np.mean(np.array(opstype)),
-                "std": np.std(np.array(opstype))}
+                "std": np.std(np.array(opstype)),
+                "peak1": ops[max1_idx],
+                "peak2": ops[max2_idx]}
     return opstats
