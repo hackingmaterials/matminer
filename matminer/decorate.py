@@ -7,7 +7,7 @@ import pandas as pd
 from matminer.data_retrieval.retrieve_Citrine import CitrineDataRetrieval
 
 
-with open('catalog.yaml', 'r') as f_catalog:
+with open('../reference_data/properties_catalog.yaml', 'r') as f_catalog:
     catalog = yaml.load(f_catalog)
 
 
