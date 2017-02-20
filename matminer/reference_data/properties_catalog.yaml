@@ -1,0 +1,1128 @@
+properties:
+- alternate_names:
+  - weight
+  - molar mass
+  - molar weight
+  alternate_symbols:
+  - w
+  db_names:
+  - Molar Mass
+  - Molecular Mass
+  name: Mass
+  symbol: m
+  type: real
+  units:
+  - kg
+  - g
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - $\\varepsilon$$_{gap}$ ($\\varepsilon$$_{LUMO}$-$\\varepsilon$$_{HOMO}$)
+  - Direct band Gap
+  - HOMO-LUMO Gap
+  - Band gap
+  name: Band gap
+  symbol: E$_{g}$
+  type: real
+  units:
+  - eV
+  - J
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Energy of highest occupied molecular orbital ($\\varepsilon$$_{HOMO}$)
+  - HOMO Energy
+  name: HOMO energy
+  symbol: E$_{HOMO}$
+  type: real
+  units:
+  - eV
+  - J
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Energy of lowest occupied molecular orbital ($\\varepsilon$$_{LUMO}$)
+  - LUMO Energy
+  name: LUMO energy
+  symbol: E$_{LUMO}$
+  type: real
+  units:
+  - eV
+  - J
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Open-circuit voltage (V$_{OC}$)
+  name: Open-circuit voltage
+  symbol: V$_{OC}$
+  type: real
+  units: V
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Power conversion efficiency (PCE)
+  name: Energy conversion efficiency
+  symbol: $\eta$
+  type: real
+  units: ''
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Short-circuit current density (J$_{SC}$)
+  name: Short-circuit current density
+  symbol: J$_{SC}$
+  type: real
+  units: mA/cm$^{2}$
+- alternate_names:
+  - Energy
+  alternate_symbols:
+  - U
+  - E_${tot}$
+  db_names:
+  - Internal energy
+  - E
+  - Energy
+  name: Total energy
+  symbol: E
+  type: real
+  units:
+  - eV
+  - J
+- alternate_names: []
+  alternate_symbols:
+  - C
+  db_names:
+  - Current (I)
+  name: Electric current
+  symbol: I
+  type: real
+  units: A
+- alternate_names: []
+  alternate_symbols:
+  - e$_{WE}$
+  - E$_{cell}$
+  db_names:
+  - Working electrode potential (e$_{WE}$)
+  name: Working electrode potential
+  symbol: E$_{WE}$
+  type: real
+  units: V
+- alternate_names:
+  - mass density
+  alternate_symbols:
+  - n/v
+  db_names:
+  - Density
+  name: Density
+  symbol: $\rho$
+  type: real
+  units:
+  - kg/m$^{3}$
+  - g/cm$^{3}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Volume
+  name: Volume
+  symbol: V
+  type: real
+  units:
+  - m$^{3}$
+  - cm$^{3}$
+- alternate_names: []
+  alternate_symbols:
+  - SG
+  db_names:
+  - Space Group
+  - Space group
+  name: Space group
+  symbol: ''
+  type: real
+  units: ''
+- alternate_names:
+  - Formation enthalpy
+  alternate_symbols:
+  - $H_{f}$
+  - $\Delta H$
+  db_names:
+  - Enthalpy of Formation
+  name: Enthalpy of formation
+  symbol: $\Delta H_{f}$
+  type: real
+  units:
+  - J/mol
+  - J/Kg
+  - J/g
+  - kJ/mol
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Enthalpy
+  name: Enthalpy
+  symbol: H
+  type: real
+  units:
+  - J/mol
+  - J/Kg
+  - J/g
+  - kJ/mol
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Total Magnetization
+  name: Total Magnetization
+  symbol: ''
+  type: real
+  units:
+  - $\mu_{B}/atom$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - InChI
+  name: InChI
+  symbol: ''
+  type: ''
+  units:
+  - ''
+- alternate_names:
+  - Thermal capacity
+  alternate_symbols: []
+  db_names:
+  - Heat capacity
+  name: Heat capacity
+  symbol: ''
+  type: real
+  units:
+  - J/K
+  - (kgm$^{2}$)/(K$\cdot$$s^{2}$)
+- alternate_names:
+  - Dipole
+  alternate_symbols: []
+  db_names:
+  - Dipole moment
+  name: Dipole moment
+  symbol: ''
+  type: real
+  units:
+  - D
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Isotropic polarizability
+  name: Polarizability
+  symbol: ''
+  type: real
+  units:
+  - C$\cdot m^{2}V^{-1}$
+  - A$^{2}s^{4}kg^{-1}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Zero point vibrational energy
+  - ground state energy
+  - E
+  name: Zero point energy
+  symbol: E$_{0}$
+  type: real
+  units:
+  - ''
+- alternate_names:
+  - Gibbs free energy
+  alternate_symbols: []
+  db_names:
+  - Free energy
+  name: Gibbs free energy
+  symbol: G
+  type: real
+  units:
+  - J
+  - kJ
+  - kcal
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Rotational constant
+  name: Rotational constant
+  symbol: $\overline{B}$
+  type: real
+  units:
+  - cm$^{-1}$
+  - m$^{-1}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Intensity
+  name: Intensity
+  symbol: ''
+  type: real
+  units:
+  - a.u.
+- alternate_names:
+  - Molar heat capacity
+  - Specific heat
+  alternate_symbols: []
+  db_names:
+  - Specific heat capacity
+  - Specific heat (C)
+  name: Specific heat capacity
+  symbol:
+  type: real
+  units:
+  - J/mol$\cdot$K
+  - J/kg$\cdot$K
+  - eV/mol$\cdot$K
+  - eV/kg$\cdot$K
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Relative standard enthalpy
+  name: Relative standard enthalpy
+  symbol: H
+  type: real
+  units:
+  - kJ/mol
+  - J/mol
+  - eV/mol
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Standard entropy
+  name: Standard entropy
+  symbol: S
+  type: real
+  units:
+  - J/mol$\cdot$K
+  - kJ/mol$\cdot$K
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Stress
+  - Static stress
+  name: Stress
+  symbol: $\sigma$
+  type: real
+  units:
+  - Pa
+  - GPa
+  - MPa
+  - kPa
+  - N/m$^{2}$
+- alternate_names:
+  - Formation Gibbs energy
+  alternate_symbols:
+  - $G_{f}$
+  - $\Delta G$
+  db_names:
+  - Standard Gibbs free energy of formation
+  name: Gibbs energy of formation
+  symbol: $\Delta G_{f}$
+  type: real
+  units:
+  - J/mol
+  - J/Kg
+  - J/g
+  - kJ/mol
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Log of formation reaction rate constant
+  name: Log of formation reaction rate constant
+  symbol: Log(r)
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Prototype
+  name: Prototype
+  symbol:
+  type: string
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Bravais Lattice
+  - Bravais lattice
+  name: Bravais lattice
+  symbol:
+  type: category
+  units:
+- alternate_names:
+  - Energy above hull
+  - E above hull
+  alternate_symbols: []
+  db_names:
+  - Energy above convex hull
+  name: Energy above convex hull
+  symbol: E$_{above_hull}$
+  type: real
+  units:
+  - eV/atom
+- alternate_names:
+  - Ultimate tensile strength
+  - Tensile strength
+  - Ultimate strength
+  alternate_symbols: []
+  db_names:
+  - Design tensile ultimate stress
+  name: Design tensile ultimate stress
+  symbol: F$_{tu}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  - Tensile yield strength
+  - Tensile yield point
+  alternate_symbols: []
+  db_names:
+  - Design tensile yield stress
+  name: Design tensile yield stress
+  symbol: F$_{ty}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Transmittance
+  name: Transmittance
+  symbol: T
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names: []
+  name: Elongation
+  symbol: e
+  type: real
+  units:
+  - \%
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Max. Stress
+  name: Maximum Stress
+  symbol: $\sigma_{max}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  - atomization energy
+  alternate_symbols: []
+  db_names:
+  - Eat
+  name: Eat
+  symbol: E$_{at}$
+  type: real
+  units:
+  - Ry
+  - J
+  - kJ
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Design bearing yield stress
+  name: Design bearing yield stress
+  symbol: F$_{bry}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Design compressive yield stress
+  name: Design compressive yield stress
+  symbol: F$_{cy}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Crystal system
+  name: Crystal system
+  symbol:
+  type: category
+  units:
+- alternate_names:
+  - Formation energy
+  alternate_symbols:
+  - $H_{f}$
+  - $\Delta H$
+  db_names:
+  - Formation energy
+  name: Energy of formation
+  symbol: $\Delta E_{f}$
+  type: real
+  units:
+  - J/mol
+  - J/Kg
+  - J/g
+  - kJ/mol
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Design ultimate stress in pure shear
+  name: Design ultimate stress in pure shear
+  symbol: F$_{su}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Crack Growth Rate
+  name: Crack Growth Rate
+  symbol: ''
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Poisson Ratio
+  name: Poisson Ratio
+  symbol: $\nu$
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Elastic Anisotropy
+  name: Elastic Anisotropy
+  symbol: ''
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names: []
+  name: Voigt-Reuss-Hill average bulk modulus
+  symbol: K$_{VRH}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Voigt-Reuss-Hill average shear modulus
+  name: Voigt-Reuss-Hill average shear modulus
+  symbol: G$_{VRH}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  - Modulus of elasticity
+  - Tensile modulus
+  - Young's modulus
+  alternate_symbols: []
+  db_names:
+  - Elastic Modulus
+  name: Elastic Modulus
+  symbol: E
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols:
+  - K
+  db_names:
+  - Bulk Modulus
+  name: Bulk Modulus
+  symbol: B
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  - Modulus of Rigidity
+  alternate_symbols: []
+  db_names:
+  - Shear Modulus
+  - Modulus of rigidity (shear modulus) (G)
+  - Shear modulus G$_0$
+  - Shear modulus (G)
+  - Shear Modulus (G)
+  - Shear Modulus G$_0$
+  name: Shear Modulus
+  symbol: G
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - HHI_p
+  name: HHI_p
+  symbol: HHI$_{p}$
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - HHI_r
+  name: HHI_r
+  symbol: HHI$_{r}$
+  type: real
+  units:
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Bearing ultimate strength
+  name: Bearing ultimate strength
+  symbol: F$_{bru}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Melting Point
+  name: Melting Point
+  symbol: T$_{m}$
+  type: real
+  units:
+  - K
+  - $^{0}$C
+  - $^{0}$F
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  name: Boiling Point
+  symbol: T$_{B}$
+  type: real
+  units:
+  - K
+  - $^{0}$C
+  - $^{0}$F
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Temperature
+  name: Temperature
+  symbol: T
+  type: real
+  units:
+  - K
+  - $^{0}$C
+  - $^{0}$F
+- alternate_names:
+  - Curie point
+  alternate_symbols: []
+  db_names:
+  name: Curie temperature
+  symbol: T$_{C}$
+  type: real
+  units:
+  - K
+  - $^{0}$C
+  - $^{0}$F
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  name: Glass transition temperature
+  symbol: T$_{g}$
+  type: real
+  units:
+  - K
+  - $^{0}$C
+  - $^{0}$F
+- alternate_names:
+  - Rockwell hardness
+  - Brinell hardness
+  - Vickers hardness
+  - Knoop hardness
+  alternate_symbols: []
+  db_names:
+  - Hardness
+  name: Hardness
+  symbol:
+  type: string
+  units:
+- alternate_names:
+  - Thermal expansion coefficient
+  - Coefficient of expansion
+  alternate_symbols: []
+  db_names:
+  - Coefficient of thermal expansion (CTE)
+  name: Coefficient of thermal expansion
+  symbol: $\alpha$
+  type: real
+  units:
+  - /K
+  - /$^{0}$C
+  - /$^{0}$F
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Superconducting Tc
+  name: Superconductivity temperature
+  symbol: T$_{c}$
+  type: real
+  units:
+  - K
+  - $^{0}$C
+  - $^{0}$F
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Thermal conductivity (K)
+  - Thermal conductivity
+  name: Thermal conductivity
+  symbol: K
+  type: real
+  units:
+  - W/(m$\cdot$K)
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Elastic Modulus (compression) (E$_{c}$)
+  name: Elastic Modulus (compression)
+  symbol: E$_{c}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Crystallinity
+  name: Crystallinity
+  symbol:
+  type: string
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Electronic entropy
+  name: Electronic entropy
+  symbol: S$_{e}$
+  type: real
+  units:
+  - J/mol$\cdot$K
+  - kJ/mol$\cdot$K
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Logarithm of crack growth distance per fatigue cycle (log$_{10}$(da/dN))
+  name: Logarithm of crack growth distance per fatigue cycle (log$_{10}$(da/dN))
+  symbol: ''
+  type: real
+  units:
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Design ultimate bearing stress (F$_{bru}$)
+  name: Design ultimate bearing stress
+  symbol: F$_{bru}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Seebeck coefficient
+  name: Seebeck coefficient
+  symbol: S
+  type: real
+  units:
+  - $\micro$V/K
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Lattice parameter (a)
+  - Lattice parameter (b)
+  - Lattice parameter (c)
+  - Lattice parameter ($\alpha$)
+  - Lattice parameter ($\beta)
+  - Lattice parameter ($\gamma)
+  name: Lattice parameter
+  symbol:
+  type: real
+  units:
+  - $\AA$
+  - nm
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Power factor
+  name: Power factor
+  symbol: S$^{2}\cdot\sigma$
+  type: real
+  units:
+  - W/mK$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - bond coordination 0
+  - bond coordination 1
+  - bond coordination 2
+  - bond coordination 3
+  - bond coordination 4
+  - bond coordination 5
+  - bond coordination 6
+  - bond coordination 7
+  - bond coordination 8
+  - bond coordination 9
+  name: bond coordination
+  symbol:
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - bond electronegativity difference 0
+  - bond electronegativity difference 1
+  - bond electronegativity difference 2
+  - bond electronegativity difference 3
+  - bond electronegativity difference 4
+  - bond electronegativity difference 5
+  - bond electronegativity difference 6
+  - bond electronegativity difference 7
+  - bond electronegativity difference 8
+  - bond electronegativity difference 9
+  name: bond electronegativity difference
+  symbol:
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - bond electronegativity max 0
+  - bond electronegativity max 1
+  - bond electronegativity max 2
+  - bond electronegativity max 3
+  - bond electronegativity max 4
+  - bond electronegativity max 5
+  - bond electronegativity max 6
+  - bond electronegativity max 7
+  - bond electronegativity max 8
+  - bond electronegativity max 9
+  name: bond electronegativity max
+  symbol:
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - bond electronegativity min 0
+  - bond electronegativity min 1
+  - bond electronegativity min 2
+  - bond electronegativity min 3
+  - bond electronegativity min 4
+  - bond electronegativity min 5
+  - bond electronegativity min 6
+  - bond electronegativity min 7
+  - bond electronegativity min 8
+  - bond electronegativity min 9
+  name: bond electronegativity min
+  symbol:
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - bond length 0
+  - bond length 1
+  - bond length 2
+  - bond length 3
+  - bond length 4
+  - bond length 5
+  - bond length 6
+  - bond length 7
+  - bond length 8
+  - bond length 9
+  name: bond length
+  symbol:
+  type: real
+  units:
+  - $\AA$
+  - nm
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Thermal Conductivity
+  name: Thermal conductivity
+  symbol: $\kappa$
+  type: real
+  units:
+  - W/(m$\cdot$K)
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Dielectric constant
+  name: Dielectric constant
+  symbol: k
+  type: real
+  units: []
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - Pearson symbol
+  name: Pearson symbol
+  symbol:
+  type: string
+  units:
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Yield strength
+  - Yield point
+  name: Yield strength
+  symbol: $\sigma$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  - ZT
+  - Thermoelectric efficiency
+  - Figure of merit
+  name: Thermoelectric figure of merit
+  symbol: zT
+  type: real
+  units:
+- alternate_names:
+  - Impact strength
+  alternate_symbols: []
+  db_names:
+  - Impact
+  name: Tensile impact strength
+  symbol:
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Impact Strength
+  - Izod impact strength
+  - Izod Impact Strength
+  - IZOD Impact Strength
+  - Izot Impact Strength
+  - Impact Strength (Izod)
+  - Izod Impact
+  - Impact Strength Izod
+  - Izod impact
+  name: IZOD impact strength
+  symbol:
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Charpy - Impact strength
+  - Charpy Impact Strength
+  - Charpy impact
+  name: Charpy impact strength
+  symbol:
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  - Bending modulus
+  alternate_symbols: []
+  db_names:
+  - Flexural modulus
+  - Flexural strength
+  - Flexural Strength
+  - Flexural Modulus
+  - FLEXURAL MODULUS
+  - FLEXURAL STRENGTH
+  - Flexural modulus of elasticity
+  - Flexural Modulus(
+  - Bending strength
+  - Bending Modulus (F$_{b}$)
+  name: Flexural modulus
+  symbol: E$_{bend}$
+  type: real
+  units:
+  - ksi
+  - Pa
+  - kPa
+  - MPa
+  - GPa
+  - N/m$^{2}$
+- alternate_names:
+  - Rigidity
+  alternate_symbols: []
+  db_names:
+  - Normal stiffness
+  name: Stiffness
+  symbol: k
+  type: real
+  units:
+  - N/m
+  - lb/in
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  name: Thickness
+  symbol:
+  type: real
+  units:
+  - mm
+  - cm
+  - m
+  - $\micro$m
+  - nm
+  - in
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  name: Diameter
+  symbol:
+  type: real
+  units:
+  - mm
+  - cm
+  - m
+  - $\micro$m
+  - nm
+  - in
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  - Electrical Resistivity
+  - Electrical resistivity
+  - Electrical resistance
+  name: Electrical resistivity
+  symbol: $\rho$
+  type: real
+  units:
+  - $\ohm$m
+  - $\ohm$cm
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  name: Time
+  symbol: t
+  type: real
+  units:
+  - hr
+  - min
+  - sec
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  name: Specific gravity
+  symbol: SG
+  type: real
+  units:
+- alternate_names: []
+  alternate_symbols: []
+  db_names:
+  name: Electrical conductivity
+  symbol: $\sigma$
+  type: real
+  units:
+  - S/m
+  - 1/s
+- alternate_names:
+  - permeability
+  alternate_symbols: []
+  db_names:
+  name: Magnetic permeability
+  symbol: $\mu$
+  type: real
+  units:
+  - N/A$^{2}$
+  - H/m
+- alternate_names:
+  alternate_symbols: []
+  db_names:
+  name: Fracture toughness
+  symbol: K$_{Ic}$
+  type: real
+  units:
+  - Pa$\sqrt{m}$
+  - MPa$\sqrt{m}$
+  - psi$\sqrt{in}$
