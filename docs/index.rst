@@ -16,6 +16,7 @@ Citing matminer
 
 We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
 
+
 -----------------
 Example notebooks
 -----------------
