@@ -1,5 +1,7 @@
 from __future__ import division, unicode_literals
 
+import os
+import json
 import math
 import numpy as np
 
@@ -327,3 +329,42 @@ def get_order_parameter_stats(
                 "peak1": ops[max1_idx],
                 "peak2": ops[max2_idx]}
     return opstats
+
+
+def get_okeeffe_params(el_symbol):
+    with open(os.path.join(os.path.dirname(__file__), 'okeeffe_params.json'), 'r') as f:
+        data = json.load(f)
+
+    matching_els = [item for item in data if item["element"] == el_symbol]
+
+    if len(matching_els) == 1:
+        return matching_els[0]
+    elif matching_els is None:
+        raise RuntimeError("Could not find O'Keeffe parameters for " + el_symbol + \
+            ". Check element symbol or append to okeeffe_params.json.")
+    elif len(matching_els) > 1:
+        raise RuntimeError("Multiple entries found for "+ el_symbol)
+
+
+def get_okeeffe_distance_prediction(el1, el2):
+    """
+    Returns an estimate of the bond valence parameter (bond length) using the derived parameters from 
+    'Atoms Sizes and Bond Lengths in Molecules and Crystals' (O'Keeffe & Brese, 1991). The estimate
+    is based on two experimental parameters: r and c. The value for r  is based off radius, while c is 
+    (usually) the Allred-Rochow electronegativity. Values used are *not* generated from pymatgen, and
+    are found in 'okeeffe_params.json'.
+
+    Args:
+        el1, el2 (Element): two Element objects
+    Returns:
+        a float value of the predicted bond length
+    """
+    el1_okeeffe_params = get_okeeffe_params(el1.symbol)
+    el2_okeeffe_params = get_okeeffe_params(el2.symbol)
+
+    r1 = el1_okeeffe_params['r']
+    r2 = el2_okeeffe_params['r']
+    c1 = el1_okeeffe_params['c']
+    c2 = el2_okeeffe_params['c']
+
+    return r1 + r2 - r1*r2*math.pow(math.sqrt(c1)-math.sqrt(c2), 2)/(c1*r1+c2*r2)
