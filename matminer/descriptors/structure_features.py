@@ -389,8 +389,8 @@ def get_okeeffe_distance_prediction(el1, el2):
     Returns:
         a float value of the predicted bond length
     """
-    el1_okeeffe_params = get_okeeffe_params(unicode(el1))
-    el2_okeeffe_params = get_okeeffe_params(unicode(el2))
+    el1_okeeffe_params = get_okeeffe_params(el1)
+    el2_okeeffe_params = get_okeeffe_params(el2)
 
     r1 = el1_okeeffe_params['r']
     r2 = el2_okeeffe_params['r']
