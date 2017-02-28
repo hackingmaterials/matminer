@@ -159,16 +159,18 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
     """
     Determine the neighbors around the site that has index n in the input
     Structure object struct, given a pre-defined approach.  So far,
-    "scaled_VIRE" and "min_relative_VIRE" are implemented
-    (VIRE = valence-ionic radius evaluator).
+    n_relative_OKeeffe", "scaled_VIRE" and "min_relative_VIRE" are
+    implemented (VIRE = valence-ionic radius evaluator).
 
     Args:
         struct (Structure): input structure.
         n (int): index of site in Structure object for which
                 neighbors are to be determined.
-        p (dict): specification ("approach") and parameters of
+        p (dict): specification (via "approach") and parameters of
                 neighbor-finding approach.
-                min_relative_VIRE (default): "delta_scale" (0.05)
+                min_relative_OKeeffe (default): "delta_minreldist" (0.05)
+                and "cutoff": 4;
+                min_relative_VIRE: "delta_minreldist" (0.05)
                 and "scale_cut" (4);
                 scaled_VIRE: "scale" (2) and "scale_cut" (4).
 
@@ -177,42 +179,61 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
     """
     sites = []
     if p == {}:
-        p = {"approach": "min_relative_VIRE", "delta_scale": 0.05,
-                "scale_cut": 4}
-    if p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
+        p = {"approach": "min_relative_OKeeffe", "delta_minreldist": 0.05,
+                "cutoff": 4}
+
+    if p["approach"] not in [
+            "min_relative_OKeeffe", "min_relative_VIRE", "scaled_VIRE"]:
+        raise RuntimeError("Unsupported neighbor-finding approach"
+                " (\"{}\")".format(p["approach"]))
+
+    if p["approach"] == "min_relative_OKeeffe":
+        neighs_dists = struct.get_neighbors(struct[n], p["cutoff"])
+        try:
+            eln = struct[n].specie.element
+        except:
+            eln = struct[n].species_string
+
+    elif p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
         vire = ValenceIonicRadiusEvaluator(struct)
         if np.linalg.norm(struct[n].coords-vire.structure[n].coords) > 1e-6:
             raise RuntimeError("Mismatch between input structure and VIRE structure.")
         maxr = p["scale_cut"] * 2.0 * max(vire.radii.values())
         neighs_dists = vire.structure.get_neighbors(vire.structure[n], maxr)
-        #print(len(neighs_dists))
         rn = vire.radii[vire.structure[n].species_string]
-        #print(str(vire.structure[n]))
-        reldists_neighs = []
-        for neigh, dist in neighs_dists:
-            if p["approach"] == "scaled_VIRE":
-                dscale = p["scale"] * (vire.radii[neigh.species_string] + rn)
-                #print("{} {}".format(dist, dscale))
-                if dist < dscale:
-                    sites.append(neigh)
-                    #print(str(neigh))
+
+    reldists_neighs = []
+    for neigh, dist in neighs_dists:
+        if p["approach"] == "scaled_VIRE":
+            dscale = p["scale"] * (vire.radii[neigh.species_string] + rn)
+            #print("{} {}".format(dist, dscale))
+            if dist < dscale:
+                sites.append(neigh)
+                #print(str(neigh))
+        elif p["approach"] == "min_relative_VIRE":
+            reldists_neighs.append([dist / (
+                    vire.radii[neigh.species_string] + rn), neigh])
+        elif p["approach"] == "min_relative_OKeeffe":
+            try:
+                el2 = neigh.specie.element
+            except:
+                el2 = neigh.species_string
+            reldists_neighs.append([dist / get_okeeffe_distance_prediction(
+                    eln, el2), neigh])
+
+    if p["approach"] == "min_relative_VIRE" or \
+            p["approach"] == "min_relative_OKeeffe":
+        reldists_neighs_sorted = sorted(reldists_neighs)
+        max_reldist = reldists_neighs_sorted[0][0] + p["delta_minreldist"]
+        for reldist, neigh in reldists_neighs_sorted:
+            if reldist < max_reldist:
+                sites.append(neigh)
             else:
-                reldists_neighs.append([dist/(
-                        vire.radii[neigh.species_string] + rn), neigh])
-        if p["approach"] == "min_relative_VIRE":
-            reldists_neighs_sorted = sorted(reldists_neighs)
-            max_reldist = reldists_neighs_sorted[0][0] + p["delta_scale"]
-            for reldist, neigh in reldists_neighs_sorted:
-                if reldist < max_reldist:
-                    sites.append(neigh)
-                else:
-                    break
-            #for reldist, neigh in reldists_neighs_sorted:
-            #    print(str(reldist))
-            #print(str(sites))
-    else:
-        raise RuntimeError("Unsupported neighbor-finding approach"
-                " (\"{}\")".format(p["approach"]))
+                break
+        #for reldist, neigh in reldists_neighs_sorted:
+        #    print(str(reldist))
+        #print(str(sites))
+
     return sites
 
 
@@ -228,8 +249,7 @@ def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
         pneighs (dict): specification ("approach") and parameters of
                 neighbor-finding approach (see
                 get_neighbors_of_site_with_index function
-                for more details; default: min_relative_VIRE,
-                delta_scale = 0.05, scale_cut = 4).
+                for more details; default: standard min_relative_OKeeffe).
         convert_none_to_zero (bool): flag indicating whether or not
                 to convert None values in OPs to zero.
 
@@ -240,9 +260,6 @@ def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
             increasing by 5 degrees, until 175 degrees), q_tet, q_oct,
             q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
     """
-    if pneighs == {}:
-        pneighs = {"approach": "min_relative_VIRE", "delta_scale": 0.05,
-                "scale_cut": 4}
     opvals = []
     optypes = ["cn", "lin"]
     opparas = [[], []]
@@ -266,6 +283,7 @@ def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
                     opvals[i][j] = 0.0
     return opvals
 
+
 def get_order_parameter_stats(
         struct, pneighs={}, convert_none_to_zero=True, delta_op=0.01):
     """
@@ -277,8 +295,7 @@ def get_order_parameter_stats(
         pneighs (dict): specification ("approach") and parameters of
                 neighbor-finding approach (see
                 get_neighbors_of_site_with_index function
-                for more details; default: min_relative_VIRE,
-                delta_scale = 0.05, scale_cut = 4).
+                for more details; default: standard min_relative_OKeeffe.
         convert_none_to_zero (bool): flag indicating whether or not
                 to convert None values in OPs to zero.
         delta_op (float): bin size of histogram that is computed
@@ -332,35 +349,35 @@ def get_order_parameter_stats(
 
 
 def get_okeeffe_params(el_symbol):
-    with open(os.path.join(os.path.dirname(__file__), 'okeeffe_params.json'), 'r') as f:
+    with open(os.path.join(
+                os.path.dirname(__file__), 'okeeffe_params.json'), 'r') as f:
         data = json.load(f)
 
-    matching_els = [item for item in data if item["element"] == el_symbol]
+    if el_symbol not in list(data.keys()):
+        raise RuntimeError("Could not find O'Keeffe parameters for element"
+                " \"{}\". Check element symbol or append to"
+                " okeeffe_params.json.".format(el_symbol))
 
-    if len(matching_els) == 1:
-        return matching_els[0]
-    elif matching_els is None:
-        raise RuntimeError("Could not find O'Keeffe parameters for " + el_symbol + \
-            ". Check element symbol or append to okeeffe_params.json.")
-    elif len(matching_els) > 1:
-        raise RuntimeError("Multiple entries found for "+ el_symbol)
+    return data[el_symbol]
 
 
 def get_okeeffe_distance_prediction(el1, el2):
     """
-    Returns an estimate of the bond valence parameter (bond length) using the derived parameters from 
-    'Atoms Sizes and Bond Lengths in Molecules and Crystals' (O'Keeffe & Brese, 1991). The estimate
-    is based on two experimental parameters: r and c. The value for r  is based off radius, while c is 
-    (usually) the Allred-Rochow electronegativity. Values used are *not* generated from pymatgen, and
-    are found in 'okeeffe_params.json'.
+    Returns an estimate of the bond valence parameter (bond length) using
+    the derived parameters from 'Atoms Sizes and Bond Lengths in Molecules
+    and Crystals' (O'Keeffe & Brese, 1991). The estimate is based on two
+    experimental parameters: r and c. The value for r  is based off radius,
+    while c is (usually) the Allred-Rochow electronegativity. Values used
+    are *not* generated from pymatgen, and are found in
+    'okeeffe_params.json'.
 
     Args:
         el1, el2 (Element): two Element objects
     Returns:
         a float value of the predicted bond length
     """
-    el1_okeeffe_params = get_okeeffe_params(el1.symbol)
-    el2_okeeffe_params = get_okeeffe_params(el2.symbol)
+    el1_okeeffe_params = get_okeeffe_params(unicode(el1))
+    el2_okeeffe_params = get_okeeffe_params(unicode(el2))
 
     r1 = el1_okeeffe_params['r']
     r2 = el2_okeeffe_params['r']
