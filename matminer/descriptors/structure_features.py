@@ -5,8 +5,10 @@ import json
 import math
 import numpy as np
 
+from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.structure_analyzer import OrderParameters
+from pymatgen.core.structure import Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 
@@ -349,16 +351,27 @@ def get_order_parameter_stats(
 
 
 def get_okeeffe_params(el_symbol):
-    with open(os.path.join(
-                os.path.dirname(__file__), 'okeeffe_params.json'), 'r') as f:
-        data = json.load(f)
+    """
+    Returns the elemental parameters related to atom size and
+    electronegativity which are used for estimating bond-valence
+    parameters (bond length) of pairs of atoms on the basis of data
+    provided in 'Atoms Sizes and Bond Lengths in Molecules and Crystals'
+    (O'Keeffe & Brese, 1991).
 
-    if el_symbol not in list(data.keys()):
+    Args:
+        el_symbol (str): element symbol.
+    Returns:
+        (dict): atom-size ('r') and electronegativity-related ('c')
+                parameter.
+    """
+
+    el = Element(el_symbol)
+    if el not in list(BV_PARAMS.keys()):
         raise RuntimeError("Could not find O'Keeffe parameters for element"
-                " \"{}\". Check element symbol or append to"
-                " okeeffe_params.json.".format(el_symbol))
+                " \"{}\" in \"BV_PARAMS\"dictonary"
+                " provided by pymatgen".format(el_symbol))
 
-    return data[el_symbol]
+    return BV_PARAMS[el]
 
 
 def get_okeeffe_distance_prediction(el1, el2):
