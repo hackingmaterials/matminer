@@ -1,10 +1,11 @@
 from __future__ import division, unicode_literals
 
 import os
-import json
+import yaml
 import math
 import numpy as np
 
+from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -331,40 +332,33 @@ def get_order_parameter_stats(
     return opstats
 
 
-def get_okeeffe_params(el_symbol):
-    with open(os.path.join(os.path.dirname(__file__), 'okeeffe_params.json'), 'r') as f:
-        data = json.load(f)
+def get_bv_atomic_params(el):
+    try:
+        matching_el = BV_PARAMS[el]
+    except:
+        raise RuntimeError("Could not find bond valence atomic parameters for " + el_symbol)
 
-    matching_els = [item for item in data if item["element"] == el_symbol]
-
-    if len(matching_els) == 1:
-        return matching_els[0]
-    elif matching_els is None:
-        raise RuntimeError("Could not find O'Keeffe parameters for " + el_symbol + \
-            ". Check element symbol or append to okeeffe_params.json.")
-    elif len(matching_els) > 1:
-        raise RuntimeError("Multiple entries found for "+ el_symbol)
+    return matching_el
 
 
-def get_okeeffe_distance_prediction(el1, el2):
+def get_bv_param(el1, el2):
     """
     Returns an estimate of the bond valence parameter (bond length) using the derived parameters from 
     'Atoms Sizes and Bond Lengths in Molecules and Crystals' (O'Keeffe & Brese, 1991). The estimate
-    is based on two experimental parameters: r and c. The value for r  is based off radius, while c is 
-    (usually) the Allred-Rochow electronegativity. Values used are *not* generated from pymatgen, and
-    are found in 'okeeffe_params.json'.
+    is based on two atomic parameters: r and c. The value for r is based off radius, while c is 
+    (usually) the Allred-Rochow electronegativity.
 
     Args:
         el1, el2 (Element): two Element objects
     Returns:
-        a float value of the predicted bond length
+        a float value of the bond valence parameter
     """
-    el1_okeeffe_params = get_okeeffe_params(el1.symbol)
-    el2_okeeffe_params = get_okeeffe_params(el2.symbol)
+    el1_bv_atomic_params = get_bv_atomic_params(el1)
+    el2_bv_atomic_params = get_bv_atomic_params(el2)
 
-    r1 = el1_okeeffe_params['r']
-    r2 = el2_okeeffe_params['r']
-    c1 = el1_okeeffe_params['c']
-    c2 = el2_okeeffe_params['c']
+    r1 = el1_bv_atomic_params['r']
+    r2 = el2_bv_atomic_params['r']
+    c1 = el1_bv_atomic_params['c']
+    c2 = el2_bv_atomic_params['c']
 
     return r1 + r2 - r1*r2*math.pow(math.sqrt(c1)-math.sqrt(c2), 2)/(c1*r1+c2*r2)
