@@ -171,10 +171,12 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
         p (dict): specification (via "approach") and parameters of
                 neighbor-finding approach.
                 min_relative_OKeeffe (default): "delta_minreldist" (0.05)
-                and "cutoff": 4;
+                and "cutoff" (6);
+                min_dist: "delta_minreldist" (0.0005)
+                and "cutoff": 6;
                 min_relative_VIRE: "delta_minreldist" (0.05)
-                and "scale_cut" (4);
-                scaled_VIRE: "scale" (2) and "scale_cut" (4).
+                and "cutoff" (6);
+                scaled_VIRE: "scale" (2) and "cutoff" (6).
 
     Returns: ([site]) list of sites that are considered to be nearest
             neighbors to site with index n in Structure object struct.
@@ -182,14 +184,15 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
     sites = []
     if p == {}:
         p = {"approach": "min_relative_OKeeffe", "delta_minreldist": 0.05,
-                "cutoff": 4}
+                "cutoff": 6}
 
     if p["approach"] not in [
-            "min_relative_OKeeffe", "min_relative_VIRE", "scaled_VIRE"]:
+            "min_relative_OKeeffe", "min_dist", "min_relative_VIRE", \
+            "scaled_VIRE"]:
         raise RuntimeError("Unsupported neighbor-finding approach"
                 " (\"{}\")".format(p["approach"]))
 
-    if p["approach"] == "min_relative_OKeeffe":
+    if p["approach"] == "min_relative_OKeeffe" or p["approach"] == "min_dist":
         neighs_dists = struct.get_neighbors(struct[n], p["cutoff"])
         try:
             eln = struct[n].specie.element
@@ -200,8 +203,9 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
         vire = ValenceIonicRadiusEvaluator(struct)
         if np.linalg.norm(struct[n].coords-vire.structure[n].coords) > 1e-6:
             raise RuntimeError("Mismatch between input structure and VIRE structure.")
-        maxr = p["scale_cut"] * 2.0 * max(vire.radii.values())
-        neighs_dists = vire.structure.get_neighbors(vire.structure[n], maxr)
+        # maxr = p["scale_cut"] * 2.0 * max(vire.radii.values())
+        #neighs_dists = vire.structure.get_neighbors(vire.structure[n], maxr)
+        neighs_dists = vire.structure.get_neighbors(vire.structure[n], p["cutoff"])
         rn = vire.radii[vire.structure[n].species_string]
 
     reldists_neighs = []
@@ -222,19 +226,35 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
                 el2 = neigh.species_string
             reldists_neighs.append([dist / get_okeeffe_distance_prediction(
                     eln, el2), neigh])
+            # print("{} {}   {}".format(eln, el2, reldists_neighs[len(reldists_neighs)-1]))
+    #print("")
 
     if p["approach"] == "min_relative_VIRE" or \
             p["approach"] == "min_relative_OKeeffe":
-        reldists_neighs_sorted = sorted(reldists_neighs)
-        max_reldist = reldists_neighs_sorted[0][0] + p["delta_minreldist"]
-        for reldist, neigh in reldists_neighs_sorted:
-            if reldist < max_reldist:
+        #reldists_neighs_sorted = sorted(reldists_neighs)
+        #max_reldist = reldists_neighs_sorted[0][0] + p["delta_minreldist"]
+        min_reldist = min([reldist for reldist, neigh in reldists_neighs])
+        #for reldist, neigh in reldists_neighs_sorted:
+        for reldist, neigh in reldists_neighs:
+            if reldist / min_reldist < 1.0 + p["delta_minreldist"]:
+                #print(str(reldist / min_reldist))
                 sites.append(neigh)
-            else:
-                break
+                #print(str(neigh))
+            #if reldist < max_reldist:
+            #    sites.append(neigh)
+            #else:
+            #    break
         #for reldist, neigh in reldists_neighs_sorted:
         #    print(str(reldist))
         #print(str(sites))
+    elif p["approach"] == "min_dist":
+        min_dist = min([dist for neigh, dist in neighs_dists])
+        for neigh, dist in neighs_dists:
+            if dist / min_dist < 1.0 + p["delta_minreldist"]:
+                #print(str(dist / min_dist))
+                sites.append(neigh)
+    #print(str(len(sites)))
+    #quit()
 
     return sites
 
