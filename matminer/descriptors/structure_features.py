@@ -172,7 +172,7 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
                 neighbor-finding approach.
                 min_relative_OKeeffe (default): "delta_minreldist" (0.05)
                 and "cutoff" (6);
-                min_dist: "delta_minreldist" (0.0005)
+                min_dist: "delta_minreldist" (0.15)
                 and "cutoff": 6;
                 min_relative_VIRE: "delta_minreldist" (0.05)
                 and "cutoff" (6);
@@ -183,7 +183,7 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
     """
     sites = []
     if p == {}:
-        p = {"approach": "min_relative_OKeeffe", "delta_minreldist": 0.05,
+        p = {"approach": "min_dist", "delta_minreldist": 0.15,
                 "cutoff": 6}
 
     if p["approach"] not in [
