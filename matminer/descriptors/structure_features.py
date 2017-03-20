@@ -157,7 +157,7 @@ def get_min_relative_distances(struct, cutoff=10.0):
     return min_rel_dists[:]
 
 
-def get_neighbors_of_site_with_index(struct, n, p={}):
+def get_neighbors_of_site_with_index(struct, n, p=None):
     """
     Determine the neighbors around the site that has index n in the input
     Structure object struct, given a pre-defined approach.  So far,
@@ -182,7 +182,7 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
             neighbors to site with index n in Structure object struct.
     """
     sites = []
-    if p == {}:
+    if p is None:
         p = {"approach": "min_dist", "delta_minreldist": 0.15,
                 "cutoff": 6}
 
@@ -259,7 +259,7 @@ def get_neighbors_of_site_with_index(struct, n, p={}):
     return sites
 
 
-def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
+def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
     """
     Determine the neighbors around the site that has index n in the input
     Structure object struct, given a pre-defined approach.  So far,
@@ -307,7 +307,7 @@ def get_order_parameters(struct, pneighs={}, convert_none_to_zero=True):
 
 
 def get_order_parameter_stats(
-        struct, pneighs={}, convert_none_to_zero=True, delta_op=0.01):
+        struct, pneighs=None, convert_none_to_zero=True, delta_op=0.01):
     """
     Determine the order parameter statistics based on the
     data from the get_order_parameters function.
