@@ -160,30 +160,48 @@ def get_min_relative_distances(struct, cutoff=10.0):
 def get_neighbors_of_site_with_index(struct, n, p=None):
     """
     Determine the neighbors around the site that has index n in the input
-    Structure object struct, given a pre-defined approach.  So far,
-    n_relative_OKeeffe", "scaled_VIRE" and "min_relative_VIRE" are
-    implemented (VIRE = valence-ionic radius evaluator).
+    Structure object struct, given the approach defined by parameters
+    p.  All supported neighbor-finding approaches and listed and
+    explained in the following.  All approaches start by creating a
+    tentative list of neighbors using a large cutoff radius defined in
+    parameter dictionary p via key "cutoff".
+    "min_dist": find nearest neighbor and its distance d_nn; consider all
+            neighbors which are within a distance of d_nn * (1 + delta),
+            where delta is an additional parameter provided in the
+            dictionary p via key "delta".
+    "scaled_VIRE": compute the radii, r_i, of all sites on the basis of
+            the valence-ionic radius evaluator (VIRE); consider all
+            neighbors for which the distance to the central site is less
+            than the sum of the radii multiplied by an a priori chosen
+            parameter, delta,
+            (i.e., dist < delta * (r_central + r_neighbor)).
+    "min_relative_VIRE": same approach as "min_dist", except that we
+            use relative distances (i.e., distances divided by the sum of the
+            atom radii from VIRE).
+    "min_relative_OKeeffe": same approach as "min_relative_VIRE", except
+            that we use the bond valence parameters from O'Keeffe's bond valence
+            method (J. Am. Chem. Soc. 1991, 3226-3229) to calculate
+            relative distances.
 
     Args:
         struct (Structure): input structure.
         n (int): index of site in Structure object for which
                 neighbors are to be determined.
-        p (dict): specification (via "approach") and parameters of
-                neighbor-finding approach.
-                min_relative_OKeeffe (default): "delta_minreldist" (0.05)
-                and "cutoff" (6);
-                min_dist: "delta_minreldist" (0.15)
-                and "cutoff": 6;
-                min_relative_VIRE: "delta_minreldist" (0.05)
-                and "cutoff" (6);
-                scaled_VIRE: "scale" (2) and "cutoff" (6).
+        p (dict): specification (via "approach" key; default is "min_dist")
+                and parameters of neighbor-finding approach.
+                Default cutoff radius is 6 Angstrom (key: "cutoff").
+                Other default parameters are as follows.
+                min_dist: "delta": 0.15;
+                min_relative_OKeeffe: "delta": 0.05;
+                min_relative_VIRE: "delta": 0.05;
+                scaled_VIRE: "delta": 2.
 
     Returns: ([site]) list of sites that are considered to be nearest
             neighbors to site with index n in Structure object struct.
     """
     sites = []
     if p is None:
-        p = {"approach": "min_dist", "delta_minreldist": 0.15,
+        p = {"approach": "min_dist", "delta": 0.15,
                 "cutoff": 6}
 
     if p["approach"] not in [
@@ -198,24 +216,19 @@ def get_neighbors_of_site_with_index(struct, n, p=None):
             eln = struct[n].specie.element
         except:
             eln = struct[n].species_string
-
     elif p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
         vire = ValenceIonicRadiusEvaluator(struct)
         if np.linalg.norm(struct[n].coords-vire.structure[n].coords) > 1e-6:
             raise RuntimeError("Mismatch between input structure and VIRE structure.")
-        # maxr = p["scale_cut"] * 2.0 * max(vire.radii.values())
-        #neighs_dists = vire.structure.get_neighbors(vire.structure[n], maxr)
         neighs_dists = vire.structure.get_neighbors(vire.structure[n], p["cutoff"])
         rn = vire.radii[vire.structure[n].species_string]
 
     reldists_neighs = []
     for neigh, dist in neighs_dists:
         if p["approach"] == "scaled_VIRE":
-            dscale = p["scale"] * (vire.radii[neigh.species_string] + rn)
-            #print("{} {}".format(dist, dscale))
+            dscale = p["delta"] * (vire.radii[neigh.species_string] + rn)
             if dist < dscale:
                 sites.append(neigh)
-                #print(str(neigh))
         elif p["approach"] == "min_relative_VIRE":
             reldists_neighs.append([dist / (
                     vire.radii[neigh.species_string] + rn), neigh])
@@ -226,52 +239,31 @@ def get_neighbors_of_site_with_index(struct, n, p=None):
                 el2 = neigh.species_string
             reldists_neighs.append([dist / get_okeeffe_distance_prediction(
                     eln, el2), neigh])
-            # print("{} {}   {}".format(eln, el2, reldists_neighs[len(reldists_neighs)-1]))
-    #print("")
+        elif p["approach"] == "min_dist":
+            reldists_neighs.append([dist, neigh])
 
     if p["approach"] == "min_relative_VIRE" or \
-            p["approach"] == "min_relative_OKeeffe":
-        #reldists_neighs_sorted = sorted(reldists_neighs)
-        #max_reldist = reldists_neighs_sorted[0][0] + p["delta_minreldist"]
+            p["approach"] == "min_relative_OKeeffe" or \
+            p["approach"] == "min_dist":
         min_reldist = min([reldist for reldist, neigh in reldists_neighs])
-        #for reldist, neigh in reldists_neighs_sorted:
         for reldist, neigh in reldists_neighs:
-            if reldist / min_reldist < 1.0 + p["delta_minreldist"]:
-                #print(str(reldist / min_reldist))
+            if reldist / min_reldist < 1.0 + p["delta"]:
                 sites.append(neigh)
-                #print(str(neigh))
-            #if reldist < max_reldist:
-            #    sites.append(neigh)
-            #else:
-            #    break
-        #for reldist, neigh in reldists_neighs_sorted:
-        #    print(str(reldist))
-        #print(str(sites))
-    elif p["approach"] == "min_dist":
-        min_dist = min([dist for neigh, dist in neighs_dists])
-        for neigh, dist in neighs_dists:
-            if dist / min_dist < 1.0 + p["delta_minreldist"]:
-                #print(str(dist / min_dist))
-                sites.append(neigh)
-    #print(str(len(sites)))
-    #quit()
 
     return sites
 
 
 def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
     """
-    Determine the neighbors around the site that has index n in the input
-    Structure object struct, given a pre-defined approach.  So far,
-    "scaled_VIRE" and "min_relative_VIRE" are implemented
-    (VIRE = valence-ionic radius evaluator).
+    Calculate all order parameters (OPs) for all sites in Structure object
+    struct.
 
     Args:
         struct (Structure): input structure.
-        pneighs (dict): specification ("approach") and parameters of
+        pneighs (dict): specification and parameters of
                 neighbor-finding approach (see
                 get_neighbors_of_site_with_index function
-                for more details; default: standard min_relative_OKeeffe).
+                for more details).
         convert_none_to_zero (bool): flag indicating whether or not
                 to convert None values in OPs to zero.
 
@@ -309,23 +301,24 @@ def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
 def get_order_parameter_stats(
         struct, pneighs=None, convert_none_to_zero=True, delta_op=0.01):
     """
-    Determine the order parameter statistics based on the
-    data from the get_order_parameters function.
+    Determine the order parameter statistics accumulated across all sites
+    in Structure object struct using the get_order_parameters function.
 
     Args:
         struct (Structure): input structure.
-        pneighs (dict): specification ("approach") and parameters of
+        pneighs (dict): specification and parameters of
                 neighbor-finding approach (see
                 get_neighbors_of_site_with_index function
-                for more details; default: standard min_relative_OKeeffe.
+                for more details).
         convert_none_to_zero (bool): flag indicating whether or not
-                to convert None values in OPs to zero.
+                to convert None values in OPs to zero (cf.,
+                get_order_parameters function).
         delta_op (float): bin size of histogram that is computed
                 in order to identify peak locations.
 
     Returns: ({}) dictionary, the keys of which represent
             the order parameter type (e.g., "bent5", "tet", "sq_pyr")
-            and the values are another dictionary carring the
+            and the values of which are dictionaries carring the
             statistics ("min", "max", "mean", "std", "peak1", "peak2").
     """
     opstats = {}
