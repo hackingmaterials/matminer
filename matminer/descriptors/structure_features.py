@@ -366,8 +366,10 @@ def get_order_parameter_stats(
 def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
     """
     Returns the motif type of site with index n in structure struct;
-    currently featuring "tetrahedral", "octahedral", "bcc", "cp"
-    (close-packed: fcc and hcp), and "unrecognized".
+    currently featuring "tetrahedral", "octahedral", "bcc", and "cp"
+    (close-packed: fcc and hcp).  If the site is not recognized
+    or if it has been recognized as two different motif types,
+    the function labels the site as "unrecognized".
 
     Args:
         struct (Structure): input structure.
@@ -389,18 +391,27 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
     cn = int(ops[n][0] + 0.5)
     motif_type = "unrecognized"
     nmotif = 0
+
     if cn == 4 and ops[n][37] > thresh["qtet"]:
         motif_type = "tetrahedral"
+        nmotif += 1
     if cn == 6 and ops[n][38] > thresh["qoct"]:
         motif_type = "octahedral"
+        nmotif += 1
     if cn == 8 and (ops[n][39] > thresh["qbcc"] and \
             ops[n][37] < thresh["qtet"]):
         motif_type = "bcc"
+        nmotif += 1
     if cn == 12 and (ops[n][42] > thresh["q6"] and \
             ops[n][37] < thresh["q6"] and \
             ops[n][38] < thresh["q6"] and \
             ops[n][39] < thresh["q6"]):
-        motif_type = "bcc"
+        motif_type = "cp"
+        nmotif += 1
+
+    if nmotif > 1:
+        motif_type = "unrecognized"
+
     return motif_type
 
 def get_okeeffe_params(el_symbol):
