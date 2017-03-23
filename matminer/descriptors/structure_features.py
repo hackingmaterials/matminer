@@ -363,6 +363,46 @@ def get_order_parameter_stats(
     return opstats
 
 
+def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
+    """
+    Returns the motif type of site with index n in structure struct;
+    currently featuring "tetrahedral", "octahedral", "bcc", "cp"
+    (close-packed: fcc and hcp), and "unrecognized".
+
+    Args:
+        struct (Structure): input structure.
+        n (int): index of site in Structure object for which motif type
+                is to be determined.
+        pneighs (dict): specification and parameters of neighbor-finding
+                approach (cf., function get_neighbors_of_site_with_index).
+        thresh (dict): thresholds for motif criteria (currently, required
+                keys and their default values are "qtet": 0.5,
+                "qoct": 0.5, "qbcc": 0.5, "q6": 0.4).
+
+    Returns: motif type (str).
+    """
+
+    if thresh is None:
+        thresh = {"qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4}
+
+    ops = get_order_parameters(struct, pneighs=pneighs)
+    cn = int(ops[n][0] + 0.5)
+    motif_type = "unrecognized"
+    nmotif = 0
+    if cn == 4 and ops[n][37] > thresh["qtet"]:
+        motif_type = "tetrahedral"
+    if cn == 6 and ops[n][38] > thresh["qoct"]:
+        motif_type = "octahedral"
+    if cn == 8 and (ops[n][39] > thresh["qbcc"] and \
+            ops[n][37] < thresh["qtet"]):
+        motif_type = "bcc"
+    if cn == 12 and (ops[n][42] > thresh["q6"] and \
+            ops[n][37] < thresh["q6"] and \
+            ops[n][38] < thresh["q6"] and \
+            ops[n][39] < thresh["q6"]):
+        motif_type = "bcc"
+    return motif_type
+
 def get_okeeffe_params(el_symbol):
     """
     Returns the elemental parameters related to atom size and
