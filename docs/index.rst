@@ -149,6 +149,7 @@ Some other descriptors that can be obtained from matminer include:
    #. Packing fraction
    #. Volume per site
    #. Radial and electronic radial distribution functions
+   #. Structural order parameters
 
 #. Band-structure descriptors
 
