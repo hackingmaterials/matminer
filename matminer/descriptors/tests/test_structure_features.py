@@ -7,12 +7,13 @@ from __future__ import unicode_literals
 import unittest2 as unittest
 
 from pymatgen import Structure, Lattice
+from pymatgen.io.vasp.inputs import Poscar
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.descriptors.structure_features import get_packing_fraction, \
         get_vol_per_site, get_density, get_rdf, get_rdf_peaks, get_redf, \
         get_min_relative_distances, get_neighbors_of_site_with_index, \
-        get_order_parameters, get_order_parameter_stats
+        get_order_parameters, get_order_parameter_stats, get_prdf
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -41,6 +42,13 @@ class StructureFeaturesTest(PymatgenTest):
                 ["Cl1-", "Cs1+"], [[2.105,2.105, 2.105], [0, 0, 0]],
                 validate_proximity=False, to_unit_cell=False,
                 coords_are_cartesian=True, site_properties=None)
+        self.ni3al = Structure(
+            Lattice([[3.52,0,0],[0,3.52,0],[0,0,3.52]]),
+            ["Al",]+["Ni"]*3, 
+            [[0,0,0],[0.5,0.5,0],[0.5,0,0.5],[0,0.5,0.5]],
+            validate_proximity=False, to_unit_cell=False,
+            coords_are_cartesian=False, site_properties=None)
+        Poscar(self.ni3al).write_file('ni3al.poscar')
 
     def test_get_packing_fraction(self):
         self.assertAlmostEqual(int(1000 * get_packing_fraction(
@@ -97,6 +105,32 @@ class StructureFeaturesTest(PymatgenTest):
         l = get_rdf_peaks(d)
         self.assertAlmostEqual(int(10 * l[0]), 36)
         self.assertAlmostEqual(int(10 * l[1]), 69)
+        
+    def test_prdf(self):
+        # Test a few peaks in diamond
+        #  These expected numbers were derived by performing the calculation in another code
+        p = get_prdf(self.diamond)
+        self.assertEquals(len(p), 1)
+        self.assertEquals(p[('C','C')].get(1.4,0), 0)
+        self.assertAlmostEqual(p[('C','C')][1.5], 1.324451676)
+        self.assertAlmostEqual(max(p[('C','C')].keys()), 19.9) # Annoyingly just off 19.9
+        self.assertAlmostEqual(p[('C','C')][max(p[('C','C')].keys())], 0.07197902)
+        
+        # Test a few peaks in CsCl, make sure it gets all types correctly
+        p = get_prdf(self.cscl)
+        self.assertEquals(len(p), 4)
+        self.assertAlmostEquals(p[('Cs','Cl')].get(3.6,0), 0.477823197)
+        self.assertAlmostEquals(p[('Cl','Cs')].get(3.6,0), 0.477823197)
+        self.assertAlmostEquals(p[('Cs','Cs')].get(3.6,0), 0)
+        
+        # Do Ni3Al, make sure it captures the antisymmetry of Ni/Al sites
+        p = get_prdf(self.ni3al)
+        self.assertEquals(len(p), 4)
+        min_dist = min(p[('Ni','Al')].keys())
+        self.assertAlmostEquals(min_dist, 2.4)
+        self.assertAlmostEquals(p[('Ni','Al')].get(min_dist,0), 0.530221909)
+        self.assertAlmostEquals(p[('Al','Ni')].get(min_dist,0), 1.590665728)
+        self.assertAlmostEquals(p[('Al','Al')].get(min_dist,0), 0)
 
     def test_get_redf(self):
         d = get_redf(self.diamond)
