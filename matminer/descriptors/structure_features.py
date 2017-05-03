@@ -64,9 +64,9 @@ def get_rdf(structure, cutoff=20.0, bin_size=0.1):
             bins=np.arange(0, cutoff+bin_size, bin_size), density=False)
     
     # Normalize counts
-    shell_width = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:],3) - np.power(dist_bins[:-1], 3))
+    shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:],3) - np.power(dist_bins[:-1], 3))
     number_density = structure.num_sites / structure.volume 
-    rdf = dist_hist / shell_width / number_density
+    rdf = dist_hist / shell_vol / number_density
     
     return rdf, dist_bins[:-1]
     
@@ -80,49 +80,55 @@ def get_prdf(structure, cutoff=20.0, bin_size=0.1):
     
     The PRDF was proposed as a structural descriptor by [Schutt *et al.*](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
     
-    Note: In contrast with `get_rdf`, this PRDF is normalized by the atom density rather than the mass density
-    
     Args:
-        Args:
         structure: pymatgen structure object
         cutoff: (int/float) distance to calculate rdf up to
         bin_size: (int/float) size of bin to obtain rdf for
 
-    Returns: (dict) Nested dict where keys are tuples of atom types and values are rdf (where key is distance and value)
+    Returns: (tuple) First element is a dict where keys are tuples of element names
+               and values are PRDFs,
     """
     
     if not structure.is_ordered:
         raise ValueError("Disordered structure support not built yet")
-    
-    prdf = {}
-    
-    # Add in keys to PRDF dictionary
-    composition = structure.composition.fractional_composition.to_reduced_dict
-    for p in itertools.product(composition.keys(), composition.keys()):
-        prdf[p] = {}
-    
-    # Perform the PRDF calculation    
-    for site in structure:
-        neighbors_lst = structure.get_neighbors(site, cutoff)
-        my_elem = site.specie.symbol if isinstance(site.specie, Element) else site.specie.element.symbol
         
-        for neighbor in neighbors_lst:
-            rij = neighbor[1]
-            bin_dist = int(rij/bin_size) * bin_size
-            your_elem = neighbor[0].specie.symbol if isinstance(site.specie, Element) else neighbor[0].specie.element.symbol
-            
-            # Update the appropriate PRDF
-            if bin_dist in prdf[(my_elem,your_elem)]:
-                prdf[(my_elem,your_elem)][bin_dist] += 1
-            else:
-                prdf[(my_elem,your_elem)][bin_dist] = 1
+    # Get the composition of the array
+    composition = structure.composition.fractional_composition.to_reduced_dict
     
-    # Normalize the PRDFs
-    for elems, rdf in prdf.items():
-        n_alpha = composition[elems[0]] * structure.num_sites
-        for bin_dist in rdf:
-            rdf[bin_dist] /= n_alpha * 4.0/3.0 * math.pi * ((bin_dist+bin_size)**3 - bin_dist**3)
-    return prdf
+    # Get the distances between all atoms
+    neighbors_lst = structure.get_all_neighbors(cutoff)
+    
+    # Sort neighbors by type
+    distances_by_type = {}
+    for p in itertools.product(composition.keys(), composition.keys()):
+        distances_by_type[p] = []
+        
+    def get_symbol(site):
+        return site.specie.symbol if isinstance(site.specie, Element) else site.specie.element.symbol
+    for site,nlst in zip(structure.sites, neighbors_lst): # Each list is a list for each site
+        my_elem = get_symbol(site)
+        
+        for neighbor in nlst:
+            rij = neighbor[1]
+            n_elem = get_symbol(neighbor[0])
+            # LW 3May17: Any better ideas than appending each element at a time?
+            distances_by_type[(my_elem,n_elem)].append(rij)
+    
+    # Compute and normalize the prdfs
+    prdf = {}
+    dist_bins = np.arange(0, cutoff+bin_size, bin_size)
+    shell_volume = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:],3) - np.power(dist_bins[:-1], 3))
+    for key, distances in distances_by_type.items():
+        # Compute histogram of distances
+        dist_hist, dist_bins = np.histogram(distances,
+            bins=dist_bins, density=False)
+        # Normalize
+        n_alpha = composition[key[0]] * structure.num_sites    
+        rdf = dist_hist / shell_volume / n_alpha
+        
+        prdf[key] = rdf
+    
+    return prdf, dist_bins[:-1]
 
 
 def get_rdf_peaks(rdf, rdf_bins, n_peaks=2):
@@ -139,7 +145,7 @@ def get_rdf_peaks(rdf, rdf_bins, n_peaks=2):
     """
     
     # LW 3May17: Sorting the whole array isn't necessary, 
-    #   but probably quick given typical RDF sizes
+    #   but probably quick given typical RDF sizes are small
     return rdf_bins[np.argsort(rdf)[-n_peaks:]][::-1]
 
 
