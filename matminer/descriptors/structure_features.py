@@ -4,6 +4,7 @@ import os
 import json
 import math
 import numpy as np
+import itertools
 
 from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
@@ -62,6 +63,60 @@ def get_rdf(structure, cutoff=20.0, bin_size=0.1):
     for bin_idx in dist_rdf:
         dist_rdf[bin_idx] /= structure.density * 4 * math.pi * (bin_idx**2) * bin_size
     return dist_rdf
+    
+    
+def get_prdf(structure, cutoff=20.0, bin_size=0.1):
+    """
+    Compute the partial radial distribution function for a structure
+    
+    The partial radial distribution function is the radial distibution function
+    broken down for each pair of atom types
+    
+    The PRDF was proposed as a structural descriptor by [Schutt *et al.*](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
+    
+    Note: In contrast with `get_rdf`, this PRDF is normalized by the atom density rather than the mass density
+    
+    Args:
+        Args:
+        structure: pymatgen structure object
+        cutoff: (int/float) distance to calculate rdf up to
+        bin_size: (int/float) size of bin to obtain rdf for
+
+    Returns: (dict) Nested dict where keys are tuples of atom types and values are rdf (where key is distance and value)
+    """
+    
+    if not structure.is_ordered:
+        raise ValueError("Disordered structure support not built yet")
+    
+    prdf = {}
+    
+    # Add in keys to PRDF dictionary
+    composition = structure.composition.fractional_composition.to_reduced_dict
+    for p in itertools.product(composition.keys(), composition.keys()):
+        prdf[p] = {}
+    
+    # Perform the PRDF calculation    
+    for site in structure:
+        neighbors_lst = structure.get_neighbors(site, cutoff)
+        my_elem = site.specie.symbol if isinstance(site.specie, Element) else site.specie.element.symbol
+        
+        for neighbor in neighbors_lst:
+            rij = neighbor[1]
+            bin_dist = int(rij/bin_size) * bin_size
+            your_elem = neighbor[0].specie.symbol if isinstance(site.specie, Element) else neighbor[0].specie.element.symbol
+            
+            # Update the appropriate PRDF
+            if bin_dist in prdf[(my_elem,your_elem)]:
+                prdf[(my_elem,your_elem)][bin_dist] += 1
+            else:
+                prdf[(my_elem,your_elem)][bin_dist] = 1
+    
+    # Normalize the PRDFs
+    for elems, rdf in prdf.items():
+        n_alpha = composition[elems[0]] * structure.num_sites
+        for bin_dist in rdf:
+            rdf[bin_dist] /= n_alpha * 4.0/3.0 * math.pi * ((bin_dist+bin_size)**3 - bin_dist**3)
+    return prdf
 
 
 def get_rdf_peaks(dist_rdf):
