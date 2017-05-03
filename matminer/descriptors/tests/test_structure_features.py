@@ -133,28 +133,27 @@ class StructureFeaturesTest(PymatgenTest):
     def test_prdf(self):
         # Test a few peaks in diamond
         #  These expected numbers were derived by performing the calculation in another code
-        p = get_prdf(self.diamond)
+        p, r = get_prdf(self.diamond)
         self.assertEquals(len(p), 1)
-        self.assertEquals(p[('C','C')].get(1.4,0), 0)
-        self.assertAlmostEqual(p[('C','C')][1.5], 1.324451676)
-        self.assertAlmostEqual(max(p[('C','C')].keys()), 19.9) # Annoyingly just off 19.9
-        self.assertAlmostEqual(p[('C','C')][max(p[('C','C')].keys())], 0.07197902)
+        self.assertEquals(p[('C','C')][round(1.4/0.1)], 0)
+        self.assertAlmostEqual(p[('C','C')][round(1.5/0.1)], 1.324451676)
+        self.assertAlmostEqual(r.max(), 19.9)
+        self.assertAlmostEqual(p[('C','C')][round(19.9/0.1)], 0.07197902)
         
         # Test a few peaks in CsCl, make sure it gets all types correctly
-        p = get_prdf(self.cscl)
+        p, r = get_prdf(self.cscl, cutoff=10)
         self.assertEquals(len(p), 4)
-        self.assertAlmostEquals(p[('Cs','Cl')].get(3.6,0), 0.477823197)
-        self.assertAlmostEquals(p[('Cl','Cs')].get(3.6,0), 0.477823197)
-        self.assertAlmostEquals(p[('Cs','Cs')].get(3.6,0), 0)
+        self.assertAlmostEqual(r.max(), 9.9)
+        self.assertAlmostEquals(p[('Cs','Cl')][round(3.6/0.1)], 0.477823197)
+        self.assertAlmostEquals(p[('Cl','Cs')][round(3.6/0.1)], 0.477823197)
+        self.assertAlmostEquals(p[('Cs','Cs')][round(3.6/0.1)], 0)
         
         # Do Ni3Al, make sure it captures the antisymmetry of Ni/Al sites
-        p = get_prdf(self.ni3al)
+        p,r = get_prdf(self.ni3al, cutoff=10, bin_size=0.5)
         self.assertEquals(len(p), 4)
-        min_dist = min(p[('Ni','Al')].keys())
-        self.assertAlmostEquals(min_dist, 2.4)
-        self.assertAlmostEquals(p[('Ni','Al')].get(min_dist,0), 0.530221909)
-        self.assertAlmostEquals(p[('Al','Ni')].get(min_dist,0), 1.590665728)
-        self.assertAlmostEquals(p[('Al','Al')].get(min_dist,0), 0)
+        self.assertAlmostEquals(p[('Ni','Al')][round(2/0.5)], 0.125236677)
+        self.assertAlmostEquals(p[('Al','Ni')][round(2/0.5)], 0.37571003)
+        self.assertAlmostEquals(p[('Al','Al')][round(2/0.5)], 0)
 
     def test_get_redf(self):
         d = get_redf(self.diamond)
