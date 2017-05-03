@@ -4,10 +4,11 @@
 
 from __future__ import unicode_literals
 
+import numpy as np
+
 import unittest2 as unittest
 
 from pymatgen import Structure, Lattice
-from pymatgen.io.vasp.inputs import Poscar
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.descriptors.structure_features import get_packing_fraction, \
@@ -48,7 +49,6 @@ class StructureFeaturesTest(PymatgenTest):
             [[0,0,0],[0.5,0.5,0],[0.5,0,0.5],[0,0.5,0.5]],
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=False, site_properties=None)
-        Poscar(self.ni3al).write_file('ni3al.poscar')
 
     def test_get_packing_fraction(self):
         self.assertAlmostEqual(int(1000 * get_packing_fraction(
@@ -75,36 +75,60 @@ class StructureFeaturesTest(PymatgenTest):
                 self.cscl)), 374)
 
     def test_get_rdf_and_peaks(self):
-        d = get_rdf(self.diamond)
-        l = sorted([[k, v] for  k, v in d.items()])
-        self.assertAlmostEqual(len(l), 116)
-        self.assertAlmostEqual(int(10*l[0][0]), 15)
-        self.assertAlmostEqual(int(1000*l[0][1]), 810)
-        self.assertAlmostEqual(int(10*l[115][0]), 199)
-        self.assertAlmostEqual(int(1000*l[115][1]), 41)
-        l = get_rdf_peaks(d)
-        self.assertAlmostEqual(int(10 * l[0]), 25)
-        self.assertAlmostEqual(int(10 * l[1]), 15)
-        d = get_rdf(self.nacl)
-        l = sorted([[k, v] for  k, v in d.items()])
-        self.assertAlmostEqual(len(l), 44)
-        self.assertAlmostEqual(int(10*l[0][0]), 28)
-        self.assertAlmostEqual(int(1000*l[0][1]), 578)
-        self.assertAlmostEqual(int(10*l[43][0]), 199)
-        self.assertAlmostEqual(int(1000*l[43][1]), 103)
-        l = get_rdf_peaks(d)
-        self.assertAlmostEqual(int(10 * l[0]), 28)
-        self.assertAlmostEqual(int(10 * l[1]), 40)
-        d = get_rdf(self.cscl)
-        l = sorted([[k, v] for  k, v in d.items()])
-        self.assertAlmostEqual(len(l), 32)
-        self.assertAlmostEqual(int(10*l[0][0]), 36)
-        self.assertAlmostEqual(int(1000*l[0][1]), 262)
-        self.assertAlmostEqual(int(10*l[31][0]), 197)
-        self.assertAlmostEqual(int(1000*l[31][1]), 26)
-        l = get_rdf_peaks(d)
-        self.assertAlmostEqual(int(10 * l[0]), 36)
-        self.assertAlmostEqual(int(10 * l[1]), 69)
+        ## Test diamond
+        rdf, bin_radius = get_rdf(self.diamond)
+        
+        # Make sure it the last bin is cutoff-bin_max
+        self.assertAlmostEquals(bin_radius.max(), 19.9)
+        
+        # Verify bin sizes
+        self.assertEquals(len(rdf), len(bin_radius))
+        self.assertEquals(len(rdf), 200)
+        
+        # Make sure it gets all of the peaks
+        self.assertEquals(np.count_nonzero(rdf), 116) 
+        
+        # Check the values for a few individual peaks
+        self.assertAlmostEqual(rdf[round(1.5/0.1)], 15.12755155)
+        self.assertAlmostEqual(rdf[round(2.9/0.1)], 12.53193948)
+        self.assertAlmostEqual(rdf[round(19.9/0.1)], 0.822126129)
+        
+        # Make sure it finds the locations of non-zero peaks correctly
+        peaks = get_rdf_peaks(rdf, bin_radius)
+        self.assertEquals(len(peaks), 2)
+        self.assertAlmostEquals(2.5, peaks[0])
+        self.assertAlmostEquals(1.5, peaks[1])
+        
+        # Repeat test with NaCl (omitting comments). Altering cutoff distance
+        rdf, bin_radius = get_rdf(self.nacl, cutoff=10)
+        self.assertAlmostEquals(bin_radius.max(), 9.9)
+        self.assertEquals(len(rdf), len(bin_radius))
+        self.assertEquals(len(rdf), 100)
+        self.assertEquals(np.count_nonzero(rdf), 11) 
+        self.assertAlmostEqual(rdf[round(2.8/0.1)], 27.09214168)
+        self.assertAlmostEqual(rdf[round(4.0/0.1)], 26.83338723)
+        self.assertAlmostEqual(rdf[round(9.8/0.1)], 3.024406467)
+        
+        peaks = get_rdf_peaks(rdf, bin_radius)
+        self.assertEquals(len(peaks), 2)
+        self.assertAlmostEquals(2.8, peaks[0])
+        self.assertAlmostEquals(4.0, peaks[1])
+        
+        # Repeat test with CsCl. Altering cutoff distance and bin_size
+        rdf, bin_radius = get_rdf(self.cscl, cutoff=8, bin_size=0.5)
+        self.assertAlmostEquals(bin_radius.max(), 7.5)
+        self.assertEquals(len(rdf), len(bin_radius))
+        self.assertEquals(len(rdf), 16)
+        self.assertEquals(np.count_nonzero(rdf), 5) 
+        self.assertAlmostEqual(rdf[round(3.5/0.5)], 6.741265585)
+        self.assertAlmostEqual(rdf[round(4.0/0.5)], 3.937582548)
+        self.assertAlmostEqual(rdf[round(7.0/0.5)], 1.805505363)
+        
+        peaks = get_rdf_peaks(rdf, bin_radius, 3)
+        self.assertEquals(len(peaks), 3)
+        self.assertAlmostEquals(3.5, peaks[0])
+        self.assertAlmostEquals(6.5, peaks[1])
+        self.assertAlmostEquals(5,5, peaks[2])
         
     def test_prdf(self):
         # Test a few peaks in diamond

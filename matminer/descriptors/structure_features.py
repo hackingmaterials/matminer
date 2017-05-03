@@ -5,6 +5,7 @@ import json
 import math
 import numpy as np
 import itertools
+from operator import itemgetter
 
 from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
@@ -47,22 +48,27 @@ def get_rdf(structure, cutoff=20.0, bin_size=0.1):
         cutoff: (int/float) distance to calculate rdf up to
         bin_size: (int/float) size of bin to obtain rdf for
 
-    Returns: (dict) rdf in dict format where keys indicate bin distance and values are calculated rdf for that bin.
+    Returns: (tuple of ndarray) first element is the normalized RDF, second is the inner radius of the RDF bin
 
     """
-    dist_rdf = {}
-    for site in structure:
-        neighbors_lst = structure.get_neighbors(site, cutoff)
-        for neighbor in neighbors_lst:
-            rij = neighbor[1]
-            bin_dist = int(rij/bin_size) * bin_size
-            if bin_dist in dist_rdf:
-                dist_rdf[bin_dist] += 1
-            else:
-                dist_rdf[bin_dist] = 1
-    for bin_idx in dist_rdf:
-        dist_rdf[bin_idx] /= structure.density * 4 * math.pi * (bin_idx**2) * bin_size
-    return dist_rdf
+    
+    if not structure.is_ordered:
+        raise ValueError("Disordered structure support not built yet")
+    
+    # Get the distances between all atoms
+    neighbors_lst = structure.get_all_neighbors(cutoff)
+    all_distances = np.concatenate(tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
+    
+    # Compute a histogram
+    dist_hist, dist_bins = np.histogram(all_distances,
+            bins=np.arange(0, cutoff+bin_size, bin_size), density=False)
+    
+    # Normalize counts
+    shell_width = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:],3) - np.power(dist_bins[:-1], 3))
+    number_density = structure.num_sites / structure.volume 
+    rdf = dist_hist / shell_width / number_density
+    
+    return rdf, dist_bins[:-1]
     
     
 def get_prdf(structure, cutoff=20.0, bin_size=0.1):
@@ -119,23 +125,22 @@ def get_prdf(structure, cutoff=20.0, bin_size=0.1):
     return prdf
 
 
-def get_rdf_peaks(dist_rdf):
+def get_rdf_peaks(rdf, rdf_bins, n_peaks=2):
     """
-    Get location of highest and second highest peaks in rdf of a structure.
+    Get location of highest peaks in rdf of a structure.
 
     Args:
-        dist_rdf: (dict) as output by the function "get_rdf", keys correspond to distances and values correspond to rdf.
+        rdf: (ndarray) as output by the function "get_rdf"
+        rdf_bins: (ndarray) inner radius of the rdf bin
+        n_peaks: (int) Number of the top peaks to return 
 
-    Returns: (tuple) of distances highest and second highest peaks.
+    Returns: (ndarray) of distances highest peaks, listed by descending height
 
     """
-    distances = list(dist_rdf.keys())
-    rdf = list(dist_rdf.values())
-    sorted_rdfs = sorted(rdf, reverse=True)
-    max_rdf, second_highest_rdf = sorted_rdfs[0], sorted_rdfs[1]
-    max_idx = rdf.index(max_rdf)
-    second_highest_idx = rdf.index(second_highest_rdf)
-    return distances[max_idx], distances[second_highest_idx]
+    
+    # LW 3May17: Sorting the whole array isn't necessary, 
+    #   but probably quick given typical RDF sizes
+    return rdf_bins[np.argsort(rdf)[-n_peaks:]][::-1]
 
 
 def get_redf(struct, cutoff=None, dr=0.05):
