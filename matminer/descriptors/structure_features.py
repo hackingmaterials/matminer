@@ -201,7 +201,7 @@ def get_neighbors_of_site_with_index(struct, n, p=None):
     """
     sites = []
     if p is None:
-        p = {"approach": "min_dist", "delta": 0.15,
+        p = {"approach": "min_dist", "delta": 0.1,
                 "cutoff": 6}
 
     if p["approach"] not in [
@@ -281,7 +281,7 @@ def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
         optypes.append("bent")
         opparas.append([float(i), 0.0667])
     for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-            "sq_pyr"]:
+            "sq_pyr", "tri_bipyr"]:
         optypes.append(t)
         opparas.append([])
     ops = OrderParameters(optypes, opparas, 100.0)
@@ -326,7 +326,7 @@ def get_order_parameter_stats(
     for i in range(5, 180, 5):
         optypes.append("bent{}".format(i))
     for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-            "sq_pyr"]:
+            "sq_pyr", "tri_bipyr"]:
         optypes.append(t)
     opvals = get_order_parameters(
             struct, pneighs=pneighs, convert_none_to_zero=convert_none_to_zero)
@@ -385,7 +385,9 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
     """
 
     if thresh is None:
-        thresh = {"qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4}
+        thresh = {
+                "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
+                "qtribipyr": 0.8}
 
     ops = get_order_parameters(struct, pneighs=pneighs)
     cn = int(ops[n][0] + 0.5)
@@ -394,6 +396,9 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
 
     if cn == 4 and ops[n][37] > thresh["qtet"]:
         motif_type = "tetrahedral"
+        nmotif += 1
+    if cn = 5 and ops[n][46] > thresh["qtribipyr"]:
+        motif_type = "trigonal bipyramidal"
         nmotif += 1
     if cn == 6 and ops[n][38] > thresh["qoct"]:
         motif_type = "octahedral"
