@@ -15,7 +15,7 @@ class MPDataRetrieval:
     def __init__(self, api_key=None):
         """
         Args:
-            api_key: (str) Your Citrine API key, or None if you've set the MAPI_KEY environment variable
+            api_key: (str) Your Materials Project API key, or None if you've set the MAPI_KEY environment variable
 
         Returns: None
         """

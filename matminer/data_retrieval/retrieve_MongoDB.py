@@ -33,7 +33,11 @@ class MongoDataRetrieval:
             d = self.coll.find_one(query, projection, sort=sort)
             projection = d.keys()
 
-        r = self.coll.find(query, clean_projection(projection), sort=sort)
+        query_proj = [remove_ints(p) for p in clean_projection(projection)]
+
+        print(query_proj)
+
+        r = self.coll.find(query, query_proj, sort=sort)
         if limit:
             r.limit(limit)
 
@@ -46,6 +50,7 @@ class MongoDataRetrieval:
             # split up dot-notation keys
             for key in projection:
                 vals = key.split('.')
+                vals = [int(v) if is_int(v) else v for v in vals]
                 data = reduce(lambda e, k: e[k], vals, d)
                 row_data.append(data)
 
@@ -66,3 +71,16 @@ def clean_projection(projection):
     return [
         list(g)[0] for _, g in
         groupby(sorted(projection), key=lambda p: p.split(".", 1)[0])]
+
+
+def remove_ints(projection):
+    proj = [p for p in projection.split(".") if not is_int(p)]
+    return ".".join(proj)
+
+
+def is_int(x):
+    try:
+        int(x)
+        return True
+    except:
+        return False

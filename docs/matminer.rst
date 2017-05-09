@@ -8,8 +8,10 @@ Subpackages
 
     matminer.data_retrieval
     matminer.descriptors
+    matminer.figrecipes
     matminer.learners
     matminer.models
+    matminer.reference_data
 
 Submodules
 ----------
