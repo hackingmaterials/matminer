@@ -9,7 +9,7 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.0.8',
+        version='0.0.9',
         description='matminer is a library that contains tools for data mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.rst')).read(),
         url='https://github.com/hackingmaterials/matminer',
@@ -21,7 +21,7 @@ if __name__ == "__main__":
         zip_safe=False,
         install_requires=['pymatgen>=4.0', 'tqdm>=3.7.1', 'pandas>=0.17.1',
                           'unittest2==1.1.0', "pymongo==3.2.2", 'pint'],
-        extras_require={},
+        extras_require={'citrine':['citrination-client>=1.3.1']},
         classifiers=['Programming Language :: Python :: 2.7',
                      'Development Status :: 4 - Beta',
                      'Intended Audience :: Science/Research',
