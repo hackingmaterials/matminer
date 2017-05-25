@@ -169,7 +169,7 @@ class MPDSDataRetrieval(object):
         counter, hits_count = 0, 0
         fields = {
             key: [jmespath.compile(item) if isinstance(item, str) else item() for item in value]
-            for key, value in fields.iteritems()
+            for key, value in fields.items()
         } if fields else None
 
         while True:
@@ -242,7 +242,7 @@ class MPDSDataRetrieval(object):
         setting = 2 if setting == '2' else 1
 
         for num, i in enumerate(basis_noneq):
-            atom_data.append(Atom(els_noneq[num].encode('ascii'), tuple(i)))
+            atom_data.append(Atom(els_noneq[num], tuple(i)))
 
         return crystal(
             atom_data,
