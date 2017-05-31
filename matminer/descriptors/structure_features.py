@@ -10,6 +10,7 @@ from operator import itemgetter
 from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.structure_analyzer import OrderParameters
+from pymatgen.core.periodic_table import Specie
 from pymatgen.core.structure import Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
@@ -194,6 +195,43 @@ def get_redf(struct, cutoff=None, dr=0.05):
             redf_dict["redf"][bin_index] += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
     return redf_dict
+
+
+def get_coulomb_matrix(struct, diag_elems=False):
+    """
+    This function generates the Coulomb matrix, M, of the input
+    structure (or molecule).  The Coulomb matrix was put forward by
+    Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
+    off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j|
+    and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
+    the nuclear charge and the position of atom i, respectively.
+
+    Args:
+        struct (Structure or Molecule): input structure (or molecule).
+        diag_elems (bool): flag indicating whether (True) to use
+                the original definition of the diagonal elements;
+                if set to False (default),
+                the diagonal elements are set to zero.
+    Returns: (Nsites x Nsites matrix) Coulomb matrix.
+    """
+    m = [[] for s in struct.sites]
+    z = []
+    for s in struct.sites:
+        if isinstance(s, Specie):
+            z.append(Element(s.element.symbol).Z)
+        else:
+            z.append(Element(s.species_string).Z)
+    for i in range(struct.num_sites):
+        for j in range(struct.num_sites):
+            if i == j:
+                if diag_elems:
+                    m[i].append(0.5 * z[i]**2.4)
+                else:
+                    m[i].append(0)
+            else:
+                d = struct.get_distance(i, j)
+                m[i].append(z[i] * z[j] / d)
+    return np.array(m)
 
 
 def get_min_relative_distances(struct, cutoff=10.0):
