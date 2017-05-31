@@ -8,13 +8,14 @@ import numpy as np
 
 import unittest2 as unittest
 
-from pymatgen import Structure, Lattice
+from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.descriptors.structure_features import get_packing_fraction, \
         get_vol_per_site, get_density, get_rdf, get_rdf_peaks, get_redf, \
         get_min_relative_distances, get_neighbors_of_site_with_index, \
-        get_order_parameters, get_order_parameter_stats, get_prdf
+        get_order_parameters, get_order_parameter_stats, get_prdf, \
+        get_coulomb_matrix
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -177,6 +178,21 @@ class StructureFeaturesTest(PymatgenTest):
                 d["distances"])-1]), 7275)
         self.assertAlmostEqual(int(1000 * d["redf"][len(
                 d["redf"])-1]), 1097)
+
+    def test_get_coulomb_matrix(self):
+        species = ["C", "C", "H", "H"]
+        coords = [[0,0,0], [0,0,1.203], [0,0,-1.06], [0,0,2.263]]
+        acetylene = Molecule(species, coords)
+        morig = get_coulomb_matrix(acetylene, diag_elems=True)
+        mtarget = [[36.858,29.925,5.66,2.651],[29.925,36.858,2.651,5.66],\
+                [5.55,2.651,0.5,0.301],[2.651,5.66,0.301,0.5]]
+        self.assertAlmostEqual(
+                int(np.linalg.norm(morig - np.array(mtarget))), 0)
+        m = get_coulomb_matrix(acetylene)
+        self.assertAlmostEqual(m[0][0], 0.0)
+        self.assertAlmostEqual(m[1][1], 0.0)
+        self.assertAlmostEqual(m[2][2], 0.0)
+        self.assertAlmostEqual(m[3][3], 0.0)
 
     def test_get_min_relative_distances(self):
         self.assertAlmostEqual(int(1000*get_min_relative_distances(
