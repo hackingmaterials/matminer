@@ -45,7 +45,8 @@ def get_pymatgen_descriptor(comp, prop):
         if getattr(Element(el), prop) is not None:
 
             # units are None for these pymatgen descriptors
-            if prop in ['X', 'Z', 'ionic_radii', 'group', 'row', 'number']:
+            # todo: there seem to be a lot more unitless descriptors which are not listed here... -Alex D
+            if prop in ['X', 'Z', 'ionic_radii', 'group', 'row', 'number', 'mendeleev_no']:
                 units = None
             else:
                 units = getattr(Element(el), prop).unit
