@@ -79,13 +79,15 @@ def get_magpie_descriptor(comp, descriptor_name):
     Returns: (list) of descriptor values for each atom in the composition
 
     """
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
     magpiedata = []
     magpiedata_tup_lst = []
     magpiedata_tup = collections.namedtuple('magpiedata_tup', 'element propname propvalue propunit amt')
     available_props = []
 
     # Make a list of available properties
-    for datafile in os.listdir('data/magpie_elementdata'):
+
+    for datafile in os.listdir(data_dir):
         available_props.append(datafile.replace('.table', ''))
 
     if descriptor_name not in available_props:
@@ -95,7 +97,7 @@ def get_magpie_descriptor(comp, descriptor_name):
     # Get units from Magpie README file
     el_amt = Composition(comp).get_el_amt_dict()
     unit = None
-    with open('data/magpie_elementdata/README.txt', 'r') as readme_file:
+    with open(os.path.join(data_dir, 'README.txt'), 'r') as readme_file:
         readme_file_line = readme_file.readlines()
         for lineno, line in enumerate(readme_file_line, 1):
             if descriptor_name + '.table' in line:
@@ -103,7 +105,7 @@ def get_magpie_descriptor(comp, descriptor_name):
                     unit = readme_file_line[lineno + 1].split(':')[1].strip('\n')
 
     # Extract from data file
-    with open('data/magpie_elementdata/' + descriptor_name + '.table', 'r') as descp_file:
+    with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
         lines = descp_file.readlines()
         for el in el_amt:
             atomic_no = Element(el).Z
