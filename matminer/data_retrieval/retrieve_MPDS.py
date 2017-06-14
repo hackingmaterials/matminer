@@ -1,40 +1,40 @@
-"""
-The MIT License
-Copyright (c) 2017, Evgeny Blokhin, Tilde Materials Informatics
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-"""
 from __future__ import division
 import os
 import sys
 import time
+import warnings
 try: from urllib.parse import urlencode
 except ImportError: from urllib import urlencode
 
 import httplib2
 import ujson as json
 
-if not os.getenv('SKIP_MPDS_DEPS'):
+try:
     import jmespath
     import pandas as pd
+except ImportError:
+    warnings.warn("Pandas dataframes and/or JSON querying unavailable")
+
+use_pmg, use_ase = False, False
+try:
+    from pymatgen.core.structure import Structure
+    from pymatgen.core.lattice import Lattice
+    use_pmg = True
+except ImportError: pass
+try:
     from ase import Atom
     from ase.spacegroup import crystal
+    use_ase = True
+except ImportError: pass
 
+
+if not use_pmg and not use_ase:
+    warnings.warn("Crystal structure treatment unavailable")
+
+__author__ = 'Evgeny Blokhin <eb@tilde.pro>'
+__copyright__ = 'Copyright (c) 2017, Evgeny Blokhin, Tilde Materials Informatics'
+__license__ = 'MIT'
 
 class APIError(Exception):
     """Simple error handling"""
@@ -105,6 +105,15 @@ class MPDSDataRetrieval(object):
     chillouttime = 3 # NB please, do not use values < 3, because the server may burn out
 
     def __init__(self, api_key=None, endpoint=None):
+        """
+        MPDS API consumer constructor
+
+        Args:
+            api_key: (str) The MPDS API key, or None if the MPDS_KEY envvar is set
+            endpoint: (str) MPDS API gateway URL
+
+        Returns: None
+        """
         self.api_key = api_key if api_key else os.environ['MPDS_KEY']
         self.network = httplib2.Http()
         self.endpoint = endpoint or MPDSDataRetrieval.endpoint
@@ -163,7 +172,19 @@ class MPDSDataRetrieval(object):
         """
         Retrieve data in JSON.
         JSON is expected to be valid against the schema
-        http://developer.mpds.io/mpds.schema.json
+        at http://developer.mpds.io/mpds.schema.json
+
+        Args:
+            search: (dict) Search query like {"categ_A": "val_A", "categ_B": "val_B"},
+                documented at http://developer.mpds.io/#Categories
+            phases: (list) Phase IDs, according to the MPDS distinct phases concept
+            fields: (dict) Data of interest for C-, S-, and P-entries,
+                e.g. for phase diagrams: {'C': ['naxes', 'arity', 'shapes']},
+                documented at http://developer.mpds.io/#JSON-schemata
+
+        Returns:
+            List of dicts: C-, S-, and P-entries, the format is
+            documented at http://developer.mpds.io/#JSON-schemata
         """
         output = []
         counter, hits_count = 0, 0
@@ -209,7 +230,18 @@ class MPDSDataRetrieval(object):
 
     def get_dataframe(self, *args, **kwargs):
         """
-        Retrieve data as a pandas dataframe.
+        Retrieve data as a Pandas dataframe.
+
+        Args:
+            search: (dict) Search query like {"categ_A": "val_A", "categ_B": "val_B"},
+                documented at http://developer.mpds.io/#Categories
+            phases: (list) Phase IDs, according to the MPDS distinct phases concept
+            fields: (dict) Data of interest for C-, S-, and P-entries,
+                e.g. for phase diagrams: {'C': ['naxes', 'arity', 'shapes']},
+                documented at http://developer.mpds.io/#JSON-schemata
+            columns: (list) Column names for Pandas dataframe
+
+        Returns: (object) Pandas dataframe object containing the results
         """
         columns = kwargs.get('columns')
         if columns:
@@ -220,17 +252,33 @@ class MPDSDataRetrieval(object):
         return pd.DataFrame(self.get_data(*args, **kwargs), columns=columns)
 
     @staticmethod
-    def compile_crystal(datarow):
+    def compile_crystal(datarow, flavor='pmg'):
         """
-        Helper method for processing
-        the MPDS crystalline structures.
-        NB crystalline structures are not retrieved by default,
-        one needs to specify fields:
-            cell_abc
-            sg_n
-            setting
-            basis_noneq
-            els_noneq
+        Helper method for representing the MPDS crystal structures in two flavors:
+        either as a Pymatgen Structure object, or as an ASE Atoms object.
+
+        Attention! These two flavors are not compatible, e.g.
+        primitive vs. crystallographic cell is defaulted,
+        atoms wrapped or non-wrapped into the unit cell etc.
+
+        Note, that the crystal structures are not retrieved by default,
+        so one needs to specify the fields while retrieval:
+            - cell_abc
+            - sg_n
+            - setting
+            - basis_noneq
+            - els_noneq
+        e.g. like this: {'S':['cell_abc', 'sg_n', 'setting', 'basis_noneq', 'els_noneq']}
+        NB. occupancies are not considered.
+
+        Args:
+            datarow: (list) Required data to construct crystal structure:
+                [cell_abc, sg_n, setting, basis_noneq, els_noneq]
+            flavor: (str) Either "pmg", or "ase"
+
+        Returns:
+            - if flavor is pmg, returns Pymatgen Structure object
+            - if flavor is ase, returns ASE Atoms object
         """
         if not datarow or not datarow[-1]:
             return None
@@ -238,17 +286,28 @@ class MPDSDataRetrieval(object):
         cell_abc, sg_n, setting, basis_noneq, els_noneq = \
             datarow[-5], int(datarow[-4]), datarow[-3], datarow[-2], datarow[-1]
 
-        atom_data = []
-        setting = 2 if setting == '2' else 1
+        if flavor == 'pmg' and use_pmg:
+            return Structure.from_spacegroup(
+                sg_n,
+                Lattice.from_parameters(*cell_abc),
+                els_noneq,
+                basis_noneq
+            )
 
-        for num, i in enumerate(basis_noneq):
-            atom_data.append(Atom(els_noneq[num], tuple(i)))
+        elif flavor == 'ase' and use_ase:
+            atom_data = []
+            setting = 2 if setting == '2' else 1
 
-        return crystal(
-            atom_data,
-            spacegroup=sg_n,
-            cellpar=cell_abc,
-            primitive_cell=True,
-            setting=setting,
-            onduplicates='replace' # NB here occupancies aren't currently considered
-        )
+            for num, i in enumerate(basis_noneq):
+                atom_data.append(Atom(els_noneq[num], tuple(i)))
+
+            return crystal(
+                atom_data,
+                spacegroup=sg_n,
+                cellpar=cell_abc,
+                primitive_cell=True,
+                setting=setting,
+                onduplicates='replace'
+            )
+
+        else: raise APIError("Crystal structure treatment unavailable")
