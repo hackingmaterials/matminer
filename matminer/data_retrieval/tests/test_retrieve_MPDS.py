@@ -7,7 +7,7 @@ import ujson as json
 from jsonschema import validate, Draft4Validator
 from jsonschema.exceptions import ValidationError
 
-from matminer.data_retrieval.retrieve_MPDS import CitrineDataRetrieval
+from matminer.data_retrieval.retrieve_MPDS import MPDSDataRetrieval
 
 
 class MPDSDataRetrievalTest(unittest.TestCase):
