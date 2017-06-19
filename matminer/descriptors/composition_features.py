@@ -3,6 +3,8 @@ import collections
 import os
 import json
 
+import numpy as np
+
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 # TODO: read Magpie file only once
@@ -195,6 +197,120 @@ def get_holder_mean(data_lst, power):
             total += value ** power
         return (total / len(data_lst)) ** (1 / float(power))
 
+###Stoichiometric attributes from Ward npj paper
+def get_stoich_attributes(comp, p):
+    """
+    Get stoichiometric attributes
+
+    Args:
+        comp: string, e.g "NaCl:
+        p:
+    
+    Returns: 
+        Lp norm-based stoichiometric attribute
+    """
+
+    el_amt = Composition(comp).get_el_amt_dict()
+    
+    p_norm = 0
+    n_atoms = sum(el_amt.values())
+
+    if p == 0:
+        p_norm = n_atoms
+    else:
+        for i in el_amt:
+            p_norm += (el_amt[i]/n_atoms)**p
+        p_norm = p_norm**(1.0/p)
+
+    return p_norm
+
+###Elemental properties from Ward npj paper
+def get_elem_property_attributes(comp):
+
+    magpie_desc = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
+        "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
+        "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]
+
+    all_attributes = []
+
+    for desc in magpie_desc:
+        data_lst = get_magpie_descriptor(comp, desc)
+        desc_stats = []
+        desc_stats.append(min(data_lst))
+        desc_stats.append(max(data_lst))
+        desc_stats.append(max(data_lst) - min(data_lst))
+        desc_stats.append(np.mean(data_lst))
+        desc_stats.append(np.std(data_lst))
+        desc_stats.append(max(set(data_lst), key=data_lst.count))
+        all_attributes.append(desc_stats)
+
+    return all_attributes
+
+def get_frac_weighted_mean(comp, data_lst):
+    """Weighted mean of attributes"""
+
+    el_amt = Composition(comp).get_el_amt_dict()
+    return el_amt
+
+def get_valence_orbital_attributes(comp):
+    """Weighted fraction of valence electrons in each orbital
+       Args: 
+            comp (string)
+
+       Returns: Fs, Fp, Fd, Ff
+    """    
+    comp_obj = Composition(comp)
+    el_amt = comp_obj.get_el_amt_dict()
+    elements = el_amt.keys()
+    
+    #Fraction weighted total valence electrons
+    avg_total_valence = 0
+    avg_s = 0
+    avg_p = 0
+    avg_d = 0
+    avg_f = 0
+
+    for f in elements:
+        el_frac = comp_obj.get_atomic_fraction(f)
+        avg_total_valence += el_frac*get_magpie_descriptor(f,"NValance")[0]
+        avg_s += el_frac*get_magpie_descriptor(f,"NsValence")[0]
+        avg_p += el_frac*get_magpie_descriptor(f,"NpValence")[0]
+        avg_d += el_frac*get_magpie_descriptor(f,"NdValence")[0]
+        avg_f += el_frac*get_magpie_descriptor(f,"NfValence")[0]
+
+    Fs = avg_s/avg_total_valence
+    Fp = avg_p/avg_total_valence
+    Fd = avg_d/avg_total_valence
+    Ff = avg_f/avg_total_valence
+
+    return Fs, Fp, Fd, Ff
+
+def get_ionic_attributes(comp):
+    """
+    Ionic character
+    """
+    ##Issue reading OxidationStates file...
+    comp_obj = Composition(comp)
+    el_amt = comp_obj.get_el_amt_dict()
+    elements = el_amt.keys()
+    values = el_amt.values()
+    
+    import itertools
+    
+    atom_pairs = itertools.combinations(elements, 2)
+
+    ionic_char = []
+    avg_ionic_char = 0
+
+    for pair in atom_pairs:
+        XA = get_magpie_descriptor(pair[0], "Electronegativity")
+        XB = get_magpie_descriptor(pair[1], "Electronegativity")
+        ionic_char.append(1.0 - np.exp(-0.25*(np.array(XA)-np.array(XB))**2))
+        avg_ionic_char += comp_obj.get_atomic_fraction(pair[0])*comp_obj.get_atomic_fraction(pair[1])*ionic_char[-1]    
+    
+    max_ionic_char = np.max(ionic_char)
+ 
+    return max_ionic_char, avg_ionic_char[0]
 
 if __name__ == '__main__':
     descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
@@ -205,3 +321,15 @@ if __name__ == '__main__':
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
     print(get_magpie_descriptor('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
+
+
+    ####TESTING WARD NPJ DESCRIPTORS
+    print "WARD NPJ ATTRIBUTES"
+    print "Stoichiometric attributes"
+    print get_stoich_attributes("Fe2O3", 3)
+    print "Elemental property attributes"
+    print get_elem_property_attributes("Fe2O3")
+    print "Valence Orbital Attributes"
+    print get_valence_orbital_attributes("Fe2O3")
+    print "Ionic attributes"
+    print get_ionic_attributes("Fe2O3")
