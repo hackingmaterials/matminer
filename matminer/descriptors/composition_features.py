@@ -240,7 +240,7 @@ def get_elem_property_attributes(comp):
         desc_stats.append(max(data_lst))
         desc_stats.append(max(data_lst) - min(data_lst))
         desc_stats.append(np.mean(data_lst))
-        desc_stats.append(np.std(data_lst))
+        desc_stats.append(np.mean(np.abs(np.subtract(data_lst, np.mean(data_lst)))))
         desc_stats.append(max(set(data_lst), key=data_lst.count))
         all_attributes.append(desc_stats)
 
