@@ -127,22 +127,27 @@ def get_magpie_descriptor(comp, descriptor_name):
 
     return magpiedata
 
-def get_magpie_dict(descriptor_name):
+def get_magpie_dict(comp, descriptor_name):
     """
-    Store magpie data in a dictionary
+    Gets magpie data for an element. 
+    First checks if magpie properties are already loaded, if not, stores magpie data in a dictionary
 
     Args: 
+        elem (string): Atomic symbol of element
         descriptor_name (string): Name of descriptor
 
     Returns:
         attr_dict
     """
 
+    # Check and see if magpie_props already exists
+    if "magpie_props" not in globals():
+        globals()["magpie_props"] = {}
+
     data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
     available_props = []
 
     # Make a list of available properties
-
     for datafile in os.listdir(data_dir):
         available_props.append(datafile.replace('.table', ''))
 
@@ -150,29 +155,41 @@ def get_magpie_dict(descriptor_name):
         raise ValueError(
             "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
 
-    # Extract from data file
-    prop_value = []
-    atomic_syms = []
-    with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
-        lines = descp_file.readlines()
+    if descriptor_name not in magpie_props:
+        # Extract from data file
+        prop_value = []
+        atomic_syms = []
+        with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
+            lines = descp_file.readlines()
+            
+            for atomic_no in range(1, 104): #This is as high as pymatgen goes
+                atomic_syms.append(Element.from_Z(atomic_no).symbol)
+                try:
+                    if descriptor_name in ["OxidationStates"]:
+                        prop_value.append([float(i) for i in lines[atomic_no - 1].split()])
+                    else: 
+                        prop_value.append(float(lines[atomic_no - 1]))
+                except:
+                    prop_value.append(float("NaN"))
         
-        for atomic_no in range(1, 104): #This is as high as pymatgen goes
-            atomic_syms.append(Element.from_Z(atomic_no).symbol)
-            if "Missing" in lines[atomic_no - 1]:
-                prop_value.append(float("NaN"))
-            elif descriptor_name in ["OxidationStates"]:
-                prop_value.append([float (i) for i in lines[atomic_no - 1].split()])
-            else:
-                prop_value.append(float(lines[atomic_no - 1]))
+        attr_dict = dict(zip(atomic_syms, prop_value))    
+        magpie_props[descriptor_name] = attr_dict #Add dictionary to magpie_props
 
-        attr_dict = dict(zip(atomic_syms, prop_value))
-
-    return attr_dict
+    ##Get data for given element/compound
+    el_amt = Composition(comp).get_el_amt_dict()
+    elements = list(el_amt.keys())
+    
+    magpiedata = []
+    for el in elements:
+        for i in range(int(el_amt[el])):
+            magpiedata.append(magpie_props[descriptor_name][el])
+ 
+    return magpiedata
 
 def get_cohesive_energy(comp):
     """
     Get cohesive energy of compound by subtracting elemental cohesive energies from the formation energy of the compund.
-    Elemental cohesive energies are taken from http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html.
+    Elemental cohesive energies are taken from http://www.      knowledgedoor.com/2/elements_handbook/cohesive_energy.html.
     Most of them are taken from "Charles Kittel: Introduction to Solid State Physics, 8th edition. Hoboken, NJ:
     John Wiley & Sons, Inc, 2005, p. 50."
 
@@ -199,7 +216,6 @@ def get_cohesive_energy(comp):
         cohesive_energy -= el_amt_dict[el] * ce_data[el]
 
     return cohesive_energy
-
 
 def band_center(comp):
     """
@@ -285,7 +301,7 @@ def get_elem_property_attributes(comp):
 
     comp_obj = Composition(comp)
     el_amt = comp_obj.get_el_amt_dict()
-    elements = el_amt.keys()
+    elements = list(el_amt.keys())
 
     atom_frac = []
     for elem in elements:
@@ -298,12 +314,11 @@ def get_elem_property_attributes(comp):
     all_attributes = []
 
     for attr in req_data:
-        if not attr in globals():
-            globals()[attr] = get_magpie_dict(attr)
         
         elem_data = []
         for elem in elements:
-            elem_data.append(globals()[attr][elem])
+            elem_data.append(get_magpie_dict(elem, attr)[0])
+
         desc_stats = []
         desc_stats.append(min(elem_data))
         desc_stats.append(max(elem_data))
@@ -326,15 +341,9 @@ def get_valence_orbital_attributes(comp):
        Returns: 
             Fs, Fp, Fd, Ff (float): Fraction of valence electrons in s, p, d, and f orbitals
     """    
-    #Check if necessary magpie dictionaries are loaded, loads them if not
-    req_data = ["NValance","NsValence","NpValence","NdValence","NfValence"]
-    for attr in req_data:
-        if not attr in globals():
-            globals()[attr] = get_magpie_dict(attr)
-
     comp_obj = Composition(comp)
     el_amt = comp_obj.get_el_amt_dict()
-    elements = el_amt.keys()
+    elements = list(el_amt.keys())
     
     #Fraction weighted total valence electrons
     avg_total_valence = 0
@@ -345,17 +354,12 @@ def get_valence_orbital_attributes(comp):
 
     for f in elements:
         el_frac = comp_obj.get_atomic_fraction(f)
-        #avg_total_valence += el_frac*get_magpie_descriptor(f,"NValance")[0]
-        #avg_s += el_frac*get_magpie_descriptor(f,"NsValence")[0]
-        #avg_p += el_frac*get_magpie_descriptor(f,"NpValence")[0]
-        #avg_d += el_frac*get_magpie_descriptor(f,"NdValence")[0]
-        #avg_f += el_frac*get_magpie_descriptor(f,"NfValence")[0]
         
-        avg_total_valence += el_frac*NValance[f]
-        avg_s += el_frac*NsValence[f]
-        avg_p += el_frac*NpValence[f]
-        avg_d += el_frac*NdValence[f]
-        avg_f += el_frac*NfValence[f]
+        avg_total_valence += el_frac*get_magpie_dict(f, "NValance")[0]
+        avg_s += el_frac*get_magpie_dict(f, "NsValence")[0]
+        avg_p += el_frac*get_magpie_dict(f, "NpValence")[0]
+        avg_d += el_frac*get_magpie_dict(f, "NdValence")[0]
+        avg_f += el_frac*get_magpie_dict(f, "NfValence")[0]
 
     Fs = avg_s/avg_total_valence
     Fp = avg_p/avg_total_valence
@@ -378,22 +382,15 @@ def get_ionic_attributes(comp):
     """
     comp_obj = Composition(comp)
     el_amt = comp_obj.get_el_amt_dict()
-    elements = el_amt.keys()
-    values = el_amt.values()
-
-    # Check if electronegativity data is loaded
-    req_data = ["OxidationStates", "Electronegativity"]
-    for attr in req_data:
-        if not attr in globals():
-            globals()[attr] = get_magpie_dict(attr)
+    elements = list(el_amt.keys())
+    values = list(el_amt.values())
 
     import itertools
     
     #Determine if it is possible to form neutral ionic compound
     ox_states = []
     for elem in elements:
-        ox_states.append(OxidationStates[elem])
-        #ox_states.append(get_magpie_descriptor(elem, "OxidationStates")[0])
+        ox_states.append(get_magpie_dict(elem,"OxidationStates")[0])
     
     cpd_possible = False
     ox_sets = itertools.product(*ox_states)
@@ -408,9 +405,9 @@ def get_ionic_attributes(comp):
     avg_ionic_char = 0
 
     for pair in atom_pairs:
-        XA = Electronegativity[pair[0]]
-        XB = Electronegativity[pair[1]]
-        ionic_char.append(1.0 - np.exp(-0.25*(XA-XB)**2))
+        XA = get_magpie_dict(pair[0], "Electronegativity")
+        XB = get_magpie_dict(pair[1], "Electronegativity")
+        ionic_char.append(1.0 - np.exp(-0.25*(XA[0]-XB[0])**2))
         avg_ionic_char += comp_obj.get_atomic_fraction(pair[0])*comp_obj.get_atomic_fraction(pair[1])*ionic_char[-1]
     
     max_ionic_char = np.max(ionic_char)
