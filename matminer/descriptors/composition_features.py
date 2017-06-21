@@ -408,9 +408,9 @@ def get_ionic_attributes(comp):
     avg_ionic_char = 0
 
     for pair in atom_pairs:
-        XA = get_magpie_descriptor(pair[0], "Electronegativity")
-        XB = get_magpie_descriptor(pair[1], "Electronegativity")
-        ionic_char.append(1.0 - np.exp(-0.25*(XA[0]-XB[0])**2))
+        XA = Electronegativity[pair[0]]
+        XB = Electronegativity[pair[1]]
+        ionic_char.append(1.0 - np.exp(-0.25*(XA-XB)**2))
         avg_ionic_char += comp_obj.get_atomic_fraction(pair[0])*comp_obj.get_atomic_fraction(pair[1])*ionic_char[-1]
     
     max_ionic_char = np.max(ionic_char)
