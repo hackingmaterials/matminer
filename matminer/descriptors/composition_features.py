@@ -21,6 +21,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
 
+magpie_props = {}
 
 def get_pymatgen_descriptor(comp, prop):
     """
@@ -139,10 +140,6 @@ def get_magpie_dict(comp, descriptor_name):
     Returns:
         attr_dict
     """
-
-    # Check and see if magpie_props already exists
-    if "magpie_props" not in globals():
-        globals()["magpie_props"] = {}
 
     data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
     available_props = []
@@ -315,19 +312,19 @@ def get_elem_property_attributes(comp):
 
     for attr in req_data:
         
-        elem_data = []
-        for elem in elements:
-            elem_data.append(get_magpie_dict(elem, attr)[0])
+        elem_data = get_magpie_dict(comp, attr)
+
+        #for elem in elements:
+        #    elem_data.append(get_magpie_dict(elem, attr)[0])
 
         desc_stats = []
         desc_stats.append(min(elem_data))
         desc_stats.append(max(elem_data))
         desc_stats.append(max(elem_data) - min(elem_data))
         
-        frac_mean = np.dot(elem_data, atom_frac)
-        desc_stats.append(frac_mean)
-        desc_stats.append(np.dot(np.abs(np.subtract(elem_data, frac_mean)), atom_frac))
-        desc_stats.append(elem_data[np.argmax(atom_frac)])
+        desc_stats.append(np.mean(elem_data))
+        desc_stats.append(np.mean(np.abs(np.subtract(elem_data, np.mean(elem_data)))))
+        desc_stats.append(max(set(elem_data), key=elem_data.count))
         all_attributes.append(desc_stats)
 
     return all_attributes
@@ -341,25 +338,12 @@ def get_valence_orbital_attributes(comp):
        Returns: 
             Fs, Fp, Fd, Ff (float): Fraction of valence electrons in s, p, d, and f orbitals
     """    
-    comp_obj = Composition(comp)
-    el_amt = comp_obj.get_el_amt_dict()
-    elements = list(el_amt.keys())
-    
-    #Fraction weighted total valence electrons
-    avg_total_valence = 0
-    avg_s = 0
-    avg_p = 0
-    avg_d = 0
-    avg_f = 0
 
-    for f in elements:
-        el_frac = comp_obj.get_atomic_fraction(f)
-        
-        avg_total_valence += el_frac*get_magpie_dict(f, "NValance")[0]
-        avg_s += el_frac*get_magpie_dict(f, "NsValence")[0]
-        avg_p += el_frac*get_magpie_dict(f, "NpValence")[0]
-        avg_d += el_frac*get_magpie_dict(f, "NdValence")[0]
-        avg_f += el_frac*get_magpie_dict(f, "NfValence")[0]
+    avg_total_valence = np.mean(get_magpie_dict(comp, "NValance"))
+    avg_s = np.mean(get_magpie_dict(comp, "NsValence"))
+    avg_p = np.mean(get_magpie_dict(comp, "NpValence"))
+    avg_d = np.mean(get_magpie_dict(comp, "NdValence"))
+    avg_f = np.mean(get_magpie_dict(comp, "NfValence"))
 
     Fs = avg_s/avg_total_valence
     Fp = avg_p/avg_total_valence
