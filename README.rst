@@ -89,7 +89,7 @@ Depending on how many of the required dependencies were already installed on you
 .. code-block:: bash
 
     $ # On Mac OS X, install brew if not available
-    $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     $ # Install "freetype" and "pkg-config" using brew (on Mac OS X; for other systems, see http://stackoverflow.com/a/20533455)
     $ brew install freetype
     $ brew install pkg-config
