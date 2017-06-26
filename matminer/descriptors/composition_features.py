@@ -275,8 +275,11 @@ def get_stoich_attributes(comp, p):
     p_norm = 0
     n_atoms = sum(el_amt.values())
 
+    if p < 0:
+        raise ValueError("p-norm not defined for p < 0")
+
     if p == 0:
-        p_norm = n_atoms
+        p_norm = len(el_amt.values())
     else:
         for i in el_amt:
             p_norm += (el_amt[i]/n_atoms)**p
