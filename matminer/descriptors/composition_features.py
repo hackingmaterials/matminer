@@ -2,6 +2,7 @@ from pymatgen import Element, Composition, MPRester
 import collections
 import os
 import json
+import itertools
 
 import numpy as np
 
@@ -371,9 +372,7 @@ def get_ionic_attributes(comp):
     el_amt = comp_obj.get_el_amt_dict()
     elements = list(el_amt.keys())
     values = list(el_amt.values())
-
-    import itertools
-    
+ 
     #Determine if it is possible to form neutral ionic compound
     ox_states = []
     for elem in elements:
