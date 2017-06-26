@@ -6,6 +6,7 @@ from pymatgen.util.testing import PymatgenTest
 class CompositionFeaturesTest(PymatgenTest):
 
     def test_stoich(self):
+        self.assertAlmostEqual(get_stoich_attributes("Fe2O3", 0), 2)
         self.assertAlmostEqual(get_stoich_attributes("Fe2O3", 7), 0.604895199)
 
     def test_elem(self):
