@@ -6,6 +6,8 @@ import itertools
 
 import numpy as np
 
+import line_profiler
+
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 # TODO: read Magpie file only once
@@ -22,7 +24,13 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
 
+#empty dictionary for magpie properties
 magpie_props = {}
+
+#list of elements
+atomic_syms = []
+for atomic_no in range(1,104):
+    atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
 def get_pymatgen_descriptor(comp, prop):
     """
@@ -129,6 +137,7 @@ def get_magpie_descriptor(comp, descriptor_name):
 
     return magpiedata
 
+@profile
 def get_magpie_dict(comp, descriptor_name):
     """
     Gets magpie data for an element. 
@@ -142,26 +151,26 @@ def get_magpie_dict(comp, descriptor_name):
         attr_dict
     """
 
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
-    available_props = []
-
-    # Make a list of available properties
-    for datafile in os.listdir(data_dir):
-        available_props.append(datafile.replace('.table', ''))
-
-    if descriptor_name not in available_props:
-        raise ValueError(
-            "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
-
     if descriptor_name not in magpie_props:
+
+        data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
+        available_props = []
+
+        # Make a list of available properties
+        for datafile in os.listdir(data_dir):
+            available_props.append(datafile.replace('.table', ''))
+
+        if descriptor_name not in available_props:
+            raise ValueError(
+                "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
+
+    #if descriptor_name not in magpie_props:
         # Extract from data file
         prop_value = []
-        atomic_syms = []
         with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
             lines = descp_file.readlines()
             
             for atomic_no in range(1, 104): #This is as high as pymatgen goes
-                atomic_syms.append(Element.from_Z(atomic_no).symbol)
                 try:
                     if descriptor_name in ["OxidationStates"]:
                         prop_value.append([float(i) for i in lines[atomic_no - 1].split()])
@@ -259,6 +268,7 @@ def get_holder_mean(data_lst, power):
         return (total / len(data_lst)) ** (1 / float(power))
 
 ###Stoichiometric attributes from Ward npj paper
+@profile
 def get_stoich_attributes(comp, p):
     """
     Get stoichiometric attributes
@@ -289,11 +299,13 @@ def get_stoich_attributes(comp, p):
     return p_norm
 
 ###Elemental properties from Ward npj paper
+@profile
 def get_elem_property_attributes(comp):
     """
     Get elemental property attributes
 
     Args:
+
         comp (string): Chemical formula
     
     Returns:
@@ -304,9 +316,9 @@ def get_elem_property_attributes(comp):
     el_amt = comp_obj.get_el_amt_dict()
     elements = list(el_amt.keys())
 
-    atom_frac = []
-    for elem in elements:
-        atom_frac.append(comp_obj.get_atomic_fraction(elem))
+    #atom_frac = []
+    #for elem in elements:
+        #atom_frac.append(comp_obj.get_atomic_fraction(elem))
 
     req_data = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
         "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
@@ -326,13 +338,15 @@ def get_elem_property_attributes(comp):
         desc_stats.append(max(elem_data))
         desc_stats.append(max(elem_data) - min(elem_data))
         
-        desc_stats.append(np.mean(elem_data))
-        desc_stats.append(np.mean(np.abs(np.subtract(elem_data, np.mean(elem_data)))))
+        prop_mean = np.mean(elem_data)
+        desc_stats.append(prop_mean)
+        desc_stats.append(np.mean(np.abs(np.subtract(elem_data, prop_mean))))
         desc_stats.append(max(set(elem_data), key=elem_data.count))
         all_attributes.append(desc_stats)
 
     return all_attributes
 
+@profile
 def get_valence_orbital_attributes(comp):
     """Weighted fraction of valence electrons in each orbital
 
@@ -356,6 +370,7 @@ def get_valence_orbital_attributes(comp):
 
     return Fs, Fp, Fd, Ff
 
+@profile
 def get_ionic_attributes(comp):
     """
     Ionic character attributes
@@ -409,7 +424,7 @@ if __name__ == '__main__':
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
     print(get_magpie_descriptor('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
-
+    
     ####TESTING WARD NPJ DESCRIPTORS
     print "WARD NPJ ATTRIBUTES"
     print "Stoichiometric attributes"
