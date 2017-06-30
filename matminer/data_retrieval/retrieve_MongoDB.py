@@ -7,7 +7,6 @@ __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
 class MongoDataRetrieval:
-
     def __init__(self, coll):
         """
         Tool to retrieve data from a MongoDB collection and reformat for data analysis
@@ -43,7 +42,7 @@ class MongoDataRetrieval:
 
         total = min(limit, r.count())
 
-        all_data = []   # matrix of row, column data
+        all_data = []  # matrix of row, column data
         for d in tqdm(r, total=total):
             row_data = []
 

@@ -1,11 +1,14 @@
-
 from __future__ import division
+
 import os
 import sys
 import time
 import warnings
-try: from urllib.parse import urlencode
-except ImportError: from urllib import urlencode
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
 import httplib2
 import ujson as json
@@ -20,14 +23,17 @@ use_pmg, use_ase = False, False
 try:
     from pymatgen.core.structure import Structure
     from pymatgen.core.lattice import Lattice
+
     use_pmg = True
-except ImportError: pass
+except ImportError:
+    pass
 try:
     from ase import Atom
     from ase.spacegroup import crystal
-    use_ase = True
-except ImportError: pass
 
+    use_ase = True
+except ImportError:
+    pass
 
 if not use_pmg and not use_ase:
     warnings.warn("Crystal structure treatment unavailable")
@@ -36,13 +42,17 @@ __author__ = 'Evgeny Blokhin <eb@tilde.pro>'
 __copyright__ = 'Copyright (c) 2017, Evgeny Blokhin, Tilde Materials Informatics'
 __license__ = 'MIT'
 
+
 class APIError(Exception):
     """Simple error handling"""
+
     def __init__(self, msg, code=0):
         self.msg = msg
         self.code = code
+
     def __str__(self):
         return repr(self.msg)
+
 
 class MPDSDataRetrieval(object):
     """
@@ -101,8 +111,8 @@ class MPDSDataRetrieval(object):
     endpoint = "https://api.mpds.io/v0/download/facet"
 
     pagesize = 1000
-    maxnpages = 100 # NB one hit may reach 50kB in RAM, consider pagesize*maxnpages*50kB free RAM
-    chillouttime = 3 # NB please, do not use values < 3, because the server may burn out
+    maxnpages = 100  # NB one hit may reach 50kB in RAM, consider pagesize*maxnpages*50kB free RAM
+    chillouttime = 3  # NB please, do not use values < 3, because the server may burn out
 
     def __init__(self, api_key=None, endpoint=None):
         """
@@ -201,7 +211,7 @@ class MPDSDataRetrieval(object):
             if result['npages'] > MPDSDataRetrieval.maxnpages:
                 raise APIError(
                     "Too much hits (%s > %s), please, be more specific" % \
-                    (result['count'], MPDSDataRetrieval.maxnpages*MPDSDataRetrieval.pagesize),
+                    (result['count'], MPDSDataRetrieval.maxnpages * MPDSDataRetrieval.pagesize),
                     1
                 )
             assert result['npages'] > 0
@@ -218,7 +228,7 @@ class MPDSDataRetrieval(object):
             counter += 1
             time.sleep(MPDSDataRetrieval.chillouttime)
 
-            sys.stdout.write("\r\t%d%%" % ((counter/result['npages']) * 100))
+            sys.stdout.write("\r\t%d%%" % ((counter / result['npages']) * 100))
             sys.stdout.flush()
 
         if len(output) != hits_count:
@@ -310,4 +320,5 @@ class MPDSDataRetrieval(object):
                 onduplicates='replace'
             )
 
-        else: raise APIError("Crystal structure treatment unavailable")
+        else:
+            raise APIError("Crystal structure treatment unavailable")

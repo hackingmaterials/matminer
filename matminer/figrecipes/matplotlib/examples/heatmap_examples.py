@@ -6,6 +6,7 @@ __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 Note - be sure to copy/modify matplotlibrc
 """
 
+
 def heatmap_ex1():
     # HEAT MAP
     data = [[1, 2], [3, 4], [5, 6]]

@@ -1,5 +1,4 @@
 from matminer.descriptors.composition_features import *
-import numpy as np
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -8,6 +7,7 @@ class AddDescriptor:
     """
     Code to add a descriptor column to a dataframe
     """
+
     def __init__(self, df, formula_colname='pretty_formula', separator='_'):
         """
         Args:
@@ -31,11 +31,10 @@ class AddDescriptor:
         Returns: dataframe with appended descriptor column
         """
         try:
-            self.df[descriptor + self.separator + stat_name] = self.df[self.formula_colname].\
+            self.df[descriptor + self.separator + stat_name] = self.df[self.formula_colname]. \
                 map(lambda x: stat_function(get_pymatgen_descriptor(Composition(x), descriptor)))
         except ValueError:
             self.df.loc[descriptor + self.separator + stat_name] = None
         except AttributeError:
             raise ValueError('Invalid pymatgen Element attribute!')
         return self.df
-

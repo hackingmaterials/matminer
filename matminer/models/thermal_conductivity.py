@@ -1,7 +1,9 @@
 import math
+
 from scipy.constants import *
 from scipy.integrate import quad
-from matminer.models import ureg, Q_
+
+from matminer.models import ureg
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -18,6 +20,7 @@ class CahillSimpleModel:
         - DOI: 10.1002/adma.201400515 (Title: "High Thermoelectric Performance in Non-Toxic Earth-Abundant
         Copper Sulfide")
     """
+
     @ureg.wraps(None, (None, None, 'm**3', 'm/s', 'm/s', 'm/s'), True)
     def __init__(self, n, V, v_l, v_t1, v_t2):
         """
@@ -42,7 +45,8 @@ class CahillSimpleModel:
         """
         Returns: (float) Cahill thermal conductivity (in SI units, i.e. joule/(m*s*kelvin))
         """
-        return (1./2.) * ((math.pi/6)**(1./3.)) * k * ((self.n/self.V)**(2./3.)) * (self.v_l + self.v_t1 + self.v_t2)
+        return (1. / 2.) * ((math.pi / 6) ** (1. / 3.)) * k * ((self.n / self.V) ** (2. / 3.)) * (
+            self.v_l + self.v_t1 + self.v_t2)
 
 
 def cahill_integrand(x):
@@ -55,7 +59,7 @@ def cahill_integrand(x):
     Returns: (float) integral value
 
     """
-    return (x**3 * math.exp(x)) / ((math.exp(x)-1) ** 2)
+    return (x ** 3 * math.exp(x)) / ((math.exp(x) - 1) ** 2)
 
 
 def cahill_integrand_summation(v_i, T, theta):
@@ -77,7 +81,7 @@ def cahill_integrand_summation(v_i, T, theta):
     Returns: (float) summation term for only *one* acoustic mode i
 
     """
-    return v_i * (T/theta)**2 * quad(cahill_integrand, 0, theta/T)
+    return v_i * (T / theta) ** 2 * quad(cahill_integrand, 0, theta / T)
 
 
 def cahill_integrand_model(n, V, cahill_integrand_sum):
@@ -98,8 +102,8 @@ def cahill_integrand_model(n, V, cahill_integrand_sum):
     Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    n_d = (6 * math.pi**2 * (n/V)) ** (1./3.)
-    return (math.pi/6)**(1./3.) * k * n_d**(1./3.) * cahill_integrand_sum
+    n_d = (6 * math.pi ** 2 * (n / V)) ** (1. / 3.)
+    return (math.pi / 6) ** (1. / 3.) * k * n_d ** (1. / 3.) * cahill_integrand_sum
 
 
 def clarke_model(n, E, m, V):
@@ -121,7 +125,8 @@ def clarke_model(n, E, m, V):
     Returns: (float) Clarke thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    return 0.87 * k * (((n*6.023*10**23)/m)**(2./3.)) * (E**(1./2.)) * ((m/V)**(1./6.))
+    return 0.87 * k * (((n * 6.023 * 10 ** 23) / m) ** (2. / 3.)) * (E ** (1. / 2.)) * (
+        (m / V) ** (1. / 6.))
 
 
 def callaway_integrand(x, t_ph):
@@ -135,7 +140,7 @@ def callaway_integrand(x, t_ph):
     Returns: (float) integral value
 
     """
-    return (x**4 * math.exp(x)) / (t_ph**(-1) * (math.exp(x)-1) ** 2)
+    return (x ** 4 * math.exp(x)) / (t_ph ** (-1) * (math.exp(x) - 1) ** 2)
 
 
 def callaway_model(v_m, T, theta, t_ph):
@@ -161,7 +166,8 @@ def callaway_model(v_m, T, theta, t_ph):
     Returns: (float) Callaway thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    return (k / (2 * math.pi**2 * v_m)) * ((k*T)/hbar)**3 * quad(callaway_integrand, 0, theta/T, args=(t_ph,))
+    return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0,
+                                                                         theta / T, args=(t_ph,))
 
 
 def slack_simple_model(M, theta, v_a, gamma, n, T):
@@ -184,10 +190,10 @@ def slack_simple_model(M, theta, v_a, gamma, n, T):
     Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    A_0 = 3.1 * 10**(-8)  # for v_a in Angstroms.
+    A_0 = 3.1 * 10 ** (-8)  # for v_a in Angstroms.
     # Taken from http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1
     # This constant is 3.1 * 10**(-6) in Ref:- DOI: 10.1002/adfm.201600718
-    return (A_0 * M * theta**3 * v_a)/(gamma * n**(2./3.) * T)
+    return (A_0 * M * theta ** 3 * v_a) / (gamma * n ** (2. / 3.) * T)
 
 
 def slack_integrand(x, t_c):
@@ -201,7 +207,7 @@ def slack_integrand(x, t_c):
     Returns: (float) integral value
 
     """
-    return t_c * x**2
+    return t_c * x ** 2
 
 
 def slack_integrand_model(v_m, T, theta, t_c):
@@ -229,7 +235,8 @@ def slack_integrand_model(v_m, T, theta, t_c):
     Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    return (k / (2 * math.pi**2 * v_m)) * ((k*T)/hbar)**3 * quad(callaway_integrand, 0, theta/T, args=(t_c,))
+    return (k / (2 * math.pi ** 2 * v_m)) * ((k * T) / hbar) ** 3 * quad(callaway_integrand, 0,
+                                                                         theta / T, args=(t_c,))
 
 
 def keyes_model(gamma, e_m, T_m, m, V, T, A):
@@ -252,8 +259,8 @@ def keyes_model(gamma, e_m, T_m, m, V, T, A):
     Returns: (float) Keyes thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    B = (R**(3./2.))/(3 * gamma**2 * e_m**3 * (6.023*10**23)**(1.0/3))
-    return (B * T_m**(3./2.) * (m/V)**(2./3.))/(T * A**(7./6.))
+    B = (R ** (3. / 2.)) / (3 * gamma ** 2 * e_m ** 3 * (6.023 * 10 ** 23) ** (1.0 / 3))
+    return (B * T_m ** (3. / 2.) * (m / V) ** (2. / 3.)) / (T * A ** (7. / 6.))
 
 
 def debye_model(M, E, m, V):
@@ -269,4 +276,4 @@ def debye_model(M, E, m, V):
     Returns: (float) Debye thermal conductivity (in SI units, i.e. W(mK)^(-1))
 
     """
-    return 2.489e-11 * ((1/M)**(1./3.)) * (E**0.5) * ((m/V)**(-1./6.))
+    return 2.489e-11 * ((1 / M) ** (1. / 3.)) * (E ** 0.5) * ((m / V) ** (-1. / 6.))

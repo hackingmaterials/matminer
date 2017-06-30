@@ -37,13 +37,13 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
                     vb_energies.append(e)
             vb_energies.sort(reverse=True)
             cb_energies.sort()
-            total_sum_energies += (sum(vb_energies[0:n_vb])/n_vb +
-                                   sum(cb_energies[0:n_cb])/n_cb) \
-                                  * kpt_wts[kpt_idx]/2
+            total_sum_energies += (sum(vb_energies[0:n_vb]) / n_vb +
+                                   sum(cb_energies[0:n_cb]) / n_cb) \
+                                  * kpt_wts[kpt_idx] / 2
 
             num_points += kpt_wts[kpt_idx]
 
-    return total_sum_energies/num_points
+    return total_sum_energies / num_points
 
 
 def absolute_band_positions_bpe(bs, target_gap=None, **kwargs):
