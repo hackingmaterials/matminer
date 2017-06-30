@@ -5,6 +5,7 @@ import json
 import itertools
 
 import numpy as np
+import pandas as pd
 
 import line_profiler
 
@@ -32,13 +33,50 @@ atomic_syms = []
 for atomic_no in range(1,104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
-###First attempt at class structure
-class MagpieFeaturizer(object):
-    def __init__(self, comp_obj):
-        self.comp_obj = comp_obj
-        self.el_amt_dict = comp_obj.get_el_amt_dict()
+class BaseFeaturizer(object):
+    def __init__(self, **kwargs):
+        #ADD OPTIONS/ATTRIBUTES
 
-    def get_magpie_dict(self, descriptor_name):
+    def featurize_all(self, feature_name, comp_frame, col_id="composition"):
+        """
+        Compute features for all compounds in comp_list
+        
+        Args: 
+            comp_frame (Pandas dataframe): Dataframe containing column of compounds
+            col_id (string): column label containing compositions
+
+        Returns:
+            updated Dataframe
+        """
+
+        features = []
+        for comp in comp_list:
+            comp_obj = Composition(comp)
+            features.append(self.featurize(self, comp_obj, **kwargs))
+
+        comp_frame.assign(feature_name=features)
+        
+    def featurize(self, comp_obj):
+        """
+        Main featurizer function. Only defined in feature subclasses.
+
+        """
+        raise NotImplementedError("Featurizer is not defined")
+
+    def get_data(self, attr):
+        """
+        Function to get data from Magpie/pymatgen
+
+        """
+        raise NotImplementedError("Method not defined")
+
+class MagpieFeaturizer(BaseFeaturizer):
+    def __init__(self):
+        BaseFeaturizer.__init__(self, **kwargs)
+        #ADD OPTIONS
+
+    #@profile
+    def get_data(comp_obj, descriptor_name):
         """
         Gets magpie data for an element. 
         First checks if magpie properties are already loaded, if not, stores magpie data in a dictionary
@@ -81,7 +119,7 @@ class MagpieFeaturizer(object):
             magpie_props[descriptor_name] = attr_dict #Add dictionary to magpie_props
 
         ##Get data for given element/compound
-        el_amt = self.el_amt_dict
+        el_amt = comp_obj.get_el_amt_dict()
         elements = list(el_amt.keys())
         
         magpiedata = []
@@ -92,11 +130,12 @@ class MagpieFeaturizer(object):
         return magpiedata
 
 class StoichAttributes(MagpieFeaturizer):
+    def __init__(self):
+        MagpieFeaturizer.__init__(self)
+        #ADD OPTIONS
 
-    def __init__(self, comp_obj):
-        MagpieFeaturizer.__init__(self, comp_obj)
-
-    def featurize(self, p_list):
+    #@profile
+    def featurize(self, comp_obj, p_list):
         """
         Get stoichiometric attributes
         Args:
@@ -107,7 +146,7 @@ class StoichAttributes(MagpieFeaturizer):
             p_norm (float): Lp norm-based stoichiometric attribute
         """
  
-        el_amt = self.el_amt_dict
+        el_amt = comp_obj.get_el_amt_dict()
         
         p_norms = [0]*len(p_list)
         n_atoms = sum(el_amt.values())
@@ -126,10 +165,13 @@ class StoichAttributes(MagpieFeaturizer):
 
 class ElemPropertyAttributes(MagpieFeaturizer):
 
-    def __init__(self, comp_obj):
-        MagpieFeaturizer.__init__(self, comp_obj)
+    def __init__(self, attributes=None):
+        MagpieFeaturizer.__init__()
+        self.attributes = attributes
+        #ADD OPTIONS
 
-    def featurize(self):
+    #@profile
+    def featurize(self, comp_obj):
         """
         Get elemental property attributes
 
@@ -144,24 +186,25 @@ class ElemPropertyAttributes(MagpieFeaturizer):
         el_amt = self.el_amt_dict
         elements = list(el_amt.keys())
 
-        req_data = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
-            "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
-            "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]    
+        if self.attributes == None:
+            self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
+                "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
+                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]    
         
         all_attributes = []
 
-        for attr in req_data:
+        for attr in self.attributes:
             
-            elem_data = self.get_magpie_dict(attr)
+            elem_data = self.get_data(attr)
 
             desc_stats = []
             desc_stats.append(min(elem_data))
             desc_stats.append(max(elem_data))
             desc_stats.append(max(elem_data) - min(elem_data))
             
-            prop_mean = np.mean(elem_data)
+            prop_mean = sum(elem_data)/len(elem_data)
             desc_stats.append(prop_mean)
-            desc_stats.append(np.mean(np.abs(np.subtract(elem_data, prop_mean))))
+            desc_stats.append(sum(np.abs(np.subtract(elem_data, prop_mean)))/len(elem_data))
             desc_stats.append(max(set(elem_data), key=elem_data.count))
             all_attributes.append(desc_stats)
 
@@ -169,10 +212,12 @@ class ElemPropertyAttributes(MagpieFeaturizer):
 
 class ValenceOrbitalAttributes(MagpieFeaturizer):
 
-    def __init__(self, comp_obj):
-        MagpieFeaturizer.__init__(self, comp_obj)
+    def __init__(self):
+        MagpieFeaturizer.__init__()
+        #ADD OPTIONS    
 
-    def featurize(self):
+    #@profile
+    def featurize(self, comp_obj):
         """Weighted fraction of valence electrons in each orbital
 
            Args: 
@@ -181,12 +226,14 @@ class ValenceOrbitalAttributes(MagpieFeaturizer):
            Returns: 
                 Fs, Fp, Fd, Ff (float): Fraction of valence electrons in s, p, d, and f orbitals
         """    
+        
+        num_atoms = self.comp_obj.num_atoms
 
-        avg_total_valence = np.mean(self.get_magpie_dict("NValance"))
-        avg_s = np.mean(self.get_magpie_dict("NsValence"))
-        avg_p = np.mean(self.get_magpie_dict("NpValence"))
-        avg_d = np.mean(self.get_magpie_dict("NdValence"))
-        avg_f = np.mean(self.get_magpie_dict("NfValence"))
+        avg_total_valence = sum(self.get_data("NValance"))/num_atoms
+        avg_s = sum(self.get_data("NsValence"))/num_atoms
+        avg_p = sum(self.get_data("NpValence"))/num_atoms
+        avg_d = sum(self.get_data("NdValence"))/num_atoms
+        avg_f = sum(self.get_data("NfValence"))/num_atoms
 
         Fs = avg_s/avg_total_valence
         Fp = avg_p/avg_total_valence
@@ -197,10 +244,12 @@ class ValenceOrbitalAttributes(MagpieFeaturizer):
 
 class IonicAttributes(MagpieFeaturizer):
 
-    def __init__(self, comp_obj):
-        MagpieFeaturizer.__init__(self, comp_obj)
+    def __init__(self):
+        MagpieFeaturizer.__init__()
+        #ADD OPTIONS
 
-    def featurize(self):
+    #@profile
+    def featurize(self, comp_obj):
         """
         Ionic character attributes
 
@@ -223,8 +272,8 @@ class IonicAttributes(MagpieFeaturizer):
             avg_ionic_char = 0        
         else:
             #Get magpie data for each element
-            all_ox_states = self.get_magpie_dict("OxidationStates")
-            all_elec = self.get_magpie_dict("Electronegativity")
+            all_ox_states = self.get_data("OxidationStates")
+            all_elec = self.get_data("Electronegativity")
             ox_states = []
             elec = []
             
@@ -446,6 +495,17 @@ if __name__ == '__main__':
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
     print(get_magpie_descriptor('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
+
+    ####PRELOAD MAGPIE DATA FOR SPEED TESTING####
+    comp_obj = Composition("Fe2O3")
+    feat = MagpieFeaturizer(comp_obj)
+    req_data = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
+        "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
+        "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber","OxidationStates"]    
+    
+    for attr in req_data:
+        feat.get_magpie_dict(attr)
+        
     
     ####TESTING WARD NPJ DESCRIPTORS
     comp_obj = Composition("Fe2O3")
