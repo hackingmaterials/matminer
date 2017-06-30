@@ -24,6 +24,8 @@ Helpful Links:
 * Python Crypto: http://n8h.me/QWTqte
 '''
 
+from __future__ import division, unicode_literals, print_function
+
 import os.path
 import sqlite3
 import sys

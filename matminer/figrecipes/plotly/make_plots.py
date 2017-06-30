@@ -1,10 +1,15 @@
+from __future__ import division, unicode_literals, print_function
+
 import warnings
 
 import numpy as np
+
 import pandas as pd
+
 import plotly
 import plotly.graph_objs as go
 from plotly.tools import FigureFactory as FF
+
 from scipy import stats
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'

@@ -1,10 +1,13 @@
-__author__ = 'Anubhav Jain <ajain@lbl.gov>'
+from __future__ import division, unicode_literals, print_function
 
 import math
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+
 import numpy as np
+
+__author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
 class HeatMapPlot():

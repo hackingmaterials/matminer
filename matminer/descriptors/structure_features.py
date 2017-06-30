@@ -1,10 +1,11 @@
-from __future__ import division, unicode_literals
+from __future__ import division, unicode_literals, print_function
 
 import itertools
 import math
 from operator import itemgetter
 
 import numpy as np
+
 from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.structure_analyzer import OrderParameters
@@ -78,7 +79,8 @@ def get_prdf(structure, cutoff=20.0, bin_size=0.1):
     The partial radial distribution function is the radial distibution function
     broken down for each pair of atom types
     
-    The PRDF was proposed as a structural descriptor by [Schutt *et al.*](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
+    The PRDF was proposed as a structural descriptor by [Schutt *et al.*]
+    (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
     
     Args:
         structure: pymatgen structure object
@@ -153,10 +155,11 @@ def get_rdf_peaks(rdf, rdf_bins, n_peaks=2):
 
 def get_redf(struct, cutoff=None, dr=0.05):
     """
-    This function permits the calculation of the crystal structure-inherent electronic radial distribution function
-    (ReDF) according to Willighagen et al., Acta Cryst., 2005, B61, 29-36. The ReDF is a structure-integral RDF (i.e.,
-    summed over all sites) in which the positions of neighboring sites are weighted by electrostatic interactions
-    inferred from atomic partial charges. Atomic charges are obtained from the ValenceIonicRadiusEvaluator class.
+    This function permits the calculation of the crystal structure-inherent electronic radial
+    distribution function (ReDF) according to Willighagen et al., Acta Cryst., 2005, B61, 29-36.
+    The ReDF is a structure-integral RDF (i.e., summed over all sites) in which the positions of
+    neighboring sites are weighted by electrostatic interactions inferred from atomic partial
+    charges. Atomic charges are obtained from the ValenceIonicRadiusEvaluator class.
 
     Args:
         struct (Structure): input Structure object.
@@ -164,8 +167,10 @@ def get_redf(struct, cutoff=None, dr=0.05):
                 calculated (default: longest diagaonal in primitive cell)
         dr (float): width of bins ("x"-axis) of ReDF (default: 0.05 A).
 
-    Returns: (dict) a copy of the electronic radial distribution functions (ReDF) as a dictionary. The distance list
-        ("x"-axis values of ReDF) can be accessed via key 'distances'; the ReDF itself via key 'redf'.
+    Returns:
+        (dict) a copy of the electronic radial distribution functions (ReDF) as a dictionary.
+        The distance list ("x"-axis values of ReDF) can be accessed via key 'distances';
+        the ReDF itself via key 'redf'.
     """
     if dr <= 0:
         raise ValueError("width of bins for ReDF must be >0")
@@ -215,7 +220,9 @@ def get_coulomb_matrix(struct, diag_elems=False):
                 the original definition of the diagonal elements;
                 if set to False (default),
                 the diagonal elements are set to zero.
-    Returns: (Nsites x Nsites matrix) Coulomb matrix.
+
+    Returns:
+        (Nsites x Nsites matrix) Coulomb matrix.
     """
     m = [[] for s in struct.sites]
     z = []
@@ -252,8 +259,8 @@ def get_min_relative_distances(struct, cutoff=10.0):
                 neighbors (on the basis of relative distances) are
                 to be determined.
 
-    Returns: ([float]) list of all minimum relative distances (i.e., for all
-        sites).
+    Returns:
+        ([float]) list of all minimum relative distances (i.e., for all sites).
     """
     vire = ValenceIonicRadiusEvaluator(struct)
     min_rel_dists = []
@@ -387,8 +394,7 @@ def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
     for i in range(5, 180, 5):
         optypes.append("bent")
         opparas.append([float(i), 0.0667])
-    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-              "sq_pyr"]:  # , "tri_bipyr"]:
+    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", "sq_pyr"]:  # , "tri_bipyr"]:
         optypes.append(t)
         opparas.append([])
     ops = OrderParameters(optypes, opparas, 100.0)
@@ -510,14 +516,11 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
     if cn == 6 and ops[n][38] > thresh["qoct"]:
         motif_type = "octahedral"
         nmotif += 1
-    if cn == 8 and (ops[n][39] > thresh["qbcc"] and \
-                                ops[n][37] < thresh["qtet"]):
+    if cn == 8 and (ops[n][39] > thresh["qbcc"] and ops[n][37] < thresh["qtet"]):
         motif_type = "bcc"
         nmotif += 1
-    if cn == 12 and (ops[n][42] > thresh["q6"] and \
-                                 ops[n][37] < thresh["q6"] and \
-                                 ops[n][38] < thresh["q6"] and \
-                                 ops[n][39] < thresh["q6"]):
+    if cn == 12 and (ops[n][42] > thresh["q6"] and ops[n][37] < thresh["q6"] and \
+                                 ops[n][38] < thresh["q6"] and ops[n][39] < thresh["q6"]):
         motif_type = "cp"
         nmotif += 1
 

@@ -1,4 +1,6 @@
-from figrecipes.matplotlib.plots import XYPlot
+from __future__ import division, unicode_literals, print_function
+
+from matminer.figrecipes.matplotlib.plots import XYPlot
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
