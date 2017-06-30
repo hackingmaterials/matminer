@@ -13,6 +13,6 @@ Module contents
 ---------------
 
 .. automodule:: matminer.figrecipes
-:members:
-        :undoc-members:
-            :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
