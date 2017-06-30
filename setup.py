@@ -20,7 +20,7 @@ if __name__ == "__main__":
         package_data={},
         zip_safe=False,
         install_requires=['pymatgen>=2017.6.24', 'tqdm>=3.7.1', 'pandas>=0.17.1',
-                          'unittest2==1.1.0', "pymongo>=3.3.0", 'pint'],
+                          'unittest2==1.1.0', 'pymongo>=3.3.0', 'pint>=0.8.1', 'six>=1.10.0'],
         extras_require={'citrine': ['citrination-client>=1.3.1']},
         classifiers=['Programming Language :: Python :: 2.7',
                      'Programming Language :: Python :: 3.6',
