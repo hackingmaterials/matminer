@@ -34,10 +34,11 @@ for atomic_no in range(1,104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
 class BaseFeaturizer(object):
-    def __init__(self, **kwargs):
+    def __init__(self):
+        pass
         #ADD OPTIONS/ATTRIBUTES
 
-    def featurize_all(self, feature_name, comp_frame, col_id="composition"):
+    def featurize_all(self, comp_frame, col_id="composition"):
         """
         Compute features for all compounds in comp_list
         
@@ -50,35 +51,36 @@ class BaseFeaturizer(object):
         """
 
         features = []
+        comp_list = comp_frame[col_id]
         for comp in comp_list:
             comp_obj = Composition(comp)
-            features.append(self.featurize(self, comp_obj, **kwargs))
-
-        comp_frame.assign(feature_name=features)
+            features.append(self.featurize(comp_obj))
         
+        features = np.array(features)
+
+        labels = self.generate_labels()
+        comp_frame = comp_frame.assign(**dict(zip(labels, [features[:,i] for i in range(np.shape(features)[1])])))
+
+        return comp_frame
+    
+    #Get this to take multiple attributes 
     def featurize(self, comp_obj):
-        """
-        Main featurizer function. Only defined in feature subclasses.
-
-        """
+        """Main featurizer function. Only defined in feature subclasses."""
         raise NotImplementedError("Featurizer is not defined")
-
-    def get_data(self, attr):
-        """
-        Function to get data from Magpie/pymatgen
-
-        """
-        raise NotImplementedError("Method not defined")
+    
+    def generate_labels(self):
+        """Generate attribute names"""
+        raise NotImplementedError("Featurizer is not defined")
 
 class MagpieFeaturizer(BaseFeaturizer):
     def __init__(self):
-        BaseFeaturizer.__init__(self, **kwargs)
+        BaseFeaturizer.__init__(self)
         #ADD OPTIONS
 
     #@profile
-    def get_data(comp_obj, descriptor_name):
+    def get_data(self, comp_obj, descriptor_name):
         """
-        Gets magpie data for an element. 
+        Gets magpie data for a composition object. 
         First checks if magpie properties are already loaded, if not, stores magpie data in a dictionary
 
         Args: 
@@ -130,12 +132,15 @@ class MagpieFeaturizer(BaseFeaturizer):
         return magpiedata
 
 class StoichAttributes(MagpieFeaturizer):
-    def __init__(self):
+    def __init__(self, p_list=None):
         MagpieFeaturizer.__init__(self)
-        #ADD OPTIONS
-
+        if p_list == None:
+            self.p_list = [0,2,3,5,7,10]
+        else:
+            self.p_list = p_list
+ 
     #@profile
-    def featurize(self, comp_obj, p_list):
+    def featurize(self, comp_obj):
         """
         Get stoichiometric attributes
         Args:
@@ -148,27 +153,37 @@ class StoichAttributes(MagpieFeaturizer):
  
         el_amt = comp_obj.get_el_amt_dict()
         
-        p_norms = [0]*len(p_list)
+        p_norms = [0]*len(self.p_list)
         n_atoms = sum(el_amt.values())
 
-        for i in range(len(p_list)):
-            if p_list[i] < 0:
+        for i in range(len(self.p_list)):
+            if self.p_list[i] < 0:
                 raise ValueError("p-norm not defined for p < 0")
-            if p_list[i] == 0:
+            if self.p_list[i] == 0:
                 p_norms[i] = len(el_amt.values())
             else:
                 for j in el_amt:
-                    p_norms[i] += (el_amt[j]/n_atoms)**p_list[i]
-                p_norms[i] = p_norms[i]**(1.0/p_list[i])
+                    p_norms[i] += (el_amt[j]/n_atoms)**self.p_list[i]
+                p_norms[i] = p_norms[i]**(1.0/self.p_list[i])
 
         return p_norms
+
+    def generate_labels(self):
+        labels = []
+        for p in self.p_list:
+            labels.append("%d-norm"%p)
+        return labels
 
 class ElemPropertyAttributes(MagpieFeaturizer):
 
     def __init__(self, attributes=None):
-        MagpieFeaturizer.__init__()
-        self.attributes = attributes
-        #ADD OPTIONS
+        MagpieFeaturizer.__init__(self)
+        if attributes == None:
+            self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
+                "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
+                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]    
+        else: 
+            self.attributes = attributes
 
     #@profile
     def featurize(self, comp_obj):
@@ -180,40 +195,44 @@ class ElemPropertyAttributes(MagpieFeaturizer):
             self: Featurizer object
         
         Returns:
-            all_attributes: min, max, range, mean, average deviation, and mode of 22 descriptors
+            all_attributes: min, max, range, mean, average deviation, and mode of descriptors
         """
 
-        el_amt = self.el_amt_dict
+        el_amt = comp_obj.get_el_amt_dict()
         elements = list(el_amt.keys())
-
-        if self.attributes == None:
-            self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
-                "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
-                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]    
-        
+       
         all_attributes = []
 
         for attr in self.attributes:
             
-            elem_data = self.get_data(attr)
+            elem_data = self.get_data(comp_obj, attr)
 
-            desc_stats = []
-            desc_stats.append(min(elem_data))
-            desc_stats.append(max(elem_data))
-            desc_stats.append(max(elem_data) - min(elem_data))
+            all_attributes.append(min(elem_data))
+            all_attributes.append(max(elem_data))
+            all_attributes.append(max(elem_data) - min(elem_data))
             
             prop_mean = sum(elem_data)/len(elem_data)
-            desc_stats.append(prop_mean)
-            desc_stats.append(sum(np.abs(np.subtract(elem_data, prop_mean)))/len(elem_data))
-            desc_stats.append(max(set(elem_data), key=elem_data.count))
-            all_attributes.append(desc_stats)
+            all_attributes.append(prop_mean)
+            all_attributes.append(sum(np.abs(np.subtract(elem_data, prop_mean)))/len(elem_data))
+            all_attributes.append(max(set(elem_data), key=elem_data.count))
 
         return all_attributes
+
+    def generate_labels(self):
+        labels = []
+        for attr in self.attributes:
+            labels.append("Max %s"%attr)
+            labels.append("Min %s"%attr)
+            labels.append("Range %s"%attr)
+            labels.append("Mean %s"%attr)
+            labels.append("AbsDev %s"%attr)
+            labels.append("Mode %s"%attr)
+        return labels
 
 class ValenceOrbitalAttributes(MagpieFeaturizer):
 
     def __init__(self):
-        MagpieFeaturizer.__init__()
+        MagpieFeaturizer.__init__(self)
         #ADD OPTIONS    
 
     #@profile
@@ -227,25 +246,33 @@ class ValenceOrbitalAttributes(MagpieFeaturizer):
                 Fs, Fp, Fd, Ff (float): Fraction of valence electrons in s, p, d, and f orbitals
         """    
         
-        num_atoms = self.comp_obj.num_atoms
+        num_atoms = comp_obj.num_atoms
 
-        avg_total_valence = sum(self.get_data("NValance"))/num_atoms
-        avg_s = sum(self.get_data("NsValence"))/num_atoms
-        avg_p = sum(self.get_data("NpValence"))/num_atoms
-        avg_d = sum(self.get_data("NdValence"))/num_atoms
-        avg_f = sum(self.get_data("NfValence"))/num_atoms
+        avg_total_valence = sum(self.get_data(comp_obj,"NValance"))/num_atoms
+        avg_s = sum(self.get_data(comp_obj,"NsValence"))/num_atoms
+        avg_p = sum(self.get_data(comp_obj,"NpValence"))/num_atoms
+        avg_d = sum(self.get_data(comp_obj,"NdValence"))/num_atoms
+        avg_f = sum(self.get_data(comp_obj,"NfValence"))/num_atoms
 
         Fs = avg_s/avg_total_valence
         Fp = avg_p/avg_total_valence
         Fd = avg_d/avg_total_valence
         Ff = avg_f/avg_total_valence
 
-        return Fs, Fp, Fd, Ff
+        return list((Fs, Fp, Fd, Ff))
+
+    def generate_labels(self):
+        orbitals = ["s","p","d","f"]
+        labels = []
+        for orb in orbitals:
+            labels.append("Frac %s Valence Electrons"%orb)
+
+        return labels
 
 class IonicAttributes(MagpieFeaturizer):
 
     def __init__(self):
-        MagpieFeaturizer.__init__()
+        MagpieFeaturizer.__init__(self)
         #ADD OPTIONS
 
     #@profile
@@ -262,7 +289,7 @@ class IonicAttributes(MagpieFeaturizer):
             avg_ionic_char (float): Average ionic character
         """
 
-        el_amt = self.el_amt_dict
+        el_amt = comp_obj.get_el_amt_dict()
         elements = list(el_amt.keys())
         values = list(el_amt.values())
 
@@ -272,8 +299,8 @@ class IonicAttributes(MagpieFeaturizer):
             avg_ionic_char = 0        
         else:
             #Get magpie data for each element
-            all_ox_states = self.get_data("OxidationStates")
-            all_elec = self.get_data("Electronegativity")
+            all_ox_states = self.get_data(comp_obj,"OxidationStates")
+            all_elec = self.get_data(comp_obj,"Electronegativity")
             ox_states = []
             elec = []
             
@@ -305,7 +332,11 @@ class IonicAttributes(MagpieFeaturizer):
             
             max_ionic_char = np.max(ionic_char)
          
-        return cpd_possible, max_ionic_char, avg_ionic_char
+        return list((cpd_possible, max_ionic_char, avg_ionic_char))
+
+    def generate_labels(self):
+        labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
+        return labels
 
 def get_pymatgen_descriptor(comp, prop):
     """
