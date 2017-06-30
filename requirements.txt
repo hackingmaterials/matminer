@@ -1,6 +1,7 @@
-pymongo
-BeautifulSoup
-lxml
-tqdm>=3.7.1
-pandas>=0.17.1
-pymatgen>=3.2.10
+pymongo==3.4.0
+tqdm==4.11.2
+pandas==0.20.1
+pymatgen==4.7.6
+unittest2==1.1.0
+citrination-client
+plotly
