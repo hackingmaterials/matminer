@@ -1,6 +1,8 @@
 import collections
 import json
 import os
+from functools import reduce
+
 from pymatgen import Element, Composition, MPRester
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
