@@ -128,7 +128,7 @@ class MPDSDataRetrieval(object):
         self.network = httplib2.Http()
         self.endpoint = endpoint or MPDSDataRetrieval.endpoint
 
-    def _request(self, query, phases=[], page=0):
+    def _request(self, query, phases=None, page=0):
         phases = ','.join([str(int(x)) for x in phases]) if phases else ''
 
         response, content = self.network.request(

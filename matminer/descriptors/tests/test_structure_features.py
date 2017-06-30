@@ -184,7 +184,7 @@ class StructureFeaturesTest(PymatgenTest):
         coords = [[0, 0, 0], [0, 0, 1.203], [0, 0, -1.06], [0, 0, 2.263]]
         acetylene = Molecule(species, coords)
         morig = get_coulomb_matrix(acetylene, diag_elems=True)
-        mtarget = [[36.858, 29.925, 5.66, 2.651], [29.925, 36.858, 2.651, 5.66], \
+        mtarget = [[36.858, 29.925, 5.66, 2.651], [29.925, 36.858, 2.651, 5.66],
                    [5.55, 2.651, 0.5, 0.301], [2.651, 5.66, 0.301, 0.5]]
         self.assertAlmostEqual(
             int(np.linalg.norm(morig - np.array(mtarget))), 0)

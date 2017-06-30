@@ -10,7 +10,7 @@ This is a skeleton of how a model might look like
 
 
 # TODO: base class useful?
-class SoundVelocityModel():
+class SoundVelocityModel:
     """
     This is an example model
     """
