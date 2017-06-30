@@ -1,47 +1,86 @@
+from itertools import groupby
+
 import pandas as pd
+from tqdm import tqdm
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
-class MongoDataRetrieval():
+class MongoDataRetrieval:
 
-    def __init__(self, coll, query=None, projection=None, sort=None, limit=None, progressbar=100):
+    def __init__(self, coll):
+        """
+        Tool to retrieve data from a MongoDB collection and reformat for data analysis
+        Args:
+            coll: A MongoDB collection object
+        """
         self.coll = coll
-        self.projection = projection
 
-        # initialize data
-        # need to know columns of data frame; use a query to determine the fields
-        # this assumes the fields are homogeneous
-        # TODO: what to do with sub-keys?
-        if not self.projection:
-            d = self.coll.find_one(query, self.projection, sort=sort)
-            self.projection = d.keys()
+    def get_dataframe(self, projection, query=None, sort=None,
+                      limit=None, idx_field=None):
+        """
+        Args:
+            projection: (list) - a list of str fields to grab; dot-notation is allowed.
+                Set to "None" to try to auto-detect the fields.
+            query: (JSON) - a pymongo-style query to restrict data being gathered
+            sort: (tuple) - pymongo-style sort option
+            limit: (int) - int to limit the number of entries
+            idx_field: (str) - name of field to use as index field (must be unique)
+        """
+        # auto-detect projection as all root keys of any document
+        # assumes DB is uniform
+        if not projection:
+            d = self.coll.find_one(query, projection, sort=sort)
+            projection = d.keys()
 
-        self.data = []
-        r = self.coll.find(query, self.projection, sort=sort)
+        query_proj = [remove_ints(p) for p in clean_projection(projection)]
+
+        print(query_proj)
+
+        r = self.coll.find(query, query_proj, sort=sort)
         if limit:
             r.limit(limit)
 
-        total = r.count()
+        total = min(limit, r.count())
 
-        idx=0
-
-        for d in r:
+        all_data = []   # matrix of row, column data
+        for d in tqdm(r, total=total):
             row_data = []
-            for key in self.projection:
+
+            # split up dot-notation keys
+            for key in projection:
                 vals = key.split('.')
-                data = reduce(lambda d, k: d[k], vals, d)
+                vals = [int(v) if is_int(v) else v for v in vals]
+                data = reduce(lambda e, k: e[k], vals, d)
                 row_data.append(data)
 
-            self.data.append(row_data)
-            idx += 1
-            if idx % progressbar == 0:
-                print "{}/{} entries processed...".format(idx, total)
+            all_data.append(row_data)
 
-        print 'DONE PRE-PROCESSING'
-
-    def get_dataframe(self, idx_field=None):
-        df = pd.DataFrame(self.data, columns=self.projection)
+        df = pd.DataFrame(all_data, columns=projection)
         if idx_field:
-            df.index = df[idx_field]
+            df = df.set_index([idx_field])
         return df
+
+
+def clean_projection(projection):
+    """
+    Projecting on e.g. 'a.b.' and 'a' is disallowed. Project inclusively.
+    Args:
+        projection: (list) - list of fields to grab; dot-notation is allowed.
+    """
+    return [
+        list(g)[0] for _, g in
+        groupby(sorted(projection), key=lambda p: p.split(".", 1)[0])]
+
+
+def remove_ints(projection):
+    proj = [p for p in projection.split(".") if not is_int(p)]
+    return ".".join(proj)
+
+
+def is_int(x):
+    try:
+        int(x)
+        return True
+    except:
+        return False
