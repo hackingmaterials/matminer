@@ -20,31 +20,31 @@ matminer.decorate module
 ------------------------
 
 .. automodule:: matminer.decorate
-:members:
-        :undoc-members:
-            :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 matminer.pyCookieCheat module
 -----------------------------
 
 .. automodule:: matminer.pyCookieCheat
-:members:
-        :undoc-members:
-            :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 matminer.utils module
 ---------------------
 
 .. automodule:: matminer.utils
-:members:
-        :undoc-members:
-            :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: matminer
-:members:
-        :undoc-members:
-            :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
