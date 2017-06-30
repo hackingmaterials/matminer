@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import warnings
+import six
 
 try:
     from urllib.parse import urlencode
@@ -199,7 +200,7 @@ class MPDSDataRetrieval(object):
         output = []
         counter, hits_count = 0, 0
         fields = {
-            key: [jmespath.compile(item) if isinstance(item, str) else item() for item in value]
+            key: [jmespath.compile(item) if isinstance(item, six.string_types) else item() for item in value]
             for key, value in fields.items()
         } if fields else None
 
