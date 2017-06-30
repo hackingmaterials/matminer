@@ -1,19 +1,16 @@
 from __future__ import division, unicode_literals
 
-import os
-import json
-import math
-import numpy as np
 import itertools
+import math
 from operator import itemgetter
 
+import numpy as np
 from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.core.periodic_table import Specie
 from pymatgen.core.structure import Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
@@ -24,7 +21,7 @@ def get_packing_fraction(s):
         raise ValueError("Disordered structure support not built yet")
     total_rad = 0
     for site in s:
-        total_rad += site.specie.atomic_radius**3
+        total_rad += site.specie.atomic_radius ** 3
 
     return 4 * math.pi * total_rad / (3 * s.volume)
 
@@ -52,26 +49,28 @@ def get_rdf(structure, cutoff=20.0, bin_size=0.1):
     Returns: (tuple of ndarray) first element is the normalized RDF, second is the inner radius of the RDF bin
 
     """
-    
+
     if not structure.is_ordered:
         raise ValueError("Disordered structure support not built yet")
-    
+
     # Get the distances between all atoms
     neighbors_lst = structure.get_all_neighbors(cutoff)
-    all_distances = np.concatenate(tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
-    
+    all_distances = np.concatenate(
+        tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
+
     # Compute a histogram
     dist_hist, dist_bins = np.histogram(all_distances,
-            bins=np.arange(0, cutoff+bin_size, bin_size), density=False)
-    
+                                        bins=np.arange(0, cutoff + bin_size, bin_size),
+                                        density=False)
+
     # Normalize counts
-    shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:],3) - np.power(dist_bins[:-1], 3))
-    number_density = structure.num_sites / structure.volume 
+    shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+    number_density = structure.num_sites / structure.volume
     rdf = dist_hist / shell_vol / number_density
-    
+
     return rdf, dist_bins[:-1]
-    
-    
+
+
 def get_prdf(structure, cutoff=20.0, bin_size=0.1):
     """
     Compute the partial radial distribution function for a structure
@@ -89,46 +88,48 @@ def get_prdf(structure, cutoff=20.0, bin_size=0.1):
     Returns: (tuple) First element is a dict where keys are tuples of element names
                and values are PRDFs,
     """
-    
+
     if not structure.is_ordered:
         raise ValueError("Disordered structure support not built yet")
-        
+
     # Get the composition of the array
     composition = structure.composition.fractional_composition.to_reduced_dict
-    
+
     # Get the distances between all atoms
     neighbors_lst = structure.get_all_neighbors(cutoff)
-    
+
     # Sort neighbors by type
     distances_by_type = {}
     for p in itertools.product(composition.keys(), composition.keys()):
         distances_by_type[p] = []
-        
+
     def get_symbol(site):
-        return site.specie.symbol if isinstance(site.specie, Element) else site.specie.element.symbol
-    for site,nlst in zip(structure.sites, neighbors_lst): # Each list is a list for each site
+        return site.specie.symbol if isinstance(site.specie,
+                                                Element) else site.specie.element.symbol
+
+    for site, nlst in zip(structure.sites, neighbors_lst):  # Each list is a list for each site
         my_elem = get_symbol(site)
-        
+
         for neighbor in nlst:
             rij = neighbor[1]
             n_elem = get_symbol(neighbor[0])
             # LW 3May17: Any better ideas than appending each element at a time?
-            distances_by_type[(my_elem,n_elem)].append(rij)
-    
+            distances_by_type[(my_elem, n_elem)].append(rij)
+
     # Compute and normalize the prdfs
     prdf = {}
-    dist_bins = np.arange(0, cutoff+bin_size, bin_size)
-    shell_volume = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:],3) - np.power(dist_bins[:-1], 3))
+    dist_bins = np.arange(0, cutoff + bin_size, bin_size)
+    shell_volume = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
     for key, distances in distances_by_type.items():
         # Compute histogram of distances
         dist_hist, dist_bins = np.histogram(distances,
-            bins=dist_bins, density=False)
+                                            bins=dist_bins, density=False)
         # Normalize
-        n_alpha = composition[key[0]] * structure.num_sites    
+        n_alpha = composition[key[0]] * structure.num_sites
         rdf = dist_hist / shell_volume / n_alpha
-        
+
         prdf[key] = rdf
-    
+
     return prdf, dist_bins[:-1]
 
 
@@ -144,7 +145,7 @@ def get_rdf_peaks(rdf, rdf_bins, n_peaks=2):
     Returns: (ndarray) of distances highest peaks, listed by descending height
 
     """
-    
+
     # LW 3May17: Sorting the whole array isn't necessary, 
     #   but probably quick given typical RDF sizes are small
     return rdf_bins[np.argsort(rdf)[-n_peaks:]][::-1]
@@ -180,7 +181,9 @@ def get_redf(struct, cutoff=None, dr=0.05):
         a = struct.lattice.matrix[0]
         b = struct.lattice.matrix[1]
         c = struct.lattice.matrix[2]
-        cutoff = max([np.linalg.norm(a+b+c), np.linalg.norm(-a+b+c), np.linalg.norm(a-b+c), np.linalg.norm(a+b-c)])
+        cutoff = max(
+            [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c), np.linalg.norm(a - b + c),
+             np.linalg.norm(a + b - c)])
 
     nbins = int(cutoff / dr) + 1
     redf_dict = {"distances": np.array([(i + 0.5) * dr for i in range(nbins)]),
@@ -225,7 +228,7 @@ def get_coulomb_matrix(struct, diag_elems=False):
         for j in range(struct.num_sites):
             if i == j:
                 if diag_elems:
-                    m[i].append(0.5 * z[i]**2.4)
+                    m[i].append(0.5 * z[i] ** 2.4)
                 else:
                     m[i].append(0)
             else:
@@ -255,9 +258,9 @@ def get_min_relative_distances(struct, cutoff=10.0):
     vire = ValenceIonicRadiusEvaluator(struct)
     min_rel_dists = []
     for site in vire.structure:
-        min_rel_dists.append(min([dist/(vire.radii[site.species_string]+\
-            vire.radii[neigh.species_string]) for neigh, dist in \
-            vire.structure.get_neighbors(site, cutoff)]))
+        min_rel_dists.append(min([dist / (vire.radii[site.species_string] + \
+                                          vire.radii[neigh.species_string]) for neigh, dist in \
+                                  vire.structure.get_neighbors(site, cutoff)]))
     return min_rel_dists[:]
 
 
@@ -306,13 +309,13 @@ def get_neighbors_of_site_with_index(struct, n, p=None):
     sites = []
     if p is None:
         p = {"approach": "min_dist", "delta": 0.1,
-                "cutoff": 6}
+             "cutoff": 6}
 
     if p["approach"] not in [
-            "min_relative_OKeeffe", "min_dist", "min_relative_VIRE", \
+        "min_relative_OKeeffe", "min_dist", "min_relative_VIRE", \
             "scaled_VIRE"]:
         raise RuntimeError("Unsupported neighbor-finding approach"
-                " (\"{}\")".format(p["approach"]))
+                           " (\"{}\")".format(p["approach"]))
 
     if p["approach"] == "min_relative_OKeeffe" or p["approach"] == "min_dist":
         neighs_dists = struct.get_neighbors(struct[n], p["cutoff"])
@@ -322,7 +325,7 @@ def get_neighbors_of_site_with_index(struct, n, p=None):
             eln = struct[n].species_string
     elif p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
         vire = ValenceIonicRadiusEvaluator(struct)
-        if np.linalg.norm(struct[n].coords-vire.structure[n].coords) > 1e-6:
+        if np.linalg.norm(struct[n].coords - vire.structure[n].coords) > 1e-6:
             raise RuntimeError("Mismatch between input structure and VIRE structure.")
         neighs_dists = vire.structure.get_neighbors(vire.structure[n], p["cutoff"])
         rn = vire.radii[vire.structure[n].species_string]
@@ -335,20 +338,20 @@ def get_neighbors_of_site_with_index(struct, n, p=None):
                 sites.append(neigh)
         elif p["approach"] == "min_relative_VIRE":
             reldists_neighs.append([dist / (
-                    vire.radii[neigh.species_string] + rn), neigh])
+                vire.radii[neigh.species_string] + rn), neigh])
         elif p["approach"] == "min_relative_OKeeffe":
             try:
                 el2 = neigh.specie.element
             except:
                 el2 = neigh.species_string
             reldists_neighs.append([dist / get_okeeffe_distance_prediction(
-                    eln, el2), neigh])
+                eln, el2), neigh])
         elif p["approach"] == "min_dist":
             reldists_neighs.append([dist, neigh])
 
     if p["approach"] == "min_relative_VIRE" or \
-            p["approach"] == "min_relative_OKeeffe" or \
-            p["approach"] == "min_dist":
+                    p["approach"] == "min_relative_OKeeffe" or \
+                    p["approach"] == "min_dist":
         min_reldist = min([reldist for reldist, neigh in reldists_neighs])
         for reldist, neigh in reldists_neighs:
             if reldist / min_reldist < 1.0 + p["delta"]:
@@ -385,7 +388,7 @@ def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
         optypes.append("bent")
         opparas.append([float(i), 0.0667])
     for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-            "sq_pyr"]: # , "tri_bipyr"]:
+              "sq_pyr"]:  # , "tri_bipyr"]:
         optypes.append(t)
         opparas.append([])
     ops = OrderParameters(optypes, opparas, 100.0)
@@ -393,8 +396,8 @@ def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
         neighcent = get_neighbors_of_site_with_index(struct, i, pneighs)
         neighcent.append(s)
         opvals.append(ops.get_order_parameters(
-                neighcent, len(neighcent)-1,
-                indeces_neighs=[j for j in range(len(neighcent)-1)]))
+            neighcent, len(neighcent) - 1,
+            indeces_neighs=[j for j in range(len(neighcent) - 1)]))
         if convert_none_to_zero:
             for j, opval in enumerate(opvals[i]):
                 if opval is None:
@@ -430,10 +433,10 @@ def get_order_parameter_stats(
     for i in range(5, 180, 5):
         optypes.append("bent{}".format(i))
     for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-            "sq_pyr"]: # , "tri_bipyr"]:
+              "sq_pyr"]:  # , "tri_bipyr"]:
         optypes.append(t)
     opvals = get_order_parameters(
-            struct, pneighs=pneighs, convert_none_to_zero=convert_none_to_zero)
+        struct, pneighs=pneighs, convert_none_to_zero=convert_none_to_zero)
     opvals2 = [[] for t in optypes]
     for i, opsite in enumerate(opvals):
         for j, op in enumerate(opsite):
@@ -446,7 +449,7 @@ def get_order_parameter_stats(
                 ops_hist[b] += 1
             else:
                 ops_hist[b] = 1
-        ops =list(ops_hist.keys())
+        ops = list(ops_hist.keys())
         hist = list(ops_hist.values())
         sorted_hist = sorted(hist, reverse=True)
         if len(sorted_hist) > 1:
@@ -458,12 +461,12 @@ def get_order_parameter_stats(
         max1_idx = hist.index(max1_hist)
         max2_idx = hist.index(max2_hist)
         opstats[optypes[i]] = {
-                "min": min(opstype),
-                "max": max(opstype),
-                "mean": np.mean(np.array(opstype)),
-                "std": np.std(np.array(opstype)),
-                "peak1": ops[max1_idx],
-                "peak2": ops[max2_idx]}
+            "min": min(opstype),
+            "max": max(opstype),
+            "mean": np.mean(np.array(opstype)),
+            "std": np.std(np.array(opstype)),
+            "peak1": ops[max1_idx],
+            "peak2": ops[max2_idx]}
     return opstats
 
 
@@ -490,8 +493,8 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
 
     if thresh is None:
         thresh = {
-                "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
-                "qtribipyr": 0.8}
+            "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
+            "qtribipyr": 0.8}
 
     ops = get_order_parameters(struct, pneighs=pneighs)
     cn = int(ops[n][0] + 0.5)
@@ -501,20 +504,20 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
     if cn == 4 and ops[n][37] > thresh["qtet"]:
         motif_type = "tetrahedral"
         nmotif += 1
-    #if cn == 5 and ops[n][46] > thresh["qtribipyr"]:
+    # if cn == 5 and ops[n][46] > thresh["qtribipyr"]:
     #    motif_type = "trigonal bipyramidal"
     #    nmotif += 1
     if cn == 6 and ops[n][38] > thresh["qoct"]:
         motif_type = "octahedral"
         nmotif += 1
     if cn == 8 and (ops[n][39] > thresh["qbcc"] and \
-            ops[n][37] < thresh["qtet"]):
+                                ops[n][37] < thresh["qtet"]):
         motif_type = "bcc"
         nmotif += 1
     if cn == 12 and (ops[n][42] > thresh["q6"] and \
-            ops[n][37] < thresh["q6"] and \
-            ops[n][38] < thresh["q6"] and \
-            ops[n][39] < thresh["q6"]):
+                                 ops[n][37] < thresh["q6"] and \
+                                 ops[n][38] < thresh["q6"] and \
+                                 ops[n][39] < thresh["q6"]):
         motif_type = "cp"
         nmotif += 1
 
@@ -522,6 +525,7 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
         motif_type = "unrecognized"
 
     return motif_type
+
 
 def get_okeeffe_params(el_symbol):
     """
@@ -541,8 +545,8 @@ def get_okeeffe_params(el_symbol):
     el = Element(el_symbol)
     if el not in list(BV_PARAMS.keys()):
         raise RuntimeError("Could not find O'Keeffe parameters for element"
-                " \"{}\" in \"BV_PARAMS\"dictonary"
-                " provided by pymatgen".format(el_symbol))
+                           " \"{}\" in \"BV_PARAMS\"dictonary"
+                           " provided by pymatgen".format(el_symbol))
 
     return BV_PARAMS[el]
 
@@ -570,4 +574,4 @@ def get_okeeffe_distance_prediction(el1, el2):
     c1 = el1_okeeffe_params['c']
     c2 = el2_okeeffe_params['c']
 
-    return r1 + r2 - r1*r2*math.pow(math.sqrt(c1)-math.sqrt(c2), 2)/(c1*r1+c2*r2)
+    return r1 + r2 - r1 * r2 * math.pow(math.sqrt(c1) - math.sqrt(c2), 2) / (c1 * r1 + c2 * r2)

@@ -15,15 +15,15 @@ matminer.figrecipes.matplotlib.plots module
 -------------------------------------------
 
 .. automodule:: matminer.figrecipes.matplotlib.plots
-    :members:
-    :undoc-members:
-    :show-inheritance:
+:members:
+        :undoc-members:
+            :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: matminer.figrecipes.matplotlib
-    :members:
-    :undoc-members:
-    :show-inheritance:
+:members:
+        :undoc-members:
+            :show-inheritance:

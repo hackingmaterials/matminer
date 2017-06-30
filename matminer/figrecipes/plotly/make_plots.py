@@ -1,19 +1,22 @@
+import warnings
+
+import numpy as np
+import pandas as pd
 import plotly
 import plotly.graph_objs as go
 from plotly.tools import FigureFactory as FF
-import pandas as pd
-import numpy as np
-import warnings
 from scipy import stats
-
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 class PlotlyFig:
-    def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
-                 plot_mode='offline', username=None, api_key=None, textsize=30, ticksize=25, fontfamily=None,
-                 height=800, width=1000, scale=None, margin_top=100, margin_bottom=80, margin_left=80, margin_right=80,
+    def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest',
+                 filename=None,
+                 plot_mode='offline', username=None, api_key=None, textsize=30, ticksize=25,
+                 fontfamily=None,
+                 height=800, width=1000, scale=None, margin_top=100, margin_bottom=80,
+                 margin_left=80, margin_right=80,
                  pad=0):
         """
         Class for making Plotly plots
@@ -72,9 +75,11 @@ class PlotlyFig:
         self.layout = dict(
             title=self.title,
             titlefont=dict(size=self.textsize, family=self.fontfamily),
-            xaxis=dict(title=self.x_title, titlefont=dict(size=self.textsize, family=self.fontfamily),
+            xaxis=dict(title=self.x_title,
+                       titlefont=dict(size=self.textsize, family=self.fontfamily),
                        tickfont=dict(size=self.ticksize, family=self.fontfamily)),
-            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, family=self.fontfamily),
+            yaxis=dict(title=self.y_title,
+                       titlefont=dict(size=self.textsize, family=self.fontfamily),
                        tickfont=dict(size=self.ticksize, family=self.fontfamily)),
             hovermode=self.hovermode,
             width=self.width,
@@ -89,16 +94,21 @@ class PlotlyFig:
                 raise ValueError('field "api_key" must be filled in online plotting mode')
 
         elif self.plot_mode == 'static':
-            if not self.filename or not self.filename.lower().endswith(('.png', '.svg', '.jpeg', '.pdf')):
+            if not self.filename or not self.filename.lower().endswith(
+                    ('.png', '.svg', '.jpeg', '.pdf')):
                 raise ValueError(
                     'field "filename" must be filled in static plotting mode and must have an extension ending in ('
                     '".png", ".svg", ".jpeg", ".pdf")')
 
-    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
+    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6,
+                colorscale='Viridis',
                 legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill',
-                hoverinfo='x+y+text', add_xy_plot=None, marker_outline_width=0, marker_outline_color='black',
-                linedash='solid', linewidth=2, lineshape='linear', error_type=None, error_direction=None,
-                error_array=None, error_value=None, error_symmetric=True, error_arrayminus=None, error_valueminus=None):
+                hoverinfo='x+y+text', add_xy_plot=None, marker_outline_width=0,
+                marker_outline_color='black',
+                linedash='solid', linewidth=2, lineshape='linear', error_type=None,
+                error_direction=None,
+                error_array=None, error_value=None, error_symmetric=True, error_arrayminus=None,
+                error_valueminus=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -197,7 +207,8 @@ class PlotlyFig:
                 color=color,
                 colorscale=colorscale,
                 showscale=showscale,
-                line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
+                line=dict(width=marker_outline_width, color=marker_outline_color,
+                          colorscale=colorscale),
                 symbol=marker,
                 colorbar=dict(tickfont=dict(size=int(0.75 * self.ticksize), family=self.fontfamily))
             ),
@@ -207,13 +218,15 @@ class PlotlyFig:
         # Add error bars
         if error_type:
             if error_direction is None:
-                raise ValueError("The field 'error_direction' must be populated if 'err_type' is specified")
+                raise ValueError(
+                    "The field 'error_direction' must be populated if 'err_type' is specified")
             if error_type == 'data':
                 if error_symmetric:
                     trace0['error_' + error_direction] = dict(type=error_type, array=error_array)
                 else:
                     if not error_arrayminus:
-                        raise ValueError("Please specify error bar lengths in the negative direction")
+                        raise ValueError(
+                            "Please specify error bar lengths in the negative direction")
                     trace0['error_' + error_direction] = dict(type=error_type, array=error_array,
                                                               arrayminus=error_arrayminus)
             elif error_type == 'constant' or error_type == 'percent':
@@ -221,11 +234,13 @@ class PlotlyFig:
                     trace0['error_' + error_direction] = dict(type=error_type, value=error_value)
                 else:
                     if not error_valueminus:
-                        raise ValueError("Please specify error bar lengths in the negative direction")
+                        raise ValueError(
+                            "Please specify error bar lengths in the negative direction")
                     trace0['error_' + error_direction] = dict(type=error_type, value=error_value,
                                                               valueminus=error_valueminus)
             else:
-                raise ValueError("Invalid error bar type. Please choose from 'data'/'constant'/'percent'.")
+                raise ValueError(
+                    "Invalid error bar type. Please choose from 'data'/'constant'/'percent'.")
 
         data = [trace0]
 
@@ -250,11 +265,13 @@ class PlotlyFig:
                         marker=dict(
                             color=plot_data['color'],
                             size=plot_data['size'],
-                            colorscale=colorscale, # colorscale is fixed to that of the main plot
-                            showscale=showscale, # showscale is fixed to that of the main plot
-                            line=dict(width=marker_outline_width, color=marker_outline_color, colorscale=colorscale),
+                            colorscale=colorscale,  # colorscale is fixed to that of the main plot
+                            showscale=showscale,  # showscale is fixed to that of the main plot
+                            line=dict(width=marker_outline_width, color=marker_outline_color,
+                                      colorscale=colorscale),
                             symbol=plot_data['marker'],
-                            colorbar=dict(tickfont=dict(size=int(0.75 * self.ticksize), family=self.fontfamily))
+                            colorbar=dict(tickfont=dict(size=int(0.75 * self.ticksize),
+                                                        family=self.fontfamily))
                         )
                     )
                 )
@@ -282,10 +299,12 @@ class PlotlyFig:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
+                                        width=self.width,
                                         scale=self.scale)
 
-    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None,
+    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis',
+                     colorscale_range=None,
                      annotations_text=None, annotations_text_size=20, annotations_color='white'):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
@@ -330,7 +349,8 @@ class PlotlyFig:
                             text=str(var),
                             x=x_labels[m], y=y_labels[n],
                             xref='x1', yref='y1',
-                            font=dict(color=annotations_color, size=annotations_text_size, family=self.fontfamily),
+                            font=dict(color=annotations_color, size=annotations_text_size,
+                                      family=self.fontfamily),
                             showarrow=False)
                     )
         else:
@@ -370,7 +390,8 @@ class PlotlyFig:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
+                                        width=self.width,
                                         scale=self.scale)
 
     def violin_plot(self, data, data_col=None, group_col=None, title=None, height=800, width=1000,
@@ -424,18 +445,22 @@ class PlotlyFig:
             for j in group_value_counts:
                 if group_value_counts[j] == 1:
                     data = data[data[group_col] != j]
-                    warnings.warn('Omitting rows with group = ' + str(j) + ' which have only one row in the dataframe.')
+                    warnings.warn('Omitting rows with group = ' + str(
+                        j) + ' which have only one row in the dataframe.')
 
-        fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title, height=height,
-                               width=width, colors=colors, use_colorscale=use_colorscale, group_stats=group_stats)
+        fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title,
+                               height=height,
+                               width=width, colors=colors, use_colorscale=use_colorscale,
+                               group_stats=group_stats)
 
         # Cannot add x-axis title as the above object populates it with group names.
         fig.update(dict(
             layout=dict(
-            title=self.title,
-            titlefont=dict(size=self.textsize, family=self.fontfamily),
-            yaxis=dict(title=self.y_title, titlefont=dict(size=self.textsize, family=self.fontfamily),
-                       tickfont=dict(size=self.ticksize, family=self.fontfamily)),
+                title=self.title,
+                titlefont=dict(size=self.textsize, family=self.fontfamily),
+                yaxis=dict(title=self.y_title,
+                           titlefont=dict(size=self.textsize, family=self.fontfamily),
+                           tickfont=dict(size=self.ticksize, family=self.fontfamily)),
             )
         ))
 
@@ -467,11 +492,14 @@ class PlotlyFig:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
+                                        width=self.width,
                                         scale=self.scale)
 
-    def scatter_matrix(self, dataframe, select_columns=None, index_colname=None, diag_kind='scatter',
-                       marker_size=10, height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
+    def scatter_matrix(self, dataframe, select_columns=None, index_colname=None,
+                       diag_kind='scatter',
+                       marker_size=10, height=800, width=1000, marker_outline_width=0,
+                       marker_outline_color='black'):
         """
         Create a scatter matrix plot from dataframes using Plotly.
 
@@ -493,7 +521,7 @@ class PlotlyFig:
         """
         df = dataframe[select_columns] if select_columns else dataframe
         fig = FF.create_scatterplotmatrix(df, index=index_colname, diag=diag_kind, size=marker_size,
-                                              height=height, width=width)
+                                          height=height, width=width)
 
         # Add outline to markers
         for trace in fig['data']:
@@ -517,10 +545,12 @@ class PlotlyFig:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
+                                        width=self.width,
                                         scale=self.scale)
 
-    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1, color='rgba(70, 130, 180, 1)', bargap=0):
+    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1,
+                  color='rgba(70, 130, 180, 1)', bargap=0):
         """
         Create a histogram using Plotly
 
@@ -552,7 +582,8 @@ class PlotlyFig:
         if not x_end:
             x_end = max(x)
 
-        trace0 = go.Histogram(x=x, histnorm=histnorm, xbins=dict(start=x_start, end=x_end, size=bin_size),
+        trace0 = go.Histogram(x=x, histnorm=histnorm,
+                              xbins=dict(start=x_start, end=x_end, size=bin_size),
                               marker=dict(color=color))
 
         data = [trace0]
@@ -580,7 +611,8 @@ class PlotlyFig:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
+                                        width=self.width,
                                         scale=self.scale)
 
     def bar_chart(self, x, y):
@@ -619,5 +651,6 @@ class PlotlyFig:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
+                                        width=self.width,
                                         scale=self.scale)

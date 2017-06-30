@@ -1,7 +1,7 @@
 .. title:: matminer (Materials Data Mining)
 
 .. image:: _static/matminer_logo_small.png
-   :alt: matminer logo
+:alt: matminer logo
 
 
 ========
@@ -37,7 +37,7 @@ A few examples demonstrating some of the features available in matminer have bee
 You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder **example_notebooks** in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to "File->Open" within the page and navigate to the notebook of your choice. 
 
 .. image:: http://mybinder.org/badge.svg 
-   :target: http://mybinder.org/repo/hackingmaterials/matminer
+:target: http://mybinder.org/repo/hackingmaterials/matminer
 
 --------
 Installation
@@ -88,7 +88,7 @@ Below is a general workflow that shows the different tools and utilities availab
 
 |
 .. image:: https://github.com/hackingmaterials/matminer/blob/master/Flowchart.png
-   :align: center
+:align: center
 |
 |
 

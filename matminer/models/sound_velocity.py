@@ -6,6 +6,7 @@ __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 This is a skeleton of how a model might look like
 """
 
+
 # TODO: base class useful?
 class SoundVelocityModel():
     """
@@ -24,7 +25,7 @@ class SoundVelocityModel():
     def citation(self):
         return "I have no idea where this model came from"
 
-    # maybe a helper method if you need to process an entire column of data, e.g. process Pandas dataframe
+        # maybe a helper method if you need to process an entire column of data, e.g. process Pandas dataframe
 
 
 def effective_cubic_elasticconstant(direction, mode, C_11=None, C_12=None, C_44=None):
@@ -50,23 +51,26 @@ def effective_cubic_elasticconstant(direction, mode, C_11=None, C_12=None, C_44=
         elif mode in ['transverse1', 'transverse2']:
             return C_44
         else:
-            raise ValueError('Invalid "mode". Choose from "longitudinal", "transverse1", and "transverse2".')
+            raise ValueError(
+                'Invalid "mode". Choose from "longitudinal", "transverse1", and "transverse2".')
     elif direction == '110':
         if mode == 'longitudinal':
-            return (C_11 + C_12 + 2*C_44)/2
+            return (C_11 + C_12 + 2 * C_44) / 2
         elif mode == 'transverse1':
             return C_44
         elif mode == 'transverse2':
-            return (C_11 - C_12)/2
+            return (C_11 - C_12) / 2
         else:
-            raise ValueError('Invalid "mode". Choose from "longitudinal", "transverse1", and "transverse2".')
+            raise ValueError(
+                'Invalid "mode". Choose from "longitudinal", "transverse1", and "transverse2".')
     elif direction == '111':
         if mode == 'longitudinal':
-            return (C_11 + 2*C_12 + 4*C_44)/3
+            return (C_11 + 2 * C_12 + 4 * C_44) / 3
         elif mode in ['transverse1', 'transverse2']:
-            return (C_11 - C_12 + C_44)/3
+            return (C_11 - C_12 + C_44) / 3
         else:
-            raise ValueError('Invalid "mode". Choose from "longitudinal", "transverse1", and "transverse2".')
+            raise ValueError(
+                'Invalid "mode". Choose from "longitudinal", "transverse1", and "transverse2".')
     else:
         raise ValueError('Invalid "direction". Choose from Choose from "100", "110", and "111".')
 
@@ -82,10 +86,9 @@ def sound_velocity(C_eff, rho):
     Returns: (float) velocity of sound (m/s) in the material
 
     """
-    return C_eff/rho
+    return C_eff / rho
 
 
 if __name__ == "__main__":
-
     svm = SoundVelocityModel()
     print(svm.compute(5))

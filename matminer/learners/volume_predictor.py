@@ -1,10 +1,12 @@
 from __future__ import division
 
 import warnings
-from matminer.descriptors.composition_features import get_pymatgen_descriptor
-from pymatgen.analysis.structure_matcher import StructureMatcher
-from pymatgen.analysis.bond_valence import BVAnalyzer
+
 import numpy as np
+from pymatgen.analysis.bond_valence import BVAnalyzer
+from pymatgen.analysis.structure_matcher import StructureMatcher
+
+from matminer.descriptors.composition_features import get_pymatgen_descriptor
 
 
 class VolumePredictor:
@@ -20,6 +22,7 @@ class VolumePredictor:
         and f-electron systems, eg: Np, Pu, etc. as well as noble gas compounds
     This is really intended for bonded systems!
     """
+
     def __init__(self, cutoff=4, ionic_factor=0.30):
         """
         Args:
@@ -51,13 +54,15 @@ class VolumePredictor:
             raise ValueError("VolumePredictor requires ordered structures!")
 
         smallest_ratio = None  # ratio of observed vs expected bond distance
-        ionic_mix = min(np.std(get_pymatgen_descriptor(structure.composition, 'X')) * self.ionic_factor, 1)
+        ionic_mix = min(
+            np.std(get_pymatgen_descriptor(structure.composition, 'X')) * self.ionic_factor, 1)
 
         for site in structure:
             el1 = site.specie
             if el1.atomic_radius:
                 r1 = el1.average_ionic_radius * ionic_mix + \
-                     el1.atomic_radius * (1-ionic_mix) if el1.average_ionic_radius else el1.atomic_radius
+                     el1.atomic_radius * (
+                         1 - ionic_mix) if el1.average_ionic_radius else el1.atomic_radius
 
                 neighbors = structure.get_neighbors(site, el1.atomic_radius + self.cutoff)
 
@@ -65,13 +70,14 @@ class VolumePredictor:
                     el2 = site2.specie
                     if el2.atomic_radius:
                         r2 = el2.average_ionic_radius * ionic_mix + \
-                             el2.atomic_radius * (1-ionic_mix) if el2.average_ionic_radius else el2.atomic_radius
+                             el2.atomic_radius * (
+                                 1 - ionic_mix) if el2.average_ionic_radius else el2.atomic_radius
 
                         expected_dist = float(r1 + r2)
 
-                        if not smallest_ratio or dist/expected_dist \
+                        if not smallest_ratio or dist / expected_dist \
                                 < smallest_ratio:
-                            smallest_ratio = dist/expected_dist
+                            smallest_ratio = dist / expected_dist
                     else:
                         warnings.warn("VolumePredictor: no atomic radius data "
                                       "for {}".format(el2))
@@ -82,7 +88,7 @@ class VolumePredictor:
         if not smallest_ratio:
             raise ValueError("Could not find any bonds in this material!")
 
-        volume_factor = (1/smallest_ratio)**3
+        volume_factor = (1 / smallest_ratio) ** 3
 
         return structure.volume * volume_factor
 
@@ -119,6 +125,7 @@ class ConditionalVolumePredictor:
     based on an existing known structure. May integrate with above at a later
     stage to improve overall predictions.
     """
+
     def __init__(self):
         pass
 
@@ -164,7 +171,7 @@ class ConditionalVolumePredictor:
         for k, v in comp.items():
             numerator += k.ionic_radius * v ** (1 / 3)
         for k, v in ref_comp.items():
-            denominator += k.ionic_radius * v ** (1/3)
+            denominator += k.ionic_radius * v ** (1 / 3)
 
         # The scaling factor is based on lengths. We apply a power of 3.
         return ref_structure.volume * (numerator / denominator) ** 3

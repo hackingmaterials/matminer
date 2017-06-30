@@ -1,4 +1,5 @@
 import math
+
 import sympy as sp
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
@@ -8,6 +9,7 @@ class YM:
     """
     Calculate Young's modulus (E) from other moduli.
     """
+
     def __init__(self, nu, G=None, K=None):
         """
         Args:
@@ -27,9 +29,9 @@ class YM:
         Returns: Young's modulus (E) (N/m^2)
         """
         if self.G and self.K is None:
-            return 2 * self.G * (1+self.nu)
+            return 2 * self.G * (1 + self.nu)
         elif self.G is None and self.K:
-            return 3 * self.K * (1-2*self.nu)
+            return 3 * self.K * (1 - 2 * self.nu)
         else:
             raise ValueError("Enter one of G or K")
 
@@ -45,10 +47,10 @@ class YoungsModulus:
     def equation(self):
         E, G, nu = sp.symbols('E G nu')
         # return 'E - (2 * G * (1+nu))'
-        return E - (2 * G * (1+nu))
+        return E - (2 * G * (1 + nu))
 
     def calculate(self, nu, G):
-        return 2 * G * (1+nu)
+        return 2 * G * (1 + nu)
 
 
 class ShearModulus:
@@ -61,10 +63,10 @@ class ShearModulus:
 
     def equation(self):
         G, E, nu = sp.symbols('G E nu')
-        return G - (E/(2 * (1+nu)))
+        return G - (E / (2 * (1 + nu)))
 
     def calculate(self, E, nu):
-        return E/(2 * (1+nu))
+        return E / (2 * (1 + nu))
 
 
 def shear_modulus(nu, E):
@@ -78,7 +80,7 @@ def shear_modulus(nu, E):
     Returns: shear/rigidity modulus (G) (N/m^2)
 
     """
-    return E/(2 * (1+nu))
+    return E / (2 * (1 + nu))
 
 
 def bulk_modulus(nu, E):
@@ -92,7 +94,7 @@ def bulk_modulus(nu, E):
     Returns: bulk modulus (K) (N/m^2)
 
     """
-    return E/(1 - 2*nu)
+    return E / (1 - 2 * nu)
 
 
 class BulkModulus:
@@ -105,10 +107,10 @@ class BulkModulus:
 
     def equation(self):
         K, E, nu = sp.symbols('K E nu')
-        return K - (E/(1 - 2*nu))
+        return K - (E / (1 - 2 * nu))
 
     def calculate(self, E, nu):
-        return E/(1 - 2*nu)
+        return E / (1 - 2 * nu)
 
 
 def bulkmodulus_coordination(N_c, ionicity, d):
@@ -130,7 +132,7 @@ def bulkmodulus_coordination(N_c, ionicity, d):
     Returns: bulk modulus (K) (N/m^2)
 
     """
-    return (N_c/4) * (1971-220*ionicity) * d**(-3.5)
+    return (N_c / 4) * (1971 - 220 * ionicity) * d ** (-3.5)
 
 
 def vickers_hardness1(G, K):
@@ -148,7 +150,7 @@ def vickers_hardness1(G, K):
     Returns: (float) Vickers hardness (H_v) (N/m^2)
 
     """
-    return 2*(G**3.0/K**2.0)**0.585 - 3
+    return 2 * (G ** 3.0 / K ** 2.0) ** 0.585 - 3
 
 
 class Lames1stParam:
@@ -160,6 +162,7 @@ class Lames1stParam:
     Reference:
         https://en.wikipedia.org/wiki/Lam%C3%A9_parameters
     """
+
     def __init__(self):
         pass
 
@@ -169,10 +172,10 @@ class Lames1stParam:
 
     def equation(self):
         lamda, K, nu = sp.symbols('lamda K nu')
-        return lamda - ((3 * K * nu)/(1 + nu))
+        return lamda - ((3 * K * nu) / (1 + nu))
 
     def calculate(self, K, nu):
-        return (3 * K * nu)/(1 + nu)
+        return (3 * K * nu) / (1 + nu)
 
 
 class PWaveModulus:
@@ -183,6 +186,7 @@ class PWaveModulus:
     Reference:
         https://en.wikipedia.org/wiki/P-wave_modulus
     """
+
     def __init__(self):
         pass
 
@@ -192,10 +196,10 @@ class PWaveModulus:
 
     def equation(self):
         M, K, nu = sp.symbols('M K nu')
-        return M - ((3 * K * (1-nu))/(1 + nu))
+        return M - ((3 * K * (1 - nu)) / (1 + nu))
 
     def calculate(self, K, nu):
-        return (3 * K * (1-nu))/(1 + nu)
+        return (3 * K * (1 - nu)) / (1 + nu)
 
 
 def vickers_hardness2(F, a):
@@ -213,7 +217,7 @@ def vickers_hardness2(F, a):
     Returns: (float) Vickers hardness (H) (N/m^2)
 
     """
-    return (1.8544 * F)/((2*a)**2.0)
+    return (1.8544 * F) / ((2 * a) ** 2.0)
 
 
 def thermal_stress(E_T, cte_T, delta_T, nu_T):
@@ -233,7 +237,7 @@ def thermal_stress(E_T, cte_T, delta_T, nu_T):
     Returns: (float) thermal stress (sigma_T) induced by thermal gradients or thermal transients
 
     """
-    return (E_T * cte_T * delta_T)/(1 - nu_T)
+    return (E_T * cte_T * delta_T) / (1 - nu_T)
 
 
 def fracture_toughness(E, H, F, c):
@@ -253,7 +257,7 @@ def fracture_toughness(E, H, F, c):
     Returns: (float) fracture toughness (K_c) of a material (Pa.m^(0.5) or N/m^(1.5))
 
     """
-    return (0.016 * (E/H)**0.5 * F)/(c**1.5)
+    return (0.016 * (E / H) ** 0.5 * F) / (c ** 1.5)
 
 
 def brittleness_index(H, E, K_c):
@@ -268,7 +272,7 @@ def brittleness_index(H, E, K_c):
     Returns: (float) brittleness index (BI) of a material (m^(-1))
 
     """
-    return (H * E)/(K_c**2)
+    return (H * E) / (K_c ** 2)
 
 
 def steadystate_heatflow(A, T2, T1, kappa, x):
@@ -285,7 +289,7 @@ def steadystate_heatflow(A, T2, T1, kappa, x):
     Returns: steady state heat flow (Q) (W or J/s)
 
     """
-    return (-A * (T2-T1) * kappa)/x
+    return (-A * (T2 - T1) * kappa) / x
 
 
 def max_allowed_heatflow(nu, kappa, sigma, E, cte):
@@ -302,7 +306,7 @@ def max_allowed_heatflow(nu, kappa, sigma, E, cte):
     Returns: maximum allowable heat flow (QF) (W/m)
 
     """
-    return ((1-nu) * kappa * sigma)/(E * cte)
+    return ((1 - nu) * kappa * sigma) / (E * cte)
 
 
 def stress_from_tempgradient(T2, T1, E, cte, nu):
@@ -319,7 +323,7 @@ def stress_from_tempgradient(T2, T1, E, cte, nu):
     Returns: stress as a result of temperature gradient (sigma) (N/m^2)
 
     """
-    return ((T2-T1) * E * cte)/(1-nu)
+    return ((T2 - T1) * E * cte) / (1 - nu)
 
 
 def thermal_shock(sigma_tens, nu, kappa, E, cte):
@@ -336,7 +340,7 @@ def thermal_shock(sigma_tens, nu, kappa, E, cte):
     Returns: thermal shock resistance parameter (R_therm)
 
     """
-    return (sigma_tens * (1-nu) * kappa)/(E * cte)
+    return (sigma_tens * (1 - nu) * kappa) / (E * cte)
 
 
 def critical_stress(E, gamma_s, a, gamma_p=0, nu=0):
@@ -359,7 +363,7 @@ def critical_stress(E, gamma_s, a, gamma_p=0, nu=0):
     Returns: critical stress needed for crack propagation (sigma_c) (N/m^2)
 
     """
-    return ((2 * E * (gamma_s+gamma_p))/((1-nu**2) * math.pi * a)) ** 0.5
+    return ((2 * E * (gamma_s + gamma_p)) / ((1 - nu ** 2) * math.pi * a)) ** 0.5
 
 
 def critical_fracture_toughness(sigma, a, Y=1):
@@ -384,7 +388,7 @@ def critical_fracture_toughness(sigma, a, Y=1):
     Returns: critical fracture toughness (K_IC) (Pa.m^(0.5) or N/m^(1.5))
 
     """
-    return Y * sigma * (math.pi * a)**0.5
+    return Y * sigma * (math.pi * a) ** 0.5
 
 
 def strain_energy_releaserate(K_I, E, nu=0):
@@ -402,9 +406,11 @@ def strain_energy_releaserate(K_I, E, nu=0):
     Returns: strain energy release rate (G_I) (N/m)
 
     """
-    return ((1-nu**2) * K_I**2)/E
+    return ((1 - nu ** 2) * K_I ** 2) / E
 
 
 if __name__ == "__main__":
-    print vickers_hardness1(3, 2)
-    print YoungsModulus(nu=1).properties_involved()
+    print
+    vickers_hardness1(3, 2)
+    print
+    YoungsModulus(nu=1).properties_involved()

@@ -15,15 +15,15 @@ matminer.learners.volume_predictor module
 -----------------------------------------
 
 .. automodule:: matminer.learners.volume_predictor
-    :members:
-    :undoc-members:
-    :show-inheritance:
+:members:
+        :undoc-members:
+            :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: matminer.learners
-    :members:
-    :undoc-members:
-    :show-inheritance:
+:members:
+        :undoc-members:
+            :show-inheritance:

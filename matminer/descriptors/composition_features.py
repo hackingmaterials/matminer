@@ -1,7 +1,7 @@
-from pymatgen import Element, Composition, MPRester
 import collections
-import os
 import json
+import os
+from pymatgen import Element, Composition, MPRester
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -53,7 +53,8 @@ def get_pymatgen_descriptor(comp, prop):
 
             # Make a named tuple out of all the available information
             eldata_tup_lst.append(
-                eldata_tup(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
+                eldata_tup(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)),
+                           propunit=units,
                            amt=el_amt_dict[el]))
 
             # Add descriptor values, one for each atom in the compound
@@ -61,8 +62,9 @@ def get_pymatgen_descriptor(comp, prop):
                 eldata.append(float(getattr(Element(el), prop)))
 
         else:
-            eldata_tup_lst.append(eldata_tup(element=el, propname=prop, propvalue=None, propunit=None,
-                                             amt=el_amt_dict[el]))
+            eldata_tup_lst.append(
+                eldata_tup(element=el, propname=prop, propvalue=None, propunit=None,
+                           amt=el_amt_dict[el]))
 
     return eldata
 
@@ -79,10 +81,12 @@ def get_magpie_descriptor(comp, descriptor_name):
     Returns: (list) of descriptor values for each atom in the composition
 
     """
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",
+                            'magpie_elementdata')
     magpiedata = []
     magpiedata_tup_lst = []
-    magpiedata_tup = collections.namedtuple('magpiedata_tup', 'element propname propvalue propunit amt')
+    magpiedata_tup = collections.namedtuple('magpiedata_tup',
+                                            'element propname propvalue propunit amt')
     available_props = []
 
     # Make a list of available properties
@@ -92,7 +96,8 @@ def get_magpie_descriptor(comp, descriptor_name):
 
     if descriptor_name not in available_props:
         raise ValueError(
-            "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
+            "This descriptor is not available from the Magpie repository. Choose from {}".format(
+                available_props))
 
     # Get units from Magpie README file
     el_amt = Composition(comp).get_el_amt_dict()
@@ -110,7 +115,8 @@ def get_magpie_descriptor(comp, descriptor_name):
         for el in el_amt:
             atomic_no = Element(el).Z
             magpiedata_tup_lst.append(magpiedata_tup(element=el, propname=descriptor_name,
-                                                     propvalue=float(lines[atomic_no - 1]), propunit=unit,
+                                                     propvalue=float(lines[atomic_no - 1]),
+                                                     propunit=unit,
                                                      amt=el_amt[el]))
 
             # Add descriptor values, one for each atom in the compound
