@@ -265,7 +265,7 @@ def get_min_relative_distances(struct, cutoff=10.0):
     vire = ValenceIonicRadiusEvaluator(struct)
     min_rel_dists = []
     for site in vire.structure:
-        min_rel_dists.append(min([dist / (vire.radii[site.species_string] + \
+        min_rel_dists.append(min([dist / (vire.radii[site.species_string] +
                                           vire.radii[neigh.species_string]) for neigh, dist in \
                                   vire.structure.get_neighbors(site, cutoff)]))
     return min_rel_dists[:]
@@ -438,8 +438,7 @@ def get_order_parameter_stats(
     optypes = ["cn", "lin"]
     for i in range(5, 180, 5):
         optypes.append("bent{}".format(i))
-    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-              "sq_pyr"]:  # , "tri_bipyr"]:
+    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", "sq_pyr"]:  # , "tri_bipyr"]:
         optypes.append(t)
     opvals = get_order_parameters(
         struct, pneighs=pneighs, convert_none_to_zero=convert_none_to_zero)

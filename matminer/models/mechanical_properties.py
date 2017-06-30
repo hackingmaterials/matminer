@@ -419,4 +419,4 @@ def strain_energy_releaserate(K_I, E, nu=0):
 
 if __name__ == "__main__":
     print(vickers_hardness1(3, 2))
-    print(YoungsModulus(nu=1).properties_involved())
+    print(YoungsModulus().properties_involved())

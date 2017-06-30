@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
-'''pyCookieCheat.py
+
+"""pyCookieCheat.py
 2015022 Now its own GitHub repo, and in PyPi.
     - For most recent version: https://github.com/n8henrie/pycookiecheat
     - This gist unlikely to be maintained further for that reason.
@@ -22,7 +23,7 @@ Helpful Links:
 * Chromium Mac os_crypt: http://n8h.me/QWRgK8
 * Chromium Linux os_crypt: http://n8h.me/QWTglz
 * Python Crypto: http://n8h.me/QWTqte
-'''
+"""
 
 from __future__ import division, unicode_literals, print_function
 

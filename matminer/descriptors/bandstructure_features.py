@@ -38,8 +38,7 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
             vb_energies.sort(reverse=True)
             cb_energies.sort()
             total_sum_energies += (sum(vb_energies[0:n_vb]) / n_vb +
-                                   sum(cb_energies[0:n_cb]) / n_cb) \
-                                  * kpt_wts[kpt_idx] / 2
+                                   sum(cb_energies[0:n_cb]) / n_cb) * kpt_wts[kpt_idx] / 2
 
             num_points += kpt_wts[kpt_idx]
 

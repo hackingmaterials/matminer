@@ -10,7 +10,7 @@ import numpy as np
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
-class HeatMapPlot():
+class HeatMapPlot:
     def __init__(self, data, xlabels, ylabels, m_props=None, discrete_int=False):
         """
 
@@ -33,8 +33,7 @@ class HeatMapPlot():
         self.p['xrotation'] = 0
         self.p['yrotation'] = 0
         self.p['colormap'] = 'hot'
-        self.p[
-            'ncolorbins'] = None  # (int) bin the colormap into discrete areas, e.g. for mapping ints or "AUTO_INT"
+        self.p['ncolorbins'] = None  # (int) bin the colormap into discrete areas, e.g. for mapping ints or "AUTO_INT"
         self.p['cbar_ticks'] = None  # (list of numbers) colorbar tick locs or "AUTO_INT"
         self.p['cbar_labels'] = None  # (list of str) labels for the colorbar ticks
         self.p['xlabel'] = None
