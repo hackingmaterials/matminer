@@ -10,10 +10,10 @@ if __name__ == "__main__":
     setup(
         name='MatMiner',
         version='0.0.2',
-        description='Materials Science Data Mining',
+        description='MatMiner has implementations of FireWorks workflows for Materials Science',
         long_description=open(os.path.join(module_dir, 'README.rst')).read(),
         url='https://github.com/hackingmaterials/MatMiner',
-        author='Kiran Mathew, Anubhav Jain',
+        author='Anubhav Jain',
         author_email='anubhavster@gmail.com',
         license='modified BSD',
         packages=find_packages(),
