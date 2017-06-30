@@ -100,8 +100,8 @@ class PlotlyFig:
     def create_plot(self, fig):
         """
         Warning: not to be explicitly called by the user
-        Create the plot that has been set up by one of the functions for a specific type of plot below, and show
-        and/or save the plot depending on user specification
+        Creates the specific plot that has been set up by one of the functions below, and shows and/or saves the plot
+        depending on user specification
 
         Args:
             fig: (dictionary) contains data and layout information
