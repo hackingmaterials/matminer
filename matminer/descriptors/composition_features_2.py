@@ -221,8 +221,8 @@ class ElemPropertyAttributes(MagpieFeaturizer):
     def generate_labels(self):
         labels = []
         for attr in self.attributes:
-            labels.append("Max %s"%attr)
             labels.append("Min %s"%attr)
+            labels.append("Max %s"%attr)
             labels.append("Range %s"%attr)
             labels.append("Mean %s"%attr)
             labels.append("AbsDev %s"%attr)
