@@ -27,9 +27,12 @@ def get_pymatgen_descriptor(composition, property_name):
     Args:
         composition (str/Composition): Either pymatgen Composition object or string formula,
             eg: "NaCl", "Na+1Cl-1", "Fe2+3O3-2" or "Fe2 +3 O3 -2"
-            Note:
-                 - Composition object doesnt support
-                1. for the oxidation state, the sign(+ or -) must be specified
+            Notes:
+                 - For 'ionic_radii' property, the Composition object must be made of oxidation
+                    state decorated Specie objects not the plain Element objects.
+                    eg.  fe2o3 = Composition({Specie("Fe", 3): 2, Specie("O", -2): 3})
+                 - For string formula, the oxidation state sign(+ or -) must be specified explicitly.
+                    eg.  "Fe2+3O3-2"
 
         property_name (str): pymatgen element attribute name, as defined in the Element class at
             http://pymatgen.org/_modules/pymatgen/core/periodic_table.html
