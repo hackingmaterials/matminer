@@ -20,13 +20,17 @@ with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r'
     ce_data = json.load(f)
 
 
-def get_pymatgen_descriptor(formula, property_name):
+def get_pymatgen_descriptor(composition, property_name):
     """
     Get descriptor data for elements in a compound from pymatgen.
 
     Args:
-        formula (str): compound formula, eg: "NaCl", "Na+1Cl-1", "Fe2+3O3-2" or "Fe2 +3 O3 -2"
-            Note: the oxidation state sign(+ or -) must be specified
+        composition (str/Composition): Either pymatgen Composition object or string formula,
+            eg: "NaCl", "Na+1Cl-1", "Fe2+3O3-2" or "Fe2 +3 O3 -2"
+            Note:
+                 - Composition object doesnt support
+                1. for the oxidation state, the sign(+ or -) must be specified
+
         property_name (str): pymatgen element attribute name, as defined in the Element class at
             http://pymatgen.org/_modules/pymatgen/core/periodic_table.html
 
@@ -39,8 +43,18 @@ def get_pymatgen_descriptor(formula, property_name):
     # what are these named tuples for? not used or returned! -KM
     eldata_tup_lst = []
     eldata_tup = collections.namedtuple('eldata_tup', 'element propname propvalue propunit amt')
-    comp, oxidation_states = get_composition_oxidation_state(formula)
-    el_amt_dict = Composition(comp).get_el_amt_dict()
+
+    oxidation_states = {}
+    if isinstance(composition, Composition):
+        # check whether the composition is composed of oxidation state decorates species (not just plain Elements)
+        if hasattr(composition.elements[0], "oxi_state"):
+            oxidation_states = dict([(str(sp.element), sp.oxi_state) for sp in composition.elements])
+        el_amt_dict = composition.get_el_amt_dict()
+    # string
+    else:
+        comp, oxidation_states = get_composition_oxidation_state(composition)
+        el_amt_dict = comp.get_el_amt_dict()
+
     symbols = sorted(el_amt_dict.keys(), key=lambda sym: get_el_sp(sym).X)
 
     for el_sym in symbols:
