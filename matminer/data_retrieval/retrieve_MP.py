@@ -1,7 +1,7 @@
 import os
+
 import pandas as pd
 from pymatgen.matproj.rest import MPRester
-
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 

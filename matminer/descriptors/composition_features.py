@@ -1,16 +1,16 @@
-from pymatgen import Element, Composition, MPRester
 import collections
-import os
 import json
+import os
+import re
+from functools import reduce
+
+from pymatgen import Element, Composition, MPRester
+from pymatgen.core.units import Unit
+from pymatgen.core.periodic_table import get_el_sp
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 # TODO: read Magpie file only once
-# TODO: Handle dictionaries in case of atomic radii. Aj says "You can require that getting the ionic_radii descriptor
-#  requires a valence-decorated Structure or valence-decorated Composition. Otherwise it does not work, i.e. returns
-# None. Other radii (e.g. covalent) won't require an oxidation state and people can and should use those for
-# non-ionic structures. You can also have a function that returns a mean of ionic_radii for all valences but that
-# should not be the default."
 # TODO: unit tests
 # TODO: most of this code needs to be rewritten ... AJ
 
@@ -20,53 +20,64 @@ with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r'
     ce_data = json.load(f)
 
 
-def get_pymatgen_descriptor(comp, prop):
+def get_pymatgen_descriptor(formula, property_name):
     """
     Get descriptor data for elements in a compound from pymatgen.
 
     Args:
-        comp: (str) compound composition, eg: "NaCl"
-        prop: (str) pymatgen element attribute, as defined in the Element class at
+        formula (str): compound formula, eg: "NaCl", "Na+1Cl-1", "Fe2+3O3-2" or "Fe2 +3 O3 -2"
+            Note: the oxidation state sign(+ or -) must be specified
+        property_name (str): pymatgen element attribute name, as defined in the Element class at
             http://pymatgen.org/_modules/pymatgen/core/periodic_table.html
 
-    Returns: (list) of values containing descriptor floats for each atom in the compound
+    Returns:
+        (list) of values containing descriptor floats for each atom in the compound(sorted by the
+            electronegativity of the contituent atoms)
 
     """
     eldata = []
+    # what are these named tuples for? not used or returned! -KM
     eldata_tup_lst = []
     eldata_tup = collections.namedtuple('eldata_tup', 'element propname propvalue propunit amt')
+    comp, oxidation_states = get_composition_oxidation_state(formula)
     el_amt_dict = Composition(comp).get_el_amt_dict()
+    symbols = sorted(el_amt_dict.keys(), key=lambda sym: get_el_sp(sym).X)
 
-    for el in el_amt_dict:
+    for el_sym in symbols:
 
-        if callable(getattr(Element(el), prop)) is None:
-            raise ValueError('Invalid pymatgen Element attribute(property)')
+        element = Element(el_sym)
+        property_value = None
+        property_units = None
 
-        if getattr(Element(el), prop) is not None:
+        try:
+            p = getattr(element, property_name)
+        except AttributeError:
+            print("{} attribute missing".format(property_name))
+            raise
 
-            if prop in ['ionic_radii']:
-                raise ValueError("{} is not a valid property; It does not yield a unique number "
-                                 "per Element".format(prop))
+        if p is not None:
+            if property_name in ['ionic_radii']:
+                if oxidation_states:
+                    property_value = element.ionic_radii[oxidation_states[el_sym]]
+                    property_units = Unit("ang")
+                else:
+                    raise ValueError("oxidation state not given for {}; It does not yield a unique "
+                                     "number per Element".format(property_name))
+            else:
+                property_value = float(p)
 
             # units are None for these pymatgen descriptors
             # todo: there seem to be a lot more unitless descriptors which are not listed here... -Alex D
-            if prop in ['X', 'Z', 'group', 'row', 'number', 'mendeleev_no']:
-                units = None
-            else:
-                units = getattr(Element(el), prop).unit
+            if property_name not in ['X', 'Z', 'group', 'row', 'number', 'mendeleev_no', 'ionic_radii']:
+                property_units = p.unit
 
-            # Make a named tuple out of all the available information
-            eldata_tup_lst.append(
-                eldata_tup(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
-                           amt=el_amt_dict[el]))
+        # Make a named tuple out of all the available information
+        eldata_tup_lst.append(eldata_tup(element=el_sym, propname=property_name, propvalue=property_value,
+                                         propunit=property_units, amt=el_amt_dict[el_sym]))
 
-            # Add descriptor values, one for each atom in the compound
-            for i in range(int(el_amt_dict[el])):
-                eldata.append(float(getattr(Element(el), prop)))
-
-        else:
-            eldata_tup_lst.append(eldata_tup(element=el, propname=prop, propvalue=None, propunit=None,
-                                             amt=el_amt_dict[el]))
+        # Add descriptor values, one for each atom in the compound
+        for i in range(int(el_amt_dict[el_sym])):
+            eldata.append(property_value)
 
     return eldata
 
@@ -83,10 +94,12 @@ def get_magpie_descriptor(comp, descriptor_name):
     Returns: (list) of descriptor values for each atom in the composition
 
     """
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",
+                            'magpie_elementdata')
     magpiedata = []
     magpiedata_tup_lst = []
-    magpiedata_tup = collections.namedtuple('magpiedata_tup', 'element propname propvalue propunit amt')
+    magpiedata_tup = collections.namedtuple('magpiedata_tup',
+                                            'element propname propvalue propunit amt')
     available_props = []
 
     # Make a list of available properties
@@ -96,7 +109,8 @@ def get_magpie_descriptor(comp, descriptor_name):
 
     if descriptor_name not in available_props:
         raise ValueError(
-            "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
+            "This descriptor is not available from the Magpie repository. Choose from {}".format(
+                available_props))
 
     # Get units from Magpie README file
     el_amt = Composition(comp).get_el_amt_dict()
@@ -114,7 +128,8 @@ def get_magpie_descriptor(comp, descriptor_name):
         for el in el_amt:
             atomic_no = Element(el).Z
             magpiedata_tup_lst.append(magpiedata_tup(element=el, propname=descriptor_name,
-                                                     propvalue=float(lines[atomic_no - 1]), propunit=unit,
+                                                     propvalue=float(lines[atomic_no - 1]),
+                                                     propunit=unit,
                                                      amt=el_amt[el]))
 
             # Add descriptor values, one for each atom in the compound
@@ -198,6 +213,44 @@ def get_holder_mean(data_lst, power):
         for value in data_lst:
             total += value ** power
         return (total / len(data_lst)) ** (1 / float(power))
+
+
+def get_composition_oxidation_state(formula):
+    """
+    Returns the composition and oxidation states from the given formula.
+    Formula examples: "NaCl", "Na+1Cl-1",   "Fe2+3O3-2" or "Fe2 +3 O3 -2"
+
+    Args:
+        formula (str):
+
+    Returns:
+        pymatgen.core.composition.Composition, dict of oxidation states as strings
+
+    """
+    oxidation_states_dict = {}
+    non_alphabets = re.split('[a-z]+', formula, flags=re.IGNORECASE)
+    if not non_alphabets:
+        return Composition(formula), oxidation_states_dict
+    oxidation_states = []
+    for na in non_alphabets:
+        s = na.strip()
+        if s != "" and ("+" in s or "-" in s):
+            digits = re.split('[+-]+', s)
+            sign_tmp = re.split('\d+', s)
+            sign = [x.strip() for x in sign_tmp if x.strip() != ""]
+            oxidation_states.append("{}{}".format(sign[-1], digits[-1].strip()))
+    if not oxidation_states:
+        return Composition(formula), oxidation_states_dict
+    formula_plain = []
+    before, after = tuple(formula.split(oxidation_states[0], 1))
+    formula_plain.append(before)
+    for oxs in oxidation_states[1:]:
+        before, after = tuple(after.split(oxs, 1))
+        formula_plain.append(before)
+    for i, g in enumerate(formula_plain):
+        el = re.split("\d", g.strip())[0]
+        oxidation_states_dict[str(Element(el))] = int(oxidation_states[i])
+    return Composition("".join(formula_plain)), oxidation_states_dict
 
 
 if __name__ == '__main__':

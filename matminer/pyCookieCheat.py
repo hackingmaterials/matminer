@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
-'''pyCookieCheat.py
+
+"""pyCookieCheat.py
 2015022 Now its own GitHub repo, and in PyPi.
     - For most recent version: https://github.com/n8henrie/pycookiecheat
     - This gist unlikely to be maintained further for that reason.
@@ -22,18 +23,21 @@ Helpful Links:
 * Chromium Mac os_crypt: http://n8h.me/QWRgK8
 * Chromium Linux os_crypt: http://n8h.me/QWTglz
 * Python Crypto: http://n8h.me/QWTqte
-'''
+"""
 
-import sqlite3
+from __future__ import division, unicode_literals, print_function
+
 import os.path
-import urlparse
-import keyring
+import sqlite3
 import sys
+
+import keyring
+import urlparse
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 
-def chrome_cookies(url):
 
+def chrome_cookies(url):
     salt = b'saltysalt'
     iv = b' ' * 16
     length = 16
@@ -82,8 +86,8 @@ def chrome_cookies(url):
     domain_no_sub = '.'.join(domain.split('.')[-2:])
 
     conn = sqlite3.connect(cookie_file)
-    sql = 'select name, value, encrypted_value from cookies '\
-            'where host_key like "%{}%"'.format(domain_no_sub)
+    sql = 'select name, value, encrypted_value from cookies ' \
+          'where host_key like "%{}%"'.format(domain_no_sub)
 
     cookies = {}
     cookies_list = []
