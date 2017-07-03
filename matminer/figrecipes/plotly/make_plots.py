@@ -16,12 +16,9 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 class PlotlyFig:
-    def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest',
-                 filename=None,
-                 plot_mode='offline', username=None, api_key=None, textsize=30, ticksize=25,
-                 fontfamily=None,
-                 height=800, width=1000, scale=None, margin_top=100, margin_bottom=80,
-                 margin_left=80, margin_right=80,
+    def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
+                 plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25, fontfamily=None,
+                 height=800, width=1000, scale=None, margin_top=100, margin_bottom=80, margin_left=80, margin_right=80,
                  pad=0):
         """
         Class for making Plotly plots
@@ -37,6 +34,8 @@ class PlotlyFig:
                 the fields 'username' and 'api_key' to be set), or (iv) 'static': save a static image of the plot
                 locally. Valid image formats are 'png', 'svg', 'jpeg', and 'pdf'. The format is taken as the extension
                 of the filename or as the supplied format.
+            show_offline_plot: (bool) automatically open the plot (the plot is saved either way); only applies to
+                'offline' mode
             username: (str) plotly account username
             api_key: (str) plotly account API key
             textsize: (int) size of text of plot title and axis titles
@@ -67,6 +66,7 @@ class PlotlyFig:
         self.hovermode = hovermode
         self.filename = filename
         self.plot_mode = plot_mode
+        self.show_offline_plot = show_offline_plot
         self.username = username
         self.api_key = api_key
         self.textsize = textsize
@@ -105,8 +105,38 @@ class PlotlyFig:
                     'field "filename" must be filled in static plotting mode and must have an extension ending in ('
                     '".png", ".svg", ".jpeg", ".pdf")')
 
-    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6,
-                colorscale='Viridis',
+    def create_plot(self, fig):
+        """
+        Warning: not to be explicitly called by the user
+        Creates the specific plot that has been set up by one of the functions below, and shows and/or saves the plot
+        depending on user specification
+
+        Args:
+            fig: (dictionary) contains data and layout information
+
+        """
+        if self.plot_mode == 'offline':
+            if self.filename:
+                plotly.offline.plot(fig, filename=self.filename, auto_open=self.show_offline_plot)
+            else:
+                plotly.offline.plot(fig, auto_open=self.show_offline_plot)
+
+        elif self.plot_mode == 'notebook':
+            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
+            plotly.offline.iplot(fig)
+
+        elif self.plot_mode == 'online':
+            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
+            if self.filename:
+                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
+            else:
+                plotly.plotly.plot(fig, sharing='public')
+
+        elif self.plot_mode == 'static':
+            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
+                                        scale=self.scale)
+
+    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
                 legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill',
                 hoverinfo='x+y+text', add_xy_plot=None, marker_outline_width=0,
                 marker_outline_color='black',
@@ -286,27 +316,7 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        if self.plot_mode == 'offline':
-            if self.filename:
-                plotly.offline.plot(fig, filename=self.filename)
-            else:
-                plotly.offline.plot(fig)
-
-        elif self.plot_mode == 'notebook':
-            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
-            plotly.offline.iplot(fig)
-
-        elif self.plot_mode == 'online':
-            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
-            if self.filename:
-                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
-            else:
-                plotly.plotly.plot(fig, sharing='public')
-
-        elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
-                                        width=self.width,
-                                        scale=self.scale)
+        self.create_plot(fig)
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis',
                      colorscale_range=None,
@@ -377,27 +387,7 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        if self.plot_mode == 'offline':
-            if self.filename:
-                plotly.offline.plot(fig, filename=self.filename)
-            else:
-                plotly.offline.plot(fig)
-
-        elif self.plot_mode == 'notebook':
-            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
-            plotly.offline.iplot(fig)
-
-        elif self.plot_mode == 'online':
-            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
-            if self.filename:
-                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
-            else:
-                plotly.plotly.plot(fig, sharing='public')
-
-        elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
-                                        width=self.width,
-                                        scale=self.scale)
+        self.create_plot(fig)
 
     def violin_plot(self, data, data_col=None, group_col=None, title=None, height=800, width=1000,
                     colors=None, use_colorscale=False, groups=None):
@@ -479,27 +469,7 @@ class PlotlyFig:
                     )
                 )
 
-        if self.plot_mode == 'offline':
-            if self.filename:
-                plotly.offline.plot(fig, filename=self.filename)
-            else:
-                plotly.offline.plot(fig)
-
-        elif self.plot_mode == 'notebook':
-            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
-            plotly.offline.iplot(fig)
-
-        elif self.plot_mode == 'online':
-            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
-            if self.filename:
-                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
-            else:
-                plotly.plotly.plot(fig, sharing='public')
-
-        elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
-                                        width=self.width,
-                                        scale=self.scale)
+        self.create_plot(fig)
 
     def scatter_matrix(self, dataframe, select_columns=None, index_colname=None,
                        diag_kind='scatter',
@@ -532,27 +502,7 @@ class PlotlyFig:
         for trace in fig['data']:
             trace['marker']['line'] = dict(width=marker_outline_width, color=marker_outline_color)
 
-        if self.plot_mode == 'offline':
-            if self.filename:
-                plotly.offline.plot(fig, filename=self.filename)
-            else:
-                plotly.offline.plot(fig)
-
-        elif self.plot_mode == 'notebook':
-            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
-            plotly.offline.iplot(fig)
-
-        elif self.plot_mode == 'online':
-            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
-            if self.filename:
-                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
-            else:
-                plotly.plotly.plot(fig, sharing='public')
-
-        elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
-                                        width=self.width,
-                                        scale=self.scale)
+        self.create_plot(fig)
 
     def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1,
                   color='rgba(70, 130, 180, 1)', bargap=0):
@@ -598,27 +548,7 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        if self.plot_mode == 'offline':
-            if self.filename:
-                plotly.offline.plot(fig, filename=self.filename)
-            else:
-                plotly.offline.plot(fig)
-
-        elif self.plot_mode == 'notebook':
-            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
-            plotly.offline.iplot(fig)
-
-        elif self.plot_mode == 'online':
-            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
-            if self.filename:
-                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
-            else:
-                plotly.plotly.plot(fig, sharing='public')
-
-        elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
-                                        width=self.width,
-                                        scale=self.scale)
+        self.create_plot(fig)
 
     def bar_chart(self, x, y):
         """
@@ -638,24 +568,4 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        if self.plot_mode == 'offline':
-            if self.filename:
-                plotly.offline.plot(fig, filename=self.filename)
-            else:
-                plotly.offline.plot(fig)
-
-        elif self.plot_mode == 'notebook':
-            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
-            plotly.offline.iplot(fig)
-
-        elif self.plot_mode == 'online':
-            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
-            if self.filename:
-                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
-            else:
-                plotly.plotly.plot(fig, sharing='public')
-
-        elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height,
-                                        width=self.width,
-                                        scale=self.scale)
+        self.create_plot(fig)
