@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
 import os
-import multiprocessing, logging  # AJ: for some reason this is needed to not have "python setup.py test" freak out
+
+from setuptools import setup, find_packages
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -19,10 +19,11 @@ if __name__ == "__main__":
         packages=find_packages(),
         package_data={},
         zip_safe=False,
-        install_requires=['pymatgen>=4.0', 'tqdm>=3.7.1', 'pandas>=0.17.1',
-                          'unittest2==1.1.0', "pymongo==3.2.2", 'pint'],
-        extras_require={'citrine':['citrination-client>=1.3.1']},
+        install_requires=['pymatgen>=2017.6.24', 'tqdm>=3.7.1', 'pandas>=0.17.1',
+                          'unittest2==1.1.0', 'pymongo>=3.3.0', 'pint>=0.8.1', 'six>=1.10.0'],
+        extras_require={'citrine': ['citrination-client>=1.3.1']},
         classifiers=['Programming Language :: Python :: 2.7',
+                     'Programming Language :: Python :: 3.6',
                      'Development Status :: 4 - Beta',
                      'Intended Audience :: Science/Research',
                      'Intended Audience :: System Administrators',
@@ -33,5 +34,5 @@ if __name__ == "__main__":
         test_suite='nose.collector',
         tests_require=['nose'],
         scripts=[]
-        #scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
+        # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
     )

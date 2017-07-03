@@ -1,6 +1,8 @@
 import unittest
-from matminer.learners.volume_predictor import VolumePredictor, ConditionalVolumePredictor
+
 from pymatgen.util.testing import PymatgenTest
+
+from matminer.learners.volume_predictor import VolumePredictor, ConditionalVolumePredictor
 
 
 class VolumePredictorTest(unittest.TestCase):
@@ -22,7 +24,6 @@ class VolumePredictorTest(unittest.TestCase):
 
 
 class ConditionalVolumePredictorTest(PymatgenTest):
-
     def test_predict(self):
         s = PymatgenTest.get_structure("CsCl")
         nacl = PymatgenTest.get_structure("CsCl")
@@ -43,6 +44,7 @@ class ConditionalVolumePredictorTest(PymatgenTest):
         scoo = PymatgenTest.get_structure("SrTiO3")
         scoo.replace_species({"Ti4+": "Co4+"})
         self.assertAlmostEqual(p.predict(scoo, sto), 56.162534974936463)
+
 
 if __name__ == '__main__':
     unittest.main()

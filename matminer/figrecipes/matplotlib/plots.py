@@ -1,13 +1,16 @@
-__author__ = 'Anubhav Jain <ajain@lbl.gov>'
+from __future__ import division, unicode_literals, print_function
 
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 import math
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
-class HeatMapPlot():
+import numpy as np
 
+__author__ = 'Anubhav Jain <ajain@lbl.gov>'
+
+
+class HeatMapPlot:
     def __init__(self, data, xlabels, ylabels, m_props=None, discrete_int=False):
         """
 
@@ -87,9 +90,11 @@ class HeatMapPlot():
         # x and y axes
         ticklok_x = [z + 0.5 for z in range(0, len(self.xlabels))]
         ticklok_y = [z + 0.5 for z in range(0, len(self.ylabels))]
-        plt.xticks(ticklok_x, self.xlabels, ha='center', rotation=self.p['xrotation'], fontsize=self.p['fontsize'],
+        plt.xticks(ticklok_x, self.xlabels, ha='center', rotation=self.p['xrotation'],
+                   fontsize=self.p['fontsize'],
                    fontname=self.p['fontname'])
-        plt.yticks(ticklok_y, self.ylabels, ha='right', rotation=self.p['yrotation'], fontsize=self.p['fontsize'],
+        plt.yticks(ticklok_y, self.ylabels, ha='right', rotation=self.p['yrotation'],
+                   fontsize=self.p['fontsize'],
                    fontname=self.p['fontname'])
 
         # set proper limits
@@ -108,7 +113,6 @@ class HeatMapPlot():
 
 
 class XYPlot():
-
     def __init__(self, data, m_props=None):
         """
 
@@ -131,7 +135,6 @@ class XYPlot():
         self.p['yticklabels'] = None
         self.p['xrotation'] = None
         self.p['yrotation'] = None
-
 
         # series-specific default parameters
         defaults = [('dodgerblue', 'o', 4)]
@@ -158,17 +161,15 @@ class XYPlot():
             data[idx]['xerr'] = data[idx].get('xerr', None)
             data[idx]['yerr'] = data[idx].get('yerr', None)
 
-
             # defaults for annotate
             data[idx]['xytext'] = data[idx].get('xytext', (0, 0))
-            data[idx]['arrowprops'] = data[idx].get('arrowprops', {"arrowstyle":"->", "connectionstyle":"arc"})
+            data[idx]['arrowprops'] = data[idx].get('arrowprops',
+                                                    {"arrowstyle": "->", "connectionstyle": "arc"})
             data[idx]['bbox'] = dict(boxstyle="square", fc="w", alpha=0.7)
-
 
         # user parameter override
         m_props = m_props if m_props else {}
         self.p.update(m_props)
-
 
     def plot(self, export_filename=None):
         """
@@ -180,9 +181,14 @@ class XYPlot():
         plt.figure(1, figsize=self.p['figsize'])
         for d in self.data:
             if d['style'] == 'annotate':
-                plt.annotate(d['text'], xy=(d['x'], d['y']), xycoords='data', xytext=d['xytext'], textcoords='offset points', arrowprops=d['arrowprops'], bbox=d['bbox'], horizontalalignment='center', verticalalignment='center')
+                plt.annotate(d['text'], xy=(d['x'], d['y']), xycoords='data', xytext=d['xytext'],
+                             textcoords='offset points', arrowprops=d['arrowprops'], bbox=d['bbox'],
+                             horizontalalignment='center', verticalalignment='center')
             else:
-                plt.errorbar(d['x'], d['y'], linestyle=d['linestyle'], lw=d['linewidth'], color=d['color'], label=d['label'], marker=d['marker'], markersize=d['markersize'], xerr=d['xerr'], yerr=d['yerr'], ecolor='black')
+                plt.errorbar(d['x'], d['y'], linestyle=d['linestyle'], lw=d['linewidth'],
+                             color=d['color'], label=d['label'], marker=d['marker'],
+                             markersize=d['markersize'], xerr=d['xerr'], yerr=d['yerr'],
+                             ecolor='black')
 
         # title, x, y labels
         if self.p['title']:
@@ -197,15 +203,17 @@ class XYPlot():
         # x and y axes tick labels - for custom axes labels
         if self.p['xticklabels']:
             ticklok_x = self.p.get('tickloc_x', range(0, len(self.p['xticklabels'])))
-            plt.xticks(ticklok_x, self.p['xticklabels'], ha='center', rotation=self.p['xrotation'], fontsize=self.p['fontsize'],
-                   fontname=self.p['fontname'])
+            plt.xticks(ticklok_x, self.p['xticklabels'], ha='center', rotation=self.p['xrotation'],
+                       fontsize=self.p['fontsize'],
+                       fontname=self.p['fontname'])
         else:
             plt.xticks(fontsize=self.p['fontsize'], fontname=self.p['fontname'])
 
         if self.p['yticklabels']:
             ticklok_y = self.p.get('tickloc_y', range(0, len(self.p['yticklabels'])))
-            plt.yticks(ticklok_y, self.p['yticklabels'], ha='right', rotation=self.p['yrotation'], fontsize=self.p['fontsize'],
-                   fontname=self.p['fontname'])
+            plt.yticks(ticklok_y, self.p['yticklabels'], ha='right', rotation=self.p['yrotation'],
+                       fontsize=self.p['fontsize'],
+                       fontname=self.p['fontname'])
         else:
             plt.yticks(fontsize=self.p['fontsize'], fontname=self.p['fontname'])
 

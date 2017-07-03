@@ -1,11 +1,12 @@
 from __future__ import absolute_import
-from citrination_client import *
+
 import os
 import time
-import pandas as pd
-from tqdm import tqdm
-from pandas.io.json import json_normalize
 
+import pandas as pd
+from citrination_client import *
+from pandas.io.json import json_normalize
+from tqdm import tqdm
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -108,8 +109,10 @@ class CitrineDataRetrieval:
             matrix_column.set_value(row, matrix_values)
         return matrix_values
 
-    def get_dataframe(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
-                      max_measurement=None, from_record=None, data_set_id=None, max_results=None, show_columns=None):
+    def get_dataframe(self, formula=None, property=None, data_type=None, reference=None,
+                      min_measurement=None,
+                      max_measurement=None, from_record=None, data_set_id=None, max_results=None,
+                      show_columns=None):
         """
         Gets data from Citrine in a dataframe format.
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
@@ -144,7 +147,8 @@ class CitrineDataRetrieval:
                     properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
                                              value=FieldOperation(filter=Filter(min=min_measurement,
                                                                                 max=max_measurement)),
-                                             data_type=FieldOperation(filter=Filter(equal=data_type))
+                                             data_type=FieldOperation(
+                                                 filter=Filter(equal=data_type))
                                              ),
                     references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=max_results)
@@ -155,7 +159,8 @@ class CitrineDataRetrieval:
                     properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
                                              value=FieldOperation(filter=Filter(min=min_measurement,
                                                                                 max=max_measurement)),
-                                             data_type=FieldOperation(filter=Filter(equal=data_type))
+                                             data_type=FieldOperation(
+                                                 filter=Filter(equal=data_type))
                                              ),
                     references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=per_page)
@@ -169,9 +174,10 @@ class CitrineDataRetrieval:
             start += size
             json_data.append(data)
 
-            if max_results and len(json_data) * per_page > max_results:      # check if limit is reached
-                json_data = json_data[:(max_results / per_page)]             # get first multiple of 100 records
-                json_data.append(data[:max_results % per_page])              # get remaining records
+            if max_results and len(json_data) * per_page > max_results:  # check if limit is reached
+                json_data = json_data[
+                            :(max_results / per_page)]  # get first multiple of 100 records
+                json_data.append(data[:max_results % per_page])  # get remaining records
                 break
             if size < per_page:  # break out of last loop of results
                 break
@@ -188,14 +194,15 @@ class CitrineDataRetrieval:
 
             for hit in tqdm(page):
 
-                counter += 1          # Keep a count to appropriately index the rows
+                counter += 1  # Keep a count to appropriately index the rows
 
-                if 'system' in hit.keys():       # Check if 'system' key exists, else skip
+                if 'system' in hit.keys():  # Check if 'system' key exists, else skip
                     system_value = hit['system']
                     system_normdf = json_normalize(system_value)
 
                     # Make a DF of all non-'properties' fields
-                    non_prop_cols = [cols for cols in system_normdf.columns if "properties" not in cols]
+                    non_prop_cols = [cols for cols in system_normdf.columns if
+                                     "properties" not in cols]
                     non_prop_row = pd.DataFrame()
                     for col in non_prop_cols:
                         non_prop_row[col] = system_normdf[col]
@@ -231,11 +238,13 @@ class CitrineDataRetrieval:
                         non_values_df = pd.DataFrame()
                         non_values_cols = []
                         for col in prop_normdf.columns:
-                            if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']:
+                            if col not in ['name', 'scalars', 'vectors', 'matrices',
+                                           'property_values']:
                                 non_values_cols.append(col)
                         for col in non_values_cols:
                             non_values_df[col] = prop_normdf[col]
-                        if len(non_values_df) > 0:  # Do not index empty DF (non-value columns absent)
+                        if len(
+                                non_values_df) > 0:  # Do not index empty DF (non-value columns absent)
                             non_values_df.index = [counter] * len(prop_normdf)
 
                         # Concatenate values and non-values DF
