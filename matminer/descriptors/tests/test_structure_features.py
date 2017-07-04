@@ -4,10 +4,11 @@
 
 from __future__ import unicode_literals
 
-from pymatgen import Structure, Lattice, Molecule
+import unittest
 
 import numpy as np
-import unittest2 as unittest
+
+from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.descriptors.structure_features import get_packing_fraction, \
