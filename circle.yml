@@ -1,12 +1,8 @@
-machine:
-  python:
-    version: 3.6.0
 dependencies:
   override:
-    - pip install --upgrade pip
-    - pip install numpy --upgrade
-    - pip install -r requirements.txt
-    - python setup.py develop
+    - pip install tox tox-pyenv
+    - pyenv local 2.7.12 3.6.0
 test:
   override:
-    - nosetests
+    - tox:
+        timeout: 1500

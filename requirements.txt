@@ -2,6 +2,5 @@ pymongo==3.4.0
 tqdm==4.11.2
 pandas==0.20.1
 pymatgen==2017.6.24
-unittest2==1.1.0
 citrination-client
 plotly
