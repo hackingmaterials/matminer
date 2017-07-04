@@ -2,7 +2,7 @@
 
 from __future__ import division, unicode_literals, absolute_import
 
-import unittest2 as unittest
+import unittest
 
 from matminer.data_retrieval.retrieve_MongoDB import clean_projection
 
