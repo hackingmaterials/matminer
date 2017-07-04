@@ -4,7 +4,7 @@ from __future__ import division, unicode_literals, absolute_import
 
 import os
 
-import unittest2 as unittest
+import unittest
 
 from matminer.data_retrieval.retrieve_Citrine import CitrineDataRetrieval
 
