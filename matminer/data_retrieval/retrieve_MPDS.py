@@ -4,40 +4,31 @@ import os
 import sys
 import time
 import warnings
-import six
 
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+import six
+from six.moves.urllib_parse import urlencode
 
 import httplib2
 import ujson as json
 
+import pandas as pd
+
+from pymatgen.core.structure import Structure
+from pymatgen.core.lattice import Lattice
+
 try:
     import jmespath
-    import pandas as pd
-except ImportError:
-    warnings.warn("Pandas dataframes and/or JSON querying unavailable")
+except ImportError as ex:
+    warnings.warn(ex)
 
-use_pmg, use_ase = False, False
-try:
-    from pymatgen.core.structure import Structure
-    from pymatgen.core.lattice import Lattice
-
-    use_pmg = True
-except ImportError:
-    pass
+use_ase = False
 try:
     from ase import Atom
     from ase.spacegroup import crystal
 
     use_ase = True
-except ImportError:
-    pass
-
-if not use_pmg and not use_ase:
-    warnings.warn("Crystal structure treatment unavailable")
+except ImportError as ex:
+    warnings.warn(ex)
 
 __author__ = 'Evgeny Blokhin <eb@tilde.pro>'
 __copyright__ = 'Copyright (c) 2017, Evgeny Blokhin, Tilde Materials Informatics'
@@ -297,7 +288,7 @@ class MPDSDataRetrieval(object):
         cell_abc, sg_n, setting, basis_noneq, els_noneq = \
             datarow[-5], int(datarow[-4]), datarow[-3], datarow[-2], datarow[-1]
 
-        if flavor == 'pmg' and use_pmg:
+        if flavor == 'pmg':
             return Structure.from_spacegroup(
                 sg_n,
                 Lattice.from_parameters(*cell_abc),
