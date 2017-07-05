@@ -30,7 +30,7 @@ A few examples demonstrating some of the features available in matminer have bee
 You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder **example_notebooks** in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to "File->Open" within the page and navigate to the notebook of your choice. 
 
 .. image:: http://mybinder.org/badge.svg 
-   :target: http://mybinder.org/repo/hackingmaterials/matminer
+:target: http://mybinder.org/repo/hackingmaterials/matminer
 
 --------
 Installation
@@ -89,7 +89,7 @@ Depending on how many of the required dependencies were already installed on you
 .. code-block:: bash
 
     $ # On Mac OS X, install brew if not available
-    $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     $ # Install "freetype" and "pkg-config" using brew (on Mac OS X; for other systems, see http://stackoverflow.com/a/20533455)
     $ brew install freetype
     $ brew install pkg-config
@@ -115,7 +115,7 @@ Below is a general workflow that shows the different tools and utilities availab
 
 |
 .. image:: https://github.com/hackingmaterials/matminer/blob/master/Flowchart.png
-   :align: center
+:align: center
 |
 |
 
@@ -124,9 +124,9 @@ Here's a brief description of the available tools (please find implementation ex
 Data retrieval tools
 --------------------
 
-- Retrieve data from the biggest materials databases, such as the Materials Project and Citrine's databases, in a Pandas dataframe format
+- Retrieve data from the biggest materials databases, such as the Materials Project, Citrine, and MPDS (PAULING FILE) databases, in a Pandas dataframe format
 
-The `MPDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MP.py>`_ and `CitrineDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_Citrine.py>`_ classes can be used to retrieve data from the biggest open-source materials database collections of the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine Informatics <https://citrination.com/>`_, respectively, in a `Pandas <http://pandas.pydata.org/>`_ dataframe format. The data contained in these databases are a variety of material properties, obtained in-house or from other external databases, that are either calculated, measured from experiments, or learned from trained algorithms. The :code:`get_dataframe` method of these classes executes the data retrieval by searching the respective database using user-specified filters, such as compound/material, property type, etc , extracting the selected data in a JSON/dictionary format through the API, parsing it and output the result to a Pandas dataframe with columns as properties/features measured or calculated and rows as data points. 
+The `MPDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MP.py>`_, `CitrineDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_Citrine.py>`_, and `MPDSDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MPDS.py>`_ classes can be used to retrieve data from the biggest open-source materials database collections of the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine Informatics <https://citrination.com/>`_, as well as from the partially opened database `MPDS (PAULING FILE) <https://mpds.io/>`_, respectively, in a `Pandas <http://pandas.pydata.org/>`_ dataframe format. The data contained in these databases are a variety of material properties, obtained in-house or from other external databases, that are either calculated, measured from experiments, or learned from trained algorithms. The :code:`get_dataframe` method of these classes executes the data retrieval by searching the respective database using user-specified filters, such as compound/material, property type, etc , extracting the selected data in a JSON/dictionary format through the API, parsing it and output the result to a Pandas dataframe with columns as properties/features measured or calculated and rows as data points.
 
 For example, to compare experimental and computed band gaps of Si, one can employ the following lines of code:
 
@@ -207,7 +207,17 @@ Some other descriptors that can be obtained from matminer include:
    #. Slack model
    #. Keyes model
    
- 
+
+Note on MPDS (PAULING FILE) database
+----------------
+Using MPDS generally requires commercial license. However, these data are provided for free:
+
+- All data for compounds containing both Ag and K
+- All cell parameters - temperature diagrams
+- All cell parameters - pressure diagrams
+
+In case of questions, please, contact `MPDS <https://mpds.io/>`_ directly.
+
 Plotting tools
 ----------------
 

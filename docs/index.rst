@@ -181,12 +181,23 @@ Some other descriptors that can be obtained from matminer include:
    
  
 Plotting tools
-----------------
+--------------
 
 - Plot data from either arrays or dataframes using either `Plotly <https://plot.ly/>`_ or `matplotlib <http://matplotlib.org/>`_
 
 In the figrecipes module of the matminer library, we have developed utilities that wrap around two popular plotting libraries, Plotly and matplotlib to produce various types of plots that plot data from either arrays or dataframes. The Plotly part of this module contains classes/functions that wrap around its Python API library and follows its JSON schema. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly and matplotlib, while at the same time sheilding the complexities involved. 
 
 A few examples demonstrating usage can be found in the notebook hosted on `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/matminer/figrecipes/plotly/examples/plotly_examples.ipynb>`_ and `Github <https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb>`_
-   
+
+Changelog
+---------
+
+**v0.1.0**
+
+* Add MPDS data retrieval (E. Blokhin)
+* Add partial RDF descriptor (L. Ward)
+* Add local environment motif descriptors (N. Zimmermann)
+* fix misc. bugs and installation issues (A. Dunn, S. Bajaj, L. Ward)
+
+For changelog before v0.1.0, consult the git history of matminer.
  

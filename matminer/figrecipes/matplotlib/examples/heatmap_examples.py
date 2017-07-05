@@ -1,10 +1,13 @@
-from figrecipes.matplotlib.plots import HeatMapPlot
+from __future__ import division, unicode_literals, print_function
+
+from matminer.figrecipes.matplotlib.plots import HeatMapPlot
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 """
 Note - be sure to copy/modify matplotlibrc
 """
+
 
 def heatmap_ex1():
     # HEAT MAP
