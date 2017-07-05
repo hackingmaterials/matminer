@@ -20,6 +20,14 @@ matminer.data_retrieval.retrieve_MP module
     :undoc-members:
     :show-inheritance:
 
+matminer.data_retrieval.retrieve_MPDS module
+--------------------------------------------
+
+.. automodule:: matminer.data_retrieval.retrieve_MPDS
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer.data_retrieval.retrieve_MongoDB module
 -----------------------------------------------
 

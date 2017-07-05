@@ -10,6 +10,7 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
+from __future__ import print_function
 
 import sys, os
 from matminer import __version__
@@ -18,7 +19,7 @@ from matminer import __version__
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('..'))
-print sys.path
+print(sys.path)
 
 # -- General configuration -----------------------------------------------------
 

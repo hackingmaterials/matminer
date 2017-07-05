@@ -1,4 +1,7 @@
+from __future__ import division, unicode_literals, print_function
+
 import math
+
 import sympy as sp
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
@@ -8,6 +11,7 @@ class YM:
     """
     Calculate Young's modulus (E) from other moduli.
     """
+
     def __init__(self, nu, G=None, K=None):
         """
         Args:
@@ -27,9 +31,9 @@ class YM:
         Returns: Young's modulus (E) (N/m^2)
         """
         if self.G and self.K is None:
-            return 2 * self.G * (1+self.nu)
+            return 2 * self.G * (1 + self.nu)
         elif self.G is None and self.K:
-            return 3 * self.K * (1-2*self.nu)
+            return 3 * self.K * (1 - 2 * self.nu)
         else:
             raise ValueError("Enter one of G or K")
 
@@ -45,10 +49,10 @@ class YoungsModulus:
     def equation(self):
         E, G, nu = sp.symbols('E G nu')
         # return 'E - (2 * G * (1+nu))'
-        return E - (2 * G * (1+nu))
+        return E - (2 * G * (1 + nu))
 
     def calculate(self, nu, G):
-        return 2 * G * (1+nu)
+        return 2 * G * (1 + nu)
 
 
 class ShearModulus:
@@ -61,10 +65,10 @@ class ShearModulus:
 
     def equation(self):
         G, E, nu = sp.symbols('G E nu')
-        return G - (E/(2 * (1+nu)))
+        return G - (E / (2 * (1 + nu)))
 
     def calculate(self, E, nu):
-        return E/(2 * (1+nu))
+        return E / (2 * (1 + nu))
 
 
 def shear_modulus(nu, E):
@@ -78,7 +82,7 @@ def shear_modulus(nu, E):
     Returns: shear/rigidity modulus (G) (N/m^2)
 
     """
-    return E/(2 * (1+nu))
+    return E / (2 * (1 + nu))
 
 
 def bulk_modulus(nu, E):
@@ -92,7 +96,7 @@ def bulk_modulus(nu, E):
     Returns: bulk modulus (K) (N/m^2)
 
     """
-    return E/(1 - 2*nu)
+    return E / (1 - 2 * nu)
 
 
 class BulkModulus:
@@ -105,10 +109,10 @@ class BulkModulus:
 
     def equation(self):
         K, E, nu = sp.symbols('K E nu')
-        return K - (E/(1 - 2*nu))
+        return K - (E / (1 - 2 * nu))
 
     def calculate(self, E, nu):
-        return E/(1 - 2*nu)
+        return E / (1 - 2 * nu)
 
 
 def bulkmodulus_coordination(N_c, ionicity, d):
@@ -117,20 +121,22 @@ def bulkmodulus_coordination(N_c, ionicity, d):
 
     References:
         - ISBN: 9780521523394 (Title: "Atomic and Electronic Structure of Solids")
-        - DOI: 10.1103/PhysRevB.32.7988 (Title: "Calculation of bulk moduli of diamond and zinc-blende solids")
+        - DOI: 10.1103/PhysRevB.32.7988 (Title: "Calculation of bulk moduli of diamond and
+            zinc-blende solids")
 
     Args:
         N_c: (float) average coordination number of the solid
-        ionicity: (int) a dimensionless number which describes the ionicity a dimensionless number which describes the
-         ionicity; ionicity=0 for the homopolar crystals C, Si, Ge, Sn; ionicity=1 for III-V compounds (where the
-         valence of each element differs by 1 from the average valence of 4); ionicity=2 for II-VI compounds (where the
-         valence of each element differs by 2 from the average valence of 4).
+        ionicity: (int) a dimensionless number which describes the ionicity a dimensionless
+            number which describes the ionicity; ionicity=0 for the homopolar crystals C, Si, Ge,
+            Sn; ionicity=1 for III-V compounds (where the valence of each element differs by 1
+            from the average valence of 4); ionicity=2 for II-VI compounds (where the valence of
+            each element differs by 2 from the average valence of 4).
         d: (float) bond length
 
     Returns: bulk modulus (K) (N/m^2)
 
     """
-    return (N_c/4) * (1971-220*ionicity) * d**(-3.5)
+    return (N_c / 4) * (1971 - 220 * ionicity) * d ** (-3.5)
 
 
 def vickers_hardness1(G, K):
@@ -138,8 +144,8 @@ def vickers_hardness1(G, K):
     Calculate Vickers hardness (H_v) for a material.
 
     References:
-        DOI: (not available yet) (Title: "A Statistical Learning Framework for Materials Science: Application to
-        Elastic Moduli of k-nary Inorganic Compounds")
+        DOI: (not available yet) (Title: "A Statistical Learning Framework for Materials Science:
+            Application to Elastic Moduli of k-nary Inorganic Compounds")
 
     Args:
         G: (float) elastic bulk modulus (N/m^2)
@@ -148,18 +154,20 @@ def vickers_hardness1(G, K):
     Returns: (float) Vickers hardness (H_v) (N/m^2)
 
     """
-    return 2*(G**3.0/K**2.0)**0.585 - 3
+    return 2 * (G ** 3.0 / K ** 2.0) ** 0.585 - 3
 
 
 class Lames1stParam:
     """
-    In continuum mechanics, the Lames parameters (also called the Lame coefficients or Lame constants) are two
-    material-dependent quantities denoted by 'lamda' and 'mu' that arise in strain-stress relationships. In general,
-    'lamda' and 'mu' are individually referred to as Lames first parameter and Lames second parameter, respectively.
+    In continuum mechanics, the Lames parameters (also called the Lame coefficients or Lame
+    constants) are two material-dependent quantities denoted by 'lamda' and 'mu' that arise in
+    strain-stress relationships. In general, 'lamda' and 'mu' are individually referred to as
+    Lames first parameter and Lames second parameter, respectively.
 
     Reference:
         https://en.wikipedia.org/wiki/Lam%C3%A9_parameters
     """
+
     def __init__(self):
         pass
 
@@ -169,20 +177,22 @@ class Lames1stParam:
 
     def equation(self):
         lamda, K, nu = sp.symbols('lamda K nu')
-        return lamda - ((3 * K * nu)/(1 + nu))
+        return lamda - ((3 * K * nu) / (1 + nu))
 
     def calculate(self, K, nu):
-        return (3 * K * nu)/(1 + nu)
+        return (3 * K * nu) / (1 + nu)
 
 
 class PWaveModulus:
     """
-    In linear elasticity, the P-wave modulus 'M', also known as the longitudinal modulus or the constrained modulus, is
-    one of the elastic moduli available to describe isotropic homogeneous materials.
+    In linear elasticity, the P-wave modulus 'M', also known as the longitudinal modulus or
+    the constrained modulus, is one of the elastic moduli available to describe isotropic
+    homogeneous materials.
 
     Reference:
         https://en.wikipedia.org/wiki/P-wave_modulus
     """
+
     def __init__(self):
         pass
 
@@ -192,10 +202,10 @@ class PWaveModulus:
 
     def equation(self):
         M, K, nu = sp.symbols('M K nu')
-        return M - ((3 * K * (1-nu))/(1 + nu))
+        return M - ((3 * K * (1 - nu)) / (1 + nu))
 
     def calculate(self, K, nu):
-        return (3 * K * (1-nu))/(1 + nu)
+        return (3 * K * (1 - nu)) / (1 + nu)
 
 
 def vickers_hardness2(F, a):
@@ -203,8 +213,8 @@ def vickers_hardness2(F, a):
     Calculate Vickers hardness (H) for a material.
 
     References:
-        DOI: 10.1007/s10853-013-7569-1 (Title: "Room temperature mechanical properties of natural-mineral-based
-        thermoelectrics")
+        DOI: 10.1007/s10853-013-7569-1 (Title: "Room temperature mechanical properties of
+        natural-mineral-based thermoelectrics")
 
     Args:
         F: (float) indentation load (N)
@@ -213,7 +223,7 @@ def vickers_hardness2(F, a):
     Returns: (float) Vickers hardness (H) (N/m^2)
 
     """
-    return (1.8544 * F)/((2*a)**2.0)
+    return (1.8544 * F) / ((2 * a) ** 2.0)
 
 
 def thermal_stress(E_T, cte_T, delta_T, nu_T):
@@ -221,8 +231,8 @@ def thermal_stress(E_T, cte_T, delta_T, nu_T):
     Calculate thermal stress (sigma_T) in a material.
 
     References:
-        DOI: 10.1007/s10853-013-7569-1 (Title: "Room temperature mechanical properties of natural-mineral-based
-        thermoelectrics")
+        DOI: 10.1007/s10853-013-7569-1 (Title: "Room temperature mechanical properties of
+        natural-mineral-based thermoelectrics")
 
     Args:
         E_T: (float) temperature-dependent Young's modulus (N/m^2)
@@ -233,7 +243,7 @@ def thermal_stress(E_T, cte_T, delta_T, nu_T):
     Returns: (float) thermal stress (sigma_T) induced by thermal gradients or thermal transients
 
     """
-    return (E_T * cte_T * delta_T)/(1 - nu_T)
+    return (E_T * cte_T * delta_T) / (1 - nu_T)
 
 
 def fracture_toughness(E, H, F, c):
@@ -241,8 +251,8 @@ def fracture_toughness(E, H, F, c):
     Calculate fracture toughness (K_c) of a material.
 
     References:
-        DOI: 10.1007/s10853-013-7569-1 (Title: "Room temperature mechanical properties of natural-mineral-based
-        thermoelectrics")
+        DOI: 10.1007/s10853-013-7569-1 (Title: "Room temperature mechanical properties of
+        natural-mineral-based thermoelectrics")
 
     Args:
         E: (float) Young's modulus (N/m^2)
@@ -253,7 +263,7 @@ def fracture_toughness(E, H, F, c):
     Returns: (float) fracture toughness (K_c) of a material (Pa.m^(0.5) or N/m^(1.5))
 
     """
-    return (0.016 * (E/H)**0.5 * F)/(c**1.5)
+    return (0.016 * (E / H) ** 0.5 * F) / (c ** 1.5)
 
 
 def brittleness_index(H, E, K_c):
@@ -268,7 +278,7 @@ def brittleness_index(H, E, K_c):
     Returns: (float) brittleness index (BI) of a material (m^(-1))
 
     """
-    return (H * E)/(K_c**2)
+    return (H * E) / (K_c ** 2)
 
 
 def steadystate_heatflow(A, T2, T1, kappa, x):
@@ -285,7 +295,7 @@ def steadystate_heatflow(A, T2, T1, kappa, x):
     Returns: steady state heat flow (Q) (W or J/s)
 
     """
-    return (-A * (T2-T1) * kappa)/x
+    return (-A * (T2 - T1) * kappa) / x
 
 
 def max_allowed_heatflow(nu, kappa, sigma, E, cte):
@@ -302,7 +312,7 @@ def max_allowed_heatflow(nu, kappa, sigma, E, cte):
     Returns: maximum allowable heat flow (QF) (W/m)
 
     """
-    return ((1-nu) * kappa * sigma)/(E * cte)
+    return ((1 - nu) * kappa * sigma) / (E * cte)
 
 
 def stress_from_tempgradient(T2, T1, E, cte, nu):
@@ -319,7 +329,7 @@ def stress_from_tempgradient(T2, T1, E, cte, nu):
     Returns: stress as a result of temperature gradient (sigma) (N/m^2)
 
     """
-    return ((T2-T1) * E * cte)/(1-nu)
+    return ((T2 - T1) * E * cte) / (1 - nu)
 
 
 def thermal_shock(sigma_tens, nu, kappa, E, cte):
@@ -336,12 +346,13 @@ def thermal_shock(sigma_tens, nu, kappa, E, cte):
     Returns: thermal shock resistance parameter (R_therm)
 
     """
-    return (sigma_tens * (1-nu) * kappa)/(E * cte)
+    return (sigma_tens * (1 - nu) * kappa) / (E * cte)
 
 
 def critical_stress(E, gamma_s, a, gamma_p=0, nu=0):
     """
-    Calculate critical stress needed for crack propagation (sigma_c) according to Griffith theory of brittle fracture.
+    Calculate critical stress needed for crack propagation (sigma_c) according to Griffith
+    theory of brittle fracture.
 
     References:
         - http://www4.ncsu.edu/~murty/NE509/NOTES/Ch4b-Fracture.pdf
@@ -359,13 +370,13 @@ def critical_stress(E, gamma_s, a, gamma_p=0, nu=0):
     Returns: critical stress needed for crack propagation (sigma_c) (N/m^2)
 
     """
-    return ((2 * E * (gamma_s+gamma_p))/((1-nu**2) * math.pi * a)) ** 0.5
+    return ((2 * E * (gamma_s + gamma_p)) / ((1 - nu ** 2) * math.pi * a)) ** 0.5
 
 
 def critical_fracture_toughness(sigma, a, Y=1):
     """
-    Calculate critical fracture toughness (K_IC) according to Griffith theory of brittle fracture. Also known as stress
-    intensity factor, and called fracture toughness nder conditions of:
+    Calculate critical fracture toughness (K_IC) according to Griffith theory of brittle fracture.
+    Also known as stress intensity factor, and called fracture toughness nder conditions of:
         (i) brittle fracture
         (ii) in the presence of a sharp crack
         (iii) under critical tensile loading
@@ -384,14 +395,15 @@ def critical_fracture_toughness(sigma, a, Y=1):
     Returns: critical fracture toughness (K_IC) (Pa.m^(0.5) or N/m^(1.5))
 
     """
-    return Y * sigma * (math.pi * a)**0.5
+    return Y * sigma * (math.pi * a) ** 0.5
 
 
 def strain_energy_releaserate(K_I, E, nu=0):
     """
-    Calculate strain energy release rate (G_I). Irwin was the first to observe that if the size of the plastic zone
-    around a crack is small compared to the size of the crack, the energy required to grow the crack will not be
-    critically dependent on the state of stress at the crack tip. Irwin showed that for a mode I crack (opening mode)
+    Calculate strain energy release rate (G_I). Irwin was the first to observe that if the size
+    of the plastic zone around a crack is small compared to the size of the crack, the energy
+    required to grow the crack will not be critically dependent on the state of stress at the
+    crack tip. Irwin showed that for a mode I crack (opening mode)
     the strain energy release rate and the stress intensity factor are related by the following relation.
 
     Args:
@@ -402,9 +414,9 @@ def strain_energy_releaserate(K_I, E, nu=0):
     Returns: strain energy release rate (G_I) (N/m)
 
     """
-    return ((1-nu**2) * K_I**2)/E
+    return ((1 - nu ** 2) * K_I ** 2) / E
 
 
 if __name__ == "__main__":
-    print vickers_hardness1(3, 2)
-    print YoungsModulus(nu=1).properties_involved()
+    print(vickers_hardness1(3, 2))
+    print(YoungsModulus().properties_involved())
