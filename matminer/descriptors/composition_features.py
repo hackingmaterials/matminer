@@ -36,6 +36,9 @@ for atomic_no in range(1, 104):
 class MagpieFeaturizer:
     """Class to get data from Magpie files"""
 
+    def __init__(self):
+        pass
+
     def get_data(self, comp_obj, descriptor_name):
         """
         Gets magpie data for a composition object.
