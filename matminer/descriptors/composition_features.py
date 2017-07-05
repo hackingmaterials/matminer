@@ -33,11 +33,8 @@ for atomic_no in range(1, 104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
 
-class MagpieFeaturizer(BaseFeaturizer):
+class MagpieFeaturizer:
     """Class to get data from Magpie files"""
-
-    def __init__(self):
-        BaseFeaturizer.__init__(self)
 
     def get_data(self, comp_obj, descriptor_name):
         """
@@ -96,7 +93,7 @@ class MagpieFeaturizer(BaseFeaturizer):
         return magpiedata
 
 
-class StoichAttributes(MagpieFeaturizer):
+class StoichAttributes(BaseFeaturizer, MagpieFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -146,7 +143,7 @@ class StoichAttributes(MagpieFeaturizer):
         return labels
 
 
-class ElemPropertyAttributes(MagpieFeaturizer):
+class ElemPropertyAttributes(BaseFeaturizer, MagpieFeaturizer):
     """
     Class to calculate elemental property attributes
 
@@ -207,7 +204,7 @@ class ElemPropertyAttributes(MagpieFeaturizer):
         return labels
 
 
-class ValenceOrbitalAttributes(MagpieFeaturizer):
+class ValenceOrbitalAttributes(BaseFeaturizer, MagpieFeaturizer):
     """Class to calculate valence orbital attributes"""
 
     def __init__(self):
@@ -247,7 +244,7 @@ class ValenceOrbitalAttributes(MagpieFeaturizer):
         return labels
 
 
-class IonicAttributes(MagpieFeaturizer):
+class IonicAttributes(BaseFeaturizer, MagpieFeaturizer):
     """Class to calculate ionic property attributes"""
 
     def __init__(self):
