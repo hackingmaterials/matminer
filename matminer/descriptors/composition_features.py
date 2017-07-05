@@ -1,8 +1,13 @@
+from __future__ import division, unicode_literals, print_function
+
 import collections
 import json
 import os
 import re
 from functools import reduce
+import itertools
+
+import numpy as np
 
 from pymatgen import Element, Composition, MPRester
 from pymatgen.core.units import Unit
@@ -10,12 +15,10 @@ from pymatgen.core.periodic_table import get_el_sp
 
 from matminer.descriptors.base import BaseFeaturizer
 
-__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
+__author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Kiran Mathew'
 
 # TODO: read Magpie file only once
 # TODO: unit tests
-# TODO: most of this code needs to be rewritten ... AJ
-
 
 # Load elemental cohesive energy data from json file
 with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
@@ -153,7 +156,7 @@ class ElemPropertyAttributes(MagpieFeaturizer):
 
     def __init__(self, attributes=None):
         MagpieFeaturizer.__init__(self)
-        if attributes == None:
+        if attributes is None:
             self.attributes = ["Number", "MendeleevNumber", "AtomicWeight", "MeltingT", "Column",
                                "Row", "CovalentRadius", "Electronegativity",
                                "NsValence", "NpValence", "NdValence", "NfValence", "NValance",
@@ -564,6 +567,9 @@ def get_composition_oxidation_state(formula):
 
 
 if __name__ == '__main__':
+
+    import pandas as pd
+
     descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
                    'coefficient_of_linear_thermal_expansion']
 

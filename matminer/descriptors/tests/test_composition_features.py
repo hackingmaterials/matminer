@@ -5,6 +5,8 @@ import unittest
 from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
+import pandas as pd
+
 from matminer.descriptors.composition_features import get_composition_oxidation_state, \
     get_pymatgen_descriptor, StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes
 
@@ -40,6 +42,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertEqual(df_ionic["compound possible"][0], 1.0)
         self.assertAlmostEqual(df_ionic["Max Ionic Char"][0], 0.476922164)
         self.assertAlmostEqual(df_ionic["Avg Ionic Char"][0], 0.114461319)
+
 
 class PymatgenDescriptorTest(unittest.TestCase):
 
