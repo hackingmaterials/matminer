@@ -1,12 +1,15 @@
-from pymatgen import Composition
+from __future__ import division, unicode_literals, print_function
+
+import abc
+import six
+
 import numpy as np
-import pandas as pd
 
-class BaseFeaturizer(object):
+from pymatgen import Composition
+
+
+class BaseFeaturizer(six.with_metaclass(abc.ABCMeta)):
     """Abstract class to calculate attributes for compounds"""
-
-    def __init__(self):
-        pass
 
     def featurize_all(self, comp_frame, col_id="composition"):
         """
@@ -32,7 +35,8 @@ class BaseFeaturizer(object):
         comp_frame = comp_frame.assign(**dict(zip(labels, [features[:,i] for i in range(np.shape(features)[1])])))
 
         return comp_frame
-    
+
+    @abc.abstractmethod
     def featurize(self, comp_obj):
         """
         Main featurizer function. Only defined in feature subclasses.
@@ -43,9 +47,9 @@ class BaseFeaturizer(object):
         Returns:
             list of features
         """
+        pass
 
-        raise NotImplementedError("Featurizer is not defined")
-    
+    @abc.abstractmethod
     def generate_labels(self):
         """
         Generate attribute names
@@ -53,7 +57,4 @@ class BaseFeaturizer(object):
         Returns:
             list of strings for attribute labels
         """
-
-        raise NotImplementedError("Featurizer is not defined")
-
-
+        pass
