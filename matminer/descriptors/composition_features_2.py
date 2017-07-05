@@ -7,7 +7,7 @@ import itertools
 import numpy as np
 import pandas as pd
 
-import line_profiler
+from base_classes import BaseFeaturizer
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -32,47 +32,6 @@ magpie_props = {}
 atomic_syms = []
 for atomic_no in range(1,104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
-
-class BaseFeaturizer(object):
-    """Abstract class to calculate attributes for compounds"""
-
-    def __init__(self):
-        pass
-
-    def featurize_all(self, comp_frame, col_id="composition"):
-        """
-        Compute features for all compounds contained in input dataframe
-        
-        Args: 
-            comp_frame (Pandas dataframe): Dataframe containing column of compounds
-            col_id (string): column label containing compositions
-
-        Returns:
-            updated Dataframe
-        """
-
-        features = []
-        comp_list = comp_frame[col_id]
-        for comp in comp_list:
-            comp_obj = Composition(comp)
-            features.append(self.featurize(comp_obj))
-        
-        features = np.array(features)
-
-        labels = self.generate_labels()
-        comp_frame = comp_frame.assign(**dict(zip(labels, [features[:,i] for i in range(np.shape(features)[1])])))
-
-        return comp_frame
-    
-    def featurize(self, comp_obj):
-        """Main featurizer function. Only defined in feature subclasses."""
-
-        raise NotImplementedError("Featurizer is not defined")
-    
-    def generate_labels(self):
-        """Generate attribute names"""
-
-        raise NotImplementedError("Featurizer is not defined")
 
 class MagpieFeaturizer(BaseFeaturizer):
     """Class to get data from Magpie files"""    
