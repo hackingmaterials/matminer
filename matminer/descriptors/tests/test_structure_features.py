@@ -3,6 +3,7 @@
 # Distributed under the terms of the MIT License.
 
 from __future__ import unicode_literals
+from future.builtins.misc import round
 
 import unittest
 
@@ -91,9 +92,9 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEquals(np.count_nonzero(rdf), 116)
 
         # Check the values for a few individual peaks
-        self.assertAlmostEqual(rdf[int(round(1.5 / 0.1))], 15.12755155)
-        self.assertAlmostEqual(rdf[int(round(2.9 / 0.1))], 12.53193948)
-        self.assertAlmostEqual(rdf[int(round(19.9 / 0.1))], 0.822126129)
+        self.assertAlmostEqual(rdf[round(1.5 / 0.1)], 15.12755155)
+        self.assertAlmostEqual(rdf[round(2.9 / 0.1)], 12.53193948)
+        self.assertAlmostEqual(rdf[round(19.9 / 0.1)], 0.822126129)
 
         # Make sure it finds the locations of non-zero peaks correctly
         peaks = get_rdf_peaks(rdf, bin_radius)
@@ -107,9 +108,9 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEquals(len(rdf), len(bin_radius))
         self.assertEquals(len(rdf), 100)
         self.assertEquals(np.count_nonzero(rdf), 11)
-        self.assertAlmostEqual(rdf[int(round(2.8 / 0.1))], 27.09214168)
-        self.assertAlmostEqual(rdf[int(round(4.0 / 0.1))], 26.83338723)
-        self.assertAlmostEqual(rdf[int(round(9.8 / 0.1))], 3.024406467)
+        self.assertAlmostEqual(rdf[round(2.8 / 0.1)], 27.09214168)
+        self.assertAlmostEqual(rdf[round(4.0 / 0.1)], 26.83338723)
+        self.assertAlmostEqual(rdf[round(9.8 / 0.1)], 3.024406467)
 
         peaks = get_rdf_peaks(rdf, bin_radius)
         self.assertEquals(len(peaks), 2)
@@ -122,9 +123,9 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEquals(len(rdf), len(bin_radius))
         self.assertEquals(len(rdf), 16)
         self.assertEquals(np.count_nonzero(rdf), 5)
-        self.assertAlmostEqual(rdf[int(round(3.5 / 0.5))], 6.741265585)
-        self.assertAlmostEqual(rdf[int(round(4.0 / 0.5))], 3.937582548)
-        self.assertAlmostEqual(rdf[int(round(7.0 / 0.5))], 1.805505363)
+        self.assertAlmostEqual(rdf[round(3.5 / 0.5)], 6.741265585)
+        self.assertAlmostEqual(rdf[round(4.0 / 0.5)], 3.937582548)
+        self.assertAlmostEqual(rdf[round(7.0 / 0.5)], 1.805505363)
 
         peaks = get_rdf_peaks(rdf, bin_radius, 3)
         self.assertEquals(len(peaks), 3)
@@ -137,25 +138,25 @@ class StructureFeaturesTest(PymatgenTest):
         #  These expected numbers were derived by performing the calculation in another code
         p, r = get_prdf(self.diamond)
         self.assertEquals(len(p), 1)
-        self.assertEquals(p[('C', 'C')][int(round(1.4 / 0.1))], 0)
-        self.assertAlmostEqual(p[('C', 'C')][int(round(1.5 / 0.1))], 1.324451676)
+        self.assertEquals(p[('C', 'C')][round(1.4 / 0.1)], 0)
+        self.assertAlmostEqual(p[('C', 'C')][round(1.5 / 0.1)], 1.324451676)
         self.assertAlmostEqual(r.max(), 19.9)
-        self.assertAlmostEqual(p[('C', 'C')][int(round(19.9 / 0.1))], 0.07197902)
+        self.assertAlmostEqual(p[('C', 'C')][round(19.9 / 0.1)], 0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
         p, r = get_prdf(self.cscl, cutoff=10)
         self.assertEquals(len(p), 4)
         self.assertAlmostEqual(r.max(), 9.9)
-        self.assertAlmostEquals(p[('Cs', 'Cl')][int(round(3.6 / 0.1))], 0.477823197)
-        self.assertAlmostEquals(p[('Cl', 'Cs')][int(round(3.6 / 0.1))], 0.477823197)
-        self.assertAlmostEquals(p[('Cs', 'Cs')][int(round(3.6 / 0.1))], 0)
+        self.assertAlmostEquals(p[('Cs', 'Cl')][round(3.6 / 0.1)], 0.477823197)
+        self.assertAlmostEquals(p[('Cl', 'Cs')][round(3.6 / 0.1)], 0.477823197)
+        self.assertAlmostEquals(p[('Cs', 'Cs')][round(3.6 / 0.1)], 0)
 
         # Do Ni3Al, make sure it captures the antisymmetry of Ni/Al sites
         p, r = get_prdf(self.ni3al, cutoff=10, bin_size=0.5)
         self.assertEquals(len(p), 4)
-        self.assertAlmostEquals(p[('Ni', 'Al')][int(round(2 / 0.5))], 0.125236677)
-        self.assertAlmostEquals(p[('Al', 'Ni')][int(round(2 / 0.5))], 0.37571003)
-        self.assertAlmostEquals(p[('Al', 'Al')][int(round(2 / 0.5))], 0)
+        self.assertAlmostEquals(p[('Ni', 'Al')][round(2 / 0.5)], 0.125236677)
+        self.assertAlmostEquals(p[('Al', 'Ni')][round(2 / 0.5)], 0.37571003)
+        self.assertAlmostEquals(p[('Al', 'Al')][round(2 / 0.5)], 0)
 
     def test_get_redf(self):
         d = get_redf(self.diamond)
