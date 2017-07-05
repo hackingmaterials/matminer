@@ -34,13 +34,14 @@ for atomic_no in range(1,104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
 class BaseFeaturizer(object):
+    """Abstract class to calculate attributes for compounds"""
+
     def __init__(self):
         pass
-        #ADD OPTIONS/ATTRIBUTES
 
     def featurize_all(self, comp_frame, col_id="composition"):
         """
-        Compute features for all compounds in comp_list
+        Compute features for all compounds contained in input dataframe
         
         Args: 
             comp_frame (Pandas dataframe): Dataframe containing column of compounds
@@ -63,32 +64,33 @@ class BaseFeaturizer(object):
 
         return comp_frame
     
-    #Get this to take multiple attributes 
     def featurize(self, comp_obj):
         """Main featurizer function. Only defined in feature subclasses."""
+
         raise NotImplementedError("Featurizer is not defined")
     
     def generate_labels(self):
         """Generate attribute names"""
+
         raise NotImplementedError("Featurizer is not defined")
 
 class MagpieFeaturizer(BaseFeaturizer):
+    """Class to get data from Magpie files"""    
+
     def __init__(self):
         BaseFeaturizer.__init__(self)
-        #ADD OPTIONS
 
-    #@profile
     def get_data(self, comp_obj, descriptor_name):
         """
         Gets magpie data for a composition object. 
         First checks if magpie properties are already loaded, if not, stores magpie data in a dictionary
 
         Args: 
-            elem (string): Atomic symbol of element
+            comp_obj: Pymatgen composition object
             descriptor_name (string): Name of descriptor
 
         Returns:
-            attr_dict
+            magpiedata (list): list of values for each atom in comp_obj
         """
 
         if descriptor_name not in magpie_props:
@@ -120,7 +122,7 @@ class MagpieFeaturizer(BaseFeaturizer):
             attr_dict = dict(zip(atomic_syms, prop_value))    
             magpie_props[descriptor_name] = attr_dict #Add dictionary to magpie_props
 
-        ##Get data for given element/compound
+        #Get data for given element/compound
         el_amt = comp_obj.get_el_amt_dict()
         elements = list(el_amt.keys())
         
@@ -132,6 +134,13 @@ class MagpieFeaturizer(BaseFeaturizer):
         return magpiedata
 
 class StoichAttributes(MagpieFeaturizer):
+    """
+    Class to calculate stoichiometric attributes.
+
+    Parameters:
+        p_list (list of ints): list of norms to calculate
+    """
+
     def __init__(self, p_list=None):
         MagpieFeaturizer.__init__(self)
         if p_list == None:
@@ -139,12 +148,11 @@ class StoichAttributes(MagpieFeaturizer):
         else:
             self.p_list = p_list
  
-    #@profile
     def featurize(self, comp_obj):
         """
         Get stoichiometric attributes
         Args:
-            self: Featurizer object
+            comp_obj: Pymatgen composition object
             p_list (list of ints)
         
         Returns: 
@@ -175,6 +183,12 @@ class StoichAttributes(MagpieFeaturizer):
         return labels
 
 class ElemPropertyAttributes(MagpieFeaturizer):
+    """
+    Class to calculate elemental property attributes
+
+    Parameters:
+        attributes (list of strings): List of elemental properties to use    
+    """
 
     def __init__(self, attributes=None):
         MagpieFeaturizer.__init__(self)
@@ -185,14 +199,12 @@ class ElemPropertyAttributes(MagpieFeaturizer):
         else: 
             self.attributes = attributes
 
-    #@profile
     def featurize(self, comp_obj):
         """
         Get elemental property attributes
 
         Args:
-
-            self: Featurizer object
+            comp_obj: Pymatgen composition object
         
         Returns:
             all_attributes: min, max, range, mean, average deviation, and mode of descriptors
@@ -230,17 +242,16 @@ class ElemPropertyAttributes(MagpieFeaturizer):
         return labels
 
 class ValenceOrbitalAttributes(MagpieFeaturizer):
+    """Class to calculate valence orbital attributes"""
 
     def __init__(self):
         MagpieFeaturizer.__init__(self)
-        #ADD OPTIONS    
 
-    #@profile
     def featurize(self, comp_obj):
         """Weighted fraction of valence electrons in each orbital
 
            Args: 
-                self: Featurizer object
+                comp_obj: Pymatgen composition object
 
            Returns: 
                 Fs, Fp, Fd, Ff (float): Fraction of valence electrons in s, p, d, and f orbitals
@@ -270,18 +281,16 @@ class ValenceOrbitalAttributes(MagpieFeaturizer):
         return labels
 
 class IonicAttributes(MagpieFeaturizer):
-
+    """Class to calculate ionic property attributes"""
     def __init__(self):
         MagpieFeaturizer.__init__(self)
-        #ADD OPTIONS
 
-    #@profile
     def featurize(self, comp_obj):
         """
         Ionic character attributes
 
         Args:
-            self: Featurizer object
+            com_obj: Pymatgen composition object
 
         Returns:
             cpd_possible (bool): Indicates if a neutral ionic compound is possible
@@ -526,27 +535,15 @@ if __name__ == '__main__':
     print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
     print(get_magpie_descriptor('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
-
-    ####PRELOAD MAGPIE DATA FOR SPEED TESTING####
-    comp_obj = Composition("Fe2O3")
-    feat = MagpieFeaturizer(comp_obj)
-    req_data = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
-        "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
-        "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber","OxidationStates"]    
-    
-    for attr in req_data:
-        feat.get_magpie_dict(attr)
-        
-    
-    ####TESTING WARD NPJ DESCRIPTORS
-    comp_obj = Composition("Fe2O3")
+   
+    training_set = pd.DataFrame({"composition":["Fe2O3"]})
     print "WARD NPJ ATTRIBUTES"
     print "Stoichiometric attributes"
     p_list = [0,2,3,5,7,9]
-    print StoichAttributes(comp_obj).featurize(p_list)
+    print StoichAttributes().featurize_all(training_set)
     print "Elemental property attributes"
-    print ElemPropertyAttributes(comp_obj).featurize()
+    print ElemPropertyAttributes().featurize_all(training_set)
     print "Valence Orbital Attributes"
-    print ValenceOrbitalAttributes(comp_obj).featurize()
+    print ValenceOrbitalAttributes().featurize_all(training_set)
     print "Ionic attributes"
-    print IonicAttributes(comp_obj).featurize()
+    print IonicAttributes().featurize_all(training_set)
