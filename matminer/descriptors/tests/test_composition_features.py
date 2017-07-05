@@ -5,8 +5,9 @@ import unittest
 from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
-from matminer.descriptors.composition_features_2 import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes 
+from matminer.descriptors.composition_features import get_composition_oxidation_state, \
+    get_pymatgen_descriptor, StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes
+
 
 class CompositionFeaturesTest(PymatgenTest):
 
