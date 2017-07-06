@@ -389,63 +389,6 @@ def get_pymatgen_descriptor(composition, property_name):
     return eldata
 
 
-def get_magpie_descriptor(comp, descriptor_name):
-    """
-    Get descriptor data for elements in a compound from the Magpie data repository.
-
-    Args:
-        comp: (str) compound composition, eg: "NaCl"
-        descriptor_name: name of Magpie descriptor needed. Find the entire list at
-            https://bitbucket.org/wolverton/magpie/src/6ecf8d3b79e03e06ef55c141c350a08fbc8da849/Lookup%20Data/?at=master
-
-    Returns: (list) of descriptor values for each atom in the composition
-
-    """
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",
-                            'magpie_elementdata')
-    magpiedata = []
-    magpiedata_tup_lst = []
-    magpiedata_tup = namedtuple('magpiedata_tup',
-                                            'element propname propvalue propunit amt')
-    available_props = []
-
-    # Make a list of available properties
-
-    for datafile in os.listdir(data_dir):
-        available_props.append(datafile.replace('.table', ''))
-
-    if descriptor_name not in available_props:
-        raise ValueError(
-            "This descriptor is not available from the Magpie repository. Choose from {}".format(
-                available_props))
-
-    # Get units from Magpie README file
-    el_amt = Composition(comp).get_el_amt_dict()
-    unit = None
-    with open(os.path.join(data_dir, 'README.txt'), 'r') as readme_file:
-        readme_file_line = readme_file.readlines()
-        for lineno, line in enumerate(readme_file_line, 1):
-            if descriptor_name + '.table' in line:
-                if 'Units: ' in readme_file_line[lineno + 1]:
-                    unit = readme_file_line[lineno + 1].split(':')[1].strip('\n')
-
-    # Extract from data file
-    with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
-        lines = descp_file.readlines()
-        for el in el_amt:
-            atomic_no = Element(el).Z
-            magpiedata_tup_lst.append(magpiedata_tup(element=el, propname=descriptor_name,
-                                                     propvalue=float(lines[atomic_no - 1]),
-                                                     propunit=unit,
-                                                     amt=el_amt[el]))
-
-            # Add descriptor values, one for each atom in the compound
-            for i in range(int(el_amt[el])):
-                magpiedata.append(float(lines[atomic_no - 1]))
-
-    return magpiedata
-
-
 def get_cohesive_energy(comp):
     """
     Get cohesive energy of compound by subtracting elemental cohesive energies from the formation energy of the compund.
@@ -569,8 +512,8 @@ if __name__ == '__main__':
 
     for desc in descriptors:
         print(get_pymatgen_descriptor('LiFePO4', desc))
-    print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
-    print(get_magpie_descriptor('LiFePO4', 'Density'))
+    print(magpie_data.get_data('LiFePO4', 'AtomicVolume'))
+    print(magpie_data.get_data('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
 
     training_set = pd.DataFrame({"composition": ["Fe2O3"]})
