@@ -17,7 +17,7 @@ from matminer.descriptors.data import magpie_data, cohesive_energy_data
 __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
 
 
-class StoichAttributes(BaseFeaturizer):
+class StoichiometricFeatures(BaseFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -66,7 +66,7 @@ class StoichAttributes(BaseFeaturizer):
         return labels
 
 
-class ElemPropertyAttributes(BaseFeaturizer):
+class ElementalFeatures(BaseFeaturizer):
     """
     Class to calculate elemental property attributes
 
@@ -126,7 +126,7 @@ class ElemPropertyAttributes(BaseFeaturizer):
         return labels
 
 
-class ValenceOrbitalAttributes(BaseFeaturizer):
+class ValenceOrbitalFeatures(BaseFeaturizer):
     """Class to calculate valence orbital attributes"""
 
     def __init__(self):
@@ -166,7 +166,7 @@ class ValenceOrbitalAttributes(BaseFeaturizer):
         return labels
 
 
-class IonicAttributes(BaseFeaturizer):
+class IonicFeatures(BaseFeaturizer):
     """Class to calculate ionic property attributes"""
 
     def __init__(self):
@@ -445,10 +445,10 @@ if __name__ == '__main__':
     print("WARD NPJ ATTRIBUTES")
     print("Stoichiometric attributes")
     p_list = [0, 2, 3, 5, 7, 9]
-    print(StoichAttributes().featurize_all(training_set))
+    print(StoichiometricFeatures().featurize_all(training_set))
     print("Elemental property attributes")
-    print(ElemPropertyAttributes().featurize_all(training_set))
+    print(ElementalFeatures().featurize_all(training_set))
     print("Valence Orbital Attributes")
-    print(ValenceOrbitalAttributes().featurize_all(training_set))
+    print(ValenceOrbitalFeatures().featurize_all(training_set))
     print("Ionic attributes")
-    print(IonicAttributes().featurize_all(training_set))
+    print(IonicFeatures().featurize_all(training_set))
