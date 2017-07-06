@@ -25,7 +25,7 @@ __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Load elemental cohesive energy data from json file
-with open(os.path.join(module_dir, 'cohesive_energies.json'), 'r') as f:
+with open(os.path.join(module_dir, 'data_files','cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
 
 
@@ -38,7 +38,7 @@ class MagpieData:
     def __init__(self):
         self.all_elemental_props = defaultdict(dict)
         self.available_props = []
-        self.data_dir = os.path.join(module_dir, "data", 'magpie_elementdata')
+        self.data_dir = os.path.join(module_dir, "data_files", 'magpie_elementdata')
 
         # Make a list of available properties
         for datafile in glob(os.path.join(self.data_dir, "*.table")):
