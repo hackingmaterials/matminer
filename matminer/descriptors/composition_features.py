@@ -11,13 +11,13 @@ from pymatgen import Element, Composition, MPRester
 from pymatgen.core.periodic_table import get_el_sp
 from pymatgen.core.units import Unit
 
-from matminer.descriptors.base import BaseFeaturizer
+from matminer.descriptors.base import AbstractFeaturizer
 from matminer.descriptors.data import magpie_data, cohesive_energy_data
 
 __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
 
 
-class StoichiometryAttribute(BaseFeaturizer):
+class StoichiometryAttribute(AbstractFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -31,18 +31,18 @@ class StoichiometryAttribute(BaseFeaturizer):
         else:
             self.p_list = p_list
 
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """
         Get stoichiometric attributes
         Args:
-            comp_obj: Pymatgen composition object
+            comp: Pymatgen composition object
             p_list (list of ints)
 
         Returns:
             p_norm (float): Lp norm-based stoichiometric attribute
         """
 
-        el_amt = comp_obj.get_el_amt_dict()
+        el_amt = comp.get_el_amt_dict()
 
         p_norms = [0] * len(self.p_list)
         n_atoms = sum(el_amt.values())
@@ -66,7 +66,7 @@ class StoichiometryAttribute(BaseFeaturizer):
         return labels
 
 
-class ElementAttribute(BaseFeaturizer):
+class ElementAttribute(AbstractFeaturizer):
     """
     Class to calculate elemental property attributes
 
@@ -84,24 +84,24 @@ class ElementAttribute(BaseFeaturizer):
         else:
             self.attributes = attributes
 
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """
         Get elemental property attributes
 
         Args:
-            comp_obj: Pymatgen composition object
+            comp: Pymatgen composition object
 
         Returns:
             all_attributes: min, max, range, mean, average deviation, and mode of descriptors
         """
 
-        el_amt = comp_obj.get_el_amt_dict()
+        el_amt = comp.get_el_amt_dict()
         elements = list(el_amt.keys())
 
         all_attributes = []
 
         for attr in self.attributes:
-            elem_data = magpie_data.get_data(comp_obj, attr)
+            elem_data = magpie_data.get_data(comp, attr)
 
             all_attributes.append(min(elem_data))
             all_attributes.append(max(elem_data))
@@ -126,29 +126,29 @@ class ElementAttribute(BaseFeaturizer):
         return labels
 
 
-class ValenceOrbitalAttribute(BaseFeaturizer):
+class ValenceOrbitalAttribute(AbstractFeaturizer):
     """Class to calculate valence orbital attributes"""
 
     def __init__(self):
         pass
 
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """Weighted fraction of valence electrons in each orbital
 
            Args:
-                comp_obj: Pymatgen composition object
+                comp: Pymatgen composition object
 
            Returns:
                 Fs, Fp, Fd, Ff (float): Fraction of valence electrons in s, p, d, and f orbitals
         """
 
-        num_atoms = comp_obj.num_atoms
+        num_atoms = comp.num_atoms
 
-        avg_total_valence = sum(magpie_data.get_data(comp_obj, "NValance")) / num_atoms
-        avg_s = sum(magpie_data.get_data(comp_obj, "NsValence")) / num_atoms
-        avg_p = sum(magpie_data.get_data(comp_obj, "NpValence")) / num_atoms
-        avg_d = sum(magpie_data.get_data(comp_obj, "NdValence")) / num_atoms
-        avg_f = sum(magpie_data.get_data(comp_obj, "NfValence")) / num_atoms
+        avg_total_valence = sum(magpie_data.get_data(comp, "NValance")) / num_atoms
+        avg_s = sum(magpie_data.get_data(comp, "NsValence")) / num_atoms
+        avg_p = sum(magpie_data.get_data(comp, "NpValence")) / num_atoms
+        avg_d = sum(magpie_data.get_data(comp, "NdValence")) / num_atoms
+        avg_f = sum(magpie_data.get_data(comp, "NfValence")) / num_atoms
 
         Fs = avg_s / avg_total_valence
         Fp = avg_p / avg_total_valence
@@ -166,13 +166,13 @@ class ValenceOrbitalAttribute(BaseFeaturizer):
         return labels
 
 
-class IonicAttribute(BaseFeaturizer):
+class IonicAttribute(AbstractFeaturizer):
     """Class to calculate ionic property attributes"""
 
     def __init__(self):
         pass
 
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """
         Ionic character attributes
 
@@ -185,7 +185,7 @@ class IonicAttribute(BaseFeaturizer):
             avg_ionic_char (float): Average ionic character
         """
 
-        el_amt = comp_obj.get_el_amt_dict()
+        el_amt = comp.get_el_amt_dict()
         elements = list(el_amt.keys())
         values = list(el_amt.values())
 
@@ -195,8 +195,8 @@ class IonicAttribute(BaseFeaturizer):
             avg_ionic_char = 0
         else:
             # Get magpie data for each element
-            all_ox_states = magpie_data.get_data(comp_obj, "OxidationStates")
-            all_elec = magpie_data.get_data(comp_obj, "Electronegativity")
+            all_ox_states = magpie_data.get_data(comp, "OxidationStates")
+            all_elec = magpie_data.get_data(comp, "Electronegativity")
             ox_states = []
             elec = []
 

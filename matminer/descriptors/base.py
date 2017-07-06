@@ -8,8 +8,10 @@ import numpy as np
 from pymatgen import Composition
 
 
-class BaseFeaturizer(six.with_metaclass(abc.ABCMeta)):
-    """Abstract class to calculate attributes for compounds"""
+class AbstractFeaturizer(six.with_metaclass(abc.ABCMeta)):
+    """
+    Abstract class to calculate attributes for compounds
+    """
 
     def featurize_all(self, comp_frame, col_id="composition"):
         """
@@ -37,12 +39,12 @@ class BaseFeaturizer(six.with_metaclass(abc.ABCMeta)):
         return comp_frame
 
     @abc.abstractmethod
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """
         Main featurizer function. Only defined in feature subclasses.
 
         Args:
-            comp_obj: Pymatgen composition object
+            comp (Composition / str)
 
         Returns:
             list of features
