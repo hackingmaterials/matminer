@@ -1,6 +1,6 @@
 from __future__ import division, unicode_literals, print_function
 
-import collections
+from collections import namedtuple, defaultdict
 import json
 import os
 import re
@@ -35,28 +35,28 @@ class MagpieData:
     """
 
     def __init__(self):
-        self.magpie_props = {}
+        self.all_elemental_props = defaultdict(dict)
         self.available_props = []
-        data_dir = os.path.join(module_dir, "data", 'magpie_elementdata')                
-        prop_value = []        
+        data_dir = os.path.join(module_dir, "data", 'magpie_elementdata')
 
         # Make a list of available properties
         for datafile in glob(os.path.join(data_dir, "*.table")):
             self.available_props.append(os.path.basename(datafile).replace('.table', ''))
 
+        # parse and store all elemental properties
         for descriptor_name in self.available_props:
             with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
                 lines = descp_file.readlines()
                 for atomic_no in range(1, len(_pt_data)+1):  # as high as pymatgen goes
                     try:
                         if descriptor_name in ["OxidationStates"]:
-                            prop_value.append([float(i) for i in lines[atomic_no - 1].split()])
+                            prop_value = [float(i) for i in lines[atomic_no - 1].split()]
                         else:
-                            prop_value.append(float(lines[atomic_no - 1]))
+                            prop_value = float(lines[atomic_no - 1])
                     except:
-                        prop_value.append(float("NaN"))
+                        prop_value = float("NaN")
 
-            self.magpie_props[descriptor_name] = dict(zip(list(_pt_data.keys()), prop_value))
+                    self.all_elemental_props[descriptor_name][str(Element.from_Z(atomic_no))] = prop_value
 
     def get_data(self, comp_obj, descriptor_name):
         """
@@ -76,7 +76,7 @@ class MagpieData:
         el_amt = comp_obj.get_el_amt_dict()
         elements = list(el_amt.keys())
 
-        magpiedata = [self.magpie_props[descriptor_name][el]
+        magpiedata = [self.all_elemental_props[descriptor_name][el]
                       for el in elements
                       for i in range(int(el_amt[el]))]
 
@@ -264,7 +264,6 @@ class IonicAttributes(BaseFeaturizer):
         else:
             # Get magpie data for each element
             all_ox_states = magpie_data.get_data(comp_obj, "OxidationStates")
-            print(all_ox_states)
             all_elec = magpie_data.get_data(comp_obj, "Electronegativity")
             ox_states = []
             elec = []
@@ -329,7 +328,7 @@ def get_pymatgen_descriptor(composition, property_name):
     eldata = []
     # what are these named tuples for? not used or returned! -KM
     eldata_tup_lst = []
-    eldata_tup = collections.namedtuple('eldata_tup', 'element propname propvalue propunit amt')
+    eldata_tup = namedtuple('eldata_tup', 'element propname propvalue propunit amt')
 
     oxidation_states = {}
     if isinstance(composition, Composition):
@@ -399,7 +398,7 @@ def get_magpie_descriptor(comp, descriptor_name):
                             'magpie_elementdata')
     magpiedata = []
     magpiedata_tup_lst = []
-    magpiedata_tup = collections.namedtuple('magpiedata_tup',
+    magpiedata_tup = namedtuple('magpiedata_tup',
                                             'element propname propvalue propunit amt')
     available_props = []
 
