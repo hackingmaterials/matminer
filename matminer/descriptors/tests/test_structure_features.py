@@ -8,7 +8,7 @@ import unittest
 
 import numpy as np
 from future.builtins.misc import round
-from matminer.descriptors.structure_features import get_packing_fraction, \
+from matminer.descriptors.structure import get_packing_fraction, \
     get_vol_per_site, get_density, get_rdf, get_rdf_peaks, get_redf, \
     get_min_relative_distances, get_neighbors_of_site_with_index, \
     get_order_parameters, get_order_parameter_stats, get_prdf, \

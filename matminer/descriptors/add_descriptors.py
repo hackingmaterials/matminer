@@ -2,7 +2,7 @@ from __future__ import division, unicode_literals, print_function
 
 from pymatgen.core.composition import Composition
 
-from matminer.descriptors.composition_features import get_pymatgen_descriptor
+from matminer.descriptors.composition import get_pymatgen_descriptor
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 

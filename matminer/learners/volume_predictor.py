@@ -7,7 +7,7 @@ import numpy as np
 from pymatgen.analysis.bond_valence import BVAnalyzer
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
-from matminer.descriptors.composition_features import get_pymatgen_descriptor
+from matminer.descriptors.composition import get_pymatgen_descriptor
 
 
 class VolumePredictor:
