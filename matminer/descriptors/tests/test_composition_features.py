@@ -3,7 +3,7 @@ from __future__ import unicode_literals, division, print_function
 import unittest
 
 import pandas as pd
-from matminer.descriptors.composition_features import get_composition_oxidation_state, \
+from matminer.descriptors.composition import get_composition_oxidation_state, \
     get_pymatgen_descriptor, StoichiometricAttribute, ElementalAttribute, ValenceOrbitalAttribute, \
     IonicAttribute
 from matminer.descriptors.data import magpie_data
