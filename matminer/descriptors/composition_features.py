@@ -21,27 +21,19 @@ class StoichiometryAttribute(AbstractFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
-    Parameters:
+    Generates: Lp norm-based stoichiometric attribute.
+
+    Args:
         p_list (list of ints): list of norms to calculate
     """
 
     def __init__(self, p_list=None):
-        if p_list == None:
+        if p_list is None:
             self.p_list = [0, 2, 3, 5, 7, 10]
         else:
             self.p_list = p_list
 
     def featurize(self, comp):
-        """
-        Get stoichiometric attributes
-        Args:
-            comp: Pymatgen composition object
-            p_list (list of ints)
-
-        Returns:
-            p_norm (float): Lp norm-based stoichiometric attribute
-        """
-
         el_amt = comp.get_el_amt_dict()
 
         p_norms = [0] * len(self.p_list)
@@ -68,9 +60,12 @@ class StoichiometryAttribute(AbstractFeaturizer):
 
 class ElementAttribute(AbstractFeaturizer):
     """
-    Class to calculate elemental property attributes
+    Class to calculate elemental property attributes.
 
-    Parameters:
+    Generates: list representation with min, max, range, mean,  average deviation, and
+        mode of descriptors
+
+    Args:
         attributes (list of strings): List of elemental properties to use
     """
 
@@ -85,19 +80,6 @@ class ElementAttribute(AbstractFeaturizer):
             self.attributes = attributes
 
     def featurize(self, comp):
-        """
-        Get elemental property attributes
-
-        Args:
-            comp: Pymatgen composition object
-
-        Returns:
-            all_attributes: min, max, range, mean, average deviation, and mode of descriptors
-        """
-
-        el_amt = comp.get_el_amt_dict()
-        elements = list(el_amt.keys())
-
         all_attributes = []
 
         for attr in self.attributes:
@@ -127,21 +109,15 @@ class ElementAttribute(AbstractFeaturizer):
 
 
 class ValenceOrbitalAttribute(AbstractFeaturizer):
-    """Class to calculate valence orbital attributes"""
+    """
+    Class to calculate valence orbital attributes.
+    Generate fraction of valence electrons in s, p, d, and f orbitals
+    """
 
     def __init__(self):
         pass
 
     def featurize(self, comp):
-        """Weighted fraction of valence electrons in each orbital
-
-           Args:
-                comp: Pymatgen composition object
-
-           Returns:
-                Fs, Fp, Fd, Ff (float): Fraction of valence electrons in s, p, d, and f orbitals
-        """
-
         num_atoms = comp.num_atoms
 
         avg_total_valence = sum(magpie_data.get_data(comp, "NValance")) / num_atoms
@@ -167,24 +143,18 @@ class ValenceOrbitalAttribute(AbstractFeaturizer):
 
 
 class IonicAttribute(AbstractFeaturizer):
-    """Class to calculate ionic property attributes"""
+    """
+    Class to calculate ionic property attributes.
+
+    Generates: [ cpd_possible (boolean value indicating if a neutral ionic compound is possible),
+                 max_ionic_char (float value indicating maximum ionic character between two atoms),
+                 avg_ionic_char (Average ionic character ]
+    """
 
     def __init__(self):
         pass
 
     def featurize(self, comp):
-        """
-        Ionic character attributes
-
-        Args:
-            com_obj: Pymatgen composition object
-
-        Returns:
-            cpd_possible (bool): Indicates if a neutral ionic compound is possible
-            max_ionic_char (float): Maximum ionic character between two atoms
-            avg_ionic_char (float): Average ionic character
-        """
-
         el_amt = comp.get_el_amt_dict()
         elements = list(el_amt.keys())
         values = list(el_amt.values())
