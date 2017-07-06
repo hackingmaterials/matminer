@@ -3,20 +3,18 @@
 # Distributed under the terms of the MIT License.
 
 from __future__ import unicode_literals
-from future.builtins.misc import round
 
 import unittest
 
 import numpy as np
-
-from pymatgen import Structure, Lattice, Molecule
-from pymatgen.util.testing import PymatgenTest
-
+from future.builtins.misc import round
 from matminer.descriptors.structure_features import get_packing_fraction, \
     get_vol_per_site, get_density, get_rdf, get_rdf_peaks, get_redf, \
     get_min_relative_distances, get_neighbors_of_site_with_index, \
     get_order_parameters, get_order_parameter_stats, get_prdf, \
     get_coulomb_matrix
+from pymatgen import Structure, Lattice, Molecule
+from pymatgen.util.testing import PymatgenTest
 
 
 class StructureFeaturesTest(PymatgenTest):

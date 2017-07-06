@@ -2,19 +2,29 @@ from __future__ import unicode_literals, division, print_function
 
 import unittest
 
+import pandas as pd
+from matminer.descriptors.composition_features import get_composition_oxidation_state, \
+    get_pymatgen_descriptor, StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, \
+    IonicAttributes, magpie_data
 from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
-import pandas as pd
 
-from matminer.descriptors.composition_features import get_composition_oxidation_state, \
-    get_pymatgen_descriptor, StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes
+class MagpiDataTest(unittest.TestCase):
+    def test_string_composition(self):
+        oxs = magpie_data.get_data("LiFePO4", "OxidationStates")
+        self.assertEqual(oxs, [[1.0],
+                               [2.0, 3.0],
+                               [-3.0, 3.0, 5.0],
+                               [-2.0], [-2.0], [-2.0], [-2.0]])
+        lifepo4 = Composition("LiFePO4")
+        oxs_1 = magpie_data.get_data(lifepo4, "OxidationStates")
+        self.assertEqual(oxs, oxs_1)
 
 
 class CompositionFeaturesTest(PymatgenTest):
-
     def setUp(self):
-        self.df = pd.DataFrame({"composition":["Fe2O3"]})
+        self.df = pd.DataFrame({"composition": ["Fe2O3"]})
 
     def test_stoich(self):
         df_stoich = StoichAttributes().featurize_all(self.df)
@@ -45,7 +55,6 @@ class CompositionFeaturesTest(PymatgenTest):
 
 
 class PymatgenDescriptorTest(unittest.TestCase):
-
     def setUp(self):
         self.nacl_formula_1 = "NaCl"
         self.nacl_formula_2 = "Na+1Cl-1"
