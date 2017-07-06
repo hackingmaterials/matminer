@@ -13,36 +13,54 @@ from monty.design_patterns import singleton
 
 from pymatgen import Element, Composition, MPRester
 from pymatgen.core.units import Unit
-from pymatgen.core.periodic_table import get_el_sp
+from pymatgen.core.periodic_table import get_el_sp, _pt_data
 
 from matminer.descriptors.base import BaseFeaturizer
 
-__author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Kiran Mathew'
+__author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
 
-# TODO: read Magpie file only once
 # TODO: unit tests
 
 # Load elemental cohesive energy data from json file
 with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
 
-# list of elements
-atomic_syms = []
-for atomic_no in range(1, 104):
-    atomic_syms.append(Element.from_Z(atomic_no).symbol)
-
 
 @singleton    
 class MagpieData:
-    """Class to get data from Magpie files"""
+    """
+    Singleton class to get data from Magpie files
+    """
 
     def __init__(self):
-        pass
+        self.magpie_props = {}
+        data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
+        available_props = []
+        prop_value = []        
+
+        # Make a list of available properties
+        for datafile in os.listdir(data_dir):
+            available_props.append(datafile.replace('.table', ''))
+
+        if descriptor_name not in available_props:
+            raise ValueError("This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
+
+        with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
+            lines = descp_file.readlines()
+            for atomic_no in range(1, len(_pt_data.keys())+1):  # as high as pymatgen goes
+                try:
+                    if descriptor_name in ["OxidationStates"]:
+                        prop_value.append([float(i) for i in lines[atomic_no - 1].split()])
+                    else:
+                        prop_value.append(float(lines[atomic_no - 1]))
+                except:
+                    prop_value.append(float("NaN"))
+
+            self.magpie_props[descriptor_name] = dict(zip(_pt_data.keys(), prop_value))
 
     def get_data(self, comp_obj, descriptor_name):
         """
         Gets magpie data for a composition object.
-        First checks if magpie properties are already loaded, if not, stores magpie data in a dictionary
 
         Args:
             comp_obj: Pymatgen composition object
@@ -51,47 +69,13 @@ class MagpieData:
         Returns:
             magpiedata (list): list of values for each atom in comp_obj
         """
-        magpie_props = {}
-        if descriptor_name not in magpie_props:
-
-            data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",
-                                    'magpie_elementdata')
-            available_props = []
-
-            # Make a list of available properties
-            for datafile in os.listdir(data_dir):
-                available_props.append(datafile.replace('.table', ''))
-
-            if descriptor_name not in available_props:
-                raise ValueError(
-                    "This descriptor is not available from the Magpie repository. Choose from {}".format(
-                        available_props))
-
-            prop_value = []
-            with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)),
-                      'r') as descp_file:
-                lines = descp_file.readlines()
-
-                for atomic_no in range(1, 104):  # This is as high as pymatgen goes
-                    try:
-                        if descriptor_name in ["OxidationStates"]:
-                            prop_value.append([float(i) for i in lines[atomic_no - 1].split()])
-                        else:
-                            prop_value.append(float(lines[atomic_no - 1]))
-                    except:
-                        prop_value.append(float("NaN"))
-
-            attr_dict = dict(zip(atomic_syms, prop_value))
-            magpie_props[descriptor_name] = attr_dict  # Add dictionary to magpie_props
-
         # Get data for given element/compound
         el_amt = comp_obj.get_el_amt_dict()
         elements = list(el_amt.keys())
 
-        magpiedata = []
-        for el in elements:
-            for i in range(int(el_amt[el])):
-                magpiedata.append(magpie_props[descriptor_name][el])
+        magpiedata = [self.magpie_props[descriptor_name][el]
+                      for el in elements
+                      for i in range(int(el_amt[el]))]
 
         return magpiedata
 
