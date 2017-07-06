@@ -2,7 +2,7 @@ from __future__ import division, unicode_literals, print_function
 
 from pymatgen.core.composition import Composition
 
-from matminer.descriptors.data import get_pymatgen_descriptor
+from matminer.descriptors.data import PymatgenData
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -24,6 +24,7 @@ class AddDescriptor:
         self.df = df
         self.formula_colname = formula_colname
         self.separator = separator
+        self.pmg_data = PymatgenData()
 
     def add_pmgdescriptor_column(self, descriptor, stat_function, stat_name):
         """
@@ -36,7 +37,7 @@ class AddDescriptor:
         """
         try:
             self.df[descriptor + self.separator + stat_name] = self.df[self.formula_colname]. \
-                map(lambda x: stat_function(get_pymatgen_descriptor(Composition(x), descriptor)))
+                map(lambda x: stat_function(self.pmg_data.get_property(Composition(x), descriptor)))
         except ValueError:
             self.df.loc[descriptor + self.separator + stat_name] = None
         except AttributeError:
