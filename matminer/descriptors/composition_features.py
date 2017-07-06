@@ -9,6 +9,8 @@ import itertools
 
 import numpy as np
 
+from monty.design_patterns import singleton
+
 from pymatgen import Element, Composition, MPRester
 from pymatgen.core.units import Unit
 from pymatgen.core.periodic_table import get_el_sp
@@ -24,16 +26,14 @@ __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Kiran Mathew'
 with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
 
-# empty dictionary for magpie properties
-magpie_props = {}
-
 # list of elements
 atomic_syms = []
 for atomic_no in range(1, 104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
 
-class MagpieFeaturizer:
+@singleton    
+class MagpieData:
     """Class to get data from Magpie files"""
 
     def __init__(self):
@@ -51,7 +51,7 @@ class MagpieFeaturizer:
         Returns:
             magpiedata (list): list of values for each atom in comp_obj
         """
-
+        magpie_props = {}
         if descriptor_name not in magpie_props:
 
             data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",
@@ -95,8 +95,10 @@ class MagpieFeaturizer:
 
         return magpiedata
 
+magpie_data = MagpieData()    
 
-class StoichAttributes(BaseFeaturizer, MagpieFeaturizer):
+
+class StoichAttributes(BaseFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -105,7 +107,6 @@ class StoichAttributes(BaseFeaturizer, MagpieFeaturizer):
     """
 
     def __init__(self, p_list=None):
-        MagpieFeaturizer.__init__(self)
         if p_list == None:
             self.p_list = [0, 2, 3, 5, 7, 10]
         else:
@@ -146,7 +147,7 @@ class StoichAttributes(BaseFeaturizer, MagpieFeaturizer):
         return labels
 
 
-class ElemPropertyAttributes(BaseFeaturizer, MagpieFeaturizer):
+class ElemPropertyAttributes(BaseFeaturizer):
     """
     Class to calculate elemental property attributes
 
@@ -155,7 +156,6 @@ class ElemPropertyAttributes(BaseFeaturizer, MagpieFeaturizer):
     """
 
     def __init__(self, attributes=None):
-        MagpieFeaturizer.__init__(self)
         if attributes is None:
             self.attributes = ["Number", "MendeleevNumber", "AtomicWeight", "MeltingT", "Column",
                                "Row", "CovalentRadius", "Electronegativity",
@@ -182,7 +182,7 @@ class ElemPropertyAttributes(BaseFeaturizer, MagpieFeaturizer):
         all_attributes = []
 
         for attr in self.attributes:
-            elem_data = self.get_data(comp_obj, attr)
+            elem_data = magpie_data.get_data(comp_obj, attr)
 
             all_attributes.append(min(elem_data))
             all_attributes.append(max(elem_data))
@@ -207,11 +207,11 @@ class ElemPropertyAttributes(BaseFeaturizer, MagpieFeaturizer):
         return labels
 
 
-class ValenceOrbitalAttributes(BaseFeaturizer, MagpieFeaturizer):
+class ValenceOrbitalAttributes(BaseFeaturizer):
     """Class to calculate valence orbital attributes"""
 
     def __init__(self):
-        MagpieFeaturizer.__init__(self)
+        pass
 
     def featurize(self, comp_obj):
         """Weighted fraction of valence electrons in each orbital
@@ -225,11 +225,11 @@ class ValenceOrbitalAttributes(BaseFeaturizer, MagpieFeaturizer):
 
         num_atoms = comp_obj.num_atoms
 
-        avg_total_valence = sum(self.get_data(comp_obj, "NValance")) / num_atoms
-        avg_s = sum(self.get_data(comp_obj, "NsValence")) / num_atoms
-        avg_p = sum(self.get_data(comp_obj, "NpValence")) / num_atoms
-        avg_d = sum(self.get_data(comp_obj, "NdValence")) / num_atoms
-        avg_f = sum(self.get_data(comp_obj, "NfValence")) / num_atoms
+        avg_total_valence = sum(magpie_data.get_data(comp_obj, "NValance")) / num_atoms
+        avg_s = sum(magpie_data.get_data(comp_obj, "NsValence")) / num_atoms
+        avg_p = sum(magpie_data.get_data(comp_obj, "NpValence")) / num_atoms
+        avg_d = sum(magpie_data.get_data(comp_obj, "NdValence")) / num_atoms
+        avg_f = sum(magpie_data.get_data(comp_obj, "NfValence")) / num_atoms
 
         Fs = avg_s / avg_total_valence
         Fp = avg_p / avg_total_valence
@@ -247,11 +247,11 @@ class ValenceOrbitalAttributes(BaseFeaturizer, MagpieFeaturizer):
         return labels
 
 
-class IonicAttributes(BaseFeaturizer, MagpieFeaturizer):
+class IonicAttributes(BaseFeaturizer):
     """Class to calculate ionic property attributes"""
 
     def __init__(self):
-        MagpieFeaturizer.__init__(self)
+        pass
 
     def featurize(self, comp_obj):
         """
@@ -276,8 +276,8 @@ class IonicAttributes(BaseFeaturizer, MagpieFeaturizer):
             avg_ionic_char = 0
         else:
             # Get magpie data for each element
-            all_ox_states = self.get_data(comp_obj, "OxidationStates")
-            all_elec = self.get_data(comp_obj, "Electronegativity")
+            all_ox_states = magpie_data.get_data(comp_obj, "OxidationStates")
+            all_elec = magpie_data.get_data(comp_obj, "Electronegativity")
             ox_states = []
             elec = []
 
