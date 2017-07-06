@@ -23,8 +23,9 @@ __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
 # TODO: unit tests
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
+
 # Load elemental cohesive energy data from json file
-with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
+with open(os.path.join(module_dir, 'cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
 
 
@@ -37,50 +38,56 @@ class MagpieData:
     def __init__(self):
         self.all_elemental_props = defaultdict(dict)
         self.available_props = []
-        data_dir = os.path.join(module_dir, "data", 'magpie_elementdata')
+        self.data_dir = os.path.join(module_dir, "data", 'magpie_elementdata')
 
         # Make a list of available properties
-        for datafile in glob(os.path.join(data_dir, "*.table")):
+        for datafile in glob(os.path.join(self.data_dir, "*.table")):
             self.available_props.append(os.path.basename(datafile).replace('.table', ''))
 
-        # parse and store all elemental properties
+        self._parse()
+
+    def _parse(self):
+        """
+        parse and store all elemental properties once and for all.
+        """
         for descriptor_name in self.available_props:
-            with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
-                lines = descp_file.readlines()
-                for atomic_no in range(1, len(_pt_data)+1):  # as high as pymatgen goes
+            with open(os.path.join(self.data_dir, '{}.table'.format(descriptor_name)), 'r') as f:
+                lines = f.readlines()
+                for atomic_no in range(1, len(_pt_data)+1):  # max Z=103
                     try:
                         if descriptor_name in ["OxidationStates"]:
                             prop_value = [float(i) for i in lines[atomic_no - 1].split()]
                         else:
                             prop_value = float(lines[atomic_no - 1])
-                    except:
+                    except ValueError:
                         prop_value = float("NaN")
-
                     self.all_elemental_props[descriptor_name][str(Element.from_Z(atomic_no))] = prop_value
 
-    def get_data(self, comp_obj, descriptor_name):
+    def get_data(self, comp, descriptor_name):
         """
         Gets magpie data for a composition object.
 
         Args:
-            comp_obj: Pymatgen composition object
-            descriptor_name (string): Name of descriptor
+            comp (Composition/str): Pymatgen composition object or str.
+            descriptor_name (str): Name of descriptor
 
         Returns:
             magpiedata (list): list of values for each atom in comp_obj
         """
+        comp = Composition(comp)
         if descriptor_name not in self.available_props:
-            raise ValueError("This descriptor is not available from the Magpie repository. Choose from {}".format(self.available_props))
+            raise ValueError("This descriptor is not available from the Magpie repository. "
+                             "Choose from {}".format(self.available_props))
         
         # Get data for given element/compound
-        el_amt = comp_obj.get_el_amt_dict()
-        elements = list(el_amt.keys())
+        el_amt = comp.get_el_amt_dict()
+        # sort symbols by electronegativity
+        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
 
-        magpiedata = [self.all_elemental_props[descriptor_name][el]
-                      for el in elements
-                      for i in range(int(el_amt[el]))]
+        return [self.all_elemental_props[descriptor_name][el]
+                for el in symbols
+                for _ in range(int(el_amt[el]))]
 
-        return magpiedata
 
 magpie_data = MagpieData()    
 
