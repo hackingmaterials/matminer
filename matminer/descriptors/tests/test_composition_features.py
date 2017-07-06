@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 from matminer.descriptors.composition_features import get_composition_oxidation_state, \
-    get_pymatgen_descriptor, StoichiometryAttribute, ElementAttribute, ValenceOrbitalAttribute, \
+    get_pymatgen_descriptor, StoichiometricAttribute, ElementalAttribute, ValenceOrbitalAttribute, \
     IonicAttribute
 from matminer.descriptors.data import magpie_data
 from pymatgen import Composition, Specie
@@ -28,12 +28,12 @@ class CompositionFeaturesTest(PymatgenTest):
         self.df = pd.DataFrame({"composition": ["Fe2O3"]})
 
     def test_stoich(self):
-        df_stoich = StoichiometryAttribute().featurize_all(self.df)
+        df_stoich = StoichiometricAttribute().featurize_all(self.df)
         self.assertAlmostEqual(df_stoich["0-norm"][0], 2)
         self.assertAlmostEqual(df_stoich["7-norm"][0], 0.604895199)
 
     def test_elem(self):
-        df_elem = ElementAttribute().featurize_all(self.df)
+        df_elem = ElementalAttribute().featurize_all(self.df)
         self.assertAlmostEqual(df_elem["Min Number"][0], 8)
         self.assertAlmostEqual(df_elem["Max Number"][0], 26)
         self.assertAlmostEqual(df_elem["Range Number"][0], 18)

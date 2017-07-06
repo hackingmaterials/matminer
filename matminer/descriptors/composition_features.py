@@ -17,7 +17,7 @@ from matminer.descriptors.data import magpie_data, cohesive_energy_data
 __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
 
 
-class StoichiometryAttribute(AbstractFeaturizer):
+class StoichiometricAttribute(AbstractFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -58,7 +58,7 @@ class StoichiometryAttribute(AbstractFeaturizer):
         return labels
 
 
-class ElementAttribute(AbstractFeaturizer):
+class ElementalAttribute(AbstractFeaturizer):
     """
     Class to calculate elemental property attributes.
 
@@ -415,9 +415,9 @@ if __name__ == '__main__':
     print("WARD NPJ ATTRIBUTES")
     print("Stoichiometric attributes")
     p_list = [0, 2, 3, 5, 7, 9]
-    print(StoichiometryAttribute().featurize_all(training_set))
+    print(StoichiometricAttribute().featurize_all(training_set))
     print("Elemental property attributes")
-    print(ElementAttribute().featurize_all(training_set))
+    print(ElementalAttribute().featurize_all(training_set))
     print("Valence Orbital Attributes")
     print(ValenceOrbitalAttribute().featurize_all(training_set))
     print("Ionic attributes")
