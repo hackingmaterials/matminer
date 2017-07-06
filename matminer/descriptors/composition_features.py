@@ -6,6 +6,7 @@ import os
 import re
 from functools import reduce
 import itertools
+from glob import glob
 
 import numpy as np
 
@@ -21,6 +22,7 @@ __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
 
 # TODO: unit tests
 
+module_dir = os.path.dirname(os.path.abspath(__file__))
 # Load elemental cohesive energy data from json file
 with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
@@ -34,29 +36,27 @@ class MagpieData:
 
     def __init__(self):
         self.magpie_props = {}
-        data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
-        available_props = []
+        self.available_props = []
+        data_dir = os.path.join(module_dir, "data", 'magpie_elementdata')                
         prop_value = []        
 
         # Make a list of available properties
-        for datafile in os.listdir(data_dir):
-            available_props.append(datafile.replace('.table', ''))
+        for datafile in glob(os.path.join(data_dir, "*.table")):
+            self.available_props.append(os.path.basename(datafile).replace('.table', ''))
 
-        if descriptor_name not in available_props:
-            raise ValueError("This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
+        for descriptor_name in self.available_props:
+            with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
+                lines = descp_file.readlines()
+                for atomic_no in range(1, len(_pt_data)+1):  # as high as pymatgen goes
+                    try:
+                        if descriptor_name in ["OxidationStates"]:
+                            prop_value.append([float(i) for i in lines[atomic_no - 1].split()])
+                        else:
+                            prop_value.append(float(lines[atomic_no - 1]))
+                    except:
+                        prop_value.append(float("NaN"))
 
-        with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
-            lines = descp_file.readlines()
-            for atomic_no in range(1, len(_pt_data.keys())+1):  # as high as pymatgen goes
-                try:
-                    if descriptor_name in ["OxidationStates"]:
-                        prop_value.append([float(i) for i in lines[atomic_no - 1].split()])
-                    else:
-                        prop_value.append(float(lines[atomic_no - 1]))
-                except:
-                    prop_value.append(float("NaN"))
-
-            self.magpie_props[descriptor_name] = dict(zip(_pt_data.keys(), prop_value))
+            self.magpie_props[descriptor_name] = dict(zip(list(_pt_data.keys()), prop_value))
 
     def get_data(self, comp_obj, descriptor_name):
         """
@@ -69,6 +69,9 @@ class MagpieData:
         Returns:
             magpiedata (list): list of values for each atom in comp_obj
         """
+        if descriptor_name not in self.available_props:
+            raise ValueError("This descriptor is not available from the Magpie repository. Choose from {}".format(self.available_props))
+        
         # Get data for given element/compound
         el_amt = comp_obj.get_el_amt_dict()
         elements = list(el_amt.keys())
@@ -261,6 +264,7 @@ class IonicAttributes(BaseFeaturizer):
         else:
             # Get magpie data for each element
             all_ox_states = magpie_data.get_data(comp_obj, "OxidationStates")
+            print(all_ox_states)
             all_elec = magpie_data.get_data(comp_obj, "Electronegativity")
             ox_states = []
             elec = []
