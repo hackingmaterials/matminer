@@ -136,7 +136,7 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
+    def xy_plot(self, x_col, y_col, x_axis_type='-', y_axis_type='-', text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
                 legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill',
                 hoverinfo='x+y+text', add_xy_plot=None, marker_outline_width=0,
                 marker_outline_color='black',
@@ -150,6 +150,10 @@ class PlotlyFig:
         Args:
             x_col: (array) x-axis values, which can be a list/array/dataframe column
             y_col: (array) y-axis values, which can be a list/array/dataframe column
+            x_axis_type: (str) method of spacing values on the x axis, relevant options are 'linear' and 'log', default
+                attempts to choose best option from the data
+            y_axis_type: (str) method of spacing values on the y axis, relevant options are 'linear' and 'log', default
+                attempts to choose best option from the data
             text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a
                 dataframe column containing text strings
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
@@ -313,6 +317,9 @@ class PlotlyFig:
 
         # Add legend
         self.layout['showlegend'] = showlegend
+
+        self.layout['xaxis']['type'] = x_axis_type
+        self.layout['yaxis']['type'] = y_axis_type
 
         fig = dict(data=data, layout=self.layout)
 
