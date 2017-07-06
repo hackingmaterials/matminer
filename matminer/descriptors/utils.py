@@ -1,7 +1,10 @@
+from __future__ import division, unicode_literals, print_function
+
 from functools import reduce
 
-from matminer.descriptors.data import cohesive_energy_data
 from pymatgen import Composition, MPRester, Element
+
+from matminer.descriptors.data import cohesive_energy_data
 
 
 def get_cohesive_energy(comp):
