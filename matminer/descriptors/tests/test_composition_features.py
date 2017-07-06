@@ -5,7 +5,8 @@ import unittest
 import pandas as pd
 from matminer.descriptors.composition_features import get_composition_oxidation_state, \
     get_pymatgen_descriptor, StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, \
-    IonicAttributes, magpie_data
+    IonicAttributes
+from matminer.descriptors.data import magpie_data
 from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
