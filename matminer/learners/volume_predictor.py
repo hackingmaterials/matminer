@@ -7,7 +7,7 @@ import numpy as np
 from pymatgen.analysis.bond_valence import BVAnalyzer
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
-from matminer.descriptors.composition import get_pymatgen_descriptor
+from matminer.descriptors.data import PymatgenData
 
 
 class VolumePredictor:
@@ -39,6 +39,7 @@ class VolumePredictor:
 
         self.cutoff = cutoff
         self.ionic_factor = ionic_factor
+        self.pmg_data = PymatgenData()
 
     def predict(self, structure):
         """
@@ -56,7 +57,7 @@ class VolumePredictor:
 
         smallest_ratio = None  # ratio of observed vs expected bond distance
         ionic_mix = min(
-            np.std(get_pymatgen_descriptor(structure.composition, 'X')) * self.ionic_factor, 1)
+            np.std(self.pmg_data.get_property(structure.composition, 'X')) * self.ionic_factor, 1)
 
         for site in structure:
             el1 = site.specie
