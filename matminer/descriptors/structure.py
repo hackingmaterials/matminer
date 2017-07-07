@@ -21,7 +21,204 @@ __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
 
 
 # TODO: implement featurize and generate_labels
-class StructuralAttribute(AbstractFeaturizer):
+class SiteAttribute(AbstractFeaturizer):
+    """
+    Featurize site in the given structure.
+
+    TODO: The features could include the site's elemental properties + its
+        local environment in the strucure(like coordination number, bond lengths etc.)
+    """
+    def __init__(self, structure):
+        self.structure = structure
+
+    def featurize(self):
+        pass
+
+    def generate_labels(self):
+        pass
+
+    def get_vol_per_site(self):
+        if not self.structure.is_ordered:
+            raise ValueError("Disordered structure support not built yet")
+
+        return self.structure.volume / len(self.structure)
+
+    def get_min_relative_distances(self, cutoff=10.0):
+        """
+        This function determines the relative distance of each site to its closest
+        neighbor. We use the relative distance,
+        f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the absolute
+        distances, r_ij, to account for the fact that different atoms/species
+        have different sizes.  The function uses the valence-ionic radius
+        estimator implemented in pymatgen.
+
+        Args:
+            struct (Structure): input structure.
+            cutoff (float): (absolute) distance up to which tentative closest
+                    neighbors (on the basis of relative distances) are
+                    to be determined.
+
+        Returns:
+            ([float]) list of all minimum relative distances (i.e., for all sites).
+        """
+        vire = ValenceIonicRadiusEvaluator(self.structure)
+        min_rel_dists = []
+        for site in vire.structure:
+            min_rel_dists.append(min([dist / (vire.radii[site.species_string] +
+                                              vire.radii[neigh.species_string]) for neigh, dist in \
+                                      vire.structure.get_neighbors(site, cutoff)]))
+        return min_rel_dists[:]
+
+    def get_neighbors_of_site_with_index(self, n, p=None):
+        """
+        Determine the neighbors around the site that has index n in the input
+        Structure object struct, given the approach defined by parameters
+        p.  All supported neighbor-finding approaches and listed and
+        explained in the following.  All approaches start by creating a
+        tentative list of neighbors using a large cutoff radius defined in
+        parameter dictionary p via key "cutoff".
+        "min_dist": find nearest neighbor and its distance d_nn; consider all
+                neighbors which are within a distance of d_nn * (1 + delta),
+                where delta is an additional parameter provided in the
+                dictionary p via key "delta".
+        "scaled_VIRE": compute the radii, r_i, of all sites on the basis of
+                the valence-ionic radius evaluator (VIRE); consider all
+                neighbors for which the distance to the central site is less
+                than the sum of the radii multiplied by an a priori chosen
+                parameter, delta,
+                (i.e., dist < delta * (r_central + r_neighbor)).
+        "min_relative_VIRE": same approach as "min_dist", except that we
+                use relative distances (i.e., distances divided by the sum of the
+                atom radii from VIRE).
+        "min_relative_OKeeffe": same approach as "min_relative_VIRE", except
+                that we use the bond valence parameters from O'Keeffe's bond valence
+                method (J. Am. Chem. Soc. 1991, 3226-3229) to calculate
+                relative distances.
+
+        Args:
+            struct (Structure): input structure.
+            n (int): index of site in Structure object for which
+                    neighbors are to be determined.
+            p (dict): specification (via "approach" key; default is "min_dist")
+                    and parameters of neighbor-finding approach.
+                    Default cutoff radius is 6 Angstrom (key: "cutoff").
+                    Other default parameters are as follows.
+                    min_dist: "delta": 0.15;
+                    min_relative_OKeeffe: "delta": 0.05;
+                    min_relative_VIRE: "delta": 0.05;
+                    scaled_VIRE: "delta": 2.
+
+        Returns: ([site]) list of sites that are considered to be nearest
+                neighbors to site with index n in Structure object struct.
+        """
+        sites = []
+        if p is None:
+            p = {"approach": "min_dist", "delta": 0.1,
+                 "cutoff": 6}
+
+        if p["approach"] not in [
+            "min_relative_OKeeffe", "min_dist", "min_relative_VIRE", \
+                "scaled_VIRE"]:
+            raise RuntimeError("Unsupported neighbor-finding approach"
+                               " (\"{}\")".format(p["approach"]))
+
+        if p["approach"] == "min_relative_OKeeffe" or p["approach"] == "min_dist":
+            neighs_dists = self.structure.get_neighbors(self.structure[n], p["cutoff"])
+            try:
+                eln = self.structure[n].specie.element
+            except:
+                eln = self.structure[n].species_string
+        elif p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
+            vire = ValenceIonicRadiusEvaluator(self.structure)
+            if np.linalg.norm(self.structure[n].coords - vire.structure[n].coords) > 1e-6:
+                raise RuntimeError("Mismatch between input structure and VIRE structure.")
+            neighs_dists = vire.structure.get_neighbors(vire.structure[n], p["cutoff"])
+            rn = vire.radii[vire.structure[n].species_string]
+
+        reldists_neighs = []
+        for neigh, dist in neighs_dists:
+            if p["approach"] == "scaled_VIRE":
+                dscale = p["delta"] * (vire.radii[neigh.species_string] + rn)
+                if dist < dscale:
+                    sites.append(neigh)
+            elif p["approach"] == "min_relative_VIRE":
+                reldists_neighs.append([dist / (
+                    vire.radii[neigh.species_string] + rn), neigh])
+            elif p["approach"] == "min_relative_OKeeffe":
+                try:
+                    el2 = neigh.specie.element
+                except:
+                    el2 = neigh.species_string
+                reldists_neighs.append([dist / self.get_okeeffe_distance_prediction(eln, el2), neigh])
+            elif p["approach"] == "min_dist":
+                reldists_neighs.append([dist, neigh])
+
+        if p["approach"] == "min_relative_VIRE" or \
+                        p["approach"] == "min_relative_OKeeffe" or \
+                        p["approach"] == "min_dist":
+            min_reldist = min([reldist for reldist, neigh in reldists_neighs])
+            for reldist, neigh in reldists_neighs:
+                if reldist / min_reldist < 1.0 + p["delta"]:
+                    sites.append(neigh)
+
+        return sites
+
+    def site_is_of_motif_type(self, n, pneighs=None, thresh=None):
+        """
+        Returns the motif type of site with index n in structure struct;
+        currently featuring "tetrahedral", "octahedral", "bcc", and "cp"
+        (close-packed: fcc and hcp).  If the site is not recognized
+        or if it has been recognized as two different motif types,
+        the function labels the site as "unrecognized".
+
+        Args:
+            struct (Structure): input structure.
+            n (int): index of site in Structure object for which motif type
+                    is to be determined.
+            pneighs (dict): specification and parameters of neighbor-finding
+                    approach (cf., function get_neighbors_of_site_with_index).
+            thresh (dict): thresholds for motif criteria (currently, required
+                    keys and their default values are "qtet": 0.5,
+                    "qoct": 0.5, "qbcc": 0.5, "q6": 0.4).
+
+        Returns: motif type (str).
+        """
+
+        if thresh is None:
+            thresh = {
+                "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
+                "qtribipyr": 0.8}
+
+        ops = self.get_order_parameters(pneighs=pneighs)
+        cn = int(ops[n][0] + 0.5)
+        motif_type = "unrecognized"
+        nmotif = 0
+
+        if cn == 4 and ops[n][37] > thresh["qtet"]:
+            motif_type = "tetrahedral"
+            nmotif += 1
+        # if cn == 5 and ops[n][46] > thresh["qtribipyr"]:
+        #    motif_type = "trigonal bipyramidal"
+        #    nmotif += 1
+        if cn == 6 and ops[n][38] > thresh["qoct"]:
+            motif_type = "octahedral"
+            nmotif += 1
+        if cn == 8 and (ops[n][39] > thresh["qbcc"] and ops[n][37] < thresh["qtet"]):
+            motif_type = "bcc"
+            nmotif += 1
+        if cn == 12 and (ops[n][42] > thresh["q6"] and ops[n][37] < thresh["q6"] and \
+                                     ops[n][38] < thresh["q6"] and ops[n][39] < thresh["q6"]):
+            motif_type = "cp"
+            nmotif += 1
+
+        if nmotif > 1:
+            motif_type = "unrecognized"
+
+        return motif_type
+
+
+# TODO: implement featurize and generate_labels
+class StructuralAttribute(SiteAttribute):
     def __init__(self, structure):
         self.structure = structure
 
@@ -39,12 +236,6 @@ class StructuralAttribute(AbstractFeaturizer):
             total_rad += site.specie.atomic_radius ** 3
 
         return 4 * math.pi * total_rad / (3 * self.structure.volume)
-
-    def get_vol_per_site(self):
-        if not self.structure.is_ordered:
-            raise ValueError("Disordered structure support not built yet")
-
-        return self.structure.volume / len(self.structure)
 
     def get_density(self):
         return self.structure.density
@@ -253,126 +444,6 @@ class StructuralAttribute(AbstractFeaturizer):
                     m[i].append(z[i] * z[j] / d)
         return np.array(m)
 
-    def get_min_relative_distances(self, cutoff=10.0):
-        """
-        This function determines the relative distance of each site to its closest
-        neighbor. We use the relative distance,
-        f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the absolute
-        distances, r_ij, to account for the fact that different atoms/species
-        have different sizes.  The function uses the valence-ionic radius
-        estimator implemented in pymatgen.
-
-        Args:
-            struct (Structure): input structure.
-            cutoff (float): (absolute) distance up to which tentative closest
-                    neighbors (on the basis of relative distances) are
-                    to be determined.
-
-        Returns:
-            ([float]) list of all minimum relative distances (i.e., for all sites).
-        """
-        vire = ValenceIonicRadiusEvaluator(self.structure)
-        min_rel_dists = []
-        for site in vire.structure:
-            min_rel_dists.append(min([dist / (vire.radii[site.species_string] +
-                                              vire.radii[neigh.species_string]) for neigh, dist in \
-                                      vire.structure.get_neighbors(site, cutoff)]))
-        return min_rel_dists[:]
-
-    def get_neighbors_of_site_with_index(self, n, p=None):
-        """
-        Determine the neighbors around the site that has index n in the input
-        Structure object struct, given the approach defined by parameters
-        p.  All supported neighbor-finding approaches and listed and
-        explained in the following.  All approaches start by creating a
-        tentative list of neighbors using a large cutoff radius defined in
-        parameter dictionary p via key "cutoff".
-        "min_dist": find nearest neighbor and its distance d_nn; consider all
-                neighbors which are within a distance of d_nn * (1 + delta),
-                where delta is an additional parameter provided in the
-                dictionary p via key "delta".
-        "scaled_VIRE": compute the radii, r_i, of all sites on the basis of
-                the valence-ionic radius evaluator (VIRE); consider all
-                neighbors for which the distance to the central site is less
-                than the sum of the radii multiplied by an a priori chosen
-                parameter, delta,
-                (i.e., dist < delta * (r_central + r_neighbor)).
-        "min_relative_VIRE": same approach as "min_dist", except that we
-                use relative distances (i.e., distances divided by the sum of the
-                atom radii from VIRE).
-        "min_relative_OKeeffe": same approach as "min_relative_VIRE", except
-                that we use the bond valence parameters from O'Keeffe's bond valence
-                method (J. Am. Chem. Soc. 1991, 3226-3229) to calculate
-                relative distances.
-
-        Args:
-            struct (Structure): input structure.
-            n (int): index of site in Structure object for which
-                    neighbors are to be determined.
-            p (dict): specification (via "approach" key; default is "min_dist")
-                    and parameters of neighbor-finding approach.
-                    Default cutoff radius is 6 Angstrom (key: "cutoff").
-                    Other default parameters are as follows.
-                    min_dist: "delta": 0.15;
-                    min_relative_OKeeffe: "delta": 0.05;
-                    min_relative_VIRE: "delta": 0.05;
-                    scaled_VIRE: "delta": 2.
-
-        Returns: ([site]) list of sites that are considered to be nearest
-                neighbors to site with index n in Structure object struct.
-        """
-        sites = []
-        if p is None:
-            p = {"approach": "min_dist", "delta": 0.1,
-                 "cutoff": 6}
-
-        if p["approach"] not in [
-            "min_relative_OKeeffe", "min_dist", "min_relative_VIRE", \
-                "scaled_VIRE"]:
-            raise RuntimeError("Unsupported neighbor-finding approach"
-                               " (\"{}\")".format(p["approach"]))
-
-        if p["approach"] == "min_relative_OKeeffe" or p["approach"] == "min_dist":
-            neighs_dists = self.structure.get_neighbors(self.structure[n], p["cutoff"])
-            try:
-                eln = self.structure[n].specie.element
-            except:
-                eln = self.structure[n].species_string
-        elif p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
-            vire = ValenceIonicRadiusEvaluator(self.structure)
-            if np.linalg.norm(self.structure[n].coords - vire.structure[n].coords) > 1e-6:
-                raise RuntimeError("Mismatch between input structure and VIRE structure.")
-            neighs_dists = vire.structure.get_neighbors(vire.structure[n], p["cutoff"])
-            rn = vire.radii[vire.structure[n].species_string]
-
-        reldists_neighs = []
-        for neigh, dist in neighs_dists:
-            if p["approach"] == "scaled_VIRE":
-                dscale = p["delta"] * (vire.radii[neigh.species_string] + rn)
-                if dist < dscale:
-                    sites.append(neigh)
-            elif p["approach"] == "min_relative_VIRE":
-                reldists_neighs.append([dist / (
-                    vire.radii[neigh.species_string] + rn), neigh])
-            elif p["approach"] == "min_relative_OKeeffe":
-                try:
-                    el2 = neigh.specie.element
-                except:
-                    el2 = neigh.species_string
-                reldists_neighs.append([dist / self.get_okeeffe_distance_prediction(eln, el2), neigh])
-            elif p["approach"] == "min_dist":
-                reldists_neighs.append([dist, neigh])
-
-        if p["approach"] == "min_relative_VIRE" or \
-                        p["approach"] == "min_relative_OKeeffe" or \
-                        p["approach"] == "min_dist":
-            min_reldist = min([reldist for reldist, neigh in reldists_neighs])
-            for reldist, neigh in reldists_neighs:
-                if reldist / min_reldist < 1.0 + p["delta"]:
-                    sites.append(neigh)
-
-        return sites
-
     def get_order_parameters(self, pneighs=None, convert_none_to_zero=True):
         """
         Calculate all order parameters (OPs) for all sites in Structure object
@@ -479,59 +550,6 @@ class StructuralAttribute(AbstractFeaturizer):
                 "peak1": ops[max1_idx],
                 "peak2": ops[max2_idx]}
         return opstats
-
-    def site_is_of_motif_type(self, n, pneighs=None, thresh=None):
-        """
-        Returns the motif type of site with index n in structure struct;
-        currently featuring "tetrahedral", "octahedral", "bcc", and "cp"
-        (close-packed: fcc and hcp).  If the site is not recognized
-        or if it has been recognized as two different motif types,
-        the function labels the site as "unrecognized".
-
-        Args:
-            struct (Structure): input structure.
-            n (int): index of site in Structure object for which motif type
-                    is to be determined.
-            pneighs (dict): specification and parameters of neighbor-finding
-                    approach (cf., function get_neighbors_of_site_with_index).
-            thresh (dict): thresholds for motif criteria (currently, required
-                    keys and their default values are "qtet": 0.5,
-                    "qoct": 0.5, "qbcc": 0.5, "q6": 0.4).
-
-        Returns: motif type (str).
-        """
-
-        if thresh is None:
-            thresh = {
-                "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
-                "qtribipyr": 0.8}
-
-        ops = self.get_order_parameters(pneighs=pneighs)
-        cn = int(ops[n][0] + 0.5)
-        motif_type = "unrecognized"
-        nmotif = 0
-
-        if cn == 4 and ops[n][37] > thresh["qtet"]:
-            motif_type = "tetrahedral"
-            nmotif += 1
-        # if cn == 5 and ops[n][46] > thresh["qtribipyr"]:
-        #    motif_type = "trigonal bipyramidal"
-        #    nmotif += 1
-        if cn == 6 and ops[n][38] > thresh["qoct"]:
-            motif_type = "octahedral"
-            nmotif += 1
-        if cn == 8 and (ops[n][39] > thresh["qbcc"] and ops[n][37] < thresh["qtet"]):
-            motif_type = "bcc"
-            nmotif += 1
-        if cn == 12 and (ops[n][42] > thresh["q6"] and ops[n][37] < thresh["q6"] and \
-                                     ops[n][38] < thresh["q6"] and ops[n][39] < thresh["q6"]):
-            motif_type = "cp"
-            nmotif += 1
-
-        if nmotif > 1:
-            motif_type = "unrecognized"
-
-        return motif_type
 
     @staticmethod
     def get_okeeffe_params(el_symbol):
