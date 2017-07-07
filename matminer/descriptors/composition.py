@@ -9,7 +9,7 @@ from pymatgen import Composition
 from pymatgen.core.periodic_table import get_el_sp
 
 from matminer.descriptors.base import AbstractFeaturizer
-from matminer.descriptors.data import magpie_data
+from matminer.descriptors.data import MagpieData, PymatgenData
 from matminer.descriptors.utils import get_holder_mean
 
 __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
@@ -120,21 +120,27 @@ class ElementalAttribute(CompositionFeaturizer):
         properties (list of strings): List of elemental properties to use
     """
 
-    def __init__(self, properties=None):
-        if properties is None:
-            self.properties = ["Number", "MendeleevNumber", "AtomicWeight", "MeltingT", "Column",
-                               "Row", "CovalentRadius", "Electronegativity",
-                               "NsValence", "NpValence", "NdValence", "NfValence", "NValance",
-                               "NsUnfilled", "NpUnfilled", "NdUnfilled", "NfUnfilled", "NUnfilled",
-                               "GSvolume_pa", "GSbandgap", "GSmagmom", "SpaceGroupNumber"]
-        else:
-            self.properties = properties
+    def __init__(self, properties=None, data_source=None):
+        self.data_source = data_source or MagpieData()
+        self.properties = properties
+        if self.properties is None:
+            if isinstance(self.data_source, PymatgenData):
+                self.properties = ['X', 'Z', 'atomic_mass', 'group', 'row', 'number',
+                                   'mendeleev_no', 'melting_point',  'atomic_radius_calculated']
+            # magpie
+            else:
+                self.properties = ["Number", "MendeleevNumber", "AtomicWeight", "MeltingT",
+                                   "Column", "Row", "CovalentRadius", "Electronegativity",
+                                   "NsValence", "NpValence", "NdValence", "NfValence", "NValance",
+                                   "NsUnfilled", "NpUnfilled", "NdUnfilled", "NfUnfilled",
+                                   "NUnfilled", "GSvolume_pa", "GSbandgap", "GSmagmom",
+                                   "SpaceGroupNumber"]
 
     def featurize(self, comp):
         all_properties = []
 
         for attr in self.properties:
-            elem_data = magpie_data.get_property(comp, attr)
+            elem_data = self.data_source.get_property(comp, attr)
 
             all_properties.append(min(elem_data))
             all_properties.append(max(elem_data))
@@ -162,20 +168,21 @@ class ElementalAttribute(CompositionFeaturizer):
 class ValenceOrbitalAttribute(CompositionFeaturizer):
     """
     Class to calculate valence orbital attributes.
-    Generate fraction of valence electrons in s, p, d, and f orbitals
+
+    Generates: [fraction of valence electrons in s, p, d, and f orbitals]
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, data_source=None):
+        self.data_source = data_source or MagpieData()
 
     def featurize(self, comp):
         num_atoms = comp.num_atoms
 
-        avg_total_valence = sum(magpie_data.get_property(comp, "NValance")) / num_atoms
-        avg_s = sum(magpie_data.get_property(comp, "NsValence")) / num_atoms
-        avg_p = sum(magpie_data.get_property(comp, "NpValence")) / num_atoms
-        avg_d = sum(magpie_data.get_property(comp, "NdValence")) / num_atoms
-        avg_f = sum(magpie_data.get_property(comp, "NfValence")) / num_atoms
+        avg_total_valence = sum(self.data_source.get_property(comp, "NValance")) / num_atoms
+        avg_s = sum(self.data_source.get_property(comp, "NsValence")) / num_atoms
+        avg_p = sum(self.data_source.get_property(comp, "NpValence")) / num_atoms
+        avg_d = sum(self.data_source.get_property(comp, "NdValence")) / num_atoms
+        avg_f = sum(self.data_source.get_property(comp, "NfValence")) / num_atoms
 
         Fs = avg_s / avg_total_valence
         Fp = avg_p / avg_total_valence
@@ -202,8 +209,15 @@ class IonicAttribute(CompositionFeaturizer):
                  avg_ionic_char (Average ionic character ]
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, data_source=None):
+        self.data_source = data_source or MagpieData()
+        if isinstance(self.data_source, PymatgenData):
+            self.oxidation_states = "oxidation_states"
+            self.electronegativity = "X"
+        # magpie
+        else:
+            self.oxidation_states = "OxidationStates"
+            self.electronegativity = "Electronegativity"
 
     def featurize(self, comp):
         el_amt = comp.get_el_amt_dict()
@@ -217,9 +231,9 @@ class IonicAttribute(CompositionFeaturizer):
             max_ionic_char = 0
             avg_ionic_char = 0
         else:
-            # Get magpie data for each element
-            all_ox_states = magpie_data.get_property(comp, "OxidationStates")
-            all_elec = magpie_data.get_property(comp, "Electronegativity")
+            # Get data for each element
+            all_ox_states = self.data_source.get_property(comp, self.oxidation_states)
+            all_elec = self.data_source.get_property(comp, self.electronegativity)
             ox_states = []
             elec = []
 
@@ -261,9 +275,9 @@ class IonicAttribute(CompositionFeaturizer):
 if __name__ == '__main__':
 
     import pandas as pd
-    from matminer.descriptors.data import PymatgenData
 
     pmg_data = PymatgenData()
+    magpie_data = MagpieData()
 
     descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
                    'coefficient_of_linear_thermal_expansion']

@@ -13,7 +13,7 @@ from monty.design_patterns import singleton
 from pymatgen import Element, Composition, Unit
 from pymatgen.core.periodic_table import _pt_data, get_el_sp
 
-__author__ = 'Jimin Chen, Logan Ward, Kiran Mathew'
+__author__ = 'Kiran Mathew, Jimin Chen, Logan Ward'
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -120,7 +120,8 @@ class PymatgenData(AbstractData):
 
         oxidation_states = {}
         if isinstance(comp, Composition):
-            # check whether the composition is composed of oxidation state decorates species (not just plain Elements)
+            # check whether the composition is composed of oxidation state decorated species (not
+            # just plain Elements)
             if hasattr(comp.elements[0], "oxi_state"):
                 oxidation_states = dict(
                     [(str(sp.element), sp.oxi_state) for sp in comp.elements])
@@ -158,7 +159,8 @@ class PymatgenData(AbstractData):
 
                 # units are None for these pymatgen descriptors
                 # todo: there seem to be a lot more unitless descriptors which are not listed here... -Alex D
-                if property_name not in ['X', 'Z', 'group', 'row', 'number', 'mendeleev_no', 'ionic_radii']:
+                if property_name not in ['X', 'Z', 'group', 'row', 'number', 'mendeleev_no',
+                                         'ionic_radii']:
                     property_units = p.unit
 
             # Make a named tuple out of all the available information
@@ -209,6 +211,3 @@ class PymatgenData(AbstractData):
             el = re.split("\d", g.strip())[0]
             oxidation_states_dict[str(Element(el))] = int(oxidation_states[i])
         return Composition("".join(formula_plain)), oxidation_states_dict
-
-
-magpie_data = MagpieData()
