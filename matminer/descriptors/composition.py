@@ -1,8 +1,12 @@
 from __future__ import division, unicode_literals, print_function
 
 import itertools
+from collections import OrderedDict
 
 import numpy as np
+
+from pymatgen import Composition
+from pymatgen.core.periodic_table import get_el_sp
 
 from matminer.descriptors.base import AbstractFeaturizer
 from matminer.descriptors.data import magpie_data
@@ -11,7 +15,61 @@ from matminer.descriptors.utils import get_holder_mean
 __author__ = 'Jimin Chen, Logan Ward, Saurabh Bajaj, Anubhav jain, Kiran Mathew'
 
 
-class StoichiometricAttribute(AbstractFeaturizer):
+class CompositionFeaturizer(AbstractFeaturizer):
+    """
+    Base class to compute features for compounds.
+    All composition related attribute classes must subclass this.
+    """
+
+    def featurize_all(self, comp_frame, col_id="composition"):
+        """
+        Compute features for all compounds contained in input dataframe
+
+        Args:
+            comp_frame (pandas.DataFrame): Dataframe containing column of compounds
+            col_id (string): column label containing compositions
+
+        Returns:
+            pandas.DataFrame: updated Dataframe
+        """
+
+        features = []
+        comp_list = comp_frame[col_id]
+        for comp in comp_list:
+            comp_obj = Composition(comp)
+            features.append(self.featurize(comp_obj))
+
+        features = np.array(features)
+
+        labels = self.generate_labels()
+        comp_frame = comp_frame.assign(
+            **dict(zip(labels, [features[:, i] for i in range(np.shape(features)[1])])))
+
+        return comp_frame
+
+    def featurize(self, comp):
+        """
+        Main featurizer function. Only defined in feature subclasses.
+
+        Args:
+            comp (Composition / str)
+
+        Returns:
+            list of features
+        """
+        pass
+
+    def generate_labels(self):
+        """
+        Generate attribute names
+
+        Returns:
+            list of strings for attribute labels
+        """
+        pass
+
+
+class StoichiometricAttribute(CompositionFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -28,19 +86,18 @@ class StoichiometricAttribute(AbstractFeaturizer):
             self.p_list = p_list
 
     def featurize(self, comp):
-        el_amt = comp.get_el_amt_dict()
 
         p_norms = [0] * len(self.p_list)
-        n_atoms = sum(el_amt.values())
+        n_atoms = sum([comp[el] for el in comp.elements])
 
-        for i in range(len(self.p_list)):
-            if self.p_list[i] < 0:
+        for i, p in enumerate(self.p_list):
+            if p < 0:
                 raise ValueError("p-norm not defined for p < 0")
-            if self.p_list[i] == 0:
-                p_norms[i] = len(el_amt.values())
+            if p == 0:
+                p_norms[i] = len(comp.elements)
             else:
-                for j in el_amt:
-                    p_norms[i] += (el_amt[j] / n_atoms) ** self.p_list[i]
+                for el in comp.elements:
+                    p_norms[i] += (comp[el] / n_atoms) ** self.p_list[i]
                 p_norms[i] = p_norms[i] ** (1.0 / self.p_list[i])
 
         return p_norms
@@ -52,7 +109,7 @@ class StoichiometricAttribute(AbstractFeaturizer):
         return labels
 
 
-class ElementalAttribute(AbstractFeaturizer):
+class ElementalAttribute(CompositionFeaturizer):
     """
     Class to calculate elemental property attributes.
 
@@ -102,7 +159,7 @@ class ElementalAttribute(AbstractFeaturizer):
         return labels
 
 
-class ValenceOrbitalAttribute(AbstractFeaturizer):
+class ValenceOrbitalAttribute(CompositionFeaturizer):
     """
     Class to calculate valence orbital attributes.
     Generate fraction of valence electrons in s, p, d, and f orbitals
@@ -136,7 +193,7 @@ class ValenceOrbitalAttribute(AbstractFeaturizer):
         return labels
 
 
-class IonicAttribute(AbstractFeaturizer):
+class IonicAttribute(CompositionFeaturizer):
     """
     Class to calculate ionic property attributes.
 
@@ -150,8 +207,10 @@ class IonicAttribute(AbstractFeaturizer):
 
     def featurize(self, comp):
         el_amt = comp.get_el_amt_dict()
-        elements = list(el_amt.keys())
-        values = list(el_amt.values())
+        # Data returns properties sorted by the electronegativity of the constituent elements
+        el_amt_dict = OrderedDict(sorted(el_amt.items(), key=lambda item: get_el_sp(item[0]).X))
+        elements = list(el_amt_dict.keys())
+        values = list(el_amt_dict.values())
 
         if len(elements) < 2:  # Single element
             cpd_possible = True
@@ -202,12 +261,15 @@ class IonicAttribute(AbstractFeaturizer):
 if __name__ == '__main__':
 
     import pandas as pd
+    from matminer.descriptors.data import PymatgenData
+
+    pmg_data = PymatgenData()
 
     descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
                    'coefficient_of_linear_thermal_expansion']
 
     for desc in descriptors:
-        print(get_pymatgen_descriptor('LiFePO4', desc))
+        print(pmg_data.get_property('LiFePO4', desc))
     print(magpie_data.get_property('LiFePO4', 'AtomicVolume'))
     print(magpie_data.get_property('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
