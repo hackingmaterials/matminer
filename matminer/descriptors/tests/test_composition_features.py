@@ -3,14 +3,16 @@ from __future__ import unicode_literals, division, print_function
 import unittest
 
 import pandas as pd
-from matminer.descriptors.composition import StoichiometricAttribute, ElementalAttribute, ValenceOrbitalAttribute, \
-    IonicAttribute
-from matminer.descriptors.data import magpie_data, PymatgenData
+
 from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
+from matminer.descriptors.composition import StoichiometricAttribute, ElementalAttribute, \
+    ValenceOrbitalAttribute, IonicAttribute
+from matminer.descriptors.data import magpie_data, PymatgenData
 
-class MagpiDataTest(unittest.TestCase):
+
+class MagpieDataTest(unittest.TestCase):
     def test_string_composition(self):
         oxs = magpie_data.get_property("LiFePO4", "OxidationStates")
         self.assertEqual(oxs, [[1.0],
