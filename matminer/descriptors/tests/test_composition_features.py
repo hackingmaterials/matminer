@@ -9,11 +9,12 @@ from pymatgen.util.testing import PymatgenTest
 
 from matminer.descriptors.composition import StoichiometricAttribute, ElementalAttribute, \
     ValenceOrbitalAttribute, IonicAttribute
-from matminer.descriptors.data import magpie_data, PymatgenData
+from matminer.descriptors.data import MagpieData, PymatgenData
 
 
 class MagpieDataTest(unittest.TestCase):
     def test_string_composition(self):
+        magpie_data = MagpieData()
         oxs = magpie_data.get_property("LiFePO4", "OxidationStates")
         self.assertEqual(oxs, [[1.0],
                                [2.0, 3.0],
