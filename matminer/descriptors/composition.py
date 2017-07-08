@@ -1,5 +1,9 @@
 from __future__ import division, unicode_literals, print_function
 
+"""
+Defines classes that generate features based on compositon objects.
+"""
+
 import itertools
 from collections import OrderedDict
 
