@@ -1,5 +1,9 @@
 from __future__ import division, unicode_literals, print_function
 
+"""
+Defines classes that generate features based on Structure/Site objects.
+"""
+
 import itertools
 import math
 from operator import itemgetter
@@ -16,8 +20,8 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from matminer.descriptors.base import AbstractFeaturizer
 
 
-__authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
-              'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
+__authors__ = 'Anubhav Jain, Saurabh Bajaj, Nils E.R. Zimmerman, Kiran Mathew'
+__emaill__ = 'ajain@lbl.gov, sbajaj@lbl.gov, nils.e.r.zimmermann@gmail.com'
 
 
 # TODO: implement featurize and generate_labels

@@ -1,5 +1,9 @@
 from __future__ import division, unicode_literals, print_function
 
+"""
+Defines various utility functions.
+"""
+
 from functools import reduce
 
 from pymatgen import Composition, MPRester, Element

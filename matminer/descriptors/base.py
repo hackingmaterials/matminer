@@ -1,5 +1,9 @@
 from __future__ import division, unicode_literals, print_function
 
+"""
+Defines abstract featurizer class. Inspired by deepchem model.
+"""
+
 import abc
 import six
 

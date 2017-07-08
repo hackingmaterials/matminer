@@ -1,5 +1,9 @@
 from __future__ import division, unicode_literals, print_function
 
+"""
+Defines wrappers for data sources(magpi, pymatgen etc) for elemental properties.
+"""
+
 import os
 import json
 import re
@@ -34,7 +38,9 @@ class AbstractData((six.with_metaclass(abc.ABCMeta))):
             property_name (str): Name of descriptor
 
         Returns:
-            (list): list of values for each atom in comp_obj
+            (list): list of values for each atom in comp_obj.
+            Note: the returned values are sorted by the corresponding element's electronegativity.
+            This is done for the sake of consistency.
         """
         pass
 
