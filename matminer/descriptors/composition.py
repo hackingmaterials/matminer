@@ -80,10 +80,7 @@ class StoichiometricAttribute(CompositionFeaturizer):
     """
 
     def __init__(self, p_list=None):
-        if p_list is None:
-            self.p_list = [0, 2, 3, 5, 7, 10]
-        else:
-            self.p_list = p_list
+        self.p_list = p_list or [0, 2, 3, 5, 7, 10]
 
     def featurize(self, comp):
 
@@ -117,7 +114,10 @@ class ElementalAttribute(CompositionFeaturizer):
         mode of descriptors
 
     Args:
-        properties (list of strings): List of elemental properties to use
+        properties (list of strings): List of elemental properties to use. Must be supported
+            by the accompanying data_source.
+        data_source (AbstractData): object of class that subclasses data.Abstractdata.
+            eg. Magpiedata(), PymatgenData()
     """
 
     def __init__(self, properties=None, data_source=None):
@@ -170,6 +170,10 @@ class ValenceOrbitalAttribute(CompositionFeaturizer):
     Class to calculate valence orbital attributes.
 
     Generates: [fraction of valence electrons in s, p, d, and f orbitals]
+
+    Args:
+        data_source (AbstractData): object of class that subclasses data.Abstractdata.
+            eg. Magpiedata(), PymatgenData()
     """
 
     def __init__(self, data_source=None):
@@ -207,6 +211,10 @@ class IonicAttribute(CompositionFeaturizer):
     Generates: [ cpd_possible (boolean value indicating if a neutral ionic compound is possible),
                  max_ionic_char (float value indicating maximum ionic character between two atoms),
                  avg_ionic_char (Average ionic character ]
+
+    Args:
+        data_source (AbstractData): object of class that subclasses data.Abstractdata.
+            eg. Magpiedata(), PymatgenData()
     """
 
     def __init__(self, data_source=None):
