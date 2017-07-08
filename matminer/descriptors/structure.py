@@ -21,7 +21,7 @@ from matminer.descriptors.base import AbstractFeaturizer
 
 
 __authors__ = 'Anubhav Jain, Saurabh Bajaj, Nils E.R. Zimmerman, Kiran Mathew'
-__emaill__ = 'ajain@lbl.gov, sbajaj@lbl.gov, nils.e.r.zimmermann@gmail.com'
+__email__ = 'ajain@lbl.gov, sbajaj@lbl.gov, nils.e.r.zimmermann@gmail.com'
 
 
 # TODO: implement featurize and generate_labels
@@ -69,8 +69,8 @@ class SiteAttribute(AbstractFeaturizer):
         min_rel_dists = []
         for site in vire.structure:
             min_rel_dists.append(min([dist / (vire.radii[site.species_string] +
-                                              vire.radii[neigh.species_string]) for neigh, dist in \
-                                      vire.structure.get_neighbors(site, cutoff)]))
+                                              vire.radii[neigh.species_string])
+                                      for neigh, dist in vire.structure.get_neighbors(site, cutoff)]))
         return min_rel_dists[:]
 
     def get_neighbors_of_site_with_index(self, n, p=None):
@@ -117,14 +117,10 @@ class SiteAttribute(AbstractFeaturizer):
         """
         sites = []
         if p is None:
-            p = {"approach": "min_dist", "delta": 0.1,
-                 "cutoff": 6}
+            p = {"approach": "min_dist", "delta": 0.1, "cutoff": 6}
 
-        if p["approach"] not in [
-            "min_relative_OKeeffe", "min_dist", "min_relative_VIRE", \
-                "scaled_VIRE"]:
-            raise RuntimeError("Unsupported neighbor-finding approach"
-                               " (\"{}\")".format(p["approach"]))
+        if p["approach"] not in ["min_relative_OKeeffe", "min_dist", "min_relative_VIRE", "scaled_VIRE"]:
+            raise RuntimeError("Unsupported neighbor-finding approach (\"{}\")".format(p["approach"]))
 
         if p["approach"] == "min_relative_OKeeffe" or p["approach"] == "min_dist":
             neighs_dists = self.structure.get_neighbors(self.structure[n], p["cutoff"])
@@ -189,9 +185,8 @@ class SiteAttribute(AbstractFeaturizer):
         """
 
         if thresh is None:
-            thresh = {
-                "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
-                "qtribipyr": 0.8}
+            thresh = {"qtet": 0.5, "qoct": 0.5,
+                      "qbcc": 0.5, "q6": 0.4, "qtribipyr": 0.8}
 
         ops = self.get_order_parameters(pneighs=pneighs)
         cn = int(ops[n][0] + 0.5)
@@ -210,8 +205,10 @@ class SiteAttribute(AbstractFeaturizer):
         if cn == 8 and (ops[n][39] > thresh["qbcc"] and ops[n][37] < thresh["qtet"]):
             motif_type = "bcc"
             nmotif += 1
-        if cn == 12 and (ops[n][42] > thresh["q6"] and ops[n][37] < thresh["q6"] and \
-                                     ops[n][38] < thresh["q6"] and ops[n][39] < thresh["q6"]):
+        if cn == 12 and (ops[n][42] > thresh["q6"] and
+                                 ops[n][37] < thresh["q6"] and
+                                 ops[n][38] < thresh["q6"] and
+                                 ops[n][39] < thresh["q6"]):
             motif_type = "cp"
             nmotif += 1
 
@@ -220,9 +217,165 @@ class SiteAttribute(AbstractFeaturizer):
 
         return motif_type
 
+    @staticmethod
+    def get_okeeffe_params(el_symbol):
+        """
+        Returns the elemental parameters related to atom size and
+        electronegativity which are used for estimating bond-valence
+        parameters (bond length) of pairs of atoms on the basis of data
+        provided in 'Atoms Sizes and Bond Lengths in Molecules and Crystals'
+        (O'Keeffe & Brese, 1991).
+
+        Args:
+            el_symbol (str): element symbol.
+        Returns:
+            (dict): atom-size ('r') and electronegativity-related ('c')
+                    parameter.
+        """
+
+        el = Element(el_symbol)
+        if el not in list(BV_PARAMS.keys()):
+            raise RuntimeError("Could not find O'Keeffe parameters for element  \"{}\" in "
+                               "\"BV_PARAMS\"dictonary provided by pymatgen".format(el_symbol))
+
+        return BV_PARAMS[el]
+
+    @staticmethod
+    def get_okeeffe_distance_prediction(el1, el2):
+        """
+        Returns an estimate of the bond valence parameter (bond length) using
+        the derived parameters from 'Atoms Sizes and Bond Lengths in Molecules
+        and Crystals' (O'Keeffe & Brese, 1991). The estimate is based on two
+        experimental parameters: r and c. The value for r  is based off radius,
+        while c is (usually) the Allred-Rochow electronegativity. Values used
+        are *not* generated from pymatgen, and are found in
+        'okeeffe_params.json'.
+
+        Args:
+            el1, el2 (Element): two Element objects
+        Returns:
+            a float value of the predicted bond length
+        """
+        el1_okeeffe_params = StructuralAttribute.get_okeeffe_params(el1)
+        el2_okeeffe_params = StructuralAttribute.get_okeeffe_params(el2)
+
+        r1 = el1_okeeffe_params['r']
+        r2 = el2_okeeffe_params['r']
+        c1 = el1_okeeffe_params['c']
+        c2 = el2_okeeffe_params['c']
+
+        return r1 + r2 - r1 * r2 * math.pow(math.sqrt(c1) - math.sqrt(c2), 2) / (c1 * r1 + c2 * r2)
+
+    def get_order_parameters(self, pneighs=None, convert_none_to_zero=True):
+        """
+        Calculate all order parameters (OPs) for all sites in Structure object
+        struct.
+
+        Args:
+            struct (Structure): input structure.
+            pneighs (dict): specification and parameters of
+                    neighbor-finding approach (see
+                    get_neighbors_of_site_with_index function
+                    for more details).
+            convert_none_to_zero (bool): flag indicating whether or not
+                    to convert None values in OPs to zero.
+
+        Returns: ([[float]]) matrix of all sites' (1st dimension)
+                order parameters (2nd dimension). 46 order parameters are
+                computed per site: q_cn (coordination number), q_lin,
+                35 x q_bent (starting with a target angle of 5 degrees and,
+                increasing by 5 degrees, until 175 degrees), q_tet, q_oct,
+                q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
+        """
+        opvals = []
+        optypes = ["cn", "lin"]
+        opparas = [[], []]
+        for i in range(5, 180, 5):
+            optypes.append("bent")
+            opparas.append([float(i), 0.0667])
+        for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq",
+                  "sq_pyr"]:  # , "tri_bipyr"]:
+            optypes.append(t)
+            opparas.append([])
+        ops = OrderParameters(optypes, opparas, 100.0)
+        for i, s in enumerate(self.structure.sites):
+            neighcent = self.get_neighbors_of_site_with_index(i, pneighs)
+            neighcent.append(s)
+            opvals.append(ops.get_order_parameters(
+                neighcent, len(neighcent) - 1,
+                indeces_neighs=[j for j in range(len(neighcent) - 1)]))
+            if convert_none_to_zero:
+                for j, opval in enumerate(opvals[i]):
+                    if opval is None:
+                        opvals[i][j] = 0.0
+        return opvals
+
+    def get_order_parameter_stats(self, pneighs=None, convert_none_to_zero=True, delta_op=0.01):
+        """
+        Determine the order parameter statistics accumulated across all sites
+        in Structure object struct using the get_order_parameters function.
+
+        Args:
+            struct (Structure): input structure.
+            pneighs (dict): specification and parameters of
+                    neighbor-finding approach (see
+                    get_neighbors_of_site_with_index function
+                    for more details).
+            convert_none_to_zero (bool): flag indicating whether or not
+                    to convert None values in OPs to zero (cf.,
+                    get_order_parameters function).
+            delta_op (float): bin size of histogram that is computed
+                    in order to identify peak locations.
+
+        Returns: ({}) dictionary, the keys of which represent
+                the order parameter type (e.g., "bent5", "tet", "sq_pyr")
+                and the values of which are dictionaries carring the
+                statistics ("min", "max", "mean", "std", "peak1", "peak2").
+        """
+        opstats = {}
+        optypes = ["cn", "lin"]
+        for i in range(5, 180, 5):
+            optypes.append("bent{}".format(i))
+        for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq",
+                  "sq_pyr"]:  # , "tri_bipyr"]:
+            optypes.append(t)
+        opvals = self.get_order_parameters(pneighs=pneighs, convert_none_to_zero=convert_none_to_zero)
+        opvals2 = [[] for t in optypes]
+        for i, opsite in enumerate(opvals):
+            for j, op in enumerate(opsite):
+                opvals2[j].append(op)
+        for i, opstype in enumerate(opvals2):
+            ops_hist = {}
+            for op in opstype:
+                b = round(op / delta_op) * delta_op
+                if b in ops_hist.keys():
+                    ops_hist[b] += 1
+                else:
+                    ops_hist[b] = 1
+            ops = list(ops_hist.keys())
+            hist = list(ops_hist.values())
+            sorted_hist = sorted(hist, reverse=True)
+            if len(sorted_hist) > 1:
+                max1_hist, max2_hist = sorted_hist[0], sorted_hist[1]
+            elif len(sorted_hist) > 0:
+                max1_hist, max2_hist = sorted_hist[0], sorted_hist[0]
+            else:
+                raise RuntimeError("Could not compute OP histogram.")
+            max1_idx = hist.index(max1_hist)
+            max2_idx = hist.index(max2_hist)
+            opstats[optypes[i]] = {
+                "min": min(opstype),
+                "max": max(opstype),
+                "mean": np.mean(np.array(opstype)),
+                "std": np.std(np.array(opstype)),
+                "peak1": ops[max1_idx],
+                "peak2": ops[max2_idx]}
+        return opstats
+
 
 # TODO: implement featurize and generate_labels
 class StructuralAttribute(SiteAttribute):
+
     def __init__(self, structure):
         self.structure = structure
 
@@ -253,7 +406,9 @@ class StructuralAttribute(SiteAttribute):
             cutoff: (int/float) distance to calculate rdf up to
             bin_size: (int/float) size of bin to obtain rdf for
 
-        Returns: (tuple of ndarray) first element is the normalized RDF, second is the inner radius of the RDF bin
+        Returns:
+            (tuple of ndarray): first element is the normalized RDF, second is the inner
+                radius of the RDF bin.
 
         """
 
@@ -311,8 +466,7 @@ class StructuralAttribute(SiteAttribute):
             distances_by_type[p] = []
 
         def get_symbol(site):
-            return site.specie.symbol if isinstance(site.specie,
-                                                    Element) else site.specie.element.symbol
+            return site.specie.symbol if isinstance(site.specie, Element) else site.specie.element.symbol
 
         for site, nlst in zip(self.structure.sites,
                               neighbors_lst):  # Each list is a list for each site
@@ -392,7 +546,9 @@ class StructuralAttribute(SiteAttribute):
             b = struct.lattice.matrix[1]
             c = struct.lattice.matrix[2]
             cutoff = max(
-                [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c), np.linalg.norm(a - b + c),
+                [np.linalg.norm(a + b + c),
+                 np.linalg.norm(-a + b + c),
+                 np.linalg.norm(a - b + c),
                  np.linalg.norm(a + b - c)])
 
         nbins = int(cutoff / dr) + 1
@@ -405,8 +561,7 @@ class StructuralAttribute(SiteAttribute):
             for neigh, dist in neighs_dists:
                 neigh_charge = float(neigh.specie.oxi_state)
                 bin_index = int(dist / dr)
-                redf_dict["redf"][bin_index] += (this_charge * neigh_charge) / (
-                struct.num_sites * dist)
+                redf_dict["redf"][bin_index] += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
         return redf_dict
 
@@ -448,160 +603,4 @@ class StructuralAttribute(SiteAttribute):
                     m[i].append(z[i] * z[j] / d)
         return np.array(m)
 
-    def get_order_parameters(self, pneighs=None, convert_none_to_zero=True):
-        """
-        Calculate all order parameters (OPs) for all sites in Structure object
-        struct.
-
-        Args:
-            struct (Structure): input structure.
-            pneighs (dict): specification and parameters of
-                    neighbor-finding approach (see
-                    get_neighbors_of_site_with_index function
-                    for more details).
-            convert_none_to_zero (bool): flag indicating whether or not
-                    to convert None values in OPs to zero.
-
-        Returns: ([[float]]) matrix of all sites' (1st dimension)
-                order parameters (2nd dimension). 46 order parameters are
-                computed per site: q_cn (coordination number), q_lin,
-                35 x q_bent (starting with a target angle of 5 degrees and,
-                increasing by 5 degrees, until 175 degrees), q_tet, q_oct,
-                q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
-        """
-        opvals = []
-        optypes = ["cn", "lin"]
-        opparas = [[], []]
-        for i in range(5, 180, 5):
-            optypes.append("bent")
-            opparas.append([float(i), 0.0667])
-        for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq",
-                  "sq_pyr"]:  # , "tri_bipyr"]:
-            optypes.append(t)
-            opparas.append([])
-        ops = OrderParameters(optypes, opparas, 100.0)
-        for i, s in enumerate(self.structure.sites):
-            neighcent = self.get_neighbors_of_site_with_index(i, pneighs)
-            neighcent.append(s)
-            opvals.append(ops.get_order_parameters(
-                neighcent, len(neighcent) - 1,
-                indeces_neighs=[j for j in range(len(neighcent) - 1)]))
-            if convert_none_to_zero:
-                for j, opval in enumerate(opvals[i]):
-                    if opval is None:
-                        opvals[i][j] = 0.0
-        return opvals
-
-    def get_order_parameter_stats(self, pneighs=None, convert_none_to_zero=True, delta_op=0.01):
-        """
-        Determine the order parameter statistics accumulated across all sites
-        in Structure object struct using the get_order_parameters function.
-
-        Args:
-            struct (Structure): input structure.
-            pneighs (dict): specification and parameters of
-                    neighbor-finding approach (see
-                    get_neighbors_of_site_with_index function
-                    for more details).
-            convert_none_to_zero (bool): flag indicating whether or not
-                    to convert None values in OPs to zero (cf.,
-                    get_order_parameters function).
-            delta_op (float): bin size of histogram that is computed
-                    in order to identify peak locations.
-
-        Returns: ({}) dictionary, the keys of which represent
-                the order parameter type (e.g., "bent5", "tet", "sq_pyr")
-                and the values of which are dictionaries carring the
-                statistics ("min", "max", "mean", "std", "peak1", "peak2").
-        """
-        opstats = {}
-        optypes = ["cn", "lin"]
-        for i in range(5, 180, 5):
-            optypes.append("bent{}".format(i))
-        for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq",
-                  "sq_pyr"]:  # , "tri_bipyr"]:
-            optypes.append(t)
-        opvals = self.get_order_parameters(pneighs=pneighs,
-                                           convert_none_to_zero=convert_none_to_zero)
-        opvals2 = [[] for t in optypes]
-        for i, opsite in enumerate(opvals):
-            for j, op in enumerate(opsite):
-                opvals2[j].append(op)
-        for i, opstype in enumerate(opvals2):
-            ops_hist = {}
-            for op in opstype:
-                b = round(op / delta_op) * delta_op
-                if b in ops_hist.keys():
-                    ops_hist[b] += 1
-                else:
-                    ops_hist[b] = 1
-            ops = list(ops_hist.keys())
-            hist = list(ops_hist.values())
-            sorted_hist = sorted(hist, reverse=True)
-            if len(sorted_hist) > 1:
-                max1_hist, max2_hist = sorted_hist[0], sorted_hist[1]
-            elif len(sorted_hist) > 0:
-                max1_hist, max2_hist = sorted_hist[0], sorted_hist[0]
-            else:
-                raise RuntimeError("Could not compute OP histogram.")
-            max1_idx = hist.index(max1_hist)
-            max2_idx = hist.index(max2_hist)
-            opstats[optypes[i]] = {
-                "min": min(opstype),
-                "max": max(opstype),
-                "mean": np.mean(np.array(opstype)),
-                "std": np.std(np.array(opstype)),
-                "peak1": ops[max1_idx],
-                "peak2": ops[max2_idx]}
-        return opstats
-
-    @staticmethod
-    def get_okeeffe_params(el_symbol):
-        """
-        Returns the elemental parameters related to atom size and
-        electronegativity which are used for estimating bond-valence
-        parameters (bond length) of pairs of atoms on the basis of data
-        provided in 'Atoms Sizes and Bond Lengths in Molecules and Crystals'
-        (O'Keeffe & Brese, 1991).
-
-        Args:
-            el_symbol (str): element symbol.
-        Returns:
-            (dict): atom-size ('r') and electronegativity-related ('c')
-                    parameter.
-        """
-
-        el = Element(el_symbol)
-        if el not in list(BV_PARAMS.keys()):
-            raise RuntimeError("Could not find O'Keeffe parameters for element"
-                               " \"{}\" in \"BV_PARAMS\"dictonary"
-                               " provided by pymatgen".format(el_symbol))
-
-        return BV_PARAMS[el]
-
-    @staticmethod
-    def get_okeeffe_distance_prediction(el1, el2):
-        """
-        Returns an estimate of the bond valence parameter (bond length) using
-        the derived parameters from 'Atoms Sizes and Bond Lengths in Molecules
-        and Crystals' (O'Keeffe & Brese, 1991). The estimate is based on two
-        experimental parameters: r and c. The value for r  is based off radius,
-        while c is (usually) the Allred-Rochow electronegativity. Values used
-        are *not* generated from pymatgen, and are found in
-        'okeeffe_params.json'.
-
-        Args:
-            el1, el2 (Element): two Element objects
-        Returns:
-            a float value of the predicted bond length
-        """
-        el1_okeeffe_params = StructuralAttribute.get_okeeffe_params(el1)
-        el2_okeeffe_params = StructuralAttribute.get_okeeffe_params(el2)
-
-        r1 = el1_okeeffe_params['r']
-        r2 = el2_okeeffe_params['r']
-        c1 = el1_okeeffe_params['c']
-        c2 = el2_okeeffe_params['c']
-
-        return r1 + r2 - r1 * r2 * math.pow(math.sqrt(c1) - math.sqrt(c2), 2) / (c1 * r1 + c2 * r2)
 
