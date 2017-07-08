@@ -6,7 +6,7 @@ Defines various utility functions.
 
 from functools import reduce
 
-from pymatgen import Composition, MPRester, Element
+from pymatgen import Composition, MPRester
 
 from matminer.descriptors.data import cohesive_energy_data, PymatgenData
 
@@ -22,7 +22,8 @@ def get_cohesive_energy(comp):
     Args:
         comp: (str) compound composition, eg: "NaCl"
 
-    Returns: (float) cohesive energy of compound
+    Returns:
+        float: cohesive energy of compound
 
     """
     el_amt_dict = Composition(comp).get_el_amt_dict()
@@ -42,26 +43,6 @@ def get_cohesive_energy(comp):
         cohesive_energy -= el_amt_dict[el] * cohesive_energy_data[el]
 
     return cohesive_energy
-
-
-def band_center(comp):
-    """
-    Estimate absolution position of band center using geometric mean of electronegativity
-    Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at
-    Semiconductor-Electrolyte Interfaces from Atomic Electronegativities.
-    J. Electrochem. Soc. 125, 228 (1978).
-
-    Args:
-        comp: (Composition)
-
-    Returns: (float) band center
-
-    """
-    prod = 1.0
-    for el, amt in comp.get_el_amt_dict().iteritems():
-        prod = prod * (Element(el).X ** amt)
-
-    return -prod ** (1 / sum(comp.get_el_amt_dict().values()))
 
 
 def get_holder_mean(data_lst, power):

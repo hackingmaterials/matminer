@@ -602,5 +602,3 @@ class StructuralAttribute(SiteAttribute):
                     d = self.structure.get_distance(i, j)
                     m[i].append(z[i] * z[j] / d)
         return np.array(m)
-
-
