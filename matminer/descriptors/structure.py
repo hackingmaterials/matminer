@@ -377,7 +377,7 @@ class SiteAttribute(AbstractFeaturizer):
 class StructuralAttribute(SiteAttribute):
 
     def __init__(self, structure):
-        self.structure = structure
+        super(StructuralAttribute, self).__init__(structure)
 
     def featurize(self):
         pass
