@@ -25,6 +25,14 @@ class CompositionFeaturizer(AbstractFeaturizer):
     All composition related attribute classes must subclass this.
     """
 
+    def __init__(self, data_source=None):
+        """
+        Args:
+            data_source (AbstractData): object of class that subclasses data.Abstractdata.
+            eg. Magpiedata(), PymatgenData()
+        """
+        self.data_source = data_source or MagpieData()
+
     def featurize_all(self, comp_frame, col_id="composition"):
         """
         Compute features for all compounds contained in input dataframe
@@ -73,43 +81,6 @@ class CompositionFeaturizer(AbstractFeaturizer):
         pass
 
 
-class StoichiometricAttribute(CompositionFeaturizer):
-    """
-    Class to calculate stoichiometric attributes.
-
-    Generates: Lp norm-based stoichiometric attribute.
-
-    Args:
-        p_list (list of ints): list of norms to calculate
-    """
-
-    def __init__(self, p_list=None):
-        self.p_list = p_list or [0, 2, 3, 5, 7, 10]
-
-    def featurize(self, comp):
-
-        p_norms = [0] * len(self.p_list)
-        n_atoms = sum([comp[el] for el in comp.elements])
-
-        for i, p in enumerate(self.p_list):
-            if p < 0:
-                raise ValueError("p-norm not defined for p < 0")
-            if p == 0:
-                p_norms[i] = len(comp.elements)
-            else:
-                for el in comp.elements:
-                    p_norms[i] += (comp[el] / n_atoms) ** self.p_list[i]
-                p_norms[i] = p_norms[i] ** (1.0 / self.p_list[i])
-
-        return p_norms
-
-    def generate_labels(self):
-        labels = []
-        for p in self.p_list:
-            labels.append("%d-norm" % p)
-        return labels
-
-
 class ElementalAttribute(CompositionFeaturizer):
     """
     Class to calculate elemental property attributes.
@@ -125,7 +96,7 @@ class ElementalAttribute(CompositionFeaturizer):
     """
 
     def __init__(self, properties=None, data_source=None):
-        self.data_source = data_source or MagpieData()
+        super(ElementalAttribute, self).__init__(data_source)
         self.properties = properties
         if self.properties is None:
             if isinstance(self.data_source, PymatgenData):
@@ -181,7 +152,7 @@ class ValenceOrbitalAttribute(CompositionFeaturizer):
     """
 
     def __init__(self, data_source=None):
-        self.data_source = data_source or MagpieData()
+        super(ValenceOrbitalAttribute, self).__init__(data_source)
 
     def featurize(self, comp):
         num_atoms = comp.num_atoms
@@ -222,7 +193,7 @@ class IonicAttribute(CompositionFeaturizer):
     """
 
     def __init__(self, data_source=None):
-        self.data_source = data_source or MagpieData()
+        super(IonicAttribute, self).__init__(data_source)
         if isinstance(self.data_source, PymatgenData):
             self.oxidation_states = "oxidation_states"
             self.electronegativity = "X"
@@ -281,6 +252,43 @@ class IonicAttribute(CompositionFeaturizer):
 
     def generate_labels(self):
         labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
+        return labels
+
+
+class StoichiometricAttribute(CompositionFeaturizer):
+    """
+    Class to calculate stoichiometric attributes.
+
+    Generates: Lp norm-based stoichiometric attribute.
+
+    Args:
+        p_list (list of ints): list of norms to calculate
+    """
+
+    def __init__(self, p_list=None):
+        self.p_list = p_list or [0, 2, 3, 5, 7, 10]
+
+    def featurize(self, comp):
+
+        p_norms = [0] * len(self.p_list)
+        n_atoms = sum([comp[el] for el in comp.elements])
+
+        for i, p in enumerate(self.p_list):
+            if p < 0:
+                raise ValueError("p-norm not defined for p < 0")
+            if p == 0:
+                p_norms[i] = len(comp.elements)
+            else:
+                for el in comp.elements:
+                    p_norms[i] += (comp[el] / n_atoms) ** self.p_list[i]
+                p_norms[i] = p_norms[i] ** (1.0 / self.p_list[i])
+
+        return p_norms
+
+    def generate_labels(self):
+        labels = []
+        for p in self.p_list:
+            labels.append("%d-norm" % p)
         return labels
 
 
