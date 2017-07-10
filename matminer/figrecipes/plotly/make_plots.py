@@ -2,6 +2,8 @@ from __future__ import division, unicode_literals, print_function
 
 import warnings
 
+import os.path
+
 import numpy as np
 
 import pandas as pd
@@ -94,13 +96,15 @@ class PlotlyFig:
             margin=dict(t=margin_top, b=margin_bottom, l=margin_left, r=margin_right, pad=pad)
         )
 
-        if self.plot_mode == 'online':
-            if not self.username:
-                raise ValueError('field "username" must be filled in online plotting mode')
-            if not self.api_key:
-                raise ValueError('field "api_key" must be filled in online plotting mode')
+        if self.plot_mode == 'online' or self.plot_mode == 'static':
+            if not os.path.isfile('~/.plotly/.credentials'):
+                if not self.username:
+                    raise ValueError('field "username" must be filled in online plotting mode')
+                if not self.api_key:
+                    raise ValueError('field "api_key" must be filled in online plotting mode')
+                plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
 
-        elif self.plot_mode == 'static':
+        if self.plot_mode == 'static':
             if not self.filename or not self.filename.lower().endswith(
                     ('.png', '.svg', '.jpeg', '.pdf')):
                 raise ValueError(
@@ -128,7 +132,6 @@ class PlotlyFig:
             plotly.offline.iplot(fig)
 
         elif self.plot_mode == 'online':
-            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
             if self.filename:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:
