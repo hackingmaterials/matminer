@@ -30,10 +30,12 @@ class PlotlyFig:
             hovermode: (str) determines the mode of hover interactions. Can be 'x'/'y'/'closest'/False
             filename: (str) name/filepath of plot file
             plot_mode: (str) (i) 'offline': creates and saves plots on the local disk, (ii) 'notebook': to embed plots
-                in a IPython/Jupyter notebook, (iii) 'online': save the plot in your online plotly account (requires
-                the fields 'username' and 'api_key' to be set), or (iv) 'static': save a static image of the plot
-                locally. Valid image formats are 'png', 'svg', 'jpeg', and 'pdf'. The format is taken as the extension
-                of the filename or as the supplied format.
+                in a IPython/Jupyter notebook, (iii) 'online': save the plot in your online plotly account, or (iv)
+                'static': save a static image of the plot locally (but requiring plotly account credentials). Valid
+                image formats are 'png', 'svg', 'jpeg', and 'pdf'. The format is taken as the extension of the filename
+                or as the supplied format.
+                NOTE: Both 'online' and 'static' modes require either the fields 'username' and 'api_key' or
+                the plotly credentials file to be set. See plotly website and documentation for details.
             show_offline_plot: (bool) automatically open the plot (the plot is saved either way); only applies to
                 'offline' mode
             username: (str) plotly account username
