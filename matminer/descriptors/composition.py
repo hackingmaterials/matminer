@@ -302,20 +302,11 @@ class ElementFractionAttribute(CompositionFeaturizer):
 
     def featurize(self, comp):
         vector = [0]*103
-        el_list = comp.elements
+        el_list = list(comp.element_composition.fractional_composition.items())
         for el in el_list:
             obj = el
-            symbol = ""
-            # if it's a specie, get it's underlying element
-            if isinstance(obj, Specie):
-                symbol = obj.element.symbol
-            else:
-                symbol = obj.symbol
-            atomic_number_i = obj.number-1
-            if vector[atomic_number_i] == 0:
-                vector[atomic_number_i] = comp.get_atomic_fraction(obj)
-            else:
-                vector[atomic_number_i] += comp.get_atomic_fraction(obj)
+            atomic_number_i = obj[0].number-1
+            vector[atomic_number_i] = obj[1]
         return vector
 
     def generate_labels(self):
