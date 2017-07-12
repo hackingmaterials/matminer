@@ -1,6 +1,5 @@
 from __future__ import division, unicode_literals, print_function
 
-from pymatgen import Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
@@ -68,23 +67,3 @@ def absolute_band_positions_bpe(bs, target_gap=None, **kwargs):
 
     bpe = branch_point_energy(bs, **kwargs)
     return (vbm - bpe - shift), (cbm - bpe + shift)
-
-
-def band_center(comp):
-    """
-    Estimate absolution position of band center using geometric mean of electronegativity
-    Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at
-    Semiconductor-Electrolyte Interfaces from Atomic Electronegativities.
-    J. Electrochem. Soc. 125, 228 (1978).
-
-    Args:
-        comp: (Composition)
-
-    Returns: (float) band center
-
-    """
-    prod = 1.0
-    for el, amt in comp.get_el_amt_dict().iteritems():
-        prod = prod * (Element(el).X ** amt)
-
-    return -prod ** (1 / sum(comp.get_el_amt_dict().values()))
