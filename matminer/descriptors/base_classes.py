@@ -5,9 +5,6 @@ import pandas as pd
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def __init__(self):
-        pass
-
     def featurize_all(self, comp_frame, col_id="composition"):
         """
         Compute features for all compounds contained in input dataframe
