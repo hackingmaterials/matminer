@@ -8,9 +8,8 @@ from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.descriptors.composition import StoichiometricAttribute, ElementalAttribute, \
-    ValenceOrbitalAttribute, IonicAttribute, FractionalAttribute
+    ValenceOrbitalAttribute, IonicAttribute, ElementFractionAttribute
 from matminer.descriptors.data import MagpieData, PymatgenData
-
 
 class MagpieDataTest(unittest.TestCase):
     def test_string_composition(self):
@@ -27,7 +26,8 @@ class MagpieDataTest(unittest.TestCase):
 
 class CompositionFeaturesTest(PymatgenTest):
     def setUp(self):
-        self.df = pd.DataFrame({"composition": ["Fe2O3"]})
+        c = Composition({"Fe2+": 2, "Fe3+": 4, "Li+": 8})
+        self.df = pd.DataFrame({"composition": ["Fe2O3", c]})
 
     def test_stoich(self):
         df_stoich = StoichiometricAttribute().featurize_all(self.df)
@@ -57,9 +57,11 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_ionic["Avg Ionic Char"][0], 0.114461319)
 
     def test_fraction(self):
-        df_frac = FractionalAttribute().featurize_all(self.df)
+        df_frac = ElementFractionAttribute().featurize_all(self.df)
         self.assertEqual(df_frac["O"][0], 0.6)
         self.assertEqual(df_frac["Fe"][0], 0.4)
+        self.assertAlmostEqual(df_frac["Fe"][1], 0.42857143)
+        self.assertAlmostEqual(df_frac["Li"][1], 0.57142857)
 
 class PymatgenDescriptorTest(unittest.TestCase):
     def setUp(self):
