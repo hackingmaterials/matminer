@@ -9,7 +9,7 @@ from collections import OrderedDict
 
 import numpy as np
 
-from pymatgen import Composition
+from pymatgen import Composition, Element, Specie
 from pymatgen.core.periodic_table import get_el_sp
 
 from matminer.descriptors.base import AbstractFeaturizer
@@ -54,8 +54,7 @@ class CompositionFeaturizer(AbstractFeaturizer):
         features = np.array(features)
 
         labels = self.generate_labels()
-        comp_frame = comp_frame.assign(
-            **dict(zip(labels, [features[:, i] for i in range(np.shape(features)[1])])))
+        comp_frame = comp_frame.assign(**dict(zip(labels, features.T)))
 
         return comp_frame
 
@@ -290,7 +289,31 @@ class StoichiometricAttribute(CompositionFeaturizer):
         for p in self.p_list:
             labels.append("%d-norm" % p)
         return labels
+    
+class ElementFractionAttribute(CompositionFeaturizer):
+    """
+    Class to calculate the atomic fraction of each element in a composition.
 
+    Generates: vector where each index represents an element in atomic number order. 
+    """
+
+    def __init__(self):
+        pass
+
+    def featurize(self, comp):
+        vector = [0]*103
+        el_list = list(comp.element_composition.fractional_composition.items())
+        for el in el_list:
+            obj = el
+            atomic_number_i = obj[0].number-1
+            vector[atomic_number_i] = obj[1]
+        return vector
+
+    def generate_labels(self):
+        labels = []
+        for i in range(1, 104):
+            labels.append(Element.from_Z(i).symbol)
+        return labels
 
 if __name__ == '__main__':
 
