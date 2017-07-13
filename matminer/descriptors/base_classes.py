@@ -26,8 +26,7 @@ class BaseFeaturizer(object):
         features = np.array(features)
 
         labels = self.generate_labels()
-        comp_frame = comp_frame.assign(**dict(zip(labels, [features[:,i] for i in range(np.shape(features)[1])])))
-
+        comp_frame = comp_frame.assign(**dict(zip(labels, features.T)))
         return comp_frame
     
     def featurize(self, comp_obj):
