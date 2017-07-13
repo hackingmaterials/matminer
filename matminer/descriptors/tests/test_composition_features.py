@@ -7,7 +7,7 @@ from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
 #from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
-from matminer.descriptors.composition_features import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes 
+from matminer.descriptors.composition_features import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes, ElementFractionAttribute 
 
 class CompositionFeaturesTest(PymatgenTest):
 
@@ -40,6 +40,13 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertEqual(df_ionic["compound possible"][0], 1.0)
         self.assertAlmostEqual(df_ionic["Max Ionic Char"][0], 0.476922164)
         self.assertAlmostEqual(df_ionic["Avg Ionic Char"][0], 0.114461319)
+
+    def test_fraction(self):
+        df_frac = ElementFractionAttribute().featurize_all(self.df)
+        self.assertEqual(df_frac["O"][0], 0.6)
+        self.assertEqual(df_frac["Fe"][0], 0.4)
+        self.assertAlmostEqual(df_frac["Fe"][1], 0.42857143)
+        self.assertAlmostEqual(df_frac["Li"][1], 0.57142857)
 
 """
 class PymatgenDescriptorTest(unittest.TestCase):
