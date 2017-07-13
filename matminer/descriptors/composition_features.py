@@ -306,6 +306,31 @@ class IonicAttributes(MagpieFeaturizer):
         labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
         return labels
 
+class ElementFractionAttribute(CompositionFeaturizer):
+    """
+    Class to calculate the atomic fraction of each element in a composition.
+
+    Generates: vector where each index represents an element in atomic number order. 
+    """
+
+    def __init__(self):
+        pass
+
+    def featurize(self, comp):
+        vector = [0]*103
+        el_list = list(comp.element_composition.fractional_composition.items())
+        for el in el_list:
+            obj = el
+            atomic_number_i = obj[0].number-1
+            vector[atomic_number_i] = obj[1]
+        return vector
+
+    def generate_labels(self):
+        labels = []
+        for i in range(1, 104):
+            labels.append(Element.from_Z(i).symbol)
+        return labels
+
 def get_pymatgen_descriptor(comp, prop):
     """
     Get descriptor data for elements in a compound from pymatgen.
