@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 
 from base_classes import BaseFeaturizer
+from data import DemlData, MagpieData, PymatgenData
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -22,8 +23,8 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 # Load elemental cohesive energy data from json file
-with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
-    ce_data = json.load(f)
+#with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
+#    ce_data = json.load(f)
 
 #empty dictionary for magpie properties
 magpie_props = {}
@@ -33,66 +34,7 @@ atomic_syms = []
 for atomic_no in range(1,104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
-class MagpieFeaturizer(BaseFeaturizer):
-    """Class to get data from Magpie files"""    
-
-    def __init__(self):
-        BaseFeaturizer.__init__(self)
-
-    def get_data(self, comp_obj, descriptor_name):
-        """
-        Gets magpie data for a composition object. 
-        First checks if magpie properties are already loaded, if not, stores magpie data in a dictionary
-
-        Args: 
-            comp_obj: Pymatgen composition object
-            descriptor_name (string): Name of descriptor
-
-        Returns:
-            magpiedata (list): list of values for each atom in comp_obj
-        """
-
-        if descriptor_name not in magpie_props:
-
-            data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
-            available_props = []
-
-            # Make a list of available properties
-            for datafile in os.listdir(data_dir):
-                available_props.append(datafile.replace('.table', ''))
-
-            if descriptor_name not in available_props:
-                raise ValueError(
-                    "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
-
-            prop_value = []
-            with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
-                lines = descp_file.readlines()
-                
-                for atomic_no in range(1, 104): #This is as high as pymatgen goes
-                    try:
-                        if descriptor_name in ["OxidationStates"]:
-                            prop_value.append([float(i) for i in lines[atomic_no - 1].split()])
-                        else: 
-                            prop_value.append(float(lines[atomic_no - 1]))
-                    except:
-                        prop_value.append(float("NaN"))
-            
-            attr_dict = dict(zip(atomic_syms, prop_value))    
-            magpie_props[descriptor_name] = attr_dict #Add dictionary to magpie_props
-
-        #Get data for given element/compound
-        el_amt = comp_obj.get_el_amt_dict()
-        elements = list(el_amt.keys())
-        
-        magpiedata = []
-        for el in elements:
-            for i in range(int(el_amt[el])):
-                magpiedata.append(magpie_props[descriptor_name][el])
-     
-        return magpiedata
-
-class StoichAttributes(MagpieFeaturizer):
+class StoichAttributes(BaseFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -101,7 +43,7 @@ class StoichAttributes(MagpieFeaturizer):
     """
 
     def __init__(self, p_list=None):
-        MagpieFeaturizer.__init__(self)
+        BaseFeaturizer.__init__(self)
         if p_list == None:
             self.p_list = [0,2,3,5,7,10]
         else:
@@ -141,7 +83,7 @@ class StoichAttributes(MagpieFeaturizer):
             labels.append("%d-norm"%p)
         return labels
 
-class ElemPropertyAttributes(MagpieFeaturizer):
+class ElemPropertyAttributes(BaseFeaturizer):
     """
     Class to calculate elemental property attributes
 
@@ -149,14 +91,16 @@ class ElemPropertyAttributes(MagpieFeaturizer):
         attributes (list of strings): List of elemental properties to use    
     """
 
-    def __init__(self, attributes=None):
-        MagpieFeaturizer.__init__(self)
+    def __init__(self, attributes=None, method=None, data_source=MagpieData()):
+        BaseFeaturizer.__init__(self)
         if attributes == None:
             self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
                 "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
                 "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]    
         else: 
             self.attributes = attributes
+        self.method = method
+        self.data_source = data_source
 
     def featurize(self, comp_obj):
         """
@@ -176,7 +120,7 @@ class ElemPropertyAttributes(MagpieFeaturizer):
 
         for attr in self.attributes:
             
-            elem_data = self.get_data(comp_obj, attr)
+            elem_data = self.data_source.get_property(comp_obj, attr)
 
             all_attributes.append(min(elem_data))
             all_attributes.append(max(elem_data))
@@ -184,8 +128,11 @@ class ElemPropertyAttributes(MagpieFeaturizer):
             
             prop_mean = sum(elem_data)/len(elem_data)
             all_attributes.append(prop_mean)
-            all_attributes.append(sum(np.abs(np.subtract(elem_data, prop_mean)))/len(elem_data))
-            all_attributes.append(max(set(elem_data), key=elem_data.count))
+            if self.method=="deml":
+                all_attributes.append(np.std(elem_data))
+            else:
+                all_attributes.append(sum(np.abs(np.subtract(elem_data, prop_mean)))/len(elem_data))
+                all_attributes.append(max(set(elem_data), key=elem_data.count))
 
         return all_attributes
 
@@ -200,11 +147,12 @@ class ElemPropertyAttributes(MagpieFeaturizer):
             labels.append("Mode %s"%attr)
         return labels
 
-class ValenceOrbitalAttributes(MagpieFeaturizer):
+class ValenceOrbitalAttributes(BaseFeaturizer):
     """Class to calculate valence orbital attributes"""
 
-    def __init__(self):
-        MagpieFeaturizer.__init__(self)
+    def __init__(self, data_source=MagpieData()):
+        BaseFeaturizer.__init__(self)
+        self.data_source = data_source
 
     def featurize(self, comp_obj):
         """Weighted fraction of valence electrons in each orbital
@@ -218,11 +166,11 @@ class ValenceOrbitalAttributes(MagpieFeaturizer):
         
         num_atoms = comp_obj.num_atoms
 
-        avg_total_valence = sum(self.get_data(comp_obj,"NValance"))/num_atoms
-        avg_s = sum(self.get_data(comp_obj,"NsValence"))/num_atoms
-        avg_p = sum(self.get_data(comp_obj,"NpValence"))/num_atoms
-        avg_d = sum(self.get_data(comp_obj,"NdValence"))/num_atoms
-        avg_f = sum(self.get_data(comp_obj,"NfValence"))/num_atoms
+        avg_total_valence = sum(self.data_source.get_property(comp_obj,"NValance"))/num_atoms
+        avg_s = sum(self.data_source.get_property(comp_obj,"NsValence"))/num_atoms
+        avg_p = sum(self.data_source.get_property(comp_obj,"NpValence"))/num_atoms
+        avg_d = sum(self.data_source.get_property(comp_obj,"NdValence"))/num_atoms
+        avg_f = sum(self.data_source.get_property(comp_obj,"NfValence"))/num_atoms
 
         Fs = avg_s/avg_total_valence
         Fp = avg_p/avg_total_valence
@@ -239,10 +187,11 @@ class ValenceOrbitalAttributes(MagpieFeaturizer):
 
         return labels
 
-class IonicAttributes(MagpieFeaturizer):
+class IonicAttributes(BaseFeaturizer):
     """Class to calculate ionic property attributes"""
-    def __init__(self):
-        MagpieFeaturizer.__init__(self)
+    def __init__(self, data_source=MagpieData()):
+        BaseFeaturizer.__init__(self)
+        self.data_source = data_source
 
     def featurize(self, comp_obj):
         """
@@ -267,13 +216,14 @@ class IonicAttributes(MagpieFeaturizer):
             avg_ionic_char = 0        
         else:
             #Get magpie data for each element
-            all_ox_states = self.get_data(comp_obj,"OxidationStates")
-            all_elec = self.get_data(comp_obj,"Electronegativity")
+            all_ox_states = self.data_source.get_property(comp_obj,"OxidationStates")
+            all_elec = self.data_source.get_property(comp_obj,"Electronegativity")
             ox_states = []
             elec = []
             
-            for i in range(1,len(values)+1):
-                ind = int(sum(values[:i])-1)
+            values_int = map(int, values)
+            for i in range(1,len(values_int)+1):
+                ind = int(sum(values_int[:i])-1)
                 ox_states.append(all_ox_states[ind])
                 elec.append(all_elec[ind])
 
@@ -305,7 +255,7 @@ class IonicAttributes(MagpieFeaturizer):
     def generate_labels(self):
         labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
         return labels
-
+      
 class ElementFractionAttribute(CompositionFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
@@ -331,6 +281,7 @@ class ElementFractionAttribute(CompositionFeaturizer):
             labels.append(Element.from_Z(i).symbol)
         return labels
 
+#Old functions below
 def get_pymatgen_descriptor(comp, prop):
     """
     Get descriptor data for elements in a compound from pymatgen.
@@ -390,7 +341,7 @@ def get_magpie_descriptor(comp, descriptor_name):
     Returns: (list) of descriptor values for each atom in the composition
 
     """
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 'magpie_elementdata')
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data_files", 'magpie_elementdata')
     magpiedata = []
     magpiedata_tup_lst = []
     magpiedata_tup = collections.namedtuple('magpiedata_tup', 'element propname propvalue propunit amt')

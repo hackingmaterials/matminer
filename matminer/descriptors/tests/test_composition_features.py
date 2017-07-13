@@ -1,12 +1,13 @@
 from __future__ import unicode_literals, division, print_function
 
 import unittest
+import pandas as pd
 
 from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
-from matminer.descriptors.composition_features_2 import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes, ElementFractionAttribute
+#from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
+from matminer.descriptors.composition_features import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes, ElementFractionAttribute 
 
 class CompositionFeaturesTest(PymatgenTest):
 
@@ -47,7 +48,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_frac["Fe"][1], 0.42857143)
         self.assertAlmostEqual(df_frac["Li"][1], 0.57142857)
 
-        
+"""
 class PymatgenDescriptorTest(unittest.TestCase):
 
     def setUp(self):
@@ -84,7 +85,7 @@ class PymatgenDescriptorTest(unittest.TestCase):
         self.assertEqual(ionic_radii, [1.81, 1.67])
         ionic_radii_2 = get_pymatgen_descriptor("Cs+1Cl-1", "ionic_radii")
         self.assertEqual(ionic_radii, ionic_radii_2)
-
+"""
 
 if __name__ == '__main__':
     unittest.main()
