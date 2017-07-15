@@ -256,7 +256,7 @@ class IonicAttributes(BaseFeaturizer):
         labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
         return labels
       
-class ElementFractionAttribute(CompositionFeaturizer):
+class ElementFractionAttribute(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
 
