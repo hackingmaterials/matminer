@@ -55,9 +55,17 @@ class DemlData(AbstractData):
     def __init__(self):
         from data_files.deml_elementdata import properties
         self.all_props = properties
-        self.available_props = self.all_props.keys() + ["formal_charge"]
+        self.available_props = self.all_props.keys() + ["formal_charge","valence_s","valence_p","valence_d"]
 
     def calc_formal_charge(self, comp):
+        """
+        Computes formal charge of each element in a composition
+        Args:
+            comp (str or Composition object): composition
+        Returns:
+            dictionary of elements and formal charges
+        """
+
         if type(comp) == str:
             comp = Composition(comp)
 
@@ -107,6 +115,17 @@ class DemlData(AbstractData):
             return [fml_charge_dict[el]
                 for el in symbols
                 for _ in range(int(el_amt[el]))]
+        elif "valence" in property_name:
+            for el in symbols:
+                valence_dict = self.all_props["valence_e"][self.all_props["col_num"][el]]
+                if property_name[-1] in ["s","p","d"]:
+                    for _ in range(int(el_amt[el])):
+                        demldata.append(valence_dict[property_name[-1]])
+                else:
+                    n_valence = sum(valence_dict.values())
+                    for _ in range(int(el_amt[el])):
+                        demldata.append(n_valence)
+            return demldata
         elif property_name in ["xtal_field_split", "magn_mom", "so_coupling", "sat_magn"]: #Charge dependent properties
             fml_charge_dict = self.calc_formal_charge(comp)
             for el in symbols:
