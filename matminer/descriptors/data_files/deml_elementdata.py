@@ -1,3 +1,5 @@
+# Originally from http://github.com/ademl/predict_Etot_dHf/blob/master/elemental_properties.py 
+
 # data tables of elemental properties used for Etot/dHf model
 # values omitted elements without FERE values (e.g. noble gases, Tc, Ru,...)
 # 2015-10-05 A.Deml

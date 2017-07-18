@@ -10,7 +10,7 @@ import pandas as pd
 from base_classes import BaseFeaturizer
 from data import DemlData, MagpieData, PymatgenData
 
-__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
+__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew'
 
 # TODO: read Magpie file only once
 # TODO: Handle dictionaries in case of atomic radii. Aj says "You can require that getting the ionic_radii descriptor
@@ -91,16 +91,88 @@ class ElemPropertyAttributes(BaseFeaturizer):
         attributes (list of strings): List of elemental properties to use    
     """
 
-    def __init__(self, attributes=None, method=None, data_source=MagpieData()):
+    def __init__(self, method="magpie", stats=None, attributes=None, data_source=None):
         BaseFeaturizer.__init__(self)
-        if attributes == None:
+        self.method = method
+        if self.method == "deml":
+            self.stats = [self.minimum, self.maximum, self.attr_range, self.mean, self.std_dev]
+            self.attributes = ["atom_num", "atom_mass", "row_num", "col_num", "atom_radius", "molar_vol", "heat_fusion", "melting_point",
+                "boiling_point", "heat_cap", "first_ioniz", "total_ioniz", "electronegativity", "formal_charge", "xtal_field_split",
+                "magn_moment", "so_coupling", "sat_magn", "electric_pol", "GGAU_Etot", "mus_fere"]
+            self.data_source = DemlData()
+        elif self.method == "magpie":
+            self.stats = [self.minimum, self.maximum, self.attr_range, self.mean, self.avg_dev, self.mode]
             self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
                 "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
                 "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]    
-        else: 
+            self.data_source = MagpieData()
+        else:
+            self.stats = stats
             self.attributes = attributes
-        self.method = method
-        self.data_source = data_source
+            self.data_source = data_source
+
+    def minimum(self, elem_data):
+        """
+        Minimum value in a list of element data
+        Args:
+            elem_data (list of floats): Value of a property for each atom in a compound
+        Returns: 
+            minimum value"""
+        return min(elem_data)
+
+    def maximum(self, elem_data):
+        """
+        Maximum value in a list of element data
+        Args:
+            elem_data (list of floats): Value of a property for each atom in a compound
+        Returns: 
+            maximum value"""
+        return max(elem_data)
+
+    def attr_range(self, elem_data):
+        """
+        Range of a list of element data
+        Args:
+            elem_data (list of floats): Value of a property for each atom in a compound
+        Returns: 
+            range"""
+        return max(elem_data) - min(elem_data)
+
+    def mean(self, elem_data):
+        """
+        Mean of list of element data
+        Args:
+            elem_data (list of floats): Value of a property for each atom in a compound
+        Returns: 
+            mean value"""
+        return sum(elem_data)/len(elem_data)
+
+    def avg_dev(self, elem_data):
+        """
+        Average absolute deviation of list of element data
+        Args:
+            elem_data (list of floats): Value of a property for each atom in a compound
+        Returns: 
+            average absolute deviation"""
+        return sum(np.abs(np.subtract(elem_data, self.mean(elem_data))))/len(elem_data)
+
+    def std_dev(self, elem_data):
+        """
+        Standard deviation of a list of element data
+        Args:
+            elem_data (list of floats): Value of a property for each atom in a compound
+        Returns: 
+            standard deviation"""
+        return np.std(elem_data)
+
+    def mode(self, elem_data):
+        """
+        Mode of a list of element data
+        Args:
+            elem_data (list of floats): Value of a property for each atom in a compound
+        Returns: 
+            mode"""
+        return max(set(elem_data), key=elem_data.count)
 
     def featurize(self, comp_obj):
         """
@@ -119,32 +191,20 @@ class ElemPropertyAttributes(BaseFeaturizer):
         all_attributes = []
 
         for attr in self.attributes:
-            
+
             elem_data = self.data_source.get_property(comp_obj, attr)
 
-            all_attributes.append(min(elem_data))
-            all_attributes.append(max(elem_data))
-            all_attributes.append(max(elem_data) - min(elem_data))
-            
-            prop_mean = sum(elem_data)/len(elem_data)
-            all_attributes.append(prop_mean)
-            if self.method=="deml":
-                all_attributes.append(np.std(elem_data))
-            else:
-                all_attributes.append(sum(np.abs(np.subtract(elem_data, prop_mean)))/len(elem_data))
-                all_attributes.append(max(set(elem_data), key=elem_data.count))
+            for stat in self.stats:
+                all_attributes.append(stat(elem_data))
 
         return all_attributes
 
     def generate_labels(self):
         labels = []
         for attr in self.attributes:
-            labels.append("Min %s"%attr)
-            labels.append("Max %s"%attr)
-            labels.append("Range %s"%attr)
-            labels.append("Mean %s"%attr)
-            labels.append("AbsDev %s"%attr)
-            labels.append("Mode %s"%attr)
+            for stat in self.stats:
+                labels.append("%s %s"%(stat.__name__, attr))
+
         return labels
 
 class ValenceOrbitalAttributes(BaseFeaturizer):
@@ -198,7 +258,7 @@ class IonicAttributes(BaseFeaturizer):
         Ionic character attributes
 
         Args:
-            com_obj: Pymatgen composition object
+            comp_obj: Pymatgen composition object
 
         Returns:
             cpd_possible (bool): Indicates if a neutral ionic compound is possible
@@ -279,6 +339,63 @@ class ElementFractionAttribute(BaseFeaturizer):
         labels = []
         for i in range(1, 104):
             labels.append(Element.from_Z(i).symbol)
+        return labels
+
+class TMetalFractionAttribute(BaseFeaturizer):
+    """
+    Class to calculate fraction of magnetic transition metals in a composition.
+
+    Generates: Fraction of magnetic transition metal atoms in a compound
+    """
+
+    def __init__(self):
+        self.magn_elem = ['Ti','V','Cr','Mn','Fe','Co','Ni','Cu','Nb','Mo','Tc','Ru',
+            'Rh','Pd','Ag','Ta','W','Re','Os','Ir','Pt']
+
+    def featurize(self, comp):
+        el_amt = comp.get_el_amt_dict()
+
+        frac_magn_atoms = 0
+        for el in el_amt:
+            if el in self.magn_elem:
+                frac_magn_atoms += el_amt[el]
+
+        frac_magn_atoms /= sum(el_amt.values())
+
+        return frac_magn_atoms
+
+    def generate_labels(self):
+        labels = ["TMetal Fraction"]
+        return labels
+
+class ElectronAffinityAttribute(BaseFeaturizer):
+    """
+    Class to calculate average electron affinity times formal charge of anion elements
+
+    Generates average (electron affinity*formal charge) of anions
+    """
+
+    def __init__(self, data_source=DemlData()):
+        self.data_source = data_source
+
+    def featurize(self, comp):
+        fml_charge = self.data_source.get_property(comp, "formal_charge")
+        electron_affin = self.data_source.get_property(comp, "electron_affin")
+
+        anion_charge = []
+        anion_affin = []
+
+        for i in range(len(fml_charge)):
+            if fml_charge[i] < 0:
+                anion_charge.append(fml_charge[i])
+                anion_affin.append(electron_affin[i])
+
+        avg_anion_affin = np.dot(anion_charge, anion_affin)/len(fml_charge)
+
+        return avg_anion_affin
+
+    def generate_labels(self):
+        labels = ["Avg Anion Electron Affinity"]
         return labels
 
 #Old functions below
@@ -482,3 +599,8 @@ if __name__ == '__main__':
     print ValenceOrbitalAttributes().featurize_all(training_set)
     print "Ionic attributes"
     print IonicAttributes().featurize_all(training_set)
+
+    print "DEML ELEMENTAL DESCRIPTORS"
+    print ElemPropertyAttributes(method="deml").featurize_all(training_set)
+    print TMetalFractionAttribute().featurize_all(training_set)
+    print ElectronAffinityAttribute().featurize_all(training_set)
