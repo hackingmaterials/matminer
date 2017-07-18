@@ -7,7 +7,7 @@ from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
 #from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
-from matminer.descriptors.composition_features import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes, ElementFractionAttribute 
+from matminer.descriptors.composition_features import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes, ElementFractionAttribute, TMetalFractionAttribute
 
 class CompositionFeaturesTest(PymatgenTest):
 
@@ -21,12 +21,26 @@ class CompositionFeaturesTest(PymatgenTest):
 
     def test_elem(self):
         df_elem = ElemPropertyAttributes().featurize_all(self.df)
-        self.assertAlmostEqual(df_elem["Min Number"][0], 8)
-        self.assertAlmostEqual(df_elem["Max Number"][0], 26)
-        self.assertAlmostEqual(df_elem["Range Number"][0], 18)
-        self.assertAlmostEqual(df_elem["Mean Number"][0], 15.2)
-        self.assertAlmostEqual(df_elem["AbsDev Number"][0], 8.64)
-        self.assertAlmostEqual(df_elem["Mode Number"][0], 8)
+        self.assertAlmostEqual(df_elem["minimum Number"][0], 8)
+        self.assertAlmostEqual(df_elem["maximum Number"][0], 26)
+        self.assertAlmostEqual(df_elem["attr_range Number"][0], 18)
+        self.assertAlmostEqual(df_elem["mean Number"][0], 15.2)
+        self.assertAlmostEqual(df_elem["avg_dev Number"][0], 8.64)
+        self.assertAlmostEqual(df_elem["mode Number"][0], 8)
+
+    def test_elem_deml(self):
+        df_elem_deml = ElemPropertyAttributes("deml").featurize_all(self.df)
+        self.assertAlmostEqual(df_elem_deml["minimum atom_num"][0], 8)
+        self.assertAlmostEqual(df_elem_deml["maximum atom_num"][0], 26)
+        self.assertAlmostEqual(df_elem_deml["attr_range atom_num"][0], 18)
+        self.assertAlmostEqual(df_elem_deml["mean atom_num"][0], 15.2)
+        self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 8.81816307)
+        #Charge dependent property
+        self.assertAlmostEqual(df_elem_deml["minimum magn_moment"][0], 0)
+        self.assertAlmostEqual(df_elem_deml["maximum magn_moment"][0], 5.2)
+        self.assertAlmostEqual(df_elem_deml["attr_range magn_moment"][0], 5.2)
+        self.assertAlmostEqual(df_elem_deml["mean magn_moment"][0], 2.08)
+        self.assertAlmostEqual(df_elem_deml["std_dev magn_moment"][0], 2.547469332)
 
     def test_valence(self):
         df_val = ValenceOrbitalAttributes().featurize_all(self.df)
@@ -48,6 +62,9 @@ class CompositionFeaturesTest(PymatgenTest):
         #self.assertAlmostEqual(df_frac["Fe"][1], 0.42857143)
         #self.assertAlmostEqual(df_frac["Li"][1], 0.57142857)
 
+    def test_tm_fraction(self):
+        df_tm_frac = TMetalFractionAttribute().featurize_all(self.df)
+        self.assertAlmostEqual(df_tm_frac["TMetal Fraction"][0], 0.4)
 """
 class PymatgenDescriptorTest(unittest.TestCase):
 

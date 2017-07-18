@@ -55,7 +55,7 @@ class DemlData(AbstractData):
     def __init__(self):
         from data_files.deml_elementdata import properties
         self.all_props = properties
-        self.available_props = self.all_props.keys() + ["formal_charge","valence_s","valence_p","valence_d"]
+        self.available_props = self.all_props.keys() + ["formal_charge","valence_s","valence_p","valence_d","first_ioniz","total_ioniz"]
 
     def calc_formal_charge(self, comp):
         """
@@ -112,32 +112,44 @@ class DemlData(AbstractData):
 
         if property_name == "formal_charge":
             fml_charge_dict = self.calc_formal_charge(comp)
-            return [fml_charge_dict[el]
+            return [float(fml_charge_dict[el])
                 for el in symbols
                 for _ in range(int(el_amt[el]))]
+        elif property_name == "first_ioniz": #First ionization energy
+            for el in symbols:
+                first_ioniz = self.all_props["ionization_en"][el][0]
+                for _ in range(int(el_amt[el])):
+                    demldata.append(first_ioniz)
+            return demldata
+        elif property_name == "total_ioniz": #Cumulative ionization energy
+            for el in symbols:
+                total_ioniz = sum(self.all_props["ionization_en"][el])
+                for _ in range(int(el_amt[el])):
+                    demldata.append(total_ioniz)
+            return demldata
         elif "valence" in property_name:
             for el in symbols:
                 valence_dict = self.all_props["valence_e"][self.all_props["col_num"][el]]
                 if property_name[-1] in ["s","p","d"]:
                     for _ in range(int(el_amt[el])):
-                        demldata.append(valence_dict[property_name[-1]])
+                        demldata.append(float(valence_dict[property_name[-1]]))
                 else:
                     n_valence = sum(valence_dict.values())
                     for _ in range(int(el_amt[el])):
-                        demldata.append(n_valence)
+                        demldata.append(float(n_valence))
             return demldata
-        elif property_name in ["xtal_field_split", "magn_mom", "so_coupling", "sat_magn"]: #Charge dependent properties
+        elif property_name in ["xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]: #Charge dependent properties
             fml_charge_dict = self.calc_formal_charge(comp)
             for el in symbols:
                 for _ in range(int(el_amt[el])):
                     try:
                         charge = fml_charge_dict[el]
-                        demldata.append(self.all_props[property_name][el][charge])
+                        demldata.append(float(self.all_props[property_name][el][charge]))
                     except:
-                        demldata.append(0)
+                        demldata.append(0.0)
             return demldata
         else:    
-            return [self.all_props[property_name][el]
+            return [float(self.all_props[property_name][el])
                 for el in symbols
                 for _ in range(int(el_amt[el]))]
 
