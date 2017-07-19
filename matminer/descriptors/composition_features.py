@@ -9,6 +9,7 @@ import pandas as pd
 
 from base_classes import BaseFeaturizer
 from data import DemlData, MagpieData, PymatgenData
+from stats import PropertyStats
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew'
 
@@ -95,84 +96,21 @@ class ElemPropertyAttributes(BaseFeaturizer):
         BaseFeaturizer.__init__(self)
         self.method = method
         if self.method == "deml":
-            self.stats = [self.minimum, self.maximum, self.attr_range, self.mean, self.std_dev]
+            self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
             self.attributes = ["atom_num", "atom_mass", "row_num", "col_num", "atom_radius", "molar_vol", "heat_fusion", "melting_point",
                 "boiling_point", "heat_cap", "first_ioniz", "total_ioniz", "electronegativity", "formal_charge", "xtal_field_split",
                 "magn_moment", "so_coupling", "sat_magn", "electric_pol", "GGAU_Etot", "mus_fere"]
             self.data_source = DemlData()
         elif self.method == "magpie":
-            self.stats = [self.minimum, self.maximum, self.attr_range, self.mean, self.avg_dev, self.mode]
+            self.stats = ["minimum", "maximum", "range", "mean", "avg_dev", "mode"]
             self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
                 "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
-                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]    
+                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"] 
             self.data_source = MagpieData()
         else:
             self.stats = stats
             self.attributes = attributes
             self.data_source = data_source
-
-    def minimum(self, elem_data):
-        """
-        Minimum value in a list of element data
-        Args:
-            elem_data (list of floats): Value of a property for each atom in a compound
-        Returns: 
-            minimum value"""
-        return min(elem_data)
-
-    def maximum(self, elem_data):
-        """
-        Maximum value in a list of element data
-        Args:
-            elem_data (list of floats): Value of a property for each atom in a compound
-        Returns: 
-            maximum value"""
-        return max(elem_data)
-
-    def attr_range(self, elem_data):
-        """
-        Range of a list of element data
-        Args:
-            elem_data (list of floats): Value of a property for each atom in a compound
-        Returns: 
-            range"""
-        return max(elem_data) - min(elem_data)
-
-    def mean(self, elem_data):
-        """
-        Mean of list of element data
-        Args:
-            elem_data (list of floats): Value of a property for each atom in a compound
-        Returns: 
-            mean value"""
-        return sum(elem_data)/len(elem_data)
-
-    def avg_dev(self, elem_data):
-        """
-        Average absolute deviation of list of element data
-        Args:
-            elem_data (list of floats): Value of a property for each atom in a compound
-        Returns: 
-            average absolute deviation"""
-        return sum(np.abs(np.subtract(elem_data, self.mean(elem_data))))/len(elem_data)
-
-    def std_dev(self, elem_data):
-        """
-        Standard deviation of a list of element data
-        Args:
-            elem_data (list of floats): Value of a property for each atom in a compound
-        Returns: 
-            standard deviation"""
-        return np.std(elem_data)
-
-    def mode(self, elem_data):
-        """
-        Mode of a list of element data
-        Args:
-            elem_data (list of floats): Value of a property for each atom in a compound
-        Returns: 
-            mode"""
-        return max(set(elem_data), key=elem_data.count)
 
     def featurize(self, comp_obj):
         """
@@ -195,7 +133,7 @@ class ElemPropertyAttributes(BaseFeaturizer):
             elem_data = self.data_source.get_property(comp_obj, attr)
 
             for stat in self.stats:
-                all_attributes.append(stat(elem_data))
+                all_attributes.append(PropertyStats().calc_stat(elem_data, stat))
 
         return all_attributes
 
@@ -203,7 +141,7 @@ class ElemPropertyAttributes(BaseFeaturizer):
         labels = []
         for attr in self.attributes:
             for stat in self.stats:
-                labels.append("%s %s"%(stat.__name__, attr))
+                labels.append("%s %s"%(stat, attr))
 
         return labels
 
@@ -396,6 +334,58 @@ class ElectronAffinityAttribute(BaseFeaturizer):
 
     def generate_labels(self):
         labels = ["Avg Anion Electron Affinity"]
+        return labels
+
+class ElectronegativityDiffAttribute(BaseFeaturizer):
+    """
+    Class to calculate average electronegativity difference
+
+    Generates average electronegativity difference between cations and anions
+    """
+
+    def __init__(self, data_source=DemlData(), stats=None):
+        self.data_source = data_source
+        if stats == None:
+            self.stats = ["minimum","maximum","range","mean","std_dev"]
+        else:
+            self.stats = stats
+
+    def featurize(self, comp):
+
+        fml_charge = self.data_source.get_property(comp, "formal_charge")
+        electroneg = self.data_source.get_property(comp, "electronegativity")
+        
+        cation_en = []
+        anion_en = []
+
+        #Get electronegativity values for cations and anions
+        for i in range(len(fml_charge)):
+            if fml_charge[i] > 0:
+                cation_en.append(electroneg[i])
+            else:
+                anion_en.append(electroneg[i])
+
+        avg_en_diff = []
+        n_anions = len(anion_en)
+        for en in cation_en:
+            avg_en_diff.append(abs(en - (sum(anion_en)/n_anions)))
+
+        en_diff_stats = []
+
+        for stat in self.stats:
+            en_diff_stats.append(PropertyStats().calc_stat(avg_en_diff, stat))
+
+        if "mean" in self.stats: #Change to mean across total atoms
+            en_diff_stats[self.stats.index("mean")] *= float(len(cation_en))/float(len(fml_charge))
+
+        return en_diff_stats
+
+    def generate_labels(self):
+
+        labels = []
+        for stat in self.stats:
+            labels.append("%s EN difference"%stat)
+
         return labels
 
 #Old functions below
