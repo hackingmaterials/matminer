@@ -7,9 +7,9 @@ import itertools
 import numpy as np
 import pandas as pd
 
-from base_classes import BaseFeaturizer
-from data import DemlData, MagpieData, PymatgenData
-from stats import PropertyStats
+from matminer.descriptors.base_classes import BaseFeaturizer
+from matminer.descriptors.data import DemlData, MagpieData, PymatgenData
+from matminer.descriptors.stats import PropertyStats
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew'
 
@@ -578,19 +578,19 @@ if __name__ == '__main__':
     print(get_magpie_descriptor('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
    
-    training_set = pd.DataFrame({"composition":["Fe2O3"]})
+    training_set = pd.DataFrame({"composition":[Composition("Fe2O3")]})
     print("WARD NPJ ATTRIBUTES")
     print("Stoichiometric attributes")
     p_list = [0,2,3,5,7,9]
-    print(StoichAttributes().featurize_all(training_set))
+    print(StoichAttributes().featurize_dataframe(training_set))
     print("Elemental property attributes")
-    print(ElemPropertyAttributes().featurize_all(training_set))
+    print(ElemPropertyAttributes().featurize_dataframe(training_set))
     print("Valence Orbital Attributes")
-    print(ValenceOrbitalAttributes().featurize_all(training_set))
+    print(ValenceOrbitalAttributes().featurize_dataframe(training_set))
     print("Ionic attributes")
-    print(IonicAttributes().featurize_all(training_set))
+    print(IonicAttributes().featurize_dataframe(training_set))
 
     print("DEML ELEMENTAL DESCRIPTORS")
-    print(ElemPropertyAttributes(method="deml").featurize_all(training_set))
-    print(TMetalFractionAttribute().featurize_all(training_set))
-    print(ElectronAffinityAttribute().featurize_all(training_set))
+    print(ElemPropertyAttributes(method="deml").featurize_dataframe(training_set))
+    print(TMetalFractionAttribute().featurize_dataframe(training_set))
+    print(ElectronAffinityAttribute().featurize_dataframe(training_set))
