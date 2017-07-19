@@ -1,17 +1,16 @@
-from pymatgen import Composition
 import numpy as np
 import pandas as pd
 
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_all(self, comp_frame, col_id="composition"):
+    def featurize_dataframe(self, comp_frame, col_id="composition"):
         """
         Compute features for all compounds contained in input dataframe
         
         Args: 
             comp_frame (Pandas dataframe): Dataframe containing column of compounds
-            col_id (string): column label containing compositions
+            col_id (string): column label containing objects to featurize
 
         Returns:
             updated Dataframe
@@ -20,21 +19,20 @@ class BaseFeaturizer(object):
         features = []
         comp_list = comp_frame[col_id]
         for comp in comp_list:
-            comp_obj = Composition(comp)
-            features.append(self.featurize(comp_obj))
+            features.append(self.featurize(comp))
         
         features = np.array(features)
 
-        labels = self.generate_labels()
+        labels = self.feature_labels()
         comp_frame = comp_frame.assign(**dict(zip(labels, features.T)))
         return comp_frame
     
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """
         Main featurizer function. Only defined in feature subclasses.
 
         Args:
-            comp_obj: Pymatgen composition object
+            comp: Pymatgen composition object
 
         Returns:
             list of features
@@ -42,7 +40,7 @@ class BaseFeaturizer(object):
 
         raise NotImplementedError("Featurizer is not defined")
     
-    def generate_labels(self):
+    def feature_labels(self):
         """
         Generate attribute names
         
@@ -52,4 +50,12 @@ class BaseFeaturizer(object):
 
         raise NotImplementedError("Featurizer is not defined")
 
+    def credits(self):
+        """
+        Citation for feature
 
+        Returns:
+            BibTeX citation
+        """
+
+        raise NotImplementedError("Featurizer is not defined")
