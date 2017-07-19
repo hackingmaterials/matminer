@@ -219,7 +219,7 @@ class IonicAttributes(BaseFeaturizer):
             ox_states = []
             elec = []
             
-            values_int = list(map(int, values))
+            values_int = [int(i) for i in values]
             print(values_int)
             print(all_elec)
             for i in range(1,len(values_int)+1):
