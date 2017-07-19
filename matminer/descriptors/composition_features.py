@@ -220,14 +220,10 @@ class IonicAttributes(BaseFeaturizer):
             elec = []
             
             values_int = [int(i) for i in values]
-            print(values_int)
-            print(all_elec)
             for i in range(1,len(values_int)+1):
                 ind = int(sum(values_int[:i])-1)
-                print(ind)
                 ox_states.append(all_ox_states[ind])
                 elec.append(all_elec[ind])
-                print(all_elec[ind])
 
             #Determine if neutral compound is possible
             cpd_possible = False
@@ -252,10 +248,6 @@ class IonicAttributes(BaseFeaturizer):
            
             max_ionic_char = np.max(ionic_char)
 
-            print(elec)
-            print(ionic_char)
-            print(max_ionic_char)
-         
         return list((cpd_possible, max_ionic_char, avg_ionic_char))
 
     def feature_labels(self):
