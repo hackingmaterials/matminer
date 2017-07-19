@@ -243,10 +243,14 @@ class IonicAttributes(BaseFeaturizer):
             for pair in atom_pairs:
                 XA = elec[pair[0]]
                 XB = elec[pair[1]]
-                ionic_char.append(1.0 - np.exp(-0.25*(XA-XB)**2))
+                ionic_char.append(1.0 - np.exp(-0.25*((XA-XB)**2)))
                 avg_ionic_char += el_frac[pair[0]]*el_frac[pair[1]]*ionic_char[-1]
-            
+           
             max_ionic_char = np.max(ionic_char)
+
+            print(elec)
+            print(ionic_char)
+            print(max_ionic_char)
          
         return list((cpd_possible, max_ionic_char, avg_ionic_char))
 
