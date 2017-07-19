@@ -78,7 +78,7 @@ class StoichAttributes(BaseFeaturizer):
 
         return p_norms
 
-    def generate_labels(self):
+    def feature_labels(self):
         labels = []
         for p in self.p_list:
             labels.append("%d-norm"%p)
@@ -137,7 +137,7 @@ class ElemPropertyAttributes(BaseFeaturizer):
 
         return all_attributes
 
-    def generate_labels(self):
+    def feature_labels(self):
         labels = []
         for attr in self.attributes:
             for stat in self.stats:
@@ -177,7 +177,7 @@ class ValenceOrbitalAttributes(BaseFeaturizer):
 
         return list((Fs, Fp, Fd, Ff))
 
-    def generate_labels(self):
+    def feature_labels(self):
         orbitals = ["s","p","d","f"]
         labels = []
         for orb in orbitals:
@@ -250,7 +250,7 @@ class IonicAttributes(BaseFeaturizer):
          
         return list((cpd_possible, max_ionic_char, avg_ionic_char))
 
-    def generate_labels(self):
+    def feature_labels(self):
         labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
         return labels
       
@@ -273,7 +273,7 @@ class ElementFractionAttribute(BaseFeaturizer):
             vector[atomic_number_i] = obj[1]
         return vector
 
-    def generate_labels(self):
+    def feature_labels(self):
         labels = []
         for i in range(1, 104):
             labels.append(Element.from_Z(i).symbol)
@@ -302,7 +302,7 @@ class TMetalFractionAttribute(BaseFeaturizer):
 
         return frac_magn_atoms
 
-    def generate_labels(self):
+    def feature_labels(self):
         labels = ["TMetal Fraction"]
         return labels
 
@@ -332,7 +332,7 @@ class ElectronAffinityAttribute(BaseFeaturizer):
 
         return avg_anion_affin
 
-    def generate_labels(self):
+    def feature_labels(self):
         labels = ["Avg Anion Electron Affinity"]
         return labels
 
@@ -380,7 +380,7 @@ class ElectronegativityDiffAttribute(BaseFeaturizer):
 
         return en_diff_stats
 
-    def generate_labels(self):
+    def feature_labels(self):
 
         labels = []
         for stat in self.stats:
@@ -579,18 +579,18 @@ if __name__ == '__main__':
     print(get_holder_mean([1, 2, 3, 4], 0))
    
     training_set = pd.DataFrame({"composition":["Fe2O3"]})
-    print "WARD NPJ ATTRIBUTES"
-    print "Stoichiometric attributes"
+    print("WARD NPJ ATTRIBUTES")
+    print("Stoichiometric attributes")
     p_list = [0,2,3,5,7,9]
-    print StoichAttributes().featurize_all(training_set)
-    print "Elemental property attributes"
-    print ElemPropertyAttributes().featurize_all(training_set)
-    print "Valence Orbital Attributes"
-    print ValenceOrbitalAttributes().featurize_all(training_set)
-    print "Ionic attributes"
-    print IonicAttributes().featurize_all(training_set)
+    print(StoichAttributes().featurize_all(training_set))
+    print("Elemental property attributes")
+    print(ElemPropertyAttributes().featurize_all(training_set))
+    print("Valence Orbital Attributes")
+    print(ValenceOrbitalAttributes().featurize_all(training_set))
+    print("Ionic attributes")
+    print(IonicAttributes().featurize_all(training_set))
 
-    print "DEML ELEMENTAL DESCRIPTORS"
-    print ElemPropertyAttributes(method="deml").featurize_all(training_set)
-    print TMetalFractionAttribute().featurize_all(training_set)
-    print ElectronAffinityAttribute().featurize_all(training_set)
+    print("DEML ELEMENTAL DESCRIPTORS")
+    print(ElemPropertyAttributes(method="deml").featurize_all(training_set))
+    print(TMetalFractionAttribute().featurize_all(training_set))
+    print(ElectronAffinityAttribute().featurize_all(training_set))
