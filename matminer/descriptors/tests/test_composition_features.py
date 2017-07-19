@@ -12,7 +12,7 @@ from matminer.descriptors.composition_features import StoichAttributes, ElemProp
 class CompositionFeaturesTest(PymatgenTest):
 
     def setUp(self):
-        self.df = pd.DataFrame({"composition":["Fe2O3"]})
+        self.df = pd.DataFrame({"composition":[Composition("Fe2O3")]})
 
     def test_stoich(self):
         df_stoich = StoichAttributes().featurize_dataframe(self.df)
