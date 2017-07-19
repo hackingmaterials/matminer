@@ -15,12 +15,12 @@ class CompositionFeaturesTest(PymatgenTest):
         self.df = pd.DataFrame({"composition":["Fe2O3"]})
 
     def test_stoich(self):
-        df_stoich = StoichAttributes().featurize_all(self.df)
+        df_stoich = StoichAttributes().featurize_dataframe(self.df)
         self.assertAlmostEqual(df_stoich["0-norm"][0], 2)
         self.assertAlmostEqual(df_stoich["7-norm"][0], 0.604895199)
 
     def test_elem(self):
-        df_elem = ElemPropertyAttributes().featurize_all(self.df)
+        df_elem = ElemPropertyAttributes().featurize_dataframe(self.df)
         self.assertAlmostEqual(df_elem["minimum Number"][0], 8)
         self.assertAlmostEqual(df_elem["maximum Number"][0], 26)
         self.assertAlmostEqual(df_elem["range Number"][0], 18)
@@ -29,7 +29,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem["mode Number"][0], 8)
 
     def test_elem_deml(self):
-        df_elem_deml = ElemPropertyAttributes("deml").featurize_all(self.df)
+        df_elem_deml = ElemPropertyAttributes("deml").featurize_dataframe(self.df)
         self.assertAlmostEqual(df_elem_deml["minimum atom_num"][0], 8)
         self.assertAlmostEqual(df_elem_deml["maximum atom_num"][0], 26)
         self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)
@@ -43,35 +43,35 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem_deml["std_dev magn_moment"][0], 2.547469332)
 
     def test_valence(self):
-        df_val = ValenceOrbitalAttributes().featurize_all(self.df)
+        df_val = ValenceOrbitalAttributes().featurize_dataframe(self.df)
         self.assertAlmostEqual(df_val["Frac s Valence Electrons"][0], 0.294117647)
         self.assertAlmostEqual(df_val["Frac d Valence Electrons"][0], 0.352941176)
         self.assertAlmostEqual(df_val["Frac p Valence Electrons"][0], 0.352941176)
         self.assertAlmostEqual(df_val["Frac f Valence Electrons"][0], 0)
 
     def test_ionic(self):
-        df_ionic = IonicAttributes().featurize_all(self.df)
+        df_ionic = IonicAttributes().featurize_dataframe(self.df)
         self.assertEqual(df_ionic["compound possible"][0], 1.0)
         self.assertAlmostEqual(df_ionic["Max Ionic Char"][0], 0.476922164)
         self.assertAlmostEqual(df_ionic["Avg Ionic Char"][0], 0.114461319)
 
     def test_fraction(self):
-        df_frac = ElementFractionAttribute().featurize_all(self.df)
+        df_frac = ElementFractionAttribute().featurize_dataframe(self.df)
         self.assertEqual(df_frac["O"][0], 0.6)
         self.assertEqual(df_frac["Fe"][0], 0.4)
         #self.assertAlmostEqual(df_frac["Fe"][1], 0.42857143)
         #self.assertAlmostEqual(df_frac["Li"][1], 0.57142857)
 
     def test_tm_fraction(self):
-        df_tm_frac = TMetalFractionAttribute().featurize_all(self.df)
+        df_tm_frac = TMetalFractionAttribute().featurize_dataframe(self.df)
         self.assertAlmostEqual(df_tm_frac["TMetal Fraction"][0], 0.4)
 
     def test_elec_affin(self):
-        df_elec_affin = ElectronAffinityAttribute().featurize_all(self.df)
+        df_elec_affin = ElectronAffinityAttribute().featurize_dataframe(self.df)
         self.assertAlmostEqual(df_elec_affin["Avg Anion Electron Affinity"][0], -169200)
 
     def test_en_diff(self):
-        df_en_diff = ElectronegativityDiffAttribute().featurize_all(self.df)
+        df_en_diff = ElectronegativityDiffAttribute().featurize_dataframe(self.df)
         self.assertAlmostEqual(df_en_diff["minimum EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["maximum EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["range EN difference"][0], 0)
