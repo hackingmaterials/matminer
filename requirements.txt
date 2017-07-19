@@ -1,5 +1,5 @@
 pymatgen==2017.7.4
-pandas==0.20.2
+pandas==0.20.3
 tqdm==4.14.0
 pymongo==3.4.0
 pint==0.8.1
