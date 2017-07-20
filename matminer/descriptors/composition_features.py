@@ -41,14 +41,13 @@ class StoichAttributes(BaseFeaturizer):
 
     Parameters:
         p_list (list of ints): list of norms to calculate
+        num_atoms (bool): whether to return number of atoms
     """
 
-    def __init__(self, p_list=None):
+    def __init__(self, p_list=[0,2,3,5,7,10], num_atoms=False):
         BaseFeaturizer.__init__(self)
-        if p_list == None:
-            self.p_list = [0,2,3,5,7,10]
-        else:
-            self.p_list = p_list
+        self.p_list = p_list
+        self.num_atoms = num_atoms
  
     def featurize(self, comp_obj):
         """
@@ -62,27 +61,50 @@ class StoichAttributes(BaseFeaturizer):
         """
  
         el_amt = comp_obj.get_el_amt_dict()
-        
-        p_norms = [0]*len(self.p_list)
+
         n_atoms = sum(el_amt.values())
+       
+        if self.p_list == None:
+            stoich_attr = n_atoms #return number of atoms if no norms specified
+        else: 
+            p_norms = [0]*len(self.p_list)
+            n_atoms = sum(el_amt.values())
 
-        for i in range(len(self.p_list)):
-            if self.p_list[i] < 0:
-                raise ValueError("p-norm not defined for p < 0")
-            if self.p_list[i] == 0:
-                p_norms[i] = len(el_amt.values())
+            for i in range(len(self.p_list)):
+                if self.p_list[i] < 0:
+                    raise ValueError("p-norm not defined for p < 0")
+                if self.p_list[i] == 0:
+                    p_norms[i] = len(el_amt.values())
+                else:
+                    for j in el_amt:
+                        p_norms[i] += (el_amt[j]/n_atoms)**self.p_list[i]
+                    p_norms[i] = p_norms[i]**(1.0/self.p_list[i])
+
+            if self.num_atoms:
+                stoich_attr = [n_atoms] + p_norms
             else:
-                for j in el_amt:
-                    p_norms[i] += (el_amt[j]/n_atoms)**self.p_list[i]
-                p_norms[i] = p_norms[i]**(1.0/self.p_list[i])
+                stoich_attr = p_norms
 
-        return p_norms
+        return stoich_attr
 
     def feature_labels(self):
         labels = []
-        for p in self.p_list:
-            labels.append("%d-norm"%p)
+        if self.num_atoms:
+            labels.append("Number of atoms")
+
+        if self.p_list != None:
+            for p in self.p_list:
+                labels.append("%d-norm"%p)
+
         return labels
+
+    def credits(self):
+        citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
+            "machine learning framework for predicting properties of inorganic materials}, "
+            "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
+            "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
+            "Alok and Wolverton, Christopher}, year={2016}}")
+        return citation
 
 class ElemPropertyAttributes(BaseFeaturizer):
     """
@@ -145,12 +167,29 @@ class ElemPropertyAttributes(BaseFeaturizer):
 
         return labels
 
+    def credits(self):
+        if self.method == "magpie":
+            citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
+                "machine learning framework for predicting properties of inorganic materials}, "
+                "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
+                "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
+                "Alok and Wolverton, Christopher}, year={2016}}")
+        elif self.method == "deml":
+            citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+                "functional theory total energies and enthalpies of formation of metal-nonmetal "
+                "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+                "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+        return citation
+
 class ValenceOrbitalAttributes(BaseFeaturizer):
     """Class to calculate valence orbital attributes"""
 
-    def __init__(self, data_source=MagpieData()):
+    def __init__(self, data_source=MagpieData(), orbitals=["s","p","d","f"], props=["avg", "frac"]):
         BaseFeaturizer.__init__(self)
         self.data_source = data_source
+        self.orbitals = orbitals
+        self.props = props
 
     def featurize(self, comp_obj):
         """Weighted fraction of valence electrons in each orbital
@@ -164,26 +203,43 @@ class ValenceOrbitalAttributes(BaseFeaturizer):
         
         num_atoms = comp_obj.num_atoms
 
-        avg_total_valence = sum(self.data_source.get_property(comp_obj,"NValance"))/num_atoms
-        avg_s = sum(self.data_source.get_property(comp_obj,"NsValence"))/num_atoms
-        avg_p = sum(self.data_source.get_property(comp_obj,"NpValence"))/num_atoms
-        avg_d = sum(self.data_source.get_property(comp_obj,"NdValence"))/num_atoms
-        avg_f = sum(self.data_source.get_property(comp_obj,"NfValence"))/num_atoms
+        avg = []
 
-        Fs = avg_s/avg_total_valence
-        Fp = avg_p/avg_total_valence
-        Fd = avg_d/avg_total_valence
-        Ff = avg_f/avg_total_valence
+        for orb in self.orbitals:
+            avg.append(sum(self.data_source.get_property(comp_obj,"N%sValence"%orb))/num_atoms)
 
-        return list((Fs, Fp, Fd, Ff))
+        if "frac" in self.props:
+            avg_total_valence = sum(self.data_source.get_property(comp_obj,"NValance"))/num_atoms
+            frac = [a/avg_total_valence for a in avg]
+
+        valence_attributes = []
+        for prop in self.props:
+            valence_attributes += locals()[prop]
+
+        return valence_attributes
 
     def feature_labels(self):
-        orbitals = ["s","p","d","f"]
+        #orbitals = ["s","p","d","f"]
         labels = []
-        for orb in orbitals:
-            labels.append("Frac %s Valence Electrons"%orb)
+        for prop in self.props:
+            for orb in self.orbitals:
+                labels.append("%s %s valence electrons"%(prop, orb))
 
         return labels
+
+    def credits(self):
+        ward_citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
+            "machine learning framework for predicting properties of inorganic materials}, "
+            "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
+            "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
+            "Alok and Wolverton, Christopher}, year={2016}}")
+        deml_citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+            "functional theory total energies and enthalpies of formation of metal-nonmetal "
+            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+        citations = [ward_citation, deml_citation]
+        return citations
 
 class IonicAttributes(BaseFeaturizer):
     """Class to calculate ionic property attributes"""
@@ -254,6 +310,14 @@ class IonicAttributes(BaseFeaturizer):
         labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
         return labels
       
+    def credits(self):
+        citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
+            "machine learning framework for predicting properties of inorganic materials}, "
+            "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
+            "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
+            "Alok and Wolverton, Christopher}, year={2016}}")
+        return citation
+
 class ElementFractionAttribute(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
@@ -306,6 +370,14 @@ class TMetalFractionAttribute(BaseFeaturizer):
         labels = ["TMetal Fraction"]
         return labels
 
+    def credits(self):
+        citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+            "functional theory total energies and enthalpies of formation of metal-nonmetal "
+            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+        return citation
+
 class ElectronAffinityAttribute(BaseFeaturizer):
     """
     Class to calculate average electron affinity times formal charge of anion elements
@@ -335,6 +407,14 @@ class ElectronAffinityAttribute(BaseFeaturizer):
     def feature_labels(self):
         labels = ["Avg Anion Electron Affinity"]
         return labels
+
+    def credits(self):
+        citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+            "functional theory total energies and enthalpies of formation of metal-nonmetal "
+            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+        return citation
 
 class ElectronegativityDiffAttribute(BaseFeaturizer):
     """
@@ -387,6 +467,57 @@ class ElectronegativityDiffAttribute(BaseFeaturizer):
             labels.append("%s EN difference"%stat)
 
         return labels
+
+    def credits(self):
+        citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+            "functional theory total energies and enthalpies of formation of metal-nonmetal "
+            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+        return citation
+
+class FERECorrectionAttribute(BaseFeaturizer):
+    """
+    Class to calculate difference between fitted elemental-phase reference energy (FERE) and GGA+U energy
+
+    Generates: Property statistics of difference between FERE and GGA+U energy
+    """
+
+    def __init__(self, data_source=DemlData(), stats=None):
+        self.data_source = data_source
+        if stats == None:
+            self.stats = ["minimum", "maximum","range","mean","std_dev"]
+        else:
+            self.stats = stats
+
+    def featurize(self, comp):
+
+        GGAU_Etot = self.data_source.get_property(comp, "GGAU_Etot")
+        mus_fere = self.data_source.get_property(comp, "mus_fere")
+
+        fere_corr = [mus_fere[i] - GGAU_Etot[i] for i in range(len(GGAU_Etot))]
+
+        fere_corr_stats = []
+        for stat in self.stats:
+            fere_corr_stats.append(PropertyStats().calc_stat(fere_corr, stat))
+
+        return fere_corr_stats
+
+    def feature_labels(self):
+
+        labels = []
+        for stat in self.stats:
+            labels.append("%s FERE Correction"%stat)
+
+        return labels
+
+    def credits(self):
+        citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+            "functional theory total energies and enthalpies of formation of metal-nonmetal "
+            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+        return citation
 
 #Old functions below
 def get_pymatgen_descriptor(comp, prop):
@@ -586,11 +717,13 @@ if __name__ == '__main__':
     print("Elemental property attributes")
     print(ElemPropertyAttributes().featurize_dataframe(training_set))
     print("Valence Orbital Attributes")
-    print(ValenceOrbitalAttributes().featurize_dataframe(training_set))
+    print(ValenceOrbitalAttributes(props=["frac"]).featurize_dataframe(training_set))
     print("Ionic attributes")
     print(IonicAttributes().featurize_dataframe(training_set))
 
     print("DEML ELEMENTAL DESCRIPTORS")
+    print(StoichAttributes(p_list=None, num_atoms=True).featurize_dataframe(training_set))
     print(ElemPropertyAttributes(method="deml").featurize_dataframe(training_set))
     print(TMetalFractionAttribute().featurize_dataframe(training_set))
     print(ElectronAffinityAttribute().featurize_dataframe(training_set))
+    print(ValenceOrbitalAttributes().featurize_dataframe(training_set))

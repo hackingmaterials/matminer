@@ -7,7 +7,7 @@ from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
 #from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
-from matminer.descriptors.composition_features import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes, ElementFractionAttribute, TMetalFractionAttribute, ElectronAffinityAttribute, ElectronegativityDiffAttribute
+from matminer.descriptors.composition_features import StoichAttributes, ElemPropertyAttributes, ValenceOrbitalAttributes, IonicAttributes, ElementFractionAttribute, TMetalFractionAttribute, ElectronAffinityAttribute, ElectronegativityDiffAttribute, FERECorrectionAttribute
 
 class CompositionFeaturesTest(PymatgenTest):
 
@@ -15,7 +15,8 @@ class CompositionFeaturesTest(PymatgenTest):
         self.df = pd.DataFrame({"composition":[Composition("Fe2O3")]})
 
     def test_stoich(self):
-        df_stoich = StoichAttributes().featurize_dataframe(self.df)
+        df_stoich = StoichAttributes(num_atoms=True).featurize_dataframe(self.df)
+        self.assertAlmostEqual(df_stoich["Number of atoms"][0], 5)
         self.assertAlmostEqual(df_stoich["0-norm"][0], 2)
         self.assertAlmostEqual(df_stoich["7-norm"][0], 0.604895199)
 
@@ -44,10 +45,14 @@ class CompositionFeaturesTest(PymatgenTest):
 
     def test_valence(self):
         df_val = ValenceOrbitalAttributes().featurize_dataframe(self.df)
-        self.assertAlmostEqual(df_val["Frac s Valence Electrons"][0], 0.294117647)
-        self.assertAlmostEqual(df_val["Frac d Valence Electrons"][0], 0.352941176)
-        self.assertAlmostEqual(df_val["Frac p Valence Electrons"][0], 0.352941176)
-        self.assertAlmostEqual(df_val["Frac f Valence Electrons"][0], 0)
+        self.assertAlmostEqual(df_val["avg s valence electrons"][0], 2.0)
+        self.assertAlmostEqual(df_val["avg p valence electrons"][0], 2.4)
+        self.assertAlmostEqual(df_val["avg d valence electrons"][0], 2.4)
+        self.assertAlmostEqual(df_val["avg f valence electrons"][0], 0.0)
+        self.assertAlmostEqual(df_val["frac s valence electrons"][0], 0.294117647)
+        self.assertAlmostEqual(df_val["frac d valence electrons"][0], 0.352941176)
+        self.assertAlmostEqual(df_val["frac p valence electrons"][0], 0.352941176)
+        self.assertAlmostEqual(df_val["frac f valence electrons"][0], 0)
 
     def test_ionic(self):
         df_ionic = IonicAttributes().featurize_dataframe(self.df)
@@ -77,6 +82,14 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_en_diff["range EN difference"][0], 0)
         self.assertAlmostEqual(df_en_diff["mean EN difference"][0], 0.644)
         self.assertAlmostEqual(df_en_diff["std_dev EN difference"][0], 0)
+
+    def test_fere_corr(self):
+        df_fere_corr = FERECorrectionAttribute().featurize_dataframe(self.df)
+        self.assertAlmostEqual(df_fere_corr["minimum FERE Correction"][0], -0.15213431610903)
+        self.assertAlmostEqual(df_fere_corr["maximum FERE Correction"][0], 0.23)
+        self.assertAlmostEqual(df_fere_corr["range FERE Correction"][0], 0.382134316)
+        self.assertAlmostEqual(df_fere_corr["mean FERE Correction"][0], 0.077146274)
+        self.assertAlmostEqual(df_fere_corr["std_dev FERE Correction"][0], 0.187206817)
 
 """
 class PymatgenDescriptorTest(unittest.TestCase):
