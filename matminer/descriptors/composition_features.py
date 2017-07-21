@@ -22,11 +22,6 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Ag
 # TODO: unit tests
 # TODO: most of this code needs to be rewritten ... AJ
 
-
-# Load elemental cohesive energy data from json file
-#with open(os.path.join(os.path.dirname(__file__), 'cohesive_energies.json'), 'r') as f:
-#    ce_data = json.load(f)
-
 #empty dictionary for magpie properties
 magpie_props = {}
 
@@ -62,10 +57,10 @@ class StoichAttributes(BaseFeaturizer):
  
         el_amt = comp_obj.get_el_amt_dict()
 
-        n_atoms = sum(el_amt.values())
+        n_atoms = comp_obj.num_atoms
        
         if self.p_list == None:
-            stoich_attr = n_atoms #return number of atoms if no norms specified
+            stoich_attr = [n_atoms] #return number of atoms if no norms specified
         else: 
             p_norms = [0]*len(self.p_list)
             n_atoms = sum(el_amt.values())
@@ -276,6 +271,7 @@ class IonicAttributes(BaseFeaturizer):
             cpd_possible = False
             ox_sets = itertools.product(*ox_states)
             for ox in ox_sets:
+                print(ox_sets)
                 if abs(np.dot(ox, values)) < 1e-4:
                     cpd_possible = True
                     break    
@@ -355,7 +351,7 @@ class TMetalFractionAttribute(BaseFeaturizer):
 
         frac_magn_atoms /= sum(el_amt.values())
 
-        return frac_magn_atoms
+        return [frac_magn_atoms]
 
     def feature_labels(self):
         labels = ["TMetal Fraction"]
@@ -393,7 +389,7 @@ class ElectronAffinityAttribute(BaseFeaturizer):
 
         avg_anion_affin = np.dot(anion_charge, anion_affin)/len(fml_charge)
 
-        return avg_anion_affin
+        return [avg_anion_affin]
 
     def feature_labels(self):
         labels = ["Avg Anion Electron Affinity"]
@@ -703,7 +699,7 @@ if __name__ == '__main__':
     print(get_magpie_descriptor('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
    
-    training_set = pd.DataFrame({"composition":[Composition("Fe2O3")]})
+    training_set = pd.DataFrame({"composition":[Composition("Fe2O3"), Composition("Ga1Na6P3"), Composition("O4Si1Zn2")]})
     print("WARD NPJ ATTRIBUTES")
     print("Stoichiometric attributes")
     p_list = [0,2,3,5,7,9]
@@ -720,4 +716,4 @@ if __name__ == '__main__':
     print(ElemPropertyAttributes(method="deml").featurize_dataframe(training_set))
     print(TMetalFractionAttribute().featurize_dataframe(training_set))
     print(ElectronAffinityAttribute().featurize_dataframe(training_set))
-    print(ValenceOrbitalAttribute().featurize_dataframe(training_set))
+    print(ValenceOrbitalAttributes(orbitals=["s","p","d"], props=["avg","frac"]).featurize_dataframe(training_set))
