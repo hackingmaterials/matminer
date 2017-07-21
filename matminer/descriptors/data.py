@@ -31,13 +31,14 @@ with open(os.path.join(module_dir, 'data_files', 'cohesive_energies.json'), 'r')
 class AbstractData((six.with_metaclass(abc.ABCMeta))):
 
     @abc.abstractmethod
-    def get_property(self, comp, property_name):
+    def get_property(self, comp, property_name, return_per_element=False):
         """
         Gets data for a composition object.
 
         Args:
             comp (Composition/str): composition
             property_name (str): Name of descriptor
+            return_per_element (bool): If true, returns one value per element rather than per atom
 
         Returns:
             (list): list of values for each atom in comp_obj.
@@ -101,7 +102,7 @@ class DemlData(AbstractData):
 
         return fml_charge_dict
                                
-    def get_property(self, comp, property_name):
+    def get_property(self, comp, property_name, return_per_element=False):
         if property_name not in self.available_props:
             raise ValueError("This descriptor is not available")
 
@@ -122,34 +123,49 @@ class DemlData(AbstractData):
                     prop = float(fml_charge_dict[el])
                 except:
                     prop = float("NaN")
-                for _ in range(int(el_amt[el])):
+                if return_per_element:
                     demldata.append(prop)
+                else:
+                    for _ in range(int(el_amt[el])):
+                        demldata.append(prop)
         elif property_name == "first_ioniz": #First ionization energy
             for el in symbols:
                 try:
                     first_ioniz = self.all_props["ionization_en"][el][0]
                 except:
                     first_ioniz = float("NaN")
-                for _ in range(int(el_amt[el])):
+                if return_per_element:
                     demldata.append(first_ioniz)
+                else:
+                    for _ in range(int(el_amt[el])):
+                        demldata.append(first_ioniz)
         elif property_name == "total_ioniz": #Cumulative ionization energy
             for el in symbols:
                 try:
                     total_ioniz = sum(self.all_props["ionization_en"][el])
                 except:
                     total_ioniz = float("NaN")
-                for _ in range(int(el_amt[el])):
+                if return_per_element:
                     demldata.append(total_ioniz)
+                else:
+                    for _ in range(int(el_amt[el])):
+                        demldata.append(total_ioniz)
         elif "valence" in property_name:
             for el in symbols:
                 valence_dict = self.all_props["valence_e"][self.all_props["col_num"][el]]
                 if property_name[-1] in ["s","p","d"]:
-                    for _ in range(int(el_amt[el])):
+                    if return_per_element: 
                         demldata.append(float(valence_dict[property_name[-1]]))
+                    else:
+                        for _ in range(int(el_amt[el])):
+                            demldata.append(float(valence_dict[property_name[-1]]))
                 else:
                     n_valence = sum(valence_dict.values())
-                    for _ in range(int(el_amt[el])):
+                    if return_per_element:
                         demldata.append(float(n_valence))
+                    else:
+                        for _ in range(int(el_amt[el])):
+                            demldata.append(float(n_valence))
         elif property_name in ["xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]: #Charge dependent properties
             fml_charge_dict = self.calc_formal_charge(comp)
             for el in symbols:
@@ -158,8 +174,11 @@ class DemlData(AbstractData):
                     prop = float(self.all_props[property_name][el][charge])
                 except:
                     prop = 0.0
-                for _ in range(int(el_amt[el])):
+                if return_per_element:
                     demldata.append(prop)
+                else:
+                    for _ in range(int(el_amt[el])):
+                        demldata.append(prop)
             return demldata
         else:
             for el in symbols:
@@ -167,8 +186,11 @@ class DemlData(AbstractData):
                     prop = float(self.all_props[property_name][el])
                 except:
                     prop = float("NaN")
-                for _ in range(int(el_amt[el])):
+                if return_per_element:
                     demldata.append(prop)
+                else:
+                    for _ in range(int(el_amt[el])):
+                        demldata.append(prop)
 
         return demldata
 
@@ -206,7 +228,7 @@ class MagpieData(AbstractData):
                         prop_value = float("NaN")
                     self.all_elemental_props[descriptor_name][str(Element.from_Z(atomic_no))] = prop_value
 
-    def get_property(self, comp, property_name):
+    def get_property(self, comp, property_name, return_per_element=False):
         if property_name not in self.available_props:
             raise ValueError("This descriptor is not available from the Magpie repository. "
                              "Choose from {}".format(self.available_props))
@@ -219,14 +241,17 @@ class MagpieData(AbstractData):
         # sort symbols by electronegativity
         symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
 
-        return [self.all_elemental_props[property_name][el]
-                for el in symbols
-                for _ in range(int(el_amt[el]))]
+        if return_per_element:
+            return [self.all_elemental_props[property_name][el] for el in symbols]
+        else:
+            return [self.all_elemental_props[property_name][el]
+                    for el in symbols
+                    for _ in range(int(el_amt[el]))]
 
 
 class PymatgenData(AbstractData):
 
-    def get_property(self, comp, property_name):
+    def get_property(self, comp, property_name, return_per_element=False):
         """
         Get descriptor data for elements in a compound from pymatgen.
 
@@ -303,9 +328,12 @@ class PymatgenData(AbstractData):
                 eldata_tup(element=el_sym, propname=property_name, propvalue=property_value,
                            propunit=property_units, amt=el_amt_dict[el_sym]))
 
-            # Add descriptor values, one for each atom in the compound
-            for i in range(int(el_amt_dict[el_sym])):
+            if return_per_element:
                 eldata.append(property_value)
+            else:
+                # Add descriptor values, one for each atom in the compound
+                for i in range(int(el_amt_dict[el_sym])):
+                    eldata.append(property_value)
 
         return eldata
 
