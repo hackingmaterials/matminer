@@ -269,16 +269,8 @@ class IonicAttributes(BaseFeaturizer):
             avg_ionic_char = 0        
         else:
             #Get magpie data for each element
-            all_ox_states = self.data_source.get_property(comp_obj,"OxidationStates")
-            all_elec = self.data_source.get_property(comp_obj,"Electronegativity")
-            ox_states = []
-            elec = []
-            
-            values_int = [int(i) for i in values]
-            for i in range(1,len(values_int)+1):
-                ind = int(sum(values_int[:i])-1)
-                ox_states.append(all_ox_states[ind])
-                elec.append(all_elec[ind])
+            ox_states = self.data_source.get_property(comp_obj, "OxidationStates", return_per_element=True)
+            elec = self.data_source.get_property(comp_obj, "Electronegativity", return_per_element=True)
 
             #Determine if neutral compound is possible
             cpd_possible = False
