@@ -219,7 +219,6 @@ class ValenceOrbitalAttributes(BaseFeaturizer):
         return valence_attributes
 
     def feature_labels(self):
-        #orbitals = ["s","p","d","f"]
         labels = []
         for prop in self.props:
             for orb in self.orbitals:
@@ -285,7 +284,7 @@ class IonicAttributes(BaseFeaturizer):
             cpd_possible = False
             ox_sets = itertools.product(*ox_states)
             for ox in ox_sets:
-                if np.dot(ox, values) < 1e-4:
+                if abs(np.dot(ox, values)) < 1e-4:
                     cpd_possible = True
                     break    
 
@@ -442,8 +441,11 @@ class ElectronegativityDiffAttribute(BaseFeaturizer):
         for i in range(len(fml_charge)):
             if fml_charge[i] > 0:
                 cation_en.append(electroneg[i])
-            else:
+            elif fml_charge[i] < 0:
                 anion_en.append(electroneg[i])
+
+        if len(cation_en) == 0 or len(anion_en) == 0: #Return NaN if cations/anions missing
+            return len(self.stats)*[float("NaN")]
 
         avg_en_diff = []
         n_anions = len(anion_en)
