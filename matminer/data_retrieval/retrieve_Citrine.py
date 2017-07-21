@@ -109,10 +109,8 @@ class CitrineDataRetrieval:
             matrix_column.set_value(row, matrix_values)
         return matrix_values
 
-    def get_dataframe(self, formula=None, property=None, data_type=None, reference=None,
-                      min_measurement=None,
-                      max_measurement=None, from_record=None, data_set_id=None, max_results=None,
-                      show_columns=None):
+    def get_dataframe(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
+                      max_measurement=None, from_record=None, data_set_id=None, max_results=None, show_columns=None):
         """
         Gets data from Citrine in a dataframe format.
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
