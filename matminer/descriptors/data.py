@@ -73,8 +73,13 @@ class DemlData(AbstractData):
         symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X) #Sort by electronegativity
         stoich = [el_amt[el] for el in symbols]
 
-        charge_states = [self.all_props["charge_states"][el] for el in symbols]
-        
+        charge_states = []
+        for el in symbols:
+            try:
+                charge_states.append(self.all_props["charge_states"][el])
+            except:
+                charge_states.append([float("NaN")])
+
         charge_sets = itertools.product(*charge_states)
         possible_fml_charge = []
 
@@ -112,21 +117,29 @@ class DemlData(AbstractData):
 
         if property_name == "formal_charge":
             fml_charge_dict = self.calc_formal_charge(comp)
-            return [float(fml_charge_dict[el])
-                for el in symbols
-                for _ in range(int(el_amt[el]))]
+            for el in symbols:
+                try:
+                    prop = float(fml_charge_dict[el])
+                except:
+                    prop = float("NaN")
+                for _ in range(int(el_amt[el])):
+                    demldata.append(prop)
         elif property_name == "first_ioniz": #First ionization energy
             for el in symbols:
-                first_ioniz = self.all_props["ionization_en"][el][0]
+                try:
+                    first_ioniz = self.all_props["ionization_en"][el][0]
+                except:
+                    first_ioniz = float("NaN")
                 for _ in range(int(el_amt[el])):
                     demldata.append(first_ioniz)
-            return demldata
         elif property_name == "total_ioniz": #Cumulative ionization energy
             for el in symbols:
-                total_ioniz = sum(self.all_props["ionization_en"][el])
+                try:
+                    total_ioniz = sum(self.all_props["ionization_en"][el])
+                except:
+                    total_ioniz = float("NaN")
                 for _ in range(int(el_amt[el])):
                     demldata.append(total_ioniz)
-            return demldata
         elif "valence" in property_name:
             for el in symbols:
                 valence_dict = self.all_props["valence_e"][self.all_props["col_num"][el]]
@@ -137,21 +150,27 @@ class DemlData(AbstractData):
                     n_valence = sum(valence_dict.values())
                     for _ in range(int(el_amt[el])):
                         demldata.append(float(n_valence))
-            return demldata
         elif property_name in ["xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]: #Charge dependent properties
             fml_charge_dict = self.calc_formal_charge(comp)
             for el in symbols:
+                try:
+                    charge = fml_charge_dict[el]
+                    prop = float(self.all_props[property_name][el][charge])
+                except:
+                    prop = 0.0
                 for _ in range(int(el_amt[el])):
-                    try:
-                        charge = fml_charge_dict[el]
-                        demldata.append(float(self.all_props[property_name][el][charge]))
-                    except:
-                        demldata.append(0.0)
+                    demldata.append(prop)
             return demldata
-        else:    
-            return [float(self.all_props[property_name][el])
-                for el in symbols
-                for _ in range(int(el_amt[el]))]
+        else:
+            for el in symbols:
+                try:
+                    prop = float(self.all_props[property_name][el])
+                except:
+                    prop = float("NaN")
+                for _ in range(int(el_amt[el])):
+                    demldata.append(prop)
+
+        return demldata
 
 @singleton
 class MagpieData(AbstractData):
