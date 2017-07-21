@@ -2,6 +2,8 @@ from __future__ import division, unicode_literals, print_function
 
 import warnings
 
+import os.path
+
 import numpy as np
 
 import pandas as pd
@@ -30,10 +32,12 @@ class PlotlyFig:
             hovermode: (str) determines the mode of hover interactions. Can be 'x'/'y'/'closest'/False
             filename: (str) name/filepath of plot file
             plot_mode: (str) (i) 'offline': creates and saves plots on the local disk, (ii) 'notebook': to embed plots
-                in a IPython/Jupyter notebook, (iii) 'online': save the plot in your online plotly account (requires
-                the fields 'username' and 'api_key' to be set), or (iv) 'static': save a static image of the plot
-                locally. Valid image formats are 'png', 'svg', 'jpeg', and 'pdf'. The format is taken as the extension
-                of the filename or as the supplied format.
+                in a IPython/Jupyter notebook, (iii) 'online': save the plot in your online plotly account, or (iv)
+                'static': save a static image of the plot locally (but requiring plotly account credentials). Valid
+                image formats are 'png', 'svg', 'jpeg', and 'pdf'. The format is taken as the extension of the filename
+                or as the supplied format.
+                NOTE: Both 'online' and 'static' modes require either the fields 'username' and 'api_key' or
+                the plotly credentials file to be set. See plotly website and documentation for details.
             show_offline_plot: (bool) automatically open the plot (the plot is saved either way); only applies to
                 'offline' mode
             username: (str) plotly account username
@@ -92,13 +96,15 @@ class PlotlyFig:
             margin=dict(t=margin_top, b=margin_bottom, l=margin_left, r=margin_right, pad=pad)
         )
 
-        if self.plot_mode == 'online':
-            if not self.username:
-                raise ValueError('field "username" must be filled in online plotting mode')
-            if not self.api_key:
-                raise ValueError('field "api_key" must be filled in online plotting mode')
+        if self.plot_mode == 'online' or self.plot_mode == 'static':
+            if not os.path.isfile('~/.plotly/.credentials'):
+                if not self.username:
+                    raise ValueError('field "username" must be filled in online plotting mode')
+                if not self.api_key:
+                    raise ValueError('field "api_key" must be filled in online plotting mode')
+                plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
 
-        elif self.plot_mode == 'static':
+        if self.plot_mode == 'static':
             if not self.filename or not self.filename.lower().endswith(
                     ('.png', '.svg', '.jpeg', '.pdf')):
                 raise ValueError(
@@ -126,7 +132,6 @@ class PlotlyFig:
             plotly.offline.iplot(fig)
 
         elif self.plot_mode == 'online':
-            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
             if self.filename:
                 plotly.plotly.plot(fig, filename=self.filename, sharing='public')
             else:

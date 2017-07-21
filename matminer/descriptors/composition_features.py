@@ -720,4 +720,4 @@ if __name__ == '__main__':
     print(ElemPropertyAttributes(method="deml").featurize_dataframe(training_set))
     print(TMetalFractionAttribute().featurize_dataframe(training_set))
     print(ElectronAffinityAttribute().featurize_dataframe(training_set))
-    print(ValenceOrbitalAttributes().featurize_dataframe(training_set))
+    print(ValenceOrbitalAttribute().featurize_dataframe(training_set))
