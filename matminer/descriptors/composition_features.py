@@ -32,7 +32,7 @@ atomic_syms = []
 for atomic_no in range(1,104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
-class StoichAttributes(BaseFeaturizer):
+class StoichAttribute(BaseFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -54,7 +54,8 @@ class StoichAttributes(BaseFeaturizer):
             p_list (list of ints)
         
         Returns: 
-            p_norm (float): Lp norm-based stoichiometric attribute
+            p_norm (list of floats): Lp norm-based stoichiometric attributes.
+                Returns number of atoms if no p-values specified.
         """
  
         el_amt = comp_obj.get_el_amt_dict()
@@ -103,12 +104,14 @@ class StoichAttributes(BaseFeaturizer):
             "Alok and Wolverton, Christopher}, year={2016}}")
         return citation
 
-class ElemPropertyAttributes(BaseFeaturizer):
+class ElemPropertyAttribute(BaseFeaturizer):
     """
     Class to calculate elemental property attributes
 
     Parameters:
-        attributes (list of strings): List of elemental properties to use    
+        attributes (list of strings): List of elemental properties to use
+        method (string): pre-packaged sets of property sets to compute
+        data_source (data object): source from which to retrieve element property data
     """
 
     def __init__(self, method="magpie", stats=None, attributes=None, data_source=None):
@@ -139,7 +142,7 @@ class ElemPropertyAttributes(BaseFeaturizer):
             comp_obj: Pymatgen composition object
         
         Returns:
-            all_attributes: min, max, range, mean, average deviation, and mode of descriptors
+            all_attributes: Specified property statistics of descriptors
         """
 
         el_amt = comp_obj.get_el_amt_dict()
@@ -179,8 +182,16 @@ class ElemPropertyAttributes(BaseFeaturizer):
                 "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
-class ValenceOrbitalAttributes(BaseFeaturizer):
-    """Class to calculate valence orbital attributes"""
+class ValenceOrbitalAttribute(BaseFeaturizer):
+    """
+        Class to calculate valence orbital attributes
+
+        Parameters:
+            data_source (data object): source from which to retrieve element data
+            orbitals (list): orbitals to calculate
+            props (list): specifies whether to return average number of electrons in each orbital,
+                fraction of electrons in each orbital, or both
+    """
 
     def __init__(self, data_source=MagpieData(), orbitals=["s","p","d","f"], props=["avg", "frac"]):
         BaseFeaturizer.__init__(self)
@@ -195,7 +206,7 @@ class ValenceOrbitalAttributes(BaseFeaturizer):
                 comp_obj: Pymatgen composition object
 
            Returns: 
-                Fs, Fp, Fd, Ff (float): Fraction of valence electrons in s, p, d, and f orbitals
+                valence_attributes (list of floats): Average number and/or fraction of valence electrons in specfied orbitals
         """    
         
         num_atoms = comp_obj.num_atoms
@@ -237,8 +248,14 @@ class ValenceOrbitalAttributes(BaseFeaturizer):
         citations = [ward_citation, deml_citation]
         return citations
 
-class IonicAttributes(BaseFeaturizer):
-    """Class to calculate ionic property attributes"""
+class IonicAttribute(BaseFeaturizer):
+    """
+    Class to calculate ionic property attributes
+
+    Parameters:
+        data_source (data class): source from which to retrieve element data
+    """
+
     def __init__(self, data_source=MagpieData()):
         BaseFeaturizer.__init__(self)
         self.data_source = data_source
@@ -275,8 +292,6 @@ class IonicAttributes(BaseFeaturizer):
             cpd_possible = False
             ox_sets = itertools.product(*ox_states)
             for ox in ox_sets:
-                print(ox)
-                print(values)
                 if abs(np.dot(ox, values)) < 1e-4:
                     cpd_possible = True
                     break    
@@ -321,6 +336,14 @@ class ElementFractionAttribute(BaseFeaturizer):
         pass
 
     def featurize(self, comp):
+        """
+        Args:
+            comp: Pymatgen Composition object
+    
+        Returns:
+            vector (list of floats): fraction of each element in a composition
+        """
+
         vector = [0]*103
         el_list = list(comp.element_composition.fractional_composition.items())
         for el in el_list:
@@ -339,6 +362,9 @@ class TMetalFractionAttribute(BaseFeaturizer):
     """
     Class to calculate fraction of magnetic transition metals in a composition.
 
+    Parameters:
+        data_source (data class): source from which to retrieve element data
+
     Generates: Fraction of magnetic transition metal atoms in a compound
     """
 
@@ -347,6 +373,14 @@ class TMetalFractionAttribute(BaseFeaturizer):
             'Rh','Pd','Ag','Ta','W','Re','Os','Ir','Pt']
 
     def featurize(self, comp):
+        """
+        Args:
+            comp: Pymatgen Composition object
+    
+        Returns:
+            frac_magn_atoms (single-element list): fraction of magnetic transitional metal atoms in a compound
+        """
+
         el_amt = comp.get_el_amt_dict()
 
         frac_magn_atoms = 0
@@ -374,6 +408,9 @@ class ElectronAffinityAttribute(BaseFeaturizer):
     """
     Class to calculate average electron affinity times formal charge of anion elements
 
+    Parameters:
+        data_source (data class): source from which to retrieve element data
+
     Generates average (electron affinity*formal charge) of anions
     """
 
@@ -381,6 +418,14 @@ class ElectronAffinityAttribute(BaseFeaturizer):
         self.data_source = data_source
 
     def featurize(self, comp):
+        """
+        Args:
+            comp: Pymatgen Composition object
+    
+        Returns:
+            avg_anion_affin (single-element list): average electron affinity*formal charge of anions
+        """
+
         fml_charge = self.data_source.get_property(comp, "formal_charge")
         electron_affin = self.data_source.get_property(comp, "electron_affin")
 
@@ -412,6 +457,10 @@ class ElectronegativityDiffAttribute(BaseFeaturizer):
     """
     Class to calculate average electronegativity difference
 
+    Parameters:
+        data_source (data class): source from which to retrieve element data
+        stats: Property statistics to compute
+
     Generates average electronegativity difference between cations and anions
     """
 
@@ -423,6 +472,14 @@ class ElectronegativityDiffAttribute(BaseFeaturizer):
             self.stats = stats
 
     def featurize(self, comp):
+        """
+        Args:
+            comp: Pymatgen Composition object
+    
+        Returns:
+            en_diff_stats (list of floats): Property stats of electronegativity difference
+        """
+
 
         fml_charge = self.data_source.get_property(comp, "formal_charge")
         electroneg = self.data_source.get_property(comp, "electronegativity")
@@ -475,6 +532,10 @@ class FERECorrectionAttribute(BaseFeaturizer):
     """
     Class to calculate difference between fitted elemental-phase reference energy (FERE) and GGA+U energy
 
+    Parameters:
+        data_source (data class): source from which to retrieve element data
+        stats: Property statistics to compute
+
     Generates: Property statistics of difference between FERE and GGA+U energy
     """
 
@@ -486,6 +547,13 @@ class FERECorrectionAttribute(BaseFeaturizer):
             self.stats = stats
 
     def featurize(self, comp):
+        """
+        Args:
+            comp: Pymatgen Composition object
+    
+        Returns:
+            fere_corr_stats (list of floats): Property stats of FERE Correction
+        """
 
         GGAU_Etot = self.data_source.get_property(comp, "GGAU_Etot")
         mus_fere = self.data_source.get_property(comp, "mus_fere")
@@ -708,17 +776,17 @@ if __name__ == '__main__':
     print("WARD NPJ ATTRIBUTES")
     print("Stoichiometric attributes")
     p_list = [0,2,3,5,7,9]
-    print(StoichAttributes().featurize_dataframe(training_set))
+    print(StoichAttribute().featurize_dataframe(training_set))
     print("Elemental property attributes")
-    print(ElemPropertyAttributes().featurize_dataframe(training_set))
+    print(ElemPropertyAttribute().featurize_dataframe(training_set))
     print("Valence Orbital Attributes")
-    print(ValenceOrbitalAttributes(props=["frac"]).featurize_dataframe(training_set))
+    print(ValenceOrbitalAttribute(props=["frac"]).featurize_dataframe(training_set))
     print("Ionic attributes")
-    print(IonicAttributes().featurize_dataframe(training_set))
+    print(IonicAttribute().featurize_dataframe(training_set))
 
     print("DEML ELEMENTAL DESCRIPTORS")
-    print(StoichAttributes(p_list=None, num_atoms=True).featurize_dataframe(training_set))
-    print(ElemPropertyAttributes(method="deml").featurize_dataframe(training_set))
+    print(StoichAttribute(p_list=None, num_atoms=True).featurize_dataframe(training_set))
+    print(ElemPropertyAttribute(method="deml").featurize_dataframe(training_set))
     print(TMetalFractionAttribute().featurize_dataframe(training_set))
     print(ElectronAffinityAttribute().featurize_dataframe(training_set))
-    print(ValenceOrbitalAttributes(orbitals=["s","p","d"], props=["avg","frac"]).featurize_dataframe(training_set))
+    print(ValenceOrbitalAttribute(orbitals=["s","p","d"], props=["avg","frac"]).featurize_dataframe(training_set))
