@@ -272,6 +272,7 @@ class IonicAttributes(BaseFeaturizer):
             ox_sets = itertools.product(*ox_states)
             for ox in ox_sets:
                 print(ox)
+                print(values)
                 if abs(np.dot(ox, values)) < 1e-4:
                     cpd_possible = True
                     break    
