@@ -1,4 +1,6 @@
 from pymatgen import Element, Composition, MPRester
+from pymatgen.core.periodic_table import get_el_sp
+
 import collections
 import os
 import json
@@ -255,8 +257,10 @@ class IonicAttributes(BaseFeaturizer):
         """
 
         el_amt = comp_obj.get_el_amt_dict()
-        elements = list(el_amt.keys())
-        values = list(el_amt.values())
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        values = [el_amt[el] for el in elements]
+        #elements = list(el_amt.keys())
+        #values = list(el_amt.values())
 
         if len(elements) < 2: #Single element
             cpd_possible = True
