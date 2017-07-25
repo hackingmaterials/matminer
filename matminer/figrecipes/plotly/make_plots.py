@@ -1,27 +1,22 @@
 from __future__ import division, unicode_literals, print_function
-
 import warnings
-
 import os.path
-
 import numpy as np
-
 import pandas as pd
-
 import plotly
 import plotly.graph_objs as go
 from plotly.tools import FigureFactory as FF
-
 from scipy import stats
+
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
 class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
-                 plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25, fontfamily=None,
-                 height=800, width=1000, scale=None, margin_top=100, margin_bottom=80, margin_left=80, margin_right=80,
-                 pad=0):
+                 plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
+                 fontfamily=None, height=800, width=1000, scale=None, margin_top=100, margin_bottom=80, margin_left=80,
+                 margin_right=80, pad=0):
         """
         Class for making Plotly plots
 
@@ -141,14 +136,12 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis',
-                legend=None, showlegend=False, mode='markers', marker='circle', marker_fill='fill',
-                hoverinfo='x+y+text', add_xy_plot=None, marker_outline_width=0,
-                marker_outline_color='black',
-                linedash='solid', linewidth=2, lineshape='linear', error_type=None,
-                error_direction=None,
-                error_array=None, error_value=None, error_symmetric=True, error_arrayminus=None,
-                error_valueminus=None):
+    def xy_plot(self, x_col, y_col, x_axis_type='linear', y_axis_type='linear', text=None,
+                color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis', legend=None, showlegend=False,
+                mode='markers', marker='circle', marker_fill='fill', hoverinfo='x+y+text', add_xy_plot=None,
+                marker_outline_width=0, marker_outline_color='black', linedash='solid', linewidth=2, lineshape='linear',
+                error_type=None, error_direction=None, error_array=None, error_value=None, error_symmetric=True,
+                error_arrayminus=None, error_valueminus=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -323,8 +316,7 @@ class PlotlyFig:
 
         self.create_plot(fig)
 
-    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis',
-                     colorscale_range=None,
+    def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None,
                      annotations_text=None, annotations_text_size=20, annotations_color='white'):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
@@ -394,8 +386,8 @@ class PlotlyFig:
 
         self.create_plot(fig)
 
-    def violin_plot(self, data, data_col=None, group_col=None, title=None, height=800, width=1000,
-                    colors=None, use_colorscale=False, groups=None):
+    def violin_plot(self, data, data_col=None, group_col=None, title=None, height=800, width=1000, colors=None,
+                    use_colorscale=False, groups=None):
         """
         Create a violin plot using Plotly.
 
@@ -476,10 +468,8 @@ class PlotlyFig:
 
         self.create_plot(fig)
 
-    def scatter_matrix(self, dataframe, select_columns=None, index_colname=None,
-                       diag_kind='scatter',
-                       marker_size=10, height=800, width=1000, marker_outline_width=0,
-                       marker_outline_color='black'):
+    def scatter_matrix(self, dataframe, select_columns=None, index_colname=None, diag_kind='scatter', marker_size=10,
+                       height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
         """
         Create a scatter matrix plot from dataframes using Plotly.
 
@@ -509,8 +499,7 @@ class PlotlyFig:
 
         self.create_plot(fig)
 
-    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1,
-                  color='rgba(70, 130, 180, 1)', bargap=0):
+    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1, color='rgba(70, 130, 180, 1)', bargap=0):
         """
         Create a histogram using Plotly
 
