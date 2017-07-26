@@ -31,7 +31,7 @@ with open(os.path.join(module_dir, 'data_files', 'cohesive_energies.json'), 'r')
 class AbstractData((six.with_metaclass(abc.ABCMeta))):
 
     @abc.abstractmethod
-    def get_property(self, comp, property_name, return_per_element=False):
+    def get_property(self, comp, property_name, return_per_element=True):
         """
         Gets data for a composition object.
 
@@ -102,7 +102,7 @@ class DemlData(AbstractData):
 
         return fml_charge_dict
                                
-    def get_property(self, comp, property_name, return_per_element=False):
+    def get_property(self, comp, property_name, return_per_element=True):
         if property_name not in self.available_props:
             raise ValueError("This descriptor is not available")
 
@@ -228,7 +228,7 @@ class MagpieData(AbstractData):
                         prop_value = float("NaN")
                     self.all_elemental_props[descriptor_name][str(Element.from_Z(atomic_no))] = prop_value
 
-    def get_property(self, comp, property_name, return_per_element=False):
+    def get_property(self, comp, property_name, return_per_element=True):
         if property_name not in self.available_props:
             raise ValueError("This descriptor is not available from the Magpie repository. "
                              "Choose from {}".format(self.available_props))
@@ -251,7 +251,7 @@ class MagpieData(AbstractData):
 
 class PymatgenData(AbstractData):
 
-    def get_property(self, comp, property_name, return_per_element=False):
+    def get_property(self, comp, property_name, return_per_element=True):
         """
         Get descriptor data for elements in a compound from pymatgen.
 

@@ -46,11 +46,11 @@ class StoichAttribute(BaseFeaturizer):
         self.p_list = p_list
         self.num_atoms = num_atoms
  
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """
         Get stoichiometric attributes
         Args:
-            comp_obj: Pymatgen composition object
+            comp: Pymatgen composition object
             p_list (list of ints)
         
         Returns: 
@@ -58,9 +58,9 @@ class StoichAttribute(BaseFeaturizer):
                 Returns number of atoms if no p-values specified.
         """
  
-        el_amt = comp_obj.get_el_amt_dict()
+        el_amt = comp.get_el_amt_dict()
 
-        n_atoms = comp_obj.num_atoms
+        n_atoms = comp.num_atoms
        
         if self.p_list == None:
             stoich_attr = [n_atoms] #return number of atoms if no norms specified
@@ -112,10 +112,9 @@ class ElemPropertyAttribute(BaseFeaturizer):
         attributes (list of strings): List of elemental properties to use
         method (string): pre-packaged sets of property sets to compute
         data_source (data object): source from which to retrieve element property data
-        use_frac (bool): if true, uses atomic fractions and gets properties by element
     """
 
-    def __init__(self, method="magpie", stats=None, attributes=None, data_source=None, use_frac=False):
+    def __init__(self, method="magpie", stats=None, attributes=None, data_source=None):
         BaseFeaturizer.__init__(self)
         self.method = method
         if self.method == "deml":
@@ -124,52 +123,39 @@ class ElemPropertyAttribute(BaseFeaturizer):
                 "boiling_point", "heat_cap", "first_ioniz", "total_ioniz", "electronegativity", "formal_charge", "xtal_field_split",
                 "magn_moment", "so_coupling", "sat_magn", "electric_pol", "GGAU_Etot", "mus_fere"]
             self.data_source = DemlData()
-            self.use_frac = use_frac
         elif self.method == "magpie":
             self.stats = ["minimum", "maximum", "range", "mean", "avg_dev", "mode"]
             self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
                 "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
                 "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"] 
             self.data_source = MagpieData()
-            self.use_frac = use_frac
         else:
             self.stats = stats
             self.attributes = attributes
             self.data_source = data_source
-            self.use_frac = use_frac
 
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """
         Get elemental property attributes
 
         Args:
-            comp_obj: Pymatgen composition object
+            comp: Pymatgen composition object
         
         Returns:
             all_attributes: Specified property statistics of descriptors
         """
 
-        if self.use_frac:
-            el_amt = comp_obj.fractional_composition.get_el_amt_dict()
-            elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
-            fracs = [el_amt[el] for el in elements]
-        else:
-            el_amt = comp_obj.get_el_amt_dict()
-            elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        fracs = [el_amt[el] for el in elements]
        
         all_attributes = []
 
         for attr in self.attributes:
-            if self.use_frac:
-                elem_data = self.data_source.get_property(comp_obj, attr, return_per_element=True)
-            else:
-                elem_data = self.data_source.get_property(comp_obj, attr)
+            elem_data = self.data_source.get_property(comp, attr, return_per_element=True)
 
             for stat in self.stats:
-                if self.use_frac:
-                    all_attributes.append(PropertyStats().calc_stat(elem_data, stat, weights=fracs))
-                else:
-                    all_attributes.append(PropertyStats().calc_stat(elem_data, stat))
+                all_attributes.append(PropertyStats().calc_stat(elem_data, stat, weights=fracs))
 
         return all_attributes
 
@@ -205,47 +191,35 @@ class ValenceOrbitalAttribute(BaseFeaturizer):
             orbitals (list): orbitals to calculate
             props (list): specifies whether to return average number of electrons in each orbital,
                 fraction of electrons in each orbital, or both
-            use_frac (bool): if true, uses atomic fractions and gets properties by element
     """
 
-    def __init__(self, data_source=MagpieData(), orbitals=["s","p","d","f"], props=["avg", "frac"], use_frac=False):
+    def __init__(self, data_source=MagpieData(), orbitals=["s","p","d","f"], props=["avg", "frac"]):
         BaseFeaturizer.__init__(self)
         self.data_source = data_source
         self.orbitals = orbitals
         self.props = props
-        self.use_frac = use_frac
 
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """Weighted fraction of valence electrons in each orbital
 
            Args: 
-                comp_obj: Pymatgen composition object
+                comp: Pymatgen composition object
 
            Returns: 
                 valence_attributes (list of floats): Average number and/or fraction of valence electrons in specfied orbitals
         """    
         
-        if self.use_frac:
-            el_amt = comp_obj.fractional_composition.get_el_amt_dict()
-            elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
-            el_fracs = [el_amt[el] for el in elements]
-        else: 
-            num_atoms = comp_obj.num_atoms
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        el_fracs = [el_amt[el] for el in elements]
 
         avg = []
 
-        if self.use_frac:
-            for orb in self.orbitals:
-                avg.append(PropertyStats().mean(self.data_source.get_property(comp_obj,"N%sValence"%orb, return_per_element=True), weights=el_fracs))
-        else:
-            for orb in self.orbitals:
-                avg.append(PropertyStats().mean(self.data_source.get_property(comp_obj,"N%sValence"%orb)))
+        for orb in self.orbitals:
+            avg.append(PropertyStats().mean(self.data_source.get_property(comp,"N%sValence"%orb, return_per_element=True), weights=el_fracs))
 
         if "frac" in self.props:
-            if self.use_frac:
-                avg_total_valence = PropertyStats().mean(self.data_source.get_property(comp_obj,"NValance", return_per_element=True), weights=el_fracs)
-            else: 
-                avg_total_valence = PropertyStats().mean(self.data_source.get_property(comp_obj,"NValance"))
+            avg_total_valence = PropertyStats().mean(self.data_source.get_property(comp,"NValance", return_per_element=True), weights=el_fracs)
             frac = [a/avg_total_valence for a in avg]
 
         valence_attributes = []
@@ -288,12 +262,12 @@ class IonicAttribute(BaseFeaturizer):
         BaseFeaturizer.__init__(self)
         self.data_source = data_source
 
-    def featurize(self, comp_obj):
+    def featurize(self, comp):
         """
         Ionic character attributes
 
         Args:
-            comp_obj: Pymatgen composition object
+            comp: Pymatgen composition object
 
         Returns:
             cpd_possible (bool): Indicates if a neutral ionic compound is possible
@@ -301,7 +275,7 @@ class IonicAttribute(BaseFeaturizer):
             avg_ionic_char (float): Average ionic character
         """
 
-        el_amt = comp_obj.get_el_amt_dict()
+        el_amt = comp.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         values = [el_amt[el] for el in elements]
 
@@ -311,8 +285,8 @@ class IonicAttribute(BaseFeaturizer):
             avg_ionic_char = 0        
         else:
             #Get magpie data for each element
-            ox_states = self.data_source.get_property(comp_obj, "OxidationStates", return_per_element=True)
-            elec = self.data_source.get_property(comp_obj, "Electronegativity", return_per_element=True)
+            ox_states = self.data_source.get_property(comp, "OxidationStates", return_per_element=True)
+            elec = self.data_source.get_property(comp, "Electronegativity", return_per_element=True)
 
             #Determine if neutral compound is possible
             cpd_possible = False
@@ -452,18 +426,21 @@ class ElectronAffinityAttribute(BaseFeaturizer):
             avg_anion_affin (single-element list): average electron affinity*formal charge of anions
         """
 
-        fml_charge = self.data_source.get_property(comp, "formal_charge")
-        electron_affin = self.data_source.get_property(comp, "electron_affin")
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        el_fracs = [el_amt[el] for el in elements]
+
+        fml_charge = self.data_source.get_property(comp, "formal_charge", return_per_element=True)
+        electron_affin = self.data_source.get_property(comp, "electron_affin", return_per_element=True)
 
         anion_charge = []
         anion_affin = []
 
+        avg_anion_affin = 0
+
         for i in range(len(fml_charge)):
             if fml_charge[i] < 0:
-                anion_charge.append(fml_charge[i])
-                anion_affin.append(electron_affin[i])
-
-        avg_anion_affin = np.dot(anion_charge, anion_affin)/len(fml_charge)
+                avg_anion_affin += fml_charge[i]*electron_affin[i]*el_fracs[i]
 
         return [avg_anion_affin]
 
@@ -506,35 +483,48 @@ class ElectronegativityDiffAttribute(BaseFeaturizer):
             en_diff_stats (list of floats): Property stats of electronegativity difference
         """
 
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
 
-        fml_charge = self.data_source.get_property(comp, "formal_charge")
-        electroneg = self.data_source.get_property(comp, "electronegativity")
-        
+        fml_charge = self.data_source.get_property(comp, "formal_charge", return_per_element=True)
+        electroneg = self.data_source.get_property(comp, "electronegativity", return_per_element=True)
+ 
+        cations = []
+        anions = []
         cation_en = []
         anion_en = []
 
         #Get electronegativity values for cations and anions
         for i in range(len(fml_charge)):
             if fml_charge[i] > 0:
+                cations.append(elements[i])
                 cation_en.append(electroneg[i])
             elif fml_charge[i] < 0:
+                anions.append(elements[i])
                 anion_en.append(electroneg[i])
 
-        if len(cation_en) == 0 or len(anion_en) == 0: #Return NaN if cations/anions missing
+        if len(cations) == 0 or len(anions) == 0: #Return NaN if cations/anions missing
             return len(self.stats)*[float("NaN")]
 
         avg_en_diff = []
-        n_anions = len(anion_en)
-        for en in cation_en:
-            avg_en_diff.append(abs(en - (sum(anion_en)/n_anions)))
+        n_anions = sum([el_amt[el] for el in anions])
 
+        for cat_en in cation_en:
+            en_diff = 0
+            for i in range(len(anions)):
+                frac_anion = el_amt[anions[i]]/n_anions
+                an_en = anion_en[i]
+                en_diff += abs(cat_en - an_en)*frac_anion
+            avg_en_diff.append(en_diff)
+
+        cation_fracs = [el_amt[el] for el in cations]
         en_diff_stats = []
 
         for stat in self.stats:
-            en_diff_stats.append(PropertyStats().calc_stat(avg_en_diff, stat))
-
-        if "mean" in self.stats: #Change to mean across total atoms
-            en_diff_stats[self.stats.index("mean")] *= float(len(cation_en))/float(len(fml_charge))
+            if stat == "std_dev":
+                en_diff_stats.append(PropertyStats().calc_stat(avg_en_diff, stat))
+            else:
+                en_diff_stats.append(PropertyStats().calc_stat(avg_en_diff, stat, weights=cation_fracs))
 
         return en_diff_stats
 
@@ -581,14 +571,18 @@ class FERECorrectionAttribute(BaseFeaturizer):
             fere_corr_stats (list of floats): Property stats of FERE Correction
         """
 
-        GGAU_Etot = self.data_source.get_property(comp, "GGAU_Etot")
-        mus_fere = self.data_source.get_property(comp, "mus_fere")
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        el_frac = [el_amt[el] for el in elements]
+
+        GGAU_Etot = self.data_source.get_property(comp, "GGAU_Etot", return_per_element=True)
+        mus_fere = self.data_source.get_property(comp, "mus_fere", return_per_element=True)
 
         fere_corr = [mus_fere[i] - GGAU_Etot[i] for i in range(len(GGAU_Etot))]
 
         fere_corr_stats = []
         for stat in self.stats:
-            fere_corr_stats.append(PropertyStats().calc_stat(fere_corr, stat))
+            fere_corr_stats.append(PropertyStats().calc_stat(fere_corr, stat, weights=el_frac))
 
         return fere_corr_stats
 
@@ -804,9 +798,9 @@ if __name__ == '__main__':
     p_list = [0,2,3,5,7,9]
     print(StoichAttribute().featurize_dataframe(training_set))
     print("Elemental property attributes")
-    print(ElemPropertyAttribute(use_frac=True).featurize_dataframe(training_set))
+    print(ElemPropertyAttribute().featurize_dataframe(training_set))
     print("Valence Orbital Attributes")
-    print(ValenceOrbitalAttribute(props=["frac"], use_frac=True).featurize_dataframe(training_set))
+    print(ValenceOrbitalAttribute(props=["frac"]).featurize_dataframe(training_set))
     print("Ionic attributes")
     print(IonicAttribute().featurize_dataframe(training_set))
 
@@ -816,3 +810,4 @@ if __name__ == '__main__':
     print(TMetalFractionAttribute().featurize_dataframe(training_set))
     print(ElectronAffinityAttribute().featurize_dataframe(training_set))
     print(ValenceOrbitalAttribute(orbitals=["s","p","d"], props=["avg","frac"]).featurize_dataframe(training_set))
+    print(ElectronegativityDiffAttribute().featurize_dataframe(training_set))

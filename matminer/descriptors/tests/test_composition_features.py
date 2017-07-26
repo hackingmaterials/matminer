@@ -29,14 +29,6 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem["avg_dev Number"][0], 8.64)
         self.assertAlmostEqual(df_elem["mode Number"][0], 8)
 
-        df_elem = ElemPropertyAttribute(use_frac=True).featurize_dataframe(self.df)
-        self.assertAlmostEqual(df_elem["minimum Number"][0], 8)
-        self.assertAlmostEqual(df_elem["maximum Number"][0], 26)
-        self.assertAlmostEqual(df_elem["range Number"][0], 18)
-        self.assertAlmostEqual(df_elem["mean Number"][0], 15.2)
-        self.assertAlmostEqual(df_elem["avg_dev Number"][0], 8.64)
-        self.assertAlmostEqual(df_elem["mode Number"][0], 8)
-
     def test_elem_deml(self):
         df_elem_deml = ElemPropertyAttribute("deml").featurize_dataframe(self.df)
         self.assertAlmostEqual(df_elem_deml["minimum atom_num"][0], 8)
@@ -53,15 +45,6 @@ class CompositionFeaturesTest(PymatgenTest):
 
     def test_valence(self):
         df_val = ValenceOrbitalAttribute().featurize_dataframe(self.df)
-        self.assertAlmostEqual(df_val["avg s valence electrons"][0], 2.0)
-        self.assertAlmostEqual(df_val["avg p valence electrons"][0], 2.4)
-        self.assertAlmostEqual(df_val["avg d valence electrons"][0], 2.4)
-        self.assertAlmostEqual(df_val["avg f valence electrons"][0], 0.0)
-        self.assertAlmostEqual(df_val["frac s valence electrons"][0], 0.294117647)
-        self.assertAlmostEqual(df_val["frac d valence electrons"][0], 0.352941176)
-        self.assertAlmostEqual(df_val["frac p valence electrons"][0], 0.352941176)
-        self.assertAlmostEqual(df_val["frac f valence electrons"][0], 0)
-        df_val = ValenceOrbitalAttribute(use_frac=True).featurize_dataframe(self.df)
         self.assertAlmostEqual(df_val["avg s valence electrons"][0], 2.0)
         self.assertAlmostEqual(df_val["avg p valence electrons"][0], 2.4)
         self.assertAlmostEqual(df_val["avg d valence electrons"][0], 2.4)
