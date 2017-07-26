@@ -394,7 +394,7 @@ def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
     for i in range(5, 180, 5):
         optypes.append("bent")
         opparas.append([float(i), 0.0667])
-    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", "sq_pyr"]:  # , "tri_bipyr"]:
+    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", "sq_pyr", "tri_bipyr"]:
         optypes.append(t)
         opparas.append([])
     ops = OrderParameters(optypes, opparas, 100.0)
@@ -412,7 +412,8 @@ def get_order_parameters(struct, pneighs=None, convert_none_to_zero=True):
 
 
 def get_order_parameter_stats(
-        struct, pneighs=None, convert_none_to_zero=True, delta_op=0.01):
+        struct, pneighs=None, convert_none_to_zero=True, delta_op=0.01,
+        ignore_op_types=None):
     """
     Determine the order parameter statistics accumulated across all sites
     in Structure object struct using the get_order_parameters function.
@@ -428,6 +429,9 @@ def get_order_parameter_stats(
                 get_order_parameters function).
         delta_op (float): bin size of histogram that is computed
                 in order to identify peak locations.
+        ignore_op_types ([str]): list of OP types to be ignored in
+                output dictionary (e.g., ["cn", "bent"]). Default (None)
+                will consider all OPs.
 
     Returns: ({}) dictionary, the keys of which represent
             the order parameter type (e.g., "bent5", "tet", "sq_pyr")
@@ -438,7 +442,7 @@ def get_order_parameter_stats(
     optypes = ["cn", "lin"]
     for i in range(5, 180, 5):
         optypes.append("bent{}".format(i))
-    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", "sq_pyr"]:  # , "tri_bipyr"]:
+    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", "sq_pyr", "tri_bipyr"]:
         optypes.append(t)
     opvals = get_order_parameters(
         struct, pneighs=pneighs, convert_none_to_zero=convert_none_to_zero)
@@ -447,6 +451,10 @@ def get_order_parameter_stats(
         for j, op in enumerate(opsite):
             opvals2[j].append(op)
     for i, opstype in enumerate(opvals2):
+        if ignore_op_types is not None:
+            if optypes[i] in ignore_op_types or \
+                    ("bent" in ignore_op_types and i > 1 and i < 36):
+                continue
         ops_hist = {}
         for op in opstype:
             b = round(op / delta_op) * delta_op
@@ -473,6 +481,51 @@ def get_order_parameter_stats(
             "peak1": ops[max1_idx],
             "peak2": ops[max2_idx]}
     return opstats
+
+
+def get_order_parameter_feature_vectors_difference(
+        struct1, struct2, pneighs=None, convert_none_to_zero=True,
+        delta_op=0.01, ignore_op_types=None):
+    """
+    Determine the difference vector between two order parameter-statistics
+    feature vector resulting from two input structures.
+
+    Args:
+        struct1 (Structure): first input structure.
+        struct2 (Structure): second input structure.
+        pneighs (dict): specification and parameters of
+                neighbor-finding approach (see
+                get_neighbors_of_site_with_index function
+                for more details).
+        convert_none_to_zero (bool): flag indicating whether or not
+                to convert None values in OPs to zero (cf.,
+                get_order_parameters function).
+        delta_op (float): bin size of histogram that is computed
+                in order to identify peak locations (cf.,
+                get_order_parameters_stats function).
+        ignore_op_types ([str]): list of OP types to be ignored in
+                output dictionary (cf., get_order_parameters_stats
+                function).
+
+    Returns: ([float]) difference vector between order
+                parameter-statistics feature vectors obtained from the
+                two input structures (structure 1 - structure 2).
+    """
+    d1 = get_order_parameter_stats(
+            struct1, pneighs=pneighs,
+            convert_none_to_zero=convert_none_to_zero,
+            delta_op=delta_op,
+            ignore_op_types=ignore_op_types)
+    d2 = get_order_parameter_stats(
+            struct2, pneighs=pneighs,
+            convert_none_to_zero=convert_none_to_zero,
+            delta_op=delta_op,
+            ignore_op_types=ignore_op_types)
+    v = []
+    for optype, stats in d1.items():
+        for stattype, val in stats.items():
+            v.append(val - d2[optype][stattype])
+    return np.array(v)
 
 
 def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
