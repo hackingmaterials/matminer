@@ -91,7 +91,7 @@ class PropertyStats(object):
         if weights is None:
             return max(set(data_lst), key=data_lst.count)
         else:
-            ind_max = max(xrange(len(weights)), key=weights.__getitem__)
+            ind_max = max(range(len(weights)), key=weights.__getitem__)
             return data_lst[ind_max]
 
     def holder_mean(data_lst, power=None, **kwargs):
