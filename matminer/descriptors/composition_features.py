@@ -658,7 +658,7 @@ class BandCenterAttribute(BaseFeaturizer):
 
         """
         prod = 1.0
-        for el, amt in comp.get_el_amt_dict().iteritems():
+        for el, amt in comp.get_el_amt_dict().items():
             prod = prod * (Element(el).X ** amt)
 
         return [-prod ** (1 / sum(comp.get_el_amt_dict().values()))]
