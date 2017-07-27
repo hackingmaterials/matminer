@@ -148,10 +148,6 @@ class PlotlyFig:
         Args:
             x_col: (array) x-axis values, which can be a list/array/dataframe column
             y_col: (array) y-axis values, which can be a list/array/dataframe column
-            x_axis_type: (str) method of spacing values on the x axis, relevant options are 'linear', 'log', and '-'
-                ('-' attempts to choose the best option based on the data)
-            y_axis_type: (str) method of spacing values on the y axis, relevant options are 'linear', 'log', and '-'
-                ('-' attempts to choose the best option based on the data)
             text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a
                 dataframe column containing text strings
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
@@ -315,9 +311,6 @@ class PlotlyFig:
 
         # Add legend
         self.layout['showlegend'] = showlegend
-
-        self.layout['xaxis']['type'] = x_axis_type
-        self.layout['yaxis']['type'] = y_axis_type
 
         fig = dict(data=data, layout=self.layout)
 
