@@ -667,7 +667,7 @@ class BandCenterAttribute(BaseFeaturizer):
         return ["Band Center"]
 
 if __name__ == '__main__':
-    print(get_holder_mean([1, 2, 3, 4], 0))
+    print(PropertyStats.holder_mean([1, 2, 3, 4]))
    
     training_set = pd.DataFrame({"composition":[Composition("Fe2O3"), Composition("Ga1Na6P3"), Composition("O4Si1Zn2")]})
     print("WARD NPJ ATTRIBUTES")
