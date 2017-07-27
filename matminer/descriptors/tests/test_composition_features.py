@@ -80,7 +80,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_en_diff["minimum EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["maximum EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["range EN difference"][0], 0)
-        self.assertAlmostEqual(df_en_diff["mean EN difference"][0], 0.644)
+        self.assertAlmostEqual(df_en_diff["mean EN difference"][0], 1.60999999999)
         self.assertAlmostEqual(df_en_diff["std_dev EN difference"][0], 0)
 
     def test_fere_corr(self):
