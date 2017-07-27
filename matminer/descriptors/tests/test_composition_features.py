@@ -95,6 +95,7 @@ class CompositionFeaturesTest(PymatgenTest):
         df_band_center = BandCenterAttribute().featurize_dataframe(self.df)
         self.assertAlmostEqual(df_band_center["Band Center"][0], -2.672486385)
 
+    @unittest.skip("requires API code")
     def test_cohesive_energy(self):
         df_cohesive_energy = CohesiveEnergyAttribute().featurize_dataframe(self.df)
         self.assertAlmostEqual(df_cohesive_energy["Cohesive Energy"][0], -18.24568582)
