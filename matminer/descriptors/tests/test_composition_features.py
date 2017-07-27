@@ -7,7 +7,7 @@ from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
 #from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
-from matminer.descriptors.composition_features import StoichAttribute, ElemPropertyAttribute, ValenceOrbitalAttribute, IonicAttribute, ElementFractionAttribute, TMetalFractionAttribute, ElectronAffinityAttribute, ElectronegativityDiffAttribute, FERECorrectionAttribute
+from matminer.descriptors.composition_features import StoichAttribute, ElemPropertyAttribute, ValenceOrbitalAttribute, IonicAttribute, ElementFractionAttribute, TMetalFractionAttribute, ElectronAffinityAttribute, ElectronegativityDiffAttribute, FERECorrectionAttribute, BandCenterAttribute, CohesiveEnergyAttribute
 
 class CompositionFeaturesTest(PymatgenTest):
 
@@ -80,7 +80,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_en_diff["minimum EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["maximum EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["range EN difference"][0], 0)
-        self.assertAlmostEqual(df_en_diff["mean EN difference"][0], 0.644)
+        self.assertAlmostEqual(df_en_diff["mean EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["std_dev EN difference"][0], 0)
 
     def test_fere_corr(self):
@@ -91,6 +91,13 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_fere_corr["mean FERE Correction"][0], 0.077146274)
         self.assertAlmostEqual(df_fere_corr["std_dev FERE Correction"][0], 0.187206817)
 
+    def test_band_center(self):
+        df_band_center = BandCenterAttribute().featurize_dataframe(self.df)
+        self.assertAlmostEqual(df_band_center["Band Center"][0], -2.672486385)
+
+    def test_cohesive_energy(self):
+        df_cohesive_energy = CohesiveEnergyAttribute().featurize_dataframe(self.df)
+        self.assertAlmostEqual(df_cohesive_energy["Cohesive Energy"][0], -18.24568582)
 """
 class PymatgenDescriptorTest(unittest.TestCase):
 
