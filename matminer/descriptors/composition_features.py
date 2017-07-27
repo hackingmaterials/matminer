@@ -602,111 +602,6 @@ class FERECorrectionAttribute(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
-#Old functions below
-def get_pymatgen_descriptor(comp, prop):
-    """
-    Get descriptor data for elements in a compound from pymatgen.
-
-    Args:
-        comp: (str) compound composition, eg: "NaCl"
-        prop: (str) pymatgen element attribute, as defined in the Element class at
-            http://pymatgen.org/_modules/pymatgen/core/periodic_table.html
-
-    Returns: (list) of values containing descriptor floats for each atom in the compound
-
-    """
-    eldata = []
-    eldata_tup_lst = []
-    eldata_tup = collections.namedtuple('eldata_tup', 'element propname propvalue propunit amt')
-    el_amt_dict = Composition(comp).get_el_amt_dict()
-
-    for el in el_amt_dict:
-
-        if callable(getattr(Element(el), prop)) is None:
-            raise ValueError('Invalid pymatgen Element attribute(property)')
-
-        if getattr(Element(el), prop) is not None:
-
-            # units are None for these pymatgen descriptors
-            # todo: there seem to be a lot more unitless descriptors which are not listed here... -Alex D
-            if prop in ['X', 'Z', 'ionic_radii', 'group', 'row', 'number', 'mendeleev_no','oxidation_states','common_oxidation_states']:
-                units = None
-            else:
-                units = getattr(Element(el), prop).unit
-
-            # Make a named tuple out of all the available information
-            eldata_tup_lst.append(
-                eldata_tup(element=el, propname=prop, propvalue=float(getattr(Element(el), prop)), propunit=units,
-                           amt=el_amt_dict[el]))
-
-            # Add descriptor values, one for each atom in the compound
-            for i in range(int(el_amt_dict[el])):
-                eldata.append(float(getattr(Element(el), prop)))
-
-        else:
-            eldata_tup_lst.append(eldata_tup(element=el, propname=prop, propvalue=None, propunit=None,
-                                             amt=el_amt_dict[el]))
-
-    return eldata
-
-
-def get_magpie_descriptor(comp, descriptor_name):
-    """
-    Get descriptor data for elements in a compound from the Magpie data repository.
-
-    Args:
-        comp: (str) compound composition, eg: "NaCl"
-        descriptor_name: name of Magpie descriptor needed. Find the entire list at
-            https://bitbucket.org/wolverton/magpie/src/6ecf8d3b79e03e06ef55c141c350a08fbc8da849/Lookup%20Data/?at=master
-
-    Returns: (list) of descriptor values for each atom in the composition
-
-    """
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data_files", 'magpie_elementdata')
-    magpiedata = []
-    magpiedata_tup_lst = []
-    magpiedata_tup = collections.namedtuple('magpiedata_tup', 'element propname propvalue propunit amt')
-    available_props = []
-
-    # Make a list of available properties
-
-    for datafile in os.listdir(data_dir):
-        available_props.append(datafile.replace('.table', ''))
-
-    if descriptor_name not in available_props:
-        raise ValueError(
-            "This descriptor is not available from the Magpie repository. Choose from {}".format(available_props))
-
-    # Get units from Magpie README file
-    el_amt = Composition(comp).get_el_amt_dict()
-    unit = None
-    with open(os.path.join(data_dir, 'README.txt'), 'r') as readme_file:
-        readme_file_line = readme_file.readlines()
-        for lineno, line in enumerate(readme_file_line, 1):
-            if descriptor_name + '.table' in line:
-                if 'Units: ' in readme_file_line[lineno + 1]:
-                    unit = readme_file_line[lineno + 1].split(':')[1].strip('\n')
-
-    # Extract from data file
-    with open(os.path.join(data_dir, '{}.table'.format(descriptor_name)), 'r') as descp_file:
-        lines = descp_file.readlines()
-        for el in el_amt:
-            atomic_no = Element(el).Z
-            #if len(lines[atomic_no - 1].split()) > 1:
-            if descriptor_name in ["OxidationStates"]:
-                propvalue = [float(i) for i in lines[atomic_no - 1].split()]
-            else:
-                propvalue = float(lines[atomic_no - 1])
-
-            magpiedata_tup_lst.append(magpiedata_tup(element=el, propname=descriptor_name,
-                                                    propvalue=propvalue, propunit=unit,
-                                                    amt=el_amt[el]))
-
-            # Add descriptor values, one for each atom in the compound
-            for i in range(int(el_amt[el])):
-                magpiedata.append(propvalue)
-
-    return magpiedata
 
 def get_cohesive_energy(comp):
     """
@@ -783,13 +678,6 @@ def get_holder_mean(data_lst, power):
         return (total / len(data_lst)) ** (1 / float(power))
 
 if __name__ == '__main__':
-    descriptors = ['atomic_mass', 'X', 'Z', 'thermal_conductivity', 'melting_point',
-                   'coefficient_of_linear_thermal_expansion']
-
-    for desc in descriptors:
-        print(get_pymatgen_descriptor('LiFePO4', desc))
-    print(get_magpie_descriptor('LiFePO4', 'AtomicVolume'))
-    print(get_magpie_descriptor('LiFePO4', 'Density'))
     print(get_holder_mean([1, 2, 3, 4], 0))
    
     training_set = pd.DataFrame({"composition":[Composition("Fe2O3"), Composition("Ga1Na6P3"), Composition("O4Si1Zn2")]})
