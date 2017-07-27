@@ -24,6 +24,11 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Ag
 # TODO: unit tests
 # TODO: most of this code needs to be rewritten ... AJ
 
+module_dir = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(module_dir, 'data_files', 'cohesive_energies.json'), 'r') as f:
+    ce_data = json.load(f)
+
 #empty dictionary for magpie properties
 magpie_props = {}
 
@@ -602,80 +607,64 @@ class FERECorrectionAttribute(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
+class CohesiveEnergyAttribute(BaseFeaturizer):
 
-def get_cohesive_energy(comp):
-    """
-    Get cohesive energy of compound by subtracting elemental cohesive energies from the formation energy of the compund.
-    Elemental cohesive energies are taken from http://www.      knowledgedoor.com/2/elements_handbook/cohesive_energy.html.
-    Most of them are taken from "Charles Kittel: Introduction to Solid State Physics, 8th edition. Hoboken, NJ:
-    John Wiley & Sons, Inc, 2005, p. 50."
+    def featurize(self, comp):
+        """
+        Get cohesive energy of compound by subtracting elemental cohesive energies from the formation energy of the compund.
+        Elemental cohesive energies are taken from http://www.      knowledgedoor.com/2/elements_handbook/cohesive_energy.html.
+        Most of them are taken from "Charles Kittel: Introduction to Solid State Physics, 8th edition. Hoboken, NJ:
+        John Wiley & Sons, Inc, 2005, p. 50."
 
-    Args:
-        comp: (str) compound composition, eg: "NaCl"
+        Args:
+            comp: (str) compound composition, eg: "NaCl"
 
-    Returns: (float) cohesive energy of compound
+        Returns: (float) cohesive energy of compound
 
-    """
-    el_amt_dict = Composition(comp).get_el_amt_dict()
+        """
+        el_amt_dict = comp.get_el_amt_dict()
 
-    # Get formation energy of most stable structure from MP
-    struct_lst = MPRester().get_data(comp)
-    if len(struct_lst) > 0:
-        struct_lst = sorted(struct_lst, key=lambda e: e['energy_per_atom'])
-        most_stable_entry = struct_lst[0]
-        formation_energy = most_stable_entry['formation_energy_per_atom']
-    else:
-        raise ValueError('No structure found in MP for {}'.format(comp))
+        # Get formation energy of most stable structure from MP
+        struct_lst = MPRester().get_data(comp.formula.replace(" ",""))
+        if len(struct_lst) > 0:
+            struct_lst = sorted(struct_lst, key=lambda e: e['energy_per_atom'])
+            most_stable_entry = struct_lst[0]
+            formation_energy = most_stable_entry['formation_energy_per_atom']
+        else:
+            raise ValueError('No structure found in MP for {}'.format(comp))
 
-    # Subtract elemental cohesive energies from formation energy
-    cohesive_energy = formation_energy
-    for el in el_amt_dict:
-        cohesive_energy -= el_amt_dict[el] * ce_data[el]
+        # Subtract elemental cohesive energies from formation energy
+        cohesive_energy = formation_energy
+        for el in el_amt_dict:
+            cohesive_energy -= el_amt_dict[el] * ce_data[el]
 
-    return cohesive_energy
+        return [cohesive_energy]
 
-def band_center(comp):
-    """
-    Estimate absolution position of band center using geometric mean of electronegativity
-    Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at Semiconductor-Electrolyte Interfaces from
-    Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).
+    def feature_labels(self):
+        return ["Cohesive Energy"]
 
-    Args:
-        comp: (Composition)
+class BandCenterAttribute(BaseFeaturizer):
 
-    Returns: (float) band center
+    def featurize(self, comp):
+        """
+        Estimate absolution position of band center using geometric mean of electronegativity
+        Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at Semiconductor-Electrolyte Interfaces from
+        Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).
 
-    """
-    prod = 1.0
-    for el, amt in comp.get_el_amt_dict().iteritems():
-        prod = prod * (Element(el).X ** amt)
+        Args:
+            comp: (Composition)
 
-    return -prod ** (1 / sum(comp.get_el_amt_dict().values()))
+        Returns: (float) band center
 
+        """
+        prod = 1.0
+        for el, amt in comp.get_el_amt_dict().iteritems():
+            prod = prod * (Element(el).X ** amt)
 
-def get_holder_mean(data_lst, power):
-    """
-    Get Holder mean
+        return [-prod ** (1 / sum(comp.get_el_amt_dict().values()))]
 
-    Args:
-        data_lst: (list/array) of values
-        power: (int/float) non-zero real number
-
-    Returns: Holder mean
-
-    """
-    # Function for calculating Geometric mean
-    geomean = lambda n: reduce(lambda x, y: x * y, n) ** (1.0 / len(n))
-
-    # If power=0, return geometric mean
-    if power == 0:
-        return geomean(data_lst)
-
-    else:
-        total = 0.0
-        for value in data_lst:
-            total += value ** power
-        return (total / len(data_lst)) ** (1 / float(power))
+    def feature_labels(self):
+        return ["Band Center"]
 
 if __name__ == '__main__':
     print(get_holder_mean([1, 2, 3, 4], 0))
