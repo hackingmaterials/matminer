@@ -2,16 +2,32 @@
 File containing general methods for computing property statistics
 """
 import numpy as np
-from monty.design_patterns import singleton
+from scipy import stats
 
-@singleton
+from six import string_types
+
+
 class PropertyStats(object):
 
-    def __init__(self):
-        self.stat_dict = {"minimum": self.minimum, "maximum":self.maximum, "range":self.attr_range, "mean":self.mean,
-            "avg_dev":self.avg_dev, "std_dev":self.std_dev, "mode":self.mode, "holder_mean":self.holder_mean}
+    @staticmethod
+    def calc_stat(stat, data_lst, weights=None):
+        """
+        Compute a property statistic
 
-    def minimum(self, data_lst, **kwargs):
+        Args:
+            str (str) - Name of property to be compute. If there are arguments to the statistics function, these
+             should be added after the name and separated by two underscores. For example, the 2nd Holder mean would
+             be "holder_mean__2"
+            data_lst (list of floats): list of values
+            weights (list of floats): (Optional) weights for each element in data_lst
+        Reteurn:
+            float - Desired statistic
+        """
+        statistics = stat.split("__")
+        return getattr(PropertyStats, statistics[0])(data_lst, weights, *statistics[1:])
+
+    @staticmethod
+    def minimum(data_lst, weights=None):
         """
         Minimum value in a list of element data
         Args:
@@ -21,7 +37,8 @@ class PropertyStats(object):
             minimum value"""
         return min(data_lst)
 
-    def maximum(self, data_lst, **kwargs):
+    @staticmethod
+    def maximum(data_lst, weights=None):
         """
         Maximum value in a list of element data
         Args:
@@ -31,7 +48,8 @@ class PropertyStats(object):
             maximum value"""
         return max(data_lst)
 
-    def attr_range(self, data_lst, **kwargs):
+    @staticmethod
+    def range(data_lst, weights=None):
         """
         Range of a list of element data
         Args:
@@ -41,20 +59,22 @@ class PropertyStats(object):
             range"""
         return max(data_lst) - min(data_lst)
 
-    def mean(self, data_lst, weights=None, **kwargs):
+    @staticmethod
+    def mean(data_lst, weights=None, **kwargs):
         """
         Mean of list of element data
         Args:
             data_lst (list of floats): Value of a property for each atom or element in a compound
-            weights (list of floats): Atomic fractions
+            weights (list of floats): Weights for each value
         Returns: 
             mean value"""
         if weights is None:
-            return sum(data_lst)/len(data_lst)
+            return np.average(data_lst)
         else:
-            return sum([data_lst[i]*weights[i] for i in range(len(data_lst))])
+            return np.dot(data_lst, weights) / sum(weights)
 
-    def avg_dev(self, data_lst, weights=None, **kwargs):
+    @staticmethod
+    def avg_dev(data_lst, weights=None):
         """
         Average absolute deviation of list of element data
         Args:
@@ -62,13 +82,11 @@ class PropertyStats(object):
             weights (list of floats): Atomic fractions
         Returns: 
             average absolute deviation"""
-        if weights is None:
-            return sum(abs(np.subtract(data_lst, self.mean(data_lst))))/len(data_lst)
-        else:
-            abs_dev = abs(np.subtract(data_lst, self.mean(data_lst, weights=weights)))
-            return self.mean(abs_dev, weights=weights)
+        mean = PropertyStats.mean(data_lst, weights)
+        return np.average(np.abs(np.subtract(data_lst, mean)), weights=weights)
 
-    def std_dev(self, data_lst, weights=None, **kwargs):
+    @staticmethod
+    def std_dev(data_lst, weights=None):
         """
         Standard deviation of a list of element data
         Args:
@@ -78,45 +96,55 @@ class PropertyStats(object):
         if weights is None:
             return np.std(data_lst)
         else:
-            dev = np.subtract(data_lst, self.mean(data_lst, weights=weights))**2
-            return np.sqrt(self.mean(dev, weights=weights))
+            dev = np.subtract(data_lst, PropertyStats.mean(data_lst, weights=weights))**2
+            return np.sqrt(PropertyStats.mean(dev, weights=weights))
 
-    def mode(self, data_lst, weights=None, **kwargs):
+    @staticmethod
+    def mode(data_lst, weights=None):
         """
-        Mode of a list of element data
+        Mode of a list of element data. If multiple elements occur equally-frequently (or same weight, if weights are
+        provided), this function will return the average of those values
         Args:
             data_lst (list of floats): Value of a property for each atom in a compound
         Returns: 
             mode"""
         if weights is None:
-            return max(set(data_lst), key=data_lst.count)
+            return stats.mode(data_lst).mode[0]
         else:
-            ind_max = max(range(len(weights)), key=weights.__getitem__)
-            return data_lst[ind_max]
+            # Find the entry(s) with the largest weight
+            data_lst = np.array(data_lst)
+            weights = np.array(weights)
+            most_freq = np.isclose(weights, weights.max())
 
-    def holder_mean(data_lst, power=None, **kwargs):
+            # Return the minimum of the most-frequent entries
+            return data_lst[most_freq].min()
+
+    @staticmethod
+    def holder_mean(data_lst, weights=None, power=1):
         """
         Get Holder mean
         Args:
             data_lst: (list/array) of values
-            power: (int/float) non-zero real number
+            weights: (list/array) of weights
+            power: (int/float/str) which holder mean to compute
         Returns: Holder mean
         """
-        # Function for calculating Geometric mean
-        geomean = lambda n: reduce(lambda x, y: x * y, n) ** (1.0 / len(n))
 
-        # If power=0, return geometric mean
-        if power == 0:
-            return geomean(data_lst)
+        if isinstance(power, string_types):
+            power = float(power)
 
+        if weights is None:
+            if power == 0:
+                return stats.mstats.gmean(data_lst)
+            else:
+                return np.power(np.mean(np.power(data_lst, power)), 1.0 / power)
         else:
-            total = 0.0
-            for value in data_lst:
-                total += value ** power
-            return (total / len(data_lst)) ** (1 / float(power))
+            # Compute the normalization factor
+            alpha = sum(weights)
 
-    def calc_stat(self, data_lst, stat, **kwargs):
-        """
-        Compute a property statistic
-        """
-        return self.stat_dict[stat](data_lst, **kwargs)
+            # If power=0, return geometric mean
+            if power == 0:
+                return np.product(np.power(data_lst, np.divide(weights, np.sum(weights))))
+            else:
+                return np.power(np.sum(np.multiply(weights, np.power(data_lst, power))) / alpha, 1.0/power)
+
