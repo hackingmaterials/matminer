@@ -329,11 +329,17 @@ class PymatgenData(AbstractData):
                            propunit=property_units, amt=el_amt_dict[el_sym]))
 
             if return_per_element:
-                eldata.append(property_value)
+                if property_value is None:
+                    eldata.append(float("NaN"))
+                else:
+                    eldata.append(property_value)
             else:
                 # Add descriptor values, one for each atom in the compound
-                for i in range(int(el_amt_dict[el_sym])):
-                    eldata.append(property_value)
+                if property_value is None:
+                    eldata.append(float("NaN"))
+                else:
+                    for i in range(int(el_amt_dict[el_sym])):
+                        eldata.append(property_value)
 
         return eldata
 
