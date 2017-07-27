@@ -160,7 +160,7 @@ class ElemPropertyAttribute(BaseFeaturizer):
             elem_data = self.data_source.get_property(comp, attr, return_per_element=True)
 
             for stat in self.stats:
-                all_attributes.append(PropertyStats().calc_stat(elem_data, stat, weights=fracs))
+                all_attributes.append(PropertyStats().calc_stat(stat, elem_data, weights=fracs))
 
         return all_attributes
 
@@ -527,9 +527,9 @@ class ElectronegativityDiffAttribute(BaseFeaturizer):
 
         for stat in self.stats:
             if stat == "std_dev":
-                en_diff_stats.append(PropertyStats().calc_stat(avg_en_diff, stat))
+                en_diff_stats.append(PropertyStats().calc_stat(stat, avg_en_diff))
             else:
-                en_diff_stats.append(PropertyStats().calc_stat(avg_en_diff, stat, weights=cation_fracs))
+                en_diff_stats.append(PropertyStats().calc_stat(stat, avg_en_diff, weights=cation_fracs))
 
         return en_diff_stats
 
@@ -587,7 +587,7 @@ class FERECorrectionAttribute(BaseFeaturizer):
 
         fere_corr_stats = []
         for stat in self.stats:
-            fere_corr_stats.append(PropertyStats().calc_stat(fere_corr, stat, weights=el_frac))
+            fere_corr_stats.append(PropertyStats().calc_stat(stat, fere_corr, weights=el_frac))
 
         return fere_corr_stats
 
