@@ -137,7 +137,7 @@ class PropertyStats(object):
             if power == 0:
                 return stats.mstats.gmean(data_lst)
             else:
-                return np.power(np.sum(np.power(data_lst, power) / len(data_lst)), 1.0 / power)
+                return np.power(np.mean(np.power(data_lst, power)), 1.0 / power)
         else:
             # Compute the normalization factor
             alpha = sum(weights)
