@@ -11,7 +11,7 @@ import numpy as np
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.structure_features import get_packing_fraction, \
+from matminer.featurizers.structure import get_packing_fraction, \
     get_vol_per_site, get_density, get_rdf, get_rdf_peaks, get_redf, \
     get_min_relative_distances, get_neighbors_of_site_with_index, \
     get_order_parameters, get_order_parameter_stats, get_prdf, \
