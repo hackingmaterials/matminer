@@ -37,7 +37,7 @@ atomic_syms = []
 for atomic_no in range(1,104):
     atomic_syms.append(Element.from_Z(atomic_no).symbol)
 
-class StoichAttribute(BaseFeaturizer):
+class Stoichiometry(BaseFeaturizer):
     """
     Class to calculate stoichiometric attributes.
 
@@ -109,7 +109,7 @@ class StoichAttribute(BaseFeaturizer):
             "Alok and Wolverton, Christopher}, year={2016}}")
         return citation
 
-class ElemPropertyAttribute(BaseFeaturizer):
+class ElementProperty(BaseFeaturizer):
     """
     Class to calculate elemental property attributes
 
@@ -187,7 +187,7 @@ class ElemPropertyAttribute(BaseFeaturizer):
                 "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
-class ValenceOrbitalAttribute(BaseFeaturizer):
+class ValenceOrbital(BaseFeaturizer):
     """
         Class to calculate valence orbital attributes
 
@@ -255,7 +255,7 @@ class ValenceOrbitalAttribute(BaseFeaturizer):
         citations = [ward_citation, deml_citation]
         return citations
 
-class IonicAttribute(BaseFeaturizer):
+class IonProperty(BaseFeaturizer):
     """
     Class to calculate ionic property attributes
 
@@ -330,7 +330,7 @@ class IonicAttribute(BaseFeaturizer):
             "Alok and Wolverton, Christopher}, year={2016}}")
         return citation
 
-class ElementFractionAttribute(BaseFeaturizer):
+class ElementFraction(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
 
@@ -363,7 +363,7 @@ class ElementFractionAttribute(BaseFeaturizer):
             labels.append(Element.from_Z(i).symbol)
         return labels
 
-class TMetalFractionAttribute(BaseFeaturizer):
+class TMetalFraction(BaseFeaturizer):
     """
     Class to calculate fraction of magnetic transition metals in a composition.
 
@@ -409,7 +409,7 @@ class TMetalFractionAttribute(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
-class ElectronAffinityAttribute(BaseFeaturizer):
+class ElectronAffinity(BaseFeaturizer):
     """
     Class to calculate average electron affinity times formal charge of anion elements
 
@@ -461,7 +461,7 @@ class ElectronAffinityAttribute(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
-class ElectronegativityDiffAttribute(BaseFeaturizer):
+class ElectronegativityDiff(BaseFeaturizer):
     """
     Class to calculate average electronegativity difference
 
@@ -549,7 +549,7 @@ class ElectronegativityDiffAttribute(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
-class FERECorrectionAttribute(BaseFeaturizer):
+class FERECorrection(BaseFeaturizer):
     """
     Class to calculate difference between fitted elemental-phase reference energy (FERE) and GGA+U energy
 
@@ -607,7 +607,7 @@ class FERECorrectionAttribute(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
-class CohesiveEnergyAttribute(BaseFeaturizer):
+class CohesiveEnergy(BaseFeaturizer):
 
     def featurize(self, comp):
         """
@@ -643,7 +643,7 @@ class CohesiveEnergyAttribute(BaseFeaturizer):
     def feature_labels(self):
         return ["Cohesive Energy"]
 
-class BandCenterAttribute(BaseFeaturizer):
+class BandCenter(BaseFeaturizer):
 
     def featurize(self, comp):
         """
@@ -673,18 +673,18 @@ if __name__ == '__main__':
     print("WARD NPJ ATTRIBUTES")
     print("Stoichiometric attributes")
     p_list = [0,2,3,5,7,9]
-    print(StoichAttribute().featurize_dataframe(training_set, col_id="composition"))
+    print(Stoichiometry().featurize_dataframe(training_set, col_id="composition"))
     print("Elemental property attributes")
-    print(ElemPropertyAttribute().featurize_dataframe(training_set, col_id="composition"))
+    print(ElementProperty().featurize_dataframe(training_set, col_id="composition"))
     print("Valence Orbital Attributes")
-    print(ValenceOrbitalAttribute(props=["frac"]).featurize_dataframe(training_set, col_id="composition"))
+    print(ValenceOrbital(props=["frac"]).featurize_dataframe(training_set, col_id="composition"))
     print("Ionic attributes")
-    print(IonicAttribute().featurize_dataframe(training_set, col_id="composition"))
+    print(IonProperty().featurize_dataframe(training_set, col_id="composition"))
 
     print("DEML ELEMENTAL DESCRIPTORS")
-    print(StoichAttribute(p_list=None, num_atoms=True).featurize_dataframe(training_set, col_id="composition"))
-    print(ElemPropertyAttribute(method="deml").featurize_dataframe(training_set, col_id="composition"))
-    print(TMetalFractionAttribute().featurize_dataframe(training_set, col_id="composition"))
-    print(ElectronAffinityAttribute().featurize_dataframe(training_set, col_id="composition"))
-    print(ValenceOrbitalAttribute(orbitals=["s","p","d"], props=["avg","frac"]).featurize_dataframe(training_set, col_id="composition"))
-    print(ElectronegativityDiffAttribute().featurize_dataframe(training_set, col_id="composition"))
+    print(Stoichiometry(p_list=None, num_atoms=True).featurize_dataframe(training_set, col_id="composition"))
+    print(ElementProperty(method="deml").featurize_dataframe(training_set, col_id="composition"))
+    print(TMetalFraction().featurize_dataframe(training_set, col_id="composition"))
+    print(ElectronAffinity().featurize_dataframe(training_set, col_id="composition"))
+    print(ValenceOrbital(orbitals=["s", "p", "d"], props=["avg", "frac"]).featurize_dataframe(training_set, col_id="composition"))
+    print(ElectronegativityDiff().featurize_dataframe(training_set, col_id="composition"))
