@@ -13,7 +13,7 @@ from matminer.featurizers.base_classes import BaseFeaturizer
 from matminer.featurizers.data import DemlData, MagpieData, PymatgenData
 from matminer.featurizers.stats import PropertyStats
 
-__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew'
+__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, Anubhav Jain'
 
 # TODO: read Magpie file only once
 # TODO: Handle dictionaries in case of atomic radii. Aj says "You can require that getting the ionic_radii descriptor

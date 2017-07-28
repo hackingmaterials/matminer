@@ -49,12 +49,23 @@ class BaseFeaturizer(object):
 
         raise NotImplementedError("feature_labels() is not defined!")
 
-    def credits(self):
+    def reference(self):
         """
-        Citation for feature
+        Citation / reference for feature
 
         Returns:
             BibTeX citation
         """
 
-        return ""
+        raise NotImplementedError("reference() is not defined!")
+
+    def implementors(self):
+        """
+        List of implementors of the feature.
+
+        Returns:
+            array of str; each str could be a name or name/email
+                combo (e.g., "Anubhav Jain <ajain@lbl.gov>")
+        """
+
+        raise NotImplementedError("implementors() is not defined!")
