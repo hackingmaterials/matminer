@@ -4,34 +4,50 @@ matminer.descriptors package
 Submodules
 ----------
 
-matminer.descriptors.add_descriptors module
--------------------------------------------
+matminer.descriptors.bandstructure module
+-----------------------------------------
 
-.. automodule:: matminer.descriptors.add_descriptors
+.. automodule:: matminer.descriptors.bandstructure
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.descriptors.bandstructure_features module
---------------------------------------------------
+matminer.descriptors.base module
+--------------------------------
 
-.. automodule:: matminer.descriptors.bandstructure_features
+.. automodule:: matminer.descriptors.base
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.descriptors.composition_features module
-------------------------------------------------
+matminer.descriptors.composition module
+---------------------------------------
 
-.. automodule:: matminer.descriptors.composition_features
+.. automodule:: matminer.descriptors.composition
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.descriptors.structure_features module
-----------------------------------------------
+matminer.descriptors.data module
+--------------------------------
 
-.. automodule:: matminer.descriptors.structure_features
+.. automodule:: matminer.descriptors.data
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matminer.descriptors.structure module
+-------------------------------------
+
+.. automodule:: matminer.descriptors.structure
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matminer.descriptors.utils module
+---------------------------------
+
+.. automodule:: matminer.descriptors.utils
     :members:
     :undoc-members:
     :show-inheritance:
