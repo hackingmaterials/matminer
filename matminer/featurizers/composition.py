@@ -109,6 +109,10 @@ class Stoichiometry(BaseFeaturizer):
             "Alok and Wolverton, Christopher}, year={2016}}")
         return citation
 
+    def implementors(self):
+        # TODO: @JFChen3 please confirm/modify!
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+
 class ElementProperty(BaseFeaturizer):
     """
     Class to calculate elemental property attributes
@@ -187,6 +191,10 @@ class ElementProperty(BaseFeaturizer):
                 "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
+    def implementors(self):
+        # TODO: @JFChen3 please confirm/modify!
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal", "Saurabh Bajaj"]
+
 class ValenceOrbital(BaseFeaturizer):
     """
         Class to calculate valence orbital attributes
@@ -254,6 +262,9 @@ class ValenceOrbital(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         citations = [ward_citation, deml_citation]
         return citations
+
+    def implementors(self):
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
 
 class IonProperty(BaseFeaturizer):
     """
@@ -330,6 +341,9 @@ class IonProperty(BaseFeaturizer):
             "Alok and Wolverton, Christopher}, year={2016}}")
         return citation
 
+    def implementors(self):
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+
 class ElementFraction(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
@@ -362,6 +376,9 @@ class ElementFraction(BaseFeaturizer):
         for i in range(1, 104):
             labels.append(Element.from_Z(i).symbol)
         return labels
+
+    def implementors(self):
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
 
 class TMetalFraction(BaseFeaturizer):
     """
@@ -408,6 +425,10 @@ class TMetalFraction(BaseFeaturizer):
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
+
+    def implementors(self):
+        # TODO: @JFChen3 please confirm/modify!
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
 
 class ElectronAffinity(BaseFeaturizer):
     """
@@ -460,6 +481,9 @@ class ElectronAffinity(BaseFeaturizer):
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
+
+    def implementors(self):
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
 
 class ElectronegativityDiff(BaseFeaturizer):
     """
@@ -549,6 +573,9 @@ class ElectronegativityDiff(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
+    def implementors(self):
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+
 class FERECorrection(BaseFeaturizer):
     """
     Class to calculate difference between fitted elemental-phase reference energy (FERE) and GGA+U energy
@@ -607,6 +634,10 @@ class FERECorrection(BaseFeaturizer):
             "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
         return citation
 
+    def implementors(self):
+        # TODO: @JFChen3 please confirm/modify!
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+
 class CohesiveEnergy(BaseFeaturizer):
 
     def featurize(self, comp):
@@ -643,6 +674,10 @@ class CohesiveEnergy(BaseFeaturizer):
     def feature_labels(self):
         return ["Cohesive Energy"]
 
+    def implementors(self):
+        # TODO: @JFChen3 please confirm/modify!
+        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+
 class BandCenter(BaseFeaturizer):
 
     def featurize(self, comp):
@@ -665,6 +700,9 @@ class BandCenter(BaseFeaturizer):
 
     def feature_labels(self):
         return ["Band Center"]
+
+    def implementors(self):
+        return ["Anubhav Jain"]
 
 if __name__ == '__main__':
     print(PropertyStats.holder_mean([1, 2, 3, 4]))
