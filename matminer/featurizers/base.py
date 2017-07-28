@@ -64,8 +64,9 @@ class BaseFeaturizer(object):
         List of implementors of the feature.
 
         Returns:
-            array of str; each str could be a name or name/email
-                combo (e.g., "Anubhav Jain <ajain@lbl.gov>")
+            array - each element should either be str with author name (e.g., "Anubhav Jain") or
+                dict with required key "name" and other keys like "email" or "institution" (e.g.,
+                {"name": "Anubhav Jain", "email": "ajain@lbl.gov", "institution": "LBNL"}).
         """
 
         raise NotImplementedError("implementors() is not defined!")
