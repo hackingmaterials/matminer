@@ -9,9 +9,9 @@ import itertools
 import numpy as np
 import pandas as pd
 
-from matminer.descriptors.base_classes import BaseFeaturizer
-from matminer.descriptors.data import DemlData, MagpieData, PymatgenData
-from matminer.descriptors.stats import PropertyStats
+from matminer.featurizers.base_classes import BaseFeaturizer
+from matminer.featurizers.data import DemlData, MagpieData, PymatgenData
+from matminer.featurizers.stats import PropertyStats
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew'
 
@@ -673,18 +673,18 @@ if __name__ == '__main__':
     print("WARD NPJ ATTRIBUTES")
     print("Stoichiometric attributes")
     p_list = [0,2,3,5,7,9]
-    print(StoichAttribute().featurize_dataframe(training_set))
+    print(StoichAttribute().featurize_dataframe(training_set, col_id="composition"))
     print("Elemental property attributes")
-    print(ElemPropertyAttribute().featurize_dataframe(training_set))
+    print(ElemPropertyAttribute().featurize_dataframe(training_set, col_id="composition"))
     print("Valence Orbital Attributes")
-    print(ValenceOrbitalAttribute(props=["frac"]).featurize_dataframe(training_set))
+    print(ValenceOrbitalAttribute(props=["frac"]).featurize_dataframe(training_set, col_id="composition"))
     print("Ionic attributes")
-    print(IonicAttribute().featurize_dataframe(training_set))
+    print(IonicAttribute().featurize_dataframe(training_set, col_id="composition"))
 
     print("DEML ELEMENTAL DESCRIPTORS")
-    print(StoichAttribute(p_list=None, num_atoms=True).featurize_dataframe(training_set))
-    print(ElemPropertyAttribute(method="deml").featurize_dataframe(training_set))
-    print(TMetalFractionAttribute().featurize_dataframe(training_set))
-    print(ElectronAffinityAttribute().featurize_dataframe(training_set))
-    print(ValenceOrbitalAttribute(orbitals=["s","p","d"], props=["avg","frac"]).featurize_dataframe(training_set))
-    print(ElectronegativityDiffAttribute().featurize_dataframe(training_set))
+    print(StoichAttribute(p_list=None, num_atoms=True).featurize_dataframe(training_set, col_id="composition"))
+    print(ElemPropertyAttribute(method="deml").featurize_dataframe(training_set, col_id="composition"))
+    print(TMetalFractionAttribute().featurize_dataframe(training_set, col_id="composition"))
+    print(ElectronAffinityAttribute().featurize_dataframe(training_set, col_id="composition"))
+    print(ValenceOrbitalAttribute(orbitals=["s","p","d"], props=["avg","frac"]).featurize_dataframe(training_set, col_id="composition"))
+    print(ElectronegativityDiffAttribute().featurize_dataframe(training_set, col_id="composition"))

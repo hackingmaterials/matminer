@@ -54,7 +54,7 @@ class DemlData(AbstractData):
     """
     
     def __init__(self):
-        from matminer.descriptors.data_files.deml_elementdata import properties
+        from matminer.featurizers.data_files.deml_elementdata import properties
         self.all_props = properties
         self.available_props = list(self.all_props.keys()) + ["formal_charge","valence_s","valence_p","valence_d","first_ioniz","total_ioniz"]
 

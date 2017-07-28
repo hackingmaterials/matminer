@@ -7,7 +7,7 @@ import numpy as np
 from pymatgen.analysis.bond_valence import BVAnalyzer
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
-from matminer.descriptors.data import PymatgenData
+from matminer.featurizers.data import PymatgenData
 
 pmgdata = PymatgenData()
 

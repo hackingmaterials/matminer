@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from matminer.descriptors.stats import PropertyStats
+from matminer.featurizers.stats import PropertyStats
 import numpy as np
 from math import sqrt
 
