@@ -1,15 +1,14 @@
 import numpy as np
-import pandas as pd
 
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_dataframe(self, comp_frame, col_id="composition"):
+    def featurize_dataframe(self, df, col_id):
         """
-        Compute features for all compounds contained in input dataframe
+        Compute features for all entries contained in input dataframe
         
         Args: 
-            comp_frame (Pandas dataframe): Dataframe containing column of compounds
+            df (Pandas dataframe): Dataframe containing input data
             col_id (string): column label containing objects to featurize
 
         Returns:
@@ -17,28 +16,28 @@ class BaseFeaturizer(object):
         """
 
         features = []
-        comp_list = comp_frame[col_id]
-        for comp in comp_list:
-            features.append(self.featurize(comp))
+        x_list = df[col_id]
+        for x in x_list:
+            features.append(self.featurize(x))
         
         features = np.array(features)
 
         labels = self.feature_labels()
-        comp_frame = comp_frame.assign(**dict(zip(labels, features.T)))
-        return comp_frame
+        df = df.assign(**dict(zip(labels, features.T)))
+        return df
     
-    def featurize(self, comp):
+    def featurize(self, x):
         """
         Main featurizer function. Only defined in feature subclasses.
 
         Args:
-            comp: Pymatgen composition object
+            x: input data to featurize (type depends on featurizer)
 
         Returns:
-            list of features
+            list of one or more features
         """
 
-        raise NotImplementedError("Featurizer is not defined")
+        raise NotImplementedError("featurize() is not defined!")
     
     def feature_labels(self):
         """
@@ -48,7 +47,7 @@ class BaseFeaturizer(object):
             list of strings for attribute labels
         """
 
-        raise NotImplementedError("Featurizer is not defined")
+        raise NotImplementedError("feature_labels() is not defined!")
 
     def credits(self):
         """
@@ -58,4 +57,4 @@ class BaseFeaturizer(object):
             BibTeX citation
         """
 
-        raise NotImplementedError("Featurizer is not defined")
+        return ""
