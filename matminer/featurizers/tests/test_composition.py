@@ -6,8 +6,7 @@ import pandas as pd
 from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
-#from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
-from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, BandCenter, CohesiveEnergy
+from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter
 
 class CompositionFeaturesTest(PymatgenTest):
 
