@@ -6,8 +6,7 @@ import pandas as pd
 from pymatgen import Composition, Specie
 from pymatgen.util.testing import PymatgenTest
 
-#from matminer.descriptors.composition_features import get_composition_oxidation_state, get_pymatgen_descriptor
-from matminer.featurizers.composition_features import StoichAttribute, ElemPropertyAttribute, ValenceOrbitalAttribute, IonicAttribute, ElementFractionAttribute, TMetalFractionAttribute, ElectronAffinityAttribute, ElectronegativityDiffAttribute, FERECorrectionAttribute, BandCenterAttribute, CohesiveEnergyAttribute
+from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter
 
 class CompositionFeaturesTest(PymatgenTest):
 
@@ -15,13 +14,13 @@ class CompositionFeaturesTest(PymatgenTest):
         self.df = pd.DataFrame({"composition":[Composition("Fe2O3")]})
 
     def test_stoich(self):
-        df_stoich = StoichAttribute(num_atoms=True).featurize_dataframe(self.df, col_id="composition")
+        df_stoich = Stoichiometry(num_atoms=True).featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_stoich["Number of atoms"][0], 5)
         self.assertAlmostEqual(df_stoich["0-norm"][0], 2)
         self.assertAlmostEqual(df_stoich["7-norm"][0], 0.604895199)
 
     def test_elem(self):
-        df_elem = ElemPropertyAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_elem = ElementProperty().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_elem["minimum Number"][0], 8)
         self.assertAlmostEqual(df_elem["maximum Number"][0], 26)
         self.assertAlmostEqual(df_elem["range Number"][0], 18)
@@ -30,7 +29,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem["mode Number"][0], 8)
 
     def test_elem_deml(self):
-        df_elem_deml = ElemPropertyAttribute("deml").featurize_dataframe(self.df, col_id="composition")
+        df_elem_deml = ElementProperty("deml").featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_elem_deml["minimum atom_num"][0], 8)
         self.assertAlmostEqual(df_elem_deml["maximum atom_num"][0], 26)
         self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)
@@ -44,7 +43,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem_deml["std_dev magn_moment"][0], 2.547469332)
 
     def test_valence(self):
-        df_val = ValenceOrbitalAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_val["avg s valence electrons"][0], 2.0)
         self.assertAlmostEqual(df_val["avg p valence electrons"][0], 2.4)
         self.assertAlmostEqual(df_val["avg d valence electrons"][0], 2.4)
@@ -55,28 +54,28 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_val["frac f valence electrons"][0], 0)
 
     def test_ionic(self):
-        df_ionic = IonicAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_ionic = IonProperty().featurize_dataframe(self.df, col_id="composition")
         self.assertEqual(df_ionic["compound possible"][0], 1.0)
         self.assertAlmostEqual(df_ionic["Max Ionic Char"][0], 0.476922164)
         self.assertAlmostEqual(df_ionic["Avg Ionic Char"][0], 0.114461319)
 
     def test_fraction(self):
-        df_frac = ElementFractionAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_frac = ElementFraction().featurize_dataframe(self.df, col_id="composition")
         self.assertEqual(df_frac["O"][0], 0.6)
         self.assertEqual(df_frac["Fe"][0], 0.4)
         #self.assertAlmostEqual(df_frac["Fe"][1], 0.42857143)
         #self.assertAlmostEqual(df_frac["Li"][1], 0.57142857)
 
     def test_tm_fraction(self):
-        df_tm_frac = TMetalFractionAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_tm_frac = TMetalFraction().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_tm_frac["TMetal Fraction"][0], 0.4)
 
     def test_elec_affin(self):
-        df_elec_affin = ElectronAffinityAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_elec_affin = ElectronAffinity().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_elec_affin["Avg Anion Electron Affinity"][0], -169200)
 
     def test_en_diff(self):
-        df_en_diff = ElectronegativityDiffAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_en_diff = ElectronegativityDiff().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_en_diff["minimum EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["maximum EN difference"][0], 1.6099999999)
         self.assertAlmostEqual(df_en_diff["range EN difference"][0], 0)
@@ -84,7 +83,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_en_diff["std_dev EN difference"][0], 0)
 
     def test_fere_corr(self):
-        df_fere_corr = FERECorrectionAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_fere_corr = FERECorrection().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_fere_corr["minimum FERE Correction"][0], -0.15213431610903)
         self.assertAlmostEqual(df_fere_corr["maximum FERE Correction"][0], 0.23)
         self.assertAlmostEqual(df_fere_corr["range FERE Correction"][0], 0.382134316)
@@ -92,12 +91,12 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_fere_corr["std_dev FERE Correction"][0], 0.187206817)
 
     def test_band_center(self):
-        df_band_center = BandCenterAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_band_center["Band Center"][0], -2.672486385)
 
     @unittest.skip("requires API code")
     def test_cohesive_energy(self):
-        df_cohesive_energy = CohesiveEnergyAttribute().featurize_dataframe(self.df, col_id="composition")
+        df_cohesive_energy = CohesiveEnergy().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_cohesive_energy["Cohesive Energy"][0], -18.24568582)
 """
 class PymatgenDescriptorTest(unittest.TestCase):

@@ -9,7 +9,7 @@ import itertools
 import numpy as np
 import pandas as pd
 
-from matminer.featurizers.base_classes import BaseFeaturizer
+from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.data import DemlData, MagpieData, PymatgenData
 from matminer.featurizers.stats import PropertyStats
 
