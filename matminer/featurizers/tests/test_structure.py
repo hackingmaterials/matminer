@@ -11,7 +11,7 @@ import numpy as np
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.structure_features import get_packing_fraction, \
+from matminer.featurizers.structure import get_packing_fraction, \
     get_vol_per_site, get_density, get_rdf, get_rdf_peaks, get_redf, \
     get_min_relative_distances, get_neighbors_of_site_with_index, \
     get_order_parameters, get_order_parameter_stats, get_prdf, \
@@ -164,21 +164,21 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 6175)
         self.assertAlmostEqual(int(1000 * d["redf"][len(
-            d["redf"]) - 1]), 0)
+            d["distances"]) - 1]), 0)
         d = get_redf(self.nacl)
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
         self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
+        self.assertAlmostEqual(int(1000 * d["distances"][56]), 2825)
+        self.assertAlmostEqual(int(1000 * d["redf"][56]), -2108)
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 9875)
-        self.assertAlmostEqual(int(1000 * d["redf"][len(
-            d["redf"]) - 1]), 202)
         d = get_redf(self.cscl)
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
         self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
+        self.assertAlmostEqual(int(1000 * d["distances"][72]), 3625)
+        self.assertAlmostEqual(int(1000 * d["redf"][72]), -2194)
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 7275)
-        self.assertAlmostEqual(int(1000 * d["redf"][len(
-            d["redf"]) - 1]), 1097)
 
     def test_get_coulomb_matrix(self):
         species = ["C", "C", "H", "H"]
