@@ -110,8 +110,7 @@ class Stoichiometry(BaseFeaturizer):
         return citation
 
     def implementors(self):
-        # TODO: @JFChen3 please confirm/modify!
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Jiming Chen", "Logan Ward"]
 
 class ElementProperty(BaseFeaturizer):
     """
@@ -192,8 +191,7 @@ class ElementProperty(BaseFeaturizer):
         return citation
 
     def implementors(self):
-        # TODO: @JFChen3 please confirm/modify!
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal", "Saurabh Bajaj"]
+        return ["Jiming Chen", "Logan Ward"]
 
 class ValenceOrbital(BaseFeaturizer):
     """
@@ -264,7 +262,7 @@ class ValenceOrbital(BaseFeaturizer):
         return citations
 
     def implementors(self):
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Jiming Chen", "Logan Ward"]
 
 class IonProperty(BaseFeaturizer):
     """
@@ -342,7 +340,7 @@ class IonProperty(BaseFeaturizer):
         return citation
 
     def implementors(self):
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Jiming Chen", "Logan Ward"]
 
 class ElementFraction(BaseFeaturizer):
     """
@@ -378,7 +376,7 @@ class ElementFraction(BaseFeaturizer):
         return labels
 
     def implementors(self):
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Ashwin Aggarwal, Logan Ward"]
 
 class TMetalFraction(BaseFeaturizer):
     """
@@ -427,8 +425,7 @@ class TMetalFraction(BaseFeaturizer):
         return citation
 
     def implementors(self):
-        # TODO: @JFChen3 please confirm/modify!
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Jiming Chen, Logan Ward"]
 
 class ElectronAffinity(BaseFeaturizer):
     """
@@ -483,7 +480,7 @@ class ElectronAffinity(BaseFeaturizer):
         return citation
 
     def implementors(self):
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Jiming Chen", "Logan Ward"]
 
 class ElectronegativityDiff(BaseFeaturizer):
     """
@@ -574,7 +571,7 @@ class ElectronegativityDiff(BaseFeaturizer):
         return citation
 
     def implementors(self):
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Jiming Chen", "Logan Ward"]
 
 class FERECorrection(BaseFeaturizer):
     """
@@ -635,8 +632,7 @@ class FERECorrection(BaseFeaturizer):
         return citation
 
     def implementors(self):
-        # TODO: @JFChen3 please confirm/modify!
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Jiming Chen", "Logan Ward"]
 
 class CohesiveEnergy(BaseFeaturizer):
 
@@ -675,8 +671,7 @@ class CohesiveEnergy(BaseFeaturizer):
         return ["Cohesive Energy"]
 
     def implementors(self):
-        # TODO: @JFChen3 please confirm/modify!
-        return ["Logan Ward", "Jiming Chen", "Ashwin Aggarwal"]
+        return ["Saurabh Bajaj"]
 
 class BandCenter(BaseFeaturizer):
 
