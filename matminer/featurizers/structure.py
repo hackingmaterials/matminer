@@ -13,63 +13,159 @@ from pymatgen.core.periodic_table import Specie
 from pymatgen.core.structure import Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
+from matminer.featurizers.base import BaseFeaturizer
+
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
 
 
-def get_packing_fraction(s):
-    if not s.is_ordered:
-        raise ValueError("Disordered structure support not built yet")
-    total_rad = 0
-    for site in s:
-        total_rad += site.specie.atomic_radius ** 3
-
-    return 4 * math.pi * total_rad / (3 * s.volume)
-
-
-def get_vol_per_site(s):
-    if not s.is_ordered:
-        raise ValueError("Disordered structure support not built yet")
-
-    return s.volume / len(s)
-
-
-def get_density(s):
-    return s.density
-
-
-def get_rdf(structure, cutoff=20.0, bin_size=0.1):
+class PackingFraction(BaseFeaturizer):
     """
-    Calculate rdf fingerprint of a given structure
-
-    Args:
-        structure: pymatgen structure object
-        cutoff: (int/float) distance to calculate rdf up to
-        bin_size: (int/float) size of bin to obtain rdf for
-
-    Returns: (tuple of ndarray) first element is the normalized RDF, second is the inner radius of the RDF bin
-
+    Calculates the packing fraction of a crystal structure.
     """
 
-    if not structure.is_ordered:
-        raise ValueError("Disordered structure support not built yet")
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
 
-    # Get the distances between all atoms
-    neighbors_lst = structure.get_all_neighbors(cutoff)
-    all_distances = np.concatenate(
-        tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
+    def featurize(self, s):
+        """
+        Get packing fraction of the input structure.
+        Args:
+            s: Pymatgen Structure object.
 
-    # Compute a histogram
-    dist_hist, dist_bins = np.histogram(all_distances,
-                                        bins=np.arange(0, cutoff + bin_size, bin_size),
-                                        density=False)
+        Returns:
+            f (float): packing fraction.
+        """
 
-    # Normalize counts
-    shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
-    number_density = structure.num_sites / structure.volume
-    rdf = dist_hist / shell_vol / number_density
+        if not s.is_ordered:
+            raise ValueError("Disordered structure support not built yet.")
+        total_rad = 0
+        for site in s:
+            total_rad += site.specie.atomic_radius ** 3
+        return 4 * math.pi * total_rad / (3 * s.volume)
 
-    return rdf, dist_bins[:-1]
+    def feature_labels(self):
+        return "Packing fraction"
+
+    def credits(self):
+        return ""
+
+    def implementors(self):
+        return ["Saurabh Bajaj"]
+
+
+class VolumePerSite(BaseFeaturizer):
+    """
+    Calculates volume per site in a crystal structure.
+    """
+
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
+
+    def featurize(self, s):
+        """
+        Get volume per site of the input structure.
+        Args:
+            s: Pymatgen Structure object.
+
+        Returns:
+            f (float): volume per site.
+        """
+        if not s.is_ordered:
+            raise ValueError("Disordered structure support not built yet.")
+
+        return s.volume / len(s)
+
+    def feature_labels(self):
+        return "Volume per site"
+
+    def credits(self):
+        return ""
+
+    def implementors(self):
+        return ["Saurabh Bajaj"]
+
+
+class Density(BaseFeaturizer):
+    """
+    Gets the density of a crystal structure.
+    """
+
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
+
+    def featurize(self, s):
+        """
+        Get density of the input structure.
+        Args:
+            s: Pymatgen Structure object.
+
+        Returns:
+            f (float): density.
+        """
+
+        return s.density
+
+    def feature_labels(self):
+        return "Density"
+
+    def credits(self):
+        return ""
+
+    def implementors(self):
+        return ["Saurabh Bajaj"]
+
+
+class RadialDistributionFunction(BaseFeaturizer):
+    """
+    Calculate the radial distribution function (RDF) of a crystal
+    structure.
+    """
+
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
+
+    def featurize(self, s, cutoff=20.0, bin_size=0.1):
+        """
+        Get RDF of the input structure.
+        Args:
+            s: Pymatgen Structure object.
+            cutoff: (float) distance up to which to calculate the RDF.
+            bin_size: (float) size of each bin of the (discrete) RDF.
+
+        Returns:
+            rdf, dist: (tuple of arrays) the first element is the
+                    normalized RDF, whereas the second element is
+                    the inner radius of the RDF bin.
+        """
+        if not s.is_ordered:
+            raise ValueError("Disordered structure support not built yet")
+    
+        # Get the distances between all atoms
+        neighbors_lst = s.get_all_neighbors(cutoff)
+        all_distances = np.concatenate(
+            tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
+    
+        # Compute a histogram
+        dist_hist, dist_bins = np.histogram(
+                all_distances, bins=np.arange(0, cutoff + bin_size, bin_size),
+                density=False)
+    
+        # Normalize counts
+        shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        number_density = s.num_sites / s.volume
+        rdf = dist_hist / shell_vol / number_density
+    
+        return rdf, dist_bins[:-1]
+
+    def feature_labels(self):
+        return "Density"
+
+    def credits(self):
+        return ""
+
+    def implementors(self):
+        return ["Saurabh Bajaj"]
 
 
 def get_prdf(structure, cutoff=20.0, bin_size=0.1):

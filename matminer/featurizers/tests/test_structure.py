@@ -11,8 +11,9 @@ import numpy as np
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.structure import get_packing_fraction, \
-    get_vol_per_site, get_density, get_rdf, get_rdf_peaks, get_redf, \
+from matminer.featurizers.structure import PackingFraction, \
+    VolumePerSite, Density, RadialDistributionFunction, \
+    get_rdf_peaks, get_redf, \
     get_min_relative_distances, get_neighbors_of_site_with_index, \
     get_order_parameters, get_order_parameter_stats, get_prdf, \
     get_coulomb_matrix
@@ -52,33 +53,37 @@ class StructureFeaturesTest(PymatgenTest):
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=False, site_properties=None)
 
-    def test_get_packing_fraction(self):
-        self.assertAlmostEqual(int(1000 * get_packing_fraction(
+    def test_packing_fraction(self):
+        pf = PackingFraction()
+        self.assertAlmostEqual(int(1000 * pf.featurize(
             self.diamond)), 251)
-        self.assertAlmostEqual(int(1000 * get_packing_fraction(
+        self.assertAlmostEqual(int(1000 * pf.featurize(
             self.nacl)), 620)
-        self.assertAlmostEqual(int(1000 * get_packing_fraction(
+        self.assertAlmostEqual(int(1000 * pf.featurize(
             self.cscl)), 1043)
 
-    def test_get_vol_per_site(self):
-        self.assertAlmostEqual(int(1000 * get_vol_per_site(
+    def test_volume_per_site(self):
+        vps = VolumePerSite()
+        self.assertAlmostEqual(int(1000 * vps.featurize(
             self.diamond)), 5710)
-        self.assertAlmostEqual(int(1000 * get_vol_per_site(
+        self.assertAlmostEqual(int(1000 * vps.featurize(
             self.nacl)), 23046)
-        self.assertAlmostEqual(int(1000 * get_vol_per_site(
+        self.assertAlmostEqual(int(1000 * vps.featurize(
             self.cscl)), 37282)
 
     def test_get_density(self):
-        self.assertAlmostEqual(int(100 * get_density(
+        d = Density()
+        self.assertAlmostEqual(int(100 * d.featurize(
             self.diamond)), 349)
-        self.assertAlmostEqual(int(100 * get_density(
+        self.assertAlmostEqual(int(100 * d.featurize(
             self.nacl)), 210)
-        self.assertAlmostEqual(int(100 * get_density(
+        self.assertAlmostEqual(int(100 * d.featurize(
             self.cscl)), 374)
 
     def test_get_rdf_and_peaks(self):
         ## Test diamond
-        rdf, bin_radius = get_rdf(self.diamond)
+        rdf, bin_radius = RadialDistributionFunction().featurize(
+                self.diamond)
 
         # Make sure it the last bin is cutoff-bin_max
         self.assertAlmostEquals(bin_radius.max(), 19.9)
@@ -102,7 +107,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEquals(1.5, peaks[1])
 
         # Repeat test with NaCl (omitting comments). Altering cutoff distance
-        rdf, bin_radius = get_rdf(self.nacl, cutoff=10)
+        rdf, bin_radius = RadialDistributionFunction().featurize(
+                self.nacl, cutoff=10)
         self.assertAlmostEquals(bin_radius.max(), 9.9)
         self.assertEquals(len(rdf), len(bin_radius))
         self.assertEquals(len(rdf), 100)
@@ -117,7 +123,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEquals(4.0, peaks[1])
 
         # Repeat test with CsCl. Altering cutoff distance and bin_size
-        rdf, bin_radius = get_rdf(self.cscl, cutoff=8, bin_size=0.5)
+        rdf, bin_radius = RadialDistributionFunction().featurize(
+                self.cscl, cutoff=8, bin_size=0.5)
         self.assertAlmostEquals(bin_radius.max(), 7.5)
         self.assertEquals(len(rdf), len(bin_radius))
         self.assertEquals(len(rdf), 16)
