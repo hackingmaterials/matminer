@@ -47,7 +47,6 @@ class Stoichiometry(BaseFeaturizer):
     """
 
     def __init__(self, p_list=[0,2,3,5,7,10], num_atoms=False):
-        BaseFeaturizer.__init__(self)
         self.p_list = p_list
         self.num_atoms = num_atoms
  
@@ -123,7 +122,6 @@ class ElementProperty(BaseFeaturizer):
     """
 
     def __init__(self, method="magpie", stats=None, attributes=None, data_source=None):
-        BaseFeaturizer.__init__(self)
         self.method = method
         if self.method == "deml":
             self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
@@ -135,7 +133,7 @@ class ElementProperty(BaseFeaturizer):
             self.stats = ["minimum", "maximum", "range", "mean", "avg_dev", "mode"]
             self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
                 "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
-                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"] 
+                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]
             self.data_source = MagpieData()
         else:
             self.stats = stats
@@ -148,7 +146,7 @@ class ElementProperty(BaseFeaturizer):
 
         Args:
             comp: Pymatgen composition object
-        
+
         Returns:
             all_attributes: Specified property statistics of descriptors
         """
@@ -156,7 +154,7 @@ class ElementProperty(BaseFeaturizer):
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         fracs = [el_amt[el] for el in elements]
-       
+
         all_attributes = []
 
         for attr in self.attributes:
@@ -205,7 +203,6 @@ class ValenceOrbital(BaseFeaturizer):
     """
 
     def __init__(self, data_source=MagpieData(), orbitals=["s","p","d","f"], props=["avg", "frac"]):
-        BaseFeaturizer.__init__(self)
         self.data_source = data_source
         self.orbitals = orbitals
         self.props = props
@@ -213,13 +210,13 @@ class ValenceOrbital(BaseFeaturizer):
     def featurize(self, comp):
         """Weighted fraction of valence electrons in each orbital
 
-           Args: 
+           Args:
                 comp: Pymatgen composition object
 
-           Returns: 
+           Returns:
                 valence_attributes (list of floats): Average number and/or fraction of valence electrons in specfied orbitals
-        """    
-        
+        """
+
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         el_fracs = [el_amt[el] for el in elements]
@@ -273,7 +270,6 @@ class IonProperty(BaseFeaturizer):
     """
 
     def __init__(self, data_source=MagpieData()):
-        BaseFeaturizer.__init__(self)
         self.data_source = data_source
 
     def featurize(self, comp):
