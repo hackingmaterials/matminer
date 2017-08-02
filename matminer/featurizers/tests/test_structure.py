@@ -14,10 +14,10 @@ from pymatgen.util.testing import PymatgenTest
 from matminer.featurizers.structure import PackingFraction, \
     VolumePerSite, Density, RadialDistributionFunction, \
     RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
-    get_redf, \
-    get_min_relative_distances, get_neighbors_of_site_with_index, \
+    ElectronicRadialDistributionFunction, \
+    MinimumRelativeDistances, get_neighbors_of_site_with_index, \
     get_order_parameters, get_order_parameter_stats, \
-    get_coulomb_matrix
+    CoulombMatrix
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -169,22 +169,25 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEquals(p[('Al', 'Ni')][int(round(2 / 0.5))], 0.37571003)
         self.assertAlmostEquals(p[('Al', 'Al')][int(round(2 / 0.5))], 0)
 
-    def test_get_redf(self):
-        d = get_redf(self.diamond)
+    def test_redf(self):
+        d = ElectronicRadialDistributionFunction().featurize(
+                self.diamond)
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
         self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 6175)
         self.assertAlmostEqual(int(1000 * d["redf"][len(
             d["distances"]) - 1]), 0)
-        d = get_redf(self.nacl)
+        d = ElectronicRadialDistributionFunction().featurize(
+                self.nacl)
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
         self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
         self.assertAlmostEqual(int(1000 * d["distances"][56]), 2825)
         self.assertAlmostEqual(int(1000 * d["redf"][56]), -2108)
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 9875)
-        d = get_redf(self.cscl)
+        d = ElectronicRadialDistributionFunction().featurize(
+                self.cscl)
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
         self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
         self.assertAlmostEqual(int(1000 * d["distances"][72]), 3625)
@@ -192,28 +195,31 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 7275)
 
-    def test_get_coulomb_matrix(self):
+    def test_coulomb_matrix(self):
         species = ["C", "C", "H", "H"]
         coords = [[0, 0, 0], [0, 0, 1.203], [0, 0, -1.06], [0, 0, 2.263]]
         acetylene = Molecule(species, coords)
-        morig = get_coulomb_matrix(acetylene, diag_elems=True)
+        morig = CoulombMatrix().featurize(acetylene, diag_elems=True)
         mtarget = [[36.858, 29.925, 5.66, 2.651], [29.925, 36.858, 2.651, 5.66],
                    [5.55, 2.651, 0.5, 0.301], [2.651, 5.66, 0.301, 0.5]]
         self.assertAlmostEqual(
             int(np.linalg.norm(morig - np.array(mtarget))), 0)
-        m = get_coulomb_matrix(acetylene)
+        m = CoulombMatrix().featurize(acetylene)
         self.assertAlmostEqual(m[0][0], 0.0)
         self.assertAlmostEqual(m[1][1], 0.0)
         self.assertAlmostEqual(m[2][2], 0.0)
         self.assertAlmostEqual(m[3][3], 0.0)
 
-    def test_get_min_relative_distances(self):
-        self.assertAlmostEqual(int(1000 * get_min_relative_distances(
-            self.diamond_no_oxi)[0]), 1105)
-        self.assertAlmostEqual(int(1000 * get_min_relative_distances(
-            self.nacl)[0]), 1005)
-        self.assertAlmostEqual(int(1000 * get_min_relative_distances(
-            self.cscl)[0]), 1006)
+    def test_min_relative_distances(self):
+        self.assertAlmostEqual(int(
+                1000 * MinimumRelativeDistances().featurize(
+                self.diamond_no_oxi)[0]), 1105)
+        self.assertAlmostEqual(int(
+                1000 * MinimumRelativeDistances().featurize(
+                self.nacl)[0]), 1005)
+        self.assertAlmostEqual(int(
+                1000 * MinimumRelativeDistances().featurize(
+                self.cscl)[0]), 1006)
 
     def test_get_neighbors_of_site_with_index(self):
         self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
