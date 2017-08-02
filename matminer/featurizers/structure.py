@@ -17,6 +17,7 @@ from matminer.featurizers.base import BaseFeaturizer
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
+# ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
 
 
 class PackingFraction(BaseFeaturizer):
@@ -285,122 +286,194 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
         return ["Saurabh Bajaj"]
 
 
-def get_redf(struct, cutoff=None, dr=0.05):
+class ElectronicRadialDistributionFunction(BaseFeaturizer):
     """
-    This function permits the calculation of the crystal structure-inherent electronic radial
-    distribution function (ReDF) according to Willighagen et al., Acta Cryst., 2005, B61, 29-36.
-    The ReDF is a structure-integral RDF (i.e., summed over all sites) in which the positions of
-    neighboring sites are weighted by electrostatic interactions inferred from atomic partial
-    charges. Atomic charges are obtained from the ValenceIonicRadiusEvaluator class.
-
-    Args:
-        struct (Structure): input Structure object.
-        cutoff (float): distance up to which the ReDF is to be
-                calculated (default: longest diagaonal in primitive cell)
-        dr (float): width of bins ("x"-axis) of ReDF (default: 0.05 A).
-
-    Returns:
-        (dict) a copy of the electronic radial distribution functions (ReDF) as a dictionary.
-        The distance list ("x"-axis values of ReDF) can be accessed via key 'distances';
-        the ReDF itself via key 'redf'.
+    Calculate the crystal structure-inherent
+    electronic radial distribution function (ReDF) according to
+    Willighagen et al., Acta Cryst., 2005, B61, 29-36.
+    The ReDF is a structure-integral RDF (i.e., summed over
+    all sites) in which the positions of neighboring sites
+    are weighted by electrostatic interactions inferred
+    from atomic partial charges. Atomic charges are obtained
+    from the ValenceIonicRadiusEvaluator class.
     """
-    if dr <= 0:
-        raise ValueError("width of bins for ReDF must be >0")
 
-    # make primitive
-    struct = SpacegroupAnalyzer(struct).find_primitive() or struct
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
 
-    # add oxidation states
-    struct = ValenceIonicRadiusEvaluator(struct).structure
+    def featurize(self, s, cutoff=None, dr=0.05):
+        """
+        Get ReDF of input structure.
 
-    if cutoff is None:
-        # set cutoff to longest diagonal
-        a = struct.lattice.matrix[0]
-        b = struct.lattice.matrix[1]
-        c = struct.lattice.matrix[2]
-        cutoff = max(
-            [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c), np.linalg.norm(a - b + c),
-             np.linalg.norm(a + b - c)])
+        Args:
+            s: input Structure object.
+            cutoff: (float) distance up to which the ReDF is to be
+                    calculated (default: longest diagaonal in
+                    primitive cell).
+            dr: (float) width of bins ("x"-axis) of ReDF (default: 0.05 A).
 
-    nbins = int(cutoff / dr) + 1
-    redf_dict = {"distances": np.array([(i + 0.5) * dr for i in range(nbins)]),
-                 "redf": np.zeros(nbins, dtype=np.float)}
+        Returns: (dict) a copy of the electronic radial distribution
+                functions (ReDF) as a dictionary. The distance list
+                ("x"-axis values of ReDF) can be accessed via key
+                'distances'; the ReDF itself is accessible via key
+                'redf'.
+        """
+        if dr <= 0:
+            raise ValueError("width of bins for ReDF must be >0")
+    
+        # Make structure primitive.
+        struct = SpacegroupAnalyzer(s).find_primitive() or s
+    
+        # Add oxidation states.
+        struct = ValenceIonicRadiusEvaluator(struct).structure
+    
+        if cutoff is None:
+            # Set cutoff to longest diagonal.
+            a = struct.lattice.matrix[0]
+            b = struct.lattice.matrix[1]
+            c = struct.lattice.matrix[2]
+            cutoff = max(
+                [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c),
+                 np.linalg.norm(a - b + c), np.linalg.norm(a + b - c)])
+    
+        nbins = int(cutoff / dr) + 1
+        redf_dict = {"distances": np.array(
+                [(i + 0.5) * dr for i in range(nbins)]),
+                "redf": np.zeros(nbins, dtype=np.float)}
+    
+        for site in struct.sites:
+            this_charge = float(site.specie.oxi_state)
+            neighs_dists = struct.get_neighbors(site, cutoff)
+            for neigh, dist in neighs_dists:
+                neigh_charge = float(neigh.specie.oxi_state)
+                bin_index = int(dist / dr)
+                redf_dict["redf"][bin_index] += (
+                        this_charge * neigh_charge) / (
+                        struct.num_sites * dist)
+    
+        return redf_dict
 
-    for site in struct.sites:
-        this_charge = float(site.specie.oxi_state)
-        neighs_dists = struct.get_neighbors(site, cutoff)
-        for neigh, dist in neighs_dists:
-            neigh_charge = float(neigh.specie.oxi_state)
-            bin_index = int(dist / dr)
-            redf_dict["redf"][bin_index] += (this_charge * neigh_charge) / (struct.num_sites * dist)
+    def feature_labels(self):
+        return "Electronic radial distribution function"
 
-    return redf_dict
+    def credits(self):
+        return ("@article{title={Method for the computational comparison"
+                " of crystal structures}, volume={B61}, pages={29-36},"
+                " DOI={10.1107/S0108768104028344},"
+                " journal={Acta Crystallographica Section B},"
+                " author={Willighagen, E. L. and Wehrens, R. and Verwer,"
+                " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}")
+
+    def implementors(self):
+        return ["Nils E. R. Zimmermann"]
 
 
-def get_coulomb_matrix(struct, diag_elems=False):
+class CoulombMatrix(BaseFeaturizer):
     """
-    This function generates the Coulomb matrix, M, of the input
+    Generate the Coulomb matrix, M, of the input
     structure (or molecule).  The Coulomb matrix was put forward by
     Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
     off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j|
     and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
     the nuclear charge and the position of atom i, respectively.
-
-    Args:
-        struct (Structure or Molecule): input structure (or molecule).
-        diag_elems (bool): flag indicating whether (True) to use
-                the original definition of the diagonal elements;
-                if set to False (default),
-                the diagonal elements are set to zero.
-
-    Returns:
-        (Nsites x Nsites matrix) Coulomb matrix.
     """
-    m = [[] for s in struct.sites]
-    z = []
-    for s in struct.sites:
-        if isinstance(s, Specie):
-            z.append(Element(s.element.symbol).Z)
-        else:
-            z.append(Element(s.species_string).Z)
-    for i in range(struct.num_sites):
-        for j in range(struct.num_sites):
-            if i == j:
-                if diag_elems:
-                    m[i].append(0.5 * z[i] ** 2.4)
-                else:
-                    m[i].append(0)
+
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
+
+    def featurize(self, s, diag_elems=False):
+        """
+        Get Coulomb matrix of input structure.
+    
+        Args:
+            s: input Structure (or Molecule) object.
+            diag_elems: (bool) flag indicating whether (True) to use
+                    the original definition of the diagonal elements;
+                    if set to False (default),
+                    the diagonal elements are set to zero.
+    
+        Returns:
+            m: (Nsites x Nsites matrix) Coulomb matrix.
+        """
+        m = [[] for site in s.sites]
+        z = []
+        for site in s.sites:
+            if isinstance(site, Specie):
+                z.append(Element(site.element.symbol).Z)
             else:
-                d = struct.get_distance(i, j)
-                m[i].append(z[i] * z[j] / d)
-    return np.array(m)
+                z.append(Element(site.species_string).Z)
+        for i in range(s.num_sites):
+            for j in range(s.num_sites):
+                if i == j:
+                    if diag_elems:
+                        m[i].append(0.5 * z[i] ** 2.4)
+                    else:
+                        m[i].append(0)
+                else:
+                    d = s.get_distance(i, j)
+                    m[i].append(z[i] * z[j] / d)
+        return np.array(m)
+
+    def feature_labels(self):
+        return "Coulomb matrix"
+
+    def credits(self):
+        return ("@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
+            "Fast and accurate modeling of molecular atomization energies"
+            " with machine learning}, volume={108},"
+            " DOI={10.1103/PhysRevLett.108.058301}, number={5},"
+            " pages={058301}, journal={Physical Review Letters}, author={"
+            "Rupp, Matthias and Tkatchenko, Alexandre and M\"uller,"
+            " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}")
+
+    def implementors(self):
+        return ["Nils E. R. Zimmermann"]
 
 
-def get_min_relative_distances(struct, cutoff=10.0):
+class MinimumRelativeDistances(BaseFeaturizer):
     """
-    This function determines the relative distance of each site to its closest
+    Determines the relative distance of each site to its closest
     neighbor. We use the relative distance,
-    f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the absolute
-    distances, r_ij, to account for the fact that different atoms/species
-    have different sizes.  The function uses the valence-ionic radius
-    estimator implemented in pymatgen.
-
-    Args:
-        struct (Structure): input structure.
-        cutoff (float): (absolute) distance up to which tentative closest
-                neighbors (on the basis of relative distances) are
-                to be determined.
-
-    Returns:
-        ([float]) list of all minimum relative distances (i.e., for all sites).
+    f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the
+    absolute distances, r_ij, to account for the fact that different
+    atoms/species have different sizes.  The function uses the
+    valence-ionic radius estimator implemented in Pymatgen.
     """
-    vire = ValenceIonicRadiusEvaluator(struct)
-    min_rel_dists = []
-    for site in vire.structure:
-        min_rel_dists.append(min([dist / (vire.radii[site.species_string] +
-                                          vire.radii[neigh.species_string]) for neigh, dist in \
-                                  vire.structure.get_neighbors(site, cutoff)]))
-    return min_rel_dists[:]
+
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
+
+    def featurize(self, s, cutoff=10.0):
+        """
+        Get minimum relative distances of all sites of the input structure.
+    
+        Args:
+            s: Pymatgen Structure object.
+            cutoff: (float) (absolute) distance up to which tentative
+                    closest neighbors (on the basis of relative distances)
+                    are to be determined.
+
+        Returns:
+            min_rel_dists: (list of floats) list of all minimum relative
+                    distances (i.e., for all sites).
+        """
+        vire = ValenceIonicRadiusEvaluator(s)
+        min_rel_dists = []
+        for site in vire.structure:
+            min_rel_dists.append(min([dist / (
+                    vire.radii[site.species_string] +
+                    vire.radii[neigh.species_string]) for neigh, dist in \
+                    vire.structure.get_neighbors(site, cutoff)]))
+        return min_rel_dists[:]
+
+    def feature_labels(self):
+        return "Minimum relative distances"
+
+    def credits(self):
+        return ("")
+
+    def implementors(self):
+        return ["Nils E. R. Zimmermann"]
 
 
 def get_neighbors_of_site_with_index(struct, n, p=None):
