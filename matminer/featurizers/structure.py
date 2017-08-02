@@ -168,85 +168,121 @@ class RadialDistributionFunction(BaseFeaturizer):
         return ["Saurabh Bajaj"]
 
 
-def get_prdf(structure, cutoff=20.0, bin_size=0.1):
+class PartialRadialDistributionFunction(BaseFeaturizer):
     """
-    Compute the partial radial distribution function for a structure
-    
-    The partial radial distribution function is the radial distibution function
-    broken down for each pair of atom types
-    
-    The PRDF was proposed as a structural descriptor by [Schutt *et al.*]
+    Compute the partial radial distribution function (PRDF) of a crystal
+    structure, which is the radial distibution function
+    broken down for each pair of atom types.  The PRDF was proposed as a
+    structural descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
+    """
+
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
+
+    def featurize(self, s, cutoff=20.0, bin_size=0.1):
+        """
+        Get PRDF of the input structure.
+        Args:
+            s: Pymatgen Structure object.
+            cutoff: (float) distance up to which to calculate the RDF.
+            bin_size: (float) size of each bin of the (discrete) RDF.
+
+        Returns:
+            prdf, dist: (tuple of arrays) the first element is a
+                    dictionary where keys are tuples of element
+                    names and values are PRDFs.
+        """
+
+        if not s.is_ordered:
+            raise ValueError("Disordered structure support not built yet")
     
-    Args:
-        structure: pymatgen structure object
-        cutoff: (int/float) distance to calculate rdf up to
-        bin_size: (int/float) size of bin to obtain rdf for
+        # Get the composition of the array
+        composition = s.composition.fractional_composition.to_reduced_dict
+    
+        # Get the distances between all atoms
+        neighbors_lst = s.get_all_neighbors(cutoff)
+    
+        # Sort neighbors by type
+        distances_by_type = {}
+        for p in itertools.product(composition.keys(), composition.keys()):
+            distances_by_type[p] = []
+    
+        def get_symbol(site):
+            return site.specie.symbol if isinstance(site.specie,
+                                                    Element) else site.specie.element.symbol
+    
+        for site, nlst in zip(s.sites, neighbors_lst):  # Each list is a list for each site
+            my_elem = get_symbol(site)
+    
+            for neighbor in nlst:
+                rij = neighbor[1]
+                n_elem = get_symbol(neighbor[0])
+                # LW 3May17: Any better ideas than appending each element at a time?
+                distances_by_type[(my_elem, n_elem)].append(rij)
+    
+        # Compute and normalize the prdfs
+        prdf = {}
+        dist_bins = np.arange(0, cutoff + bin_size, bin_size)
+        shell_volume = 4.0 / 3.0 * math.pi * (
+                np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        for key, distances in distances_by_type.items():
+            # Compute histogram of distances
+            dist_hist, dist_bins = np.histogram(distances,
+                                                bins=dist_bins, density=False)
+            # Normalize
+            n_alpha = composition[key[0]] * s.num_sites
+            rdf = dist_hist / shell_volume / n_alpha
+    
+            prdf[key] = rdf
+    
+        return prdf, dist_bins[:-1]
 
-    Returns: (tuple) First element is a dict where keys are tuples of element names
-               and values are PRDFs,
+    def feature_labels(self):
+        return "Partial radial distribution function"
+
+    def credits(self):
+        return ""
+
+    def implementors(self):
+        return ["Saurabh Bajaj"]
+
+
+class RadialDistributionFunctionPeaks(BaseFeaturizer):
+    """
+    Determine the location of the highest peaks in the radial distribution
+    function (RDF) of a structure.
     """
 
-    if not structure.is_ordered:
-        raise ValueError("Disordered structure support not built yet")
+    def __init__(self):
+        BaseFeaturizer.__init__(self)
 
-    # Get the composition of the array
-    composition = structure.composition.fractional_composition.to_reduced_dict
+    def featurize(self, rdf, rdf_bins, n_peaks=2):
+        """
+        Get location of highest peaks in RDF.
+    
+        Args:
+            rdf: (ndarray) RDF as obtained from the
+                    RadialDistributionFunction class.
+            rdf_bins: (ndarray) inner radius of the rdf bin.
+            n_peaks: (int) number of the top peaks to return .
+    
+        Returns: (ndarray) distances of highest peaks in descending order
+                of the peak height
+        """
+    
+        # LW 3May17: Sorting the whole array isn't necessary, 
+        #   but probably quick given typical RDF sizes are small
+        return rdf_bins[np.argsort(rdf)[-n_peaks:]][::-1]
 
-    # Get the distances between all atoms
-    neighbors_lst = structure.get_all_neighbors(cutoff)
+    def feature_labels(self):
+        return "Radial distribution function peaks"
 
-    # Sort neighbors by type
-    distances_by_type = {}
-    for p in itertools.product(composition.keys(), composition.keys()):
-        distances_by_type[p] = []
+    def credits(self):
+        return ""
 
-    def get_symbol(site):
-        return site.specie.symbol if isinstance(site.specie,
-                                                Element) else site.specie.element.symbol
-
-    for site, nlst in zip(structure.sites, neighbors_lst):  # Each list is a list for each site
-        my_elem = get_symbol(site)
-
-        for neighbor in nlst:
-            rij = neighbor[1]
-            n_elem = get_symbol(neighbor[0])
-            # LW 3May17: Any better ideas than appending each element at a time?
-            distances_by_type[(my_elem, n_elem)].append(rij)
-
-    # Compute and normalize the prdfs
-    prdf = {}
-    dist_bins = np.arange(0, cutoff + bin_size, bin_size)
-    shell_volume = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
-    for key, distances in distances_by_type.items():
-        # Compute histogram of distances
-        dist_hist, dist_bins = np.histogram(distances,
-                                            bins=dist_bins, density=False)
-        # Normalize
-        n_alpha = composition[key[0]] * structure.num_sites
-        rdf = dist_hist / shell_volume / n_alpha
-
-        prdf[key] = rdf
-
-    return prdf, dist_bins[:-1]
-
-
-def get_rdf_peaks(rdf, rdf_bins, n_peaks=2):
-    """
-    Get location of highest peaks in rdf of a structure.
-
-    Args:
-        rdf: (ndarray) as output by the function "get_rdf"
-        rdf_bins: (ndarray) inner radius of the rdf bin
-        n_peaks: (int) Number of the top peaks to return 
-
-    Returns: (ndarray) of distances highest peaks, listed by descending height
-
-    """
-
-    # LW 3May17: Sorting the whole array isn't necessary, 
-    #   but probably quick given typical RDF sizes are small
-    return rdf_bins[np.argsort(rdf)[-n_peaks:]][::-1]
+    def implementors(self):
+        return ["Saurabh Bajaj"]
 
 
 def get_redf(struct, cutoff=None, dr=0.05):
