@@ -757,7 +757,7 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
     if thresh is None:
         thresh = {
             "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
-            "qtribipyr": 0.8}
+            "qtribipyr": 0.8, "qsqpyr": 0.5}
 
     ops = get_order_parameters(struct, pneighs=pneighs)
     cn = int(ops[n][0] + 0.5)
@@ -767,6 +767,9 @@ def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
     if cn == 4 and ops[n][37] > thresh["qtet"]:
         motif_type = "tetrahedral"
         nmotif += 1
+    if cn == 5 and ops[n][45] > thresh["qsqpyr"]:
+       motif_type = "square bipyramidal"
+       nmotif += 1
     # if cn == 5 and ops[n][46] > thresh["qtribipyr"]:
     #    motif_type = "trigonal bipyramidal"
     #    nmotif += 1
