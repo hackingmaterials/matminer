@@ -34,7 +34,8 @@ class PropertyStats(object):
             data_lst (list of floats): Value of a property for each atom in a compound
             weights (ignored)
         Returns: 
-            minimum value"""
+            minimum value
+        """
         return min(data_lst)
 
     @staticmethod
@@ -45,7 +46,8 @@ class PropertyStats(object):
             data_lst (list of floats): Value of a property for each atom in a compound
             weights (ignored)
         Returns: 
-            maximum value"""
+            maximum value
+        """
         return max(data_lst)
 
     @staticmethod
@@ -56,7 +58,8 @@ class PropertyStats(object):
             data_lst (list of floats): Value of a property for each atom in a compound
             weights (ignored)
         Returns: 
-            range"""
+            range
+        """
         return max(data_lst) - min(data_lst)
 
     @staticmethod
@@ -67,7 +70,8 @@ class PropertyStats(object):
             data_lst (list of floats): Value of a property for each atom or element in a compound
             weights (list of floats): Weights for each value
         Returns: 
-            mean value"""
+            mean value
+        """
         if weights is None:
             return np.average(data_lst)
         else:
@@ -81,7 +85,8 @@ class PropertyStats(object):
             data_lst (list of floats): Value of a property for each atom in a compound
             weights (list of floats): Atomic fractions
         Returns: 
-            average absolute deviation"""
+            average absolute deviation
+        """
         mean = PropertyStats.mean(data_lst, weights)
         return np.average(np.abs(np.subtract(data_lst, mean)), weights=weights)
 
@@ -107,7 +112,8 @@ class PropertyStats(object):
         Args:
             data_lst (list of floats): Value of a property for each atom in a compound
         Returns: 
-            mode"""
+            mode
+        """
         if weights is None:
             return stats.mode(data_lst).mode[0]
         else:
@@ -118,6 +124,22 @@ class PropertyStats(object):
 
             # Return the minimum of the most-frequent entries
             return data_lst[most_freq].min()
+
+    @staticmethod
+    def n_numerical_modes(data_lst, n, dl=0.1):
+        """
+        Determines the n first modes of a data set that are obtained with
+        a finite bin size for the underlying frequency distribution.
+        Args:
+            data_lst (list of floats): data values.
+            n (integer): number of most frequent elements to be determined.
+            dl (float): bin size of underlying (coarsened) distribution.
+        Returns: 
+            modes (list of float): first n most frequent elements.
+        """
+        hist, bins = np.histogram(data_lst, bins=np.arange(
+                min(data_lst), max(data_lst), dl), density=False)
+        return bins[np.argsort(hist)[-n:]][::-1]
 
     @staticmethod
     def holder_mean(data_lst, weights=None, power=1):
