@@ -192,6 +192,13 @@ A few examples demonstrating usage can be found in the notebook hosted on `Jupyt
 Changelog
 ---------
 
+**v0.1.1**
+
+* refactor and redesign of codebase to be more OOP (J. Chen, L. Ward)
+* Py3 compatibility (K. Mathew)
+* Element fraction feature (A. Aggarwal)
+* misc fixes / improvements (A. Jain, J. Chen, L. Ward, K. Mathew, J. Frost)
+
 **v0.1.0**
 
 * Add MPDS data retrieval (E. Blokhin)
@@ -201,3 +208,17 @@ Changelog
 
 For changelog before v0.1.0, consult the git history of matminer.
  
+Contributors
+------------
+
+Matminer is led by Anubhav Jain and the Hackingmaterials Research group at Lawrence Berkeley National Lab. Major contributions were provided by:
+
+* Jiming Chen and Logan Ward (U. Chicago)
+* Saurabh Bajaj (LBNL - HackingMaterials)
+
+Additional contributions from:
+
+* Shyue Ping Ong (UC San Diego)
+* Sayan Rowchowdhury, Alex Dunn, Jason Frost, Alireza Faghaninia (LBNL - HackingMaterials)
+* Matt Horton, Donny Winston, Joseph Montoya (LBNL - Persson research group)
+* Ashwin Aggarwal (U. Chicago)
