@@ -15,8 +15,8 @@ from matminer.featurizers.structure import PackingFraction, \
     VolumePerSite, Density, RadialDistributionFunction, \
     RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
     ElectronicRadialDistributionFunction, \
-    MinimumRelativeDistances, get_neighbors_of_site_with_index, \
-    get_order_parameters, get_order_parameter_stats, \
+    MinimumRelativeDistances, \
+    SitesOrderParameters, get_order_parameter_stats, \
     CoulombMatrix
 
 
@@ -221,22 +221,22 @@ class StructureFeaturesTest(PymatgenTest):
                 1000 * MinimumRelativeDistances().featurize(
                 self.cscl)[0]), 1006)
 
-    def test_get_neighbors_of_site_with_index(self):
-        self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
-            self.diamond, 0)), 4)
-        self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
-            self.nacl, 0)), 6)
-        self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
-            self.cscl, 0)), 8)
+    #def test_get_neighbors_of_site_with_index(self):
+    #    self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
+    #        self.diamond, 0)), 4)
+    #    self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
+    #        self.nacl, 0)), 6)
+    #    self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
+    #        self.cscl, 0)), 8)
 
     def test_get_order_parameters(self):
-        opvals = get_order_parameters(self.diamond)
+        opvals = SitesOrderParameters().featurize(self.diamond)
         self.assertAlmostEqual(int(opvals[0][37] * 1000), 999)
         self.assertAlmostEqual(int(opvals[1][37] * 1000), 999)
-        opvals = get_order_parameters(self.nacl)
+        opvals = SitesOrderParameters().featurize(self.nacl)
         self.assertAlmostEqual(int(opvals[0][38] * 1000), 999)
         self.assertAlmostEqual(int(opvals[1][38] * 1000), 999)
-        opvals = get_order_parameters(self.cscl)
+        opvals = SitesOrderParameters().featurize(self.cscl)
         self.assertAlmostEqual(int(opvals[0][39] * 1000), 975)
         self.assertAlmostEqual(int(opvals[1][39] * 1000), 975)
 
