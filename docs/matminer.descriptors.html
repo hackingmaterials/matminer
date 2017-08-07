@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>matminer.descriptors package &#8212; matminer 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matminer-descriptors-package">
+<h1>matminer.descriptors package<a class="headerlink" href="#matminer-descriptors-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="matminer-descriptors-add-descriptors-module">
+<h2>matminer.descriptors.add_descriptors module<a class="headerlink" href="#matminer-descriptors-add-descriptors-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="matminer-descriptors-bandstructure-features-module">
+<h2>matminer.descriptors.bandstructure_features module<a class="headerlink" href="#matminer-descriptors-bandstructure-features-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="matminer-descriptors-composition-features-module">
+<h2>matminer.descriptors.composition_features module<a class="headerlink" href="#matminer-descriptors-composition-features-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matminer.descriptors.structure_features">
+<span id="matminer-descriptors-structure-features-module"></span><h2>matminer.descriptors.structure_features module<a class="headerlink" href="#module-matminer.descriptors.structure_features" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_coulomb_matrix">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_coulomb_matrix</code><span class="sig-paren">(</span><em>struct</em>, <em>diag_elems=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_coulomb_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates the Coulomb matrix, M, of the input
+structure (or molecule).  The Coulomb matrix was put forward by
+Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
+off-diagonal elements M_ij = Z_i*Z_j/<a href="#id1"><span class="problematic" id="id2">|R_i-R_j|</span></a>
+and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
+the nuclear charge and the position of atom i, respectively.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">struct (Structure or Molecule): input structure (or molecule).
+diag_elems (bool): flag indicating whether (True) to use</p>
+<blockquote class="last">
+<div>the original definition of the diagonal elements;
+if set to False (default),
+the diagonal elements are set to zero.</div></blockquote>
+</dd>
+<dt>Returns:</dt>
+<dd>(Nsites x Nsites matrix) Coulomb matrix.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_density">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_density</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_density" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_min_relative_distances">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_min_relative_distances</code><span class="sig-paren">(</span><em>struct</em>, <em>cutoff=10.0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_min_relative_distances" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function determines the relative distance of each site to its closest
+neighbor. We use the relative distance,
+f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the absolute
+distances, r_ij, to account for the fact that different atoms/species
+have different sizes.  The function uses the valence-ionic radius
+estimator implemented in pymatgen.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">struct (Structure): input structure.
+cutoff (float): (absolute) distance up to which tentative closest</p>
+<blockquote class="last">
+<div>neighbors (on the basis of relative distances) are
+to be determined.</div></blockquote>
+</dd>
+<dt>Returns:</dt>
+<dd>([float]) list of all minimum relative distances (i.e., for all sites).</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_neighbors_of_site_with_index">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_neighbors_of_site_with_index</code><span class="sig-paren">(</span><em>struct</em>, <em>n</em>, <em>p=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_neighbors_of_site_with_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the neighbors around the site that has index n in the input
+Structure object struct, given the approach defined by parameters
+p.  All supported neighbor-finding approaches and listed and
+explained in the following.  All approaches start by creating a
+tentative list of neighbors using a large cutoff radius defined in
+parameter dictionary p via key &#8220;cutoff&#8221;.
+&#8220;min_dist&#8221;: find nearest neighbor and its distance d_nn; consider all</p>
+<blockquote>
+<div>neighbors which are within a distance of d_nn * (1 + delta),
+where delta is an additional parameter provided in the
+dictionary p via key &#8220;delta&#8221;.</div></blockquote>
+<dl class="docutils">
+<dt>&#8220;scaled_VIRE&#8221;: compute the radii, r_i, of all sites on the basis of</dt>
+<dd>the valence-ionic radius evaluator (VIRE); consider all
+neighbors for which the distance to the central site is less
+than the sum of the radii multiplied by an a priori chosen
+parameter, delta,
+(i.e., dist &lt; delta * (r_central + r_neighbor)).</dd>
+<dt>&#8220;min_relative_VIRE&#8221;: same approach as &#8220;min_dist&#8221;, except that we</dt>
+<dd>use relative distances (i.e., distances divided by the sum of the
+atom radii from VIRE).</dd>
+<dt>&#8220;min_relative_OKeeffe&#8221;: same approach as &#8220;min_relative_VIRE&#8221;, except</dt>
+<dd>that we use the bond valence parameters from O&#8217;Keeffe&#8217;s bond valence
+method (J. Am. Chem. Soc. 1991, 3226-3229) to calculate
+relative distances.</dd>
+<dt>Args:</dt>
+<dd><p class="first">struct (Structure): input structure.
+n (int): index of site in Structure object for which</p>
+<blockquote>
+<div>neighbors are to be determined.</div></blockquote>
+<dl class="last docutils">
+<dt>p (dict): specification (via &#8220;approach&#8221; key; default is &#8220;min_dist&#8221;)</dt>
+<dd>and parameters of neighbor-finding approach.
+Default cutoff radius is 6 Angstrom (key: &#8220;cutoff&#8221;).
+Other default parameters are as follows.
+min_dist: &#8220;delta&#8221;: 0.15;
+min_relative_OKeeffe: &#8220;delta&#8221;: 0.05;
+min_relative_VIRE: &#8220;delta&#8221;: 0.05;
+scaled_VIRE: &#8220;delta&#8221;: 2.</dd>
+</dl>
+</dd>
+<dt>Returns: ([site]) list of sites that are considered to be nearest</dt>
+<dd>neighbors to site with index n in Structure object struct.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_okeeffe_distance_prediction">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_okeeffe_distance_prediction</code><span class="sig-paren">(</span><em>el1</em>, <em>el2</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_okeeffe_distance_prediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an estimate of the bond valence parameter (bond length) using
+the derived parameters from &#8216;Atoms Sizes and Bond Lengths in Molecules
+and Crystals&#8217; (O&#8217;Keeffe &amp; Brese, 1991). The estimate is based on two
+experimental parameters: r and c. The value for r  is based off radius,
+while c is (usually) the Allred-Rochow electronegativity. Values used
+are <em>not</em> generated from pymatgen, and are found in
+&#8216;okeeffe_params.json&#8217;.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>el1, el2 (Element): two Element objects</dd>
+<dt>Returns:</dt>
+<dd>a float value of the predicted bond length</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_okeeffe_params">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_okeeffe_params</code><span class="sig-paren">(</span><em>el_symbol</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_okeeffe_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the elemental parameters related to atom size and
+electronegativity which are used for estimating bond-valence
+parameters (bond length) of pairs of atoms on the basis of data
+provided in &#8216;Atoms Sizes and Bond Lengths in Molecules and Crystals&#8217;
+(O&#8217;Keeffe &amp; Brese, 1991).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>el_symbol (str): element symbol.</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(dict): atom-size (&#8216;r&#8217;) and electronegativity-related (&#8216;c&#8217;)</dt>
+<dd>parameter.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_order_parameter_feature_vectors_difference">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_order_parameter_feature_vectors_difference</code><span class="sig-paren">(</span><em>struct1</em>, <em>struct2</em>, <em>pneighs=None</em>, <em>convert_none_to_zero=True</em>, <em>delta_op=0.01</em>, <em>ignore_op_types=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_order_parameter_feature_vectors_difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the difference vector between two order parameter-statistics
+feature vector resulting from two input structures.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">struct1 (Structure): first input structure.
+struct2 (Structure): second input structure.
+pneighs (dict): specification and parameters of</p>
+<blockquote>
+<div>neighbor-finding approach (see
+get_neighbors_of_site_with_index function
+for more details).</div></blockquote>
+<dl class="last docutils">
+<dt>convert_none_to_zero (bool): flag indicating whether or not</dt>
+<dd>to convert None values in OPs to zero (cf.,
+get_order_parameters function).</dd>
+<dt>delta_op (float): bin size of histogram that is computed</dt>
+<dd>in order to identify peak locations (cf.,
+get_order_parameters_stats function).</dd>
+<dt>ignore_op_types ([str]): list of OP types to be ignored in</dt>
+<dd>output dictionary (cf., get_order_parameters_stats
+function).</dd>
+</dl>
+</dd>
+<dt>Returns: ([float]) difference vector between order</dt>
+<dd>parameter-statistics feature vectors obtained from the
+two input structures (structure 1 - structure 2).</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_order_parameter_stats">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_order_parameter_stats</code><span class="sig-paren">(</span><em>struct</em>, <em>pneighs=None</em>, <em>convert_none_to_zero=True</em>, <em>delta_op=0.01</em>, <em>ignore_op_types=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_order_parameter_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the order parameter statistics accumulated across all sites
+in Structure object struct using the get_order_parameters function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">struct (Structure): input structure.
+pneighs (dict): specification and parameters of</p>
+<blockquote>
+<div>neighbor-finding approach (see
+get_neighbors_of_site_with_index function
+for more details).</div></blockquote>
+<dl class="last docutils">
+<dt>convert_none_to_zero (bool): flag indicating whether or not</dt>
+<dd>to convert None values in OPs to zero (cf.,
+get_order_parameters function).</dd>
+<dt>delta_op (float): bin size of histogram that is computed</dt>
+<dd>in order to identify peak locations.</dd>
+<dt>ignore_op_types ([str]): list of OP types to be ignored in</dt>
+<dd>output dictionary (e.g., [&#8220;cn&#8221;, &#8220;bent&#8221;]). Default (None)
+will consider all OPs.</dd>
+</dl>
+</dd>
+<dt>Returns: ({}) dictionary, the keys of which represent</dt>
+<dd>the order parameter type (e.g., &#8220;bent5&#8221;, &#8220;tet&#8221;, &#8220;sq_pyr&#8221;)
+and the values of which are dictionaries carring the
+statistics (&#8220;min&#8221;, &#8220;max&#8221;, &#8220;mean&#8221;, &#8220;std&#8221;, &#8220;peak1&#8221;, &#8220;peak2&#8221;).</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_order_parameters">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_order_parameters</code><span class="sig-paren">(</span><em>struct</em>, <em>pneighs=None</em>, <em>convert_none_to_zero=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_order_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate all order parameters (OPs) for all sites in Structure object
+struct.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">struct (Structure): input structure.
+pneighs (dict): specification and parameters of</p>
+<blockquote>
+<div>neighbor-finding approach (see
+get_neighbors_of_site_with_index function
+for more details).</div></blockquote>
+<dl class="last docutils">
+<dt>convert_none_to_zero (bool): flag indicating whether or not</dt>
+<dd>to convert None values in OPs to zero.</dd>
+</dl>
+</dd>
+<dt>Returns: ([[float]]) matrix of all sites&#8217; (1st dimension)</dt>
+<dd>order parameters (2nd dimension). 46 order parameters are
+computed per site: q_cn (coordination number), q_lin,
+35 x q_bent (starting with a target angle of 5 degrees and,
+increasing by 5 degrees, until 175 degrees), q_tet, q_oct,
+q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_packing_fraction">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_packing_fraction</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_packing_fraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_prdf">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_prdf</code><span class="sig-paren">(</span><em>structure</em>, <em>cutoff=20.0</em>, <em>bin_size=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_prdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the partial radial distribution function for a structure</p>
+<p>The partial radial distribution function is the radial distibution function
+broken down for each pair of atom types</p>
+<p>The PRDF was proposed as a structural descriptor by [Schutt <em>et al.</em>]
+(<a class="reference external" href="https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118">https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118</a>)</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structure: pymatgen structure object
+cutoff: (int/float) distance to calculate rdf up to
+bin_size: (int/float) size of bin to obtain rdf for</dd>
+<dt>Returns: (tuple) First element is a dict where keys are tuples of element names</dt>
+<dd>and values are PRDFs,</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_rdf">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_rdf</code><span class="sig-paren">(</span><em>structure</em>, <em>cutoff=20.0</em>, <em>bin_size=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_rdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate rdf fingerprint of a given structure</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structure: pymatgen structure object
+cutoff: (int/float) distance to calculate rdf up to
+bin_size: (int/float) size of bin to obtain rdf for</dd>
+</dl>
+<p>Returns: (tuple of ndarray) first element is the normalized RDF, second is the inner radius of the RDF bin</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_rdf_peaks">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_rdf_peaks</code><span class="sig-paren">(</span><em>rdf</em>, <em>rdf_bins</em>, <em>n_peaks=2</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_rdf_peaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get location of highest peaks in rdf of a structure.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>rdf: (ndarray) as output by the function &#8220;get_rdf&#8221;
+rdf_bins: (ndarray) inner radius of the rdf bin
+n_peaks: (int) Number of the top peaks to return</dd>
+</dl>
+<p>Returns: (ndarray) of distances highest peaks, listed by descending height</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_redf">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_redf</code><span class="sig-paren">(</span><em>struct</em>, <em>cutoff=None</em>, <em>dr=0.05</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_redf" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function permits the calculation of the crystal structure-inherent electronic radial
+distribution function (ReDF) according to Willighagen et al., Acta Cryst., 2005, B61, 29-36.
+The ReDF is a structure-integral RDF (i.e., summed over all sites) in which the positions of
+neighboring sites are weighted by electrostatic interactions inferred from atomic partial
+charges. Atomic charges are obtained from the ValenceIonicRadiusEvaluator class.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">struct (Structure): input Structure object.
+cutoff (float): distance up to which the ReDF is to be</p>
+<blockquote>
+<div>calculated (default: longest diagaonal in primitive cell)</div></blockquote>
+<p class="last">dr (float): width of bins (&#8220;x&#8221;-axis) of ReDF (default: 0.05 A).</p>
+</dd>
+<dt>Returns:</dt>
+<dd>(dict) a copy of the electronic radial distribution functions (ReDF) as a dictionary.
+The distance list (&#8220;x&#8221;-axis values of ReDF) can be accessed via key &#8216;distances&#8217;;
+the ReDF itself via key &#8216;redf&#8217;.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.get_vol_per_site">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">get_vol_per_site</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.get_vol_per_site" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="matminer.descriptors.structure_features.site_is_of_motif_type">
+<code class="descclassname">matminer.descriptors.structure_features.</code><code class="descname">site_is_of_motif_type</code><span class="sig-paren">(</span><em>struct</em>, <em>n</em>, <em>pneighs=None</em>, <em>thresh=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.descriptors.structure_features.site_is_of_motif_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the motif type of site with index n in structure struct;
+currently featuring &#8220;tetrahedral&#8221;, &#8220;octahedral&#8221;, &#8220;bcc&#8221;, and &#8220;cp&#8221;
+(close-packed: fcc and hcp).  If the site is not recognized
+or if it has been recognized as two different motif types,
+the function labels the site as &#8220;unrecognized&#8221;.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">struct (Structure): input structure.
+n (int): index of site in Structure object for which motif type</p>
+<blockquote>
+<div>is to be determined.</div></blockquote>
+<dl class="last docutils">
+<dt>pneighs (dict): specification and parameters of neighbor-finding</dt>
+<dd>approach (cf., function get_neighbors_of_site_with_index).</dd>
+<dt>thresh (dict): thresholds for motif criteria (currently, required</dt>
+<dd>keys and their default values are &#8220;qtet&#8221;: 0.5,
+&#8220;qoct&#8221;: 0.5, &#8220;qbcc&#8221;: 0.5, &#8220;q6&#8221;: 0.4).</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns: motif type (str).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.descriptors">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.descriptors" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">matminer.descriptors package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#matminer-descriptors-add-descriptors-module">matminer.descriptors.add_descriptors module</a></li>
+<li><a class="reference internal" href="#matminer-descriptors-bandstructure-features-module">matminer.descriptors.bandstructure_features module</a></li>
+<li><a class="reference internal" href="#matminer-descriptors-composition-features-module">matminer.descriptors.composition_features module</a></li>
+<li><a class="reference internal" href="#module-matminer.descriptors.structure_features">matminer.descriptors.structure_features module</a></li>
+<li><a class="reference internal" href="#module-matminer.descriptors">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/matminer.descriptors.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+    </div>
+  </body>
+</html>

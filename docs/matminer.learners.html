@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>matminer.learners package &#8212; matminer 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matminer-learners-package">
+<h1>matminer.learners package<a class="headerlink" href="#matminer-learners-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="matminer.learners.tests.html">matminer.learners.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matminer.learners.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.learners.tests.html#module-matminer.learners.tests.test_volume_predictor">matminer.learners.tests.test_volume_predictor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.learners.tests.html#module-matminer.learners.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matminer.learners.volume_predictor">
+<span id="matminer-learners-volume-predictor-module"></span><h2>matminer.learners.volume_predictor module<a class="headerlink" href="#module-matminer.learners.volume_predictor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.learners.volume_predictor.ConditionalVolumePredictor">
+<em class="property">class </em><code class="descclassname">matminer.learners.volume_predictor.</code><code class="descname">ConditionalVolumePredictor</code><a class="headerlink" href="#matminer.learners.volume_predictor.ConditionalVolumePredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unlike the above, the idea here is to predict the volume of a structure
+based on an existing known structure. May integrate with above at a later
+stage to improve overall predictions.</p>
+<dl class="method">
+<dt id="matminer.learners.volume_predictor.ConditionalVolumePredictor.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.ConditionalVolumePredictor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.learners.volume_predictor.ConditionalVolumePredictor.get_predicted_structure">
+<code class="descname">get_predicted_structure</code><span class="sig-paren">(</span><em>structure</em>, <em>ref_structure</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.ConditionalVolumePredictor.get_predicted_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a structure, returns back the structure scaled to predicted
+volume.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">structure (Structure): structure w/unknown volume
+ref_structure (Structure): A reference structure with a similar</p>
+<blockquote class="last">
+<div>structure but different species.</div></blockquote>
+</dd>
+<dt>Returns:</dt>
+<dd>a Structure object with predicted volume</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.learners.volume_predictor.ConditionalVolumePredictor.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>structure</em>, <em>ref_structure</em>, <em>test_isostructural=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.ConditionalVolumePredictor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a structure, returns back the predicted volume.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">structure (Structure): structure w/unknown volume
+ref_structure (Structure): A reference structure with a similar</p>
+<blockquote>
+<div>structure but different species.</div></blockquote>
+<dl class="last docutils">
+<dt>test_isostructural (bool): Whether to test that the two</dt>
+<dd>structures are isostructural. This algo works best for
+isostructural compounds. Defaults to True.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>a float value of the predicted volume</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.learners.volume_predictor.VolumePredictor">
+<em class="property">class </em><code class="descclassname">matminer.learners.volume_predictor.</code><code class="descname">VolumePredictor</code><span class="sig-paren">(</span><em>cutoff=4</em>, <em>ionic_factor=0.3</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.VolumePredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts volume; given a structure, finds the minimum volume such that no
+two sites are closer than a weighted sum of their atomic and ionic radii.
+When run over all stable elemental and binary structures from MP,
+it is found that:
+(i) RMSE % error = 23.6 %
+(ii) Average percentage difference in volume from initial volume = 2.88 %
+(iii) Average absolute percentage difference in volume from initial volume = 17.0 %
+(iv) Performs worst for materials that are gaseous eg: H2, N2,</p>
+<blockquote>
+<div>and f-electron systems, eg: Np, Pu, etc. as well as noble gas compounds</div></blockquote>
+<p>This is really intended for bonded systems!</p>
+<dl class="method">
+<dt id="matminer.learners.volume_predictor.VolumePredictor.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>cutoff=4</em>, <em>ionic_factor=0.3</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.VolumePredictor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>cutoff (float): cutoff radius added to site radius for finding</dt>
+<dd>site pairs. Necessary to increase only if your initial
+structure guess is extremely bad (atoms way too far apart). In
+all other instances, increasing cutoff gives same answer
+but takes more time.</dd>
+<dt>ionic_factor: (float) This factor, multiplied by the compound&#8217;s</dt>
+<dd>spread in electronegativity, determines the weighting between
+ionic and atomic radii for expected bond distances.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.learners.volume_predictor.VolumePredictor.get_predicted_structure">
+<code class="descname">get_predicted_structure</code><span class="sig-paren">(</span><em>structure</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.VolumePredictor.get_predicted_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a structure, returns back the structure scaled to predicted
+volume.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structure (Structure): structure w/unknown volume</dd>
+<dt>Returns:</dt>
+<dd>a Structure object with predicted volume</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.learners.volume_predictor.VolumePredictor.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>structure</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.VolumePredictor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a structure, returns back the predicted volume.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structure (Structure): structure w/unknown volume</dd>
+<dt>Returns:</dt>
+<dd>a float value of the predicted volume</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.learners.volume_predictor.is_ox">
+<code class="descclassname">matminer.learners.volume_predictor.</code><code class="descname">is_ox</code><span class="sig-paren">(</span><em>structure</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.is_ox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-matminer.learners">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.learners" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">matminer.learners package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-matminer.learners.volume_predictor">matminer.learners.volume_predictor module</a></li>
+<li><a class="reference internal" href="#module-matminer.learners">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/matminer.learners.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+    </div>
+  </body>
+</html>

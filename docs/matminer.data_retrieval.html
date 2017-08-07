@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>matminer.data_retrieval package &#8212; matminer 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matminer-data-retrieval-package">
+<h1>matminer.data_retrieval package<a class="headerlink" href="#matminer-data-retrieval-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matminer.data_retrieval.retrieve_Citrine">
+<span id="matminer-data-retrieval-retrieve-citrine-module"></span><h2>matminer.data_retrieval.retrieve_Citrine module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_Citrine" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval">
+<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="descname">CitrineDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd>api_key: (str) Your Citrine API key, or None if you&#8217;ve set the CITRINE_KEY environment variable</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe">
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>formula=None</em>, <em>property=None</em>, <em>data_type=None</em>, <em>reference=None</em>, <em>min_measurement=None</em>, <em>max_measurement=None</em>, <em>from_record=None</em>, <em>data_set_id=None</em>, <em>max_results=None</em>, <em>show_columns=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets data from Citrine in a dataframe format.
+See client docs at <a class="reference external" href="http://citrineinformatics.github.io/api-documentation/">http://citrineinformatics.github.io/api-documentation/</a> for more details on these parameters.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>formula: (str) filter for the chemical formula field; only those results that have chemical formulas that</dt>
+<dd>contain this string will be returned</dd>
+</dl>
+<p>property: (str) name of the property to search for
+data_type: (str) &#8216;EXPERIMENTAL&#8217;/&#8217;COMPUTATIONAL&#8217;/&#8217;MACHINE_LEARNING&#8217;; filter for properties obtained from</p>
+<blockquote>
+<div>experimental work, computational methods, or machine learning.</div></blockquote>
+<dl class="docutils">
+<dt>reference: (str) filter for the reference field; only those results that have contributors that</dt>
+<dd>contain this string will be returned</dd>
+</dl>
+<p class="last">min_measurement: (str/num) minimum of the property value range
+max_measurement: (str/num) maximum of the property value range
+from_record: (int) index of the first record to return (indexed from 0)
+data_set_id: (int) id of the particular data set to search on
+max_results: (int) number of records to limit the results to
+show_columns: (list) list of columns to show from the resulting dataframe</p>
+</dd>
+</dl>
+<p>Returns: (object) Pandas dataframe object containing the results</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>dict_item</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract values from &#8216;Property&#8217; objects</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>dict_item: &#8216;Property&#8217; object</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>if &#8216;value&#8217;, returns string/float</li>
+<li>if &#8216;minimum&#8217; or &#8216;maximum&#8217;, returns string</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_matrix">
+<code class="descname">parse_matrix</code><span class="sig-paren">(</span><em>matrix_column</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse matrix/(array of array) value items from a &#8216;Property&#8217; column</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>matrix_column: &#8216;Property&#8217; column with array of array objects</dd>
+</dl>
+<p>Returns: column with extracted array of arrays</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_scalars">
+<code class="descname">parse_scalars</code><span class="sig-paren">(</span><em>scalar_column</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_scalars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse scalar/single value items from a &#8216;Property&#8217; column</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>scalar_column: &#8216;Property&#8217; column with scalar objects</dd>
+</dl>
+<p>Returns: column with extracted values</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_vectors">
+<code class="descname">parse_vectors</code><span class="sig-paren">(</span><em>vector_column</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse vector/array value items from a &#8216;Property&#8217; column</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>vector_column: &#8216;Property&#8217; column with vector objects</dd>
+</dl>
+<p>Returns: column with extracted arrays</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.data_retrieval.retrieve_MP">
+<span id="matminer-data-retrieval-retrieve-mp-module"></span><h2>matminer.data_retrieval.retrieve_MP module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MP" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval">
+<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MP.</code><code class="descname">MPDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<dd><p>MPDataRetrieval is used to retrieve data from the Materials Project database, print the results, and convert them
+into an indexed/unindexed Pandas dataframe.</p>
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd>api_key: (str) Your Materials Project API key, or None if you&#8217;ve set the MAPI_KEY environment variable</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe">
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties</em>, <em>mp_decode=False</em>, <em>index_mpid=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets data from MP in a dataframe format.
+See API docs at <a class="reference external" href="https://materialsproject.org/wiki/index.php/The_Materials_API">https://materialsproject.org/wiki/index.php/The_Materials_API</a> for more details.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>criteria: (str/dict) Criteria of the query as a string or mongo-style dict. If string, it supports a</dt>
+<dd><p class="first">powerful but simple string criteria. E.g., &#8220;Fe2O3&#8221; means search for materials with reduced_formula
+Fe2O3. Wild cards are also supported. E.g., &#8220;*2O&#8221; means get all materials whose formula can be formed
+as *2O, e.g., Li2O, K2O, etc.</p>
+<dl class="docutils">
+<dt>Other syntax examples:</dt>
+<dd>mp-1234: Interpreted as a Materials ID.
+Fe2O3 or *2O3: Interpreted as reduced formulas.
+Li-Fe-O or *-Fe-O: Interpreted as chemical systems.</dd>
+</dl>
+<p>You can mix and match with spaces, which are interpreted as &#8220;OR&#8221;. E.g. &#8220;mp-1234 FeO&#8221; means query for
+all compounds with reduced formula FeO or with materials_id mp-1234.</p>
+<p class="last">Using a full dict syntax, even more powerful queries can be constructed. For example,
+{&#8220;elements&#8221;:{&#8220;$in&#8221;:[&#8220;Li&#8221;, &#8220;Na&#8221;, &#8220;K&#8221;], &#8220;$all&#8221;: [&#8220;O&#8221;]}, &#8220;nelements&#8221;:2} selects all Li, Na and K oxides.
+{&#8220;band_gap&#8221;: {&#8220;$gt&#8221;: 1}} selects all materials with band gaps greater than 1 eV.</p>
+</dd>
+<dt>properties: (list) Properties to request for as a list. For example,</dt>
+<dd>[&#8220;formula&#8221;, &#8220;formation_energy_per_atom&#8221;] returns the formula and formation energy per atom.</dd>
+<dt>mp_decode: (bool) Whether to do a decoding to a Pymatgen object where possible. In some cases, it might be</dt>
+<dd>useful to just get the raw python dict, i.e., set to False.</dd>
+</dl>
+<p class="last">index_mpid: (bool) Whether to set the materials_id as the dataframe index.</p>
+</dd>
+</dl>
+<p>Returns: A Pandas dataframe object</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="matminer-data-retrieval-retrieve-mpds-module">
+<h2>matminer.data_retrieval.retrieve_MPDS module<a class="headerlink" href="#matminer-data-retrieval-retrieve-mpds-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matminer.data_retrieval.retrieve_MongoDB">
+<span id="matminer-data-retrieval-retrieve-mongodb-module"></span><h2>matminer.data_retrieval.retrieve_MongoDB module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MongoDB" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval">
+<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">MongoDataRetrieval</code><span class="sig-paren">(</span><em>coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tool to retrieve data from a MongoDB collection and reformat for data analysis
+Args:</p>
+<blockquote>
+<div>coll: A MongoDB collection object</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe">
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>projection</em>, <em>query=None</em>, <em>sort=None</em>, <em>limit=None</em>, <em>idx_field=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>projection: (list) - a list of str fields to grab; dot-notation is allowed.</dt>
+<dd>Set to &#8220;None&#8221; to try to auto-detect the fields.</dd>
+</dl>
+<p class="last">query: (JSON) - a pymongo-style query to restrict data being gathered
+sort: (tuple) - pymongo-style sort option
+limit: (int) - int to limit the number of entries
+idx_field: (str) - name of field to use as index field (must be unique)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.data_retrieval.retrieve_MongoDB.clean_projection">
+<code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">clean_projection</code><span class="sig-paren">(</span><em>projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.clean_projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projecting on e.g. &#8216;a.b.&#8217; and &#8216;a&#8217; is disallowed. Project inclusively.
+Args:</p>
+<blockquote>
+<div>projection: (list) - list of fields to grab; dot-notation is allowed.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.data_retrieval.retrieve_MongoDB.is_int">
+<code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">is_int</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.is_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="matminer.data_retrieval.retrieve_MongoDB.remove_ints">
+<code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">remove_ints</code><span class="sig-paren">(</span><em>projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.remove_ints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-matminer.data_retrieval">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.data_retrieval" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">matminer.data_retrieval package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_Citrine">matminer.data_retrieval.retrieve_Citrine module</a></li>
+<li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MP">matminer.data_retrieval.retrieve_MP module</a></li>
+<li><a class="reference internal" href="#matminer-data-retrieval-retrieve-mpds-module">matminer.data_retrieval.retrieve_MPDS module</a></li>
+<li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MongoDB">matminer.data_retrieval.retrieve_MongoDB module</a></li>
+<li><a class="reference internal" href="#module-matminer.data_retrieval">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/matminer.data_retrieval.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+    </div>
+  </body>
+</html>

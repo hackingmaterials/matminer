@@ -49,15 +49,15 @@ class BaseFeaturizer(object):
 
         raise NotImplementedError("feature_labels() is not defined!")
 
-    def reference(self):
+    def citations(self):
         """
         Citation / reference for feature
 
         Returns:
-            BibTeX citation
+            array - each element should be str citation, ideally in BibTeX format
         """
 
-        raise NotImplementedError("reference() is not defined!")
+        raise NotImplementedError("citations() is not defined!")
 
     def implementors(self):
         """
