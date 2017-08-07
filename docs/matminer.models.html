@@ -1,0 +1,865 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>matminer.models package &#8212; matminer 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matminer-models-package">
+<h1>matminer.models package<a class="headerlink" href="#matminer-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matminer.models.mechanical_properties">
+<span id="matminer-models-mechanical-properties-module"></span><h2>matminer.models.mechanical_properties module<a class="headerlink" href="#module-matminer.models.mechanical_properties" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.models.mechanical_properties.BulkModulus">
+<em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">BulkModulus</code><a class="headerlink" href="#matminer.models.mechanical_properties.BulkModulus" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="matminer.models.mechanical_properties.BulkModulus.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.BulkModulus.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.BulkModulus.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>E</em>, <em>nu</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.BulkModulus.calculate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.BulkModulus.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.BulkModulus.equation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.BulkModulus.properties_involved">
+<code class="descname">properties_involved</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.BulkModulus.properties_involved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.models.mechanical_properties.Lames1stParam">
+<em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">Lames1stParam</code><a class="headerlink" href="#matminer.models.mechanical_properties.Lames1stParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>In continuum mechanics, the Lames parameters (also called the Lame coefficients or Lame
+constants) are two material-dependent quantities denoted by &#8216;lamda&#8217; and &#8216;mu&#8217; that arise in
+strain-stress relationships. In general, &#8216;lamda&#8217; and &#8216;mu&#8217; are individually referred to as
+Lames first parameter and Lames second parameter, respectively.</p>
+<dl class="docutils">
+<dt>Reference:</dt>
+<dd><a class="reference external" href="https://en.wikipedia.org/wiki/Lam%C3%A9_parameters">https://en.wikipedia.org/wiki/Lam%C3%A9_parameters</a></dd>
+</dl>
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.Lames1stParam.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.Lames1stParam.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.Lames1stParam.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>K</em>, <em>nu</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.Lames1stParam.calculate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.Lames1stParam.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.Lames1stParam.equation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.Lames1stParam.properties_involved">
+<code class="descname">properties_involved</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.Lames1stParam.properties_involved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.models.mechanical_properties.PWaveModulus">
+<em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">PWaveModulus</code><a class="headerlink" href="#matminer.models.mechanical_properties.PWaveModulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>In linear elasticity, the P-wave modulus &#8216;M&#8217;, also known as the longitudinal modulus or
+the constrained modulus, is one of the elastic moduli available to describe isotropic
+homogeneous materials.</p>
+<dl class="docutils">
+<dt>Reference:</dt>
+<dd><a class="reference external" href="https://en.wikipedia.org/wiki/P-wave_modulus">https://en.wikipedia.org/wiki/P-wave_modulus</a></dd>
+</dl>
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.PWaveModulus.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.PWaveModulus.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.PWaveModulus.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>K</em>, <em>nu</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.PWaveModulus.calculate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.PWaveModulus.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.PWaveModulus.equation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.PWaveModulus.properties_involved">
+<code class="descname">properties_involved</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.PWaveModulus.properties_involved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.models.mechanical_properties.ShearModulus">
+<em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">ShearModulus</code><a class="headerlink" href="#matminer.models.mechanical_properties.ShearModulus" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="matminer.models.mechanical_properties.ShearModulus.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.ShearModulus.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.ShearModulus.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>E</em>, <em>nu</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.ShearModulus.calculate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.ShearModulus.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.ShearModulus.equation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.ShearModulus.properties_involved">
+<code class="descname">properties_involved</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.ShearModulus.properties_involved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.models.mechanical_properties.YM">
+<em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">YM</code><span class="sig-paren">(</span><em>nu</em>, <em>G=None</em>, <em>K=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Young&#8217;s modulus (E) from other moduli.</p>
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.YM.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nu</em>, <em>G=None</em>, <em>K=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd>nu: (float) Poisson&#8217;s ratio
+G: (float) shear or rigidity modulus (N/m^2)
+K: (float) bulk modulus (N/m^2)</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.YM.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YM.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: Young&#8217;s modulus (E) (N/m^2)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.YM.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YM.equation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.models.mechanical_properties.YoungsModulus">
+<em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">YoungsModulus</code><a class="headerlink" href="#matminer.models.mechanical_properties.YoungsModulus" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="matminer.models.mechanical_properties.YoungsModulus.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YoungsModulus.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.YoungsModulus.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>nu</em>, <em>G</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YoungsModulus.calculate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.YoungsModulus.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YoungsModulus.equation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.mechanical_properties.YoungsModulus.properties_involved">
+<code class="descname">properties_involved</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YoungsModulus.properties_involved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.brittleness_index">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">brittleness_index</code><span class="sig-paren">(</span><em>H</em>, <em>E</em>, <em>K_c</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.brittleness_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate brittleness index (BI) of a material.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>H: (float) hardness (N/m^2)
+E: (float) Young&#8217;s modulus (N/m^2)
+K_c: (float) fracture toughness  (N/m^(1.5))</dd>
+</dl>
+<p>Returns: (float) brittleness index (BI) of a material (m^(-1))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.bulk_modulus">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">bulk_modulus</code><span class="sig-paren">(</span><em>nu</em>, <em>E</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.bulk_modulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate bulk modulus (K) from Young&#8217;s modulus.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>nu: (float) Poisson&#8217;s ratio
+E: (float) Young&#8217;s modulus (N/m^2)</dd>
+</dl>
+<p>Returns: bulk modulus (K) (N/m^2)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.bulkmodulus_coordination">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">bulkmodulus_coordination</code><span class="sig-paren">(</span><em>N_c</em>, <em>ionicity</em>, <em>d</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.bulkmodulus_coordination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate bulk modulus (K) from coordination number.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first last">
+<li><p class="first">ISBN: 9780521523394 (Title: &#8220;Atomic and Electronic Structure of Solids&#8221;)</p>
+</li>
+<li><dl class="first docutils">
+<dt>DOI: 10.1103/PhysRevB.32.7988 (Title: &#8220;Calculation of bulk moduli of diamond and</dt>
+<dd><p class="first last">zinc-blende solids&#8221;)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Args:</dt>
+<dd><p class="first">N_c: (float) average coordination number of the solid
+ionicity: (int) a dimensionless number which describes the ionicity a dimensionless</p>
+<blockquote>
+<div>number which describes the ionicity; ionicity=0 for the homopolar crystals C, Si, Ge,
+Sn; ionicity=1 for III-V compounds (where the valence of each element differs by 1
+from the average valence of 4); ionicity=2 for II-VI compounds (where the valence of
+each element differs by 2 from the average valence of 4).</div></blockquote>
+<p class="last">d: (float) bond length</p>
+</dd>
+</dl>
+<p>Returns: bulk modulus (K) (N/m^2)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.critical_fracture_toughness">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">critical_fracture_toughness</code><span class="sig-paren">(</span><em>sigma</em>, <em>a</em>, <em>Y=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.critical_fracture_toughness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate critical fracture toughness (K_IC) according to Griffith theory of brittle fracture.
+Also known as stress intensity factor, and called fracture toughness nder conditions of:</p>
+<blockquote>
+<div><ol class="lowerroman simple">
+<li>brittle fracture</li>
+<li>in the presence of a sharp crack</li>
+<li>under critical tensile loading</li>
+</ol>
+</div></blockquote>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://www4.ncsu.edu/~murty/NE509/NOTES/Ch4b-Fracture.pdf">http://www4.ncsu.edu/~murty/NE509/NOTES/Ch4b-Fracture.pdf</a></li>
+<li><a class="reference external" href="http://www.srmuniv.ac.in/sites/default/files/downloads/griffith_theory_of_brittle_fracture.pdf">http://www.srmuniv.ac.in/sites/default/files/downloads/griffith_theory_of_brittle_fracture.pdf</a></li>
+<li><a class="reference external" href="https://en.wikipedia.org/wiki/Fracture_mechanics">https://en.wikipedia.org/wiki/Fracture_mechanics</a></li>
+<li><a class="reference external" href="https://www.fose1.plymouth.ac.uk/fatiguefracture/tutorials/FractureMechanics/Griffith/GriffTheory1.htm">https://www.fose1.plymouth.ac.uk/fatiguefracture/tutorials/FractureMechanics/Griffith/GriffTheory1.htm</a></li>
+</ul>
+</dd>
+<dt>Args:</dt>
+<dd>sigma: (float) tensile stress or strength (N/m^2)
+a: (float) one half crack length for internal cracks or crack length for edge cracks (m)
+Y: (float) Crack shape factor</dd>
+</dl>
+<p>Returns: critical fracture toughness (K_IC) (Pa.m^(0.5) or N/m^(1.5))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.critical_stress">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">critical_stress</code><span class="sig-paren">(</span><em>E</em>, <em>gamma_s</em>, <em>a</em>, <em>gamma_p=0</em>, <em>nu=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.critical_stress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate critical stress needed for crack propagation (sigma_c) according to Griffith
+theory of brittle fracture.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://www4.ncsu.edu/~murty/NE509/NOTES/Ch4b-Fracture.pdf">http://www4.ncsu.edu/~murty/NE509/NOTES/Ch4b-Fracture.pdf</a></li>
+<li><a class="reference external" href="http://www.srmuniv.ac.in/sites/default/files/downloads/griffith_theory_of_brittle_fracture.pdf">http://www.srmuniv.ac.in/sites/default/files/downloads/griffith_theory_of_brittle_fracture.pdf</a></li>
+<li><a class="reference external" href="https://en.wikipedia.org/wiki/Fracture_mechanics">https://en.wikipedia.org/wiki/Fracture_mechanics</a></li>
+<li><a class="reference external" href="https://www.fose1.plymouth.ac.uk/fatiguefracture/tutorials/FractureMechanics/Griffith/GriffTheory1.htm">https://www.fose1.plymouth.ac.uk/fatiguefracture/tutorials/FractureMechanics/Griffith/GriffTheory1.htm</a></li>
+</ul>
+</dd>
+<dt>Args:</dt>
+<dd>E: (float) Young&#8217;s modulus (N/m^2)
+gamma_s: (float) elastic strain energy released (N/m)
+a: (float) one half crack length for internal cracks or crack length for edge cracks (m)
+gamma_p: (float) plastic strain energy released (N/m)
+nu: (float) Poisson&#8217;s ratio, used in plain strain condition, else default=0</dd>
+</dl>
+<p>Returns: critical stress needed for crack propagation (sigma_c) (N/m^2)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.fracture_toughness">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">fracture_toughness</code><span class="sig-paren">(</span><em>E</em>, <em>H</em>, <em>F</em>, <em>c</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.fracture_toughness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate fracture toughness (K_c) of a material.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd>DOI: 10.1007/s10853-013-7569-1 (Title: &#8220;Room temperature mechanical properties of
+natural-mineral-based thermoelectrics&#8221;)</dd>
+<dt>Args:</dt>
+<dd>E: (float) Young&#8217;s modulus (N/m^2)
+H: (float) hardness (N/m^2)
+F: (float) indentation load (N)
+c: (float) hald of radial crack length (m)</dd>
+</dl>
+<p>Returns: (float) fracture toughness (K_c) of a material (Pa.m^(0.5) or N/m^(1.5))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.max_allowed_heatflow">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">max_allowed_heatflow</code><span class="sig-paren">(</span><em>nu</em>, <em>kappa</em>, <em>sigma</em>, <em>E</em>, <em>cte</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.max_allowed_heatflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate maximum allowable heat flow (QF)</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>nu: (float) Poisson&#8217;s ratio
+kappa: (float) thermal conductivity (W(mK)^(-1))
+sigma: (float) stress as a result of temperature gradient (N/m^2)
+E: (float) Young&#8217;s modulus (N/m^2)
+cte: (float) coefficient of thermal expansion (K^(-1))</dd>
+</dl>
+<p>Returns: maximum allowable heat flow (QF) (W/m)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.shear_modulus">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">shear_modulus</code><span class="sig-paren">(</span><em>nu</em>, <em>E</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.shear_modulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate shear/rigidity modulus (G) from Young&#8217;s modulus.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>nu: (float) Poisson&#8217;s ratio
+E: (float) Young&#8217;s modulus (N/m^2)</dd>
+</dl>
+<p>Returns: shear/rigidity modulus (G) (N/m^2)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.steadystate_heatflow">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">steadystate_heatflow</code><span class="sig-paren">(</span><em>A</em>, <em>T2</em>, <em>T1</em>, <em>kappa</em>, <em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.steadystate_heatflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate steady state heat flow (Q)</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>A: (float) cross-sectional area (m^2)
+T2: (float) temperature at cold end (K)
+T1: (float) temperature at hot end (K)
+kappa: (float) thermal conductivity (W(mK)^(-1))
+x: (float) slab length at which heat flow is calculated (m)</dd>
+</dl>
+<p>Returns: steady state heat flow (Q) (W or J/s)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.strain_energy_releaserate">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">strain_energy_releaserate</code><span class="sig-paren">(</span><em>K_I</em>, <em>E</em>, <em>nu=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.strain_energy_releaserate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate strain energy release rate (G_I). Irwin was the first to observe that if the size
+of the plastic zone around a crack is small compared to the size of the crack, the energy
+required to grow the crack will not be critically dependent on the state of stress at the
+crack tip. Irwin showed that for a mode I crack (opening mode)
+the strain energy release rate and the stress intensity factor are related by the following relation.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>K_I: (float) stress intensity factor in mode 1 (N/m^(1.5))
+E: (float) Young&#8217;s modulus (N/m^2)
+nu: (float) Poisson&#8217;s ratio, used in plain strain condition, else default=0</dd>
+</dl>
+<p>Returns: strain energy release rate (G_I) (N/m)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.stress_from_tempgradient">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">stress_from_tempgradient</code><span class="sig-paren">(</span><em>T2</em>, <em>T1</em>, <em>E</em>, <em>cte</em>, <em>nu</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.stress_from_tempgradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate stress as a result of temperature gradient (sigma)</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>T2: (float) temperature at cold end (K)
+T1: (float) temperature at hot end (K)
+E: (float) Young&#8217;s modulus (N/m^2)
+cte: (float) coefficient of thermal expansion (K^(-1))
+nu: (float) Poisson&#8217;s ratio</dd>
+</dl>
+<p>Returns: stress as a result of temperature gradient (sigma) (N/m^2)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.thermal_shock">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">thermal_shock</code><span class="sig-paren">(</span><em>sigma_tens</em>, <em>nu</em>, <em>kappa</em>, <em>E</em>, <em>cte</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.thermal_shock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate thermal shock resistance parameter (R_therm)</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>sigma_tens: (float) tensile stress or strength (N/m^2)
+nu: (float) Poisson&#8217;s ratio
+kappa: (float) thermal conductivity (W(mK)^(-1))
+E: (float) Young&#8217;s modulus (N/m^2)
+cte: (float) coefficient of thermal expansion (K^(-1))</dd>
+</dl>
+<p>Returns: thermal shock resistance parameter (R_therm)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.thermal_stress">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">thermal_stress</code><span class="sig-paren">(</span><em>E_T</em>, <em>cte_T</em>, <em>delta_T</em>, <em>nu_T</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.thermal_stress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate thermal stress (sigma_T) in a material.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd>DOI: 10.1007/s10853-013-7569-1 (Title: &#8220;Room temperature mechanical properties of
+natural-mineral-based thermoelectrics&#8221;)</dd>
+<dt>Args:</dt>
+<dd>E_T: (float) temperature-dependent Young&#8217;s modulus (N/m^2)
+cte_T: (float) temperature-dependent thermal expansion coefficient (K^(-1))
+delta_T: (float) temperature difference (K)
+nu_T: (float) temperature-dependent Poisson&#8217;s ratio</dd>
+</dl>
+<p>Returns: (float) thermal stress (sigma_T) induced by thermal gradients or thermal transients</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.vickers_hardness1">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">vickers_hardness1</code><span class="sig-paren">(</span><em>G</em>, <em>K</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.vickers_hardness1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Vickers hardness (H_v) for a material.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><dl class="first last docutils">
+<dt>DOI: (not available yet) (Title: &#8220;A Statistical Learning Framework for Materials Science:</dt>
+<dd>Application to Elastic Moduli of k-nary Inorganic Compounds&#8221;)</dd>
+</dl>
+</dd>
+<dt>Args:</dt>
+<dd>G: (float) elastic bulk modulus (N/m^2)
+K: (float) elastic shear modulus (N/m^2)</dd>
+</dl>
+<p>Returns: (float) Vickers hardness (H_v) (N/m^2)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.mechanical_properties.vickers_hardness2">
+<code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">vickers_hardness2</code><span class="sig-paren">(</span><em>F</em>, <em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.vickers_hardness2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Vickers hardness (H) for a material.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd>DOI: 10.1007/s10853-013-7569-1 (Title: &#8220;Room temperature mechanical properties of
+natural-mineral-based thermoelectrics&#8221;)</dd>
+<dt>Args:</dt>
+<dd>F: (float) indentation load (N)
+a: (float) half of diagonal length of the indentation impression (m)</dd>
+</dl>
+<p>Returns: (float) Vickers hardness (H) (N/m^2)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.models.sound_velocity">
+<span id="matminer-models-sound-velocity-module"></span><h2>matminer.models.sound_velocity module<a class="headerlink" href="#module-matminer.models.sound_velocity" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.models.sound_velocity.SoundVelocityModel">
+<em class="property">class </em><code class="descclassname">matminer.models.sound_velocity.</code><code class="descname">SoundVelocityModel</code><a class="headerlink" href="#matminer.models.sound_velocity.SoundVelocityModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an example model</p>
+<dl class="method">
+<dt id="matminer.models.sound_velocity.SoundVelocityModel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.sound_velocity.SoundVelocityModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.sound_velocity.SoundVelocityModel.citation">
+<code class="descname">citation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.sound_velocity.SoundVelocityModel.citation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.sound_velocity.SoundVelocityModel.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.sound_velocity.SoundVelocityModel.compute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.sound_velocity.effective_cubic_elasticconstant">
+<code class="descclassname">matminer.models.sound_velocity.</code><code class="descname">effective_cubic_elasticconstant</code><span class="sig-paren">(</span><em>direction</em>, <em>mode</em>, <em>C_11=None</em>, <em>C_12=None</em>, <em>C_44=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.sound_velocity.effective_cubic_elasticconstant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate effective elastic constant (C_eff) for a cubic material.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><a class="reference external" href="http://unlcms.unl.edu/cas/physics/tsymbal/teaching/SSP-927/Section%2004_Elastic_Properties.pdf">http://unlcms.unl.edu/cas/physics/tsymbal/teaching/SSP-927/Section%2004_Elastic_Properties.pdf</a></dd>
+<dt>Args:</dt>
+<dd>direction: (str) direction of sound velocity. Choose from Choose from &#8220;100&#8221;, &#8220;110&#8221;, and &#8220;111&#8221;.
+mode: (str) wave mode. Choose from &#8220;longitudinal&#8221;, &#8220;transverse1&#8221;, and &#8220;transverse2&#8221;.
+C_11: elastic constant C_xxxx (N/m^2)
+C_12: elastic constant C_xxyy (N/m^2)
+C_44: elastic constant C_yzyz (N/m^2)</dd>
+</dl>
+<p>Returns: (float) effective elastic constant (C_eff) for a cubic material (N/m^2).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.sound_velocity.sound_velocity">
+<code class="descclassname">matminer.models.sound_velocity.</code><code class="descname">sound_velocity</code><span class="sig-paren">(</span><em>C_eff</em>, <em>rho</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.sound_velocity.sound_velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate sound velocity (v) in a material from elastic constant.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>C_eff: (float) effective elastic constant (N/m^2)
+rho: (float) material density (kg/m^3)</dd>
+</dl>
+<p>Returns: (float) velocity of sound (m/s) in the material</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.models.thermal_conductivity">
+<span id="matminer-models-thermal-conductivity-module"></span><h2>matminer.models.thermal_conductivity module<a class="headerlink" href="#module-matminer.models.thermal_conductivity" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.models.thermal_conductivity.CahillSimpleModel">
+<em class="property">class </em><code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">CahillSimpleModel</code><span class="sig-paren">(</span><em>*values</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.CahillSimpleModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Cahill thermal conductivity.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first simple">
+<li>DOI: 10.1016/j.jallcom.2014.09.022 (Title: &#8220;Electronic structure, elastic anisotropy,</li>
+</ul>
+<p class="last">thermal conductivity and optical properties of calcium apatite Ca5(PO4)3X (X = F, Cl or Br)&#8221;)
+- DOI: 10.1016/j.commatsci.2015.07.029 (Title: &#8220;Electronic structure, mechanical properties and
+anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals&#8221;)
+- DOI: 10.1002/adma.201400515 (Title: &#8220;High Thermoelectric Performance in Non-Toxic Earth-Abundant
+Copper Sulfide&#8221;)</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.models.thermal_conductivity.CahillSimpleModel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*values</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.CahillSimpleModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd>n: (int) number of atoms in unit cell
+V: (float) unit cell volume (in SI units, i.e. m^(3))
+v_l: (float) longitudinal sound velocity (in SI units, i.e. m/s)
+v_t1: (float) transverse sound velocity in direction 1 (in SI units, i.e. m/s)
+v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m/s)</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.models.thermal_conductivity.CahillSimpleModel.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>*values</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.CahillSimpleModel.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: (float) Cahill thermal conductivity (in SI units, i.e. joule/(m*s*kelvin))</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.cahill_integrand">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">cahill_integrand</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.cahill_integrand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrand function to calculate Cahill thermal conductivity.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck&#8217;s constant, omega = phonon frequency</dd>
+</dl>
+<p>Returns: (float) integral value</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.cahill_integrand_model">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">cahill_integrand_model</code><span class="sig-paren">(</span><em>n</em>, <em>V</em>, <em>cahill_integrand_sum</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.cahill_integrand_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Cahill thermal conductivity using the intergrand model.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first simple">
+<li>DOI: 10.1002/adfm.201600718 (Title: &#8220;Minimum Thermal Conductivity in Weak Topological Insulators with</li>
+</ul>
+<p class="last">Bismuth-Based Stack Structure&#8221;)
+- DOI: 10.1038/nature13184 (Title: &#8220;Ultralow thermal conductivity and high thermoelectric figure of merit in
+SnSe crystals&#8221;) (full formula)</p>
+</dd>
+<dt>Args:</dt>
+<dd>n: (int) number of atoms in primitive cell
+V: (float) unit cell volume (in SI units, i.e. m^(3))
+cahill_integrand_sum: (float) <em>sum</em> of the term calculate using the above function &#8220;cahill_integrand_summation&#8221;</dd>
+</dl>
+<p>Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.cahill_integrand_summation">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">cahill_integrand_summation</code><span class="sig-paren">(</span><em>v_i</em>, <em>T</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.cahill_integrand_summation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the summation term for the Cahill thermal conductivity integrand model.
+Use this function repeatedly to calculate the total sum over all acoustic modes.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first simple">
+<li>DOI: 10.1002/adfm.201600718 (Title: &#8220;Minimum Thermal Conductivity in Weak Topological Insulators with</li>
+</ul>
+<p class="last">Bismuth-Based Stack Structure&#8221;)
+- DOI: 10.1038/nature13184 (Title: &#8220;Ultralow thermal conductivity and high thermoelectric figure of merit in
+SnSe crystals&#8221;) (full formula)</p>
+</dd>
+<dt>Args:</dt>
+<dd>v_i: (float) sound velocity for the acoustic mode i (in SI units, i.e. m(s)^(-1))
+T: (float) absolute temperature (in K)
+theta: (float) Debye temperature (in K)</dd>
+</dl>
+<p>Returns: (float) summation term for only <em>one</em> acoustic mode i</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.callaway_integrand">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">callaway_integrand</code><span class="sig-paren">(</span><em>x</em>, <em>t_ph</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.callaway_integrand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrand function to calculate Callaway thermal conductivity.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck&#8217;s constant, omega = phonon frequency
+t_ph: (float) phonon relaxation time (in SI units, s^(-1))</dd>
+</dl>
+<p>Returns: (float) integral value</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.callaway_model">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">callaway_model</code><span class="sig-paren">(</span><em>v_m</em>, <em>T</em>, <em>theta</em>, <em>t_ph</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.callaway_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Callaway thermal conductivity
+(In some circumstances, a second term may be required as seen in
+<a class="reference external" href="http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1">http://link.springer.com/chapter/10.1007%2F0-387-25100-6_2#page-1</a>)</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first simple">
+<li>DOI: 10.1002/adfm.201600718 (Title: &#8220;Minimum Thermal Conductivity in Weak Topological Insulators with</li>
+</ul>
+<p>Bismuth-Based Stack Structure&#8221;)
+- DOI: 10.1063/1.4906225 (Title: &#8220;Critical analysis of lattice thermal conductivity of half-Heusler alloys
+using variations of Callaway model&#8221;)
+- DOI: 10.1103/PhysRev.134.A1058 (Title: &#8220;Thermal Conductivity of Silicon and Germanium from 3 K to the Melting</p>
+<blockquote class="last">
+<div>Point&#8221;)</div></blockquote>
+</dd>
+<dt>Args:</dt>
+<dd>v_m: (float) speed of sound in the material (in SI units, i.e. m(s)^(-1))
+T: (float) absolute temperature (in K)
+theta: (float) Debye temperature (in K)
+t_ph: (float) phonon relaxation time (in SI units, s^(-1))</dd>
+</dl>
+<p>Returns: (float) Callaway thermal conductivity (in SI units, i.e. W(mK)^(-1))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.clarke_model">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">clarke_model</code><span class="sig-paren">(</span><em>n</em>, <em>E</em>, <em>m</em>, <em>V</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.clarke_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Clarke thermal conductivity.</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first simple">
+<li>DOI: 10.1016/j.jallcom.2014.09.022 (Title: &#8220;Electronic structure, elastic anisotropy,</li>
+</ul>
+<p class="last">thermal conductivity and optical properties of calcium apatite Ca5(PO4)3X (X = F, Cl or Br)&#8221;)
+- DOI: 10.1016/j.commatsci.2015.07.029 (Title: &#8220;Electronic structure, mechanical properties and
+anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals&#8221;)</p>
+</dd>
+<dt>Args:</dt>
+<dd>n: (int) number of atoms in primitive cell
+E: (float) Young&#8217;s modules (in SI units, i.e. Kgm(s)^(-2))
+m: (float) total mass per unit cell (in SI units, i.e. Kg)
+V: (float) unit cell volume (in SI units, i.e. m^(3))</dd>
+</dl>
+<p>Returns: (float) Clarke thermal conductivity (in SI units, i.e. W(mK)^(-1))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.debye_model">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">debye_model</code><span class="sig-paren">(</span><em>M</em>, <em>E</em>, <em>m</em>, <em>V</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.debye_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Debye thermal conductivity.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>M: (float) molecular mass
+E: (float) Young&#8217;s modules (in SI units, i.e. Kgm(s)^(-2))
+m: (float) total mass (in SI units, i.e. Kg)
+V: (float) unit cell volume (in SI units, i.e. m^(3))</dd>
+</dl>
+<p>Returns: (float) Debye thermal conductivity (in SI units, i.e. W(mK)^(-1))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.keyes_model">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">keyes_model</code><span class="sig-paren">(</span><em>gamma</em>, <em>e_m</em>, <em>T_m</em>, <em>m</em>, <em>V</em>, <em>T</em>, <em>A</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.keyes_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Keyes thermal conductivity</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first simple">
+<li>DOI: 10.1103/PhysRev.115.564 (Title: &#8220;High-Temperature Thermal Conductivity of Insulating Crystals:</li>
+</ul>
+<p class="last">Relationship to the Melting Point&#8221;)</p>
+</dd>
+<dt>Args:</dt>
+<dd>gamma: (float) Gruneisen parameter
+e_m: (float) amplitude of atomic vibrations as fraction of lattice constant at which melting takes place
+T_m: (float) melting temperature (K)
+m: (float) total mass (in SI units, i.e. Kg)
+V: (float) unit cell volume (in SI units, i.e. m^(3))
+T: (float) absolute temperature (in K)
+A: (float) average atomic weight</dd>
+</dl>
+<p>Returns: (float) Keyes thermal conductivity (in SI units, i.e. W(mK)^(-1))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.slack_integrand">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">slack_integrand</code><span class="sig-paren">(</span><em>x</em>, <em>t_c</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.slack_integrand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrand function to calculate Callaway thermal conductivity.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck&#8217;s constant, omega = phonon frequency
+t_c: (float) phonon relaxation time (in SI units, s^(-1))</dd>
+</dl>
+<p>Returns: (float) integral value</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.slack_integrand_model">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">slack_integrand_model</code><span class="sig-paren">(</span><em>v_m</em>, <em>T</em>, <em>theta</em>, <em>t_c</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.slack_integrand_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Slack thermal conductivity using the integral model.
+(In high temperature regions, those higher than that of the Debye temperature of the material, the Callaway
+model is insufficient at predicting the lattice thermal conductivity. This shortfall must be addressed as many
+thermoelectric materials are designed to be used in conditions beyond the Debye temperature of the alloys and
+accurate predictions are required. At high temperatures, a modification suggested by Glassbrenner and Slack is
+made to model thermal conductivity as shown here.)</p>
+<dl class="docutils">
+<dt>References:</dt>
+<dd><ul class="first simple">
+<li>DOI: 10.1103/PhysRev.134.A1058 (Title: &#8220;Thermal Conductivity of Silicon and Germanium from 3 K to the Melting</li>
+</ul>
+<blockquote>
+<div>Point&#8221;)</div></blockquote>
+<ul class="simple">
+<li>DOI: 10.1063/1.4906225 (Title: &#8220;Critical analysis of lattice thermal conductivity of half-Heusler alloys</li>
+</ul>
+<p class="last">using variations of Callaway model&#8221;)</p>
+</dd>
+<dt>Args:</dt>
+<dd><p class="first">v_m: (float) speed of sound in the material (in SI units, i.e. m(s)^(-1))
+T: (float) absolute temperature (in K)
+theta: (float) Debye temperature (in K)
+t_c: (float) combined phonon relaxation time that includes higher-order processes (in SI units, s^(-1))</p>
+<blockquote class="last">
+<div>(see Ref:- DOI: 10.1103/PhysRev.134.A1058)</div></blockquote>
+</dd>
+</dl>
+<p>Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.models.thermal_conductivity.slack_simple_model">
+<code class="descclassname">matminer.models.thermal_conductivity.</code><code class="descname">slack_simple_model</code><span class="sig-paren">(</span><em>M</em>, <em>theta</em>, <em>v_a</em>, <em>gamma</em>, <em>n</em>, <em>T</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.thermal_conductivity.slack_simple_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the simple Slack thermal conductivity</p>
+<dl class="docutils">
+<dt>References</dt>
+<dd><ul class="first simple">
+<li>DOI: 10.1007/0-387-25100-6_2 (Title: &#8220;High Lattice Thermal Conductivity Solids&#8221;)</li>
+<li>DOI: 10.1002/adfm.201600718 (Title: &#8220;Minimum Thermal Conductivity in Weak Topological Insulators with</li>
+</ul>
+<p class="last">Bismuth-Based Stack Structure&#8221;)</p>
+</dd>
+<dt>Args:</dt>
+<dd>M: (float) average atomic mass
+theta: (float) Debye temperature (K)
+v_a: (float) (v_a)**3 is the volume per atom (Angstroms)
+gamma: (float) Gruneisen parameter
+n: (int) number of atoms in primitive cell
+T: (float) absolute temperature (K)</dd>
+</dl>
+<p>Returns: (float) Slack thermal conductivity (in SI units, i.e. W(mK)^(-1))</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.models" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">matminer.models package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-matminer.models.mechanical_properties">matminer.models.mechanical_properties module</a></li>
+<li><a class="reference internal" href="#module-matminer.models.sound_velocity">matminer.models.sound_velocity module</a></li>
+<li><a class="reference internal" href="#module-matminer.models.thermal_conductivity">matminer.models.thermal_conductivity module</a></li>
+<li><a class="reference internal" href="#module-matminer.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/matminer.models.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+    </div>
+  </body>
+</html>

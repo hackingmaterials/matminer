@@ -47,7 +47,6 @@ class Stoichiometry(BaseFeaturizer):
     """
 
     def __init__(self, p_list=[0,2,3,5,7,10], num_atoms=False):
-        BaseFeaturizer.__init__(self)
         self.p_list = p_list
         self.num_atoms = num_atoms
  
@@ -101,7 +100,7 @@ class Stoichiometry(BaseFeaturizer):
 
         return labels
 
-    def credits(self):
+    def citations(self):
         citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
@@ -123,7 +122,6 @@ class ElementProperty(BaseFeaturizer):
     """
 
     def __init__(self, method="magpie", stats=None, attributes=None, data_source=None):
-        BaseFeaturizer.__init__(self)
         self.method = method
         if self.method == "deml":
             self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
@@ -135,7 +133,7 @@ class ElementProperty(BaseFeaturizer):
             self.stats = ["minimum", "maximum", "range", "mean", "avg_dev", "mode"]
             self.attributes = ["Number", "MendeleevNumber", "AtomicWeight","MeltingT","Column","Row","CovalentRadius","Electronegativity",
                 "NsValence","NpValence","NdValence","NfValence","NValance","NsUnfilled","NpUnfilled","NdUnfilled","NfUnfilled","NUnfilled",
-                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"] 
+                "GSvolume_pa","GSbandgap","GSmagmom","SpaceGroupNumber"]
             self.data_source = MagpieData()
         else:
             self.stats = stats
@@ -148,7 +146,7 @@ class ElementProperty(BaseFeaturizer):
 
         Args:
             comp: Pymatgen composition object
-        
+
         Returns:
             all_attributes: Specified property statistics of descriptors
         """
@@ -156,7 +154,7 @@ class ElementProperty(BaseFeaturizer):
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         fracs = [el_amt[el] for el in elements]
-       
+
         all_attributes = []
 
         for attr in self.attributes:
@@ -175,7 +173,7 @@ class ElementProperty(BaseFeaturizer):
 
         return labels
 
-    def credits(self):
+    def citations(self):
         if self.method == "magpie":
             citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
                 "machine learning framework for predicting properties of inorganic materials}, "
@@ -205,7 +203,6 @@ class ValenceOrbital(BaseFeaturizer):
     """
 
     def __init__(self, data_source=MagpieData(), orbitals=["s","p","d","f"], props=["avg", "frac"]):
-        BaseFeaturizer.__init__(self)
         self.data_source = data_source
         self.orbitals = orbitals
         self.props = props
@@ -213,13 +210,13 @@ class ValenceOrbital(BaseFeaturizer):
     def featurize(self, comp):
         """Weighted fraction of valence electrons in each orbital
 
-           Args: 
+           Args:
                 comp: Pymatgen composition object
 
-           Returns: 
+           Returns:
                 valence_attributes (list of floats): Average number and/or fraction of valence electrons in specfied orbitals
-        """    
-        
+        """
+
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         el_fracs = [el_amt[el] for el in elements]
@@ -247,7 +244,7 @@ class ValenceOrbital(BaseFeaturizer):
 
         return labels
 
-    def credits(self):
+    def citations(self):
         ward_citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
@@ -273,7 +270,6 @@ class IonProperty(BaseFeaturizer):
     """
 
     def __init__(self, data_source=MagpieData()):
-        BaseFeaturizer.__init__(self)
         self.data_source = data_source
 
     def featurize(self, comp):
@@ -296,7 +292,7 @@ class IonProperty(BaseFeaturizer):
         if len(elements) < 2: #Single element
             cpd_possible = True
             max_ionic_char = 0
-            avg_ionic_char = 0        
+            avg_ionic_char = 0
         else:
             #Get magpie data for each element
             ox_states = self.data_source.get_property(comp, "OxidationStates", return_per_element=True)
@@ -308,7 +304,7 @@ class IonProperty(BaseFeaturizer):
             for ox in ox_sets:
                 if abs(np.dot(ox, values)) < 1e-4:
                     cpd_possible = True
-                    break    
+                    break
 
             #Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
@@ -322,7 +318,7 @@ class IonProperty(BaseFeaturizer):
                 XB = elec[pair[1]]
                 ionic_char.append(1.0 - np.exp(-0.25*((XA-XB)**2)))
                 avg_ionic_char += el_frac[pair[0]]*el_frac[pair[1]]*ionic_char[-1]
-           
+
             max_ionic_char = np.max(ionic_char)
 
         return list((cpd_possible, max_ionic_char, avg_ionic_char))
@@ -330,8 +326,8 @@ class IonProperty(BaseFeaturizer):
     def feature_labels(self):
         labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
         return labels
-      
-    def credits(self):
+
+    def citations(self):
         citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
@@ -346,7 +342,7 @@ class ElementFraction(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
 
-    Generates: vector where each index represents an element in atomic number order. 
+    Generates: vector where each index represents an element in atomic number order.
     """
 
     def __init__(self):
@@ -356,7 +352,7 @@ class ElementFraction(BaseFeaturizer):
         """
         Args:
             comp: Pymatgen Composition object
-    
+
         Returns:
             vector (list of floats): fraction of each element in a composition
         """
@@ -396,7 +392,7 @@ class TMetalFraction(BaseFeaturizer):
         """
         Args:
             comp: Pymatgen Composition object
-    
+
         Returns:
             frac_magn_atoms (single-element list): fraction of magnetic transitional metal atoms in a compound
         """
@@ -416,7 +412,7 @@ class TMetalFraction(BaseFeaturizer):
         labels = ["TMetal Fraction"]
         return labels
 
-    def credits(self):
+    def citations(self):
         citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
@@ -444,7 +440,7 @@ class ElectronAffinity(BaseFeaturizer):
         """
         Args:
             comp: Pymatgen Composition object
-    
+
         Returns:
             avg_anion_affin (single-element list): average electron affinity*formal charge of anions
         """
@@ -471,7 +467,7 @@ class ElectronAffinity(BaseFeaturizer):
         labels = ["Avg Anion Electron Affinity"]
         return labels
 
-    def credits(self):
+    def citations(self):
         citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
@@ -504,7 +500,7 @@ class ElectronegativityDiff(BaseFeaturizer):
         """
         Args:
             comp: Pymatgen Composition object
-    
+
         Returns:
             en_diff_stats (list of floats): Property stats of electronegativity difference
         """
@@ -514,7 +510,7 @@ class ElectronegativityDiff(BaseFeaturizer):
 
         fml_charge = self.data_source.get_property(comp, "formal_charge", return_per_element=True)
         electroneg = self.data_source.get_property(comp, "electronegativity", return_per_element=True)
- 
+
         cations = []
         anions = []
         cation_en = []
@@ -562,7 +558,7 @@ class ElectronegativityDiff(BaseFeaturizer):
 
         return labels
 
-    def credits(self):
+    def citations(self):
         citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
@@ -595,7 +591,7 @@ class FERECorrection(BaseFeaturizer):
         """
         Args:
             comp: Pymatgen Composition object
-    
+
         Returns:
             fere_corr_stats (list of floats): Property stats of FERE Correction
         """
@@ -623,7 +619,7 @@ class FERECorrection(BaseFeaturizer):
 
         return labels
 
-    def credits(self):
+    def citations(self):
         citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
