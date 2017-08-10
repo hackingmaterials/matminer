@@ -1,4 +1,5 @@
 import numpy as np
+from six import string_types
 
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
@@ -9,24 +10,30 @@ class BaseFeaturizer(object):
         
         Args: 
             df (Pandas dataframe): Dataframe containing input data
-            col_id (string): column label containing objects to featurize
+            col_id (str or list of str): column label containing objects to featurize. Can be multiple labels, if the featurize
+                function requires multiple inputs
 
         Returns:
             updated Dataframe
         """
 
+        # If only one column and user provided a string, put it inside a list
+        if isinstance(col_id, string_types):
+            col_id = [col_id]
+
+        # Compute the features
         features = []
         x_list = df[col_id]
-        for x in x_list:
-            features.append(self.featurize(x))
-        
-        features = np.array(features)
+        for x in x_list.values:
+            features.append(self.featurize(*x))
 
+        # Add features to dataframe
+        features = np.array(features)
         labels = self.feature_labels()
         df = df.assign(**dict(zip(labels, features.T)))
         return df
-    
-    def featurize(self, x):
+
+    def featurize(self, *x):
         """
         Main featurizer function. Only defined in feature subclasses.
 
