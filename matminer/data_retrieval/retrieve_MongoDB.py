@@ -48,10 +48,13 @@ class MongoDataRetrieval:
 
             # split up dot-notation keys
             for key in projection:
-                vals = key.split('.')
-                vals = [int(v) if is_int(v) else v for v in vals]
-                data = reduce(lambda e, k: e[k], vals, d)
-                row_data.append(data)
+                try:
+                    vals = key.split('.')
+                    vals = [int(v) if is_int(v) else v for v in vals]
+                    data = reduce(lambda e, k: e[k], vals, d)
+                    row_data.append(data)
+                except:
+                    row_data.append(float("nan"))
 
             all_data.append(row_data)
 
