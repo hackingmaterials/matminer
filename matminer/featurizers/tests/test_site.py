@@ -3,7 +3,7 @@ import pandas as pd
 from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.atomic_site import AGNIFingerprints
+from matminer.featurizers.site import AGNIFingerprints
 
 
 class AGNIFingerprintTests(PymatgenTest):
