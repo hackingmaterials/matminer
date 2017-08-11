@@ -16,7 +16,7 @@ class MongoDataRetrieval:
         self.coll = coll
 
     def get_dataframe(self, projection, query=None, sort=None,
-                      limit=None, idx_field=None):
+                      limit=None, idx_field=None, strict=False):
         """
         Args:
             projection: (list) - a list of str fields to grab; dot-notation is allowed.
@@ -25,6 +25,7 @@ class MongoDataRetrieval:
             sort: (tuple) - pymongo-style sort option
             limit: (int) - int to limit the number of entries
             idx_field: (str) - name of field to use as index field (must be unique)
+            strict: (bool) - if False, replaces missing values with NaN
         """
         # auto-detect projection as all root keys of any document
         # assumes DB is uniform
@@ -54,7 +55,11 @@ class MongoDataRetrieval:
                     data = reduce(lambda e, k: e[k], vals, d)
                     row_data.append(data)
                 except:
-                    row_data.append(float("nan"))
+                    if not strict:
+                        row_data.append(float("nan"))
+                    else:
+                        raise
+
 
             all_data.append(row_data)
 
