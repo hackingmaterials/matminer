@@ -35,8 +35,6 @@ class MongoDataRetrieval:
 
         query_proj = [remove_ints(p) for p in clean_projection(projection)]
 
-        print(query_proj)
-
         r = self.coll.find(query, query_proj, sort=sort)
         if limit:
             r.limit(limit)
