@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import unittest
 
 import numpy as np
+from math import fabs
 
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
@@ -57,85 +58,93 @@ class StructureFeaturesTest(PymatgenTest):
     def test_packing_fraction(self):
         pf = PackingFraction()
         self.assertAlmostEqual(int(1000 * pf.featurize(
-            self.diamond)), 251)
+            self.diamond)[0]), 251)
         self.assertAlmostEqual(int(1000 * pf.featurize(
-            self.nacl)), 620)
+            self.nacl)[0]), 620)
         self.assertAlmostEqual(int(1000 * pf.featurize(
-            self.cscl)), 1043)
+            self.cscl)[0]), 1043)
 
     def test_volume_per_site(self):
         vps = VolumePerSite()
         self.assertAlmostEqual(int(1000 * vps.featurize(
-            self.diamond)), 5710)
+            self.diamond)[0]), 5710)
         self.assertAlmostEqual(int(1000 * vps.featurize(
-            self.nacl)), 23046)
+            self.nacl)[0]), 23046)
         self.assertAlmostEqual(int(1000 * vps.featurize(
-            self.cscl)), 37282)
+            self.cscl)[0]), 37282)
 
     def test_density(self):
         d = Density()
         self.assertAlmostEqual(int(100 * d.featurize(
-            self.diamond)), 349)
+            self.diamond)[0]), 349)
         self.assertAlmostEqual(int(100 * d.featurize(
-            self.nacl)), 210)
+            self.nacl)[0]), 210)
         self.assertAlmostEqual(int(100 * d.featurize(
-            self.cscl)), 374)
+            self.cscl)[0]), 374)
 
     def test_rdf_and_peaks(self):
         ## Test diamond
-        rdf, bin_radius = RadialDistributionFunction().featurize(
+        rdforig = RadialDistributionFunction().featurize(
                 self.diamond)
+        rdf = rdforig[0]
 
         # Make sure it the last bin is cutoff-bin_max
-        self.assertAlmostEquals(bin_radius.max(), 19.9)
+        self.assertAlmostEquals(max(rdf['distances']), 19.9)
 
         # Verify bin sizes
-        self.assertEquals(len(rdf), len(bin_radius))
-        self.assertEquals(len(rdf), 200)
+        self.assertEquals(len(rdf['distribution']), 200)
 
         # Make sure it gets all of the peaks
-        self.assertEquals(np.count_nonzero(rdf), 116)
+        self.assertEquals(np.count_nonzero(rdf['distribution']), 116)
 
         # Check the values for a few individual peaks
-        self.assertAlmostEqual(rdf[int(round(1.5 / 0.1))], 15.12755155)
-        self.assertAlmostEqual(rdf[int(round(2.9 / 0.1))], 12.53193948)
-        self.assertAlmostEqual(rdf[int(round(19.9 / 0.1))], 0.822126129)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(1.5/0.1))], 15.12755155)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(2.9/0.1))], 12.53193948)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(19.9/0.1))], 0.822126129)
 
         # Make sure it finds the locations of non-zero peaks correctly
-        peaks = RadialDistributionFunctionPeaks().featurize(rdf, bin_radius)
+        peaks = RadialDistributionFunctionPeaks().featurize(rdforig)[0]
         self.assertEquals(len(peaks), 2)
         self.assertAlmostEquals(2.5, peaks[0])
         self.assertAlmostEquals(1.5, peaks[1])
 
         # Repeat test with NaCl (omitting comments). Altering cutoff distance
-        rdf, bin_radius = RadialDistributionFunction().featurize(
-                self.nacl, cutoff=10)
-        self.assertAlmostEquals(bin_radius.max(), 9.9)
-        self.assertEquals(len(rdf), len(bin_radius))
-        self.assertEquals(len(rdf), 100)
-        self.assertEquals(np.count_nonzero(rdf), 11)
-        self.assertAlmostEqual(rdf[int(round(2.8 / 0.1))], 27.09214168)
-        self.assertAlmostEqual(rdf[int(round(4.0 / 0.1))], 26.83338723)
-        self.assertAlmostEqual(rdf[int(round(9.8 / 0.1))], 3.024406467)
+        rdforig = RadialDistributionFunction(cutoff=10).featurize(self.nacl)
+        rdf = rdforig[0]
+        self.assertAlmostEquals(max(rdf['distances']), 9.9)
+        self.assertEquals(len(rdf['distribution']), 100)
+        self.assertEquals(np.count_nonzero(rdf['distribution']), 11)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(2.8/0.1))], 27.09214168)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(4.0/0.1))], 26.83338723)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(9.8/0.1))], 3.024406467)
 
-        peaks = RadialDistributionFunctionPeaks().featurize(rdf, bin_radius)
+        peaks = RadialDistributionFunctionPeaks().featurize(rdforig)[0]
         self.assertEquals(len(peaks), 2)
         self.assertAlmostEquals(2.8, peaks[0])
         self.assertAlmostEquals(4.0, peaks[1])
 
         # Repeat test with CsCl. Altering cutoff distance and bin_size
-        rdf, bin_radius = RadialDistributionFunction().featurize(
-                self.cscl, cutoff=8, bin_size=0.5)
-        self.assertAlmostEquals(bin_radius.max(), 7.5)
-        self.assertEquals(len(rdf), len(bin_radius))
-        self.assertEquals(len(rdf), 16)
-        self.assertEquals(np.count_nonzero(rdf), 5)
-        self.assertAlmostEqual(rdf[int(round(3.5 / 0.5))], 6.741265585)
-        self.assertAlmostEqual(rdf[int(round(4.0 / 0.5))], 3.937582548)
-        self.assertAlmostEqual(rdf[int(round(7.0 / 0.5))], 1.805505363)
+        rdforig = RadialDistributionFunction(
+              cutoff=8, bin_size=0.5).featurize(self.cscl)
+        rdf = rdforig[0]
+        self.assertAlmostEquals(max(rdf['distances']), 7.5)
+        self.assertEquals(len(rdf['distribution']), 16)
+        self.assertEquals(np.count_nonzero(rdf['distribution']), 5)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(3.5/0.5))], 6.741265585)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(4.0/0.5))], 3.937582548)
+        self.assertAlmostEqual(
+                rdf['distribution'][int(round(7.0/0.5))], 1.805505363)
 
-        peaks = RadialDistributionFunctionPeaks().featurize(
-                rdf, bin_radius, n_peaks=3)
+        peaks = RadialDistributionFunctionPeaks(n_peaks=3).featurize(
+                rdforig)[0]
         self.assertEquals(len(peaks), 3)
         self.assertAlmostEquals(3.5, peaks[0])
         self.assertAlmostEquals(6.5, peaks[1])
@@ -145,53 +154,62 @@ class StructureFeaturesTest(PymatgenTest):
         # Test a few peaks in diamond
         # These expected numbers were derived by performing
         # the calculation in another code
-        p, r = PartialRadialDistributionFunction().featurize(self.diamond)
-        self.assertEquals(len(p), 1)
-        self.assertEquals(p[('C', 'C')][int(round(1.4 / 0.1))], 0)
-        self.assertAlmostEqual(p[('C', 'C')][int(round(1.5 / 0.1))], 1.324451676)
-        self.assertAlmostEqual(r.max(), 19.9)
-        self.assertAlmostEqual(p[('C', 'C')][int(round(19.9 / 0.1))], 0.07197902)
+        prdf = PartialRadialDistributionFunction().featurize(self.diamond)[0]
+        self.assertEquals(len(prdf.values()), 1)
+        self.assertAlmostEqual(
+                prdf[('C', 'C')]['distribution'][int(round(1.4/0.1))], 0)
+        self.assertAlmostEqual(
+                prdf[('C', 'C')]['distribution'][int(round(1.5/0.1))], 1.32445167622)
+        self.assertAlmostEqual(max(prdf[('C', 'C')]['distances']), 20.0)
+        self.assertAlmostEqual(
+                prdf[('C', 'C')]['distribution'][int(round(19.9 / 0.1))], 0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
-        p, r = PartialRadialDistributionFunction().featurize(
-                self.cscl, cutoff=10)
-        self.assertEquals(len(p), 4)
-        self.assertAlmostEqual(r.max(), 9.9)
-        self.assertAlmostEquals(p[('Cs', 'Cl')][int(round(3.6 / 0.1))], 0.477823197)
-        self.assertAlmostEquals(p[('Cl', 'Cs')][int(round(3.6 / 0.1))], 0.477823197)
-        self.assertAlmostEquals(p[('Cs', 'Cs')][int(round(3.6 / 0.1))], 0)
+        prdf = PartialRadialDistributionFunction(cutoff=10).featurize(
+                self.cscl)[0]
+        self.assertEquals(len(prdf.values()), 4)
+        self.assertAlmostEqual(max(prdf[('Cs', 'Cl')]['distances']), 10.0)
+        self.assertAlmostEquals(
+                prdf[('Cs', 'Cl')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
+        self.assertAlmostEquals(
+                prdf[('Cl', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
+        self.assertAlmostEquals(
+                prdf[('Cs', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0)
 
         # Do Ni3Al, make sure it captures the antisymmetry of Ni/Al sites
-        p, r = PartialRadialDistributionFunction().featurize(
-                self.ni3al, cutoff=10, bin_size=0.5)
-        self.assertEquals(len(p), 4)
-        self.assertAlmostEquals(p[('Ni', 'Al')][int(round(2 / 0.5))], 0.125236677)
-        self.assertAlmostEquals(p[('Al', 'Ni')][int(round(2 / 0.5))], 0.37571003)
-        self.assertAlmostEquals(p[('Al', 'Al')][int(round(2 / 0.5))], 0)
+        prdf = PartialRadialDistributionFunction(
+                cutoff=10, bin_size=0.5).featurize(self.ni3al)[0]
+        self.assertEquals(len(prdf.values()), 4)
+        self.assertAlmostEquals(
+                prdf[('Ni', 'Al')]['distribution'][int(round(2 / 0.5))], 0.125236677)
+        self.assertAlmostEquals(
+                prdf[('Al', 'Ni')]['distribution'][int(round(2 / 0.5))], 0.37571003)
+        self.assertAlmostEquals(
+                prdf[('Al', 'Al')]['distribution'][int(round(2 / 0.5))], 0)
 
     def test_redf(self):
         d = ElectronicRadialDistributionFunction().featurize(
-                self.diamond)
+                self.diamond)[0]
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
-        self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
+        self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 6175)
-        self.assertAlmostEqual(int(1000 * d["redf"][len(
+        self.assertAlmostEqual(int(1000 * d["distribution"][len(
             d["distances"]) - 1]), 0)
         d = ElectronicRadialDistributionFunction().featurize(
-                self.nacl)
+                self.nacl)[0]
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
-        self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
+        self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
         self.assertAlmostEqual(int(1000 * d["distances"][56]), 2825)
-        self.assertAlmostEqual(int(1000 * d["redf"][56]), -2108)
+        self.assertAlmostEqual(int(1000 * d["distribution"][56]), -2108)
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 9875)
         d = ElectronicRadialDistributionFunction().featurize(
-                self.cscl)
+                self.cscl)[0]
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
-        self.assertAlmostEqual(int(1000 * d["redf"][0]), 0)
+        self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
         self.assertAlmostEqual(int(1000 * d["distances"][72]), 3625)
-        self.assertAlmostEqual(int(1000 * d["redf"][72]), -2194)
+        self.assertAlmostEqual(int(1000 * d["distribution"][72]), -2194)
         self.assertAlmostEqual(int(1000 * d["distances"][len(
             d["distances"]) - 1]), 7275)
 
@@ -213,13 +231,13 @@ class StructureFeaturesTest(PymatgenTest):
     def test_min_relative_distances(self):
         self.assertAlmostEqual(int(
                 1000 * MinimumRelativeDistances().featurize(
-                self.diamond_no_oxi)[0]), 1105)
+                self.diamond_no_oxi)[0][0]), 1105)
         self.assertAlmostEqual(int(
                 1000 * MinimumRelativeDistances().featurize(
-                self.nacl)[0]), 1005)
+                self.nacl)[0][0]), 1005)
         self.assertAlmostEqual(int(
                 1000 * MinimumRelativeDistances().featurize(
-                self.cscl)[0]), 1006)
+                self.cscl)[0][0]), 1006)
 
     #def test_get_neighbors_of_site_with_index(self):
     #    self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
@@ -231,14 +249,14 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_get_order_parameters(self):
         opvals = SitesOrderParameters().featurize(self.diamond)
-        self.assertAlmostEqual(int(opvals[0][37] * 1000), 999)
-        self.assertAlmostEqual(int(opvals[1][37] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[37][0] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[37][1] * 1000), 999)
         opvals = SitesOrderParameters().featurize(self.nacl)
-        self.assertAlmostEqual(int(opvals[0][38] * 1000), 999)
-        self.assertAlmostEqual(int(opvals[1][38] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[38][0] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[38][1] * 1000), 999)
         opvals = SitesOrderParameters().featurize(self.cscl)
-        self.assertAlmostEqual(int(opvals[0][39] * 1000), 975)
-        self.assertAlmostEqual(int(opvals[1][39] * 1000), 975)
+        self.assertAlmostEqual(int(opvals[39][0] * 1000), 975)
+        self.assertAlmostEqual(int(opvals[39][1] * 1000), 975)
 
     def test_get_order_parameter_stats(self):
         opstats = get_order_parameter_stats(self.diamond)
