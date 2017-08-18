@@ -6,7 +6,6 @@ from operator import itemgetter
 
 import numpy as np
 
-from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects.point_defects import \
         ValenceIonicRadiusEvaluator, get_neighbors_of_site_with_index
 from pymatgen.analysis.structure_analyzer import OrderParameters
