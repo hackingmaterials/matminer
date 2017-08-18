@@ -5,6 +5,7 @@ import math
 from operator import itemgetter
 
 import numpy as np
+import scipy.constants as const
 
 from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects.point_defects import \
@@ -13,6 +14,10 @@ from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.core.periodic_table import Specie
 from pymatgen.core.structure import Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.core.periodic_table import Specie, Element
+from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.io.vasp.inputs import Poscar
 
 from matminer.featurizers.base import BaseFeaturizer
 
@@ -20,6 +25,7 @@ __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
 # ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
 
+ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 
 class PackingFraction(BaseFeaturizer):
     """
@@ -379,10 +385,11 @@ class CoulombMatrix(BaseFeaturizer):
     the nuclear charge and the position of atom i, respectively.
     """
 
-    def __init__(self):
+    def __init__(self, diag_elems=False):
         BaseFeaturizer.__init__(self)
+        self.diag_elems = diag_elems
 
-    def featurize(self, s, diag_elems=False):
+    def featurize(self, s):
         """
         Get Coulomb matrix of input structure.
     
@@ -406,12 +413,12 @@ class CoulombMatrix(BaseFeaturizer):
         for i in range(s.num_sites):
             for j in range(s.num_sites):
                 if i == j:
-                    if diag_elems:
+                    if self.diag_elems:
                         m[i].append(0.5 * z[i] ** 2.4)
                     else:
                         m[i].append(0)
                 else:
-                    d = s.get_distance(i, j)
+                    d = s.get_distance(i, j) * ANG_TO_BOHR
                     m[i].append(z[i] * z[j] / d)
         return np.array(m)
 
@@ -430,6 +437,297 @@ class CoulombMatrix(BaseFeaturizer):
     def implementors(self):
         return ["Nils E. R. Zimmermann"]
 
+
+class SineCoulombMatrix(BaseFeaturizer):
+    """
+    This function generates a variant of the Coulomb matrix developed
+    for periodic crystals by Faber et al. (Inter. J. Quantum Chem.
+    115, 16, 2015). It is identical to the Coulomb matrix, except
+    that the inverse distance function is replaced by the inverse of a
+    sin**2 function of the vector between the sites which is periodic
+    in the dimensions of the structure lattice. It is the best performing
+    coulomb matrix model for machine learning formation energies of 
+    periodic crystals. See paper for details.
+    """
+
+    def __init__(self, diag_elems=False):
+    	"""
+    	Args:
+    		diag_elems (bool): flag indication whether (True) to use
+    	            the original definition of the diagonal elements;
+    	            if set to False (default),
+    	            the diagonal elements are set to 0
+    	"""
+    	BaseFeaturizer.__init__(self)
+    	self.diag_elems = diag_elems
+
+    def featurize(self, s):
+        """
+        Args:
+            s (Structure or Molecule): input structure (or molecule)
+
+        Returns:
+            (Nsites x Nsites matrix) Sine matrix.
+        """
+        sites = s.sites
+        Zs = np.array([site.specie.Z for site in sites])
+        sin_mat = np.zeros((len(sites), len(sites)))
+        coords = np.array([site.frac_coords for site in sites])
+        lattice = s.lattice.matrix
+        pi = np.pi
+
+        for i in range(len(sin_mat)):
+        	for j in range(len(sin_mat)):
+        		if i == j:
+        			if self.diag_elems:
+        				sin_mat[i][i] = 0.5 * Zs[i]**2.4
+        		elif i < j:
+        			vec = coords[i] - coords[j]
+        			coord_vec = np.sin(pi * vec)**2
+        			trig_dist = np.linalg.norm((np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
+        			sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
+        		else:
+        			sin_mat[i][j] = sin_mat[j][i]
+        return sin_mat
+
+    def feature_labels(self):
+        return "sine Coulomb matrix"
+
+    def credits(self):
+        return ("@article {QUA:QUA24917,"
+    			"author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
+    			"title = {Crystal structure representations for machine learning models of formation energies},"
+    			"journal = {International Journal of Quantum Chemistry},"
+    			"volume = {115},"
+    			"number = {16},"
+    			"issn = {1097-461X},"
+    			"url = {http://dx.doi.org/10.1002/qua.24917},"
+    			"doi = {10.1002/qua.24917},"
+    			"pages = {1094--1101},"
+    			"keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
+    			"year = {2015},"
+    			"}")
+
+    def implementors(self):
+        return ["Kyle Bystrom"]
+
+
+class EwaldMatrix(BaseFeaturizer):
+    """
+	This function generates a variant of the Coulomb matrix developed
+    for periodic crystals by Faber et al. (Inter. J. Quantum Chem.
+    115, 16, 2015). Each element M[i,j] is based on an Ewald sum
+    element for the two sites, which the charges equal to the nuclear
+    charge of the species. It is the second best performing
+    coulomb matrix model for machine learning formation energies of 
+    periodic crystals. See paper for details.
+    """
+
+    def __init__(self, Lmax, Gmax):
+    	"""
+    	Args:
+    		Lmax: maximum length of real space lattice vector
+	        Gmax: maximum length of reciprocal space lattice vector
+    	"""
+        BaseFeaturizer.__init__(self)
+        self.Lmax = Lmax
+        self.Gmax = Gmax
+
+    def featurize(self, struct):
+        """
+        Args:
+            struct (Structure or Molecule): input structure (or molecule)
+
+        Returns:
+            (Nsites x Nsites matrix) Ewald matrix.
+        """
+        Lmax = self.Lmax
+        Gmax = self.Gmax
+        sites = struct.sites
+        Zs = np.array([site.specie.Z for site in sites])
+        M = np.zeros((len(sites), len(sites)))
+        coords = np.array([site.frac_coords for site in sites])
+        lattice = struct.lattice
+        reciprocal_lattice = struct.lattice.reciprocal_lattice
+        real_vecs_in_range = lattice.get_points_in_sphere([0,0,0], [0,0,0], Lmax)
+        valid_real_vecs_frac = sorted(real_vecs_in_range, key = lambda x: x[1])
+        valid_real_vecs = [real_vec*lattice.matrix for real_vec in valid_real_vecs_frac]
+        recip_vecs_in_range = reciprocal_lattice.get_points_in_sphere([0,0,0], [0,0,0], Gmax)
+        valid_recip_vecs_frac = sorted(recip_vecs_in_range, key = lambda x: x[1])[1:]
+        valid_recip_vecs = [recip_vec*reciprocal_lattice.matrix for recip_vec in valid_recip_vecs_frac]
+        check_radius = max(lattice.abc)
+        a = (0.01 * len(sites) * np.pi**3 / lattice.volume / ANG_TO_BOHR**3)**(1.0 / 6.0)
+        pi = np.pi
+
+        for i in range(len(M)):
+            for j in range(len(M)):
+                if i <= j:
+                    short_vec = lattice.get_points_in_sphere(sites[i].frac_coords,\
+                		sites[j].frac_coords, check_radius)
+                    short_vec = sorted(short_vec, key = lambda x: x[1])
+                    short_vec = short_vec[1] * lattice.matrix if i == j\
+                	else short_vec[0] * lattice.matrix
+                    x_r = 0
+                    for L in valid_real_vecs:
+                        dist = np.linalg.norm(short_vec + L) * ANG_TO_BOHR
+                        x_r += np.erfc(a * dist) / dist
+                    x_r *= Zs[i] * Zs[j]
+
+                    x_m = 0
+                    for G in valid_recip_vecs:
+                        cos_part = np.cos(G * short_vec)
+                        G_norm_sq = np.linalg.norm(G)**2 / ANG_TO_BOHR**2
+                        x_m += np.exp(-G_norm_sq / (2*a)**2) / G_norm_sq * cos_part
+                    x_m *= Zs[i]*Zs[j] / np.pi / lattice.volume / ANG_TO_BOHR**3
+
+                    if i == j:
+                    	x_r /= 2
+                    	x_m /= 2
+                        x_0 = -Zs[i]**2 * a / np.pi**0.5 -\
+                            Zs[i]**2 / a**2 * np.pi / 2 / lattice.volume / ANG_TO_BOHR**3
+                    else:
+                        x_0 = -(Zs[i]**2 + Zs[j]**2) * a / np.pi**0.5 -\
+                            (Zs[i] / a + Zs[j] / a)**2 * np.pi / 2 / lattice.volume / ANG_TO_BOHR**3
+
+                    M[i][j] = x_r + x_m + x_0
+                else:
+                    M[i][j] = M[j][i]
+        return M
+
+    def feature_labels(self):
+        return "Ewald matrix"
+
+    def credits(self):
+        return ("@article {QUA:QUA24917,"
+				"author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
+				"title = {Crystal structure representations for machine learning models of formation energies},"
+				"journal = {International Journal of Quantum Chemistry},"
+				"volume = {115},"
+				"number = {16},"
+				"issn = {1097-461X},"
+				"url = {http://dx.doi.org/10.1002/qua.24917},"
+				"doi = {10.1002/qua.24917},"
+				"pages = {1094--1101},"
+				"keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
+				"year = {2015},"
+				"}")
+
+    def implementors(self):
+        return ["Kyle Bystrom"]
+
+
+class OrbitalFieldMatrix(BaseFeaturizer):
+    """
+    This function generates an orbital field matrix (OFM) as developed
+    by Pham et al (arXiv, May 2017). Each atom is described by a 32-element
+    vector uniquely representing the valence subshell. A 32x32 matrix is formed
+    by multiplying two atomic vectors. An OFM for an atomic environment is the
+    sum of these matrices for each atom the center atom coordinates with
+    multiplied by a distance function (In this case, 1/r times the weight of
+    the coordinating atomic in the Voronoi Polyhedra method). The OFM of a structure
+    or molecule is the average of the OFMs for all the sites in the structure
+    """
+    def __init__(self):
+    	BaseFeaturizer.__init__(self)
+    	my_ohvs = {}
+    	for Z in range(1,95):
+    		el = Element.from_Z(Z)
+    		my_ohvs[Z] = self.get_ohv(el)
+    		my_ohvs[Z] = np.matrix(my_ohvs[Z])
+    	self.ohvs = my_ohvs
+
+    def get_ohv(self, sp):
+    	el_struct = sp.full_electronic_structure
+    	ohd = {j: {i+1: 0 for i in range(2*(2*j+1))} for j in range(4)}
+    	nume = 0
+    	shell_num = 0
+    	max_n = el_struct[-1][0]
+    	while shell_num < len(el_struct):
+    		if el_struct[-1-shell_num][0] < max_n-2:
+    			shell_num += 1
+    			continue
+    		elif el_struct[-1-shell_num][0] < max_n-1 and el_struct[-1-shell_num][1] != u'f':
+    			shell_num += 1
+    			continue
+    		elif el_struct[-1-shell_num][0] < max_n and (el_struct[-1-shell_num][1] != u'd' and el_struct[-1-shell_num][1] != u'f'):
+    			shell_num += 1
+    			continue
+    		curr_shell = el_struct[-1 - shell_num]
+    		if curr_shell[1] == u's': l=0
+    		elif curr_shell[1] == u'p': l=1
+    		elif curr_shell[1] == u'd': l=2
+    		elif curr_shell[1] == u'f': l=3
+    		ohd[l][curr_shell[2]] = 1
+    		nume += curr_shell[2]
+    		shell_num += 1
+    	my_ohv = np.zeros(32, np.int)
+    	k = 0
+    	for j in range(4):
+    		for i in range(2*(2*j+1)):
+    			my_ohv[k] = ohd[j][i+1]
+    			k += 1
+    	return my_ohv
+
+    def get_single_ofm(self, site, site_dict):
+        ohvs = self.ohvs
+        atom_ofm = np.matrix(np.zeros((32,32)))
+        ref_atom = ohvs[site.specie.Z]
+        for other_site in site_dict:
+            scale = site_dict[other_site]
+            other_atom = ohvs[other_site.specie.Z]
+            atom_ofm += other_atom.T * ref_atom * scale / site.distance(other_site) / ANG_TO_BOHR
+        return atom_ofm
+
+    def get_atom_ofms(self, struct, symm=False):
+    	ofms = []
+    	vcf = VCF(struct, allow_pathological=True)
+    	if symm:
+    		symm_struct = SpacegroupAnalyzer(struct).get_symmetrized_structure()
+    		indices = [lst[0] for lst in symm_struct.equivalent_indices]
+    		counts = [len(lst) for lst in symm_struct.equivalent_indices]
+    	else:
+    		indices = [i for i in range(len(struct.sites))]
+    	for index in indices:
+    		ofms.append(self.get_single_ofm(struct.sites[index], vcf.get_voronoi_polyhedra(index)))
+    	if symm:
+    		return ofms, counts
+    	return ofms
+
+    def get_mean_ofm(self, ofms, counts):
+    	ofms = [ofm*c for ofm, c in zip(ofms, counts)]
+    	return sum(ofms) / sum(counts)
+
+    def get_structure_ofm(self, struct):
+    	ofms, counts = self.get_atom_ofms(struct, True)
+    	return self.get_mean_ofm(ofms, counts)
+
+    def featurize(self, s):
+        s *= [3,3,3]
+        ofms, counts = self.get_atom_ofms(s, True)
+        mean_ofm = self.get_mean_ofm(ofms, counts)
+        return mean_ofm
+
+    def feature_labels(self):
+    	return "orbital field matrix"
+
+    def credits(self):
+        return ("@ARTICLE{2017arXiv170501043P,"
+                "   author = {{Pham}, T. L. and {Kino}, H. and {Terakura}, K. and {Miyake}, T. and "
+                "   {Takigawa}, I. and {Tsuda}, K. and {Dam}, H. C.},"
+                "    title = \"{Machine learning reveals orbital interaction in crystalline materials}\","
+                "  journal = {ArXiv e-prints},"
+                "archivePrefix = \"arXiv\","
+                "   eprint = {1705.01043},"
+                " primaryClass = \"cond-mat.mtrl-sci\","
+                " keywords = {Condensed Matter - Materials Science},"
+                "     year = 2017,"
+                "    month = may,"
+                "   adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170501043P},"
+                "  adsnote = {Provided by the SAO/NASA Astrophysics Data System}"
+                "}")
+
+    def implementors(self):
+        return ["Kyle Bystrom"]
 
 class MinimumRelativeDistances(BaseFeaturizer):
     """
