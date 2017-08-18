@@ -18,8 +18,9 @@ from matminer.featurizers.base import BaseFeaturizer
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
-# ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
-
+# To do:
+# - Use local_env-based neighbor finding
+#   once this is part of the stable Pymatgen version.
 
 class PackingFraction(BaseFeaturizer):
     """
@@ -44,16 +45,16 @@ class PackingFraction(BaseFeaturizer):
         total_rad = 0
         for site in s:
             total_rad += site.specie.atomic_radius ** 3
-        return 4 * math.pi * total_rad / (3 * s.volume)
+        return [4 * math.pi * total_rad / (3 * s.volume)]
 
     def feature_labels(self):
-        return "Packing fraction"
+        return ["Packing fraction"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class VolumePerSite(BaseFeaturizer):
@@ -76,16 +77,16 @@ class VolumePerSite(BaseFeaturizer):
         if not s.is_ordered:
             raise ValueError("Disordered structure support not built yet.")
 
-        return s.volume / len(s)
+        return [s.volume / len(s)]
 
     def feature_labels(self):
-        return "Volume per site"
+        return ["Volume per site"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class Density(BaseFeaturizer):
@@ -106,16 +107,16 @@ class Density(BaseFeaturizer):
             f (float): density.
         """
 
-        return s.density
+        return [s.density]
 
     def feature_labels(self):
-        return "Density"
+        return ["Density"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class RadialDistributionFunction(BaseFeaturizer):
@@ -157,17 +158,19 @@ class RadialDistributionFunction(BaseFeaturizer):
         shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         number_density = s.num_sites / s.volume
         rdf = dist_hist / shell_vol / number_density
-    
-        return rdf, dist_bins[:-1]
+        rdf_dict = {}
+        for d, r in zip(dist_bins[:-1], rdf):
+            rdf_dict[d] = r
+        return [rdf_dict]
 
     def feature_labels(self):
-        return "Density"
+        return ["Radial distribution function"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class PartialRadialDistributionFunction(BaseFeaturizer):
@@ -236,18 +239,18 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             n_alpha = composition[key[0]] * s.num_sites
             rdf = dist_hist / shell_volume / n_alpha
     
-            prdf[key] = rdf
+            prdf[key] = {"prdf": rdf, "dist": dist_bins}
     
-        return prdf, dist_bins[:-1]
+        return [prdf]
 
     def feature_labels(self):
-        return "Partial radial distribution function"
+        return ["Partial radial distribution functions"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
@@ -275,16 +278,16 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
     
         # LW 3May17: Sorting the whole array isn't necessary, 
         #   but probably quick given typical RDF sizes are small
-        return rdf_bins[np.argsort(rdf)[-n_peaks:]][::-1]
+        return [rdf_bins[np.argsort(rdf)[-n_peaks:]][::-1]]
 
     def feature_labels(self):
-        return "Radial distribution function peaks"
+        return ["Radial distribution function peaks"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
@@ -352,10 +355,10 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                         this_charge * neigh_charge) / (
                         struct.num_sites * dist)
     
-        return redf_dict
+        return [redf_dict]
 
     def feature_labels(self):
-        return "Electronic radial distribution function"
+        return ["Electronic radial distribution function"]
 
     def credits(self):
         return ("@article{title={Method for the computational comparison"
@@ -366,7 +369,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}")
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ("Nils E. R. Zimmermann")
 
 
 class CoulombMatrix(BaseFeaturizer):
@@ -465,16 +468,16 @@ class MinimumRelativeDistances(BaseFeaturizer):
                     vire.radii[site.species_string] +
                     vire.radii[neigh.species_string]) for neigh, dist in \
                     vire.structure.get_neighbors(site, cutoff)]))
-        return min_rel_dists[:]
+        return [min_rel_dists[:]]
 
     def feature_labels(self):
-        return "Minimum relative distances"
+        return ["Minimum relative distances"]
 
     def credits(self):
         return ("")
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ("Nils E. R. Zimmermann")
 
 
 class SitesOrderParameters(BaseFeaturizer):
@@ -486,22 +489,22 @@ class SitesOrderParameters(BaseFeaturizer):
     def __init__(self):
         BaseFeaturizer.__init__(self)
         self._types = ["cn", "lin"]
-        self._labels = ["cn", "lin"]
+        self._labels = ["CN", "q_lin"]
         self._paras = [[], []]
         for i in range(5, 180, 5):
             self._types.append("bent")
-            self._labels.append("bent{}".format(i))
+            self._labels.append("q_bent_{}".format(i))
             self._paras.append([float(i), 0.0667])
         for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
                 "sq_pyr", "tri_bipyr"]:
             self._types.append(t)
-            self._labels.append(t)
+            self._labels.append('q_'+t)
             self._paras.append([])
 
     def featurize(self, s, pneighs=None):
         """
-        Calculate all sites' OPs.
-    
+        Calculate all sites' local structure order parameters (LSOPs).
+
         Args:
             s: Pymatgen Structure object.
             pneighs: (dict) specification and parameters of
@@ -510,7 +513,7 @@ class SitesOrderParameters(BaseFeaturizer):
                     in Pymatgen for more details).
     
             Returns:
-                opvals: (2D array of floats) OP values of all sites'
+                opvals: (2D array of floats) LSOP values of all sites'
                 (1st dimension) order parameters (2nd dimension). 46 order
                 parameters are computed per site: q_cn (coordination
                 number), q_lin, 35 x q_bent (starting with a target angle
@@ -528,10 +531,10 @@ class SitesOrderParameters(BaseFeaturizer):
             for j, opval in enumerate(opvals[i]):
                 if opval is None:
                     opvals[i][j] = 0.0
-        return opvals
+        return [opvals]
 
     def feature_labels(self):
-        return self._labels
+        return [self._labels]
 
     def credits(self):
         return ("@article{zimmermann_jain_2017, title={Applications of order"
@@ -539,7 +542,7 @@ class SitesOrderParameters(BaseFeaturizer):
                 "Zimmermann, N. E. R. and Jain, A.}, year={2017}}")
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ("Nils E. R. Zimmermann")
 
 
 def get_order_parameter_stats(
@@ -556,7 +559,7 @@ def get_order_parameter_stats(
                 get_neighbors_of_site_with_index function
                 for more details).
         convert_none_to_zero (bool): flag indicating whether or not
-                to convert None values in OPs to zero (cf.,
+                to convert None values in LSOPs to zero (cf.,
                 get_order_parameters function).
         delta_op (float): bin size of histogram that is computed
                 in order to identify peak locations.
@@ -657,62 +660,5 @@ def get_order_parameter_feature_vectors_difference(
         for stattype, val in stats.items():
             v.append(val - d2[optype][stattype])
     return np.array(v)
-
-
-def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
-    """
-    Returns the motif type of site with index n in structure struct;
-    currently featuring "tetrahedral", "octahedral", "bcc", and "cp"
-    (close-packed: fcc and hcp).  If the site is not recognized
-    or if it has been recognized as two different motif types,
-    the function labels the site as "unrecognized".
-
-    Args:
-        struct (Structure): input structure.
-        n (int): index of site in Structure object for which motif type
-                is to be determined.
-        pneighs (dict): specification and parameters of neighbor-finding
-                approach (cf., function get_neighbors_of_site_with_index).
-        thresh (dict): thresholds for motif criteria (currently, required
-                keys and their default values are "qtet": 0.5,
-                "qoct": 0.5, "qbcc": 0.5, "q6": 0.4).
-
-    Returns: motif type (str).
-    """
-
-    if thresh is None:
-        thresh = {
-            "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
-            "qtribipyr": 0.8, "qsqpyr": 0.5}
-
-    ops = SitesOrderParameters().featurize(struct, pneighs=pneighs)
-    cn = int(ops[n][0] + 0.5)
-    motif_type = "unrecognized"
-    nmotif = 0
-
-    if cn == 4 and ops[n][37] > thresh["qtet"]:
-        motif_type = "tetrahedral"
-        nmotif += 1
-    if cn == 5 and ops[n][45] > thresh["qsqpyr"]:
-       motif_type = "square bipyramidal"
-       nmotif += 1
-    if cn == 5 and ops[n][46] > thresh["qtribipyr"]:
-       motif_type = "trigonal bipyramidal"
-       nmotif += 1
-    if cn == 6 and ops[n][38] > thresh["qoct"]:
-        motif_type = "octahedral"
-        nmotif += 1
-    if cn == 8 and (ops[n][39] > thresh["qbcc"] and ops[n][37] < thresh["qtet"]):
-        motif_type = "bcc"
-        nmotif += 1
-    if cn == 12 and (ops[n][42] > thresh["q6"] and ops[n][37] < thresh["q6"] and \
-                                 ops[n][38] < thresh["q6"] and ops[n][39] < thresh["q6"]):
-        motif_type = "cp"
-        nmotif += 1
-
-    if nmotif > 1:
-        motif_type = "unrecognized"
-
-    return motif_type
 
 
