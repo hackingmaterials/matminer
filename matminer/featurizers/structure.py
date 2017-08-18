@@ -6,6 +6,7 @@ from operator import itemgetter
 
 import numpy as np
 import scipy.constants as const
+import scipy.special
 
 from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects.point_defects import \
@@ -512,110 +513,6 @@ class SineCoulombMatrix(BaseFeaturizer):
         return ["Kyle Bystrom"]
 
 
-class EwaldMatrix(BaseFeaturizer):
-    """
-	This function generates a variant of the Coulomb matrix developed
-    for periodic crystals by Faber et al. (Inter. J. Quantum Chem.
-    115, 16, 2015). Each element M[i,j] is based on an Ewald sum
-    element for the two sites, which the charges equal to the nuclear
-    charge of the species. It is the second best performing
-    coulomb matrix model for machine learning formation energies of 
-    periodic crystals. See paper for details.
-    """
-
-    def __init__(self, Lmax, Gmax):
-    	"""
-    	Args:
-    		Lmax: maximum length of real space lattice vector
-	        Gmax: maximum length of reciprocal space lattice vector
-    	"""
-        BaseFeaturizer.__init__(self)
-        self.Lmax = Lmax
-        self.Gmax = Gmax
-
-    def featurize(self, struct):
-        """
-        Args:
-            struct (Structure or Molecule): input structure (or molecule)
-
-        Returns:
-            (Nsites x Nsites matrix) Ewald matrix.
-        """
-        Lmax = self.Lmax
-        Gmax = self.Gmax
-        sites = struct.sites
-        Zs = np.array([site.specie.Z for site in sites])
-        M = np.zeros((len(sites), len(sites)))
-        coords = np.array([site.frac_coords for site in sites])
-        lattice = struct.lattice
-        reciprocal_lattice = struct.lattice.reciprocal_lattice
-        real_vecs_in_range = lattice.get_points_in_sphere([0,0,0], [0,0,0], Lmax)
-        valid_real_vecs_frac = sorted(real_vecs_in_range, key = lambda x: x[1])
-        valid_real_vecs = [real_vec*lattice.matrix for real_vec in valid_real_vecs_frac]
-        recip_vecs_in_range = reciprocal_lattice.get_points_in_sphere([0,0,0], [0,0,0], Gmax)
-        valid_recip_vecs_frac = sorted(recip_vecs_in_range, key = lambda x: x[1])[1:]
-        valid_recip_vecs = [recip_vec*reciprocal_lattice.matrix for recip_vec in valid_recip_vecs_frac]
-        check_radius = max(lattice.abc)
-        a = (0.01 * len(sites) * np.pi**3 / lattice.volume / ANG_TO_BOHR**3)**(1.0 / 6.0)
-        pi = np.pi
-
-        for i in range(len(M)):
-            for j in range(len(M)):
-                if i <= j:
-                    short_vec = lattice.get_points_in_sphere(sites[i].frac_coords,\
-                		sites[j].frac_coords, check_radius)
-                    short_vec = sorted(short_vec, key = lambda x: x[1])
-                    short_vec = short_vec[1] * lattice.matrix if i == j\
-                	else short_vec[0] * lattice.matrix
-                    x_r = 0
-                    for L in valid_real_vecs:
-                        dist = np.linalg.norm(short_vec + L) * ANG_TO_BOHR
-                        x_r += np.erfc(a * dist) / dist
-                    x_r *= Zs[i] * Zs[j]
-
-                    x_m = 0
-                    for G in valid_recip_vecs:
-                        cos_part = np.cos(G * short_vec)
-                        G_norm_sq = np.linalg.norm(G)**2 / ANG_TO_BOHR**2
-                        x_m += np.exp(-G_norm_sq / (2*a)**2) / G_norm_sq * cos_part
-                    x_m *= Zs[i]*Zs[j] / np.pi / lattice.volume / ANG_TO_BOHR**3
-
-                    if i == j:
-                    	x_r /= 2
-                    	x_m /= 2
-                        x_0 = -Zs[i]**2 * a / np.pi**0.5 -\
-                            Zs[i]**2 / a**2 * np.pi / 2 / lattice.volume / ANG_TO_BOHR**3
-                    else:
-                        x_0 = -(Zs[i]**2 + Zs[j]**2) * a / np.pi**0.5 -\
-                            (Zs[i] / a + Zs[j] / a)**2 * np.pi / 2 / lattice.volume / ANG_TO_BOHR**3
-
-                    M[i][j] = x_r + x_m + x_0
-                else:
-                    M[i][j] = M[j][i]
-        return M
-
-    def feature_labels(self):
-        return "Ewald matrix"
-
-    def credits(self):
-        return ("@article {QUA:QUA24917,"
-				"author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
-				"title = {Crystal structure representations for machine learning models of formation energies},"
-				"journal = {International Journal of Quantum Chemistry},"
-				"volume = {115},"
-				"number = {16},"
-				"issn = {1097-461X},"
-				"url = {http://dx.doi.org/10.1002/qua.24917},"
-				"doi = {10.1002/qua.24917},"
-				"pages = {1094--1101},"
-				"keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
-				"year = {2015},"
-				"}")
-
-    def implementors(self):
-        return ["Kyle Bystrom"]
-
-
 class OrbitalFieldMatrix(BaseFeaturizer):
     """
     This function generates an orbital field matrix (OFM) as developed
@@ -627,6 +524,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     the coordinating atomic in the Voronoi Polyhedra method). The OFM of a structure
     or molecule is the average of the OFMs for all the sites in the structure
     """
+
     def __init__(self):
     	BaseFeaturizer.__init__(self)
     	my_ohvs = {}
@@ -637,6 +535,15 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     	self.ohvs = my_ohvs
 
     def get_ohv(self, sp):
+        """
+        Get the "one-hot-vector" for pymatgen Element sp. This 32-length
+        vector represents the valence shell of the given element.
+        Args:
+            sp (Element): element whose ohv should be returned
+
+        Returns:
+            my_ohv (numpy array length 32): ohv for sp
+        """
     	el_struct = sp.full_electronic_structure
     	ohd = {j: {i+1: 0 for i in range(2*(2*j+1))} for j in range(4)}
     	nume = 0
@@ -669,6 +576,19 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     	return my_ohv
 
     def get_single_ofm(self, site, site_dict):
+        """
+        Gets the orbital field matrix for a single chemical environment,
+        where site is the center atom whose environment is characterized and
+        site_dict is a dictionary of site : weight, where the weights are the
+        Voronoi Polyhedra weights of the corresponding coordinating sites.
+
+        Args:
+            site (Site): center atom
+            site_dict (dict of Site:float): chemical environment
+
+        Returns:
+            atom_ofm (32 X 32 numpy matrix): ofm for site
+        """
         ohvs = self.ohvs
         atom_ofm = np.matrix(np.zeros((32,32)))
         ref_atom = ohvs[site.specie.Z]
@@ -679,6 +599,24 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         return atom_ofm
 
     def get_atom_ofms(self, struct, symm=False):
+        """
+        Calls get_single_ofm for every site in struct. If symm=True,
+        get_single_ofm is called for symmetrically distinct sites, and
+        counts is constructed such that ofms[i] occurs counts[i] times
+        in the structure
+
+        Args:
+            struct (Structure): structure for find ofms for
+            symm (bool): whether to calculate ofm for only symmetrically
+                    distinct sites
+
+        Returns:
+            ofms ([32 X 32 matrix] X len(struct)): ofms for struct
+            if symm:
+                ofms ([32 X 32 matrix] X number of symmetrically distinct sites):
+                    ofms for struct
+                counts: number of identical sites for each ofm
+        """
     	ofms = []
     	vcf = VCF(struct, allow_pathological=True)
     	if symm:
@@ -688,20 +626,41 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     	else:
     		indices = [i for i in range(len(struct.sites))]
     	for index in indices:
-    		ofms.append(self.get_single_ofm(struct.sites[index], vcf.get_voronoi_polyhedra(index)))
+    		ofms.append(self.get_single_ofm(struct.sites[index],\
+                vcf.get_voronoi_polyhedra(index)))
     	if symm:
     		return ofms, counts
     	return ofms
 
     def get_mean_ofm(self, ofms, counts):
+        """
+        Averages a list of ofms, weights by counts
+        """
     	ofms = [ofm*c for ofm, c in zip(ofms, counts)]
     	return sum(ofms) / sum(counts)
 
     def get_structure_ofm(self, struct):
+        """
+        Calls get_mean_ofm on the results of get_atom_ofms
+        to give a 32 X 32 matrix characterizing a structure
+        """
     	ofms, counts = self.get_atom_ofms(struct, True)
     	return self.get_mean_ofm(ofms, counts)
 
     def featurize(self, s):
+        """
+        Makes a supercell for structure s (to protect sites
+        from coordinating with themselves), and then finds the mean
+        of the orbital field matrices of each site to characterize
+        a structure
+
+        Args:
+            s (Structure): structure to characterize
+
+        Returns:
+            mean_ofm (32 X 32 matrix): orbital field matrix
+                    characterizing s
+        """
         s *= [3,3,3]
         ofms, counts = self.get_atom_ofms(s, True)
         mean_ofm = self.get_mean_ofm(ofms, counts)
@@ -712,18 +671,18 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
     def credits(self):
         return ("@ARTICLE{2017arXiv170501043P,"
-                "   author = {{Pham}, T. L. and {Kino}, H. and {Terakura}, K. and {Miyake}, T. and "
-                "   {Takigawa}, I. and {Tsuda}, K. and {Dam}, H. C.},"
-                "    title = \"{Machine learning reveals orbital interaction in crystalline materials}\","
-                "  journal = {ArXiv e-prints},"
+                "author = {{Pham}, T. L. and {Kino}, H. and {Terakura}, K. and {Miyake}, T. and "
+                "{Takigawa}, I. and {Tsuda}, K. and {Dam}, H. C.},"
+                "title = \"{Machine learning reveals orbital interaction in crystalline materials}\","
+                "journal = {ArXiv e-prints},"
                 "archivePrefix = \"arXiv\","
-                "   eprint = {1705.01043},"
-                " primaryClass = \"cond-mat.mtrl-sci\","
-                " keywords = {Condensed Matter - Materials Science},"
-                "     year = 2017,"
-                "    month = may,"
-                "   adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170501043P},"
-                "  adsnote = {Provided by the SAO/NASA Astrophysics Data System}"
+                "eprint = {1705.01043},"
+                "primaryClass = \"cond-mat.mtrl-sci\","
+                "keywords = {Condensed Matter - Materials Science},"
+                "year = 2017,"
+                "month = may,"
+                "adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170501043P},"
+                "adsnote = {Provided by the SAO/NASA Astrophysics Data System}"
                 "}")
 
     def implementors(self):

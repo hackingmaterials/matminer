@@ -17,8 +17,7 @@ from matminer.featurizers.structure import PackingFraction, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
     SitesOrderParameters, get_order_parameter_stats, \
-    CoulombMatrix, SineCoulombMatrix, EwaldMatrix, OrbitalFieldMatrix
-
+    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix
 
 class StructureFeaturesTest(PymatgenTest):
     def setUp(self):
@@ -218,6 +217,10 @@ class StructureFeaturesTest(PymatgenTest):
         mtarget = [[36.8581, 6.147068], [6.147068, 36.8581]]
         self.assertAlmostEqual(
             np.linalg.norm(sin_mat - np.array(mtarget)), 0.0, places = 4)
+        scm = SineCoulombMatrix()
+        sin_mat = scm.featurize(self.diamond)
+        self.assertEquals(sin_mat[0][0], 0)
+        self.assertEquals(sin_mat[1][1], 0)
     
     def test_orbital_field_matrix(self):
         ofm_maker = OrbitalFieldMatrix()
@@ -227,12 +230,13 @@ class StructureFeaturesTest(PymatgenTest):
         mtarget[1][3] = 1.4789015#1.3675444
         mtarget[3][1] = 1.4789015#1.3675444
         mtarget[3][3] = 1.4789015#1.3675444 if for a coord# of eaxactly 4
+        for i in range(32):
+            for j in range(32):
+                if not i in [1, 3] and not j in [1, 3]:
+                    self.assertEquals(ofm[i, j], 0.0)
         mtarget = np.matrix(mtarget)
         self.assertAlmostEqual(
             np.linalg.norm(ofm - mtarget), 0.0, places = 4)
-
-    def test_ewald_matrix(self):
-        
     
     def test_min_relative_distances(self):
         self.assertAlmostEqual(int(
