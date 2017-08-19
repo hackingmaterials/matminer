@@ -1,16 +1,16 @@
 from __future__ import division, unicode_literals, print_function
 
 import itertools
-import math
+from math import pi, fabs
 from operator import itemgetter
+import warnings
 
 import numpy as np
 import scipy.constants as const
 import scipy.special
 
-from pymatgen.analysis.bond_valence import BV_PARAMS
 from pymatgen.analysis.defects.point_defects import \
-        ValenceIonicRadiusEvaluator, get_neighbors_of_site_with_index
+        ValenceIonicRadiusEvaluator
 from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.core.periodic_table import Specie
 from pymatgen.core.structure import Element
@@ -27,6 +27,9 @@ __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
 # ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
 
 ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
+# To do:
+# - Use local_env-based neighbor finding
+#   once this is part of the stable Pymatgen version.
 
 class PackingFraction(BaseFeaturizer):
     """
@@ -51,16 +54,16 @@ class PackingFraction(BaseFeaturizer):
         total_rad = 0
         for site in s:
             total_rad += site.specie.atomic_radius ** 3
-        return 4 * math.pi * total_rad / (3 * s.volume)
+        return [4 * pi * total_rad / (3 * s.volume)]
 
     def feature_labels(self):
-        return "Packing fraction"
+        return ["Packing fraction"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class VolumePerSite(BaseFeaturizer):
@@ -83,16 +86,16 @@ class VolumePerSite(BaseFeaturizer):
         if not s.is_ordered:
             raise ValueError("Disordered structure support not built yet.")
 
-        return s.volume / len(s)
+        return [s.volume / len(s)]
 
     def feature_labels(self):
-        return "Volume per site"
+        return ["Volume per site"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class Density(BaseFeaturizer):
@@ -113,34 +116,37 @@ class Density(BaseFeaturizer):
             f (float): density.
         """
 
-        return s.density
+        return [s.density]
 
     def feature_labels(self):
-        return "Density"
+        return ["Density"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class RadialDistributionFunction(BaseFeaturizer):
     """
     Calculate the radial distribution function (RDF) of a crystal
     structure.
+    Args:
+        cutoff: (float) distance up to which to calculate the RDF.
+        bin_size: (float) size of each bin of the (discrete) RDF.
     """
 
-    def __init__(self):
+    def __init__(self, cutoff=20.0, bin_size=0.1):
+        self.cutoff = cutoff
+        self.bin_size = bin_size
         BaseFeaturizer.__init__(self)
 
-    def featurize(self, s, cutoff=20.0, bin_size=0.1):
+    def featurize(self, s):
         """
         Get RDF of the input structure.
         Args:
             s: Pymatgen Structure object.
-            cutoff: (float) distance up to which to calculate the RDF.
-            bin_size: (float) size of each bin of the (discrete) RDF.
 
         Returns:
             rdf, dist: (tuple of arrays) the first element is the
@@ -151,30 +157,31 @@ class RadialDistributionFunction(BaseFeaturizer):
             raise ValueError("Disordered structure support not built yet")
     
         # Get the distances between all atoms
-        neighbors_lst = s.get_all_neighbors(cutoff)
+        neighbors_lst = s.get_all_neighbors(self.cutoff)
         all_distances = np.concatenate(
             tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
     
         # Compute a histogram
+        rdf_dict = {}
         dist_hist, dist_bins = np.histogram(
-                all_distances, bins=np.arange(0, cutoff + bin_size, bin_size),
-                density=False)
+                all_distances, bins=np.arange(
+                0, self.cutoff + self.bin_size, self.bin_size), density=False)
     
         # Normalize counts
-        shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        shell_vol = 4.0 / 3.0 * pi * (np.power(
+                dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         number_density = s.num_sites / s.volume
         rdf = dist_hist / shell_vol / number_density
-    
-        return rdf, dist_bins[:-1]
+        return [{'distances': dist_bins[:-1], 'distribution': rdf}]
 
     def feature_labels(self):
-        return "Density"
+        return ["Radial distribution function"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class PartialRadialDistributionFunction(BaseFeaturizer):
@@ -184,18 +191,21 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     broken down for each pair of atom types.  The PRDF was proposed as a
     structural descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
+    Args:
+        cutoff: (float) distance up to which to calculate the RDF.
+        bin_size: (float) size of each bin of the (discrete) RDF.
     """
 
-    def __init__(self):
+    def __init__(self, cutoff=20.0, bin_size=0.1):
         BaseFeaturizer.__init__(self)
+        self.cutoff = cutoff
+        self.bin_size = bin_size
 
-    def featurize(self, s, cutoff=20.0, bin_size=0.1):
+    def featurize(self, s):
         """
         Get PRDF of the input structure.
         Args:
             s: Pymatgen Structure object.
-            cutoff: (float) distance up to which to calculate the RDF.
-            bin_size: (float) size of each bin of the (discrete) RDF.
 
         Returns:
             prdf, dist: (tuple of arrays) the first element is a
@@ -210,7 +220,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         composition = s.composition.fractional_composition.to_reduced_dict
     
         # Get the distances between all atoms
-        neighbors_lst = s.get_all_neighbors(cutoff)
+        neighbors_lst = s.get_all_neighbors(self.cutoff)
     
         # Sort neighbors by type
         distances_by_type = {}
@@ -232,8 +242,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     
         # Compute and normalize the prdfs
         prdf = {}
-        dist_bins = np.arange(0, cutoff + bin_size, bin_size)
-        shell_volume = 4.0 / 3.0 * math.pi * (
+        dist_bins = np.arange(0, self.cutoff + self.bin_size, self.bin_size)
+        shell_volume = 4.0 / 3.0 * pi * (
                 np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
@@ -243,55 +253,56 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             n_alpha = composition[key[0]] * s.num_sites
             rdf = dist_hist / shell_volume / n_alpha
     
-            prdf[key] = rdf
-    
-        return prdf, dist_bins[:-1]
+            prdf[key] = {'distances': dist_bins, 'distribution': rdf}
+
+        return [prdf]
+
 
     def feature_labels(self):
-        return "Partial radial distribution function"
+        return ["Partial radial distribution functions"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
     """
     Determine the location of the highest peaks in the radial distribution
     function (RDF) of a structure.
+    Args:
+        n_peaks: (int) number of the top peaks to return .
     """
 
-    def __init__(self):
+    def __init__(self, n_peaks=2):
         BaseFeaturizer.__init__(self)
+        self.n_peaks = n_peaks
 
-    def featurize(self, rdf, rdf_bins, n_peaks=2):
+    def featurize(self, rdf):
         """
         Get location of highest peaks in RDF.
     
         Args:
             rdf: (ndarray) RDF as obtained from the
                     RadialDistributionFunction class.
-            rdf_bins: (ndarray) inner radius of the rdf bin.
-            n_peaks: (int) number of the top peaks to return .
     
         Returns: (ndarray) distances of highest peaks in descending order
                 of the peak height
         """
     
-        # LW 3May17: Sorting the whole array isn't necessary, 
-        #   but probably quick given typical RDF sizes are small
-        return rdf_bins[np.argsort(rdf)[-n_peaks:]][::-1]
+        return [[rdf[0]['distances'][i] for i in np.argsort(
+                rdf[0]['distribution'])[-self.n_peaks:]][::-1]]
 
     def feature_labels(self):
-        return "Radial distribution function peaks"
+        return ["Radial distribution function peaks"]
 
     def credits(self):
-        return ""
+        return ("")
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ("Saurabh Bajaj")
 
 
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
@@ -304,21 +315,24 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
     are weighted by electrostatic interactions inferred
     from atomic partial charges. Atomic charges are obtained
     from the ValenceIonicRadiusEvaluator class.
+    Args:
+        cutoff: (float) distance up to which the ReDF is to be
+                calculated (default: longest diagaonal in
+                primitive cell).
+        dr: (float) width of bins ("x"-axis) of ReDF (default: 0.05 A).
     """
 
-    def __init__(self):
+    def __init__(self, cutoff=None, dr=0.05):
         BaseFeaturizer.__init__(self)
+        self.cutoff = cutoff
+        self.dr = dr
 
-    def featurize(self, s, cutoff=None, dr=0.05):
+    def featurize(self, s):
         """
         Get ReDF of input structure.
 
         Args:
             s: input Structure object.
-            cutoff: (float) distance up to which the ReDF is to be
-                    calculated (default: longest diagaonal in
-                    primitive cell).
-            dr: (float) width of bins ("x"-axis) of ReDF (default: 0.05 A).
 
         Returns: (dict) a copy of the electronic radial distribution
                 functions (ReDF) as a dictionary. The distance list
@@ -326,7 +340,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 'distances'; the ReDF itself is accessible via key
                 'redf'.
         """
-        if dr <= 0:
+        if self.dr <= 0:
             raise ValueError("width of bins for ReDF must be >0")
     
         # Make structure primitive.
@@ -335,34 +349,34 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         # Add oxidation states.
         struct = ValenceIonicRadiusEvaluator(struct).structure
     
-        if cutoff is None:
+        if self.cutoff is None:
             # Set cutoff to longest diagonal.
             a = struct.lattice.matrix[0]
             b = struct.lattice.matrix[1]
             c = struct.lattice.matrix[2]
-            cutoff = max(
+            self.cutoff = max(
                 [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c),
                  np.linalg.norm(a - b + c), np.linalg.norm(a + b - c)])
     
-        nbins = int(cutoff / dr) + 1
+        nbins = int(self.cutoff / self.dr) + 1
         redf_dict = {"distances": np.array(
-                [(i + 0.5) * dr for i in range(nbins)]),
-                "redf": np.zeros(nbins, dtype=np.float)}
+                [(i + 0.5) * self.dr for i in range(nbins)]),
+                "distribution": np.zeros(nbins, dtype=np.float)}
     
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
-            neighs_dists = struct.get_neighbors(site, cutoff)
+            neighs_dists = struct.get_neighbors(site, self.cutoff)
             for neigh, dist in neighs_dists:
                 neigh_charge = float(neigh.specie.oxi_state)
-                bin_index = int(dist / dr)
-                redf_dict["redf"][bin_index] += (
+                bin_index = int(dist / self.dr)
+                redf_dict["distribution"][bin_index] += (
                         this_charge * neigh_charge) / (
                         struct.num_sites * dist)
     
-        return redf_dict
+        return [redf_dict]
 
     def feature_labels(self):
-        return "Electronic radial distribution function"
+        return ["Electronic radial distribution function"]
 
     def credits(self):
         return ("@article{title={Method for the computational comparison"
@@ -373,7 +387,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}")
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ("Nils E. R. Zimmermann")
 
 
 class CoulombMatrix(BaseFeaturizer):
@@ -696,10 +710,15 @@ class MinimumRelativeDistances(BaseFeaturizer):
     absolute distances, r_ij, to account for the fact that different
     atoms/species have different sizes.  The function uses the
     valence-ionic radius estimator implemented in Pymatgen.
+    Args:
+        cutoff: (float) (absolute) distance up to which tentative
+                closest neighbors (on the basis of relative distances)
+                are to be determined.
     """
 
-    def __init__(self):
+    def __init__(self, cutoff=10.0):
         BaseFeaturizer.__init__(self)
+        self.cutoff = cutoff
 
     def featurize(self, s, cutoff=10.0):
         """
@@ -707,9 +726,6 @@ class MinimumRelativeDistances(BaseFeaturizer):
     
         Args:
             s: Pymatgen Structure object.
-            cutoff: (float) (absolute) distance up to which tentative
-                    closest neighbors (on the basis of relative distances)
-                    are to be determined.
 
         Returns:
             min_rel_dists: (list of floats) list of all minimum relative
@@ -721,70 +737,80 @@ class MinimumRelativeDistances(BaseFeaturizer):
             min_rel_dists.append(min([dist / (
                     vire.radii[site.species_string] +
                     vire.radii[neigh.species_string]) for neigh, dist in \
-                    vire.structure.get_neighbors(site, cutoff)]))
-        return min_rel_dists[:]
+                    vire.structure.get_neighbors(site, self.cutoff)]))
+        return [min_rel_dists[:]]
 
     def feature_labels(self):
-        return "Minimum relative distances"
+        return ["Minimum relative distance of each site"]
 
     def credits(self):
         return ("")
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ("Nils E. R. Zimmermann")
 
 
 class SitesOrderParameters(BaseFeaturizer):
     """
     Calculates all order parameters (OPs) for all sites in a crystal
     structure.
+    Args:
+        pneighs: (dict) specification and parameters of
+                neighbor-finding approach (see
+                get_neighbors_of_site_with_index).
     """
 
-    def __init__(self):
+    def __init__(self, pneighs=None):
         BaseFeaturizer.__init__(self)
+        self.pneighs = pneighs
         self._types = ["cn", "lin"]
-        self._labels = ["cn", "lin"]
+        self._labels = ["CN", "q_lin"]
         self._paras = [[], []]
         for i in range(5, 180, 5):
             self._types.append("bent")
-            self._labels.append("bent{}".format(i))
+            self._labels.append("q_bent_{}".format(i))
             self._paras.append([float(i), 0.0667])
         for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
                 "sq_pyr", "tri_bipyr"]:
             self._types.append(t)
-            self._labels.append(t)
+            self._labels.append('q_'+t)
             self._paras.append([])
 
-    def featurize(self, s, pneighs=None):
+    def featurize(self, s):
         """
-        Calculate all sites' OPs.
-    
+        Calculate all sites' local structure order parameters (LSOPs).
+
         Args:
             s: Pymatgen Structure object.
-            pneighs: (dict) specification and parameters of
-                    neighbor-finding approach (see
-                    get_neighbors_of_site_with_index function
-                    in Pymatgen for more details).
-    
+
             Returns:
-                opvals: (2D array of floats) OP values of all sites'
+                opvals: (2D array of floats) LSOP values of all sites'
                 (1st dimension) order parameters (2nd dimension). 46 order
                 parameters are computed per site: q_cn (coordination
                 number), q_lin, 35 x q_bent (starting with a target angle
                 of 5 degrees and, increasing by 5 degrees, until 175 degrees),
                 q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
         """
-        opvals = []
         ops = OrderParameters(self._types, self._paras, 100.0)
+        opvals = [[] for t in self._types]
         for i, site in enumerate(s.sites):
-            neighcent = get_neighbors_of_site_with_index(s, i, p=pneighs)
+            neighcent = get_neighbors_of_site_with_index(
+                    s, i, p=self.pneighs)
+            #if self.pneighs is None:
+            #    neighcent = get_neighbors_of_site_with_index(s, i)
+            #else:
+            #    neighcent = get_neighbors_of_site_with_index(
+            #            s, i, approach=self.pneighs['approach'],
+            #            delta=self.pneighs['delta'], cutoff=self.pneighs['cutoff'])
             neighcent.append(site)
-            opvals.append(ops.get_order_parameters(
+            opvalstmp = ops.get_order_parameters(
                 neighcent, len(neighcent)-1,
-                indeces_neighs=[j for j in range(len(neighcent) - 1)]))
-            for j, opval in enumerate(opvals[i]):
+                indeces_neighs=[j for j in range(len(neighcent) - 1)])
+            for j, opval in enumerate(opvalstmp):
                 if opval is None:
-                    opvals[i][j] = 0.0
+                    opvals[j].append(0.0)
+                else:
+                    opvals[j].append(opval)
         return opvals
 
     def feature_labels(self):
@@ -796,7 +822,7 @@ class SitesOrderParameters(BaseFeaturizer):
                 "Zimmermann, N. E. R. and Jain, A.}, year={2017}}")
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ("Nils E. R. Zimmermann")
 
 
 def get_order_parameter_stats(
@@ -813,7 +839,7 @@ def get_order_parameter_stats(
                 get_neighbors_of_site_with_index function
                 for more details).
         convert_none_to_zero (bool): flag indicating whether or not
-                to convert None values in OPs to zero (cf.,
+                to convert None values in LSOPs to zero (cf.,
                 get_order_parameters function).
         delta_op (float): bin size of histogram that is computed
                 in order to identify peak locations.
@@ -832,13 +858,8 @@ def get_order_parameter_stats(
         optypes.append("bent{}".format(i))
     for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", "sq_pyr", "tri_bipyr"]:
         optypes.append(t)
-    opvals = SitesOrderParameters().featurize(
-        struct, pneighs=pneighs)
-    opvals2 = [[] for t in optypes]
-    for i, opsite in enumerate(opvals):
-        for j, op in enumerate(opsite):
-            opvals2[j].append(op)
-    for i, opstype in enumerate(opvals2):
+    opvals = SitesOrderParameters(pneighs=pneighs).featurize(struct)
+    for i, opstype in enumerate(opvals):
         if ignore_op_types is not None:
             if optypes[i] in ignore_op_types or \
                     ("bent" in ignore_op_types and i > 1 and i < 36):
@@ -916,60 +937,136 @@ def get_order_parameter_feature_vectors_difference(
     return np.array(v)
 
 
-def site_is_of_motif_type(struct, n, pneighs=None, thresh=None):
+def get_neighbors_of_site_with_index_future(struct, n, approach="min_dist", \
+        delta=0.1, cutoff=10.0):
     """
-    Returns the motif type of site with index n in structure struct;
-    currently featuring "tetrahedral", "octahedral", "bcc", and "cp"
-    (close-packed: fcc and hcp).  If the site is not recognized
-    or if it has been recognized as two different motif types,
-    the function labels the site as "unrecognized".
+    Returns the neighbors of a given site using a specific neighbor-finding
+    method.
 
     Args:
         struct (Structure): input structure.
         n (int): index of site in Structure object for which motif type
                 is to be determined.
-        pneighs (dict): specification and parameters of neighbor-finding
-                approach (cf., function get_neighbors_of_site_with_index).
-        thresh (dict): thresholds for motif criteria (currently, required
-                keys and their default values are "qtet": 0.5,
-                "qoct": 0.5, "qbcc": 0.5, "q6": 0.4).
+        approach (str): type of neighbor-finding approach, where
+              "min_dist" will use the MinimumDistanceNN class,
+              "voronoi" the VoronoiNN class, "min_OKeeffe" the
+              MinimumOKeeffe class, and "min_VIRE" the MinimumVIRENN class.
+        delta (float): tolerance involved in neighbor finding.
+        cutoff (float): (large) radius to find tentative neighbors.
 
-    Returns: motif type (str).
+    Returns: neighbor sites.
     """
 
-    if thresh is None:
-        thresh = {
-            "qtet": 0.5, "qoct": 0.5, "qbcc": 0.5, "q6": 0.4,
-            "qtribipyr": 0.8, "qsqpyr": 0.5}
+    warnings.warn('This function will go into Pymatgen very soon.')
 
-    ops = SitesOrderParameters().featurize(struct, pneighs=pneighs)
-    cn = int(ops[n][0] + 0.5)
-    motif_type = "unrecognized"
-    nmotif = 0
+    if approach == "min_dist":
+        return MinimumDistanceNN(tol=delta, cutoff=cutoff).get_nn(
+                struct, n)
+    elif approach == "voronoi":
+        return VoronoiNN(tol=delta, cutoff=cutoff).get_nn(
+                struct, n)
+    elif approach == "min_OKeeffe":
+        return MinimumOKeeffeNN(tol=delta, cutoff=cutoff).get_nn(
+                struct, n)
+    elif approach == "min_VIRE":
+        return MinimumVIRENN(tol=delta, cutoff=cutoff).get_nn(
+                struct, n)
+    else:
+        raise RuntimeError("unsupported neighbor-finding method ({}).".format(
+                approach))
 
-    if cn == 4 and ops[n][37] > thresh["qtet"]:
-        motif_type = "tetrahedral"
-        nmotif += 1
-    if cn == 5 and ops[n][45] > thresh["qsqpyr"]:
-       motif_type = "square bipyramidal"
-       nmotif += 1
-    if cn == 5 and ops[n][46] > thresh["qtribipyr"]:
-       motif_type = "trigonal bipyramidal"
-       nmotif += 1
-    if cn == 6 and ops[n][38] > thresh["qoct"]:
-        motif_type = "octahedral"
-        nmotif += 1
-    if cn == 8 and (ops[n][39] > thresh["qbcc"] and ops[n][37] < thresh["qtet"]):
-        motif_type = "bcc"
-        nmotif += 1
-    if cn == 12 and (ops[n][42] > thresh["q6"] and ops[n][37] < thresh["q6"] and \
-                                 ops[n][38] < thresh["q6"] and ops[n][39] < thresh["q6"]):
-        motif_type = "cp"
-        nmotif += 1
+def get_neighbors_of_site_with_index(struct, n, p=None):
+    """
+    Determine the neighbors around the site that has index n in the input
+    Structure object struct, given the approach defined by parameters
+    p.  All supported neighbor-finding approaches and listed and
+    explained in the following.  All approaches start by creating a
+    tentative list of neighbors using a large cutoff radius defined in
+    parameter dictionary p via key "cutoff".
+    "min_dist": find nearest neighbor and its distance d_nn; consider all
+            neighbors which are within a distance of d_nn * (1 + delta),
+            where delta is an additional parameter provided in the
+            dictionary p via key "delta".
+    "scaled_VIRE": compute the radii, r_i, of all sites on the basis of
+            the valence-ionic radius evaluator (VIRE); consider all
+            neighbors for which the distance to the central site is less
+            than the sum of the radii multiplied by an a priori chosen
+            parameter, delta,
+            (i.e., dist < delta * (r_central + r_neighbor)).
+    "min_relative_VIRE": same approach as "min_dist", except that we
+            use relative distances (i.e., distances divided by the sum of the
+            atom radii from VIRE).
+    "min_relative_OKeeffe": same approach as "min_relative_VIRE", except
+            that we use the bond valence parameters from O'Keeffe's bond valence
+            method (J. Am. Chem. Soc. 1991, 3226-3229) to calculate
+            relative distances.
+    Args:
+        struct (Structure): input structure.
+        n (int): index of site in Structure object for which
+                neighbors are to be determined.
+        p (dict): specification (via "approach" key; default is "min_dist")
+                and parameters of neighbor-finding approach.
+                Default cutoff radius is 6 Angstrom (key: "cutoff").
+                Other default parameters are as follows.
+                min_dist: "delta": 0.15;
+                min_relative_OKeeffe: "delta": 0.05;
+                min_relative_VIRE: "delta": 0.05;
+                scaled_VIRE: "delta": 2.
+    Returns: ([site]) list of sites that are considered to be nearest
+            neighbors to site with index n in Structure object struct.
+    """
+    warnings.warn('This function will be removed as soon as the equivalent function in Pymatgen works with the new near neighbor-finding classes.')
 
-    if nmotif > 1:
-        motif_type = "unrecognized"
+    sites = []
+    if p is None:
+        p = {"approach": "min_dist", "delta": 0.1,
+             "cutoff": 6}
 
-    return motif_type
+    if p["approach"] not in [
+        "min_relative_OKeeffe", "min_dist", "min_relative_VIRE", \
+            "scaled_VIRE"]:
+        raise RuntimeError("Unsupported neighbor-finding approach"
+                           " (\"{}\")".format(p["approach"]))
 
+    if p["approach"] == "min_relative_OKeeffe" or p["approach"] == "min_dist":
+        neighs_dists = struct.get_neighbors(struct[n], p["cutoff"])
+        try:
+            eln = struct[n].specie.element
+        except:
+            eln = struct[n].species_string
+    elif p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
+        vire = ValenceIonicRadiusEvaluator(struct)
+        if np.linalg.norm(struct[n].coords - vire.structure[n].coords) > 1e-6:
+            raise RuntimeError("Mismatch between input structure and VIRE structure.")
+        neighs_dists = vire.structure.get_neighbors(vire.structure[n], p["cutoff"])
+        rn = vire.radii[vire.structure[n].species_string]
+
+    reldists_neighs = []
+    for neigh, dist in neighs_dists:
+        if p["approach"] == "scaled_VIRE":
+            dscale = p["delta"] * (vire.radii[neigh.species_string] + rn)
+            if dist < dscale:
+                sites.append(neigh)
+        elif p["approach"] == "min_relative_VIRE":
+            reldists_neighs.append([dist / (
+                vire.radii[neigh.species_string] + rn), neigh])
+        elif p["approach"] == "min_relative_OKeeffe":
+            try:
+                el2 = neigh.specie.element
+            except:
+                el2 = neigh.species_string
+            reldists_neighs.append([dist / get_okeeffe_distance_prediction(
+                eln, el2), neigh])
+        elif p["approach"] == "min_dist":
+            reldists_neighs.append([dist, neigh])
+
+    if p["approach"] == "min_relative_VIRE" or \
+                    p["approach"] == "min_relative_OKeeffe" or \
+                    p["approach"] == "min_dist":
+        min_reldist = min([reldist for reldist, neigh in reldists_neighs])
+        for reldist, neigh in reldists_neighs:
+            if reldist / min_reldist < 1.0 + p["delta"]:
+                sites.append(neigh)
+
+    return sites
 
