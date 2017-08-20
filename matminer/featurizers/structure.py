@@ -10,8 +10,6 @@ import scipy.constants as const
 
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
-#from pymatgen.analysis.local_env import get_okeeffe_distance_prediction, MinimumDistanceNN, \
-#    VoronoiNN, MinimumOKeeffeNN, MinimumVIRENN
 from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
@@ -924,45 +922,6 @@ def get_order_parameter_feature_vectors_difference(
         for stattype, val in stats.items():
             v.append(val - d2[optype][stattype])
     return np.array(v)
-
-
-#def get_neighbors_of_site_with_index_future(struct, n, approach="min_dist", \
-#                                            delta=0.1, cutoff=10.0):
-#    """
-#    Returns the neighbors of a given site using a specific neighbor-finding
-#    method.
-#
-#    Args:
-#        struct (Structure): input structure.
-#        n (int): index of site in Structure object for which motif type
-#                is to be determined.
-#        approach (str): type of neighbor-finding approach, where
-#              "min_dist" will use the MinimumDistanceNN class,
-#              "voronoi" the VoronoiNN class, "min_OKeeffe" the
-#              MinimumOKeeffe class, and "min_VIRE" the MinimumVIRENN class.
-#        delta (float): tolerance involved in neighbor finding.
-#        cutoff (float): (large) radius to find tentative neighbors.
-#
-#    Returns: neighbor sites.
-#    """
-#
-#    warnings.warn('This function will go into Pymatgen very soon.')
-#
-#    if approach == "min_dist":
-#        return MinimumDistanceNN(tol=delta, cutoff=cutoff).get_nn(
-#            struct, n)
-#    elif approach == "voronoi":
-#        return VoronoiNN(tol=delta, cutoff=cutoff).get_nn(
-#            struct, n)
-#    elif approach == "min_OKeeffe":
-#        return MinimumOKeeffeNN(tol=delta, cutoff=cutoff).get_nn(
-#            struct, n)
-#    elif approach == "min_VIRE":
-#        return MinimumVIRENN(tol=delta, cutoff=cutoff).get_nn(
-#            struct, n)
-#    else:
-#        raise RuntimeError("unsupported neighbor-finding method ({}).".format(
-#            approach))
 
 
 def get_neighbors_of_site_with_index(struct, n, p=None):
