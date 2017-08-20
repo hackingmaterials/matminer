@@ -10,7 +10,7 @@ import scipy.constants as const
 import scipy.special
 
 from pymatgen.analysis.defects.point_defects import \
-        ValenceIonicRadiusEvaluator
+    ValenceIonicRadiusEvaluator
 from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.core.periodic_table import Specie
 from pymatgen.core.structure import Element
@@ -27,6 +27,8 @@ __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
 # ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
 
 ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
+
+
 # To do:
 # - Use local_env-based neighbor finding
 #   once this is part of the stable Pymatgen version.
@@ -146,21 +148,21 @@ class RadialDistributionFunction(BaseFeaturizer):
         """
         if not s.is_ordered:
             raise ValueError("Disordered structure support not built yet")
-    
+
         # Get the distances between all atoms
         neighbors_lst = s.get_all_neighbors(self.cutoff)
         all_distances = np.concatenate(
             tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
-    
+
         # Compute a histogram
         rdf_dict = {}
         dist_hist, dist_bins = np.histogram(
-                all_distances, bins=np.arange(
+            all_distances, bins=np.arange(
                 0, self.cutoff + self.bin_size, self.bin_size), density=False)
-    
+
         # Normalize counts
         shell_vol = 4.0 / 3.0 * pi * (np.power(
-                dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+            dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         number_density = s.num_sites / s.volume
         rdf = dist_hist / shell_vol / number_density
         return [{'distances': dist_bins[:-1], 'distribution': rdf}]
@@ -205,36 +207,36 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         if not s.is_ordered:
             raise ValueError("Disordered structure support not built yet")
-    
+
         # Get the composition of the array
         composition = s.composition.fractional_composition.to_reduced_dict
-    
+
         # Get the distances between all atoms
         neighbors_lst = s.get_all_neighbors(self.cutoff)
-    
+
         # Sort neighbors by type
         distances_by_type = {}
         for p in itertools.product(composition.keys(), composition.keys()):
             distances_by_type[p] = []
-    
+
         def get_symbol(site):
             return site.specie.symbol if isinstance(site.specie,
                                                     Element) else site.specie.element.symbol
-    
+
         for site, nlst in zip(s.sites, neighbors_lst):  # Each list is a list for each site
             my_elem = get_symbol(site)
-    
+
             for neighbor in nlst:
                 rij = neighbor[1]
                 n_elem = get_symbol(neighbor[0])
                 # LW 3May17: Any better ideas than appending each element at a time?
                 distances_by_type[(my_elem, n_elem)].append(rij)
-    
+
         # Compute and normalize the prdfs
         prdf = {}
         dist_bins = np.arange(0, self.cutoff + self.bin_size, self.bin_size)
         shell_volume = 4.0 / 3.0 * pi * (
-                np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+            np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
             dist_hist, dist_bins = np.histogram(distances,
@@ -242,11 +244,10 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             # Normalize
             n_alpha = composition[key[0]] * s.num_sites
             rdf = dist_hist / shell_volume / n_alpha
-    
+
             prdf[key] = {'distances': dist_bins, 'distribution': rdf}
 
         return [prdf]
-
 
     def feature_labels(self):
         return ["Partial radial distribution functions"]
@@ -280,9 +281,9 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
         Returns: (ndarray) distances of highest peaks in descending order
                 of the peak height
         """
-    
+
         return [[rdf[0]['distances'][i] for i in np.argsort(
-                rdf[0]['distribution'])[-self.n_peaks:]][::-1]]
+            rdf[0]['distribution'])[-self.n_peaks:]][::-1]]
 
     def feature_labels(self):
         return ["Radial distribution function peaks"]
@@ -330,13 +331,13 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         """
         if self.dr <= 0:
             raise ValueError("width of bins for ReDF must be >0")
-    
+
         # Make structure primitive.
         struct = SpacegroupAnalyzer(s).find_primitive() or s
-    
+
         # Add oxidation states.
         struct = ValenceIonicRadiusEvaluator(struct).structure
-    
+
         if self.cutoff is None:
             # Set cutoff to longest diagonal.
             a = struct.lattice.matrix[0]
@@ -345,12 +346,12 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             self.cutoff = max(
                 [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c),
                  np.linalg.norm(a - b + c), np.linalg.norm(a + b - c)])
-    
+
         nbins = int(self.cutoff / self.dr) + 1
         redf_dict = {"distances": np.array(
-                [(i + 0.5) * self.dr for i in range(nbins)]),
-                "distribution": np.zeros(nbins, dtype=np.float)}
-    
+            [(i + 0.5) * self.dr for i in range(nbins)]),
+            "distribution": np.zeros(nbins, dtype=np.float)}
+
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
             neighs_dists = struct.get_neighbors(site, self.cutoff)
@@ -358,9 +359,9 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 neigh_charge = float(neigh.specie.oxi_state)
                 bin_index = int(dist / self.dr)
                 redf_dict["distribution"][bin_index] += (
-                        this_charge * neigh_charge) / (
-                        struct.num_sites * dist)
-    
+                                                            this_charge * neigh_charge) / (
+                                                            struct.num_sites * dist)
+
         return [redf_dict]
 
     def feature_labels(self):
@@ -429,12 +430,12 @@ class CoulombMatrix(BaseFeaturizer):
 
     def citations(self):
         return ("@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
-            "Fast and accurate modeling of molecular atomization energies"
-            " with machine learning}, volume={108},"
-            " DOI={10.1103/PhysRevLett.108.058301}, number={5},"
-            " pages={058301}, journal={Physical Review Letters}, author={"
-            "Rupp, Matthias and Tkatchenko, Alexandre and M\"uller,"
-            " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}")
+                "Fast and accurate modeling of molecular atomization energies"
+                " with machine learning}, volume={108},"
+                " DOI={10.1103/PhysRevLett.108.058301}, number={5},"
+                " pages={058301}, journal={Physical Review Letters}, author={"
+                "Rupp, Matthias and Tkatchenko, Alexandre and M\"uller,"
+                " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}")
 
     def implementors(self):
         return ["Nils E. R. Zimmermann"]
@@ -453,14 +454,14 @@ class SineCoulombMatrix(BaseFeaturizer):
     """
 
     def __init__(self, diag_elems=False):
-    	"""
-    	Args:
-    		diag_elems (bool): flag indication whether (True) to use
-    	            the original definition of the diagonal elements;
-    	            if set to False (default),
-    	            the diagonal elements are set to 0
-    	"""
-    	self.diag_elems = diag_elems
+        """
+        Args:
+            diag_elems (bool): flag indication whether (True) to use
+                    the original definition of the diagonal elements;
+                    if set to False (default),
+                    the diagonal elements are set to 0
+        """
+        self.diag_elems = diag_elems
 
     def featurize(self, s):
         """
@@ -478,17 +479,17 @@ class SineCoulombMatrix(BaseFeaturizer):
         pi = np.pi
 
         for i in range(len(sin_mat)):
-        	for j in range(len(sin_mat)):
-        		if i == j:
-        			if self.diag_elems:
-        				sin_mat[i][i] = 0.5 * Zs[i]**2.4
-        		elif i < j:
-        			vec = coords[i] - coords[j]
-        			coord_vec = np.sin(pi * vec)**2
-        			trig_dist = np.linalg.norm((np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
-        			sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
-        		else:
-        			sin_mat[i][j] = sin_mat[j][i]
+            for j in range(len(sin_mat)):
+                if i == j:
+                    if self.diag_elems:
+                        sin_mat[i][i] = 0.5 * Zs[i] ** 2.4
+                elif i < j:
+                    vec = coords[i] - coords[j]
+                    coord_vec = np.sin(pi * vec) ** 2
+                    trig_dist = np.linalg.norm((np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
+                    sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
+                else:
+                    sin_mat[i][j] = sin_mat[j][i]
         return sin_mat
 
     def feature_labels(self):
@@ -496,18 +497,18 @@ class SineCoulombMatrix(BaseFeaturizer):
 
     def citations(self):
         return ("@article {QUA:QUA24917,"
-    			"author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
-    			"title = {Crystal structure representations for machine learning models of formation energies},"
-    			"journal = {International Journal of Quantum Chemistry},"
-    			"volume = {115},"
-    			"number = {16},"
-    			"issn = {1097-461X},"
-    			"url = {http://dx.doi.org/10.1002/qua.24917},"
-    			"doi = {10.1002/qua.24917},"
-    			"pages = {1094--1101},"
-    			"keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
-    			"year = {2015},"
-    			"}")
+                "author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
+                "title = {Crystal structure representations for machine learning models of formation energies},"
+                "journal = {International Journal of Quantum Chemistry},"
+                "volume = {115},"
+                "number = {16},"
+                "issn = {1097-461X},"
+                "url = {http://dx.doi.org/10.1002/qua.24917},"
+                "doi = {10.1002/qua.24917},"
+                "pages = {1094--1101},"
+                "keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
+                "year = {2015},"
+                "}")
 
     def implementors(self):
         return ["Kyle Bystrom"]
@@ -526,12 +527,12 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     """
 
     def __init__(self):
-    	my_ohvs = {}
-    	for Z in range(1,95):
-    		el = Element.from_Z(Z)
-    		my_ohvs[Z] = self.get_ohv(el)
-    		my_ohvs[Z] = np.matrix(my_ohvs[Z])
-    	self.ohvs = my_ohvs
+        my_ohvs = {}
+        for Z in range(1, 95):
+            el = Element.from_Z(Z)
+            my_ohvs[Z] = self.get_ohv(el)
+            my_ohvs[Z] = np.matrix(my_ohvs[Z])
+        self.ohvs = my_ohvs
 
     def get_ohv(self, sp):
         """
@@ -543,36 +544,41 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         Returns:
             my_ohv (numpy array length 32): ohv for sp
         """
-    	el_struct = sp.full_electronic_structure
-    	ohd = {j: {i+1: 0 for i in range(2*(2*j+1))} for j in range(4)}
-    	nume = 0
-    	shell_num = 0
-    	max_n = el_struct[-1][0]
-    	while shell_num < len(el_struct):
-    		if el_struct[-1-shell_num][0] < max_n-2:
-    			shell_num += 1
-    			continue
-    		elif el_struct[-1-shell_num][0] < max_n-1 and el_struct[-1-shell_num][1] != u'f':
-    			shell_num += 1
-    			continue
-    		elif el_struct[-1-shell_num][0] < max_n and (el_struct[-1-shell_num][1] != u'd' and el_struct[-1-shell_num][1] != u'f'):
-    			shell_num += 1
-    			continue
-    		curr_shell = el_struct[-1 - shell_num]
-    		if curr_shell[1] == u's': l=0
-    		elif curr_shell[1] == u'p': l=1
-    		elif curr_shell[1] == u'd': l=2
-    		elif curr_shell[1] == u'f': l=3
-    		ohd[l][curr_shell[2]] = 1
-    		nume += curr_shell[2]
-    		shell_num += 1
-    	my_ohv = np.zeros(32, np.int)
-    	k = 0
-    	for j in range(4):
-    		for i in range(2*(2*j+1)):
-    			my_ohv[k] = ohd[j][i+1]
-    			k += 1
-    	return my_ohv
+        el_struct = sp.full_electronic_structure
+        ohd = {j: {i + 1: 0 for i in range(2 * (2 * j + 1))} for j in range(4)}
+        nume = 0
+        shell_num = 0
+        max_n = el_struct[-1][0]
+        while shell_num < len(el_struct):
+            if el_struct[-1 - shell_num][0] < max_n - 2:
+                shell_num += 1
+                continue
+            elif el_struct[-1 - shell_num][0] < max_n - 1 and el_struct[-1 - shell_num][1] != u'f':
+                shell_num += 1
+                continue
+            elif el_struct[-1 - shell_num][0] < max_n and (
+                            el_struct[-1 - shell_num][1] != u'd' and el_struct[-1 - shell_num][1] != u'f'):
+                shell_num += 1
+                continue
+            curr_shell = el_struct[-1 - shell_num]
+            if curr_shell[1] == u's':
+                l = 0
+            elif curr_shell[1] == u'p':
+                l = 1
+            elif curr_shell[1] == u'd':
+                l = 2
+            elif curr_shell[1] == u'f':
+                l = 3
+            ohd[l][curr_shell[2]] = 1
+            nume += curr_shell[2]
+            shell_num += 1
+        my_ohv = np.zeros(32, np.int)
+        k = 0
+        for j in range(4):
+            for i in range(2 * (2 * j + 1)):
+                my_ohv[k] = ohd[j][i + 1]
+                k += 1
+        return my_ohv
 
     def get_single_ofm(self, site, site_dict):
         """
@@ -589,7 +595,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             atom_ofm (32 X 32 numpy matrix): ofm for site
         """
         ohvs = self.ohvs
-        atom_ofm = np.matrix(np.zeros((32,32)))
+        atom_ofm = np.matrix(np.zeros((32, 32)))
         ref_atom = ohvs[site.specie.Z]
         for other_site in site_dict:
             scale = site_dict[other_site]
@@ -616,35 +622,35 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                     ofms for struct
                 counts: number of identical sites for each ofm
         """
-    	ofms = []
-    	vcf = VCF(struct, allow_pathological=True)
-    	if symm:
-    		symm_struct = SpacegroupAnalyzer(struct).get_symmetrized_structure()
-    		indices = [lst[0] for lst in symm_struct.equivalent_indices]
-    		counts = [len(lst) for lst in symm_struct.equivalent_indices]
-    	else:
-    		indices = [i for i in range(len(struct.sites))]
-    	for index in indices:
-    		ofms.append(self.get_single_ofm(struct.sites[index],\
-                vcf.get_voronoi_polyhedra(index)))
-    	if symm:
-    		return ofms, counts
-    	return ofms
+        ofms = []
+        vcf = VCF(struct, allow_pathological=True)
+        if symm:
+            symm_struct = SpacegroupAnalyzer(struct).get_symmetrized_structure()
+            indices = [lst[0] for lst in symm_struct.equivalent_indices]
+            counts = [len(lst) for lst in symm_struct.equivalent_indices]
+        else:
+            indices = [i for i in range(len(struct.sites))]
+        for index in indices:
+            ofms.append(self.get_single_ofm(struct.sites[index], \
+                                            vcf.get_voronoi_polyhedra(index)))
+        if symm:
+            return ofms, counts
+        return ofms
 
     def get_mean_ofm(self, ofms, counts):
         """
         Averages a list of ofms, weights by counts
         """
-    	ofms = [ofm*c for ofm, c in zip(ofms, counts)]
-    	return sum(ofms) / sum(counts)
+        ofms = [ofm * c for ofm, c in zip(ofms, counts)]
+        return sum(ofms) / sum(counts)
 
     def get_structure_ofm(self, struct):
         """
         Calls get_mean_ofm on the results of get_atom_ofms
         to give a 32 X 32 matrix characterizing a structure
         """
-    	ofms, counts = self.get_atom_ofms(struct, True)
-    	return self.get_mean_ofm(ofms, counts)
+        ofms, counts = self.get_atom_ofms(struct, True)
+        return self.get_mean_ofm(ofms, counts)
 
     def featurize(self, s):
         """
@@ -660,13 +666,13 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             mean_ofm (32 X 32 matrix): orbital field matrix
                     characterizing s
         """
-        s *= [3,3,3]
+        s *= [3, 3, 3]
         ofms, counts = self.get_atom_ofms(s, True)
         mean_ofm = self.get_mean_ofm(ofms, counts)
         return mean_ofm
 
     def feature_labels(self):
-    	return "orbital field matrix"
+        return "orbital field matrix"
 
     def citations(self):
         return ("@ARTICLE{2017arXiv170501043P,"
@@ -686,6 +692,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
     def implementors(self):
         return ["Kyle Bystrom"]
+
 
 class MinimumRelativeDistances(BaseFeaturizer):
     """
@@ -719,9 +726,9 @@ class MinimumRelativeDistances(BaseFeaturizer):
         min_rel_dists = []
         for site in vire.structure:
             min_rel_dists.append(min([dist / (
-                    vire.radii[site.species_string] +
-                    vire.radii[neigh.species_string]) for neigh, dist in \
-                    vire.structure.get_neighbors(site, self.cutoff)]))
+                vire.radii[site.species_string] +
+                vire.radii[neigh.species_string]) for neigh, dist in \
+                                      vire.structure.get_neighbors(site, self.cutoff)]))
         return [min_rel_dists[:]]
 
     def feature_labels(self):
@@ -754,9 +761,9 @@ class SitesOrderParameters(BaseFeaturizer):
             self._labels.append("q_bent_{}".format(i))
             self._paras.append([float(i), 0.0667])
         for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-                "sq_pyr", "tri_bipyr"]:
+                  "sq_pyr", "tri_bipyr"]:
             self._types.append(t)
-            self._labels.append('q_'+t)
+            self._labels.append('q_' + t)
             self._paras.append([])
 
     def featurize(self, s):
@@ -778,16 +785,16 @@ class SitesOrderParameters(BaseFeaturizer):
         opvals = [[] for t in self._types]
         for i, site in enumerate(s.sites):
             neighcent = get_neighbors_of_site_with_index(
-                    s, i, p=self.pneighs)
-            #if self.pneighs is None:
+                s, i, p=self.pneighs)
+            # if self.pneighs is None:
             #    neighcent = get_neighbors_of_site_with_index(s, i)
-            #else:
+            # else:
             #    neighcent = get_neighbors_of_site_with_index(
             #            s, i, approach=self.pneighs['approach'],
             #            delta=self.pneighs['delta'], cutoff=self.pneighs['cutoff'])
             neighcent.append(site)
             opvalstmp = ops.get_order_parameters(
-                neighcent, len(neighcent)-1,
+                neighcent, len(neighcent) - 1,
                 indeces_neighs=[j for j in range(len(neighcent) - 1)])
             for j, opval in enumerate(opvalstmp):
                 if opval is None:
@@ -904,15 +911,15 @@ def get_order_parameter_feature_vectors_difference(
                 two input structures (structure 1 - structure 2).
     """
     d1 = get_order_parameter_stats(
-            struct1, pneighs=pneighs,
-            convert_none_to_zero=convert_none_to_zero,
-            delta_op=delta_op,
-            ignore_op_types=ignore_op_types)
+        struct1, pneighs=pneighs,
+        convert_none_to_zero=convert_none_to_zero,
+        delta_op=delta_op,
+        ignore_op_types=ignore_op_types)
     d2 = get_order_parameter_stats(
-            struct2, pneighs=pneighs,
-            convert_none_to_zero=convert_none_to_zero,
-            delta_op=delta_op,
-            ignore_op_types=ignore_op_types)
+        struct2, pneighs=pneighs,
+        convert_none_to_zero=convert_none_to_zero,
+        delta_op=delta_op,
+        ignore_op_types=ignore_op_types)
     v = []
     for optype, stats in d1.items():
         for stattype, val in stats.items():
@@ -921,7 +928,7 @@ def get_order_parameter_feature_vectors_difference(
 
 
 def get_neighbors_of_site_with_index_future(struct, n, approach="min_dist", \
-        delta=0.1, cutoff=10.0):
+                                            delta=0.1, cutoff=10.0):
     """
     Returns the neighbors of a given site using a specific neighbor-finding
     method.
@@ -944,19 +951,20 @@ def get_neighbors_of_site_with_index_future(struct, n, approach="min_dist", \
 
     if approach == "min_dist":
         return MinimumDistanceNN(tol=delta, cutoff=cutoff).get_nn(
-                struct, n)
+            struct, n)
     elif approach == "voronoi":
         return VoronoiNN(tol=delta, cutoff=cutoff).get_nn(
-                struct, n)
+            struct, n)
     elif approach == "min_OKeeffe":
         return MinimumOKeeffeNN(tol=delta, cutoff=cutoff).get_nn(
-                struct, n)
+            struct, n)
     elif approach == "min_VIRE":
         return MinimumVIRENN(tol=delta, cutoff=cutoff).get_nn(
-                struct, n)
+            struct, n)
     else:
         raise RuntimeError("unsupported neighbor-finding method ({}).".format(
-                approach))
+            approach))
+
 
 def get_neighbors_of_site_with_index(struct, n, p=None):
     """
@@ -998,7 +1006,8 @@ def get_neighbors_of_site_with_index(struct, n, p=None):
     Returns: ([site]) list of sites that are considered to be nearest
             neighbors to site with index n in Structure object struct.
     """
-    warnings.warn('This function will be removed as soon as the equivalent function in Pymatgen works with the new near neighbor-finding classes.')
+    warnings.warn(
+        'This function will be removed as soon as the equivalent function in Pymatgen works with the new near neighbor-finding classes.')
 
     sites = []
     if p is None:
@@ -1052,4 +1061,3 @@ def get_neighbors_of_site_with_index(struct, n, p=None):
                 sites.append(neigh)
 
     return sites
-
