@@ -31,6 +31,7 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 #   once this is part of the stable Pymatgen version.
 
 
+# TODO: merge PackingFraction, VolmePerSite, and Density into a single class. -computron
 class PackingFraction(BaseFeaturizer):
     """
     Calculates the packing fraction of a crystal structure.
