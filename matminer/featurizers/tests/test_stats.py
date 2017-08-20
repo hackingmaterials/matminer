@@ -23,12 +23,12 @@ class TestPropertyStats(TestCase):
         :param sample_2_weighted: float, expected value for statistic of sample 2 with weights
         """
 
-        self.assertAlmostEqual(sample_1, PropertyStats.calc_stat(statistic, self.sample_1))
-        self.assertAlmostEqual(sample_1_weighted, PropertyStats.calc_stat(statistic, self.sample_1,
+        self.assertAlmostEqual(sample_1, PropertyStats.calc_stat(self.sample_1, statistic))
+        self.assertAlmostEqual(sample_1_weighted, PropertyStats.calc_stat(self.sample_1, statistic,
                                                                           self.sample_1_weights))
-        self.assertAlmostEqual(sample_2, PropertyStats.calc_stat(statistic, self.sample_2))
-        self.assertAlmostEqual(sample_2_weighted, PropertyStats.calc_stat(statistic, self.sample_2,
-                                                                          self.sample_2_weights ))
+        self.assertAlmostEqual(sample_2, PropertyStats.calc_stat(self.sample_2, statistic))
+        self.assertAlmostEqual(sample_2_weighted, PropertyStats.calc_stat(self.sample_2, statistic,
+                                                                          self.sample_2_weights))
 
     def test_minimum(self):
         self._run_test("minimum", 1, 1, 0, 0)
