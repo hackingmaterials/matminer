@@ -217,10 +217,10 @@ class StructureFeaturesTest(PymatgenTest):
         coords = [[0, 0, 0], [0, 0, 1.203], [0, 0, -1.06], [0, 0, 2.263]]
         acetylene = Molecule(species, coords)
         morig = CoulombMatrix(True).featurize(acetylene)
-        mtarget = [[36.858, 15.835391290199961, 2.9950982356735767, 1.4028278132103624],\
-                [15.835391290199961, 36.858, 1.4028278132103624, 2.9950982356735767],\
-                [2.93688961271879, 1.4028278132103624, 0.5, 0.15927995917628032],\
-                [1.4028278132103624, 2.9950982356735767, 0.15927995917628032, 0.5]]
+        mtarget = [[36.858, 15.835391290, 2.995098235, 1.402827813],\
+                [15.835391290, 36.858, 1.4028278132103624, 2.9950982],\
+                [2.9368896127, 1.402827813, 0.5, 0.159279959],\
+                [1.4028278132, 2.995098235, 0.159279959, 0.5]]
         self.assertAlmostEqual(
             int(np.linalg.norm(morig - np.array(mtarget))), 0)
         m = CoulombMatrix().featurize(acetylene)
@@ -244,10 +244,10 @@ class StructureFeaturesTest(PymatgenTest):
         ofm_maker = OrbitalFieldMatrix()
         ofm = ofm_maker.featurize(self.diamond)
         mtarget = np.zeros((32,32))
-        mtarget[1][1] = 1.4789015#1.3675444
-        mtarget[1][3] = 1.4789015#1.3675444
-        mtarget[3][1] = 1.4789015#1.3675444
-        mtarget[3][3] = 1.4789015#1.3675444 if for a coord# of eaxactly 4
+        mtarget[1][1] = 1.4789015  # 1.3675444
+        mtarget[1][3] = 1.4789015  # 1.3675444
+        mtarget[3][1] = 1.4789015  # 1.3675444
+        mtarget[3][3] = 1.4789015  # 1.3675444 if for a coord# of exactly 4
         for i in range(32):
             for j in range(32):
                 if not i in [1, 3] and not j in [1, 3]:
