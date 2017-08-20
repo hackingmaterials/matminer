@@ -1,24 +1,21 @@
 from __future__ import division, unicode_literals, print_function
 
 import itertools
-from math import pi, fabs
+from math import pi
 from operator import itemgetter
 import warnings
 
 import numpy as np
 import scipy.constants as const
-import scipy.special
 
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
+from pymatgen.analysis.local_env import get_okeeffe_distance_prediction, MinimumDistanceNN, \
+    VoronoiNN, MinimumOKeeffeNN, MinimumVIRENN
 from pymatgen.analysis.structure_analyzer import OrderParameters
-from pymatgen.core.periodic_table import Specie
-from pymatgen.core.structure import Element
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from pymatgen.io.vasp.inputs import Poscar
 
 from matminer.featurizers.base import BaseFeaturizer
 
