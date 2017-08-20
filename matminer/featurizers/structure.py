@@ -31,6 +31,7 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 # - Use local_env-based neighbor finding
 #   once this is part of the stable Pymatgen version.
 
+
 class PackingFraction(BaseFeaturizer):
     """
     Calculates the packing fraction of a crystal structure.
@@ -59,7 +60,7 @@ class PackingFraction(BaseFeaturizer):
     def feature_labels(self):
         return ["Packing fraction"]
 
-    def credits(self):
+    def citations(self):
         return ("")
 
     def implementors(self):
@@ -91,7 +92,7 @@ class VolumePerSite(BaseFeaturizer):
     def feature_labels(self):
         return ["Volume per site"]
 
-    def credits(self):
+    def citations(self):
         return ("")
 
     def implementors(self):
@@ -121,7 +122,7 @@ class Density(BaseFeaturizer):
     def feature_labels(self):
         return ["Density"]
 
-    def credits(self):
+    def citations(self):
         return ("")
 
     def implementors(self):
@@ -177,7 +178,7 @@ class RadialDistributionFunction(BaseFeaturizer):
     def feature_labels(self):
         return ["Radial distribution function"]
 
-    def credits(self):
+    def citations(self):
         return ("")
 
     def implementors(self):
@@ -261,7 +262,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     def feature_labels(self):
         return ["Partial radial distribution functions"]
 
-    def credits(self):
+    def citations(self):
         return ("")
 
     def implementors(self):
@@ -298,7 +299,7 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
     def feature_labels(self):
         return ["Radial distribution function peaks"]
 
-    def credits(self):
+    def citations(self):
         return ("")
 
     def implementors(self):
@@ -378,7 +379,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
     def feature_labels(self):
         return ["Electronic radial distribution function"]
 
-    def credits(self):
+    def citations(self):
         return ("@article{title={Method for the computational comparison"
                 " of crystal structures}, volume={B61}, pages={29-36},"
                 " DOI={10.1107/S0108768104028344},"
@@ -440,7 +441,7 @@ class CoulombMatrix(BaseFeaturizer):
     def feature_labels(self):
         return "Coulomb matrix"
 
-    def credits(self):
+    def citations(self):
         return ("@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
             "Fast and accurate modeling of molecular atomization energies"
             " with machine learning}, volume={108},"
@@ -508,7 +509,7 @@ class SineCoulombMatrix(BaseFeaturizer):
     def feature_labels(self):
         return "sine Coulomb matrix"
 
-    def credits(self):
+    def citations(self):
         return ("@article {QUA:QUA24917,"
     			"author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
     			"title = {Crystal structure representations for machine learning models of formation energies},"
@@ -683,7 +684,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     def feature_labels(self):
     	return "orbital field matrix"
 
-    def credits(self):
+    def citations(self):
         return ("@ARTICLE{2017arXiv170501043P,"
                 "author = {{Pham}, T. L. and {Kino}, H. and {Terakura}, K. and {Miyake}, T. and "
                 "{Takigawa}, I. and {Tsuda}, K. and {Dam}, H. C.},"
@@ -743,7 +744,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
     def feature_labels(self):
         return ["Minimum relative distance of each site"]
 
-    def credits(self):
+    def citations(self):
         return ("")
 
     def implementors(self):
@@ -816,7 +817,7 @@ class SitesOrderParameters(BaseFeaturizer):
     def feature_labels(self):
         return self._labels
 
-    def credits(self):
+    def citations(self):
         return ("@article{zimmermann_jain_2017, title={Applications of order"
                 " parameter feature vectors}, journal={in progress}, author={"
                 "Zimmermann, N. E. R. and Jain, A.}, year={2017}}")
