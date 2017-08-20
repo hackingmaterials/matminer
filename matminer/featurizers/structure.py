@@ -37,9 +37,6 @@ class PackingFraction(BaseFeaturizer):
     Calculates the packing fraction of a crystal structure.
     """
 
-    def __init__(self):
-        BaseFeaturizer.__init__(self)
-
     def featurize(self, s):
         """
         Get packing fraction of the input structure.
@@ -72,9 +69,6 @@ class VolumePerSite(BaseFeaturizer):
     Calculates volume per site in a crystal structure.
     """
 
-    def __init__(self):
-        BaseFeaturizer.__init__(self)
-
     def featurize(self, s):
         """
         Get volume per site of the input structure.
@@ -103,9 +97,6 @@ class Density(BaseFeaturizer):
     """
     Gets the density of a crystal structure.
     """
-
-    def __init__(self):
-        BaseFeaturizer.__init__(self)
 
     def featurize(self, s):
         """
@@ -141,7 +132,6 @@ class RadialDistributionFunction(BaseFeaturizer):
     def __init__(self, cutoff=20.0, bin_size=0.1):
         self.cutoff = cutoff
         self.bin_size = bin_size
-        BaseFeaturizer.__init__(self)
 
     def featurize(self, s):
         """
@@ -198,7 +188,6 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     """
 
     def __init__(self, cutoff=20.0, bin_size=0.1):
-        BaseFeaturizer.__init__(self)
         self.cutoff = cutoff
         self.bin_size = bin_size
 
@@ -278,7 +267,6 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
     """
 
     def __init__(self, n_peaks=2):
-        BaseFeaturizer.__init__(self)
         self.n_peaks = n_peaks
 
     def featurize(self, rdf):
@@ -324,7 +312,6 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
     """
 
     def __init__(self, cutoff=None, dr=0.05):
-        BaseFeaturizer.__init__(self)
         self.cutoff = cutoff
         self.dr = dr
 
@@ -402,7 +389,6 @@ class CoulombMatrix(BaseFeaturizer):
     """
 
     def __init__(self, diag_elems=False):
-        BaseFeaturizer.__init__(self)
         self.diag_elems = diag_elems
 
     def featurize(self, s):
@@ -474,7 +460,6 @@ class SineCoulombMatrix(BaseFeaturizer):
     	            if set to False (default),
     	            the diagonal elements are set to 0
     	"""
-    	BaseFeaturizer.__init__(self)
     	self.diag_elems = diag_elems
 
     def featurize(self, s):
@@ -541,7 +526,6 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     """
 
     def __init__(self):
-    	BaseFeaturizer.__init__(self)
     	my_ohvs = {}
     	for Z in range(1,95):
     		el = Element.from_Z(Z)
@@ -718,7 +702,6 @@ class MinimumRelativeDistances(BaseFeaturizer):
     """
 
     def __init__(self, cutoff=10.0):
-        BaseFeaturizer.__init__(self)
         self.cutoff = cutoff
 
     def featurize(self, s, cutoff=10.0):
@@ -762,7 +745,6 @@ class SitesOrderParameters(BaseFeaturizer):
     """
 
     def __init__(self, pneighs=None):
-        BaseFeaturizer.__init__(self)
         self.pneighs = pneighs
         self._types = ["cn", "lin"]
         self._labels = ["CN", "q_lin"]
