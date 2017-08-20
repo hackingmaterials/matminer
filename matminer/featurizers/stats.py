@@ -170,3 +170,49 @@ class PropertyStats(object):
             else:
                 return np.power(np.sum(np.multiply(weights, np.power(data_lst, power))) / alpha, 1.0/power)
 
+    def sorted(data_lst):
+        """
+        Returns the sorted data_lst
+        """
+        return np.sort(data_lst)
+
+    def eigenvalues(data_lst, symm = False, sort = False):
+        """
+        Return the eigenvalues of a matrix as a numpy array
+        Args:
+            data_lst: (matrix-like) of values
+            symm: whether to assume the matrix is symmetric
+            sort: wheter to sort the eigenvalues
+        Returns: eigenvalues
+        """
+        if symm:
+            eigs = np.linalg.eigvalsh(data_lst)
+        else:
+            eigs = np.linalg.eigvals(data_lst)
+        if sort:
+            eigs.sort()
+        return eigs
+
+    def flatten(data_lst):
+        """
+        Returns a flattened copy of data_lst-as a numpy array
+        """
+        return np.array(data_lst).flatten()
+
+    def laplacian_kernel(arr0, arr1, SIGMA):
+        """
+        Returns a Laplacian kernel of the two arrays
+        for use in KRR or other regressions using the
+        kernel trick.
+        """
+        diff = arr0 - arr1
+        return np.exp(-np.linalg.norm(diff.A1, ord=1) / SIGMA)
+
+    def gaussian_kernel(arr0, arr1, SIGMA):
+        """
+        Returns a Gaussian kernel of the two arrays
+        for use in KRR or other regressions using the
+        kernel trick.
+        """
+        diff = arr0 - arr1
+        return np.exp(-np.linalg.norm(diff.A1, ord=2)**2 / 2 / SIGMA**2)
