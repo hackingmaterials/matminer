@@ -192,7 +192,7 @@ class PropertyStats(object):
             sort: wheter to sort the eigenvalues
         Returns: eigenvalues
         """
-        eigs = np.linalg.eigvalsh(data_lst) if symm else eigs = np.linalg.eigvals(data_lst)
+        eigs = np.linalg.eigvalsh(data_lst) if symm else np.linalg.eigvals(data_lst)
         if sort:
             eigs.sort()
         return eigs
