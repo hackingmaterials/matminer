@@ -19,7 +19,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         package_data={},
         zip_safe=False,
-        install_requires=['pymatgen>=2017.7.4', 'tqdm>=4.14.0', 'pandas>=0.20.1',
+        install_requires=['pymatgen>=2017.8.16', 'tqdm>=4.14.0', 'pandas>=0.20.1',
                           'pymongo>=3.4.0', 'pint>=0.8.1', 'six>=1.10.0'],
         extras_require={'citrine': ['citrination-client>=1.5.3'],
                         'mpds': ['jmespath>=0.9.3', 'ujson>=1.35', 'httplib2>=0.10.3'],
