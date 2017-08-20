@@ -10,15 +10,15 @@ from six import string_types
 class PropertyStats(object):
 
     @staticmethod
-    def calc_stat(stat, data_lst, weights=None):
+    def calc_stat(data_lst, stat, weights=None):
         """
         Compute a property statistic
 
         Args:
-            str (str) - Name of property to be compute. If there are arguments to the statistics function, these
+            data_lst (list of floats): list of values
+            stat (str) - Name of property to be compute. If there are arguments to the statistics function, these
              should be added after the name and separated by two underscores. For example, the 2nd Holder mean would
              be "holder_mean__2"
-            data_lst (list of floats): list of values
             weights (list of floats): (Optional) weights for each element in data_lst
         Reteurn:
             float - Desired statistic
