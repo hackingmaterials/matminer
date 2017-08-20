@@ -111,6 +111,7 @@ class PropertyStats(object):
         provided), this function will return the average of those values
         Args:
             data_lst (list of floats): Value of a property for each atom in a compound
+            weights (list of floats): Atomic fractions
         Returns: 
             mode
         """
