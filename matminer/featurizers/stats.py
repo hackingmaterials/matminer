@@ -7,6 +7,10 @@ from scipy import stats
 from six import string_types
 
 
+# TODO: some of this needs a bit more cleanup. The kernel methods (requiring two lists) should
+# probably go in a different class. Some of the method signatures are consistent, others aren't.
+# Just needs a 15 minute cleanup check. -computron
+
 class PropertyStats(object):
 
     @staticmethod
@@ -171,12 +175,14 @@ class PropertyStats(object):
             else:
                 return np.power(np.sum(np.multiply(weights, np.power(data_lst, power))) / alpha, 1.0/power)
 
+    @staticmethod
     def sorted(data_lst):
         """
         Returns the sorted data_lst
         """
         return np.sort(data_lst)
 
+    @staticmethod
     def eigenvalues(data_lst, symm = False, sort = False):
         """
         Return the eigenvalues of a matrix as a numpy array
@@ -186,20 +192,19 @@ class PropertyStats(object):
             sort: wheter to sort the eigenvalues
         Returns: eigenvalues
         """
-        if symm:
-            eigs = np.linalg.eigvalsh(data_lst)
-        else:
-            eigs = np.linalg.eigvals(data_lst)
+        eigs = np.linalg.eigvalsh(data_lst) if symm else eigs = np.linalg.eigvals(data_lst)
         if sort:
             eigs.sort()
         return eigs
 
+    @staticmethod
     def flatten(data_lst):
         """
         Returns a flattened copy of data_lst-as a numpy array
         """
         return np.array(data_lst).flatten()
 
+    @staticmethod
     def laplacian_kernel(arr0, arr1, SIGMA):
         """
         Returns a Laplacian kernel of the two arrays
@@ -209,6 +214,7 @@ class PropertyStats(object):
         diff = arr0 - arr1
         return np.exp(-np.linalg.norm(diff.A1, ord=1) / SIGMA)
 
+    @staticmethod
     def gaussian_kernel(arr0, arr1, SIGMA):
         """
         Returns a Gaussian kernel of the two arrays
