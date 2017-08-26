@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>matminer.data_retrieval package &#8212; matminer 0.1.1 documentation</title>
+    <title>matminer.data_retrieval package &#8212; matminer 0.1.2 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -222,7 +222,7 @@ Args:</p>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>projection</em>, <em>query=None</em>, <em>sort=None</em>, <em>limit=None</em>, <em>idx_field=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>projection</em>, <em>query=None</em>, <em>sort=None</em>, <em>limit=None</em>, <em>idx_field=None</em>, <em>strict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first docutils">
@@ -232,7 +232,8 @@ Args:</p>
 <p class="last">query: (JSON) - a pymongo-style query to restrict data being gathered
 sort: (tuple) - pymongo-style sort option
 limit: (int) - int to limit the number of entries
-idx_field: (str) - name of field to use as index field (must be unique)</p>
+idx_field: (str) - name of field to use as index field (must be unique)
+strict: (bool) - if False, replaces missing values with NaN</p>
 </dd>
 </dl>
 </dd></dl>
@@ -313,7 +314,7 @@ Args:</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
