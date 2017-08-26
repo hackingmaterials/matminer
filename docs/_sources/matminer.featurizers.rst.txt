@@ -43,6 +43,14 @@ matminer.featurizers.data module
     :undoc-members:
     :show-inheritance:
 
+matminer.featurizers.site module
+--------------------------------
+
+.. automodule:: matminer.featurizers.site
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer.featurizers.stats module
 ---------------------------------
 
