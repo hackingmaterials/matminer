@@ -1,4 +1,2 @@
 *.csv filter=lfs diff=lfs merge=lfs -text
 matminer/datasets/*.csv filter=lfs diff=lfs merge=lfs -text
-example_notebooks/*.ipynb filter=lfs diff=lfs merge=lfs -text
-*.ipynb filter=lfs diff=lfs merge=lfs -text
