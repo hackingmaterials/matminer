@@ -22,95 +22,11 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Ag
 # non-ionic structures. You can also have a function that returns a mean of ionic_radii for all valences but that
 # should not be the default."
 # TODO: unit tests
-# TODO: most of this code needs to be rewritten ... AJ
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 with open(os.path.join(module_dir, 'data_files', 'cohesive_energies.json'), 'r') as f:
     ce_data = json.load(f)
-
-# empty dictionary for magpie properties
-magpie_props = {}
-
-# list of elements
-atomic_syms = []
-for atomic_no in range(1, 104):
-    atomic_syms.append(Element.from_Z(atomic_no).symbol)
-
-
-class Stoichiometry(BaseFeaturizer):
-    """
-    Class to calculate stoichiometric attributes.
-
-    Parameters:
-        p_list (list of ints): list of norms to calculate
-        num_atoms (bool): whether to return number of atoms
-    """
-
-    def __init__(self, p_list=[0, 2, 3, 5, 7, 10], num_atoms=False):
-        self.p_list = p_list
-        self.num_atoms = num_atoms
-
-    def featurize(self, comp):
-        """
-        Get stoichiometric attributes
-        Args:
-            comp: Pymatgen composition object
-            p_list (list of ints)
-        
-        Returns: 
-            p_norm (list of floats): Lp norm-based stoichiometric attributes.
-                Returns number of atoms if no p-values specified.
-        """
-
-        el_amt = comp.get_el_amt_dict()
-
-        n_atoms = comp.num_atoms
-
-        if self.p_list == None:
-            stoich_attr = [n_atoms]  # return number of atoms if no norms specified
-        else:
-            p_norms = [0] * len(self.p_list)
-            n_atoms = sum(el_amt.values())
-
-            for i in range(len(self.p_list)):
-                if self.p_list[i] < 0:
-                    raise ValueError("p-norm not defined for p < 0")
-                if self.p_list[i] == 0:
-                    p_norms[i] = len(el_amt.values())
-                else:
-                    for j in el_amt:
-                        p_norms[i] += (el_amt[j] / n_atoms) ** self.p_list[i]
-                    p_norms[i] = p_norms[i] ** (1.0 / self.p_list[i])
-
-            if self.num_atoms:
-                stoich_attr = [n_atoms] + p_norms
-            else:
-                stoich_attr = p_norms
-
-        return stoich_attr
-
-    def feature_labels(self):
-        labels = []
-        if self.num_atoms:
-            labels.append("Number of atoms")
-
-        if self.p_list != None:
-            for p in self.p_list:
-                labels.append("%d-norm" % p)
-
-        return labels
-
-    def citations(self):
-        citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
-                    "machine learning framework for predicting properties of inorganic materials}, "
-                    "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
-                    "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-                    "Alok and Wolverton, Christopher}, year={2016}}")
-        return citation
-
-    def implementors(self):
-        return ["Jiming Chen", "Logan Ward"]
 
 
 class ElementProperty(BaseFeaturizer):
@@ -238,6 +154,80 @@ class ElementProperty(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
+
+class Stoichiometry(BaseFeaturizer):
+    """
+    Class to calculate stoichiometric attributes.
+
+    Parameters:
+        p_list (list of ints): list of norms to calculate
+        num_atoms (bool): whether to return number of atoms
+    """
+
+    def __init__(self, p_list=[0, 2, 3, 5, 7, 10], num_atoms=False):
+        self.p_list = p_list
+        self.num_atoms = num_atoms
+
+    def featurize(self, comp):
+        """
+        Get stoichiometric attributes
+        Args:
+            comp: Pymatgen composition object
+            p_list (list of ints)
+        
+        Returns: 
+            p_norm (list of floats): Lp norm-based stoichiometric attributes.
+                Returns number of atoms if no p-values specified.
+        """
+
+        el_amt = comp.get_el_amt_dict()
+
+        n_atoms = comp.num_atoms
+
+        if self.p_list == None:
+            stoich_attr = [n_atoms]  # return number of atoms if no norms specified
+        else:
+            p_norms = [0] * len(self.p_list)
+            n_atoms = sum(el_amt.values())
+
+            for i in range(len(self.p_list)):
+                if self.p_list[i] < 0:
+                    raise ValueError("p-norm not defined for p < 0")
+                if self.p_list[i] == 0:
+                    p_norms[i] = len(el_amt.values())
+                else:
+                    for j in el_amt:
+                        p_norms[i] += (el_amt[j] / n_atoms) ** self.p_list[i]
+                    p_norms[i] = p_norms[i] ** (1.0 / self.p_list[i])
+
+            if self.num_atoms:
+                stoich_attr = [n_atoms] + p_norms
+            else:
+                stoich_attr = p_norms
+
+        return stoich_attr
+
+    def feature_labels(self):
+        labels = []
+        if self.num_atoms:
+            labels.append("Number of atoms")
+
+        if self.p_list != None:
+            for p in self.p_list:
+                labels.append("%d-norm" % p)
+
+        return labels
+
+    def citations(self):
+        citation = ("@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
+                    "machine learning framework for predicting properties of inorganic materials}, "
+                    "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
+                    "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
+                    "Alok and Wolverton, Christopher}, year={2016}}")
+        return citation
+
+    def implementors(self):
+        return ["Jiming Chen", "Logan Ward"]
 
 
 class ValenceOrbital(BaseFeaturizer):
