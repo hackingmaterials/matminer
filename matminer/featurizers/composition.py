@@ -23,10 +23,6 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, Ashwin Ag
 # should not be the default."
 # TODO: unit tests
 
-module_dir = os.path.dirname(os.path.abspath(__file__))
-
-with open(os.path.join(module_dir, 'data_files', 'cohesive_energies.json'), 'r') as f:
-    ce_data = json.load(f)
 
 
 class ElementProperty(BaseFeaturizer):
@@ -680,7 +676,14 @@ class FERECorrection(BaseFeaturizer):
         return ["Jiming Chen", "Logan Ward"]
 
 
+
 class CohesiveEnergy(BaseFeaturizer):
+    def __init__(self):
+        # TODO: reimplement as PropertyData! -computron
+        module_dir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(module_dir, 'data_files', 'cohesive_energies.json'), 'r') as f:
+            self.ce_data = json.load(f)
+
     def featurize(self, comp):
         """
         Get cohesive energy of compound by subtracting elemental cohesive energies from the formation energy of the compund.
@@ -708,7 +711,7 @@ class CohesiveEnergy(BaseFeaturizer):
         # Subtract elemental cohesive energies from formation energy
         cohesive_energy = formation_energy
         for el in el_amt_dict:
-            cohesive_energy -= el_amt_dict[el] * ce_data[el]
+            cohesive_energy -= el_amt_dict[el] * self.ce_data[el]
 
         return [cohesive_energy]
 
