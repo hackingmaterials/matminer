@@ -20,7 +20,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_stoich["7-norm"][0], 0.604895199)
 
     def test_elem(self):
-        df_elem = ElementProperty().featurize_dataframe(self.df, col_id="composition")
+        df_elem = ElementProperty.from_preset("magpie").featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_elem["minimum Number"][0], 8)
         self.assertAlmostEqual(df_elem["maximum Number"][0], 26)
         self.assertAlmostEqual(df_elem["range Number"][0], 18)
@@ -29,7 +29,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem["mode Number"][0], 8)
 
     def test_elem_deml(self):
-        df_elem_deml = ElementProperty("deml").featurize_dataframe(self.df, col_id="composition")
+        df_elem_deml = ElementProperty.from_preset("deml").featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_elem_deml["minimum atom_num"][0], 8)
         self.assertAlmostEqual(df_elem_deml["maximum atom_num"][0], 26)
         self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)

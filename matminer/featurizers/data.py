@@ -317,8 +317,8 @@ class PymatgenData(AbstractData):
                 else:
                     property_value = float(p)
 
-                # units are None for these pymatgen descriptors
-                # todo: there seem to be a lot more unitless descriptors which are not listed here... -Alex D
+                # units are None for these pymatgen features
+                # todo: there seem to be a lot more unitless features which are not listed here... -Alex D
                 if property_name not in ['X', 'Z', 'group', 'row', 'number', 'mendeleev_no',
                                          'ionic_radii']:
                     property_units = p.unit
