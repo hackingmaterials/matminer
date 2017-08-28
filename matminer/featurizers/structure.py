@@ -30,94 +30,41 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 # - Use local_env-based neighbor finding
 #   once this is part of the stable Pymatgen version.
 
+class DensityFeatures(BaseFeaturizer):
 
-# TODO: merge PackingFraction, VolmePerSite, and Density into a single class. -computron
-class PackingFraction(BaseFeaturizer):
-    """
-    Calculates the packing fraction of a crystal structure.
-    """
+    def __init__(self, desired_features=None):
+        self.features = ["density", "vpa", "packing fraction"] if not desired_features else desired_features
 
     def featurize(self, s):
-        """
-        Get packing fraction of the input structure.
-        Args:
-            s: Pymatgen Structure object.
+        features = []
 
-        Returns:
-            f (float): packing fraction.
-        """
+        if "density" in self.features:
+            features.append(s.density)
 
-        if not s.is_ordered:
-            raise ValueError("Disordered structure support not built yet.")
-        total_rad = 0
-        for site in s:
-            total_rad += site.specie.atomic_radius ** 3
-        return [4 * pi * total_rad / (3 * s.volume)]
+        if "vpa" in self.features:
+            if not s.is_ordered:
+                raise ValueError("Disordered structure support not built yet.")
+            features.append(s.volume / len(s))
 
-    def feature_labels(self):
-        return ["Packing fraction"]
+        if "packing fraction" in self.features:
+            if not s.is_ordered:
+                raise ValueError("Disordered structure support not built yet.")
+            total_rad = 0
+            for site in s:
+                total_rad += site.specie.atomic_radius ** 3
+            features.append(4 * pi * total_rad / (3 * s.volume))
 
-    def citations(self):
-        return ("")
-
-    def implementors(self):
-        return ("Saurabh Bajaj")
-
-
-class VolumePerSite(BaseFeaturizer):
-    """
-    Calculates volume per site in a crystal structure.
-    """
-
-    def featurize(self, s):
-        """
-        Get volume per site of the input structure.
-        Args:
-            s: Pymatgen Structure object.
-
-        Returns:
-            f (float): volume per site.
-        """
-        if not s.is_ordered:
-            raise ValueError("Disordered structure support not built yet.")
-
-        return [s.volume / len(s)]
+        return features
 
     def feature_labels(self):
-        return ["Volume per site"]
+        all_features = ["density", "vpa", "packing fraction"]
+        return [x for x in all_features if x in self.features]
 
     def citations(self):
-        return ("")
+        return [""]
 
     def implementors(self):
-        return ("Saurabh Bajaj")
-
-
-class Density(BaseFeaturizer):
-    """
-    Gets the density of a crystal structure.
-    """
-
-    def featurize(self, s):
-        """
-        Get density of the input structure.
-        Args:
-            s: Pymatgen Structure object.
-
-        Returns:
-            f (float): density.
-        """
-
-        return [s.density]
-
-    def feature_labels(self):
-        return ["Density"]
-
-    def citations(self):
-        return ("")
-
-    def implementors(self):
-        return ("Saurabh Bajaj")
+        return ["Saurabh Bajaj", "Anubhav Jain"]
 
 
 class RadialDistributionFunction(BaseFeaturizer):
