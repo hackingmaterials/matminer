@@ -151,6 +151,40 @@ class ElementProperty(BaseFeaturizer):
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
 
+
+class BandCenter(BaseFeaturizer):
+    def featurize(self, comp):
+        """
+        (Rough) estimation of absolution position of band center using geometric mean of electronegativity
+        Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at Semiconductor-Electrolyte Interfaces from
+        Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).
+
+        Args:
+            comp: (Composition)
+
+        Returns: (float) band center
+
+        """
+        prod = 1.0
+        for el, amt in comp.get_el_amt_dict().items():
+            prod = prod * (Element(el).X ** amt)
+
+        return [-prod ** (1 / sum(comp.get_el_amt_dict().values()))]
+
+    def feature_labels(self):
+        return ["band center"]
+
+    def citations(self):
+        return ["@article{Butler1978, author = {Butler, M A and Ginley, D S}, doi = {10.1149/1.2131419}, isbn = "
+                "{0013-4651}, issn = {00134651}, journal = {Journal of The Electrochemical Society}, month = {feb}, "
+                "number = {2}, pages = {228--232}, title = {{Prediction of Flatband Potentials at "
+                "Semiconductor-Electrolyte Interfaces from Atomic Electronegativities}}, url = "
+                "{http://jes.ecsdl.org/content/125/2/228}, volume = {125}, year = {1978} } "]
+
+    def implementors(self):
+        return ["Anubhav Jain"]
+
+
 class Stoichiometry(BaseFeaturizer):
     """
     Class to calculate stoichiometric attributes.
@@ -679,7 +713,7 @@ class FERECorrection(BaseFeaturizer):
 
 class CohesiveEnergy(BaseFeaturizer):
     def __init__(self):
-        # TODO: reimplement as PropertyData! -computron
+        # TODO: reimplement as AbstractData! -computron
         module_dir = os.path.dirname(os.path.abspath(__file__))
         with open(os.path.join(module_dir, 'data_files', 'cohesive_energies.json'), 'r') as f:
             self.ce_data = json.load(f)
@@ -720,32 +754,6 @@ class CohesiveEnergy(BaseFeaturizer):
 
     def implementors(self):
         return ["Saurabh Bajaj"]
-
-
-class BandCenter(BaseFeaturizer):
-    def featurize(self, comp):
-        """
-        Estimate absolution position of band center using geometric mean of electronegativity
-        Ref: Butler, M. a. & Ginley, D. S. Prediction of Flatband Potentials at Semiconductor-Electrolyte Interfaces from
-        Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).
-
-        Args:
-            comp: (Composition)
-
-        Returns: (float) band center
-
-        """
-        prod = 1.0
-        for el, amt in comp.get_el_amt_dict().items():
-            prod = prod * (Element(el).X ** amt)
-
-        return [-prod ** (1 / sum(comp.get_el_amt_dict().values()))]
-
-    def feature_labels(self):
-        return ["Band Center"]
-
-    def implementors(self):
-        return ["Anubhav Jain"]
 
 
 if __name__ == '__main__':
