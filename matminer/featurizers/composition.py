@@ -184,6 +184,151 @@ class BandCenter(BaseFeaturizer):
     def implementors(self):
         return ["Anubhav Jain"]
 
+class ElectronegativityDiff(BaseFeaturizer):
+    """
+    Calculate electronegativity difference between cations and anions (average, max, range, etc.)
+
+    Parameters:
+        data_source (data class): source from which to retrieve element data
+        stats: Property statistics to compute
+
+    Generates average electronegativity difference between cations and anions
+    """
+
+    def __init__(self, data_source=DemlData(), stats=None):
+        self.data_source = data_source
+        if stats == None:
+            self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
+        else:
+            self.stats = stats
+
+    def featurize(self, comp):
+        """
+        Args:
+            comp: Pymatgen Composition object
+
+        Returns:
+            en_diff_stats (list of floats): Property stats of electronegativity difference
+        """
+
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+
+        fml_charge = self.data_source.get_property(comp, "formal_charge", return_per_element=True)
+        electroneg = self.data_source.get_property(comp, "electronegativity", return_per_element=True)
+
+        cations = []
+        anions = []
+        cation_en = []
+        anion_en = []
+
+        # Get electronegativity values for cations and anions
+        for i in range(len(fml_charge)):
+            if fml_charge[i] > 0:
+                cations.append(elements[i])
+                cation_en.append(electroneg[i])
+            elif fml_charge[i] < 0:
+                anions.append(elements[i])
+                anion_en.append(electroneg[i])
+
+        if len(cations) == 0 or len(anions) == 0:  # Return NaN if cations/anions missing
+            return len(self.stats) * [float("NaN")]
+
+        avg_en_diff = []
+        n_anions = sum([el_amt[el] for el in anions])
+
+        for cat_en in cation_en:
+            en_diff = 0
+            for i in range(len(anions)):
+                frac_anion = el_amt[anions[i]] / n_anions
+                an_en = anion_en[i]
+                en_diff += abs(cat_en - an_en) * frac_anion
+            avg_en_diff.append(en_diff)
+
+        cation_fracs = [el_amt[el] for el in cations]
+        en_diff_stats = []
+
+        for stat in self.stats:
+            if stat == "std_dev":
+                en_diff_stats.append(PropertyStats().calc_stat(avg_en_diff, stat))
+            else:
+                en_diff_stats.append(
+                    PropertyStats().calc_stat(avg_en_diff, stat, weights=cation_fracs))
+
+        return en_diff_stats
+
+    def feature_labels(self):
+
+        labels = []
+        for stat in self.stats:
+            labels.append("%s EN difference" % stat)
+
+        return labels
+
+    def citations(self):
+        citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+                    "functional theory total energies and enthalpies of formation of metal-nonmetal "
+                    "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+                    "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+                    "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+        return citation
+
+    def implementors(self):
+        return ["Jiming Chen", "Logan Ward"]
+
+
+class ElectronAffinity(BaseFeaturizer):
+    """
+    Class to calculate average electron affinity times formal charge of anion elements
+
+    Parameters:
+        data_source (data class): source from which to retrieve element data
+
+    Generates average (electron affinity*formal charge) of anions
+    """
+
+    def __init__(self, data_source=DemlData()):
+        self.data_source = data_source
+
+    def featurize(self, comp):
+        """
+        Args:
+            comp: Pymatgen Composition object
+
+        Returns:
+            avg_anion_affin (single-element list): average electron affinity*formal charge of anions
+        """
+
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        el_fracs = [el_amt[el] for el in elements]
+
+        fml_charge = self.data_source.get_property(comp, "formal_charge", return_per_element=True)
+        electron_affin = self.data_source.get_property(comp, "electron_affin", return_per_element=True)
+
+        avg_anion_affin = 0
+
+        for i in range(len(fml_charge)):
+            if fml_charge[i] < 0:
+                avg_anion_affin += fml_charge[i] * electron_affin[i] * el_fracs[i]
+
+        return [avg_anion_affin]
+
+    def feature_labels(self):
+        labels = ["Avg Anion Electron Affinity"]
+        return labels
+
+    def citations(self):
+        citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+                    "functional theory total energies and enthalpies of formation of metal-nonmetal "
+                    "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+                    "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+                    "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+        return citation
+
+    def implementors(self):
+        return ["Jiming Chen", "Logan Ward"]
+
 
 class Stoichiometry(BaseFeaturizer):
     """
@@ -497,155 +642,6 @@ class TMetalFraction(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen, Logan Ward"]
-
-
-class ElectronAffinity(BaseFeaturizer):
-    """
-    Class to calculate average electron affinity times formal charge of anion elements
-
-    Parameters:
-        data_source (data class): source from which to retrieve element data
-
-    Generates average (electron affinity*formal charge) of anions
-    """
-
-    def __init__(self, data_source=DemlData()):
-        self.data_source = data_source
-
-    def featurize(self, comp):
-        """
-        Args:
-            comp: Pymatgen Composition object
-
-        Returns:
-            avg_anion_affin (single-element list): average electron affinity*formal charge of anions
-        """
-
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
-        el_fracs = [el_amt[el] for el in elements]
-
-        fml_charge = self.data_source.get_property(comp, "formal_charge", return_per_element=True)
-        electron_affin = self.data_source.get_property(comp, "electron_affin", return_per_element=True)
-
-        anion_charge = []
-        anion_affin = []
-
-        avg_anion_affin = 0
-
-        for i in range(len(fml_charge)):
-            if fml_charge[i] < 0:
-                avg_anion_affin += fml_charge[i] * electron_affin[i] * el_fracs[i]
-
-        return [avg_anion_affin]
-
-    def feature_labels(self):
-        labels = ["Avg Anion Electron Affinity"]
-        return labels
-
-    def citations(self):
-        citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
-                    "functional theory total energies and enthalpies of formation of metal-nonmetal "
-                    "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
-                    "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                    "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
-        return citation
-
-    def implementors(self):
-        return ["Jiming Chen", "Logan Ward"]
-
-
-class ElectronegativityDiff(BaseFeaturizer):
-    """
-    Class to calculate average electronegativity difference
-
-    Parameters:
-        data_source (data class): source from which to retrieve element data
-        stats: Property statistics to compute
-
-    Generates average electronegativity difference between cations and anions
-    """
-
-    def __init__(self, data_source=DemlData(), stats=None):
-        self.data_source = data_source
-        if stats == None:
-            self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
-        else:
-            self.stats = stats
-
-    def featurize(self, comp):
-        """
-        Args:
-            comp: Pymatgen Composition object
-
-        Returns:
-            en_diff_stats (list of floats): Property stats of electronegativity difference
-        """
-
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
-
-        fml_charge = self.data_source.get_property(comp, "formal_charge", return_per_element=True)
-        electroneg = self.data_source.get_property(comp, "electronegativity", return_per_element=True)
-
-        cations = []
-        anions = []
-        cation_en = []
-        anion_en = []
-
-        # Get electronegativity values for cations and anions
-        for i in range(len(fml_charge)):
-            if fml_charge[i] > 0:
-                cations.append(elements[i])
-                cation_en.append(electroneg[i])
-            elif fml_charge[i] < 0:
-                anions.append(elements[i])
-                anion_en.append(electroneg[i])
-
-        if len(cations) == 0 or len(anions) == 0:  # Return NaN if cations/anions missing
-            return len(self.stats) * [float("NaN")]
-
-        avg_en_diff = []
-        n_anions = sum([el_amt[el] for el in anions])
-
-        for cat_en in cation_en:
-            en_diff = 0
-            for i in range(len(anions)):
-                frac_anion = el_amt[anions[i]] / n_anions
-                an_en = anion_en[i]
-                en_diff += abs(cat_en - an_en) * frac_anion
-            avg_en_diff.append(en_diff)
-
-        cation_fracs = [el_amt[el] for el in cations]
-        en_diff_stats = []
-
-        for stat in self.stats:
-            if stat == "std_dev":
-                en_diff_stats.append(PropertyStats().calc_stat(avg_en_diff, stat))
-            else:
-                en_diff_stats.append(
-                    PropertyStats().calc_stat(avg_en_diff, stat, weights=cation_fracs))
-
-        return en_diff_stats
-
-    def feature_labels(self):
-
-        labels = []
-        for stat in self.stats:
-            labels.append("%s EN difference" % stat)
-
-        return labels
-
-    def citations(self):
-        citation = ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
-                    "functional theory total energies and enthalpies of formation of metal-nonmetal "
-                    "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
-                    "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                    "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
-        return citation
-
-    def implementors(self):
-        return ["Jiming Chen", "Logan Ward"]
 
 
 class FERECorrection(BaseFeaturizer):
