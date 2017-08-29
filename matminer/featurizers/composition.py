@@ -315,7 +315,7 @@ class ElectronAffinity(BaseFeaturizer):
         return [avg_anion_affin]
 
     def feature_labels(self):
-        labels = ["Avg Anion Electron Affinity"]
+        labels = ["avg anion electron affinity "]
         return labels
 
     def citations(self):
@@ -385,7 +385,7 @@ class Stoichiometry(BaseFeaturizer):
     def feature_labels(self):
         labels = []
         if self.num_atoms:
-            labels.append("Number of atoms")
+            labels.append("num atoms")
 
         if self.p_list != None:
             for p in self.p_list:
@@ -542,7 +542,7 @@ class IonProperty(BaseFeaturizer):
         return list((cpd_possible, max_ionic_char, avg_ionic_char))
 
     def feature_labels(self):
-        labels = ["compound possible", "Max Ionic Char", "Avg Ionic Char"]
+        labels = ["compound possible", "max ionic char", "avg ionic char"]
         return labels
 
     def citations(self):
@@ -629,7 +629,7 @@ class TMetalFraction(BaseFeaturizer):
         return [frac_magn_atoms]
 
     def feature_labels(self):
-        labels = ["TMetal Fraction"]
+        labels = ["transition metal fraction"]
         return labels
 
     def citations(self):
@@ -668,7 +668,7 @@ class FERECorrection(BaseFeaturizer):
             comp: Pymatgen Composition object
 
         Returns:
-            fere_corr_stats (list of floats): Property stats of FERE Correction
+            fere_corr_stats (list of floats): Property stats of FERE correction
         """
 
         el_amt = comp.fractional_composition.get_el_amt_dict()
@@ -690,7 +690,7 @@ class FERECorrection(BaseFeaturizer):
 
         labels = []
         for stat in self.stats:
-            labels.append("%s FERE Correction" % stat)
+            labels.append("%s FERE correction" % stat)
 
         return labels
 
@@ -746,7 +746,7 @@ class CohesiveEnergy(BaseFeaturizer):
         return [cohesive_energy]
 
     def feature_labels(self):
-        return ["Cohesive Energy"]
+        return ["cohesive energy"]
 
     def implementors(self):
         return ["Saurabh Bajaj"]

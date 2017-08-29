@@ -113,7 +113,7 @@ class RadialDistributionFunction(BaseFeaturizer):
         return [{'distances': dist_bins[:-1], 'distribution': rdf}]
 
     def feature_labels(self):
-        return ["Radial distribution function"]
+        return ["radial distribution function"]
 
     def citations(self):
         return ("")
@@ -195,7 +195,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         return [prdf]
 
     def feature_labels(self):
-        return ["Partial radial distribution functions"]
+        return ["partial radial distribution functions"]
 
     def citations(self):
         return ("")
@@ -231,7 +231,7 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
             rdf[0]['distribution'])[-self.n_peaks:]][::-1]]
 
     def feature_labels(self):
-        return ["Radial distribution function peaks"]
+        return ["radial distribution function peaks"]
 
     def citations(self):
         return ("")
@@ -310,7 +310,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         return [redf_dict]
 
     def feature_labels(self):
-        return ["Electronic radial distribution function"]
+        return ["electronic radial distribution function"]
 
     def citations(self):
         return ("@article{title={Method for the computational comparison"
@@ -368,10 +368,10 @@ class CoulombMatrix(BaseFeaturizer):
                 else:
                     d = s.get_distance(i, j) * ANG_TO_BOHR
                     m[i].append(z[i] * z[j] / d)
-        return np.array(m)
+        return [np.array(m)]
 
     def feature_labels(self):
-        return "Coulomb matrix"
+        return ["Coulomb matrix"]
 
     def citations(self):
         return ("@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
@@ -435,10 +435,10 @@ class SineCoulombMatrix(BaseFeaturizer):
                     sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
-        return sin_mat
+        return [sin_mat]
 
     def feature_labels(self):
-        return "sine Coulomb matrix"
+        return ["sine Coulomb matrix"]
 
     def citations(self):
         return ("@article {QUA:QUA24917,"
@@ -614,10 +614,10 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         s *= [3, 3, 3]
         ofms, counts = self.get_atom_ofms(s, True)
         mean_ofm = self.get_mean_ofm(ofms, counts)
-        return mean_ofm
+        return [mean_ofm]
 
     def feature_labels(self):
-        return "orbital field matrix"
+        return ["orbital field matrix"]
 
     def citations(self):
         return ("@ARTICLE{2017arXiv170501043P,"
@@ -677,7 +677,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return [min_rel_dists[:]]
 
     def feature_labels(self):
-        return ["Minimum relative distance of each site"]
+        return ["minimum relative distance of each site"]
 
     def citations(self):
         return ("")

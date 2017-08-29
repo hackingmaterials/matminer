@@ -4,7 +4,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
-
+# TODO: make featurizer
 def branch_point_energy(bs, n_vb=1, n_cb=1):
     """
     Get the branch point energy as defined by:
@@ -44,7 +44,7 @@ def branch_point_energy(bs, n_vb=1, n_cb=1):
 
     return total_sum_energies / num_points
 
-
+# TODO: make featurizer
 def absolute_band_positions_bpe(bs, target_gap=None, **kwargs):
     """
     Absolute VBM and CBM positions with respect to branch point energy

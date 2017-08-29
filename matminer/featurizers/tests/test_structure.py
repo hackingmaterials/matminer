@@ -209,7 +209,7 @@ class StructureFeaturesTest(PymatgenTest):
                    [1.4028278132, 2.995098235, 0.159279959, 0.5]]
         self.assertAlmostEqual(
             int(np.linalg.norm(morig - np.array(mtarget))), 0)
-        m = CoulombMatrix().featurize(acetylene)
+        m = CoulombMatrix().featurize(acetylene)[0]
         self.assertAlmostEqual(m[0][0], 0.0)
         self.assertAlmostEqual(m[1][1], 0.0)
         self.assertAlmostEqual(m[2][2], 0.0)
@@ -222,13 +222,13 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             np.linalg.norm(sin_mat - np.array(mtarget)), 0.0, places=4)
         scm = SineCoulombMatrix()
-        sin_mat = scm.featurize(self.diamond)
+        sin_mat = scm.featurize(self.diamond)[0]
         self.assertEquals(sin_mat[0][0], 0)
         self.assertEquals(sin_mat[1][1], 0)
 
     def test_orbital_field_matrix(self):
         ofm_maker = OrbitalFieldMatrix()
-        ofm = ofm_maker.featurize(self.diamond)
+        ofm = ofm_maker.featurize(self.diamond)[0]
         mtarget = np.zeros((32, 32))
         mtarget[1][1] = 1.4789015  # 1.3675444
         mtarget[1][3] = 1.4789015  # 1.3675444

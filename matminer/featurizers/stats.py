@@ -199,7 +199,7 @@ class PropertyStats(object):
 
     @staticmethod
     def flatten(data_lst):
-        """
+        """oxi
         Returns a flattened copy of data_lst-as a numpy array
         """
         return np.array(data_lst).flatten()
