@@ -79,18 +79,14 @@ class BranchPointEnergy(BaseFeaturizer):
             "branch point energy"]
 
     def citations(self):
-        return ["""@article{Schleife2009,
-author = {Schleife, A. and Fuchs, F. and R{\"{o}}dl, C. and Furthm{\"{u}}ller, J. and Bechstedt, F.},
-doi = {10.1063/1.3059569},
-isbn = {0003-6951},
-issn = {00036951},
-journal = {Applied Physics Letters},
-number = {1},
-pages = {2009--2011},
-title = {{Branch-point energies and band discontinuities of III-nitrides and III-/II-oxides from quasiparticle band-structure calculations}},
-volume = {94},
-year = {2009}
-}"""]
+        return ["@article{Schleife2009, author = {Schleife, A. and Fuchs, F. "
+                "and R{\"{o}}dl, C. and Furthm{\"{u}}ller, J. and Bechstedt, "
+                "F.}, doi = {10.1063/1.3059569}, isbn = {0003-6951}, issn = "
+                "{00036951}, journal = {Applied Physics Letters}, number = {1},"
+                " pages = {2009--2011}, title = {{Branch-point energies and "
+                "band discontinuities of III-nitrides and III-/II-oxides "
+                "from quasiparticle band-structure calculations}}, volume = "
+                "{94}, year = {2009}}"]
 
     def implementors(self):
         return ["Anubhav Jain"]
