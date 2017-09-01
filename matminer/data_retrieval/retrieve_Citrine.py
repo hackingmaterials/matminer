@@ -10,12 +10,6 @@ from tqdm import tqdm
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
-"""
-This package requires downloading an installing the citrination client:
-https://github.com/CitrineInformatics/python-citrination-client
-
-"""
-
 
 class CitrineDataRetrieval:
     def __init__(self, api_key=None):

@@ -1,5 +1,3 @@
-citrination-client==1.5.0
-plotly==2.0.12
 pycookiecheat==0.4.2
 # MPDS
 ujson==1.35
