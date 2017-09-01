@@ -13,6 +13,6 @@ class MongoDataRetrievalTest(unittest.TestCase):
         result = clean_projection(p)
         self.assertEqual(set(result), {'a.b', 'm', 'n.o.e'})
 
-        p = ['d.x', 'd.y', 'd.z', 'a.b.c', 'a.b.d.e']
+        p = ['d.x', 'd.y', 'd.z', 'a.b.c', 'a.b.d.e', 'm.n.x', 'm.l.x']
         result = clean_projection(p)
-        self.assertEqual(set(result), {'d', 'a.b'})
+        self.assertEqual(set(result), {'d', 'a.b', 'm'})
