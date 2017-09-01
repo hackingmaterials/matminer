@@ -4,7 +4,8 @@ from __future__ import division, unicode_literals, absolute_import
 
 import unittest
 
-from matminer.data_retrieval.retrieve_MongoDB import clean_projection
+from matminer.data_retrieval.retrieve_MongoDB import clean_projection, \
+    remove_ints
 
 
 class MongoDataRetrievalTest(unittest.TestCase):
@@ -16,3 +17,7 @@ class MongoDataRetrievalTest(unittest.TestCase):
         p = ['d.x', 'd.y', 'd.z', 'a.b.c', 'a.b.d.e', 'm.n.x', 'm.l.x']
         result = clean_projection(p)
         self.assertEqual(set(result), {'d', 'a.b', 'm'})
+
+    def test_remove_ints(self):
+        self.assertEqual(remove_ints("a.1"), "a")
+        self.assertEqual(remove_ints("a.1.x"), "a.x")

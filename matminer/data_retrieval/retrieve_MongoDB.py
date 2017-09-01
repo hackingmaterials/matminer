@@ -9,7 +9,9 @@ __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 class MongoDataRetrieval:
     def __init__(self, coll):
         """
-        Tool to retrieve data from a MongoDB collection and reformat for data analysis
+        Tool to retrieve data from a MongoDB collection and put into a pandas
+        Dataframe object
+
         Args:
             coll: A MongoDB collection object
         """
@@ -19,17 +21,19 @@ class MongoDataRetrieval:
                       limit=None, idx_field=None, strict=False):
         """
         Args:
-            projection: (list) - a list of str fields to grab; dot-notation is allowed.
-                Set to "None" to try to auto-detect the fields.
-            query: (JSON) - a pymongo-style query to restrict data being gathered
+            projection: (list) - a list of str fields to grab; dot-notation is
+                allowed. Set to "None" to try to auto-detect the fields.
+            query: (JSON) - a pymongo-style query to filter data records
             sort: (tuple) - pymongo-style sort option
-            limit: (int) - int to limit the number of entries
-            idx_field: (str) - name of field to use as index field (must be unique)
+            limit: (int) - max number of entries
+            idx_field: (str) - name of field to use as index (must have unique
+                entries)
             strict: (bool) - if False, replaces missing values with NaN
         """
-        # auto-detect projection as all root keys of any document
-        # assumes DB is uniform
+
         if not projection:
+            # auto-detect projection as all root keys of any document
+            # assumes DB is uniform
             d = self.coll.find_one(query, projection, sort=sort)
             projection = d.keys()
 
@@ -58,7 +62,6 @@ class MongoDataRetrieval:
                     else:
                         raise
 
-
             all_data.append(row_data)
 
         df = pd.DataFrame(all_data, columns=projection)
@@ -69,7 +72,8 @@ class MongoDataRetrieval:
 
 def clean_projection(projection):
     """
-    Projecting on e.g. 'a.b.' and 'a' is disallowed. Project inclusively.
+    Projecting on e.g. 'a.b.' and 'a' is disallowed in MongoDb, so project
+    inclusively. See unit tests for examples of what this is doing.
     Args:
         projection: (list) - list of fields to grab; dot-notation is allowed.
     """
@@ -104,13 +108,21 @@ def clean_projection(projection):
 
 
 def remove_ints(projection):
+    """
+    Transforms a string like "a.1.x" to "a.x" - for Mongo projection purposes
+    Args:
+        projection: (str) the projection to remove ints from
+
+    Returns:
+
+    """
+
+    def is_int(x):
+        try:
+            int(x)
+            return True
+        except:
+            return False
+
     proj = [p for p in projection.split(".") if not is_int(p)]
     return ".".join(proj)
-
-
-def is_int(x):
-    try:
-        int(x)
-        return True
-    except:
-        return False
