@@ -3,7 +3,7 @@ from __future__ import unicode_literals, division, print_function
 import unittest
 import pandas as pd
 
-from pymatgen import Composition, Specie
+from pymatgen import Composition
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter
