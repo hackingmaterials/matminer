@@ -22,7 +22,7 @@ def load_piezoelectric_tensor():
     # ref: de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.
     # A database to enable discovery and design of piezoelectric materials.
     # Sci. Data 2, 150053 (2015).
-    return pandas.read_csv(os.path.join(module_dir, "piezo.csv"), comment="#")
+    return pandas.read_csv(os.path.join(module_dir, "piezoelectric_tensor.csv"), comment="#")
 
 
 def load_dielectric_constant():
