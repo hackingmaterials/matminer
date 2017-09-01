@@ -73,9 +73,34 @@ def clean_projection(projection):
     Args:
         projection: (list) - list of fields to grab; dot-notation is allowed.
     """
-    return [
-        list(g)[0] for _, g in
-        groupby(sorted(projection), key=lambda p: p.split(".", 1)[0])]
+    all_proj = []
+    for group in groupby(sorted(projection), key=lambda p: p.split(".", 1)[0]):
+        common = ''
+        derivs = list(group[1])
+        smallest_deriv = derivs[0]
+        buffer = ""
+        for i in range(len(smallest_deriv)):
+            all_match = True
+            for deriv in derivs:
+                if deriv[i] != smallest_deriv[i]:
+                    all_match = False
+                    break
+
+            if all_match:
+                if smallest_deriv[i] == '.':
+                    common += buffer
+                    buffer = ''
+
+                buffer += smallest_deriv[i]
+                if i == len(smallest_deriv) - 1:
+                    common += buffer
+
+            else:
+                break
+
+        all_proj.append(common)
+
+    return all_proj
 
 
 def remove_ints(projection):
