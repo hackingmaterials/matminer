@@ -1,4 +1,4 @@
-pymatgen==2017.8.21
+pymatgen==2017.9.1
 pandas==0.20.3
 tqdm==4.14.0
 pymongo==3.4.0
