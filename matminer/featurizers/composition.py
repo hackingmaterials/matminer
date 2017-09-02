@@ -223,36 +223,21 @@ class ElectronegativityDiff(BaseFeaturizer):
             en_diff_stats (list of floats): Property stats of electronegativity difference
         """
         el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
 
-        fml_charge = self.data_source.get_property(comp, "formal_charge",
-                                                   return_per_element=True)
-        electroneg = self.data_source.get_property(comp, "electronegativity",
-                                                   return_per_element=True)
+        best_guess = comp.oxi_state_guesses(max_sites=-1)[0]
+        cations = [x for x in best_guess if best_guess[x] > 0]
+        anions = [x for x in best_guess if best_guess[x] < 0]
 
-        cations = []
-        anions = []
-        cation_en = []
-        anion_en = []
+        cation_en = [Element(x).X for x in cations]
+        anion_en = [Element(x).X for x in anions]
 
-        # TODO: you can automatically figure out cations/anions using Composition.oxi_state_guesses.
-        # TODO: which electronegativity is being loaded?
-        # Get electronegativity values for cations and anions
-        for i in range(len(fml_charge)):
-            if fml_charge[i] > 0:
-                cations.append(elements[i])
-                cation_en.append(electroneg[i])
-            elif fml_charge[i] < 0:
-                anions.append(elements[i])
-                anion_en.append(electroneg[i])
-
-        if len(cations) == 0 or len(
-                anions) == 0:  # Return NaN if cations/anions missing
+        if len(cations) == 0 or len(anions) == 0:
             return len(self.stats) * [float("NaN")]
 
         avg_en_diff = []
         n_anions = sum([el_amt[el] for el in anions])
 
+        # TODO: @wardlt, @JFChen3 I left this code as-is but am not quite sure what's going on. Why is there some normalization applied to anions but not cations? -computron
         for cat_en in cation_en:
             en_diff = 0
             for i in range(len(anions)):
@@ -317,23 +302,16 @@ class ElectronAffinity(BaseFeaturizer):
         Returns:
             avg_anion_affin (single-element list): average electron affinity*formal charge of anions
         """
-
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
-        el_fracs = [el_amt[el] for el in elements]
-
-        fml_charge = self.data_source.get_property(comp, "formal_charge",
-                                                   return_per_element=True)
         electron_affin = self.data_source.get_property(comp, "electron_affin",
                                                        return_per_element=True)
 
-        avg_anion_affin = 0
+        oxi_states = comp.oxi_state_guesses(max_sites=-1)[0]
 
-        # TODO: you can automatically figure out formal charge using Composition.oxi_state_guesses. Will be more accurate than this method.
-        for i in range(len(fml_charge)):
-            if fml_charge[i] < 0:
-                avg_anion_affin += fml_charge[i] * electron_affin[i] * el_fracs[
-                    i]
+        avg_anion_affin = 0
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        for i, el in enumerate(oxi_states):
+            if oxi_states[el] < 0:
+                avg_anion_affin += oxi_states[el] * electron_affin[i] * el_amt[el]
 
         return [avg_anion_affin]
 
@@ -550,7 +528,9 @@ class IonProperty(BaseFeaturizer):
             elec = self.data_source.get_property(comp, "Electronegativity",
                                                  return_per_element=True)
 
-            # TODO: consider replacing with oxi_state_guesses
+            # TODO: consider replacing with oxi_state_guesses - depends on
+            # whether Magpie oxidation states table matches oxi_states table
+
             # Determine if neutral compound is possible
             cpd_possible = False
             ox_sets = itertools.product(*ox_states)
