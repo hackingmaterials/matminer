@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import os
 import time
@@ -188,7 +188,7 @@ class CitrineDataRetrieval:
                     json_data) * per_page > max_results:  # check if limit is reached
                 json_data = json_data[
                             :(
-                            max_results / per_page)]  # get first multiple of 100 records
+                            max_results // per_page)]  # get first multiple of 100 records
                 json_data.append(
                     data[:max_results % per_page])  # get remaining records
                 break
