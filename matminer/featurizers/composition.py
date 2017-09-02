@@ -305,13 +305,17 @@ class ElectronAffinity(BaseFeaturizer):
         electron_affin = self.data_source.get_property(comp, "electron_affin",
                                                        return_per_element=True)
 
+        el_amt = comp.fractional_composition.get_el_amt_dict()
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        electron_affin = dict(zip(elements, electron_affin))
+
         oxi_states = comp.oxi_state_guesses(max_sites=-1)[0]
 
         avg_anion_affin = 0
-        el_amt = comp.fractional_composition.get_el_amt_dict()
         for i, el in enumerate(oxi_states):
             if oxi_states[el] < 0:
-                avg_anion_affin += oxi_states[el] * electron_affin[i] * el_amt[el]
+                avg_anion_affin += oxi_states[el] * electron_affin[el] * \
+                                   el_amt[el]
 
         return [avg_anion_affin]
 
