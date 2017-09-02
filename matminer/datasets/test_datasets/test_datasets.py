@@ -21,7 +21,8 @@ class DataSetTest(unittest.TestCase):
         df = load_piezoelectric_tensor()
         self.assertEqual(len(df), 941)
         column_headers = {'idx', 'eij_max', 'meta', 'piezoelectric_tensor',
-                          'v_max'}
+                          'v_max', 'structure', 'poscar', 'formula', 'volume',
+                          'space_group', 'point_group', 'nsites', 'material_id'}
         self.assertEqual(set(list(df)), column_headers)
 
     def test_dielectric_tensor(self):
@@ -30,7 +31,8 @@ class DataSetTest(unittest.TestCase):
         print(list(df))
         column_headers = {'idx', 'band_gap', 'e_electronic', 'e_total', 'meta',
                           'n', 'poly_electronic', 'poly_total',
-                          'pot_ferroelectric'}
+                          'pot_ferroelectric', 'nsites', 'structure', 'poscar',
+                          'space_group', 'material_id', 'formula', 'volume'}
         self.assertEqual(set(list(df)), column_headers)
 
 
