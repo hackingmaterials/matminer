@@ -737,50 +737,65 @@ class FERECorrection(BaseFeaturizer):
 
 
 class CohesiveEnergy(BaseFeaturizer):
-    def __init__(self):
-        # TODO: MAPI key as parameter
-        # TODO: formation energy as parameter (then you don't need MAPI key)
-        # TODO: reimplement as AbstractData! -computron
+
+    def __init__(self, mapi_key=None):
+        """
+        Class to get cohesive energy of compound by subtracting elemental
+        cohesive energies from the formation energy of the compound.
+
+        Parameters:
+            mapi_key (str): Materials API key for looking up formation energy
+                by composition alone (if you don't set the formation energy
+                yourself).
+        """
+        self.mapi_key = mapi_key
+
+        # TODO: reimplement as AbstractData -computron
         module_dir = os.path.dirname(os.path.abspath(__file__))
         with open(os.path.join(module_dir, 'data_files',
                                'cohesive_energies.json'), 'r') as f:
             self.ce_data = json.load(f)
 
-    def featurize(self, comp):
+    def featurize(self, comp, formation_energy_per_atom=None):
         """
-        Get cohesive energy of compound by subtracting elemental cohesive
-        energies from the formation energy of the compound.
 
         Args:
             comp: (str) compound composition, eg: "NaCl"
-
-        Returns: (float) cohesive energy of compound
-
+            formation_energy_per_atom: (float) the formation energy per atom of
+                your compound. If not set, will look up the most stable
+                formation energy from the Materials Project database.
         """
-        # TODO: clean up
         el_amt_dict = comp.get_el_amt_dict()
 
-        # Get formation energy of most stable structure from MP
-        struct_lst = MPRester().get_data(comp.formula.replace(" ", ""))
-        if len(struct_lst) > 0:
-            struct_lst = sorted(struct_lst, key=lambda e: e['energy_per_atom'])
-            most_stable_entry = struct_lst[0]
-            formation_energy = most_stable_entry['formation_energy_per_atom']
-        else:
-            raise ValueError('No structure found in MP for {}'.format(comp))
+        formation_energy_per_atom = formation_energy_per_atom or None
+
+        if not formation_energy_per_atom:
+            # Get formation energy of most stable structure from MP
+            struct_lst = MPRester(self.mapi_key).get_data(
+                comp.formula.replace(" ", ""))
+            if len(struct_lst) > 0:
+                most_stable_entry = sorted(struct_lst,
+                                           key=lambda e:
+                                           e['energy_per_atom'])[0]
+                formation_energy_per_atom = most_stable_entry[
+                    'formation_energy_per_atom']
+            else:
+                raise ValueError('No structure found in MP for {}'.format(comp))
 
         # Subtract elemental cohesive energies from formation energy
-        cohesive_energy = formation_energy
+        cohesive_energy = -formation_energy_per_atom * comp.num_atoms
         for el in el_amt_dict:
-            cohesive_energy -= el_amt_dict[el] * self.ce_data[el]
+            cohesive_energy += el_amt_dict[el] * self.ce_data[el]
 
-        return [cohesive_energy]
+        cohesive_energy_per_atom = cohesive_energy / comp.num_atoms
+
+        return [cohesive_energy_per_atom]
 
     def feature_labels(self):
         return ["cohesive energy"]
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ["Saurabh Bajaj", "Anubhav Jain"]
 
     def citations(self):
         # TODO: unclear whether cohesive energies are taken from first ref, second ref, or combination of both
