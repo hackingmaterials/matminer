@@ -314,13 +314,16 @@ class PymatgenData(AbstractData):
                         raise ValueError(
                             "oxidation state not given for {}; It does not yield a unique "
                             "number per Element".format(property_name))
+                elif property_name == "block":
+                    block_key = {"s": 1.0, "p": 2.0, "d": 3.0, "f": 3.0}
+                    property_value = block_key[p]
                 else:
                     property_value = float(p)
 
                 # units are None for these pymatgen features
                 # todo: there seem to be a lot more unitless features which are not listed here... -Alex D
                 if property_name not in ['X', 'Z', 'group', 'row', 'number', 'mendeleev_no',
-                                         'ionic_radii']:
+                                         'ionic_radii', 'block']:
                     property_units = p.unit
 
             # Make a named tuple out of all the available information
