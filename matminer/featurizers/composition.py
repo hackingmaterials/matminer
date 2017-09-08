@@ -103,7 +103,7 @@ class ElementProperty(BaseFeaturizer):
         """
 
         el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
         fracs = [el_amt[el] for el in elements]
 
         all_attributes = []
@@ -304,7 +304,7 @@ class ElectronAffinity(BaseFeaturizer):
                                                        return_per_element=True)
 
         el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
         electron_affin = dict(zip(elements, electron_affin))
 
         oxi_states = comp.oxi_state_guesses(max_sites=-1)[0]
@@ -438,7 +438,7 @@ class ValenceOrbital(BaseFeaturizer):
         """
 
         el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
         el_fracs = [el_amt[el] for el in elements]
 
         avg = []
@@ -516,7 +516,7 @@ class IonProperty(BaseFeaturizer):
         """
 
         el_amt = comp.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
         values = [el_amt[el] for el in elements]
 
         if len(elements) < 2:  # Single element
@@ -696,7 +696,7 @@ class FERECorrection(BaseFeaturizer):
         """
 
         el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
         el_frac = [el_amt[el] for el in elements]
 
         GGAU_Etot = self.data_source.get_property(comp, "GGAU_Etot",

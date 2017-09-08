@@ -3,6 +3,7 @@ from __future__ import unicode_literals, division, print_function
 import unittest
 from unittest import SkipTest
 
+import math
 import pandas as pd
 
 from pymatgen import Composition, MPRester
@@ -47,7 +48,7 @@ class CompositionFeaturesTest(PymatgenTest):
     def test_elem_matminer(self):
         df_elem = ElementProperty.from_preset("matminer").featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_elem["minimum melting_point"][0], 54.8, 1)
-        self.assertAlmostEqual(df_elem["maximum bulk_modulus"][0], 170.0, 1)
+        self.assertTrue(math.isnan(df_elem["maximum bulk_modulus"][0]))
         self.assertAlmostEqual(df_elem["range X"][0], 1.61, 1)
         self.assertAlmostEqual(df_elem["mean X"][0], 2.796, 1)
 
