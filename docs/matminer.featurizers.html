@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>matminer.featurizers package &#8212; matminer 0.1.2 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -66,32 +66,52 @@
 </div>
 <div class="section" id="module-matminer.featurizers.bandstructure">
 <span id="matminer-featurizers-bandstructure-module"></span><h2>matminer.featurizers.bandstructure module<a class="headerlink" href="#module-matminer.featurizers.bandstructure" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="matminer.featurizers.bandstructure.absolute_band_positions_bpe">
-<code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">absolute_band_positions_bpe</code><span class="sig-paren">(</span><em>bs</em>, <em>target_gap=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.absolute_band_positions_bpe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Absolute VBM and CBM positions with respect to branch point energy</p>
+<dl class="class">
+<dt id="matminer.featurizers.bandstructure.BranchPointEnergy">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">BranchPointEnergy</code><span class="sig-paren">(</span><em>n_vb=1</em>, <em>n_cb=1</em>, <em>calculate_band_edges=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BranchPointEnergy.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>n_vb=1</em>, <em>n_cb=1</em>, <em>calculate_band_edges=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the branch point energy and (optionally) an absolute band
+edge position assuming the branch point energy is the center of the gap</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>bs: Bandstructure object
-target_gap: if a better band gap is known, shift band positions by this gap
-<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: arguments to feed into branch point energy code</dd>
-<dt>Returns:</dt>
-<dd>(vbm, cbm) - tuple of floats</dd>
+<dd><p class="first">n_vb: (int) number of valence bands to include in BPE calc
+n_cb: (int) number of conduction bands to include in BPE calc
+calculate_band_edges: (bool) whether to also return band edge</p>
+<blockquote class="last">
+<div>positions</div></blockquote>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="matminer.featurizers.bandstructure.branch_point_energy">
-<code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">branch_point_energy</code><span class="sig-paren">(</span><em>bs</em>, <em>n_vb=1</em>, <em>n_cb=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.branch_point_energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the branch point energy as defined by:
-Schleife, Fuchs, Rodi, Furthmuller, Bechstedt, APL 94, 012104 (2009)</p>
-<dl class="docutils">
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BranchPointEnergy.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BranchPointEnergy.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BranchPointEnergy.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>bs</em>, <em>target_gap=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
 <dt>Args:</dt>
-<dd>bs: (BandStructure) - uniform mesh bandstructure object
-n_vb: number of valence bands to include
-n_cb: number of conduction bands to include</dd>
+<dd>bs: (BandStructure)</dd>
+<dt>Returns:</dt>
+<dd>(int) branch point energy on same energy scale as BS eigenvalues</dd>
 </dl>
-<p>Returns: (int) branch point energy on same energy scale as BS eigenvalues</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BranchPointEnergy.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -175,6 +195,11 @@ col_id (str or list of str): column label containing objects to featurize. Can b
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">BandCenter</code><a class="headerlink" href="#matminer.featurizers.composition.BandCenter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <dl class="method">
+<dt id="matminer.featurizers.composition.BandCenter.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.BandCenter.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="matminer.featurizers.composition.BandCenter.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.BandCenter.feature_labels" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -182,9 +207,8 @@ col_id (str or list of str): column label containing objects to featurize. Can b
 <dl class="method">
 <dt id="matminer.featurizers.composition.BandCenter.featurize">
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.BandCenter.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate absolution position of band center using geometric mean of electronegativity
-Ref: Butler, M. a. &amp; Ginley, D. S. Prediction of Flatband Potentials at Semiconductor-Electrolyte Interfaces from
-Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).</p>
+<dd><p>(Rough) estimation of absolution position of band center using
+geometric mean of electronegativity.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>comp: (Composition)</dd>
@@ -201,8 +225,30 @@ Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).</p>
 
 <dl class="class">
 <dt id="matminer.featurizers.composition.CohesiveEnergy">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">CohesiveEnergy</code><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">CohesiveEnergy</code><span class="sig-paren">(</span><em>mapi_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.composition.CohesiveEnergy.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>mapi_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to get cohesive energy per atom of a compound by adding known
+elemental cohesive energies from the formation energy of the
+compound.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><dl class="first last docutils">
+<dt>mapi_key (str): Materials API key for looking up formation energy</dt>
+<dd>by composition alone (if you don&#8217;t set the formation energy
+yourself).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.CohesiveEnergy.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="matminer.featurizers.composition.CohesiveEnergy.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy.feature_labels" title="Permalink to this definition">¶</a></dt>
@@ -210,16 +256,16 @@ Atomic Electronegativities. J. Electrochem. Soc. 125, 228 (1978).</p>
 
 <dl class="method">
 <dt id="matminer.featurizers.composition.CohesiveEnergy.featurize">
-<code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get cohesive energy of compound by subtracting elemental cohesive energies from the formation energy of the compund.
-Elemental cohesive energies are taken from <a class="reference external" href="http://www">http://www</a>.      knowledgedoor.com/2/elements_handbook/cohesive_energy.html.
-Most of them are taken from &#8220;Charles Kittel: Introduction to Solid State Physics, 8th edition. Hoboken, NJ:
-John Wiley &amp; Sons, Inc, 2005, p. 50.&#8221;</p>
-<dl class="docutils">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em>, <em>formation_energy_per_atom=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
 <dt>Args:</dt>
-<dd>comp: (str) compound composition, eg: &#8220;NaCl&#8221;</dd>
+<dd><p class="first">comp: (str) compound composition, eg: &#8220;NaCl&#8221;
+formation_energy_per_atom: (float) the formation energy per atom of</p>
+<blockquote class="last">
+<div>your compound. If not set, will look up the most stable
+formation energy from the Materials Project database.</div></blockquote>
+</dd>
 </dl>
-<p>Returns: (float) cohesive energy of compound</p>
 </dd></dl>
 
 <dl class="method">
@@ -276,7 +322,8 @@ John Wiley &amp; Sons, Inc, 2005, p. 50.&#8221;</p>
 <dt id="matminer.featurizers.composition.ElectronegativityDiff">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">ElectronegativityDiff</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.featurizers.data.DemlData object&gt;</em>, <em>stats=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ElectronegativityDiff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Class to calculate average electronegativity difference</p>
+<p>Calculate electronegativity difference between cations and anions
+(average, max, range, etc.)</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
 <dd>data_source (data class): source from which to retrieve element data
@@ -352,18 +399,26 @@ stats: Property statistics to compute</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.composition.ElementProperty">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">ElementProperty</code><span class="sig-paren">(</span><em>method='magpie'</em>, <em>stats=None</em>, <em>attributes=None</em>, <em>data_source=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ElementProperty" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">ElementProperty</code><span class="sig-paren">(</span><em>data_source</em>, <em>features</em>, <em>stats</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ElementProperty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Class to calculate elemental property attributes</p>
+<p>Class to calculate elemental property attributes. To initialize quickly,
+use the from_preset() method.</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
-<dd>attributes (list of strings): List of elemental properties to use
-method (string): pre-packaged sets of property sets to compute
-data_source (data object): source from which to retrieve element property data</dd>
+<dd><dl class="first last docutils">
+<dt>data_source (AbstractData or str): source from which to retrieve</dt>
+<dd>element property data (or use str for preset: &#8220;pymatgen&#8221;,
+&#8220;magpie&#8221;, or &#8220;deml&#8221;)</dd>
+<dt>attributes (list of strings): List of elemental properties to use</dt>
+<dd>(these must be supported by data_source)</dd>
+<dt>stats (string): a list of weighted statistics to compute to for each</dt>
+<dd>property (see PropertyStats for available stats)</dd>
+</dl>
+</dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.composition.ElementProperty.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>method='magpie'</em>, <em>stats=None</em>, <em>attributes=None</em>, <em>data_source=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ElementProperty.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_source</em>, <em>features</em>, <em>stats</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ElementProperty.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -384,8 +439,18 @@ data_source (data object): source from which to retrieve element property data</
 <dt>Args:</dt>
 <dd>comp: Pymatgen composition object</dd>
 <dt>Returns:</dt>
-<dd>all_attributes: Specified property statistics of descriptors</dd>
+<dd>all_attributes: Specified property statistics of features</dd>
 </dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.composition.ElementProperty.from_preset">
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ElementProperty.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return ElementProperty from a preset string
+Args:</p>
+<blockquote>
+<div>preset_name: (str) can be one of &#8220;magpie&#8221;, &#8220;deml&#8221;, or &#8220;matminer&#8221;</div></blockquote>
+<p>Returns:</p>
 </dd></dl>
 
 <dl class="method">
@@ -399,7 +464,8 @@ data_source (data object): source from which to retrieve element property data</
 <dt id="matminer.featurizers.composition.FERECorrection">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">FERECorrection</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.featurizers.data.DemlData object&gt;</em>, <em>stats=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.FERECorrection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Class to calculate difference between fitted elemental-phase reference energy (FERE) and GGA+U energy</p>
+<p>Class to calculate difference between fitted elemental-phase reference
+energy (FERE) and GGA+U energy</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
 <dd>data_source (data class): source from which to retrieve element data
@@ -428,7 +494,7 @@ stats: Property statistics to compute</dd>
 <dt>Args:</dt>
 <dd>comp: Pymatgen Composition object</dd>
 <dt>Returns:</dt>
-<dd>fere_corr_stats (list of floats): Property stats of FERE Correction</dd>
+<dd>fere_corr_stats (list of floats): Property stats of FERE correction</dd>
 </dl>
 </dd></dl>
 
@@ -643,7 +709,7 @@ property_name (str): Name of descriptor
 return_per_element (bool): If true, returns one value per element rather than per atom</dd>
 <dt>Returns:</dt>
 <dd>(list): list of values for each atom in comp_obj.
-Note: the returned values are sorted by the corresponding element&#8217;s electronegativity.
+Note: the returned values are sorted by the corresponding element&#8217;s atomic number.
 This is done for the sake of consistency.</dd>
 </dl>
 </dd></dl>
@@ -730,18 +796,18 @@ site (int): Index of the site to be featurized</dd>
 <div><p>Originally used by [Botu <em>et al</em>](<a class="reference external" href="http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908">http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908</a>) to fit empiricial potentials,
 these features come in two forms: atomic fingerprints, and direction-resolved fingerprints.</p>
 <p>Atomic fingerprints describe the local environment of an atom and are computed using the function:</p>
-<p>:math:<a href="#id3"><span class="problematic" id="id4">`</span></a>A_i(eta) = sumlimits_{i</p>
+<p>:math:<a href="#id1"><span class="problematic" id="id2">`</span></a>A_i(eta) = sumlimits_{i</p>
 </div></blockquote>
 <p>e j} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <blockquote>
 <div>where <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/9172efc523d7488d4c3ed299d0be813de01503b8.png" alt="\eta"/> is a scaling function,
 <img class="math" src="_images/math/35bab58b40a77a2e24ecb9f58898f1813de64459.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> and <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/>, and <img class="math" src="_images/math/074903764bb5a464b7c346e84f43cba2174f3ab0.png" alt="f(r)"/> is a cutoff function where
-:math:<a href="#id5"><span class="problematic" id="id6">`</span></a>f(r) = 0.5[cos(</div></blockquote>
+:math:<a href="#id3"><span class="problematic" id="id4">`</span></a>f(r) = 0.5[cos(</div></blockquote>
 <p>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/b851d3a5fb872ad82d61f964772ca1cc2520a590.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</p>
 <blockquote>
 <div><p>The direction-resolved fingerprints are computed using</p>
-<p>:math:<a href="#id7"><span class="problematic" id="id8">`</span></a>V_i^k(eta) = sumlimits_{i</p>
+<p>:math:<a href="#id5"><span class="problematic" id="id6">`</span></a>V_i^k(eta) = sumlimits_{i</p>
 </div></blockquote>
 <p>e j} 
 rac{r_{ij}^k}{r_{ij}} e^{-(
@@ -898,7 +964,8 @@ sort: wheter to sort the eigenvalues</div></blockquote>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.flatten">
 <em class="property">static </em><code class="descname">flatten</code><span class="sig-paren">(</span><em>data_lst</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.flatten" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a flattened copy of data_lst-as a numpy array</p>
+<dd><p>oxi
+Returns a flattened copy of data_lst-as a numpy array</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1044,7 +1111,7 @@ weights (list of floats): Atomic fractions</div></blockquote>
 <p>Generate the Coulomb matrix, M, of the input
 structure (or molecule).  The Coulomb matrix was put forward by
 Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-off-diagonal elements M_ij = Z_i*Z_j/<a href="#id9"><span class="problematic" id="id10">|R_i-R_j|</span></a>
+off-diagonal elements M_ij = Z_i*Z_j/<a href="#id7"><span class="problematic" id="id8">|R_i-R_j|</span></a>
 and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
 the nuclear charge and the position of atom i, respectively.</p>
 <dl class="method">
@@ -1088,36 +1155,32 @@ the diagonal elements are set to zero.</div></blockquote>
 </dd></dl>
 
 <dl class="class">
-<dt id="matminer.featurizers.structure.Density">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">Density</code><a class="headerlink" href="#matminer.featurizers.structure.Density" title="Permalink to this definition">¶</a></dt>
+<dt id="matminer.featurizers.structure.DensityFeatures">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">DensityFeatures</code><span class="sig-paren">(</span><em>desired_features=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Gets the density of a crystal structure.</p>
 <dl class="method">
-<dt id="matminer.featurizers.structure.Density.citations">
-<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Density.citations" title="Permalink to this definition">¶</a></dt>
+<dt id="matminer.featurizers.structure.DensityFeatures.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>desired_features=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="matminer.featurizers.structure.Density.feature_labels">
-<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Density.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dt id="matminer.featurizers.structure.DensityFeatures.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures.citations" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="matminer.featurizers.structure.Density.featurize">
-<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Density.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get density of the input structure.
-Args:</p>
-<blockquote>
-<div>s: Pymatgen Structure object.</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>f (float): density.</dd>
-</dl>
-</dd></dl>
+<dt id="matminer.featurizers.structure.DensityFeatures.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
-<dt id="matminer.featurizers.structure.Density.implementors">
-<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Density.implementors" title="Permalink to this definition">¶</a></dt>
+<dt id="matminer.featurizers.structure.DensityFeatures.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures.featurize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.DensityFeatures.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures.implementors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1356,41 +1419,6 @@ to give a 32 X 32 matrix characterizing a structure</p>
 <dl class="method">
 <dt id="matminer.featurizers.structure.OrbitalFieldMatrix.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.implementors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="matminer.featurizers.structure.PackingFraction">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">PackingFraction</code><a class="headerlink" href="#matminer.featurizers.structure.PackingFraction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Calculates the packing fraction of a crystal structure.</p>
-<dl class="method">
-<dt id="matminer.featurizers.structure.PackingFraction.citations">
-<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.PackingFraction.citations" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.PackingFraction.feature_labels">
-<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.PackingFraction.feature_labels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.PackingFraction.featurize">
-<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.PackingFraction.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get packing fraction of the input structure.
-Args:</p>
-<blockquote>
-<div>s: Pymatgen Structure object.</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>f (float): packing fraction.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.PackingFraction.implementors">
-<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.PackingFraction.implementors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1656,41 +1684,6 @@ q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.</dd>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="matminer.featurizers.structure.VolumePerSite">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">VolumePerSite</code><a class="headerlink" href="#matminer.featurizers.structure.VolumePerSite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Calculates volume per site in a crystal structure.</p>
-<dl class="method">
-<dt id="matminer.featurizers.structure.VolumePerSite.citations">
-<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.VolumePerSite.citations" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.VolumePerSite.feature_labels">
-<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.VolumePerSite.feature_labels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.VolumePerSite.featurize">
-<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.VolumePerSite.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get volume per site of the input structure.
-Args:</p>
-<blockquote>
-<div>s: Pymatgen Structure object.</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>f (float): volume per site.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.VolumePerSite.implementors">
-<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.VolumePerSite.implementors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <dl class="function">
 <dt id="matminer.featurizers.structure.get_neighbors_of_site_with_index">
 <code class="descclassname">matminer.featurizers.structure.</code><code class="descname">get_neighbors_of_site_with_index</code><span class="sig-paren">(</span><em>struct</em>, <em>n</em>, <em>p=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.get_neighbors_of_site_with_index" title="Permalink to this definition">¶</a></dt>
@@ -1886,7 +1879,7 @@ statistics (&#8220;min&#8221;, &#8220;max&#8221;, &#8220;mean&#8221;, &#8220;std
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

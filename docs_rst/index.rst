@@ -194,6 +194,19 @@ A few examples demonstrating usage can be found in the notebook hosted on `Jupyt
 Changelog
 ---------
 
+**v0.1.3**
+
+* remove git-lfs
+* refactor structure descriptors
+* multiple fixes to cohesive energy
+* fixes to data loaders
+* fix complex Mongo retrieval queries, better logic for query projections
+* more unit tests
+* enforce lower case feature names
+* sort data by atomic number not electronegativity in data getters, this will avoid pernicious behavior
+* many minor cleanups, bug fixes, and consistency fixes
+
+
 **v0.1.2**
 
 * Several new structure fingerprint methods (L. Ward, K. Bostrom)
