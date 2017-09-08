@@ -1,9 +1,11 @@
 from __future__ import unicode_literals, division, print_function
 
 import unittest
+from unittest import SkipTest
+
 import pandas as pd
 
-from pymatgen import Composition
+from pymatgen import Composition, MPRester
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter
@@ -94,10 +96,12 @@ class CompositionFeaturesTest(PymatgenTest):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_band_center["band center"][0], -2.672486385)
 
-    @unittest.skip("requires API code")
     def test_cohesive_energy(self):
+        mpr = MPRester()
+        if not mpr.api_key:
+            raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
         df_cohesive_energy = CohesiveEnergy().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], -18.24568582)
+        self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 5.157)
 """
 class PymatgenDescriptorTest(unittest.TestCase):
 

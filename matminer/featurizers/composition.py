@@ -1,20 +1,18 @@
 from pymatgen import Element, Composition, MPRester
 from pymatgen.core.periodic_table import get_el_sp
 
-import collections
 import os
 import json
 import itertools
 
 import numpy as np
-import pandas as pd
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.data import DemlData, MagpieData, PymatgenData
 from matminer.featurizers.stats import PropertyStats
 
-__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Logan Ward, Jiming Chen, ' \
-             'Ashwin Aggarwal, Kiran Mathew, Anubhav Jain'
+__author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
+             'Saurabh Bajaj, Anubhav Jain'
 
 
 class ElementProperty(BaseFeaturizer):
@@ -740,8 +738,9 @@ class CohesiveEnergy(BaseFeaturizer):
 
     def __init__(self, mapi_key=None):
         """
-        Class to get cohesive energy of compound by subtracting elemental
-        cohesive energies from the formation energy of the compound.
+        Class to get cohesive energy per atom of a compound by adding known
+        elemental cohesive energies from the formation energy of the
+        compound.
 
         Parameters:
             mapi_key (str): Materials API key for looking up formation energy
@@ -750,7 +749,7 @@ class CohesiveEnergy(BaseFeaturizer):
         """
         self.mapi_key = mapi_key
 
-        # TODO: reimplement as AbstractData -computron
+        # TODO: @sbajaj reimplement as AbstractData
         module_dir = os.path.dirname(os.path.abspath(__file__))
         with open(os.path.join(module_dir, 'data_files',
                                'cohesive_energies.json'), 'r') as f:
@@ -798,7 +797,7 @@ class CohesiveEnergy(BaseFeaturizer):
         return ["Saurabh Bajaj", "Anubhav Jain"]
 
     def citations(self):
-        # TODO: unclear whether cohesive energies are taken from first ref, second ref, or combination of both
+        # TODO: @sbajaj unclear whether cohesive energies are taken from first ref, second ref, or combination of both
         return [
             "@misc{, title = {{Knowledgedoor Cohesive energy handbook}}, "
             "url = {http://www.knowledgedoor.com/2/elements{\_}handbook/cohesive{\_}energy.html}}",
