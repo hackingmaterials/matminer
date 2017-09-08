@@ -197,6 +197,7 @@ Changelog
 **v0.1.3**
 
 * remove git-lfs
+* updated CSV data sets (K. Bostrom)
 * refactor structure descriptors
 * multiple fixes to cohesive energy
 * fixes to data loaders
