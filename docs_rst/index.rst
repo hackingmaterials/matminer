@@ -10,9 +10,9 @@ matminer
 
 matminer is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a **working code**.
 
---------
+---------------
 Citing matminer
---------
+---------------
 
 We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
 
@@ -39,9 +39,9 @@ You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launc
 .. image:: http://mybinder.org/badge.svg 
    :target: http://mybinder.org/repo/hackingmaterials/matminer
 
---------
+------------
 Installation
---------
+------------
 
 There are a couple of quick and easy ways to install matminer:-
 
@@ -118,7 +118,7 @@ For example, to compare experimental and computed band gaps of Si, one can emplo
 
 
 Data descriptor tools
-----------------
+---------------------
 
 - Decorate the dataframe with composition, structural, and/or band structure descriptors/features
 

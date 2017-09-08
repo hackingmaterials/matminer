@@ -1,0 +1,29 @@
+matminer.datasets package
+=========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    matminer.datasets.test_datasets
+
+Submodules
+----------
+
+matminer.datasets.dataframe_loader module
+-----------------------------------------
+
+.. automodule:: matminer.datasets.dataframe_loader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: matminer.datasets
+    :members:
+    :undoc-members:
+    :show-inheritance:
