@@ -198,6 +198,7 @@ Changelog
 
 * remove git-lfs
 * updated CSV data sets (K. Bostrom)
+* better oxidation state determination in multiple composition descriptors
 * refactor structure descriptors
 * multiple fixes to cohesive energy
 * fixes to data loaders
