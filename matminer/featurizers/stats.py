@@ -40,7 +40,7 @@ class PropertyStats(object):
         Returns: 
             minimum value
         """
-        return min(data_lst)
+        return min(data_lst) if float("nan") not in data_lst else float("nan")
 
     @staticmethod
     def maximum(data_lst, weights=None):
@@ -52,7 +52,7 @@ class PropertyStats(object):
         Returns: 
             maximum value
         """
-        return max(data_lst)
+        return max(data_lst) if float("nan") not in data_lst else float("nan")
 
     @staticmethod
     def range(data_lst, weights=None):
@@ -64,7 +64,8 @@ class PropertyStats(object):
         Returns: 
             range
         """
-        return max(data_lst) - min(data_lst)
+        return (max(data_lst) - min(data_lst)) if float("nan") not in data_lst \
+            else float("nan")
 
     @staticmethod
     def mean(data_lst, weights=None, **kwargs):
@@ -199,7 +200,7 @@ class PropertyStats(object):
 
     @staticmethod
     def flatten(data_lst):
-        """
+        """oxi
         Returns a flattened copy of data_lst-as a numpy array
         """
         return np.array(data_lst).flatten()

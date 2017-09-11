@@ -10,9 +10,9 @@ matminer
 
 matminer is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a **working code**.
 
---------
+---------------
 Citing matminer
---------
+---------------
 
 We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
 
@@ -39,9 +39,9 @@ You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launc
 .. image:: http://mybinder.org/badge.svg 
    :target: http://mybinder.org/repo/hackingmaterials/matminer
 
---------
+------------
 Installation
---------
+------------
 
 There are a couple of quick and easy ways to install matminer:-
 
@@ -64,6 +64,8 @@ or, to install matminer in your user $HOME folder, run the command:
 One way to obtain :code:`pip` if not already installed is through :code:`conda`, which is useful when you are working with many python packages and want to use separate configuration settings and environment for each package. You can then install matminer and packages required by it in its own environment. Some useful links are `here <https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/20/conda/>`_ and `here <http://conda.pydata.org/docs/using/index.html>`_.
 
 - **Install in developmental mode**
+
+To install in development mode, first make sure you have `git-lfs <https://git-lfs.github.com>`_ installed so that you can clone large files.
 
 To install the full and latest source of the matminer code in developmental mode, along with its important dependencies, clone the Git source in a folder of your choosing by entering the following command:
 
@@ -116,7 +118,7 @@ For example, to compare experimental and computed band gaps of Si, one can emplo
 
 
 Data descriptor tools
-----------------
+---------------------
 
 - Decorate the dataframe with composition, structural, and/or band structure descriptors/features
 
@@ -191,6 +193,29 @@ A few examples demonstrating usage can be found in the notebook hosted on `Jupyt
 
 Changelog
 ---------
+
+**v0.1.3**
+
+* remove git-lfs
+* updated CSV data sets (K. Bostrom)
+* better oxidation state determination in multiple composition descriptors
+* refactor structure descriptors
+* multiple fixes to cohesive energy
+* fixes to data loaders
+* fix complex Mongo retrieval queries, better logic for query projections
+* more unit tests
+* enforce lower case feature names
+* sort data by atomic number not electronegativity in data getters, this will avoid pernicious behavior
+* many minor cleanups, bug fixes, and consistency fixes
+
+
+**v0.1.2**
+
+* Several new structure fingerprint methods (L. Ward, K. Bostrom)
+* Refactor structure descriptors into new OOP style (N. Zimmermann)
+* move large files to git-lfs (K. Bostrom, A. Jain)
+* update example notebooks to new style
+* misc. cleanups and bug fixes
 
 **v0.1.1**
 

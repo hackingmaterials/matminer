@@ -12,8 +12,7 @@ from math import fabs
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.structure import PackingFraction, \
-    VolumePerSite, Density, RadialDistributionFunction, \
+from matminer.featurizers.structure import DensityFeatures, RadialDistributionFunction, \
     RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
@@ -55,32 +54,18 @@ class StructureFeaturesTest(PymatgenTest):
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=False, site_properties=None)
 
-    def test_packing_fraction(self):
-        pf = PackingFraction()
-        self.assertAlmostEqual(int(1000 * pf.featurize(
-            self.diamond)[0]), 251)
-        self.assertAlmostEqual(int(1000 * pf.featurize(
-            self.nacl)[0]), 620)
-        self.assertAlmostEqual(int(1000 * pf.featurize(
-            self.cscl)[0]), 1043)
+    def test_density_features(self):
+        df = DensityFeatures()
+        f = df.featurize(self.diamond)
+        self.assertAlmostEqual(f[0], 3.49, 2)
+        self.assertAlmostEqual(f[1], 5.71, 2)
+        self.assertAlmostEqual(f[2], 0.25, 2)
 
-    def test_volume_per_site(self):
-        vps = VolumePerSite()
-        self.assertAlmostEqual(int(1000 * vps.featurize(
-            self.diamond)[0]), 5710)
-        self.assertAlmostEqual(int(1000 * vps.featurize(
-            self.nacl)[0]), 23046)
-        self.assertAlmostEqual(int(1000 * vps.featurize(
-            self.cscl)[0]), 37282)
+        f = df.featurize(self.nacl)
+        self.assertAlmostEqual(f[0], 2.105, 2)
+        self.assertAlmostEqual(f[1], 23.046, 2)
+        self.assertAlmostEqual(f[2], 0.620, 2)
 
-    def test_density(self):
-        d = Density()
-        self.assertAlmostEqual(int(100 * d.featurize(
-            self.diamond)[0]), 349)
-        self.assertAlmostEqual(int(100 * d.featurize(
-            self.nacl)[0]), 210)
-        self.assertAlmostEqual(int(100 * d.featurize(
-            self.cscl)[0]), 374)
 
     def test_rdf_and_peaks(self):
         ## Test diamond
@@ -224,7 +209,7 @@ class StructureFeaturesTest(PymatgenTest):
                    [1.4028278132, 2.995098235, 0.159279959, 0.5]]
         self.assertAlmostEqual(
             int(np.linalg.norm(morig - np.array(mtarget))), 0)
-        m = CoulombMatrix().featurize(acetylene)
+        m = CoulombMatrix().featurize(acetylene)[0]
         self.assertAlmostEqual(m[0][0], 0.0)
         self.assertAlmostEqual(m[1][1], 0.0)
         self.assertAlmostEqual(m[2][2], 0.0)
@@ -237,13 +222,13 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             np.linalg.norm(sin_mat - np.array(mtarget)), 0.0, places=4)
         scm = SineCoulombMatrix()
-        sin_mat = scm.featurize(self.diamond)
+        sin_mat = scm.featurize(self.diamond)[0]
         self.assertEquals(sin_mat[0][0], 0)
         self.assertEquals(sin_mat[1][1], 0)
 
     def test_orbital_field_matrix(self):
         ofm_maker = OrbitalFieldMatrix()
-        ofm = ofm_maker.featurize(self.diamond)
+        ofm = ofm_maker.featurize(self.diamond)[0]
         mtarget = np.zeros((32, 32))
         mtarget[1][1] = 1.4789015  # 1.3675444
         mtarget[1][3] = 1.4789015  # 1.3675444

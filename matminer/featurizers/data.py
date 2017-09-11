@@ -42,10 +42,11 @@ class AbstractData((six.with_metaclass(abc.ABCMeta))):
 
         Returns:
             (list): list of values for each atom in comp_obj.
-            Note: the returned values are sorted by the corresponding element's electronegativity.
+            Note: the returned values are sorted by the corresponding element's atomic number.
             This is done for the sake of consistency.
         """
         pass
+
 
 @singleton
 class DemlData(AbstractData):
@@ -71,7 +72,7 @@ class DemlData(AbstractData):
             comp = Composition(comp)
 
         el_amt = comp.get_el_amt_dict()
-        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X) #Sort by electronegativity
+        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)  # Sort by atomic number
         stoich = [el_amt[el] for el in symbols]
 
         charge_states = []
@@ -112,7 +113,7 @@ class DemlData(AbstractData):
         # Get data for given element/compound
         el_amt = comp.get_el_amt_dict()
         # sort symbols by electronegativity
-        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
 
         demldata = []
 
@@ -239,7 +240,7 @@ class MagpieData(AbstractData):
         # Get data for given element/compound
         el_amt = comp.get_el_amt_dict()
         # sort symbols by electronegativity
-        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
+        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
 
         if return_per_element:
             return [self.all_elemental_props[property_name][el] for el in symbols]
@@ -291,7 +292,7 @@ class PymatgenData(AbstractData):
             comp, oxidation_states = self.get_composition_oxidation_state(comp)
             el_amt_dict = comp.get_el_amt_dict()
 
-        symbols = sorted(el_amt_dict.keys(), key=lambda sym: get_el_sp(sym).X)
+        symbols = sorted(el_amt_dict.keys(), key=lambda sym: get_el_sp(sym).Z)
 
         for el_sym in symbols:
 
@@ -314,13 +315,16 @@ class PymatgenData(AbstractData):
                         raise ValueError(
                             "oxidation state not given for {}; It does not yield a unique "
                             "number per Element".format(property_name))
+                elif property_name == "block":
+                    block_key = {"s": 1.0, "p": 2.0, "d": 3.0, "f": 3.0}
+                    property_value = block_key[p]
                 else:
                     property_value = float(p)
 
-                # units are None for these pymatgen descriptors
-                # todo: there seem to be a lot more unitless descriptors which are not listed here... -Alex D
+                # units are None for these pymatgen features
+                # todo: there seem to be a lot more unitless features which are not listed here... -Alex D
                 if property_name not in ['X', 'Z', 'group', 'row', 'number', 'mendeleev_no',
-                                         'ionic_radii']:
+                                         'ionic_radii', 'block']:
                     property_units = p.unit
 
             # Make a named tuple out of all the available information

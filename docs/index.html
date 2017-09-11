@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>matminer (Materials Data Mining) &#8212; matminer 0.1.1 documentation</title>
+    <title>matminer (Materials Data Mining) &#8212; matminer 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">matminer 0.1.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">matminer 0.1.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -89,6 +89,7 @@
 <ul class="simple">
 <li><strong>Install in developmental mode</strong></li>
 </ul>
+<p>To install in development mode, first make sure you have <a class="reference external" href="https://git-lfs.github.com">git-lfs</a> installed so that you can clone large files.</p>
 <p>To install the full and latest source of the matminer code in developmental mode, along with its important dependencies, clone the Git source in a folder of your choosing by entering the following command:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone https://github.com/hackingmaterials/matminer.git
 </pre></div>
@@ -201,6 +202,26 @@ descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
 </div>
 <div class="section" id="changelog">
 <h3>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h3>
+<p><strong>v0.1.3</strong></p>
+<ul class="simple">
+<li>remove git-lfs</li>
+<li>refactor structure descriptors</li>
+<li>multiple fixes to cohesive energy</li>
+<li>fixes to data loaders</li>
+<li>fix complex Mongo retrieval queries, better logic for query projections</li>
+<li>more unit tests</li>
+<li>enforce lower case feature names</li>
+<li>sort data by atomic number not electronegativity in data getters, this will avoid pernicious behavior</li>
+<li>many minor cleanups, bug fixes, and consistency fixes</li>
+</ul>
+<p><strong>v0.1.2</strong></p>
+<ul class="simple">
+<li>Several new structure fingerprint methods (L. Ward, K. Bostrom)</li>
+<li>Refactor structure descriptors into new OOP style (N. Zimmermann)</li>
+<li>move large files to git-lfs (K. Bostrom, A. Jain)</li>
+<li>update example notebooks to new style</li>
+<li>misc. cleanups and bug fixes</li>
+</ul>
 <p><strong>v0.1.1</strong></p>
 <ul class="simple">
 <li>refactor and redesign of codebase to be more OOP (J. Chen, L. Ward)</li>
@@ -289,7 +310,7 @@ descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">matminer 0.1.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">matminer 0.1.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

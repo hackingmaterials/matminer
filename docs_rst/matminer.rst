@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     matminer.data_retrieval
+    matminer.datasets
     matminer.featurizers
     matminer.figrecipes
     matminer.learners

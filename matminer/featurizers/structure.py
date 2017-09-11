@@ -29,94 +29,41 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 #   once this is part of the stable Pymatgen version.
 # - Use more than 1 method for MinimumRelativeDistance
 
+class DensityFeatures(BaseFeaturizer):
 
-# TODO: merge PackingFraction, VolmePerSite, and Density into a single class. -computron
-class PackingFraction(BaseFeaturizer):
-    """
-    Calculates the packing fraction of a crystal structure.
-    """
+    def __init__(self, desired_features=None):
+        self.features = ["density", "vpa", "packing fraction"] if not desired_features else desired_features
 
     def featurize(self, s):
-        """
-        Get packing fraction of the input structure.
-        Args:
-            s: Pymatgen Structure object.
+        features = []
 
-        Returns:
-            f (float): packing fraction.
-        """
+        if "density" in self.features:
+            features.append(s.density)
 
-        if not s.is_ordered:
-            raise ValueError("Disordered structure support not built yet.")
-        total_rad = 0
-        for site in s:
-            total_rad += site.specie.atomic_radius ** 3
-        return [4 * pi * total_rad / (3 * s.volume)]
+        if "vpa" in self.features:
+            if not s.is_ordered:
+                raise ValueError("Disordered structure support not built yet.")
+            features.append(s.volume / len(s))
 
-    def feature_labels(self):
-        return ["Packing fraction"]
+        if "packing fraction" in self.features:
+            if not s.is_ordered:
+                raise ValueError("Disordered structure support not built yet.")
+            total_rad = 0
+            for site in s:
+                total_rad += site.specie.atomic_radius ** 3
+            features.append(4 * pi * total_rad / (3 * s.volume))
 
-    def citations(self):
-        return ("")
-
-    def implementors(self):
-        return ("Saurabh Bajaj")
-
-
-class VolumePerSite(BaseFeaturizer):
-    """
-    Calculates volume per site in a crystal structure.
-    """
-
-    def featurize(self, s):
-        """
-        Get volume per site of the input structure.
-        Args:
-            s: Pymatgen Structure object.
-
-        Returns:
-            f (float): volume per site.
-        """
-        if not s.is_ordered:
-            raise ValueError("Disordered structure support not built yet.")
-
-        return [s.volume / len(s)]
+        return features
 
     def feature_labels(self):
-        return ["Volume per site"]
+        all_features = ["density", "vpa", "packing fraction"]
+        return [x for x in all_features if x in self.features]
 
     def citations(self):
-        return ("")
+        return [""]
 
     def implementors(self):
-        return ("Saurabh Bajaj")
-
-
-class Density(BaseFeaturizer):
-    """
-    Gets the density of a crystal structure.
-    """
-
-    def featurize(self, s):
-        """
-        Get density of the input structure.
-        Args:
-            s: Pymatgen Structure object.
-
-        Returns:
-            f (float): density.
-        """
-
-        return [s.density]
-
-    def feature_labels(self):
-        return ["Density"]
-
-    def citations(self):
-        return ("")
-
-    def implementors(self):
-        return ("Saurabh Bajaj")
+        return ["Saurabh Bajaj", "Anubhav Jain"]
 
 
 class RadialDistributionFunction(BaseFeaturizer):
@@ -165,7 +112,7 @@ class RadialDistributionFunction(BaseFeaturizer):
         return [{'distances': dist_bins[:-1], 'distribution': rdf}]
 
     def feature_labels(self):
-        return ["Radial distribution function"]
+        return ["radial distribution function"]
 
     def citations(self):
         return ("")
@@ -247,7 +194,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         return [prdf]
 
     def feature_labels(self):
-        return ["Partial radial distribution functions"]
+        return ["partial radial distribution functions"]
 
     def citations(self):
         return ("")
@@ -283,7 +230,7 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
             rdf[0]['distribution'])[-self.n_peaks:]][::-1]]
 
     def feature_labels(self):
-        return ["Radial distribution function peaks"]
+        return ["radial distribution function peaks"]
 
     def citations(self):
         return ("")
@@ -362,7 +309,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         return [redf_dict]
 
     def feature_labels(self):
-        return ["Electronic radial distribution function"]
+        return ["electronic radial distribution function"]
 
     def citations(self):
         return ("@article{title={Method for the computational comparison"
@@ -420,10 +367,10 @@ class CoulombMatrix(BaseFeaturizer):
                 else:
                     d = s.get_distance(i, j) * ANG_TO_BOHR
                     m[i].append(z[i] * z[j] / d)
-        return np.array(m)
+        return [np.array(m)]
 
     def feature_labels(self):
-        return "Coulomb matrix"
+        return ["Coulomb matrix"]
 
     def citations(self):
         return ("@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
@@ -487,10 +434,10 @@ class SineCoulombMatrix(BaseFeaturizer):
                     sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
-        return sin_mat
+        return [sin_mat]
 
     def feature_labels(self):
-        return "sine Coulomb matrix"
+        return ["sine Coulomb matrix"]
 
     def citations(self):
         return ("@article {QUA:QUA24917,"
@@ -666,10 +613,10 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         s *= [3, 3, 3]
         ofms, counts = self.get_atom_ofms(s, True)
         mean_ofm = self.get_mean_ofm(ofms, counts)
-        return mean_ofm
+        return [mean_ofm]
 
     def feature_labels(self):
-        return "orbital field matrix"
+        return ["orbital field matrix"]
 
     def citations(self):
         return ("@ARTICLE{2017arXiv170501043P,"
@@ -729,7 +676,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return [min_rel_dists[:]]
 
     def feature_labels(self):
-        return ["Minimum relative distance of each site"]
+        return ["minimum relative distance of each site"]
 
     def citations(self):
         return ("")
