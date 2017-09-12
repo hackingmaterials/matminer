@@ -692,9 +692,7 @@ class SitesOrderParameters(BaseFeaturizer):
     Calculates all order parameters (OPs) for all sites in a crystal
     structure.
     Args:
-        data_source (AbstractData or str): source from which to retrieve
-            order parameter data (or use str for preset: "pymatgen")
-        features ([str]): list of order parameters supported by data_source
+        features ([str]): list of order parameters supported by OrderParameters
         stats ([str]): list of weighted statistics to compute for each feature.
             If stats is None, for each order parameter, a list is returned that
             contains the calculated parameter for each site in the structure.
@@ -704,7 +702,7 @@ class SitesOrderParameters(BaseFeaturizer):
         bond_angles ([float]): list of bond angles for which order parameters
             are calculated explicitly (in addition to features)
     """
-    def __init__(self, data_source=None, features=None, stats=None, pneighs=None,
+    def __init__(self, features=None, stats=None, pneighs=None,
                  bond_angles=None):
         self.features = features or ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6',
                                      'reg_tri', 'sq', 'sq_pyr', 'tri_bipyr']
@@ -714,7 +712,6 @@ class SitesOrderParameters(BaseFeaturizer):
         self._labels = ["CN", "q_lin"]
         self._paras = [[], []]
         self.bond_angles = bond_angles or [45, 90, 135]
-        self.data_source = data_source or 'pymatgen'
         for i in self.bond_angles:
             self._types.append("bent")
             self._labels.append("q_bent_{}".format(i))
@@ -723,9 +720,6 @@ class SitesOrderParameters(BaseFeaturizer):
             self._types.append(t)
             self._labels.append('q_' + t)
             self._paras.append([])
-        if self.data_source == 'pymatgen':
-            self.data_source = OrderParameters(self._types, self._paras, 100.0)
-
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
             for stat in self.stats:
@@ -744,14 +738,13 @@ class SitesOrderParameters(BaseFeaturizer):
 
         """
         if preset_name == 'matminer':
-            data_source = 'pymatgen'
             features = ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'reg_tri',
                         'sq', 'sq_pyr', 'tri_bipyr']
             stats = ['minimum', 'maximum', 'range', 'mean', 'avg_dev',
                      '1st_mode', '2nd_mode']
         else:
             raise ValueError("Invalid preset_name specified!")
-        return SitesOrderParameters(data_source, features, stats)
+        return SitesOrderParameters(features, stats)
 
     def featurize(self, s):
         """
@@ -768,13 +761,13 @@ class SitesOrderParameters(BaseFeaturizer):
                 of 5 degrees and, increasing by 5 degrees, until 175 degrees),
                 q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
         """
-
+        ops = OrderParameters(self._types, self._paras, 100.0)
         opvals = [[] for t in self._types]
         for i, site in enumerate(s.sites):
             neighcent = get_neighbors_of_site_with_index(
                 s, i, p=self.pneighs)
             neighcent.append(site)
-            opvalstmp = self.data_source.get_order_parameters(
+            opvalstmp = ops.get_order_parameters(
                 neighcent, len(neighcent) - 1,
                 indeces_neighs=[j for j in range(len(neighcent) - 1)])
             for j, opval in enumerate(opvalstmp):
