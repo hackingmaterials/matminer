@@ -53,6 +53,7 @@ class StructureFeaturesTest(PymatgenTest):
             [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0.5], [0, 0.5, 0.5]],
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=False, site_properties=None)
+        self.bond_angles = range(5, 180, 5)
 
     def test_density_features(self):
         df = DensityFeatures()
@@ -262,28 +263,36 @@ class StructureFeaturesTest(PymatgenTest):
     #        self.cscl, 0)), 8)
 
     def test_get_order_parameters(self):
-        opvals = SitesOrderParameters().featurize(self.diamond)
+        opvals = SitesOrderParameters(
+                bond_angles=self.bond_angles).featurize(self.diamond)
         self.assertAlmostEqual(int(opvals[37][0] * 1000), 999)
         self.assertAlmostEqual(int(opvals[37][1] * 1000), 999)
-        opvals = SitesOrderParameters().featurize(self.nacl)
+        opvals = SitesOrderParameters(
+            bond_angles=self.bond_angles
+        ).featurize(self.nacl)
         self.assertAlmostEqual(int(opvals[38][0] * 1000), 999)
         self.assertAlmostEqual(int(opvals[38][1] * 1000), 999)
-        opvals = SitesOrderParameters().featurize(self.cscl)
+        opvals = SitesOrderParameters(
+            bond_angles=self.bond_angles
+        ).featurize(self.cscl)
         self.assertAlmostEqual(int(opvals[39][0] * 1000), 975)
         self.assertAlmostEqual(int(opvals[39][1] * 1000), 975)
 
     def test_get_order_parameter_stats(self):
-        opstats = get_order_parameter_stats(self.diamond)
+        opstats = get_order_parameter_stats(self.diamond,
+                                            bond_angles=self.bond_angles)
         self.assertAlmostEqual(int(opstats["tet"]["min"] * 1000), 999)
         self.assertAlmostEqual(int(opstats["tet"]["max"] * 1000), 999)
         self.assertAlmostEqual(int(opstats["tet"]["mean"] * 1000), 999)
         self.assertAlmostEqual(int(opstats["tet"]["std"] * 1000), 0)
-        opstats = get_order_parameter_stats(self.nacl)
+        opstats = get_order_parameter_stats(self.nacl,
+                                            bond_angles=self.bond_angles)
         self.assertAlmostEqual(int(opstats["oct"]["min"] * 1000), 999)
         self.assertAlmostEqual(int(opstats["oct"]["max"] * 1000), 999)
         self.assertAlmostEqual(int(opstats["oct"]["mean"] * 1000), 999)
         self.assertAlmostEqual(int(opstats["oct"]["std"] * 1000), 0)
-        opstats = get_order_parameter_stats(self.cscl)
+        opstats = get_order_parameter_stats(self.cscl,
+                                            bond_angles=self.bond_angles)
         self.assertAlmostEqual(int(opstats["bcc"]["min"] * 1000), 975)
         self.assertAlmostEqual(int(opstats["bcc"]["max"] * 1000), 975)
         self.assertAlmostEqual(int(opstats["bcc"]["mean"] * 1000), 975)
