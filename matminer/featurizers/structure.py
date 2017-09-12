@@ -820,7 +820,7 @@ class SitesOrderParameters(BaseFeaturizer):
 
 def get_order_parameter_stats(
         struct, pneighs=None, convert_none_to_zero=True, delta_op=0.01,
-        ignore_op_types=None):
+        ignore_op_types=None, bond_angles=None):
     """
     Determine the order parameter statistics accumulated across all sites
     in Structure object struct using the get_order_parameters function.
@@ -847,11 +847,14 @@ def get_order_parameter_stats(
     """
     opstats = {}
     optypes = ["cn", "lin"]
-    for i in range(5, 180, 5):
+    bond_angles = bond_angles or [45, 90, 135]
+    for i in bond_angles:
         optypes.append("bent{}".format(i))
-    for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", "sq_pyr", "tri_bipyr"]:
+    for t in ["tet", "oct", "bcc", "q2", "q4", "q6",
+              "reg_tri", "sq", "sq_pyr", "tri_bipyr"]:
         optypes.append(t)
-    opvals = SitesOrderParameters(pneighs=pneighs).featurize(struct)
+    opvals = SitesOrderParameters(pneighs=pneighs, bond_angles=bond_angles).\
+            featurize(struct)
     for i, opstype in enumerate(opvals):
         if ignore_op_types is not None:
             if optypes[i] in ignore_op_types or \
