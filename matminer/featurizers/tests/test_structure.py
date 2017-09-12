@@ -277,6 +277,7 @@ class StructureFeaturesTest(PymatgenTest):
         ).featurize(self.cscl)
         self.assertAlmostEqual(int(opvals[39][0] * 1000), 975)
         self.assertAlmostEqual(int(opvals[39][1] * 1000), 975)
+        #TODO-AF: add test_order_parameters for when stats not None
 
     def test_get_order_parameter_stats(self):
         opstats = get_order_parameter_stats(self.diamond,
