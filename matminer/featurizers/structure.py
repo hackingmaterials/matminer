@@ -18,6 +18,7 @@ from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
@@ -691,25 +692,66 @@ class SitesOrderParameters(BaseFeaturizer):
     Calculates all order parameters (OPs) for all sites in a crystal
     structure.
     Args:
-        pneighs: (dict) specification and parameters of
-                neighbor-finding approach (see
-                get_neighbors_of_site_with_index).
+        data_source (AbstractData or str): source from which to retrieve
+            order parameter data (or use str for preset: "pymatgen")
+        features ([str]): list of order parameters supported by data_source
+        stats ([str]): list of weighted statistics to compute for each feature.
+            If stats is None, for each order parameter, a list is returned that
+            contains the calculated parameter for each site in the structure.
+            *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
+        pneighs (dict): specification and parameters of neighbor-finding
+            approach (see get_neighbors_of_site_with_index).
+        bond_angles ([float]): list of bond angles for which order parameters
+            are calculated explicitly (in addition to features)
     """
-
-    def __init__(self, pneighs=None):
+    def __init__(self, data_source=None, features=None, stats=None, pneighs=None,
+                 bond_angles=None):
+        self.features = features or ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6',
+                                     'reg_tri', 'sq', 'sq_pyr', 'tri_bipyr']
+        self.stats = stats
         self.pneighs = pneighs
         self._types = ["cn", "lin"]
         self._labels = ["CN", "q_lin"]
         self._paras = [[], []]
-        for i in range(5, 180, 5):
+        self.bond_angles = bond_angles or [45, 90, 135]
+        self.data_source = data_source or 'pymatgen'
+        for i in self.bond_angles:
             self._types.append("bent")
             self._labels.append("q_bent_{}".format(i))
             self._paras.append([float(i), 0.0667])
-        for t in ["tet", "oct", "bcc", "q2", "q4", "q6", "reg_tri", "sq", \
-                  "sq_pyr", "tri_bipyr"]:
+        for t in self.features:
             self._types.append(t)
             self._labels.append('q_' + t)
             self._paras.append([])
+        if self.data_source == 'pymatgen':
+            self.data_source = OrderParameters(self._types, self._paras, 100.0)
+
+        if self.stats and '_mode' in ''.join(self.stats):
+            nmodes = 0
+            for stat in self.stats:
+                if '_mode' in stat and int(stat[0]) > nmodes:
+                    nmodes = int(stat[0])
+            self.nmodes = nmodes
+
+    @staticmethod
+    def from_preset(preset_name):
+        """
+        Returns OrderParameters from a preset string.
+        Args:
+            preset_name (str): options are 'matminer',
+
+        Returns:
+
+        """
+        if preset_name == 'matminer':
+            data_source = 'pymatgen'
+            features = ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'reg_tri',
+                        'sq', 'sq_pyr', 'tri_bipyr']
+            stats = ['minimum', 'maximum', 'range', 'mean', 'avg_dev',
+                     '1st_mode', '2nd_mode']
+        else:
+            raise ValueError("Invalid preset_name specified!")
+        return SitesOrderParameters(data_source, features, stats)
 
     def featurize(self, s):
         """
@@ -726,19 +768,13 @@ class SitesOrderParameters(BaseFeaturizer):
                 of 5 degrees and, increasing by 5 degrees, until 175 degrees),
                 q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
         """
-        ops = OrderParameters(self._types, self._paras, 100.0)
+
         opvals = [[] for t in self._types]
         for i, site in enumerate(s.sites):
             neighcent = get_neighbors_of_site_with_index(
                 s, i, p=self.pneighs)
-            # if self.pneighs is None:
-            #    neighcent = get_neighbors_of_site_with_index(s, i)
-            # else:
-            #    neighcent = get_neighbors_of_site_with_index(
-            #            s, i, approach=self.pneighs['approach'],
-            #            delta=self.pneighs['delta'], cutoff=self.pneighs['cutoff'])
             neighcent.append(site)
-            opvalstmp = ops.get_order_parameters(
+            opvalstmp = self.data_source.get_order_parameters(
                 neighcent, len(neighcent) - 1,
                 indeces_neighs=[j for j in range(len(neighcent) - 1)])
             for j, opval in enumerate(opvalstmp):
@@ -746,18 +782,40 @@ class SitesOrderParameters(BaseFeaturizer):
                     opvals[j].append(0.0)
                 else:
                     opvals[j].append(opval)
-        return opvals
+
+        if self.stats:
+            opstats = []
+            for op in opvals:
+                if '_mode' in ''.join(self.stats):
+                    modes = PropertyStats().n_numerical_modes(
+                            op, self.nmodes, 0.01)
+                for stat in self.stats:
+                    if '_mode' in stat:
+                        opstats.append(modes[int(stat[0])-1])
+                    else:
+                        opstats.append(PropertyStats().calc_stat(op, stat))
+
+            return opstats
+        else:
+            return opvals
 
     def feature_labels(self):
-        return self._labels
+        if self.stats:
+            labels = []
+            for attr in self._labels:
+                for stat in self.stats:
+                    labels.append('%s %s' % (stat, attr))
+            return labels
+        else:
+            return self._labels
 
     def citations(self):
-        return ("@article{zimmermann_jain_2017, title={Applications of order"
-                " parameter feature vectors}, journal={in progress}, author={"
-                "Zimmermann, N. E. R. and Jain, A.}, year={2017}}")
+        return ('@article{zimmermann_jain_2017, title={Applications of order'
+                ' parameter feature vectors}, journal={in progress}, author={'
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
 
     def implementors(self):
-        return ("Nils E. R. Zimmermann")
+        return (['Nils E. R. Zimmermann', 'Alireza Faghaninia'])
 
 
 def get_order_parameter_stats(
