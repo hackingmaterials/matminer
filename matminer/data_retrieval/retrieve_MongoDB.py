@@ -106,6 +106,12 @@ def clean_projection(projection):
 
     return all_proj
 
+def is_int(x):
+    try:
+        int(x)
+        return True
+    except:
+        return False
 
 def remove_ints(projection):
     """
@@ -116,13 +122,6 @@ def remove_ints(projection):
     Returns:
 
     """
-
-    def is_int(x):
-        try:
-            int(x)
-            return True
-        except:
-            return False
 
     proj = [p for p in projection.split(".") if not is_int(p)]
     return ".".join(proj)
