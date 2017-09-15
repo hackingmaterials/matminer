@@ -1,10 +1,16 @@
 from __future__ import division, unicode_literals, print_function
 
+import numpy as np
+
 from matminer.featurizers.base import BaseFeaturizer
+from pymatgen import Spin
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
+
+def norm(vector):
+    return (vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2) ** 0.5
 
 # TODO: add a unit test
 
@@ -90,3 +96,90 @@ class BranchPointEnergy(BaseFeaturizer):
 
     def implementors(self):
         return ["Anubhav Jain"]
+
+
+class BandFeaturizer(BaseFeaturizer):
+    """
+    Featurizes a pymatgen band structure object. If also the structure is fed
+        to featurize method, additional features will be returned.
+    Args:
+        nband (int): the number of the valence or conduction bands to be
+            included when featurizing the band structure
+        n_extrem (int): the number of extrema (in each band) to be included
+    """
+    def __init__(self, nband=1, n_extrem=1):
+        self.n_extrem = n_extrem
+        self.nband = nband
+
+    def featurize(self, bs):
+        """
+        Args:
+            bs (pymatgen BandStructure or BandStructureSymmLine or their dict)
+                note that if bs.structure, more features will be generated.
+        Returns ([float]):
+            a list of band structure features. If not bs.structure, the
+                features that require the structure will be returned as NaN.
+            List of currently supported features:
+                band_gap (eV): the difference between the CBM and VBM energy
+                is_gap_direct (0.0|1.0): whether the band gap is direct or not
+                direct_gap (eV): the minimum direct distance of the last
+                    valence band and the first conduction band
+                *_ex#_en (eV): for example p_ex2_en is the absolute value of
+                    the energy of the second valence band maximum w.r.t. VBM
+                *_ex#_norm (float): e.g. p_ex1_norm is norm of the fractional
+                     coordinates of the 1st valence band maximum (VBM) k-point
+                NA! *_ex#_degen (float): the band degeneracy of the extremum
+                NA! *_ex#_mass (float): the effective mass of the extremum
+
+        """
+        self.feat = []
+        if isinstance(bs, dict):
+            bsd = bs
+            structure = None
+        else:
+            bsd = bs.as_dict()
+            structure = bs.structure
+
+        if bsd['is_metal']:
+            raise ValueError("Cannot featurize a metallic band structure!")
+
+        # preparation
+        cbm = bsd['cbm']
+        vbm = bsd['vbm']
+        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm)
+        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm)
+        vbm_ens = np.array(bsd['bands'][str(vbm_bspin)][vbm_bidx])
+        cbm_ens = np.array(bsd['bands'][str(cbm_bspin)][cbm_bidx])
+
+        # featurize
+        self.feat.append(('band_gap', bsd['band_gap']['energy']))
+        self.feat.append(('is_gap_direct', bsd['band_gap']['direct']))
+        self.feat.append(('direct_gap', min(cbm_ens - vbm_ens)))
+        self.feat.append(('p_ex1_norm',
+                norm(bsd['kpoints'][vbm['kpoint_index'][0]])))
+        self.feat.append(('n_ex1_norm',
+                norm(bsd['kpoints'][cbm['kpoint_index'][-1]])))
+        if structure:
+            pass
+            # additional features such as n_ex_degen will be generated here
+
+        return list(zip(*self.feat)[1])
+
+    def feature_labels(self):
+        return list(zip(*self.feat)[0])
+
+    @staticmethod
+    def get_bindex_bspin(extremum):
+        try:
+            bidx = extremum["band_index"][str(Spin.up)][-1]
+            bspin = int(Spin.up)
+        except KeyError:
+            bidx = extremum["band_index"][str(Spin.down)][-1]
+            bspin = int(Spin.down)
+        return bidx, bspin
+
+    def citations(self):
+        return ['@article{in_progress, title={{In progress}} year={2017}}']
+
+    def implementors(self):
+        return ['Alireza Faghaninia', 'Anubhav Jain']
