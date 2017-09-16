@@ -4,6 +4,7 @@ import numpy as np
 
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen import Spin
+from pymatgen.electronic_structure.bandstructure import BandStructure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
@@ -103,13 +104,9 @@ class BandFeaturizer(BaseFeaturizer):
     Featurizes a pymatgen band structure object. If also the structure is fed
         to featurize method, additional features will be returned.
     Args:
-        nband (int): the number of the valence or conduction bands to be
-            included when featurizing the band structure
-        n_extrem (int): the number of extrema (in each band) to be included
     """
-    def __init__(self, nband=1, n_extrem=1):
-        self.n_extrem = n_extrem
-        self.nband = nband
+    def __init__(self):
+        pass
 
     def featurize(self, bs):
         """
@@ -134,32 +131,28 @@ class BandFeaturizer(BaseFeaturizer):
         """
         self.feat = []
         if isinstance(bs, dict):
-            bsd = bs
-            structure = None
-        else:
-            bsd = bs.as_dict()
-            structure = bs.structure
-
-        if bsd['is_metal']:
+            bs = BandStructure.from_dict(bs)
+        if bs.is_metal():
             raise ValueError("Cannot featurize a metallic band structure!")
 
         # preparation
-        cbm = bsd['cbm']
-        vbm = bsd['vbm']
-        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm)
-        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm)
-        vbm_ens = np.array(bsd['bands'][str(vbm_bspin)][vbm_bidx])
-        cbm_ens = np.array(bsd['bands'][str(cbm_bspin)][cbm_bidx])
+        cbm = bs.get_cbm()
+        vbm = bs.get_vbm()
+        band_gap = bs.get_band_gap()
+        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm, cbm=False)
+        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, cbm=True)
+        vbm_ens = np.array(bs.bands[vbm_bspin][vbm_bidx])
+        cbm_ens = np.array(bs.bands[cbm_bspin][cbm_bidx])
 
         # featurize
-        self.feat.append(('band_gap', bsd['band_gap']['energy']))
-        self.feat.append(('is_gap_direct', bsd['band_gap']['direct']))
+        self.feat.append(('band_gap', band_gap['energy']))
+        self.feat.append(('is_gap_direct', band_gap['direct']))
         self.feat.append(('direct_gap', min(cbm_ens - vbm_ens)))
         self.feat.append(('p_ex1_norm',
-                norm(bsd['kpoints'][vbm['kpoint_index'][0]])))
+                norm(bs.kpoints[vbm['kpoint_index'][0]].frac_coords)))
         self.feat.append(('n_ex1_norm',
-                norm(bsd['kpoints'][cbm['kpoint_index'][-1]])))
-        if structure:
+                norm(bs.kpoints[cbm['kpoint_index'][0]].frac_coords)))
+        if bs.structure:
             pass
             # additional features such as n_ex_degen will be generated here
 
@@ -169,13 +162,20 @@ class BandFeaturizer(BaseFeaturizer):
         return list(list(zip(*self.feat))[0])
 
     @staticmethod
-    def get_bindex_bspin(extremum):
+    def get_bindex_bspin(extremum, cbm):
+        """
+        Returns the band index and spin of band extremum
+        Args:
+            extremum (dict): dictionary containing the CBM/VBM
+            cbm (bool): whether the extremum is the CBM or not
+        """
+        idx = int(cbm) - 1 # 0 for CBM and -1 for VBM
         try:
-            bidx = extremum["band_index"][str(Spin.up)][-1]
-            bspin = int(Spin.up)
-        except KeyError:
-            bidx = extremum["band_index"][str(Spin.down)][-1]
-            bspin = int(Spin.down)
+            bidx = extremum["band_index"][Spin.up][idx]
+            bspin = Spin.up
+        except IndexError:
+            bidx = extremum["band_index"][Spin.down][idx]
+            bspin = Spin.down
         return bidx, bspin
 
     def citations(self):
