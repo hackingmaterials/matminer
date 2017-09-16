@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, division, print_function
 
 import json
+import os
 import pandas as pd
 import unittest
 
@@ -8,14 +9,15 @@ from matminer.featurizers.bandstructure import BandFeaturizer, BranchPointEnergy
 from pymatgen.electronic_structure.bandstructure import BandStructure
 from pymatgen.util.testing import PymatgenTest
 
+test_dir = os.path.join(os.path.dirname(__file__))
 
 class BandstructureFeaturesTest(PymatgenTest):
 
     def setUp(self):
-        with open('si_structure.json', 'r') as st_handle:
-            si_str = json.load(st_handle)
-        with open('si_bandstructure.json', 'r') as bs_handle:
-            si_bs = BandStructure.from_dict(json.load(bs_handle))
+        with open(os.path.join(test_dir, 'si_structure.json'),'r') as sth:
+            si_str = json.load(sth)
+        with open(os.path.join(test_dir, 'si_bandstructure.json'),'r') as bsh:
+            si_bs = BandStructure.from_dict(json.load(bsh))
         si_bs.structure = si_str
         self.df = pd.DataFrame({'bs':[si_bs]})
 
