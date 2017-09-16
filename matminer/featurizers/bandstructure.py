@@ -163,10 +163,10 @@ class BandFeaturizer(BaseFeaturizer):
             pass
             # additional features such as n_ex_degen will be generated here
 
-        return list(zip(*self.feat)[1])
+        return list(list(zip(*self.feat))[1])
 
     def feature_labels(self):
-        return list(zip(*self.feat)[0])
+        return list(list(zip(*self.feat))[0])
 
     @staticmethod
     def get_bindex_bspin(extremum):
