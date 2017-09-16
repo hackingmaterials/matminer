@@ -1,25 +1,23 @@
 from __future__ import unicode_literals, division, print_function
 
+import json
 import pandas as pd
 import unittest
 
 from matminer.featurizers.bandstructure import BandFeaturizer, BranchPointEnergy
-from pymatgen.ext.matproj import MPRester
+from pymatgen.electronic_structure.bandstructure import BandStructure
 from pymatgen.util.testing import PymatgenTest
-
-
-api = MPRester()
 
 
 class BandstructureFeaturesTest(PymatgenTest):
 
     def setUp(self):
-        # self.si_str = PymatgenTest.get_structure('Si')
-        mpid = 'mp-149' # silicon
-        test_structure = api.get_structure_by_material_id(material_id=mpid)
-        bs = api.get_bandstructure_by_material_id(material_id=mpid)
-        bs.structure = test_structure
-        self.df = pd.DataFrame({'bs':[bs]})
+        with open('si_structure.json', 'r') as st_handle:
+            si_str = json.load(st_handle)
+        with open('si_bandstructure.json', 'r') as bs_handle:
+            si_bs = BandStructure.from_dict(json.load(bs_handle))
+        si_bs.structure = si_str
+        self.df = pd.DataFrame({'bs':[si_bs]})
 
     def test_BranchPointEnergy(self):
         df_bpe = BranchPointEnergy()
