@@ -125,7 +125,6 @@ class BandFeaturizer(BaseFeaturizer):
                     (n) band extremum, i.e., the CBM
 
         """
-        self.feat = []
         if isinstance(bs, dict):
             bs = BandStructure.from_dict(bs)
         if bs.is_metal():
@@ -135,12 +134,13 @@ class BandFeaturizer(BaseFeaturizer):
         cbm = bs.get_cbm()
         vbm = bs.get_vbm()
         band_gap = bs.get_band_gap()
-        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm, cbm=False)
-        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, cbm=True)
+        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm, is_cbm=False)
+        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, is_cbm=True)
         vbm_ens = np.array(bs.bands[vbm_bspin][vbm_bidx])
         cbm_ens = np.array(bs.bands[cbm_bspin][cbm_bidx])
 
         # featurize
+        self.feat = []
         self.feat.append(('band_gap', band_gap['energy']))
         self.feat.append(('is_gap_direct', band_gap['direct']))
         self.feat.append(('direct_gap', min(cbm_ens - vbm_ens)))
@@ -149,20 +149,23 @@ class BandFeaturizer(BaseFeaturizer):
         self.feat.append(('n_ex1_norm',
                 norm(bs.kpoints[cbm['kpoint_index'][0]].frac_coords)))
 
-        return list(list(zip(*self.feat))[1])
+        return list(x[1] for x in self.feat)
 
     def feature_labels(self):
-        return list(list(zip(*self.feat))[0])
+        return list(x[0] for x in self.feat)
 
     @staticmethod
-    def get_bindex_bspin(extremum, cbm):
+    def get_bindex_bspin(extremum, is_cbm):
         """
         Returns the band index and spin of band extremum
+
         Args:
-            extremum (dict): dictionary containing the CBM/VBM
-            cbm (bool): whether the extremum is the CBM or not
+            extremum (dict): dictionary containing the CBM/VBM, i.e. output of
+                Bandstructure.get_cbm()
+            is_cbm (bool): whether the extremum is the CBM or not
         """
-        idx = int(cbm) - 1 # 0 for CBM and -1 for VBM
+
+        idx = int(is_cbm) - 1 # 0 for CBM and -1 for VBM
         try:
             bidx = extremum["band_index"][Spin.up][idx]
             bspin = Spin.up
