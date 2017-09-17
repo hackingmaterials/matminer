@@ -99,9 +99,7 @@ class BranchPointEnergy(BaseFeaturizer):
 
 class BandFeaturizer(BaseFeaturizer):
     """
-    Featurizes a pymatgen band structure object. If also the structure is fed
-        to featurize method, additional features will be returned.
-    Args:
+    Featurizes a pymatgen band structure object.
     """
     def __init__(self):
         pass
@@ -109,8 +107,9 @@ class BandFeaturizer(BaseFeaturizer):
     def featurize(self, bs):
         """
         Args:
-            bs (pymatgen BandStructure or BandStructureSymmLine or their dict)
-                note that if bs.structure, more features will be generated.
+            bs (pymatgen BandStructure or BandStructureSymmLine or their dict):
+                note that if bs.structure has a valid structure, additional
+                features will be generated.
         Returns ([float]):
             a list of band structure features. If not bs.structure, the
                 features that require the structure will be returned as NaN.
@@ -119,12 +118,14 @@ class BandFeaturizer(BaseFeaturizer):
                 is_gap_direct (0.0|1.0): whether the band gap is direct or not
                 direct_gap (eV): the minimum direct distance of the last
                     valence band and the first conduction band
-                *_ex#_en (eV): for example p_ex2_en is the absolute value of
-                    the energy of the second valence band maximum w.r.t. VBM
-                *_ex#_norm (float): e.g. p_ex1_norm is norm of the fractional
-                     coordinates of the 1st valence band maximum (VBM) k-point
-                NA! *_ex#_degen (float): the band degeneracy of the extremum
-                NA! *_ex#_mass (float): the effective mass of the extremum
+                {n,p}_ex{#}_en (eV): for example p_ex2_en is the absolute value
+                    of the energy of the second valence (p) band extremum
+                    w.r.t. VBM
+                {n,p}_ex{#}_norm (float): e.g. n_ex1_norm is norm of the
+                    fractional coordinates of k-points of the 1st conduction
+                    (n) band extremum, i.e., the CBM
+                {n,p}_ex{#}_degen (float): the band degeneracy of the extremum
+                {n,p}_ex{#}_mass (float): the effective mass of the extremum
 
         """
         self.feat = []
