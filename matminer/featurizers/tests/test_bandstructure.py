@@ -6,6 +6,7 @@ import pandas as pd
 import unittest
 
 from matminer.featurizers.bandstructure import BandFeaturizer, BranchPointEnergy
+from pymatgen import Structure
 from pymatgen.electronic_structure.bandstructure import BandStructure
 from pymatgen.util.testing import PymatgenTest
 
@@ -15,14 +16,16 @@ class BandstructureFeaturesTest(PymatgenTest):
 
     def setUp(self):
         with open(os.path.join(test_dir, 'si_structure.json'),'r') as sth:
-            si_str = json.load(sth)
+            si_str = Structure.from_dict(json.load(sth))
         with open(os.path.join(test_dir, 'si_bandstructure.json'),'r') as bsh:
             si_bs = BandStructure.from_dict(json.load(bsh))
         si_bs.structure = si_str
-        self.df = pd.DataFrame({'bs':[si_bs]})
+        self.df = pd.DataFrame({'bs': [si_bs]})
 
     def test_BranchPointEnergy(self):
         df_bpe = BranchPointEnergy()
+
+        # TODO: @computron not sure what's going on here, need to fix! -computron
 
         # this takes forever and fails at the end raises the following error:
         # ValueError: Unable to find 1:1 corresponding between input kpoints and irreducible grid!
