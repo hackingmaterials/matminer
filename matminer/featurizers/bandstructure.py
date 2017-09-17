@@ -108,8 +108,7 @@ class BandFeaturizer(BaseFeaturizer):
         """
         Args:
             bs (pymatgen BandStructure or BandStructureSymmLine or their dict):
-                note that if bs.structure has a valid structure, additional
-                features will be generated.
+                The band structure to featurize()
         Returns ([float]):
             a list of band structure features. If not bs.structure, the
                 features that require the structure will be returned as NaN.
@@ -124,8 +123,6 @@ class BandFeaturizer(BaseFeaturizer):
                 {n,p}_ex{#}_norm (float): e.g. n_ex1_norm is norm of the
                     fractional coordinates of k-points of the 1st conduction
                     (n) band extremum, i.e., the CBM
-                {n,p}_ex{#}_degeneracy (float): the band degeneracyeracy of the extremum
-                {n,p}_ex{#}_mass (float): the effective mass of the extremum
 
         """
         self.feat = []
@@ -151,9 +148,6 @@ class BandFeaturizer(BaseFeaturizer):
                 norm(bs.kpoints[vbm['kpoint_index'][0]].frac_coords)))
         self.feat.append(('n_ex1_norm',
                 norm(bs.kpoints[cbm['kpoint_index'][0]].frac_coords)))
-        if bs.structure:
-            pass
-            # additional features such as n_ex_degeneracy will be generated here
 
         return list(list(zip(*self.feat))[1])
 
