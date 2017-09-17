@@ -1,6 +1,7 @@
 from __future__ import division, unicode_literals, print_function
 
 import numpy as np
+from numpy.linalg import norm
 
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen import Spin
@@ -9,9 +10,6 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
-
-def norm(vector):
-    return (vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2) ** 0.5
 
 # TODO: add a unit test
 
