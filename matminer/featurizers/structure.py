@@ -464,23 +464,43 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     """
     This function generates an orbital field matrix (OFM) as developed
     by Pham et al (arXiv, May 2017). Each atom is described by a 32-element
-    vector uniquely representing the valence subshell. A 32x32 matrix is formed
+    vector (or 39-element vector, see period tag for details) uniquely
+    representing the valence subshell. A 32x32 (39x39) matrix is formed
     by multiplying two atomic vectors. An OFM for an atomic environment is the
     sum of these matrices for each atom the center atom coordinates with
     multiplied by a distance function (In this case, 1/r times the weight of
-    the coordinating atomic in the Voronoi Polyhedra method). The OFM of a structure
-    or molecule is the average of the OFMs for all the sites in the structure
+    the coordinating atom in the Voronoi Polyhedra method). The OFM of a structure
+    or molecule is the average of the OFMs for all the sites in the structure.
+
+    Args:
+        period_tag (bool): In the original OFM, an element is represented
+                by a vector of length 32, where each element is 1 or 0,
+                which represents the valence subshell of the element.
+                With period_tag=True (default), the vector size is increased
+                to 39, where the 7 extra elements represent the period
+                of the element. Note lanthanides are treated as period 6,
+                actinides as period 7.
+
+    ...attribute:: size
+        Either 32 or 39, the size of the vectors used to describe elements.
     """
 
-    def __init__(self):
+    def __init__(self, period_tag = True):
+        """
+        
+        """
         my_ohvs = {}
+        if period_tag:
+            self.size = 39
+        else:
+            self.size = 32
         for Z in range(1, 95):
             el = Element.from_Z(Z)
-            my_ohvs[Z] = self.get_ohv(el)
+            my_ohvs[Z] = self.get_ohv(el, period_tag)
             my_ohvs[Z] = np.matrix(my_ohvs[Z])
         self.ohvs = my_ohvs
 
-    def get_ohv(self, sp):
+    def get_ohv(self, sp, period_tag):
         """
         Get the "one-hot-vector" for pymatgen Element sp. This 32-length
         vector represents the valence shell of the given element.
@@ -518,12 +538,17 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             ohd[l][curr_shell[2]] = 1
             nume += curr_shell[2]
             shell_num += 1
-        my_ohv = np.zeros(32, np.int)
+        my_ohv = np.zeros(self.size, np.int)
         k = 0
         for j in range(4):
             for i in range(2 * (2 * j + 1)):
                 my_ohv[k] = ohd[j][i + 1]
                 k += 1
+        if period_tag:
+            row = sp.row
+            if row > 7:
+                row -= 2
+            my_ohv[row+31] = 1
         return my_ohv
 
     def get_single_ofm(self, site, site_dict):
@@ -538,10 +563,10 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             site_dict (dict of Site:float): chemical environment
 
         Returns:
-            atom_ofm (32 X 32 numpy matrix): ofm for site
+            atom_ofm (size X size numpy matrix): ofm for site
         """
         ohvs = self.ohvs
-        atom_ofm = np.matrix(np.zeros((32, 32)))
+        atom_ofm = np.matrix(np.zeros((self.size, self.size)))
         ref_atom = ohvs[site.specie.Z]
         for other_site in site_dict:
             scale = site_dict[other_site]
@@ -562,9 +587,9 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                     distinct sites
 
         Returns:
-            ofms ([32 X 32 matrix] X len(struct)): ofms for struct
+            ofms ([size X size matrix] X len(struct)): ofms for struct
             if symm:
-                ofms ([32 X 32 matrix] X number of symmetrically distinct sites):
+                ofms ([size X size matrix] X number of symmetrically distinct sites):
                     ofms for struct
                 counts: number of identical sites for each ofm
         """
@@ -593,7 +618,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     def get_structure_ofm(self, struct):
         """
         Calls get_mean_ofm on the results of get_atom_ofms
-        to give a 32 X 32 matrix characterizing a structure
+        to give a size X size matrix characterizing a structure
         """
         ofms, counts = self.get_atom_ofms(struct, True)
         return self.get_mean_ofm(ofms, counts)
@@ -609,7 +634,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             s (Structure): structure to characterize
 
         Returns:
-            mean_ofm (32 X 32 matrix): orbital field matrix
+            mean_ofm (size X size matrix): orbital field matrix
                     characterizing s
         """
         s *= [3, 3, 3]

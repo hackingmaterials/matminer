@@ -228,7 +228,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEquals(sin_mat[1][1], 0)
 
     def test_orbital_field_matrix(self):
-        ofm_maker = OrbitalFieldMatrix()
+        ofm_maker = OrbitalFieldMatrix(False)
         ofm = ofm_maker.featurize(self.diamond)[0]
         mtarget = np.zeros((32, 32))
         mtarget[1][1] = 1.4789015  # 1.3675444
@@ -239,6 +239,22 @@ class StructureFeaturesTest(PymatgenTest):
             for j in range(32):
                 if not i in [1, 3] and not j in [1, 3]:
                     self.assertEquals(ofm[i, j], 0.0)
+        mtarget = np.matrix(mtarget)
+        self.assertAlmostEqual(
+            np.linalg.norm(ofm - mtarget), 0.0, places=4)
+
+        ofm_maker = OrbitalFieldMatrix(True)
+        ofm = ofm_maker.featurize(self.diamond)[0]
+        mtarget = np.zeros((39, 39))
+        mtarget[1][1] = 1.4789015
+        mtarget[1][3] = 1.4789015
+        mtarget[3][1] = 1.4789015
+        mtarget[3][3] = 1.4789015
+        mtarget[1][33] = 1.4789015
+        mtarget[3][33] = 1.4789015
+        mtarget[33][1] = 1.4789015
+        mtarget[33][3] = 1.4789015
+        mtarget[33][33] = 1.4789015
         mtarget = np.matrix(mtarget)
         self.assertAlmostEqual(
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
