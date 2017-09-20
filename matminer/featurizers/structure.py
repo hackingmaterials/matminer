@@ -473,10 +473,10 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         period_tag (bool): In the original OFM, an element is represented
                 by a vector of length 32, where each element is 1 or 0,
                 which represents the valence subshell of the element.
-                With period_tag=True (default), the vector size is increased
+                With period_tag=True, the vector size is increased
                 to 39, where the 7 extra elements represent the period
                 of the element. Note lanthanides are treated as period 6,
-                actinides as period 7.
+                actinides as period 7. Default False as in the original paper.
 
     ...attribute:: size
         Either 32 or 39, the size of the vectors used to describe elements.
