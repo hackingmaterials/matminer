@@ -502,13 +502,15 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
     def get_ohv(self, sp, period_tag):
         """
-        Get the "one-hot-vector" for pymatgen Element sp. This 32-length
+        Get the "one-hot-vector" for pymatgen Element sp. This 32 or 39-length
         vector represents the valence shell of the given element.
         Args:
             sp (Element): element whose ohv should be returned
+            period_tag (bool): If true, the vector contains items
+                    corresponding to the period of the element
 
         Returns:
-            my_ohv (numpy array length 32): ohv for sp
+            my_ohv (numpy array length 39 if period_tag, else 32): ohv for sp
         """
         el_struct = sp.full_electronic_structure
         ohd = {j: {i + 1: 0 for i in range(2 * (2 * j + 1))} for j in range(4)}
