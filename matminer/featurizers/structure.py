@@ -333,9 +333,14 @@ class CoulombMatrix(BaseFeaturizer):
     off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j|
     and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
     the nuclear charge and the position of atom i, respectively.
+
+    Args:
+        diag_elems: (bool) flag indicating whether (True, default) to use
+                    the original definition of the diagonal elements;
+                    if set to False, the diagonal elements are set to zero.
     """
 
-    def __init__(self, diag_elems=False):
+    def __init__(self, diag_elems=True):
         self.diag_elems = diag_elems
 
     def featurize(self, s):
@@ -344,10 +349,6 @@ class CoulombMatrix(BaseFeaturizer):
     
         Args:
             s: input Structure (or Molecule) object.
-            diag_elems: (bool) flag indicating whether (True) to use
-                    the original definition of the diagonal elements;
-                    if set to False (default),
-                    the diagonal elements are set to zero.
     
         Returns:
             m: (Nsites x Nsites matrix) Coulomb matrix.
@@ -372,7 +373,7 @@ class CoulombMatrix(BaseFeaturizer):
         return [np.array(m)]
 
     def feature_labels(self):
-        return ["Coulomb matrix"]
+        return ["coulomb matrix"]
 
     def citations(self):
         return ("@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
@@ -394,19 +395,15 @@ class SineCoulombMatrix(BaseFeaturizer):
     115, 16, 2015). It is identical to the Coulomb matrix, except
     that the inverse distance function is replaced by the inverse of a
     sin**2 function of the vector between the sites which is periodic
-    in the dimensions of the structure lattice. It is the best performing
-    coulomb matrix model for machine learning formation energies of 
-    periodic crystals. See paper for details.
+    in the dimensions of the structure lattice. See paper for details.
+
+    Args:
+        diag_elems (bool): flag indication whether (True, default) to use
+                the original definition of the diagonal elements;
+                if set to False, the diagonal elements are set to 0
     """
 
-    def __init__(self, diag_elems=False):
-        """
-        Args:
-            diag_elems (bool): flag indication whether (True) to use
-                    the original definition of the diagonal elements;
-                    if set to False (default),
-                    the diagonal elements are set to 0
-        """
+    def __init__(self, diag_elems=True):
         self.diag_elems = diag_elems
 
     def featurize(self, s):
@@ -439,7 +436,7 @@ class SineCoulombMatrix(BaseFeaturizer):
         return [sin_mat]
 
     def feature_labels(self):
-        return ["sine Coulomb matrix"]
+        return ["sine coulomb matrix"]
 
     def citations(self):
         return ("@article {QUA:QUA24917,"
@@ -486,9 +483,6 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     """
 
     def __init__(self, period_tag = True):
-        """
-        
-        """
         my_ohvs = {}
         if period_tag:
             self.size = 39

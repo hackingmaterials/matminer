@@ -203,26 +203,26 @@ class StructureFeaturesTest(PymatgenTest):
         species = ["C", "C", "H", "H"]
         coords = [[0, 0, 0], [0, 0, 1.203], [0, 0, -1.06], [0, 0, 2.263]]
         acetylene = Molecule(species, coords)
-        morig = CoulombMatrix(True).featurize(acetylene)
+        morig = CoulombMatrix().featurize(acetylene)
         mtarget = [[36.858, 15.835391290, 2.995098235, 1.402827813], \
                    [15.835391290, 36.858, 1.4028278132103624, 2.9950982], \
                    [2.9368896127, 1.402827813, 0.5, 0.159279959], \
                    [1.4028278132, 2.995098235, 0.159279959, 0.5]]
         self.assertAlmostEqual(
             int(np.linalg.norm(morig - np.array(mtarget))), 0)
-        m = CoulombMatrix().featurize(acetylene)[0]
+        m = CoulombMatrix(False).featurize(acetylene)[0]
         self.assertAlmostEqual(m[0][0], 0.0)
         self.assertAlmostEqual(m[1][1], 0.0)
         self.assertAlmostEqual(m[2][2], 0.0)
         self.assertAlmostEqual(m[3][3], 0.0)
 
     def test_sine_coulomb_matrix(self):
-        scm = SineCoulombMatrix(True)
+        scm = SineCoulombMatrix()
         sin_mat = scm.featurize(self.diamond)
         mtarget = [[36.8581, 6.147068], [6.147068, 36.8581]]
         self.assertAlmostEqual(
             np.linalg.norm(sin_mat - np.array(mtarget)), 0.0, places=4)
-        scm = SineCoulombMatrix()
+        scm = SineCoulombMatrix(False)
         sin_mat = scm.featurize(self.diamond)[0]
         self.assertEquals(sin_mat[0][0], 0)
         self.assertEquals(sin_mat[1][1], 0)
