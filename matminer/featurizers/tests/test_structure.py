@@ -228,7 +228,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEquals(sin_mat[1][1], 0)
 
     def test_orbital_field_matrix(self):
-        ofm_maker = OrbitalFieldMatrix(False)
+        ofm_maker = OrbitalFieldMatrix()
         ofm = ofm_maker.featurize(self.diamond)[0]
         mtarget = np.zeros((32, 32))
         mtarget[1][1] = 1.4789015  # 1.3675444

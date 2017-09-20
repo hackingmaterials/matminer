@@ -482,7 +482,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         Either 32 or 39, the size of the vectors used to describe elements.
     """
 
-    def __init__(self, period_tag = True):
+    def __init__(self, period_tag = False):
         my_ohvs = {}
         if period_tag:
             self.size = 39
