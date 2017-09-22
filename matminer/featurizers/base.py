@@ -29,6 +29,12 @@ class BaseFeaturizer(object):
 
         # Add features to dataframe
         features = np.array(features)
+        
+        #  Special case: For single attribute, add an axis
+        if len(features.shape) == 1:
+            features = features[:, np.newaxis]
+            
+        # Add features to dataframe
         labels = self.feature_labels()
         df = df.assign(**dict(zip(labels, features.T)))
         return df
