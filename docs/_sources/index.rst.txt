@@ -10,9 +10,9 @@ matminer
 
 matminer is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a **working code**.
 
---------
+---------------
 Citing matminer
---------
+---------------
 
 We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
 
@@ -39,9 +39,9 @@ You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launc
 .. image:: http://mybinder.org/badge.svg 
    :target: http://mybinder.org/repo/hackingmaterials/matminer
 
---------
+------------
 Installation
---------
+------------
 
 There are a couple of quick and easy ways to install matminer:-
 
@@ -80,7 +80,7 @@ and then entering the cloned repository/folder to install in developer mode:
     $ cd matminer
     $ python setup.py develop
     
-Depending on how many of the required dependencies were already installed on your system, you will see a few or many warnings, but everything should be installed successfully.
+Depending on how many of the required dependencies were already installed on your system, you'll see a few or many warnings, but everything should be installed successfully.
 
 --------
 Overview
@@ -118,7 +118,7 @@ For example, to compare experimental and computed band gaps of Si, one can emplo
 
 
 Data descriptor tools
-----------------
+---------------------
 
 - Decorate the dataframe with composition, structural, and/or band structure descriptors/features
 
@@ -197,6 +197,8 @@ Changelog
 **v0.1.3**
 
 * remove git-lfs
+* updated CSV data sets (K. Bostrom)
+* better oxidation state determination in multiple composition descriptors
 * refactor structure descriptors
 * multiple fixes to cohesive energy
 * fixes to data loaders
@@ -230,18 +232,21 @@ Changelog
 * fix misc. bugs and installation issues (A. Dunn, S. Bajaj, L. Ward)
 
 For changelog before v0.1.0, consult the git history of matminer.
- 
+
+-----------------------------
+Contributions and Bug Reports
+-----------------------------
+Want to see something added or changed? Here's a few ways you can!
+
+* Help us improve the documentation. Tell us where you got 'stuck' and improve the install process for everyone.
+* Let us know about areas of the code that are difficult to understand or use.
+* Contribute code! Fork our `Github repo <https://github.com/hackingmaterials/matminer>`_ and make a pull request.
+
+Submit all questions and contact to the Google group (coming soon!).
+
+------------
 Contributors
 ------------
 
-Matminer is led by Anubhav Jain and the Hackingmaterials Research group at Lawrence Berkeley National Lab. Major contributions were provided by:
+A full list of contributors can be found :doc:`here </contributors>`
 
-* Jiming Chen and Logan Ward (U. Chicago)
-* Saurabh Bajaj (LBNL - HackingMaterials)
-
-Additional contributions from:
-
-* Shyue Ping Ong (UC San Diego)
-* Sayan Rowchowdhury, Alex Dunn, Jason Frost, Alireza Faghaninia (LBNL - HackingMaterials)
-* Matt Horton, Donny Winston, Joseph Montoya (LBNL - Persson research group)
-* Ashwin Aggarwal (U. Chicago)

@@ -1,0 +1,8 @@
+.. title:: Contributions
+
+.. image:: _static/matminer_logo_small.png
+   :alt: matminer logo
+
+-----------------
+Example notebooks
+-----------------

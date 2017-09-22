@@ -232,18 +232,21 @@ Changelog
 * fix misc. bugs and installation issues (A. Dunn, S. Bajaj, L. Ward)
 
 For changelog before v0.1.0, consult the git history of matminer.
- 
+
+-----------------------------
+Contributions and Bug Reports
+-----------------------------
+Want to see something added or changed? Here's a few ways you can!
+
+* Help us improve the documentation. Tell us where you got 'stuck' and improve the install process for everyone.
+* Let us know about areas of the code that are difficult to understand or use.
+* Contribute code! Fork our `Github repo <https://github.com/hackingmaterials/matminer>`_ and make a pull request.
+
+Submit all questions and contact to the Google group (coming soon!).
+
+------------
 Contributors
 ------------
 
-Matminer is led by Anubhav Jain and the Hackingmaterials Research group at Lawrence Berkeley National Lab. Major contributions were provided by:
+A full list of contributors can be found :doc:`here </contributors>`
 
-* Jiming Chen and Logan Ward (U. Chicago)
-* Saurabh Bajaj (LBNL - HackingMaterials)
-
-Additional contributions from:
-
-* Shyue Ping Ong (UC San Diego)
-* Sayan Rowchowdhury, Alex Dunn, Jason Frost, Alireza Faghaninia (LBNL - HackingMaterials)
-* Matt Horton, Donny Winston, Joseph Montoya (LBNL - Persson research group)
-* Ashwin Aggarwal (U. Chicago)

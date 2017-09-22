@@ -1,19 +1,19 @@
-matminer.figrecipes.matplotlib.examples package
-===============================================
+matminer\.figrecipes\.matplotlib\.examples package
+==================================================
 
 Submodules
 ----------
 
-matminer.figrecipes.matplotlib.examples.heatmap_examples module
----------------------------------------------------------------
+matminer\.figrecipes\.matplotlib\.examples\.heatmap\_examples module
+--------------------------------------------------------------------
 
 .. automodule:: matminer.figrecipes.matplotlib.examples.heatmap_examples
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.figrecipes.matplotlib.examples.xyscatter_examples module
------------------------------------------------------------------
+matminer\.figrecipes\.matplotlib\.examples\.xyscatter\_examples module
+----------------------------------------------------------------------
 
 .. automodule:: matminer.figrecipes.matplotlib.examples.xyscatter_examples
     :members:
