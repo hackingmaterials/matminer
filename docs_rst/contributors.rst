@@ -1,10 +1,11 @@
-.. title:: Contributors
-
+.. title:: MatMiner Contributors
 .. _contributors:
 
-============
-Contributors
-============
+
+
+=====================
+matminer Contributors
+=====================
 
 Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the HackingMaterials research group at Lawrence Berkeley National Lab.
 

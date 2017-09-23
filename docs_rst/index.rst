@@ -10,11 +10,12 @@ matminer
 
 matminer is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a **working code**.
 
----------------
-Citing matminer
----------------
 
-We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
+-------------------
+Installing matminer
+-------------------
+
+Install matminer by following our short :doc:`installation tutorial. </installation>`
 
 
 -----------------
@@ -39,48 +40,6 @@ You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launc
 .. image:: http://mybinder.org/badge.svg 
    :target: http://mybinder.org/repo/hackingmaterials/matminer
 
-------------
-Installation
-------------
-
-There are a couple of quick and easy ways to install matminer:-
-
-- **Quick install**
-
-(Note: this may not install the latest changes to matminer. To install the version with the latest commits, skip to the next steps)
-
-For a quick install of matminer, and all of its dependencies, simply run the command in a bash terminal:
-
-.. code-block:: bash
-
-    $ pip install matminer
-
-or, to install matminer in your user $HOME folder, run the command:
-
-.. code-block:: bash
-
-    $ pip install matminer --user 
-
-One way to obtain :code:`pip` if not already installed is through :code:`conda`, which is useful when you are working with many python packages and want to use separate configuration settings and environment for each package. You can then install matminer and packages required by it in its own environment. Some useful links are `here <https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/20/conda/>`_ and `here <http://conda.pydata.org/docs/using/index.html>`_.
-
-- **Install in developmental mode**
-
-To install in development mode, first make sure you have `git-lfs <https://git-lfs.github.com>`_ installed so that you can clone large files.
-
-To install the full and latest source of the matminer code in developmental mode, along with its important dependencies, clone the Git source in a folder of your choosing by entering the following command:
-
-.. code-block:: bash
-
-    $ git clone https://github.com/hackingmaterials/matminer.git
-
-and then entering the cloned repository/folder to install in developer mode:
-
-.. code-block:: bash
-
-    $ cd matminer
-    $ python setup.py develop
-    
-Depending on how many of the required dependencies were already installed on your system, you'll see a few or many warnings, but everything should be installed successfully.
 
 --------
 Overview
@@ -191,47 +150,18 @@ In the figrecipes module of the matminer library, we have developed utilities th
 
 A few examples demonstrating usage can be found in the notebook hosted on `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/matminer/figrecipes/plotly/examples/plotly_examples.ipynb>`_ and `Github <https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb>`_
 
+---------------
+Citing matminer
+---------------
+
+We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
+
+
+---------
 Changelog
 ---------
 
-**v0.1.3**
-
-* remove git-lfs
-* updated CSV data sets (K. Bostrom)
-* better oxidation state determination in multiple composition descriptors
-* refactor structure descriptors
-* multiple fixes to cohesive energy
-* fixes to data loaders
-* fix complex Mongo retrieval queries, better logic for query projections
-* more unit tests
-* enforce lower case feature names
-* sort data by atomic number not electronegativity in data getters, this will avoid pernicious behavior
-* many minor cleanups, bug fixes, and consistency fixes
-
-
-**v0.1.2**
-
-* Several new structure fingerprint methods (L. Ward, K. Bostrom)
-* Refactor structure descriptors into new OOP style (N. Zimmermann)
-* move large files to git-lfs (K. Bostrom, A. Jain)
-* update example notebooks to new style
-* misc. cleanups and bug fixes
-
-**v0.1.1**
-
-* refactor and redesign of codebase to be more OOP (J. Chen, L. Ward)
-* Py3 compatibility (K. Mathew)
-* Element fraction feature (A. Aggarwal)
-* misc fixes / improvements (A. Jain, J. Chen, L. Ward, K. Mathew, J. Frost)
-
-**v0.1.0**
-
-* Add MPDS data retrieval (E. Blokhin)
-* Add partial RDF descriptor (L. Ward)
-* Add local environment motif descriptors (N. Zimmermann)
-* fix misc. bugs and installation issues (A. Dunn, S. Bajaj, L. Ward)
-
-For changelog before v0.1.0, consult the git history of matminer.
+Check out our full changelog :doc:`here </changelog>`
 
 -----------------------------
 Contributions and Bug Reports
@@ -243,6 +173,7 @@ Want to see something added or changed? Here's a few ways you can!
 * Contribute code! Fork our `Github repo <https://github.com/hackingmaterials/matminer>`_ and make a pull request.
 
 Submit all questions and contact to the Google group (coming soon!).
+
 
 ------------
 Contributors
