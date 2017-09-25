@@ -1,0 +1,48 @@
+.. title:: MatMiner Contributors
+.. _contributors:
+
+
+
+=====================
+matminer Contributors
+=====================
+
+Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the HackingMaterials research group at Lawrence Berkeley National Lab.
+
+Major contributions are shown in **bold**.
+
+
+`LBNL - Hacking Materials <https://hackingmaterials.lbl.gov/>`_
+----------------------------------------------------------------
+
+* **Anubhav Jain**
+* Alireza Faghaninia
+* Nils Zimmermann
+* Sayan Rowchowdhury
+* Alex Dunn
+* Jason Frost
+
+
+University of Chicago
+----------------------
+
+* **Jiming Chen**
+* **Logan Ward**
+* Ashwin Aggarwal
+
+
+`LBNL - Persson Group <http://perssongroup.lbl.gov/>`_
+------------------------------------------------------
+
+* **Kiran Mathew**
+* Matt Horton
+* Donny Winston
+* Joseph Montoya
+
+
+Other
+-----
+* **Saurabh Bajaj (Citrine Informatics)**
+* Kyle Bystrom (Asta Research Group)
+* Shyue Ping Ong (UC San Diego)
+* Evgeny Blokhin (Tilde Lab)
