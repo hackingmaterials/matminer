@@ -51,22 +51,6 @@
 <h2>Installing matminer<a class="headerlink" href="#installing-matminer" title="Permalink to this headline">¶</a></h2>
 <p>Install matminer by following our short <a class="reference internal" href="installation.html"><span class="doc">installation tutorial.</span></a></p>
 </div>
-<div class="section" id="example-notebooks">
-<h2>Example notebooks<a class="headerlink" href="#example-notebooks" title="Permalink to this headline">¶</a></h2>
-<p>A few examples demonstrating some of the features available in matminer have been created in the form of Jupyter notebooks:</p>
-<p>(Note: the Jupyter (Binder) links below are recommended as Github does not render interactive Javascript code or images.)</p>
-<ol class="arabic simple">
-<li>Get all experimentally measured band gaps of PbTe from Citrine’s database: <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb">Jupyter</a>  <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb">Github</a></li>
-<li>Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/experiment_vs_computed_bandgap.ipynb">Jupyter</a>  <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb">Github</a></li>
-<li>Train and predict band gaps using matminer’s tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb">Jupyter</a>  <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb">Github</a></li>
-<li>Training and predict bulk moduli using matminer’s tools to retrieve computed bulk moduli and descriptors from the Materials Project, and composition descriptors from pymatgen: <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb">Jupyter</a> <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb">Github</a></li>
-</ol>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p>You can also use the <a class="reference external" href="http://mybinder.org/">Binder</a> service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder <strong>example_notebooks</strong> in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to “File-&gt;Open” within the page and navigate to the notebook of your choice.</p>
-<a class="reference external image-reference" href="http://mybinder.org/repo/hackingmaterials/matminer"><img alt="http://mybinder.org/badge.svg" src="http://mybinder.org/badge.svg" /></a>
-</div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>Below is a general workflow that shows the different tools and utilities available within matminer, and how they could be implemented with each other, as well as with external libraries, in your own materials data mining/analysis study.</p>
@@ -114,49 +98,7 @@ descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
 </pre></div>
 </div>
 <p>The function <code class="code docutils literal"><span class="pre">get_magpie_descriptor</span></code> operates in a similar way and obtains its data from the tables accumulated in the <a class="reference external" href="https://bitbucket.org/wolverton/magpie">Magpie repository</a>, some of which are sourced from elemental data compiled by Mathematica (more information can be found <a class="reference external" href="https://reference.wolfram.com/language/ref/ElementData.html">here</a>). Some properties that don’t overlap with the pymatgen library include heat capacity, enthalpy of fusion of elements at melting points, pseudopotential radii, etc.</p>
-<p>Some other descriptors that can be obtained from matminer include:</p>
-<ol class="arabic simple">
-<li>Composition descriptors<ol class="arabic">
-<li>Cohesive energy</li>
-<li>Band center</li>
-</ol>
-</li>
-<li>Structural descriptors<ol class="arabic">
-<li>Packing fraction</li>
-<li>Volume per site</li>
-<li>Radial and electronic radial distribution functions</li>
-<li>Structural order parameters</li>
-</ol>
-</li>
-<li>Band-structure descriptors<ol class="arabic">
-<li>Branch point energy</li>
-<li>Absolute band positions</li>
-</ol>
-</li>
-<li>Mechanical properties<ol class="arabic">
-<li>Thermal stress</li>
-<li>Fracture toughness</li>
-<li>Brittleness index</li>
-<li>Critical stress</li>
-<li>bulk/elastic, rigid, and shear moduli</li>
-<li>bulk modulus from coordination number</li>
-<li>Vicker’s hardness</li>
-<li>Lame’s first parameter</li>
-<li>p-wave modulus</li>
-<li>Sound velocity from elastic constants</li>
-<li>Steady-state and maximum allowed heatflow</li>
-<li>Strain energy release rate</li>
-</ol>
-</li>
-<li>Thermal condutivity models<ol class="arabic">
-<li>Cahill model</li>
-<li>Clarke model</li>
-<li>Callaway model</li>
-<li>Slack model</li>
-<li>Keyes model</li>
-</ol>
-</li>
-</ol>
+<p>Other descriptors provided by matminer can be found in the <a class="reference external" href="https://github.com/hackingmaterials/matminer/tree/master/matminer/featurizers">Github repo.</a></p>
 </div>
 <div class="section" id="plotting-tools">
 <h3>Plotting tools<a class="headerlink" href="#plotting-tools" title="Permalink to this headline">¶</a></h3>
@@ -167,13 +109,30 @@ descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
 <p>A few examples demonstrating usage can be found in the notebook hosted on <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/matminer/figrecipes/plotly/examples/plotly_examples.ipynb">Jupyter</a> and <a class="reference external" href="https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb">Github</a></p>
 </div>
 </div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Make sure to check out some <a class="reference internal" href="examples.html"><span class="doc">examples</span></a> of how to use matminer!</p>
+<p>Examples demonstrating some of matminer’s features have been created in the form of Jupyter notebooks:</p>
+<p>(Note: the Jupyter (Binder) links below are recommended as Github does not render interactive Javascript code or images.)</p>
+<ol class="arabic simple">
+<li>Get all experimentally measured band gaps of PbTe from Citrine’s database: <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb">Jupyter</a>  <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb">Github</a></li>
+<li>Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/experiment_vs_computed_bandgap.ipynb">Jupyter</a>  <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb">Github</a></li>
+<li>Train and predict band gaps using matminer’s tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb">Jupyter</a>  <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb">Github</a></li>
+<li>Training and predict bulk moduli using matminer’s tools to retrieve computed bulk moduli and descriptors from the Materials Project, and composition descriptors from pymatgen: <a class="reference external" href="http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb">Jupyter</a> <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb">Github</a></li>
+</ol>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>You can also use the <a class="reference external" href="http://mybinder.org/">Binder</a> service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder <strong>example_notebooks</strong> in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to “File-&gt;Open” within the page and navigate to the notebook of your choice.</p>
+<a class="reference external image-reference" href="http://mybinder.org/repo/hackingmaterials/matminer"><img alt="http://mybinder.org/badge.svg" src="http://mybinder.org/badge.svg" /></a>
+</div>
 <div class="section" id="citing-matminer">
 <h2>Citing matminer<a class="headerlink" href="#citing-matminer" title="Permalink to this headline">¶</a></h2>
 <p>We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.</p>
 </div>
 <div class="section" id="changelog">
 <h2>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h2>
-<p>Check out our full changelog <a class="reference internal" href="changelog.html"><span class="doc">here</span></a></p>
+<p>Check out our full changelog <a class="reference internal" href="changelog.html"><span class="doc">here.</span></a></p>
 </div>
 <div class="section" id="contributions-and-bug-reports">
 <h2>Contributions and Bug Reports<a class="headerlink" href="#contributions-and-bug-reports" title="Permalink to this headline">¶</a></h2>
@@ -184,10 +143,7 @@ descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
 <li>Contribute code! Fork our <a class="reference external" href="https://github.com/hackingmaterials/matminer">Github repo</a> and make a pull request.</li>
 </ul>
 <p>Submit all questions and contact to the Google group (coming soon!).</p>
-</div>
-<div class="section" id="contributors">
-<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h2>
-<p>A full list of contributors can be found <a class="reference internal" href="contributors.html"><span class="doc">here</span></a></p>
+<p>A full list of contributors can be found <a class="reference internal" href="contributors.html"><span class="doc">here.</span></a></p>
 </div>
 </div>
 
@@ -201,17 +157,16 @@ descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
   <ul>
 <li><a class="reference internal" href="#">matminer</a><ul>
 <li><a class="reference internal" href="#installing-matminer">Installing matminer</a></li>
-<li><a class="reference internal" href="#example-notebooks">Example notebooks</a></li>
 <li><a class="reference internal" href="#overview">Overview</a><ul>
 <li><a class="reference internal" href="#data-retrieval-tools">Data retrieval tools</a></li>
 <li><a class="reference internal" href="#data-descriptor-tools">Data descriptor tools</a></li>
 <li><a class="reference internal" href="#plotting-tools">Plotting tools</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
 <li><a class="reference internal" href="#citing-matminer">Citing matminer</a></li>
 <li><a class="reference internal" href="#changelog">Changelog</a></li>
 <li><a class="reference internal" href="#contributions-and-bug-reports">Contributions and Bug Reports</a></li>
-<li><a class="reference internal" href="#contributors">Contributors</a></li>
 </ul>
 </li>
 </ul>

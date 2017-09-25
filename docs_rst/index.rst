@@ -17,30 +17,6 @@ Installing matminer
 
 Install matminer by following our short :doc:`installation tutorial. </installation>`
 
-
------------------
-Example notebooks
------------------
-
-A few examples demonstrating some of the features available in matminer have been created in the form of Jupyter notebooks:
-
-(Note: the Jupyter (Binder) links below are recommended as Github does not render interactive Javascript code or images.)
-
-1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_
-
-2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
-
-3. Train and predict band gaps using matminer's tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_
-
-4. Training and predict bulk moduli using matminer's tools to retrieve computed bulk moduli and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_ `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_
-
-|
-You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder **example_notebooks** in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to "File->Open" within the page and navigate to the notebook of your choice. 
-
-.. image:: http://mybinder.org/badge.svg 
-   :target: http://mybinder.org/repo/hackingmaterials/matminer
-
-
 --------
 Overview
 --------
@@ -60,7 +36,7 @@ Data retrieval tools
 
 - Retrieve data from the biggest materials databases, such as the Materials Project and Citrine's databases, in a Pandas dataframe format
 
-The `MPDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MP.py>`_ and `CitrineDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_Citrine.py>`_ classes can be used to retrieve data from the biggest open-source materials database collections of the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine Informatics <https://citrination.com/>`_, respectively, in a `Pandas <http://pandas.pydata.org/>`_ dataframe format. The data contained in these databases are a variety of material properties, obtained in-house or from other external databases, that are either calculated, measured from experiments, or learned from trained algorithms. The :code:`get_dataframe` method of these classes executes the data retrieval by searching the respective database using user-specified filters, such as compound/material, property type, etc , extracting the selected data in a JSON/dictionary format through the API, parsing it and output the result to a Pandas dataframe with columns as properties/features measured or calculated and rows as data points. 
+The `MPDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MP.py>`_ and `CitrineDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_Citrine.py>`_ classes can be used to retrieve data from the biggest open-source materials database collections of the `Materials Project <https://www.materialsproject.org/>`_ and `Citrine Informatics <https://citrination.com/>`_, respectively, in a `Pandas <http://pandas.pydata.org/>`_ dataframe format. The data contained in these databases are a variety of material properties, obtained in-house or from other external databases, that are either calculated, measured from experiments, or learned from trained algorithms. The :code:`get_dataframe` method of these classes executes the data retrieval by searching the respective database using user-specified filters, such as compound/material, property type, etc , extracting the selected data in a JSON/dictionary format through the API, parsing it and output the result to a Pandas dataframe with columns as properties/features measured or calculated and rows as data points.
 
 For example, to compare experimental and computed band gaps of Si, one can employ the following lines of code:
 
@@ -96,9 +72,9 @@ descriptors that can be obtained for LiFePO\ :sub:`4`:
    range_elect = max(get_pymatgen_descriptor('LiFePO4', 'X')) - \
               min(get_pymatgen_descriptor('LiFePO4', 'X'))      # Maximum difference in electronegativity
 
-The function :code:`get_magpie_descriptor` operates in a similar way and obtains its data from the tables accumulated in the `Magpie repository <https://bitbucket.org/wolverton/magpie>`_, some of which are sourced from elemental data compiled by Mathematica (more information can be found `here <https://reference.wolfram.com/language/ref/ElementData.html>`_). Some properties that don't overlap with the pymatgen library include heat capacity, enthalpy of fusion of elements at melting points, pseudopotential radii, etc. 
+The function :code:`get_magpie_descriptor` operates in a similar way and obtains its data from the tables accumulated in the `Magpie repository <https://bitbucket.org/wolverton/magpie>`_, some of which are sourced from elemental data compiled by Mathematica (more information can be found `here <https://reference.wolfram.com/language/ref/ElementData.html>`_). Some properties that don't overlap with the pymatgen library include heat capacity, enthalpy of fusion of elements at melting points, pseudopotential radii, etc.
 
-Other descriptors provided by matminer can be found in the `Github repo <https://github.com/hackingmaterials/matminer/tree/master/matminer/featurizers>`_
+Other descriptors provided by matminer can be found in the `Github repo. <https://github.com/hackingmaterials/matminer/tree/master/matminer/featurizers>`_
    
  
 Plotting tools
@@ -109,6 +85,33 @@ Plotting tools
 In the figrecipes module of the matminer library, we have developed utilities that wrap around two popular plotting libraries, Plotly and matplotlib to produce various types of plots that plot data from either arrays or dataframes. The Plotly part of this module contains classes/functions that wrap around its Python API library and follows its JSON schema. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly and matplotlib, while at the same time sheilding the complexities involved. 
 
 A few examples demonstrating usage can be found in the notebook hosted on `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/matminer/figrecipes/plotly/examples/plotly_examples.ipynb>`_ and `Github <https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb>`_
+
+
+--------
+Examples
+--------
+
+Make sure to check out some :doc:`examples </examples>` of how to use matminer!
+
+
+Examples demonstrating some of matminer's features have been created in the form of Jupyter notebooks:
+
+(Note: the Jupyter (Binder) links below are recommended as Github does not render interactive Javascript code or images.)
+
+1. Get all experimentally measured band gaps of PbTe from Citrine's database: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/get_Citrine_experimental_bandgaps_PbTe.ipynb>`_
+
+2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/experiment_vs_computed_bandgap.ipynb>`_
+
+3. Train and predict band gaps using matminer's tools to retrieve computed band gaps and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_  `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_bandgap.ipynb>`_
+
+4. Training and predict bulk moduli using matminer's tools to retrieve computed bulk moduli and descriptors from the Materials Project, and composition descriptors from pymatgen: `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_ `Github <https://github.com/hackingmaterials/matminer/blob/master/example_notebooks/machine_learning_to_predict_BulkModulus.ipynb>`_
+
+|
+You can also use the `Binder <http://mybinder.org/>`_ service (in beta) to launch an interactive notebook upon a click. Click the button below to open the tree structure of this repository and navigate to the folder **example_notebooks** in the current working directory to use/edit the above notebooks right away! To open/run/edit other notebooks, go to "File->Open" within the page and navigate to the notebook of your choice.
+
+.. image:: http://mybinder.org/badge.svg
+   :target: http://mybinder.org/repo/hackingmaterials/matminer
+
 
 ---------------
 Citing matminer
@@ -121,7 +124,7 @@ We are currently in the process of writing a paper on matminer - we will update 
 Changelog
 ---------
 
-Check out our full changelog :doc:`here </changelog>`
+Check out our full changelog :doc:`here. </changelog>`
 
 -----------------------------
 Contributions and Bug Reports
@@ -134,10 +137,5 @@ Want to see something added or changed? Here's a few ways you can!
 
 Submit all questions and contact to the Google group (coming soon!).
 
-
-------------
-Contributors
-------------
-
-A full list of contributors can be found :doc:`here </contributors>`
+A full list of contributors can be found :doc:`here. </contributors>`
 
