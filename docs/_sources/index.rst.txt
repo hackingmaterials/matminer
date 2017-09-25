@@ -17,12 +17,6 @@ Installing matminer
 
 Install matminer by following our short :doc:`installation tutorial. </installation>`
 
----------------
-Citing matminer
----------------
-
-We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
-
 
 -----------------
 Example notebooks
@@ -156,12 +150,18 @@ In the figrecipes module of the matminer library, we have developed utilities th
 
 A few examples demonstrating usage can be found in the notebook hosted on `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/matminer/figrecipes/plotly/examples/plotly_examples.ipynb>`_ and `Github <https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb>`_
 
+---------------
+Citing matminer
+---------------
+
+We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
+
+
 ---------
 Changelog
 ---------
 
 Check out our full changelog :doc:`here </changelog>`
-
 
 -----------------------------
 Contributions and Bug Reports

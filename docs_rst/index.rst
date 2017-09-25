@@ -98,47 +98,7 @@ descriptors that can be obtained for LiFePO\ :sub:`4`:
 
 The function :code:`get_magpie_descriptor` operates in a similar way and obtains its data from the tables accumulated in the `Magpie repository <https://bitbucket.org/wolverton/magpie>`_, some of which are sourced from elemental data compiled by Mathematica (more information can be found `here <https://reference.wolfram.com/language/ref/ElementData.html>`_). Some properties that don't overlap with the pymatgen library include heat capacity, enthalpy of fusion of elements at melting points, pseudopotential radii, etc. 
 
-Some other descriptors that can be obtained from matminer include:
-
-#. Composition descriptors
-
-   #. Cohesive energy
-   #. Band center
-   
-#. Structural descriptors
-
-   #. Packing fraction
-   #. Volume per site
-   #. Radial and electronic radial distribution functions
-   #. Structural order parameters
-
-#. Band-structure descriptors
-
-   #. Branch point energy
-   #. Absolute band positions
-
-#. Mechanical properties
-
-   #. Thermal stress
-   #. Fracture toughness
-   #. Brittleness index
-   #. Critical stress
-   #. bulk/elastic, rigid, and shear moduli
-   #. bulk modulus from coordination number
-   #. Vicker's hardness
-   #. Lame's first parameter
-   #. p-wave modulus
-   #. Sound velocity from elastic constants
-   #. Steady-state and maximum allowed heatflow
-   #. Strain energy release rate
-   
-#. Thermal condutivity models
-
-   #. Cahill model
-   #. Clarke model
-   #. Callaway model
-   #. Slack model
-   #. Keyes model
+Other descriptors provided by matminer can be found in the `Github repo <https://github.com/hackingmaterials/matminer/tree/master/matminer/featurizers>`_
    
  
 Plotting tools
