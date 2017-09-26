@@ -135,7 +135,7 @@ Want to see something added or changed? Here's a few ways you can!
 * Let us know about areas of the code that are difficult to understand or use.
 * Contribute code! Fork our `Github repo <https://github.com/hackingmaterials/matminer>`_ and make a pull request.
 
-Submit all questions and contact to the Google group (coming soon!).
+Submit all questions and contact to the `Google group <https://groups.google.com/forum/#!forum/matminer>`_
 
 A full list of contributors can be found :doc:`here. </contributors>`
 
