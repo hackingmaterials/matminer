@@ -1,11 +1,11 @@
-matminer\.featurizers\.data\_files package
-==========================================
+matminer.featurizers.data_files package
+=======================================
 
 Submodules
 ----------
 
-matminer\.featurizers\.data\_files\.deml\_elementdata module
-------------------------------------------------------------
+matminer.featurizers.data_files.deml_elementdata module
+-------------------------------------------------------
 
 .. automodule:: matminer.featurizers.data_files.deml_elementdata
     :members:

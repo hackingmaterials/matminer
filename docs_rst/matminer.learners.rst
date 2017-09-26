@@ -1,5 +1,5 @@
-matminer\.learners package
-==========================
+matminer.learners package
+=========================
 
 Subpackages
 -----------
@@ -11,8 +11,8 @@ Subpackages
 Submodules
 ----------
 
-matminer\.learners\.volume\_predictor module
---------------------------------------------
+matminer.learners.volume_predictor module
+-----------------------------------------
 
 .. automodule:: matminer.learners.volume_predictor
     :members:

@@ -1,5 +1,5 @@
-matminer\.figrecipes\.matplotlib package
-========================================
+matminer.figrecipes.matplotlib package
+======================================
 
 Subpackages
 -----------
@@ -11,8 +11,8 @@ Subpackages
 Submodules
 ----------
 
-matminer\.figrecipes\.matplotlib\.plots module
-----------------------------------------------
+matminer.figrecipes.matplotlib.plots module
+-------------------------------------------
 
 .. automodule:: matminer.figrecipes.matplotlib.plots
     :members:

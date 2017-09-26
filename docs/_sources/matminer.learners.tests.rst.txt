@@ -1,11 +1,11 @@
-matminer\.learners\.tests package
-=================================
+matminer.learners.tests package
+===============================
 
 Submodules
 ----------
 
-matminer\.learners\.tests\.test\_volume\_predictor module
----------------------------------------------------------
+matminer.learners.tests.test_volume_predictor module
+----------------------------------------------------
 
 .. automodule:: matminer.learners.tests.test_volume_predictor
     :members:
