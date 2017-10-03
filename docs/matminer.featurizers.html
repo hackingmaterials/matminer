@@ -67,6 +67,82 @@
 <div class="section" id="module-matminer.featurizers.bandstructure">
 <span id="matminer-featurizers-bandstructure-module"></span><h2>matminer.featurizers.bandstructure module<a class="headerlink" href="#module-matminer.featurizers.bandstructure" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="matminer.featurizers.bandstructure.BandFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">BandFeaturizer</code><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Featurizes a pymatgen band structure object.</p>
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BandFeaturizer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BandFeaturizer.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BandFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BandFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>bs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>bs (pymatgen BandStructure or BandStructureSymmLine or their dict):</dt>
+<dd>The band structure to featurize()</dd>
+</dl>
+</dd>
+<dt>Returns ([float]):</dt>
+<dd><dl class="first last docutils">
+<dt>a list of band structure features. If not bs.structure, the</dt>
+<dd>features that require the structure will be returned as NaN.</dd>
+<dt>List of currently supported features:</dt>
+<dd><p class="first">band_gap (eV): the difference between the CBM and VBM energy
+is_gap_direct (0.0|1.0): whether the band gap is direct or not
+direct_gap (eV): the minimum direct distance of the last</p>
+<blockquote>
+<div>valence band and the first conduction band</div></blockquote>
+<dl class="last docutils">
+<dt>{n,p}_ex{#}_en (eV): for example p_ex2_en is the absolute value</dt>
+<dd>of the energy of the second valence (p) band extremum
+w.r.t. VBM</dd>
+<dt>{n,p}_ex{#}_norm (float): e.g. n_ex1_norm is norm of the</dt>
+<dd>fractional coordinates of k-points of the 1st conduction
+(n) band extremum, i.e., the CBM</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.bandstructure.BandFeaturizer.get_bindex_bspin">
+<em class="property">static </em><code class="descname">get_bindex_bspin</code><span class="sig-paren">(</span><em>extremum</em>, <em>is_cbm</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer.get_bindex_bspin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the band index and spin of band extremum</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>extremum (dict): dictionary containing the CBM/VBM, i.e. output of</dt>
+<dd>Bandstructure.get_cbm()</dd>
+</dl>
+<p class="last">is_cbm (bool): whether the extremum is the CBM or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.BandFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="matminer.featurizers.bandstructure.BranchPointEnergy">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">BranchPointEnergy</code><span class="sig-paren">(</span><em>n_vb=1</em>, <em>n_cb=1</em>, <em>calculate_band_edges=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
@@ -1056,16 +1132,15 @@ weights (list of floats): Atomic fractions</div></blockquote>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.n_numerical_modes">
 <em class="property">static </em><code class="descname">n_numerical_modes</code><span class="sig-paren">(</span><em>data_lst</em>, <em>n</em>, <em>dl=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.n_numerical_modes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines the n first modes of a data set that are obtained with
-a finite bin size for the underlying frequency distribution.
-Args:</p>
-<blockquote>
-<div>data_lst (list of floats): data values.
+<dd><dl class="docutils">
+<dt>Returns the n first modes of a data set that are obtained with</dt>
+<dd>a finite bin size for the underlying frequency distribution.</dd>
+<dt>Args:</dt>
+<dd>data_lst ([float]): data values.
 n (integer): number of most frequent elements to be determined.
-dl (float): bin size of underlying (coarsened) distribution.</div></blockquote>
-<dl class="docutils">
-<dt>Returns: </dt>
-<dd>modes (list of float): first n most frequent elements.</dd>
+dl (float): bin size of underlying (coarsened) distribution.</dd>
+<dt>Returns:</dt>
+<dd>([float]): first n most frequent entries (or nan if not found).</dd>
 </dl>
 </dd></dl>
 
@@ -1106,17 +1181,26 @@ weights (list of floats): Atomic fractions</div></blockquote>
 <span id="matminer-featurizers-structure-module"></span><h2>matminer.featurizers.structure module<a class="headerlink" href="#module-matminer.featurizers.structure" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.featurizers.structure.CoulombMatrix">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">CoulombMatrix</code><span class="sig-paren">(</span><em>diag_elems=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CoulombMatrix" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">CoulombMatrix</code><span class="sig-paren">(</span><em>diag_elems=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CoulombMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Generate the Coulomb matrix, M, of the input
 structure (or molecule).  The Coulomb matrix was put forward by
 Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-off-diagonal elements M_ij = Z_i*Z_j/<a href="#id7"><span class="problematic" id="id8">|R_i-R_j|</span></a>
+off-diagonal elements M_ij = Z_i*Z_j/<a href="#id9"><span class="problematic" id="id10">|R_i-R_j|</span></a>
 and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
 the nuclear charge and the position of atom i, respectively.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>diag_elems: (bool) flag indicating whether (True, default) to use</dt>
+<dd>the original definition of the diagonal elements;
+if set to False, the diagonal elements are set to zero.</dd>
+</dl>
+</dd>
+</dl>
 <dl class="method">
 <dt id="matminer.featurizers.structure.CoulombMatrix.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>diag_elems=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CoulombMatrix.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>diag_elems=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CoulombMatrix.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1135,13 +1219,7 @@ the nuclear charge and the position of atom i, respectively.</p>
 <dd><p>Get Coulomb matrix of input structure.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">s: input Structure (or Molecule) object.
-diag_elems: (bool) flag indicating whether (True) to use</p>
-<blockquote class="last">
-<div>the original definition of the diagonal elements;
-if set to False (default),
-the diagonal elements are set to zero.</div></blockquote>
-</dd>
+<dd>s: input Structure (or Molecule) object.</dd>
 <dt>Returns:</dt>
 <dd>m: (Nsites x Nsites matrix) Coulomb matrix.</dd>
 </dl>
@@ -1301,19 +1379,35 @@ are to be determined.</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.structure.OrbitalFieldMatrix">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OrbitalFieldMatrix</code><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OrbitalFieldMatrix</code><span class="sig-paren">(</span><em>period_tag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>This function generates an orbital field matrix (OFM) as developed
 by Pham et al (arXiv, May 2017). Each atom is described by a 32-element
-vector uniquely representing the valence subshell. A 32x32 matrix is formed
+vector (or 39-element vector, see period tag for details) uniquely
+representing the valence subshell. A 32x32 (39x39) matrix is formed
 by multiplying two atomic vectors. An OFM for an atomic environment is the
 sum of these matrices for each atom the center atom coordinates with
 multiplied by a distance function (In this case, 1/r times the weight of
-the coordinating atomic in the Voronoi Polyhedra method). The OFM of a structure
-or molecule is the average of the OFMs for all the sites in the structure</p>
+the coordinating atom in the Voronoi Polyhedra method). The OFM of a structure
+or molecule is the average of the OFMs for all the sites in the structure.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>period_tag (bool): In the original OFM, an element is represented</dt>
+<dd>by a vector of length 32, where each element is 1 or 0,
+which represents the valence subshell of the element.
+With period_tag=True, the vector size is increased
+to 39, where the 7 extra elements represent the period
+of the element. Note lanthanides are treated as period 6,
+actinides as period 7. Default False as in the original paper.</dd>
+</dl>
+</dd>
+<dt>...attribute:: size</dt>
+<dd>Either 32 or 39, the size of the vectors used to describe elements.</dd>
+</dl>
 <dl class="method">
 <dt id="matminer.featurizers.structure.OrbitalFieldMatrix.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>period_tag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1338,7 +1432,7 @@ a structure</p>
 <dd>s (Structure): structure to characterize</dd>
 <dt>Returns:</dt>
 <dd><dl class="first last docutils">
-<dt>mean_ofm (32 X 32 matrix): orbital field matrix</dt>
+<dt>mean_ofm (size X size matrix): orbital field matrix</dt>
 <dd>characterizing s</dd>
 </dl>
 </dd>
@@ -1360,11 +1454,11 @@ symm (bool): whether to calculate ofm for only symmetrically</p>
 <div>distinct sites</div></blockquote>
 </dd>
 <dt>Returns:</dt>
-<dd><p class="first">ofms ([32 X 32 matrix] X len(struct)): ofms for struct
+<dd><p class="first">ofms ([size X size matrix] X len(struct)): ofms for struct
 if symm:</p>
 <blockquote class="last">
 <div><dl class="docutils">
-<dt>ofms ([32 X 32 matrix] X number of symmetrically distinct sites):</dt>
+<dt>ofms ([size X size matrix] X number of symmetrically distinct sites):</dt>
 <dd>ofms for struct</dd>
 </dl>
 <p>counts: number of identical sites for each ofm</p>
@@ -1381,15 +1475,19 @@ if symm:</p>
 
 <dl class="method">
 <dt id="matminer.featurizers.structure.OrbitalFieldMatrix.get_ohv">
-<code class="descname">get_ohv</code><span class="sig-paren">(</span><em>sp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.get_ohv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the &#8220;one-hot-vector&#8221; for pymatgen Element sp. This 32-length
+<code class="descname">get_ohv</code><span class="sig-paren">(</span><em>sp</em>, <em>period_tag</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.get_ohv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the &#8220;one-hot-vector&#8221; for pymatgen Element sp. This 32 or 39-length
 vector represents the valence shell of the given element.
 Args:</p>
 <blockquote>
-<div>sp (Element): element whose ohv should be returned</div></blockquote>
+<div><p>sp (Element): element whose ohv should be returned
+period_tag (bool): If true, the vector contains items</p>
+<blockquote>
+<div>corresponding to the period of the element</div></blockquote>
+</div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
-<dd>my_ohv (numpy array length 32): ohv for sp</dd>
+<dd>my_ohv (numpy array length 39 if period_tag, else 32): ohv for sp</dd>
 </dl>
 </dd></dl>
 
@@ -1405,7 +1503,7 @@ Voronoi Polyhedra weights of the corresponding coordinating sites.</p>
 <dd>site (Site): center atom
 site_dict (dict of Site:float): chemical environment</dd>
 <dt>Returns:</dt>
-<dd>atom_ofm (32 X 32 numpy matrix): ofm for site</dd>
+<dd>atom_ofm (size X size numpy matrix): ofm for site</dd>
 </dl>
 </dd></dl>
 
@@ -1413,7 +1511,7 @@ site_dict (dict of Site:float): chemical environment</dd>
 <dt id="matminer.featurizers.structure.OrbitalFieldMatrix.get_structure_ofm">
 <code class="descname">get_structure_ofm</code><span class="sig-paren">(</span><em>struct</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.get_structure_ofm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls get_mean_ofm on the results of get_atom_ofms
-to give a 32 X 32 matrix characterizing a structure</p>
+to give a size X size matrix characterizing a structure</p>
 </dd></dl>
 
 <dl class="method">
@@ -1575,30 +1673,27 @@ Args:</p>
 
 <dl class="class">
 <dt id="matminer.featurizers.structure.SineCoulombMatrix">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">SineCoulombMatrix</code><span class="sig-paren">(</span><em>diag_elems=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SineCoulombMatrix" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">SineCoulombMatrix</code><span class="sig-paren">(</span><em>diag_elems=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SineCoulombMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>This function generates a variant of the Coulomb matrix developed
 for periodic crystals by Faber et al. (Inter. J. Quantum Chem.
 115, 16, 2015). It is identical to the Coulomb matrix, except
 that the inverse distance function is replaced by the inverse of a
 sin**2 function of the vector between the sites which is periodic
-in the dimensions of the structure lattice. It is the best performing
-coulomb matrix model for machine learning formation energies of 
-periodic crystals. See paper for details.</p>
-<dl class="method">
-<dt id="matminer.featurizers.structure.SineCoulombMatrix.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>diag_elems=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SineCoulombMatrix.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
+in the dimensions of the structure lattice. See paper for details.</p>
+<dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt>diag_elems (bool): flag indication whether (True) to use</dt>
+<dt>diag_elems (bool): flag indication whether (True, default) to use</dt>
 <dd>the original definition of the diagonal elements;
-if set to False (default),
-the diagonal elements are set to 0</dd>
+if set to False, the diagonal elements are set to 0</dd>
 </dl>
 </dd>
 </dl>
-</dd></dl>
+<dl class="method">
+<dt id="matminer.featurizers.structure.SineCoulombMatrix.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>diag_elems=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SineCoulombMatrix.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.structure.SineCoulombMatrix.citations">
@@ -1630,21 +1725,28 @@ the diagonal elements are set to 0</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.structure.SitesOrderParameters">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">SitesOrderParameters</code><span class="sig-paren">(</span><em>pneighs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SitesOrderParameters" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">SitesOrderParameters</code><span class="sig-paren">(</span><em>features=None</em>, <em>stats=None</em>, <em>pneighs=None</em>, <em>bond_angles=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SitesOrderParameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Calculates all order parameters (OPs) for all sites in a crystal
 structure.
 Args:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>pneighs: (dict) specification and parameters of</dt>
-<dd>neighbor-finding approach (see
-get_neighbors_of_site_with_index).</dd>
+<div><p>features ([str]): list of order parameters supported by OrderParameters
+stats ([str]): list of weighted statistics to compute for each feature.</p>
+<blockquote>
+<div>If stats is None, for each order parameter, a list is returned that
+contains the calculated parameter for each site in the structure.
+<a href="#id7"><span class="problematic" id="id8">*</span></a>Note for nth mode, stat must be &#8216;n*_mode&#8217;; e.g. stat=&#8216;2nd_mode&#8217;</div></blockquote>
+<dl class="docutils">
+<dt>pneighs (dict): specification and parameters of neighbor-finding</dt>
+<dd>approach (see get_neighbors_of_site_with_index).</dd>
+<dt>bond_angles ([float]): list of bond angles for which order parameters</dt>
+<dd>are calculated explicitly (in addition to features)</dd>
 </dl>
 </div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.structure.SitesOrderParameters.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>pneighs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SitesOrderParameters.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>features=None</em>, <em>stats=None</em>, <em>pneighs=None</em>, <em>bond_angles=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SitesOrderParameters.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1675,6 +1777,16 @@ q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.</dd>
 </dl>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.structure.SitesOrderParameters.from_preset">
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SitesOrderParameters.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns OrderParameters from a preset string.
+Args:</p>
+<blockquote>
+<div>preset_name (str): options are &#8216;matminer&#8217;,</div></blockquote>
+<p>Returns:</p>
 </dd></dl>
 
 <dl class="method">
@@ -1791,7 +1903,7 @@ two input structures (structure 1 - structure 2).</dd>
 
 <dl class="function">
 <dt id="matminer.featurizers.structure.get_order_parameter_stats">
-<code class="descclassname">matminer.featurizers.structure.</code><code class="descname">get_order_parameter_stats</code><span class="sig-paren">(</span><em>struct</em>, <em>pneighs=None</em>, <em>convert_none_to_zero=True</em>, <em>delta_op=0.01</em>, <em>ignore_op_types=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.get_order_parameter_stats" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">matminer.featurizers.structure.</code><code class="descname">get_order_parameter_stats</code><span class="sig-paren">(</span><em>struct</em>, <em>pneighs=None</em>, <em>convert_none_to_zero=True</em>, <em>delta_op=0.01</em>, <em>ignore_op_types=None</em>, <em>bond_angles=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.get_order_parameter_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the order parameter statistics accumulated across all sites
 in Structure object struct using the get_order_parameters function.</p>
 <dl class="docutils">
