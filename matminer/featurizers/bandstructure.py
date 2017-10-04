@@ -113,23 +113,22 @@ class BandFeaturizer(BaseFeaturizer):
         """
         Args:
             bs (pymatgen BandStructure or BandStructureSymmLine or their dict):
-                The band structure to featurize()
-        Returns ([float]):
-            a list of band structure features. If not bs.structure, the
+                The band structure to featurize. To obtain all features, bs
+                should include the structure attribute.
+        Returns:
+             ([float]): a list of band structure features. If not bs.structure,
                 features that require the structure will be returned as NaN.
             List of currently supported features:
                 band_gap (eV): the difference between the CBM and VBM energy
                 is_gap_direct (0.0|1.0): whether the band gap is direct or not
                 direct_gap (eV): the minimum direct distance of the last
                     valence band and the first conduction band
-                {n,p}_ex{#}_en (eV): for example p_ex2_en is the absolute value
-                    of the energy of the second valence (p) band extremum
-                    w.r.t. VBM
-                {n,p}_ex{#}_norm (float): e.g. n_ex1_norm is norm of the
-                    fractional coordinates of k-points of the 1st conduction
-                    (n) band extremum, i.e., the CBM
-
+                p_ex1_norm (Angstrom^-1): k-space distance between Gamma point
+                    and k-point of VBM
+                n_ex1_norm (Angstrom^-1): k-space distance between Gamma point
+                    and k-point of CBM
         """
+
         if isinstance(bs, dict):
             bs = BandStructure.from_dict(bs)
         if bs.is_metal():
@@ -170,7 +169,7 @@ class BandFeaturizer(BaseFeaturizer):
             is_cbm (bool): whether the extremum is the CBM or not
         """
 
-        idx = int(is_cbm) - 1 # 0 for CBM and -1 for VBM
+        idx = int(is_cbm) - 1  # 0 for CBM and -1 for VBM
         try:
             bidx = extremum["band_index"][Spin.up][idx]
             bspin = Spin.up
