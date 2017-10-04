@@ -5,13 +5,12 @@ from numpy.linalg import norm
 
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen import Spin
-from pymatgen.electronic_structure.bandstructure import BandStructure
+from pymatgen.electronic_structure.bandstructure import BandStructure, \
+    BandStructureSymmLine
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
-
-# TODO: add a unit test
 
 class BranchPointEnergy(BaseFeaturizer):
     def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
@@ -40,10 +39,16 @@ class BranchPointEnergy(BaseFeaturizer):
         if bs.is_metal():
             raise ValueError("Cannot define a branch point energy for metals!")
 
+        if isinstance(bs, BandStructureSymmLine):
+            raise ValueError("BranchPointEnergy works only with uniform (not "
+                             "line mode) band structures!")
+
         total_sum_energies = 0
         num_points = 0
+
         kpt_wts = SpacegroupAnalyzer(bs.structure).get_kpoint_weights(
             [k.frac_coords for k in bs.kpoints])
+
         for spin in bs.bands:
             for kpt_idx in range(len(bs.kpoints)):
                 vb_energies = []
@@ -79,7 +84,7 @@ class BranchPointEnergy(BaseFeaturizer):
 
     def feature_labels(self):
 
-        return ["branch point energy", "vbm_absolute",
+        return ["branch_point_energy", "vbm_absolute",
                 "cbm_absolute"] if self.calculate_band_edges else [
             "branch point energy"]
 
