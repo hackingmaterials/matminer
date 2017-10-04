@@ -31,7 +31,7 @@ class BranchPointEnergy(BaseFeaturizer):
     def featurize(self, bs, target_gap=None):
         """
         Args:
-            bs: (BandStructure)
+            bs: (BandStructure) Uniform (not symm line) band structure
 
         Returns:
             (int) branch point energy on same energy scale as BS eigenvalues
