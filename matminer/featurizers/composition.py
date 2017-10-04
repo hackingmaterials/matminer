@@ -24,7 +24,7 @@ class ElementProperty(BaseFeaturizer):
         data_source (AbstractData or str): source from which to retrieve
             element property data (or use str for preset: "pymatgen",
             "magpie", or "deml")
-        attributes (list of strings): List of elemental properties to use
+        features (list of strings): List of elemental properties to use
             (these must be supported by data_source)
         stats (string): a list of weighted statistics to compute to for each
             property (see PropertyStats for available stats)
