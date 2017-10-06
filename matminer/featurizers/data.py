@@ -23,8 +23,8 @@ __author__ = 'Kiran Mathew, Jiming Chen, Logan Ward'
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
-class AbstractData((six.with_metaclass(abc.ABCMeta))):
 
+class AbstractData((six.with_metaclass(abc.ABCMeta))):
     @abc.abstractmethod
     def get_property(self, x, property_name, combine_by_element=False):
         """
@@ -39,9 +39,9 @@ class AbstractData((six.with_metaclass(abc.ABCMeta))):
                 will give the same data vector)
 
         Returns:
-            Property value(s). Note: if multiple values are returned for
-                multiple elements in a Composition, the convention is to sort
-                values by the element's atomic number.
+            Property value(s), typically either float or list of float.
+            Note: if multiple values are returned for a Composition, the
+            convention is to sort values by the element's atomic number.
         """
         pass
 
@@ -69,14 +69,6 @@ class CohesiveEnergyData(AbstractData):
         Returns:
             (float): cohesive energy of the element
         """
-
-        if not combine_by_element:
-            raise ValueError("combine_by_element must be True for "
-                             "CohesiveEnergyData!")
-        if property_name != "cohesive_energy":
-            raise ValueError("property_name must be 'cohesive_energy' for "
-                             "CohesiveEnergyData!")
-
         return self.cohesive_energy_data[x]
 
 
@@ -85,7 +77,7 @@ class DemlData(AbstractData):
     """
     Singleton class to get data from Deml data file
     """
-    
+
     def __init__(self):
         from matminer.featurizers.data_files.deml_elementdata import properties
         self.all_props = properties
@@ -106,7 +98,8 @@ class DemlData(AbstractData):
             comp = Composition(comp)
 
         el_amt = comp.get_el_amt_dict()
-        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)  # Sort by atomic number
+        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(
+            sym).Z)  # Sort by atomic number
         stoich = [el_amt[el] for el in symbols]
 
         charge_states = []
@@ -124,19 +117,24 @@ class DemlData(AbstractData):
                 possible_fml_charge.append(charge)
 
         if len(possible_fml_charge) == 0:
-            fml_charge_dict = dict(zip(symbols, len(symbols)*[float("NaN")]))
+            fml_charge_dict = dict(zip(symbols, len(symbols) * [float("NaN")]))
         elif len(possible_fml_charge) == 1:
             fml_charge_dict = dict(zip(symbols, possible_fml_charge[0]))
         else:
-            scores = [] #Score for correct sorting
+            scores = []  # Score for correct sorting
             for charge_state in possible_fml_charge:
-                el_charge_sort = [sym for (charge, sym) in sorted(zip(charge_state, symbols))] #Elements sorted by charge 
-                scores.append(sum(el_charge_sort[i] == symbols[i]) for i in range(len(symbols))) #Score based on number of elements in correct position
+                el_charge_sort = [sym for (charge, sym) in sorted(
+                    zip(charge_state, symbols))]  # Elements sorted by charge
+                scores.append(sum(el_charge_sort[i] == symbols[i]) for i in
+                              range(len(
+                                  symbols)))  # Score based on number of elements in correct position
 
-            fml_charge_dict = dict(zip(symbols, possible_fml_charge[scores.index(max(scores))])) #Get charge states with best score
+            fml_charge_dict = dict(zip(symbols, possible_fml_charge[
+                scores.index(
+                    max(scores))]))  # Get charge states with best score
 
         return fml_charge_dict
-                               
+
     def get_property(self, comp, property_name, combine_by_element=False):
         """
         Args:
@@ -152,7 +150,7 @@ class DemlData(AbstractData):
 
         if type(comp) == str:
             comp = Composition(comp)
- 
+
         # Get data for given element/compound
         el_amt = comp.get_el_amt_dict()
         # sort symbols by electronegativity
@@ -172,7 +170,7 @@ class DemlData(AbstractData):
                 else:
                     for _ in range(int(el_amt[el])):
                         demldata.append(prop)
-        elif property_name == "first_ioniz": #First ionization energy
+        elif property_name == "first_ioniz":  # First ionization energy
             for el in symbols:
                 try:
                     first_ioniz = self.all_props["ionization_en"][el][0]
@@ -183,7 +181,7 @@ class DemlData(AbstractData):
                 else:
                     for _ in range(int(el_amt[el])):
                         demldata.append(first_ioniz)
-        elif property_name == "total_ioniz": #Cumulative ionization energy
+        elif property_name == "total_ioniz":  # Cumulative ionization energy
             for el in symbols:
                 try:
                     total_ioniz = sum(self.all_props["ionization_en"][el])
@@ -196,13 +194,15 @@ class DemlData(AbstractData):
                         demldata.append(total_ioniz)
         elif "valence" in property_name:
             for el in symbols:
-                valence_dict = self.all_props["valence_e"][self.all_props["col_num"][el]]
-                if property_name[-1] in ["s","p","d"]:
+                valence_dict = self.all_props["valence_e"][
+                    self.all_props["col_num"][el]]
+                if property_name[-1] in ["s", "p", "d"]:
                     if combine_by_element:
                         demldata.append(float(valence_dict[property_name[-1]]))
                     else:
                         for _ in range(int(el_amt[el])):
-                            demldata.append(float(valence_dict[property_name[-1]]))
+                            demldata.append(
+                                float(valence_dict[property_name[-1]]))
                 else:
                     n_valence = sum(valence_dict.values())
                     if combine_by_element:
@@ -210,7 +210,8 @@ class DemlData(AbstractData):
                     else:
                         for _ in range(int(el_amt[el])):
                             demldata.append(float(n_valence))
-        elif property_name in ["xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]: #Charge dependent properties
+        elif property_name in ["xtal_field_split", "magn_moment", "so_coupling",
+                               "sat_magn"]:  # Charge dependent properties
             fml_charge_dict = self.calc_formal_charge(comp)
             for el in symbols:
                 try:
@@ -238,6 +239,7 @@ class DemlData(AbstractData):
 
         return demldata
 
+
 @singleton
 class MagpieData(AbstractData):
     """
@@ -247,11 +249,13 @@ class MagpieData(AbstractData):
     def __init__(self):
         self.all_elemental_props = defaultdict(dict)
         self.available_props = []
-        self.data_dir = os.path.join(module_dir, "data_files", 'magpie_elementdata')
+        self.data_dir = os.path.join(module_dir, "data_files",
+                                     'magpie_elementdata')
 
         # Make a list of available properties
         for datafile in glob(os.path.join(self.data_dir, "*.table")):
-            self.available_props.append(os.path.basename(datafile).replace('.table', ''))
+            self.available_props.append(
+                os.path.basename(datafile).replace('.table', ''))
 
         self._parse()
 
@@ -260,17 +264,21 @@ class MagpieData(AbstractData):
         parse and store all elemental properties once and for all.
         """
         for descriptor_name in self.available_props:
-            with open(os.path.join(self.data_dir, '{}.table'.format(descriptor_name)), 'r') as f:
+            with open(os.path.join(self.data_dir,
+                                   '{}.table'.format(descriptor_name)),
+                      'r') as f:
                 lines = f.readlines()
-                for atomic_no in range(1, len(_pt_data)+1):  # max Z=103
+                for atomic_no in range(1, len(_pt_data) + 1):  # max Z=103
                     try:
                         if descriptor_name in ["OxidationStates"]:
-                            prop_value = [float(i) for i in lines[atomic_no - 1].split()]
+                            prop_value = [float(i) for i in
+                                          lines[atomic_no - 1].split()]
                         else:
                             prop_value = float(lines[atomic_no - 1])
                     except ValueError:
                         prop_value = float("NaN")
-                    self.all_elemental_props[descriptor_name][str(Element.from_Z(atomic_no))] = prop_value
+                    self.all_elemental_props[descriptor_name][
+                        str(Element.from_Z(atomic_no))] = prop_value
 
     def get_property(self, comp, property_name, combine_by_element=False):
         """
@@ -283,8 +291,9 @@ class MagpieData(AbstractData):
             (list): list of property values for the composition
         """
         if property_name not in self.available_props:
-            raise ValueError("This descriptor is not available from the Magpie repository. "
-                             "Choose from {}".format(self.available_props))
+            raise ValueError(
+                "This descriptor is not available from the Magpie repository. "
+                "Choose from {}".format(self.available_props))
 
         if type(comp) == str:
             comp = Composition(comp)
@@ -295,7 +304,8 @@ class MagpieData(AbstractData):
         symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
 
         if combine_by_element:
-            return [self.all_elemental_props[property_name][el] for el in symbols]
+            return [self.all_elemental_props[property_name][el] for el in
+                    symbols]
         else:
             return [self.all_elemental_props[property_name][el]
                     for el in symbols
@@ -303,7 +313,6 @@ class MagpieData(AbstractData):
 
 
 class PymatgenData(AbstractData):
-
     def get_property(self, comp, property_name, combine_by_element=False):
         """
         Get descriptor data for elements in a compound from pymatgen.
@@ -331,7 +340,8 @@ class PymatgenData(AbstractData):
         eldata = []
         # what are these named tuples for? not used or returned! -KM
         eldata_tup_lst = []
-        eldata_tup = namedtuple('eldata_tup', 'element propname propvalue propunit amt')
+        eldata_tup = namedtuple('eldata_tup',
+                                'element propname propvalue propunit amt')
 
         oxidation_states = {}
         if isinstance(comp, Composition):
@@ -363,7 +373,8 @@ class PymatgenData(AbstractData):
             if p is not None:
                 if property_name in ['ionic_radii']:
                     if oxidation_states:
-                        property_value = element.ionic_radii[oxidation_states[el_sym]]
+                        property_value = element.ionic_radii[
+                            oxidation_states[el_sym]]
                         property_units = Unit("ang")
                     else:
                         raise ValueError(
@@ -377,13 +388,15 @@ class PymatgenData(AbstractData):
 
                 # units are None for these pymatgen features
                 # todo: there seem to be a lot more unitless features which are not listed here... -Alex D
-                if property_name not in ['X', 'Z', 'group', 'row', 'number', 'mendeleev_no',
+                if property_name not in ['X', 'Z', 'group', 'row', 'number',
+                                         'mendeleev_no',
                                          'ionic_radii', 'block']:
                     property_units = p.unit
 
             # Make a named tuple out of all the available information
             eldata_tup_lst.append(
-                eldata_tup(element=el_sym, propname=property_name, propvalue=property_value,
+                eldata_tup(element=el_sym, propname=property_name,
+                           propvalue=property_value,
                            propunit=property_units, amt=el_amt_dict[el_sym]))
 
             if combine_by_element:
@@ -425,7 +438,8 @@ class PymatgenData(AbstractData):
                 digits = re.split('[+-]+', s)
                 sign_tmp = re.split('\d+', s)
                 sign = [x.strip() for x in sign_tmp if x.strip() != ""]
-                oxidation_states.append("{}{}".format(sign[-1], digits[-1].strip()))
+                oxidation_states.append(
+                    "{}{}".format(sign[-1], digits[-1].strip()))
         if not oxidation_states:
             return Composition(formula), oxidation_states_dict
         formula_plain = []
