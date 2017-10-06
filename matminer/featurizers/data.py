@@ -23,29 +23,61 @@ __author__ = 'Kiran Mathew, Jiming Chen, Logan Ward'
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Load elemental cohesive energy data from json file
-with open(os.path.join(module_dir, 'data_files', 'cohesive_energies.json'), 'r') as f:
-    cohesive_energy_data = json.load(f)
-
-
 class AbstractData((six.with_metaclass(abc.ABCMeta))):
 
     @abc.abstractmethod
-    def get_property(self, comp, property_name, return_per_element=True):
+    def get_property(self, x, property_name, combine_by_element=False):
         """
         Gets data for a composition object.
 
         Args:
-            comp (Composition/str): composition
-            property_name (str): Name of descriptor
-            return_per_element (bool): If true, returns one value per element rather than per atom
+            x: input data/object to retrieve the property of, e.g., an Element,
+                Composition, or str representation
+            property_name (str): Name of property to retrieve
+            combine_by_element (bool): If true, behavior will be to collapse
+                all values for a single Element to one value (e.g., VO and VO2
+                will give the same data vector)
 
         Returns:
-            (list): list of values for each atom in comp_obj.
-            Note: the returned values are sorted by the corresponding element's atomic number.
-            This is done for the sake of consistency.
+            Property value(s). Note: if multiple values are returned for
+                multiple elements in a Composition, the convention is to sort
+                values by the element's atomic number.
         """
         pass
+
+
+@singleton
+class CohesiveEnergyData(AbstractData):
+    """
+    Singleton class to get cohesive energy data
+    """
+
+    def __init__(self):
+        # Load elemental cohesive energy data from json file
+        with open(os.path.join(module_dir, 'data_files',
+                               'cohesive_energies.json'), 'r') as f:
+            self.cohesive_energy_data = json.load(f)
+
+    def get_property(self, x, property_name="cohesive_energy",
+                     combine_by_element=True):
+        """
+        Args:
+            x: (str) Element as str
+            property_name (str): must be "cohesive_energy"
+            combine_by_element (bool): must be True
+
+        Returns:
+            (float): cohesive energy of the element
+        """
+
+        if not combine_by_element:
+            raise ValueError("combine_by_element must be True for "
+                             "CohesiveEnergyData!")
+        if property_name != "cohesive_energy":
+            raise ValueError("property_name must be 'cohesive_energy' for "
+                             "CohesiveEnergyData!")
+
+        return self.cohesive_energy_data[x]
 
 
 @singleton
@@ -57,7 +89,9 @@ class DemlData(AbstractData):
     def __init__(self):
         from matminer.featurizers.data_files.deml_elementdata import properties
         self.all_props = properties
-        self.available_props = list(self.all_props.keys()) + ["formal_charge","valence_s","valence_p","valence_d","first_ioniz","total_ioniz"]
+        self.available_props = list(self.all_props.keys()) + \
+                               ["formal_charge", "valence_s", "valence_p",
+                                "valence_d", "first_ioniz", "total_ioniz"]
 
     def calc_formal_charge(self, comp):
         """
@@ -103,7 +137,16 @@ class DemlData(AbstractData):
 
         return fml_charge_dict
                                
-    def get_property(self, comp, property_name, return_per_element=True):
+    def get_property(self, comp, property_name, combine_by_element=False):
+        """
+        Args:
+            x: (comp) Composition object (or str representation)
+            property_name (str):
+            combine_by_element (bool):
+
+        Returns:
+            (list): list of property values for the composition
+        """
         if property_name not in self.available_props:
             raise ValueError("This descriptor is not available")
 
@@ -124,7 +167,7 @@ class DemlData(AbstractData):
                     prop = float(fml_charge_dict[el])
                 except:
                     prop = float("NaN")
-                if return_per_element:
+                if combine_by_element:
                     demldata.append(prop)
                 else:
                     for _ in range(int(el_amt[el])):
@@ -135,7 +178,7 @@ class DemlData(AbstractData):
                     first_ioniz = self.all_props["ionization_en"][el][0]
                 except:
                     first_ioniz = float("NaN")
-                if return_per_element:
+                if combine_by_element:
                     demldata.append(first_ioniz)
                 else:
                     for _ in range(int(el_amt[el])):
@@ -146,7 +189,7 @@ class DemlData(AbstractData):
                     total_ioniz = sum(self.all_props["ionization_en"][el])
                 except:
                     total_ioniz = float("NaN")
-                if return_per_element:
+                if combine_by_element:
                     demldata.append(total_ioniz)
                 else:
                     for _ in range(int(el_amt[el])):
@@ -155,14 +198,14 @@ class DemlData(AbstractData):
             for el in symbols:
                 valence_dict = self.all_props["valence_e"][self.all_props["col_num"][el]]
                 if property_name[-1] in ["s","p","d"]:
-                    if return_per_element: 
+                    if combine_by_element:
                         demldata.append(float(valence_dict[property_name[-1]]))
                     else:
                         for _ in range(int(el_amt[el])):
                             demldata.append(float(valence_dict[property_name[-1]]))
                 else:
                     n_valence = sum(valence_dict.values())
-                    if return_per_element:
+                    if combine_by_element:
                         demldata.append(float(n_valence))
                     else:
                         for _ in range(int(el_amt[el])):
@@ -175,7 +218,7 @@ class DemlData(AbstractData):
                     prop = float(self.all_props[property_name][el][charge])
                 except:
                     prop = 0.0
-                if return_per_element:
+                if combine_by_element:
                     demldata.append(prop)
                 else:
                     for _ in range(int(el_amt[el])):
@@ -187,7 +230,7 @@ class DemlData(AbstractData):
                     prop = float(self.all_props[property_name][el])
                 except:
                     prop = float("NaN")
-                if return_per_element:
+                if combine_by_element:
                     demldata.append(prop)
                 else:
                     for _ in range(int(el_amt[el])):
@@ -229,7 +272,16 @@ class MagpieData(AbstractData):
                         prop_value = float("NaN")
                     self.all_elemental_props[descriptor_name][str(Element.from_Z(atomic_no))] = prop_value
 
-    def get_property(self, comp, property_name, return_per_element=True):
+    def get_property(self, comp, property_name, combine_by_element=False):
+        """
+        Args:
+            x: (comp) Composition object (or str representation)
+            property_name (str):
+            combine_by_element (bool):
+
+        Returns:
+            (list): list of property values for the composition
+        """
         if property_name not in self.available_props:
             raise ValueError("This descriptor is not available from the Magpie repository. "
                              "Choose from {}".format(self.available_props))
@@ -242,7 +294,7 @@ class MagpieData(AbstractData):
         # sort symbols by electronegativity
         symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
 
-        if return_per_element:
+        if combine_by_element:
             return [self.all_elemental_props[property_name][el] for el in symbols]
         else:
             return [self.all_elemental_props[property_name][el]
@@ -252,7 +304,7 @@ class MagpieData(AbstractData):
 
 class PymatgenData(AbstractData):
 
-    def get_property(self, comp, property_name, return_per_element=True):
+    def get_property(self, comp, property_name, combine_by_element=False):
         """
         Get descriptor data for elements in a compound from pymatgen.
 
@@ -269,9 +321,11 @@ class PymatgenData(AbstractData):
             property_name (str): pymatgen element attribute name, as defined in the Element class at
                 http://pymatgen.org/_modules/pymatgen/core/periodic_table.html
 
+            combine_by_element (bool):
+
         Returns:
-            (list) of values containing descriptor floats for each atom in the compound(sorted by the
-                electronegativity of the contituent atoms)
+            (list) of values containing descriptor floats for each atom in the compound (sorted by the
+                atomic number of the constituent atoms)
 
         """
         eldata = []
@@ -332,7 +386,7 @@ class PymatgenData(AbstractData):
                 eldata_tup(element=el_sym, propname=property_name, propvalue=property_value,
                            propunit=property_units, amt=el_amt_dict[el_sym]))
 
-            if return_per_element:
+            if combine_by_element:
                 if property_value is None:
                     eldata.append(float("NaN"))
                 else:
