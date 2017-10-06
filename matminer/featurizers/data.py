@@ -1,5 +1,7 @@
 from __future__ import division, unicode_literals, print_function
 
+# TODO: this code is all quite messy ... needs some beautification for sure
+
 """
 Defines wrappers for data sources(magpi, pymatgen etc) for elemental properties.
 """
@@ -321,7 +323,7 @@ class PymatgenData(AbstractData):
             comp (str/Composition): Either pymatgen Composition object or string formula,
                 eg: "NaCl", "Na+1Cl-1", "Fe2+3O3-2" or "Fe2 +3 O3 -2"
                 Notes:
-                     - For 'ionic_radii' property, the Composition object must be made of oxidation
+                     - For 'ionic_radii' property, the Composition object must consist of oxidation
                         state decorated Specie objects not the plain Element objects.
                         eg.  fe2o3 = Composition({Specie("Fe", 3): 2, Specie("O", -2): 3})
                      - For string formula, the oxidation state sign(+ or -) must be specified explicitly.
@@ -345,8 +347,7 @@ class PymatgenData(AbstractData):
 
         oxidation_states = {}
         if isinstance(comp, Composition):
-            # check whether the composition is composed of oxidation state decorated species (not
-            # just plain Elements)
+            # check whether the composition is composed of oxidation state decorated species
             if hasattr(comp.elements[0], "oxi_state"):
                 oxidation_states = dict(
                     [(str(sp.element), sp.oxi_state) for sp in comp.elements])
