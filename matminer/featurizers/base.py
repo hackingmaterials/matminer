@@ -36,6 +36,7 @@ class BaseFeaturizer(object):
         if len(features.shape) == 1:
             features = features[:, np.newaxis]
 
+        # TODO: @JFChen3 @WardLT - is df.join() more efficient than df.assign? -computron
         # Add features to dataframe
         labels = self.feature_labels()
         df = df.assign(**dict(zip(labels, features.T)))
