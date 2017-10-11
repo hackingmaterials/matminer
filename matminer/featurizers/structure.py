@@ -33,18 +33,19 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 class DensityFeatures(BaseFeaturizer):
 
     def __init__(self, desired_features=None):
-        self.features = ["density", "vpa", "packing fraction"] if not desired_features else desired_features
+        self.features = ["density", "vpa", "packing fraction"] if not \
+            desired_features else desired_features
 
     def featurize(self, s):
-        features = []
+        output = []
 
         if "density" in self.features:
-            features.append(s.density)
+            output.append(s.density)
 
         if "vpa" in self.features:
             if not s.is_ordered:
                 raise ValueError("Disordered structure support not built yet.")
-            features.append(s.volume / len(s))
+            output.append(s.volume / len(s))
 
         if "packing fraction" in self.features:
             if not s.is_ordered:
@@ -52,12 +53,12 @@ class DensityFeatures(BaseFeaturizer):
             total_rad = 0
             for site in s:
                 total_rad += site.specie.atomic_radius ** 3
-            features.append(4 * pi * total_rad / (3 * s.volume))
+            output.append(4 * pi * total_rad / (3 * s.volume))
 
-        return features
+        return output
 
     def feature_labels(self):
-        all_features = ["density", "vpa", "packing fraction"]
+        all_features = ["density", "vpa", "packing fraction"]  # enforce order
         return [x for x in all_features if x in self.features]
 
     def citations(self):
@@ -65,6 +66,53 @@ class DensityFeatures(BaseFeaturizer):
 
     def implementors(self):
         return ["Saurabh Bajaj", "Anubhav Jain"]
+
+
+class GlobalSymmetryFeatures(BaseFeaturizer):
+
+    crystal_idx = {"triclinic": 7,
+                   "monoclinic": 6,
+                   "orthorhombic": 5,
+                   "tetragonal": 4,
+                   "trigonal": 3,
+                   "hexagonal": 2,
+                   "cubic": 1
+                   }
+
+    def __init__(self, desired_features = None):
+        self.features = ["spacegroup_num", "crystal_system",
+                         "crystal_system_int", "is_centrosymmetric"] if not \
+            desired_features else desired_features
+
+    def featurize(self, s):
+        sga = SpacegroupAnalyzer(s)
+        output = []
+
+        if "spacegroup_num" in self.features:
+            output.append(sga.get_space_group_number())
+
+        if "crystal_system" in self.features:
+            output.append(sga.get_crystal_system())
+
+        if "crystal_system_int" in self.features:
+            output.append(GlobalSymmetryFeatures.crystal_idx[
+                              sga.get_crystal_system()])
+
+        if "is_centrosymmetric" in self.features:
+            output.append(sga.is_laue())
+
+        return output
+
+    def feature_labels(self):
+        all_features = ["spacegroup_num", "crystal_system",
+                        "crystal_system_int", "is_centrosymmetric"]  # enforce order
+        return [x for x in all_features if x in self.features]
+
+    def citations(self):
+        return [""]
+
+    def implementors(self):
+        return ["Anubhav Jain"]
 
 
 class RadialDistributionFunction(BaseFeaturizer):
