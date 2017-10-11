@@ -12,12 +12,13 @@ from math import fabs
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.structure import DensityFeatures, RadialDistributionFunction, \
+from matminer.featurizers.structure import DensityFeatures, \
+    RadialDistributionFunction, \
     RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
     SitesOrderParameters, get_order_parameter_stats, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix
+    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -67,6 +68,9 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(f[1], 23.046, 2)
         self.assertAlmostEqual(f[2], 0.620, 2)
 
+    def test_global_symmetry(self):
+        gsf = GlobalSymmetryFeatures()
+        self.assertEqual(gsf.featurize(self.diamond), [227, "cubic", 1, True])
 
     def test_rdf_and_peaks(self):
         ## Test diamond
