@@ -125,7 +125,14 @@ class AGNIFingerprints(BaseFeaturizer):
 class OPSiteFingerprint(BaseFeaturizer):
     """
     Local structure order parameters computed from the neighbor
-    environment of a site. xxx: neigh find
+    environment of a site. For each order parameter, we determine
+    the neighbor shell that complies with the expected
+    coordination number. For example, we find the 4 nearest
+    neighbors for the tetrahedral OP, the 6 nearest for the
+    octahedral OP, and the 8 nearest neighbors for the bcc OP.
+    If we don't find such a shell, the OP is either set to zero
+    or evaluated with the shell of the next largest observed
+    coordination number.
 
     Args:
         dr (float): width for binning neighors in unit of relative
@@ -135,15 +142,16 @@ class OPSiteFingerprint(BaseFeaturizer):
                     variations in neighbor distances (default: 0.1).
         dist_exp (boolean): exponent for distance factor to multiply
                             order parameters with that penalizes (large)
-                            variations in distances in a given motif
-                            (default: 0, which turns this option off).
-        zero_ops (boolean): set an OP to zero if there is no cutoff
-                            radius that yields a neighbor environment
-                            with the expected coordinatoin number
+                            variations in distances in a given motif.
+                            0 will switch the option off
+                            (default: 2).
+        zero_ops (boolean): set an OP to zero if there is no neighbor
+                            shell that complies with the expected
+                            coordination number of a given OP
                             (e.g., CN=4 for tetrahedron;
                             default: True).
     """
-    def __init__(self, optypes=None, dr=0.1, dist_exp=0, zero_ops=True):
+    def __init__(self, optypes=None, dr=0.1, dist_exp=2, zero_ops=True):
         self.optypes = {
             1: ["sgl_bd"],
             2: ["lin", "bent45", "bent90", "bent135"],

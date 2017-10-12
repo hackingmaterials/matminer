@@ -78,7 +78,11 @@ class FingerprintTests(PymatgenTest):
         self.assertEqual(len(ops), 35)
         self.assertAlmostEquals(ops[opsf.feature_labels().index('oct')], 1.0)
         ops = opsf.featurize(self.cscl, 0)
+        self.assertAlmostEquals(ops[opsf.feature_labels().index('bcc')], 0.84926515934857649)
+        opsf = OPSiteFingerprint(dist_exp=0)
+        ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEquals(ops[opsf.feature_labels().index('bcc')], 0.9320733)
+
 
 if __name__ == '__main__':
     import unittest
