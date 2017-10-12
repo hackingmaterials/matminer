@@ -15,7 +15,8 @@ We have to use two options because the Site object does not hold a pointer back 
 import numpy as np
 
 from .base import BaseFeaturizer
-
+from pymatgen.analysis.structure_analyzer import OrderParameters
+from math import sqrt
 
 class AGNIFingerprints(BaseFeaturizer):
     """Integral of the product of the radial distribution function and a Gaussian window function.
@@ -119,3 +120,150 @@ class AGNIFingerprints(BaseFeaturizer):
 
     def implementors(self):
         return ['Logan Ward']
+
+
+class OPSiteFingerprint(BaseFeaturizer):
+    """
+    Local structure order parameters computed from the neighbor
+    environment of a site. xxx: neigh find
+
+    Args:
+        dr (float): width for binning neighors in unit of relative
+                    distances (= distance/nearest neighbor
+                    distance).  The binning is necessary to make the
+                    neighbor-finding step robust agains small numerical
+                    variations in neighbor distances (default: 0.1).
+        dist_exp (boolean): exponent for distance factor to multiply
+                            order parameters with that penalizes (large)
+                            variations in distances in a given motif
+                            (default: 0, which turns this option off).
+        zero_ops (boolean): set an OP to zero if there is no cutoff
+                            radius that yields a neighbor environment
+                            with the expected coordinatoin number
+                            (e.g., CN=4 for tetrahedron;
+                            default: True).
+    """
+    def __init__(self, optypes=None, dr=0.1, dist_exp=0, zero_ops=True):
+        self.optypes = {
+            1: ["sgl_bd"],
+            2: ["lin", "bent45", "bent90", "bent135"],
+            3: ["tri_plan", "tet", "T"],
+            4: ["sq_plan", "sq", "tet", "see_saw", "tri_pyr"],
+            5: ["pent_plan", "sq_pyr", "tri_bipyr"],
+            6: ["oct", "pent_pyr"],
+            7: ["hex_pyr", "pent_bipyr"],
+            8: ["bcc", "hex_bipyr"],
+            9: ["q2", "q4", "q6"],
+            10: ["q2", "q4", "q6"],
+            11: ["q2", "q4", "q6"],
+            12: ["cuboct", "q2", "q4", "q6"]} if optypes is None \
+            else optypes.copy()
+        self.dr = dr
+        self.idr = 1.0 / dr
+        self.dist_exp = dist_exp
+        self.zero_ops = zero_ops
+        self.ops = {}
+        for cn, t_list in self.optypes.items():
+            self.ops[cn] = []
+            for t in t_list:
+                if t[:4] == 'bent':
+                    self.ops[cn].append(OrderParameters(
+                        [t[:4]], parameters=[[float(t[4:]), 0.0667]]))
+                else:
+                    self.ops[cn].append(OrderParameters([t]))
+
+    def featurize(self, struct, idx):
+        """
+        Get OP fingerprint of site with given index in input
+        structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure struct.
+        Returns:
+            opvals (numpy array): order parameters of target site.
+        """
+        opvals = []
+        s = struct.sites[idx]
+        neigh_dist = []
+        r = 6
+        while len(neigh_dist) < 12:
+            r += 1.0
+            neigh_dist = struct.get_neighbors(s, r)
+        # Smoothen distance, but use relative distances.
+        dmin = min([d for n, d in neigh_dist])
+        neigh_dist = [[n, d / dmin] for n, d in neigh_dist]
+        for j in range(len(neigh_dist)):
+            neigh_dist[j][1] = float(
+                int(neigh_dist[j][1] * self.idr + 0.5)) * self.dr
+        d_sorted = []
+        for n, d in neigh_dist:
+            if d not in d_sorted:
+                d_sorted.append(d)
+        d_sorted = sorted(d_sorted)
+    
+        # Do q_sgl_bd separately.
+        if self.optypes[1][0] == "sgl_bd":
+            site_list = [s]
+            for n, dn in neigh_dist:
+                site_list.append(n)
+            opval = self.ops[1][0].get_order_parameters(
+                site_list, 0,
+                indeces_neighs=[j for j in range(1,len(site_list))])
+            opvals.append(opval[0])
+    
+        prev_cn = 0
+        prev_site_list = None
+        prev_d_fac = None
+        dmin = min(d_sorted)
+        for d in d_sorted:
+            this_cn = 0
+            site_list = [s]
+            this_av_inv_drel = 0.0
+            for n, dn in neigh_dist:
+                if dn <= d:
+                    this_cn += 1
+                    site_list.append(n)
+                    this_av_inv_drel += (1.0 / (dn / dmin))
+            this_av_inv_drel = this_av_inv_drel / float(this_cn)
+            d_fac = this_av_inv_drel ** self.dist_exp
+            for cn in range(max(2, prev_cn+1), min(this_cn+1, 13)):
+                # Set all OPs of non-CN-complying neighbor environments
+                # to zero if applicable.
+                if self.zero_ops and cn != this_cn:
+                    for it in range(len(self.optypes[cn])):
+                        opvals.append(0)
+                    continue
+
+                # Set all (remaining) OPs.    
+                for it in range(len(self.optypes[cn])):
+                    opval = self.ops[cn][it].get_order_parameters(
+                        site_list, 0,
+                        indeces_neighs=[j for j in range(1,len(site_list))])
+                    if opval[0] is None:
+                        opval[0] = 0
+                    else:
+                        opval[0] = d_fac * opval[0]
+                    opvals.append(opval[0])
+            prev_site_list = site_list
+            prev_cn = this_cn
+            prev_d_fac = d_fac
+            if prev_cn >= 12:
+                break
+    
+        return np.array(opvals)
+
+    def feature_labels(self):
+        labels = []
+        for cn, li in self.optypes.items():
+            for e in li:
+                labels.append(e)
+        return labels
+
+    def citations(self):
+        return ('@article{zimmermann_jain_2017, title={Applications of order'
+                ' parameter feature vectors}, journal={in progress}, author={'
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
+
+    def implementors(self):
+        return (['Nils E. R. Zimmermann'])
+

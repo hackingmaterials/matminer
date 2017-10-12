@@ -3,10 +3,10 @@ import pandas as pd
 from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.site import AGNIFingerprints
+from matminer.featurizers.site import AGNIFingerprints, \
+    OPSiteFingerprint
 
-
-class AGNIFingerprintTests(PymatgenTest):
+class FingerprintTests(PymatgenTest):
     def setUp(self):
         self.sc = Structure(
             Lattice([[3.52, 0, 0], [0, 3.52, 0], [0, 0, 3.52]]),
@@ -71,3 +71,15 @@ class AGNIFingerprintTests(PymatgenTest):
 
         agni = AGNIFingerprints()
         agni.featurize_dataframe(data, ['strc', 'site'])
+
+    def test_op_site_fingerprint(self):
+        opsf = OPSiteFingerprint()
+        ops = opsf.featurize(self.sc, 0)
+        self.assertEqual(len(ops), 35)
+        self.assertAlmostEquals(ops[opsf.feature_labels().index('oct')], 1.0)
+        ops = opsf.featurize(self.cscl, 0)
+        self.assertAlmostEquals(ops[opsf.feature_labels().index('bcc')], 0.9320733)
+
+if __name__ == '__main__':
+    import unittest
+    unittest.main()
