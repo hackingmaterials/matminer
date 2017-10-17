@@ -202,8 +202,8 @@ class OPSiteFingerprint(BaseFeaturizer):
         dmin = min([d for n, d in neigh_dist])
         neigh_dist = [[n, d / dmin] for n, d in neigh_dist]
         for j in range(len(neigh_dist)):
-            neigh_dist[j][1] = float(
-                int(neigh_dist[j][1] * self.idr + 0.5)) * self.dr
+            neigh_dist[j][1] = (float(int(neigh_dist[j][1] * self.idr \
+                + 0.5)) + 0.5) * self.dr
         d_sorted = []
         for n, d in neigh_dist:
             if d not in d_sorted:
