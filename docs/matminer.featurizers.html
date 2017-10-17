@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>matminer.featurizers package &#8212; matminer 0.1.3 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.1.4 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -93,13 +93,18 @@
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
 <dt>bs (pymatgen BandStructure or BandStructureSymmLine or their dict):</dt>
-<dd>The band structure to featurize()</dd>
+<dd>The band structure to featurize. To obtain all features, bs
+should include the structure attribute.</dd>
 </dl>
 </dd>
-<dt>Returns ([float]):</dt>
-<dd><dl class="first last docutils">
-<dt>a list of band structure features. If not bs.structure, the</dt>
+<dt>Returns:</dt>
+<dd><blockquote class="first">
+<div><dl class="docutils">
+<dt>([float]): a list of band structure features. If not bs.structure,</dt>
 <dd>features that require the structure will be returned as NaN.</dd>
+</dl>
+</div></blockquote>
+<dl class="last docutils">
 <dt>List of currently supported features:</dt>
 <dd><p class="first">band_gap (eV): the difference between the CBM and VBM energy
 is_gap_direct (0.0|1.0): whether the band gap is direct or not
@@ -107,12 +112,10 @@ direct_gap (eV): the minimum direct distance of the last</p>
 <blockquote>
 <div>valence band and the first conduction band</div></blockquote>
 <dl class="last docutils">
-<dt>{n,p}_ex{#}_en (eV): for example p_ex2_en is the absolute value</dt>
-<dd>of the energy of the second valence (p) band extremum
-w.r.t. VBM</dd>
-<dt>{n,p}_ex{#}_norm (float): e.g. n_ex1_norm is norm of the</dt>
-<dd>fractional coordinates of k-points of the 1st conduction
-(n) band extremum, i.e., the CBM</dd>
+<dt>p_ex1_norm (Angstrom^-1): k-space distance between Gamma point</dt>
+<dd>and k-point of VBM</dd>
+<dt>n_ex1_norm (Angstrom^-1): k-space distance between Gamma point</dt>
+<dd>and k-point of CBM</dd>
 </dl>
 </dd>
 </dl>
@@ -177,7 +180,7 @@ calculate_band_edges: (bool) whether to also return band edge</p>
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>bs</em>, <em>target_gap=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
-<dd>bs: (BandStructure)</dd>
+<dd>bs: (BandStructure) Uniform (not symm line) band structure</dd>
 <dt>Returns:</dt>
 <dd>(int) branch point energy on same energy scale as BS eigenvalues</dd>
 </dl>
@@ -204,7 +207,11 @@ calculate_band_edges: (bool) whether to also return band edge</p>
 <dd><p>Citation / reference for feature</p>
 <dl class="docutils">
 <dt>Returns:</dt>
-<dd>array - each element should be str citation, ideally in BibTeX format</dd>
+<dd><dl class="first last docutils">
+<dt>array - each element should be str citation, ideally in BibTeX</dt>
+<dd>format</dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
@@ -237,9 +244,10 @@ calculate_band_edges: (bool) whether to also return band edge</p>
 <dl class="docutils">
 <dt>Args: </dt>
 <dd><p class="first">df (Pandas dataframe): Dataframe containing input data
-col_id (str or list of str): column label containing objects to featurize. Can be multiple labels, if the featurize</p>
+col_id (str or list of str): column label containing objects to</p>
 <blockquote class="last">
-<div>function requires multiple inputs</div></blockquote>
+<div>featurize. Can be multiple labels if the featurize function
+requires multiple inputs</div></blockquote>
 </dd>
 <dt>Returns:</dt>
 <dd>updated Dataframe</dd>
@@ -249,13 +257,14 @@ col_id (str or list of str): column label containing objects to featurize. Can b
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of implementors of the feature.</p>
+<dd><p>List of implementors of the feature</p>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd><dl class="first last docutils">
-<dt>array - each element should either be str with author name (e.g., &#8220;Anubhav Jain&#8221;) or</dt>
-<dd>dict with required key &#8220;name&#8221; and other keys like &#8220;email&#8221; or &#8220;institution&#8221; (e.g.,
-{&#8220;name&#8221;: &#8220;Anubhav Jain&#8221;, &#8220;email&#8221;: &#8220;<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>&#8221;, &#8220;institution&#8221;: &#8220;LBNL&#8221;}).</dd>
+<dt>array - each element should either be str with author name (e.g.,</dt>
+<dd>&#8220;Anubhav Jain&#8221;) or dict with required key &#8220;name&#8221; and other
+keys like &#8220;email&#8221; or &#8220;institution&#8221; (e.g., {&#8220;name&#8221;: &#8220;Anubhav
+Jain&#8221;, &#8220;email&#8221;: &#8220;<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>&#8221;, &#8220;institution&#8221;: &#8220;LBNL&#8221;}).</dd>
 </dl>
 </dd>
 </dl>
@@ -485,7 +494,7 @@ use the from_preset() method.</p>
 <dt>data_source (AbstractData or str): source from which to retrieve</dt>
 <dd>element property data (or use str for preset: &#8220;pymatgen&#8221;,
 &#8220;magpie&#8221;, or &#8220;deml&#8221;)</dd>
-<dt>attributes (list of strings): List of elemental properties to use</dt>
+<dt>features (list of strings): List of elemental properties to use</dt>
 <dd>(these must be supported by data_source)</dd>
 <dt>stats (string): a list of weighted statistics to compute to for each</dt>
 <dd>property (see PropertyStats for available stats)</dd>
@@ -776,17 +785,24 @@ props (list): specifies whether to return average number of electrons in each or
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <dl class="method">
 <dt id="matminer.featurizers.data.AbstractData.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>comp</em>, <em>property_name</em>, <em>return_per_element=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.data.AbstractData.get_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>x</em>, <em>property_name</em>, <em>combine_by_element=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.data.AbstractData.get_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets data for a composition object.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>comp (Composition/str): composition
-property_name (str): Name of descriptor
-return_per_element (bool): If true, returns one value per element rather than per atom</dd>
+<dd><dl class="first docutils">
+<dt>x: input data/object to retrieve the property of, e.g., an Element,</dt>
+<dd>Composition, or str representation</dd>
+</dl>
+<p>property_name (str): Name of property to retrieve
+combine_by_element (bool): If true, behavior will be to collapse</p>
+<blockquote class="last">
+<div>all values for a single Element to one value (e.g., VO and VO2
+will give the same data vector)</div></blockquote>
+</dd>
 <dt>Returns:</dt>
-<dd>(list): list of values for each atom in comp_obj.
-Note: the returned values are sorted by the corresponding element&#8217;s atomic number.
-This is done for the sake of consistency.</dd>
+<dd>Property value(s), typically either float or list of float.
+Note: if multiple values are returned for a Composition, the
+convention is to sort values by the element&#8217;s atomic number.</dd>
 </dl>
 </dd></dl>
 
@@ -811,18 +827,18 @@ Formula examples: &#8220;NaCl&#8221;, &#8220;Na+1Cl-1&#8221;,   &#8220;Fe2+3O3-2
 
 <dl class="method">
 <dt id="matminer.featurizers.data.PymatgenData.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>comp</em>, <em>property_name</em>, <em>return_per_element=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.data.PymatgenData.get_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>comp</em>, <em>property_name</em>, <em>combine_by_element=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.data.PymatgenData.get_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get descriptor data for elements in a compound from pymatgen.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><dl class="first last docutils">
+<dd><dl class="first docutils">
 <dt>comp (str/Composition): Either pymatgen Composition object or string formula,</dt>
 <dd><p class="first">eg: &#8220;NaCl&#8221;, &#8220;Na+1Cl-1&#8221;, &#8220;Fe2+3O3-2&#8221; or &#8220;Fe2 +3 O3 -2&#8221;
 Notes:</p>
 <blockquote class="last">
 <div><ul>
 <li><dl class="first docutils">
-<dt>For &#8216;ionic_radii&#8217; property, the Composition object must be made of oxidation</dt>
+<dt>For &#8216;ionic_radii&#8217; property, the Composition object must consist of oxidation</dt>
 <dd><p class="first last">state decorated Specie objects not the plain Element objects.
 eg.  fe2o3 = Composition({Specie(&#8220;Fe&#8221;, 3): 2, Specie(&#8220;O&#8221;, -2): 3})</p>
 </dd>
@@ -840,11 +856,12 @@ eg.  fe2o3 = Composition({Specie(&#8220;Fe&#8221;, 3): 2, Specie(&#8220;O&#8221;
 <dt>property_name (str): pymatgen element attribute name, as defined in the Element class at</dt>
 <dd><a class="reference external" href="http://pymatgen.org/_modules/pymatgen/core/periodic_table.html">http://pymatgen.org/_modules/pymatgen/core/periodic_table.html</a></dd>
 </dl>
+<p class="last">combine_by_element (bool):</p>
 </dd>
 <dt>Returns:</dt>
 <dd><dl class="first last docutils">
-<dt>(list) of values containing descriptor floats for each atom in the compound(sorted by the</dt>
-<dd>electronegativity of the contituent atoms)</dd>
+<dt>(list) of values containing descriptor floats for each atom in the compound (sorted by the</dt>
+<dd>atomic number of the constituent atoms)</dd>
 </dl>
 </dd>
 </dl>
@@ -1317,6 +1334,42 @@ primitive cell).</dd>
 <dl class="method">
 <dt id="matminer.featurizers.structure.ElectronicRadialDistributionFunction.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.ElectronicRadialDistributionFunction.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.structure.GlobalSymmetryFeatures">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">GlobalSymmetryFeatures</code><span class="sig-paren">(</span><em>desired_features=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.structure.GlobalSymmetryFeatures.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>desired_features=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.GlobalSymmetryFeatures.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.featurizers.structure.GlobalSymmetryFeatures.crystal_idx">
+<code class="descname">crystal_idx</code><em class="property"> = {u'trigonal': 3, u'cubic': 1, u'orthorhombic': 5, u'monoclinic': 6, u'tetragonal': 4, u'triclinic': 7, u'hexagonal': 2}</em><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.crystal_idx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.GlobalSymmetryFeatures.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.GlobalSymmetryFeatures.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.featurize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.GlobalSymmetryFeatures.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.implementors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1991,7 +2044,7 @@ statistics (&#8220;min&#8221;, &#8220;max&#8221;, &#8220;mean&#8221;, &#8220;std
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

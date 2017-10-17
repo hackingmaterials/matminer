@@ -5,6 +5,16 @@
 matminer Changelog
 ==================
 
+**v0.1.4**
+
+* add a band structure featurizer (A. Faghaninia)
+* add global structure featurizer (A. Jain)
+* improve CoulombMatrix, SineCoulombMatrix, and OrbitalFieldMatrix featurizers (K. Bostrom)
+* fix some code structure / interfaces (A. Faghaninia, A. Jain)
+* bug fixes (A. Jain, A. Faghaninia, L. Ward)
+* code cleanup (A. Jain)
+* doc updates (A. Dunn, A. Jain, K. Bostrom)
+
 **v0.1.3**
 
 * remove git-lfs
