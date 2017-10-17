@@ -74,14 +74,24 @@ class FingerprintTests(PymatgenTest):
 
     def test_op_site_fingerprint(self):
         opsf = OPSiteFingerprint()
+        l = opsf.feature_labels()
+        t = ["sgl_bd", "bent180", "bent45", "bent90", "bent135", "tri_plan", \
+            "tet", "T", "sq_plan", "sq", "tet", "see_saw", "tri_pyr", \
+            "pent_plan", "sq_pyr", "tri_bipyr", "oct", "pent_pyr", \
+            "hex_pyr", "pent_bipyr", "bcc", "hex_bipyr", "q2", "q4", "q6", \
+            "q2", "q4", "q6", "q2", "q4", "q6", "cuboct", "q2", "q4", "q6"]
+        for i in range(len(l)):
+            self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 35)
         self.assertAlmostEquals(ops[opsf.feature_labels().index('oct')], 1.0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(ops[opsf.feature_labels().index('bcc')], 0.84926515934857649)
+        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
+            'bcc')] + 0.5), 849)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(ops[opsf.feature_labels().index('bcc')], 0.9320733)
+        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
+            'bcc')] + 0.5), 932)
 
 
 if __name__ == '__main__':

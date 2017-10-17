@@ -12,12 +12,13 @@ from math import fabs
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
+from matminer.featurizers.site import OPSiteFingerprint
 from matminer.featurizers.structure import DensityFeatures, \
     RadialDistributionFunction, \
     RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
-    SitesOrderParameters, get_order_parameter_stats, \
+    OPStructureFingerprint, get_order_parameter_stats, \
     CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures
 
 
@@ -274,50 +275,38 @@ class StructureFeaturesTest(PymatgenTest):
             1000 * MinimumRelativeDistances().featurize(
                 self.cscl)[0][0]), 1006)
 
-    # def test_get_neighbors_of_site_with_index(self):
-    #    self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
-    #        self.diamond, 0)), 4)
-    #    self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
-    #        self.nacl, 0)), 6)
-    #    self.assertAlmostEqual(len(get_neighbors_of_site_with_index(
-    #        self.cscl, 0)), 8)
+    def test_op_structure_fingerprint(self):
+        # Test tensor.
+        op_site_fp = OPSiteFingerprint()
+        op_struct_fp = OPStructureFingerprint(op_site_fp)
+        opvals = op_struct_fp.featurize(self.diamond)
+        oplabels = op_struct_fp.feature_labels()
+        self.assertAlmostEqual(int(opvals[10][0] * 1000 + 0.5), 1000)
+        self.assertAlmostEqual(int(opvals[10][1] * 1000 + 0.5), 1000)
+        opvals = op_struct_fp.featurize(self.nacl)
+        self.assertAlmostEqual(int(opvals[16][0] * 1000 + 0.5), 1000)
+        self.assertAlmostEqual(int(opvals[16][1] * 1000 + 0.5), 1000)
+        opvals = op_struct_fp.featurize(self.cscl)
+        self.assertAlmostEqual(int(opvals[20][0] * 1000), 975)
+        self.assertAlmostEqual(int(opvals[20][1] * 1000), 975)
 
-    def test_get_order_parameters(self):
-        opvals = SitesOrderParameters(
-                bond_angles=self.bond_angles).featurize(self.diamond)
-        self.assertAlmostEqual(int(opvals[37][0] * 1000), 999)
-        self.assertAlmostEqual(int(opvals[37][1] * 1000), 999)
-        opvals = SitesOrderParameters(
-            bond_angles=self.bond_angles
-        ).featurize(self.nacl)
-        self.assertAlmostEqual(int(opvals[38][0] * 1000), 999)
-        self.assertAlmostEqual(int(opvals[38][1] * 1000), 999)
-        opvals = SitesOrderParameters(
-            bond_angles=self.bond_angles
-        ).featurize(self.cscl)
-        self.assertAlmostEqual(int(opvals[39][0] * 1000), 975)
-        self.assertAlmostEqual(int(opvals[39][1] * 1000), 975)
-        #TODO-AF: add test_order_parameters for when stats not None
-
-    def test_get_order_parameter_stats(self):
-        opstats = get_order_parameter_stats(self.diamond,
-                                            bond_angles=self.bond_angles)
-        self.assertAlmostEqual(int(opstats["tet"]["min"] * 1000), 999)
-        self.assertAlmostEqual(int(opstats["tet"]["max"] * 1000), 999)
-        self.assertAlmostEqual(int(opstats["tet"]["mean"] * 1000), 999)
-        self.assertAlmostEqual(int(opstats["tet"]["std"] * 1000), 0)
-        opstats = get_order_parameter_stats(self.nacl,
-                                            bond_angles=self.bond_angles)
-        self.assertAlmostEqual(int(opstats["oct"]["min"] * 1000), 999)
-        self.assertAlmostEqual(int(opstats["oct"]["max"] * 1000), 999)
-        self.assertAlmostEqual(int(opstats["oct"]["mean"] * 1000), 999)
-        self.assertAlmostEqual(int(opstats["oct"]["std"] * 1000), 0)
-        opstats = get_order_parameter_stats(self.cscl,
-                                            bond_angles=self.bond_angles)
-        self.assertAlmostEqual(int(opstats["bcc"]["min"] * 1000), 975)
-        self.assertAlmostEqual(int(opstats["bcc"]["max"] * 1000), 975)
-        self.assertAlmostEqual(int(opstats["bcc"]["mean"] * 1000), 975)
-        self.assertAlmostEqual(int(opstats["bcc"]["std"] * 1000), 0)
+        # Test stats.
+        op_struct_fp = OPStructureFingerprint(
+            op_site_fp, stats=['mean', 'std_dev', 'minimum', 'maximum'])
+        opvals = op_struct_fp.featurize(self.diamond)
+        self.assertAlmostEqual(int(opvals[0] * 10000 + 0.5), 1)
+        self.assertAlmostEqual(int(opvals[1] * 10000 + 0.5), 0)
+        self.assertAlmostEqual(int(opvals[2] * 10000 + 0.5), 1)
+        self.assertAlmostEqual(int(opvals[3] * 10000 + 0.5), 1)
+        self.assertAlmostEqual(int(opvals[4] * 10000 + 0.5), 0)
+        self.assertAlmostEqual(int(opvals[32] * 1000 + 0.5), 38)
+        self.assertAlmostEqual(int(opvals[40] * 1000 + 0.5), 1000)
+        self.assertAlmostEqual(int(opvals[41] * 1000 + 0.5), 0)
+        self.assertAlmostEqual(int(opvals[42] * 1000 + 0.5), 1000)
+        self.assertAlmostEqual(int(opvals[43] * 1000 + 0.5), 1000)
+        self.assertAlmostEqual(int(opvals[44] * 1000 + 0.5), 0)
+        for i in range(52, len(opvals)):
+            self.assertAlmostEqual(int(opvals[i] * 1000 + 0.5), 0)
 
     def tearDown(self):
         del self.diamond

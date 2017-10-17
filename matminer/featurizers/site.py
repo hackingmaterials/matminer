@@ -154,7 +154,7 @@ class OPSiteFingerprint(BaseFeaturizer):
     def __init__(self, optypes=None, dr=0.1, dist_exp=2, zero_ops=True):
         self.optypes = {
             1: ["sgl_bd"],
-            2: ["lin", "bent45", "bent90", "bent135"],
+            2: ["bent180", "bent45", "bent90", "bent135"],
             3: ["tri_plan", "tet", "T"],
             4: ["sq_plan", "sq", "tet", "see_saw", "tri_pyr"],
             5: ["pent_plan", "sq_pyr", "tri_bipyr"],
@@ -176,7 +176,8 @@ class OPSiteFingerprint(BaseFeaturizer):
             for t in t_list:
                 if t[:4] == 'bent':
                     self.ops[cn].append(OrderParameters(
-                        [t[:4]], parameters=[[float(t[4:]), 0.0667]]))
+                        [t[:4]], parameters=[{'TA': float(t[4:])/180.0, \
+                                              'IGW_TA':1.0/0.0667}]))
                 else:
                     self.ops[cn].append(OrderParameters([t]))
 
@@ -216,7 +217,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                 site_list.append(n)
             opval = self.ops[1][0].get_order_parameters(
                 site_list, 0,
-                indeces_neighs=[j for j in range(1,len(site_list))])
+                indices_neighs=[j for j in range(1,len(site_list))])
             opvals.append(opval[0])
     
         prev_cn = 0
@@ -246,7 +247,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                 for it in range(len(self.optypes[cn])):
                     opval = self.ops[cn][it].get_order_parameters(
                         site_list, 0,
-                        indeces_neighs=[j for j in range(1,len(site_list))])
+                        indices_neighs=[j for j in range(1,len(site_list))])
                     if opval[0] is None:
                         opval[0] = 0
                     else:

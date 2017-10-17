@@ -10,12 +10,12 @@ import scipy.constants as const
 
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
-from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.site import OPSiteFingerprint
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
@@ -755,39 +755,35 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return ("Nils E. R. Zimmermann")
 
 
-class SitesOrderParameters(BaseFeaturizer):
+class OPStructureFingerprint(BaseFeaturizer):
     """
     Calculates all order parameters (OPs) for all sites in a crystal
     structure.
     Args:
-        features ([str]): list of order parameters supported by OrderParameters
+        op_site_fp (OPSiteFingerprint): defines the types of order
+            parameters to be calculated.
         stats ([str]): list of weighted statistics to compute for each feature.
             If stats is None, for each order parameter, a list is returned that
             contains the calculated parameter for each site in the structure.
             *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
-        pneighs (dict): specification and parameters of neighbor-finding
-            approach (see get_neighbors_of_site_with_index).
-        bond_angles ([float]): list of bond angles for which order parameters
-            are calculated explicitly (in addition to features)
     """
-    def __init__(self, features=None, stats=None, pneighs=None,
-                 bond_angles=None):
-        self.features = features or ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6',
-                                     'reg_tri', 'sq', 'sq_pyr', 'tri_bipyr']
+    def __init__(self, op_site_fp, stats=None):
+        self.op_site_fp = op_site_fp
+        self._labels = op_site_fp.feature_labels()
         self.stats = stats
-        self.pneighs = pneighs
-        self._types = ["cn", "lin"]
-        self._labels = ["CN", "q_lin"]
-        self._paras = [[], []]
-        self.bond_angles = bond_angles or [45, 90, 135]
-        for i in self.bond_angles:
-            self._types.append("bent")
-            self._labels.append("q_bent_{}".format(i))
-            self._paras.append([float(i), 0.0667])
-        for t in self.features:
-            self._types.append(t)
-            self._labels.append('q_' + t)
-            self._paras.append([])
+        #self.pneighs = pneighs
+        #self._types = ["cn", "lin"]
+        #self._labels = ["CN", "q_lin"]
+        #self._paras = [[], []]
+        #self.bond_angles = bond_angles or [45, 90, 135]
+        #for i in self.bond_angles:
+        #    self._types.append("bent")
+        #    self._labels.append("q_bent_{}".format(i))
+        #    self._paras.append([float(i), 0.0667])
+        #for t in self.features:
+        #    self._types.append(t)
+        #    self._labels.append('q_' + t)
+        #    self._paras.append([])
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
             for stat in self.stats:
@@ -795,24 +791,24 @@ class SitesOrderParameters(BaseFeaturizer):
                     nmodes = int(stat[0])
             self.nmodes = nmodes
 
-    @staticmethod
-    def from_preset(preset_name):
-        """
-        Returns OrderParameters from a preset string.
-        Args:
-            preset_name (str): options are 'matminer',
+    #@staticmethod
+    #def from_preset(preset_name):
+    #    """
+    #    Returns OrderParameters from a preset string.
+    #    Args:
+    #        preset_name (str): options are 'matminer',
 
-        Returns:
+    #    Returns:
 
-        """
-        if preset_name == 'matminer':
-            features = ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'reg_tri',
-                        'sq', 'sq_pyr', 'tri_bipyr']
-            stats = ['minimum', 'maximum', 'range', 'mean', 'avg_dev',
-                     '1st_mode', '2nd_mode']
-        else:
-            raise ValueError("Invalid preset_name specified!")
-        return SitesOrderParameters(features, stats)
+    #    """
+    #    if preset_name == 'matminer':
+    #        features = ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'reg_tri',
+    #                    'sq', 'sq_pyr', 'tri_bipyr']
+    #        stats = ['minimum', 'maximum', 'range', 'mean', 'avg_dev',
+    #                 '1st_mode', '2nd_mode']
+    #    else:
+    #        raise ValueError("Invalid preset_name specified!")
+    #    return SitesOrderParameters(features, stats)
 
     def featurize(self, s):
         """
@@ -829,15 +825,18 @@ class SitesOrderParameters(BaseFeaturizer):
                 of 5 degrees and, increasing by 5 degrees, until 175 degrees),
                 q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
         """
-        ops = OrderParameters(self._types, self._paras, 100.0)
-        opvals = [[] for t in self._types]
+        #opvals = self.op_site_fp.featurize()
+        #ops = OrderParameters(self._types, self._paras, 100.0)
+        #print(str(self.features))
+        opvals = [[] for t in self._labels]
         for i, site in enumerate(s.sites):
-            neighcent = get_neighbors_of_site_with_index(
-                s, i, p=self.pneighs)
-            neighcent.append(site)
-            opvalstmp = ops.get_order_parameters(
-                neighcent, len(neighcent) - 1,
-                indeces_neighs=[j for j in range(len(neighcent) - 1)])
+            #neighcent = get_neighbors_of_site_with_index(
+            #    s, i, p=self.pneighs)
+            #neighcent.append(site)
+            #opvalstmp = ops.get_order_parameters(
+            #    neighcent, len(neighcent) - 1,
+            #    indeces_neighs=[j for j in range(len(neighcent) - 1)])
+            opvalstmp = self.op_site_fp.featurize(s, i)
             for j, opval in enumerate(opvalstmp):
                 if opval is None:
                     opvals[j].append(0.0)
