@@ -10,14 +10,12 @@ import scipy.constants as const
 
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
-from pymatgen.analysis.local_env import get_okeeffe_distance_prediction, MinimumDistanceNN, \
-    VoronoiNN, MinimumOKeeffeNN, MinimumVIRENN
-from pymatgen.analysis.structure_analyzer import OrderParameters
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.site import OPSiteFingerprint
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
@@ -30,6 +28,7 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 # To do:
 # - Use local_env-based neighbor finding
 #   once this is part of the stable Pymatgen version.
+# - Use more than 1 method for MinimumRelativeDistance
 
 class DensityFeatures(BaseFeaturizer):
 
@@ -756,64 +755,30 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return ("Nils E. R. Zimmermann")
 
 
-class SitesOrderParameters(BaseFeaturizer):
+class OPStructureFingerprint(BaseFeaturizer):
     """
     Calculates all order parameters (OPs) for all sites in a crystal
     structure.
     Args:
-        features ([str]): list of order parameters supported by OrderParameters
+        op_site_fp (OPSiteFingerprint): defines the types of order
+            parameters to be calculated.
         stats ([str]): list of weighted statistics to compute for each feature.
             If stats is None, for each order parameter, a list is returned that
             contains the calculated parameter for each site in the structure.
             *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
-        pneighs (dict): specification and parameters of neighbor-finding
-            approach (see get_neighbors_of_site_with_index).
-        bond_angles ([float]): list of bond angles for which order parameters
-            are calculated explicitly (in addition to features)
     """
-    def __init__(self, features=None, stats=None, pneighs=None,
-                 bond_angles=None):
-        self.features = features or ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6',
-                                     'reg_tri', 'sq', 'sq_pyr', 'tri_bipyr']
+    def __init__(self, op_site_fp=None, stats=[
+            'mean', 'std_dev', 'minimum', 'maximum']):
+        self.op_site_fp = OPSiteFingerprint() if op_site_fp is None \
+            else op_site_fp
+        self._labels = self.op_site_fp.feature_labels()
         self.stats = stats
-        self.pneighs = pneighs
-        self._types = ["cn", "lin"]
-        self._labels = ["CN", "q_lin"]
-        self._paras = [[], []]
-        self.bond_angles = bond_angles or [45, 90, 135]
-        for i in self.bond_angles:
-            self._types.append("bent")
-            self._labels.append("q_bent_{}".format(i))
-            self._paras.append([float(i), 0.0667])
-        for t in self.features:
-            self._types.append(t)
-            self._labels.append('q_' + t)
-            self._paras.append([])
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
             for stat in self.stats:
                 if '_mode' in stat and int(stat[0]) > nmodes:
                     nmodes = int(stat[0])
             self.nmodes = nmodes
-
-    @staticmethod
-    def from_preset(preset_name):
-        """
-        Returns OrderParameters from a preset string.
-        Args:
-            preset_name (str): options are 'matminer',
-
-        Returns:
-
-        """
-        if preset_name == 'matminer':
-            features = ['tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'reg_tri',
-                        'sq', 'sq_pyr', 'tri_bipyr']
-            stats = ['minimum', 'maximum', 'range', 'mean', 'avg_dev',
-                     '1st_mode', '2nd_mode']
-        else:
-            raise ValueError("Invalid preset_name specified!")
-        return SitesOrderParameters(features, stats)
 
     def featurize(self, s):
         """
@@ -830,15 +795,9 @@ class SitesOrderParameters(BaseFeaturizer):
                 of 5 degrees and, increasing by 5 degrees, until 175 degrees),
                 q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
         """
-        ops = OrderParameters(self._types, self._paras, 100.0)
-        opvals = [[] for t in self._types]
+        opvals = [[] for t in self._labels]
         for i, site in enumerate(s.sites):
-            neighcent = get_neighbors_of_site_with_index(
-                s, i, p=self.pneighs)
-            neighcent.append(site)
-            opvalstmp = ops.get_order_parameters(
-                neighcent, len(neighcent) - 1,
-                indeces_neighs=[j for j in range(len(neighcent) - 1)])
+            opvalstmp = self.op_site_fp.featurize(s, i)
             for j, opval in enumerate(opvalstmp):
                 if opval is None:
                     opvals[j].append(0.0)
@@ -993,45 +952,6 @@ def get_order_parameter_feature_vectors_difference(
         for stattype, val in stats.items():
             v.append(val - d2[optype][stattype])
     return np.array(v)
-
-
-def get_neighbors_of_site_with_index_future(struct, n, approach="min_dist", \
-                                            delta=0.1, cutoff=10.0):
-    """
-    Returns the neighbors of a given site using a specific neighbor-finding
-    method.
-
-    Args:
-        struct (Structure): input structure.
-        n (int): index of site in Structure object for which motif type
-                is to be determined.
-        approach (str): type of neighbor-finding approach, where
-              "min_dist" will use the MinimumDistanceNN class,
-              "voronoi" the VoronoiNN class, "min_OKeeffe" the
-              MinimumOKeeffe class, and "min_VIRE" the MinimumVIRENN class.
-        delta (float): tolerance involved in neighbor finding.
-        cutoff (float): (large) radius to find tentative neighbors.
-
-    Returns: neighbor sites.
-    """
-
-    warnings.warn('This function will go into Pymatgen very soon.')
-
-    if approach == "min_dist":
-        return MinimumDistanceNN(tol=delta, cutoff=cutoff).get_nn(
-            struct, n)
-    elif approach == "voronoi":
-        return VoronoiNN(tol=delta, cutoff=cutoff).get_nn(
-            struct, n)
-    elif approach == "min_OKeeffe":
-        return MinimumOKeeffeNN(tol=delta, cutoff=cutoff).get_nn(
-            struct, n)
-    elif approach == "min_VIRE":
-        return MinimumVIRENN(tol=delta, cutoff=cutoff).get_nn(
-            struct, n)
-    else:
-        raise RuntimeError("unsupported neighbor-finding method ({}).".format(
-            approach))
 
 
 def get_neighbors_of_site_with_index(struct, n, p=None):
