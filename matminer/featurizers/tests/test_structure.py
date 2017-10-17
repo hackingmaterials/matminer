@@ -276,9 +276,8 @@ class StructureFeaturesTest(PymatgenTest):
                 self.cscl)[0][0]), 1006)
 
     def test_op_structure_fingerprint(self):
-        # Test tensor.
-        op_site_fp = OPSiteFingerprint()
-        op_struct_fp = OPStructureFingerprint(op_site_fp, stats=None)
+        # Test matrix.
+        op_struct_fp = OPStructureFingerprint(stats=None)
         opvals = op_struct_fp.featurize(self.diamond)
         oplabels = op_struct_fp.feature_labels()
         self.assertAlmostEqual(int(opvals[10][0] * 1000 + 0.5), 1000)
@@ -291,7 +290,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(int(opvals[20][1] * 1000), 975)
 
         # Test stats.
-        op_struct_fp = OPStructureFingerprint(op_site_fp)
+        op_struct_fp = OPStructureFingerprint()
         opvals = op_struct_fp.featurize(self.diamond)
         self.assertAlmostEqual(int(opvals[0] * 10000 + 0.5), 1)
         self.assertAlmostEqual(int(opvals[1] * 10000 + 0.5), 0)

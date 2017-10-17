@@ -767,9 +767,11 @@ class OPStructureFingerprint(BaseFeaturizer):
             contains the calculated parameter for each site in the structure.
             *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
     """
-    def __init__(self, op_site_fp, stats=['mean', 'std_dev', 'minimum', 'maximum']):
-        self.op_site_fp = op_site_fp
-        self._labels = op_site_fp.feature_labels()
+    def __init__(self, op_site_fp=None, stats=[
+            'mean', 'std_dev', 'minimum', 'maximum']):
+        self.op_site_fp = OPSiteFingerprint() if op_site_fp is None \
+            else op_site_fp
+        self._labels = self.op_site_fp.feature_labels()
         self.stats = stats
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
