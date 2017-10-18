@@ -1,7 +1,7 @@
 from __future__ import division, unicode_literals, print_function
 
 import itertools
-from math import pi
+from math import pi, fabs
 from operator import itemgetter
 import warnings
 
@@ -839,213 +839,49 @@ class OPStructureFingerprint(BaseFeaturizer):
         return (['Nils E. R. Zimmermann', 'Alireza Faghaninia'])
 
 
-def get_order_parameter_stats(
-        struct, pneighs=None, convert_none_to_zero=True, delta_op=0.01,
-        ignore_op_types=None, bond_angles=None):
-    """
-    Determine the order parameter statistics accumulated across all sites
-    in Structure object struct using the get_order_parameters function.
-
-    Args:
-        struct (Structure): input structure.
-        pneighs (dict): specification and parameters of
-                neighbor-finding approach (see
-                get_neighbors_of_site_with_index function
-                for more details).
-        convert_none_to_zero (bool): flag indicating whether or not
-                to convert None values in LSOPs to zero (cf.,
-                get_order_parameters function).
-        delta_op (float): bin size of histogram that is computed
-                in order to identify peak locations.
-        ignore_op_types ([str]): list of OP types to be ignored in
-                output dictionary (e.g., ["cn", "bent"]). Default (None)
-                will consider all OPs.
-
-    Returns: ({}) dictionary, the keys of which represent
-            the order parameter type (e.g., "bent5", "tet", "sq_pyr")
-            and the values of which are dictionaries carring the
-            statistics ("min", "max", "mean", "std", "peak1", "peak2").
-    """
-    opstats = {}
-    optypes = ["cn", "lin"]
-    bond_angles = bond_angles or [45, 90, 135]
-    for i in bond_angles:
-        optypes.append("bent{}".format(i))
-    for t in ["tet", "oct", "bcc", "q2", "q4", "q6",
-              "reg_tri", "sq", "sq_pyr", "tri_bipyr"]:
-        optypes.append(t)
-    opvals = SitesOrderParameters(pneighs=pneighs, bond_angles=bond_angles).\
-            featurize(struct)
-    for i, opstype in enumerate(opvals):
-        if ignore_op_types is not None:
-            if optypes[i] in ignore_op_types or \
-                    ("bent" in ignore_op_types and i > 1 and i < 36):
-                continue
-        ops_hist = {}
-        for op in opstype:
-            b = round(op / delta_op) * delta_op
-            if b in ops_hist.keys():
-                ops_hist[b] += 1
-            else:
-                ops_hist[b] = 1
-        ops = list(ops_hist.keys())
-        hist = list(ops_hist.values())
-        sorted_hist = sorted(hist, reverse=True)
-        if len(sorted_hist) > 1:
-            max1_hist, max2_hist = sorted_hist[0], sorted_hist[1]
-        elif len(sorted_hist) > 0:
-            max1_hist, max2_hist = sorted_hist[0], sorted_hist[0]
-        else:
-            raise RuntimeError("Could not compute OP histogram.")
-        max1_idx = hist.index(max1_hist)
-        max2_idx = hist.index(max2_hist)
-        opstats[optypes[i]] = {
-            "min": min(opstype),
-            "max": max(opstype),
-            "mean": np.mean(np.array(opstype)),
-            "std": np.std(np.array(opstype)),
-            "peak1": ops[max1_idx],
-            "peak2": ops[max2_idx]}
-    return opstats
-
-
-def get_order_parameter_feature_vectors_difference(
-        struct1, struct2, pneighs=None, convert_none_to_zero=True,
-        delta_op=0.01, ignore_op_types=None):
+def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     """
     Determine the difference vector between two order parameter-statistics
     feature vector resulting from two input structures.
 
     Args:
-        struct1 (Structure): first input structure.
-        struct2 (Structure): second input structure.
-        pneighs (dict): specification and parameters of
-                neighbor-finding approach (see
-                get_neighbors_of_site_with_index function
-                for more details).
-        convert_none_to_zero (bool): flag indicating whether or not
-                to convert None values in OPs to zero (cf.,
-                get_order_parameters function).
-        delta_op (float): bin size of histogram that is computed
-                in order to identify peak locations (cf.,
-                get_order_parameters_stats function).
-        ignore_op_types ([str]): list of OP types to be ignored in
-                output dictionary (cf., get_order_parameters_stats
-                function).
+        s1 (Structure): first input structure.
+        s2 (Structure): second input structure.
+        max_dr (float): maximum neighbor-finding parameter to be tested.
+        ddr (float): step size for increasing neighbor-finding parameter.
+        ddist (float): bin size for histogramming distances of varying dr.
 
-    Returns: ([float]) difference vector between order
-                parameter-statistics feature vectors obtained from the
-                two input structures (structure 1 - structure 2).
+    Returns: (float, [float]) optimal neighbor-finding parameter
+        and difference vector between order
+        parameter-statistics feature vectors obtained from the
+        two input structures (s1 - s2).
     """
-    d1 = get_order_parameter_stats(
-        struct1, pneighs=pneighs,
-        convert_none_to_zero=convert_none_to_zero,
-        delta_op=delta_op,
-        ignore_op_types=ignore_op_types)
-    d2 = get_order_parameter_stats(
-        struct2, pneighs=pneighs,
-        convert_none_to_zero=convert_none_to_zero,
-        delta_op=delta_op,
-        ignore_op_types=ignore_op_types)
-    v = []
-    for optype, stats in d1.items():
-        for stattype, val in stats.items():
-            v.append(val - d2[optype][stattype])
-    return np.array(v)
+    # Compute OP stats vector distances for varying neigh-find paras.
+    dr = []
+    dist = []
+    delta = []
+    nbins = int(max_dr/ddr) + 1
+    for i in range(nbins):
+        dr.append(float(i+1)*ddr)
+        opsf = OPStructureFingerprint(op_site_fp=OPSiteFingerprint(dr=dr[i]))
+        delta.append(np.array(
+            opsf.featurize(s1)) - np.array(opsf.featurize(s2)))
+        dist.append(np.linalg.norm(delta[i]))
+
+    # Compute distance histogram, determine peak, and location
+    # of smallest dr with peak value.
+    nbins = int(max(dist) / ddist) + 1
+    hist, bin_edges = np.histogram(
+        dist, bins=[float(i)*ddist for i in range(nbins)],
+        normed=False, weights=None, density=False)
+    idx = list(hist).index(max(hist))
+    dist_peak = 0.5 * (bin_edges[idx] + bin_edges[idx+1])
+    idx = -1
+    for i, d in enumerate(dist):
+        if fabs(d - dist_peak) <= ddist:
+            idx = i
+            break
+
+    return dr[idx], delta[idx]
 
 
-def get_neighbors_of_site_with_index(struct, n, p=None):
-    """
-    Determine the neighbors around the site that has index n in the input
-    Structure object struct, given the approach defined by parameters
-    p.  All supported neighbor-finding approaches and listed and
-    explained in the following.  All approaches start by creating a
-    tentative list of neighbors using a large cutoff radius defined in
-    parameter dictionary p via key "cutoff".
-    "min_dist": find nearest neighbor and its distance d_nn; consider all
-            neighbors which are within a distance of d_nn * (1 + delta),
-            where delta is an additional parameter provided in the
-            dictionary p via key "delta".
-    "scaled_VIRE": compute the radii, r_i, of all sites on the basis of
-            the valence-ionic radius evaluator (VIRE); consider all
-            neighbors for which the distance to the central site is less
-            than the sum of the radii multiplied by an a priori chosen
-            parameter, delta,
-            (i.e., dist < delta * (r_central + r_neighbor)).
-    "min_relative_VIRE": same approach as "min_dist", except that we
-            use relative distances (i.e., distances divided by the sum of the
-            atom radii from VIRE).
-    "min_relative_OKeeffe": same approach as "min_relative_VIRE", except
-            that we use the bond valence parameters from O'Keeffe's bond valence
-            method (J. Am. Chem. Soc. 1991, 3226-3229) to calculate
-            relative distances.
-    Args:
-        struct (Structure): input structure.
-        n (int): index of site in Structure object for which
-                neighbors are to be determined.
-        p (dict): specification (via "approach" key; default is "min_dist")
-                and parameters of neighbor-finding approach.
-                Default cutoff radius is 6 Angstrom (key: "cutoff").
-                Other default parameters are as follows.
-                min_dist: "delta": 0.15;
-                min_relative_OKeeffe: "delta": 0.05;
-                min_relative_VIRE: "delta": 0.05;
-                scaled_VIRE: "delta": 2.
-    Returns: ([site]) list of sites that are considered to be nearest
-            neighbors to site with index n in Structure object struct.
-    """
-    warnings.warn(
-        'This function will be removed as soon as the equivalent function in Pymatgen works with the new near neighbor-finding classes.')
-
-    sites = []
-    if p is None:
-        p = {"approach": "min_dist", "delta": 0.1,
-             "cutoff": 6}
-
-    if p["approach"] not in [
-        "min_relative_OKeeffe", "min_dist", "min_relative_VIRE", \
-            "scaled_VIRE"]:
-        raise RuntimeError("Unsupported neighbor-finding approach"
-                           " (\"{}\")".format(p["approach"]))
-
-    if p["approach"] == "min_relative_OKeeffe" or p["approach"] == "min_dist":
-        neighs_dists = struct.get_neighbors(struct[n], p["cutoff"])
-        try:
-            eln = struct[n].specie.element
-        except:
-            eln = struct[n].species_string
-    elif p["approach"] == "scaled_VIRE" or p["approach"] == "min_relative_VIRE":
-        vire = ValenceIonicRadiusEvaluator(struct)
-        if np.linalg.norm(struct[n].coords - vire.structure[n].coords) > 1e-6:
-            raise RuntimeError("Mismatch between input structure and VIRE structure.")
-        neighs_dists = vire.structure.get_neighbors(vire.structure[n], p["cutoff"])
-        rn = vire.radii[vire.structure[n].species_string]
-
-    reldists_neighs = []
-    for neigh, dist in neighs_dists:
-        if p["approach"] == "scaled_VIRE":
-            dscale = p["delta"] * (vire.radii[neigh.species_string] + rn)
-            if dist < dscale:
-                sites.append(neigh)
-        elif p["approach"] == "min_relative_VIRE":
-            reldists_neighs.append([dist / (
-                vire.radii[neigh.species_string] + rn), neigh])
-        elif p["approach"] == "min_relative_OKeeffe":
-            try:
-                el2 = neigh.specie.element
-            except:
-                el2 = neigh.species_string
-            reldists_neighs.append([dist / get_okeeffe_distance_prediction(
-                eln, el2), neigh])
-        elif p["approach"] == "min_dist":
-            reldists_neighs.append([dist, neigh])
-
-    if p["approach"] == "min_relative_VIRE" or \
-                    p["approach"] == "min_relative_OKeeffe" or \
-                    p["approach"] == "min_dist":
-        min_reldist = min([reldist for reldist, neigh in reldists_neighs])
-        for reldist, neigh in reldists_neighs:
-            if reldist / min_reldist < 1.0 + p["delta"]:
-                sites.append(neigh)
-
-    return sites

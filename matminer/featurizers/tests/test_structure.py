@@ -18,7 +18,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
-    OPStructureFingerprint, get_order_parameter_stats, \
+    OPStructureFingerprint, \
     CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures
 
 
