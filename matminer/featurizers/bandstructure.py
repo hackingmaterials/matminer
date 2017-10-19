@@ -7,6 +7,7 @@ from matminer.featurizers.base import BaseFeaturizer
 from pymatgen import Spin
 from pymatgen.electronic_structure.bandstructure import BandStructure, \
     BandStructureSymmLine
+from pymatgen.electronic_structure.dos import Dos
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
@@ -183,3 +184,141 @@ class BandFeaturizer(BaseFeaturizer):
 
     def implementors(self):
         return ['Alireza Faghaninia', 'Anubhav Jain']
+
+
+class DOSFeaturizer(BaseFeaturizer):
+    """
+    Featurizes a pymatgen dos object.
+    """
+
+    def __init__(self):
+        pass
+
+    def featurize(self, dos, band_depth=1, sampling_resolution=100, smear=0.25):
+        """
+        Args:
+            dos (pymatgen DOS or their dict):
+                The density of states to featurize. To obtain all features, dos
+                should include the structure attribute.
+            band_depth: The extent into the bands to sample the DOS
+            sampling_resolution: Number of points to sample DOS at
+            smear: Smearing parameter for the DOS
+        Returns:
+             ([float]): a list of band structure features.
+            List of currently supported features:
+                cbm_main_percent: (float) fraction that the main cb orbital contributes
+                vbm_main_percent: (float) fraction that the main vb orbital contributes
+                cb_main_character: ([0.0|1.0]) main orbital present is s p or d
+                vb_main_character: ([0.0|1.0]) main orbital present is s p or d
+                                    s = [1.0, 0.0, 0.0]
+                                    p = [0.0, 1.0, 0.0]
+                                    d = [0.0, 0.0, 1.0]
+        """
+
+        if isinstance(dos, dict):
+            dos = Dos.from_dict(dos)
+
+        # preparation
+        cbm_scores, vbm_scores = self.get_cbm_vbm_scores(
+            dos, band_depth, sampling_resolution, smear)
+
+        cbm_pdos = list(cbm_scores.items())
+        cbm_pdos.sort(key=lambda x: x[1])
+        vbm_pdos = list(vbm_scores.items())
+        vbm_pdos.sort(key=lambda x: x[1])
+
+        cbm_main = cbm_pdos[-1]
+        vbm_main = vbm_pdos[-1]
+
+        # featurize
+        self.feat = []
+        self.feat.append(('cbm_main_percent', cbm_main[1]))
+        self.feat.append(('vbm_main_percent', vbm_main[1]))
+        self.feat.append(('cbm_main_character', self.get_orbital_character(cbm_main)))
+        self.feat.append(('vbm_main_character', self.get_orbital_character(vbm_main)))
+
+        return list(x[1] for x in self.feat)
+
+    def feature_labels(self):
+        return list(x[0] for x in self.feat)
+
+    @staticmethod
+    def get_orbital_character(PDOS):
+        """
+        check which orbital character (s, p, d) is present
+        Args:
+            PDOS: (touple) that gives pdos character and ammount
+                ex: ('Ti:s', 0.75)
+        return:
+            [(int)]: a binary list which represents the pdos character
+            s = [1.0, 0.0, 0.0]
+            p = [0.0, 1.0, 0.0]
+            d = [0.0, 0.0, 1.0]
+        """
+
+        if PDOS[0][-1] == 's':
+            return [1., 0., 0.]
+        elif PDOS[0][-1] == 'p':
+            return [0., 1., 0.]
+        else:
+            return [0., 0., 1.]
+
+    @staticmethod
+    def get_cbm_vbm_scores(dos, band_depth, sampling_resolution, smear):
+        """
+        Args:
+            dos (pymatgen DOS or their dict):
+                The density of states to featurize. To obtain all features, dos
+                should include the structure attribute.
+            band_depth: The extent into the bands to sample the DOS
+            sampling_resolution: Number of points to sample DOS at
+            smear: smearing parameter for the DOS
+        Returns:
+            density of states scores (cbm_scores, vbm_scores):
+                the partial density of states of both band extremum
+                normalized by the total density of states in the sampled
+                range
+        """
+
+        cbm, vbm = dos.get_cbm_vbm(tol=0.01)
+
+        cbm_scores = {}
+        vbm_scores = {}
+        for el in dos.structure.composition.elements:
+            proj = dos.get_element_spd_dos(el)
+            for orb in proj:
+                energies = [e for e in proj[orb].energies]
+                smear_dos = proj[orb].get_smeared_densities(smear)
+                dos_up = smear_dos[Spin.up]
+                dos_down = smear_dos[Spin.down] if Spin.down in smear_dos\
+                           else smear_dos[Spin.up]
+                dos_total = [sum(id) for id in zip(dos_up, dos_down)]
+
+                vbm_score = 0
+                vbm_space = np.linspace(vbm, vbm - band_depth,
+                                        num=sampling_resolution)
+                for e in vbm_space:
+                    vbm_score += np.interp(e, energies, dos_total)
+
+                cbm_score = 0
+                cbm_space = np.linspace(cbm, cbm + band_depth,
+                                        num=sampling_resolution)
+                for e in cbm_space:
+                    cbm_score += np.interp(e, energies, dos_total)
+
+                cbm_scores["{}:{}".format(el.symbol, str(orb))] = cbm_score
+                vbm_scores["{}:{}".format(el.symbol, str(orb))] = vbm_score
+
+        total_cbm = sum([cbm_scores[key] for key in cbm_scores.keys()])
+        total_vbm = sum([vbm_scores[key] for key in vbm_scores.keys()])
+
+        for key in cbm_scores.keys():
+            cbm_scores[key] = cbm_scores[key] / total_cbm
+
+        for key in vbm_scores.keys():
+            vbm_scores[key] = vbm_scores[key] / total_vbm
+
+        return (cbm_scores, vbm_scores)
+
+    def implementors(self):
+        return ['Maxwell Dylla', 'Anubhav Jain']
