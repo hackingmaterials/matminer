@@ -134,22 +134,22 @@ class CitrineDataRetrieval:
         while True:
             if max_results and max_results < per_page:  # use per_page=max_results, eg: in case of max_results=68 < 100
                 pif_query = PifQuery(system=SystemQuery(
-                    chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
-                    properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
-                                             value=FieldOperation(filter=Filter(min=min_measurement,
-                                                                                max=max_measurement)),
-                                             data_type=FieldOperation(filter=Filter(equal=data_type))),
-                    references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
+                    chemical_formula=ChemicalFieldQuery(filter=ChemicalFilter(equal=formula)),
+                    properties=PropertyQuery(name=FieldQuery(filter=Filter(equal=property)),
+                                             value=FieldQuery(filter=Filter(min=min_measurement,
+                                                                            max=max_measurement)),
+                                             data_type=FieldQuery(filter=Filter(equal=data_type))),
+                    references=ReferenceQuery(doi=FieldQuery(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=max_results)
 
             else:
                 pif_query = PifQuery(system=SystemQuery(
-                    chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
-                    properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
-                                             value=FieldOperation(filter=Filter(min=min_measurement,
-                                                                                max=max_measurement)),
-                                             data_type=FieldOperation(filter=Filter(equal=data_type))),
-                    references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
+                    chemical_formula=ChemicalFieldQuery(filter=ChemicalFilter(equal=formula)),
+                    properties=PropertyQuery(name=FieldQuery(filter=Filter(equal=property)),
+                                             value=FieldQuery(filter=Filter(min=min_measurement,
+                                                                            max=max_measurement)),
+                                             data_type=FieldQuery(filter=Filter(equal=data_type))),
+                    references=ReferenceQuery(doi=FieldQuery(filter=Filter(equal=reference)))),
                     include_datasets=[data_set_id], from_index=start, size=per_page)
 
             # Check if any results found
