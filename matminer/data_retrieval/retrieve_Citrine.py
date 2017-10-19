@@ -102,8 +102,8 @@ class CitrineDataRetrieval:
             matrix_column.set_value(row, matrix_values)
         return matrix_values
 
-    def get_dataframe(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
-                      max_measurement=None, from_record=None, data_set_id=None, max_results=None, show_columns=None):
+    def get_api_data(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
+                      max_measurement=None, from_record=None, data_set_id=None, max_results=None):
         """
         Gets data from Citrine in a dataframe format.
         See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
@@ -121,7 +121,6 @@ class CitrineDataRetrieval:
             from_record: (int) index of the first record to return (indexed from 0)
             data_set_id: (int) id of the particular data set to search on
             max_results: (int) number of records to limit the results to
-            show_columns: (list) list of columns to show from the resulting dataframe
 
         Returns: (object) Pandas dataframe object containing the results
         """
@@ -161,77 +160,87 @@ class CitrineDataRetrieval:
             start += size
             json_data.append(data)
 
-            if max_results and len(json_data) * per_page > max_results:  # check if limit is reached
-                json_data = json_data[:(max_results // per_page)]  # get first multiple of 100 records
-                json_data.append(data[:max_results % per_page])  # get remaining records
+            if max_results and len(json_data) > max_results:                 # check if limit is reached
+                json_data = json_data[:max_results]             # get first multiple of 100 records
+                json_data.extend(data[:max_results % per_page])              # get remaining records
                 break
             if size < per_page:  # break out of last loop of results
                 break
 
             time.sleep(refresh_time)
 
+        return json_data
+
+    def get_dataframe(self, json_lst, show_columns=None):
+        """
+        Converts list of json/pifs to a Pandas dataframe
+
+        Args:
+            json_lst: (list) of json/pifs
+            show_columns: (list) list of columns to show from the resulting dataframe
+
+        Returns: (object) Pandas dataframe object containing the results
+
+        """
         non_prop_df = pd.DataFrame()  # df w/o measurement column
         prop_df = pd.DataFrame()  # df containing only measurement column
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for page in json_data:
-            # df = pd.concat((json_normalize(hit) for hit in set))  # Useful tool for the future
+        for hit in tqdm(json_lst):
 
-            for hit in tqdm(page):
+            counter += 1  # Keep a count to appropriately index the rows
 
-                counter += 1  # Keep a count to appropriately index the rows
+            if 'system' in hit.keys():  # Check if 'system' key exists, else skip
+                system_value = hit['system']
+                system_normdf = json_normalize(system_value)
 
-                if 'system' in hit.keys():  # Check if 'system' key exists, else skip
-                    system_value = hit['system']
-                    system_normdf = json_normalize(system_value)
+                # Make a DF of all non-'properties' fields
+                non_prop_cols = [cols for cols in system_normdf.columns if "properties" not in cols]
+                non_prop_row = pd.DataFrame()
+                for col in non_prop_cols:
+                    non_prop_row[col] = system_normdf[col]
+                non_prop_row.index = [counter] * len(system_normdf)
+                non_prop_df = non_prop_df.append(non_prop_row)
 
-                    # Make a DF of all non-'properties' fields
-                    non_prop_cols = [cols for cols in system_normdf.columns if "properties" not in cols]
-                    non_prop_row = pd.DataFrame()
-                    for col in non_prop_cols:
-                        non_prop_row[col] = system_normdf[col]
-                    non_prop_row.index = [counter] * len(system_normdf)
-                    non_prop_df = non_prop_df.append(non_prop_row)
+                # Make a DF of the 'properties' array
+                if 'properties' in system_value:
+                    prop_normdf = json_normalize(system_value['properties'])
 
-                    # Make a DF of the 'properties' array
-                    if 'properties' in system_value:
-                        prop_normdf = json_normalize(system_value['properties'])
+                    # Parse each type of property value
+                    if 'scalars' in prop_normdf.columns:
+                        self.parse_scalars(prop_normdf['scalars'])
+                    if 'vectors' in prop_normdf.columns:
+                        self.parse_vectors(prop_normdf['vectors'])
+                    if 'matrices' in prop_normdf.columns:
+                        self.parse_matrix(prop_normdf['matrices'])
 
-                        # Parse each type of property value
-                        if 'scalars' in prop_normdf.columns:
-                            self.parse_scalars(prop_normdf['scalars'])
-                        if 'vectors' in prop_normdf.columns:
-                            self.parse_vectors(prop_normdf['vectors'])
-                        if 'matrices' in prop_normdf.columns:
-                            self.parse_matrix(prop_normdf['matrices'])
+                    # Get non-Null property values, and merge them into a new single column 'property_values'
+                    value_cols = []
+                    for col in prop_normdf.columns:
+                        if col in ['scalars', 'vectors', 'matrices']:
+                            value_cols.append(prop_normdf[col].dropna())
+                    prop_normdf['property_values'] = pd.concat(value_cols)
 
-                        # Get non-Null property values, and merge them into a new single column 'property_values'
-                        value_cols = []
-                        for col in prop_normdf.columns:
-                            if col in ['scalars', 'vectors', 'matrices']:
-                                value_cols.append(prop_normdf[col].dropna())
-                        prop_normdf['property_values'] = pd.concat(value_cols)
+                    # Pivot to make properties into columns
+                    values_df = prop_normdf.pivot(columns='name', values='property_values')
+                    values_df.index = [counter] * len(prop_normdf)
+                    # Convert to float type whichever columns can be converted
+                    values_df = values_df.apply(pd.to_numeric, errors='ignore')
 
-                        # Pivot to make properties into columns
-                        values_df = prop_normdf.pivot(columns='name', values='property_values')
-                        values_df.index = [counter] * len(prop_normdf)
-                        # Convert to float type whichever columns can be converted
-                        values_df = values_df.apply(pd.to_numeric, errors='ignore')
+                    # Making a single row DF of columns that do not contain property values
+                    non_values_df = pd.DataFrame()
+                    non_values_cols = []
+                    for col in prop_normdf.columns:
+                        if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']:
+                            non_values_cols.append(col)
+                    for col in non_values_cols:
+                        non_values_df[col] = prop_normdf[col]
+                    if len(non_values_df) > 0:  # Do not index empty DF (non-value columns absent)
+                        non_values_df.index = [counter] * len(prop_normdf)
 
-                        # Making a single row DF of columns that do not contain property values
-                        non_values_df = pd.DataFrame()
-                        non_values_cols = []
-                        for col in prop_normdf.columns:
-                            if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']:
-                                non_values_cols.append(col)
-                        for col in non_values_cols:
-                            non_values_df[col] = prop_normdf[col]
-                        if len(non_values_df) > 0:  # Do not index empty DF (non-value columns absent)
-                            non_values_df.index = [counter] * len(prop_normdf)
-
-                        # Concatenate values and non-values DF
-                        prop_df = prop_df.append(pd.concat([values_df, non_values_df], axis=1))
+                    # Concatenate values and non-values DF
+                    prop_df = prop_df.append(pd.concat([values_df, non_values_df], axis=1))
 
         # Concatenate 'properties' and 'non-properties' dataframes
         df = pd.concat([non_prop_df, prop_df], axis=1)
