@@ -87,7 +87,7 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEquals(ops[opsf.feature_labels().index('oct')], 1.0)
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
-            'bcc')] + 0.5), 853)
+            'bcc')] + 0.5), 845)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(

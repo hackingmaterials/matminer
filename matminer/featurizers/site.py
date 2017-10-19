@@ -17,6 +17,7 @@ import numpy as np
 from .base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters
 from math import sqrt
+from matminer.featurizers.stats import PropertyStats
 
 class AGNIFingerprints(BaseFeaturizer):
     """Integral of the product of the radial distribution function and a Gaussian window function.
@@ -151,7 +152,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                             (e.g., CN=4 for tetrahedron;
                             default: True).
     """
-    def __init__(self, optypes=None, dr=0.1, dist_exp=2, zero_ops=True):
+    def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=1, dist_exp=2, zero_ops=True):
         self.optypes = {
             1: ["sgl_bd"],
             2: ["bent180", "bent45", "bent90", "bent135"],
@@ -167,7 +168,9 @@ class OPSiteFingerprint(BaseFeaturizer):
             12: ["cuboct", "q2", "q4", "q6"]} if optypes is None \
             else optypes.copy()
         self.dr = dr
-        self.idr = 1.0 / dr
+        self.ddr = ddr
+        self.ndr = ndr
+        #self.idr = 1.0 / dr
         self.dist_exp = dist_exp
         self.zero_ops = zero_ops
         self.ops = {}
@@ -191,7 +194,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         Returns:
             opvals (numpy array): order parameters of target site.
         """
-        opvals = []
+        opvals = {}
         s = struct.sites[idx]
         neigh_dist = []
         r = 6
@@ -201,65 +204,80 @@ class OPSiteFingerprint(BaseFeaturizer):
         # Smoothen distance, but use relative distances.
         dmin = min([d for n, d in neigh_dist])
         neigh_dist = [[n, d / dmin] for n, d in neigh_dist]
-        for j in range(len(neigh_dist)):
-            neigh_dist[j][1] = (float(int(neigh_dist[j][1] * self.idr \
-                + 0.5)) + 0.5) * self.dr
-        d_sorted = []
-        for n, d in neigh_dist:
-            if d not in d_sorted:
-                d_sorted.append(d)
-        d_sorted = sorted(d_sorted)
-    
+        neigh_dist_alldrs = {}
+        d_sorted_alldrs = {}
+        for i in range(-self.ndr, self.ndr+1):
+            opvals[i] = []
+            this_dr = self.dr + float(i) * self.ddr
+            this_idr = 1.0 / this_dr
+            neigh_dist_alldrs[i] = []
+            for j in range(len(neigh_dist)):
+                neigh_dist_alldrs[i].append([neigh_dist[j][0],
+                    (float(int(neigh_dist[j][1] * this_idr \
+                    + 0.5)) + 0.5) * this_dr])
+            d_sorted_alldrs[i] = []
+            for n, d in neigh_dist_alldrs[i]:
+                if d not in d_sorted_alldrs[i]:
+                    d_sorted_alldrs[i].append(d)
+            d_sorted_alldrs[i] = sorted(d_sorted_alldrs[i])
+
         # Do q_sgl_bd separately.
         if self.optypes[1][0] == "sgl_bd":
-            site_list = [s]
-            for n, dn in neigh_dist:
-                site_list.append(n)
-            opval = self.ops[1][0].get_order_parameters(
-                site_list, 0,
-                indices_neighs=[j for j in range(1,len(site_list))])
-            opvals.append(opval[0])
-    
-        prev_cn = 0
-        prev_site_list = None
-        prev_d_fac = None
-        dmin = min(d_sorted)
-        for d in d_sorted:
-            this_cn = 0
-            site_list = [s]
-            this_av_inv_drel = 0.0
-            for n, dn in neigh_dist:
-                if dn <= d:
-                    this_cn += 1
+            for i in range(-self.ndr, self.ndr+1):
+                site_list = [s]
+                for n, dn in neigh_dist_alldrs[i]:
                     site_list.append(n)
-                    this_av_inv_drel += (1.0 / (dn / dmin))
-            this_av_inv_drel = this_av_inv_drel / float(this_cn)
-            d_fac = this_av_inv_drel ** self.dist_exp
-            for cn in range(max(2, prev_cn+1), min(this_cn+1, 13)):
-                # Set all OPs of non-CN-complying neighbor environments
-                # to zero if applicable.
-                if self.zero_ops and cn != this_cn:
-                    for it in range(len(self.optypes[cn])):
-                        opvals.append(0)
-                    continue
-
-                # Set all (remaining) OPs.    
-                for it in range(len(self.optypes[cn])):
-                    opval = self.ops[cn][it].get_order_parameters(
-                        site_list, 0,
-                        indices_neighs=[j for j in range(1,len(site_list))])
-                    if opval[0] is None:
-                        opval[0] = 0
-                    else:
-                        opval[0] = d_fac * opval[0]
-                    opvals.append(opval[0])
-            prev_site_list = site_list
-            prev_cn = this_cn
-            prev_d_fac = d_fac
-            if prev_cn >= 12:
-                break
+                opval = self.ops[1][0].get_order_parameters(
+                    site_list, 0,
+                    indices_neighs=[j for j in range(1,len(site_list))])
+                opvals[i].append(opval[0])
     
-        return np.array(opvals)
+        for i in range(-self.ndr, self.ndr+1):
+            prev_cn = 0
+            prev_site_list = None
+            prev_d_fac = None
+            dmin = min(d_sorted_alldrs[i])
+            for d in d_sorted_alldrs[i]:
+                this_cn = 0
+                site_list = [s]
+                this_av_inv_drel = 0.0
+                for n, dn in neigh_dist_alldrs[i]:
+                    if dn <= d:
+                        this_cn += 1
+                        site_list.append(n)
+                        this_av_inv_drel += (1.0 / (dn / dmin))
+                this_av_inv_drel = this_av_inv_drel / float(this_cn)
+                d_fac = this_av_inv_drel ** self.dist_exp
+                for cn in range(max(2, prev_cn+1), min(this_cn+1, 13)):
+                    # Set all OPs of non-CN-complying neighbor environments
+                    # to zero if applicable.
+                    if self.zero_ops and cn != this_cn:
+                        for it in range(len(self.optypes[cn])):
+                            opvals[i].append(0)
+                        continue
+
+                    # Set all (remaining) OPs.    
+                    for it in range(len(self.optypes[cn])):
+                        opval = self.ops[cn][it].get_order_parameters(
+                            site_list, 0,
+                            indices_neighs=[j for j in range(1,len(site_list))])
+                        if opval[0] is None:
+                            opval[0] = 0
+                        else:
+                            opval[0] = d_fac * opval[0]
+                        opvals[i].append(opval[0])
+                prev_site_list = site_list
+                prev_cn = this_cn
+                prev_d_fac = d_fac
+                if prev_cn >= 12:
+                    break
+
+        opvals_out = []
+        ps = PropertyStats()
+        for j in range(len(opvals[0])):
+            opvals_out.append(ps.n_numerical_modes(
+                [opvals[i][j] for i in range(-self.ndr, self.ndr+1)], 1, 0.01))
+        return np.array(opvals_out)
 
     def feature_labels(self):
         labels = []
