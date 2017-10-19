@@ -1,12 +1,11 @@
 from __future__ import absolute_import, division
-
+from citrination_client import *
 import os
 import time
-
 import pandas as pd
-from citrination_client import *
-from pandas.io.json import json_normalize
 from tqdm import tqdm
+from pandas.io.json import json_normalize
+
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
@@ -15,8 +14,7 @@ class CitrineDataRetrieval:
     def __init__(self, api_key=None):
         """
         Args:
-            api_key: (str) Your Citrine API key, or None if you've set the
-                CITRINE_KEY environment variable
+            api_key: (str) Your Citrine API key, or None if you've set the CITRINE_KEY environment variable
 
         Returns: None
         """
@@ -105,34 +103,26 @@ class CitrineDataRetrieval:
             matrix_column.set_value(row, matrix_values)
         return matrix_values
 
-    def get_dataframe(self, formula=None, property=None, data_type=None,
-                      reference=None, min_measurement=None,
-                      max_measurement=None, from_record=None, data_set_id=None,
-                      max_results=None, show_columns=None):
+    def get_dataframe(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
+                      max_measurement=None, from_record=None, data_set_id=None, max_results=None, show_columns=None):
         """
         Gets data from Citrine in a dataframe format.
-        See client docs at
-        http://citrineinformatics.github.io/api-documentation/ for more details
-        on these parameters.
+        See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
 
         Args:
-            formula: (str) filter for the chemical formula field; only those
-                results that have chemical formulas that contain this string
-                will be returned
+            formula: (str) filter for the chemical formula field; only those results that have chemical formulas that
+                contain this string will be returned
             property: (str) name of the property to search for
             data_type: (str) 'EXPERIMENTAL'/'COMPUTATIONAL'/'MACHINE_LEARNING';
-                filter for properties obtained from experimental work,
-                computational methods, or machine learning.
-            reference: (str) filter for the reference field; only those results
-                that have contributors that contain this string will be returned
+                filter for properties obtained from experimental work, computational methods, or machine learning.
+            reference: (str) filter for the reference field; only those results that have contributors that contain
+                this string will be returned
             min_measurement: (str/num) minimum of the property value range
             max_measurement: (str/num) maximum of the property value range
-            from_record: (int) index of the first record to return (indexed
-                from 0)
+            from_record: (int) index of the first record to return (indexed from 0)
             data_set_id: (int) id of the particular data set to search on
             max_results: (int) number of records to limit the results to
-            show_columns: (list) list of columns to show from the resulting
-                dataframe
+            show_columns: (list) list of columns to show from the resulting dataframe
 
         Returns: (object) Pandas dataframe object containing the results
         """
@@ -184,13 +174,9 @@ class CitrineDataRetrieval:
             start += size
             json_data.append(data)
 
-            if max_results and len(
-                    json_data) * per_page > max_results:  # check if limit is reached
-                json_data = json_data[
-                            :(
-                            max_results // per_page)]  # get first multiple of 100 records
-                json_data.append(
-                    data[:max_results % per_page])  # get remaining records
+            if max_results and len(json_data) * per_page > max_results:  # check if limit is reached
+                json_data = json_data[:(max_results // per_page)]  # get first multiple of 100 records
+                json_data.append(data[:max_results % per_page])  # get remaining records
                 break
             if size < per_page:  # break out of last loop of results
                 break
