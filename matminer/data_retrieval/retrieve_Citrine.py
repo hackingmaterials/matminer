@@ -37,8 +37,7 @@ class CitrineDataRetrieval:
         if 'value' in dict_item:
             return dict_item['value']
         elif 'minimum' in dict_item and 'maximum' in dict_item:
-            return 'Minimum = {}, Maximum = {}'.format(dict_item['minimum'],
-                                                       dict_item['maximum'])
+            return 'Minimum = {}, Maximum = {}'.format(dict_item['minimum'], dict_item['maximum'])
 
     def parse_scalars(self, scalar_column):
         """
@@ -135,35 +134,23 @@ class CitrineDataRetrieval:
         while True:
             if max_results and max_results < per_page:  # use per_page=max_results, eg: in case of max_results=68 < 100
                 pif_query = PifQuery(system=SystemQuery(
-                    chemical_formula=ChemicalFieldOperation(
-                        filter=ChemicalFilter(equal=formula)),
-                    properties=PropertyQuery(
-                        name=FieldOperation(filter=Filter(equal=property)),
-                        value=FieldOperation(filter=Filter(min=min_measurement,
-                                                           max=max_measurement)),
-                        data_type=FieldOperation(
-                            filter=Filter(equal=data_type))
-                        ),
-                    references=ReferenceQuery(
-                        doi=FieldOperation(filter=Filter(equal=reference)))),
-                    include_datasets=[data_set_id], from_index=start,
-                    size=max_results)
+                    chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
+                    properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
+                                             value=FieldOperation(filter=Filter(min=min_measurement,
+                                                                                max=max_measurement)),
+                                             data_type=FieldOperation(filter=Filter(equal=data_type))),
+                    references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
+                    include_datasets=[data_set_id], from_index=start, size=max_results)
 
             else:
                 pif_query = PifQuery(system=SystemQuery(
-                    chemical_formula=ChemicalFieldOperation(
-                        filter=ChemicalFilter(equal=formula)),
-                    properties=PropertyQuery(
-                        name=FieldOperation(filter=Filter(equal=property)),
-                        value=FieldOperation(filter=Filter(min=min_measurement,
-                                                           max=max_measurement)),
-                        data_type=FieldOperation(
-                            filter=Filter(equal=data_type))
-                        ),
-                    references=ReferenceQuery(
-                        doi=FieldOperation(filter=Filter(equal=reference)))),
-                    include_datasets=[data_set_id], from_index=start,
-                    size=per_page)
+                    chemical_formula=ChemicalFieldOperation(filter=ChemicalFilter(equal=formula)),
+                    properties=PropertyQuery(name=FieldOperation(filter=Filter(equal=property)),
+                                             value=FieldOperation(filter=Filter(min=min_measurement,
+                                                                                max=max_measurement)),
+                                             data_type=FieldOperation(filter=Filter(equal=data_type))),
+                    references=ReferenceQuery(doi=FieldOperation(filter=Filter(equal=reference)))),
+                    include_datasets=[data_set_id], from_index=start, size=per_page)
 
             # Check if any results found
             if 'hits' not in self.client.search(pif_query).as_dictionary():
@@ -200,8 +187,7 @@ class CitrineDataRetrieval:
                     system_normdf = json_normalize(system_value)
 
                     # Make a DF of all non-'properties' fields
-                    non_prop_cols = [cols for cols in system_normdf.columns if
-                                     "properties" not in cols]
+                    non_prop_cols = [cols for cols in system_normdf.columns if "properties" not in cols]
                     non_prop_row = pd.DataFrame()
                     for col in non_prop_cols:
                         non_prop_row[col] = system_normdf[col]
@@ -228,30 +214,24 @@ class CitrineDataRetrieval:
                         prop_normdf['property_values'] = pd.concat(value_cols)
 
                         # Pivot to make properties into columns
-                        values_df = prop_normdf.pivot(columns='name',
-                                                      values='property_values')
+                        values_df = prop_normdf.pivot(columns='name', values='property_values')
                         values_df.index = [counter] * len(prop_normdf)
                         # Convert to float type whichever columns can be converted
-                        values_df = values_df.apply(pd.to_numeric,
-                                                    errors='ignore')
+                        values_df = values_df.apply(pd.to_numeric, errors='ignore')
 
                         # Making a single row DF of columns that do not contain property values
                         non_values_df = pd.DataFrame()
                         non_values_cols = []
                         for col in prop_normdf.columns:
-                            if col not in ['name', 'scalars', 'vectors',
-                                           'matrices',
-                                           'property_values']:
+                            if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']:
                                 non_values_cols.append(col)
                         for col in non_values_cols:
                             non_values_df[col] = prop_normdf[col]
-                        if len(
-                                non_values_df) > 0:  # Do not index empty DF (non-value columns absent)
+                        if len(non_values_df) > 0:  # Do not index empty DF (non-value columns absent)
                             non_values_df.index = [counter] * len(prop_normdf)
 
                         # Concatenate values and non-values DF
-                        prop_df = prop_df.append(
-                            pd.concat([values_df, non_values_df], axis=1))
+                        prop_df = prop_df.append(pd.concat([values_df, non_values_df], axis=1))
 
         # Concatenate 'properties' and 'non-properties' dataframes
         df = pd.concat([non_prop_df, prop_df], axis=1)
