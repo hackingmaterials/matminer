@@ -170,7 +170,7 @@ class CitrineDataRetrieval:
             data = self.client.search(pif_query).as_dictionary()['hits']
             size = len(data)
             start += size
-            json_data.append(data)
+            json_data.extend(data)
 
             if max_results and len(json_data) > max_results:                 # check if limit is reached
                 json_data = json_data[:max_results]             # get first multiple of 100 records
