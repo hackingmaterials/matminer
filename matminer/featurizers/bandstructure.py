@@ -22,7 +22,7 @@ def remove_duplicate_kpoints(kpts, dk=0.001):
     """
     rm_list = []
     kdist = [norm(k) for k in kpts]
-    ktuple = zip(kdist, kpts)
+    ktuple = list(zip(kdist, kpts))
     ktuple.sort(key=lambda x: x[0])
     kpts = [tup[1] for tup in ktuple]
     i = 0
