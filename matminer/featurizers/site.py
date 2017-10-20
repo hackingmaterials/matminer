@@ -266,6 +266,8 @@ class OPSiteFingerprint(BaseFeaturizer):
                             opval[0] = 0
                         else:
                             opval[0] = d_fac * opval[0]
+                        if self.optypes[cn][it] == 'bcc':
+                            opval[0] = opval[0] / 0.976
                         opvals[i].append(opval[0])
                 prev_site_list = site_list
                 prev_cn = this_cn
@@ -328,7 +330,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         labels = []
         for cn, li in self.optypes.items():
             for e in li:
-                labels.append(e)
+                labels.append('{} CN_{}'.format(e, cn))
         return labels
 
     def citations(self):
