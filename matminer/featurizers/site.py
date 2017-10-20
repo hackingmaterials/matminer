@@ -152,7 +152,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                             (e.g., CN=4 for tetrahedron;
                             default: True).
     """
-    def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=2, dop=0.001, dist_exp=2, zero_ops=True):
+    def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001, dist_exp=2, zero_ops=True):
         self.optypes = {
             1: ["sgl_bd"],
             2: ["bent180", "bent45", "bent90", "bent135"],
