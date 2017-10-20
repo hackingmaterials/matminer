@@ -10,6 +10,18 @@ from pandas.io.json import json_normalize
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
+def parse_scalars(scalars):
+    return get_value(scalars[0])
+
+
+def get_value(dict_item):
+    # TODO: deal with rest of formats in a scalar object
+    if 'value' in dict_item:
+        return dict_item['value']
+    elif 'minimum' in dict_item and 'maximum' in dict_item:
+        return 'Minimum = {}, Maximum = {}'.format(dict_item['minimum'], dict_item['maximum'])
+
+
 class CitrineDataRetrieval:
     def __init__(self, api_key=None):
         """
@@ -205,42 +217,24 @@ class CitrineDataRetrieval:
 
                 # Make a DF of the 'properties' array
                 if 'properties' in system_value:
-                    prop_normdf = json_normalize(system_value['properties'])
 
-                    # Parse each type of property value
-                    if 'scalars' in prop_normdf.columns:
-                        self.parse_scalars(prop_normdf['scalars'])
-                    if 'vectors' in prop_normdf.columns:
-                        self.parse_vectors(prop_normdf['vectors'])
-                    if 'matrices' in prop_normdf.columns:
-                        self.parse_matrix(prop_normdf['matrices'])
+                    p_df = pd.DataFrame()
 
-                    # Get non-Null property values, and merge them into a new single column 'property_values'
-                    value_cols = []
-                    for col in prop_normdf.columns:
-                        if col in ['scalars', 'vectors', 'matrices']:
-                            value_cols.append(prop_normdf[col].dropna())
-                    prop_normdf['property_values'] = pd.concat(value_cols)
+                    for prop in system_value['properties']:
 
-                    # Pivot to make properties into columns
-                    values_df = prop_normdf.pivot(columns='name', values='property_values')
-                    values_df.index = [counter] * len(prop_normdf)
-                    # Convert to float type whichever columns can be converted
-                    values_df = values_df.apply(pd.to_numeric, errors='ignore')
+                        if 'scalars' in prop:
+                            p_df.set_value(counter, prop['name'], parse_scalars(prop['scalars']))
+                        elif 'vectors' in prop:
+                            p_df[prop['name']] = prop['vectors']
+                        elif 'matrices' in prop:
+                            p_df[prop['name']] = prop['matrices']
 
-                    # Making a single row DF of columns that do not contain property values
-                    non_values_df = pd.DataFrame()
-                    non_values_cols = []
-                    for col in prop_normdf.columns:
-                        if col not in ['name', 'scalars', 'vectors', 'matrices', 'property_values']:
-                            non_values_cols.append(col)
-                    for col in non_values_cols:
-                        non_values_df[col] = prop_normdf[col]
-                    if len(non_values_df) > 0:  # Do not index empty DF (non-value columns absent)
-                        non_values_df.index = [counter] * len(prop_normdf)
+                        for prop_key in prop:
+                            if prop_key not in ['name', 'scalars', 'vectors', 'matrices']:
+                                p_df[prop['name'] + '-' + prop_key] = prop[prop_key]
 
-                    # Concatenate values and non-values DF
-                    prop_df = prop_df.append(pd.concat([values_df, non_values_df], axis=1))
+                    p_df.index = [counter]
+                    prop_df = prop_df.append(p_df)
 
         # Concatenate 'properties' and 'non-properties' dataframes
         df = pd.concat([non_prop_df, prop_df], axis=1)
