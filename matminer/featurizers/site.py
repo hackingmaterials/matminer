@@ -16,7 +16,7 @@ import numpy as np
 
 from .base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters
-from math import sqrt
+from math import sqrt, isnan, fabs
 from matminer.featurizers.stats import PropertyStats
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -152,7 +152,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                             (e.g., CN=4 for tetrahedron;
                             default: True).
     """
-    def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=1, dist_exp=2, zero_ops=True):
+    def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=2, dop=0.001, dist_exp=2, zero_ops=True):
         self.optypes = {
             1: ["sgl_bd"],
             2: ["bent180", "bent45", "bent90", "bent135"],
@@ -170,6 +170,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         self.dr = dr
         self.ddr = ddr
         self.ndr = ndr
+        self.dop = dop
         #self.idr = 1.0 / dr
         self.dist_exp = dist_exp
         self.zero_ops = zero_ops
@@ -275,8 +276,52 @@ class OPSiteFingerprint(BaseFeaturizer):
         opvals_out = []
         ps = PropertyStats()
         for j in range(len(opvals[0])):
-            opvals_out.append(ps.n_numerical_modes(
-                [opvals[i][j] for i in range(-self.ndr, self.ndr+1)], 1, 0.01))
+            #this_op = ps.n_numerical_modes(
+            #    [opvals[i][j] for i in range(-self.ndr, self.ndr+1)], 1, 0.01)
+            #if type(this_op) is not float:
+            #    this_op = this_op[0]
+            #if isnan(this_op):
+            #    this_op = 0
+
+            # Compute histogram, determine peak, and location
+            # of peak value.
+            op_tmp = [opvals[i][j] for i in range(-self.ndr, self.ndr+1)]
+            #print('op_tmp '+str(op_tmp))
+            nbins = int(max(op_tmp) / self.dop) + 3
+            #print(nbins)
+            hist, bin_edges = np.histogram(
+                op_tmp, bins=[(float(i) - 0.5) * self.dop for i in range(nbins)],
+                normed=False, weights=None, density=False)
+            #print('bin edges '+str(bin_edges))
+            #print('hist '+str(hist))
+            #k = list(hist).index(max(hist))
+            #print('k '+str(k))
+            #op_peak = 0.5 * (bin_edges[k] + bin_edges[k+1])
+            max_hist = max(hist)
+            op_peaks = []
+            for i, h in enumerate(hist):
+                if h == max_hist:
+                    op_peaks.append([i, 0.5 * (bin_edges[i] + bin_edges[i+1])])
+            # Address problem that 2 OP values can be close to a bin edge.
+            hist2 = []
+            op_peaks2 = []
+            i = 0
+            while i < len(op_peaks):
+                if i < len(op_peaks)-1:
+                    if op_peaks[i+1][0] - op_peaks[i][0] == 1:
+                        op_peaks2.append(0.5 * (op_peaks[i][1] + op_peaks[i+1][1]))
+                        hist2.append(hist[op_peaks[i][0]]+hist[op_peaks[i+1][0]])
+                        i += 1
+                    else:
+                        op_peaks2.append(op_peaks[i][1])
+                        hist2.append(hist[op_peaks[i][0]])
+                else:
+                    op_peaks2.append(op_peaks[i][1])
+                    hist2.append(hist[op_peaks[i][0]])
+                i += 1
+            opvals_out.append(op_peaks2[list(hist2).index(max(hist2))])
+            #print('{} {}'.format(opvals_out[j], [opvals[i][j] for i in range(-self.ndr, self.ndr+1)]))
+        #print('')
         return np.array(opvals_out)
 
     def feature_labels(self):
