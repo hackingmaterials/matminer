@@ -12,6 +12,48 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
+def remove_duplicate_kpoints(kpts, dk=0.001):
+    """
+    Args:
+        kpts ([numpy.array]): list of fractional coordinates of k-points
+        dk (float): the tolerance below which two coordinates assumed the same
+    Returns ([numpy.array]): list of fractional coordinates of k-points w/o
+        duplicates. [0.5, 0.5, 0.0] and [-0.5, -0.5, 0.0] are also duplicates
+    """
+    rm_list = []
+    kdist = [norm(k) for k in kpts]
+    ktuple = zip(kdist, kpts)
+    ktuple.sort(key=lambda x: x[0])
+    kpts = [tup[1] for tup in ktuple]
+    i = 0
+    while i < len(kpts) - 1:
+        j = i
+        while j < len(kpts) - 1 and ktuple[j + 1][0] - ktuple[i][0] < dk:
+            if (abs(kpts[i][0] - kpts[j + 1][0]) < dk or
+                abs(kpts[i][0]) == abs(kpts[j + 1][0]) == 0.5) and \
+                (abs(kpts[i][1] - kpts[j + 1][1]) < dk or
+                abs(kpts[i][1]) == abs(kpts[j + 1][1]) == 0.5) and \
+                (abs(kpts[i][2] - kpts[j + 1][2]) < dk or
+                abs(kpts[i][2]) == abs(kpts[j + 1][2]) == 0.5):
+                rm_list.append(j + 1)
+            j += 1
+        i += 1
+    return np.delete(kpts, rm_list, axis=0)
+
+
+def get_k_degen(frac_k, rotations):
+    """
+    returns the degeneracy of a given k-point inside the Brillouin zone.
+    Args:
+        frac_k (numy.array vector): fractional coordinate of the k-point
+        rotations ([numpy.array]): list of rotational symmtetry matrices
+    Returns (int): the number of unique equivalent k-points (i.e. degeneracy)
+    """
+    # all_ks = [np.dot(frac_k, rotations[i]) for i in range(len(rotations))]
+    all_ks = np.dot(frac_k, rotations)
+    return len(remove_duplicate_kpoints(all_ks))
+
+
 class BranchPointEnergy(BaseFeaturizer):
     def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
         """
@@ -142,16 +184,21 @@ class BandFeaturizer(BaseFeaturizer):
         cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, is_cbm=True)
         vbm_ens = np.array(bs.bands[vbm_bspin][vbm_bidx])
         cbm_ens = np.array(bs.bands[cbm_bspin][cbm_bidx])
+        vbm_k = bs.kpoints[vbm['kpoint_index'][0]].frac_coords
+        cbm_k = bs.kpoints[cbm['kpoint_index'][0]].frac_coords
 
         # featurize
         self.feat = []
         self.feat.append(('band_gap', band_gap['energy']))
         self.feat.append(('is_gap_direct', band_gap['direct']))
         self.feat.append(('direct_gap', min(cbm_ens - vbm_ens)))
-        self.feat.append(('p_ex1_norm',
-                norm(bs.kpoints[vbm['kpoint_index'][0]].frac_coords)))
-        self.feat.append(('n_ex1_norm',
-                norm(bs.kpoints[cbm['kpoint_index'][0]].frac_coords)))
+        self.feat.append(('p_ex1_norm', norm(vbm_k)))
+        self.feat.append(('n_ex1_norm', norm(cbm_k)))
+        if bs.structure:
+            sg = SpacegroupAnalyzer(bs.structure)
+            rotations, _ = sg._get_symmetry()
+            self.feat.append(('p_ex1_degen', get_k_degen(vbm_k, rotations)))
+            self.feat.append(('n_ex1_degen', get_k_degen(cbm_k, rotations)))
 
         return list(x[1] for x in self.feat)
 
