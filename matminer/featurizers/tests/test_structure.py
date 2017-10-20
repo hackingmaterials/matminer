@@ -292,10 +292,10 @@ class StructureFeaturesTest(PymatgenTest):
         # Test stats.
         op_struct_fp = OPStructureFingerprint()
         opvals = op_struct_fp.featurize(self.diamond)
-        self.assertAlmostEqual(int(opvals[0] * 10000 + 0.5), 1)
+        self.assertAlmostEqual(int(opvals[0] * 10000 + 0.5), 0)
         self.assertAlmostEqual(int(opvals[1] * 10000 + 0.5), 0)
-        self.assertAlmostEqual(int(opvals[2] * 10000 + 0.5), 1)
-        self.assertAlmostEqual(int(opvals[3] * 10000 + 0.5), 1)
+        self.assertAlmostEqual(int(opvals[2] * 10000 + 0.5), 0)
+        self.assertAlmostEqual(int(opvals[3] * 10000 + 0.5), 0)
         self.assertAlmostEqual(int(opvals[4] * 10000 + 0.5), 0)
         self.assertAlmostEqual(int(opvals[32] * 1000 + 0.5), 38)
         self.assertAlmostEqual(int(opvals[40] * 1000 + 0.5), 1000)
