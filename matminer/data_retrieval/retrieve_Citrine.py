@@ -134,7 +134,7 @@ class CitrineDataRetrieval:
             data_set_id: (int) id of the particular data set to search on
             max_results: (int) number of records to limit the results to
 
-        Returns: (object) Pandas dataframe object containing the results
+        Returns: (list) of jsons/pifs returned by Citrine's API
         """
 
         json_data = []
