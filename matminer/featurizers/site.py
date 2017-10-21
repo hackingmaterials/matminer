@@ -201,6 +201,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         Returns:
             opvals (numpy array): order parameters of target site.
         """
+        idop = 1.0 / self.dop
         opvals = {}
         s = struct.sites[idx]
         neigh_dist = []
@@ -287,9 +288,29 @@ class OPSiteFingerprint(BaseFeaturizer):
             # Compute histogram, determine peak, and location
             # of peak value.
             op_tmp = [opvals[i][j] for i in range(-self.ndr, self.ndr+1)]
-            nbins = int(max(op_tmp) / self.dop) + 3
+            minval = float(int(min(op_tmp) * idop - 1.5)) * self.dop
+            #print(minval)
+            if minval < 0.0:
+                minval = 0.0
+            if minval > 1.0:
+                minval = 1.0
+            #print(minval)
+            maxval = float(int(max(op_tmp) * idop + 1.5)) * self.dop
+            #print(maxval)
+            if maxval < 0.0:
+                maxval = 0.0
+            if maxval > 1.0:
+                maxval = 1.0
+            #print(maxval)
+            if minval == maxval:
+                minval = minval - self.dop
+                maxval = maxval + self.dop
+            #print(minval)
+            #print(maxval)
+            nbins = int((maxval - minval) * idop)
+            #print('{} {} {}'.format(minval, maxval, nbins))
             hist, bin_edges = np.histogram(
-                op_tmp, bins=[(float(i) - 0.5) * self.dop for i in range(nbins)],
+                op_tmp, bins=nbins, range=(minval, maxval),
                 normed=False, weights=None, density=False)
             max_hist = max(hist)
             op_peaks = []

@@ -89,14 +89,14 @@ class FingerprintTests(PymatgenTest):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 35)
-        self.assertAlmostEquals(ops[opsf.feature_labels().index(
-            'oct CN_6')], 1.0)
+        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
+            'oct CN_6')]), 999)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
-            'bcc CN_8')] + 0.5), 894)
+        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
+            'bcc CN_8')] + 0.5), 895)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
+        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
             'bcc CN_8')] + 0.5), 955)
 
 
