@@ -9,7 +9,7 @@ Fit data mining models to ~6000 calculated bulk moduli from Materials Project
 -----------------------------------------------------------------------------
 
 
-This notebook is an example of using the MP data retrieval tool 'retrieve_MP.py' to retrieve computed bulk moduli from
+This notebook is an example of using the MP data retrieval tool :code:`retrieve_MP.py` to retrieve computed bulk moduli from
 `the materials project databases <https://materialsproject.org/>`_ in the form of a pandas dataframe, using matminer's tools to populate
 the dataframe with descriptors/features from pymatgen, and then fitting regression models from the scikit-learn library to
 the dataset.
@@ -171,13 +171,13 @@ _______________________________________________________________
 
 .. code-block:: python
 
-    from sklearn.cross_validation import KFold, cross_val_score
+    from sklearn.model_selection import KFold, cross_val_score
 
     # Use 10-fold cross validation (90% training, 10% test)
-    crossvalidation = KFold(n=X.shape[0], n_folds=10, shuffle=True, random_state=1)
+    crossvalidation = KFold(n_splits=10, shuffle=True, random_state=1)
 
     # compute cross validation scores for random forest model
-    scores = cross_val_score(linear_regression, X, y, scoring='mean_squared_error',
+    scores = cross_val_score(lr, X, y, scoring='mean_squared_error',
                              cv=crossvalidation, n_jobs=1)
     rmse_scores = [np.sqrt(abs(s)) for s in scores]
 
@@ -190,7 +190,9 @@ _______________________________________________________________
     Cross-validation results:
     Folds: 10, mean RMSE: 33.200
 
-**Step 4: Plot the results using FigRecipes**
+
+Step 4: Plot the results with FigRecipes
+________________________________________
 
 .. code-block:: python
 
@@ -204,6 +206,7 @@ _______________________________________________________________
                    textsize=35,
                    ticksize=30)
 
+    # a line to represent a perfect model with 1:1 prediction
     xy_params = {'x_col': [0, 400],
                  'y_col': [0, 400],
                  'color': 'black',
@@ -221,4 +224,101 @@ _______________________________________________________________
 
 
 .. image:: _static/example_bulkmod.png
-   :scale: 85
+   :scale: 70
+
+Great! We just fit a linear regression model to pymatgen features using matminer and sklearn. Now let's use a Random
+Forest model to examine the importance of our features.
+
+Step 5: Follow similar steps for a Random Forest model
+______________________________________________________
+
+
+**Step 5a: Fit the Random Forest model, get R\ :sup:`2` and RMSE**
+
+.. code-block:: python
+
+   from sklearn.ensemble import RandomForestRegressor
+
+   rf = RandomForestRegressor(n_estimators=50, random_state=1)
+
+   rf.fit(X, y)
+   print 'R2 = ' + str(round(rf.score(X, y), 3))
+   print 'RMSE = %.3f' % np.sqrt(mean_squared_error(y_true=y, y_pred=rf.predict(X)))
+
+.. code-block:: python
+
+    R2 = 0.988
+    RMSE = 7.947
+
+
+**Step 5b: Cross-validate the results**
+
+.. code-block:: python
+
+    # compute cross validation scores for random forest model
+    scores = cross_val_score(rf, X, y, scoring='mean_squared_error', cv=crossvalidation, n_jobs=1)
+
+    rmse_scores = [np.sqrt(abs(s)) for s in scores]
+    print 'Cross-validation results:'
+    print 'Folds: %i, mean RMSE: %.3f' % (len(scores), np.mean(np.abs(rmse_scores)))
+
+.. code-block:: python
+
+    Cross-validation results:
+    Folds: 10, mean RMSE: 20.087
+
+
+Step 6: Plot our results and determine what features are the most important
+___________________________________________________________________________
+
+**Step 6a: Plot the random forest model**
+
+.. code-block:: python
+
+    from matminer.figrecipes.plotly.make_plots import PlotlyFig
+
+    pf_rf = PlotlyFig(x_title='DFT (MP) bulk modulus (GPa)',
+                      y_title='Random forest bulk modulus (GPa)',
+                      plot_title='Random forest regression',
+                      plot_mode='offline',
+                      margin_left=150,
+                      textsize=35,
+                      ticksize=30)
+
+    # a line to represent a perfect model with 1:1 prediction
+    xy_line = {'x_col': [0, 450],
+               'y_col': [0, 450],
+               'color': 'black',
+               'mode': 'lines',
+               'legend': None,
+               'text': None,
+               'size': None}
+
+
+    pf_rf.xy_plot(x_col=y,
+                  y_col=rf.predict(X),
+                  size=3,
+                  marker_outline_width=0.5,
+                  text=df_mp['pretty_formula'],
+                  add_xy_plot=[xy_line])
+
+.. image:: _static/example_bulkmod_rf.png
+   :scale: 80
+
+**Step 6b: Plot the importance of the features we used**
+
+.. code-block:: python
+
+    importances = rf.feature_importances_
+    indices = np.argsort(importances)[::-1]
+
+    PlotlyFig(y_title='Importance (%)',
+              plot_title='Feature by importances',
+              plot_mode='offline',
+              margin_left=150,
+              textsize=20,
+              ticksize=15)\
+              .bar_chart(x=X_cols, y=importances[indices])
+
+.. image:: _static/example_bulkmod_feats.png
+   :scale: 90

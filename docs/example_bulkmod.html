@@ -47,7 +47,7 @@
 <h1>Predicting bulk moduli with matminer<a class="headerlink" href="#predicting-bulk-moduli-with-matminer" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="fit-data-mining-models-to-6000-calculated-bulk-moduli-from-materials-project">
 <h2>Fit data mining models to ~6000 calculated bulk moduli from Materials Project<a class="headerlink" href="#fit-data-mining-models-to-6000-calculated-bulk-moduli-from-materials-project" title="Permalink to this headline">¶</a></h2>
-<p>This notebook is an example of using the MP data retrieval tool ‘retrieve_MP.py’ to retrieve computed bulk moduli from
+<p>This notebook is an example of using the MP data retrieval tool <code class="code docutils literal"><span class="pre">retrieve_MP.py</span></code> to retrieve computed bulk moduli from
 <a class="reference external" href="https://materialsproject.org/">the materials project databases</a> in the form of a pandas dataframe, using matminer’s tools to populate
 the dataframe with descriptors/features from pymatgen, and then fitting regression models from the scikit-learn library to
 the dataset.</p>
@@ -173,13 +173,13 @@ the dataset.</p>
 </pre></div>
 </div>
 <p><strong>Step 3c: Cross validate the results</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">KFold</span><span class="p">,</span> <span class="n">cross_val_score</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span><span class="p">,</span> <span class="n">cross_val_score</span>
 
 <span class="c1"># Use 10-fold cross validation (90% training, 10% test)</span>
-<span class="n">crossvalidation</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">crossvalidation</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># compute cross validation scores for random forest model</span>
-<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">linear_regression</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;mean_squared_error&#39;</span><span class="p">,</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;mean_squared_error&#39;</span><span class="p">,</span>
                          <span class="n">cv</span><span class="o">=</span><span class="n">crossvalidation</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">rmse_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
 
@@ -191,7 +191,9 @@ the dataset.</p>
 <span class="n">Folds</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mean</span> <span class="n">RMSE</span><span class="p">:</span> <span class="mf">33.200</span>
 </pre></div>
 </div>
-<p><strong>Step 4: Plot the results using FigRecipes</strong></p>
+</div>
+<div class="section" id="step-4-plot-the-results-with-figrecipes">
+<h3>Step 4: Plot the results with FigRecipes<a class="headerlink" href="#step-4-plot-the-results-with-figrecipes" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.figrecipes.plotly.make_plots</span> <span class="kn">import</span> <span class="n">PlotlyFig</span>
 
 <span class="n">pf</span> <span class="o">=</span> <span class="n">PlotlyFig</span><span class="p">(</span><span class="n">x_title</span><span class="o">=</span><span class="s1">&#39;DFT (MP) bulk modulus (GPa)&#39;</span><span class="p">,</span>
@@ -202,6 +204,7 @@ the dataset.</p>
                <span class="n">textsize</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span>
                <span class="n">ticksize</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 
+<span class="c1"># a line to represent a perfect model with 1:1 prediction</span>
 <span class="n">xy_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x_col&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span>
              <span class="s1">&#39;y_col&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span>
              <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span>
@@ -218,7 +221,86 @@ the dataset.</p>
            <span class="n">add_xy_plot</span><span class="o">=</span><span class="p">[</span><span class="n">xy_params</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/example_bulkmod.png"><img alt="_images/example_bulkmod.png" src="_images/example_bulkmod.png" style="width: 765.0px; height: 603.5px;" /></a>
+<a class="reference internal image-reference" href="_images/example_bulkmod.png"><img alt="_images/example_bulkmod.png" src="_images/example_bulkmod.png" style="width: 630.0px; height: 497.0px;" /></a>
+<p>Great! We just fit a linear regression model to pymatgen features using matminer and sklearn. Now let’s use a Random
+Forest model to examine the importance of our features.</p>
+</div>
+<div class="section" id="step-5-follow-similar-steps-for-a-random-forest-model">
+<h3>Step 5: Follow similar steps for a Random Forest model<a class="headerlink" href="#step-5-follow-similar-steps-for-a-random-forest-model" title="Permalink to this headline">¶</a></h3>
+<p><strong>Step 5a: Fit the Random Forest model, get R:sup:`2` and RMSE</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="k">print</span> <span class="s1">&#39;R2 = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+<span class="k">print</span> <span class="s1">&#39;RMSE = </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">rf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">R2</span> <span class="o">=</span> <span class="mf">0.988</span>
+<span class="n">RMSE</span> <span class="o">=</span> <span class="mf">7.947</span>
+</pre></div>
+</div>
+<p><strong>Step 5b: Cross-validate the results</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># compute cross validation scores for random forest model</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;mean_squared_error&#39;</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">crossvalidation</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">rmse_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
+<span class="k">print</span> <span class="s1">&#39;Cross-validation results:&#39;</span>
+<span class="k">print</span> <span class="s1">&#39;Folds: </span><span class="si">%i</span><span class="s1">, mean RMSE: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rmse_scores</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Cross</span><span class="o">-</span><span class="n">validation</span> <span class="n">results</span><span class="p">:</span>
+<span class="n">Folds</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mean</span> <span class="n">RMSE</span><span class="p">:</span> <span class="mf">20.087</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-6-plot-our-results-and-determine-what-features-are-the-most-important">
+<h3>Step 6: Plot our results and determine what features are the most important<a class="headerlink" href="#step-6-plot-our-results-and-determine-what-features-are-the-most-important" title="Permalink to this headline">¶</a></h3>
+<p><strong>Step 6a: Plot the random forest model</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.figrecipes.plotly.make_plots</span> <span class="kn">import</span> <span class="n">PlotlyFig</span>
+
+<span class="n">pf_rf</span> <span class="o">=</span> <span class="n">PlotlyFig</span><span class="p">(</span><span class="n">x_title</span><span class="o">=</span><span class="s1">&#39;DFT (MP) bulk modulus (GPa)&#39;</span><span class="p">,</span>
+                  <span class="n">y_title</span><span class="o">=</span><span class="s1">&#39;Random forest bulk modulus (GPa)&#39;</span><span class="p">,</span>
+                  <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;Random forest regression&#39;</span><span class="p">,</span>
+                  <span class="n">plot_mode</span><span class="o">=</span><span class="s1">&#39;offline&#39;</span><span class="p">,</span>
+                  <span class="n">margin_left</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+                  <span class="n">textsize</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span>
+                  <span class="n">ticksize</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="c1"># a line to represent a perfect model with 1:1 prediction</span>
+<span class="n">xy_line</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x_col&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">450</span><span class="p">],</span>
+           <span class="s1">&#39;y_col&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">450</span><span class="p">],</span>
+           <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;legend&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+           <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+           <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
+
+
+<span class="n">pf_rf</span><span class="o">.</span><span class="n">xy_plot</span><span class="p">(</span><span class="n">x_col</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+              <span class="n">y_col</span><span class="o">=</span><span class="n">rf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">),</span>
+              <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+              <span class="n">marker_outline_width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+              <span class="n">text</span><span class="o">=</span><span class="n">df_mp</span><span class="p">[</span><span class="s1">&#39;pretty_formula&#39;</span><span class="p">],</span>
+              <span class="n">add_xy_plot</span><span class="o">=</span><span class="p">[</span><span class="n">xy_line</span><span class="p">])</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/example_bulkmod_rf.png"><img alt="_images/example_bulkmod_rf.png" src="_images/example_bulkmod_rf.png" style="width: 646.4px; height: 517.6px;" /></a>
+<p><strong>Step 6b: Plot the importance of the features we used</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">importances</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">importances</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">PlotlyFig</span><span class="p">(</span><span class="n">y_title</span><span class="o">=</span><span class="s1">&#39;Importance (%)&#39;</span><span class="p">,</span>
+          <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;Feature by importances&#39;</span><span class="p">,</span>
+          <span class="n">plot_mode</span><span class="o">=</span><span class="s1">&#39;offline&#39;</span><span class="p">,</span>
+          <span class="n">margin_left</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+          <span class="n">textsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+          <span class="n">ticksize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>\
+          <span class="o">.</span><span class="n">bar_chart</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X_cols</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">importances</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/example_bulkmod_feats.png"><img alt="_images/example_bulkmod_feats.png" src="_images/example_bulkmod_feats.png" style="width: 679.5px; height: 522.0px;" /></a>
 </div>
 </div>
 </div>
@@ -237,6 +319,9 @@ the dataset.</p>
 <li><a class="reference internal" href="#step-1-use-matminer-to-obtain-data-from-mp-automatically-in-a-pandas-dataframe">Step 1: Use matminer to obtain data from MP (automatically) in a “pandas” dataframe</a></li>
 <li><a class="reference internal" href="#step-2-add-descriptors-features">Step 2: Add descriptors/features</a></li>
 <li><a class="reference internal" href="#step-3-fit-a-linear-regression-model-get-r2-and-rmse">Step 3: Fit a Linear Regression model, get R<sup>2</sup> and RMSE</a></li>
+<li><a class="reference internal" href="#step-4-plot-the-results-with-figrecipes">Step 4: Plot the results with FigRecipes</a></li>
+<li><a class="reference internal" href="#step-5-follow-similar-steps-for-a-random-forest-model">Step 5: Follow similar steps for a Random Forest model</a></li>
+<li><a class="reference internal" href="#step-6-plot-our-results-and-determine-what-features-are-the-most-important">Step 6: Plot our results and determine what features are the most important</a></li>
 </ul>
 </li>
 </ul>

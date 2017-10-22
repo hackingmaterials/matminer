@@ -102,7 +102,7 @@ retrieve descriptors and organize our data.
 
 4. :doc:`Use matminer and sklearn to train/predict bulk moduli. </example_bulkmod>`
 
-.. image:: _static/example_bulkmod.png
+.. image:: _static/example_bulkmod_rf.png
    :scale: 50
 
 

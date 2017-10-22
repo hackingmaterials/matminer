@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>matminer.featurizers package &#8212; matminer 0.1.3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -27,7 +24,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -253,9 +250,9 @@ col_id (str or list of str): column label containing objects to featurize. Can b
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd><dl class="first last docutils">
-<dt>array - each element should either be str with author name (e.g., &#8220;Anubhav Jain&#8221;) or</dt>
-<dd>dict with required key &#8220;name&#8221; and other keys like &#8220;email&#8221; or &#8220;institution&#8221; (e.g.,
-{&#8220;name&#8221;: &#8220;Anubhav Jain&#8221;, &#8220;email&#8221;: &#8220;<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>&#8221;, &#8220;institution&#8221;: &#8220;LBNL&#8221;}).</dd>
+<dt>array - each element should either be str with author name (e.g., “Anubhav Jain”) or</dt>
+<dd>dict with required key “name” and other keys like “email” or “institution” (e.g.,
+{“name”: “Anubhav Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
 </dl>
 </dd>
 </dl>
@@ -313,7 +310,7 @@ compound.</p>
 <dt>Parameters:</dt>
 <dd><dl class="first last docutils">
 <dt>mapi_key (str): Materials API key for looking up formation energy</dt>
-<dd>by composition alone (if you don&#8217;t set the formation energy
+<dd>by composition alone (if you don’t set the formation energy
 yourself).</dd>
 </dl>
 </dd>
@@ -335,7 +332,7 @@ yourself).</dd>
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em>, <em>formation_energy_per_atom=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">comp: (str) compound composition, eg: &#8220;NaCl&#8221;
+<dd><p class="first">comp: (str) compound composition, eg: “NaCl”
 formation_energy_per_atom: (float) the formation energy per atom of</p>
 <blockquote class="last">
 <div>your compound. If not set, will look up the most stable
@@ -483,8 +480,8 @@ use the from_preset() method.</p>
 <dt>Parameters:</dt>
 <dd><dl class="first last docutils">
 <dt>data_source (AbstractData or str): source from which to retrieve</dt>
-<dd>element property data (or use str for preset: &#8220;pymatgen&#8221;,
-&#8220;magpie&#8221;, or &#8220;deml&#8221;)</dd>
+<dd>element property data (or use str for preset: “pymatgen”,
+“magpie”, or “deml”)</dd>
 <dt>attributes (list of strings): List of elemental properties to use</dt>
 <dd>(these must be supported by data_source)</dd>
 <dt>stats (string): a list of weighted statistics to compute to for each</dt>
@@ -525,7 +522,7 @@ use the from_preset() method.</p>
 <dd><p>Return ElementProperty from a preset string
 Args:</p>
 <blockquote>
-<div>preset_name: (str) can be one of &#8220;magpie&#8221;, &#8220;deml&#8221;, or &#8220;matminer&#8221;</div></blockquote>
+<div>preset_name: (str) can be one of “magpie”, “deml”, or “matminer”</div></blockquote>
 <p>Returns:</p>
 </dd></dl>
 
@@ -785,7 +782,7 @@ property_name (str): Name of descriptor
 return_per_element (bool): If true, returns one value per element rather than per atom</dd>
 <dt>Returns:</dt>
 <dd>(list): list of values for each atom in comp_obj.
-Note: the returned values are sorted by the corresponding element&#8217;s atomic number.
+Note: the returned values are sorted by the corresponding element’s atomic number.
 This is done for the sake of consistency.</dd>
 </dl>
 </dd></dl>
@@ -800,7 +797,7 @@ This is done for the sake of consistency.</dd>
 <dt id="matminer.featurizers.data.PymatgenData.get_composition_oxidation_state">
 <em class="property">static </em><code class="descname">get_composition_oxidation_state</code><span class="sig-paren">(</span><em>formula</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.data.PymatgenData.get_composition_oxidation_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the composition and oxidation states from the given formula.
-Formula examples: &#8220;NaCl&#8221;, &#8220;Na+1Cl-1&#8221;,   &#8220;Fe2+3O3-2&#8221; or &#8220;Fe2 +3 O3 -2&#8221;</p>
+Formula examples: “NaCl”, “Na+1Cl-1”,   “Fe2+3O3-2” or “Fe2 +3 O3 -2”</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>formula (str):</dd>
@@ -817,21 +814,19 @@ Formula examples: &#8220;NaCl&#8221;, &#8220;Na+1Cl-1&#8221;,   &#8220;Fe2+3O3-2
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
 <dt>comp (str/Composition): Either pymatgen Composition object or string formula,</dt>
-<dd><p class="first">eg: &#8220;NaCl&#8221;, &#8220;Na+1Cl-1&#8221;, &#8220;Fe2+3O3-2&#8221; or &#8220;Fe2 +3 O3 -2&#8221;
+<dd><p class="first">eg: “NaCl”, “Na+1Cl-1”, “Fe2+3O3-2” or “Fe2 +3 O3 -2”
 Notes:</p>
 <blockquote class="last">
-<div><ul>
+<div><ul class="simple">
 <li><dl class="first docutils">
-<dt>For &#8216;ionic_radii&#8217; property, the Composition object must be made of oxidation</dt>
-<dd><p class="first last">state decorated Specie objects not the plain Element objects.
-eg.  fe2o3 = Composition({Specie(&#8220;Fe&#8221;, 3): 2, Specie(&#8220;O&#8221;, -2): 3})</p>
-</dd>
+<dt>For ‘ionic_radii’ property, the Composition object must be made of oxidation</dt>
+<dd>state decorated Specie objects not the plain Element objects.
+eg.  fe2o3 = Composition({Specie(“Fe”, 3): 2, Specie(“O”, -2): 3})</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>For string formula, the oxidation state sign(+ or -) must be specified explicitly.</dt>
-<dd><p class="first last">eg.  &#8220;Fe2+3O3-2&#8221;</p>
-</dd>
+<dd>eg.  “Fe2+3O3-2”</dd>
 </dl>
 </li>
 </ul>
@@ -893,35 +888,35 @@ rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">old{r}_i - old{r}_j</tt>)</p>
 latex exited with error
 [stdout]
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=latex)
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=latex)
  restricted \write18 enabled.
 entering extended mode
 (./math.tex
-LaTeX2e &lt;2015/01/01&gt;
-Babel &lt;3.9l&gt; and hyphenation patterns for 79 languages loaded.
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/article.cls
+LaTeX2e &lt;2017-04-15&gt;
+Babel &lt;3.10&gt; and hyphenation patterns for 84 language(s) loaded.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/size12.clo))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/inputenc.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/utf8x.def))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucs.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/data/uni-global.def))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsmath.sty
-For additional information on amsmath, use the `?&#8217; option.
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amstext.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsgen.sty))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsbsy.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsopn.sty))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amscls/amsthm.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amssymb.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucsencs.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/size12.clo))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/utf8x.def))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/ucs.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/data/uni-global.def))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/ucsencs.def)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsb.fd)
 
 ! Package inputenc Error: Keyboard character used is undefined
-(inputenc)                in inputencoding `utf8x&#8217;.
+(inputenc)                in inputencoding `utf8x'.
 
 See the inputenc package documentation for explanation.
 Type  H &lt;return&gt;  for immediate help.
@@ -931,7 +926,7 @@ l.12 $^^H
          old{r}_i - ^^Hold{r}_j$
 
 ! Package inputenc Error: Keyboard character used is undefined
-(inputenc)                in inputencoding `utf8x&#8217;.
+(inputenc)                in inputencoding `utf8x'.
 
 See the inputenc package documentation for explanation.
 Type  H &lt;return&gt;  for immediate help.
@@ -947,7 +942,7 @@ Transcript written on math.log.
 .</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
-<dd>directions (iterable): List of directions for the fingerprints. Can be <cite>none</cite>, &#8216;x&#8217;, &#8216;y&#8217;, or &#8216;z&#8217;
+<dd>directions (iterable): List of directions for the fingerprints. Can be <cite>none</cite>, ‘x’, ‘y’, or ‘z’
 etas (iterable of floats): List of which window widths to compute
 cutoff (float): Cutoff distance</dd>
 </dl>
@@ -1017,7 +1012,7 @@ weights (list of floats): Atomic fractions</div></blockquote>
 stat (str) - Name of property to be compute. If there are arguments to the statistics function, these</p>
 <blockquote>
 <div>should be added after the name and separated by two underscores. For example, the 2nd Holder mean would
-be &#8220;holder_mean__2&#8221;</div></blockquote>
+be “holder_mean__2”</div></blockquote>
 <p class="last">weights (list of floats): (Optional) weights for each element in data_lst</p>
 </dd>
 <dt>Reteurn:</dt>
@@ -1282,7 +1277,7 @@ Args:</p>
 <dd>calculated (default: longest diagaonal in
 primitive cell).</dd>
 </dl>
-<p>dr: (float) width of bins (&#8220;x&#8221;-axis) of ReDF (default: 0.05 A).</p>
+<p>dr: (float) width of bins (“x”-axis) of ReDF (default: 0.05 A).</p>
 </div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.structure.ElectronicRadialDistributionFunction.__init__">
@@ -1308,9 +1303,9 @@ primitive cell).</dd>
 <dd>s: input Structure object.</dd>
 <dt>Returns: (dict) a copy of the electronic radial distribution</dt>
 <dd>functions (ReDF) as a dictionary. The distance list
-(&#8220;x&#8221;-axis values of ReDF) can be accessed via key
-&#8216;distances&#8217;; the ReDF itself is accessible via key
-&#8216;redf&#8217;.</dd>
+(“x”-axis values of ReDF) can be accessed via key
+‘distances’; the ReDF itself is accessible via key
+‘redf’.</dd>
 </dl>
 </dd></dl>
 
@@ -1402,7 +1397,7 @@ of the element. Note lanthanides are treated as period 6,
 actinides as period 7. Default False as in the original paper.</dd>
 </dl>
 </dd>
-<dt>...attribute:: size</dt>
+<dt>…attribute:: size</dt>
 <dd>Either 32 or 39, the size of the vectors used to describe elements.</dd>
 </dl>
 <dl class="method">
@@ -1476,7 +1471,7 @@ if symm:</p>
 <dl class="method">
 <dt id="matminer.featurizers.structure.OrbitalFieldMatrix.get_ohv">
 <code class="descname">get_ohv</code><span class="sig-paren">(</span><em>sp</em>, <em>period_tag</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.get_ohv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the &#8220;one-hot-vector&#8221; for pymatgen Element sp. This 32 or 39-length
+<dd><p>Get the “one-hot-vector” for pymatgen Element sp. This 32 or 39-length
 vector represents the valence shell of the given element.
 Args:</p>
 <blockquote>
@@ -1736,7 +1731,7 @@ stats ([str]): list of weighted statistics to compute for each feature.</p>
 <blockquote>
 <div>If stats is None, for each order parameter, a list is returned that
 contains the calculated parameter for each site in the structure.
-<a href="#id7"><span class="problematic" id="id8">*</span></a>Note for nth mode, stat must be &#8216;n*_mode&#8217;; e.g. stat=&#8216;2nd_mode&#8217;</div></blockquote>
+<a href="#id7"><span class="problematic" id="id8">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
 <dl class="docutils">
 <dt>pneighs (dict): specification and parameters of neighbor-finding</dt>
 <dd>approach (see get_neighbors_of_site_with_index).</dd>
@@ -1762,13 +1757,13 @@ contains the calculated parameter for each site in the structure.
 <dl class="method">
 <dt id="matminer.featurizers.structure.SitesOrderParameters.featurize">
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SitesOrderParameters.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate all sites&#8217; local structure order parameters (LSOPs).</p>
+<dd><p>Calculate all sites’ local structure order parameters (LSOPs).</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">s: Pymatgen Structure object.</p>
 <dl class="last docutils">
 <dt>Returns:</dt>
-<dd>opvals: (2D array of floats) LSOP values of all sites&#8217;
+<dd>opvals: (2D array of floats) LSOP values of all sites’
 (1st dimension) order parameters (2nd dimension). 46 order
 parameters are computed per site: q_cn (coordination
 number), q_lin, 35 x q_bent (starting with a target angle
@@ -1785,7 +1780,7 @@ q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.</dd>
 <dd><p>Returns OrderParameters from a preset string.
 Args:</p>
 <blockquote>
-<div>preset_name (str): options are &#8216;matminer&#8217;,</div></blockquote>
+<div>preset_name (str): options are ‘matminer’,</div></blockquote>
 <p>Returns:</p>
 </dd></dl>
 
@@ -1804,24 +1799,24 @@ Structure object struct, given the approach defined by parameters
 p.  All supported neighbor-finding approaches and listed and
 explained in the following.  All approaches start by creating a
 tentative list of neighbors using a large cutoff radius defined in
-parameter dictionary p via key &#8220;cutoff&#8221;.
-&#8220;min_dist&#8221;: find nearest neighbor and its distance d_nn; consider all</p>
+parameter dictionary p via key “cutoff”.
+“min_dist”: find nearest neighbor and its distance d_nn; consider all</p>
 <blockquote>
 <div>neighbors which are within a distance of d_nn * (1 + delta),
 where delta is an additional parameter provided in the
-dictionary p via key &#8220;delta&#8221;.</div></blockquote>
+dictionary p via key “delta”.</div></blockquote>
 <dl class="docutils">
-<dt>&#8220;scaled_VIRE&#8221;: compute the radii, r_i, of all sites on the basis of</dt>
+<dt>“scaled_VIRE”: compute the radii, r_i, of all sites on the basis of</dt>
 <dd>the valence-ionic radius evaluator (VIRE); consider all
 neighbors for which the distance to the central site is less
 than the sum of the radii multiplied by an a priori chosen
 parameter, delta,
 (i.e., dist &lt; delta * (r_central + r_neighbor)).</dd>
-<dt>&#8220;min_relative_VIRE&#8221;: same approach as &#8220;min_dist&#8221;, except that we</dt>
+<dt>“min_relative_VIRE”: same approach as “min_dist”, except that we</dt>
 <dd>use relative distances (i.e., distances divided by the sum of the
 atom radii from VIRE).</dd>
-<dt>&#8220;min_relative_OKeeffe&#8221;: same approach as &#8220;min_relative_VIRE&#8221;, except</dt>
-<dd>that we use the bond valence parameters from O&#8217;Keeffe&#8217;s bond valence
+<dt>“min_relative_OKeeffe”: same approach as “min_relative_VIRE”, except</dt>
+<dd>that we use the bond valence parameters from O’Keeffe’s bond valence
 method (J. Am. Chem. Soc. 1991, 3226-3229) to calculate
 relative distances.</dd>
 <dt>Args:</dt>
@@ -1830,14 +1825,14 @@ n (int): index of site in Structure object for which</p>
 <blockquote>
 <div>neighbors are to be determined.</div></blockquote>
 <dl class="last docutils">
-<dt>p (dict): specification (via &#8220;approach&#8221; key; default is &#8220;min_dist&#8221;)</dt>
+<dt>p (dict): specification (via “approach” key; default is “min_dist”)</dt>
 <dd>and parameters of neighbor-finding approach.
-Default cutoff radius is 6 Angstrom (key: &#8220;cutoff&#8221;).
+Default cutoff radius is 6 Angstrom (key: “cutoff”).
 Other default parameters are as follows.
-min_dist: &#8220;delta&#8221;: 0.15;
-min_relative_OKeeffe: &#8220;delta&#8221;: 0.05;
-min_relative_VIRE: &#8220;delta&#8221;: 0.05;
-scaled_VIRE: &#8220;delta&#8221;: 2.</dd>
+min_dist: “delta”: 0.15;
+min_relative_OKeeffe: “delta”: 0.05;
+min_relative_VIRE: “delta”: 0.05;
+scaled_VIRE: “delta”: 2.</dd>
 </dl>
 </dd>
 <dt>Returns: ([site]) list of sites that are considered to be nearest</dt>
@@ -1858,9 +1853,9 @@ n (int): index of site in Structure object for which motif type</p>
 <div>is to be determined.</div></blockquote>
 <dl class="docutils">
 <dt>approach (str): type of neighbor-finding approach, where</dt>
-<dd>&#8220;min_dist&#8221; will use the MinimumDistanceNN class,
-&#8220;voronoi&#8221; the VoronoiNN class, &#8220;min_OKeeffe&#8221; the
-MinimumOKeeffe class, and &#8220;min_VIRE&#8221; the MinimumVIRENN class.</dd>
+<dd>“min_dist” will use the MinimumDistanceNN class,
+“voronoi” the VoronoiNN class, “min_OKeeffe” the
+MinimumOKeeffe class, and “min_VIRE” the MinimumVIRENN class.</dd>
 </dl>
 <p class="last">delta (float): tolerance involved in neighbor finding.
 cutoff (float): (large) radius to find tentative neighbors.</p>
@@ -1921,14 +1916,14 @@ get_order_parameters function).</dd>
 <dt>delta_op (float): bin size of histogram that is computed</dt>
 <dd>in order to identify peak locations.</dd>
 <dt>ignore_op_types ([str]): list of OP types to be ignored in</dt>
-<dd>output dictionary (e.g., [&#8220;cn&#8221;, &#8220;bent&#8221;]). Default (None)
+<dd>output dictionary (e.g., [“cn”, “bent”]). Default (None)
 will consider all OPs.</dd>
 </dl>
 </dd>
 <dt>Returns: ({}) dictionary, the keys of which represent</dt>
-<dd>the order parameter type (e.g., &#8220;bent5&#8221;, &#8220;tet&#8221;, &#8220;sq_pyr&#8221;)
+<dd>the order parameter type (e.g., “bent5”, “tet”, “sq_pyr”)
 and the values of which are dictionaries carring the
-statistics (&#8220;min&#8221;, &#8220;max&#8221;, &#8220;mean&#8221;, &#8220;std&#8221;, &#8220;peak1&#8221;, &#8220;peak2&#8221;).</dd>
+statistics (“min”, “max”, “mean”, “std”, “peak1”, “peak2”).</dd>
 </dl>
 </dd></dl>
 
@@ -1996,7 +1991,7 @@ statistics (&#8220;min&#8221;, &#8220;max&#8221;, &#8220;mean&#8221;, &#8220;std
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
