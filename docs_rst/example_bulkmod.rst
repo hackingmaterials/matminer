@@ -234,7 +234,7 @@ Step 5: Follow similar steps for a Random Forest model
 ______________________________________________________
 
 
-**Step 5a: Fit the Random Forest model, get R:sup:`2` and RMSE**
+**Step 5a: Fit the Random Forest model, get R2 and RMSE**
 
 .. code-block:: python
 
