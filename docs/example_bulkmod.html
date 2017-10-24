@@ -47,6 +47,7 @@
 <h1>Predicting bulk moduli with matminer<a class="headerlink" href="#predicting-bulk-moduli-with-matminer" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="fit-data-mining-models-to-6000-calculated-bulk-moduli-from-materials-project">
 <h2>Fit data mining models to ~6000 calculated bulk moduli from Materials Project<a class="headerlink" href="#fit-data-mining-models-to-6000-calculated-bulk-moduli-from-materials-project" title="Permalink to this headline">¶</a></h2>
+<p><strong>Time to complete: 30 minutes</strong></p>
 <p>This notebook is an example of using the MP data retrieval tool <code class="code docutils literal"><span class="pre">retrieve_MP.py</span></code> to retrieve computed bulk moduli from
 <a class="reference external" href="https://materialsproject.org/">the materials project databases</a> in the form of a pandas dataframe, using matminer’s tools to populate
 the dataframe with descriptors/features from pymatgen, and then fitting regression models from the scikit-learn library to
@@ -227,7 +228,7 @@ Forest model to examine the importance of our features.</p>
 </div>
 <div class="section" id="step-5-follow-similar-steps-for-a-random-forest-model">
 <h3>Step 5: Follow similar steps for a Random Forest model<a class="headerlink" href="#step-5-follow-similar-steps-for-a-random-forest-model" title="Permalink to this headline">¶</a></h3>
-<p><strong>Step 5a: Fit the Random Forest model, get R:sup:`2` and RMSE</strong></p>
+<p><strong>Step 5a: Fit the Random Forest model, get R2 and RMSE</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
 
 <span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -363,7 +364,7 @@ Forest model to examine the importance of our features.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
     </div>
   </body>
 </html>

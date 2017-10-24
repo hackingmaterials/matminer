@@ -8,6 +8,7 @@ Predicting bulk moduli with matminer
 Fit data mining models to ~6000 calculated bulk moduli from Materials Project
 -----------------------------------------------------------------------------
 
+**Time to complete: 30 minutes**
 
 This notebook is an example of using the MP data retrieval tool :code:`retrieve_MP.py` to retrieve computed bulk moduli from
 `the materials project databases <https://materialsproject.org/>`_ in the form of a pandas dataframe, using matminer's tools to populate
@@ -233,7 +234,7 @@ Step 5: Follow similar steps for a Random Forest model
 ______________________________________________________
 
 
-**Step 5a: Fit the Random Forest model, get R\ :sup:`2` and RMSE**
+**Step 5a: Fit the Random Forest model, get R2 and RMSE**
 
 .. code-block:: python
 
