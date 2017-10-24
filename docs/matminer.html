@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>matminer package &#8212; matminer 0.1.4 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -27,7 +24,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -168,13 +165,13 @@
 <code class="descclassname">matminer.utils.</code><code class="descname">flattenDict</code><span class="sig-paren">(</span><em>d</em>, <em>result=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.flattenDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to flatten a JSON dictionary. Taken from: <a class="reference external" href="https://gist.github.com/higarmi/6708779">https://gist.github.com/higarmi/6708779</a></p>
 <p>example: The following JSON document:
-{&#8220;maps&#8221;:[{&#8220;id1&#8221;:&#8221;blabla&#8221;,&#8221;iscategorical1&#8221;:&#8221;0&#8221;, &#8220;perro&#8221;:[{&#8220;dog1&#8221;: &#8220;1&#8221;, &#8220;dog2&#8221;: &#8220;2&#8221;}]},{&#8220;id2&#8221;:&#8221;blabla&#8221;,&#8221;iscategorical2&#8221;:&#8221;0&#8221;}],
-&#8220;masks&#8221;:{&#8220;id&#8221;:&#8221;valore&#8221;},
-&#8220;om_points&#8221;:&#8221;value&#8221;,
-&#8220;parameters&#8221;:{&#8220;id&#8221;:&#8221;valore&#8221;}}</p>
+{“maps”:[{“id1”:”blabla”,”iscategorical1”:”0”, “perro”:[{“dog1”: “1”, “dog2”: “2”}]},{“id2”:”blabla”,”iscategorical2”:”0”}],
+“masks”:{“id”:”valore”},
+“om_points”:”value”,
+“parameters”:{“id”:”valore”}}</p>
 <p>will have the following output:
-{&#8216;masks.id&#8217;: &#8216;valore&#8217;, &#8216;maps.iscategorical2&#8217;: &#8216;0&#8217;, &#8216;om_points&#8217;: &#8216;value&#8217;, &#8216;maps.iscategorical1&#8217;: &#8216;0&#8217;,
-&#8216;maps.id1&#8217;: &#8216;blabla&#8217;, &#8216;parameters.id&#8217;: &#8216;valore&#8217;, &#8216;maps.perro.dog2&#8217;: &#8216;2&#8217;, &#8216;maps.perro.dog1&#8217;: &#8216;1&#8217;, &#8216;maps.id2&#8217;: &#8216;blabla&#8217;}</p>
+{‘masks.id’: ‘valore’, ‘maps.iscategorical2’: ‘0’, ‘om_points’: ‘value’, ‘maps.iscategorical1’: ‘0’,
+‘maps.id1’: ‘blabla’, ‘parameters.id’: ‘valore’, ‘maps.perro.dog2’: ‘2’, ‘maps.perro.dog1’: ‘1’, ‘maps.id2’: ‘blabla’}</p>
 </dd></dl>
 
 </div>
@@ -237,7 +234,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
