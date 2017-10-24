@@ -83,12 +83,14 @@ Other descriptors provided by matminer can be found in the `Github repo. <https:
 Plotting tools
 --------------
 
-Plot data from either arrays or dataframes using either `Plotly <https://plot.ly/>`_ or `matplotlib <http://matplotlib.org/>`_
-______________________________________________________________________________________________________________________________
+Plot data from either arrays or dataframes using either `Plotly <https://plot.ly/>`_ or `matplotlib <http://matplotlib.org/>`_ with figrecipes
+______________________________________________________________________________________________________________________________________________
 
-In the figrecipes module of the matminer library, we have developed utilities that wrap around two popular plotting libraries, Plotly and matplotlib to produce various types of plots that plot data from either arrays or dataframes. The Plotly part of this module contains classes/functions that wrap around its Python API library and follows its JSON schema. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly and matplotlib, while at the same time sheilding the complexities involved. 
+In the figrecipes module of the matminer library, we have developed utilities that make it easier and faster to plot common figures with Plotly and matplotlib. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly and matplotlib, while at the same time sheilding the complexities involved.
 
-A few examples demonstrating usage can be found in the notebook hosted on `Jupyter <http://mybinder.org/repo/hackingmaterials/matminer/notebooks/matminer/figrecipes/plotly/examples/plotly_examples.ipynb>`_ and `Github <https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb>`_
+The Plotly module contains the :code:`PlotlyFig` class that wraps around Plotly's Python API and follows its JSON schema. The matplotlib module contains plotting wrapper classes for each kind of popular plot, including XY-scatter plots and heat maps.
+
+A few examples demonstrating usage can be found in the notebook hosted on `Github <https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb>`_. *Note: these examples may be out of date*.
 
 
 --------

@@ -905,32 +905,32 @@ rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">old{r}_i - old{r}_j</tt>)</p>
 latex exited with error
 [stdout]
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=latex)
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=latex)
  restricted \write18 enabled.
 entering extended mode
 (./math.tex
-LaTeX2e &lt;2015/01/01&gt;
-Babel &lt;3.9l&gt; and hyphenation patterns for 79 languages loaded.
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/article.cls
+LaTeX2e &lt;2017-04-15&gt;
+Babel &lt;3.10&gt; and hyphenation patterns for 84 language(s) loaded.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/size12.clo))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/inputenc.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/utf8x.def))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucs.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/data/uni-global.def))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsmath.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/size12.clo))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/utf8x.def))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/ucs.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/data/uni-global.def))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsmath.sty
 For additional information on amsmath, use the `?' option.
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amstext.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsgen.sty))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsbsy.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsopn.sty))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amscls/amsthm.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amssymb.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucsencs.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/ucsencs.def)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsb.fd)
 
 ! Package inputenc Error: Keyboard character used is undefined
 (inputenc)                in inputencoding `utf8x'.
@@ -1420,7 +1420,7 @@ primitive cell).</dd>
 
 <dl class="attribute">
 <dt id="matminer.featurizers.structure.GlobalSymmetryFeatures.crystal_idx">
-<code class="descname">crystal_idx</code><em class="property"> = {'triclinic': 7, 'monoclinic': 6, 'orthorhombic': 5, 'tetragonal': 4, 'trigonal': 3, 'hexagonal': 2, 'cubic': 1}</em><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.crystal_idx" title="Permalink to this definition">¶</a></dt>
+<code class="descname">crystal_idx</code><em class="property"> = {u'trigonal': 3, u'cubic': 1, u'orthorhombic': 5, u'monoclinic': 6, u'tetragonal': 4, u'triclinic': 7, u'hexagonal': 2}</em><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.crystal_idx" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1498,7 +1498,7 @@ are to be determined.</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.structure.OPStructureFingerprint">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OPStructureFingerprint</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=('mean'</em>, <em>'std_dev'</em>, <em>'minimum'</em>, <em>'maximum')</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OPStructureFingerprint</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=(u'mean'</em>, <em>u'std_dev'</em>, <em>u'minimum'</em>, <em>u'maximum')</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Calculates all order parameters (OPs) for all sites in a crystal
 structure.
@@ -1515,7 +1515,7 @@ contains the calculated parameter for each site in the structure.
 </div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.structure.OPStructureFingerprint.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=('mean'</em>, <em>'std_dev'</em>, <em>'minimum'</em>, <em>'maximum')</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=(u'mean'</em>, <em>u'std_dev'</em>, <em>u'minimum'</em>, <em>u'maximum')</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2077,7 +2077,7 @@ statistics (“min”, “max”, “mean”, “std”, “peak1”, “peak2�
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>
