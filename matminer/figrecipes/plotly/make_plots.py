@@ -106,7 +106,8 @@ class PlotlyFig:
                     'field "filename" must be filled in static plotting mode and must have an extension ending in ('
                     '".png", ".svg", ".jpeg", ".pdf")')
 
-    def create_plot(self, fig):
+
+    def _create_plot(self, fig):
         """
         Warning: not to be explicitly called by the user
         Creates the specific plot that has been set up by one of the functions below, and shows and/or saves the plot
@@ -314,7 +315,7 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        self.create_plot(fig)
+        self._create_plot(fig)
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None,
                      annotations_text=None, annotations_text_size=20, annotations_color='white'):
@@ -384,7 +385,7 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        self.create_plot(fig)
+        self._create_plot(fig)
 
     def violin_plot(self, data, data_col=None, group_col=None, title=None, height=800, width=1000, colors=None,
                     use_colorscale=False, groups=None):
@@ -466,7 +467,7 @@ class PlotlyFig:
                     )
                 )
 
-        self.create_plot(fig)
+        self._create_plot(fig)
 
     def scatter_matrix(self, dataframe, select_columns=None, index_colname=None, diag_kind='scatter', marker_size=10,
                        height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
@@ -497,7 +498,7 @@ class PlotlyFig:
         for trace in fig['data']:
             trace['marker']['line'] = dict(width=marker_outline_width, color=marker_outline_color)
 
-        self.create_plot(fig)
+        self._create_plot(fig)
 
     def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1, color='rgba(70, 130, 180, 1)', bargap=0):
         """
@@ -531,18 +532,17 @@ class PlotlyFig:
         if not x_end:
             x_end = max(x)
 
-        trace0 = go.Histogram(x=x, histnorm=histnorm,
+        histogram = go.Histogram(x=x, histnorm=histnorm,
                               xbins=dict(start=x_start, end=x_end, size=bin_size),
                               marker=dict(color=color))
 
-        data = [trace0]
+        data = [histogram]
 
         self.layout['hovermode'] = 'x'
         self.layout['bargap'] = bargap
-
         fig = dict(data=data, layout=self.layout)
 
-        self.create_plot(fig)
+        self._create_plot(fig)
 
     def bar_chart(self, x, y):
         """
@@ -553,13 +553,9 @@ class PlotlyFig:
             y: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the y coordinates
 
         Returns: a Plotly bar chart
-
         """
 
-        trace0 = go.Bar(x=x, y=y)
-
-        data = [trace0]
-
+        barplot = go.Bar(x=x, y=y)
+        data = [barplot]
         fig = dict(data=data, layout=self.layout)
-
-        self.create_plot(fig)
+        self._create_plot(fig)
