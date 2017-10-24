@@ -3,10 +3,10 @@ import pandas as pd
 from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.site import AGNIFingerprints
+from matminer.featurizers.site import AGNIFingerprints, \
+    OPSiteFingerprint
 
-
-class AGNIFingerprintTests(PymatgenTest):
+class FingerprintTests(PymatgenTest):
     def setUp(self):
         self.sc = Structure(
             Lattice([[3.52, 0, 0], [0, 3.52, 0], [0, 0, 3.52]]),
@@ -71,3 +71,29 @@ class AGNIFingerprintTests(PymatgenTest):
 
         agni = AGNIFingerprints()
         agni.featurize_dataframe(data, ['strc', 'site'])
+
+    def test_op_site_fingerprint(self):
+        opsf = OPSiteFingerprint()
+        l = opsf.feature_labels()
+        t = ["sgl_bd", "bent180", "bent45", "bent90", "bent135", "tri_plan", \
+            "tet", "T", "sq_plan", "sq", "tet", "see_saw", "tri_pyr", \
+            "pent_plan", "sq_pyr", "tri_bipyr", "oct", "pent_pyr", \
+            "hex_pyr", "pent_bipyr", "bcc", "hex_bipyr", "q2", "q4", "q6", \
+            "q2", "q4", "q6", "q2", "q4", "q6", "cuboct", "q2", "q4", "q6"]
+        for i in range(len(l)):
+            self.assertEqual(l[i], t[i])
+        ops = opsf.featurize(self.sc, 0)
+        self.assertEqual(len(ops), 35)
+        self.assertAlmostEquals(ops[opsf.feature_labels().index('oct')], 1.0)
+        ops = opsf.featurize(self.cscl, 0)
+        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
+            'bcc')] + 0.5), 853)
+        opsf = OPSiteFingerprint(dist_exp=0)
+        ops = opsf.featurize(self.cscl, 0)
+        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
+            'bcc')] + 0.5), 932)
+
+
+if __name__ == '__main__':
+    import unittest
+    unittest.main()

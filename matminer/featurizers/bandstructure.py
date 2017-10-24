@@ -5,13 +5,12 @@ from numpy.linalg import norm
 
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen import Spin
-from pymatgen.electronic_structure.bandstructure import BandStructure
+from pymatgen.electronic_structure.bandstructure import BandStructure, \
+    BandStructureSymmLine
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
-
-# TODO: add a unit test
 
 class BranchPointEnergy(BaseFeaturizer):
     def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
@@ -32,7 +31,7 @@ class BranchPointEnergy(BaseFeaturizer):
     def featurize(self, bs, target_gap=None):
         """
         Args:
-            bs: (BandStructure)
+            bs: (BandStructure) Uniform (not symm line) band structure
 
         Returns:
             (int) branch point energy on same energy scale as BS eigenvalues
@@ -40,10 +39,16 @@ class BranchPointEnergy(BaseFeaturizer):
         if bs.is_metal():
             raise ValueError("Cannot define a branch point energy for metals!")
 
+        if isinstance(bs, BandStructureSymmLine):
+            raise ValueError("BranchPointEnergy works only with uniform (not "
+                             "line mode) band structures!")
+
         total_sum_energies = 0
         num_points = 0
+
         kpt_wts = SpacegroupAnalyzer(bs.structure).get_kpoint_weights(
             [k.frac_coords for k in bs.kpoints])
+
         for spin in bs.bands:
             for kpt_idx in range(len(bs.kpoints)):
                 vb_energies = []
@@ -79,7 +84,7 @@ class BranchPointEnergy(BaseFeaturizer):
 
     def feature_labels(self):
 
-        return ["branch point energy", "vbm_absolute",
+        return ["branch_point_energy", "vbm_absolute",
                 "cbm_absolute"] if self.calculate_band_edges else [
             "branch point energy"]
 
@@ -108,23 +113,22 @@ class BandFeaturizer(BaseFeaturizer):
         """
         Args:
             bs (pymatgen BandStructure or BandStructureSymmLine or their dict):
-                The band structure to featurize()
-        Returns ([float]):
-            a list of band structure features. If not bs.structure, the
+                The band structure to featurize. To obtain all features, bs
+                should include the structure attribute.
+        Returns:
+             ([float]): a list of band structure features. If not bs.structure,
                 features that require the structure will be returned as NaN.
             List of currently supported features:
                 band_gap (eV): the difference between the CBM and VBM energy
                 is_gap_direct (0.0|1.0): whether the band gap is direct or not
                 direct_gap (eV): the minimum direct distance of the last
                     valence band and the first conduction band
-                {n,p}_ex{#}_en (eV): for example p_ex2_en is the absolute value
-                    of the energy of the second valence (p) band extremum
-                    w.r.t. VBM
-                {n,p}_ex{#}_norm (float): e.g. n_ex1_norm is norm of the
-                    fractional coordinates of k-points of the 1st conduction
-                    (n) band extremum, i.e., the CBM
-
+                p_ex1_norm (Angstrom^-1): k-space distance between Gamma point
+                    and k-point of VBM
+                n_ex1_norm (Angstrom^-1): k-space distance between Gamma point
+                    and k-point of CBM
         """
+
         if isinstance(bs, dict):
             bs = BandStructure.from_dict(bs)
         if bs.is_metal():
@@ -165,7 +169,7 @@ class BandFeaturizer(BaseFeaturizer):
             is_cbm (bool): whether the extremum is the CBM or not
         """
 
-        idx = int(is_cbm) - 1 # 0 for CBM and -1 for VBM
+        idx = int(is_cbm) - 1  # 0 for CBM and -1 for VBM
         try:
             bidx = extremum["band_index"][Spin.up][idx]
             bspin = Spin.up

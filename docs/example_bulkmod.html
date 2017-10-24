@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Predicting bulk moduli with matminer &#8212; matminer 0.1.3 documentation</title>
+    <title>Predicting bulk moduli with matminer &#8212; matminer 0.1.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -222,7 +222,7 @@ the dataset.</p>
            <span class="n">add_xy_plot</span><span class="o">=</span><span class="p">[</span><span class="n">xy_params</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/example_bulkmod.png"><img alt="_images/example_bulkmod.png" src="_images/example_bulkmod.png" style="width: 630.0px; height: 497.0px;" /></a>
+<a class="reference internal image-reference" href="_images/example_bulkmod.png"><img alt="_images/example_bulkmod.png" src="_images/example_bulkmod.png" style="width: 630.0px; height: 496.99999999999994px;" /></a>
 <p>Great! We just fit a linear regression model to pymatgen features using matminer and sklearn. Now let’s use a Random
 Forest model to examine the importance of our features.</p>
 </div>
@@ -287,7 +287,7 @@ Forest model to examine the importance of our features.</p>
               <span class="n">add_xy_plot</span><span class="o">=</span><span class="p">[</span><span class="n">xy_line</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/example_bulkmod_rf.png"><img alt="_images/example_bulkmod_rf.png" src="_images/example_bulkmod_rf.png" style="width: 646.4px; height: 517.6px;" /></a>
+<a class="reference internal image-reference" href="_images/example_bulkmod_rf.png"><img alt="_images/example_bulkmod_rf.png" src="_images/example_bulkmod_rf.png" style="width: 646.4000000000001px; height: 517.6px;" /></a>
 <p><strong>Step 6b: Plot the importance of the features we used</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">importances</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span>
 <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">importances</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -359,7 +359,7 @@ Forest model to examine the importance of our features.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

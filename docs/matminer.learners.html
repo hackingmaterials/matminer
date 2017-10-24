@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.learners package &#8212; matminer 0.1.3 documentation</title>
+    <title>matminer.learners package &#8212; matminer 0.1.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -66,7 +66,8 @@
 <dl class="class">
 <dt id="matminer.learners.volume_predictor.ConditionalVolumePredictor">
 <em class="property">class </em><code class="descclassname">matminer.learners.volume_predictor.</code><code class="descname">ConditionalVolumePredictor</code><a class="headerlink" href="#matminer.learners.volume_predictor.ConditionalVolumePredictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unlike the above, the idea here is to predict the volume of a structure
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Unlike the above, the idea here is to predict the volume of a structure
 based on an existing known structure. May integrate with above at a later
 stage to improve overall predictions.</p>
 <dl class="method">
@@ -117,7 +118,8 @@ isostructural compounds. Defaults to True.</dd>
 <dl class="class">
 <dt id="matminer.learners.volume_predictor.VolumePredictor">
 <em class="property">class </em><code class="descclassname">matminer.learners.volume_predictor.</code><code class="descname">VolumePredictor</code><span class="sig-paren">(</span><em>cutoff=4</em>, <em>ionic_factor=0.3</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.VolumePredictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Predicts volume; given a structure, finds the minimum volume such that no
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Predicts volume; given a structure, finds the minimum volume such that no
 two sites are closer than a weighted sum of their atomic and ionic radii.
 When run over all stable elemental and binary structures from MP,
 it is found that:
@@ -232,7 +234,7 @@ volume.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

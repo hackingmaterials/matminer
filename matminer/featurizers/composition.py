@@ -8,7 +8,8 @@ import itertools
 import numpy as np
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.data import DemlData, MagpieData, PymatgenData
+from matminer.featurizers.data import DemlData, MagpieData, PymatgenData, \
+    CohesiveEnergyData
 from matminer.featurizers.stats import PropertyStats
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
@@ -24,11 +25,10 @@ class ElementProperty(BaseFeaturizer):
         data_source (AbstractData or str): source from which to retrieve
             element property data (or use str for preset: "pymatgen",
             "magpie", or "deml")
-        attributes (list of strings): List of elemental properties to use
+        features (list of strings): List of elemental properties to use
             (these must be supported by data_source)
         stats (string): a list of weighted statistics to compute to for each
             property (see PropertyStats for available stats)
-
     """
 
     def __init__(self, data_source, features, stats):
@@ -102,19 +102,14 @@ class ElementProperty(BaseFeaturizer):
             all_attributes: Specified property statistics of features
         """
 
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        fracs = [el_amt[el] for el in elements]
-
         all_attributes = []
 
         for attr in self.features:
-            elem_data = self.data_source.get_property(comp, attr,
-                                                      return_per_element=True)
+            elem_data = self.data_source.get_property(comp, attr)
 
             for stat in self.stats:
                 all_attributes.append(
-                    PropertyStats().calc_stat(elem_data, stat, weights=fracs))
+                    PropertyStats().calc_stat(elem_data, stat))
 
         return all_attributes
 
@@ -301,7 +296,7 @@ class ElectronAffinity(BaseFeaturizer):
             avg_anion_affin (single-element list): average electron affinity*formal charge of anions
         """
         electron_affin = self.data_source.get_property(comp, "electron_affin",
-                                                       return_per_element=True)
+                                                       combine_by_element=True)
 
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
@@ -447,13 +442,13 @@ class ValenceOrbital(BaseFeaturizer):
             avg.append(
                 PropertyStats().mean(
                     self.data_source.get_property(comp, "N%sValence" % orb,
-                                                  return_per_element=True),
+                                                  combine_by_element=True),
                     weights=el_fracs))
 
         if "frac" in self.props:
             avg_total_valence = PropertyStats().mean(
                 self.data_source.get_property(comp, "NValance",
-                                              return_per_element=True),
+                                              combine_by_element=True),
                 weights=el_fracs)
             frac = [a / avg_total_valence for a in avg]
 
@@ -526,9 +521,9 @@ class IonProperty(BaseFeaturizer):
         else:
             # Get magpie data for each element
             ox_states = self.data_source.get_property(comp, "OxidationStates",
-                                                      return_per_element=True)
+                                                      combine_by_element=True)
             elec = self.data_source.get_property(comp, "Electronegativity",
-                                                 return_per_element=True)
+                                                 combine_by_element=True)
 
             # TODO: consider replacing with oxi_state_guesses - depends on
             # whether Magpie oxidation states table matches oxi_states table
@@ -700,9 +695,9 @@ class FERECorrection(BaseFeaturizer):
         el_frac = [el_amt[el] for el in elements]
 
         GGAU_Etot = self.data_source.get_property(comp, "GGAU_Etot",
-                                                  return_per_element=True)
+                                                  combine_by_element=True)
         mus_fere = self.data_source.get_property(comp, "mus_fere",
-                                                 return_per_element=True)
+                                                 combine_by_element=True)
 
         fere_corr = [mus_fere[i] - GGAU_Etot[i] for i in range(len(GGAU_Etot))]
 
@@ -749,12 +744,6 @@ class CohesiveEnergy(BaseFeaturizer):
         """
         self.mapi_key = mapi_key
 
-        # TODO: @sbajaj reimplement as AbstractData
-        module_dir = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(module_dir, 'data_files',
-                               'cohesive_energies.json'), 'r') as f:
-            self.ce_data = json.load(f)
-
     def featurize(self, comp, formation_energy_per_atom=None):
         """
 
@@ -784,7 +773,8 @@ class CohesiveEnergy(BaseFeaturizer):
         # Subtract elemental cohesive energies from formation energy
         cohesive_energy = -formation_energy_per_atom * comp.num_atoms
         for el in el_amt_dict:
-            cohesive_energy += el_amt_dict[el] * self.ce_data[el]
+            cohesive_energy += el_amt_dict[el] * \
+                               CohesiveEnergyData().get_property(el)
 
         cohesive_energy_per_atom = cohesive_energy / comp.num_atoms
 
