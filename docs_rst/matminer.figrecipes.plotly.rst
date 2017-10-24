@@ -1,11 +1,11 @@
-matminer.figrecipes.plotly package
-==================================
+matminer\.figrecipes\.plotly package
+====================================
 
 Submodules
 ----------
 
-matminer.figrecipes.plotly.make_plots module
---------------------------------------------
+matminer\.figrecipes\.plotly\.make\_plots module
+------------------------------------------------
 
 .. automodule:: matminer.figrecipes.plotly.make_plots
     :members:

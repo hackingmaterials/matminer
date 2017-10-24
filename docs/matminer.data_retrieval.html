@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>matminer.data_retrieval package &#8212; matminer 0.1.4 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -27,7 +24,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -56,13 +53,14 @@
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval">
 <em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="descname">CitrineDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt>api_key: (str) Your Citrine API key, or None if you&#8217;ve set the</dt>
+<dt>api_key: (str) Your Citrine API key, or None if you’ve set the</dt>
 <dd>CITRINE_KEY environment variable</dd>
 </dl>
 </dd>
@@ -85,7 +83,7 @@ on these parameters.</p>
 will be returned</dd>
 </dl>
 <p>property: (str) name of the property to search for
-data_type: (str) &#8216;EXPERIMENTAL&#8217;/&#8217;COMPUTATIONAL&#8217;/&#8217;MACHINE_LEARNING&#8217;;</p>
+data_type: (str) ‘EXPERIMENTAL’/’COMPUTATIONAL’/’MACHINE_LEARNING’;</p>
 <blockquote>
 <div>filter for properties obtained from experimental work,
 computational methods, or machine learning.</div></blockquote>
@@ -111,14 +109,14 @@ show_columns: (list) list of columns to show from the resulting</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_value">
 <code class="descname">get_value</code><span class="sig-paren">(</span><em>dict_item</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract values from &#8216;Property&#8217; objects</p>
+<dd><p>Extract values from ‘Property’ objects</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>dict_item: &#8216;Property&#8217; object</dd>
+<dd>dict_item: ‘Property’ object</dd>
 <dt>Returns:</dt>
 <dd><ul class="first last simple">
-<li>if &#8216;value&#8217;, returns string/float</li>
-<li>if &#8216;minimum&#8217; or &#8216;maximum&#8217;, returns string</li>
+<li>if ‘value’, returns string/float</li>
+<li>if ‘minimum’ or ‘maximum’, returns string</li>
 </ul>
 </dd>
 </dl>
@@ -127,10 +125,10 @@ show_columns: (list) list of columns to show from the resulting</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_matrix">
 <code class="descname">parse_matrix</code><span class="sig-paren">(</span><em>matrix_column</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse matrix/(array of array) value items from a &#8216;Property&#8217; column</p>
+<dd><p>Parse matrix/(array of array) value items from a ‘Property’ column</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>matrix_column: &#8216;Property&#8217; column with array of array objects</dd>
+<dd>matrix_column: ‘Property’ column with array of array objects</dd>
 </dl>
 <p>Returns: column with extracted array of arrays</p>
 </dd></dl>
@@ -138,10 +136,10 @@ show_columns: (list) list of columns to show from the resulting</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_scalars">
 <code class="descname">parse_scalars</code><span class="sig-paren">(</span><em>scalar_column</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_scalars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse scalar/single value items from a &#8216;Property&#8217; column</p>
+<dd><p>Parse scalar/single value items from a ‘Property’ column</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>scalar_column: &#8216;Property&#8217; column with scalar objects</dd>
+<dd>scalar_column: ‘Property’ column with scalar objects</dd>
 </dl>
 <p>Returns: column with extracted values</p>
 </dd></dl>
@@ -149,10 +147,10 @@ show_columns: (list) list of columns to show from the resulting</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_vectors">
 <code class="descname">parse_vectors</code><span class="sig-paren">(</span><em>vector_column</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.parse_vectors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse vector/array value items from a &#8216;Property&#8217; column</p>
+<dd><p>Parse vector/array value items from a ‘Property’ column</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>vector_column: &#8216;Property&#8217; column with vector objects</dd>
+<dd>vector_column: ‘Property’ column with vector objects</dd>
 </dl>
 <p>Returns: column with extracted arrays</p>
 </dd></dl>
@@ -165,7 +163,8 @@ show_columns: (list) list of columns to show from the resulting</p>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval">
 <em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MP.</code><code class="descname">MPDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd><p>MPDataRetrieval is used to retrieve data from the Materials Project
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>MPDataRetrieval is used to retrieve data from the Materials Project
 database, print the results, and convert them into an indexed Pandas
 dataframe.</p>
 <dl class="method">
@@ -174,7 +173,7 @@ dataframe.</p>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt>api_key: (str) Your Materials Project API key, or None if you&#8217;ve</dt>
+<dt>api_key: (str) Your Materials Project API key, or None if you’ve</dt>
 <dd>set up your pymatgen config.</dd>
 </dl>
 </dd>
@@ -192,10 +191,10 @@ for more details.</p>
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
 <dt>criteria: (str/dict) see MPRester.query() for a description of this</dt>
-<dd>parameter. String examples: &#8220;mp-1234&#8221;, &#8220;Fe2O3&#8221;, &#8220;Li-Fe-O&#8217;,
-&#8220;*2O3&#8221;. Dict example: {&#8220;band_gap&#8221;: {&#8220;$gt&#8221;: 1}}</dd>
+<dd>parameter. String examples: “mp-1234”, “Fe2O3”, “Li-Fe-O’,
+“*2O3”. Dict example: {“band_gap”: {“$gt”: 1}}</dd>
 <dt>properties: (list) see MPRester.query() for a description of this</dt>
-<dd>parameter. Example: [&#8220;formula&#8221;, &#8220;formation_energy_per_atom&#8221;]</dd>
+<dd>parameter. Example: [“formula”, “formation_energy_per_atom”]</dd>
 <dt>mp_decode: (bool) see MPRester.query() for a description of this</dt>
 <dd>parameter. Whether to decode to a Pymatgen object where
 possible.</dd>
@@ -218,7 +217,8 @@ possible.</dd>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval">
 <em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">MongoDataRetrieval</code><span class="sig-paren">(</span><em>coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tool to retrieve data from a MongoDB collection and put into a pandas
@@ -236,7 +236,7 @@ Dataframe object</p>
 <dt>Args:</dt>
 <dd><dl class="first docutils">
 <dt>projection: (list) - a list of str fields to grab; dot-notation is</dt>
-<dd>allowed. Set to &#8220;None&#8221; to try to auto-detect the fields.</dd>
+<dd>allowed. Set to “None” to try to auto-detect the fields.</dd>
 </dl>
 <p>query: (JSON) - a pymongo-style query to filter data records
 sort: (tuple) - pymongo-style sort option
@@ -254,7 +254,7 @@ idx_field: (str) - name of field to use as index (must have unique</p>
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.clean_projection">
 <code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">clean_projection</code><span class="sig-paren">(</span><em>projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.clean_projection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Projecting on e.g. &#8216;a.b.&#8217; and &#8216;a&#8217; is disallowed in MongoDb, so project
+<dd><p>Projecting on e.g. ‘a.b.’ and ‘a’ is disallowed in MongoDb, so project
 inclusively. See unit tests for examples of what this is doing.
 Args:</p>
 <blockquote>
@@ -269,7 +269,7 @@ Args:</p>
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.remove_ints">
 <code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">remove_ints</code><span class="sig-paren">(</span><em>projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.remove_ints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms a string like &#8220;a.1.x&#8221; to &#8220;a.x&#8221; - for Mongo projection purposes
+<dd><p>Transforms a string like “a.1.x” to “a.x” - for Mongo projection purposes
 Args:</p>
 <blockquote>
 <div>projection: (str) the projection to remove ints from</div></blockquote>
@@ -336,7 +336,7 @@ Args:</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>matminer.learners package &#8212; matminer 0.1.4 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -27,7 +24,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -69,7 +66,8 @@
 <dl class="class">
 <dt id="matminer.learners.volume_predictor.ConditionalVolumePredictor">
 <em class="property">class </em><code class="descclassname">matminer.learners.volume_predictor.</code><code class="descname">ConditionalVolumePredictor</code><a class="headerlink" href="#matminer.learners.volume_predictor.ConditionalVolumePredictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unlike the above, the idea here is to predict the volume of a structure
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Unlike the above, the idea here is to predict the volume of a structure
 based on an existing known structure. May integrate with above at a later
 stage to improve overall predictions.</p>
 <dl class="method">
@@ -120,7 +118,8 @@ isostructural compounds. Defaults to True.</dd>
 <dl class="class">
 <dt id="matminer.learners.volume_predictor.VolumePredictor">
 <em class="property">class </em><code class="descclassname">matminer.learners.volume_predictor.</code><code class="descname">VolumePredictor</code><span class="sig-paren">(</span><em>cutoff=4</em>, <em>ionic_factor=0.3</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.learners.volume_predictor.VolumePredictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Predicts volume; given a structure, finds the minimum volume such that no
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Predicts volume; given a structure, finds the minimum volume such that no
 two sites are closer than a weighted sum of their atomic and ionic radii.
 When run over all stable elemental and binary structures from MP,
 it is found that:
@@ -142,7 +141,7 @@ it is found that:
 structure guess is extremely bad (atoms way too far apart). In
 all other instances, increasing cutoff gives same answer
 but takes more time.</dd>
-<dt>ionic_factor: (float) This factor, multiplied by the compound&#8217;s</dt>
+<dt>ionic_factor: (float) This factor, multiplied by the compound’s</dt>
 <dd>spread in electronegativity, determines the weighting between
 ionic and atomic radii for expected bond distances.</dd>
 </dl>
@@ -240,7 +239,7 @@ volume.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
