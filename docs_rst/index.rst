@@ -8,7 +8,7 @@
 matminer
 ========
 
-matminer is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a **working code**.
+matminer is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a *few* lines of code. It is currently in development, however it is a `working code <https://github.com/hackingmaterials/matminer>`_.
 
 
 -------------------
@@ -106,6 +106,8 @@ Check out some examples of how to use matminer!
 3. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://gist.github.com/saurabh02/8f7727b2ed1f95d2a40fdefd0a90bec0>`_)
 
 4. Use matminer and sklearn to train/predict band gaps. (`Jupyter Notebook <https://gist.github.com/saurabh02/b0296747064599ad2a6ab69ddc64eb92>`_)
+
+5. Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (coming soon!)
 
 
 ---------------
