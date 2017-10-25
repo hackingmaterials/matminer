@@ -42,11 +42,16 @@ class TestPropertyStats(TestCase):
     def test_mean(self):
         self._run_test("mean", 1, 1, 2./3, 5./7)
 
+    def test_inverse_mean(self):
+        self.assertAlmostEquals(1, PropertyStats.inverse_mean([1, 1, 1]))
+        self.assertAlmostEquals(1, PropertyStats.inverse_mean([0.5, 0.5, -1]))
+        self.assertAlmostEquals(-1, PropertyStats.inverse_mean([0.5, 0.5, -1], weights=[0, 0, 1]))
+
     def test_avg_dev(self):
         self._run_test("avg_dev", 0, 0, 5./9, 0.448979592)
 
     def test_std_dev(self):
-        self._run_test("std_dev", 0, 0, 0.623609564, 0.524890659)
+        self._run_test("std_dev", 0, 0, 0.623609564, 0.694365075)
 
     def test_mode(self):
         self._run_test("mode", 1, 1, 0, 0.5)
@@ -55,8 +60,15 @@ class TestPropertyStats(TestCase):
         self.assertAlmostEqual(0, PropertyStats.mode([0,1,2], [1,1,1]))
 
     def test_holder_mean(self):
-        # Tests an edge case where we a value of zero
         self._run_test("holder_mean__0", 1, 1, np.product(self.sample_2), 0)
 
         self._run_test("holder_mean__1", 1, 1, 2./3, 5./7)
         self._run_test("holder_mean__2", 1, 1, sqrt(5./6), 0.88640526)
+
+    def test_geom_std_dev(self):
+        # This is right. Yes, a list without variation has a geom_std_dev of 1
+        self.assertAlmostEquals(1, PropertyStats.geom_std_dev([1, 1, 1]))
+
+        # Harder case
+        self.assertAlmostEquals(1.166860716, PropertyStats.geom_std_dev([0.5, 1.5, 1]))
+        self.assertAlmostEquals(1.352205875, PropertyStats.geom_std_dev([0.5, 1.5, 1], weights=[2, 1, 0]))
