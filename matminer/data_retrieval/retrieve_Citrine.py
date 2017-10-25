@@ -140,6 +140,7 @@ class CitrineDataRetrieval:
 
                     p_df = pd.DataFrame()
 
+                    # add each property, and its associated fields, as a new column
                     for prop in system_value["properties"]:
 
                         if "scalars" in prop:
@@ -149,13 +150,17 @@ class CitrineDataRetrieval:
                         elif "matrices" in prop:
                             p_df[prop["name"]] = prop["matrices"]
 
+                        # parse all keys in the Property object except 'name', 'scalars', 'vectors', and 'matrices'
                         for prop_key in prop:
 
                             if prop_key not in ["name", "scalars", "vectors", "matrices"]:
 
+                                # If value is a list of multiple items, set the cell to the entire list by first
+                                # converting to object type, else results in a ValueError/IndexError
                                 if type(prop[prop_key]) == list and len(prop[prop_key]) > 1:
                                     p_df[prop["name"] + "-" + prop_key] = np.nan
-                                    p_df[prop["name"] + "-" + prop_key] = p_df[prop["name"] + "-" + prop_key].astype(object)
+                                    p_df[prop["name"] + "-" + prop_key] = \
+                                        p_df[prop["name"] + "-" + prop_key].astype(object)
 
                                 p_df.set_value(counter, prop["name"] + "-" + prop_key, prop[prop_key])
 
