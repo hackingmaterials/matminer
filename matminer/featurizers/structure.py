@@ -772,7 +772,7 @@ class OPStructureFingerprint(BaseFeaturizer):
         self.op_site_fp = OPSiteFingerprint() if op_site_fp is None \
             else op_site_fp
         self._labels = self.op_site_fp.feature_labels()
-        self.stats = stats
+        self.stats = tuple([stats]) if type(stats) == str else stats
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
             for stat in self.stats:
