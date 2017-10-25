@@ -6,6 +6,7 @@ import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
 import numpy as np
+from collections import Counter
 
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
@@ -140,13 +141,27 @@ class CitrineDataRetrieval:
 
                     p_df = pd.DataFrame()
 
+                    # Rename duplicate property names in a record with progressive numbering
+                    all_prop_names = [x["name"] for x in system_value["properties"]]
+
+                    counts = {k: v for k, v in Counter(all_prop_names).items() if v > 1}
+
+                    for i in reversed(range(len(all_prop_names))):
+                        item = all_prop_names[i]
+                        if item in counts and counts[item]:
+                            all_prop_names[i] += "_" + str(counts[item])
+                            counts[item] -= 1
+
                     # add each property, and its associated fields, as a new column
-                    for prop in system_value["properties"]:
+                    for p_idx, prop in enumerate(system_value["properties"]):
+
+                        # Rename property name according to above duplicate numbering
+                        prop["name"] = all_prop_names[p_idx]
 
                         if "scalars" in prop:
                             p_df.set_value(counter, prop["name"], parse_scalars(prop["scalars"]))
                         elif "vectors" in prop:
-                            p_df[prop['name']] = prop['vectors']
+                            p_df[prop["name"]] = prop["vectors"]
                         elif "matrices" in prop:
                             p_df[prop["name"]] = prop["matrices"]
 
