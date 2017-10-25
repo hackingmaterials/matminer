@@ -18,7 +18,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
-    OPStructureFingerprint, get_order_parameter_stats, \
+    OPStructureFingerprint, \
     CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures
 
 
@@ -286,25 +286,25 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(int(opvals[16][0] * 1000 + 0.5), 1000)
         self.assertAlmostEqual(int(opvals[16][1] * 1000 + 0.5), 1000)
         opvals = op_struct_fp.featurize(self.cscl)
-        self.assertAlmostEqual(int(opvals[20][0] * 1000), 975)
-        self.assertAlmostEqual(int(opvals[20][1] * 1000), 975)
+        self.assertAlmostEqual(int(opvals[20][0] * 1000), 998)
+        self.assertAlmostEqual(int(opvals[20][1] * 1000), 998)
 
         # Test stats.
         op_struct_fp = OPStructureFingerprint()
         opvals = op_struct_fp.featurize(self.diamond)
-        self.assertAlmostEqual(int(opvals[0] * 10000 + 0.5), 1)
+        self.assertAlmostEqual(int(opvals[0] * 10000 + 0.5), 5)
         self.assertAlmostEqual(int(opvals[1] * 10000 + 0.5), 0)
-        self.assertAlmostEqual(int(opvals[2] * 10000 + 0.5), 1)
-        self.assertAlmostEqual(int(opvals[3] * 10000 + 0.5), 1)
-        self.assertAlmostEqual(int(opvals[4] * 10000 + 0.5), 0)
+        self.assertAlmostEqual(int(opvals[2] * 10000 + 0.5), 5)
+        self.assertAlmostEqual(int(opvals[3] * 10000 + 0.5), 5)
+        self.assertAlmostEqual(int(opvals[4] * 10000 + 0.5), 5)
         self.assertAlmostEqual(int(opvals[32] * 1000 + 0.5), 38)
         self.assertAlmostEqual(int(opvals[40] * 1000 + 0.5), 1000)
         self.assertAlmostEqual(int(opvals[41] * 1000 + 0.5), 0)
         self.assertAlmostEqual(int(opvals[42] * 1000 + 0.5), 1000)
         self.assertAlmostEqual(int(opvals[43] * 1000 + 0.5), 1000)
-        self.assertAlmostEqual(int(opvals[44] * 1000 + 0.5), 0)
+        self.assertAlmostEqual(int(opvals[44] * 1000 + 0.5), 1)
         for i in range(52, len(opvals)):
-            self.assertAlmostEqual(int(opvals[i] * 1000 + 0.5), 0)
+            self.assertAlmostEqual(int(opvals[i] * 500 + 0.5), 0)
 
     def tearDown(self):
         del self.diamond
