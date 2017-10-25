@@ -1,5 +1,5 @@
-matminer.datasets package
-=========================
+matminer\.datasets package
+==========================
 
 Subpackages
 -----------
@@ -11,8 +11,8 @@ Subpackages
 Submodules
 ----------
 
-matminer.datasets.dataframe_loader module
------------------------------------------
+matminer\.datasets\.dataframe\_loader module
+--------------------------------------------
 
 .. automodule:: matminer.datasets.dataframe_loader
     :members:

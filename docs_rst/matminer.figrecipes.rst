@@ -1,5 +1,5 @@
-matminer.figrecipes package
-===========================
+matminer\.figrecipes package
+============================
 
 Subpackages
 -----------

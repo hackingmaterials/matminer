@@ -1,35 +1,35 @@
-matminer.data_retrieval package
-===============================
+matminer\.data\_retrieval package
+=================================
 
 Submodules
 ----------
 
-matminer.data_retrieval.retrieve_Citrine module
------------------------------------------------
+matminer\.data\_retrieval\.retrieve\_Citrine module
+---------------------------------------------------
 
 .. automodule:: matminer.data_retrieval.retrieve_Citrine
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.data_retrieval.retrieve_MP module
-------------------------------------------
+matminer\.data\_retrieval\.retrieve\_MP module
+----------------------------------------------
 
 .. automodule:: matminer.data_retrieval.retrieve_MP
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.data_retrieval.retrieve_MPDS module
---------------------------------------------
+matminer\.data\_retrieval\.retrieve\_MPDS module
+------------------------------------------------
 
 .. automodule:: matminer.data_retrieval.retrieve_MPDS
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.data_retrieval.retrieve_MongoDB module
------------------------------------------------
+matminer\.data\_retrieval\.retrieve\_MongoDB module
+---------------------------------------------------
 
 .. automodule:: matminer.data_retrieval.retrieve_MongoDB
     :members:
