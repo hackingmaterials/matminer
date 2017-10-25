@@ -5,6 +5,7 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from pandas.io.json import json_normalize
+import numpy as np
 
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
@@ -16,10 +17,10 @@ def parse_scalars(scalars):
 
 def get_value(dict_item):
     # TODO: deal with rest of formats in a scalar object
-    if 'value' in dict_item:
-        return dict_item['value']
-    elif 'minimum' in dict_item and 'maximum' in dict_item:
-        return 'Minimum = {}, Maximum = {}'.format(dict_item['minimum'], dict_item['maximum'])
+    if "value" in dict_item:
+        return dict_item["value"]
+    elif "minimum" in dict_item and "maximum" in dict_item:
+        return "Minimum = {}, Maximum = {}".format(dict_item["minimum"], dict_item["maximum"])
 
 
 class CitrineDataRetrieval:
@@ -30,8 +31,8 @@ class CitrineDataRetrieval:
 
         Returns: None
         """
-        api_key = api_key if api_key else os.environ['CITRINE_KEY']
-        self.client = CitrinationClient(api_key, 'https://citrination.com')
+        api_key = api_key if api_key else os.environ["CITRINE_KEY"]
+        self.client = CitrinationClient(api_key, "https://citrination.com")
 
     def get_api_data(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
                       max_measurement=None, from_record=None, data_set_id=None, max_results=None):
@@ -83,10 +84,10 @@ class CitrineDataRetrieval:
                     include_datasets=[data_set_id], from_index=start, size=per_page)
 
             # Check if any results found
-            if 'hits' not in self.client.search(pif_query).as_dictionary():
-                raise KeyError('No results found!')
+            if "hits" not in self.client.search(pif_query).as_dictionary():
+                raise KeyError("No results found!")
 
-            data = self.client.search(pif_query).as_dictionary()['hits']
+            data = self.client.search(pif_query).as_dictionary()["hits"]
             size = len(data)
             start += size
             json_data.extend(data)
@@ -122,8 +123,8 @@ class CitrineDataRetrieval:
 
             counter += 1  # Keep a count to appropriately index the rows
 
-            if 'system' in hit.keys():  # Check if 'system' key exists, else skip
-                system_value = hit['system']
+            if "system" in hit.keys():  # Check if 'system' key exists, else skip
+                system_value = hit["system"]
                 system_normdf = json_normalize(system_value)
 
                 # Make a DF of all non-'properties' fields
@@ -135,32 +136,38 @@ class CitrineDataRetrieval:
                 non_prop_df = non_prop_df.append(non_prop_row)
 
                 # Make a DF of the 'properties' array
-                if 'properties' in system_value:
+                if "properties" in system_value:
 
                     p_df = pd.DataFrame()
 
-                    for prop in system_value['properties']:
+                    for prop in system_value["properties"]:
 
-                        if 'scalars' in prop:
-                            p_df.set_value(counter, prop['name'], parse_scalars(prop['scalars']))
-                        elif 'vectors' in prop:
+                        if "scalars" in prop:
+                            p_df.set_value(counter, prop["name"], parse_scalars(prop["scalars"]))
+                        elif "vectors" in prop:
                             p_df[prop['name']] = prop['vectors']
-                        elif 'matrices' in prop:
-                            p_df[prop['name']] = prop['matrices']
+                        elif "matrices" in prop:
+                            p_df[prop["name"]] = prop["matrices"]
 
                         for prop_key in prop:
-                            if prop_key not in ['name', 'scalars', 'vectors', 'matrices']:
-                                p_df[prop['name'] + '-' + prop_key] = prop[prop_key]
+
+                            if prop_key not in ["name", "scalars", "vectors", "matrices"]:
+
+                                if type(prop[prop_key]) == list and len(prop[prop_key]) > 1:
+                                    p_df[prop["name"] + "-" + prop_key] = np.nan
+                                    p_df[prop["name"] + "-" + prop_key] = p_df[prop["name"] + "-" + prop_key].astype(object)
+
+                                p_df.set_value(counter, prop["name"] + "-" + prop_key, prop[prop_key])
 
                     p_df.index = [counter]
                     prop_df = prop_df.append(p_df)
 
         # Concatenate 'properties' and 'non-properties' dataframes
         df = pd.concat([non_prop_df, prop_df], axis=1)
-        df.index.name = 'system'
+        df.index.name = "system"
 
         # Remove uninformative columns, such as 'category' and 'uid'
-        df.drop(['category', 'uid'], axis=1, inplace=True)
+        df.drop(["category", "uid"], axis=1, inplace=True)
 
         # Filter out columns not selected
         if show_columns:
