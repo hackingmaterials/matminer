@@ -16,7 +16,8 @@ import numpy as np
 
 from .base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters
-from math import sqrt
+from math import sqrt, isnan, fabs
+from matminer.featurizers.stats import PropertyStats
 
 class AGNIFingerprints(BaseFeaturizer):
     """Integral of the product of the radial distribution function and a Gaussian window function.
@@ -140,6 +141,12 @@ class OPSiteFingerprint(BaseFeaturizer):
                     distance).  The binning is necessary to make the
                     neighbor-finding step robust agains small numerical
                     variations in neighbor distances (default: 0.1).
+        ddr (float): variation of width for finding stable OP values.
+        ndr (int): number of width variations for each variaton direction
+                   (e.g., ndr = 0 only uses the input dr, whereas
+                   ndr=1 tests dr = dr - ddr, dr, and dr + ddr.
+        dop (float): binning width to compute histogram for each OP
+                     if ndr > 0.
         dist_exp (boolean): exponent for distance factor to multiply
                             order parameters with that penalizes (large)
                             variations in distances in a given motif.
@@ -151,7 +158,8 @@ class OPSiteFingerprint(BaseFeaturizer):
                             (e.g., CN=4 for tetrahedron;
                             default: True).
     """
-    def __init__(self, optypes=None, dr=0.1, dist_exp=2, zero_ops=True):
+    def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
+                 dist_exp=2, zero_ops=True):
         self.optypes = {
             1: ["sgl_bd"],
             2: ["bent180", "bent45", "bent90", "bent135"],
@@ -167,7 +175,9 @@ class OPSiteFingerprint(BaseFeaturizer):
             12: ["cuboct", "q2", "q4", "q6"]} if optypes is None \
             else optypes.copy()
         self.dr = dr
-        self.idr = 1.0 / dr
+        self.ddr = ddr
+        self.ndr = ndr
+        self.dop = dop
         self.dist_exp = dist_exp
         self.zero_ops = zero_ops
         self.ops = {}
@@ -191,7 +201,8 @@ class OPSiteFingerprint(BaseFeaturizer):
         Returns:
             opvals (numpy array): order parameters of target site.
         """
-        opvals = []
+        idop = 1.0 / self.dop
+        opvals = {}
         s = struct.sites[idx]
         neigh_dist = []
         r = 6
@@ -201,71 +212,136 @@ class OPSiteFingerprint(BaseFeaturizer):
         # Smoothen distance, but use relative distances.
         dmin = min([d for n, d in neigh_dist])
         neigh_dist = [[n, d / dmin] for n, d in neigh_dist]
-        for j in range(len(neigh_dist)):
-            neigh_dist[j][1] = (float(int(neigh_dist[j][1] * self.idr \
-                + 0.5)) + 0.5) * self.dr
-        d_sorted = []
-        for n, d in neigh_dist:
-            if d not in d_sorted:
-                d_sorted.append(d)
-        d_sorted = sorted(d_sorted)
-    
+        neigh_dist_alldrs = {}
+        d_sorted_alldrs = {}
+        for i in range(-self.ndr, self.ndr+1):
+            opvals[i] = []
+            this_dr = self.dr + float(i) * self.ddr
+            this_idr = 1.0 / this_dr
+            neigh_dist_alldrs[i] = []
+            for j in range(len(neigh_dist)):
+                neigh_dist_alldrs[i].append([neigh_dist[j][0],
+                    (float(int(neigh_dist[j][1] * this_idr \
+                    + 0.5)) + 0.5) * this_dr])
+            d_sorted_alldrs[i] = []
+            for n, d in neigh_dist_alldrs[i]:
+                if d not in d_sorted_alldrs[i]:
+                    d_sorted_alldrs[i].append(d)
+            d_sorted_alldrs[i] = sorted(d_sorted_alldrs[i])
+
         # Do q_sgl_bd separately.
         if self.optypes[1][0] == "sgl_bd":
-            site_list = [s]
-            for n, dn in neigh_dist:
-                site_list.append(n)
-            opval = self.ops[1][0].get_order_parameters(
-                site_list, 0,
-                indices_neighs=[j for j in range(1,len(site_list))])
-            opvals.append(opval[0])
-    
-        prev_cn = 0
-        prev_site_list = None
-        prev_d_fac = None
-        dmin = min(d_sorted)
-        for d in d_sorted:
-            this_cn = 0
-            site_list = [s]
-            this_av_inv_drel = 0.0
-            for n, dn in neigh_dist:
-                if dn <= d:
-                    this_cn += 1
+            for i in range(-self.ndr, self.ndr+1):
+                site_list = [s]
+                for n, dn in neigh_dist_alldrs[i]:
                     site_list.append(n)
-                    this_av_inv_drel += (1.0 / (dn / dmin))
-            this_av_inv_drel = this_av_inv_drel / float(this_cn)
-            d_fac = this_av_inv_drel ** self.dist_exp
-            for cn in range(max(2, prev_cn+1), min(this_cn+1, 13)):
-                # Set all OPs of non-CN-complying neighbor environments
-                # to zero if applicable.
-                if self.zero_ops and cn != this_cn:
-                    for it in range(len(self.optypes[cn])):
-                        opvals.append(0)
-                    continue
-
-                # Set all (remaining) OPs.    
-                for it in range(len(self.optypes[cn])):
-                    opval = self.ops[cn][it].get_order_parameters(
-                        site_list, 0,
-                        indices_neighs=[j for j in range(1,len(site_list))])
-                    if opval[0] is None:
-                        opval[0] = 0
-                    else:
-                        opval[0] = d_fac * opval[0]
-                    opvals.append(opval[0])
-            prev_site_list = site_list
-            prev_cn = this_cn
-            prev_d_fac = d_fac
-            if prev_cn >= 12:
-                break
+                opval = self.ops[1][0].get_order_parameters(
+                    site_list, 0,
+                    indices_neighs=[j for j in range(1,len(site_list))])
+                opvals[i].append(opval[0])
     
-        return np.array(opvals)
+        for i in range(-self.ndr, self.ndr+1):
+            prev_cn = 0
+            prev_site_list = None
+            prev_d_fac = None
+            dmin = min(d_sorted_alldrs[i])
+            for d in d_sorted_alldrs[i]:
+                this_cn = 0
+                site_list = [s]
+                this_av_inv_drel = 0.0
+                for j, [n, dn] in enumerate(neigh_dist_alldrs[i]):
+                    if dn <= d:
+                        this_cn += 1
+                        site_list.append(n)
+                        this_av_inv_drel += (1.0 / (neigh_dist[j][1]))
+                this_av_inv_drel = this_av_inv_drel / float(this_cn)
+                d_fac = this_av_inv_drel ** self.dist_exp
+                for cn in range(max(2, prev_cn+1), min(this_cn+1, 13)):
+                    # Set all OPs of non-CN-complying neighbor environments
+                    # to zero if applicable.
+                    if self.zero_ops and cn != this_cn:
+                        for it in range(len(self.optypes[cn])):
+                            opvals[i].append(0)
+                        continue
+
+                    # Set all (remaining) OPs.    
+                    for it in range(len(self.optypes[cn])):
+                        opval = self.ops[cn][it].get_order_parameters(
+                            site_list, 0,
+                            indices_neighs=[j for j in range(1,len(site_list))])
+                        if opval[0] is None:
+                            opval[0] = 0
+                        else:
+                            opval[0] = d_fac * opval[0]
+                        if self.optypes[cn][it] == 'bcc':
+                            opval[0] = opval[0] / 0.976
+                        opvals[i].append(opval[0])
+                prev_site_list = site_list
+                prev_cn = this_cn
+                prev_d_fac = d_fac
+                if prev_cn >= 12:
+                    break
+
+        opvals_out = []
+        ps = PropertyStats()
+        for j in range(len(opvals[0])):
+            # Compute histogram, determine peak, and location
+            # of peak value.
+            op_tmp = [opvals[i][j] for i in range(-self.ndr, self.ndr+1)]
+            minval = float(int(min(op_tmp) * idop - 1.5)) * self.dop
+            #print(minval)
+            if minval < 0.0:
+                minval = 0.0
+            if minval > 1.0:
+                minval = 1.0
+            #print(minval)
+            maxval = float(int(max(op_tmp) * idop + 1.5)) * self.dop
+            #print(maxval)
+            if maxval < 0.0:
+                maxval = 0.0
+            if maxval > 1.0:
+                maxval = 1.0
+            #print(maxval)
+            if minval == maxval:
+                minval = minval - self.dop
+                maxval = maxval + self.dop
+            #print(minval)
+            #print(maxval)
+            nbins = int((maxval - minval) * idop)
+            #print('{} {} {}'.format(minval, maxval, nbins))
+            hist, bin_edges = np.histogram(
+                op_tmp, bins=nbins, range=(minval, maxval),
+                normed=False, weights=None, density=False)
+            max_hist = max(hist)
+            op_peaks = []
+            for i, h in enumerate(hist):
+                if h == max_hist:
+                    op_peaks.append([i, 0.5 * (bin_edges[i] + bin_edges[i+1])])
+            # Address problem that 2 OP values can be close to a bin edge.
+            hist2 = []
+            op_peaks2 = []
+            i = 0
+            while i < len(op_peaks):
+                if i < len(op_peaks)-1:
+                    if op_peaks[i+1][0] - op_peaks[i][0] == 1:
+                        op_peaks2.append(0.5 * (op_peaks[i][1] + op_peaks[i+1][1]))
+                        hist2.append(hist[op_peaks[i][0]]+hist[op_peaks[i+1][0]])
+                        i += 1
+                    else:
+                        op_peaks2.append(op_peaks[i][1])
+                        hist2.append(hist[op_peaks[i][0]])
+                else:
+                    op_peaks2.append(op_peaks[i][1])
+                    hist2.append(hist[op_peaks[i][0]])
+                i += 1
+            opvals_out.append(op_peaks2[list(hist2).index(max(hist2))])
+        return np.array(opvals_out)
 
     def feature_labels(self):
         labels = []
         for cn, li in self.optypes.items():
             for e in li:
-                labels.append(e)
+                labels.append('{} CN_{}'.format(e, cn))
         return labels
 
     def citations(self):

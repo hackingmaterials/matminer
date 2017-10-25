@@ -75,23 +75,29 @@ class FingerprintTests(PymatgenTest):
     def test_op_site_fingerprint(self):
         opsf = OPSiteFingerprint()
         l = opsf.feature_labels()
-        t = ["sgl_bd", "bent180", "bent45", "bent90", "bent135", "tri_plan", \
-            "tet", "T", "sq_plan", "sq", "tet", "see_saw", "tri_pyr", \
-            "pent_plan", "sq_pyr", "tri_bipyr", "oct", "pent_pyr", \
-            "hex_pyr", "pent_bipyr", "bcc", "hex_bipyr", "q2", "q4", "q6", \
-            "q2", "q4", "q6", "q2", "q4", "q6", "cuboct", "q2", "q4", "q6"]
+        t = ["sgl_bd CN_1", "bent180 CN_2", "bent45 CN_2", "bent90 CN_2", \
+            "bent135 CN_2", "tri_plan CN_3", "tet CN_3", "T CN_3", \
+            "sq_plan CN_4", "sq CN_4", "tet CN_4", "see_saw CN_4", \
+            "tri_pyr CN_4", "pent_plan CN_5", "sq_pyr CN_5", \
+            "tri_bipyr CN_5", "oct CN_6", "pent_pyr CN_6", "hex_pyr CN_7", \
+            "pent_bipyr CN_7", "bcc CN_8", "hex_bipyr CN_8", \
+            "q2 CN_9", "q4 CN_9", "q6 CN_9", \
+            "q2 CN_10", "q4 CN_10", "q6 CN_10",
+            "q2 CN_11", "q4 CN_11", "q6 CN_11", \
+            "cuboct CN_12", "q2 CN_12", "q4 CN_12", "q6 CN_12"]
         for i in range(len(l)):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 35)
-        self.assertAlmostEquals(ops[opsf.feature_labels().index('oct')], 1.0)
+        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
+            'oct CN_6')]), 999)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
-            'bcc')] + 0.5), 853)
+        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
+            'bcc CN_8')] + 0.5), 895)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
-            'bcc')] + 0.5), 932)
+        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
+            'bcc CN_8')] + 0.5), 955)
 
 
 if __name__ == '__main__':
