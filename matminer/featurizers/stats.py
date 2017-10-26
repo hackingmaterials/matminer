@@ -11,7 +11,26 @@ from six import string_types
 # probably go in a different class. Some of the method signatures are consistent, others aren't.
 # Just needs a 15 minute cleanup check. -computron
 
+
 class PropertyStats(object):
+    """This class contains statistical operations that are commonly employed when computing features
+
+    The primary way for interacting with this class is to call the ``calc_stat`` function, which takes the name of the
+    statistic you would like to compute and the weights/values of data to be assessed. For example, computing the
+    mean of a list looks like::
+
+        x = [1, 2, 3]
+        PropertyStats.calc_stat(x, 'mean') # Result is 2
+        PropertyStats.calc_stat(x, 'mean', weights=[0, 0, 1]) # Result is 3
+
+    Some of the statistics functions take options (e.g., Holder means). You can pass them to the the statistics
+    functions by adding them after the name and two underscores. For example, the 0th Holder mean would be::
+
+        PropertyStats.calc_stat(x, 'holder_mean__0')
+
+    You can, of course, call the statistical functions directly. All take at least two arguments. The first is the data
+    being assessed and the second, optional, argument is the weights.
+    """
 
     @staticmethod
     def calc_stat(data_lst, stat, weights=None):
@@ -24,7 +43,7 @@ class PropertyStats(object):
              should be added after the name and separated by two underscores. For example, the 2nd Holder mean would
              be "holder_mean__2"
             weights (list of floats): (Optional) weights for each element in data_lst
-        Return:
+        Returns:
             float - Desired statistic
         """
         statistics = stat.split("__")
@@ -151,7 +170,7 @@ class PropertyStats(object):
         """Mode of a list of data.
 
         If multiple elements occur equally-frequently (or same weight, if weights are provided), this function
-        will return the average of those values.
+        will return the minimum of those values.
 
         Args:
             data_lst (list of floats): List of values to be assessed
@@ -171,7 +190,7 @@ class PropertyStats(object):
             return data_lst[most_freq].min()
 
     @staticmethod
-    def n_numerical_modes(data_lst, n, dl=0.1):
+    def n_numerical_modes(data_lst, n=2, dl=0.1):
         """
         Returns the n first modes of a data set that are obtained with
             a finite bin size for the underlying frequency distribution.
