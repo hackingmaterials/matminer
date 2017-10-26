@@ -662,9 +662,13 @@ class TMetalFraction(BaseFeaturizer):
 
 
 # TODO: why is this a "feature" of a compound? Seems more like a pymatgen analysis thing?
+#   Deml *et al.* PRB 085142 use the FERE correction energy as the basis for features. I've adjusted the class
+#    documentation to make it clearer that this class computes features related to the FERE correction values, and
+#    not that it is performing some kind of thermodynamic analysis. Really, we should pre-compute these correction
+#    values and combine this with the ElementProperty class.
 class FERECorrection(BaseFeaturizer):
     """
-    Class to calculate difference between fitted elemental-phase reference
+    Class to calculate features related to the difference between fitted elemental-phase reference
     energy (FERE) and GGA+U energy
 
     Parameters:
