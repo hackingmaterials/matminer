@@ -1,3 +1,5 @@
+from __future__ import division
+
 """
 File containing general methods for computing property statistics
 """

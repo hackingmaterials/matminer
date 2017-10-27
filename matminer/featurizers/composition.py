@@ -1,3 +1,5 @@
+from __future__ import division
+
 from pymatgen import Element, Composition, MPRester
 from pymatgen.core.periodic_table import get_el_sp
 

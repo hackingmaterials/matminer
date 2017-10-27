@@ -1,3 +1,5 @@
+from __future__ import division
+
 """Features that describe the local environment of a single atom
 
 The `featurize` function takes two arguments:
