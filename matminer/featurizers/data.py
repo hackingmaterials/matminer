@@ -371,6 +371,8 @@ class PymatgenData(AbstractData):
                 print("{} attribute missing".format(property_name))
                 raise
 
+            #todo: this throws errors with electrical_resistivity of some Group IVs, like Si and Ge
+
             if p is not None:
                 if property_name in ['ionic_radii']:
                     if oxidation_states:
