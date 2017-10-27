@@ -15,7 +15,7 @@ from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint
+from matminer.featurizers.site import OPSiteFingerprint, OPSiteFingerprint_alt
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
@@ -883,5 +883,24 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
             break
 
     return dr[idx], delta[idx]
+
+
+def get_op_stats_vector_diff_alt(s1, s2):
+    """
+    Compute structure distance using an alternate (test) algorithm. Docs are
+    minimal for now.
+    """
+    site_f = OPSiteFingerprint_alt(r_max=0.75, tol=1E-3)
+    structure_f = OPStructureFingerprint(op_site_fp=site_f, stats=("mean",))
+
+    f1 = structure_f.featurize(s1)
+    f2 = structure_f.featurize(s2)
+
+    # compute angle between feature vectors
+    # TODO: add StackOverflow link
+    f1_u = f1 / np.linalg.norm(f1)  # unit vector
+    f2_u = f2 / np.linalg.norm(f2)  # unit vector
+    return np.arccos(np.clip(np.dot(f1_u, f2_u), -1.0, 1.0))
+
 
 

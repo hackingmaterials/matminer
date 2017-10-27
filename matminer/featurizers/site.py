@@ -14,9 +14,10 @@ We have to use two options because the Site object does not hold a pointer back 
 
 import numpy as np
 
-from .base import BaseFeaturizer
+from collections import defaultdict
+
+from matminer.featurizers.base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters
-from math import sqrt, isnan, fabs
 from matminer.featurizers.stats import PropertyStats
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -352,3 +353,120 @@ class OPSiteFingerprint(BaseFeaturizer):
     def implementors(self):
         return (['Nils E. R. Zimmermann'])
 
+
+
+class OPSiteFingerprint_alt(BaseFeaturizer):
+    """
+    An alternate site fingerprint currently undergoing testing. This code
+    will either be improved or deleted depending on how the tests go. For now,
+    docs are minimal.
+    """
+
+    def __init__(self, optypes=None, r_max=0.5, tol=1E-3):
+        self.optypes = {
+            # 1: ["sgl_bd"],  # TODO: add this back when I figure out how to use this. e.g. mp-4324, mp-3951
+            2: ["bent180", "bent45", "bent90", "bent135"],
+            3: ["tri_plan", "tet", "T"],
+            4: ["sq_plan", "sq", "tet", "see_saw", "tri_pyr"],
+            5: ["pent_plan", "sq_pyr", "tri_bipyr"],
+            6: ["oct", "pent_pyr"],
+            7: ["hex_pyr", "pent_bipyr"],
+            8: ["bcc", "hex_bipyr"],
+            9: ["q2", "q4", "q6"],
+            10: ["q2", "q4", "q6"],
+            11: ["q2", "q4", "q6"],
+            12: ["cuboct", "q2", "q4", "q6"]} if optypes is None \
+            else optypes.copy()
+
+        self.ops = {}
+        for cn, t_list in self.optypes.items():
+            self.ops[cn] = []
+            for t in t_list:
+                if t[:4] == 'bent':
+                    self.ops[cn].append(OrderParameters(
+                        [t[:4]], parameters=[{'TA': float(t[4:])/180.0, \
+                                              'IGW_TA':1.0/0.0667}]))
+                else:
+                    self.ops[cn].append(OrderParameters([t]))
+
+        self.r_max = r_max
+        self.tol = tol
+
+    def featurize(self, struct, idx):
+        c_site = struct[idx]
+        neigh_dist = None
+        r = 4
+        while not neigh_dist:
+            neigh_dist = struct.get_neighbors(c_site, r)
+            r += 1
+
+        d_min = min([d for n, d in neigh_dist])
+        neigh_dist = struct.get_neighbors(c_site, d_min * (1 + self.r_max))
+
+        neigh_dist = [[n, d / d_min] for n, d in neigh_dist]  # normalize
+        dist_sort = sorted([d for n, d in neigh_dist])
+
+        tol = d_min * self.tol
+        dist_bins = []  # bin numerical tolerances (~error bar of measurement)
+        for d in dist_sort:
+            if not dist_bins or d > dist_bins[-1] * (1+tol):
+                dist_bins.append(d)
+
+        cn_fingerprint_array = defaultdict(list)  # dict where key = CN, val is 2D array that contains a fingerprint vector for each OP in that CN
+        total_weight = 0.5 * self.r_max  # area of weighting triangle for OP
+
+        for dist_idx, dist in enumerate(dist_bins):
+            neigh_sites = [n for n, d in neigh_dist if d <= dist*(1+tol)]
+            cn = len(neigh_sites)
+            if cn in self.ops:
+                for idx, op in enumerate(self.ops[cn]):
+                    # if self.optypes[cn][idx] == "sgl_bd":  # TODO; figure out how to use this
+                    #     neigh_sites = [n for n, d in struct.get_neighbors(c_site, 6)]
+
+                    opval = op.get_order_parameters([c_site] + neigh_sites, 0,
+                        indices_neighs=[i for i in
+                                        range(1, len(neigh_sites)+1)])[0]
+
+                    opval = opval or 0  # handle None
+
+                    if self.optypes[cn][idx] == 'bcc':  # TODO: ask Nils what this is
+                        opval = opval / 0.976
+
+                    # compute weight of this CN based on area in weighting triangle
+                    x1 = dist - 1
+                    x2 = self.r_max if dist_idx == len(dist_bins) - 1 else \
+                        dist_bins[dist_idx + 1] - 1
+                    y1 = 1 - (x1 / self.r_max)
+                    y2 = 1 - (x2 / self.r_max)
+                    weight = 0.5 * (y1 + y2) * (x2 - x1) / total_weight
+
+                    opval = opval * weight
+
+                    cn_fingerprint_array[cn].append(opval)
+
+        # convert dict to list
+        cn_fingerprint = []
+        for cn in sorted(self.optypes):
+            for op_idx, _ in enumerate(self.optypes[cn]):
+                try:
+                    cn_fingerprint.append(cn_fingerprint_array[cn][op_idx])
+                except IndexError:  # no OP value computed
+                    cn_fingerprint.append(0)
+
+        return cn_fingerprint
+
+    def feature_labels(self):
+        labels = []
+        for cn in sorted(self.optypes):
+            for op in self.optypes[cn]:
+                labels.append("{} CN_{}".format(op, cn))
+
+        return labels
+
+    def citations(self):
+        return ['@article{zimmermann_jain_2017, title={Applications of order'
+                ' parameter feature vectors}, journal={in progress}, author={'
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}']
+
+    def implementors(self):
+        return ['Anubhav Jain', 'Nils E. R. Zimmermann']
