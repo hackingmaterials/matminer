@@ -364,7 +364,7 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
     docs are minimal.
     """
 
-    def __init__(self, optypes=None, r_max=0.5, tol=1E-3):
+    def __init__(self, optypes=None, r_max=0.75, tol=1E-3):
         self.optypes = {
             # 1: ["sgl_bd"],  # TODO: add this back when I figure out how to use this. e.g. mp-4324, mp-3951
             2: ["bent180", "bent45", "bent90", "bent135"],

@@ -890,7 +890,7 @@ def get_op_stats_vector_diff_alt(s1, s2):
     Compute structure distance using an alternate (test) algorithm. Docs are
     minimal for now.
     """
-    site_f = OPSiteFingerprint_alt(r_max=0.75, tol=1E-3)
+    site_f = OPSiteFingerprint_alt()
     structure_f = OPStructureFingerprint(op_site_fp=site_f, stats=("mean",))
 
     f1 = structure_f.featurize(s1)
