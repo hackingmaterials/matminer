@@ -205,7 +205,8 @@ ________________________________________
                    plot_mode='offline',
                    margin_left=150,
                    textsize=35,
-                   ticksize=30)
+                   ticksize=30,
+                   filename="lr_regression.html")
 
     # a line to represent a perfect model with 1:1 prediction
     xy_params = {'x_col': [0, 400],
@@ -285,7 +286,7 @@ ___________________________________________________________________________
                       margin_left=150,
                       textsize=35,
                       ticksize=30,
-                      filename="regression.html")
+                      filename="rf_regression.html")
 
     # a line to represent a perfect model with 1:1 prediction
     xy_line = {'x_col': [0, 450],
@@ -315,14 +316,14 @@ ___________________________________________________________________________
     X_cols = np.asarray(X_cols)
     indices = np.argsort(importances)[::-1]
 
-    PlotlyFig(y_title='Importance (%)',
-              plot_title='Feature by importances',
-              plot_mode='offline',
-              margin_left=150,
-              margin_bottom=200,
-              textsize=20,
-              ticksize=15,
-              filename="importances.html")
+    pf = PlotlyFig(y_title='Importance (%)',
+                   plot_title='Feature by importances',
+                   plot_mode='offline',
+                   margin_left=150,
+                   margin_bottom=200,
+                   textsize=20,
+                   ticksize=15,
+                   filename="rf_importances.html")
 
     pf.bar_chart(x=X_cols[indices], y=importances[indices])
 
