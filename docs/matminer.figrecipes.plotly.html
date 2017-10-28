@@ -52,10 +52,10 @@
 <span id="matminer-figrecipes-plotly-make-plots-module"></span><h2>matminer.figrecipes.plotly.make_plots module<a class="headerlink" href="#module-matminer.figrecipes.plotly.make_plots" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig">
-<em class="property">class </em><code class="descclassname">matminer.figrecipes.plotly.make_plots.</code><code class="descname">PlotlyFig</code><span class="sig-paren">(</span><em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode=u'closest'</em>, <em>filename=None</em>, <em>plot_mode=u'offline'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=30</em>, <em>ticksize=25</em>, <em>fontfamily=None</em>, <em>height=800</em>, <em>width=1000</em>, <em>scale=None</em>, <em>margin_top=150</em>, <em>margin_bottom=80</em>, <em>margin_left=80</em>, <em>margin_right=80</em>, <em>pad=0</em>, <em>x_axis_type=u'linear'</em>, <em>y_axis_type=u'linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.figrecipes.plotly.make_plots.</code><code class="descname">PlotlyFig</code><span class="sig-paren">(</span><em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode=u'closest'</em>, <em>filename=None</em>, <em>plot_mode=u'offline'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=30</em>, <em>ticksize=25</em>, <em>fontfamily=None</em>, <em>height=800</em>, <em>width=1000</em>, <em>scale=None</em>, <em>margin_top=150</em>, <em>margin_bottom=80</em>, <em>margin_left=80</em>, <em>margin_right=80</em>, <em>pad=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode=u'closest'</em>, <em>filename=None</em>, <em>plot_mode=u'offline'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=30</em>, <em>ticksize=25</em>, <em>fontfamily=None</em>, <em>height=800</em>, <em>width=1000</em>, <em>scale=None</em>, <em>margin_top=150</em>, <em>margin_bottom=80</em>, <em>margin_left=80</em>, <em>margin_right=80</em>, <em>pad=0</em>, <em>x_axis_type=u'linear'</em>, <em>y_axis_type=u'linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode=u'closest'</em>, <em>filename=None</em>, <em>plot_mode=u'offline'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=30</em>, <em>ticksize=25</em>, <em>fontfamily=None</em>, <em>height=800</em>, <em>width=1000</em>, <em>scale=None</em>, <em>margin_top=150</em>, <em>margin_bottom=80</em>, <em>margin_left=80</em>, <em>margin_right=80</em>, <em>pad=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for making Plotly plots</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -99,9 +99,7 @@ scale: (float) Increase the resolution of the image by <cite>scale</cite> amount
 margin_bottom: (float) Sets the bottom margin (in px)
 margin_left: (float) Sets the left margin (in px)
 margin_right: (float) Sets the right margin (in px)
-pad: (float) Sets the amount of padding (in px) between the plotting area and the axis lines
-x_axis_type: (str) Sets the x axis scaling type. Select from ‘linear’, ‘log’, ‘date’, ‘category’.
-y_axis_type: (str) Sets the y axis scaling type. Select from ‘linear’, ‘log’, ‘date’, ‘category’.</p>
+pad: (float) Sets the amount of padding (in px) between the plotting area and the axis lines</p>
 </dd>
 </dl>
 <p>Returns: None</p>
@@ -243,12 +241,14 @@ be valid color types (str).</div></blockquote>
 
 <dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.xy_plot">
-<code class="descname">xy_plot</code><span class="sig-paren">(</span><em>x_col</em>, <em>y_col</em>, <em>text=None</em>, <em>color=u'rgba(70</em>, <em>130</em>, <em>180</em>, <em>1)'</em>, <em>size=6</em>, <em>colorscale=u'Viridis'</em>, <em>legend=None</em>, <em>showlegend=False</em>, <em>mode=u'markers'</em>, <em>marker=u'circle'</em>, <em>marker_fill=u'fill'</em>, <em>hoverinfo=u'x+y+text'</em>, <em>add_xy_plot=None</em>, <em>marker_outline_width=0</em>, <em>marker_outline_color=u'black'</em>, <em>linedash=u'solid'</em>, <em>linewidth=2</em>, <em>lineshape=u'linear'</em>, <em>error_type=None</em>, <em>error_direction=None</em>, <em>error_array=None</em>, <em>error_value=None</em>, <em>error_symmetric=True</em>, <em>error_arrayminus=None</em>, <em>error_valueminus=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.xy_plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">xy_plot</code><span class="sig-paren">(</span><em>x_col</em>, <em>y_col</em>, <em>x_axis_type=u'linear'</em>, <em>y_axis_type=u'linear'</em>, <em>text=None</em>, <em>color=u'rgba(70</em>, <em>130</em>, <em>180</em>, <em>1)'</em>, <em>size=6</em>, <em>colorscale=u'Viridis'</em>, <em>legend=None</em>, <em>showlegend=False</em>, <em>mode=u'markers'</em>, <em>marker=u'circle'</em>, <em>marker_fill=u'fill'</em>, <em>hoverinfo=u'x+y+text'</em>, <em>add_xy_plot=None</em>, <em>marker_outline_width=0</em>, <em>marker_outline_color=u'black'</em>, <em>linedash=u'solid'</em>, <em>linewidth=2</em>, <em>lineshape=u'linear'</em>, <em>error_type=None</em>, <em>error_direction=None</em>, <em>error_array=None</em>, <em>error_value=None</em>, <em>error_symmetric=True</em>, <em>error_arrayminus=None</em>, <em>error_valueminus=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.xy_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make an XY scatter plot, either using arrays of values, or a dataframe.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">x_col: (array) x-axis values, which can be a list/array/dataframe column
 y_col: (array) y-axis values, which can be a list/array/dataframe column
+x_axis_type: (str) Sets the x axis scaling type. Select from ‘linear’, ‘log’, ‘date’, ‘category’.
+y_axis_type: (str) Sets the y axis scaling type. Select from ‘linear’, ‘log’, ‘date’, ‘category’.
 text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a</p>
 <blockquote>
 <div>dataframe column containing text strings</div></blockquote>

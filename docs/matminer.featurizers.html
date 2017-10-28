@@ -999,7 +999,7 @@ cutoff (float): Cutoff distance</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.site.OPSiteFingerprint">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">OPSiteFingerprint</code><span class="sig-paren">(</span><em>optypes=None</em>, <em>dr=0.1</em>, <em>dist_exp=2</em>, <em>zero_ops=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">OPSiteFingerprint</code><span class="sig-paren">(</span><em>optypes=None</em>, <em>dr=0.1</em>, <em>ddr=0.01</em>, <em>ndr=1</em>, <em>dop=0.001</em>, <em>dist_exp=2</em>, <em>zero_ops=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Local structure order parameters computed from the neighbor
 environment of a site. For each order parameter, we determine
@@ -1012,12 +1012,21 @@ or evaluated with the shell of the next largest observed
 coordination number.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><dl class="first last docutils">
+<dd><dl class="first docutils">
 <dt>dr (float): width for binning neighors in unit of relative</dt>
 <dd>distances (= distance/nearest neighbor
 distance).  The binning is necessary to make the
 neighbor-finding step robust agains small numerical
 variations in neighbor distances (default: 0.1).</dd>
+</dl>
+<p>ddr (float): variation of width for finding stable OP values.
+ndr (int): number of width variations for each variaton direction</p>
+<blockquote>
+<div>(e.g., ndr = 0 only uses the input dr, whereas
+ndr=1 tests dr = dr - ddr, dr, and dr + ddr.</div></blockquote>
+<dl class="last docutils">
+<dt>dop (float): binning width to compute histogram for each OP</dt>
+<dd>if ndr &gt; 0.</dd>
 <dt>dist_exp (boolean): exponent for distance factor to multiply</dt>
 <dd>order parameters with that penalizes (large)
 variations in distances in a given motif.
@@ -1033,7 +1042,7 @@ default: True).</dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.site.OPSiteFingerprint.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>optypes=None</em>, <em>dr=0.1</em>, <em>dist_exp=2</em>, <em>zero_ops=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>optypes=None</em>, <em>dr=0.1</em>, <em>ddr=0.01</em>, <em>ndr=1</em>, <em>dop=0.001</em>, <em>dist_exp=2</em>, <em>zero_ops=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1902,114 +1911,21 @@ if set to False, the diagonal elements are set to 0</dd>
 </dd></dl>
 
 <dl class="function">
-<dt id="matminer.featurizers.structure.get_neighbors_of_site_with_index">
-<code class="descclassname">matminer.featurizers.structure.</code><code class="descname">get_neighbors_of_site_with_index</code><span class="sig-paren">(</span><em>struct</em>, <em>n</em>, <em>p=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.get_neighbors_of_site_with_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine the neighbors around the site that has index n in the input
-Structure object struct, given the approach defined by parameters
-p.  All supported neighbor-finding approaches and listed and
-explained in the following.  All approaches start by creating a
-tentative list of neighbors using a large cutoff radius defined in
-parameter dictionary p via key “cutoff”.
-“min_dist”: find nearest neighbor and its distance d_nn; consider all</p>
-<blockquote>
-<div>neighbors which are within a distance of d_nn * (1 + delta),
-where delta is an additional parameter provided in the
-dictionary p via key “delta”.</div></blockquote>
-<dl class="docutils">
-<dt>“scaled_VIRE”: compute the radii, r_i, of all sites on the basis of</dt>
-<dd>the valence-ionic radius evaluator (VIRE); consider all
-neighbors for which the distance to the central site is less
-than the sum of the radii multiplied by an a priori chosen
-parameter, delta,
-(i.e., dist &lt; delta * (r_central + r_neighbor)).</dd>
-<dt>“min_relative_VIRE”: same approach as “min_dist”, except that we</dt>
-<dd>use relative distances (i.e., distances divided by the sum of the
-atom radii from VIRE).</dd>
-<dt>“min_relative_OKeeffe”: same approach as “min_relative_VIRE”, except</dt>
-<dd>that we use the bond valence parameters from O’Keeffe’s bond valence
-method (J. Am. Chem. Soc. 1991, 3226-3229) to calculate
-relative distances.</dd>
-<dt>Args:</dt>
-<dd><p class="first">struct (Structure): input structure.
-n (int): index of site in Structure object for which</p>
-<blockquote>
-<div>neighbors are to be determined.</div></blockquote>
-<dl class="last docutils">
-<dt>p (dict): specification (via “approach” key; default is “min_dist”)</dt>
-<dd>and parameters of neighbor-finding approach.
-Default cutoff radius is 6 Angstrom (key: “cutoff”).
-Other default parameters are as follows.
-min_dist: “delta”: 0.15;
-min_relative_OKeeffe: “delta”: 0.05;
-min_relative_VIRE: “delta”: 0.05;
-scaled_VIRE: “delta”: 2.</dd>
-</dl>
-</dd>
-<dt>Returns: ([site]) list of sites that are considered to be nearest</dt>
-<dd>neighbors to site with index n in Structure object struct.</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="matminer.featurizers.structure.get_order_parameter_feature_vectors_difference">
-<code class="descclassname">matminer.featurizers.structure.</code><code class="descname">get_order_parameter_feature_vectors_difference</code><span class="sig-paren">(</span><em>struct1</em>, <em>struct2</em>, <em>pneighs=None</em>, <em>convert_none_to_zero=True</em>, <em>delta_op=0.01</em>, <em>ignore_op_types=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.get_order_parameter_feature_vectors_difference" title="Permalink to this definition">¶</a></dt>
+<dt id="matminer.featurizers.structure.get_op_stats_vector_diff">
+<code class="descclassname">matminer.featurizers.structure.</code><code class="descname">get_op_stats_vector_diff</code><span class="sig-paren">(</span><em>s1</em>, <em>s2</em>, <em>max_dr=0.2</em>, <em>ddr=0.01</em>, <em>ddist=0.01</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.get_op_stats_vector_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the difference vector between two order parameter-statistics
 feature vector resulting from two input structures.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">struct1 (Structure): first input structure.
-struct2 (Structure): second input structure.
-pneighs (dict): specification and parameters of</p>
-<blockquote>
-<div>neighbor-finding approach (see
-get_neighbors_of_site_with_index function
-for more details).</div></blockquote>
-<dl class="last docutils">
-<dt>convert_none_to_zero (bool): flag indicating whether or not</dt>
-<dd>to convert None values in OPs to zero (cf.,
-get_order_parameters function).</dd>
-<dt>delta_op (float): bin size of histogram that is computed</dt>
-<dd>in order to identify peak locations (cf.,
-get_order_parameters_stats function).</dd>
-<dt>ignore_op_types ([str]): list of OP types to be ignored in</dt>
-<dd>output dictionary (cf., get_order_parameters_stats
-function).</dd>
-</dl>
-</dd>
-<dt>Returns: ([float]) difference vector between order</dt>
-<dd>parameter-statistics feature vectors obtained from the
-two input structures (structure 1 - structure 2).</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="matminer.featurizers.structure.get_order_parameter_stats">
-<code class="descclassname">matminer.featurizers.structure.</code><code class="descname">get_order_parameter_stats</code><span class="sig-paren">(</span><em>struct</em>, <em>pneighs=None</em>, <em>convert_none_to_zero=True</em>, <em>delta_op=0.01</em>, <em>ignore_op_types=None</em>, <em>bond_angles=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.get_order_parameter_stats" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine the order parameter statistics accumulated across all sites
-in Structure object struct using the get_order_parameters function.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">struct (Structure): input structure.
-pneighs (dict): specification and parameters of</p>
-<blockquote>
-<div>neighbor-finding approach (see
-get_neighbors_of_site_with_index function
-for more details).</div></blockquote>
-<dl class="last docutils">
-<dt>convert_none_to_zero (bool): flag indicating whether or not</dt>
-<dd>to convert None values in LSOPs to zero (cf.,
-get_order_parameters function).</dd>
-<dt>delta_op (float): bin size of histogram that is computed</dt>
-<dd>in order to identify peak locations.</dd>
-<dt>ignore_op_types ([str]): list of OP types to be ignored in</dt>
-<dd>output dictionary (e.g., [“cn”, “bent”]). Default (None)
-will consider all OPs.</dd>
-</dl>
-</dd>
-<dt>Returns: ({}) dictionary, the keys of which represent</dt>
-<dd>the order parameter type (e.g., “bent5”, “tet”, “sq_pyr”)
-and the values of which are dictionaries carring the
-statistics (“min”, “max”, “mean”, “std”, “peak1”, “peak2”).</dd>
+<dd>s1 (Structure): first input structure.
+s2 (Structure): second input structure.
+max_dr (float): maximum neighbor-finding parameter to be tested.
+ddr (float): step size for increasing neighbor-finding parameter.
+ddist (float): bin size for histogramming distances of varying dr.</dd>
+<dt>Returns: (float, [float]) optimal neighbor-finding parameter</dt>
+<dd>and difference vector between order
+parameter-statistics feature vectors obtained from the
+two input structures (s1 - s2).</dd>
 </dl>
 </dd></dl>
 
