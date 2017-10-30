@@ -1,3 +1,5 @@
+from __future__ import division
+
 from unittest import TestCase
 
 from matminer.featurizers.stats import PropertyStats
