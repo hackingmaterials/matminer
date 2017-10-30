@@ -205,7 +205,8 @@ ________________________________________
                    plot_mode='offline',
                    margin_left=150,
                    textsize=35,
-                   ticksize=30)
+                   ticksize=30,
+                   filename="lr_regression.html")
 
     # a line to represent a perfect model with 1:1 prediction
     xy_params = {'x_col': [0, 400],
@@ -284,7 +285,8 @@ ___________________________________________________________________________
                       plot_mode='offline',
                       margin_left=150,
                       textsize=35,
-                      ticksize=30)
+                      ticksize=30,
+                      filename="rf_regression.html")
 
     # a line to represent a perfect model with 1:1 prediction
     xy_line = {'x_col': [0, 450],
@@ -311,15 +313,19 @@ ___________________________________________________________________________
 .. code-block:: python
 
     importances = rf.feature_importances_
+    X_cols = np.asarray(X_cols)
     indices = np.argsort(importances)[::-1]
 
-    PlotlyFig(y_title='Importance (%)',
-              plot_title='Feature by importances',
-              plot_mode='offline',
-              margin_left=150,
-              textsize=20,
-              ticksize=15)\
-              .bar_chart(x=X_cols, y=importances[indices])
+    pf = PlotlyFig(y_title='Importance (%)',
+                   plot_title='Feature by importances',
+                   plot_mode='offline',
+                   margin_left=150,
+                   margin_bottom=200,
+                   textsize=20,
+                   ticksize=15,
+                   filename="rf_importances.html")
+
+    pf.bar_chart(x=X_cols[indices], y=importances[indices])
 
 .. image:: _static/example_bulkmod_feats.png
-   :scale: 90
+   :scale: 60

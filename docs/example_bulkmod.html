@@ -203,7 +203,8 @@ the dataset.</p>
                <span class="n">plot_mode</span><span class="o">=</span><span class="s1">&#39;offline&#39;</span><span class="p">,</span>
                <span class="n">margin_left</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
                <span class="n">textsize</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span>
-               <span class="n">ticksize</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+               <span class="n">ticksize</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+               <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;lr_regression.html&quot;</span><span class="p">)</span>
 
 <span class="c1"># a line to represent a perfect model with 1:1 prediction</span>
 <span class="n">xy_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x_col&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span>
@@ -267,7 +268,8 @@ Forest model to examine the importance of our features.</p>
                   <span class="n">plot_mode</span><span class="o">=</span><span class="s1">&#39;offline&#39;</span><span class="p">,</span>
                   <span class="n">margin_left</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
                   <span class="n">textsize</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span>
-                  <span class="n">ticksize</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+                  <span class="n">ticksize</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+                  <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;rf_regression.html&quot;</span><span class="p">)</span>
 
 <span class="c1"># a line to represent a perfect model with 1:1 prediction</span>
 <span class="n">xy_line</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x_col&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">450</span><span class="p">],</span>
@@ -290,18 +292,22 @@ Forest model to examine the importance of our features.</p>
 <a class="reference internal image-reference" href="_images/example_bulkmod_rf.png"><img alt="_images/example_bulkmod_rf.png" src="_images/example_bulkmod_rf.png" style="width: 646.4px; height: 517.6px;" /></a>
 <p><strong>Step 6b: Plot the importance of the features we used</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">importances</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span>
+<span class="n">X_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X_cols</span><span class="p">)</span>
 <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">importances</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-<span class="n">PlotlyFig</span><span class="p">(</span><span class="n">y_title</span><span class="o">=</span><span class="s1">&#39;Importance (%)&#39;</span><span class="p">,</span>
-          <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;Feature by importances&#39;</span><span class="p">,</span>
-          <span class="n">plot_mode</span><span class="o">=</span><span class="s1">&#39;offline&#39;</span><span class="p">,</span>
-          <span class="n">margin_left</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
-          <span class="n">textsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-          <span class="n">ticksize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>\
-          <span class="o">.</span><span class="n">bar_chart</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X_cols</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">importances</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+<span class="n">pf</span> <span class="o">=</span> <span class="n">PlotlyFig</span><span class="p">(</span><span class="n">y_title</span><span class="o">=</span><span class="s1">&#39;Importance (%)&#39;</span><span class="p">,</span>
+               <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;Feature by importances&#39;</span><span class="p">,</span>
+               <span class="n">plot_mode</span><span class="o">=</span><span class="s1">&#39;offline&#39;</span><span class="p">,</span>
+               <span class="n">margin_left</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+               <span class="n">margin_bottom</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+               <span class="n">textsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+               <span class="n">ticksize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+               <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;rf_importances.html&quot;</span><span class="p">)</span>
+
+<span class="n">pf</span><span class="o">.</span><span class="n">bar_chart</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X_cols</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">importances</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/example_bulkmod_feats.png"><img alt="_images/example_bulkmod_feats.png" src="_images/example_bulkmod_feats.png" style="width: 679.5px; height: 522.0px;" /></a>
+<a class="reference internal image-reference" href="_images/example_bulkmod_feats.png"><img alt="_images/example_bulkmod_feats.png" src="_images/example_bulkmod_feats.png" style="width: 1171.2px; height: 836.4px;" /></a>
 </div>
 </div>
 </div>

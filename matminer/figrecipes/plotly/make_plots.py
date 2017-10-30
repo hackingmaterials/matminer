@@ -15,7 +15,7 @@ class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
                  fontfamily=None, height=800, width=1000, scale=None, margin_top=150, margin_bottom=80, margin_left=80,
-                 margin_right=80, pad=0, x_axis_type='linear', y_axis_type='linear'):
+                 margin_right=80, pad=0):
         """
         Class for making Plotly plots
 
@@ -54,8 +54,6 @@ class PlotlyFig:
             margin_left: (float) Sets the left margin (in px)
             margin_right: (float) Sets the right margin (in px)
             pad: (float) Sets the amount of padding (in px) between the plotting area and the axis lines
-            x_axis_type: (str) Sets the x axis scaling type. Select from 'linear', 'log', 'date', 'category'.
-            y_axis_type: (str) Sets the y axis scaling type. Select from 'linear', 'log', 'date', 'category'.
 
         Returns: None
 
@@ -75,8 +73,6 @@ class PlotlyFig:
         self.height = height
         self.width = width
         self.scale = scale
-        self.x_axis_type = x_axis_type
-        self.y_axis_type = y_axis_type
 
         # Make default layout
         self.layout = dict(
@@ -84,12 +80,10 @@ class PlotlyFig:
             titlefont=dict(size=self.textsize, family=self.fontfamily),
             xaxis=dict(title=self.x_title,
                        titlefont=dict(size=self.textsize, family=self.fontfamily),
-                       tickfont=dict(size=self.ticksize, family=self.fontfamily),
-                       type=self.x_axis_type),
+                       tickfont=dict(size=self.ticksize, family=self.fontfamily)),
             yaxis=dict(title=self.y_title,
                        titlefont=dict(size=self.textsize, family=self.fontfamily),
-                       tickfont=dict(size=self.ticksize, family=self.fontfamily),
-                       type=self.y_axis_type),
+                       tickfont=dict(size=self.ticksize, family=self.fontfamily)),
             hovermode=self.hovermode,
             width=self.width,
             height=self.height,
@@ -141,7 +135,7 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
                                         scale=self.scale)
 
-    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis', legend=None,
+    def xy_plot(self, x_col, y_col, x_axis_type='linear', y_axis_type='linear', text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis', legend=None,
                 showlegend=False, mode='markers', marker='circle', marker_fill='fill', hoverinfo='x+y+text',
                 add_xy_plot=None, marker_outline_width=0, marker_outline_color='black', linedash='solid',
                 linewidth=2, lineshape='linear', error_type=None, error_direction=None, error_array=None,
@@ -152,6 +146,8 @@ class PlotlyFig:
         Args:
             x_col: (array) x-axis values, which can be a list/array/dataframe column
             y_col: (array) y-axis values, which can be a list/array/dataframe column
+            x_axis_type: (str) Sets the x axis scaling type. Select from 'linear', 'log', 'date', 'category'.
+            y_axis_type: (str) Sets the y axis scaling type. Select from 'linear', 'log', 'date', 'category'.
             text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a
                 dataframe column containing text strings
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
@@ -252,6 +248,8 @@ class PlotlyFig:
             ),
             line=dict(dash=linedash, width=linewidth, shape=lineshape)
         )
+        self.layout['xaxis']['type'] = x_axis_type
+        self.layout['yaxis']['type'] = y_axis_type
 
         # Add error bars
         if error_type:
