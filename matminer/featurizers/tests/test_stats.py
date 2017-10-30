@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import unicode_literals, division, print_function
 
 from unittest import TestCase
 
