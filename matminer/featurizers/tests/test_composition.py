@@ -98,7 +98,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_fere_corr["maximum FERE correction"][0], 0.23)
         self.assertAlmostEqual(df_fere_corr["range FERE correction"][0], 0.382134316)
         self.assertAlmostEqual(df_fere_corr["mean FERE correction"][0], 0.077146274)
-        self.assertAlmostEqual(df_fere_corr["std_dev FERE correction"][0], 0.187206817)
+        self.assertAlmostEqual(df_fere_corr["std_dev FERE correction"][0], 0.270209766)
 
     def test_band_center(self):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
