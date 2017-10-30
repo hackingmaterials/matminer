@@ -64,8 +64,8 @@ class TestPropertyStats(TestCase):
 
     def test_geom_std_dev(self):
         # This is right. Yes, a list without variation has a geom_std_dev of 1
-        self.assertAlmostEquals(1, PropertyStats.geom_std_dev([1, 1, 1]))
+        self.assertAlmostEqual(1, PropertyStats.geom_std_dev([1, 1, 1]))
 
         # Harder case
-        self.assertAlmostEquals(1.166860716, PropertyStats.geom_std_dev([0.5, 1.5, 1]))
-        self.assertAlmostEquals(1.352205875, PropertyStats.geom_std_dev([0.5, 1.5, 1], weights=[2, 1, 0]))
+        self.assertAlmostEqual(1.166860716, PropertyStats.geom_std_dev([0.5, 1.5, 1]))
+        self.assertAlmostEqual(1.352205875, PropertyStats.geom_std_dev([0.5, 1.5, 1], weights=[2, 1, 0]))
