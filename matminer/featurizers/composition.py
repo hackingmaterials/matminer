@@ -232,7 +232,7 @@ class ElectronegativityDiff(BaseFeaturizer):
         avg_en_diff = []
         n_anions = sum([el_amt[el] for el in anions])
 
-        # TODO: @wardlt, @JFChen3 I left this code as-is but am not quite sure what's going on. Why is there some normalization applied to anions but not cations? -computron
+        # TODO: @WardLT, @JFChen3 I left this code as-is but am not quite sure what's going on. Why is there some normalization applied to anions but not cations? -computron
         for cat_en in cation_en:
             en_diff = 0
             for i in range(len(anions)):
