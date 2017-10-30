@@ -101,18 +101,6 @@ class PropertyStats(object):
         return np.average(data_lst, weights=weights)
 
     @staticmethod
-    def inverse_mean(data_lst, weights=None):
-        """Mean of the inverse of each entry
-
-        Args:
-            data_lst (list of floats): List of values to be assessed
-            weights (list of floats): Weights for each value
-        Returns:
-            inverse mean
-        """
-        return PropertyStats.mean([1.0 / x for x in data_lst], weights=weights)
-
-    @staticmethod
     def avg_dev(data_lst, weights=None):
         """Mean absolute deviation of list of element data.
 

@@ -42,11 +42,6 @@ class TestPropertyStats(TestCase):
     def test_mean(self):
         self._run_test("mean", 1, 1, 2./3, 5./7)
 
-    def test_inverse_mean(self):
-        self.assertAlmostEquals(1, PropertyStats.inverse_mean([1, 1, 1]))
-        self.assertAlmostEquals(1, PropertyStats.inverse_mean([0.5, 0.5, -1]))
-        self.assertAlmostEquals(-1, PropertyStats.inverse_mean([0.5, 0.5, -1], weights=[0, 0, 1]))
-
     def test_avg_dev(self):
         self._run_test("avg_dev", 0, 0, 5./9, 0.448979592)
 
