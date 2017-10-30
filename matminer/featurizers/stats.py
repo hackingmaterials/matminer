@@ -128,6 +128,8 @@ class PropertyStats(object):
         mean = PropertyStats.mean(data_lst, weights)
         return np.average(np.abs(np.subtract(data_lst, mean)), weights=weights)
 
+
+    # TODO: @WardLT - should we be using Bessel's correction by default here (ddof=1 in np.std)?
     @staticmethod
     def std_dev(data_lst, weights=None):
         """Standard deviation of a list of element data
