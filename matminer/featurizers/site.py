@@ -93,11 +93,11 @@ class AGNIFingerprints(BaseFeaturizer):
             if d is None:
                 output.append(np.sum(windowed, axis=0))
             else:
-                if d is 'x':
+                if d == 'x':
                     proj = [1., 0., 0.]
-                elif d is 'y':
+                elif d == 'y':
                     proj = [0., 1., 0.]
-                elif d is 'z':
+                elif d == 'z':
                     proj = [0., 0., 1.]
                 else:
                     raise Exception('Unrecognized direction')
