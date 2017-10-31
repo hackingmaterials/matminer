@@ -540,7 +540,7 @@ class IonProperty(BaseFeaturizer):
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
-            el_frac = list(np.divide(values, sum(values)))
+            el_frac = list(np.true_divide(values, sum(values)))
 
             ionic_char = []
             avg_ionic_char = 0

@@ -85,7 +85,7 @@ class AGNIFingerprints(BaseFeaturizer):
         # Compute "e^(r/eta) * cutoff_func" for each eta
         windowed = np.zeros((len(dists), len(self.etas)))
         for i, eta in enumerate(self.etas):
-            windowed[:, i] = np.multiply(np.exp(-1 * np.power(np.divide(dists, eta), 2)), cutoff_func)
+            windowed[:, i] = np.multiply(np.exp(-1 * np.power(np.true_divide(dists, eta), 2)), cutoff_func)
 
         # Compute the fingerprints
         output = []

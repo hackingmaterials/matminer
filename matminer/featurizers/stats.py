@@ -101,6 +101,18 @@ class PropertyStats(object):
         return np.average(data_lst, weights=weights)
 
     @staticmethod
+    def inverse_mean(data_lst, weights=None):
+        """Mean of the inverse of each entry
+
+        Args:
+            data_lst (list of floats): List of values to be assessed
+            weights (list of floats): Weights for each value
+        Returns:
+            inverse mean
+        """
+        return PropertyStats.mean([1.0 / x for x in data_lst], weights=weights)
+
+    @staticmethod
     def avg_dev(data_lst, weights=None):
         """Mean absolute deviation of list of element data.
 
@@ -116,8 +128,6 @@ class PropertyStats(object):
         mean = PropertyStats.mean(data_lst, weights)
         return np.average(np.abs(np.subtract(data_lst, mean)), weights=weights)
 
-
-    # TODO: @WardLT - should we be using Bessel's correction by default here (ddof=1 in np.std)?
     @staticmethod
     def std_dev(data_lst, weights=None):
         """Standard deviation of a list of element data
@@ -154,7 +164,7 @@ class PropertyStats(object):
         # Compute the geometric std dev
         mean = PropertyStats.holder_mean(data_lst, weights, 0)
         beta = np.sum(weights) / (np.sum(weights) ** 2 - np.sum(np.power(weights, 2)))
-        dev = np.log(np.divide(data_lst, mean))
+        dev = np.log(np.true_divide(data_lst, mean))
         return np.sqrt(np.exp(beta * np.dot(weights, np.power(dev, 2))))
 
     @staticmethod
@@ -225,7 +235,7 @@ class PropertyStats(object):
 
             # If power=0, return geometric mean
             if power == 0:
-                return np.product(np.power(data_lst, np.divide(weights, np.sum(weights))))
+                return np.product(np.power(data_lst, np.true_divide(weights, np.sum(weights))))
             else:
                 return np.power(np.sum(np.multiply(weights, np.power(data_lst, power))) / alpha, 1.0/power)
 
