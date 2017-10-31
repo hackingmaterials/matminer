@@ -909,7 +909,8 @@ def get_op_stats_vector_diff_alt(s1, s2, angle_weight=1):
     if euclidean_weight > 0:
         euclidean_distance = np.linalg.norm(np.array(f1) - np.array(f2))
 
-    return angle_weight * angle_distance + euclidean_weight * euclidean_distance
+    return (angle_weight * angle_distance) + \
+           (euclidean_weight * euclidean_distance)
 
 
 
