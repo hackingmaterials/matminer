@@ -502,7 +502,8 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1, color='rgba(70, 130, 180, 1)', bargap=0):
+    def histogram(self, x, histnorm="probability density", x_start=None, x_end=None, bin_size=1,
+                  color='rgba(70, 130, 180, 1)', bargap=0):
         """
         Create a histogram using Plotly
 
