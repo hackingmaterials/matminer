@@ -4,10 +4,11 @@ import numpy as np
 from numpy.linalg import norm
 
 from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.site import OPSiteFingerprint
 from pymatgen import Spin
 from pymatgen.electronic_structure.bandstructure import BandStructure, \
     BandStructureSymmLine
-from pymatgen.electronic_structure.dos import Dos
+from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
@@ -107,6 +108,7 @@ class BandFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen band structure object.
     """
+
     def __init__(self):
         pass
 
@@ -194,33 +196,45 @@ class DOSFeaturizer(BaseFeaturizer):
     def __init__(self):
         pass
 
-    def featurize(self, dos, band_depth=1, sampling_resolution=100, smear=0.25):
+    def featurize(self, dos, contributors=3, coordination_features=False,
+                  energy_cutoff=0.5, sampling_resolution=100, gaus_smear=0.1):
         """
         Args:
-            dos (pymatgen DOS or their dict):
-                The density of states to featurize. To obtain all features, dos
-                should include the structure attribute.
-            band_depth: The extent into the bands to sample the DOS
-            sampling_resolution: Number of points to sample DOS at
-            smear: Smearing parameter for the DOS
+            dos (pymatgen CompleteDos or their dict):
+                The density of states to featurize. Must be a complete DOS,
+                (i.e. contains PDOS and structure, in addition to total DOS)
+            contributors (int):
+                Sets the number of top contributors to the DOS that are
+                returned as features. (i.e. contributors=1 will only return the
+                main cb and main vb orbital)
+            coordination_features (bool):
+                If true, the coordination enviornment of the PDOS contributors
+                will also be returned. Only BCC and tetrehedral enviornments
+                are currently supported. If the enviornemnt is neither,
+                "unrecognized" will be returned
+            energy_cutoff (float in eV):
+                The extent (into the bands) to sample the DOS
+            sampling_resolution (int):
+                Number of points to sample DOS
+            gaus_smear (float in eV):
+                Gaussian smearing (sigma) around each sampled point in the DOS
         Returns:
-             ([float]): a list of band structure features.
-            List of currently supported features:
-                cbm_main_percent: (float) fraction that the main cb orbital contributes
-                vbm_main_percent: (float) fraction that the main vb orbital contributes
-                cb_main_character: ([0.0|1.0]) main orbital present is s p or d
-                vb_main_character: ([0.0|1.0]) main orbital present is s p or d
-                                    s = [1.0, 0.0, 0.0]
-                                    p = [0.0, 1.0, 0.0]
-                                    d = [0.0, 0.0, 1.0]
+             ([float | string]): a list of band structure features.
+                List of currently supported features:
+                .. xbm_percents: [(float)] fraction that the orbitals contribute
+                .. xbm_locations: [[(float)]] cartesian locations of orbitals
+                .. xbm_species: [(str)] species of orbital (s p d or f)
+                .. xbm_characters: [(str)] orbital characters (s p d or f)
+                .. xbm_coordination: [(str)] the cordination geometries
         """
 
         if isinstance(dos, dict):
-            dos = Dos.from_dict(dos)
+            dos = CompleteDos.from_dict(dos)
 
         # preparation
-        cbm_scores, vbm_scores = self.get_cbm_vbm_scores(
-            dos, band_depth, sampling_resolution, smear)
+        orbital_scores = self.get_cbm_vbm_scores(dos, coordination_features,
+                                                 energy_cutoff,
+                                                 sampling_resolution, gaus_smear)
 
         cbm_pdos = list(cbm_scores.items())
         cbm_pdos.sort(key=lambda x: x[1])
@@ -232,10 +246,14 @@ class DOSFeaturizer(BaseFeaturizer):
 
         # featurize
         self.feat = []
-        self.feat.append(('cbm_main_percent', cbm_main[1]))
-        self.feat.append(('vbm_main_percent', vbm_main[1]))
-        self.feat.append(('cbm_main_character', self.get_orbital_character(cbm_main)))
-        self.feat.append(('vbm_main_character', self.get_orbital_character(vbm_main)))
+        self.feat.append(('cbm_percents', cbm_main[1]))
+        self.feat.append(('vbm_percents', vbm_main[1]))
+        self.feat.append(('cbm_locations', cbm_main[1]))
+        self.feat.append(('vbm_locations', vbm_main[1]))
+        self.feat.append(('cbm_species', cbm_main[1]))
+        self.feat.append(('vbm_species', vbm_main[1]))
+        self.feat.append(('cbm_characters', self.get_orbital_character(cbm_main)))
+        self.feat.append(('vbm_characters', self.get_orbital_character(vbm_main)))
 
         return list(x[1] for x in self.feat)
 
@@ -243,82 +261,132 @@ class DOSFeaturizer(BaseFeaturizer):
         return list(x[0] for x in self.feat)
 
     @staticmethod
-    def get_orbital_character(PDOS):
-        """
-        check which orbital character (s, p, d) is present
-        Args:
-            PDOS: (touple) that gives pdos character and ammount
-                ex: ('Ti:s', 0.75)
-        return:
-            [(int)]: a binary list which represents the pdos character
-            s = [1.0, 0.0, 0.0]
-            p = [0.0, 1.0, 0.0]
-            d = [0.0, 0.0, 1.0]
-        """
-
-        if PDOS[0][-1] == 's':
-            return [1., 0., 0.]
-        elif PDOS[0][-1] == 'p':
-            return [0., 1., 0.]
-        else:
-            return [0., 0., 1.]
-
-    @staticmethod
-    def get_cbm_vbm_scores(dos, band_depth, sampling_resolution, smear):
+    def get_cbm_vbm_scores(dos, coordination_features, energy_cutoff,
+                           sampling_resolution, gaus_smear):
         """
         Args:
-            dos (pymatgen DOS or their dict):
-                The density of states to featurize. To obtain all features, dos
-                should include the structure attribute.
-            band_depth: The extent into the bands to sample the DOS
-            sampling_resolution: Number of points to sample DOS at
-            smear: smearing parameter for the DOS
+            dos (pymatgen CompleteDos or their dict):
+                The density of states to featurize. Must be a complete DOS,
+                (i.e. contains PDOS and structure, in addition to total DOS)
+            coordination_features (bool):
+                if true, will also return the coordination enviornment of the
+                PDOS features
+            energy_cutoff (float in eV):
+                The extent (into the bands) to sample the DOS
+            sampling_resolution (int):
+                Number of points to sample DOS
+            gaus_smear (float in eV):
+                Gaussian smearing (sigma) around each sampled point in the DOS
         Returns:
-            density of states scores (cbm_scores, vbm_scores):
-                the partial density of states of both band extremum
-                normalized by the total density of states in the sampled
-                range
+            orbital_scores [(dict)]:
+                A list of how much each orbital contributes to the partial
+                density of states up to energy_cutoff. Dictionary items are:
+                .. cbm_score: (float) fractional contribution to the conduction band
+                .. vbm_score: (float) fractional contribution to the valence band
+                .. species: (pymatgen Specie) the Specie of the orbital
+                .. character: (str) is the orbital character s, p, d, or f
+                .. location: [(float)] cartesian coordinates of the orbital
+                .. coordination (str) optional-coordination enviornment from op
+                                        site feature vector
         """
 
         cbm, vbm = dos.get_cbm_vbm(tol=0.01)
 
-        cbm_scores = {}
-        vbm_scores = {}
-        for el in dos.structure.composition.elements:
-            proj = dos.get_element_spd_dos(el)
+        structure = dos.structure
+        sites = structure.sites
+
+        orbital_scores = []
+        for i in range(0, len(sites)):
+
+            # if you desire coordination enviornment as feature
+            if coordination_features:
+                geometry = get_tet_bcc_motif(structure, i)
+
+            site = sites[i]
+            proj = dos.get_site_spd_dos(site)
             for orb in proj:
+                # calculate contribution
                 energies = [e for e in proj[orb].energies]
-                smear_dos = proj[orb].get_smeared_densities(smear)
+                smear_dos = proj[orb].get_smeared_densities(gaus_smear)
                 dos_up = smear_dos[Spin.up]
                 dos_down = smear_dos[Spin.down] if Spin.down in smear_dos\
                            else smear_dos[Spin.up]
                 dos_total = [sum(id) for id in zip(dos_up, dos_down)]
 
                 vbm_score = 0
-                vbm_space = np.linspace(vbm, vbm - band_depth,
+                vbm_space = np.linspace(vbm, vbm - energy_cutoff,
                                         num=sampling_resolution)
                 for e in vbm_space:
                     vbm_score += np.interp(e, energies, dos_total)
 
                 cbm_score = 0
-                cbm_space = np.linspace(cbm, cbm + band_depth,
+                cbm_space = np.linspace(cbm, cbm + energy_cutoff,
                                         num=sampling_resolution)
                 for e in cbm_space:
                     cbm_score += np.interp(e, energies, dos_total)
 
-                cbm_scores["{}:{}".format(el.symbol, str(orb))] = cbm_score
-                vbm_scores["{}:{}".format(el.symbol, str(orb))] = vbm_score
+                # add orbital scores to list
+                orbital_score = {
+                    'cbm_score': cbm_score,
+                    'vbm_score': vbm_score,
+                    'species': site.specie,
+                    'character': orb,
+                    'location': site.coords}
+                if coordination_features:
+                    orbital_score['coordination'] = geometry
+                orbital_scores.append(orbital_score)
 
-        total_cbm = sum([cbm_scores[key] for key in cbm_scores.keys()])
-        total_vbm = sum([vbm_scores[key] for key in vbm_scores.keys()])
+        # normalize by total contribution
+        total_cbm = sum([orbital_scores[i]['cbm_score'] for i in
+                         range(0, len(orbital_scores))])
+        total_vbm = sum([orbital_scores[i]['vbm_score'] for i in
+                         range(0, len(orbital_scores))])
+        for orbital in orbital_scores:
+            orbital['cbm_score'] = orbital['cbm_score'] / total_cbm
+            orbital['vbm_score'] = orbital['vbm_score'] / total_vbm
 
-        for key in cbm_scores.keys():
-            cbm_scores[key] = cbm_scores[key] / total_cbm
+        return orbital_scores
 
-        for key in vbm_scores.keys():
-            vbm_scores[key] = vbm_scores[key] / total_vbm
+    @staticmethod
+    def get_tet_bcc_motif(struct, idx):
+        '''
+        Convience class-method from Nils Zimmermann.
+        Used to distinguish coordination environment in half-Heuslers.
+        Args:
+            struct (pymatgen Structure object):
+                the target structure to evaluate
+            idx (index):
+                the site index in the structure
+        Returns:
+            (str) that describes site coordination enviornment
+                'bcc'
+                'tet'
+                'unrecognized'
+        '''
 
-        return (cbm_scores, vbm_scores)
+        op_site_fp = OPSiteFingerprint()
+        fp = op_site_fp.featurize(struct, idx)
+        labels = op_site_fp.feature_labels()
+        i_tet = labels.index('tet CN_4')
+        i_bcc = labels.index('bcc CN_8')
+        if fp[i_bcc] > 0.5:
+            return 'bcc'
+        elif fp[i_tet] > 0.5:
+            return 'tet'
+        else:
+            return 'unrecognized'
 
     def implementors(self):
         return ['Maxwell Dylla', 'Anubhav Jain']
+
+
+if __name__ == '__main__':
+    from pymatgen import MPRester
+
+    API = MPRester('VerGNDXO3Wdt4cJb')
+    DOS = API.get_dos_by_material_id('mp-4651')
+
+    feats = DOSFeaturizer()
+    feats.featurize(self, DOS, contributors=3, coordination_features=False,
+                  energy_cutoff=0.5, sampling_resolution=100, gaus_smear=0.1)
+    print(feats.feat)
