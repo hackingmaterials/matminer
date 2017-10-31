@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>matminer.models package &#8212; matminer 0.1.4 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -27,7 +24,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -82,8 +79,8 @@
 <dt id="matminer.models.mechanical_properties.Lames1stParam">
 <em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">Lames1stParam</code><a class="headerlink" href="#matminer.models.mechanical_properties.Lames1stParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>In continuum mechanics, the Lames parameters (also called the Lame coefficients or Lame
-constants) are two material-dependent quantities denoted by &#8216;lamda&#8217; and &#8216;mu&#8217; that arise in
-strain-stress relationships. In general, &#8216;lamda&#8217; and &#8216;mu&#8217; are individually referred to as
+constants) are two material-dependent quantities denoted by ‘lamda’ and ‘mu’ that arise in
+strain-stress relationships. In general, ‘lamda’ and ‘mu’ are individually referred to as
 Lames first parameter and Lames second parameter, respectively.</p>
 <dl class="docutils">
 <dt>Reference:</dt>
@@ -114,7 +111,7 @@ Lames first parameter and Lames second parameter, respectively.</p>
 <dl class="class">
 <dt id="matminer.models.mechanical_properties.PWaveModulus">
 <em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">PWaveModulus</code><a class="headerlink" href="#matminer.models.mechanical_properties.PWaveModulus" title="Permalink to this definition">¶</a></dt>
-<dd><p>In linear elasticity, the P-wave modulus &#8216;M&#8217;, also known as the longitudinal modulus or
+<dd><p>In linear elasticity, the P-wave modulus ‘M’, also known as the longitudinal modulus or
 the constrained modulus, is one of the elastic moduli available to describe isotropic
 homogeneous materials.</p>
 <dl class="docutils">
@@ -171,13 +168,13 @@ homogeneous materials.</p>
 <dl class="class">
 <dt id="matminer.models.mechanical_properties.YM">
 <em class="property">class </em><code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">YM</code><span class="sig-paren">(</span><em>nu</em>, <em>G=None</em>, <em>K=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate Young&#8217;s modulus (E) from other moduli.</p>
+<dd><p>Calculate Young’s modulus (E) from other moduli.</p>
 <dl class="method">
 <dt id="matminer.models.mechanical_properties.YM.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>nu</em>, <em>G=None</em>, <em>K=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YM.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
-<dd>nu: (float) Poisson&#8217;s ratio
+<dd>nu: (float) Poisson’s ratio
 G: (float) shear or rigidity modulus (N/m^2)
 K: (float) bulk modulus (N/m^2)</dd>
 </dl>
@@ -186,7 +183,7 @@ K: (float) bulk modulus (N/m^2)</dd>
 <dl class="method">
 <dt id="matminer.models.mechanical_properties.YM.calculate">
 <code class="descname">calculate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.YM.calculate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns: Young&#8217;s modulus (E) (N/m^2)</p>
+<dd><p>Returns: Young’s modulus (E) (N/m^2)</p>
 </dd></dl>
 
 <dl class="method">
@@ -228,7 +225,7 @@ K: (float) bulk modulus (N/m^2)</dd>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>H: (float) hardness (N/m^2)
-E: (float) Young&#8217;s modulus (N/m^2)
+E: (float) Young’s modulus (N/m^2)
 K_c: (float) fracture toughness  (N/m^(1.5))</dd>
 </dl>
 <p>Returns: (float) brittleness index (BI) of a material (m^(-1))</p>
@@ -237,11 +234,11 @@ K_c: (float) fracture toughness  (N/m^(1.5))</dd>
 <dl class="function">
 <dt id="matminer.models.mechanical_properties.bulk_modulus">
 <code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">bulk_modulus</code><span class="sig-paren">(</span><em>nu</em>, <em>E</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.bulk_modulus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate bulk modulus (K) from Young&#8217;s modulus.</p>
+<dd><p>Calculate bulk modulus (K) from Young’s modulus.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>nu: (float) Poisson&#8217;s ratio
-E: (float) Young&#8217;s modulus (N/m^2)</dd>
+<dd>nu: (float) Poisson’s ratio
+E: (float) Young’s modulus (N/m^2)</dd>
 </dl>
 <p>Returns: bulk modulus (K) (N/m^2)</p>
 </dd></dl>
@@ -252,13 +249,11 @@ E: (float) Young&#8217;s modulus (N/m^2)</dd>
 <dd><p>Calculate bulk modulus (K) from coordination number.</p>
 <dl class="docutils">
 <dt>References:</dt>
-<dd><ul class="first last">
-<li><p class="first">ISBN: 9780521523394 (Title: &#8220;Atomic and Electronic Structure of Solids&#8221;)</p>
-</li>
+<dd><ul class="first last simple">
+<li>ISBN: 9780521523394 (Title: “Atomic and Electronic Structure of Solids”)</li>
 <li><dl class="first docutils">
-<dt>DOI: 10.1103/PhysRevB.32.7988 (Title: &#8220;Calculation of bulk moduli of diamond and</dt>
-<dd><p class="first last">zinc-blende solids&#8221;)</p>
-</dd>
+<dt>DOI: 10.1103/PhysRevB.32.7988 (Title: “Calculation of bulk moduli of diamond and</dt>
+<dd>zinc-blende solids”)</dd>
 </dl>
 </li>
 </ul>
@@ -321,11 +316,11 @@ theory of brittle fracture.</p>
 </ul>
 </dd>
 <dt>Args:</dt>
-<dd>E: (float) Young&#8217;s modulus (N/m^2)
+<dd>E: (float) Young’s modulus (N/m^2)
 gamma_s: (float) elastic strain energy released (N/m)
 a: (float) one half crack length for internal cracks or crack length for edge cracks (m)
 gamma_p: (float) plastic strain energy released (N/m)
-nu: (float) Poisson&#8217;s ratio, used in plain strain condition, else default=0</dd>
+nu: (float) Poisson’s ratio, used in plain strain condition, else default=0</dd>
 </dl>
 <p>Returns: critical stress needed for crack propagation (sigma_c) (N/m^2)</p>
 </dd></dl>
@@ -336,10 +331,10 @@ nu: (float) Poisson&#8217;s ratio, used in plain strain condition, else default=
 <dd><p>Calculate fracture toughness (K_c) of a material.</p>
 <dl class="docutils">
 <dt>References:</dt>
-<dd>DOI: 10.1007/s10853-013-7569-1 (Title: &#8220;Room temperature mechanical properties of
-natural-mineral-based thermoelectrics&#8221;)</dd>
+<dd>DOI: 10.1007/s10853-013-7569-1 (Title: “Room temperature mechanical properties of
+natural-mineral-based thermoelectrics”)</dd>
 <dt>Args:</dt>
-<dd>E: (float) Young&#8217;s modulus (N/m^2)
+<dd>E: (float) Young’s modulus (N/m^2)
 H: (float) hardness (N/m^2)
 F: (float) indentation load (N)
 c: (float) hald of radial crack length (m)</dd>
@@ -353,10 +348,10 @@ c: (float) hald of radial crack length (m)</dd>
 <dd><p>Calculate maximum allowable heat flow (QF)</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>nu: (float) Poisson&#8217;s ratio
+<dd>nu: (float) Poisson’s ratio
 kappa: (float) thermal conductivity (W(mK)^(-1))
 sigma: (float) stress as a result of temperature gradient (N/m^2)
-E: (float) Young&#8217;s modulus (N/m^2)
+E: (float) Young’s modulus (N/m^2)
 cte: (float) coefficient of thermal expansion (K^(-1))</dd>
 </dl>
 <p>Returns: maximum allowable heat flow (QF) (W/m)</p>
@@ -365,11 +360,11 @@ cte: (float) coefficient of thermal expansion (K^(-1))</dd>
 <dl class="function">
 <dt id="matminer.models.mechanical_properties.shear_modulus">
 <code class="descclassname">matminer.models.mechanical_properties.</code><code class="descname">shear_modulus</code><span class="sig-paren">(</span><em>nu</em>, <em>E</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.models.mechanical_properties.shear_modulus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate shear/rigidity modulus (G) from Young&#8217;s modulus.</p>
+<dd><p>Calculate shear/rigidity modulus (G) from Young’s modulus.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>nu: (float) Poisson&#8217;s ratio
-E: (float) Young&#8217;s modulus (N/m^2)</dd>
+<dd>nu: (float) Poisson’s ratio
+E: (float) Young’s modulus (N/m^2)</dd>
 </dl>
 <p>Returns: shear/rigidity modulus (G) (N/m^2)</p>
 </dd></dl>
@@ -400,8 +395,8 @@ the strain energy release rate and the stress intensity factor are related by th
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>K_I: (float) stress intensity factor in mode 1 (N/m^(1.5))
-E: (float) Young&#8217;s modulus (N/m^2)
-nu: (float) Poisson&#8217;s ratio, used in plain strain condition, else default=0</dd>
+E: (float) Young’s modulus (N/m^2)
+nu: (float) Poisson’s ratio, used in plain strain condition, else default=0</dd>
 </dl>
 <p>Returns: strain energy release rate (G_I) (N/m)</p>
 </dd></dl>
@@ -414,9 +409,9 @@ nu: (float) Poisson&#8217;s ratio, used in plain strain condition, else default=
 <dt>Args:</dt>
 <dd>T2: (float) temperature at cold end (K)
 T1: (float) temperature at hot end (K)
-E: (float) Young&#8217;s modulus (N/m^2)
+E: (float) Young’s modulus (N/m^2)
 cte: (float) coefficient of thermal expansion (K^(-1))
-nu: (float) Poisson&#8217;s ratio</dd>
+nu: (float) Poisson’s ratio</dd>
 </dl>
 <p>Returns: stress as a result of temperature gradient (sigma) (N/m^2)</p>
 </dd></dl>
@@ -428,9 +423,9 @@ nu: (float) Poisson&#8217;s ratio</dd>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>sigma_tens: (float) tensile stress or strength (N/m^2)
-nu: (float) Poisson&#8217;s ratio
+nu: (float) Poisson’s ratio
 kappa: (float) thermal conductivity (W(mK)^(-1))
-E: (float) Young&#8217;s modulus (N/m^2)
+E: (float) Young’s modulus (N/m^2)
 cte: (float) coefficient of thermal expansion (K^(-1))</dd>
 </dl>
 <p>Returns: thermal shock resistance parameter (R_therm)</p>
@@ -442,13 +437,13 @@ cte: (float) coefficient of thermal expansion (K^(-1))</dd>
 <dd><p>Calculate thermal stress (sigma_T) in a material.</p>
 <dl class="docutils">
 <dt>References:</dt>
-<dd>DOI: 10.1007/s10853-013-7569-1 (Title: &#8220;Room temperature mechanical properties of
-natural-mineral-based thermoelectrics&#8221;)</dd>
+<dd>DOI: 10.1007/s10853-013-7569-1 (Title: “Room temperature mechanical properties of
+natural-mineral-based thermoelectrics”)</dd>
 <dt>Args:</dt>
-<dd>E_T: (float) temperature-dependent Young&#8217;s modulus (N/m^2)
+<dd>E_T: (float) temperature-dependent Young’s modulus (N/m^2)
 cte_T: (float) temperature-dependent thermal expansion coefficient (K^(-1))
 delta_T: (float) temperature difference (K)
-nu_T: (float) temperature-dependent Poisson&#8217;s ratio</dd>
+nu_T: (float) temperature-dependent Poisson’s ratio</dd>
 </dl>
 <p>Returns: (float) thermal stress (sigma_T) induced by thermal gradients or thermal transients</p>
 </dd></dl>
@@ -460,8 +455,8 @@ nu_T: (float) temperature-dependent Poisson&#8217;s ratio</dd>
 <dl class="docutils">
 <dt>References:</dt>
 <dd><dl class="first last docutils">
-<dt>DOI: (not available yet) (Title: &#8220;A Statistical Learning Framework for Materials Science:</dt>
-<dd>Application to Elastic Moduli of k-nary Inorganic Compounds&#8221;)</dd>
+<dt>DOI: (not available yet) (Title: “A Statistical Learning Framework for Materials Science:</dt>
+<dd>Application to Elastic Moduli of k-nary Inorganic Compounds”)</dd>
 </dl>
 </dd>
 <dt>Args:</dt>
@@ -477,8 +472,8 @@ K: (float) elastic shear modulus (N/m^2)</dd>
 <dd><p>Calculate Vickers hardness (H) for a material.</p>
 <dl class="docutils">
 <dt>References:</dt>
-<dd>DOI: 10.1007/s10853-013-7569-1 (Title: &#8220;Room temperature mechanical properties of
-natural-mineral-based thermoelectrics&#8221;)</dd>
+<dd>DOI: 10.1007/s10853-013-7569-1 (Title: “Room temperature mechanical properties of
+natural-mineral-based thermoelectrics”)</dd>
 <dt>Args:</dt>
 <dd>F: (float) indentation load (N)
 a: (float) half of diagonal length of the indentation impression (m)</dd>
@@ -518,8 +513,8 @@ a: (float) half of diagonal length of the indentation impression (m)</dd>
 <dt>References:</dt>
 <dd><a class="reference external" href="http://unlcms.unl.edu/cas/physics/tsymbal/teaching/SSP-927/Section%2004_Elastic_Properties.pdf">http://unlcms.unl.edu/cas/physics/tsymbal/teaching/SSP-927/Section%2004_Elastic_Properties.pdf</a></dd>
 <dt>Args:</dt>
-<dd>direction: (str) direction of sound velocity. Choose from Choose from &#8220;100&#8221;, &#8220;110&#8221;, and &#8220;111&#8221;.
-mode: (str) wave mode. Choose from &#8220;longitudinal&#8221;, &#8220;transverse1&#8221;, and &#8220;transverse2&#8221;.
+<dd>direction: (str) direction of sound velocity. Choose from Choose from “100”, “110”, and “111”.
+mode: (str) wave mode. Choose from “longitudinal”, “transverse1”, and “transverse2”.
 C_11: elastic constant C_xxxx (N/m^2)
 C_12: elastic constant C_xxyy (N/m^2)
 C_44: elastic constant C_yzyz (N/m^2)</dd>
@@ -549,13 +544,13 @@ rho: (float) material density (kg/m^3)</dd>
 <dl class="docutils">
 <dt>References:</dt>
 <dd><ul class="first simple">
-<li>DOI: 10.1016/j.jallcom.2014.09.022 (Title: &#8220;Electronic structure, elastic anisotropy,</li>
+<li>DOI: 10.1016/j.jallcom.2014.09.022 (Title: “Electronic structure, elastic anisotropy,</li>
 </ul>
-<p class="last">thermal conductivity and optical properties of calcium apatite Ca5(PO4)3X (X = F, Cl or Br)&#8221;)
-- DOI: 10.1016/j.commatsci.2015.07.029 (Title: &#8220;Electronic structure, mechanical properties and
-anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals&#8221;)
-- DOI: 10.1002/adma.201400515 (Title: &#8220;High Thermoelectric Performance in Non-Toxic Earth-Abundant
-Copper Sulfide&#8221;)</p>
+<p class="last">thermal conductivity and optical properties of calcium apatite Ca5(PO4)3X (X = F, Cl or Br)”)
+- DOI: 10.1016/j.commatsci.2015.07.029 (Title: “Electronic structure, mechanical properties and
+anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals”)
+- DOI: 10.1002/adma.201400515 (Title: “High Thermoelectric Performance in Non-Toxic Earth-Abundant
+Copper Sulfide”)</p>
 </dd>
 </dl>
 <dl class="method">
@@ -586,7 +581,7 @@ v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m/s)</
 <dd><p>Integrand function to calculate Cahill thermal conductivity.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck&#8217;s constant, omega = phonon frequency</dd>
+<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck’s constant, omega = phonon frequency</dd>
 </dl>
 <p>Returns: (float) integral value</p>
 </dd></dl>
@@ -598,16 +593,16 @@ v_t2: (float) transverse sound velocity in direction 2 (in SI units, i.e. m/s)</
 <dl class="docutils">
 <dt>References:</dt>
 <dd><ul class="first simple">
-<li>DOI: 10.1002/adfm.201600718 (Title: &#8220;Minimum Thermal Conductivity in Weak Topological Insulators with</li>
+<li>DOI: 10.1002/adfm.201600718 (Title: “Minimum Thermal Conductivity in Weak Topological Insulators with</li>
 </ul>
-<p class="last">Bismuth-Based Stack Structure&#8221;)
-- DOI: 10.1038/nature13184 (Title: &#8220;Ultralow thermal conductivity and high thermoelectric figure of merit in
-SnSe crystals&#8221;) (full formula)</p>
+<p class="last">Bismuth-Based Stack Structure”)
+- DOI: 10.1038/nature13184 (Title: “Ultralow thermal conductivity and high thermoelectric figure of merit in
+SnSe crystals”) (full formula)</p>
 </dd>
 <dt>Args:</dt>
 <dd>n: (int) number of atoms in primitive cell
 V: (float) unit cell volume (in SI units, i.e. m^(3))
-cahill_integrand_sum: (float) <em>sum</em> of the term calculate using the above function &#8220;cahill_integrand_summation&#8221;</dd>
+cahill_integrand_sum: (float) <em>sum</em> of the term calculate using the above function “cahill_integrand_summation”</dd>
 </dl>
 <p>Returns: (float) Cahill thermal conductivity (in SI units, i.e. W(mK)^(-1))</p>
 </dd></dl>
@@ -620,11 +615,11 @@ Use this function repeatedly to calculate the total sum over all acoustic modes.
 <dl class="docutils">
 <dt>References:</dt>
 <dd><ul class="first simple">
-<li>DOI: 10.1002/adfm.201600718 (Title: &#8220;Minimum Thermal Conductivity in Weak Topological Insulators with</li>
+<li>DOI: 10.1002/adfm.201600718 (Title: “Minimum Thermal Conductivity in Weak Topological Insulators with</li>
 </ul>
-<p class="last">Bismuth-Based Stack Structure&#8221;)
-- DOI: 10.1038/nature13184 (Title: &#8220;Ultralow thermal conductivity and high thermoelectric figure of merit in
-SnSe crystals&#8221;) (full formula)</p>
+<p class="last">Bismuth-Based Stack Structure”)
+- DOI: 10.1038/nature13184 (Title: “Ultralow thermal conductivity and high thermoelectric figure of merit in
+SnSe crystals”) (full formula)</p>
 </dd>
 <dt>Args:</dt>
 <dd>v_i: (float) sound velocity for the acoustic mode i (in SI units, i.e. m(s)^(-1))
@@ -640,7 +635,7 @@ theta: (float) Debye temperature (in K)</dd>
 <dd><p>Integrand function to calculate Callaway thermal conductivity.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck&#8217;s constant, omega = phonon frequency
+<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck’s constant, omega = phonon frequency
 t_ph: (float) phonon relaxation time (in SI units, s^(-1))</dd>
 </dl>
 <p>Returns: (float) integral value</p>
@@ -655,14 +650,14 @@ t_ph: (float) phonon relaxation time (in SI units, s^(-1))</dd>
 <dl class="docutils">
 <dt>References:</dt>
 <dd><ul class="first simple">
-<li>DOI: 10.1002/adfm.201600718 (Title: &#8220;Minimum Thermal Conductivity in Weak Topological Insulators with</li>
+<li>DOI: 10.1002/adfm.201600718 (Title: “Minimum Thermal Conductivity in Weak Topological Insulators with</li>
 </ul>
-<p>Bismuth-Based Stack Structure&#8221;)
-- DOI: 10.1063/1.4906225 (Title: &#8220;Critical analysis of lattice thermal conductivity of half-Heusler alloys
-using variations of Callaway model&#8221;)
-- DOI: 10.1103/PhysRev.134.A1058 (Title: &#8220;Thermal Conductivity of Silicon and Germanium from 3 K to the Melting</p>
+<p>Bismuth-Based Stack Structure”)
+- DOI: 10.1063/1.4906225 (Title: “Critical analysis of lattice thermal conductivity of half-Heusler alloys
+using variations of Callaway model”)
+- DOI: 10.1103/PhysRev.134.A1058 (Title: “Thermal Conductivity of Silicon and Germanium from 3 K to the Melting</p>
 <blockquote class="last">
-<div>Point&#8221;)</div></blockquote>
+<div>Point”)</div></blockquote>
 </dd>
 <dt>Args:</dt>
 <dd>v_m: (float) speed of sound in the material (in SI units, i.e. m(s)^(-1))
@@ -680,15 +675,15 @@ t_ph: (float) phonon relaxation time (in SI units, s^(-1))</dd>
 <dl class="docutils">
 <dt>References:</dt>
 <dd><ul class="first simple">
-<li>DOI: 10.1016/j.jallcom.2014.09.022 (Title: &#8220;Electronic structure, elastic anisotropy,</li>
+<li>DOI: 10.1016/j.jallcom.2014.09.022 (Title: “Electronic structure, elastic anisotropy,</li>
 </ul>
-<p class="last">thermal conductivity and optical properties of calcium apatite Ca5(PO4)3X (X = F, Cl or Br)&#8221;)
-- DOI: 10.1016/j.commatsci.2015.07.029 (Title: &#8220;Electronic structure, mechanical properties and
-anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals&#8221;)</p>
+<p class="last">thermal conductivity and optical properties of calcium apatite Ca5(PO4)3X (X = F, Cl or Br)”)
+- DOI: 10.1016/j.commatsci.2015.07.029 (Title: “Electronic structure, mechanical properties and
+anisotropy of thermal conductivity of Y-Si-O-N quaternary crystals”)</p>
 </dd>
 <dt>Args:</dt>
 <dd>n: (int) number of atoms in primitive cell
-E: (float) Young&#8217;s modules (in SI units, i.e. Kgm(s)^(-2))
+E: (float) Young’s modules (in SI units, i.e. Kgm(s)^(-2))
 m: (float) total mass per unit cell (in SI units, i.e. Kg)
 V: (float) unit cell volume (in SI units, i.e. m^(3))</dd>
 </dl>
@@ -702,7 +697,7 @@ V: (float) unit cell volume (in SI units, i.e. m^(3))</dd>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>M: (float) molecular mass
-E: (float) Young&#8217;s modules (in SI units, i.e. Kgm(s)^(-2))
+E: (float) Young’s modules (in SI units, i.e. Kgm(s)^(-2))
 m: (float) total mass (in SI units, i.e. Kg)
 V: (float) unit cell volume (in SI units, i.e. m^(3))</dd>
 </dl>
@@ -716,9 +711,9 @@ V: (float) unit cell volume (in SI units, i.e. m^(3))</dd>
 <dl class="docutils">
 <dt>References:</dt>
 <dd><ul class="first simple">
-<li>DOI: 10.1103/PhysRev.115.564 (Title: &#8220;High-Temperature Thermal Conductivity of Insulating Crystals:</li>
+<li>DOI: 10.1103/PhysRev.115.564 (Title: “High-Temperature Thermal Conductivity of Insulating Crystals:</li>
 </ul>
-<p class="last">Relationship to the Melting Point&#8221;)</p>
+<p class="last">Relationship to the Melting Point”)</p>
 </dd>
 <dt>Args:</dt>
 <dd>gamma: (float) Gruneisen parameter
@@ -738,7 +733,7 @@ A: (float) average atomic weight</dd>
 <dd><p>Integrand function to calculate Callaway thermal conductivity.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck&#8217;s constant, omega = phonon frequency
+<dd>x: (hbar * omega)/(k * T)   # hbar: reduced Planck’s constant, omega = phonon frequency
 t_c: (float) phonon relaxation time (in SI units, s^(-1))</dd>
 </dl>
 <p>Returns: (float) integral value</p>
@@ -756,14 +751,14 @@ made to model thermal conductivity as shown here.)</p>
 <dl class="docutils">
 <dt>References:</dt>
 <dd><ul class="first simple">
-<li>DOI: 10.1103/PhysRev.134.A1058 (Title: &#8220;Thermal Conductivity of Silicon and Germanium from 3 K to the Melting</li>
+<li>DOI: 10.1103/PhysRev.134.A1058 (Title: “Thermal Conductivity of Silicon and Germanium from 3 K to the Melting</li>
 </ul>
 <blockquote>
-<div>Point&#8221;)</div></blockquote>
+<div>Point”)</div></blockquote>
 <ul class="simple">
-<li>DOI: 10.1063/1.4906225 (Title: &#8220;Critical analysis of lattice thermal conductivity of half-Heusler alloys</li>
+<li>DOI: 10.1063/1.4906225 (Title: “Critical analysis of lattice thermal conductivity of half-Heusler alloys</li>
 </ul>
-<p class="last">using variations of Callaway model&#8221;)</p>
+<p class="last">using variations of Callaway model”)</p>
 </dd>
 <dt>Args:</dt>
 <dd><p class="first">v_m: (float) speed of sound in the material (in SI units, i.e. m(s)^(-1))
@@ -784,10 +779,10 @@ t_c: (float) combined phonon relaxation time that includes higher-order processe
 <dl class="docutils">
 <dt>References</dt>
 <dd><ul class="first simple">
-<li>DOI: 10.1007/0-387-25100-6_2 (Title: &#8220;High Lattice Thermal Conductivity Solids&#8221;)</li>
-<li>DOI: 10.1002/adfm.201600718 (Title: &#8220;Minimum Thermal Conductivity in Weak Topological Insulators with</li>
+<li>DOI: 10.1007/0-387-25100-6_2 (Title: “High Lattice Thermal Conductivity Solids”)</li>
+<li>DOI: 10.1002/adfm.201600718 (Title: “Minimum Thermal Conductivity in Weak Topological Insulators with</li>
 </ul>
-<p class="last">Bismuth-Based Stack Structure&#8221;)</p>
+<p class="last">Bismuth-Based Stack Structure”)</p>
 </dd>
 <dt>Args:</dt>
 <dd>M: (float) average atomic mass
@@ -859,7 +854,7 @@ T: (float) absolute temperature (K)</dd>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>

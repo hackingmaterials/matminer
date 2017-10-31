@@ -21,7 +21,7 @@ class MongoDataRetrieval:
                       limit=None, idx_field=None, strict=False):
         """
         Args:
-            projection: (list) - a list of str fields to grab; dot-notation is
+            projection: (list) - a list of str fields to retrieve; dot-notation is
                 allowed. Set to "None" to try to auto-detect the fields.
             query: (JSON) - a pymongo-style query to filter data records
             sort: (tuple) - pymongo-style sort option
@@ -75,7 +75,7 @@ def clean_projection(projection):
     Projecting on e.g. 'a.b.' and 'a' is disallowed in MongoDb, so project
     inclusively. See unit tests for examples of what this is doing.
     Args:
-        projection: (list) - list of fields to grab; dot-notation is allowed.
+        projection: (list) - list of fields to retrieve; dot-notation is allowed.
     """
     all_proj = []
     for group in groupby(sorted(projection), key=lambda p: p.split(".", 1)[0]):
