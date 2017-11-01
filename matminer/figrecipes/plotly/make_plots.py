@@ -535,6 +535,12 @@ class PlotlyFig:
         if not x_end:
             x_end = max(x)
 
+        # plotly fig does not render correctly if x has shape (_, 1), such as the result of a dataframe.as_matrix()
+        # The array must have shape (_,).
+        if isinstance(x, np.ndarray):
+            if len(x.shape) == 2:
+                x = x.reshape((len(x),))
+
         histogram = go.Histogram(x=x, histnorm=histnorm,
                                  xbins=dict(start=x_start, end=x_end, size=bin_size),
                                  marker=dict(color=color))
