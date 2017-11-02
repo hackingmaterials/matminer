@@ -177,16 +177,15 @@ class BandFeaturizer(BaseFeaturizer):
             raise ValueError("Cannot featurize a metallic band structure!")
 
         # preparation
-        cbm = bs.get_cbm()
         vbm = bs.get_vbm()
-        band_gap = bs.get_band_gap()
-        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm, is_cbm=False)
-        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, is_cbm=True)
-        vbm_ens = np.array(bs.bands[vbm_bspin][vbm_bidx])
-        cbm_ens = np.array(bs.bands[cbm_bspin][cbm_bidx])
         vbm_k = bs.kpoints[vbm['kpoint_index'][0]].frac_coords
+        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm, is_cbm=False)
+        vbm_ens = np.array(bs.bands[vbm_bspin][vbm_bidx])
+        cbm = bs.get_cbm()
         cbm_k = bs.kpoints[cbm['kpoint_index'][0]].frac_coords
-
+        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, is_cbm=True)
+        cbm_ens = np.array(bs.bands[cbm_bspin][cbm_bidx])
+        band_gap = bs.get_band_gap()
         # featurize
         self.feat = []
         self.feat.append(('band_gap', band_gap['energy']))
@@ -195,11 +194,11 @@ class BandFeaturizer(BaseFeaturizer):
         self.feat.append(('p_ex1_norm', norm(vbm_k)))
         self.feat.append(('n_ex1_norm', norm(cbm_k)))
         if bs.structure:
-            sg = SpacegroupAnalyzer(bs.structure)
-            rotations, _ = sg._get_symmetry()
-            self.feat.append(('p_ex1_degen', get_k_degen(vbm_k, rotations)))
-            self.feat.append(('n_ex1_degen', get_k_degen(cbm_k, rotations)))
-
+            self.feat.append(('p_ex1_degen', bs.get_kpoint_degeneracy(vbm_k)))
+            self.feat.append(('n_ex1_degen', bs.get_kpoint_degeneracy(cbm_k)))
+        else:
+            for prop in ['p_ex1_degen', 'n_ex1_degen']:
+                self.feat.append((prop, None))
         return list(x[1] for x in self.feat)
 
     def feature_labels(self):
