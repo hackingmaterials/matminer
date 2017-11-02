@@ -1,3 +1,5 @@
+from __future__ import division
+
 from pymatgen import Element, Composition, MPRester
 from pymatgen.core.periodic_table import get_el_sp
 
@@ -230,7 +232,7 @@ class ElectronegativityDiff(BaseFeaturizer):
         avg_en_diff = []
         n_anions = sum([el_amt[el] for el in anions])
 
-        # TODO: @wardlt, @JFChen3 I left this code as-is but am not quite sure what's going on. Why is there some normalization applied to anions but not cations? -computron
+        # TODO: @WardLT, @JFChen3 I left this code as-is but am not quite sure what's going on. Why is there some normalization applied to anions but not cations? -computron
         for cat_en in cation_en:
             en_diff = 0
             for i in range(len(anions)):
@@ -538,7 +540,7 @@ class IonProperty(BaseFeaturizer):
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
-            el_frac = list(np.divide(values, sum(values)))
+            el_frac = list(np.true_divide(values, sum(values)))
 
             ionic_char = []
             avg_ionic_char = 0
@@ -662,9 +664,13 @@ class TMetalFraction(BaseFeaturizer):
 
 
 # TODO: why is this a "feature" of a compound? Seems more like a pymatgen analysis thing?
+#   Deml *et al.* PRB 085142 use the FERE correction energy as the basis for features. I've adjusted the class
+#    documentation to make it clearer that this class computes features related to the FERE correction values, and
+#    not that it is performing some kind of thermodynamic analysis. Really, we should pre-compute these correction
+#    values and combine this with the ElementProperty class.
 class FERECorrection(BaseFeaturizer):
     """
-    Class to calculate difference between fitted elemental-phase reference
+    Class to calculate features related to the difference between fitted elemental-phase reference
     energy (FERE) and GGA+U energy
 
     Parameters:

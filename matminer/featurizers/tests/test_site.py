@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, division, print_function
+
 import numpy as np
 import pandas as pd
 from pymatgen import Structure, Lattice
@@ -40,8 +42,8 @@ class FingerprintTests(PymatgenTest):
         self.assertEquals(8, len(set(agni.feature_labels())))
 
         self.assertEquals(0.8, agni.etas[0])
-        self.assertAlmostEquals(6 * np.exp(-(3.52 / 0.8) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[0])
-        self.assertAlmostEquals(6 * np.exp(-(3.52 / 16) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[-1])
+        self.assertAlmostEqual(6 * np.exp(-(3.52 / 0.8) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[0])
+        self.assertAlmostEqual(6 * np.exp(-(3.52 / 16) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[-1])
 
     def test_off_center_cscl(self):
         agni = AGNIFingerprints(directions=[None, 'x', 'y', 'z'], cutoff=4)
@@ -61,7 +63,7 @@ class FingerprintTests(PymatgenTest):
         right_xdist = 4.209 * 0.45
         left_dist = 4.209 * np.sqrt(0.55 ** 2 + 2 * 0.5 ** 2)
         left_xdist = 4.209 * 0.55
-        self.assertAlmostEquals(4 * (
+        self.assertAlmostEqual(4 * (
             right_xdist / right_dist * np.exp(-(right_dist / 0.8) ** 2) * 0.5 * (np.cos(np.pi * right_dist / 4) + 1) -
             left_xdist / left_dist * np.exp(-(left_dist / 0.8) ** 2) * 0.5 * (np.cos(np.pi * left_dist / 4) + 1)),
                                 site1[8])
@@ -75,23 +77,29 @@ class FingerprintTests(PymatgenTest):
     def test_op_site_fingerprint(self):
         opsf = OPSiteFingerprint()
         l = opsf.feature_labels()
-        t = ["sgl_bd", "bent180", "bent45", "bent90", "bent135", "tri_plan", \
-            "tet", "T", "sq_plan", "sq", "tet", "see_saw", "tri_pyr", \
-            "pent_plan", "sq_pyr", "tri_bipyr", "oct", "pent_pyr", \
-            "hex_pyr", "pent_bipyr", "bcc", "hex_bipyr", "q2", "q4", "q6", \
-            "q2", "q4", "q6", "q2", "q4", "q6", "cuboct", "q2", "q4", "q6"]
+        t = ["sgl_bd CN_1", "bent180 CN_2", "bent45 CN_2", "bent90 CN_2", \
+            "bent135 CN_2", "tri_plan CN_3", "tet CN_3", "T CN_3", \
+            "sq_plan CN_4", "sq CN_4", "tet CN_4", "see_saw CN_4", \
+            "tri_pyr CN_4", "pent_plan CN_5", "sq_pyr CN_5", \
+            "tri_bipyr CN_5", "oct CN_6", "pent_pyr CN_6", "hex_pyr CN_7", \
+            "pent_bipyr CN_7", "bcc CN_8", "hex_bipyr CN_8", \
+            "q2 CN_9", "q4 CN_9", "q6 CN_9", \
+            "q2 CN_10", "q4 CN_10", "q6 CN_10",
+            "q2 CN_11", "q4 CN_11", "q6 CN_11", \
+            "cuboct CN_12", "q2 CN_12", "q4 CN_12", "q6 CN_12"]
         for i in range(len(l)):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 35)
-        self.assertAlmostEquals(ops[opsf.feature_labels().index('oct')], 1.0)
+        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
+            'oct CN_6')]), 999)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
-            'bcc')] + 0.5), 853)
+        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
+            'bcc CN_8')] + 0.5), 895)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(int(1000*ops[opsf.feature_labels().index(
-            'bcc')] + 0.5), 932)
+        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
+            'bcc CN_8')] + 0.5), 955)
 
 
 if __name__ == '__main__':

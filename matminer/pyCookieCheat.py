@@ -3,7 +3,7 @@
 """
 For most recent version: https://github.com/n8henrie/pycookiecheat
 
-Use your browser's cookies to make grabbing data from login-protected sites easier.
+Use your browser's cookies to make retrieving data from login-protected sites easier.
 Intended for use with Python Requests http://python-requests.org
 Accepts a URL from which it tries to extract a domain. If you want to force the domain,
 just send it the domain you'd like to use instead.
