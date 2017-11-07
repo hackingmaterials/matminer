@@ -53,7 +53,9 @@ class AGNIFingerprints(BaseFeaturizer):
     def __init__(self, directions=(None, 'x', 'y', 'z'), etas=None,
                  cutoff=8):
         self.directions = directions
-        self.etas = etas or np.logspace(np.log10(0.8), np.log10(16), 8)
+        self.etas = etas
+        if self.etas is None:
+            self.etas = np.logspace(np.log10(0.8), np.log10(16), 8)
         self.cutoff = cutoff
 
     @property
