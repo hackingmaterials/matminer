@@ -29,8 +29,8 @@ class FingerprintTests(PymatgenTest):
         agni = AGNIFingerprints(directions=['x', 'y', 'z'])
 
         features = agni.featurize(self.sc, 0)
-        self.assertEquals(8 * 3, len(features))
-        self.assertEquals(8 * 3, len(set(agni.feature_labels())))
+        self.assertEqual(8 * 3, len(features))
+        self.assertEqual(8 * 3, len(set(agni.feature_labels())))
         self.assertArrayAlmostEqual([0, ] * 24, features)
 
         # Compute the "atomic fingerprints"
@@ -38,12 +38,17 @@ class FingerprintTests(PymatgenTest):
         agni.cutoff = 3.75  # To only get 6 neighbors to deal with
 
         features = agni.featurize(self.sc, 0)
-        self.assertEquals(8, len(features))
-        self.assertEquals(8, len(set(agni.feature_labels())))
+        self.assertEqual(8, len(features))
+        self.assertEqual(8, len(set(agni.feature_labels())))
 
-        self.assertEquals(0.8, agni.etas[0])
+        self.assertEqual(0.8, agni.etas[0])
         self.assertAlmostEqual(6 * np.exp(-(3.52 / 0.8) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[0])
         self.assertAlmostEqual(6 * np.exp(-(3.52 / 16) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[-1])
+        
+        # Test that passing etas to constructor works
+        new_etas = np.logspace(-4, 2, 6)
+        agni = AGNIFingerprints(directions=['x', 'y', 'z'], etas=new_etas)
+        self.assertArrayAlmostEqual(new_etas, agni.etas)
 
     def test_off_center_cscl(self):
         agni = AGNIFingerprints(directions=[None, 'x', 'y', 'z'], cutoff=4)

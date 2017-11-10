@@ -13,7 +13,6 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
-
 class BranchPointEnergy(BaseFeaturizer):
     def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
         """
@@ -130,6 +129,8 @@ class BandFeaturizer(BaseFeaturizer):
                     and k-point of VBM
                 n_ex1_norm (Angstrom^-1): k-space distance between Gamma point
                     and k-point of CBM
+                p_ex1_degen: degeneracy of VBM
+                n_ex1_degen: degeneracy of CBM
         """
 
         if isinstance(bs, dict):
@@ -138,24 +139,28 @@ class BandFeaturizer(BaseFeaturizer):
             raise ValueError("Cannot featurize a metallic band structure!")
 
         # preparation
-        cbm = bs.get_cbm()
         vbm = bs.get_vbm()
-        band_gap = bs.get_band_gap()
+        vbm_k = bs.kpoints[vbm['kpoint_index'][0]].frac_coords
         vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm, is_cbm=False)
-        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, is_cbm=True)
         vbm_ens = np.array(bs.bands[vbm_bspin][vbm_bidx])
+        cbm = bs.get_cbm()
+        cbm_k = bs.kpoints[cbm['kpoint_index'][0]].frac_coords
+        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, is_cbm=True)
         cbm_ens = np.array(bs.bands[cbm_bspin][cbm_bidx])
-
+        band_gap = bs.get_band_gap()
         # featurize
         self.feat = []
         self.feat.append(('band_gap', band_gap['energy']))
         self.feat.append(('is_gap_direct', band_gap['direct']))
         self.feat.append(('direct_gap', min(cbm_ens - vbm_ens)))
-        self.feat.append(('p_ex1_norm',
-                norm(bs.kpoints[vbm['kpoint_index'][0]].frac_coords)))
-        self.feat.append(('n_ex1_norm',
-                norm(bs.kpoints[cbm['kpoint_index'][0]].frac_coords)))
-
+        self.feat.append(('p_ex1_norm', norm(vbm_k)))
+        self.feat.append(('n_ex1_norm', norm(cbm_k)))
+        if bs.structure:
+            self.feat.append(('p_ex1_degen', bs.get_kpoint_degeneracy(vbm_k)))
+            self.feat.append(('n_ex1_degen', bs.get_kpoint_degeneracy(cbm_k)))
+        else:
+            for prop in ['p_ex1_degen', 'n_ex1_degen']:
+                self.feat.append((prop, float.NaN))
         return list(x[1] for x in self.feat)
 
     def feature_labels(self):
