@@ -4,7 +4,7 @@ import numpy as np
 from numpy.linalg import norm
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint
+from matminer.featurizers.site import OPSiteFingerprint, get_tet_bcc_motif
 from pymatgen import Spin
 from pymatgen.electronic_structure.bandstructure import BandStructure, \
     BandStructureSymmLine
@@ -247,10 +247,11 @@ class DOSFeaturizer(BaseFeaturizer):
             dos = CompleteDos.from_dict(dos)
 
         # preparation
-        orbital_scores = self.get_cbm_vbm_scores(dos, coordination_features,
-                                                 energy_cutoff,
-                                                 sampling_resolution,
-                                                 gaussian_smear)
+        orbital_scores = DOSFeaturizer.get_cbm_vbm_scores(dos,
+                                                          coordination_features,
+                                                          energy_cutoff,
+                                                          sampling_resolution,
+                                                          gaussian_smear)
 
         orbital_scores.sort(key=lambda x: x['cbm_score'], reverse=True)
         cbm_contributors = orbital_scores[0:contributors]
@@ -305,7 +306,8 @@ class DOSFeaturizer(BaseFeaturizer):
     def feature_labels(self):
         return list(x[0] for x in self.feat)
 
-    def get_cbm_vbm_scores(self, dos, coordination_features, energy_cutoff,
+    @staticmethod
+    def get_cbm_vbm_scores(dos, coordination_features, energy_cutoff,
                            sampling_resolution, gaussian_smear):
         """
         Args:
@@ -344,7 +346,7 @@ class DOSFeaturizer(BaseFeaturizer):
 
             # if you desire coordination enviornment as feature
             if coordination_features:
-                geometry = self.get_tet_bcc_motif(structure, i)
+                geometry = get_tet_bcc_motif(structure, i)
 
             site = sites[i]
             proj = dos.get_site_spd_dos(site)
@@ -390,35 +392,6 @@ class DOSFeaturizer(BaseFeaturizer):
             orbital['vbm_score'] = orbital['vbm_score'] / total_vbm
 
         return orbital_scores
-
-    @staticmethod
-    def get_tet_bcc_motif(struct, idx):
-        '''
-        Convience class-method from Nils Zimmermann.
-        Used to distinguish coordination environment in half-Heuslers.
-        Args:
-            struct (pymatgen Structure object):
-                the target structure to evaluate
-            idx (index):
-                the site index in the structure
-        Returns:
-            (str) that describes site coordination enviornment
-                'bcc'
-                'tet'
-                'unrecognized'
-        '''
-
-        op_site_fp = OPSiteFingerprint()
-        fp = op_site_fp.featurize(struct, idx)
-        labels = op_site_fp.feature_labels()
-        i_tet = labels.index('tet CN_4')
-        i_bcc = labels.index('bcc CN_8')
-        if fp[i_bcc] > 0.5:
-            return 'bcc'
-        elif fp[i_tet] > 0.5:
-            return 'tet'
-        else:
-            return 'unrecognized'
 
     def implementors(self):
         return ['Maxwell Dylla', 'Anubhav Jain']
