@@ -219,10 +219,10 @@ class DOSFeaturizer(BaseFeaturizer):
                 determines the feature value xbm_significant_contributors.
                 The threshold is a fractional value between 0 and 1.
             coordination_features (bool):
-                If true, the coordination enviornment of the PDOS contributors
-                will also be returned. Only BCC and tetrehedral enviornments
-                are currently supported. If the enviornemnt is neither,
-                "unrecognized" will be returned
+                If true, the coordination environment of the PDOS contributors
+                will also be returned. Only limited environments are currently
+                supported. If the environment is neither, "unrecognized" will
+                be returned.
             energy_cutoff (float in eV):
                 The extent (into the bands) to sample the DOS
             sampling_resolution (int):
@@ -236,8 +236,8 @@ class DOSFeaturizer(BaseFeaturizer):
                 .. xbm_locations: [[(float)]] cartesian locations of orbitals
                 .. xbm_species: [(str)] elemental specie of orbitals (ex: 'Ti')
                 .. xbm_characters: [(str)] orbital characters (s p d or f)
-                .. xbm_coordinations: [(str)] the cordination geometry that
-                        the orbitals reside in. (the coordination enviornment
+                .. xbm_coordinations: [(str)] the coordination geometry that
+                        the orbitals reside in. (the coordination environment
                         of the site the orbital is associated with)
                 .. xbm_significant_contributors: (int) the number of orbitals
                         with contributions above the significance_threshold
