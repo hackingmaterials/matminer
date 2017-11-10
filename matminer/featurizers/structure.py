@@ -766,9 +766,14 @@ class OPStructureFingerprint(BaseFeaturizer):
             If stats is None, for each order parameter, a list is returned that
             contains the calculated parameter for each site in the structure.
             *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
+        min_oxi (int): minimum site oxidation state for inclusion (e.g.,
+            zero means metals/cations only)
+        max_oxi (int): maximum site oxidation state for inclusion
     """
-    def __init__(self, op_site_fp=None, stats=('mean', 'std_dev',
-                                               'minimum', 'maximum')):
+    def __init__(self, op_site_fp=None, stats=('mean', 'std_dev', 'minimum',
+                                               'maximum'), min_oxi=None,
+                 max_oxi=None):
+
         self.op_site_fp = OPSiteFingerprint() if op_site_fp is None \
             else op_site_fp
         self._labels = self.op_site_fp.feature_labels()
@@ -779,6 +784,9 @@ class OPStructureFingerprint(BaseFeaturizer):
                 if '_mode' in stat and int(stat[0]) > nmodes:
                     nmodes = int(stat[0])
             self.nmodes = nmodes
+
+        self.min_oxi = min_oxi
+        self.max_oxi = max_oxi
 
     def featurize(self, s):
         """
@@ -797,12 +805,14 @@ class OPStructureFingerprint(BaseFeaturizer):
         """
         opvals = [[] for t in self._labels]
         for i, site in enumerate(s.sites):
-            opvalstmp = self.op_site_fp.featurize(s, i)
-            for j, opval in enumerate(opvalstmp):
-                if opval is None:
-                    opvals[j].append(0.0)
-                else:
-                    opvals[j].append(opval)
+            if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
+                    and (self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
+                opvalstmp = self.op_site_fp.featurize(s, i)
+                for j, opval in enumerate(opvalstmp):
+                    if opval is None:
+                        opvals[j].append(0.0)
+                    else:
+                        opvals[j].append(opval)
 
         if self.stats:
             opstats = []
@@ -836,7 +846,7 @@ class OPStructureFingerprint(BaseFeaturizer):
                 'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
 
     def implementors(self):
-        return (['Nils E. R. Zimmermann', 'Alireza Faghaninia'])
+        return (['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain'])
 
 
 def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
