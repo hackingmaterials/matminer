@@ -157,7 +157,7 @@ class BandFeaturizer(BaseFeaturizer):
             self.feat.append(('n_ex1_degen', bs.get_kpoint_degeneracy(cbm_k)))
         else:
             for prop in ['p_ex1_degen', 'n_ex1_degen']:
-                self.feat.append((prop, None))
+                self.feat.append((prop, float.NaN))
         return list(x[1] for x in self.feat)
 
     def feature_labels(self):
