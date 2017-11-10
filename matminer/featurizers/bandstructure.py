@@ -126,6 +126,8 @@ class BandFeaturizer(BaseFeaturizer):
                     and k-point of VBM
                 n_ex1_norm (Angstrom^-1): k-space distance between Gamma point
                     and k-point of CBM
+                p_ex1_degen: degeneracy of VBM
+                n_ex1_degen: degeneracy of CBM
         """
 
         if isinstance(bs, dict):
