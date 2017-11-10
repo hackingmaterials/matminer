@@ -15,6 +15,7 @@ We have to use two options because the Site object does not hold a pointer back 
 """
 
 import numpy as np
+import math
 
 from collections import defaultdict
 
@@ -366,7 +367,14 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
     docs are minimal.
     """
 
-    def __init__(self, optypes=None, r_max=0.75, tol=1E-3):
+    @staticmethod
+    def _semicircle_integral(x, r):
+        if r == x:  # avoid tan-1(infinity) braekdown
+            return 0.25 * math.pi * r**2
+
+        return 0.5 * ((x * math.sqrt(r**2 - x**2)) + (r**2 * math.atan(x/math.sqrt(r**2 - x**2))))
+
+    def __init__(self, optypes=None, r_max=0.75, tol=1E-3, method="triangle"):
         self.optypes = {
             # 1: ["sgl_bd"],  # TODO: add this back when I figure out how to use this. e.g. mp-4324, mp-3951
             2: ["bent180", "bent45", "bent90", "bent135"],
@@ -395,6 +403,7 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
 
         self.r_max = r_max
         self.tol = tol
+        self.method = method
 
     def featurize(self, struct, idx):
         c_site = struct[idx]
@@ -417,7 +426,11 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
                 dist_bins.append(d)
 
         cn_fingerprint_array = defaultdict(list)  # dict where key = CN, val is 2D array that contains a fingerprint vector for each OP in that CN
-        total_weight = 0.5 * self.r_max  # area of weighting triangle for OP
+
+        if self.method == "triangle":
+            total_weight = self.r_max * 0.5
+        elif self.method == "circle":
+            total_weight = self.r_max**2 * math.pi / 4
 
         for dist_idx, dist in enumerate(dist_bins):
             neigh_sites = [n for n, d in neigh_dist if d <= dist*(1+tol)]
@@ -437,14 +450,22 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
                         opval = opval / 0.976
 
                     # compute weight of this CN based on area in weighting triangle
-                    x1 = dist - 1
-                    x2 = self.r_max if dist_idx == len(dist_bins) - 1 else \
-                        dist_bins[dist_idx + 1] - 1
-                    y1 = 1 - (x1 / self.r_max)
-                    y2 = 1 - (x2 / self.r_max)
-                    weight = 0.5 * (y1 + y2) * (x2 - x1) / total_weight
+                    if self.method == "triangle":
+                        x1 = dist - 1
+                        x2 = self.r_max if dist_idx == len(dist_bins) - 1 else \
+                            dist_bins[dist_idx + 1] - 1
+                        y1 = 1 - (x1 / self.r_max)
+                        y2 = 1 - (x2 / self.r_max)
+                        weight = 0.5 * (y1 + y2) * (x2 - x1)
+                    elif self.method == "circle":
+                        x1 = dist - 1
+                        x2 = self.r_max if dist_idx == len(dist_bins) - 1 else \
+                            dist_bins[dist_idx + 1] - 1
+                        weight = self._semicircle_integral(x2,
+                                                           self.r_max) - self._semicircle_integral(
+                            x1, self.r_max)
 
-                    opval = opval * weight
+                    opval = opval * weight / total_weight
 
                     cn_fingerprint_array[cn].append(opval)
 
@@ -502,3 +523,83 @@ def get_tet_bcc_motif(structure, idx):
         return 'tet'
     else:
         return 'unrecognized'
+
+
+class CNFingerprint(BaseFeaturizer):
+    """
+    An alternate site fingerprint currently undergoing testing. This code
+    will either be improved or deleted depending on how the tests go. For now,
+    docs are minimal.
+    """
+
+    def _semicircle_integral(self, x, r):
+        if r == x:
+            return 0.25 * math.pi * r**2
+
+        return 0.5 * ((x * math.sqrt(r**2 - x**2)) + (r**2 * math.atan(x/math.sqrt(r**2 - x**2))))
+
+    def __init__(self, r_max=0.75, max_cn=12, tol=1E-2, method="circle"):
+        self.r_max = r_max
+        self.tol = tol
+        self.max_cn = max_cn
+        self.method = method
+
+    def featurize(self, struct, idx):
+        c_site = struct[idx]
+        neigh_dist = None
+
+        r = 4
+        while not neigh_dist:
+            neigh_dist = struct.get_neighbors(c_site, r)
+            r += 1
+
+        d_min = min([d for n, d in neigh_dist])
+        neigh_dist = struct.get_neighbors(c_site, d_min * (1 + self.r_max))
+
+        neigh_dist = [[n, d / d_min] for n, d in neigh_dist]  # normalize
+        dist_sort = sorted([d for n, d in neigh_dist])
+
+        tol = d_min * self.tol
+        dist_bins = []  # bin numerical tolerances (~error bar of measurement)
+        for d in dist_sort:
+            if not dist_bins or d > dist_bins[-1] * (1+tol):
+                dist_bins.append(d)
+
+        cn_fingerprint_array = [0 for i in range(self.max_cn)]
+
+        if self.method == "triangle":
+            total_weight = self.r_max * 0.5
+        elif self.method == "circle":
+            total_weight = self.r_max**2 * math.pi / 4
+
+        for dist_idx, dist in enumerate(dist_bins):
+            neigh_sites = [n for n, d in neigh_dist if d <= dist*(1+tol)]
+            cn = len(neigh_sites)
+            if cn <= self.max_cn:
+                if self.method == "triangle":
+                    x1 = dist - 1
+                    x2 = self.r_max if dist_idx == len(dist_bins) - 1 else \
+                        dist_bins[dist_idx + 1] - 1
+                    y1 = 1 - (x1 / self.r_max)
+                    y2 = 1 - (x2 / self.r_max)
+                    weight = 0.5 * (y1 + y2) * (x2 - x1)
+                elif self.method == "circle":
+                    x1 = dist - 1
+                    x2 = self.r_max if dist_idx == len(dist_bins) - 1 else \
+                        dist_bins[dist_idx + 1] - 1
+                    weight = self._semicircle_integral(x2, self.r_max) - self._semicircle_integral(x1, self.r_max)
+
+                cn_fingerprint_array[cn-1] = weight
+
+        cn_fingerprint_array = [x/total_weight for x in cn_fingerprint_array]
+
+        return cn_fingerprint_array
+
+    def feature_labels(self):
+        return ["CN_{}".format(i+1) for i in range(self.max_cn)]
+
+    def citations(self):
+        return ['']
+
+    def implementors(self):
+        return ['Anubhav Jain']
