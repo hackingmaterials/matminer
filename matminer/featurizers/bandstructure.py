@@ -203,7 +203,7 @@ class DOSFeaturizer(BaseFeaturizer):
 
     def featurize(self, dos, contributors=1, significance_threshold=0.1,
                   coordination_features=True, energy_cutoff=0.5,
-                  sampling_resolution=100, gaus_smear=0.1):
+                  sampling_resolution=100, gaussian_smear=0.1):
         """
         Args:
             dos (pymatgen CompleteDos or their dict):
@@ -227,7 +227,7 @@ class DOSFeaturizer(BaseFeaturizer):
                 The extent (into the bands) to sample the DOS
             sampling_resolution (int):
                 Number of points to sample DOS
-            gaus_smear (float in eV):
+            gaussian_smear (float in eV):
                 Gaussian smearing (sigma) around each sampled point in the DOS
         Returns:
              ([float | string]): a list of band structure features.
@@ -250,7 +250,7 @@ class DOSFeaturizer(BaseFeaturizer):
         orbital_scores = self.get_cbm_vbm_scores(dos, coordination_features,
                                                  energy_cutoff,
                                                  sampling_resolution,
-                                                 gaus_smear)
+                                                 gaussian_smear)
 
         orbital_scores.sort(key=lambda x: x['cbm_score'], reverse=True)
         cbm_contributors = orbital_scores[0:contributors]
@@ -306,7 +306,7 @@ class DOSFeaturizer(BaseFeaturizer):
         return list(x[0] for x in self.feat)
 
     def get_cbm_vbm_scores(self, dos, coordination_features, energy_cutoff,
-                           sampling_resolution, gaus_smear):
+                           sampling_resolution, gaussian_smear):
         """
         Args:
             dos (pymatgen CompleteDos or their dict):
@@ -319,7 +319,7 @@ class DOSFeaturizer(BaseFeaturizer):
                 The extent (into the bands) to sample the DOS
             sampling_resolution (int):
                 Number of points to sample DOS
-            gaus_smear (float in eV):
+            gaussian_smear (float in eV):
                 Gaussian smearing (sigma) around each sampled point in the DOS
         Returns:
             orbital_scores [(dict)]:
@@ -351,7 +351,7 @@ class DOSFeaturizer(BaseFeaturizer):
             for orb in proj:
                 # calculate contribution
                 energies = [e for e in proj[orb].energies]
-                smear_dos = proj[orb].get_smeared_densities(gaus_smear)
+                smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
                 dos_up = smear_dos[Spin.up]
                 dos_down = smear_dos[Spin.down] if Spin.down in smear_dos\
                     else smear_dos[Spin.up]
