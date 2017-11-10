@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.1.4 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.1.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.4',
+        VERSION:     '0.1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -108,12 +108,14 @@ is_gap_direct (0.0|1.0): whether the band gap is direct or not
 direct_gap (eV): the minimum direct distance of the last</p>
 <blockquote>
 <div>valence band and the first conduction band</div></blockquote>
-<dl class="last docutils">
+<dl class="docutils">
 <dt>p_ex1_norm (Angstrom^-1): k-space distance between Gamma point</dt>
 <dd>and k-point of VBM</dd>
 <dt>n_ex1_norm (Angstrom^-1): k-space distance between Gamma point</dt>
 <dd>and k-point of CBM</dd>
 </dl>
+<p class="last">p_ex1_degen: degeneracy of VBM
+n_ex1_degen: degeneracy of CBM</p>
 </dd>
 </dl>
 </dd>
@@ -186,6 +188,116 @@ calculate_band_edges: (bool) whether to also return band edge</p>
 <dl class="method">
 <dt id="matminer.featurizers.bandstructure.BranchPointEnergy.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.bandstructure.DOSFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">DOSFeaturizer</code><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Featurizes a pymatgen dos object.</p>
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>dos</em>, <em>contributors=1</em>, <em>significance_threshold=0.1</em>, <em>coordination_features=True</em>, <em>energy_cutoff=0.5</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>dos (pymatgen CompleteDos or their dict):</dt>
+<dd>The density of states to featurize. Must be a complete DOS,
+(i.e. contains PDOS and structure, in addition to total DOS)</dd>
+<dt>contributors (int):</dt>
+<dd>Sets the number of top contributors to the DOS that are
+returned as features. (i.e. contributors=1 will only return the
+main cb and main vb orbital)</dd>
+<dt>significance_threshold (float):</dt>
+<dd>Sets the significance threshold for orbitals in the DOS.
+Does not impact the number of contributors returned. Only
+determines the feature value xbm_significant_contributors.
+The threshold is a fractional value between 0 and 1.</dd>
+<dt>coordination_features (bool):</dt>
+<dd>If true, the coordination environment of the PDOS contributors
+will also be returned. Only limited environments are currently
+supported. If the environment is neither, “unrecognized” will
+be returned.</dd>
+<dt>energy_cutoff (float in eV):</dt>
+<dd>The extent (into the bands) to sample the DOS</dd>
+<dt>sampling_resolution (int):</dt>
+<dd>Number of points to sample DOS</dd>
+<dt>gaussian_smear (float in eV):</dt>
+<dd>Gaussian smearing (sigma) around each sampled point in the DOS</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>([float | string]): a list of band structure features.</dt>
+<dd><p class="first">List of currently supported features:
+.. xbm_percents: [(float)] fractions that orbitals contribute
+.. xbm_locations: [[(float)]] cartesian locations of orbitals
+.. xbm_species: [(str)] elemental specie of orbitals (ex: ‘Ti’)
+.. xbm_characters: [(str)] orbital characters (s p d or f)
+.. xbm_coordinations: [(str)] the coordination geometry that</p>
+<blockquote class="last">
+<div>the orbitals reside in. (the coordination environment
+of the site the orbital is associated with)</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.get_cbm_vbm_scores">
+<em class="property">static </em><code class="descname">get_cbm_vbm_scores</code><span class="sig-paren">(</span><em>dos</em>, <em>coordination_features</em>, <em>energy_cutoff</em>, <em>sampling_resolution</em>, <em>gaussian_smear</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.get_cbm_vbm_scores" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>dos (pymatgen CompleteDos or their dict):</dt>
+<dd>The density of states to featurize. Must be a complete DOS,
+(i.e. contains PDOS and structure, in addition to total DOS)</dd>
+<dt>coordination_features (bool):</dt>
+<dd>if true, will also return the coordination enviornment of the
+PDOS features</dd>
+<dt>energy_cutoff (float in eV):</dt>
+<dd>The extent (into the bands) to sample the DOS</dd>
+<dt>sampling_resolution (int):</dt>
+<dd>Number of points to sample DOS</dd>
+<dt>gaussian_smear (float in eV):</dt>
+<dd>Gaussian smearing (sigma) around each sampled point in the DOS</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>orbital_scores [(dict)]:</dt>
+<dd><p class="first">A list of how much each orbital contributes to the partial
+density of states up to energy_cutoff. Dictionary items are:
+.. cbm_score: (float) fractional contribution to conduction band
+.. vbm_score: (float) fractional contribution to valence band
+.. species: (pymatgen Specie) the Specie of the orbital
+.. character: (str) is the orbital character s, p, d, or f
+.. location: [(float)] cartesian coordinates of the orbital
+.. coordination (str) optional-coordination enviornment from op</p>
+<blockquote class="last">
+<div>site feature vector</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -546,7 +658,7 @@ Args:</p>
 <dt id="matminer.featurizers.composition.FERECorrection">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">FERECorrection</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.featurizers.data.DemlData object&gt;</em>, <em>stats=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.FERECorrection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Class to calculate difference between fitted elemental-phase reference
+<p>Class to calculate features related to the difference between fitted elemental-phase reference
 energy (FERE) and GGA+U energy</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
@@ -867,17 +979,9 @@ eg.  fe2o3 = Composition({Specie(“Fe”, 3): 2, Specie(“O”, -2): 3})</dd>
 </div>
 <div class="section" id="module-matminer.featurizers.site">
 <span id="matminer-featurizers-site-module"></span><h2>matminer.featurizers.site module<a class="headerlink" href="#module-matminer.featurizers.site" title="Permalink to this headline">¶</a></h2>
-<p>Features that describe the local environment of a single atom</p>
-<dl class="docutils">
-<dt>The <cite>featurize</cite> function takes two arguments:</dt>
-<dd>strc (Structure): Object representing the structure containing the site of interest
-site (int): Index of the site to be featurized</dd>
-</dl>
-<p>We have to use two options because the Site object does not hold a pointer back to its structure. To run
-<code class="code docutils literal"><span class="pre">featurize_dataframe</span></code>, you must pass the column names for both the site and the structure. For example:</p>
 <dl class="class">
 <dt id="matminer.featurizers.site.AGNIFingerprints">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">AGNIFingerprints</code><span class="sig-paren">(</span><em>directions=(None</em>, <em>'x'</em>, <em>'y'</em>, <em>'z')</em>, <em>etas=array([  0.8</em>, <em>1.22730192</em>, <em>1.88283751</em>, <em>2.88851263</em>, <em>4.43134638</em>, <em>6.79824993</em>, <em>10.42938152</em>, <em>16.        ])</em>, <em>cutoff=8</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AGNIFingerprints" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">AGNIFingerprints</code><span class="sig-paren">(</span><em>directions=(None</em>, <em>'x'</em>, <em>'y'</em>, <em>'z')</em>, <em>etas=None</em>, <em>cutoff=8</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AGNIFingerprints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Integral of the product of the radial distribution function and a Gaussian window function.</p>
 <blockquote>
@@ -905,32 +1009,32 @@ rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">old{r}_i - old{r}_j</tt>)</p>
 latex exited with error
 [stdout]
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=latex)
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=latex)
  restricted \write18 enabled.
 entering extended mode
 (./math.tex
-LaTeX2e &lt;2017-04-15&gt;
-Babel &lt;3.10&gt; and hyphenation patterns for 84 language(s) loaded.
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/article.cls
+LaTeX2e &lt;2015/01/01&gt;
+Babel &lt;3.9l&gt; and hyphenation patterns for 79 languages loaded.
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/size12.clo))
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/inputenc.sty
-(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/utf8x.def))
-(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/ucs.sty
-(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/data/uni-global.def))
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsmath.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/size12.clo))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/utf8x.def))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucs.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/data/uni-global.def))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsmath.sty
 For additional information on amsmath, use the `?' option.
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amstext.sty
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsgen.sty))
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsbsy.sty)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsmath/amsopn.sty))
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amscls/amsthm.sty)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/amssymb.sty
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
-(/usr/local/texlive/2017/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/ucs/ucsencs.def)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsa.fd)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucsencs.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd)
 
 ! Package inputenc Error: Keyboard character used is undefined
 (inputenc)                in inputencoding `utf8x'.
@@ -967,7 +1071,7 @@ cutoff (float): Cutoff distance</dd>
 </div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.site.AGNIFingerprints.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>directions=(None</em>, <em>'x'</em>, <em>'y'</em>, <em>'z')</em>, <em>etas=array([  0.8</em>, <em>1.22730192</em>, <em>1.88283751</em>, <em>2.88851263</em>, <em>4.43134638</em>, <em>6.79824993</em>, <em>10.42938152</em>, <em>16.        ])</em>, <em>cutoff=8</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AGNIFingerprints.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>directions=(None</em>, <em>'x'</em>, <em>'y'</em>, <em>'z')</em>, <em>etas=None</em>, <em>cutoff=8</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AGNIFingerprints.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -993,6 +1097,40 @@ cutoff (float): Cutoff distance</dd>
 <dl class="method">
 <dt id="matminer.featurizers.site.AGNIFingerprints.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AGNIFingerprints.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.site.CNFingerprint">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">CNFingerprint</code><span class="sig-paren">(</span><em>r_max=0.75</em>, <em>max_cn=12</em>, <em>tol=0.01</em>, <em>method='circle'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CNFingerprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>An alternate site fingerprint currently undergoing testing. This code
+will either be improved or deleted depending on how the tests go. For now,
+docs are minimal.</p>
+<dl class="method">
+<dt id="matminer.featurizers.site.CNFingerprint.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>r_max=0.75</em>, <em>max_cn=12</em>, <em>tol=0.01</em>, <em>method='circle'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CNFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CNFingerprint.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CNFingerprint.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CNFingerprint.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CNFingerprint.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CNFingerprint.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>struct</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CNFingerprint.featurize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CNFingerprint.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CNFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1077,25 +1215,96 @@ idx (int): index of target site in structure struct.</div></blockquote>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="matminer.featurizers.site.OPSiteFingerprint_alt">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">OPSiteFingerprint_alt</code><span class="sig-paren">(</span><em>optypes=None</em>, <em>r_max=0.75</em>, <em>tol=0.001</em>, <em>method='triangle'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint_alt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>An alternate site fingerprint currently undergoing testing. This code
+will either be improved or deleted depending on how the tests go. For now,
+docs are minimal.</p>
+<dl class="method">
+<dt id="matminer.featurizers.site.OPSiteFingerprint_alt.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>optypes=None</em>, <em>r_max=0.75</em>, <em>tol=0.001</em>, <em>method='triangle'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint_alt.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.OPSiteFingerprint_alt.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint_alt.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.OPSiteFingerprint_alt.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint_alt.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.OPSiteFingerprint_alt.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>struct</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint_alt.featurize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.OPSiteFingerprint_alt.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint_alt.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.featurizers.site.get_tet_bcc_motif">
+<code class="descclassname">matminer.featurizers.site.</code><code class="descname">get_tet_bcc_motif</code><span class="sig-paren">(</span><em>structure</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.get_tet_bcc_motif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience class-method from Nils Zimmermann.
+Used to distinguish coordination environment in half-Heuslers.
+Args:</p>
+<blockquote>
+<div>structure (pymatgen Structure): the target structure to evaluate
+idx (index): the site index in the structure</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(str) that describes site coordination enviornment</dt>
+<dd>‘bcc’
+‘tet’
+‘unrecognized’</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-matminer.featurizers.stats">
 <span id="matminer-featurizers-stats-module"></span><h2>matminer.featurizers.stats module<a class="headerlink" href="#module-matminer.featurizers.stats" title="Permalink to this headline">¶</a></h2>
-<p>File containing general methods for computing property statistics</p>
 <dl class="class">
 <dt id="matminer.featurizers.stats.PropertyStats">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.stats.</code><code class="descname">PropertyStats</code><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>This class contains statistical operations that are commonly employed when computing features</p>
+<p>The primary way for interacting with this class is to call the <code class="docutils literal"><span class="pre">calc_stat</span></code> function, which takes the name of the
+statistic you would like to compute and the weights/values of data to be assessed. For example, computing the
+mean of a list looks like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">PropertyStats</span><span class="o">.</span><span class="n">calc_stat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span> <span class="c1"># Result is 2</span>
+<span class="n">PropertyStats</span><span class="o">.</span><span class="n">calc_stat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="c1"># Result is 3</span>
+</pre></div>
+</div>
+<p>Some of the statistics functions take options (e.g., Holder means). You can pass them to the the statistics
+functions by adding them after the name and two underscores. For example, the 0th Holder mean would be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PropertyStats</span><span class="o">.</span><span class="n">calc_stat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;holder_mean__0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can, of course, call the statistical functions directly. All take at least two arguments. The first is the data
+being assessed and the second, optional, argument is the weights.</p>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.avg_dev">
 <em class="property">static </em><code class="descname">avg_dev</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.avg_dev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Average absolute deviation of list of element data
-Args:</p>
-<blockquote>
-<div>data_lst (list of floats): Value of a property for each atom in a compound
-weights (list of floats): Atomic fractions</div></blockquote>
+<dd><p>Mean absolute deviation of list of element data.</p>
+<p>This is computed by first calculating the mean of the list, and then computing the average absolute difference
+between each value and the mean.</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</dd>
 <dt>Returns: </dt>
-<dd>average absolute deviation</dd>
+<dd>mean absolute deviation</dd>
 </dl>
 </dd></dl>
 
@@ -1112,7 +1321,7 @@ stat (str) - Name of property to be compute. If there are arguments to the stati
 be “holder_mean__2”</div></blockquote>
 <p class="last">weights (list of floats): (Optional) weights for each element in data_lst</p>
 </dd>
-<dt>Reteurn:</dt>
+<dt>Returns:</dt>
 <dd>float - Desired statistic</dd>
 </dl>
 </dd></dl>
@@ -1132,8 +1341,7 @@ sort: wheter to sort the eigenvalues</div></blockquote>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.flatten">
 <em class="property">static </em><code class="descname">flatten</code><span class="sig-paren">(</span><em>data_lst</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.flatten" title="Permalink to this definition">¶</a></dt>
-<dd><p>oxi
-Returns a flattened copy of data_lst-as a numpy array</p>
+<dd><p>Returns a flattened copy of data_lst-as a numpy array</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1142,6 +1350,19 @@ Returns a flattened copy of data_lst-as a numpy array</p>
 <dd><p>Returns a Gaussian kernel of the two arrays
 for use in KRR or other regressions using the
 kernel trick.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.stats.PropertyStats.geom_std_dev">
+<em class="property">static </em><code class="descname">geom_std_dev</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.geom_std_dev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Geometric standard deviation</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</dd>
+<dt>Returns:</dt>
+<dd>geometric standard deviation</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1157,6 +1378,19 @@ power: (int/float/str) which holder mean to compute</div></blockquote>
 </dd></dl>
 
 <dl class="staticmethod">
+<dt id="matminer.featurizers.stats.PropertyStats.inverse_mean">
+<em class="property">static </em><code class="descname">inverse_mean</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.inverse_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mean of the inverse of each entry</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</dd>
+<dt>Returns:</dt>
+<dd>inverse mean</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.laplacian_kernel">
 <em class="property">static </em><code class="descname">laplacian_kernel</code><span class="sig-paren">(</span><em>arr0</em>, <em>arr1</em>, <em>SIGMA</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.laplacian_kernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Laplacian kernel of the two arrays
@@ -1167,12 +1401,11 @@ kernel trick.</p>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.maximum">
 <em class="property">static </em><code class="descname">maximum</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.maximum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maximum value in a list of element data
-Args:</p>
-<blockquote>
-<div>data_lst (list of floats): Value of a property for each atom in a compound
-weights (ignored)</div></blockquote>
+<dd><p>Maximum value in a list</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (ignored)</dd>
 <dt>Returns: </dt>
 <dd>maximum value</dd>
 </dl>
@@ -1180,13 +1413,12 @@ weights (ignored)</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.mean">
-<em class="property">static </em><code class="descname">mean</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.mean" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mean of list of element data
-Args:</p>
-<blockquote>
-<div>data_lst (list of floats): Value of a property for each atom or element in a compound
-weights (list of floats): Weights for each value</div></blockquote>
+<em class="property">static </em><code class="descname">mean</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Arithmetic mean of list</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</dd>
 <dt>Returns: </dt>
 <dd>mean value</dd>
 </dl>
@@ -1195,12 +1427,11 @@ weights (list of floats): Weights for each value</div></blockquote>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.minimum">
 <em class="property">static </em><code class="descname">minimum</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.minimum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Minimum value in a list of element data
-Args:</p>
-<blockquote>
-<div>data_lst (list of floats): Value of a property for each atom in a compound
-weights (ignored)</div></blockquote>
+<dd><p>Minimum value in a list</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (ignored)</dd>
 <dt>Returns: </dt>
 <dd>minimum value</dd>
 </dl>
@@ -1209,13 +1440,13 @@ weights (ignored)</div></blockquote>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.mode">
 <em class="property">static </em><code class="descname">mode</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mode of a list of element data. If multiple elements occur equally-frequently (or same weight, if weights are
-provided), this function will return the average of those values
-Args:</p>
-<blockquote>
-<div>data_lst (list of floats): Value of a property for each atom in a compound
-weights (list of floats): Atomic fractions</div></blockquote>
+<dd><p>Mode of a list of data.</p>
+<p>If multiple elements occur equally-frequently (or same weight, if weights are provided), this function
+will return the minimum of those values.</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</dd>
 <dt>Returns: </dt>
 <dd>mode</dd>
 </dl>
@@ -1223,7 +1454,7 @@ weights (list of floats): Atomic fractions</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.n_numerical_modes">
-<em class="property">static </em><code class="descname">n_numerical_modes</code><span class="sig-paren">(</span><em>data_lst</em>, <em>n</em>, <em>dl=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.n_numerical_modes" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">n_numerical_modes</code><span class="sig-paren">(</span><em>data_lst</em>, <em>n=2</em>, <em>dl=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.n_numerical_modes" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Returns the n first modes of a data set that are obtained with</dt>
 <dd>a finite bin size for the underlying frequency distribution.</dd>
@@ -1239,12 +1470,11 @@ dl (float): bin size of underlying (coarsened) distribution.</dd>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.range">
 <em class="property">static </em><code class="descname">range</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Range of a list of element data
-Args:</p>
-<blockquote>
-<div>data_lst (list of floats): Value of a property for each atom in a compound
-weights (ignored)</div></blockquote>
+<dd><p>Range of a list</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (ignored)</dd>
 <dt>Returns: </dt>
 <dd>range</dd>
 </dl>
@@ -1259,11 +1489,14 @@ weights (ignored)</div></blockquote>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.stats.PropertyStats.std_dev">
 <em class="property">static </em><code class="descname">std_dev</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats.std_dev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Standard deviation of a list of element data
-Args:</p>
-<blockquote>
-<div>data_lst (list of floats): Value of a property for each atom in a compound
-weights (list of floats): Atomic fractions</div></blockquote>
+<dd><p>Standard deviation of a list of element data</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</dd>
+<dt>Returns:</dt>
+<dd>standard deviation</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1429,7 +1662,7 @@ primitive cell).</dd>
 
 <dl class="attribute">
 <dt id="matminer.featurizers.structure.GlobalSymmetryFeatures.crystal_idx">
-<code class="descname">crystal_idx</code><em class="property"> = {u'trigonal': 3, u'cubic': 1, u'orthorhombic': 5, u'monoclinic': 6, u'tetragonal': 4, u'triclinic': 7, u'hexagonal': 2}</em><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.crystal_idx" title="Permalink to this definition">¶</a></dt>
+<code class="descname">crystal_idx</code><em class="property"> = {'triclinic': 7, 'monoclinic': 6, 'orthorhombic': 5, 'tetragonal': 4, 'trigonal': 3, 'hexagonal': 2, 'cubic': 1}</em><a class="headerlink" href="#matminer.featurizers.structure.GlobalSymmetryFeatures.crystal_idx" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1507,7 +1740,7 @@ are to be determined.</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.structure.OPStructureFingerprint">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OPStructureFingerprint</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=(u'mean'</em>, <em>u'std_dev'</em>, <em>u'minimum'</em>, <em>u'maximum')</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OPStructureFingerprint</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=('mean'</em>, <em>'std_dev'</em>, <em>'minimum'</em>, <em>'maximum')</em>, <em>min_oxi=None</em>, <em>max_oxi=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Calculates all order parameters (OPs) for all sites in a crystal
 structure.
@@ -1520,11 +1753,14 @@ Args:</p>
 <dd>If stats is None, for each order parameter, a list is returned that
 contains the calculated parameter for each site in the structure.
 <a href="#id7"><span class="problematic" id="id8">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</dd>
+<dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
+<dd>zero means metals/cations only)</dd>
 </dl>
+<p>max_oxi (int): maximum site oxidation state for inclusion</p>
 </div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.structure.OPStructureFingerprint.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=(u'mean'</em>, <em>u'std_dev'</em>, <em>u'minimum'</em>, <em>u'maximum')</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=('mean'</em>, <em>'std_dev'</em>, <em>'minimum'</em>, <em>'maximum')</em>, <em>min_oxi=None</em>, <em>max_oxi=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1929,6 +2165,13 @@ two input structures (s1 - s2).</dd>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="matminer.featurizers.structure.get_op_stats_vector_diff_alt">
+<code class="descclassname">matminer.featurizers.structure.</code><code class="descname">get_op_stats_vector_diff_alt</code><span class="sig-paren">(</span><em>s1</em>, <em>s2</em>, <em>angle_weight=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.get_op_stats_vector_diff_alt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute structure distance using an alternate (test) algorithm. Docs are
+minimal for now.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-matminer.featurizers">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.featurizers" title="Permalink to this headline">¶</a></h2>
@@ -1988,12 +2231,12 @@ two input structures (s1 - s2).</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

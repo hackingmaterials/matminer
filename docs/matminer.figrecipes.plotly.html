@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.figrecipes.plotly package &#8212; matminer 0.1.4 documentation</title>
+    <title>matminer.figrecipes.plotly package &#8212; matminer 0.1.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.4',
+        VERSION:     '0.1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -52,10 +52,11 @@
 <span id="matminer-figrecipes-plotly-make-plots-module"></span><h2>matminer.figrecipes.plotly.make_plots module<a class="headerlink" href="#module-matminer.figrecipes.plotly.make_plots" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig">
-<em class="property">class </em><code class="descclassname">matminer.figrecipes.plotly.make_plots.</code><code class="descname">PlotlyFig</code><span class="sig-paren">(</span><em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode=u'closest'</em>, <em>filename=None</em>, <em>plot_mode=u'offline'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=30</em>, <em>ticksize=25</em>, <em>fontfamily=None</em>, <em>height=800</em>, <em>width=1000</em>, <em>scale=None</em>, <em>margin_top=150</em>, <em>margin_bottom=80</em>, <em>margin_left=80</em>, <em>margin_right=80</em>, <em>pad=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="descclassname">matminer.figrecipes.plotly.make_plots.</code><code class="descname">PlotlyFig</code><span class="sig-paren">(</span><em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode='closest'</em>, <em>filename=None</em>, <em>plot_mode='offline'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=30</em>, <em>ticksize=25</em>, <em>fontfamily=None</em>, <em>height=800</em>, <em>width=1000</em>, <em>scale=None</em>, <em>margin_top=150</em>, <em>margin_bottom=80</em>, <em>margin_left=80</em>, <em>margin_right=80</em>, <em>pad=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode=u'closest'</em>, <em>filename=None</em>, <em>plot_mode=u'offline'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=30</em>, <em>ticksize=25</em>, <em>fontfamily=None</em>, <em>height=800</em>, <em>width=1000</em>, <em>scale=None</em>, <em>margin_top=150</em>, <em>margin_bottom=80</em>, <em>margin_left=80</em>, <em>margin_right=80</em>, <em>pad=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode='closest'</em>, <em>filename=None</em>, <em>plot_mode='offline'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=30</em>, <em>ticksize=25</em>, <em>fontfamily=None</em>, <em>height=800</em>, <em>width=1000</em>, <em>scale=None</em>, <em>margin_top=150</em>, <em>margin_bottom=80</em>, <em>margin_left=80</em>, <em>margin_right=80</em>, <em>pad=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for making Plotly plots</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -119,7 +120,7 @@ y: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the y
 
 <dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.heatmap_plot">
-<code class="descname">heatmap_plot</code><span class="sig-paren">(</span><em>data</em>, <em>x_labels=None</em>, <em>y_labels=None</em>, <em>colorscale=u'Viridis'</em>, <em>colorscale_range=None</em>, <em>annotations_text=None</em>, <em>annotations_text_size=20</em>, <em>annotations_color=u'white'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.heatmap_plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">heatmap_plot</code><span class="sig-paren">(</span><em>data</em>, <em>x_labels=None</em>, <em>y_labels=None</em>, <em>colorscale='Viridis'</em>, <em>colorscale_range=None</em>, <em>annotations_text=None</em>, <em>annotations_text_size=20</em>, <em>annotations_color='white'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.heatmap_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a heatmap plot, either using 2D arrays of values, or a dataframe.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -148,7 +149,7 @@ annotations_color: (str/array) color of annotation text - accepts similar format
 
 <dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.histogram">
-<code class="descname">histogram</code><span class="sig-paren">(</span><em>x</em>, <em>histnorm=u''</em>, <em>x_start=None</em>, <em>x_end=None</em>, <em>bin_size=1</em>, <em>color=u'rgba(70</em>, <em>130</em>, <em>180</em>, <em>1)'</em>, <em>bargap=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.histogram" title="Permalink to this definition">¶</a></dt>
+<code class="descname">histogram</code><span class="sig-paren">(</span><em>x</em>, <em>histnorm=''</em>, <em>x_start=None</em>, <em>x_end=None</em>, <em>bin_size=1</em>, <em>color='rgba(70</em>, <em>130</em>, <em>180</em>, <em>1)'</em>, <em>bargap=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a histogram using Plotly</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -180,7 +181,7 @@ must be between 0.0 and 1.0., or (iii) hexagonal code (eg: “FFBAD2”)</div></
 
 <dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.scatter_matrix">
-<code class="descname">scatter_matrix</code><span class="sig-paren">(</span><em>dataframe</em>, <em>select_columns=None</em>, <em>index_colname=None</em>, <em>diag_kind=u'scatter'</em>, <em>marker_size=10</em>, <em>height=800</em>, <em>width=1000</em>, <em>marker_outline_width=0</em>, <em>marker_outline_color=u'black'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.scatter_matrix" title="Permalink to this definition">¶</a></dt>
+<code class="descname">scatter_matrix</code><span class="sig-paren">(</span><em>dataframe</em>, <em>select_columns=None</em>, <em>index_colname=None</em>, <em>diag_kind='scatter'</em>, <em>marker_size=10</em>, <em>height=800</em>, <em>width=1000</em>, <em>marker_outline_width=0</em>, <em>marker_outline_color='black'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.scatter_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a scatter matrix plot from dataframes using Plotly.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -241,7 +242,7 @@ be valid color types (str).</div></blockquote>
 
 <dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.xy_plot">
-<code class="descname">xy_plot</code><span class="sig-paren">(</span><em>x_col</em>, <em>y_col</em>, <em>x_axis_type=u'linear'</em>, <em>y_axis_type=u'linear'</em>, <em>text=None</em>, <em>color=u'rgba(70</em>, <em>130</em>, <em>180</em>, <em>1)'</em>, <em>size=6</em>, <em>colorscale=u'Viridis'</em>, <em>legend=None</em>, <em>showlegend=False</em>, <em>mode=u'markers'</em>, <em>marker=u'circle'</em>, <em>marker_fill=u'fill'</em>, <em>hoverinfo=u'x+y+text'</em>, <em>add_xy_plot=None</em>, <em>marker_outline_width=0</em>, <em>marker_outline_color=u'black'</em>, <em>linedash=u'solid'</em>, <em>linewidth=2</em>, <em>lineshape=u'linear'</em>, <em>error_type=None</em>, <em>error_direction=None</em>, <em>error_array=None</em>, <em>error_value=None</em>, <em>error_symmetric=True</em>, <em>error_arrayminus=None</em>, <em>error_valueminus=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.xy_plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">xy_plot</code><span class="sig-paren">(</span><em>x_col</em>, <em>y_col</em>, <em>x_axis_type='linear'</em>, <em>y_axis_type='linear'</em>, <em>text=None</em>, <em>color='rgba(70</em>, <em>130</em>, <em>180</em>, <em>1)'</em>, <em>size=6</em>, <em>colorscale='Viridis'</em>, <em>legend=None</em>, <em>showlegend=False</em>, <em>mode='markers'</em>, <em>marker='circle'</em>, <em>marker_fill='fill'</em>, <em>hoverinfo='x+y+text'</em>, <em>add_xy_plot=None</em>, <em>marker_outline_width=0</em>, <em>marker_outline_color='black'</em>, <em>linedash='solid'</em>, <em>linewidth=2</em>, <em>lineshape='linear'</em>, <em>error_type=None</em>, <em>error_direction=None</em>, <em>error_array=None</em>, <em>error_value=None</em>, <em>error_symmetric=True</em>, <em>error_arrayminus=None</em>, <em>error_valueminus=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.xy_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make an XY scatter plot, either using arrays of values, or a dataframe.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -376,12 +377,12 @@ the bottom (left) direction for vertical (horizontal) bars</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
