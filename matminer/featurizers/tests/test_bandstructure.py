@@ -45,9 +45,9 @@ class BandstructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_bf['direct_gap'][0], 2.557, 3)
         self.assertAlmostEqual(df_bf['n_ex1_norm'][0], 0.58413, 5)
         self.assertAlmostEqual(df_bf['p_ex1_norm'][0], 0.0, 5)
-        self.assertEquals(df_bf['is_gap_direct'][0], False)
-        self.assertEquals(df_bf['n_ex1_degen'][0], 6)
-        self.assertEquals(df_bf['p_ex1_degen'][0], 1)
+        self.assertEqual(df_bf['is_gap_direct'][0], False)
+        self.assertEqual(df_bf['n_ex1_degen'][0], 6)
+        self.assertEqual(df_bf['p_ex1_degen'][0], 1)
 
 class DOSFeaturesTest(PymatgenTest):
 
