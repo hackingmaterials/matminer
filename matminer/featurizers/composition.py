@@ -863,7 +863,7 @@ class Miedema(BaseFeaturizer):
             R_const = np.array(df_element['R_const'])
             H_trans = np.array(df_element['H_trans'])
         else:
-            # allow to extract parameters for other ab initio databases eg MP, Citrine ** Currently not done
+            # allow to extract parameters for ab initio databases eg MP, Citrine ** Currently not done
             df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'), index_col='element')
             df_element = df_dataset.ix[elements]
             V_molar = np.array(df_element['molar_volume'])
@@ -927,7 +927,7 @@ class Miedema(BaseFeaturizer):
             compr = np.array(df_element['compressibility'])
             shear_mod = np.array(df_element['shear_modulus'])
         else:
-            # allow to extract parameters for other ab initio databases eg MP, Citrine ** Currently not done
+            # allow to extract parameters for ab initio databases eg MP, Citrine ** Currently not done
             df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'),index_col='element')
             df_element = df_dataset.ix[elements]
             V_molar = np.array(df_element['molar_volume'])
