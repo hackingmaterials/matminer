@@ -9,7 +9,7 @@ import pandas as pd
 from pymatgen import Composition, MPRester
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter
+from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter, Miedema
 
 class CompositionFeaturesTest(PymatgenTest):
 
@@ -110,6 +110,24 @@ class CompositionFeaturesTest(PymatgenTest):
             raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
         df_cohesive_energy = CohesiveEnergy().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 5.15768, 2)
+
+    def test_miedema_all(self):
+        miedema_df = pd.DataFrame({"composition": [Composition("TiZr")]})
+        # test miedema formation enthalpy of all types of phases
+        df_miedema_all = Miedema(struct='all').featurize_dataframe(miedema_df, col_id="composition")
+        self.assertAlmostEqual(df_miedema_all['formation_enthalpy_inter'][0], -0.003446246113174913)
+        self.assertAlmostEqual(df_miedema_all['formation_enthalpy_amor'][0], 0.070791025609907424)
+        self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_min'][0], 0.036649013730308419)
+
+    def test_miedema_ss(self):
+        miedema_df = pd.DataFrame({"composition": [Composition("TiZr")]})
+        df_miedema_all = Miedema(struct='ss|ss,none,bcc,fcc,hcp').featurize_dataframe(miedema_df, col_id="composition")
+        # test miedema formation enthalpy of solid solution with different lattice types
+        self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_min'][0], 0.036649013730308419)
+        self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_none'][0], 0.036649013730308419)
+        self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_bcc'][0], 0.083304812878959328)
+        self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_fcc'][0], 0.047016969096675285)
+        self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_hcp'][0], 0.036649013730308419)
 
 if __name__ == '__main__':
     unittest.main()
