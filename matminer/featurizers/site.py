@@ -19,8 +19,9 @@ import numpy as np
 from collections import defaultdict
 
 from matminer.featurizers.base import BaseFeaturizer
-from pymatgen.analysis.structure_analyzer import OrderParameters
+from pymatgen.analysis.structure_analyzer import OrderParameters, VoronoiAnalyzer
 from matminer.featurizers.stats import PropertyStats
+
 
 class AGNIFingerprints(BaseFeaturizer):
     """Integral of the product of the radial distribution function and a Gaussian window function.
@@ -161,6 +162,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                             (e.g., CN=4 for tetrahedron;
                             default: True).
     """
+
     def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
                  dist_exp=2, zero_ops=True):
         self.optypes = {
@@ -189,8 +191,8 @@ class OPSiteFingerprint(BaseFeaturizer):
             for t in t_list:
                 if t[:4] == 'bent':
                     self.ops[cn].append(OrderParameters(
-                        [t[:4]], parameters=[{'TA': float(t[4:])/180.0, \
-                                              'IGW_TA':1.0/0.0667}]))
+                        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
+                                              'IGW_TA': 1.0 / 0.0667}]))
                 else:
                     self.ops[cn].append(OrderParameters([t]))
 
@@ -217,15 +219,15 @@ class OPSiteFingerprint(BaseFeaturizer):
         neigh_dist = [[n, d / dmin] for n, d in neigh_dist]
         neigh_dist_alldrs = {}
         d_sorted_alldrs = {}
-        for i in range(-self.ndr, self.ndr+1):
+        for i in range(-self.ndr, self.ndr + 1):
             opvals[i] = []
             this_dr = self.dr + float(i) * self.ddr
             this_idr = 1.0 / this_dr
             neigh_dist_alldrs[i] = []
             for j in range(len(neigh_dist)):
                 neigh_dist_alldrs[i].append([neigh_dist[j][0],
-                    (float(int(neigh_dist[j][1] * this_idr \
-                    + 0.5)) + 0.5) * this_dr])
+                                             (float(int(neigh_dist[j][1] * this_idr \
+                                                        + 0.5)) + 0.5) * this_dr])
             d_sorted_alldrs[i] = []
             for n, d in neigh_dist_alldrs[i]:
                 if d not in d_sorted_alldrs[i]:
@@ -234,16 +236,16 @@ class OPSiteFingerprint(BaseFeaturizer):
 
         # Do q_sgl_bd separately.
         if self.optypes[1][0] == "sgl_bd":
-            for i in range(-self.ndr, self.ndr+1):
+            for i in range(-self.ndr, self.ndr + 1):
                 site_list = [s]
                 for n, dn in neigh_dist_alldrs[i]:
                     site_list.append(n)
                 opval = self.ops[1][0].get_order_parameters(
                     site_list, 0,
-                    indices_neighs=[j for j in range(1,len(site_list))])
+                    indices_neighs=[j for j in range(1, len(site_list))])
                 opvals[i].append(opval[0])
-    
-        for i in range(-self.ndr, self.ndr+1):
+
+        for i in range(-self.ndr, self.ndr + 1):
             prev_cn = 0
             prev_site_list = None
             prev_d_fac = None
@@ -259,7 +261,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                         this_av_inv_drel += (1.0 / (neigh_dist[j][1]))
                 this_av_inv_drel = this_av_inv_drel / float(this_cn)
                 d_fac = this_av_inv_drel ** self.dist_exp
-                for cn in range(max(2, prev_cn+1), min(this_cn+1, 13)):
+                for cn in range(max(2, prev_cn + 1), min(this_cn + 1, 13)):
                     # Set all OPs of non-CN-complying neighbor environments
                     # to zero if applicable.
                     if self.zero_ops and cn != this_cn:
@@ -267,11 +269,11 @@ class OPSiteFingerprint(BaseFeaturizer):
                             opvals[i].append(0)
                         continue
 
-                    # Set all (remaining) OPs.    
+                    # Set all (remaining) OPs.
                     for it in range(len(self.optypes[cn])):
                         opval = self.ops[cn][it].get_order_parameters(
                             site_list, 0,
-                            indices_neighs=[j for j in range(1,len(site_list))])
+                            indices_neighs=[j for j in range(1, len(site_list))])
                         if opval[0] is None:
                             opval[0] = 0
                         else:
@@ -290,28 +292,28 @@ class OPSiteFingerprint(BaseFeaturizer):
         for j in range(len(opvals[0])):
             # Compute histogram, determine peak, and location
             # of peak value.
-            op_tmp = [opvals[i][j] for i in range(-self.ndr, self.ndr+1)]
+            op_tmp = [opvals[i][j] for i in range(-self.ndr, self.ndr + 1)]
             minval = float(int(min(op_tmp) * idop - 1.5)) * self.dop
-            #print(minval)
+            # print(minval)
             if minval < 0.0:
                 minval = 0.0
             if minval > 1.0:
                 minval = 1.0
-            #print(minval)
+            # print(minval)
             maxval = float(int(max(op_tmp) * idop + 1.5)) * self.dop
-            #print(maxval)
+            # print(maxval)
             if maxval < 0.0:
                 maxval = 0.0
             if maxval > 1.0:
                 maxval = 1.0
-            #print(maxval)
+            # print(maxval)
             if minval == maxval:
                 minval = minval - self.dop
                 maxval = maxval + self.dop
-            #print(minval)
-            #print(maxval)
+            # print(minval)
+            # print(maxval)
             nbins = int((maxval - minval) * idop)
-            #print('{} {} {}'.format(minval, maxval, nbins))
+            # print('{} {} {}'.format(minval, maxval, nbins))
             hist, bin_edges = np.histogram(
                 op_tmp, bins=nbins, range=(minval, maxval),
                 normed=False, weights=None, density=False)
@@ -319,16 +321,16 @@ class OPSiteFingerprint(BaseFeaturizer):
             op_peaks = []
             for i, h in enumerate(hist):
                 if h == max_hist:
-                    op_peaks.append([i, 0.5 * (bin_edges[i] + bin_edges[i+1])])
+                    op_peaks.append([i, 0.5 * (bin_edges[i] + bin_edges[i + 1])])
             # Address problem that 2 OP values can be close to a bin edge.
             hist2 = []
             op_peaks2 = []
             i = 0
             while i < len(op_peaks):
-                if i < len(op_peaks)-1:
-                    if op_peaks[i+1][0] - op_peaks[i][0] == 1:
-                        op_peaks2.append(0.5 * (op_peaks[i][1] + op_peaks[i+1][1]))
-                        hist2.append(hist[op_peaks[i][0]]+hist[op_peaks[i+1][0]])
+                if i < len(op_peaks) - 1:
+                    if op_peaks[i + 1][0] - op_peaks[i][0] == 1:
+                        op_peaks2.append(0.5 * (op_peaks[i][1] + op_peaks[i + 1][1]))
+                        hist2.append(hist[op_peaks[i][0]] + hist[op_peaks[i + 1][0]])
                         i += 1
                     else:
                         op_peaks2.append(op_peaks[i][1])
@@ -354,7 +356,6 @@ class OPSiteFingerprint(BaseFeaturizer):
 
     def implementors(self):
         return (['Nils E. R. Zimmermann'])
-
 
 
 class OPSiteFingerprint_alt(BaseFeaturizer):
@@ -386,8 +387,8 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
             for t in t_list:
                 if t[:4] == 'bent':
                     self.ops[cn].append(OrderParameters(
-                        [t[:4]], parameters=[{'TA': float(t[4:])/180.0, \
-                                              'IGW_TA':1.0/0.0667}]))
+                        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
+                                              'IGW_TA': 1.0 / 0.0667}]))
                 else:
                     self.ops[cn].append(OrderParameters([t]))
 
@@ -411,14 +412,15 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
         tol = d_min * self.tol
         dist_bins = []  # bin numerical tolerances (~error bar of measurement)
         for d in dist_sort:
-            if not dist_bins or d > dist_bins[-1] * (1+tol):
+            if not dist_bins or d > dist_bins[-1] * (1 + tol):
                 dist_bins.append(d)
 
-        cn_fingerprint_array = defaultdict(list)  # dict where key = CN, val is 2D array that contains a fingerprint vector for each OP in that CN
+        cn_fingerprint_array = defaultdict(
+            list)  # dict where key = CN, val is 2D array that contains a fingerprint vector for each OP in that CN
         total_weight = 0.5 * self.r_max  # area of weighting triangle for OP
 
         for dist_idx, dist in enumerate(dist_bins):
-            neigh_sites = [n for n, d in neigh_dist if d <= dist*(1+tol)]
+            neigh_sites = [n for n, d in neigh_dist if d <= dist * (1 + tol)]
             cn = len(neigh_sites)
             if cn in self.ops:
                 for idx, op in enumerate(self.ops[cn]):
@@ -426,8 +428,8 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
                     #     neigh_sites = [n for n, d in struct.get_neighbors(c_site, 6)]
 
                     opval = op.get_order_parameters([c_site] + neigh_sites, 0,
-                        indices_neighs=[i for i in
-                                        range(1, len(neigh_sites)+1)])[0]
+                                                    indices_neighs=[i for i in
+                                                                    range(1, len(neigh_sites) + 1)])[0]
 
                     opval = opval or 0  # handle None
 
@@ -472,3 +474,65 @@ class OPSiteFingerprint_alt(BaseFeaturizer):
 
     def implementors(self):
         return ['Anubhav Jain', 'Nils E. R. Zimmermann']
+
+
+class Voronoi_index(BaseFeaturizer):
+    """
+    The Voronoi indices n_i and the fractional Voronoi indices n_i/sum(n_i) that
+    reflects the i-fold symmetry in the local sites.
+    n_i denotes the number of the i-edged faces, and i is in the range of 3-10 here.
+    e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...]
+         for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...]
+         for icosahedra, the Voronoi indices are [0,0,12,0,...]
+
+    Parameters:
+        cutoff (float): cutoff distance in determining the potential neighbors
+                        for Voronoi tessellation analysis (default: 6.0)
+
+    """
+
+    def __init__(self, cutoff=6.0):
+        self.cutoff = cutoff
+
+    def featurize(self, struct, site):
+        """
+        :param struct: Pymatgen Structure object
+        :param site: index of target site in structure
+        :return: voro_index: Voronoi indices
+                 voro_index_sum: sum of Voronoi indices
+                 voro_index_frac: fractional Voronoi indices
+        """
+
+        voro_index_result = []
+        self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
+        voro_index_list = self.voronoi_analyzer.analyze(struct, n=site)
+        for voro_index in voro_index_list:
+            voro_index_result.append(voro_index)
+        voro_index_sum = sum(voro_index_list)
+        voro_index_result.append(voro_index_sum)
+
+        voro_index_frac_list = voro_index_list / voro_index_sum
+        for voro_index_frac in voro_index_frac_list:
+            voro_index_result.append(voro_index_frac)
+
+        return voro_index_result
+
+    def feature_labels(self):
+        labels = []
+        for i in range(3, 11):
+            labels.append('voro_index_%d' % i)
+        labels.append('voro_index_sum')
+        for i in range(3, 11):
+            labels.append('voro_index_frac_%d' % i)
+        return labels
+
+    def citations(self):
+        citation = ('@book{okabe1992spatial,  '
+                    'title={Spatial tessellations}, '
+                    'author={Okabe, Atsuyuki}, '
+                    'year={1992}, '
+                    'publisher={Wiley Online Library}}')
+        return citation
+
+    def implementors(self):
+        return ['Qi Wang']
