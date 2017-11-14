@@ -973,7 +973,7 @@ class Miedema(BaseFeaturizer):
             struct_stability = np.array(df_element['structural_stability'])
 
         else:
-            # allow to extract parameters for other ab initio databases eg MP, Citrine **Currently not done
+            # allow to extract parameters for ab initio databases eg MP, Citrine **Currently not done
             df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'),index_col='element')
             df_element = df_dataset.ix[elements]
             valence = np.array(df_element['valence_electrons'])
@@ -1023,12 +1023,13 @@ class Miedema(BaseFeaturizer):
         delta_S = -8.314 * frac_sum / 1000
         return delta_S
 
-    # main
     def featurize(self, comp):
         """
-        Get stoichiometric attributes
+        Get Miedema formation enthalpy of target structures
         :param comp: Pymatgen composition object
-        :return:
+        :return: delta_H_inter :  formation enthalpy of intermetallic compound
+                 delta_H_ss    :  formation enthalpy of solid solution
+                 delta_H_amor  :  formation enthalpy of amorphous phase
         """
 
         el_amt = comp.fractional_composition.get_el_amt_dict()
@@ -1046,7 +1047,7 @@ class Miedema(BaseFeaturizer):
                 melting_point = np.array(df_element['melting_point'])
 
         else:
-            # allow to extract parameters for other ab initio databases eg MP, Citrine **Currently not done
+            # allow to extract parameters for ab initio databases eg MP, Citrine **Currently not done
             df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'), index_col='element')
             df_element = df_dataset.ix[elements]
             melting_point = np.array(df_element['melting_point'])
@@ -1103,7 +1104,8 @@ class Miedema(BaseFeaturizer):
     def citations(self):
         citation = ('@article{de1988cohesion, '
                     'title={Cohesion in metals},'
-                    'author={De Boer, Frank R and Mattens, WCM and Boom, R and Miedema, AR and Niessen, AK},'
+                    'author={De Boer, Frank R and Mattens, WCM '
+                    'and Boom, R and Miedema, AR and Niessen, AK},'
                     'year={1988}}')
         return citation
 
