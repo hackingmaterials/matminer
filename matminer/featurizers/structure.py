@@ -15,7 +15,7 @@ from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, OPSiteFingerprint_alt
+from matminer.featurizers.site import OPSiteFingerprint, CNFingerprint
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
@@ -900,7 +900,8 @@ def get_op_stats_vector_diff_alt(s1, s2, angle_weight=1):
     Compute structure distance using an alternate (test) algorithm. Docs are
     minimal for now.
     """
-    site_f = OPSiteFingerprint_alt()
+    # site_f = OPSiteFingerprint_alt()
+    site_f = CNFingerprint()
     structure_f = OPStructureFingerprint(op_site_fp=site_f, stats=("mean",))
 
     f1 = structure_f.featurize(s1)
