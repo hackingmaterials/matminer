@@ -516,9 +516,10 @@ class CrystalSiteCN(BaseFeaturizer):
     docs are minimal.
     """
 
-    def __init__(self, min_coord=1, max_coord=12, **kwargs):
+    def __init__(self, min_coord=1, max_coord=12, use_avg=False, **kwargs):
         self.min_coord = min_coord
         self.max_coord = max_coord
+        self.use_avg = use_avg
 
         optypes = dict([(k, ["wt"]) for k in range(min_coord, max_coord+1)])
         self.cnf = CrystalSiteFingerprint(optypes, **kwargs)
@@ -526,6 +527,17 @@ class CrystalSiteCN(BaseFeaturizer):
 
     def featurize(self, struct, idx):
         vector = self.cnf.featurize(struct, idx)
+
+        if self.use_avg:
+            tot = 0
+            weight = 0
+            for idx, val in enumerate(vector):
+                weight += val
+                tot += val * (idx+self.min_coord)
+
+            return [tot/weight]
+
+
         max_val = 0
         best_cn = float("nan")
         for idx, val in enumerate(vector):
