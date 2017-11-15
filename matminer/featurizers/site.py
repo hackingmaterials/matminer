@@ -548,7 +548,7 @@ class CrystalSiteCN(BaseFeaturizer):
         return [best_cn]
 
     def feature_labels(self):
-        return ['CN']
+        return ['CN_avg'] if self.use_avg else ['CN']
 
     def citations(self):
         return ['']
