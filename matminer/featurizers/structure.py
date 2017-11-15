@@ -15,7 +15,7 @@ from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, CNFingerprint
+from matminer.featurizers.site import OPSiteFingerprint
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
