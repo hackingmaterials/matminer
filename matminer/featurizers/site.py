@@ -571,3 +571,64 @@ def get_tet_bcc_motif(structure, idx):
         return 'tet'
     else:
         return 'unrecognized'
+
+class Voronoi_index(BaseFeaturizer):
+    """
+    The Voronoi indices n_i and the fractional Voronoi indices n_i/sum(n_i) that
+    reflects the i-fold symmetry in the local sites.
+    n_i denotes the number of the i-edged faces, and i is in the range of 3-10 here.
+    e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...]
+         for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...]
+         for icosahedra, the Voronoi indices are [0,0,12,0,...]
+
+    Parameters:
+        cutoff (float): cutoff distance in determining the potential neighbors
+                        for Voronoi tessellation analysis (default: 6.0)
+
+    """
+
+    def __init__(self, cutoff=6.0):
+        self.cutoff = cutoff
+
+    def featurize(self, struct, site):
+        """
+        :param struct: Pymatgen Structure object
+        :param site: index of target site in structure
+        :return: voro_index: Voronoi indices
+                 voro_index_sum: sum of Voronoi indices
+                 voro_index_frac: fractional Voronoi indices
+        """
+
+        voro_index_result = []
+        self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
+        voro_index_list = self.voronoi_analyzer.analyze(struct, n=site)
+        for voro_index in voro_index_list:
+            voro_index_result.append(voro_index)
+        voro_index_sum = sum(voro_index_list)
+        voro_index_result.append(voro_index_sum)
+
+        voro_index_frac_list = voro_index_list / voro_index_sum
+        for voro_index_frac in voro_index_frac_list:
+            voro_index_result.append(voro_index_frac)
+
+        return voro_index_result
+
+    def feature_labels(self):
+        labels = []
+        for i in range(3, 11):
+            labels.append('voro_index_%d' % i)
+        labels.append('voro_index_sum')
+        for i in range(3, 11):
+            labels.append('voro_index_frac_%d' % i)
+        return labels
+
+    def citations(self):
+        citation = ('@book{okabe1992spatial,  '
+                    'title={Spatial tessellations}, '
+                    'author={Okabe, Atsuyuki}, '
+                    'year={1992}, '
+                    'publisher={Wiley Online Library}}')
+        return citation
+
+    def implementors(self):
+        return ['Qi Wang']
