@@ -843,7 +843,7 @@ class Miedema(BaseFeaturizer):
     # convert kJ to eV
     # the original Miedema model is in kJ, convert to eV to facilitate comparison with ab initio or experimental results
     def kJ_to_eV(self, energy_kJ):
-        energy_eV = np.array(energy_kJ) / 96.4510325
+        energy_eV = np.array(energy_kJ) / 96.4853
         return energy_eV
 
     # chemical term of formation enthalpy
