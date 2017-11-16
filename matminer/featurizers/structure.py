@@ -15,7 +15,7 @@ from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint
+from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
@@ -895,33 +895,19 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     return dr[idx], delta[idx]
 
 
-def get_op_stats_vector_diff_alt(s1, s2, angle_weight=1):
+def get_structure_distance(s1, s2, preset_name="cn"):
     """
     Compute structure distance using an alternate (test) algorithm. Docs are
     minimal for now.
     """
-    # site_f = OPSiteFingerprint_alt()
-    site_f = CNFingerprint()
-    structure_f = OPStructureFingerprint(op_site_fp=site_f, stats=("mean",))
 
-    f1 = structure_f.featurize(s1)
-    f2 = structure_f.featurize(s2)
+    f_site = CrystalSiteFingerprint.from_preset(preset_name)
+    f_structure = OPStructureFingerprint(op_site_fp=f_site, stats=("mean",))
 
-    angle_distance = 0
-    if angle_weight > 0:
-        # compute angle between feature vectors
-        # TODO: add StackOverflow link
-        f1_u = f1 / np.linalg.norm(f1)  # unit vector
-        f2_u = f2 / np.linalg.norm(f2)  # unit vector
-        angle_distance = np.arccos(np.clip(np.dot(f1_u, f2_u), -1.0, 1.0))
+    f1 = f_structure.featurize(s1)
+    f2 = f_structure.featurize(s2)
 
-    euclidean_weight = 1 - angle_weight
-    euclidean_distance = 0
-    if euclidean_weight > 0:
-        euclidean_distance = np.linalg.norm(np.array(f1) - np.array(f2))
-
-    return (angle_weight * angle_distance) + \
-           (euclidean_weight * euclidean_distance)
+    return np.linalg.norm(np.array(f1) - np.array(f2))
 
 
 
