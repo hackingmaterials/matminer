@@ -2,6 +2,7 @@ from __future__ import division, unicode_literals, print_function
 
 import numpy as np
 from numpy.linalg import norm
+from scipy.interpolate import griddata
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, get_tet_bcc_motif
@@ -168,24 +169,33 @@ class BandFeaturizer(BaseFeaturizer):
         self.feat['band_gap'] = band_gap['energy']
         self.feat['is_gap_direct'] = band_gap['direct']
         self.feat['direct_gap'] = min(cvd['n']['Es'] - cvd['p']['Es'])
+        if self.include_symeqks:
+            temp_bs_kpts = []
+            temp_ens = {'n': [], 'p': []}
+            for ik, k in enumerate(bs_kpts):
+                eq_ks = list(bs.get_sym_eq_kpoints(k, tol=self.atol))
+                eq_ks.append(k)
+                temp_bs_kpts.extend(eq_ks)
+                for tp in ['p', 'n']:
+                    temp_ens[tp].extend([cvd[tp]['Es'][ik]]*(len(eq_ks)))
+            bs_kpts = temp_bs_kpts
+            for tp in ['n', 'p']:
+                cvd[tp]['Es'] = np.array(temp_ens[tp])
         if self.kpoints:
+            fits = {tp: griddata(points=np.array(bs_kpts),
+                        values=cvd[tp]['Es']-cvd[tp]['energy'],
+                        xi=self.kpoints, method='linear') for tp in ['p', 'n']}
             for tp in ['p', 'n']:
-                for k in self.kpoints:
+                for ik, k in enumerate(self.kpoints):
                     k_name = '{}_{};{};{}_en'.format(tp, k[0], k[1], k[2])
-                    if self.include_symeqks:
-                        kidx = self.find_kpoint(bs_kpts, k, self.atol, bs=bs)
-                    else:
-                        kidx = self.find_kpoint(bs_kpts, k, self.atol,bs=None)
-                    try:
-                        self.feat[k_name] = bs.bands[cvd[tp]['sidx']][
-                            cvd[tp]['bidx']][kidx] - cvd[tp]['energy']
-                    except IndexError:
-                        self.feat[k_name] = float('NaN')
+                    self.feat[k_name] = fits[tp][ik]
+
 
         for tp in ['p', 'n']:
             self.feat['{}_ex1_norm'.format(tp)] = norm(cvd[tp]['k'])
             if bs.structure:
-                self.feat['{}_ex1_degen'.format(tp)] = bs.get_kpoint_degeneracy(cvd[tp]['k'])
+                self.feat['{}_ex1_degen'.format(tp)] = \
+                        bs.get_kpoint_degeneracy(cvd[tp]['k'])
             else:
                 self.feat['{}_ex1_degen'] = float('NaN')
         if self.weight > 1:
@@ -227,25 +237,6 @@ class BandFeaturizer(BaseFeaturizer):
             bidx = extremum["band_index"][Spin.down][idx]
             bspin = Spin.down
         return bidx, bspin
-
-    @staticmethod
-    def find_kpoint(kpts, kpt, atol=0.01, bs=None):
-        """
-        returns the index of kpt inside kpts if found else nan
-        Args:
-            kpts ([1x3 numpy array]): list of available fractional coordinates
-            kpt (1x3 numpy array): fractional coordinates of the k-point
-            atol (float): absolute tolerance (in fractional coordinates)
-        Returns (int or nan):
-        """
-        for idx, k in enumerate(kpts):
-            if np.isclose(k, kpt, atol=atol).all():
-                return idx
-            elif bs and bs.structure:
-                for k_eq in bs.get_sym_eq_kpoints(k, tol=atol):
-                    if np.isclose(k_eq, kpt, atol=atol).all():
-                        return idx
-        return float('NaN')
 
     def citations(self):
         return ['@article{in_progress, title={{In progress}} year={2017}}']
