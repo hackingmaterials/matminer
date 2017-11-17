@@ -108,8 +108,12 @@ class BandFeaturizer(BaseFeaturizer):
     Featurizes a pymatgen band structure object.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, kpoints=None, atol=0.01, include_symeqks=False,
+                 weight=1):
+        self.atol = atol
+        self.include_symeqks = include_symeqks
+        self.kpoints = kpoints
+        self.weight = weight
 
     def featurize(self, bs):
         """
@@ -117,6 +121,15 @@ class BandFeaturizer(BaseFeaturizer):
             bs (pymatgen BandStructure or BandStructureSymmLine or their dict):
                 The band structure to featurize. To obtain all features, bs
                 should include the structure attribute.
+            kpoints ([1x3 numpy array]): list of fractional coordinates of
+                k-points at which energy is extracted.
+            atol (float): the absolute tolerance for fractional coordinate
+                below which two coordinates are considered the same
+            include_symeqks (bool): if True, when looking for energy of the
+                bands at given kpoints, symmetrically equivalent kpoints are
+                also considered (recommended to keep False for speed)
+            weight (int >= 1): if larger than 1, some features are multiplied
+                by it to emphasize their importance in the features vector.
         Returns:
              ([float]): a list of band structure features. If not bs.structure,
                 features that require the structure will be returned as NaN.
@@ -125,46 +138,75 @@ class BandFeaturizer(BaseFeaturizer):
                 is_gap_direct (0.0|1.0): whether the band gap is direct or not
                 direct_gap (eV): the minimum direct distance of the last
                     valence band and the first conduction band
-                p_ex1_norm (Angstrom^-1): k-space distance between Gamma point
+                p_ex1_norm (flaot): k-space distance between Gamma point
                     and k-point of VBM
-                n_ex1_norm (Angstrom^-1): k-space distance between Gamma point
+                n_ex1_norm (float): k-space distance between Gamma point
                     and k-point of CBM
                 p_ex1_degen: degeneracy of VBM
                 n_ex1_degen: degeneracy of CBM
+                if kpoints is provided (e.g. for kpoints == [[0.0, 0.0, 0.0]]):
+                    n_0.0;0.0;0.0_en: (energy of the first conduction band at
+                        [0.0, 0.0, 0.0] - CBM energy)
+                    p_0.0;0.0;0.0_en: (energy of the last valence band at
+                        [0.0, 0.0, 0.0] - VBM energy)
         """
-
         if isinstance(bs, dict):
             bs = BandStructure.from_dict(bs)
         if bs.is_metal():
             raise ValueError("Cannot featurize a metallic band structure!")
-
-        # preparation
-        vbm = bs.get_vbm()
-        vbm_k = bs.kpoints[vbm['kpoint_index'][0]].frac_coords
-        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm, is_cbm=False)
-        vbm_ens = np.array(bs.bands[vbm_bspin][vbm_bidx])
-        cbm = bs.get_cbm()
-        cbm_k = bs.kpoints[cbm['kpoint_index'][0]].frac_coords
-        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, is_cbm=True)
-        cbm_ens = np.array(bs.bands[cbm_bspin][cbm_bidx])
+        bs_kpts = [k.frac_coords for k in bs.kpoints]
+        cvd = {'p': bs.get_vbm(), 'n':  bs.get_cbm()}
+        for itp, tp in enumerate(['p', 'n']):
+            cvd[tp]['k'] = bs.kpoints[cvd[tp]['kpoint_index'][0]].frac_coords
+            cvd[tp]['bidx'], cvd[tp]['sidx'] = \
+                    self.get_bindex_bspin(cvd[tp], is_cbm=bool(itp))
+            cvd[tp]['Es'] = np.array(bs.bands[cvd[tp]['sidx']][cvd[tp]['bidx']])
         band_gap = bs.get_band_gap()
+
         # featurize
-        self.feat = []
-        self.feat.append(('band_gap', band_gap['energy']))
-        self.feat.append(('is_gap_direct', band_gap['direct']))
-        self.feat.append(('direct_gap', min(cbm_ens - vbm_ens)))
-        self.feat.append(('p_ex1_norm', norm(vbm_k)))
-        self.feat.append(('n_ex1_norm', norm(cbm_k)))
-        if bs.structure:
-            self.feat.append(('p_ex1_degen', bs.get_kpoint_degeneracy(vbm_k)))
-            self.feat.append(('n_ex1_degen', bs.get_kpoint_degeneracy(cbm_k)))
-        else:
-            for prop in ['p_ex1_degen', 'n_ex1_degen']:
-                self.feat.append((prop, float.NaN))
-        return list(x[1] for x in self.feat)
+        self.feat = {}
+        self.feat['band_gap'] = band_gap['energy']
+        self.feat['is_gap_direct'] = band_gap['direct']
+        self.feat['direct_gap'] = min(cvd['n']['Es'] - cvd['p']['Es'])
+        if self.kpoints:
+            for tp in ['p', 'n']:
+                for k in self.kpoints:
+                    k_name = '{}_{};{};{}_en'.format(tp, k[0], k[1], k[2])
+                    if self.include_symeqks:
+                        kidx = self.find_kpoint(bs_kpts, k, self.atol, bs=bs)
+                    else:
+                        kidx = self.find_kpoint(bs_kpts, k, self.atol,bs=None)
+                    try:
+                        self.feat[k_name] = bs.bands[cvd[tp]['sidx']][
+                            cvd[tp]['bidx']][kidx] - cvd[tp]['energy']
+                    except IndexError:
+                        self.feat[k_name] = float('NaN')
+
+        for tp in ['p', 'n']:
+            self.feat['{}_ex1_norm'.format(tp)] = norm(cvd[tp]['k'])
+            if bs.structure:
+                self.feat['{}_ex1_degen'.format(tp)] = bs.get_kpoint_degeneracy(cvd[tp]['k'])
+            else:
+                self.feat['{}_ex1_degen'] = float('NaN')
+        if self.weight > 1:
+            self.apply_weights(self.weight)
+        return self.feat.values()
+
+    def apply_weights(self, weight):
+        """
+        multiply some features by weight or a fraction of weight to emphasize
+            more on their importance (e.g. norm(kpoint) of the CBM/VBM)
+        Args:
+            weight (float): base weight; no effect if weight==1
+        Returns (dict): features
+        """
+        for key in ['is_gap_direct', 'p_ex1_norm', 'n_ex1_norm']:
+            self.feat[key] *= weight
+        for key in ['band_gap', 'direct_gap']:
+            self.feat[key] *= max(1, weight/2.)
 
     def feature_labels(self):
-        return list(x[0] for x in self.feat)
+        return self.feat.keys()
 
     @staticmethod
     def get_bindex_bspin(extremum, is_cbm):
@@ -185,6 +227,25 @@ class BandFeaturizer(BaseFeaturizer):
             bidx = extremum["band_index"][Spin.down][idx]
             bspin = Spin.down
         return bidx, bspin
+
+    @staticmethod
+    def find_kpoint(kpts, kpt, atol=0.01, bs=None):
+        """
+        returns the index of kpt inside kpts if found else nan
+        Args:
+            kpts ([1x3 numpy array]): list of available fractional coordinates
+            kpt (1x3 numpy array): fractional coordinates of the k-point
+            atol (float): absolute tolerance (in fractional coordinates)
+        Returns (int or nan):
+        """
+        for idx, k in enumerate(kpts):
+            if np.isclose(k, kpt, atol=atol).all():
+                return idx
+            elif bs and bs.structure:
+                for k_eq in bs.get_sym_eq_kpoints(k, tol=atol):
+                    if np.isclose(k_eq, kpt, atol=atol).all():
+                        return idx
+        return float('NaN')
 
     def citations(self):
         return ['@article{in_progress, title={{In progress}} year={2017}}']
