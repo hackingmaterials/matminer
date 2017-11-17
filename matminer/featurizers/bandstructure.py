@@ -190,7 +190,7 @@ class BandFeaturizer(BaseFeaturizer):
                 self.feat['{}_ex1_degen'] = float('NaN')
         if self.weight > 1:
             self.apply_weights(self.weight)
-        return self.feat.values()
+        return list(self.feat.values())
 
     def apply_weights(self, weight):
         """
@@ -206,7 +206,7 @@ class BandFeaturizer(BaseFeaturizer):
             self.feat[key] *= max(1, weight/2.)
 
     def feature_labels(self):
-        return self.feat.keys()
+        return list(self.feat.keys())
 
     @staticmethod
     def get_bindex_bspin(extremum, is_cbm):
