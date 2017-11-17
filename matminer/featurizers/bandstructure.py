@@ -109,12 +109,10 @@ class BandFeaturizer(BaseFeaturizer):
     Featurizes a pymatgen band structure object.
     """
 
-    def __init__(self, kpoints=None, atol=0.01, include_symeqks=False,
-                 weight=1):
+    def __init__(self, kpoints=None, atol=0.01, include_symeqks=False):
         self.atol = atol
         self.include_symeqks = include_symeqks
         self.kpoints = kpoints
-        self.weight = weight
 
     def featurize(self, bs):
         """
@@ -129,8 +127,6 @@ class BandFeaturizer(BaseFeaturizer):
             include_symeqks (bool): if True, when looking for energy of the
                 bands at given kpoints, symmetrically equivalent kpoints are
                 also considered (recommended to keep False for speed)
-            weight (int >= 1): if larger than 1, some features are multiplied
-                by it to emphasize their importance in the features vector.
         Returns:
              ([float]): a list of band structure features. If not bs.structure,
                 features that require the structure will be returned as NaN.
@@ -198,22 +194,9 @@ class BandFeaturizer(BaseFeaturizer):
                         bs.get_kpoint_degeneracy(cvd[tp]['k'])
             else:
                 self.feat['{}_ex1_degen'] = float('NaN')
-        if self.weight > 1:
-            self.apply_weights(self.weight)
         return list(self.feat.values())
 
-    def apply_weights(self, weight):
-        """
-        multiply some features by weight or a fraction of weight to emphasize
-            more on their importance (e.g. norm(kpoint) of the CBM/VBM)
-        Args:
-            weight (float): base weight; no effect if weight==1
-        Returns (dict): features
-        """
-        for key in ['is_gap_direct', 'p_ex1_norm', 'n_ex1_norm']:
-            self.feat[key] *= weight
-        for key in ['band_gap', 'direct_gap']:
-            self.feat[key] *= max(1, weight/2.)
+
 
     def feature_labels(self):
         return list(self.feat.keys())
