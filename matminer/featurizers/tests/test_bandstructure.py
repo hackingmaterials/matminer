@@ -69,6 +69,7 @@ class DOSFeaturesTest(PymatgenTest):
 
     def test_DOSFeaturizer(self):
         df_df = DOSFeaturizer().featurize_dataframe(self.df, col_id=['dos'])
+
         self.assertAlmostEqual(df_df['cbm_percents'][0][0], 0.258, 3)
         self.assertAlmostEqual(df_df['cbm_locations'][0], [[0.0, 0.0, 0.0]])
         self.assertEqual(df_df['cbm_species'][0], ['Si'])
