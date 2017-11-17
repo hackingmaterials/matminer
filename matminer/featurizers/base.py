@@ -31,20 +31,15 @@ class BaseFeaturizer(object):
         # Compute the features
         features = []
         x_list = df[col_id]
+        feature_len = len(self.feature_labels())
         for x in x_list.values:
             try:
                 features.append(self.featurize(*x))
             except:
                 if ignore_errors:
-                    features.append(float("nan"))
+                    features.append([float("nan")] * feature_len)
                 else:
                     raise
-
-        if ignore_errors:
-            feature_len = len(self.feature_labels())
-            for i, feature in enumerate(features):
-                if not feature:
-                    features[i] = np.full(feature_len, float("nan"))
 
         # Add features to dataframe
         features = np.array(features)
