@@ -29,7 +29,7 @@ class BandstructureFeaturesTest(PymatgenTest):
         with open(os.path.join(test_dir, 'si_bandstructure_uniform.json'),'r') as bsh:
             si_bs_uniform = BandStructure.from_dict(json.load(bsh))
         si_bs_uniform.structure = si_str
-        self.si_kpts = HighSymmKpath(si_str).kpath['kpoints'].values()
+        self.si_kpts = list(HighSymmKpath(si_str).kpath['kpoints'].values())
         self.df = pd.DataFrame({'bs_line': [si_bs_line], 'bs_uniform': [si_bs_uniform]})
 
     def test_BranchPointEnergy(self):
