@@ -359,7 +359,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
     @staticmethod
     def from_preset(preset, cation_anion=False):
         if preset == "cn":
-            optypes = dict([(k + 1, ["wt"]) for k in range(12)])
+            optypes = dict([(k + 1, ["wt"]) for k in range(16)])
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
 
         elif preset == "ops":
@@ -375,7 +375,11 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 9: ["wt", "q2", "q4", "q6"],
                 10: ["wt", "q2", "q4", "q6"],
                 11: ["wt", "q2", "q4", "q6"],
-                12: ["wt", "cuboct", "q2", "q4", "q6"]}
+                12: ["wt", "cuboct", "q2", "q4", "q6"],
+                13: ["wt"],
+                14: ["wt"],
+                15: ["wt"],
+                16: ["wt"]}
 
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
 
@@ -506,7 +510,7 @@ class CrystalSiteCN(BaseFeaturizer):
     docs are minimal.
     """
 
-    def __init__(self, min_coord=1, max_coord=12, use_avg=False, **kwargs):
+    def __init__(self, min_coord=1, max_coord=16, use_avg=False, **kwargs):
         self.min_coord = min_coord
         self.max_coord = max_coord
         self.use_avg = use_avg
