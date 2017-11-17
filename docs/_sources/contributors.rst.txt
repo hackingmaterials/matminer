@@ -41,6 +41,7 @@ University of Chicago
 
 Other
 -----
-* Kyle Bystrom (Asta Research Group)
+* Kyle Bystrom (Asta Research Group, UC Berkeley)
 * Shyue Ping Ong (UC San Diego)
 * Evgeny Blokhin (Tilde Lab)
+* Max Dylla (Snyder Research Group, Northwestern University)

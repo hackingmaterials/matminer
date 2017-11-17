@@ -1,3 +1,5 @@
+from __future__ import division
+
 """Features that describe the local environment of a single atom
 
 The `featurize` function takes two arguments:
@@ -13,10 +15,13 @@ We have to use two options because the Site object does not hold a pointer back 
 """
 
 import numpy as np
+import math
 
-from .base import BaseFeaturizer
-from pymatgen.analysis.structure_analyzer import OrderParameters
-from math import sqrt, isnan, fabs
+from collections import defaultdict
+
+from matminer.featurizers.base import BaseFeaturizer
+from pymatgen.analysis.structure_analyzer import OrderParameters, \
+    VoronoiAnalyzer, VoronoiCoordFinder
 from matminer.featurizers.stats import PropertyStats
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -47,10 +52,12 @@ class AGNIFingerprints(BaseFeaturizer):
     TODO: Differentiate between different atom types (maybe as another class)
     """
 
-    def __init__(self, directions=(None, 'x', 'y', 'z'), etas=np.logspace(np.log10(0.8), np.log10(16), 8),
+    def __init__(self, directions=(None, 'x', 'y', 'z'), etas=None,
                  cutoff=8):
         self.directions = directions
         self.etas = etas
+        if self.etas is None:
+            self.etas = np.logspace(np.log10(0.8), np.log10(16), 8)
         self.cutoff = cutoff
 
     @property
@@ -82,7 +89,7 @@ class AGNIFingerprints(BaseFeaturizer):
         # Compute "e^(r/eta) * cutoff_func" for each eta
         windowed = np.zeros((len(dists), len(self.etas)))
         for i, eta in enumerate(self.etas):
-            windowed[:, i] = np.multiply(np.exp(-1 * np.power(np.divide(dists, eta), 2)), cutoff_func)
+            windowed[:, i] = np.multiply(np.exp(-1 * np.power(np.true_divide(dists, eta), 2)), cutoff_func)
 
         # Compute the fingerprints
         output = []
@@ -90,11 +97,11 @@ class AGNIFingerprints(BaseFeaturizer):
             if d is None:
                 output.append(np.sum(windowed, axis=0))
             else:
-                if d is 'x':
+                if d == 'x':
                     proj = [1., 0., 0.]
-                elif d is 'y':
+                elif d == 'y':
                     proj = [0., 1., 0.]
-                elif d is 'z':
+                elif d == 'z':
                     proj = [0., 0., 1.]
                 else:
                     raise Exception('Unrecognized direction')
@@ -350,5 +357,229 @@ class OPSiteFingerprint(BaseFeaturizer):
                 'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
 
     def implementors(self):
-        return (['Nils E. R. Zimmermann'])
+        return ['Nils E. R. Zimmermann']
 
+
+class CrystalSiteFingerprint(BaseFeaturizer):
+    """
+    An alternate site fingerprint currently undergoing testing. This code
+    will either be improved or deleted depending on how the tests go. For now,
+    docs are minimal.
+    """
+
+    @staticmethod
+    def from_preset(preset, cation_anion=False):
+        if preset == "cn":
+            optypes = dict([(k+1, ["wt"]) for k in range(12)])
+            return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
+
+        elif preset == "ops":
+            optypes = {
+                1: ["wt"],
+                2: ["wt", "bent180", "bent45", "bent90", "bent135"],
+                3: ["wt", "tri_plan", "tet", "T"],
+                4: ["wt", "sq_plan", "sq", "tet", "see_saw", "tri_pyr"],
+                5: ["wt", "pent_plan", "sq_pyr", "tri_bipyr"],
+                6: ["wt", "oct", "pent_pyr"],
+                7: ["wt", "hex_pyr", "pent_bipyr"],
+                8: ["wt", "bcc", "hex_bipyr"],
+                9: ["wt", "q2", "q4", "q6"],
+                10: ["wt", "q2", "q4", "q6"],
+                11: ["wt", "q2", "q4", "q6"],
+                12: ["wt", "cuboct", "q2", "q4", "q6"]}
+
+            return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
+
+    def __init__(self, optypes, override_cn1=True, cutoff_radius=8, tol=1E-2,
+                 cation_anion=False):
+
+        self.optypes = optypes.copy()
+        self.override_cn1 = override_cn1
+        self.cutoff_radius = cutoff_radius
+        self.tol = tol
+        self.cation_anion = cation_anion
+
+        if self.override_cn1 and self.optypes.get(1) != ["wt"]:
+            raise ValueError("If override_cn1 is True, optypes[1] must be ['wt']!")
+
+        self.ops = {}
+        for cn, t_list in self.optypes.items():
+            self.ops[cn] = []
+            for t in t_list:
+                if t == "wt":
+                    self.ops[cn].append(t)
+
+                elif t[:4] == 'bent':
+                    self.ops[cn].append(OrderParameters(
+                        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
+                                              'IGW_TA': 1.0 / 0.0667}]))
+                else:
+                    self.ops[cn].append(OrderParameters([t]))
+
+    def featurize(self, struct, idx):
+        cn_fingerprint_array = defaultdict(list)  # dict where key = CN, val is array that contains each OP for that CN
+        total_weight = math.pi / 4  # 1/4 unit circle area
+
+        target = None
+        if self.cation_anion:
+            target = []
+            m_oxi = struct[idx].specie.oxi_state
+            for site in struct:
+                if site.specie.oxi_state * m_oxi <= 0:  # opposite charge
+                    target.append(site.specie)
+            if not target:
+                raise ValueError("No valid targets for site within cation_anion constraint!")
+
+        vcf = VoronoiCoordFinder(struct, cutoff=self.cutoff_radius, target=target)
+        n_w = vcf.get_voronoi_polyhedra(idx)
+
+        dist_sorted = (sorted(n_w.values(), reverse=True))
+
+        if self.override_cn1:
+            cn1 = 1
+            for d in dist_sorted[1:]:
+                cn1 = cn1 * (dist_sorted[0] ** 2 - d ** 2) / dist_sorted[0] ** 2
+            cn_fingerprint_array[1] = [round(cn1, 6)]
+            dist_sorted[0] = dist_sorted[1]
+
+        dist_norm = [d / dist_sorted[0] for d in dist_sorted if d > 0]
+
+        dist_bins = []  # bin numerical tolerances (~error bar of measurement)
+        for d in dist_norm:
+            if not dist_bins or (
+                    d > self.tol and dist_bins[-1] / (1 + self.tol) > d):
+                dist_bins.append(d)
+
+        for dist_idx, dist in enumerate(dist_bins):
+            neigh_sites = [n for n, w in n_w.items() if w > 0 and w / dist_sorted[0] >= dist/(1+self.tol)]
+            cn = len(neigh_sites)
+            if cn in self.ops:
+                for opidx, op in enumerate(self.ops[cn]):
+                    if self.optypes[cn][opidx] == "wt":
+                        opval = 1
+                    else:
+                        opval = op.get_order_parameters([struct[idx]] + neigh_sites, 0, indices_neighs=[i for i in range(1, len(neigh_sites)+1)])[0]
+
+                    opval = opval or 0  # handles None
+
+                    if self.optypes[cn][opidx] == 'bcc':  # TODO: ask Nils what this is
+                        opval = opval / 0.976
+
+                    # figure out the weight for this opval based on semicircle integration method
+                    x1 = 1 - dist
+                    x2 = 1 if dist_idx == len(dist_bins) - 1 else 1 - dist_bins[
+                        dist_idx + 1]
+                    weight = self._semicircle_integral(
+                        x2) - self._semicircle_integral(x1)
+
+                    opval = opval * weight / total_weight
+
+                    cn_fingerprint_array[cn].append(opval)
+
+        # convert dict to list
+        cn_fingerprint = []
+        for cn in sorted(self.optypes):
+            for op_idx, _ in enumerate(self.optypes[cn]):
+                try:
+                    cn_fingerprint.append(cn_fingerprint_array[cn][op_idx])
+                except IndexError:  # no OP value computed
+                    cn_fingerprint.append(0)
+
+        return cn_fingerprint
+
+    def feature_labels(self):
+        labels = []
+        for cn in sorted(self.optypes):
+            for op in self.optypes[cn]:
+                labels.append("{} CN_{}".format(op, cn))
+
+        return labels
+
+    def citations(self):
+        return ['']
+
+    def implementors(self):
+        return ['Anubhav Jain', 'Nils E.R. Zimmermann']
+
+    @staticmethod
+    def _semicircle_integral(x, r=1):
+        if r == x:
+            return 0.25 * math.pi * r**2
+
+        return 0.5 * ((x * math.sqrt(r**2 - x**2)) + (r**2 * math.atan(x/math.sqrt(r**2 - x**2))))
+
+
+class CrystalSiteCN(BaseFeaturizer):
+    """
+    An alternate site fingerprint currently undergoing testing. This code
+    will either be improved or deleted depending on how the tests go. For now,
+    docs are minimal.
+    """
+
+    def __init__(self, min_coord=1, max_coord=12, use_avg=False, **kwargs):
+        self.min_coord = min_coord
+        self.max_coord = max_coord
+        self.use_avg = use_avg
+
+        optypes = dict([(k, ["wt"]) for k in range(min_coord, max_coord+1)])
+        self.cnf = CrystalSiteFingerprint(optypes, **kwargs)
+
+
+    def featurize(self, struct, idx):
+        vector = self.cnf.featurize(struct, idx)
+
+        if self.use_avg:
+            tot = 0
+            weight = 0
+            for idx, val in enumerate(vector):
+                weight += val
+                tot += val * (idx+self.min_coord)
+
+            return [tot/weight]
+
+
+        max_val = 0
+        best_cn = float("nan")
+        for idx, val in enumerate(vector):
+            if val > max_val:
+                max_val = val
+                best_cn = idx+self.min_coord
+
+        return [best_cn]
+
+    def feature_labels(self):
+        return ['CN_avg'] if self.use_avg else ['CN']
+
+    def citations(self):
+        return ['']
+
+    def implementors(self):
+        return ['Anubhav Jain']
+
+
+# TODO: @nisse3000 this should be made into a Featurizer and more general than 2 classes. Also add unit test afterward, especially since it depends on certain default for OPSiteFingerprint - AJ
+def get_tet_bcc_motif(structure, idx):
+    """
+    Convenience class-method from Nils Zimmermann.
+    Used to distinguish coordination environment in half-Heuslers.
+    Args:
+        structure (pymatgen Structure): the target structure to evaluate
+        idx (index): the site index in the structure
+    Returns:
+        (str) that describes site coordination enviornment
+            'bcc'
+            'tet'
+            'unrecognized'
+    """
+
+    op_site_fp = OPSiteFingerprint()
+    fp = op_site_fp.featurize(structure, idx)
+    labels = op_site_fp.feature_labels()
+    i_tet = labels.index('tet CN_4')
+    i_bcc = labels.index('bcc CN_8')
+    if fp[i_bcc] > 0.5:
+        return 'bcc'
+    elif fp[i_tet] > 0.5:
+        return 'tet'
+    else:
+        return 'unrecognized'

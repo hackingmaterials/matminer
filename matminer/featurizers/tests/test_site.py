@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, division, print_function
+
 import numpy as np
 import pandas as pd
 from pymatgen import Structure, Lattice
@@ -27,8 +29,8 @@ class FingerprintTests(PymatgenTest):
         agni = AGNIFingerprints(directions=['x', 'y', 'z'])
 
         features = agni.featurize(self.sc, 0)
-        self.assertEquals(8 * 3, len(features))
-        self.assertEquals(8 * 3, len(set(agni.feature_labels())))
+        self.assertEqual(8 * 3, len(features))
+        self.assertEqual(8 * 3, len(set(agni.feature_labels())))
         self.assertArrayAlmostEqual([0, ] * 24, features)
 
         # Compute the "atomic fingerprints"
@@ -36,12 +38,17 @@ class FingerprintTests(PymatgenTest):
         agni.cutoff = 3.75  # To only get 6 neighbors to deal with
 
         features = agni.featurize(self.sc, 0)
-        self.assertEquals(8, len(features))
-        self.assertEquals(8, len(set(agni.feature_labels())))
+        self.assertEqual(8, len(features))
+        self.assertEqual(8, len(set(agni.feature_labels())))
 
-        self.assertEquals(0.8, agni.etas[0])
-        self.assertAlmostEquals(6 * np.exp(-(3.52 / 0.8) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[0])
-        self.assertAlmostEquals(6 * np.exp(-(3.52 / 16) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[-1])
+        self.assertEqual(0.8, agni.etas[0])
+        self.assertAlmostEqual(6 * np.exp(-(3.52 / 0.8) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[0])
+        self.assertAlmostEqual(6 * np.exp(-(3.52 / 16) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[-1])
+        
+        # Test that passing etas to constructor works
+        new_etas = np.logspace(-4, 2, 6)
+        agni = AGNIFingerprints(directions=['x', 'y', 'z'], etas=new_etas)
+        self.assertArrayAlmostEqual(new_etas, agni.etas)
 
     def test_off_center_cscl(self):
         agni = AGNIFingerprints(directions=[None, 'x', 'y', 'z'], cutoff=4)
@@ -61,7 +68,7 @@ class FingerprintTests(PymatgenTest):
         right_xdist = 4.209 * 0.45
         left_dist = 4.209 * np.sqrt(0.55 ** 2 + 2 * 0.5 ** 2)
         left_xdist = 4.209 * 0.55
-        self.assertAlmostEquals(4 * (
+        self.assertAlmostEqual(4 * (
             right_xdist / right_dist * np.exp(-(right_dist / 0.8) ** 2) * 0.5 * (np.cos(np.pi * right_dist / 4) + 1) -
             left_xdist / left_dist * np.exp(-(left_dist / 0.8) ** 2) * 0.5 * (np.cos(np.pi * left_dist / 4) + 1)),
                                 site1[8])
@@ -89,14 +96,14 @@ class FingerprintTests(PymatgenTest):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 35)
-        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
+        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
             'oct CN_6')]), 999)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
+        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
             'bcc CN_8')] + 0.5), 895)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEquals(int(1000 * ops[opsf.feature_labels().index(
+        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
             'bcc CN_8')] + 0.5), 955)
 
 

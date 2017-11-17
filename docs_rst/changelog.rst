@@ -5,6 +5,19 @@
 matminer Changelog
 ==================
 
+**v0.1.5**
+
+* new Site and Structure fingerprints based on order parameters (N. Zimmermann)
+* DOSFeaturizer (M. Dylla)
+* Structure fingerprint can do cations/anions only (A. Jain)
+* include the degeneracy of the CBM/VBM in BandFeaturizer (A. Faghaninia)
+* fixes / updates to CitrineDataRetrieval (S. Bajaj)
+* more property stats (L. Ward)
+* fixes to AGNIFingerprint (L. Ward)
+* FigRecipes cleanup (A. Dunn)
+* updated examples, docs (A. Dunn)
+* various bugfixes, code cleanup (A. Jain)
+
 **v0.1.4**
 
 * add a band structure featurizer (A. Faghaninia)

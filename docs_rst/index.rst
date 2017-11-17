@@ -109,7 +109,7 @@ Check out some examples of how to use matminer!
 
 4. Use matminer and sklearn to train/predict band gaps. (`Jupyter Notebook <https://gist.github.com/saurabh02/b0296747064599ad2a6ab69ddc64eb92>`_)
 
-5. Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (coming soon!)
+5. Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (`Jupyter Notebook <https://gist.github.com/blokhin/a9eddca705aa6d54552bc8b6d7bddbb8>`_)
 
 
 ---------------

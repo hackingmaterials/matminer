@@ -1,9 +1,9 @@
-pymatgen==2017.9.1
+pymatgen==2017.11.6
 pandas==0.20.3
 tqdm==4.14.0
 pymongo==3.4.0
 pint==0.8.1
 six==1.10.0
-citrination-client==1.5.0
+citrination-client==2.1.0
 plotly==2.0.12
 future==0.16.0
