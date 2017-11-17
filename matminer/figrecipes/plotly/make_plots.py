@@ -502,7 +502,8 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def histogram(self, x, histnorm="", x_start=None, x_end=None, bin_size=1, color='rgba(70, 130, 180, 1)', bargap=0):
+    def histogram(self, x, histnorm="probability density", x_start=None, x_end=None, bin_size=1,
+                  color='rgba(70, 130, 180, 1)', bargap=0):
         """
         Create a histogram using Plotly
 
@@ -533,6 +534,12 @@ class PlotlyFig:
 
         if not x_end:
             x_end = max(x)
+
+        # plotly fig does not render correctly if x has shape (_, 1), such as the result of a dataframe.as_matrix()
+        # The array must have shape (_,).
+        if isinstance(x, np.ndarray):
+            if len(x.shape) == 2:
+                x = x.reshape((len(x),))
 
         histogram = go.Histogram(x=x, histnorm=histnorm,
                                  xbins=dict(start=x_start, end=x_end, size=bin_size),
