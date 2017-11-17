@@ -7,12 +7,13 @@ matminer Changelog
 
 **v0.1.6**
 
-* more site / structure fingerprint options
+* new CrystalSiteFingerprint and CNSiteFingerprint (A. Jain)
 * Miedema model (Q. Wang)
+* Voronoi index site fingerprint (Q. Wang)
 * updates to CitrineDataRetrieval (S. Bajaj)
 * updates to BandStructureFeaturizer (A. Faghaninia)
 * allow featurize_dataframe() to ignore errors (A. Dunn)
-* some patches of DOSFeaturizer
+* some patches of DOSFeaturizer (A. Jain)
 
 **v0.1.5**
 
