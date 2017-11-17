@@ -5,6 +5,15 @@
 matminer Changelog
 ==================
 
+**v0.1.6**
+
+* more site / structure fingerprint options
+* Miedema model (Q. Wang)
+* updates to CitrineDataRetrieval (S. Bajaj)
+* updates to BandStructureFeaturizer (A. Faghaninia)
+* allow featurize_dataframe() to ignore errors (A. Dunn)
+* some patches of DOSFeaturizer
+
 **v0.1.5**
 
 * new Site and Structure fingerprints based on order parameters (N. Zimmermann)
