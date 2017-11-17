@@ -138,7 +138,7 @@ class BandFeaturizer(BaseFeaturizer):
                 is_gap_direct (0.0|1.0): whether the band gap is direct or not
                 direct_gap (eV): the minimum direct distance of the last
                     valence band and the first conduction band
-                p_ex1_norm (flaot): k-space distance between Gamma point
+                p_ex1_norm (float): k-space distance between Gamma point
                     and k-point of VBM
                 n_ex1_norm (float): k-space distance between Gamma point
                     and k-point of CBM
