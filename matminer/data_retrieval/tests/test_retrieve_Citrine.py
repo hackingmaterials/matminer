@@ -24,8 +24,9 @@ class CitrineDataRetrievalTest(unittest.TestCase):
         assert df.shape[0] == 10
 
     def test_mutiple_items_in_list(self):
-        pifs_lst = self.cdr.get_api_data(data_set_id=114192)
+        pifs_lst = self.cdr.get_api_data(data_set_id=114192, max_results=102)
         df = self.cdr.get_dataframe(pifs_lst)
+        assert df.shape[0] == 102
         for col in ["Thermal conductivity_5-conditions", "Condition_1", "Thermal conductivity_10"]:
             assert col in df.columns
 
