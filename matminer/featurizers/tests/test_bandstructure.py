@@ -11,6 +11,7 @@ from pymatgen import Structure
 from pymatgen.electronic_structure.bandstructure import BandStructureSymmLine, \
     BandStructure
 from pymatgen.electronic_structure.dos import CompleteDos
+from pymatgen.symmetry.bandstructure import HighSymmKpath
 from pymatgen.util.testing import PymatgenTest
 
 test_dir = os.path.join(os.path.dirname(__file__))
@@ -28,7 +29,7 @@ class BandstructureFeaturesTest(PymatgenTest):
         with open(os.path.join(test_dir, 'si_bandstructure_uniform.json'),'r') as bsh:
             si_bs_uniform = BandStructure.from_dict(json.load(bsh))
         si_bs_uniform.structure = si_str
-
+        self.si_kpts = HighSymmKpath(si_str).kpath['kpoints'].values()
         self.df = pd.DataFrame({'bs_line': [si_bs_line], 'bs_uniform': [si_bs_uniform]})
 
     def test_BranchPointEnergy(self):
@@ -40,7 +41,8 @@ class BandstructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_bpe['vbm_absolute'][0], -0.114, 3)
 
     def test_BandFeaturizer(self):
-        df_bf = BandFeaturizer().featurize_dataframe(self.df, col_id='bs_line')
+        bs_featurizer = BandFeaturizer(self.si_kpts)
+        df_bf = bs_featurizer.featurize_dataframe(self.df, col_id='bs_line')
         self.assertAlmostEqual(df_bf['band_gap'][0], 0.612, 3)
         self.assertAlmostEqual(df_bf['direct_gap'][0], 2.557, 3)
         self.assertAlmostEqual(df_bf['n_ex1_norm'][0], 0.58413, 5)
@@ -48,6 +50,15 @@ class BandstructureFeaturesTest(PymatgenTest):
         self.assertEqual(df_bf['is_gap_direct'][0], False)
         self.assertEqual(df_bf['n_ex1_degen'][0], 6)
         self.assertEqual(df_bf['p_ex1_degen'][0], 1)
+        self.assertEqual(df_bf['p_0.0;0.0;0.0_en'][0], 0.0)
+        self.assertEqual(df_bf['p_0.0;0.0;0.0_en'][0], 0.0)
+        self.assertAlmostEqual(df_bf['p_0.375;0.375;0.75_en'][0], -2.3745, 4)
+        self.assertAlmostEqual(df_bf['p_0.5;0.0;0.5_en'][0], -2.7928, 4)
+        self.assertAlmostEqual(df_bf['p_0.625;0.25;0.625_en'][0], -2.3745, 4)
+        self.assertAlmostEqual(df_bf['p_0.5;0.5;0.5_en'][0], -1.1779, 4)
+        self.assertAlmostEqual(df_bf['n_0.0;0.0;0.0_en'][0], 1.945, 4)
+        self.assertAlmostEqual(df_bf['n_0.5;0.25;0.75_en'][0], 3.6587, 4)
+        self.assertAlmostEqual(df_bf['n_0.5;0.5;0.5_en'][0], 0.8534, 4)
 
 class DOSFeaturesTest(PymatgenTest):
 
@@ -57,9 +68,7 @@ class DOSFeaturesTest(PymatgenTest):
         self.df = pd.DataFrame({'dos': [si_dos]})
 
     def test_DOSFeaturizer(self):
-        df_df = DOSFeaturizer().featurize_dataframe(self.df,
-                                                    col_id=['dos'])
-
+        df_df = DOSFeaturizer().featurize_dataframe(self.df, col_id=['dos'])
         self.assertAlmostEqual(df_df['cbm_percents'][0][0], 0.258, 3)
         self.assertAlmostEqual(df_df['cbm_locations'][0], [[0.0, 0.0, 0.0]])
         self.assertEqual(df_df['cbm_species'][0], ['Si'])
