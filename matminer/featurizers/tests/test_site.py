@@ -6,7 +6,7 @@ from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint
+    OPSiteFingerprint, Voronoi_index
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -106,6 +106,20 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
             'bcc CN_8')] + 0.5), 955)
 
+    # test Voronoi indices
+    def test_voronoi_site(self):
+        data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
+        test_site_voronoi = Voronoi_index()
+        test_featurize = test_site_voronoi.featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['voro_index_3'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['voro_index_4'][0], 6.0)
+        self.assertAlmostEqual(test_featurize['voro_index_5'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['voro_index_6'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['voro_index_7'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['voro_index_8'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['voro_index_9'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['voro_index_10'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['voro_index_sum'][0], 6.0)
 
 if __name__ == '__main__':
     import unittest
