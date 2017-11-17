@@ -219,22 +219,17 @@ class BandFeaturizer(BaseFeaturizer):
         return ['Alireza Faghaninia', 'Anubhav Jain']
 
 
+# TODO: Features should not return arrays. -computron
 class DOSFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen dos object.
     """
 
-    def __init__(self):
-        pass
-
-    def featurize(self, dos, contributors=1, significance_threshold=0.1,
+    def __init__(self, contributors=1, significance_threshold=0.1,
                   coordination_features=True, energy_cutoff=0.5,
                   sampling_resolution=100, gaussian_smear=0.1):
         """
         Args:
-            dos (pymatgen CompleteDos or their dict):
-                The density of states to featurize. Must be a complete DOS,
-                (i.e. contains PDOS and structure, in addition to total DOS)
             contributors (int):
                 Sets the number of top contributors to the DOS that are
                 returned as features. (i.e. contributors=1 will only return the
@@ -255,6 +250,35 @@ class DOSFeaturizer(BaseFeaturizer):
                 Number of points to sample DOS
             gaussian_smear (float in eV):
                 Gaussian smearing (sigma) around each sampled point in the DOS
+        """
+        self.contributors = contributors
+        self.significance_threshold = significance_threshold
+        self.coordination_features = coordination_features
+        self.energy_cutoff = energy_cutoff
+        self.sampling_resolution = sampling_resolution
+        self.gaussian_smear = gaussian_smear
+
+        self.labels = ["cbm_percents", "cbm_locations",
+                               "cbm_species", "cbm_characters"]
+        if self.coordination_features:
+            self.labels.append("cbm_coordinations")
+
+        self.labels.extend(["cbm_significant_contributors",
+                                    "vbm_percents", "vbm_locations",
+                                    "vbm_species", "vbm_characters"])
+        if self.coordination_features:
+            self.labels.append("vbm_coordinations")
+
+        self.labels.append("vbm_significant_contributors")
+
+
+    def featurize(self, dos):
+        """
+        Args:
+            dos (pymatgen CompleteDos or their dict):
+                    The density of states to featurize. Must be a complete DOS,
+                    (i.e. contains PDOS and structure, in addition to total DOS)
+
         Returns:
              ([float | string]): a list of band structure features.
                 List of currently supported features:
@@ -274,63 +298,43 @@ class DOSFeaturizer(BaseFeaturizer):
 
         # preparation
         orbital_scores = DOSFeaturizer.get_cbm_vbm_scores(dos,
-                                                          coordination_features,
-                                                          energy_cutoff,
-                                                          sampling_resolution,
-                                                          gaussian_smear)
+                                                          self.coordination_features,
+                                                          self.energy_cutoff,
+                                                          self.sampling_resolution,
+                                                          self.gaussian_smear)
 
         orbital_scores.sort(key=lambda x: x['cbm_score'], reverse=True)
-        cbm_contributors = orbital_scores[0:contributors]
+        cbm_contributors = orbital_scores[0:self.contributors]
         cbm_sig_cont = [orb for orb in orbital_scores
-                        if orb['cbm_score'] > significance_threshold]
+                        if orb['cbm_score'] > self.significance_threshold]
         orbital_scores.sort(key=lambda x: x['vbm_score'], reverse=True)
-        vbm_contributors = orbital_scores[0:contributors]
+        vbm_contributors = orbital_scores[0:self.contributors]
         vbm_sig_cont = [orb for orb in orbital_scores
-                        if orb['vbm_score'] > significance_threshold]
+                        if orb['vbm_score'] > self.significance_threshold]
 
-        # featurize
-        self.feat = []
-        self.feat.append(('cbm_percents',
-                          [cbm_contributors[i]['cbm_score']
-                           for i in range(0, contributors)]))
-        self.feat.append(('cbm_locations',
-                          [list(cbm_contributors[i]['location'])
-                           for i in range(0, contributors)]))
-        self.feat.append(('cbm_species',
-                          [cbm_contributors[i]['specie'].symbol
-                           for i in range(0, contributors)]))
-        self.feat.append(('cbm_characters',
-                          [str(cbm_contributors[i]['character'])
-                           for i in range(0, contributors)]))
-        if coordination_features:
-            self.feat.append(('cbm_coordinations',
-                              [cbm_contributors[i]['coordination']
-                               for i in range(0, contributors)]))
-        self.feat.append(('cbm_significant_contributors',
-                          len(cbm_sig_cont)))
-        self.feat.append(('vbm_percents',
-                          [vbm_contributors[i]['vbm_score']
-                           for i in range(0, contributors)]))
-        self.feat.append(('vbm_locations',
-                          [list(vbm_contributors[i]['location'])
-                           for i in range(0, contributors)]))
-        self.feat.append(('vbm_species',
-                          [vbm_contributors[i]['specie'].symbol
-                           for i in range(0, contributors)]))
-        self.feat.append(('vbm_characters',
-                          [str(vbm_contributors[i]['character'])
-                           for i in range(0, contributors)]))
-        if coordination_features:
-            self.feat.append(('vbm_coordinations',
-                              [vbm_contributors[i]['coordination']
-                               for i in range(0, contributors)]))
-        self.feat.append(('vbm_significant_contributors',
-                          len(vbm_sig_cont)))
+        features = []
 
-        return list(x[1] for x in self.feat)
+        for extremum in ["cbm", "vbm"]:
+            for feat in ["{}_score".format(extremum), "location", "specie",
+                         "character", "coordination", "significant_contributors"]:
+
+                contributors = locals()["{}_contributors".format(extremum)]
+
+                if feat == "coordination":
+                    if self.coordination_features:
+                        features.append([contributors[i]['coordination'] for i
+                                         in range(0, self.contributors)])
+                elif feat == "significant_contributors":
+                    features.append(len(locals()["{}_sig_cont".format(extremum)]))
+
+                else:
+                    features.append([contributors[i][feat] for i
+                                     in range(0, self.contributors)])
+
+        return features
 
     def feature_labels(self):
-        return list(x[0] for x in self.feat)
+        return self.labels
 
     @staticmethod
     def get_cbm_vbm_scores(dos, coordination_features, energy_cutoff,
@@ -401,9 +405,9 @@ class DOSFeaturizer(BaseFeaturizer):
                 orbital_score = {
                     'cbm_score': cbm_score,
                     'vbm_score': vbm_score,
-                    'specie': site.specie,
-                    'character': orb,
-                    'location': site.coords}
+                    'specie': str(site.specie),
+                    'character': str(orb),
+                    'location': list(site.coords)}
                 if coordination_features:
                     orbital_score['coordination'] = geometry
                 orbital_scores.append(orbital_score)
