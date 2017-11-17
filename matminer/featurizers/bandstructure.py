@@ -184,7 +184,7 @@ class BandFeaturizer(BaseFeaturizer):
         if self.kpoints:
             fits = {tp: griddata(points=np.array(bs_kpts),
                         values=cvd[tp]['Es']-cvd[tp]['energy'],
-                        xi=self.kpoints, method='linear') for tp in ['p', 'n']}
+                        xi=self.kpoints, method='nearest') for tp in ['p', 'n']}
             for tp in ['p', 'n']:
                 for ik, k in enumerate(self.kpoints):
                     k_name = '{}_{};{};{}_en'.format(tp, k[0], k[1], k[2])
