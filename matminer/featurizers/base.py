@@ -31,13 +31,12 @@ class BaseFeaturizer(object):
         # Compute the features
         features = []
         x_list = df[col_id]
-        feature_len = len(self.feature_labels())
         for x in x_list.values:
             try:
                 features.append(self.featurize(*x))
             except:
                 if ignore_errors:
-                    features.append([float("nan")] * feature_len)
+                    features.append([float("nan")] * len(self.feature_labels()))
                 else:
                     raise
 
