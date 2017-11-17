@@ -107,12 +107,21 @@ class BranchPointEnergy(BaseFeaturizer):
 class BandFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen band structure object.
+    Args:
+        kpoints ([1x3 numpy array]): list of fractional coordinates of
+                k-points at which energy is extracted.
+            method (str): the method for finding or interpolating for energy at
+                given kpoints. It does nothing if kpoints is None.
+                options are:
+                    'nearest': the energy of the nearest available k-point to
+                        the input k-point is returned.
+                    'linear': the result of linear interpolation is returned
+                    see the documentation for scipy.interpolate.griddata
     """
 
-    def __init__(self, kpoints=None, atol=0.01, include_symeqks=False):
-        self.atol = atol
-        self.include_symeqks = include_symeqks
+    def __init__(self, kpoints=None, find_method='nearest'):
         self.kpoints = kpoints
+        self.find_method = find_method
 
     def featurize(self, bs):
         """
@@ -120,13 +129,7 @@ class BandFeaturizer(BaseFeaturizer):
             bs (pymatgen BandStructure or BandStructureSymmLine or their dict):
                 The band structure to featurize. To obtain all features, bs
                 should include the structure attribute.
-            kpoints ([1x3 numpy array]): list of fractional coordinates of
-                k-points at which energy is extracted.
-            atol (float): the absolute tolerance for fractional coordinate
-                below which two coordinates are considered the same
-            include_symeqks (bool): if True, when looking for energy of the
-                bands at given kpoints, symmetrically equivalent kpoints are
-                also considered (recommended to keep False for speed)
+
         Returns:
              ([float]): a list of band structure features. If not bs.structure,
                 features that require the structure will be returned as NaN.
@@ -165,26 +168,14 @@ class BandFeaturizer(BaseFeaturizer):
         self.feat['band_gap'] = band_gap['energy']
         self.feat['is_gap_direct'] = band_gap['direct']
         self.feat['direct_gap'] = min(cvd['n']['Es'] - cvd['p']['Es'])
-        if self.include_symeqks:
-            temp_bs_kpts = []
-            temp_ens = {'n': [], 'p': []}
-            for ik, k in enumerate(bs_kpts):
-                eq_ks = list(bs.get_sym_eq_kpoints(k, tol=self.atol))
-                eq_ks.append(k)
-                temp_bs_kpts.extend(eq_ks)
-                for tp in ['p', 'n']:
-                    temp_ens[tp].extend([cvd[tp]['Es'][ik]]*(len(eq_ks)))
-            bs_kpts = temp_bs_kpts
-            for tp in ['n', 'p']:
-                cvd[tp]['Es'] = np.array(temp_ens[tp])
         if self.kpoints:
-            fits = {tp: griddata(points=np.array(bs_kpts),
-                        values=cvd[tp]['Es']-cvd[tp]['energy'],
-                        xi=self.kpoints, method='nearest') for tp in ['p', 'n']}
             for tp in ['p', 'n']:
+                fit = griddata(points=np.array(bs_kpts),
+                    values=cvd[tp]['Es']-cvd[tp]['energy'],
+                    xi=self.kpoints, method=self.find_method)
                 for ik, k in enumerate(self.kpoints):
                     k_name = '{}_{};{};{}_en'.format(tp, k[0], k[1], k[2])
-                    self.feat[k_name] = fits[tp][ik]
+                    self.feat[k_name] = fit[ik]
 
 
         for tp in ['p', 'n']:
