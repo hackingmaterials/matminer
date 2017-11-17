@@ -110,13 +110,13 @@ class BandFeaturizer(BaseFeaturizer):
     Args:
         kpoints ([1x3 numpy array]): list of fractional coordinates of
                 k-points at which energy is extracted.
-            method (str): the method for finding or interpolating for energy at
-                given kpoints. It does nothing if kpoints is None.
-                options are:
-                    'nearest': the energy of the nearest available k-point to
-                        the input k-point is returned.
-                    'linear': the result of linear interpolation is returned
-                    see the documentation for scipy.interpolate.griddata
+        find_method (str): the method for finding or interpolating for energy
+            at given kpoints. It does nothing if kpoints is None.
+            options are:
+                'nearest': the energy of the nearest available k-point to
+                    the input k-point is returned.
+                'linear': the result of linear interpolation is returned
+                see the documentation for scipy.interpolate.griddata
     """
 
     def __init__(self, kpoints=None, find_method='nearest'):
