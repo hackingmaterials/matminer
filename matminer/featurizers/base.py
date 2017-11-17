@@ -36,7 +36,7 @@ class BaseFeaturizer(object):
                 features.append(self.featurize(*x))
             except:
                 if ignore_errors:
-                    features.append(None)
+                    features.append(float("nan"))
                 else:
                     raise
 
@@ -44,7 +44,7 @@ class BaseFeaturizer(object):
             feature_len = len(self.feature_labels())
             for i, feature in enumerate(features):
                 if not feature:
-                    features[i] = np.full(feature_len, np.nan)
+                    features[i] = np.full(feature_len, float("nan"))
 
         # Add features to dataframe
         features = np.array(features)
