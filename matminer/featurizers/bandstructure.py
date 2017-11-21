@@ -2,6 +2,7 @@ from __future__ import division, unicode_literals, print_function
 
 import numpy as np
 from numpy.linalg import norm
+from scipy.interpolate import griddata
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, get_tet_bcc_motif
@@ -106,10 +107,21 @@ class BranchPointEnergy(BaseFeaturizer):
 class BandFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen band structure object.
+    Args:
+        kpoints ([1x3 numpy array]): list of fractional coordinates of
+                k-points at which energy is extracted.
+        find_method (str): the method for finding or interpolating for energy
+            at given kpoints. It does nothing if kpoints is None.
+            options are:
+                'nearest': the energy of the nearest available k-point to
+                    the input k-point is returned.
+                'linear': the result of linear interpolation is returned
+                see the documentation for scipy.interpolate.griddata
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, kpoints=None, find_method='nearest'):
+        self.kpoints = kpoints
+        self.find_method = find_method
 
     def featurize(self, bs):
         """
@@ -117,6 +129,7 @@ class BandFeaturizer(BaseFeaturizer):
             bs (pymatgen BandStructure or BandStructureSymmLine or their dict):
                 The band structure to featurize. To obtain all features, bs
                 should include the structure attribute.
+
         Returns:
              ([float]): a list of band structure features. If not bs.structure,
                 features that require the structure will be returned as NaN.
@@ -125,46 +138,59 @@ class BandFeaturizer(BaseFeaturizer):
                 is_gap_direct (0.0|1.0): whether the band gap is direct or not
                 direct_gap (eV): the minimum direct distance of the last
                     valence band and the first conduction band
-                p_ex1_norm (Angstrom^-1): k-space distance between Gamma point
+                p_ex1_norm (float): k-space distance between Gamma point
                     and k-point of VBM
-                n_ex1_norm (Angstrom^-1): k-space distance between Gamma point
+                n_ex1_norm (float): k-space distance between Gamma point
                     and k-point of CBM
                 p_ex1_degen: degeneracy of VBM
                 n_ex1_degen: degeneracy of CBM
+                if kpoints is provided (e.g. for kpoints == [[0.0, 0.0, 0.0]]):
+                    n_0.0;0.0;0.0_en: (energy of the first conduction band at
+                        [0.0, 0.0, 0.0] - CBM energy)
+                    p_0.0;0.0;0.0_en: (energy of the last valence band at
+                        [0.0, 0.0, 0.0] - VBM energy)
         """
-
         if isinstance(bs, dict):
             bs = BandStructure.from_dict(bs)
         if bs.is_metal():
             raise ValueError("Cannot featurize a metallic band structure!")
-
-        # preparation
-        vbm = bs.get_vbm()
-        vbm_k = bs.kpoints[vbm['kpoint_index'][0]].frac_coords
-        vbm_bidx, vbm_bspin = self.get_bindex_bspin(vbm, is_cbm=False)
-        vbm_ens = np.array(bs.bands[vbm_bspin][vbm_bidx])
-        cbm = bs.get_cbm()
-        cbm_k = bs.kpoints[cbm['kpoint_index'][0]].frac_coords
-        cbm_bidx, cbm_bspin = self.get_bindex_bspin(cbm, is_cbm=True)
-        cbm_ens = np.array(bs.bands[cbm_bspin][cbm_bidx])
+        bs_kpts = [k.frac_coords for k in bs.kpoints]
+        cvd = {'p': bs.get_vbm(), 'n':  bs.get_cbm()}
+        for itp, tp in enumerate(['p', 'n']):
+            cvd[tp]['k'] = bs.kpoints[cvd[tp]['kpoint_index'][0]].frac_coords
+            cvd[tp]['bidx'], cvd[tp]['sidx'] = \
+                    self.get_bindex_bspin(cvd[tp], is_cbm=bool(itp))
+            cvd[tp]['Es'] = np.array(bs.bands[cvd[tp]['sidx']][cvd[tp]['bidx']])
         band_gap = bs.get_band_gap()
+
         # featurize
-        self.feat = []
-        self.feat.append(('band_gap', band_gap['energy']))
-        self.feat.append(('is_gap_direct', band_gap['direct']))
-        self.feat.append(('direct_gap', min(cbm_ens - vbm_ens)))
-        self.feat.append(('p_ex1_norm', norm(vbm_k)))
-        self.feat.append(('n_ex1_norm', norm(cbm_k)))
-        if bs.structure:
-            self.feat.append(('p_ex1_degen', bs.get_kpoint_degeneracy(vbm_k)))
-            self.feat.append(('n_ex1_degen', bs.get_kpoint_degeneracy(cbm_k)))
-        else:
-            for prop in ['p_ex1_degen', 'n_ex1_degen']:
-                self.feat.append((prop, float.NaN))
-        return list(x[1] for x in self.feat)
+        self.feat = {}
+        self.feat['band_gap'] = band_gap['energy']
+        self.feat['is_gap_direct'] = band_gap['direct']
+        self.feat['direct_gap'] = min(cvd['n']['Es'] - cvd['p']['Es'])
+        if self.kpoints:
+            for tp in ['p', 'n']:
+                fit = griddata(points=np.array(bs_kpts),
+                    values=cvd[tp]['Es']-cvd[tp]['energy'],
+                    xi=self.kpoints, method=self.find_method)
+                for ik, k in enumerate(self.kpoints):
+                    k_name = '{}_{};{};{}_en'.format(tp, k[0], k[1], k[2])
+                    self.feat[k_name] = fit[ik]
+
+
+        for tp in ['p', 'n']:
+            self.feat['{}_ex1_norm'.format(tp)] = norm(cvd[tp]['k'])
+            if bs.structure:
+                self.feat['{}_ex1_degen'.format(tp)] = \
+                        bs.get_kpoint_degeneracy(cvd[tp]['k'])
+            else:
+                self.feat['{}_ex1_degen'] = float('NaN')
+        return list(self.feat.values())
+
+
 
     def feature_labels(self):
-        return list(x[0] for x in self.feat)
+        return list(self.feat.keys())
 
     @staticmethod
     def get_bindex_bspin(extremum, is_cbm):
@@ -193,22 +219,17 @@ class BandFeaturizer(BaseFeaturizer):
         return ['Alireza Faghaninia', 'Anubhav Jain']
 
 
+# TODO: Features should not return arrays. -computron
 class DOSFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen dos object.
     """
 
-    def __init__(self):
-        pass
-
-    def featurize(self, dos, contributors=1, significance_threshold=0.1,
+    def __init__(self, contributors=1, significance_threshold=0.1,
                   coordination_features=True, energy_cutoff=0.5,
                   sampling_resolution=100, gaussian_smear=0.1):
         """
         Args:
-            dos (pymatgen CompleteDos or their dict):
-                The density of states to featurize. Must be a complete DOS,
-                (i.e. contains PDOS and structure, in addition to total DOS)
             contributors (int):
                 Sets the number of top contributors to the DOS that are
                 returned as features. (i.e. contributors=1 will only return the
@@ -229,6 +250,35 @@ class DOSFeaturizer(BaseFeaturizer):
                 Number of points to sample DOS
             gaussian_smear (float in eV):
                 Gaussian smearing (sigma) around each sampled point in the DOS
+        """
+        self.contributors = contributors
+        self.significance_threshold = significance_threshold
+        self.coordination_features = coordination_features
+        self.energy_cutoff = energy_cutoff
+        self.sampling_resolution = sampling_resolution
+        self.gaussian_smear = gaussian_smear
+
+        self.labels = ["cbm_percents", "cbm_locations",
+                               "cbm_species", "cbm_characters"]
+        if self.coordination_features:
+            self.labels.append("cbm_coordinations")
+
+        self.labels.extend(["cbm_significant_contributors",
+                                    "vbm_percents", "vbm_locations",
+                                    "vbm_species", "vbm_characters"])
+        if self.coordination_features:
+            self.labels.append("vbm_coordinations")
+
+        self.labels.append("vbm_significant_contributors")
+
+
+    def featurize(self, dos):
+        """
+        Args:
+            dos (pymatgen CompleteDos or their dict):
+                    The density of states to featurize. Must be a complete DOS,
+                    (i.e. contains PDOS and structure, in addition to total DOS)
+
         Returns:
              ([float | string]): a list of band structure features.
                 List of currently supported features:
@@ -248,63 +298,43 @@ class DOSFeaturizer(BaseFeaturizer):
 
         # preparation
         orbital_scores = DOSFeaturizer.get_cbm_vbm_scores(dos,
-                                                          coordination_features,
-                                                          energy_cutoff,
-                                                          sampling_resolution,
-                                                          gaussian_smear)
+                                                          self.coordination_features,
+                                                          self.energy_cutoff,
+                                                          self.sampling_resolution,
+                                                          self.gaussian_smear)
 
         orbital_scores.sort(key=lambda x: x['cbm_score'], reverse=True)
-        cbm_contributors = orbital_scores[0:contributors]
+        cbm_contributors = orbital_scores[0:self.contributors]
         cbm_sig_cont = [orb for orb in orbital_scores
-                        if orb['cbm_score'] > significance_threshold]
+                        if orb['cbm_score'] > self.significance_threshold]
         orbital_scores.sort(key=lambda x: x['vbm_score'], reverse=True)
-        vbm_contributors = orbital_scores[0:contributors]
+        vbm_contributors = orbital_scores[0:self.contributors]
         vbm_sig_cont = [orb for orb in orbital_scores
-                        if orb['vbm_score'] > significance_threshold]
+                        if orb['vbm_score'] > self.significance_threshold]
 
-        # featurize
-        self.feat = []
-        self.feat.append(('cbm_percents',
-                          [cbm_contributors[i]['cbm_score']
-                           for i in range(0, contributors)]))
-        self.feat.append(('cbm_locations',
-                          [list(cbm_contributors[i]['location'])
-                           for i in range(0, contributors)]))
-        self.feat.append(('cbm_species',
-                          [cbm_contributors[i]['specie'].symbol
-                           for i in range(0, contributors)]))
-        self.feat.append(('cbm_characters',
-                          [str(cbm_contributors[i]['character'])
-                           for i in range(0, contributors)]))
-        if coordination_features:
-            self.feat.append(('cbm_coordinations',
-                              [cbm_contributors[i]['coordination']
-                               for i in range(0, contributors)]))
-        self.feat.append(('cbm_significant_contributors',
-                          len(cbm_sig_cont)))
-        self.feat.append(('vbm_percents',
-                          [vbm_contributors[i]['vbm_score']
-                           for i in range(0, contributors)]))
-        self.feat.append(('vbm_locations',
-                          [list(vbm_contributors[i]['location'])
-                           for i in range(0, contributors)]))
-        self.feat.append(('vbm_species',
-                          [vbm_contributors[i]['specie'].symbol
-                           for i in range(0, contributors)]))
-        self.feat.append(('vbm_characters',
-                          [str(vbm_contributors[i]['character'])
-                           for i in range(0, contributors)]))
-        if coordination_features:
-            self.feat.append(('vbm_coordinations',
-                              [vbm_contributors[i]['coordination']
-                               for i in range(0, contributors)]))
-        self.feat.append(('vbm_significant_contributors',
-                          len(vbm_sig_cont)))
+        features = []
 
-        return list(x[1] for x in self.feat)
+        for extremum in ["cbm", "vbm"]:
+            for feat in ["{}_score".format(extremum), "location", "specie",
+                         "character", "coordination", "significant_contributors"]:
+
+                contributors = locals()["{}_contributors".format(extremum)]
+
+                if feat == "coordination":
+                    if self.coordination_features:
+                        features.append([contributors[i]['coordination'] for i
+                                         in range(0, self.contributors)])
+                elif feat == "significant_contributors":
+                    features.append(len(locals()["{}_sig_cont".format(extremum)]))
+
+                else:
+                    features.append([contributors[i][feat] for i
+                                     in range(0, self.contributors)])
+
+        return features
 
     def feature_labels(self):
-        return list(x[0] for x in self.feat)
+        return self.labels
 
     @staticmethod
     def get_cbm_vbm_scores(dos, coordination_features, energy_cutoff,
@@ -375,9 +405,9 @@ class DOSFeaturizer(BaseFeaturizer):
                 orbital_score = {
                     'cbm_score': cbm_score,
                     'vbm_score': vbm_score,
-                    'specie': site.specie,
-                    'character': orb,
-                    'location': site.coords}
+                    'specie': str(site.specie),
+                    'character': str(orb),
+                    'location': list(site.coords)}
                 if coordination_features:
                     orbital_score['coordination'] = geometry
                 orbital_scores.append(orbital_score)
