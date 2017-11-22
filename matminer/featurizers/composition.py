@@ -840,12 +840,6 @@ class Miedema(BaseFeaturizer):
         self.struct = struct
         self.dataset = dataset
 
-    # convert kJ to eV
-    # the original Miedema model is in kJ, convert to eV to facilitate comparison with ab initio or experimental results
-    def kJ_to_eV(self, energy_kJ):
-        energy_eV = np.array(energy_kJ) / 96.4853
-        return energy_eV
-
     # chemical term of formation enthalpy
     def delta_H_chem(self, elements, fracs, struct):
         if self.dataset == 'Miedema':
@@ -1084,8 +1078,9 @@ class Miedema(BaseFeaturizer):
                 delta_H_amor = delta_H_chem_amor + 3.5 * np.dot(fracs, melting_point) / 1000
                 miedema_result.append(delta_H_amor)
 
-        # convert the kJ to eV
-        return self.kJ_to_eV(miedema_result)
+        # convert the kJ to eV, as the original Meidema model is in kJ.
+        miedema_result = [kJ / 96.4853 for kJ in miedema_result]
+        return miedema_result
 
     def feature_labels(self):
         labels = []
