@@ -1078,8 +1078,8 @@ class Miedema(BaseFeaturizer):
                 delta_H_amor = delta_H_chem_amor + 3.5 * np.dot(fracs, melting_point) / 1000
                 miedema_result.append(delta_H_amor)
 
-        # convert the kJ to eV/atom, as the original Meidema model is in kJ/mol.
-        miedema_result = [kJ / 96.4853 for kJ in miedema_result]
+        # convert kJ/mol to eV/atom. The original Miedema model is in kJ/mol.
+        miedema_result = [delta_H / 96.4853 for delta_H in miedema_result]
         return miedema_result
 
     def feature_labels(self):
