@@ -6,7 +6,7 @@ from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, Voronoi_index
+    OPSiteFingerprint, Voronoi_index, ChemEnvSiteFingerprint
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -105,6 +105,16 @@ class FingerprintTests(PymatgenTest):
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
             'bcc CN_8')] + 0.5), 955)
+
+    def test_chemenv_site_fingerprint(self):
+        cefp = ChemEnvSiteFingerprint()
+        l = cefp.feature_labels()
+        cevals = cefp.featurize(self.sc, 0)
+        self.assertEqual(len(cevals), 66)
+        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 1)
+        cevals = cefp.featurize(self.cscl, 0)
+        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 1)
+
 
     # test Voronoi indices
     def test_voronoi_site(self):
