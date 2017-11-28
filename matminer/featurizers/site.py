@@ -652,9 +652,11 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
     Args:
         cetypes ([strings]): chemical environments (CEs) to be
             considered.
+        max_csm (float): maximum continuous symmetry measure
+            (default of 8 taken from chemenv).
     """
 
-    def __init__(self, cetypes=None, maxsymmet=8):
+    def __init__(self, cetypes=None, max_csm=8):
         self.cetypes = tuple([
             'S:1', 'L:2', 'A:2', 'TL:3', 'TY:3', 'TS:3', 'T:4',
             'S:4', 'SY:4', 'SS:4', 'PP:5', 'S:5', 'T:5', 'O:6',
@@ -668,7 +670,8 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
             'CO:11', 'DI:11', 'I:12', 'PBP:12', 'TT:12', 'C:12',
             'AC:12', 'SC:12', 'S:12', 'HP:12', 'HA:12', 'SH:13',
             'DD:20']) if cetypes is None else tuple(cetypes)
-        self.maxsymmet = maxsymmet
+        self.max_csm = max_csm
+        # TODO: make the strategies, etc. variable
         self.strat = \
             MultiWeightsChemenvStrategy.stats_article_weights_parameters()
         self.lgf = LocalGeometryFinder()
@@ -696,8 +699,9 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         for ce in self.cetypes:
             try:
                 tmp = se.get_csms(idx, ce)
-                tmp = tmp[0]['symmetry_measure'] if len(tmp) != 0 else self.maxsymmet
-                cevals.append(1 - tmp / self.maxsymmet)
+                tmp = tmp[0]['symmetry_measure'] if len(tmp) != 0 \
+                    else self.max_csm
+                cevals.append(1 - tmp / self.max_csm)
             except IndexError:
                 cevals.append(0)
         return np.array(cevals)
