@@ -6,7 +6,6 @@ Defines wrappers for data sources(magpi, pymatgen etc) for elemental properties.
 
 import os
 import json
-import re
 import six
 import abc
 import itertools
