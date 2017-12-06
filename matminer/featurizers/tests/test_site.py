@@ -6,7 +6,7 @@ from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, Voronoi_index
+    OPSiteFingerprint, VoronoiIndex
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -109,7 +109,7 @@ class FingerprintTests(PymatgenTest):
     # test Voronoi indices
     def test_voronoi_site(self):
         data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
-        test_site_voronoi = Voronoi_index()
+        test_site_voronoi = VoronoiIndex()
         test_featurize = test_site_voronoi.featurize_dataframe(data, ['struct', 'site'])
         self.assertAlmostEqual(test_featurize['voro_index_3'][0], 0.0)
         self.assertAlmostEqual(test_featurize['voro_index_4'][0], 6.0)

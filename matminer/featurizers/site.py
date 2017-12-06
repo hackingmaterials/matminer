@@ -4,8 +4,8 @@ from __future__ import division
 The `featurize` function takes two arguments:
     strc (Structure): Object representing the structure containing the site of interest
     site (int): Index of the site to be featurized
-We have to use two options because the Site object does not hold a pointer back to its structure. To run
-:code:`featurize_dataframe`, you must pass the column names for both the site and the structure. For example:
+We have to use two parameters because the Site object does not hold a pointer back to its structure. To run
+:code:`featurize_dataframe`, you must pass the column names for both the site index and the structure. For example:
 .. code:: python
     f = AGNIFingerprints()
     f.featurize_dataframe(data, ['site', 'structure'])
@@ -576,7 +576,7 @@ def get_tet_bcc_motif(structure, idx):
     else:
         return 'unrecognized'
 
-class Voronoi_index(BaseFeaturizer):
+class VoronoiIndex(BaseFeaturizer):
     """
     The Voronoi indices n_i and the fractional Voronoi indices n_i/sum(n_i) that
     reflects the i-fold symmetry in the local sites.
