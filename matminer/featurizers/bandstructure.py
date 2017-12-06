@@ -14,6 +14,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
+
 class BranchPointEnergy(BaseFeaturizer):
     def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
         """
@@ -155,11 +156,11 @@ class BandFeaturizer(BaseFeaturizer):
         if bs.is_metal():
             raise ValueError("Cannot featurize a metallic band structure!")
         bs_kpts = [k.frac_coords for k in bs.kpoints]
-        cvd = {'p': bs.get_vbm(), 'n':  bs.get_cbm()}
+        cvd = {'p': bs.get_vbm(), 'n': bs.get_cbm()}
         for itp, tp in enumerate(['p', 'n']):
             cvd[tp]['k'] = bs.kpoints[cvd[tp]['kpoint_index'][0]].frac_coords
             cvd[tp]['bidx'], cvd[tp]['sidx'] = \
-                    self.get_bindex_bspin(cvd[tp], is_cbm=bool(itp))
+                self.get_bindex_bspin(cvd[tp], is_cbm=bool(itp))
             cvd[tp]['Es'] = np.array(bs.bands[cvd[tp]['sidx']][cvd[tp]['bidx']])
         band_gap = bs.get_band_gap()
 
@@ -171,23 +172,20 @@ class BandFeaturizer(BaseFeaturizer):
         if self.kpoints:
             for tp in ['p', 'n']:
                 fit = griddata(points=np.array(bs_kpts),
-                    values=cvd[tp]['Es']-cvd[tp]['energy'],
-                    xi=self.kpoints, method=self.find_method)
+                               values=cvd[tp]['Es'] - cvd[tp]['energy'],
+                               xi=self.kpoints, method=self.find_method)
                 for ik, k in enumerate(self.kpoints):
                     k_name = '{}_{};{};{}_en'.format(tp, k[0], k[1], k[2])
                     self.feat[k_name] = fit[ik]
-
 
         for tp in ['p', 'n']:
             self.feat['{}_ex1_norm'.format(tp)] = norm(cvd[tp]['k'])
             if bs.structure:
                 self.feat['{}_ex1_degen'.format(tp)] = \
-                        bs.get_kpoint_degeneracy(cvd[tp]['k'])
+                    bs.get_kpoint_degeneracy(cvd[tp]['k'])
             else:
                 self.feat['{}_ex1_degen'] = float('NaN')
         return list(self.feat.values())
-
-
 
     def feature_labels(self):
         return list(self.feat.keys())
@@ -226,8 +224,8 @@ class DOSFeaturizer(BaseFeaturizer):
     """
 
     def __init__(self, contributors=1, significance_threshold=0.1,
-                  coordination_features=True, energy_cutoff=0.5,
-                  sampling_resolution=100, gaussian_smear=0.1):
+                 coordination_features=True, energy_cutoff=0.5,
+                 sampling_resolution=100, gaussian_smear=0.1):
         """
         Args:
             contributors (int):
@@ -259,18 +257,17 @@ class DOSFeaturizer(BaseFeaturizer):
         self.gaussian_smear = gaussian_smear
 
         self.labels = ["cbm_percents", "cbm_locations",
-                               "cbm_species", "cbm_characters"]
+                       "cbm_species", "cbm_characters"]
         if self.coordination_features:
             self.labels.append("cbm_coordinations")
 
         self.labels.extend(["cbm_significant_contributors",
-                                    "vbm_percents", "vbm_locations",
-                                    "vbm_species", "vbm_characters"])
+                            "vbm_percents", "vbm_locations",
+                            "vbm_species", "vbm_characters"])
         if self.coordination_features:
             self.labels.append("vbm_coordinations")
 
         self.labels.append("vbm_significant_contributors")
-
 
     def featurize(self, dos):
         """
@@ -316,7 +313,8 @@ class DOSFeaturizer(BaseFeaturizer):
 
         for extremum in ["cbm", "vbm"]:
             for feat in ["{}_score".format(extremum), "location", "specie",
-                         "character", "coordination", "significant_contributors"]:
+                         "character", "coordination",
+                         "significant_contributors"]:
 
                 contributors = locals()["{}_contributors".format(extremum)]
 
@@ -325,7 +323,8 @@ class DOSFeaturizer(BaseFeaturizer):
                         features.append([contributors[i]['coordination'] for i
                                          in range(0, self.contributors)])
                 elif feat == "significant_contributors":
-                    features.append(len(locals()["{}_sig_cont".format(extremum)]))
+                    features.append(
+                        len(locals()["{}_sig_cont".format(extremum)]))
 
                 else:
                     features.append([contributors[i][feat] for i
@@ -385,7 +384,7 @@ class DOSFeaturizer(BaseFeaturizer):
                 energies = [e for e in proj[orb].energies]
                 smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
                 dos_up = smear_dos[Spin.up]
-                dos_down = smear_dos[Spin.down] if Spin.down in smear_dos\
+                dos_down = smear_dos[Spin.down] if Spin.down in smear_dos \
                     else smear_dos[Spin.up]
                 dos_total = [sum(id) for id in zip(dos_up, dos_down)]
 

@@ -4,6 +4,11 @@
 # values omitted elements without FERE values (e.g. noble gases, Tc, Ru,...)
 # 2015-10-05 A.Deml
 
+# See also: A.M. Deml, R. O’Hayre, C. Wolverton, V. Stevanovic, Predicting
+# density functional theory total energies and enthalpies of formation of
+# metal-nonmetal compounds by linear regression, Phys. Rev. B - Condens.
+# Matter Mater. Phys. 93 (2016).
+
 ###########################
 # TMs considered as magnetic
 magn_elem=['Ti','V','Cr','Mn','Fe','Co','Ni','Cu',
