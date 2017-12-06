@@ -6,11 +6,7 @@ from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.site import AGNIFingerprints, \
-<<<<<<< HEAD
-    OPSiteFingerprint, Voronoi_index, ChemEnvSiteFingerprint
-=======
-    OPSiteFingerprint, VoronoiIndex
->>>>>>> 70c5339fc0d26ca82dd0b457f7ef02842553e576
+    OPSiteFingerprint, ChemEnvSiteFingerprint, VoronoiIndex
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
