@@ -818,8 +818,7 @@ class OPStructureFingerprint(BaseFeaturizer):
             opstats = []
             for op in opvals:
                 if '_mode' in ''.join(self.stats):
-                    modes = PropertyStats().n_numerical_modes(
-                            op, self.nmodes, 0.01)
+                    modes = self.n_numerical_modes(op, self.nmodes, 0.01)
                 for stat in self.stats:
                     if '_mode' in stat:
                         opstats.append(modes[int(stat[0])-1])
@@ -847,6 +846,25 @@ class OPStructureFingerprint(BaseFeaturizer):
 
     def implementors(self):
         return (['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain'])
+
+    @staticmethod
+    def n_numerical_modes(data_lst, n=2, dl=0.1):
+        """
+        Returns the n first modes of a data set that are obtained with
+            a finite bin size for the underlying frequency distribution.
+        Args:
+            data_lst ([float]): data values.
+            n (integer): number of most frequent elements to be determined.
+            dl (float): bin size of underlying (coarsened) distribution.
+        Returns:
+            ([float]): first n most frequent entries (or nan if not found).
+        """
+        if len(set(data_lst)) == 1:
+            return [data_lst[0]] + [float('NaN') for _ in range(n-1)]
+        hist, bins = np.histogram(data_lst, bins=np.arange(
+                min(data_lst), max(data_lst), dl), density=False)
+        modes = list(bins[np.argsort(hist)[-n:]][::-1])
+        return modes + [float('NaN') for _ in range(n-len(modes))]
 
 
 def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):

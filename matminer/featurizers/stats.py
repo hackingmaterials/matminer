@@ -194,25 +194,6 @@ class PropertyStats(object):
             return data_lst[most_freq].min()
 
     @staticmethod
-    def n_numerical_modes(data_lst, n=2, dl=0.1):
-        """
-        Returns the n first modes of a data set that are obtained with
-            a finite bin size for the underlying frequency distribution.
-        Args:
-            data_lst ([float]): data values.
-            n (integer): number of most frequent elements to be determined.
-            dl (float): bin size of underlying (coarsened) distribution.
-        Returns:
-            ([float]): first n most frequent entries (or nan if not found).
-        """
-        if len(set(data_lst)) == 1:
-            return [data_lst[0]] + [float('NaN') for _ in range(n-1)]
-        hist, bins = np.histogram(data_lst, bins=np.arange(
-                min(data_lst), max(data_lst), dl), density=False)
-        modes = list(bins[np.argsort(hist)[-n:]][::-1])
-        return modes + [float('NaN') for _ in range(n-len(modes))]
-
-    @staticmethod
     def holder_mean(data_lst, weights=None, power=1):
         """
         Get Holder mean
