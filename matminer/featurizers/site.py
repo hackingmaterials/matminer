@@ -4,7 +4,7 @@ from __future__ import division
 The `featurize` function takes two arguments:
     struct (Structure): Object representing the structure containing the site 
         of interest
-    site_idx (int): Index of the site to be featurized
+    idx (int): Index of the site to be featurized
 We have to use two parameters because the Site object does not hold a pointer 
 back to its structure and often information on neighbors is required. To run
 :code:`featurize_dataframe`, you must pass the column names for both the site 
@@ -63,10 +63,10 @@ class AGNIFingerprints(BaseFeaturizer):
             self.etas = np.logspace(np.log10(0.8), np.log10(16), 8)
         self.cutoff = cutoff
 
-    def featurize(self, strc, site):
+    def featurize(self, struct, idx):
         # Get all neighbors of this site
-        my_site = strc[site]
-        sites, dists = zip(*strc.get_neighbors(my_site, self.cutoff))
+        my_site = struct[idx]
+        sites, dists = zip(*struct.get_neighbors(my_site, self.cutoff))
 
         # Convert dists to a ndarray
         dists = np.array(dists)
@@ -621,10 +621,10 @@ class VoronoiIndex(BaseFeaturizer):
     def __init__(self, cutoff=6.0):
         self.cutoff = cutoff
 
-    def featurize(self, struct, site):
+    def featurize(self, struct, idx):
         """
         :param struct: Pymatgen Structure object
-        :param site: index of target site in structure
+        :param idx: index of target site in structure
         :return: voro_index: Voronoi indices
                  voro_index_sum: sum of Voronoi indices
                  voro_index_frac: fractional Voronoi indices
@@ -632,7 +632,7 @@ class VoronoiIndex(BaseFeaturizer):
 
         voro_index_result = []
         self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
-        voro_index_list = self.voronoi_analyzer.analyze(struct, n=site)
+        voro_index_list = self.voronoi_analyzer.analyze(struct, n=idx)
         for voro_index in voro_index_list:
             voro_index_result.append(voro_index)
         voro_index_sum = sum(voro_index_list)
