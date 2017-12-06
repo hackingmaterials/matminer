@@ -331,7 +331,7 @@ class PymatgenData(AbstractData):
     Class to get data from pymatgen. See also:
     S.P. Ong, W.D. Richards, A. Jain, G. Hautier, M. Kocher, S. Cholia, et al.,
     Python Materials Genomics (pymatgen): A robust, open-source python library
-    for materials analysis, Comput. Mater. Sci. 68 (2013) 314–319.
+    for materials analysis, Comput. Mater. Sci. 68 (2013) 314-319.
     """
 
     def get_property(self, comp, property_name):
