@@ -73,7 +73,7 @@ class CohesiveEnergyData(AbstractData):
 class DemlData(AbstractData):
     """
     Singleton class to get data from Deml data file. See also: A.M. Deml,
-    R. O’Hayre, C. Wolverton, V. Stevanovic, Predicting density functional
+    R. O'Hayre, C. Wolverton, V. Stevanovic, Predicting density functional
     theory total energies and enthalpies of formation of metal-nonmetal
     compounds by linear regression, Phys. Rev. B - Condens. Matter Mater. Phys.
     93 (2016).
