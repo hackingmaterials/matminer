@@ -5,7 +5,8 @@ from numpy.linalg import norm
 from scipy.interpolate import griddata
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, get_tet_bcc_motif
+from matminer.featurizers.site import OPSiteFingerprint
+from matminer.distance_metrics.site import get_tet_bcc_motif
 from pymatgen import Spin
 from pymatgen.electronic_structure.bandstructure import BandStructure, \
     BandStructureSymmLine

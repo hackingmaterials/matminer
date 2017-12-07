@@ -912,18 +912,3 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
 
     return dr[idx], delta[idx]
 
-
-def get_structure_distance(s1, s2, preset_name="cn"):
-    """
-    Compute structure distance using an alternate (test) algorithm. Docs are
-    minimal for now.
-    """
-
-    f_site = CrystalSiteFingerprint.from_preset(preset_name)
-    f_structure = OPStructureFingerprint(op_site_fp=f_site, stats=("mean",))
-
-    f1 = f_structure.featurize(s1)
-    f2 = f_structure.featurize(s2)
-
-    return np.linalg.norm(np.array(f1) - np.array(f2))
-
