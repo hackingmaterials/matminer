@@ -140,13 +140,13 @@ class OPSiteFingerprint(BaseFeaturizer):
     or evaluated with the shell of the next largest observed
     coordination number.
     Args:
-        dr (float): width for binning neighors in unit of relative
+        dr (float): width for binning neighbors in unit of relative
                     distances (= distance/nearest neighbor
                     distance).  The binning is necessary to make the
-                    neighbor-finding step robust agains small numerical
+                    neighbor-finding step robust against small numerical
                     variations in neighbor distances (default: 0.1).
         ddr (float): variation of width for finding stable OP values.
-        ndr (int): number of width variations for each variaton direction
+        ndr (int): number of width variations for each variation direction
                    (e.g., ndr = 0 only uses the input dr, whereas
                    ndr=1 tests dr = dr - ddr, dr, and dr + ddr.
         dop (float): binning width to compute histogram for each OP
@@ -214,11 +214,13 @@ class OPSiteFingerprint(BaseFeaturizer):
         while len(neigh_dist) < 12:
             r += 1.0
             neigh_dist = struct.get_neighbors(s, r)
+
         # Smoothen distance, but use relative distances.
         dmin = min([d for n, d in neigh_dist])
         neigh_dist = [[n, d / dmin] for n, d in neigh_dist]
         neigh_dist_alldrs = {}
         d_sorted_alldrs = {}
+
         for i in range(-self.ndr, self.ndr + 1):
             opvals[i] = []
             this_dr = self.dr + float(i) * self.ddr
@@ -248,9 +250,6 @@ class OPSiteFingerprint(BaseFeaturizer):
 
         for i in range(-self.ndr, self.ndr + 1):
             prev_cn = 0
-            prev_site_list = None
-            prev_d_fac = None
-            dmin = min(d_sorted_alldrs[i])
             for d in d_sorted_alldrs[i]:
                 this_cn = 0
                 site_list = [s]
@@ -283,14 +282,12 @@ class OPSiteFingerprint(BaseFeaturizer):
                         if self.optypes[cn][it] == 'bcc':
                             opval[0] = opval[0] / 0.976
                         opvals[i].append(opval[0])
-                prev_site_list = site_list
                 prev_cn = this_cn
-                prev_d_fac = d_fac
                 if prev_cn >= 12:
                     break
 
         opvals_out = []
-        ps = PropertyStats()
+
         for j in range(len(opvals[0])):
             # Compute histogram, determine peak, and location
             # of peak value.
@@ -365,13 +362,24 @@ class OPSiteFingerprint(BaseFeaturizer):
 
 class CrystalSiteFingerprint(BaseFeaturizer):
     """
-    An alternate site fingerprint currently undergoing testing. This code
-    will either be improved or deleted depending on how the tests go. For now,
-    docs are minimal.
+    A site fingerprint intended for periodic crystals. The fingerprint represents
+    the value of various order parameters for the site; each value is the product
+    two quantities: (i) the value of the order parameter itself and (ii) a factor
+    that describes how consistent the number of neighbors is with that order
+    parameter. Note that we can include only factor (ii) using the "wt" order
+    parameter which is always set to 1.
     """
 
     @staticmethod
     def from_preset(preset, cation_anion=False):
+        """
+        Use preset parameters to get the fingerprint
+
+        Args:
+            preset (str): name of preset ("cn" or "ops")
+            cation_anion (bool): whether to only consider cation<->anion bonds
+                (bonds with zero charge are also allowed)
+        """
         if preset == "cn":
             optypes = dict([(k + 1, ["wt"]) for k in range(16)])
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
@@ -399,6 +407,21 @@ class CrystalSiteFingerprint(BaseFeaturizer):
 
     def __init__(self, optypes, override_cn1=True, cutoff_radius=8, tol=1E-2,
                  cation_anion=False):
+        """
+        Initialize the CrystalSiteFingerprint. Use the from_preset() function to
+        use default params.
+
+        Args:
+            optypes (dict): a dict of coordination number (int) to a list of str
+                representing the order parameter types
+            override_cn1 (bool): whether to use a special function for the single
+                neighbor case. Suggest to keep True.
+            cutoff_radius (int): radius in Angstroms for neighbor finding
+            tol (float): numerical tolerance (in case your site distances are
+                not perfect or to correct for float tolerances)
+            cation_anion (bool): whether to only consider cation<->anion bonds
+                (bonds with zero charge are also allowed)
+        """
 
         self.optypes = optypes.copy()
         self.override_cn1 = override_cn1
@@ -425,6 +448,16 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                     self.ops[cn].append(OrderParameters([t]))
 
     def featurize(self, struct, idx):
+        """
+        Get crystal fingerprint of site with given index in input
+        structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure struct.
+        Returns:
+            list of weighted order parameters of target site.
+        """
+
         cn_fingerprint_array = defaultdict(
             list)  # dict where key = CN, val is array that contains each OP for that CN
         total_weight = math.pi / 4  # 1/4 unit circle area
@@ -480,16 +513,15 @@ class CrystalSiteFingerprint(BaseFeaturizer):
 
                     opval = opval or 0  # handles None
 
-                    if self.optypes[cn][
-                        opidx] == 'bcc':  # TODO: ask Nils what this is
+                    if self.optypes[cn][opidx] == 'bcc':  # TODO: remove after pymatgen update
                         opval = opval / 0.976
 
                     # figure out the weight for this opval based on semicircle integration method
                     x1 = 1 - dist
-                    x2 = 1 if dist_idx == len(dist_bins) - 1 else 1 - dist_bins[
-                        dist_idx + 1]
-                    weight = self._semicircle_integral(
-                        x2) - self._semicircle_integral(x1)
+                    x2 = 1 if dist_idx == len(dist_bins) - 1 else \
+                        1 - dist_bins[dist_idx + 1]
+                    weight = self._semicircle_integral(x2) - \
+                             self._semicircle_integral(x1)
 
                     opval = opval * weight / total_weight
 
