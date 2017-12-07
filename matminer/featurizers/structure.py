@@ -927,5 +927,3 @@ def get_structure_distance(s1, s2, preset_name="cn"):
 
     return np.linalg.norm(np.array(f1) - np.array(f2))
 
-
-

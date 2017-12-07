@@ -804,6 +804,8 @@ class CohesiveEnergy(BaseFeaturizer):
             "Physics, 8th Edition}}, year = {2005}}"]
 
 
+# TODO: read data file only once!! (on init, then store)
+# TODO: general code review, typo fixes, etc
 class Miedema(BaseFeaturizer):
     """
     Class to calculate the formation enthalpies of the intermetallic compound,
@@ -811,7 +813,7 @@ class Miedema(BaseFeaturizer):
     semi-empirical Miedema model for transitional metals.
     (use the original formulation in 1980s, see citation)
 
-    **Currently only elementary or binary composition is supported, may extend to ternary or more later.
+    **Currently only elemental or binary composition is supported, may extend to ternary or more later.
 
     Parameters:
         struct (String): one target structure or a list of target structures separated by '|'
@@ -834,6 +836,7 @@ class Miedema(BaseFeaturizer):
     """
 
     data_dir = os.path.join(module_dir, "..", "utils", "data_files")
+
     def __init__(self, struct='inter', dataset='Miedema'):
         if struct == 'all':
             struct = 'inter|amor|ss'
