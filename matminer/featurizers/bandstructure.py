@@ -118,11 +118,13 @@ class BandFeaturizer(BaseFeaturizer):
                     the input k-point is returned.
                 'linear': the result of linear interpolation is returned
                 see the documentation for scipy.interpolate.griddata
+        nbands (int): the number of valence/conduction bands to be featurized
     """
 
-    def __init__(self, kpoints=None, find_method='nearest'):
+    def __init__(self, kpoints=None, find_method='nearest', nbands = 2):
         self.kpoints = kpoints
         self.find_method = find_method
+        self.nbands = nbands
 
     def featurize(self, bs):
         """
@@ -170,13 +172,29 @@ class BandFeaturizer(BaseFeaturizer):
         self.feat['is_gap_direct'] = band_gap['direct']
         self.feat['direct_gap'] = min(cvd['n']['Es'] - cvd['p']['Es'])
         if self.kpoints:
+            obands = {'n': [], 'p': []}
+            for spin in bs.bands:
+                for band_idx in range(bs.nb_bands):
+                    if max(bs.bands[spin][band_idx]) < bs.efermi:
+                        obands['p'].append(bs.bands[spin][band_idx])
+                    if min(bs.bands[spin][band_idx]) > bs.efermi:
+                        obands['n'].append(bs.bands[spin][band_idx])
+            bands = {tp: np.zeros((len(obands[tp]), len(self.kpoints))) for tp in ['p', 'n']}
             for tp in ['p', 'n']:
-                fit = griddata(points=np.array(bs_kpts),
-                               values=cvd[tp]['Es'] - cvd[tp]['energy'],
-                               xi=self.kpoints, method=self.find_method)
+                for ib, ob in enumerate(obands[tp]):
+                    bands[tp][ib, :] = griddata(points=np.array(bs_kpts),
+                                   values=np.array(ob) - cvd[tp]['energy'],
+                                   xi=self.kpoints, method=self.find_method)
                 for ik, k in enumerate(self.kpoints):
-                    k_name = '{}_{};{};{}_en'.format(tp, k[0], k[1], k[2])
-                    self.feat[k_name] = fit[ik]
+                    sorted_band = np.sort(bands[tp][:, ik])
+                    if tp == 'p':
+                        sorted_band = sorted_band[::-1]
+                    for ib in range(self.nbands):
+                        k_name = '{}_{};{};{}_en{}'.format(tp, k[0], k[1], k[2], ib+1)
+                        try:
+                            self.feat[k_name] = sorted_band[ib]
+                        except IndexError:
+                            self.feat[k_name] = float('NaN')
 
         for tp in ['p', 'n']:
             self.feat['{}_ex1_norm'.format(tp)] = norm(cvd[tp]['k'])
@@ -184,7 +202,7 @@ class BandFeaturizer(BaseFeaturizer):
                 self.feat['{}_ex1_degen'.format(tp)] = \
                     bs.get_kpoint_degeneracy(cvd[tp]['k'])
             else:
-                self.feat['{}_ex1_degen'] = float('NaN')
+                self.feat['{}_ex1_degen'.format(tp)] = float('NaN')
         return list(self.feat.values())
 
     def feature_labels(self):
