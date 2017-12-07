@@ -1,10 +1,9 @@
 from __future__ import division
 
-from pymatgen import Element, Composition, MPRester
+from pymatgen import Element, MPRester
 from pymatgen.core.periodic_table import get_el_sp
 
 import os
-import json
 import itertools
 
 import numpy as np
@@ -13,7 +12,7 @@ import math
 from functools import reduce
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.data import DemlData, MagpieData, PymatgenData, \
+from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     CohesiveEnergyData
 from matminer.featurizers.stats import PropertyStats
 
@@ -834,6 +833,7 @@ class Miedema(BaseFeaturizer):
                            **Currently not done yet
     """
 
+    data_dir = os.path.join(module_dir, "..", "utils", "data_files")
     def __init__(self, struct='inter', dataset='Miedema'):
         if struct == 'all':
             struct = 'inter|amor|ss'
@@ -843,7 +843,7 @@ class Miedema(BaseFeaturizer):
     # chemical term of formation enthalpy
     def delta_H_chem(self, elements, fracs, struct):
         if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'), index_col='element')
+            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
             for element in elements:
                 if element not in df_dataset.index:
                     return np.nan
@@ -858,7 +858,7 @@ class Miedema(BaseFeaturizer):
             H_trans = np.array(df_element['H_trans'])
         else:
             # allow to extract parameters for ab initio databases eg MP, Citrine ** Currently not done
-            df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'), index_col='element')
+            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
             df_element = df_dataset.ix[elements]
             V_molar = np.array(df_element['molar_volume'])
             n_WS = np.array(df_element['electron_density'])
@@ -910,7 +910,7 @@ class Miedema(BaseFeaturizer):
     # elastic term of formation enthalpy
     def delta_H_elast(self, elements, fracs):
         if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'),index_col='element')
+            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
             for element in elements:
                 if element not in df_dataset.index:
                     return np.nan
@@ -922,7 +922,7 @@ class Miedema(BaseFeaturizer):
             shear_mod = np.array(df_element['shear_modulus'])
         else:
             # allow to extract parameters for ab initio databases eg MP, Citrine ** Currently not done
-            df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'),index_col='element')
+            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
             df_element = df_dataset.ix[elements]
             V_molar = np.array(df_element['molar_volume'])
             n_WS = np.array(df_element['electron_density'])
@@ -958,7 +958,7 @@ class Miedema(BaseFeaturizer):
     # structural term of formation enthalpy
     def delta_H_struct(self, elements, fracs, lattice):
         if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'),index_col='element')
+            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
             for element in elements:
                 if element not in df_dataset.index:
                     return np.nan
@@ -968,7 +968,7 @@ class Miedema(BaseFeaturizer):
 
         else:
             # allow to extract parameters for ab initio databases eg MP, Citrine **Currently not done
-            df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'),index_col='element')
+            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
             df_element = df_dataset.ix[elements]
             valence = np.array(df_element['valence_electrons'])
             struct_stability = np.array(df_element['structural_stability'])
@@ -1031,7 +1031,7 @@ class Miedema(BaseFeaturizer):
         fracs = [el_amt[el] for el in elements]
 
         if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'), index_col='element')
+            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
             for element in elements:
                 if element not in df_dataset.index:
                     melting_point = [np.nan,np.nan]
@@ -1042,7 +1042,7 @@ class Miedema(BaseFeaturizer):
 
         else:
             # allow to extract parameters for ab initio databases eg MP, Citrine **Currently not done
-            df_dataset = pd.read_csv(os.path.join(module_dir, 'data_files', 'Miedema.csv'), index_col='element')
+            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
             df_element = df_dataset.ix[elements]
             melting_point = np.array(df_element['melting_point'])
 
