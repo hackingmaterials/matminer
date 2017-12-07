@@ -8,7 +8,7 @@ import unittest
 
 from matminer.featurizers.bandstructure import BandFeaturizer, \
     BranchPointEnergy, DOSFeaturizer
-from pymatgen import Structure
+from pymatgen.core import Structure
 from pymatgen.electronic_structure.bandstructure import BandStructureSymmLine, \
     BandStructure
 from pymatgen.electronic_structure.dos import CompleteDos
@@ -37,7 +37,6 @@ class BandstructureFeaturesTest(PymatgenTest):
         with open(os.path.join(test_dir, 'VBr2_971787_bandstructure.json'), 'r') as bsh:
             vbr2_uniform = BandStructure.from_dict(json.load(bsh))
 
-        # vbr2_line = api.get_bandstructure_by_material_id('mp-971787')
         self.vbr2kpts = [k.frac_coords for k in vbr2_uniform.labels_dict.values()]
         self.vbr2kpts = [[0.0, 0.0, 0.0], # \\Gamma
                          [0.2, 0.0, 0.0], # between \\Gamma and M
