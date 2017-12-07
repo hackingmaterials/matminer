@@ -561,52 +561,6 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
 
 
-class CrystalSiteCN(BaseFeaturizer):
-    """
-    An alternate site fingerprint currently undergoing testing. This code
-    will either be improved or deleted depending on how the tests go. For now,
-    docs are minimal.
-    """
-
-    def __init__(self, min_coord=1, max_coord=16, use_avg=False, **kwargs):
-        self.min_coord = min_coord
-        self.max_coord = max_coord
-        self.use_avg = use_avg
-
-        optypes = dict([(k, ["wt"]) for k in range(min_coord, max_coord + 1)])
-        self.cnf = CrystalSiteFingerprint(optypes, **kwargs)
-
-    def featurize(self, struct, idx):
-        vector = self.cnf.featurize(struct, idx)
-
-        if self.use_avg:
-            tot = 0
-            weight = 0
-            for idx, val in enumerate(vector):
-                weight += val
-                tot += val * (idx + self.min_coord)
-
-            return [tot / weight]
-
-        max_val = 0
-        best_cn = float("nan")
-        for idx, val in enumerate(vector):
-            if val > max_val:
-                max_val = val
-                best_cn = idx + self.min_coord
-
-        return [best_cn]
-
-    def feature_labels(self):
-        return ['CN_avg'] if self.use_avg else ['CN']
-
-    def citations(self):
-        return ['']
-
-    def implementors(self):
-        return ['Anubhav Jain']
-
-
 # TODO: @nisse3000 this should be made into a Featurizer and more general than 2 classes. Also add unit test afterward, especially since it depends on certain default for OPSiteFingerprint - AJ
 def get_tet_bcc_motif(structure, idx):
     """
