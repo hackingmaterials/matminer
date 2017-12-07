@@ -184,7 +184,7 @@ class BandFeaturizer(BaseFeaturizer):
                 self.feat['{}_ex1_degen'.format(tp)] = \
                     bs.get_kpoint_degeneracy(cvd[tp]['k'])
             else:
-                self.feat['{}_ex1_degen'] = float('NaN')
+                self.feat['{}_ex1_degen'.format(tp)] = float('NaN')
         return list(self.feat.values())
 
     def feature_labels(self):
