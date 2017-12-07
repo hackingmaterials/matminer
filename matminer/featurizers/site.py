@@ -202,7 +202,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         structure.
         Args:
             struct (Structure): Pymatgen Structure object.
-            idx (int): index of target site in structure struct.
+            idx (int): index of target site in structure.
         Returns:
             opvals (numpy array): order parameters of target site.
         """
@@ -360,6 +360,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         return ['Nils E. R. Zimmermann']
 
 
+# TODO: unit tests!!
 class CrystalSiteFingerprint(BaseFeaturizer):
     """
     A site fingerprint intended for periodic crystals. The fingerprint represents
@@ -453,7 +454,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         structure.
         Args:
             struct (Structure): Pymatgen Structure object.
-            idx (int): index of target site in structure struct.
+            idx (int): index of target site in structure.
         Returns:
             list of weighted order parameters of target site.
         """
@@ -561,34 +562,6 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
 
 
-# TODO: @nisse3000 this should be made into a Featurizer and more general than 2 classes. Also add unit test afterward, especially since it depends on certain default for OPSiteFingerprint - AJ
-def get_tet_bcc_motif(structure, idx):
-    """
-    Convenience class-method from Nils Zimmermann.
-    Used to distinguish coordination environment in half-Heuslers.
-    Args:
-        structure (pymatgen Structure): the target structure to evaluate
-        idx (index): the site index in the structure
-    Returns:
-        (str) that describes site coordination enviornment
-            'bcc'
-            'tet'
-            'unrecognized'
-    """
-
-    op_site_fp = OPSiteFingerprint()
-    fp = op_site_fp.featurize(structure, idx)
-    labels = op_site_fp.feature_labels()
-    i_tet = labels.index('tet CN_4')
-    i_bcc = labels.index('bcc CN_8')
-    if fp[i_bcc] > 0.5:
-        return 'bcc'
-    elif fp[i_tet] > 0.5:
-        return 'tet'
-    else:
-        return 'unrecognized'
-
-
 class VoronoiIndex(BaseFeaturizer):
     """
     The Voronoi indices n_i and the fractional Voronoi indices n_i/sum(n_i) that
@@ -597,27 +570,28 @@ class VoronoiIndex(BaseFeaturizer):
     e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...]
          for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...]
          for icosahedra, the Voronoi indices are [0,0,12,0,...]
-
-    Parameters:
-        cutoff (float): cutoff distance in determining the potential neighbors
-                        for Voronoi tessellation analysis (default: 6.0)
-
     """
 
     def __init__(self, cutoff=6.0):
+        """
+        Args:
+            cutoff (float): cutoff distance in determining the potential
+                neighbors for Voronoi tessellation analysis
+        """
         self.cutoff = cutoff
+        self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
 
     def featurize(self, struct, idx):
         """
-        :param struct: Pymatgen Structure object
-        :param idx: index of target site in structure
-        :return: voro_index: Voronoi indices
-                 voro_index_sum: sum of Voronoi indices
-                 voro_index_frac: fractional Voronoi indices
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            list including Voronoi indices, sum of Voronoi indices, and
+            fractional Voronoi indices
         """
 
         voro_index_result = []
-        self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
         voro_index_list = self.voronoi_analyzer.analyze(struct, n=idx)
         for voro_index in voro_index_list:
             voro_index_result.append(voro_index)
@@ -649,3 +623,31 @@ class VoronoiIndex(BaseFeaturizer):
 
     def implementors(self):
         return ['Qi Wang']
+
+
+# TODO: @nisse3000 this should be made into a Featurizer and more general than 2 classes. Also add unit test afterward, especially since it depends on certain default for OPSiteFingerprint - AJ
+def get_tet_bcc_motif(structure, idx):
+    """
+    Convenience class-method from Nils Zimmermann.
+    Used to distinguish coordination environment in half-Heuslers.
+    Args:
+        structure (pymatgen Structure): the target structure to evaluate
+        idx (index): the site index in the structure
+    Returns:
+        (str) that describes site coordination enviornment
+            'bcc'
+            'tet'
+            'unrecognized'
+    """
+
+    op_site_fp = OPSiteFingerprint()
+    fp = op_site_fp.featurize(structure, idx)
+    labels = op_site_fp.feature_labels()
+    i_tet = labels.index('tet CN_4')
+    i_bcc = labels.index('bcc CN_8')
+    if fp[i_bcc] > 0.5:
+        return 'bcc'
+    elif fp[i_tet] > 0.5:
+        return 'tet'
+    else:
+        return 'unrecognized'
