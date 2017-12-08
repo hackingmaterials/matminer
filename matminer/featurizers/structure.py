@@ -10,6 +10,7 @@ import scipy.constants as const
 
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
+from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -266,11 +267,11 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
     def featurize(self, rdf):
         """
         Get location of highest peaks in RDF.
-    
+
         Args:
             rdf: (ndarray) RDF as obtained from the
                     RadialDistributionFunction class.
-    
+
         Returns: (ndarray) distances of highest peaks in descending order
                 of the peak height
         """
@@ -393,10 +394,10 @@ class CoulombMatrix(BaseFeaturizer):
     def featurize(self, s):
         """
         Get Coulomb matrix of input structure.
-    
+
         Args:
             s: input Structure (or Molecule) object.
-    
+
         Returns:
             m: (Nsites x Nsites matrix) Coulomb matrix.
         """
@@ -728,7 +729,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
     def featurize(self, s, cutoff=10.0):
         """
         Get minimum relative distances of all sites of the input structure.
-    
+
         Args:
             s: Pymatgen Structure object.
 
@@ -912,3 +913,33 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
 
     return dr[idx], delta[idx]
 
+
+class EwaldEnergy(BaseFeaturizer):
+    """Compute the Coulomb repulsion of ions in this material.
+
+    Note: The repulsion is computed using _charges already defined for the structure_.
+    Consider assigning them using the ``add_charges_*`` from ``pymatgen``
+
+    Features:
+        ewald_energy - Coulomb repulsion energy of the structure"""
+
+    def __init__(self, accuracy=None):
+        """
+        Args:
+            accuracy (int): Accuracy of Ewald summation, number of decimal places
+        """
+        self.accuracy = accuracy
+
+    def featurize(self, strc):
+        # Compute the total energy
+        ewald = EwaldSummation(strc, acc_factor=self.accuracy)
+        return [ewald.total_energy]
+
+    def feature_labels(self):
+        return ("ewald_energy",)
+
+    def implementors(self):
+        return ("Logan Ward",)
+
+    def citations(self):
+        return []

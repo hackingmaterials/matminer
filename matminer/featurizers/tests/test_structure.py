@@ -9,6 +9,7 @@ import unittest
 import numpy as np
 
 from pymatgen import Structure, Lattice, Molecule
+from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.structure import DensityFeatures, \
@@ -17,7 +18,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
     OPStructureFingerprint, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures
+    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, EwaldEnergy
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -303,6 +304,23 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(int(opvals[44] * 1000 + 0.5), 1)
         for i in range(52, len(opvals)):
             self.assertAlmostEqual(int(opvals[i] * 500 + 0.5), 0)
+
+    def test_ewald(self):
+        # Add oxidation states to all of the structures
+        for s in [self.nacl, self.cscl, self.diamond]:
+            s.add_oxidation_state_by_guess()
+
+        # Test basic
+        ewald = EwaldEnergy(accuracy=2)
+        self.assertAlmostEquals(ewald.featurize(self.diamond)[0], 0)
+        self.assertLess(ewald.featurize(self.nacl)[0], 0)
+        self.assertLess(ewald.featurize(self.nacl),
+                        ewald.featurize(self.cscl))  # Atoms are closer in NaCl
+
+        # Perform Ewald summation by "hand",
+        #  assuming that EwaldSummation from pymatgen is correct
+        self.assertEquals(EwaldSummation(self.nacl, acc_factor=2).total_energy,
+                          ewald.featurize(self.nacl)[0])
 
     def tearDown(self):
         del self.diamond
