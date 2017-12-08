@@ -689,19 +689,19 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         return ["orbital field matrix"]
 
     def citations(self):
-        return ("@ARTICLE{2017arXiv170501043P,"
-                "author = {{Pham}, T. L. and {Kino}, H. and {Terakura}, K. and {Miyake}, T. and "
-                "{Takigawa}, I. and {Tsuda}, K. and {Dam}, H. C.},"
-                "title = \"{Machine learning reveals orbital interaction in crystalline materials}\","
-                "journal = {ArXiv e-prints},"
-                "archivePrefix = \"arXiv\","
-                "eprint = {1705.01043},"
-                "primaryClass = \"cond-mat.mtrl-sci\","
-                "keywords = {Condensed Matter - Materials Science},"
-                "year = 2017,"
-                "month = may,"
-                "adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170501043P},"
-                "adsnote = {Provided by the SAO/NASA Astrophysics Data System}"
+        return ("@article{LamPham2017,"
+                "author = {{Lam Pham}, Tien and Kino, Hiori and Terakura, Kiyoyuki and "
+                "Miyake, Takashi and Tsuda, Koji and Takigawa, Ichigaku and {Chi Dam}, Hieu},"
+                "doi = {10.1080/14686996.2017.1378060},"
+                "journal = {Science and Technology of Advanced Materials},"
+                "month = {dec},"
+                "number = {1},"
+                "pages = {756--765},"
+                "publisher = {Taylor {\&} Francis},"
+                "title = {{Machine learning reveals orbital interaction in materials}},"
+                "url = {https://www.tandfonline.com/doi/full/10.1080/14686996.2017.1378060},"
+                "volume = {18},"
+                "year = {2017}"
                 "}")
 
     def implementors(self):
