@@ -22,6 +22,7 @@ from collections import defaultdict
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters, \
     VoronoiAnalyzer, VoronoiCoordFinder
+from pymatgen.analysis.ewald import EwaldSummation
 
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -622,3 +623,55 @@ class VoronoiIndex(BaseFeaturizer):
 
     def implementors(self):
         return ['Qi Wang']
+
+
+class EwaldSiteEnergy:
+    """Compute site energy from Coulombic interactions
+
+    User notes:
+        - This class uses that `charges that are already-defined for the structure`.
+          Consider assigning them using the ``add_charges_*`` from ``pymatgen``
+          before calling this class
+
+        - Ewald summations can be expensive. If you evaluating every site in many
+          large structures, run all of the sites for each structure at the same time.
+          We cache the Ewald result for the structure that was run last, so looping
+          over sites and then structures is faster than structures than sites.
+
+    Features:
+        ewald_site_energy - Energy for the site computed from Coulombic interactions"""
+
+    def __init__(self, accuracy=None):
+        """
+        Args:
+            accuracy (int): Accuracy of Ewald summation, number of decimal places
+        """
+        self.accuracy = accuracy
+
+        # Variables used then caching the Ewald result
+        self.__last_structure = None
+        self.__last_ewald = None
+
+    def featurize(self, strc, site):
+
+        # Check if the new input is the last
+        #  Note: We use 'is' rather than structure comparisons for speed
+        #
+        #  TODO: Figure out if this implementation is thread-safe! I was debating adding
+        #        Locks, but think we are OK
+        if strc is self.__last_structure:
+            ewald = self.__last_ewald
+        else:
+            self.__last_structure = strc
+            ewald = EwaldSummation(strc, acc_factor=self.accuracy)
+            self.__last_ewald = ewald
+        return np.sum(ewald.total_energy_matrix, axis=0)[site]
+
+    def feature_labels(self):
+        return ("ewald_site_energy",)
+
+    def implementors(self):
+        return ("Logan Ward",)
+
+    def citations(self):
+        return []

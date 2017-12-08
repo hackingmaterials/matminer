@@ -312,15 +312,15 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test basic
         ewald = EwaldEnergy(accuracy=2)
-        self.assertAlmostEquals(ewald.featurize(self.diamond)[0], 0)
+        self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
         self.assertLess(ewald.featurize(self.nacl)[0], 0)
         self.assertLess(ewald.featurize(self.nacl),
                         ewald.featurize(self.cscl))  # Atoms are closer in NaCl
 
         # Perform Ewald summation by "hand",
         #  assuming that EwaldSummation from pymatgen is correct
-        self.assertEquals(EwaldSummation(self.nacl, acc_factor=2).total_energy,
-                          ewald.featurize(self.nacl)[0])
+        self.assertArrayAlmostEqual([EwaldSummation(self.nacl, acc_factor=2).total_energy],
+                                    ewald.featurize(self.nacl))
 
     def tearDown(self):
         del self.diamond

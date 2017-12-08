@@ -915,13 +915,13 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
 
 
 class EwaldEnergy(BaseFeaturizer):
-    """Compute the Coulomb repulsion of ions in this material.
+    """Compute the energy from Coulombic interactions
 
-    Note: The repulsion is computed using _charges already defined for the structure_.
-    Consider assigning them using the ``add_charges_*`` from ``pymatgen``
+    Note: The energy is computed using _charges already defined for the structure_.
+    Consider assigning them using the ``add_charges_*`` from ``pymatgen`` before calling this class
 
     Features:
-        ewald_energy - Coulomb repulsion energy of the structure"""
+        ewald_energy - Coulomb interaction energy of the structure"""
 
     def __init__(self, accuracy=None):
         """

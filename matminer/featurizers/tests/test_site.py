@@ -6,7 +6,8 @@ from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, VoronoiIndex
+    OPSiteFingerprint, VoronoiIndex, EwaldSiteEnergy
+
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -120,6 +121,25 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(test_featurize['voro_index_9'][0], 0.0)
         self.assertAlmostEqual(test_featurize['voro_index_10'][0], 0.0)
         self.assertAlmostEqual(test_featurize['voro_index_sum'][0], 6.0)
+
+    def test_ewald_site(self):
+        ewald = EwaldSiteEnergy(accuracy=4)
+
+        # Set the charges
+        for s in [self.sc, self.cscl]:
+            s.add_oxidation_state_by_guess()
+
+        # Run the sc-Al structure
+        self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
+
+        # Run the cscl-structure. Not sure what the true result will be, but
+        #   it should be negative and the value for Cs and Cl should be the same
+        self.assertAlmostEquals(ewald.featurize(self.cscl, 0), ewald.featurize(self.cscl, 1))
+        self.assertLess(ewald.featurize(self.cscl, 0), 0)
+
+        # Re-run the Al structure to make sure it is accurate
+        #  This is to test the caching feature
+        self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
 
 if __name__ == '__main__':
     import unittest
