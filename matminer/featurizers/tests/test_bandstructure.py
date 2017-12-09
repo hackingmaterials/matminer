@@ -126,20 +126,24 @@ class DOSFeaturesTest(PymatgenTest):
         self.df = pd.DataFrame({'dos': [si_dos]})
 
     def test_DOSFeaturizer(self):
-        df_df = DOSFeaturizer().featurize_dataframe(self.df, col_id=['dos'])
-
-        self.assertAlmostEqual(df_df['cbm_percents'][0][0], 0.258, 3)
-        self.assertAlmostEqual(df_df['cbm_locations'][0], [[0.0, 0.0, 0.0]])
-        self.assertEqual(df_df['cbm_species'][0], ['Si'])
-        self.assertEqual(df_df['cbm_characters'][0], ['s'])
-        self.assertEqual(df_df['cbm_coordinations'][0], ['tet'])
-        self.assertEqual(df_df['cbm_significant_contributors'][0], 4)
-        self.assertAlmostEqual(df_df['vbm_percents'][0][0], 0.490, 3)
-        self.assertEqual(df_df['vbm_locations'][0], [[0.0, 0.0, 0.0]])
-        self.assertEqual(df_df['vbm_species'][0], ['Si'])
-        self.assertEqual(df_df['vbm_characters'][0], ['p'])
-        self.assertEqual(df_df['vbm_coordinations'][0], ['tet'])
-        self.assertEqual(df_df['vbm_significant_contributors'][0], 2)
+        df_df = DOSFeaturizer(contributors=2).featurize_dataframe(self.df, col_id=['dos'])
+        df_df.to_csv('test_DOS_featurized.csv')
+        # CBM:
+        self.assertAlmostEqual(df_df['cbm_score_1'][0], 0.258, 3)
+        self.assertAlmostEqual(df_df['cbm_score_2'][0], 0.258, 3)
+        self.assertEqual(df_df['cbm_location_1'][0], '0.0;0.0;0.0')
+        self.assertEqual(df_df['cbm_specie_1'][0], 'Si')
+        self.assertEqual(df_df['cbm_character_1'][0], 's')
+        self.assertEqual(df_df['cbm_coordination_1'][0], 'tet')
+        self.assertEqual(df_df['cbm_nsignificant'][0], 4)
+        # VBM:
+        self.assertAlmostEqual(df_df['vbm_score_1'][0], 0.490, 3)
+        self.assertAlmostEqual(df_df['vbm_score_2'][0], 0.490, 3)
+        self.assertEqual(df_df['vbm_location_1'][0], '0.0;0.0;0.0')
+        self.assertEqual(df_df['vbm_specie_1'][0], 'Si')
+        self.assertEqual(df_df['vbm_character_1'][0], 'p')
+        self.assertEqual(df_df['vbm_coordination_1'][0], 'tet')
+        self.assertEqual(df_df['vbm_nsignificant'][0], 2)
 
 if __name__ == '__main__':
     unittest.main()
