@@ -127,7 +127,6 @@ class DOSFeaturesTest(PymatgenTest):
 
     def test_DOSFeaturizer(self):
         df_df = DOSFeaturizer(contributors=2).featurize_dataframe(self.df, col_id=['dos'])
-        df_df.to_csv('test_DOS_featurized.csv')
         # CBM:
         self.assertAlmostEqual(df_df['cbm_score_1'][0], 0.258, 3)
         self.assertAlmostEqual(df_df['cbm_score_2'][0], 0.258, 3)
