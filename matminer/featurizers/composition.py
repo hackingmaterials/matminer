@@ -843,34 +843,26 @@ class Miedema(BaseFeaturizer):
         self.struct = struct
         self.dataset = dataset
 
-    # chemical term of formation enthalpy
-    def delta_H_chem(self, elements, fracs, struct):
         if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
-            for element in elements:
-                if element not in df_dataset.index:
-                    return np.nan
-            df_element = df_dataset.loc[elements]
-            V_molar = np.array(df_element['molar_volume'])
-            n_WS = np.array(df_element['electron_density'])
-            elec = np.array(df_element['electronegativity'])
-            valence = np.array(df_element['valence_electrons'])
-
-            a_const = np.array(df_element['a_const'])
-            R_const = np.array(df_element['R_const'])
-            H_trans = np.array(df_element['H_trans'])
+            self.df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
         else:
             # allow to extract parameters for ab initio databases eg MP, Citrine ** Currently not done
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
-            df_element = df_dataset.ix[elements]
-            V_molar = np.array(df_element['molar_volume'])
-            n_WS = np.array(df_element['electron_density'])
-            elec = np.array(df_element['electronegativity'])
-            valence = np.array(df_element['valence_electrons'])
+            self.df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
 
-            a_const = np.array(df_element['a_const'])
-            R_const = np.array(df_element['R_const'])
-            H_trans = np.array(df_element['H_trans'])
+    # chemical term of formation enthalpy
+    def delta_H_chem(self, elements, fracs, struct):
+        for element in elements:
+            if element not in self.df_dataset.index:
+                return np.nan
+        df_element = self.df_dataset.loc[elements]
+        V_molar = np.array(df_element['molar_volume'])
+        n_WS = np.array(df_element['electron_density'])
+        elec = np.array(df_element['electronegativity'])
+        valence = np.array(df_element['valence_electrons'])
+
+        a_const = np.array(df_element['a_const'])
+        R_const = np.array(df_element['R_const'])
+        H_trans = np.array(df_element['H_trans'])
 
         if struct == 'inter':
             gamma = 8
@@ -912,26 +904,15 @@ class Miedema(BaseFeaturizer):
 
     # elastic term of formation enthalpy
     def delta_H_elast(self, elements, fracs):
-        if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
-            for element in elements:
-                if element not in df_dataset.index:
-                    return np.nan
-            df_element = df_dataset.loc[elements]
-            V_molar = np.array(df_element['molar_volume'])
-            n_WS = np.array(df_element['electron_density'])
-            elec = np.array(df_element['electronegativity'])
-            compr = np.array(df_element['compressibility'])
-            shear_mod = np.array(df_element['shear_modulus'])
-        else:
-            # allow to extract parameters for ab initio databases eg MP, Citrine ** Currently not done
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
-            df_element = df_dataset.ix[elements]
-            V_molar = np.array(df_element['molar_volume'])
-            n_WS = np.array(df_element['electron_density'])
-            elec = np.array(df_element['electronegativity'])
-            compr = np.array(df_element['compressibility'])
-            shear_mod = np.array(df_element['shear_modulus'])
+        for element in elements:
+            if element not in self.df_dataset.index:
+                return np.nan
+        df_element = self.df_dataset.loc[elements]
+        V_molar = np.array(df_element['molar_volume'])
+        n_WS = np.array(df_element['electron_density'])
+        elec = np.array(df_element['electronegativity'])
+        compr = np.array(df_element['compressibility'])
+        shear_mod = np.array(df_element['shear_modulus'])
 
         alpha_pure = 1.5 * np.power(V_molar, 2/3) / reduce(lambda x,y: 1/x + 1/y, np.power(n_WS, 1/3))
 
@@ -960,21 +941,12 @@ class Miedema(BaseFeaturizer):
 
     # structural term of formation enthalpy
     def delta_H_struct(self, elements, fracs, lattice):
-        if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
-            for element in elements:
-                if element not in df_dataset.index:
-                    return np.nan
-            df_element = df_dataset.loc[elements]
-            valence = np.array(df_element['valence_electrons'])
-            struct_stability = np.array(df_element['structural_stability'])
-
-        else:
-            # allow to extract parameters for ab initio databases eg MP, Citrine **Currently not done
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
-            df_element = df_dataset.ix[elements]
-            valence = np.array(df_element['valence_electrons'])
-            struct_stability = np.array(df_element['structural_stability'])
+        for element in elements:
+            if element not in self.df_dataset.index:
+                return np.nan
+        df_element = self.df_dataset.loc[elements]
+        valence = np.array(df_element['valence_electrons'])
+        struct_stability = np.array(df_element['structural_stability'])
 
         # fcc
         if lattice == 'fcc':
@@ -1033,20 +1005,12 @@ class Miedema(BaseFeaturizer):
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         fracs = [el_amt[el] for el in elements]
 
-        if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
-            for element in elements:
-                if element not in df_dataset.index:
-                    melting_point = [np.nan,np.nan]
-                    break
-            else:
-                df_element = df_dataset.loc[elements]
-                melting_point = np.array(df_element['melting_point'])
-
+        for element in elements:
+            if element not in self.df_dataset.index:
+                melting_point = [np.nan,np.nan]
+                break
         else:
-            # allow to extract parameters for ab initio databases eg MP, Citrine **Currently not done
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
-            df_element = df_dataset.ix[elements]
+            df_element = self.df_dataset.loc[elements]
             melting_point = np.array(df_element['melting_point'])
 
         miedema_result = []
