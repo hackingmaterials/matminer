@@ -236,8 +236,6 @@ class BandFeaturizer(BaseFeaturizer):
         return ['Alireza Faghaninia', 'Anubhav Jain']
 
 
-# TODO: Features should not return arrays. (i.e., each particular feature should be a float, although you can have an array of float features) -computron
-# TODO: general code cleanup
 class DOSFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen dos object.
