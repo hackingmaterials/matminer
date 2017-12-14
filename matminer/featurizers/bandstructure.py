@@ -368,7 +368,7 @@ def get_cbm_vbm_scores(dos, coordination_features, energy_cutoff,
     orbital_scores = []
     for i in range(0, len(sites)):
 
-        # if you desire coordination enviornment as feature
+        # if you desire coordination environment as feature
         if coordination_features:
             geometry = get_tet_bcc_motif(structure, i)
 
