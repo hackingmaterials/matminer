@@ -303,6 +303,22 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(int(opvals[44] * 1000 + 0.5), 1)
         for i in range(52, len(opvals)):
             self.assertAlmostEqual(int(opvals[i] * 500 + 0.5), 0)
+        self.assertAlmostEqual(int(op_struct_fp.get_similarity(
+                "L1", self.diamond, self.diamond) * 1000 + 0.5), 0)
+        self.assertAlmostEqual(int(op_struct_fp.get_similarity(
+                "L2", self.diamond, self.diamond) * 1000 + 0.5), 0)
+        self.assertAlmostEqual(int(op_struct_fp.get_similarity(
+                "Minkowski", 2, self.diamond, self.diamond) * 1000 + 0.5), 0)
+        self.assertAlmostEqual(int(op_struct_fp.get_similarity(
+                "cos", self.diamond, self.diamond) * 1000 + 0.5), 1000)
+        self.assertAlmostEqual(int(op_struct_fp.get_similarity(
+                "L1", self.diamond, self.nacl) * 1000 + 0.5), 6773)
+        self.assertAlmostEqual(int(op_struct_fp.get_similarity(
+                "L2", self.diamond, self.nacl) * 1000 + 0.5), 2472)
+        self.assertAlmostEqual(int(op_struct_fp.get_similarity(
+                "Minkowski", 2, self.diamond, self.nacl) * 1000 + 0.5), 2472)
+        self.assertAlmostEqual(int(op_struct_fp.get_similarity(
+                "cos", self.diamond, self.cscl) * 1000 + 0.5), 1)
 
     def tearDown(self):
         del self.diamond

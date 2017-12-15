@@ -72,6 +72,38 @@ class BaseFeaturizer(object):
 
         raise NotImplementedError("featurize() is not defined!")
 
+    def get_similarity(self, simtype, *x):
+        """
+        Compare two featurizer outcomes.
+
+        Args:
+            simtype (string): similarity measure ("L1", "L2", "Minkowski",
+                              "cos"). If "Minkowski", you also have to
+                              provide the order.
+            x: input data to calculate features, possibly preceded
+               by the Minkowski order.
+
+        Returns:
+            similarity.
+        """
+        
+        start = 1 if simtype == "Minkowski" else 0
+        lxhalf = int((len(x) - start) / 2)
+        args1 = [a for a in x[start:lxhalf + start]]
+        args2 = [a for a in x[lxhalf + start:]]
+        f1 = np.array(self.featurize(*args1))
+        f2 = np.array(self.featurize(*args2))
+        if simtype == "L1":
+            return np.linalg.norm(f1 - f2, ord=1)
+        elif simtype == "L2":
+            return np.linalg.norm(f1 - f2, ord=2)
+        elif simtype == "Minkowski":
+            return np.linalg.norm(f1 - f2, ord=x[0])
+        elif simtype == "cos":
+            return np.dot(f1, f2) / (np.linalg.norm(f1) * np.linalg.norm(f2))
+        else:
+            raise RuntimeError("Unknown similarity measure.")
+
     def feature_labels(self):
         """
         Generate attribute names
