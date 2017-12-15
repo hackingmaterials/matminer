@@ -355,7 +355,7 @@ def get_cbm_vbm_scores(dos, coordination_features, energy_cutoff,
             .. species: (pymatgen Specie) the Specie of the orbital
             .. character: (str) is the orbital character s, p, d, or f
             .. location: [(float)] cartesian coordinates of the orbital
-            .. coordination (str) optional-coordination enviornment from op
+            .. coordination (str) optional-coordination environment from op
                                     site feature vector
     """
 
