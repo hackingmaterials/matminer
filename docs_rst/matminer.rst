@@ -8,35 +8,18 @@ Subpackages
 
     matminer.data_retrieval
     matminer.datasets
+    matminer.distance_metrics
     matminer.featurizers
     matminer.figrecipes
-    matminer.learners
-    matminer.models
-    matminer.reference_data
+    matminer.utils
 
 Submodules
 ----------
-
-matminer\.decorate module
--------------------------
-
-.. automodule:: matminer.decorate
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 matminer\.pyCookieCheat module
 ------------------------------
 
 .. automodule:: matminer.pyCookieCheat
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matminer\.utils module
-----------------------
-
-.. automodule:: matminer.utils
     :members:
     :undoc-members:
     :show-inheritance:

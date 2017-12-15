@@ -26,8 +26,8 @@ Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the Hacking
 University of Chicago
 ----------------------
 
-* Jiming Chen
 * Logan Ward
+* Jiming Chen
 * Ashwin Aggarwal
 
 
