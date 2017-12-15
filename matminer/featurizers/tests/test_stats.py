@@ -57,10 +57,10 @@ class TestPropertyStats(TestCase):
         self.assertAlmostEqual(0, PropertyStats.mode([0,1,2], [1,1,1]))
 
     def test_holder_mean(self):
-        self._run_test("holder_mean__0", 1, 1, np.product(self.sample_2), 0)
+        self._run_test("holder_mean::0", 1, 1, np.product(self.sample_2), 0)
 
-        self._run_test("holder_mean__1", 1, 1, 2./3, 5./7)
-        self._run_test("holder_mean__2", 1, 1, sqrt(5./6), 0.88640526)
+        self._run_test("holder_mean::1", 1, 1, 2./3, 5./7)
+        self._run_test("holder_mean::2", 1, 1, sqrt(5./6), 0.88640526)
 
     def test_geom_std_dev(self):
         # This is right. Yes, a list without variation has a geom_std_dev of 1

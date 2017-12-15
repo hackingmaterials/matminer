@@ -689,19 +689,19 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         return ["orbital field matrix"]
 
     def citations(self):
-        return ("@ARTICLE{2017arXiv170501043P,"
-                "author = {{Pham}, T. L. and {Kino}, H. and {Terakura}, K. and {Miyake}, T. and "
-                "{Takigawa}, I. and {Tsuda}, K. and {Dam}, H. C.},"
-                "title = \"{Machine learning reveals orbital interaction in crystalline materials}\","
-                "journal = {ArXiv e-prints},"
-                "archivePrefix = \"arXiv\","
-                "eprint = {1705.01043},"
-                "primaryClass = \"cond-mat.mtrl-sci\","
-                "keywords = {Condensed Matter - Materials Science},"
-                "year = 2017,"
-                "month = may,"
-                "adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170501043P},"
-                "adsnote = {Provided by the SAO/NASA Astrophysics Data System}"
+        return ("@article{LamPham2017,"
+                "author = {{Lam Pham}, Tien and Kino, Hiori and Terakura, Kiyoyuki and "
+                "Miyake, Takashi and Tsuda, Koji and Takigawa, Ichigaku and {Chi Dam}, Hieu},"
+                "doi = {10.1080/14686996.2017.1378060},"
+                "journal = {Science and Technology of Advanced Materials},"
+                "month = {dec},"
+                "number = {1},"
+                "pages = {756--765},"
+                "publisher = {Taylor {\&} Francis},"
+                "title = {{Machine learning reveals orbital interaction in materials}},"
+                "url = {https://www.tandfonline.com/doi/full/10.1080/14686996.2017.1378060},"
+                "volume = {18},"
+                "year = {2017}"
                 "}")
 
     def implementors(self):
@@ -818,8 +818,7 @@ class OPStructureFingerprint(BaseFeaturizer):
             opstats = []
             for op in opvals:
                 if '_mode' in ''.join(self.stats):
-                    modes = PropertyStats().n_numerical_modes(
-                            op, self.nmodes, 0.01)
+                    modes = self.n_numerical_modes(op, self.nmodes, 0.01)
                 for stat in self.stats:
                     if '_mode' in stat:
                         opstats.append(modes[int(stat[0])-1])
@@ -847,6 +846,25 @@ class OPStructureFingerprint(BaseFeaturizer):
 
     def implementors(self):
         return (['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain'])
+
+    @staticmethod
+    def n_numerical_modes(data_lst, n=2, dl=0.1):
+        """
+        Returns the n first modes of a data set that are obtained with
+            a finite bin size for the underlying frequency distribution.
+        Args:
+            data_lst ([float]): data values.
+            n (integer): number of most frequent elements to be determined.
+            dl (float): bin size of underlying (coarsened) distribution.
+        Returns:
+            ([float]): first n most frequent entries (or nan if not found).
+        """
+        if len(set(data_lst)) == 1:
+            return [data_lst[0]] + [float('NaN') for _ in range(n-1)]
+        hist, bins = np.histogram(data_lst, bins=np.arange(
+                min(data_lst), max(data_lst), dl), density=False)
+        modes = list(bins[np.argsort(hist)[-n:]][::-1])
+        return modes + [float('NaN') for _ in range(n-len(modes))]
 
 
 def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
@@ -893,21 +911,4 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
             break
 
     return dr[idx], delta[idx]
-
-
-def get_structure_distance(s1, s2, preset_name="cn"):
-    """
-    Compute structure distance using an alternate (test) algorithm. Docs are
-    minimal for now.
-    """
-
-    f_site = CrystalSiteFingerprint.from_preset(preset_name)
-    f_structure = OPStructureFingerprint(op_site_fp=f_site, stats=("mean",))
-
-    f1 = f_structure.featurize(s1)
-    f2 = f_structure.featurize(s2)
-
-    return np.linalg.norm(np.array(f1) - np.array(f2))
-
-
 

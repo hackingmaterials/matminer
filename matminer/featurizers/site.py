@@ -2,13 +2,16 @@ from __future__ import division
 
 """Features that describe the local environment of a single atom
 The `featurize` function takes two arguments:
-    strc (Structure): Object representing the structure containing the site of interest
-    site (int): Index of the site to be featurized
-We have to use two parameters because the Site object does not hold a pointer back to its structure. To run
-:code:`featurize_dataframe`, you must pass the column names for both the site index and the structure. For example:
+    struct (Structure): Object representing the structure containing the site 
+        of interest
+    idx (int): Index of the site to be featurized
+We have to use two parameters because the Site object does not hold a pointer 
+back to its structure and often information on neighbors is required. To run
+:code:`featurize_dataframe`, you must pass the column names for both the site 
+index and the structure. For example:
 .. code:: python
     f = AGNIFingerprints()
-    f.featurize_dataframe(data, ['site', 'structure'])
+    f.featurize_dataframe(data, ['structure', 'site_idx'])
 """
 
 import numpy as np
@@ -66,17 +69,19 @@ class AGNIFingerprints(BaseFeaturizer):
             self.etas = np.logspace(np.log10(0.8), np.log10(16), 8)
         self.cutoff = cutoff
 
-    def featurize(self, strc, site):
+    def featurize(self, struct, idx):
         # Get all neighbors of this site
-        my_site = strc[site]
-        sites, dists = zip(*strc.get_neighbors(my_site, self.cutoff))
+        my_site = struct[idx]
+        sites, dists = zip(*struct.get_neighbors(my_site, self.cutoff))
 
         # Convert dists to a ndarray
         dists = np.array(dists)
 
         # If one of the features is direction-dependent, compute the :math:`(r_i - r_j) / r_{ij}`
         if any([x in self.directions for x in ['x', 'y', 'z']]):
-            disps = np.array([my_site.coords - s.coords for s in sites]) / dists[:, np.newaxis]
+            disps = np.array(
+                [my_site.coords - s.coords for s in sites]) / dists[:,
+                                                              np.newaxis]
 
         # Compute the cutoff function
         cutoff_func = 0.5 * (np.cos(np.pi * dists / self.cutoff) + 1)
@@ -84,7 +89,9 @@ class AGNIFingerprints(BaseFeaturizer):
         # Compute "e^(r/eta) * cutoff_func" for each eta
         windowed = np.zeros((len(dists), len(self.etas)))
         for i, eta in enumerate(self.etas):
-            windowed[:, i] = np.multiply(np.exp(-1 * np.power(np.true_divide(dists, eta), 2)), cutoff_func)
+            windowed[:, i] = np.multiply(
+                np.exp(-1 * np.power(np.true_divide(dists, eta), 2)),
+                cutoff_func)
 
         # Compute the fingerprints
         output = []
@@ -100,7 +107,9 @@ class AGNIFingerprints(BaseFeaturizer):
                     proj = [0., 0., 1.]
                 else:
                     raise Exception('Unrecognized direction')
-                output.append(np.sum(windowed * np.dot(disps, proj)[:, np.newaxis], axis=0))
+                output.append(
+                    np.sum(windowed * np.dot(disps, proj)[:, np.newaxis],
+                           axis=0))
 
         # Return the results
         return np.hstack(output)
@@ -137,13 +146,13 @@ class OPSiteFingerprint(BaseFeaturizer):
     or evaluated with the shell of the next largest observed
     coordination number.
     Args:
-        dr (float): width for binning neighors in unit of relative
+        dr (float): width for binning neighbors in unit of relative
                     distances (= distance/nearest neighbor
                     distance).  The binning is necessary to make the
-                    neighbor-finding step robust agains small numerical
+                    neighbor-finding step robust against small numerical
                     variations in neighbor distances (default: 0.1).
         ddr (float): variation of width for finding stable OP values.
-        ndr (int): number of width variations for each variaton direction
+        ndr (int): number of width variations for each variation direction
                    (e.g., ndr = 0 only uses the input dr, whereas
                    ndr=1 tests dr = dr - ddr, dr, and dr + ddr.
         dop (float): binning width to compute histogram for each OP
@@ -199,7 +208,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         structure.
         Args:
             struct (Structure): Pymatgen Structure object.
-            idx (int): index of target site in structure struct.
+            idx (int): index of target site in structure.
         Returns:
             opvals (numpy array): order parameters of target site.
         """
@@ -211,11 +220,13 @@ class OPSiteFingerprint(BaseFeaturizer):
         while len(neigh_dist) < 12:
             r += 1.0
             neigh_dist = struct.get_neighbors(s, r)
+
         # Smoothen distance, but use relative distances.
         dmin = min([d for n, d in neigh_dist])
         neigh_dist = [[n, d / dmin] for n, d in neigh_dist]
         neigh_dist_alldrs = {}
         d_sorted_alldrs = {}
+
         for i in range(-self.ndr, self.ndr + 1):
             opvals[i] = []
             this_dr = self.dr + float(i) * self.ddr
@@ -223,8 +234,9 @@ class OPSiteFingerprint(BaseFeaturizer):
             neigh_dist_alldrs[i] = []
             for j in range(len(neigh_dist)):
                 neigh_dist_alldrs[i].append([neigh_dist[j][0],
-                                             (float(int(neigh_dist[j][1] * this_idr \
-                                                        + 0.5)) + 0.5) * this_dr])
+                                             (float(
+                                                 int(neigh_dist[j][1] * this_idr \
+                                                     + 0.5)) + 0.5) * this_dr])
             d_sorted_alldrs[i] = []
             for n, d in neigh_dist_alldrs[i]:
                 if d not in d_sorted_alldrs[i]:
@@ -244,9 +256,6 @@ class OPSiteFingerprint(BaseFeaturizer):
 
         for i in range(-self.ndr, self.ndr + 1):
             prev_cn = 0
-            prev_site_list = None
-            prev_d_fac = None
-            dmin = min(d_sorted_alldrs[i])
             for d in d_sorted_alldrs[i]:
                 this_cn = 0
                 site_list = [s]
@@ -270,7 +279,8 @@ class OPSiteFingerprint(BaseFeaturizer):
                     for it in range(len(self.optypes[cn])):
                         opval = self.ops[cn][it].get_order_parameters(
                             site_list, 0,
-                            indices_neighs=[j for j in range(1, len(site_list))])
+                            indices_neighs=[j for j in
+                                            range(1, len(site_list))])
                         if opval[0] is None:
                             opval[0] = 0
                         else:
@@ -278,14 +288,12 @@ class OPSiteFingerprint(BaseFeaturizer):
                         if self.optypes[cn][it] == 'bcc':
                             opval[0] = opval[0] / 0.976
                         opvals[i].append(opval[0])
-                prev_site_list = site_list
                 prev_cn = this_cn
-                prev_d_fac = d_fac
                 if prev_cn >= 12:
                     break
 
         opvals_out = []
-        ps = PropertyStats()
+
         for j in range(len(opvals[0])):
             # Compute histogram, determine peak, and location
             # of peak value.
@@ -318,7 +326,8 @@ class OPSiteFingerprint(BaseFeaturizer):
             op_peaks = []
             for i, h in enumerate(hist):
                 if h == max_hist:
-                    op_peaks.append([i, 0.5 * (bin_edges[i] + bin_edges[i + 1])])
+                    op_peaks.append(
+                        [i, 0.5 * (bin_edges[i] + bin_edges[i + 1])])
             # Address problem that 2 OP values can be close to a bin edge.
             hist2 = []
             op_peaks2 = []
@@ -326,8 +335,10 @@ class OPSiteFingerprint(BaseFeaturizer):
             while i < len(op_peaks):
                 if i < len(op_peaks) - 1:
                     if op_peaks[i + 1][0] - op_peaks[i][0] == 1:
-                        op_peaks2.append(0.5 * (op_peaks[i][1] + op_peaks[i + 1][1]))
-                        hist2.append(hist[op_peaks[i][0]] + hist[op_peaks[i + 1][0]])
+                        op_peaks2.append(
+                            0.5 * (op_peaks[i][1] + op_peaks[i + 1][1]))
+                        hist2.append(
+                            hist[op_peaks[i][0]] + hist[op_peaks[i + 1][0]])
                         i += 1
                     else:
                         op_peaks2.append(op_peaks[i][1])
@@ -355,15 +366,27 @@ class OPSiteFingerprint(BaseFeaturizer):
         return ['Nils E. R. Zimmermann']
 
 
+# TODO: unit tests!!
 class CrystalSiteFingerprint(BaseFeaturizer):
     """
-    An alternate site fingerprint currently undergoing testing. This code
-    will either be improved or deleted depending on how the tests go. For now,
-    docs are minimal.
+    A site fingerprint intended for periodic crystals. The fingerprint represents
+    the value of various order parameters for the site; each value is the product
+    two quantities: (i) the value of the order parameter itself and (ii) a factor
+    that describes how consistent the number of neighbors is with that order
+    parameter. Note that we can include only factor (ii) using the "wt" order
+    parameter which is always set to 1.
     """
 
     @staticmethod
     def from_preset(preset, cation_anion=False):
+        """
+        Use preset parameters to get the fingerprint
+
+        Args:
+            preset (str): name of preset ("cn" or "ops")
+            cation_anion (bool): whether to only consider cation<->anion bonds
+                (bonds with zero charge are also allowed)
+        """
         if preset == "cn":
             optypes = dict([(k + 1, ["wt"]) for k in range(16)])
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
@@ -391,6 +414,21 @@ class CrystalSiteFingerprint(BaseFeaturizer):
 
     def __init__(self, optypes, override_cn1=True, cutoff_radius=8, tol=1E-2,
                  cation_anion=False):
+        """
+        Initialize the CrystalSiteFingerprint. Use the from_preset() function to
+        use default params.
+
+        Args:
+            optypes (dict): a dict of coordination number (int) to a list of str
+                representing the order parameter types
+            override_cn1 (bool): whether to use a special function for the single
+                neighbor case. Suggest to keep True.
+            cutoff_radius (int): radius in Angstroms for neighbor finding
+            tol (float): numerical tolerance (in case your site distances are
+                not perfect or to correct for float tolerances)
+            cation_anion (bool): whether to only consider cation<->anion bonds
+                (bonds with zero charge are also allowed)
+        """
 
         self.optypes = optypes.copy()
         self.override_cn1 = override_cn1
@@ -399,7 +437,8 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         self.cation_anion = cation_anion
 
         if self.override_cn1 and self.optypes.get(1) != ["wt"]:
-            raise ValueError("If override_cn1 is True, optypes[1] must be ['wt']!")
+            raise ValueError(
+                "If override_cn1 is True, optypes[1] must be ['wt']!")
 
         self.ops = {}
         for cn, t_list in self.optypes.items():
@@ -416,7 +455,18 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                     self.ops[cn].append(OrderParameters([t]))
 
     def featurize(self, struct, idx):
-        cn_fingerprint_array = defaultdict(list)  # dict where key = CN, val is array that contains each OP for that CN
+        """
+        Get crystal fingerprint of site with given index in input
+        structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            list of weighted order parameters of target site.
+        """
+
+        cn_fingerprint_array = defaultdict(
+            list)  # dict where key = CN, val is array that contains each OP for that CN
         total_weight = math.pi / 4  # 1/4 unit circle area
 
         target = None
@@ -427,9 +477,11 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 if site.specie.oxi_state * m_oxi <= 0:  # opposite charge
                     target.append(site.specie)
             if not target:
-                raise ValueError("No valid targets for site within cation_anion constraint!")
+                raise ValueError(
+                    "No valid targets for site within cation_anion constraint!")
 
-        vcf = VoronoiCoordFinder(struct, cutoff=self.cutoff_radius, target=target)
+        vcf = VoronoiCoordFinder(struct, cutoff=self.cutoff_radius,
+                                 target=target)
         n_w = vcf.get_voronoi_polyhedra(idx)
 
         dist_sorted = (sorted(n_w.values(), reverse=True))
@@ -446,31 +498,37 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         dist_bins = []  # bin numerical tolerances (~error bar of measurement)
         for d in dist_norm:
             if not dist_bins or (
-                            d > self.tol and dist_bins[-1] / (1 + self.tol) > d):
+                    d > self.tol and dist_bins[-1] / (1 + self.tol) > d):
                 dist_bins.append(d)
 
         for dist_idx, dist in enumerate(dist_bins):
-            neigh_sites = [n for n, w in n_w.items() if w > 0 and w / dist_sorted[0] >= dist / (1 + self.tol)]
+            neigh_sites = [n for n, w in n_w.items() if
+                           w > 0 and w / dist_sorted[0] >= dist / (
+                                   1 + self.tol)]
             cn = len(neigh_sites)
             if cn in self.ops:
                 for opidx, op in enumerate(self.ops[cn]):
                     if self.optypes[cn][opidx] == "wt":
                         opval = 1
                     else:
-                        opval = op.get_order_parameters([struct[idx]] + neigh_sites, 0,
-                                                        indices_neighs=[i for i in range(1, len(neigh_sites) + 1)])[0]
+                        opval = \
+                        op.get_order_parameters([struct[idx]] + neigh_sites, 0,
+                                                indices_neighs=[i for i in
+                                                                range(1, len(
+                                                                    neigh_sites) + 1)])[
+                            0]
 
                     opval = opval or 0  # handles None
 
-                    if self.optypes[cn][opidx] == 'bcc':  # TODO: ask Nils what this is
+                    if self.optypes[cn][opidx] == 'bcc':  # TODO: remove after pymatgen update
                         opval = opval / 0.976
 
                     # figure out the weight for this opval based on semicircle integration method
                     x1 = 1 - dist
-                    x2 = 1 if dist_idx == len(dist_bins) - 1 else 1 - dist_bins[
-                        dist_idx + 1]
-                    weight = self._semicircle_integral(
-                        x2) - self._semicircle_integral(x1)
+                    x2 = 1 if dist_idx == len(dist_bins) - 1 else \
+                        1 - dist_bins[dist_idx + 1]
+                    weight = self._semicircle_integral(x2) - \
+                             self._semicircle_integral(x1)
 
                     opval = opval * weight / total_weight
 
@@ -506,81 +564,9 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         if r == x:
             return 0.25 * math.pi * r ** 2
 
-        return 0.5 * ((x * math.sqrt(r ** 2 - x ** 2)) + (r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
+        return 0.5 * ((x * math.sqrt(r ** 2 - x ** 2)) + (
+                r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
 
-
-class CrystalSiteCN(BaseFeaturizer):
-    """
-    An alternate site fingerprint currently undergoing testing. This code
-    will either be improved or deleted depending on how the tests go. For now,
-    docs are minimal.
-    """
-
-    def __init__(self, min_coord=1, max_coord=16, use_avg=False, **kwargs):
-        self.min_coord = min_coord
-        self.max_coord = max_coord
-        self.use_avg = use_avg
-
-        optypes = dict([(k, ["wt"]) for k in range(min_coord, max_coord + 1)])
-        self.cnf = CrystalSiteFingerprint(optypes, **kwargs)
-
-    def featurize(self, struct, idx):
-        vector = self.cnf.featurize(struct, idx)
-
-        if self.use_avg:
-            tot = 0
-            weight = 0
-            for idx, val in enumerate(vector):
-                weight += val
-                tot += val * (idx + self.min_coord)
-
-            return [tot / weight]
-
-        max_val = 0
-        best_cn = float("nan")
-        for idx, val in enumerate(vector):
-            if val > max_val:
-                max_val = val
-                best_cn = idx + self.min_coord
-
-        return [best_cn]
-
-    def feature_labels(self):
-        return ['CN_avg'] if self.use_avg else ['CN']
-
-    def citations(self):
-        return ['']
-
-    def implementors(self):
-        return ['Anubhav Jain']
-
-
-# TODO: @nisse3000 this should be made into a Featurizer and more general than 2 classes. Also add unit test afterward, especially since it depends on certain default for OPSiteFingerprint - AJ
-def get_tet_bcc_motif(structure, idx):
-    """
-    Convenience class-method from Nils Zimmermann.
-    Used to distinguish coordination environment in half-Heuslers.
-    Args:
-        structure (pymatgen Structure): the target structure to evaluate
-        idx (index): the site index in the structure
-    Returns:
-        (str) that describes site coordination enviornment
-            'bcc'
-            'tet'
-            'unrecognized'
-    """
-
-    op_site_fp = OPSiteFingerprint()
-    fp = op_site_fp.featurize(structure, idx)
-    labels = op_site_fp.feature_labels()
-    i_tet = labels.index('tet CN_4')
-    i_bcc = labels.index('bcc CN_8')
-    if fp[i_bcc] > 0.5:
-        return 'bcc'
-    elif fp[i_tet] > 0.5:
-        return 'tet'
-    else:
-        return 'unrecognized'
 
 class VoronoiIndex(BaseFeaturizer):
     """
@@ -590,28 +576,29 @@ class VoronoiIndex(BaseFeaturizer):
     e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...]
          for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...]
          for icosahedra, the Voronoi indices are [0,0,12,0,...]
-
-    Parameters:
-        cutoff (float): cutoff distance in determining the potential neighbors
-                        for Voronoi tessellation analysis (default: 6.0)
-
     """
 
     def __init__(self, cutoff=6.0):
-        self.cutoff = cutoff
-
-    def featurize(self, struct, site):
         """
-        :param struct: Pymatgen Structure object
-        :param site: index of target site in structure
-        :return: voro_index: Voronoi indices
-                 voro_index_sum: sum of Voronoi indices
-                 voro_index_frac: fractional Voronoi indices
+        Args:
+            cutoff (float): cutoff distance in determining the potential
+                neighbors for Voronoi tessellation analysis
+        """
+        self.cutoff = cutoff
+        self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
+
+    def featurize(self, struct, idx):
+        """
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            list including Voronoi indices, sum of Voronoi indices, and
+            fractional Voronoi indices
         """
 
         voro_index_result = []
-        self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
-        voro_index_list = self.voronoi_analyzer.analyze(struct, n=site)
+        voro_index_list = self.voronoi_analyzer.analyze(struct, n=idx)
         for voro_index in voro_index_list:
             voro_index_result.append(voro_index)
         voro_index_sum = sum(voro_index_list)

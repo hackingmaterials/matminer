@@ -1,37 +1,37 @@
 from __future__ import division
 
 """
-File containing general methods for computing property statistics
+General methods for computing property statistics from a list of values
 """
+
 import numpy as np
 from scipy import stats
 
 from six import string_types
 
 
-# TODO: some of this needs a bit more cleanup. The kernel methods (requiring two lists) should
-# probably go in a different class. Some of the method signatures are consistent, others aren't.
-# Just needs a 15 minute cleanup check. -computron
-
-
 class PropertyStats(object):
-    """This class contains statistical operations that are commonly employed when computing features
+    """This class contains statistical operations that are commonly employed
+    when computing features.
 
-    The primary way for interacting with this class is to call the ``calc_stat`` function, which takes the name of the
-    statistic you would like to compute and the weights/values of data to be assessed. For example, computing the
-    mean of a list looks like::
+    The primary way for interacting with this class is to call the
+    ``calc_stat`` function, which takes the name of the statistic you would
+    like to compute and the weights/values of data to be assessed. For example,
+    computing the mean of a list looks like::
 
         x = [1, 2, 3]
         PropertyStats.calc_stat(x, 'mean') # Result is 2
         PropertyStats.calc_stat(x, 'mean', weights=[0, 0, 1]) # Result is 3
 
-    Some of the statistics functions take options (e.g., Holder means). You can pass them to the the statistics
-    functions by adding them after the name and two underscores. For example, the 0th Holder mean would be::
+    Some of the statistics functions take options (e.g., Holder means). You can
+    pass them to the the statistics functions by adding them after the name and
+    two colons. For example, the 0th Holder mean would be::
 
-        PropertyStats.calc_stat(x, 'holder_mean__0')
+        PropertyStats.calc_stat(x, 'holder_mean::0')
 
-    You can, of course, call the statistical functions directly. All take at least two arguments. The first is the data
-    being assessed and the second, optional, argument is the weights.
+    You can, of course, call the statistical functions directly. All take at
+    least two arguments.  The first is the data being assessed and the second,
+    optional, argument is the weights.
     """
 
     @staticmethod
@@ -42,13 +42,13 @@ class PropertyStats(object):
         Args:
             data_lst (list of floats): list of values
             stat (str) - Name of property to be compute. If there are arguments to the statistics function, these
-             should be added after the name and separated by two underscores. For example, the 2nd Holder mean would
-             be "holder_mean__2"
+             should be added after the name and separated by two colons. For example, the 2nd Holder mean would
+             be "holder_mean::2"
             weights (list of floats): (Optional) weights for each element in data_lst
         Returns:
             float - Desired statistic
         """
-        statistics = stat.split("__")
+        statistics = stat.split("::")
         return getattr(PropertyStats, statistics[0])(data_lst, weights, *statistics[1:])
 
     @staticmethod
@@ -57,7 +57,7 @@ class PropertyStats(object):
 
         Args:
             data_lst (list of floats): List of values to be assessed
-            weights (ignored)
+            weights: (ignored)
         Returns: 
             minimum value
         """
@@ -69,7 +69,7 @@ class PropertyStats(object):
 
         Args:
             data_lst (list of floats): List of values to be assessed
-            weights (ignored)
+            weights: (ignored)
         Returns: 
             maximum value
         """
@@ -81,7 +81,7 @@ class PropertyStats(object):
 
         Args:
             data_lst (list of floats): List of values to be assessed
-            weights (ignored)
+            weights: (ignored)
         Returns: 
             range
         """
@@ -116,8 +116,9 @@ class PropertyStats(object):
     def avg_dev(data_lst, weights=None):
         """Mean absolute deviation of list of element data.
 
-        This is computed by first calculating the mean of the list, and then computing the average absolute difference
-        between each value and the mean.
+        This is computed by first calculating the mean of the list,
+        and then computing the average absolute difference between each value
+        and the mean.
 
         Args:
             data_lst (list of floats): List of values to be assessed
@@ -171,8 +172,9 @@ class PropertyStats(object):
     def mode(data_lst, weights=None):
         """Mode of a list of data.
 
-        If multiple elements occur equally-frequently (or same weight, if weights are provided), this function
-        will return the minimum of those values.
+        If multiple elements occur equally-frequently (or same weight, if
+        weights are provided), this function will return the minimum of those
+        values.
 
         Args:
             data_lst (list of floats): List of values to be assessed
@@ -190,25 +192,6 @@ class PropertyStats(object):
 
             # Return the minimum of the most-frequent entries
             return data_lst[most_freq].min()
-
-    @staticmethod
-    def n_numerical_modes(data_lst, n=2, dl=0.1):
-        """
-        Returns the n first modes of a data set that are obtained with
-            a finite bin size for the underlying frequency distribution.
-        Args:
-            data_lst ([float]): data values.
-            n (integer): number of most frequent elements to be determined.
-            dl (float): bin size of underlying (coarsened) distribution.
-        Returns:
-            ([float]): first n most frequent entries (or nan if not found).
-        """
-        if len(set(data_lst)) == 1:
-            return [data_lst[0]] + [float('NaN') for _ in range(n-1)]
-        hist, bins = np.histogram(data_lst, bins=np.arange(
-                min(data_lst), max(data_lst), dl), density=False)
-        modes = list(bins[np.argsort(hist)[-n:]][::-1])
-        return modes + [float('NaN') for _ in range(n-len(modes))]
 
     @staticmethod
     def holder_mean(data_lst, weights=None, power=1):
@@ -266,23 +249,3 @@ class PropertyStats(object):
         """Returns a flattened copy of data_lst-as a numpy array
         """
         return np.array(data_lst).flatten()
-
-    @staticmethod
-    def laplacian_kernel(arr0, arr1, SIGMA):
-        """
-        Returns a Laplacian kernel of the two arrays
-        for use in KRR or other regressions using the
-        kernel trick.
-        """
-        diff = arr0 - arr1
-        return np.exp(-np.linalg.norm(diff.A1, ord=1) / SIGMA)
-
-    @staticmethod
-    def gaussian_kernel(arr0, arr1, SIGMA):
-        """
-        Returns a Gaussian kernel of the two arrays
-        for use in KRR or other regressions using the
-        kernel trick.
-        """
-        diff = arr0 - arr1
-        return np.exp(-np.linalg.norm(diff.A1, ord=2)**2 / 2 / SIGMA**2)
