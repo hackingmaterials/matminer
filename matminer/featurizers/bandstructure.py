@@ -236,8 +236,6 @@ class BandFeaturizer(BaseFeaturizer):
         return ['Alireza Faghaninia', 'Anubhav Jain']
 
 
-# TODO: Features should not return arrays. (i.e., each particular feature should be a float, although you can have an array of float features) -computron
-# TODO: general code cleanup
 class DOSFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen dos object.
@@ -276,171 +274,143 @@ class DOSFeaturizer(BaseFeaturizer):
         self.sampling_resolution = sampling_resolution
         self.gaussian_smear = gaussian_smear
 
-        self.labels = ["cbm_percents", "cbm_locations",
-                       "cbm_species", "cbm_characters"]
-        if self.coordination_features:
-            self.labels.append("cbm_coordinations")
-
-        self.labels.extend(["cbm_significant_contributors",
-                            "vbm_percents", "vbm_locations",
-                            "vbm_species", "vbm_characters"])
-        if self.coordination_features:
-            self.labels.append("vbm_coordinations")
-
-        self.labels.append("vbm_significant_contributors")
-
     def featurize(self, dos):
-        """
-        Args:
-            dos (pymatgen CompleteDos or their dict):
-                    The density of states to featurize. Must be a complete DOS,
-                    (i.e. contains PDOS and structure, in addition to total DOS)
-
-        Returns:
-             ([float | string]): a list of band structure features.
-                List of currently supported features:
-                .. xbm_percents: [(float)] fractions that orbitals contribute
-                .. xbm_locations: [[(float)]] cartesian locations of orbitals
-                .. xbm_species: [(str)] elemental specie of orbitals (ex: 'Ti')
-                .. xbm_characters: [(str)] orbital characters (s p d or f)
-                .. xbm_coordinations: [(str)] the coordination geometry that
-                        the orbitals reside in. (the coordination environment
-                        of the site the orbital is associated with)
-                .. xbm_significant_contributors: (int) the number of orbitals
-                        with contributions above the significance_threshold
-        """
-
-        if isinstance(dos, dict):
-            dos = CompleteDos.from_dict(dos)
-
-        # preparation
-        orbital_scores = DOSFeaturizer.get_cbm_vbm_scores(dos,
-                                                          self.coordination_features,
-                                                          self.energy_cutoff,
-                                                          self.sampling_resolution,
-                                                          self.gaussian_smear)
-
-        orbital_scores.sort(key=lambda x: x['cbm_score'], reverse=True)
-        cbm_contributors = orbital_scores[0:self.contributors]
-        cbm_sig_cont = [orb for orb in orbital_scores
-                        if orb['cbm_score'] > self.significance_threshold]
-        orbital_scores.sort(key=lambda x: x['vbm_score'], reverse=True)
-        vbm_contributors = orbital_scores[0:self.contributors]
-        vbm_sig_cont = [orb for orb in orbital_scores
-                        if orb['vbm_score'] > self.significance_threshold]
-
-        features = []
-
-        for extremum in ["cbm", "vbm"]:
-            for feat in ["{}_score".format(extremum), "location", "specie",
-                         "character", "coordination",
-                         "significant_contributors"]:
-
-                contributors = locals()["{}_contributors".format(extremum)]
-
-                if feat == "coordination":
-                    if self.coordination_features:
-                        features.append([contributors[i]['coordination'] for i
-                                         in range(0, self.contributors)])
-                elif feat == "significant_contributors":
-                    features.append(
-                        len(locals()["{}_sig_cont".format(extremum)]))
-
-                else:
-                    features.append([contributors[i][feat] for i
-                                     in range(0, self.contributors)])
-
-        return features
-
-    def feature_labels(self):
-        return self.labels
-
-    @staticmethod
-    def get_cbm_vbm_scores(dos, coordination_features, energy_cutoff,
-                           sampling_resolution, gaussian_smear):
         """
         Args:
             dos (pymatgen CompleteDos or their dict):
                 The density of states to featurize. Must be a complete DOS,
                 (i.e. contains PDOS and structure, in addition to total DOS)
-            coordination_features (bool):
-                if true, will also return the coordination enviornment of the
-                PDOS features
-            energy_cutoff (float in eV):
-                The extent (into the bands) to sample the DOS
-            sampling_resolution (int):
-                Number of points to sample DOS
-            gaussian_smear (float in eV):
-                Gaussian smearing (sigma) around each sampled point in the DOS
+                and must contain the structure.
+
         Returns:
-            orbital_scores [(dict)]:
-                A list of how much each orbital contributes to the partial
-                density of states up to energy_cutoff. Dictionary items are:
-                .. cbm_score: (float) fractional contribution to conduction band
-                .. vbm_score: (float) fractional contribution to valence band
-                .. species: (pymatgen Specie) the Specie of the orbital
-                .. character: (str) is the orbital character s, p, d, or f
-                .. location: [(float)] cartesian coordinates of the orbital
-                .. coordination (str) optional-coordination enviornment from op
-                                        site feature vector
+            xbm_score_i (float): fractions of ith contributor orbital
+            xbm_location_i (str): cartesian coordinate of ith contributor.
+                For example, '0.0;0.0;0.0' if Gamma
+            xbm_specie_i: (str) elemental specie of ith contributor (ex: 'Ti')
+            xbm_character_i: (str) orbital character of ith contributor (s p d or f)
+            xbm_coordination_i: (str) the coordination geometry that the ith
+                contributor orbital reside in. (the coordination environment
+                of the site the orbital is associated with)
+            xbm_nsignificant: (int) the number of orbitals with contributions
+                above the significance_threshold
         """
 
-        cbm, vbm = dos.get_cbm_vbm(tol=0.01)
+        if isinstance(dos, dict):
+            dos = CompleteDos.from_dict(dos)
+        if dos.structure is None:
+            raise ValueError('The input dos must contain the structure.')
+        orbscores = get_cbm_vbm_scores(dos,
+                self.coordination_features, self.energy_cutoff,
+                self.sampling_resolution, self.gaussian_smear)
+        self.feat = {}
+        for ex in ['cbm', 'vbm']:
+            orbscores.sort(key=lambda x: x['{}_score'.format(ex)], reverse=True)
+            scores = np.array([s['{}_score'.format(ex)] for s in orbscores])
+            self.feat['{}_nsignificant'.format(ex)] = len(scores[scores>self.significance_threshold])
+            i = 0
+            while i < self.contributors:
+                sd = orbscores[i]
+                if i < len(orbscores):
+                    for p in ['character', 'specie', 'coordination']:
+                        self.feat['{}_{}_{}'.format(ex, p, i + 1)] = sd[p]
+                    self.feat['{}_location_{}'.format(ex, i+1)] = '{};{};{}'.format(
+                        sd['location'][0], sd['location'][1], sd['location'][2])
+                    self.feat['{}_score_{}'.format(ex, i+1)] = float(sd['{}_score'.format(ex)])
+                else:
+                    for p in ['{}_score'.format(ex), 'character', 'specie',
+                              'coordination', 'location']:
+                        self.feat['{}_{}_{}'.format(ex, p, i+1)] = float('NaN')
+                i += 1
+        return list(self.feat.values())
 
-        structure = dos.structure
-        sites = structure.sites
-
-        orbital_scores = []
-        for i in range(0, len(sites)):
-
-            # if you desire coordination enviornment as feature
-            if coordination_features:
-                geometry = get_tet_bcc_motif(structure, i)
-
-            site = sites[i]
-            proj = dos.get_site_spd_dos(site)
-            for orb in proj:
-                # calculate contribution
-                energies = [e for e in proj[orb].energies]
-                smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
-                dos_up = smear_dos[Spin.up]
-                dos_down = smear_dos[Spin.down] if Spin.down in smear_dos \
-                    else smear_dos[Spin.up]
-                dos_total = [sum(id) for id in zip(dos_up, dos_down)]
-
-                vbm_score = 0
-                vbm_space = np.linspace(vbm, vbm - energy_cutoff,
-                                        num=sampling_resolution)
-                for e in vbm_space:
-                    vbm_score += np.interp(e, energies, dos_total)
-
-                cbm_score = 0
-                cbm_space = np.linspace(cbm, cbm + energy_cutoff,
-                                        num=sampling_resolution)
-                for e in cbm_space:
-                    cbm_score += np.interp(e, energies, dos_total)
-
-                # add orbital scores to list
-                orbital_score = {
-                    'cbm_score': cbm_score,
-                    'vbm_score': vbm_score,
-                    'specie': str(site.specie),
-                    'character': str(orb),
-                    'location': list(site.coords)}
-                if coordination_features:
-                    orbital_score['coordination'] = geometry
-                orbital_scores.append(orbital_score)
-
-        # normalize by total contribution
-        total_cbm = sum([orbital_scores[i]['cbm_score'] for i in
-                         range(0, len(orbital_scores))])
-        total_vbm = sum([orbital_scores[i]['vbm_score'] for i in
-                         range(0, len(orbital_scores))])
-        for orbital in orbital_scores:
-            orbital['cbm_score'] = orbital['cbm_score'] / total_cbm
-            orbital['vbm_score'] = orbital['vbm_score'] / total_vbm
-
-        return orbital_scores
+    def feature_labels(self):
+        return list(self.feat.keys())
 
     def implementors(self):
-        return ['Maxwell Dylla', 'Anubhav Jain']
+        return ['Maxwell Dylla', 'Alireza Faghaninia', 'Anubhav Jain']
+
+
+def get_cbm_vbm_scores(dos, coordination_features, energy_cutoff,
+                       sampling_resolution, gaussian_smear):
+    """
+    Args:
+        dos (pymatgen CompleteDos or their dict):
+            The density of states to featurize. Must be a complete DOS,
+            (i.e. contains PDOS and structure, in addition to total DOS)
+        coordination_features (bool):
+            if true, will also return the coordination enviornment of the
+            PDOS features
+        energy_cutoff (float in eV):
+            The extent (into the bands) to sample the DOS
+        sampling_resolution (int):
+            Number of points to sample DOS
+        gaussian_smear (float in eV):
+            Gaussian smearing (sigma) around each sampled point in the DOS
+    Returns:
+        orbital_scores [(dict)]:
+            A list of how much each orbital contributes to the partial
+            density of states up to energy_cutoff. Dictionary items are:
+            .. cbm_score: (float) fractional contribution to conduction band
+            .. vbm_score: (float) fractional contribution to valence band
+            .. species: (pymatgen Specie) the Specie of the orbital
+            .. character: (str) is the orbital character s, p, d, or f
+            .. location: [(float)] cartesian coordinates of the orbital
+            .. coordination (str) optional-coordination environment from op
+                                    site feature vector
+    """
+
+    cbm, vbm = dos.get_cbm_vbm(tol=0.01)
+    structure = dos.structure
+    sites = structure.sites
+
+    orbital_scores = []
+    for i in range(0, len(sites)):
+
+        # if you desire coordination environment as feature
+        if coordination_features:
+            geometry = get_tet_bcc_motif(structure, i)
+
+        site = sites[i]
+        proj = dos.get_site_spd_dos(site)
+        for orb in proj:
+            # calculate contribution
+            energies = [e for e in proj[orb].energies]
+            smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
+            dos_up = smear_dos[Spin.up]
+            dos_down = smear_dos[Spin.down] if Spin.down in smear_dos \
+                else smear_dos[Spin.up]
+            dos_total = [sum(id) for id in zip(dos_up, dos_down)]
+
+            vbm_score = 0
+            vbm_space = np.linspace(vbm, vbm - energy_cutoff,
+                                    num=sampling_resolution)
+            for e in vbm_space:
+                vbm_score += np.interp(e, energies, dos_total)
+
+            cbm_score = 0
+            cbm_space = np.linspace(cbm, cbm + energy_cutoff,
+                                    num=sampling_resolution)
+            for e in cbm_space:
+                cbm_score += np.interp(e, energies, dos_total)
+
+            # add orbital scores to list
+            orbital_score = {
+                'cbm_score': cbm_score,
+                'vbm_score': vbm_score,
+                'specie': str(site.specie),
+                'character': str(orb),
+                'location': list(site.coords)}
+            if coordination_features:
+                orbital_score['coordination'] = geometry
+            orbital_scores.append(orbital_score)
+
+    # normalize by total contribution
+    total_cbm = sum([orbital_scores[i]['cbm_score'] for i in
+                     range(0, len(orbital_scores))])
+    total_vbm = sum([orbital_scores[i]['vbm_score'] for i in
+                     range(0, len(orbital_scores))])
+    for orbital in orbital_scores:
+        orbital['cbm_score'] = orbital['cbm_score'] / total_cbm
+        orbital['vbm_score'] = orbital['vbm_score'] / total_vbm
+
+    return orbital_scores

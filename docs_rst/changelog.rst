@@ -5,6 +5,18 @@
 matminer Changelog
 ==================
 
+**v0.1.7**
+
+* lots of code cleanup / refactoring / review, including trimming of unused / moved packages (A. Jain)
+* new Chemenv structure fingerprint (N. Zimmermann)
+* various updates to BSFeaturizer (A. Faghaninia)
+* cleanup / rework of DOSFeaturizer (A. Faghaninia)
+* Updated citation for OFM paper (L. Ward)
+* CNSiteFingerprint goes to CN=16 by default, includes two presets ("cn" and "ops") (A. Jain)
+* stats use double colon instead of double underscore for params (A. Jain)
+* Various cleanups to Miedema featurizer (Q. Wang, A. Faghaninia, A. Dunn)
+
+
 **v0.1.6**
 
 * new CrystalSiteFingerprint and CNSiteFingerprint (A. Jain)

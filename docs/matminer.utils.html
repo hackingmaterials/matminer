@@ -1,0 +1,254 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>matminer.utils package &#8212; matminer 0.1.7 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.7 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matminer-utils-package">
+<h1>matminer.utils package<a class="headerlink" href="#matminer-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="matminer.utils.data_files.html">matminer.utils.data_files package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matminer.utils.data_files.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.utils.data_files.html#module-matminer.utils.data_files.deml_elementdata">matminer.utils.data_files.deml_elementdata module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.utils.data_files.html#module-matminer.utils.data_files">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matminer.utils.data">
+<span id="matminer-utils-data-module"></span><h2>matminer.utils.data module<a class="headerlink" href="#module-matminer.utils.data" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.utils.data.AbstractData">
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">AbstractData</code><a class="headerlink" href="#matminer.utils.data.AbstractData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="matminer.utils.data.AbstractData.get_property">
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>x</em>, <em>property_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.AbstractData.get_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches data / information for an object x.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>x: input data/object to retrieve the property of. Input type depends</dt>
+<dd>on type of abstract data, e.g., a Composition for MagpieData</dd>
+</dl>
+<p class="last">property_name (str): Name of property to retrieve
+<a href="#id1"><span class="problematic" id="id2">*</span></a>args: other arguments needed by the AbstractData object
+<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: other keyword arguments needed by the AbstractData object</p>
+</dd>
+<dt>Returns:</dt>
+<dd>Property value(s), typically either float or list of float.
+Note: if multiple values are returned for a Composition, the
+convention is to sort values by the element’s atomic number.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.utils.data.PymatgenData">
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">PymatgenData</code><a class="headerlink" href="#matminer.utils.data.PymatgenData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.utils.data.AbstractData" title="matminer.utils.data.AbstractData"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.AbstractData</span></code></a></p>
+<p>Class to get data from pymatgen. See also:
+S.P. Ong, W.D. Richards, A. Jain, G. Hautier, M. Kocher, S. Cholia, et al.,
+Python Materials Genomics (pymatgen): A robust, open-source python library
+for materials analysis, Comput. Mater. Sci. 68 (2013) 314-319.</p>
+<dl class="method">
+<dt id="matminer.utils.data.PymatgenData.get_property">
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>comp</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.PymatgenData.get_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get descriptor data for elements in a compound from pymatgen.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">comp (str/Composition): pymatgen Composition object
+property_name (str): pymatgen element attribute name, as defined in</p>
+<blockquote class="last">
+<div>the Element class at <a class="reference external" href="http://pymatgen.org/_modules/pymatgen/core/periodic_table.html">http://pymatgen.org/_modules/pymatgen/core/periodic_table.html</a>.
+For ‘ionic_radii’ property, the Composition object must consist
+of oxidation state decorated Specie objects (not plain Element objects).</div></blockquote>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) of values containing descriptor floats for each atom in the</dt>
+<dd>compound (sorted by the atomic number Z of the constituent atoms)</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.utils.flattendict">
+<span id="matminer-utils-flattendict-module"></span><h2>matminer.utils.flattendict module<a class="headerlink" href="#module-matminer.utils.flattendict" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="matminer.utils.flattendict.flattenDict">
+<code class="descclassname">matminer.utils.flattendict.</code><code class="descname">flattenDict</code><span class="sig-paren">(</span><em>d</em>, <em>result=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.flattendict.flattenDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to flatten a JSON dictionary. Taken from: <a class="reference external" href="https://gist.github.com/higarmi/6708779">https://gist.github.com/higarmi/6708779</a></p>
+<p>example: The following JSON document:
+{“maps”:[{“id1”:”blabla”,”iscategorical1”:”0”, “perro”:[{“dog1”: “1”, “dog2”: “2”}]},{“id2”:”blabla”,”iscategorical2”:”0”}],
+“masks”:{“id”:”valore”},
+“om_points”:”value”,
+“parameters”:{“id”:”valore”}}</p>
+<p>will have the following output:
+{‘masks.id’: ‘valore’, ‘maps.iscategorical2’: ‘0’, ‘om_points’: ‘value’, ‘maps.iscategorical1’: ‘0’,
+‘maps.id1’: ‘blabla’, ‘parameters.id’: ‘valore’, ‘maps.perro.dog2’: ‘2’, ‘maps.perro.dog1’: ‘1’, ‘maps.id2’: ‘blabla’}</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.utils.kernels">
+<span id="matminer-utils-kernels-module"></span><h2>matminer.utils.kernels module<a class="headerlink" href="#module-matminer.utils.kernels" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="matminer.utils.kernels.gaussian_kernel">
+<code class="descclassname">matminer.utils.kernels.</code><code class="descname">gaussian_kernel</code><a class="headerlink" href="#matminer.utils.kernels.gaussian_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>staticmethod(function) -&gt; method</p>
+<p>Convert a function to be a static method.</p>
+<p>A static method does not receive an implicit first argument.
+To declare a static method, use this idiom:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>class C:</dt>
+<dd><p class="first">&#64;staticmethod
+def f(arg1, arg2, …):</p>
+<blockquote class="last">
+<div>…</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p>It can be called either on the class (e.g. C.f()) or on an instance
+(e.g. C().f()).  The instance is ignored except for its class.</p>
+<p>Static methods in Python are similar to those found in Java or C++.
+For a more advanced concept, see the classmethod builtin.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.utils.kernels.laplacian_kernel">
+<code class="descclassname">matminer.utils.kernels.</code><code class="descname">laplacian_kernel</code><a class="headerlink" href="#matminer.utils.kernels.laplacian_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>staticmethod(function) -&gt; method</p>
+<p>Convert a function to be a static method.</p>
+<p>A static method does not receive an implicit first argument.
+To declare a static method, use this idiom:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>class C:</dt>
+<dd><p class="first">&#64;staticmethod
+def f(arg1, arg2, …):</p>
+<blockquote class="last">
+<div>…</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<p>It can be called either on the class (e.g. C.f()) or on an instance
+(e.g. C().f()).  The instance is ignored except for its class.</p>
+<p>Static methods in Python are similar to those found in Java or C++.
+For a more advanced concept, see the classmethod builtin.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">matminer.utils package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-matminer.utils.data">matminer.utils.data module</a></li>
+<li><a class="reference internal" href="#module-matminer.utils.flattendict">matminer.utils.flattendict module</a></li>
+<li><a class="reference internal" href="#module-matminer.utils.kernels">matminer.utils.kernels module</a></li>
+<li><a class="reference internal" href="#module-matminer.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/matminer.utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.7 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>
