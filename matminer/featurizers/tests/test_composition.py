@@ -121,6 +121,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_miedema_all['formation_enthalpy_inter'][1], -0.23512597842733007)
         self.assertAlmostEqual(df_miedema_all['formation_enthalpy_amor'][1], -0.16454184827089643)
         self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_min'][1], -0.052808433113994087)
+        #test returns of nan
         self.assertAlmostEqual(math.isnan(df_miedema_all['formation_enthalpy_inter'][2]), True)
         self.assertAlmostEqual(math.isnan(df_miedema_all['formation_enthalpy_amor'][2]), True)
         self.assertAlmostEqual(math.isnan(df_miedema_all['formation_enthalpy_ss_min'][2]), True)
@@ -139,6 +140,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_bcc'][1], -0.052808433113994087)
         self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_fcc'][1], 0.030105751741108196)
         self.assertAlmostEqual(df_miedema_all['formation_enthalpy_ss_hcp'][1], 0.030105751741108196)
+        #test returns of nan
         self.assertAlmostEqual(math.isnan(df_miedema_all['formation_enthalpy_ss_min'][2]), True)
         self.assertAlmostEqual(math.isnan(df_miedema_all['formation_enthalpy_ss_no_struct'][2]), True)
         self.assertAlmostEqual(math.isnan(df_miedema_all['formation_enthalpy_ss_bcc'][2]), True)
