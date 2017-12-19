@@ -130,7 +130,7 @@ class CompositionFeaturesTest(PymatgenTest):
     def test_miedema_ss(self):
         miedema_df = pd.DataFrame({"composition": [Composition("TiZr"), Composition("Mg10Cu50Ca40"), Composition("Fe2O3")]})
         df_miedema = Miedema(struct_types='ss',
-                                 ss_types = ['min', 'fcc', 'bcc', 'hcp', 'no_latt']).featurize_dataframe(miedema_df, col_id="composition")
+                             ss_types=['min', 'fcc', 'bcc', 'hcp', 'no_latt']).featurize_dataframe(miedema_df, col_id="composition")
         self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_min'][0], 0.036635997549833224)
         self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_fcc'][0], 0.047000270656721008)
         self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_bcc'][0], 0.083275226530828264)
@@ -144,10 +144,10 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_no_latt'][1], -0.0035781358562771083)
 
         self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_min'][2]), True)
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_no_latt'][2]), True)
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_bcc'][2]), True)
         self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_fcc'][2]), True)
+        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_bcc'][2]), True)
         self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_hcp'][2]), True)
+        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_no_latt'][2]), True)
 
 if __name__ == '__main__':
     unittest.main()

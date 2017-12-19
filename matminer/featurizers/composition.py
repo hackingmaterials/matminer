@@ -5,6 +5,7 @@ from pymatgen.core.periodic_table import get_el_sp
 
 import os
 import itertools
+import collections
 
 import numpy as np
 import pandas as pd
@@ -873,21 +874,21 @@ class Miedema(BaseFeaturizer):
     data_dir = os.path.join(module_dir, "..", "utils", "data_files")
 
     def __init__(self, struct_types='inter', ss_types='min', data_source='Miedema'):
-        if isinstance(struct_types, str):
+        if isinstance(struct_types, list):
+            self.struct_types = struct_types
+        else:
             if struct_types == 'all':
                 self.struct_types = ['inter', 'amor', 'ss']
             else:
                 self.struct_types = [struct_types]
-        else:
-            self.struct_types = struct_types
 
-        if isinstance(ss_types, str):
+        if isinstance(ss_types, list):
+            self.ss_types = ss_types
+        else:
             if ss_types == 'all':
                 self.ss_types = ['fcc', 'bcc', 'hcp', 'no_latt']
             else:
                 self.ss_types = [ss_types]
-        else:
-            self.ss_types = ss_types
 
         self.data_source = data_source
         if self.data_source == 'Miedema':
@@ -1046,23 +1047,24 @@ class Miedema(BaseFeaturizer):
         struct_stab = np.array(df_el['structural_stability'])
 
         if latt == 'fcc':
-            latt_stab_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: -2, 4.0: -1.5,
-                              5.0: 9, 5.5: 14, 6.0: 11, 7.0: -3, 8.0: -9.5,
-                              8.5: -11, 9.0: -9, 10.0: -2, 11.0: 1.5,
-                              12.0: 0, 13.0: 0, 14.0: 0, 15.0: 0}
+            latt_stab_dict = {0.0: 0., 1.0: 0, 2.0: 0, 3.0: -2, 4.0: -1.5,
+                              5.0: 9., 5.5: 14., 6.0: 11., 7.0: -3., 8.0: -9.5,
+                              8.5: -11., 9.0: -9., 10.0: -2., 11.0: 1.5,
+                              12.0: 0., 13.0: 0., 14.0: 0., 15.0: 0.}
         elif latt == 'bcc':
-            latt_stab_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: 2.2, 4.0: 2,
-                              5.0: -9.5, 5.5: -14.5, 6.0: -12, 7.0: 4,
-                              8.0: 10, 8.5: 11, 9.0: 8.5, 10.0: 1.5,
-                              11.0: 1.5, 12.0: 0, 13.0: 0, 14.0: 0, 15.0: 0}
+            latt_stab_dict = {0.0: 0., 1.0: 0., 2.0: 0., 3.0: 2.2, 4.0: 2.,
+                              5.0: -9.5, 5.5: -14.5, 6.0: -12., 7.0: 4.,
+                              8.0: 10., 8.5: 11., 9.0: 8.5, 10.0: 1.5,
+                              11.0: 1.5, 12.0: 0., 13.0: 0., 14.0: 0., 15.0: 0.}
         elif latt == 'hcp':
-            latt_stab_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: -2.5, 4.0: -2.5,
-                              5.0: 10, 5.5: 15, 6.0: 13, 7.0: -5,
-                              8.0: -10.5, 8.5: -11, 9.0: -8, 10.0: -1,
-                              11.0: 2.5, 12.0: 0, 13.0: 0, 14.0: 0, 15.0: 0}
+            latt_stab_dict = {0.0: 0., 1.0: 0., 2.0: 0., 3.0: -2.5, 4.0: -2.5,
+                              5.0: 10., 5.5: 15., 6.0: 13., 7.0: -5.,
+                              8.0: -10.5, 8.5: -11., 9.0: -8., 10.0: -1.,
+                              11.0: 2.5, 12.0: 0., 13.0: 0., 14.0: 0., 15.0: 0.}
         else:
             return 0
-
+        latt_stab_dict = collections.OrderedDict(sorted(latt_stab_dict.items(),
+                                                        key=lambda t: t[0]))
         # lattice stability of different lattice_types
         val_avg = np.dot(fracs, val)
         val_bd_lower, val_bd_upper = 0, 0
@@ -1103,7 +1105,7 @@ class Miedema(BaseFeaturizer):
         return deltaH_topo
 
     def featurize(self, comp):
-        """Get Miedema formation enthalpies of target structures: inter, amor
+        """Get Miedema formation enthalpies of target structures: inter, amor,
            ss (can be further divided into 'min', 'fcc', 'bcc', 'hcp', 'no_latt'
                for different lattice_types)
 
@@ -1118,7 +1120,6 @@ class Miedema(BaseFeaturizer):
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         fracs = [el_amt[el] for el in elements]
         len_elements = len(elements)
-
         # divide into a list of sub-binaries
         element_bins = []
         frac_bins = []
@@ -1137,16 +1138,15 @@ class Miedema(BaseFeaturizer):
                                                           frac_bins[i_inter],
                                                           'inter')
                 miedema.append(deltaH_chem_inter)
-
             # ss: solid solution
             elif struct_type == 'ss':
                 deltaH_chem_ss = 0
                 deltaH_elast_ss = 0
-                for i_ss, element_bin in enumerate(element_bins):
+                for bin, element_bin in enumerate(element_bins):
                     deltaH_chem_ss += self.deltaH_chem(element_bin,
-                                                       frac_bins[i_ss], 'ss')
+                                                       frac_bins[bin], 'ss')
                     deltaH_elast_ss += self.deltaH_elast(element_bin,
-                                                         frac_bins[i_ss])
+                                                         frac_bins[bin])
 
                 for ss_type in self.ss_types:
                     if ss_type == 'min':
@@ -1158,18 +1158,16 @@ class Miedema(BaseFeaturizer):
                         deltaH_ss_min = min(deltaH_ss_all)
                         miedema.append(deltaH_ss_min)
                     else:
-                        deltaH_struct_ss = self.deltaH_struct(elements,
-                                                              fracs, ss_type)
-                        miedema.append(deltaH_chem_ss + deltaH_elast_ss +
-                                       deltaH_struct_ss)
+                        deltaH_struct_ss = self.deltaH_struct(elements, fracs, ss_type)
+                        miedema.append(deltaH_chem_ss + deltaH_elast_ss + deltaH_struct_ss)
 
             # amor: amorphous phase
             elif struct_type == 'amor':
                 deltaH_chem_amor = 0
                 deltaH_topo_amor = self.deltaH_topo(elements, fracs)
-                for i_ss, element_bin in enumerate(element_bins):
+                for bin, element_bin in enumerate(element_bins):
                     deltaH_chem_amor += self.deltaH_chem(element_bin,
-                                                         frac_bins[i_ss], 'amor')
+                                                         frac_bins[bin], 'amor')
                 miedema.append(deltaH_chem_amor + deltaH_topo_amor)
 
         # convert kJ/mol to eV/atom. The original Miedema model is in kJ/mol.
