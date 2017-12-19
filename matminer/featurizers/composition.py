@@ -810,11 +810,12 @@ class Miedema(BaseFeaturizer):
     """
     Class to calculate the formation enthalpies of the intermetallic compound,
     solid solution and amorphous phase of a given composition, based on the
-    semi-empirical Miedema model for transitional metals.
+    semi-empirical Miedema model (and some extensions), particularly for
+    transitional metal alloys.
 
     Support elemental, binary and multicomponent alloys.
         For elemental/binary alloys, the formulation is based on the original
-        works by Miedema et al. in 1989;
+        works by Miedema et al. in 1980s;
         For multicomponent alloys, the formulation is basically linear combination
         of sub-binary systems. This is reported to work well for ternary alloys,
         but needs to be careful with quaternary alloys and more.
@@ -837,9 +838,9 @@ class Miedema(BaseFeaturizer):
             'fcc': fcc solid solution
             'bcc': bcc solid solution
             'hcp': hcp solid solution
-            'no_struct': solid solution with no specific structure type
-            'min': min value of ['no_struct', 'fcc', 'bcc', 'hcp']
-            'all': same for ['no_struct', 'fcc', 'bcc', 'hcp']
+            'no_latt': solid solution with no specific structure type
+            'min': min value of ['fcc', 'bcc', 'hcp', 'no_latt']
+            'all': same for ['fcc', 'bcc', 'hcp', 'no_latt']
             ['fcc', 'bcc']: fcc and bcc solid solutions, as an example
 
         data_source (str): default='Miedema', source of dataset
@@ -859,10 +860,13 @@ class Miedema(BaseFeaturizer):
                          'structural_stability'
 
     Returns:
-        a list of float formation enthalpies (per atom):
-            formation_enthalpy_inter:
-            formation_enthalpy_ss:
-            formation_enthalpy_amor:
+        a list of Miedema formation enthalpies (per atom) of target structures
+        for a given composition:
+            formation_enthalpy_inter: for interatomic compound
+            formation_enthalpy_ss: for solid solution, can be divided into
+                                   'min', 'fcc', 'bcc', 'hcp', 'no_latt'
+                                    for different lattice_types
+            formation_enthalpy_amor: for amorphous phase
 
     """
 
@@ -879,7 +883,7 @@ class Miedema(BaseFeaturizer):
 
         if isinstance(ss_types, str):
             if ss_types == 'all':
-                self.ss_types = ['no_struct', 'fcc', 'bcc', 'hcp']
+                self.ss_types = ['fcc', 'bcc', 'hcp', 'no_latt']
             else:
                 self.ss_types = [ss_types]
         else:
@@ -890,7 +894,6 @@ class Miedema(BaseFeaturizer):
             self.df_dataset = pd.read_csv(
                 os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
         else:
-            # allow to extract parameters for pymatgen elements, not done yet
             raise NotImplementedError('data_source {} not implemented yet'.
                                       format(self, data_source))
 
@@ -898,11 +901,13 @@ class Miedema(BaseFeaturizer):
         """chemical term of formation enthalpy
 
         Args:
-            elements:
-            fracs:
-            struct:
+            elements (list of str): list of elements
+            fracs (list of floats): list of atomic fractions
+            struct (str): 'inter', 'ss' or 'amor'
 
         Returns:
+            deltaH_chem (float): chemical term of formation enthalpy
+
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -968,10 +973,11 @@ class Miedema(BaseFeaturizer):
         """elastic term of formation enthalpy
 
         Args:
-            elements:
-            fracs:
+            elements (list of str): list of elements
+            fracs (list of floats): list of atomic fractions
 
         Returns:
+            deltaH_elastic (float): elastic term of formation enthalpy
 
         """
         for el in elements:
@@ -987,7 +993,6 @@ class Miedema(BaseFeaturizer):
         alp = (1.5 * np.power(v_molar, 2/3) /
                reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
 
-        # volume correction
         v_alloy = (v_molar +
                    np.array([alp[0] * (elec[0] - elec[1]) / n_ws[0],
                              alp[1] * (elec[1] - elec[0]) / n_ws[1]]))
@@ -1021,15 +1026,16 @@ class Miedema(BaseFeaturizer):
 
         return deltaH_elast
 
-    def deltaH_struct(self, elements, fracs, lattice):
-        """structural term of formation enthalpy
+    def deltaH_struct(self, elements, fracs, latt):
+        """structural term of formation enthalpy, only for solid solution
 
         Args:
-            elements:
-            fracs:
-            lattice:
+            elements (list of str): list of elements
+            fracs (list of floats): list of atomic fractions
+            latt (str): 'fcc', 'bcc', 'hcp' or 'no_latt'
 
         Returns:
+            deltaH_struct (float): structural term of formation enthalpy
 
         """
         for el in elements:
@@ -1039,20 +1045,17 @@ class Miedema(BaseFeaturizer):
         val = np.array(df_el['valence_electrons'])
         struct_stab = np.array(df_el['structural_stability'])
 
-        # fcc
-        if lattice == 'fcc':
+        if latt == 'fcc':
             latt_stab_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: -2, 4.0: -1.5,
                               5.0: 9, 5.5: 14, 6.0: 11, 7.0: -3, 8.0: -9.5,
                               8.5: -11, 9.0: -9, 10.0: -2, 11.0: 1.5,
                               12.0: 0, 13.0: 0, 14.0: 0, 15.0: 0}
-        # bcc
-        elif lattice == 'bcc':
+        elif latt == 'bcc':
             latt_stab_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: 2.2, 4.0: 2,
                               5.0: -9.5, 5.5: -14.5, 6.0: -12, 7.0: 4,
                               8.0: 10, 8.5: 11, 9.0: 8.5, 10.0: 1.5,
                               11.0: 1.5, 12.0: 0, 13.0: 0, 14.0: 0, 15.0: 0}
-        # hcp
-        elif lattice == 'hcp':
+        elif latt == 'hcp':
             latt_stab_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: -2.5, 4.0: -2.5,
                               5.0: 10, 5.5: 15, 6.0: 13, 7.0: -5,
                               8.0: -10.5, 8.5: -11, 9.0: -8, 10.0: -1,
@@ -1060,7 +1063,7 @@ class Miedema(BaseFeaturizer):
         else:
             return 0
 
-        # lattice stability of different structures: fcc, bcc, hcp
+        # lattice stability of different lattice_types
         val_avg = np.dot(fracs, val)
         val_bd_lower, val_bd_upper = 0, 0
         for key in latt_stab_dict.keys():
@@ -1082,10 +1085,11 @@ class Miedema(BaseFeaturizer):
         """topological term of formation enthalpy, only for amorphous phase
 
         Args:
-            elements:
-            fracs:
+            elements (list of str): list of elements
+            fracs (list of floats): list of atomic fractions
 
         Returns:
+            deltaH_topo (float): topological term of formation enthalpy
 
         """
         for el in elements:
@@ -1099,16 +1103,16 @@ class Miedema(BaseFeaturizer):
         return deltaH_topo
 
     def featurize(self, comp):
-        """Get Miedema formation enthalpy of target structures
+        """Get Miedema formation enthalpies of target structures: inter, amor
+           ss (can be further divided into 'min', 'fcc', 'bcc', 'hcp', 'no_latt'
+               for different lattice_types)
 
         Args:
             comp: Pymatgen composition object
 
         Returns:
-            miedema: list of floats
-            .. deltaH_inter: formation enthalpy of intermetallic compound
-            .. deltaH_ss: formation enthalpy of solid solution
-            .. deltaH_amor: formation enthalpy of amorphous phase
+            miedema (list of floats): formation enthalpies of target structures
+
         """
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
@@ -1135,29 +1139,29 @@ class Miedema(BaseFeaturizer):
                 miedema.append(deltaH_chem_inter)
 
             # ss: solid solution
-            # four types of solid solution prototypes, default: minimum
             elif struct_type == 'ss':
                 deltaH_chem_ss = 0
                 deltaH_elast_ss = 0
                 for i_ss, element_bin in enumerate(element_bins):
                     deltaH_chem_ss += self.deltaH_chem(element_bin,
-                                                       frac_bins[i_ss],
-                                                       'ss')
+                                                       frac_bins[i_ss], 'ss')
                     deltaH_elast_ss += self.deltaH_elast(element_bin,
                                                          frac_bins[i_ss])
 
                 for ss_type in self.ss_types:
                     if ss_type == 'min':
                         deltaH_ss_all = []
-                        for latt in ['no_struct', 'fcc', 'bcc', 'hcp']:
+                        for latt in ['fcc', 'bcc', 'hcp', 'no_latt']:
                             deltaH_ss_all.append(
                                 deltaH_chem_ss + deltaH_elast_ss +
                                 self.deltaH_struct(elements, fracs, latt))
                         deltaH_ss_min = min(deltaH_ss_all)
                         miedema.append(deltaH_ss_min)
                     else:
-                        deltaH_struct_ss = self.deltaH_struct(elements, fracs, ss_type)
-                        miedema.append(deltaH_chem_ss + deltaH_elast_ss + deltaH_struct_ss)
+                        deltaH_struct_ss = self.deltaH_struct(elements,
+                                                              fracs, ss_type)
+                        miedema.append(deltaH_chem_ss + deltaH_elast_ss +
+                                       deltaH_struct_ss)
 
             # amor: amorphous phase
             elif struct_type == 'amor':
@@ -1165,8 +1169,7 @@ class Miedema(BaseFeaturizer):
                 deltaH_topo_amor = self.deltaH_topo(elements, fracs)
                 for i_ss, element_bin in enumerate(element_bins):
                     deltaH_chem_amor += self.deltaH_chem(element_bin,
-                                                       frac_bins[i_ss],
-                                                       'amor')
+                                                         frac_bins[i_ss], 'amor')
                 miedema.append(deltaH_chem_amor + deltaH_topo_amor)
 
         # convert kJ/mol to eV/atom. The original Miedema model is in kJ/mol.
@@ -1175,21 +1178,36 @@ class Miedema(BaseFeaturizer):
 
     def feature_labels(self):
         labels = []
-        for target_struct in self.struct_types:
-            if target_struct == 'ss':
-                for ss_struct in self.ss_types:
-                    labels.append('formation_enthalpy_ss_'+ss_struct)
+        for struct_type in self.struct_types:
+            if struct_type == 'ss':
+                for ss_type in self.ss_types:
+                    labels.append('formation_enthalpy_ss_'+ss_type)
             else:
-                labels.append('formation_enthalpy_'+target_struct)
+                labels.append('formation_enthalpy_'+struct_type)
         return labels
 
     def citations(self):
-        citation = ('@article{de1988cohesion, '
-                    'title={Cohesion in metals},'
-                    'author={De Boer, Frank R and Mattens, WCM '
-                    'and Boom, R and Miedema, AR and Niessen, AK},'
-                    'year={1988}}')
-        return citation
+        miedema_citation = (
+            '@article{miedema_1988, '
+            'title={Cohesion in metals},'
+            'author={De Boer, Frank R and Mattens, WCM '
+            'and Boom, R and Miedema, AR and Niessen, AK},'
+            'year={1988}}')
+        zhang_citation = (
+            '@article{miedema_zhang_2016, '
+            'title={Miedema Calculator: A thermodynamic platform '
+            'for predicting formation enthalpies of alloys within '
+            'framework of Miedema\'s Theory},'
+            'author={R.F. Zhang, S.H. Zhang, Z.J. He, J. Jing and S.H. Sheng},'
+            'journal={Computer Physics Communications}'
+            'year={2016}}')
+        ternary_citation = (
+            '@article{miedema_alonso_1990, '
+            'title={Glass formation in ternary transition metal alloys},'
+            'author={L J Gallego, J A Somoza and J A Alonso},'
+            'journal={Journal of Physics: Condensed Matter}'
+            'year={1990}}')
+        return [miedema_citation, zhang_citation, ternary_citation]
 
     def implementors(self):
         return ['Qi Wang', 'Alireza Faghaninia', 'Anubhav Jain']
