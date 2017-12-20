@@ -1,24 +1,25 @@
 from __future__ import division
 
-from pymatgen import Element, MPRester
-from pymatgen.core.periodic_table import get_el_sp
-
-import os
 import itertools
+import math
+import os
+from functools import reduce
 
 import numpy as np
 import pandas as pd
-import math
-from functools import reduce
+from pymatgen import Element, MPRester
+from pymatgen.core.composition import Composition
+from pymatgen.core.periodic_table import get_el_sp
 
 from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     CohesiveEnergyData
-from matminer.featurizers.stats import PropertyStats
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Anubhav Jain'
 module_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 class ElementProperty(BaseFeaturizer):
     """
@@ -95,7 +96,7 @@ class ElementProperty(BaseFeaturizer):
 
         return ElementProperty(data_source, features, stats)
 
-    def featurize(self, comp):
+    def featurize(self, comp: Composition):
         """
         Get elemental property attributes
 
@@ -108,12 +109,17 @@ class ElementProperty(BaseFeaturizer):
 
         all_attributes = []
 
+        # Initialize stats computer
+        pstats = PropertyStats()
+
+        # Get the element names and fractions
+        elements, fractions = zip(*comp.element_composition.items())
+
         for attr in self.features:
-            elem_data = self.data_source.get_property(comp, attr)
+            elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
 
             for stat in self.stats:
-                all_attributes.append(
-                    PropertyStats().calc_stat(elem_data, stat))
+                all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
 
         return all_attributes
 
@@ -154,6 +160,11 @@ class ElementProperty(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
+
+
+class ChargeDependentElementalProperty(ElementProperty):
+    def featurize(self, comp):
+        raise NotImplementedError()
 
 
 class BandCenter(BaseFeaturizer):
@@ -352,8 +363,8 @@ class Stoichiometry(BaseFeaturizer):
         Args:
             comp: Pymatgen composition object
             p_list (list of ints)
-        
-        Returns: 
+
+        Returns:
             p_norm (list of floats): Lp norm-based stoichiometric attributes.
                 Returns number of atoms if no p-values specified.
         """
@@ -420,9 +431,8 @@ class ValenceOrbital(BaseFeaturizer):
                 fraction of electrons in each orbital, or both
     """
 
-    def __init__(self, data_source=MagpieData(), orbitals=["s", "p", "d", "f"],
-                 props=["avg", "frac"]):
-        self.data_source = data_source
+    def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac")):
+        self.data_source = MagpieData()
         self.orbitals = orbitals
         self.props = props
 
@@ -433,29 +443,27 @@ class ValenceOrbital(BaseFeaturizer):
                 comp: Pymatgen composition object
 
            Returns:
-                valence_attributes (list of floats): Average number and/or fraction of valence electrons in specfied orbitals
+                valence_attributes (list of floats): Average number and/or
+                    fraction of valence electrons in specfied orbitals
         """
 
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        el_fracs = [el_amt[el] for el in elements]
+        elements, fractions = zip(*comp.element_composition.items())
 
-        avg = []
+        # Get the mean number of electrons in each shell
+        avg = [
+            PropertyStats.mean(self.data_source.get_elemental_properties(elements, "N%sValence" % orb),
+                               weights=fractions)
+            for orb in self.orbitals
+        ]
 
-        for orb in self.orbitals:
-            avg.append(
-                PropertyStats().mean(
-                    self.data_source.get_property(comp, "N%sValence" % orb,
-                                                  combine_by_element=True),
-                    weights=el_fracs))
-
+        # If needed, get fraction of electrons in each shell
         if "frac" in self.props:
-            avg_total_valence = PropertyStats().mean(
-                self.data_source.get_property(comp, "NValance",
-                                              combine_by_element=True),
-                weights=el_fracs)
+            avg_total_valence = PropertyStats.mean(
+                self.data_source.get_elemental_properties(elements, "NValance"),
+                weights=fractions)
             frac = [a / avg_total_valence for a in avg]
 
+        # Get the desired attributes
         valence_attributes = []
         for prop in self.props:
             valence_attributes += locals()[prop]
@@ -493,20 +501,24 @@ class ValenceOrbital(BaseFeaturizer):
 class IonProperty(BaseFeaturizer):
     """
     Class to calculate ionic property attributes
-
-    Parameters:
-        data_source (data class): source from which to retrieve element data
     """
 
-    def __init__(self, data_source=MagpieData()):
-        self.data_source = data_source
+    def __init__(self, all_oxi_states=True):
+        """
+
+        Args:
+             all_oxi_states - (boolean), whether to consider all possible oxidation
+                states when checking whether a compound can form a neutral ionic compound
+        """
+        self.data_source = PymatgenData()
+        self.all_oxi_states = all_oxi_states
 
     def featurize(self, comp):
         """
         Ionic character attributes
 
         Args:
-            comp: Pymatgen composition object
+            comp: (Composition) Composition to be featurized
 
         Returns:
             cpd_possible (bool): Indicates if a neutral ionic compound is possible
@@ -514,9 +526,7 @@ class IonProperty(BaseFeaturizer):
             avg_ionic_char (float): Average ionic character
         """
 
-        el_amt = comp.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        values = [el_amt[el] for el in elements]
+        elements, fractions = zip(*comp.element_composition.items())
 
         if len(elements) < 2:  # Single element
             cpd_possible = True
@@ -524,25 +534,16 @@ class IonProperty(BaseFeaturizer):
             avg_ionic_char = 0
         else:
             # Get magpie data for each element
-            ox_states = self.data_source.get_property(comp, "OxidationStates",
-                                                      combine_by_element=True)
-            elec = self.data_source.get_property(comp, "Electronegativity",
-                                                 combine_by_element=True)
-
-            # TODO: consider replacing with oxi_state_guesses - depends on
-            # whether Magpie oxidation states table matches oxi_states table
+            elec = self.data_source.get_elemental_properties(elements, "X")
 
             # Determine if neutral compound is possible
-            cpd_possible = False
-            ox_sets = itertools.product(*ox_states)
-            for ox in ox_sets:
-                if abs(np.dot(ox, values)) < 1e-4:
-                    cpd_possible = True
-                    break
+            #  Note: We use pymatgen's oxidation state checker which
+            #   can detect whether an takes >1 oxidation state (as in Fe3O4)
+            cpd_possible = len(comp.oxi_state_guesses(all_oxi_states=self.all_oxi_states)) > 0
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
-            el_frac = list(np.true_divide(values, sum(values)))
+            el_frac = list(np.true_divide(fractions, sum(fractions)))
 
             ionic_char = []
             avg_ionic_char = 0
@@ -556,7 +557,7 @@ class IonProperty(BaseFeaturizer):
 
             max_ionic_char = np.max(ionic_char)
 
-        return list((cpd_possible, max_ionic_char, avg_ionic_char))
+        return [cpd_possible, max_ionic_char, avg_ionic_char]
 
     def feature_labels(self):
         labels = ["compound possible", "max ionic char", "avg ionic char"]

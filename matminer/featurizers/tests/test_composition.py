@@ -1,21 +1,24 @@
 from __future__ import unicode_literals, division, print_function
 
+import math
 import unittest
 from unittest import SkipTest
 
-import math
 import pandas as pd
-
 from pymatgen import Composition, MPRester
+from pymatgen.core.periodic_table import Specie
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter, Miedema
+from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, \
+    ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, \
+    BandCenter, Miedema
 
 
 class CompositionFeaturesTest(PymatgenTest):
 
     def setUp(self):
-        self.df = pd.DataFrame({"composition":[Composition("Fe2O3")]})
+        self.df = pd.DataFrame({"composition": [Composition("Fe2O3"),
+                                                Composition({Specie("Fe", 1): 1, Specie("O", 1): 1})]})
 
     def test_stoich(self):
         df_stoich = Stoichiometry(num_atoms=True).featurize_dataframe(self.df, col_id="composition")
@@ -39,7 +42,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)
         self.assertAlmostEqual(df_elem_deml["mean atom_num"][0], 15.2)
         self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 8.81816307)
-        #Charge dependent property
+        ## Charge dependent property
         self.assertAlmostEqual(df_elem_deml["minimum magn_moment"][0], 0)
         self.assertAlmostEqual(df_elem_deml["maximum magn_moment"][0], 5.2)
         self.assertAlmostEqual(df_elem_deml["range magn_moment"][0], 5.2)
@@ -52,6 +55,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertTrue(math.isnan(df_elem["maximum bulk_modulus"][0]))
         self.assertAlmostEqual(df_elem["range X"][0], 1.61, 1)
         self.assertAlmostEqual(df_elem["mean X"][0], 2.796, 1)
+        self.assertAlmostEqual(df_elem["max block"][0], 3, 1)
 
     def test_valence(self):
         df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")

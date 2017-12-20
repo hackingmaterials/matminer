@@ -1,7 +1,9 @@
 from __future__ import division, unicode_literals, print_function
 
 """
-Defines wrappers for data sources(magpi, pymatgen etc) for elemental properties.
+Utility classes for retrieving elemental properties. Provides
+a uniform interface to several different elemental property resources
+including ``pymatgen`` and ``Magpie``.
 """
 
 import os
@@ -11,11 +13,11 @@ import abc
 import itertools
 import numpy as np
 from glob import glob
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 
 from monty.design_patterns import singleton
 
-from pymatgen import Element, Composition, Unit
+from pymatgen import Element, Composition
 from pymatgen.core.periodic_table import _pt_data, get_el_sp
 
 __author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain'
@@ -23,31 +25,40 @@ __author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain'
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-class AbstractData((six.with_metaclass(abc.ABCMeta))):
+class AbstractData(six.with_metaclass(abc.ABCMeta)):
+    """Abstract class for retrieving elemental properties
+
+    All classes must implement the `get_elemental_property` operation"""
+
     @abc.abstractmethod
-    def get_property(self, x, property_name, *args, **kwargs):
-        """
-        Fetches data / information for an object x.
+    def get_elemental_property(self, elem, property_name):
+        """Get a certain elemental property for a certain element.
 
         Args:
-            x: input data/object to retrieve the property of. Input type depends
-                on type of abstract data, e.g., a Composition for MagpieData
-            property_name (str): Name of property to retrieve
-            *args: other arguments needed by the AbstractData object
-            **kwargs: other keyword arguments needed by the AbstractData object
-
+            elem - (Element) element to be assessed
+            property_name - (str) property to be retreived
         Returns:
-            Property value(s), typically either float or list of float.
-            Note: if multiple values are returned for a Composition, the
-            convention is to sort values by the element's atomic number.
+            float, property of that element
         """
         pass
+
+    def get_elemental_properties(self, elems, property_name):
+        """Get elemental properties for a list of elements
+
+        Args:
+            elems - ([Element]) list of elements
+            property_name - (str) property to be retrieved
+        Returns:
+            [float], properties of elements
+        """
+        return [self.get_elemental_property(e, property_name) for e in elems]
 
 
 @singleton
 class CohesiveEnergyData(AbstractData):
-    """
-    Singleton class to get cohesive energy data
+    """Get the cohesive energy of an element.
+
+    TODO: Where is this data from? -wardlt
     """
 
     def __init__(self):
@@ -56,7 +67,7 @@ class CohesiveEnergyData(AbstractData):
                                'cohesive_energies.json'), 'r') as f:
             self.cohesive_energy_data = json.load(f)
 
-    def get_property(self, x, property_name="cohesive_energy"):
+    def get_elemental_property(self, elem, property_name='cohesive energy'):
         """
         Args:
             x: (str) Element as str
@@ -65,7 +76,7 @@ class CohesiveEnergyData(AbstractData):
         Returns:
             (float): cohesive energy of the element
         """
-        return self.cohesive_energy_data[x]
+        return self.cohesive_energy_data[elem]
 
 
 @singleton
@@ -84,6 +95,20 @@ class DemlData(AbstractData):
         self.available_props = list(self.all_props.keys()) + \
                                ["formal_charge", "valence_s", "valence_p",
                                 "valence_d", "first_ioniz", "total_ioniz"]
+
+        self.charge_dependent_properties = ["xtal_field_split", "magn_moment", "so_coupling", "first_ioniz"]
+
+    def get_elemental_property(self, elem, property_name):
+        if "valence" in property_name:
+            valence_dict = self.all_props["valence_e"][
+                self.all_props["col_num"][elem.symbol]]
+            if property_name[-1] in ["s", "p", "d"]:
+                # Return one of the shells
+                return valence_dict[property_name[-1]]
+            else:
+                return sum(valence_dict.values())
+        else:
+            return self.all_props[property_name].get(elem.symbol, float("NaN"))
 
     def calc_formal_charge(self, comp):
         """
@@ -135,120 +160,6 @@ class DemlData(AbstractData):
 
         return fml_charge_dict
 
-    def get_property(self, comp, property_name, combine_by_element=False):
-        """
-        Args:
-            x: (comp) Composition object (or str representation)
-            property_name (str): property to fetch, see self.available_props
-                for list of possibilities
-            combine_by_element (bool): If true, behavior will ignore
-                stoichiometric ratios and will collapse all values for a single
-                Element to one value (e.g., VO and VO2 will give the same data
-                vector)
-
-        Returns:
-            (list): list of property values for the composition sorted by
-                atomic number Z of each element
-        """
-        if property_name not in self.available_props:
-            raise ValueError("This descriptor is not available")
-
-        if type(comp) == str:
-            comp = Composition(comp)
-
-        # Get data for given element/compound
-        el_amt = comp.get_el_amt_dict()
-        # sort symbols by atomic number
-        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-
-        demldata = []
-
-        if property_name == "formal_charge":
-            fml_charge_dict = self.calc_formal_charge(comp)
-            for el in symbols:
-                try:
-                    prop = float(fml_charge_dict[el])
-                except:
-                    prop = float("NaN")
-                if combine_by_element:
-                    demldata.append(prop)
-                else:
-                    for _ in range(int(el_amt[el])):
-                        demldata.append(prop)
-
-        elif property_name == "first_ioniz":  # First ionization energy
-            for el in symbols:
-                try:
-                    first_ioniz = self.all_props["ionization_en"][el][0]
-                except:
-                    first_ioniz = float("NaN")
-                if combine_by_element:
-                    demldata.append(first_ioniz)
-                else:
-                    for _ in range(int(el_amt[el])):
-                        demldata.append(first_ioniz)
-
-        elif property_name == "total_ioniz":  # Cumulative ionization energy
-            for el in symbols:
-                try:
-                    total_ioniz = sum(self.all_props["ionization_en"][el])
-                except:
-                    total_ioniz = float("NaN")
-                if combine_by_element:
-                    demldata.append(total_ioniz)
-                else:
-                    for _ in range(int(el_amt[el])):
-                        demldata.append(total_ioniz)
-
-        elif "valence" in property_name:
-            for el in symbols:
-                valence_dict = self.all_props["valence_e"][
-                    self.all_props["col_num"][el]]
-                if property_name[-1] in ["s", "p", "d"]:
-                    if combine_by_element:
-                        demldata.append(float(valence_dict[property_name[-1]]))
-                    else:
-                        for _ in range(int(el_amt[el])):
-                            demldata.append(
-                                float(valence_dict[property_name[-1]]))
-                else:
-                    n_valence = sum(valence_dict.values())
-                    if combine_by_element:
-                        demldata.append(float(n_valence))
-                    else:
-                        for _ in range(int(el_amt[el])):
-                            demldata.append(float(n_valence))
-
-        elif property_name in ["xtal_field_split", "magn_moment", "so_coupling",
-                               "sat_magn"]:  # Charge dependent properties
-            fml_charge_dict = self.calc_formal_charge(comp)
-            for el in symbols:
-                try:
-                    charge = fml_charge_dict[el]
-                    prop = float(self.all_props[property_name][el][charge])
-                except:
-                    prop = 0.0
-                if combine_by_element:
-                    demldata.append(prop)
-                else:
-                    for _ in range(int(el_amt[el])):
-                        demldata.append(prop)
-            return demldata
-
-        else:
-            for el in symbols:
-                try:
-                    prop = float(self.all_props[property_name][el])
-                except:
-                    prop = float("NaN")
-                if combine_by_element:
-                    demldata.append(prop)
-                else:
-                    for _ in range(int(el_amt[el])):
-                        demldata.append(prop)
-
-        return demldata
-
 
 @singleton
 class MagpieData(AbstractData):
@@ -286,43 +197,10 @@ class MagpieData(AbstractData):
                     except ValueError:
                         prop_value = float("NaN")
                     self.all_elemental_props[descriptor_name][
-                        str(Element.from_Z(atomic_no))] = prop_value
+                        Element.from_Z(atomic_no).symbol] = prop_value
 
-    def get_property(self, comp, property_name, combine_by_element=False):
-        """
-        Args:
-            x: (comp) Composition object (or str representation)
-            property_name (str): see self.available_props for a list of possibilities
-            combine_by_element (bool): If true, behavior will ignore
-                stoichiometric ratios and will collapse all values for a single
-                Element to one value (e.g., VO and VO2 will give the same data
-                vector)
-
-        Returns:
-            (list): list of property values for the composition sorted by
-                atomic number Z of each element
-        """
-        if property_name not in self.available_props:
-            raise ValueError(
-                "This descriptor is not available from the Magpie repository. "
-                "Choose from {}".format(self.available_props))
-
-        if type(comp) == str:
-            comp = Composition(comp)
-
-        # Get data for given element/compound
-        el_amt = comp.get_el_amt_dict()
-
-        # sort symbols by Z
-        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-
-        if combine_by_element:
-            return [self.all_elemental_props[property_name][el] for el in
-                    symbols]
-        else:
-            return [self.all_elemental_props[property_name][el]
-                    for el in symbols
-                    for _ in range(int(el_amt[el]))]
+    def get_elemental_property(self, elem, property_name):
+        return self.all_elemental_props[property_name][elem.symbol]
 
 
 class PymatgenData(AbstractData):
@@ -333,84 +211,9 @@ class PymatgenData(AbstractData):
     for materials analysis, Comput. Mater. Sci. 68 (2013) 314-319.
     """
 
-    def get_property(self, comp, property_name):
-        """
-        Get descriptor data for elements in a compound from pymatgen.
-
-        Args:
-            comp (str/Composition): pymatgen Composition object
-            property_name (str): pymatgen element attribute name, as defined in
-                the Element class at http://pymatgen.org/_modules/pymatgen/core/periodic_table.html.
-                For 'ionic_radii' property, the Composition object must consist
-                of oxidation state decorated Specie objects (not plain Element objects).
-
-        Returns:
-            (list) of values containing descriptor floats for each atom in the
-                compound (sorted by the atomic number Z of the constituent atoms)
-
-        """
-        eldata = []
-        # what are these named tuples for? not used or returned! -KM
-        eldata_tup_lst = []
-        eldata_tup = namedtuple('eldata_tup',
-                                'element propname propvalue propunit amt')
-
-        el_amt_dict = comp.get_el_amt_dict()
-
-        # check whether the composition is composed of oxidation state
-        # decorated species
-        oxidation_states = {}
-        has_oxi_state = all([hasattr(el, "oxi_state") for el in comp])
-
-        if has_oxi_state:
-            oxidation_states = dict(
-                [(str(sp.element), sp.oxi_state) for sp in comp.elements])
-
-        symbols = sorted(el_amt_dict.keys(), key=lambda sym: get_el_sp(sym).Z)
-
-        for el_sym in symbols:
-
-            element = Element(el_sym)
-            property_value = None
-            property_units = None
-
-            try:
-                p = getattr(element, property_name)
-            except AttributeError:
-                print("{} attribute missing".format(property_name))
-                raise
-
-            if p is not None:
-                if property_name == 'ionic_radii':
-                    if oxidation_states:
-                        property_value = element.ionic_radii[
-                            oxidation_states[el_sym]]
-                        property_units = Unit("ang")
-                    else:
-                        raise ValueError(
-                            "ionic_radii specified but oxidation state not given "
-                            "for {}".format(property_name))
-
-                elif property_name == "block":
-                    block_key = {"s": 1.0, "p": 2.0, "d": 3.0, "f": 3.0}
-                    property_value = block_key[p]
-
-                else:
-                    property_value = float(p)
-
-                property_units = getattr(p, "unit", None)
-
-            # Make a named tuple out of all the available information
-            eldata_tup_lst.append(
-                eldata_tup(element=el_sym, propname=property_name,
-                           propvalue=property_value,
-                           propunit=property_units, amt=el_amt_dict[el_sym]))
-
-            # Add descriptor values, one for each atom in the compound
-            if property_value is None:
-                eldata.append(float("NaN"))
-            else:
-                for i in range(int(el_amt_dict[el_sym])):
-                    eldata.append(property_value)
-
-        return eldata
+    def get_elemental_property(self, elem, property_name):
+        if property_name == "block":
+            block_key = {"s": 1.0, "p": 2.0, "d": 3.0, "f": 3.0}
+            return block_key[getattr(elem, property_name)]
+        else:
+            return getattr(elem, property_name)
