@@ -1208,4 +1208,4 @@ class Miedema(BaseFeaturizer):
         return [miedema_citation, zhang_citation, ternary_citation]
 
     def implementors(self):
-        return ['Qi Wang', 'Alireza Faghaninia', 'Anubhav Jain']
+        return ['Qi Wang', 'Alireza Faghaninia']
