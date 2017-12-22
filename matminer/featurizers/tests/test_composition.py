@@ -8,8 +8,9 @@ import pandas as pd
 
 from pymatgen import Composition, MPRester
 from pymatgen.util.testing import PymatgenTest
+from pymatgen.core.periodic_table import Element
 
-from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter, Miedema
+from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter, Miedema, AtomicOrbitals
 
 
 class CompositionFeaturesTest(PymatgenTest):
@@ -100,6 +101,16 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_fere_corr["range FERE correction"][0], 0.382134316)
         self.assertAlmostEqual(df_fere_corr["mean FERE correction"][0], 0.077146274)
         self.assertAlmostEqual(df_fere_corr["std_dev FERE correction"][0], 0.270209766)
+
+    def test_atomic_orbitals(self):
+        df_atomic_orbitals = AtomicOrbitals().featurize_dataframe(self.df, col_id="composition")
+        self.assertEqual(df_atomic_orbitals['HOMO_character'][0], 'd')
+        self.assertEqual(df_atomic_orbitals['HOMO_element'][0], Element('Fe'))
+        self.assertEqual(df_atomic_orbitals['HOMO_energy'][0], -0.295049)
+        self.assertEqual(df_atomic_orbitals['LUMO_character'][0], 'd')
+        self.assertEqual(df_atomic_orbitals['LUMO_element'][0], Element('Fe'))
+        self.assertEqual(df_atomic_orbitals['LUMO_energy'][0], -0.295049)
+        self.assertEqual(df_atomic_orbitals['gap'][0], 0.0)
 
     def test_band_center(self):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
