@@ -5,6 +5,11 @@
 matminer Changelog
 ==================
 
+**v0.1.8**
+
+* extend Miedema model to ternaries and higher (Q. Wang, A. Faghaninia)
+* cleanups/refactor to DOS featurizer (A. Faghaninia)
+
 **v0.1.7**
 
 * lots of code cleanup / refactoring / review, including trimming of unused / moved packages (A. Jain)

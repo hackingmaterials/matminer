@@ -6,13 +6,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Index &#8212; matminer 0.1.7 documentation</title>
+    <title>Index &#8212; matminer 0.1.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.7',
+        VERSION:     '0.1.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -84,8 +84,6 @@
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.BranchPointEnergy.__init__">(matminer.featurizers.bandstructure.BranchPointEnergy method)</a>
 </li>
-        <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.DOSFeaturizer.__init__">(matminer.featurizers.bandstructure.DOSFeaturizer method)</a>
-</li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.CohesiveEnergy.__init__">(matminer.featurizers.composition.CohesiveEnergy method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ElectronAffinity.__init__">(matminer.featurizers.composition.ElectronAffinity method)</a>
@@ -107,6 +105,8 @@
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.TMetalFraction.__init__">(matminer.featurizers.composition.TMetalFraction method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital.__init__">(matminer.featurizers.composition.ValenceOrbital method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer.__init__">(matminer.featurizers.dos.DOSFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.__init__">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
@@ -275,19 +275,19 @@
 </li>
       <li><a href="matminer.datasets.test_datasets.html#matminer.datasets.test_datasets.test_datasets.DataSetTest">DataSetTest (class in matminer.datasets.test_datasets.test_datasets)</a>
 </li>
-      <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.delta_H_chem">delta_H_chem() (matminer.featurizers.composition.Miedema method)</a>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.deltaH_chem">deltaH_chem() (matminer.featurizers.composition.Miedema method)</a>
 </li>
-      <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.delta_H_elast">delta_H_elast() (matminer.featurizers.composition.Miedema method)</a>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.deltaH_elast">deltaH_elast() (matminer.featurizers.composition.Miedema method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.delta_H_struct">delta_H_struct() (matminer.featurizers.composition.Miedema method)</a>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.deltaH_struct">deltaH_struct() (matminer.featurizers.composition.Miedema method)</a>
 </li>
-      <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.delta_S">delta_S() (matminer.featurizers.composition.Miedema method)</a>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.deltaH_topo">deltaH_topo() (matminer.featurizers.composition.Miedema method)</a>
 </li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.structure.DensityFeatures">DensityFeatures (class in matminer.featurizers.structure)</a>
 </li>
-      <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.DOSFeaturizer">DOSFeaturizer (class in matminer.featurizers.bandstructure)</a>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer">DOSFeaturizer (class in matminer.featurizers.dos)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -320,8 +320,6 @@
       <ul>
         <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.BranchPointEnergy.feature_labels">(matminer.featurizers.bandstructure.BranchPointEnergy method)</a>
 </li>
-        <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.DOSFeaturizer.feature_labels">(matminer.featurizers.bandstructure.DOSFeaturizer method)</a>
-</li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer.feature_labels">(matminer.featurizers.base.BaseFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.BandCenter.feature_labels">(matminer.featurizers.composition.BandCenter method)</a>
@@ -347,6 +345,8 @@
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.TMetalFraction.feature_labels">(matminer.featurizers.composition.TMetalFraction method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital.feature_labels">(matminer.featurizers.composition.ValenceOrbital method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer.feature_labels">(matminer.featurizers.dos.DOSFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.feature_labels">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
@@ -386,8 +386,6 @@
       <ul>
         <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.BranchPointEnergy.featurize">(matminer.featurizers.bandstructure.BranchPointEnergy method)</a>
 </li>
-        <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.DOSFeaturizer.featurize">(matminer.featurizers.bandstructure.DOSFeaturizer method)</a>
-</li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer.featurize">(matminer.featurizers.base.BaseFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.BandCenter.featurize">(matminer.featurizers.composition.BandCenter method)</a>
@@ -413,6 +411,8 @@
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.TMetalFraction.featurize">(matminer.featurizers.composition.TMetalFraction method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital.featurize">(matminer.featurizers.composition.ValenceOrbital method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer.featurize">(matminer.featurizers.dos.DOSFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.featurize">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
@@ -481,7 +481,7 @@
 </li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.BandFeaturizer.get_bindex_bspin">get_bindex_bspin() (matminer.featurizers.bandstructure.BandFeaturizer static method)</a>
 </li>
-      <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.get_cbm_vbm_scores">get_cbm_vbm_scores() (in module matminer.featurizers.bandstructure)</a>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.dos.get_cbm_vbm_scores">get_cbm_vbm_scores() (in module matminer.featurizers.dos)</a>
 </li>
       <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe">get_dataframe() (matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval method)</a>
 
@@ -546,8 +546,6 @@
       <ul>
         <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.BranchPointEnergy.implementors">(matminer.featurizers.bandstructure.BranchPointEnergy method)</a>
 </li>
-        <li><a href="matminer.featurizers.html#matminer.featurizers.bandstructure.DOSFeaturizer.implementors">(matminer.featurizers.bandstructure.DOSFeaturizer method)</a>
-</li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer.implementors">(matminer.featurizers.base.BaseFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.BandCenter.implementors">(matminer.featurizers.composition.BandCenter method)</a>
@@ -573,6 +571,8 @@
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.TMetalFraction.implementors">(matminer.featurizers.composition.TMetalFraction method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital.implementors">(matminer.featurizers.composition.ValenceOrbital method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer.implementors">(matminer.featurizers.dos.DOSFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.implementors">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
@@ -668,6 +668,8 @@
       <li><a href="matminer.featurizers.html#module-matminer.featurizers.base">matminer.featurizers.base (module)</a>
 </li>
       <li><a href="matminer.featurizers.html#module-matminer.featurizers.composition">matminer.featurizers.composition (module)</a>
+</li>
+      <li><a href="matminer.featurizers.html#module-matminer.featurizers.dos">matminer.featurizers.dos (module)</a>
 </li>
       <li><a href="matminer.featurizers.html#module-matminer.featurizers.site">matminer.featurizers.site (module)</a>
 </li>
@@ -881,7 +883,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.8 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
