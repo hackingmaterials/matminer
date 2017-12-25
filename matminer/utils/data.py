@@ -54,6 +54,22 @@ class AbstractData(six.with_metaclass(abc.ABCMeta)):
         return [self.get_elemental_property(e, property_name) for e in elems]
 
 
+class OxidationStatesMixin(six.with_metaclass(abc.ABCMeta)):
+    """Abstract class interface for retrieving the oxidation states
+    of each element"""
+
+    @abc.abstractmethod
+    def get_oxidation_states(self, elem):
+        """Retrive the oxidation states of an element
+
+        Args:
+            elem - (Element), Target element
+        Returns:
+            [int] - oxidation states
+        """
+        pass
+
+
 @singleton
 class CohesiveEnergyData(AbstractData):
     """Get the cohesive energy of an element.
@@ -80,7 +96,7 @@ class CohesiveEnergyData(AbstractData):
 
 
 @singleton
-class DemlData(AbstractData):
+class DemlData(AbstractData, OxidationStatesMixin):
     """
     Singleton class to get data from Deml data file. See also: A.M. Deml,
     R. O'Hayre, C. Wolverton, V. Stevanovic, Predicting density functional
@@ -109,6 +125,9 @@ class DemlData(AbstractData):
                 return sum(valence_dict.values())
         else:
             return self.all_props[property_name].get(elem.symbol, float("NaN"))
+
+    def get_oxidation_states(self, elem):
+        return self.all_props["charge_states"][elem.symbol]
 
     def calc_formal_charge(self, comp):
         """
@@ -162,7 +181,7 @@ class DemlData(AbstractData):
 
 
 @singleton
-class MagpieData(AbstractData):
+class MagpieData(AbstractData, OxidationStatesMixin):
     """
     Singleton class to get data from Magpie files. See also:
     L. Ward, A. Agrawal, A. Choudhary, C. Wolverton, A general-purpose machine
@@ -202,8 +221,11 @@ class MagpieData(AbstractData):
     def get_elemental_property(self, elem, property_name):
         return self.all_elemental_props[property_name][elem.symbol]
 
+    def get_oxidation_states(self, elem):
+        return self.all_elemental_props["OxidationStates"][elem.symbol]
 
-class PymatgenData(AbstractData):
+
+class PymatgenData(AbstractData, OxidationStatesMixin):
     """
     Class to get data from pymatgen. See also:
     S.P. Ong, W.D. Richards, A. Jain, G. Hautier, M. Kocher, S. Cholia, et al.,
@@ -217,3 +239,15 @@ class PymatgenData(AbstractData):
             return block_key[getattr(elem, property_name)]
         else:
             return getattr(elem, property_name)
+
+    def get_oxidation_states(self, elem: Element, common=True):
+        """Get the oxidation states of an element
+
+        Args:
+            elem - (Element) target element
+            common - (boolean), whether to return only the common oxidation states,
+                or all known oxidation states
+        Returns:
+            [int] list of oxidation states
+            """
+        return elem.common_oxidation_states if common else elem.oxidation_states
