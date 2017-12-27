@@ -132,10 +132,10 @@ class FingerprintTests(PymatgenTest):
         # Run the sc-Al structure
         self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
 
-        # Run the cscl-structure. Not sure what the true result will be, but
-        #   it should be negative and the value for Cs and Cl should be the same
+        # Run the cscl-structure
+        #   Compared to a result computed using GULP
         self.assertAlmostEquals(ewald.featurize(self.cscl, 0), ewald.featurize(self.cscl, 1))
-        self.assertLess(ewald.featurize(self.cscl, 0), 0)
+        self.assertAlmostEquals(ewald.featurize(self.cscl, 0)[0], -6.98112443 / 2, 3)
 
         # Re-run the Al structure to make sure it is accurate
         #  This is to test the caching feature

@@ -9,7 +9,6 @@ import unittest
 import numpy as np
 
 from pymatgen import Structure, Lattice, Molecule
-from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.structure import DensityFeatures, \
@@ -313,19 +312,13 @@ class StructureFeaturesTest(PymatgenTest):
         # Test basic
         ewald = EwaldEnergy(accuracy=2)
         self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
-        self.assertLess(ewald.featurize(self.nacl)[0], 0)
+        self.assertAlmostEquals(ewald.featurize(self.nacl)[0], -8.84173626, 2)
         self.assertLess(ewald.featurize(self.nacl),
                         ewald.featurize(self.cscl))  # Atoms are closer in NaCl
 
         # Perform Ewald summation by "hand",
-        #  assuming that EwaldSummation from pymatgen is correct
-        self.assertArrayAlmostEqual([EwaldSummation(self.nacl, acc_factor=2).total_energy],
-                                    ewald.featurize(self.nacl))
-
-    def tearDown(self):
-        del self.diamond
-        del self.nacl
-        del self.cscl
+        #  Using the result from GULP
+        self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
 
 
 if __name__ == '__main__':
