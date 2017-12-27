@@ -630,8 +630,6 @@ class EwaldSiteEnergy:
 
     User notes:
         - This class uses that `charges that are already-defined for the structure`.
-          Consider assigning them using the ``add_charges_*`` from ``pymatgen``
-          before calling this class
 
         - Ewald summations can be expensive. If you evaluating every site in many
           large structures, run all of the sites for each structure at the same time.
@@ -652,7 +650,14 @@ class EwaldSiteEnergy:
         self.__last_structure = None
         self.__last_ewald = None
 
-    def featurize(self, strc, site):
+    def featurize(self, strc, idx):
+        """
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            ([float]) - Electrostatic energy of the site
+        """
 
         # Check if the new input is the last
         #  Note: We use 'is' rather than structure comparisons for speed
@@ -665,7 +670,7 @@ class EwaldSiteEnergy:
             self.__last_structure = strc
             ewald = EwaldSummation(strc, acc_factor=self.accuracy)
             self.__last_ewald = ewald
-        return ewald.get_site_energy(site)
+        return [ewald.get_site_energy(idx)]
 
     def feature_labels(self):
         return ("ewald_site_energy",)

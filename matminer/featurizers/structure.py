@@ -918,7 +918,6 @@ class EwaldEnergy(BaseFeaturizer):
     """Compute the energy from Coulombic interactions
 
     Note: The energy is computed using _charges already defined for the structure_.
-    Consider assigning them using the ``add_charges_*`` from ``pymatgen`` before calling this class
 
     Features:
         ewald_energy - Coulomb interaction energy of the structure"""
@@ -931,6 +930,13 @@ class EwaldEnergy(BaseFeaturizer):
         self.accuracy = accuracy
 
     def featurize(self, strc):
+        """
+
+        Args:
+             (Structure) - Structure being analyzed
+        Returns:
+            ([float]) - Electrostatic energy of the structure
+        """
         # Compute the total energy
         ewald = EwaldSummation(strc, acc_factor=self.accuracy)
         return [ewald.total_energy]
