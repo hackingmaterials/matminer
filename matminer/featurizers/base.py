@@ -52,6 +52,11 @@ class BaseFeaturizer(object):
         # Add features to dataframe
         labels = self.feature_labels()
         df = df.assign(**dict(zip(labels, features.T)))
+        for col in df:
+            try:
+                df[col] = df[col].astype(float)
+            except:
+                pass
         return df
 
     def featurize(self, *x):

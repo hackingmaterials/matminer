@@ -1,13 +1,6 @@
 matminer\.featurizers package
 =============================
 
-Subpackages
------------
-
-.. toctree::
-
-    matminer.featurizers.data_files
-
 Submodules
 ----------
 
@@ -35,10 +28,10 @@ matminer\.featurizers\.composition module
     :undoc-members:
     :show-inheritance:
 
-matminer\.featurizers\.data module
-----------------------------------
+matminer\.featurizers\.dos module
+---------------------------------
 
-.. automodule:: matminer.featurizers.data
+.. automodule:: matminer.featurizers.dos
     :members:
     :undoc-members:
     :show-inheritance:

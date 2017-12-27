@@ -23,6 +23,13 @@ from matminer.featurizers.base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters, \
     VoronoiAnalyzer, VoronoiCoordFinder
 from pymatgen.analysis.ewald import EwaldSummation
+from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
+    import LocalGeometryFinder
+from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
+   import SimplestChemenvStrategy, MultiWeightsChemenvStrategy
+from pymatgen.analysis.chemenv.coordination_environments.structure_environments import LightStructureEnvironments
+
+from matminer.featurizers.stats import PropertyStats
 
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -691,3 +698,110 @@ class EwaldSiteEnergy:
                 "volume = {369},"
                 "year = {1921}"
                 "}"]
+
+
+class ChemEnvSiteFingerprint(BaseFeaturizer):
+    """
+    Site fingerprint computed from pymatgen's ChemEnv package
+    that provides resemblance percentages of a given site
+    to ideal environments.
+    Args:
+        cetypes ([str]): chemical environments (CEs) to be
+            considered.
+        strategy (ChemenvStrategy): ChemEnv neighbor-finding strategy.
+        geom_finder (LocalGeometryFinder): ChemEnv local geometry finder.
+        max_csm (float): maximum continuous symmetry measure (CSM;
+            default of 8 taken from chemenv). Note that any CSM
+            larger than max_csm will be set to max_csm in order
+            to avoid negative values (i.e., all features are
+            constrained to be between 0 and 1).
+    """
+
+    @staticmethod
+    def from_preset(preset):
+        """
+        Use a standard collection of CE types and
+        choose your ChemEnv neighbor-finding strategy.
+        Args:
+            preset (str): preset types ("simple" or
+                          "multi_weights").
+        Returns:
+            ChemEnvSiteFingerprint object from a preset.
+        """
+        cetypes = [
+            'S:1', 'L:2', 'A:2', 'TL:3', 'TY:3', 'TS:3', 'T:4',
+            'S:4', 'SY:4', 'SS:4', 'PP:5', 'S:5', 'T:5', 'O:6',
+            'T:6', 'PP:6', 'PB:7', 'ST:7', 'ET:7', 'FO:7', 'C:8',
+            'SA:8', 'SBT:8', 'TBT:8', 'DD:8', 'DDPN:8', 'HB:8',
+            'BO_1:8', 'BO_2:8', 'BO_3:8', 'TC:9', 'TT_1:9',
+            'TT_2:9', 'TT_3:9', 'HD:9', 'TI:9', 'SMA:9', 'SS:9',
+            'TO_1:9', 'TO_2:9', 'TO_3:9', 'PP:10', 'PA:10',
+            'SBSA:10', 'MI:10', 'S:10', 'H:10', 'BS_1:10',
+            'BS_2:10', 'TBSA:10', 'PCPA:11', 'H:11', 'SH:11',
+            'CO:11', 'DI:11', 'I:12', 'PBP:12', 'TT:12', 'C:12',
+            'AC:12', 'SC:12', 'S:12', 'HP:12', 'HA:12', 'SH:13',
+            'DD:20']
+        lgf = LocalGeometryFinder()
+        lgf.setup_parameters(
+            centering_type='centroid',
+            include_central_site_in_centroid=True,
+            structure_refinement=lgf.STRUCTURE_REFINEMENT_NONE)
+        if preset == "simple":
+            return ChemEnvSiteFingerprint(
+                cetypes,
+                SimplestChemenvStrategy(distance_cutoff=1.4, angle_cutoff=0.3),
+                lgf)
+        elif preset == "multi_weights":
+            return ChemEnvSiteFingerprint(
+                cetypes,
+                MultiWeightsChemenvStrategy.stats_article_weights_parameters(),
+                lgf)
+        else:
+            raise RuntimeError('unknown neighbor-finding strategy preset.')
+
+    def __init__(self, cetypes, strategy, geom_finder, max_csm=8):
+        self.cetypes = tuple(cetypes)
+        self.strat = strategy
+        self.lgf = geom_finder
+        self.max_csm = max_csm
+
+    def featurize(self, struct, idx):
+        """
+        Get ChemEnv fingerprint of site with given index in input
+        structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure struct.
+        Returns:
+            (numpy array): resemblance fraction of target site to ideal
+                           local environments.
+        """
+        cevals = []
+        self.lgf.setup_structure(structure=struct)
+        se = self.lgf.compute_structure_environments()
+        #        maximum_distance_factor=1.41)
+        for ce in self.cetypes:
+            try:
+                tmp = se.get_csms(idx, ce)
+                tmp = tmp[0]['symmetry_measure'] if len(tmp) != 0 \
+                    else self.max_csm
+                tmp = tmp if tmp < self.max_csm else self.max_csm
+                cevals.append(1 - tmp / self.max_csm)
+            except IndexError:
+                cevals.append(0)
+        return np.array(cevals)
+
+    def feature_labels(self):
+        return self.cetypes
+
+    def citations(self):
+        return ('@article{waroquiers_chemmater_2017, '
+                'title={Statistical analysis of coordination environments '
+                'in oxides}, journal={Chemistry of Materials},'
+                'author={Waroquiers, D. and Gonze, X. and Rignanese, G.-M.'
+                'and Welker-Nieuwoudt, C. and Rosowski, F. and Goebel, M. '
+                'and Schenk, S. and Degelmann, P. and Andre, R. '
+                'and Glaum, R. and Hautier, G.}, year={2017}}')
+
+    def implementors(self):
+        return ['Nils E. R. Zimmermann']

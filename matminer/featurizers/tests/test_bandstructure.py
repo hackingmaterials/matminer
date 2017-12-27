@@ -7,11 +7,10 @@ import pandas as pd
 import unittest
 
 from matminer.featurizers.bandstructure import BandFeaturizer, \
-    BranchPointEnergy, DOSFeaturizer
+    BranchPointEnergy
 from pymatgen.core import Structure
 from pymatgen.electronic_structure.bandstructure import BandStructureSymmLine, \
     BandStructure
-from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.symmetry.bandstructure import HighSymmKpath
 from pymatgen.util.testing import PymatgenTest
 
@@ -117,29 +116,6 @@ class BandstructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_bf2['p_0.5;0.0;0.5_en1'][0], -0.0639, 4)
         self.assertAlmostEqual(df_bf2['p_0.5;0.0;0.5_en2'][0], -0.1133, 4)
 
-
-class DOSFeaturesTest(PymatgenTest):
-
-    def setUp(self):
-        with open(os.path.join(test_dir, 'si_dos.json'), 'r') as sDOS:
-            si_dos = CompleteDos.from_dict(json.load(sDOS))
-        self.df = pd.DataFrame({'dos': [si_dos]})
-
-    def test_DOSFeaturizer(self):
-        df_df = DOSFeaturizer().featurize_dataframe(self.df, col_id=['dos'])
-
-        self.assertAlmostEqual(df_df['cbm_percents'][0][0], 0.258, 3)
-        self.assertAlmostEqual(df_df['cbm_locations'][0], [[0.0, 0.0, 0.0]])
-        self.assertEqual(df_df['cbm_species'][0], ['Si'])
-        self.assertEqual(df_df['cbm_characters'][0], ['s'])
-        self.assertEqual(df_df['cbm_coordinations'][0], ['tet'])
-        self.assertEqual(df_df['cbm_significant_contributors'][0], 4)
-        self.assertAlmostEqual(df_df['vbm_percents'][0][0], 0.490, 3)
-        self.assertEqual(df_df['vbm_locations'][0], [[0.0, 0.0, 0.0]])
-        self.assertEqual(df_df['vbm_species'][0], ['Si'])
-        self.assertEqual(df_df['vbm_characters'][0], ['p'])
-        self.assertEqual(df_df['vbm_coordinations'][0], ['tet'])
-        self.assertEqual(df_df['vbm_significant_contributors'][0], 2)
-
 if __name__ == '__main__':
     unittest.main()
+

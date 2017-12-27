@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.datasets package &#8212; matminer 0.1.8 documentation</title>
+    <title>matminer.distance_metrics package &#8212; matminer 0.1.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -43,44 +43,57 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="matminer-datasets-package">
-<h1>matminer.datasets package<a class="headerlink" href="#matminer-datasets-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="matminer.datasets.test_datasets.html">matminer.datasets.test_datasets package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.test_datasets.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.test_datasets.html#module-matminer.datasets.test_datasets.test_datasets">matminer.datasets.test_datasets.test_datasets module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.test_datasets.html#module-matminer.datasets.test_datasets">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+  <div class="section" id="matminer-distance-metrics-package">
+<h1>matminer.distance_metrics package<a class="headerlink" href="#matminer-distance-metrics-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-matminer.datasets.dataframe_loader">
-<span id="matminer-datasets-dataframe-loader-module"></span><h2>matminer.datasets.dataframe_loader module<a class="headerlink" href="#module-matminer.datasets.dataframe_loader" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-matminer.distance_metrics.site">
+<span id="matminer-distance-metrics-site-module"></span><h2>matminer.distance_metrics.site module<a class="headerlink" href="#module-matminer.distance_metrics.site" title="Permalink to this headline">¶</a></h2>
+<p>THIS IS CURRENTLY JUST HOSTING LEGACY CODE.</p>
+<p>It will soon be refactored / changed based on some discussions.</p>
+<ul class="simple">
+<li>Anubhav (12/7/17)</li>
+</ul>
 <dl class="function">
-<dt id="matminer.datasets.dataframe_loader.load_dielectric_constant">
-<code class="descclassname">matminer.datasets.dataframe_loader.</code><code class="descname">load_dielectric_constant</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataframe_loader.load_dielectric_constant" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="matminer.datasets.dataframe_loader.load_elastic_tensor">
-<code class="descclassname">matminer.datasets.dataframe_loader.</code><code class="descname">load_elastic_tensor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataframe_loader.load_elastic_tensor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="matminer.datasets.dataframe_loader.load_piezoelectric_tensor">
-<code class="descclassname">matminer.datasets.dataframe_loader.</code><code class="descname">load_piezoelectric_tensor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataframe_loader.load_piezoelectric_tensor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="matminer.distance_metrics.site.get_tet_bcc_motif">
+<code class="descclassname">matminer.distance_metrics.site.</code><code class="descname">get_tet_bcc_motif</code><span class="sig-paren">(</span><em>structure</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.distance_metrics.site.get_tet_bcc_motif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience class-method from Nils Zimmermann.
+Used to distinguish coordination environment in half-Heuslers.
+Args:</p>
+<blockquote>
+<div>structure (pymatgen Structure): the target structure to evaluate
+idx (index): the site index in the structure</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(str) that describes site coordination enviornment</dt>
+<dd>‘bcc’
+‘tet’
+‘unrecognized’</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
-<div class="section" id="module-matminer.datasets">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.datasets" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-matminer.distance_metrics.structure">
+<span id="matminer-distance-metrics-structure-module"></span><h2>matminer.distance_metrics.structure module<a class="headerlink" href="#module-matminer.distance_metrics.structure" title="Permalink to this headline">¶</a></h2>
+<p>THIS IS CURRENTLY JUST HOSTING LEGACY CODE.</p>
+<p>It will soon be refactored / changed based on some discussions.</p>
+<ul class="simple">
+<li>Anubhav (12/7/17)</li>
+</ul>
+<dl class="function">
+<dt id="matminer.distance_metrics.structure.get_structure_distance">
+<code class="descclassname">matminer.distance_metrics.structure.</code><code class="descname">get_structure_distance</code><span class="sig-paren">(</span><em>s1</em>, <em>s2</em>, <em>preset_name='cn'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.distance_metrics.structure.get_structure_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute structure distance using an alternate (test) algorithm. Docs are
+minimal for now.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.distance_metrics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.distance_metrics" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -92,11 +105,11 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">matminer.datasets package</a><ul>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#">matminer.distance_metrics package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-matminer.datasets.dataframe_loader">matminer.datasets.dataframe_loader module</a></li>
-<li><a class="reference internal" href="#module-matminer.datasets">Module contents</a></li>
+<li><a class="reference internal" href="#module-matminer.distance_metrics.site">matminer.distance_metrics.site module</a></li>
+<li><a class="reference internal" href="#module-matminer.distance_metrics.structure">matminer.distance_metrics.structure module</a></li>
+<li><a class="reference internal" href="#module-matminer.distance_metrics">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -104,7 +117,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/matminer.datasets.rst.txt"
+      <li><a href="_sources/matminer.distance_metrics.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
