@@ -674,4 +674,15 @@ class EwaldSiteEnergy:
         return ("Logan Ward",)
 
     def citations(self):
-        return []
+        return ["@Article{Ewald1921,"
+                "author = {Ewald, P. P.},"
+                "doi = {10.1002/andp.19213690304},"
+                "issn = {00033804},"
+                "journal = {Annalen der Physik},"
+                "number = {3},"
+                "pages = {253--287},"
+                "title = {{Die Berechnung optischer und elektrostatischer Gitterpotentiale}},"
+                "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
+                "volume = {369},"
+                "year = {1921}"
+                "}"]
