@@ -665,7 +665,7 @@ class EwaldSiteEnergy:
             self.__last_structure = strc
             ewald = EwaldSummation(strc, acc_factor=self.accuracy)
             self.__last_ewald = ewald
-        return np.sum(ewald.total_energy_matrix, axis=0)[site]
+        return ewald.get_site_energy(site)
 
     def feature_labels(self):
         return ("ewald_site_energy",)
