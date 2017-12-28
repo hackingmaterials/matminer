@@ -15,8 +15,6 @@ import numpy as np
 from glob import glob
 from collections import defaultdict
 
-from monty.design_patterns import singleton
-
 from pymatgen import Element, Composition
 from pymatgen.core.periodic_table import _pt_data, get_el_sp
 
@@ -70,7 +68,6 @@ class OxidationStatesMixin(six.with_metaclass(abc.ABCMeta)):
         pass
 
 
-@singleton
 class CohesiveEnergyData(AbstractData):
     """Get the cohesive energy of an element.
 
@@ -95,10 +92,9 @@ class CohesiveEnergyData(AbstractData):
         return self.cohesive_energy_data[elem]
 
 
-@singleton
 class DemlData(AbstractData, OxidationStatesMixin):
     """
-    Singleton class to get data from Deml data file. See also: A.M. Deml,
+    Class to get data from Deml data file. See also: A.M. Deml,
     R. O'Hayre, C. Wolverton, V. Stevanovic, Predicting density functional
     theory total energies and enthalpies of formation of metal-nonmetal
     compounds by linear regression, Phys. Rev. B - Condens. Matter Mater. Phys.
@@ -180,10 +176,9 @@ class DemlData(AbstractData, OxidationStatesMixin):
         return fml_charge_dict
 
 
-@singleton
 class MagpieData(AbstractData, OxidationStatesMixin):
     """
-    Singleton class to get data from Magpie files. See also:
+    Class to get data from Magpie files. See also:
     L. Ward, A. Agrawal, A. Choudhary, C. Wolverton, A general-purpose machine
     learning framework for predicting properties of inorganic materials,
     Npj Comput. Mater. 2 (2016) 16028.
