@@ -26,7 +26,7 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 def has_oxidation_states(comp):
     """Check if a composition object has oxidation states for each element
 
-    TODO: Does this make sense to add to pymatgen?
+    TODO: Does this make sense to add to pymatgen? -wardlt
 
     Args:
         comp - (Composition) Composition to check
@@ -50,7 +50,7 @@ class ElementProperty(BaseFeaturizer):
             "magpie", or "deml")
         features (list of strings): List of elemental properties to use
             (these must be supported by data_source)
-        stats (string): a list of weighted statistics to compute to for each
+        stats (list of strings): a list of weighted statistics to compute to for each
             property (see PropertyStats for available stats)
     """
 
@@ -67,8 +67,8 @@ class ElementProperty(BaseFeaturizer):
         self.features = features
         self.stats = stats
 
-    @staticmethod
-    def from_preset(preset_name):
+    @classmethod
+    def from_preset(cls, preset_name):
         """
         Return ElementProperty from a preset string
         Args:
@@ -94,9 +94,7 @@ class ElementProperty(BaseFeaturizer):
             features = ["atom_num", "atom_mass", "row_num", "col_num",
                         "atom_radius", "molar_vol", "heat_fusion",
                         "melting_point", "boiling_point", "heat_cap",
-                        "first_ioniz", "total_ioniz", "electronegativity",
-                        "formal_charge", "xtal_field_split",
-                        "magn_moment", "so_coupling", "sat_magn",
+                        "first_ioniz", "electronegativity",
                         "electric_pol", "GGAU_Etot", "mus_fere"]
 
         elif preset_name == "matminer":
@@ -112,7 +110,7 @@ class ElementProperty(BaseFeaturizer):
         else:
             raise ValueError("Invalid preset_name specified!")
 
-        return ElementProperty(data_source, features, stats)
+        return cls(data_source, features, stats)
 
     def featurize(self, comp):
         """
@@ -146,7 +144,6 @@ class ElementProperty(BaseFeaturizer):
         for attr in self.features:
             for stat in self.stats:
                 labels.append("%s %s" % (stat, attr))
-
         return labels
 
     def citations(self):
@@ -173,17 +170,61 @@ class ElementProperty(BaseFeaturizer):
                 "publisher = {Elsevier B.V.}, title = {{Python Materials Genomics (pymatgen): A robust, open-source python "
                 "library for materials analysis}}, url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
                 "volume = {68}, year = {2013} } ")
-
+        else:
+            citation = []
         return citation
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
 
 
-class ChargeDependentElementalProperty(ElementProperty):
-    """Features based on elemental properties that are dependent on charge state"""
+class CationProperty(ElementProperty):
+    """Features based on the properties of cations in a material
+
+    Requires that oxidation states have already been determined
+
+    Computes composition-weighted statistics of different elemental properties"""
+
+    @classmethod
+    def from_preset(cls, preset_name):
+        if preset_name == "deml":
+            data_source = "deml"
+            features=["total_ioniz", "xtal_field_split", "magn_moment",
+                      "so_coupling", "sat_magn",]
+            stats = ["minimum", "maximum", "range", "mean", "std_dev"]
+        else:
+            raise ValueError('Preset "%s" not found'%preset_name)
+        return cls(data_source, features, stats)
+
+    def feature_labels(self):
+        labels = []
+        for attr in self.features:
+            for stat in self.stats:
+                labels.append("%s %s of cations" % (stat, attr))
+
+        return labels
+
     def featurize(self, comp):
-        raise NotImplementedError()
+        # Check if oxidation states are present
+        if not has_oxidation_states(comp):
+            raise ValueError('Oxidation states have not been determined')
+
+        # Prepare to store the attributes
+        all_attributes = []
+
+        # Initialize stats computer
+        pstats = PropertyStats()
+
+        # Get the cation species and fractions
+        cations, fractions = zip(*[(s, f) for s, f in comp.items() if s.oxi_state > 0])
+
+        for attr in self.features:
+            elem_data = [self.data_source.get_charge_dependent_property_from_specie(c, attr) for c in cations]
+
+            for stat in self.stats:
+                all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
+
+        return all_attributes
 
 
 class BandCenter(BaseFeaturizer):

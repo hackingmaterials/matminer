@@ -139,6 +139,11 @@ class PropertyStats(object):
         Returns:
             standard deviation
         """
+        # Special case: Only one entry
+        if len(data_lst) == 1:
+            # This prevents numerical issues in the weighted std_dev
+            return 0
+
         if weights is None:
             return np.std(data_lst)
         else:

@@ -11,14 +11,14 @@ from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, \
     ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, \
-    BandCenter, Miedema
+    BandCenter, Miedema, CationProperty
 
 
 class CompositionFeaturesTest(PymatgenTest):
 
     def setUp(self):
         self.df = pd.DataFrame({"composition": [Composition("Fe2O3"),
-                                                Composition({Specie("Fe", 1): 1, Specie("O", -1): 1})]})
+                                                Composition({Specie("Fe", 2): 1, Specie("O", -2): 1})]})
 
     def test_stoich(self):
         featurizer = Stoichiometry(num_atoms=True)
@@ -48,12 +48,15 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)
         self.assertAlmostEqual(df_elem_deml["mean atom_num"][0], 15.2)
         self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 8.81816307)
-        ## Charge dependent property
-        self.assertAlmostEqual(df_elem_deml["minimum magn_moment"][0], 0)
-        self.assertAlmostEqual(df_elem_deml["maximum magn_moment"][0], 5.2)
-        self.assertAlmostEqual(df_elem_deml["range magn_moment"][0], 5.2)
-        self.assertAlmostEqual(df_elem_deml["mean magn_moment"][0], 2.08)
-        self.assertAlmostEqual(df_elem_deml["std_dev magn_moment"][0], 2.547469332)
+
+    def test_cation_properties(self):
+        featurizer = CationProperty.from_preset("deml")
+        features = dict(zip(featurizer.feature_labels(), featurizer.featurize(self.df["composition"][1])))
+        self.assertAlmostEqual(features["minimum magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["maximum magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["range magn_moment of cations"], 0)
+        self.assertAlmostEqual(features["mean magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["std_dev magn_moment of cations"], 0)
 
     def test_elem_matminer(self):
         df_elem = ElementProperty.from_preset("matminer").featurize_dataframe(self.df, col_id="composition")
@@ -91,7 +94,7 @@ class CompositionFeaturesTest(PymatgenTest):
 
     def test_elec_affin(self):
         featurizer = ElectronAffinity()
-        self.assertAlmostEqual(-141000, featurizer.featurize(self.df["composition"][1])[0])
+        self.assertAlmostEqual(-141000*2, featurizer.featurize(self.df["composition"][1])[0])
 
     def test_en_diff(self):
         df_en_diff = ElectronegativityDiff().featurize_dataframe(self.df, col_id="composition")
