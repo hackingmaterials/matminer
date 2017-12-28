@@ -23,16 +23,20 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 # Utility operations
-def check_if_has_charges(comp):
+def has_oxidation_states(comp):
     """Check if a composition object has oxidation states for each element
+
+    TODO: Does this make sense to add to pymatgen?
 
     Args:
         comp - (Composition) Composition to check
-    Throws:
-        ValueError if the composition is missing oxidation states for any element"""
+    Returns:
+        (Boolean) Whether this composition object contains oxidation states
+    """
     for el in comp.elements:
         if not isinstance(el, Specie) or el.oxi_state is None:
-            raise ValueError('Composition is missing oxidation states')
+            return False
+    return True
 
 
 class ElementProperty(BaseFeaturizer):
@@ -326,7 +330,8 @@ class ElectronAffinity(BaseFeaturizer):
         """
 
         # Check if oxidation states have been computed
-        check_if_has_charges(comp)
+        if not has_oxidation_states(comp):
+            raise ValueError('Composition lacks oxidation states')
 
         # Get the species and fractions
         species, fractions = zip(*comp.items())
@@ -558,7 +563,10 @@ class IonProperty(BaseFeaturizer):
             elec = self.data_source.get_elemental_properties(elements, "X")
 
             # Determine if neutral compound is possible
-            if self.fast:
+            if has_oxidation_states(comp):
+                charges, fractions = zip(*[(s.oxi_state, f) for s,f in comp.items()])
+                cpd_possible = math.isclose(np.dot(charges, fractions), 0)
+            elif self.fast:
                 oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
                 cpd_possible = False
                 for ox in itertools.product(*oxidation_states):
