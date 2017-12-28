@@ -18,13 +18,19 @@ class CompositionFeaturesTest(PymatgenTest):
 
     def setUp(self):
         self.df = pd.DataFrame({"composition": [Composition("Fe2O3"),
-                                                Composition({Specie("Fe", 1): 1, Specie("O", 1): 1})]})
+                                                Composition({Specie("Fe", 1): 1, Specie("O", -1): 1})]})
 
     def test_stoich(self):
+        featurizer = Stoichiometry(num_atoms=True)
         df_stoich = Stoichiometry(num_atoms=True).featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_stoich["num atoms"][0], 5)
         self.assertAlmostEqual(df_stoich["0-norm"][0], 2)
         self.assertAlmostEqual(df_stoich["7-norm"][0], 0.604895199)
+
+        # Test whether the number of formula units affects result
+        original_value = featurizer.featurize(Composition("FeO"))
+        self.assertArrayAlmostEqual(featurizer.featurize(Composition("Fe0.5O0.5")), original_value)
+        self.assertArrayAlmostEqual(featurizer.featurize(Composition("Fe2O2")), original_value)
 
     def test_elem(self):
         df_elem = ElementProperty.from_preset("magpie").featurize_dataframe(self.df, col_id="composition")
@@ -55,7 +61,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertTrue(math.isnan(df_elem["maximum bulk_modulus"][0]))
         self.assertAlmostEqual(df_elem["range X"][0], 1.61, 1)
         self.assertAlmostEqual(df_elem["mean X"][0], 2.796, 1)
-        self.assertAlmostEqual(df_elem["max block"][0], 3, 1)
+        self.assertAlmostEqual(df_elem["maximum block"][0], 3, 1)
 
     def test_valence(self):
         df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")
@@ -78,16 +84,14 @@ class CompositionFeaturesTest(PymatgenTest):
         df_frac = ElementFraction().featurize_dataframe(self.df, col_id="composition")
         self.assertEqual(df_frac["O"][0], 0.6)
         self.assertEqual(df_frac["Fe"][0], 0.4)
-        #self.assertAlmostEqual(df_frac["Fe"][1], 0.42857143)
-        #self.assertAlmostEqual(df_frac["Li"][1], 0.57142857)
 
     def test_tm_fraction(self):
         df_tm_frac = TMetalFraction().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_tm_frac["transition metal fraction"][0], 0.4)
 
     def test_elec_affin(self):
-        df_elec_affin = ElectronAffinity().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elec_affin["avg anion electron affinity "][0], -169200)
+        featurizer = ElectronAffinity()
+        self.assertAlmostEqual(-141000, featurizer.featurize(self.df["composition"][1])[0])
 
     def test_en_diff(self):
         df_en_diff = ElectronegativityDiff().featurize_dataframe(self.df, col_id="composition")

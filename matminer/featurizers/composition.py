@@ -6,12 +6,11 @@ import os
 from functools import reduce
 import collections
 
-
 import numpy as np
 import pandas as pd
 from pymatgen import Element, MPRester
 from pymatgen.core.composition import Composition
-from pymatgen.core.periodic_table import get_el_sp
+from pymatgen.core.periodic_table import get_el_sp, Specie
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.stats import PropertyStats
@@ -21,6 +20,19 @@ from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Anubhav Jain'
 module_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+# Utility operations
+def check_if_has_charges(comp):
+    """Check if a composition object has oxidation states for each element
+
+    Args:
+        comp - (Composition) Composition to check
+    Throws:
+        ValueError if the composition is missing oxidation states for any element"""
+    for el in comp.elements:
+        if not isinstance(el, Specie) or el.oxi_state is None:
+            raise ValueError('Composition is missing oxidation states')
 
 
 class ElementProperty(BaseFeaturizer):
@@ -98,7 +110,7 @@ class ElementProperty(BaseFeaturizer):
 
         return ElementProperty(data_source, features, stats)
 
-    def featurize(self, comp: Composition):
+    def featurize(self, comp):
         """
         Get elemental property attributes
 
@@ -165,6 +177,7 @@ class ElementProperty(BaseFeaturizer):
 
 
 class ChargeDependentElementalProperty(ElementProperty):
+    """Features based on elemental properties that are dependent on charge state"""
     def featurize(self, comp):
         raise NotImplementedError()
 
@@ -293,45 +306,46 @@ class ElectronegativityDiff(BaseFeaturizer):
 
 class ElectronAffinity(BaseFeaturizer):
     """
-    Class to calculate average electron affinity times formal charge of anion elements
+    Calculate average electron affinity times formal charge of anion elements
 
-    Parameters:
-        data_source (data class): source from which to retrieve element data
+    Note: The formal charges must already be computed before calling `featurize`
 
     Generates average (electron affinity*formal charge) of anions
     """
 
-    def __init__(self, data_source=DemlData()):
-        self.data_source = data_source
+    def __init__(self):
+        self.data_source = DemlData()
 
-    def featurize(self, comp):
+    def featurize(self, comp: Composition):
         """
         Args:
-            comp: Pymatgen Composition object
+            comp: (Composition) Composition to be featurized
 
         Returns:
             avg_anion_affin (single-element list): average electron affinity*formal charge of anions
         """
-        electron_affin = self.data_source.get_property(comp, "electron_affin",
-                                                       combine_by_element=True)
 
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        electron_affin = dict(zip(elements, electron_affin))
+        # Check if oxidation states have been computed
+        check_if_has_charges(comp)
 
-        oxi_states = comp.oxi_state_guesses(max_sites=-1)[0]
+        # Get the species and fractions
+        species, fractions = zip(*comp.items())
 
-        avg_anion_affin = 0
-        for i, el in enumerate(oxi_states):
-            if oxi_states[el] < 0:
-                avg_anion_affin += oxi_states[el] * electron_affin[el] * \
-                                   el_amt[el]
+        # Determine which species are anions
+        anions, fractions = zip(*[(s, f) for s,f in zip(species, fractions) if s.oxi_state < 0])
+
+        # Compute the electron_affinity*formal_charge for each anion
+        electron_affin = [
+            self.data_source.get_elemental_property(s.element, "electron_affin") * s.oxi_state for s in anions
+        ]
+
+        # Compute the average affinity
+        avg_anion_affin = PropertyStats.mean(electron_affin, fractions)
 
         return [avg_anion_affin]
 
     def feature_labels(self):
-        labels = ["avg anion electron affinity "]
-        return labels
+        return ["avg anion electron affinity"]
 
     def citations(self):
         citation = (
@@ -352,14 +366,14 @@ class Stoichiometry(BaseFeaturizer):
 
     Parameters:
         p_list (list of ints): list of norms to calculate
-        num_atoms (bool): whether to return number of atoms
+        num_atoms (bool): whether to return number of atoms per formula unit
     """
 
-    def __init__(self, p_list=[0, 2, 3, 5, 7, 10], num_atoms=False):
+    def __init__(self, p_list=(0, 2, 3, 5, 7, 10), num_atoms=False):
         self.p_list = p_list
         self.num_atoms = num_atoms
 
-    def featurize(self, comp):
+    def featurize(self, comp: Composition):
         """
         Get stoichiometric attributes
         Args:
@@ -373,10 +387,11 @@ class Stoichiometry(BaseFeaturizer):
 
         el_amt = comp.get_el_amt_dict()
 
-        n_atoms = comp.num_atoms
+        # Compute the number of atoms per formula unit
+        n_atoms_per_unit = comp.num_atoms / comp.get_integer_formula_and_factor()[1]
 
         if self.p_list == None:
-            stoich_attr = [n_atoms]  # return num atoms if no norms specified
+            stoich_attr = [n_atoms_per_unit]  # return num atoms if no norms specified
         else:
             p_norms = [0] * len(self.p_list)
             n_atoms = sum(el_amt.values())
@@ -392,7 +407,7 @@ class Stoichiometry(BaseFeaturizer):
                     p_norms[i] = p_norms[i] ** (1.0 / self.p_list[i])
 
             if self.num_atoms:
-                stoich_attr = [n_atoms] + p_norms
+                stoich_attr = [n_atoms_per_unit] + p_norms
             else:
                 stoich_attr = p_norms
 
@@ -505,15 +520,19 @@ class IonProperty(BaseFeaturizer):
     Class to calculate ionic property attributes
     """
 
-    def __init__(self, all_oxi_states=True):
+    def __init__(self, all_oxi_states=True, fast=False):
         """
 
         Args:
              all_oxi_states - (boolean), whether to consider all possible oxidation
                 states when checking whether a compound can form a neutral ionic compound
+            fast - (boolean) whether to assume elements exist in a single oxidation state,
+                which can dramatically accelerate the calculation of whether an ionic compound
+                is possible, but will miss heterovalent compounds like Fe3O4.
         """
         self.data_source = PymatgenData()
         self.all_oxi_states = all_oxi_states
+        self.fast = fast
 
     def featurize(self, comp):
         """
@@ -539,9 +558,17 @@ class IonProperty(BaseFeaturizer):
             elec = self.data_source.get_elemental_properties(elements, "X")
 
             # Determine if neutral compound is possible
-            #  Note: We use pymatgen's oxidation state checker which
-            #   can detect whether an takes >1 oxidation state (as in Fe3O4)
-            cpd_possible = len(comp.oxi_state_guesses(all_oxi_states=self.all_oxi_states)) > 0
+            if self.fast:
+                oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
+                cpd_possible = False
+                for ox in itertools.product(*oxidation_states):
+                    if math.isclose(np.dot(ox, fractions), 0):
+                        cpd_possible = True
+                        break
+            else:
+                #  Note: We use pymatgen's oxidation state checker which
+                #   can detect whether an takes >1 oxidation state (as in Fe3O4)
+                cpd_possible = len(comp.oxi_state_guesses(all_oxi_states=self.all_oxi_states)) > 0
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
