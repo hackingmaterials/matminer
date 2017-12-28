@@ -28,6 +28,14 @@ matminer\.featurizers\.composition module
     :undoc-members:
     :show-inheritance:
 
+matminer\.featurizers\.dos module
+---------------------------------
+
+.. automodule:: matminer.featurizers.dos
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer\.featurizers\.site module
 ----------------------------------
 

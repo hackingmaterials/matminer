@@ -4,6 +4,8 @@ import itertools
 import math
 import os
 from functools import reduce
+import collections
+
 
 import numpy as np
 import pandas as pd
@@ -811,67 +813,116 @@ class Miedema(BaseFeaturizer):
     """
     Class to calculate the formation enthalpies of the intermetallic compound,
     solid solution and amorphous phase of a given composition, based on the
-    semi-empirical Miedema model for transitional metals.
-    (use the original formulation in 1980s, see citation)
+    semi-empirical Miedema model (and some extensions), particularly for
+    transitional metal alloys.
 
-    **Currently only elemental or binary composition is supported, may extend to ternary or more later.
+    Support elemental, binary and multicomponent alloys.
+        For elemental/binary alloys, the formulation is based on the original
+        works by Miedema et al. in 1980s;
+        For multicomponent alloys, the formulation is basically linear combination
+        of sub-binary systems. This is reported to work well for ternary alloys,
+        but needs to be careful with quaternary alloys and more.
 
-    Parameters:
-        struct (String): one target structure or a list of target structures separated by '|'
-                          'inter'    :   intermetallic compound --by default
-                          'ss'       :   solid solution
-                          'amor'     :   amorphous phase
-                          'inter|ss' :   intermetallic compound and solid solution, as an example
-                          'all'      :   same for 'inter|ss|amor'
+    Args:
+        struct_types (str / list of str): default='inter'
+            if str, one target structure;
+            if list, a list of target structures.
 
-                           for 'ss', one can designate the lattice type: if entering 'ss, bcc', 'ss, fcc', 'ss, hcp',
-                           then the lattice type of ss is fixed; if not, returning the minimum formation enthalpy of
-                           possible lattice types
+            'inter': intermetallic compound
+            'ss': solid solution
+            'amor': amorphous phase
+            'all': same for ['inter', 'ss', 'amor']
+            ['inter', 'ss']: amorphous phase and solid solution, as an example
 
+        ss_types (str / list of str): default='min', only for ss
+            if str, one structure type of ss;
+            if list, a list of structure types of ss.
 
-        dataset (String): source of parameters:
-                           'Miedema': the original paramerization by Miedema et al. in 1989
-                           'MP': extract some features from MP to replace the original ones in 'Miedema'
-                           'Citrine': extract some features from Citrine to replace the original ones in 'Miedema'
-                           **Currently not done yet
+            'fcc': fcc solid solution
+            'bcc': bcc solid solution
+            'hcp': hcp solid solution
+            'no_latt': solid solution with no specific structure type
+            'min': min value of ['fcc', 'bcc', 'hcp', 'no_latt']
+            'all': same for ['fcc', 'bcc', 'hcp', 'no_latt']
+            ['fcc', 'bcc']: fcc and bcc solid solutions, as an example
+
+        data_source (str): default='Miedema', source of dataset
+            -'Miedema': read from 'Miedema.csv'
+                        parameterized by Miedema et al. in 1980s,
+                        containing following parameters for 73 types of elements:
+                         'molar_volume'
+                         'electron_density'
+                         'electronegativity'
+                         'valence_electrons'
+                         'a_const'
+                         'R_const'
+                         'H_trans'
+                         'compressibility'
+                         'shear_modulus'
+                         'melting_point'
+                         'structural_stability'
+
+    Returns:
+        a list of Miedema formation enthalpies (per atom) of target structures
+        for a given composition:
+            formation_enthalpy_inter: for interatomic compound
+            formation_enthalpy_ss: for solid solution, can be divided into
+                                   'min', 'fcc', 'bcc', 'hcp', 'no_latt'
+                                    for different lattice_types
+            formation_enthalpy_amor: for amorphous phase
+
     """
 
     data_dir = os.path.join(module_dir, "..", "utils", "data_files")
 
-    def __init__(self, struct='inter', dataset='Miedema'):
-        if struct == 'all':
-            struct = 'inter|amor|ss'
-        self.struct = struct
-        self.dataset = dataset
-
-    # chemical term of formation enthalpy
-    def delta_H_chem(self, elements, fracs, struct):
-        if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
-            for element in elements:
-                if element not in df_dataset.index:
-                    return np.nan
-            df_element = df_dataset.loc[elements]
-            V_molar = np.array(df_element['molar_volume'])
-            n_WS = np.array(df_element['electron_density'])
-            elec = np.array(df_element['electronegativity'])
-            valence = np.array(df_element['valence_electrons'])
-
-            a_const = np.array(df_element['a_const'])
-            R_const = np.array(df_element['R_const'])
-            H_trans = np.array(df_element['H_trans'])
+    def __init__(self, struct_types='inter', ss_types='min', data_source='Miedema'):
+        if isinstance(struct_types, list):
+            self.struct_types = struct_types
         else:
-            # allow to extract parameters for ab initio databases eg MP, Citrine ** Currently not done
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
-            df_element = df_dataset.ix[elements]
-            V_molar = np.array(df_element['molar_volume'])
-            n_WS = np.array(df_element['electron_density'])
-            elec = np.array(df_element['electronegativity'])
-            valence = np.array(df_element['valence_electrons'])
+            if struct_types == 'all':
+                self.struct_types = ['inter', 'amor', 'ss']
+            else:
+                self.struct_types = [struct_types]
 
-            a_const = np.array(df_element['a_const'])
-            R_const = np.array(df_element['R_const'])
-            H_trans = np.array(df_element['H_trans'])
+        if isinstance(ss_types, list):
+            self.ss_types = ss_types
+        else:
+            if ss_types == 'all':
+                self.ss_types = ['fcc', 'bcc', 'hcp', 'no_latt']
+            else:
+                self.ss_types = [ss_types]
+
+        self.data_source = data_source
+        if self.data_source == 'Miedema':
+            self.df_dataset = pd.read_csv(
+                os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
+        else:
+            raise NotImplementedError('data_source {} not implemented yet'.
+                                      format(self, data_source))
+
+    def deltaH_chem(self, elements, fracs, struct):
+        """chemical term of formation enthalpy
+
+        Args:
+            elements (list of str): list of elements
+            fracs (list of floats): list of atomic fractions
+            struct (str): 'inter', 'ss' or 'amor'
+
+        Returns:
+            deltaH_chem (float): chemical term of formation enthalpy
+
+        """
+        for el in elements:
+            if el not in self.df_dataset.index:
+                return np.nan
+        df_el = self.df_dataset.loc[elements]
+        v_molar = np.array(df_el['molar_volume'])
+        n_ws = np.array(df_el['electron_density'])
+        elec = np.array(df_el['electronegativity'])
+        val = np.array(df_el['valence_electrons'])
+        a = np.array(df_el['a_const'])
+        R = np.array(df_el['R_const'])
+        H_trans = np.array(df_el['H_trans'])
 
         if struct == 'inter':
             gamma = 8
@@ -880,233 +931,283 @@ class Miedema(BaseFeaturizer):
         else:
             gamma = 0
 
-        c_surf = fracs * np.power(V_molar, 2/3) / np.dot(fracs, np.power(V_molar, 2/3))
-        f = (c_surf * (1 + gamma * np.power(np.multiply.reduce(c_surf), 2)))[::-1]
-        V_alloy = np.array([np.power(V_molar[0], 2/3) * (1 + a_const[0] * f[0] * (elec[0] - elec[1])),
-                            np.power(V_molar[1], 2/3) * (1 + a_const[1] * f[1] * (elec[1] - elec[0]))])
+        c_surf = (fracs * np.power(v_molar, 2/3) /
+                  np.dot(fracs, np.power(v_molar, 2/3)))
 
-        c_surf_alloy = fracs * V_alloy / np.dot(fracs, V_alloy)
+        f = (c_surf * (1 +
+                       gamma * np.power(np.multiply.reduce(c_surf), 2)))[::-1]
 
-        f_alloy = (c_surf_alloy * (1 + gamma * np.power(np.multiply.reduce(c_surf_alloy), 2)))[::-1]
+        v_alloy = np.array([np.power(v_molar[0], 2/3) *
+                            (1 + a[0] * f[0] * (elec[0] - elec[1])),
+                            np.power(v_molar[1], 2/3) *
+                            (1 + a[1] * f[1] * (elec[1] - elec[0]))])
 
-        threshold = range(3,12)
+        c_surf_alloy = fracs * v_alloy / np.dot(fracs, v_alloy)
 
-        if (valence[0] in threshold and valence[1] in threshold):
-            P_const = 14.10
-            R_const = 0.00
+        f_alloy = (c_surf_alloy *
+                   (1 + gamma *
+                    np.power(np.multiply.reduce(c_surf_alloy), 2)))[::-1]
 
-        elif (valence[0] not in threshold) and (valence[1] not in threshold):
-            P_const = 10.70
-            R_const = 0.00
+        threshold = range(3, 12)
+        if (val[0] in threshold) and (val[1] in threshold):
+            P = 14.10
+            R = 0.00
+
+        elif (val[0] not in threshold) and (val[1] not in threshold):
+            P = 10.70
+            R = 0.00
 
         else:
-            P_const = 12.35
-            R_const = np.multiply.reduce(R_const) * P_const
+            P = 12.35
+            R = np.multiply.reduce(R) * P
+        Q = P * 9.40
 
-        Q_const = P_const * 9.40
+        eta_ab = (2 * (-P * np.power(elec[0] - elec[1], 2) - R +
+                       Q * np.power(np.power(n_ws[0], 1/3) -
+                                    np.power(n_ws[1], 1/3), 2)) /
+                  reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
 
-        eta_AB = 2 * (-P_const * np.power(elec[0] - elec[1], 2) + Q_const * np.power(np.power(n_WS[0], 1/3) -
-                 np.power(n_WS[1], 1/3), 2) - R_const) / reduce(lambda x,y: 1/x + 1/y,np.power(n_WS, 1/3))
+        deltaH_chem = (f_alloy[0] * fracs[0] * v_alloy[0] * eta_ab +
+                       np.dot(fracs, H_trans))
 
-        delta_H_chem = f_alloy[0] * fracs[0] * V_alloy[0] * eta_AB + np.dot(fracs, H_trans)
-        return delta_H_chem
+        return deltaH_chem
 
-    # elastic term of formation enthalpy
-    def delta_H_elast(self, elements, fracs):
-        if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
-            for element in elements:
-                if element not in df_dataset.index:
-                    return np.nan
-            df_element = df_dataset.loc[elements]
-            V_molar = np.array(df_element['molar_volume'])
-            n_WS = np.array(df_element['electron_density'])
-            elec = np.array(df_element['electronegativity'])
-            compr = np.array(df_element['compressibility'])
-            shear_mod = np.array(df_element['shear_modulus'])
-        else:
-            # allow to extract parameters for ab initio databases eg MP, Citrine ** Currently not done
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
-            df_element = df_dataset.ix[elements]
-            V_molar = np.array(df_element['molar_volume'])
-            n_WS = np.array(df_element['electron_density'])
-            elec = np.array(df_element['electronegativity'])
-            compr = np.array(df_element['compressibility'])
-            shear_mod = np.array(df_element['shear_modulus'])
+    def deltaH_elast(self, elements, fracs):
+        """elastic term of formation enthalpy
 
-        alpha_pure = 1.5 * np.power(V_molar, 2/3) / reduce(lambda x,y: 1/x + 1/y, np.power(n_WS, 1/3))
+        Args:
+            elements (list of str): list of elements
+            fracs (list of floats): list of atomic fractions
 
-        # volume correction
-        V_alloy = V_molar + np.array([alpha_pure[0] * (elec[0] - elec[1]) / n_WS[0],
-                                      alpha_pure[1] * (elec[1] - elec[0]) / n_WS[1]])
+        Returns:
+            deltaH_elastic (float): elastic term of formation enthalpy
 
-        alpha_alloy = 1.5 * np.power(V_alloy, 2/3) / reduce(lambda x, y: 1/x + 1/y, np.power(n_WS, 1/3))
+        """
+        for el in elements:
+            if el not in self.df_dataset.index:
+                return np.nan
+        df_el = self.df_dataset.loc[elements]
+        v_molar = np.array(df_el['molar_volume'])
+        n_ws = np.array(df_el['electron_density'])
+        elec = np.array(df_el['electronegativity'])
+        compr = np.array(df_el['compressibility'])
+        shear_mod = np.array(df_el['shear_modulus'])
+
+        alp = (1.5 * np.power(v_molar, 2/3) /
+               reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
+
+        v_alloy = (v_molar +
+                   np.array([alp[0] * (elec[0] - elec[1]) / n_ws[0],
+                             alp[1] * (elec[1] - elec[0]) / n_ws[1]]))
+
+        alp_alloy = (1.5 * np.power(v_alloy, 2/3) /
+                     reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
 
         # effective volume in alloy
-        V_alloy_AB = V_molar[0] + np.array([alpha_alloy[0] * (elec[0] - elec[1]) / n_WS[0],
-                                            alpha_alloy[1] * (elec[1] - elec[0]) / n_WS[0]])
-        V_alloy_BA = V_molar[1] + np.array([alpha_alloy[0] * (elec[0] - elec[1]) / n_WS[1],
-                                            alpha_alloy[1] * (elec[1] - elec[0]) / n_WS[1]])
+        Vab_alloy = (v_molar[0] +
+                     np.array([alp_alloy[0] * (elec[0] - elec[1]) / n_ws[0],
+                               alp_alloy[1] * (elec[1] - elec[0]) / n_ws[0]]))
+
+        Vba_alloy = (v_molar[1] +
+                     np.array([alp_alloy[0] * (elec[0] - elec[1]) / n_ws[1],
+                               alp_alloy[1] * (elec[1] - elec[0]) / n_ws[1]]))
 
         # H_elast A in B
-        H_elast_AB = 2 * compr[0] * shear_mod[1] * np.power((V_alloy_AB[0] - V_alloy_BA[0]), 2) \
-                     / (4 * shear_mod[1] * V_alloy_AB[0] + 3 * compr[0] * V_alloy_BA[0])
+        Hab_elast = ((2 * compr[0] * shear_mod[1] *
+                      np.power((Vab_alloy[0] - Vba_alloy[0]), 2)) /
+                     (4 * shear_mod[1] * Vab_alloy[0] +
+                      3 * compr[0] * Vba_alloy[0]))
+
         # H_elast B in A
-        H_elast_BA = 2 * compr[1] * shear_mod[0] * np.power((V_alloy_BA[1] - V_alloy_AB[1]), 2) \
-                     / (4 * shear_mod[0] * V_alloy_BA[1] + 3 * compr[1] * V_alloy_AB[1])
+        Hba_elast = ((2 * compr[1] * shear_mod[0] *
+                      np.power((Vba_alloy[1] - Vab_alloy[1]), 2)) /
+                     (4 * shear_mod[0] * Vba_alloy[1] +
+                      3 * compr[1] * Vab_alloy[1]))
 
-        delta_H_elast = np.multiply.reduce(fracs) * (fracs[1] * H_elast_AB + fracs[0] * H_elast_BA)
+        deltaH_elast = (np.multiply.reduce(fracs) *
+                        (fracs[1] * Hab_elast + fracs[0] * Hba_elast))
 
-        return delta_H_elast
+        return deltaH_elast
 
-    # structural term of formation enthalpy
-    def delta_H_struct(self, elements, fracs, lattice):
-        if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
-            for element in elements:
-                if element not in df_dataset.index:
-                    return np.nan
-            df_element = df_dataset.loc[elements]
-            valence = np.array(df_element['valence_electrons'])
-            struct_stability = np.array(df_element['structural_stability'])
+    def deltaH_struct(self, elements, fracs, latt):
+        """structural term of formation enthalpy, only for solid solution
 
-        else:
-            # allow to extract parameters for ab initio databases eg MP, Citrine **Currently not done
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'),index_col='element')
-            df_element = df_dataset.ix[elements]
-            valence = np.array(df_element['valence_electrons'])
-            struct_stability = np.array(df_element['structural_stability'])
+        Args:
+            elements (list of str): list of elements
+            fracs (list of floats): list of atomic fractions
+            latt (str): 'fcc', 'bcc', 'hcp' or 'no_latt'
 
-        # fcc
-        if lattice == 'fcc':
-            latt_stability_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: -2, 4.0: -1.5, 5.0: 9, 5.5: 14, 6.0: 11, 7.0: -3,
-                                   8.0: -9.5, 8.5: -11,9.0: -9, 10.0: -2, 11.0: 1.5, 12.0: 0, 13.0: 0, 14.0: 0, 15.0: 0}
-        # bcc
-        elif lattice == 'bcc':
-            latt_stability_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: 2.2, 4.0: 2, 5.0: -9.5, 5.5: -14.5, 6.0: -12, 7.0: 4,
-                                   8.0: 10, 8.5: 11, 9.0: 8.5, 10.0: 1.5, 11.0: 1.5, 12.0: 0, 13.0: 0, 14.0: 0, 15.0: 0}
-        # hcp
-        elif lattice == 'hcp':
-            latt_stability_dict = {0.0: 0, 1.0: 0, 2.0: 0, 3.0: -2.5, 4.0: -2.5, 5.0: 10, 5.5: 15, 6.0: 13, 7.0: -5,
-                                   8.0: -10.5, 8.5: -11, 9.0: -8, 10.0: -1, 11.0: 2.5, 12.0: 0, 13.0: 0, 14.0: 0, 15.0: 0}
+        Returns:
+            deltaH_struct (float): structural term of formation enthalpy
+
+        """
+        for el in elements:
+            if el not in self.df_dataset.index:
+                return np.nan
+        df_el = self.df_dataset.loc[elements]
+        val = np.array(df_el['valence_electrons'])
+        struct_stab = np.array(df_el['structural_stability'])
+
+        if latt == 'fcc':
+            latt_stab_dict = {0.0: 0., 1.0: 0, 2.0: 0, 3.0: -2, 4.0: -1.5,
+                              5.0: 9., 5.5: 14., 6.0: 11., 7.0: -3., 8.0: -9.5,
+                              8.5: -11., 9.0: -9., 10.0: -2., 11.0: 1.5,
+                              12.0: 0., 13.0: 0., 14.0: 0., 15.0: 0.}
+        elif latt == 'bcc':
+            latt_stab_dict = {0.0: 0., 1.0: 0., 2.0: 0., 3.0: 2.2, 4.0: 2.,
+                              5.0: -9.5, 5.5: -14.5, 6.0: -12., 7.0: 4.,
+                              8.0: 10., 8.5: 11., 9.0: 8.5, 10.0: 1.5,
+                              11.0: 1.5, 12.0: 0., 13.0: 0., 14.0: 0., 15.0: 0.}
+        elif latt == 'hcp':
+            latt_stab_dict = {0.0: 0., 1.0: 0., 2.0: 0., 3.0: -2.5, 4.0: -2.5,
+                              5.0: 10., 5.5: 15., 6.0: 13., 7.0: -5.,
+                              8.0: -10.5, 8.5: -11., 9.0: -8., 10.0: -1.,
+                              11.0: 2.5, 12.0: 0., 13.0: 0., 14.0: 0., 15.0: 0.}
         else:
             return 0
-
-        # lattice stability of different structures: fcc, bcc, hcp
-        valence_avg = np.dot(fracs, valence)
-        valence_boundary_lower, valence_boundary_upper = 0, 0
-        for key in latt_stability_dict.keys():
-            if valence_avg - key <= 0:
-                valence_boundary_upper = key
+        latt_stab_dict = collections.OrderedDict(sorted(latt_stab_dict.items(),
+                                                        key=lambda t: t[0]))
+        # lattice stability of different lattice_types
+        val_avg = np.dot(fracs, val)
+        val_bd_lower, val_bd_upper = 0, 0
+        for key in latt_stab_dict.keys():
+            if val_avg - key <= 0:
+                val_bd_upper = key
                 break
             else:
-                valence_boundary_lower = key
+                val_bd_lower = key
 
-        latt_stability = (valence_avg - valence_boundary_lower) * latt_stability_dict[valence_boundary_upper] / \
-                         (valence_boundary_upper - valence_boundary_lower) + (valence_boundary_upper - valence_avg) * \
-                         latt_stability_dict[valence_boundary_lower] / (valence_boundary_upper - valence_boundary_lower)
+        latt_stab = ((val_avg - val_bd_lower) * latt_stab_dict[val_bd_upper] /
+                     (val_bd_upper - val_bd_lower) +
+                     (val_bd_upper - val_avg) * latt_stab_dict[val_bd_lower] /
+                     (val_bd_upper - val_bd_lower))
 
-        delta_H_struct = latt_stability - np.dot(fracs, struct_stability)
-        return delta_H_struct
+        deltaH_struct = latt_stab - np.dot(fracs, struct_stab)
+        return deltaH_struct
 
-    # entropy term of Gibbs free energy
-    # currently not used, only return enthalpy term
-    def delta_S(self, fracs):
-        frac_sum = 0
-        for frac in fracs:
-            if frac == 0:
-                frac_sum += 0
-            else:
-                frac_sum += frac * math.log(frac)
-        delta_S = -8.314 * frac_sum / 1000
-        return delta_S
+    def deltaH_topo(self, elements, fracs):
+        """topological term of formation enthalpy, only for amorphous phase
+
+        Args:
+            elements (list of str): list of elements
+            fracs (list of floats): list of atomic fractions
+
+        Returns:
+            deltaH_topo (float): topological term of formation enthalpy
+
+        """
+        for el in elements:
+            if el not in self.df_dataset.index:
+                return np.nan
+        else:
+            df_el = self.df_dataset.loc[elements]
+            melt_point = np.array(df_el['melting_point'])
+
+        deltaH_topo = 3.5 * np.dot(fracs, melt_point) / 1000
+        return deltaH_topo
 
     def featurize(self, comp):
-        """
-        Get Miedema formation enthalpy of target structures
-        :param comp: Pymatgen composition object
-        :return: delta_H_inter :  formation enthalpy of intermetallic compound
-                 delta_H_ss    :  formation enthalpy of solid solution
-                 delta_H_amor  :  formation enthalpy of amorphous phase
-        """
+        """Get Miedema formation enthalpies of target structures: inter, amor,
+           ss (can be further divided into 'min', 'fcc', 'bcc', 'hcp', 'no_latt'
+               for different lattice_types)
 
+        Args:
+            comp: Pymatgen composition object
+
+        Returns:
+            miedema (list of floats): formation enthalpies of target structures
+
+        """
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         fracs = [el_amt[el] for el in elements]
+        len_elements = len(elements)
+        # divide into a list of sub-binaries
+        element_bins = []
+        frac_bins = []
+        for i in range(len_elements - 1):
+            for j in range(i+1, len_elements):
+                element_bins.append([elements[i], elements[j]])
+                frac_bins.append([fracs[i], fracs[j]])
 
-        if self.dataset == 'Miedema':
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
-            for element in elements:
-                if element not in df_dataset.index:
-                    melting_point = [np.nan,np.nan]
-                    break
-            else:
-                df_element = df_dataset.loc[elements]
-                melting_point = np.array(df_element['melting_point'])
-
-        else:
-            # allow to extract parameters for ab initio databases eg MP, Citrine **Currently not done
-            df_dataset = pd.read_csv(os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
-            df_element = df_dataset.ix[elements]
-            melting_point = np.array(df_element['melting_point'])
-
-        miedema_result = []
-        for struct_now in self.struct.split('|'):
+        miedema = []
+        for struct_type in self.struct_types:
             # inter: intermetallic compound
-            if struct_now == 'inter':
-                delta_H_chem_inter = self.delta_H_chem(elements, fracs, 'inter')
-                delta_H_inter = delta_H_chem_inter
-                miedema_result.append(delta_H_inter)
+            if struct_type == 'inter':
+                deltaH_chem_inter = 0
+                for i_inter, element_bin in enumerate(element_bins):
+                    deltaH_chem_inter += self.deltaH_chem(element_bin,
+                                                          frac_bins[i_inter],
+                                                          'inter')
+                miedema.append(deltaH_chem_inter)
+            # ss: solid solution
+            elif struct_type == 'ss':
+                deltaH_chem_ss = 0
+                deltaH_elast_ss = 0
+                for bin, element_bin in enumerate(element_bins):
+                    deltaH_chem_ss += self.deltaH_chem(element_bin,
+                                                       frac_bins[bin], 'ss')
+                    deltaH_elast_ss += self.deltaH_elast(element_bin,
+                                                         frac_bins[bin])
 
-            # ss: solid solution, four types of solid solution prototypes, default: minimum
-            elif struct_now.startswith('ss'):
-                delta_H_chem_ss = self.delta_H_chem(elements, fracs, 'ss')
-                delta_H_elast = self.delta_H_elast(elements, fracs)
-
-                if struct_now != 'ss':
-                    lattice = struct_now.split(',')
-                    for i in range(1, len(lattice)):
-                        miedema_result.append(delta_H_chem_ss + delta_H_elast +
-                                              self.delta_H_struct(elements, fracs, lattice[i]))
-                else:
-                    delta_H_ss_list = list()
-                    for lattice_possible in ['default', 'fcc', 'bcc', 'hcp']:
-                        delta_H_ss_list.append(delta_H_chem_ss + delta_H_elast +
-                                               self.delta_H_struct(elements, fracs, lattice_possible))
-                    delta_H_ss_min = min(delta_H_ss_list)
-                    miedema_result.append(delta_H_ss_min)
+                for ss_type in self.ss_types:
+                    if ss_type == 'min':
+                        deltaH_ss_all = []
+                        for latt in ['fcc', 'bcc', 'hcp', 'no_latt']:
+                            deltaH_ss_all.append(
+                                deltaH_chem_ss + deltaH_elast_ss +
+                                self.deltaH_struct(elements, fracs, latt))
+                        deltaH_ss_min = min(deltaH_ss_all)
+                        miedema.append(deltaH_ss_min)
+                    else:
+                        deltaH_struct_ss = self.deltaH_struct(elements, fracs, ss_type)
+                        miedema.append(deltaH_chem_ss + deltaH_elast_ss + deltaH_struct_ss)
 
             # amor: amorphous phase
-            elif struct_now == 'amor':
-                delta_H_chem_amor = self.delta_H_chem(elements, fracs, 'amor')
-                delta_H_amor = delta_H_chem_amor + 3.5 * np.dot(fracs, melting_point) / 1000
-                miedema_result.append(delta_H_amor)
+            elif struct_type == 'amor':
+                deltaH_chem_amor = 0
+                deltaH_topo_amor = self.deltaH_topo(elements, fracs)
+                for bin, element_bin in enumerate(element_bins):
+                    deltaH_chem_amor += self.deltaH_chem(element_bin,
+                                                         frac_bins[bin], 'amor')
+                miedema.append(deltaH_chem_amor + deltaH_topo_amor)
 
         # convert kJ/mol to eV/atom. The original Miedema model is in kJ/mol.
-        miedema_result = [delta_H / 96.4853 for delta_H in miedema_result]
-        return miedema_result
+        miedema = [deltaH / 96.4853 for deltaH in miedema]
+        return miedema
 
     def feature_labels(self):
         labels = []
-        for target_struct in self.struct.split('|'):
-            if target_struct.startswith('ss'):
-                if target_struct != 'ss':
-                    for label in target_struct.split(',')[1:]:
-                        labels.append('formation_enthalpy_ss_'+label)
-                else:
-                    labels.append('formation_enthalpy_ss_min')
+        for struct_type in self.struct_types:
+            if struct_type == 'ss':
+                for ss_type in self.ss_types:
+                    labels.append('formation_enthalpy_ss_'+ss_type)
             else:
-                labels.append('formation_enthalpy_'+target_struct)
+                labels.append('formation_enthalpy_'+struct_type)
         return labels
 
-
     def citations(self):
-        citation = ('@article{de1988cohesion, '
-                    'title={Cohesion in metals},'
-                    'author={De Boer, Frank R and Mattens, WCM '
-                    'and Boom, R and Miedema, AR and Niessen, AK},'
-                    'year={1988}}')
-        return citation
+        miedema_citation = (
+            '@article{miedema_1988, '
+            'title={Cohesion in metals},'
+            'author={De Boer, Frank R and Mattens, WCM '
+            'and Boom, R and Miedema, AR and Niessen, AK},'
+            'year={1988}}')
+        zhang_citation = (
+            '@article{miedema_zhang_2016, '
+            'title={Miedema Calculator: A thermodynamic platform '
+            'for predicting formation enthalpies of alloys within '
+            'framework of Miedema\'s Theory},'
+            'author={R.F. Zhang, S.H. Zhang, Z.J. He, J. Jing and S.H. Sheng},'
+            'journal={Computer Physics Communications}'
+            'year={2016}}')
+        ternary_citation = (
+            '@article{miedema_alonso_1990, '
+            'title={Glass formation in ternary transition metal alloys},'
+            'author={L J Gallego, J A Somoza and J A Alonso},'
+            'journal={Journal of Physics: Condensed Matter}'
+            'year={1990}}')
+        return [miedema_citation, zhang_citation, ternary_citation]
 
     def implementors(self):
-        return ['Qi Wang']
+        return ['Qi Wang', 'Alireza Faghaninia']

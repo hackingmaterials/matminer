@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.1.7 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.1.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.7',
+        VERSION:     '0.1.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -206,124 +206,6 @@ calculate_band_edges: (bool) whether to also return band edge</p>
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.implementors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="class">
-<dt id="matminer.featurizers.bandstructure.DOSFeaturizer">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">DOSFeaturizer</code><span class="sig-paren">(</span><em>contributors=1</em>, <em>significance_threshold=0.1</em>, <em>coordination_features=True</em>, <em>energy_cutoff=0.5</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Featurizes a pymatgen dos object.</p>
-<dl class="method">
-<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>contributors=1</em>, <em>significance_threshold=0.1</em>, <em>coordination_features=True</em>, <em>energy_cutoff=0.5</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>contributors (int):</dt>
-<dd>Sets the number of top contributors to the DOS that are
-returned as features. (i.e. contributors=1 will only return the
-main cb and main vb orbital)</dd>
-<dt>significance_threshold (float):</dt>
-<dd>Sets the significance threshold for orbitals in the DOS.
-Does not impact the number of contributors returned. Only
-determines the feature value xbm_significant_contributors.
-The threshold is a fractional value between 0 and 1.</dd>
-<dt>coordination_features (bool):</dt>
-<dd>If true, the coordination environment of the PDOS contributors
-will also be returned. Only limited environments are currently
-supported. If the environment is neither, “unrecognized” will
-be returned.</dd>
-<dt>energy_cutoff (float in eV):</dt>
-<dd>The extent (into the bands) to sample the DOS</dd>
-<dt>sampling_resolution (int):</dt>
-<dd>Number of points to sample DOS</dd>
-<dt>gaussian_smear (float in eV):</dt>
-<dd>Gaussian smearing (sigma) around each sampled point in the DOS</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.feature_labels">
-<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.featurize">
-<code class="descname">featurize</code><span class="sig-paren">(</span><em>dos</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>dos (pymatgen CompleteDos or their dict):</dt>
-<dd>The density of states to featurize. Must be a complete DOS,
-(i.e. contains PDOS and structure, in addition to total DOS)
-and must contain the structure.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd><p class="first">xbm_score_i (float): fractions of ith contributor orbital
-xbm_location_i (str): cartesian coordinate of ith contributor.</p>
-<blockquote>
-<div>For example, ‘0.0;0.0;0.0’ if Gamma</div></blockquote>
-<p>xbm_specie_i: (str) elemental specie of ith contributor (ex: ‘Ti’)
-xbm_character_i: (str) orbital character of ith contributor (s p d or f)
-xbm_coordination_i: (str) the coordination geometry that the ith</p>
-<blockquote>
-<div>contributor orbital reside in. (the coordination environment
-of the site the orbital is associated with)</div></blockquote>
-<dl class="last docutils">
-<dt>xbm_nsignificant: (int) the number of orbitals with contributions</dt>
-<dd>above the significance_threshold</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.bandstructure.DOSFeaturizer.implementors">
-<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.DOSFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="matminer.featurizers.bandstructure.get_cbm_vbm_scores">
-<code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">get_cbm_vbm_scores</code><span class="sig-paren">(</span><em>dos</em>, <em>coordination_features</em>, <em>energy_cutoff</em>, <em>sampling_resolution</em>, <em>gaussian_smear</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.get_cbm_vbm_scores" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>dos (pymatgen CompleteDos or their dict):</dt>
-<dd>The density of states to featurize. Must be a complete DOS,
-(i.e. contains PDOS and structure, in addition to total DOS)</dd>
-<dt>coordination_features (bool):</dt>
-<dd>if true, will also return the coordination enviornment of the
-PDOS features</dd>
-<dt>energy_cutoff (float in eV):</dt>
-<dd>The extent (into the bands) to sample the DOS</dd>
-<dt>sampling_resolution (int):</dt>
-<dd>Number of points to sample DOS</dd>
-<dt>gaussian_smear (float in eV):</dt>
-<dd>Gaussian smearing (sigma) around each sampled point in the DOS</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>orbital_scores [(dict)]:</dt>
-<dd><p class="first">A list of how much each orbital contributes to the partial
-density of states up to energy_cutoff. Dictionary items are:
-.. cbm_score: (float) fractional contribution to conduction band
-.. vbm_score: (float) fractional contribution to valence band
-.. species: (pymatgen Specie) the Specie of the orbital
-.. character: (str) is the orbital character s, p, d, or f
-.. location: [(float)] cartesian coordinates of the orbital
-.. coordination (str) optional-coordination environment from op</p>
-<blockquote class="last">
-<div>site feature vector</div></blockquote>
-</dd>
-</dl>
-</dd>
-</dl>
 </dd></dl>
 
 </div>
@@ -775,38 +657,82 @@ avg_ionic_char (float): Average ionic character</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.composition.Miedema">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">Miedema</code><span class="sig-paren">(</span><em>struct='inter'</em>, <em>dataset='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">Miedema</code><span class="sig-paren">(</span><em>struct_types='inter'</em>, <em>ss_types='min'</em>, <em>data_source='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Class to calculate the formation enthalpies of the intermetallic compound,
 solid solution and amorphous phase of a given composition, based on the
-semi-empirical Miedema model for transitional metals.
-(use the original formulation in 1980s, see citation)</p>
-<p><a href="#id1"><span class="problematic" id="id2">**</span></a>Currently only elemental or binary composition is supported, may extend to ternary or more later.</p>
+semi-empirical Miedema model (and some extensions), particularly for
+transitional metal alloys.</p>
 <dl class="docutils">
-<dt>Parameters:</dt>
+<dt>Support elemental, binary and multicomponent alloys.</dt>
+<dd>For elemental/binary alloys, the formulation is based on the original
+works by Miedema et al. in 1980s;
+For multicomponent alloys, the formulation is basically linear combination
+of sub-binary systems. This is reported to work well for ternary alloys,
+but needs to be careful with quaternary alloys and more.</dd>
+<dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt>struct (String): one target structure or a list of target structures separated by ‘|’</dt>
-<dd><p class="first">‘inter’    :   intermetallic compound –by default
-‘ss’       :   solid solution
-‘amor’     :   amorphous phase
-‘inter|ss’ :   intermetallic compound and solid solution, as an example
-‘all’      :   same for ‘inter|ss|amor’</p>
-<blockquote class="last">
-<div>for ‘ss’, one can designate the lattice type: if entering ‘ss, bcc’, ‘ss, fcc’, ‘ss, hcp’,
-then the lattice type of ss is fixed; if not, returning the minimum formation enthalpy of
-possible lattice types</div></blockquote>
+<dt>struct_types (str / list of str): default=’inter’</dt>
+<dd><p class="first">if str, one target structure;
+if list, a list of target structures.</p>
+<p class="last">‘inter’: intermetallic compound
+‘ss’: solid solution
+‘amor’: amorphous phase
+‘all’: same for [‘inter’, ‘ss’, ‘amor’]
+[‘inter’, ‘ss’]: amorphous phase and solid solution, as an example</p>
 </dd>
-<dt>dataset (String): source of parameters:</dt>
-<dd>‘Miedema’: the original paramerization by Miedema et al. in 1989
-‘MP’: extract some features from MP to replace the original ones in ‘Miedema’
-‘Citrine’: extract some features from Citrine to replace the original ones in ‘Miedema’
-<a href="#id3"><span class="problematic" id="id4">**</span></a>Currently not done yet</dd>
+<dt>ss_types (str / list of str): default=’min’, only for ss</dt>
+<dd><p class="first">if str, one structure type of ss;
+if list, a list of structure types of ss.</p>
+<p class="last">‘fcc’: fcc solid solution
+‘bcc’: bcc solid solution
+‘hcp’: hcp solid solution
+‘no_latt’: solid solution with no specific structure type
+‘min’: min value of [‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’]
+‘all’: same for [‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’]
+[‘fcc’, ‘bcc’]: fcc and bcc solid solutions, as an example</p>
+</dd>
+<dt>data_source (str): default=’Miedema’, source of dataset</dt>
+<dd><dl class="first last docutils">
+<dt>-‘Miedema’: read from ‘Miedema.csv’</dt>
+<dd><p class="first">parameterized by Miedema et al. in 1980s,
+containing following parameters for 73 types of elements:</p>
+<blockquote class="last">
+<div>‘molar_volume’
+‘electron_density’
+‘electronegativity’
+‘valence_electrons’
+‘a_const’
+‘R_const’
+‘H_trans’
+‘compressibility’
+‘shear_modulus’
+‘melting_point’
+‘structural_stability’</div></blockquote>
+</dd>
 </dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><p class="first">a list of Miedema formation enthalpies (per atom) of target structures
+for a given composition:</p>
+<blockquote class="last">
+<div><p>formation_enthalpy_inter: for interatomic compound
+formation_enthalpy_ss: for solid solution, can be divided into</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>‘min’, ‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’</dt>
+<dd>for different lattice_types</dd>
+</dl>
+</div></blockquote>
+<p>formation_enthalpy_amor: for amorphous phase</p>
+</div></blockquote>
 </dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>struct='inter'</em>, <em>dataset='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>struct_types='inter'</em>, <em>ss_types='min'</em>, <em>data_source='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -820,24 +746,58 @@ possible lattice types</div></blockquote>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="matminer.featurizers.composition.Miedema.delta_H_chem">
-<code class="descname">delta_H_chem</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em>, <em>struct</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.delta_H_chem" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="matminer.featurizers.composition.Miedema.deltaH_chem">
+<code class="descname">deltaH_chem</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em>, <em>struct</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_chem" title="Permalink to this definition">¶</a></dt>
+<dd><p>chemical term of formation enthalpy</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elements (list of str): list of elements
+fracs (list of floats): list of atomic fractions
+struct (str): ‘inter’, ‘ss’ or ‘amor’</dd>
+<dt>Returns:</dt>
+<dd>deltaH_chem (float): chemical term of formation enthalpy</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
-<dt id="matminer.featurizers.composition.Miedema.delta_H_elast">
-<code class="descname">delta_H_elast</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.delta_H_elast" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="matminer.featurizers.composition.Miedema.deltaH_elast">
+<code class="descname">deltaH_elast</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_elast" title="Permalink to this definition">¶</a></dt>
+<dd><p>elastic term of formation enthalpy</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elements (list of str): list of elements
+fracs (list of floats): list of atomic fractions</dd>
+<dt>Returns:</dt>
+<dd>deltaH_elastic (float): elastic term of formation enthalpy</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
-<dt id="matminer.featurizers.composition.Miedema.delta_H_struct">
-<code class="descname">delta_H_struct</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em>, <em>lattice</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.delta_H_struct" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="matminer.featurizers.composition.Miedema.deltaH_struct">
+<code class="descname">deltaH_struct</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em>, <em>latt</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_struct" title="Permalink to this definition">¶</a></dt>
+<dd><p>structural term of formation enthalpy, only for solid solution</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elements (list of str): list of elements
+fracs (list of floats): list of atomic fractions
+latt (str): ‘fcc’, ‘bcc’, ‘hcp’ or ‘no_latt’</dd>
+<dt>Returns:</dt>
+<dd>deltaH_struct (float): structural term of formation enthalpy</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
-<dt id="matminer.featurizers.composition.Miedema.delta_S">
-<code class="descname">delta_S</code><span class="sig-paren">(</span><em>fracs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.delta_S" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="matminer.featurizers.composition.Miedema.deltaH_topo">
+<code class="descname">deltaH_topo</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_topo" title="Permalink to this definition">¶</a></dt>
+<dd><p>topological term of formation enthalpy, only for amorphous phase</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elements (list of str): list of elements
+fracs (list of floats): list of atomic fractions</dd>
+<dt>Returns:</dt>
+<dd>deltaH_topo (float): topological term of formation enthalpy</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.feature_labels">
@@ -847,12 +807,18 @@ possible lattice types</div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.featurize">
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get Miedema formation enthalpy of target structures
-:param comp: Pymatgen composition object
-:return: delta_H_inter :  formation enthalpy of intermetallic compound</p>
-<blockquote>
-<div>delta_H_ss    :  formation enthalpy of solid solution
-delta_H_amor  :  formation enthalpy of amorphous phase</div></blockquote>
+<dd><dl class="docutils">
+<dt>Get Miedema formation enthalpies of target structures: inter, amor,</dt>
+<dd><dl class="first last docutils">
+<dt>ss (can be further divided into ‘min’, ‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’</dt>
+<dd>for different lattice_types)</dd>
+</dl>
+</dd>
+<dt>Args:</dt>
+<dd>comp: Pymatgen composition object</dd>
+<dt>Returns:</dt>
+<dd>miedema (list of floats): formation enthalpies of target structures</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1004,6 +970,115 @@ props (list): specifies whether to return average number of electrons in each or
 </dd></dl>
 
 </div>
+<div class="section" id="module-matminer.featurizers.dos">
+<span id="matminer-featurizers-dos-module"></span><h2>matminer.featurizers.dos module<a class="headerlink" href="#module-matminer.featurizers.dos" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.featurizers.dos.DOSFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.dos.</code><code class="descname">DOSFeaturizer</code><span class="sig-paren">(</span><em>contributors=1</em>, <em>significance_threshold=0.1</em>, <em>energy_cutoff=0.5</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Featurizes a pymatgen density of states, CompleteDos, object.</p>
+<dl class="method">
+<dt id="matminer.featurizers.dos.DOSFeaturizer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>contributors=1</em>, <em>significance_threshold=0.1</em>, <em>energy_cutoff=0.5</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>contributors (int):</dt>
+<dd>Sets the number of top contributors to the DOS that are
+returned as features. (i.e. contributors=1 will only return the
+main cb and main vb orbital)</dd>
+<dt>significance_threshold (float):</dt>
+<dd>Sets the significance threshold for orbitals in the DOS.
+Does not impact the number of contributors returned. Only
+determines the feature value xbm_significant_contributors.
+The threshold is a fractional value between 0 and 1.</dd>
+<dt>energy_cutoff (float in eV):</dt>
+<dd>The extent (into the bands) to sample the DOS</dd>
+<dt>sampling_resolution (int):</dt>
+<dd>Number of points to sample DOS</dd>
+<dt>gaussian_smear (float in eV):</dt>
+<dd>Gaussian smearing (sigma) around each sampled point in the DOS</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.dos.DOSFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.dos.DOSFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>dos</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>dos (pymatgen CompleteDos or their dict):</dt>
+<dd>The density of states to featurize. Must be a complete DOS,
+(i.e. contains PDOS and structure, in addition to total DOS)
+and must contain the structure.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><p class="first">xbm_score_i (float): fractions of ith contributor orbital
+xbm_location_i (str): fractional coordinate of ith contributor.</p>
+<blockquote>
+<div>For example, ‘0.0;0.0;0.0’ if Gamma</div></blockquote>
+<p>xbm_specie_i: (str) elemental specie of ith contributor (ex: ‘Ti’)
+xbm_character_i: (str) orbital character of ith contributor (s p d or f)
+xbm_nsignificant: (int) the number of orbitals with contributions</p>
+<blockquote class="last">
+<div>above the significance_threshold</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.dos.DOSFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.featurizers.dos.get_cbm_vbm_scores">
+<code class="descclassname">matminer.featurizers.dos.</code><code class="descname">get_cbm_vbm_scores</code><span class="sig-paren">(</span><em>dos</em>, <em>energy_cutoff</em>, <em>sampling_resolution</em>, <em>gaussian_smear</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.get_cbm_vbm_scores" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Quantifies the strength of the contribution of all orbitals of various</dt>
+<dd>species/sites to the conduction band minimum (CBM) and the valence band
+maximum (VBM) up to energy_cutoff inside the bands from the CBM/VBM.
+An example use of the output may be sorting it based on cbm_score
+or vbm_score.</dd>
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>dos (pymatgen CompleteDos or their dict):</dt>
+<dd>The density of states to featurize. Must be a complete DOS,
+(i.e. contains PDOS and structure, in addition to total DOS)</dd>
+<dt>energy_cutoff (float in eV):</dt>
+<dd>The extent (into the bands) to sample the DOS</dd>
+<dt>sampling_resolution (int):</dt>
+<dd>Number of points to sample DOS</dd>
+<dt>gaussian_smear (float in eV):</dt>
+<dd>Gaussian smearing (sigma) around each sampled point in the DOS</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>orbital_scores [(dict)]:</dt>
+<dd>A list of how much each orbital contributes to the partial
+density of states up to energy_cutoff. Dictionary items are:
+.. cbm_score: (float) fractional contribution to conduction band
+.. vbm_score: (float) fractional contribution to valence band
+.. species: (pymatgen Specie) the Specie of the orbital
+.. character: (str) is the orbital character s, p, d, or f
+.. location: [(float)] fractional coordinates of the orbital</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-matminer.featurizers.site">
 <span id="matminer-featurizers-site-module"></span><h2>matminer.featurizers.site module<a class="headerlink" href="#module-matminer.featurizers.site" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -1018,18 +1093,18 @@ potentials. These features come in two forms: atomic fingerprints and
 direction-resolved fingerprints.
 Atomic fingerprints describe the local environment of an atom and are
 computed using the function:
-:math:<a href="#id5"><span class="problematic" id="id6">`</span></a>A_i(eta) = sumlimits_{i</dd>
+:math:<a href="#id1"><span class="problematic" id="id2">`</span></a>A_i(eta) = sumlimits_{i</dd>
 </dl>
 <p>e j} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <blockquote>
 <div>where <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/9172efc523d7488d4c3ed299d0be813de01503b8.png" alt="\eta"/> is a scaling function,
 <img class="math" src="_images/math/35bab58b40a77a2e24ecb9f58898f1813de64459.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> and <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/>, and <img class="math" src="_images/math/074903764bb5a464b7c346e84f43cba2174f3ab0.png" alt="f(r)"/> is a cutoff function where
-:math:<a href="#id7"><span class="problematic" id="id8">`</span></a>f(r) = 0.5[cos(</div></blockquote>
+:math:<a href="#id3"><span class="problematic" id="id4">`</span></a>f(r) = 0.5[cos(</div></blockquote>
 <p>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/b851d3a5fb872ad82d61f964772ca1cc2520a590.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</p>
 <blockquote>
 <div>The direction-resolved fingerprints are computed using
-:math:<a href="#id9"><span class="problematic" id="id10">`</span></a>V_i^k(eta) = sumlimits_{i</div></blockquote>
+:math:<a href="#id5"><span class="problematic" id="id6">`</span></a>V_i^k(eta) = sumlimits_{i</div></blockquote>
 <p>e j} 
 rac{r_{ij}^k}{r_{ij}} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
@@ -1641,7 +1716,7 @@ weights (list of floats): Weights for each value</dd>
 <p>Generate the Coulomb matrix, M, of the input
 structure (or molecule).  The Coulomb matrix was put forward by
 Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-off-diagonal elements M_ij = Z_i*Z_j/<a href="#id13"><span class="problematic" id="id14">|R_i-R_j|</span></a>
+off-diagonal elements M_ij = Z_i*Z_j/<a href="#id9"><span class="problematic" id="id10">|R_i-R_j|</span></a>
 and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
 the nuclear charge and the position of atom i, respectively.</p>
 <dl class="docutils">
@@ -1882,7 +1957,7 @@ Args:</p>
 <dt>stats ([str]): list of weighted statistics to compute for each feature.</dt>
 <dd>If stats is None, for each order parameter, a list is returned that
 contains the calculated parameter for each site in the structure.
-<a href="#id11"><span class="problematic" id="id12">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</dd>
+<a href="#id7"><span class="problematic" id="id8">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</dd>
 <dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
 <dd>zero means metals/cations only)</dd>
 </dl>
@@ -2329,6 +2404,7 @@ two input structures (s1 - s2).</dd>
 <li><a class="reference internal" href="#module-matminer.featurizers.bandstructure">matminer.featurizers.bandstructure module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.base">matminer.featurizers.base module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.composition">matminer.featurizers.composition module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.dos">matminer.featurizers.dos module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.site">matminer.featurizers.site module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.stats">matminer.featurizers.stats module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.structure">matminer.featurizers.structure module</a></li>
@@ -2367,7 +2443,7 @@ two input structures (s1 - s2).</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.8 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
