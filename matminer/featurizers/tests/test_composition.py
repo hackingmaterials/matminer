@@ -47,7 +47,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem_deml["maximum atom_num"][0], 26)
         self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)
         self.assertAlmostEqual(df_elem_deml["mean atom_num"][0], 15.2)
-        self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 8.81816307)
+        self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 12.7279)
 
     def test_cation_properties(self):
         featurizer = CationProperty.from_preset("deml")
