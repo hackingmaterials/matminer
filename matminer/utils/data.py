@@ -26,7 +26,8 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 class AbstractData(six.with_metaclass(abc.ABCMeta)):
     """Abstract class for retrieving elemental properties
 
-    All classes must implement the `get_elemental_property` operation"""
+    All classes must implement the `get_elemental_property` operation. These operations
+    should return scalar values (ideally floats) and `nan` if a property does not exist"""
 
     @abc.abstractmethod
     def get_elemental_property(self, elem, property_name):
@@ -58,7 +59,7 @@ class OxidationStatesMixin(six.with_metaclass(abc.ABCMeta)):
 
     @abc.abstractmethod
     def get_oxidation_states(self, elem):
-        """Retrive the oxidation states of an element
+        """Retrieve the possible oxidation states of an element
 
         Args:
             elem - (Element), Target element
@@ -69,6 +70,7 @@ class OxidationStatesMixin(six.with_metaclass(abc.ABCMeta)):
 
 
 class OxidationStateDependentData(AbstractData):
+    """Abstract class that also includes oxidation-state-dependent properties"""
 
     @abc.abstractmethod
     def get_charge_dependent_property(self, element, charge, property_name):
@@ -273,7 +275,8 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
             block_key = {"s": 1.0, "p": 2.0, "d": 3.0, "f": 3.0}
             return block_key[getattr(elem, property_name)]
         else:
-            return getattr(elem, property_name)
+            value = getattr(elem, property_name)
+            return np.nan if value is None else value
 
     def get_oxidation_states(self, elem, common=True):
         """Get the oxidation states of an element
