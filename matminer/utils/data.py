@@ -16,7 +16,7 @@ from glob import glob
 from collections import defaultdict
 
 from pymatgen import Element, Composition
-from pymatgen.core.periodic_table import _pt_data, get_el_sp
+from pymatgen.core.periodic_table import _pt_data, get_el_sp, Specie
 
 __author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain'
 
@@ -68,6 +68,34 @@ class OxidationStatesMixin(six.with_metaclass(abc.ABCMeta)):
         pass
 
 
+class OxidationStateDependentData(AbstractData):
+
+    @abc.abstractmethod
+    def get_charge_dependent_property(self, element, charge, property_name):
+        """Retrieve a oxidation-state dependent elemental property
+
+        Args:
+            element - (Element), Target element
+            charge - (int), Oxidation state
+            property_name - (string), name of property
+        Return:
+            (float) - Value of property
+        """
+    pass
+
+    def get_charge_dependent_property_from_specie(self, specie, property_name):
+        """Retrieve a oxidation-state dependent elemental property
+
+        Args:
+            specie - (Specie), Specie of interest
+            property_name - (string), name of property
+        Return:
+            (float) - Value of property
+        """
+
+        return self.get_charge_dependent_property(specie.element, specie.oxi_state, property_name)
+
+
 class CohesiveEnergyData(AbstractData):
     """Get the cohesive energy of an element.
 
@@ -92,7 +120,7 @@ class CohesiveEnergyData(AbstractData):
         return self.cohesive_energy_data[elem]
 
 
-class DemlData(AbstractData, OxidationStatesMixin):
+class DemlData(OxidationStateDependentData, OxidationStatesMixin):
     """
     Class to get data from Deml data file. See also: A.M. Deml,
     R. O'Hayre, C. Wolverton, V. Stevanovic, Predicting density functional
@@ -108,7 +136,7 @@ class DemlData(AbstractData, OxidationStatesMixin):
                                ["formal_charge", "valence_s", "valence_p",
                                 "valence_d", "first_ioniz", "total_ioniz"]
 
-        self.charge_dependent_properties = ["xtal_field_split", "magn_moment", "so_coupling", "first_ioniz"]
+        self.charge_dependent_properties = ["xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]
 
     def get_elemental_property(self, elem, property_name):
         if "valence" in property_name:
@@ -119,11 +147,23 @@ class DemlData(AbstractData, OxidationStatesMixin):
                 return valence_dict[property_name[-1]]
             else:
                 return sum(valence_dict.values())
+        elif property_name == "first_ioniz":
+            return self.all_props["ionization_en"][elem.symbol][0]
         else:
             return self.all_props[property_name].get(elem.symbol, float("NaN"))
 
     def get_oxidation_states(self, elem):
         return self.all_props["charge_states"][elem.symbol]
+
+    def get_charge_dependent_property(self, element, charge, property_name):
+        if property_name == "formal_charge":
+            return charge
+        elif property_name == "total_ioniz":
+            if charge < 0:
+                raise ValueError("total ionization energy only defined for charge > 0")
+            return sum(self.all_props["ionization_en"][element.symbol][:charge])
+        else:
+            return self.all_props[property_name].get(element.symbol, {}).get(charge)
 
     def calc_formal_charge(self, comp):
         """
@@ -220,7 +260,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
         return self.all_elemental_props["OxidationStates"][elem.symbol]
 
 
-class PymatgenData(AbstractData, OxidationStatesMixin):
+class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
     """
     Class to get data from pymatgen. See also:
     S.P. Ong, W.D. Richards, A. Jain, G. Hautier, M. Kocher, S. Cholia, et al.,
@@ -235,7 +275,7 @@ class PymatgenData(AbstractData, OxidationStatesMixin):
         else:
             return getattr(elem, property_name)
 
-    def get_oxidation_states(self, elem: Element, common=True):
+    def get_oxidation_states(self, elem, common=True):
         """Get the oxidation states of an element
 
         Args:
@@ -246,3 +286,6 @@ class PymatgenData(AbstractData, OxidationStatesMixin):
             [int] list of oxidation states
             """
         return elem.common_oxidation_states if common else elem.oxidation_states
+
+    def get_charge_dependent_property(self, element, charge, property_name):
+        return getattr(element, property_name)[charge]
