@@ -105,10 +105,10 @@ class CompositionFeaturesTest(PymatgenTest):
     def test_atomic_orbitals(self):
         df_atomic_orbitals = AtomicOrbitals().featurize_dataframe(self.df, col_id="composition")
         self.assertEqual(df_atomic_orbitals['HOMO_character'][0], 'd')
-        self.assertEqual(df_atomic_orbitals['HOMO_element'][0], Element('Fe'))
+        self.assertEqual(df_atomic_orbitals['HOMO_element'][0], 'Fe')
         self.assertEqual(df_atomic_orbitals['HOMO_energy'][0], -0.295049)
         self.assertEqual(df_atomic_orbitals['LUMO_character'][0], 'd')
-        self.assertEqual(df_atomic_orbitals['LUMO_element'][0], Element('Fe'))
+        self.assertEqual(df_atomic_orbitals['LUMO_element'][0], 'Fe')
         self.assertEqual(df_atomic_orbitals['LUMO_energy'][0], -0.295049)
         self.assertEqual(df_atomic_orbitals['gap'][0], 0.0)
 

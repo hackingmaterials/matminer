@@ -1,7 +1,7 @@
 from __future__ import division
 
 from pymatgen import Element, MPRester
-from pymatgen.core.periodic_table import get_el_sp, Element
+from pymatgen.core.periodic_table import get_el_sp
 from pymatgen.core.molecular_orbitals import MolecularOrbitals
 
 import os
@@ -166,9 +166,6 @@ class AtomicOrbitals(BaseFeaturizer):
     https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
     '''
 
-    def __init__(self):
-        pass
-
     def featurize(self, comp):
         '''
         Args:
@@ -188,19 +185,30 @@ class AtomicOrbitals(BaseFeaturizer):
 
         string_comp = comp.reduced_formula
 
-        HOMO_LUMO = MolecularOrbitals(string_comp).band_edges
+        homo_lumo = MolecularOrbitals(string_comp).band_edges
 
-        self.feat = {}
+        self.feat = collections.OrderedDict()
         for edge in ['HOMO', 'LUMO']:
-            self.feat['{}_character'.format(edge)] = HOMO_LUMO[edge][1][-1]
-            self.feat['{}_element'.format(edge)] = Element(HOMO_LUMO[edge][0])
-            self.feat['{}_energy'.format(edge)] = HOMO_LUMO[edge][2]
+            self.feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
+            self.feat['{}_element'.format(edge)] = homo_lumo[edge][0]
+            self.feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
         self.feat['gap'] = self.feat['LUMO_energy'] - self.feat['HOMO_energy']
 
         return list(self.feat.values())
 
     def feature_labels(self):
         return list(self.feat.keys())
+
+    def citations(self):
+        return [
+            "@article{PhysRevA.55.191,"
+            "title = {Local-density-functional calculations of the energy of atoms},"
+            "author = {Kotochigova, Svetlana and Levine, Zachary H. and Shirley, "
+            "Eric L. and Stiles, M. D. and Clark, Charles W.},"
+            "journal = {Phys. Rev. A}, volume = {55}, issue = {1}, pages = {191--199},"
+            "year = {1997}, month = {Jan}, publisher = {American Physical Society},"
+            "doi = {10.1103/PhysRevA.55.191}, "
+            "url = {https://link.aps.org/doi/10.1103/PhysRevA.55.191}}"]
 
     def implementors(self):
         return ['Maxwell Dylla']
