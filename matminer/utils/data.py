@@ -82,7 +82,7 @@ class OxidationStateDependentData(AbstractData):
         Return:
             (float) - Value of property
         """
-    pass
+        pass
 
     def get_charge_dependent_property_from_specie(self, specie, property_name):
         """Retrieve a oxidation-state dependent elemental property

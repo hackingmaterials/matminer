@@ -409,7 +409,7 @@ class ElectronAffinity(BaseFeaturizer):
     def __init__(self):
         self.data_source = DemlData()
 
-    def featurize(self, comp: Composition):
+    def featurize(self, comp):
         """
         Args:
             comp: (Composition) Composition to be featurized
@@ -467,7 +467,7 @@ class Stoichiometry(BaseFeaturizer):
         self.p_list = p_list
         self.num_atoms = num_atoms
 
-    def featurize(self, comp: Composition):
+    def featurize(self, comp):
         """
         Get stoichiometric attributes
         Args:
@@ -654,12 +654,12 @@ class IonProperty(BaseFeaturizer):
             # Determine if neutral compound is possible
             if has_oxidation_states(comp):
                 charges, fractions = zip(*[(s.oxi_state, f) for s,f in comp.items()])
-                cpd_possible = math.isclose(np.dot(charges, fractions), 0)
+                cpd_possible = np.isclose(np.dot(charges, fractions), 0)
             elif self.fast:
                 oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
                 cpd_possible = False
                 for ox in itertools.product(*oxidation_states):
-                    if math.isclose(np.dot(ox, fractions), 0):
+                    if np.isclose(np.dot(ox, fractions), 0):
                         cpd_possible = True
                         break
             else:
