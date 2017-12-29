@@ -227,6 +227,61 @@ class CationProperty(ElementProperty):
 
         return all_attributes
 
+    def citations(self):
+        return ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+                "functional theory total energies and enthalpies of formation of metal-nonmetal "
+                "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+                "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}",)
+
+
+class OxidationStates(BaseFeaturizer):
+    """
+    Statistics about the oxidation states for each specie.
+
+    Features are concentration-weighted statistics of the oxidation states.
+    """
+
+    def __init__(self, stats):
+        """
+
+        Args:
+             stats - (list of string), which statistics compute
+        """
+        self.stats = stats
+
+    @classmethod
+    def from_preset(cls, preset_name):
+        if preset_name == "deml":
+            stats = ["minimum", "maximum", "range", "std_dev"]
+        else:
+            ValueError('Preset "%s" not found' % preset_name)
+        return cls(stats=stats)
+
+    def featurize(self, comp):
+        # Check if oxidation states are present
+        if not has_oxidation_states(comp):
+            raise ValueError('Oxidation states have not been determined')
+
+        # Get the oxidation states and their proportions
+        oxid_states, fractions = zip(*[(s.oxi_state, f) for s,f in comp.items()])
+
+        # Compute statistics
+        return [PropertyStats.calc_stat(oxid_states, s, fractions) for s in self.stats]
+
+    def feature_labels(self):
+        return ["%s oxidation state"%s for s in self.stats]
+
+    def citations(self):
+        return ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+                "functional theory total energies and enthalpies of formation of metal-nonmetal "
+                "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+                "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}",)
+
+    def implementors(self):
+        return ('Logan Ward',)
+
 
 class BandCenter(BaseFeaturizer):
     def featurize(self, comp):

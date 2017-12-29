@@ -10,13 +10,12 @@ import os
 import json
 import six
 import abc
-import itertools
 import numpy as np
 from glob import glob
 from collections import defaultdict
 
-from pymatgen import Element, Composition
-from pymatgen.core.periodic_table import _pt_data, get_el_sp, Specie
+from pymatgen import Element
+from pymatgen.core.periodic_table import _pt_data
 
 __author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain'
 
@@ -165,64 +164,12 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
         return self.all_props["charge_states"][elem.symbol]
 
     def get_charge_dependent_property(self, element, charge, property_name):
-        if property_name == "formal_charge":
-            return charge
-        elif property_name == "total_ioniz":
+        if property_name == "total_ioniz":
             if charge < 0:
                 raise ValueError("total ionization energy only defined for charge > 0")
             return sum(self.all_props["ionization_en"][element.symbol][:charge])
         else:
             return self.all_props[property_name].get(element.symbol, {}).get(charge, np.nan)
-
-    def calc_formal_charge(self, comp):
-        """
-        Computes formal charge of each element in a composition
-        Args:
-            comp (str or Composition object): composition
-        Returns:
-            dictionary of elements and formal charges
-        """
-
-        if type(comp) == str:
-            comp = Composition(comp)
-
-        el_amt = comp.get_el_amt_dict()
-        symbols = sorted(el_amt.keys(), key=lambda sym: get_el_sp(
-            sym).Z)  # Sort by atomic number
-        stoich = [el_amt[el] for el in symbols]
-
-        charge_states = []
-        for el in symbols:
-            try:
-                charge_states.append(self.all_props["charge_states"][el])
-            except:
-                charge_states.append([float("NaN")])
-
-        charge_sets = itertools.product(*charge_states)
-        possible_fml_charge = []
-
-        for charge in charge_sets:
-            if np.dot(charge, stoich) == 0:
-                possible_fml_charge.append(charge)
-
-        if len(possible_fml_charge) == 0:
-            fml_charge_dict = dict(zip(symbols, len(symbols) * [float("NaN")]))
-        elif len(possible_fml_charge) == 1:
-            fml_charge_dict = dict(zip(symbols, possible_fml_charge[0]))
-        else:
-            scores = []  # Score for correct sorting
-            for charge_state in possible_fml_charge:
-                el_charge_sort = [sym for (charge, sym) in sorted(
-                    zip(charge_state, symbols))]  # Elements sorted by charge
-                scores.append(sum(el_charge_sort[i] == symbols[i]) for i in
-                              range(len(
-                                  symbols)))  # Score based on number of elements in correct position
-
-            fml_charge_dict = dict(zip(symbols, possible_fml_charge[
-                scores.index(
-                    max(scores))]))  # Get charge states with best score
-
-        return fml_charge_dict
 
 
 class MagpieData(AbstractData, OxidationStatesMixin):

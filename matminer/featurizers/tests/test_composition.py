@@ -11,7 +11,7 @@ from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, \
     ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, CohesiveEnergy, \
-    BandCenter, Miedema, CationProperty
+    BandCenter, Miedema, CationProperty, OxidationStates
 
 
 class CompositionFeaturesTest(PymatgenTest):
@@ -119,6 +119,12 @@ class CompositionFeaturesTest(PymatgenTest):
     def test_band_center(self):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_band_center["band center"][0], -2.672486385)
+
+    def test_oxidation_states(self):
+        featurizer = OxidationStates.from_preset("deml")
+        features = dict(zip(featurizer.feature_labels(), featurizer.featurize(self.df["composition"][1])))
+        self.assertAlmostEquals(4, features["range oxidation state"])
+        self.assertAlmostEquals(2, features["maximum oxidation state"])
 
     def test_cohesive_energy(self):
         mpr = MPRester()
