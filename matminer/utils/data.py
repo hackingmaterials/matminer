@@ -57,7 +57,7 @@ class OxidationStatesMixin(six.with_metaclass(abc.ABCMeta)):
     of each element"""
 
     @abc.abstractmethod
-    def get_oxidation_states(self, elem):
+    def get_oxidation_states(self, elem, **kwargs):
         """Retrieve the possible oxidation states of an element
 
         Args:
@@ -112,7 +112,7 @@ class CohesiveEnergyData(AbstractData):
     def get_elemental_property(self, elem, property_name='cohesive energy'):
         """
         Args:
-            x: (str) Element as str
+            elem: (Element) Element of interest
             property_name (str): unused, always returns cohesive energy
 
         Returns:
@@ -139,7 +139,7 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
 
         # Compute the FERE correction energy
         fere_corr = {}
-        for k,v in self.all_props["GGAU_Etot"].items():
+        for k, v in self.all_props["GGAU_Etot"].items():
             fere_corr[k] = self.all_props["mus_fere"][k] - v
         self.all_props["FERE correction"] = fere_corr
 
@@ -160,7 +160,7 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
         else:
             return self.all_props[property_name].get(elem.symbol, float("NaN"))
 
-    def get_oxidation_states(self, elem):
+    def get_oxidation_states(self, elem, **kwargs):
         return self.all_props["charge_states"][elem.symbol]
 
     def get_charge_dependent_property(self, element, charge, property_name):
@@ -212,7 +212,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     def get_elemental_property(self, elem, property_name):
         return self.all_elemental_props[property_name][elem.symbol]
 
-    def get_oxidation_states(self, elem):
+    def get_oxidation_states(self, elem, **kwargs):
         return self.all_elemental_props["OxidationStates"][elem.symbol]
 
 
