@@ -138,6 +138,13 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
                                ["formal_charge", "valence_s", "valence_p",
                                 "valence_d", "first_ioniz", "total_ioniz"]
 
+        # Compute the FERE correction energy
+        fere_corr = {}
+        for k,v in self.all_props["GGAU_Etot"].items():
+            fere_corr[k] = self.all_props["mus_fere"][k] - v
+        self.all_props["FERE correction"] = fere_corr
+
+        # List out the available charge-dependent properties
         self.charge_dependent_properties = ["xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]
 
     def get_elemental_property(self, elem, property_name):
@@ -165,7 +172,7 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
                 raise ValueError("total ionization energy only defined for charge > 0")
             return sum(self.all_props["ionization_en"][element.symbol][:charge])
         else:
-            return self.all_props[property_name].get(element.symbol, {}).get(charge)
+            return self.all_props[property_name].get(element.symbol, {}).get(charge, np.nan)
 
     def calc_formal_charge(self, comp):
         """

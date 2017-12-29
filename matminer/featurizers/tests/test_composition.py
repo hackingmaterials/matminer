@@ -10,7 +10,7 @@ from pymatgen.core.periodic_table import Specie
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, \
-    ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, \
+    ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, CohesiveEnergy, \
     BandCenter, Miedema, CationProperty
 
 
@@ -47,7 +47,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem_deml["maximum atom_num"][0], 26)
         self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)
         self.assertAlmostEqual(df_elem_deml["mean atom_num"][0], 15.2)
-        self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 12.7279)
+        self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 12.7279, 4)
 
     def test_cation_properties(self):
         featurizer = CationProperty.from_preset("deml")
@@ -105,7 +105,10 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_en_diff["std_dev EN difference"][0], 0)
 
     def test_fere_corr(self):
-        df_fere_corr = FERECorrection().featurize_dataframe(self.df, col_id="composition")
+        df_fere_corr = ElementProperty(features=["FERE correction"],
+                                       stats=["minimum", "maximum", "range", "mean", "std_dev"],
+                                       data_source="deml")\
+            .featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_fere_corr["minimum FERE correction"][0], -0.15213431610903)
         self.assertAlmostEqual(df_fere_corr["maximum FERE correction"][0], 0.23)
         self.assertAlmostEqual(df_fere_corr["range FERE correction"][0], 0.382134316)

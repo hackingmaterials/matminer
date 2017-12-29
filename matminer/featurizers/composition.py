@@ -95,7 +95,8 @@ class ElementProperty(BaseFeaturizer):
                         "atom_radius", "molar_vol", "heat_fusion",
                         "melting_point", "boiling_point", "heat_cap",
                         "first_ioniz", "electronegativity",
-                        "electric_pol", "GGAU_Etot", "mus_fere"]
+                        "electric_pol", "GGAU_Etot", "mus_fere",
+                        "FERE correction"]
 
         elif preset_name == "matminer":
             data_source = "pymatgen"
@@ -742,78 +743,6 @@ class TMetalFraction(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen, Logan Ward"]
-
-
-# TODO: why is this a "feature" of a compound? Seems more like a pymatgen analysis thing?
-#   Deml *et al.* PRB 085142 use the FERE correction energy as the basis for features. I've adjusted the class
-#    documentation to make it clearer that this class computes features related to the FERE correction values, and
-#    not that it is performing some kind of thermodynamic analysis. Really, we should pre-compute these correction
-#    values and combine this with the ElementProperty class.
-class FERECorrection(BaseFeaturizer):
-    """
-    Class to calculate features related to the difference between fitted elemental-phase reference
-    energy (FERE) and GGA+U energy
-
-    Parameters:
-        data_source (data class): source from which to retrieve element data
-        stats: Property statistics to compute
-
-    Generates: Property statistics of difference between FERE and GGA+U energy
-    """
-
-    def __init__(self, data_source=DemlData(), stats=None):
-        self.data_source = data_source
-        if stats == None:
-            self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
-        else:
-            self.stats = stats
-
-    def featurize(self, comp):
-        """
-        Args:
-            comp: Pymatgen Composition object
-
-        Returns:
-            fere_corr_stats (list of floats): Property stats of FERE correction
-        """
-
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        el_frac = [el_amt[el] for el in elements]
-
-        GGAU_Etot = self.data_source.get_property(comp, "GGAU_Etot",
-                                                  combine_by_element=True)
-        mus_fere = self.data_source.get_property(comp, "mus_fere",
-                                                 combine_by_element=True)
-
-        fere_corr = [mus_fere[i] - GGAU_Etot[i] for i in range(len(GGAU_Etot))]
-
-        fere_corr_stats = []
-        for stat in self.stats:
-            fere_corr_stats.append(
-                PropertyStats().calc_stat(fere_corr, stat, weights=el_frac))
-
-        return fere_corr_stats
-
-    def feature_labels(self):
-
-        labels = []
-        for stat in self.stats:
-            labels.append("%s FERE correction" % stat)
-
-        return labels
-
-    def citations(self):
-        citation = (
-            "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
-            "functional theory total energies and enthalpies of formation of metal-nonmetal "
-            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
-            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
-        return citation
-
-    def implementors(self):
-        return ["Jiming Chen", "Logan Ward"]
 
 
 class CohesiveEnergy(BaseFeaturizer):
