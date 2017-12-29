@@ -20,8 +20,6 @@ class TestDemlData(TestCase):
         self.assertAlmostEquals(sum([2372300,5250500]),
                                 self.data_source.get_charge_dependent_property_from_specie(Specie("He", 2),
                                                                                            "total_ioniz"))
-        self.assertEquals(2, self.data_source.get_charge_dependent_property_from_specie(Specie("He", 2),
-                                                                                        "formal_charge"))
         self.assertAlmostEquals(18.6, self.data_source.get_charge_dependent_property_from_specie(Specie("V", 3),
                                                                                                  "xtal_field_split"))
 
