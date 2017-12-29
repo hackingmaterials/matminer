@@ -161,7 +161,7 @@ class ElementProperty(BaseFeaturizer):
 class AtomicOrbitals(BaseFeaturizer):
     '''
     class to determine the highest occupied molecular orbital (HOMO) and
-    lowest unocupied molecular orbital LUMO in a composition. The atomic 
+    lowest unocupied molecular orbital LUMO in a composition. The atomic
     orbital energies of neutral ions with LDA DFT were computed by NIST.
     https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
     '''

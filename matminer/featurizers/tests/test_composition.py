@@ -8,7 +8,6 @@ import pandas as pd
 
 from pymatgen import Composition, MPRester
 from pymatgen.util.testing import PymatgenTest
-from pymatgen.core.periodic_table import Element
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter, Miedema, AtomicOrbitals
 
