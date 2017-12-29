@@ -97,12 +97,13 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(-141000*2, featurizer.featurize(self.df["composition"][1])[0])
 
     def test_en_diff(self):
-        df_en_diff = ElectronegativityDiff().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_en_diff["minimum EN difference"][0], 1.6099999999)
-        self.assertAlmostEqual(df_en_diff["maximum EN difference"][0], 1.6099999999)
-        self.assertAlmostEqual(df_en_diff["range EN difference"][0], 0)
-        self.assertAlmostEqual(df_en_diff["mean EN difference"][0], 1.6099999999)
-        self.assertAlmostEqual(df_en_diff["std_dev EN difference"][0], 0)
+        featurizer = ElectronegativityDiff()
+        features = dict(zip(featurizer.feature_labels(), featurizer.featurize(self.df["composition"][1])))
+        self.assertAlmostEqual(features["minimum EN difference"], 1.6099999999)
+        self.assertAlmostEqual(features["maximum EN difference"], 1.6099999999)
+        self.assertAlmostEqual(features["range EN difference"], 0)
+        self.assertAlmostEqual(features["mean EN difference"], 1.6099999999)
+        self.assertAlmostEqual(features["std_dev EN difference"], 0)
 
     def test_fere_corr(self):
         df_fere_corr = ElementProperty(features=["FERE correction"],

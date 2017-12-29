@@ -266,8 +266,18 @@ class BandCenter(BaseFeaturizer):
 
 class ElectronegativityDiff(BaseFeaturizer):
     """
-    Calculate electronegativity difference between cations and anions
-    (average, max, range, etc.)
+    Features based on the electronegativity difference between the anions and
+    cations in the material.
+
+    These features are computed by first determining the concentration-weighted
+    average electronegativity of the anions. For example, the average
+    electronegativity of the anions in CaCoSO is equal to 1/2 of that of S and 1/2 of that of O.
+    We then compute the difference between the electronegativity of each cation
+    and the average anion electronegativity.
+
+    The feature values are then determined based on the concentration-weighted statistics
+    in the same manner as ElementProperty features. For example, one value could be
+    the mean electronegativity difference over all the anions.
 
     Parameters:
         data_source (data class): source from which to retrieve element data
@@ -276,8 +286,7 @@ class ElectronegativityDiff(BaseFeaturizer):
     Generates average electronegativity difference between cations and anions
     """
 
-    def __init__(self, data_source=DemlData(), stats=None):
-        self.data_source = data_source
+    def __init__(self, stats=None):
         if stats == None:
             self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
@@ -291,43 +300,26 @@ class ElectronegativityDiff(BaseFeaturizer):
         Returns:
             en_diff_stats (list of floats): Property stats of electronegativity difference
         """
-        el_amt = comp.fractional_composition.get_el_amt_dict()
 
-        best_guess = comp.oxi_state_guesses(max_sites=-1)[0]
-        cations = [x for x in best_guess if best_guess[x] > 0]
-        anions = [x for x in best_guess if best_guess[x] < 0]
+        # Check if oxidation states have been determined
+        if not has_oxidation_states(comp):
+            raise ValueError('Oxidation states have not yet been determined')
 
-        cation_en = [Element(x).X for x in cations]
-        anion_en = [Element(x).X for x in anions]
+        # Determine the average anion EN
+        anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
 
-        if len(cations) == 0 or len(anions) == 0:
-            return len(self.stats) * [float("NaN")]
+        anion_en = [s.element.X for s in anions]
+        mean_anion_en = PropertyStats.mean(anion_en, anion_fractions)
 
-        avg_en_diff = []
-        n_anions = sum([el_amt[el] for el in anions])
+        # Determine the EN difference for each cation
+        cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
 
-        # TODO: @WardLT, @JFChen3 I left this code as-is but am not quite sure what's going on. Why is there some normalization applied to anions but not cations? -computron
-        for cat_en in cation_en:
-            en_diff = 0
-            for i in range(len(anions)):
-                frac_anion = el_amt[anions[i]] / n_anions
-                an_en = anion_en[i]
-                en_diff += abs(cat_en - an_en) * frac_anion
-            avg_en_diff.append(en_diff)
+        en_difference = [mean_anion_en - s.element.X for s in cations]
 
-        cation_fracs = [el_amt[el] for el in cations]
-        en_diff_stats = []
-
-        for stat in self.stats:
-            if stat == "std_dev":
-                en_diff_stats.append(
-                    PropertyStats().calc_stat(avg_en_diff, stat))
-            else:
-                en_diff_stats.append(
-                    PropertyStats().calc_stat(avg_en_diff, stat,
-                                              weights=cation_fracs))
-
-        return en_diff_stats
+        # Compute the statistics
+        return [
+            PropertyStats.calc_stat(en_difference, stat, cation_fractions) for stat in self.stats
+        ]
 
     def feature_labels(self):
 
