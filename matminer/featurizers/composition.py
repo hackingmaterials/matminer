@@ -1,7 +1,6 @@
 from __future__ import division
 
 import itertools
-import math
 import os
 from functools import reduce
 import collections
@@ -9,7 +8,6 @@ import collections
 import numpy as np
 import pandas as pd
 from pymatgen import Element, MPRester
-from pymatgen.core.composition import Composition
 from pymatgen.core.periodic_table import get_el_sp, Specie
 
 from matminer.featurizers.base import BaseFeaturizer
