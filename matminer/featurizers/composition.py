@@ -612,18 +612,17 @@ class IonProperty(BaseFeaturizer):
     Class to calculate ionic property attributes
     """
 
-    def __init__(self, all_oxi_states=True, fast=False):
+    def __init__(self, data_source=PymatgenData(), fast=False):
         """
 
         Args:
-             all_oxi_states - (boolean), whether to consider all possible oxidation
-                states when checking whether a compound can form a neutral ionic compound
+             data_source - (OxidationStateMixin) - A AbstractData class that supports
+                the `get_oxidation_state` method.
             fast - (boolean) whether to assume elements exist in a single oxidation state,
                 which can dramatically accelerate the calculation of whether an ionic compound
                 is possible, but will miss heterovalent compounds like Fe3O4.
         """
-        self.data_source = PymatgenData()
-        self.all_oxi_states = all_oxi_states
+        self.data_source = data_source
         self.fast = fast
 
     def featurize(self, comp):
@@ -653,17 +652,21 @@ class IonProperty(BaseFeaturizer):
             if has_oxidation_states(comp):
                 charges, fractions = zip(*[(s.oxi_state, f) for s,f in comp.items()])
                 cpd_possible = np.isclose(np.dot(charges, fractions), 0)
-            elif self.fast:
-                oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
-                cpd_possible = False
-                for ox in itertools.product(*oxidation_states):
-                    if np.isclose(np.dot(ox, fractions), 0):
-                        cpd_possible = True
-                        break
             else:
-                #  Note: We use pymatgen's oxidation state checker which
-                #   can detect whether an takes >1 oxidation state (as in Fe3O4)
-                cpd_possible = len(comp.oxi_state_guesses(all_oxi_states=self.all_oxi_states)) > 0
+                oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
+                if self.fast:
+                    # Assume each element can have only 1 oxidation state
+                    cpd_possible = False
+                    for ox in itertools.product(*oxidation_states):
+                        if np.isclose(np.dot(ox, fractions), 0):
+                            cpd_possible = True
+                            break
+                else:
+                    #  Use pymatgen's oxidation state checker which
+                    #   can detect whether an takes >1 oxidation state (as in Fe3O4)
+                    oxi_state_dict = dict(zip([e.symbol for e in elements],
+                                              oxidation_states))
+                    cpd_possible = len(comp.oxi_state_guesses(oxi_states_override=oxi_state_dict)) > 0
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)

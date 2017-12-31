@@ -78,10 +78,23 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_val["frac f valence electrons"][0], 0)
 
     def test_ionic(self):
-        df_ionic = IonProperty().featurize_dataframe(self.df, col_id="composition")
+        featurizer = IonProperty()
+        df_ionic = featurizer.featurize_dataframe(self.df, col_id="composition")
         self.assertEqual(df_ionic["compound possible"][0], 1.0)
         self.assertAlmostEqual(df_ionic["max ionic char"][0], 0.476922164)
         self.assertAlmostEqual(df_ionic["avg ionic char"][0], 0.114461319)
+
+        # Test 'fast'
+        self.assertEquals(1.0, featurizer.featurize(Composition("Fe3O4"))[0])
+        featurizer.fast = True
+        self.assertEquals(0, featurizer.featurize(Composition("Fe3O4"))[0])
+
+        # Make sure 'fast' works if I use-precomputed oxidation states
+        self.assertEquals(1, featurizer.featurize(Composition({
+            Specie('Fe', 2): 1,
+            Specie('Fe', 3): 2,
+            Specie('O', -2): 4
+        }))[0])
 
     def test_fraction(self):
         df_frac = ElementFraction().featurize_dataframe(self.df, col_id="composition")
