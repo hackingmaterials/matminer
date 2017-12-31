@@ -17,7 +17,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
     OPStructureFingerprint, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures
+    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
+    ManyBodyTensor
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -261,6 +262,19 @@ class StructureFeaturesTest(PymatgenTest):
         mtarget = np.matrix(mtarget)
         self.assertAlmostEqual(
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
+
+    def test_many_body_tensor(self):
+        structs = [self.diamond, self.nacl, self.cscl, self.ni3al]
+
+        m = ManyBodyTensor.from_structures(structs, [0.1, 0.01, 100], 2,
+            '1/distance', 'identity', ['normal', [0.01]], 'identity',
+            'full', 'full')
+
+
+        file = open('tst.txt', 'w')
+        for lst in m:
+            for sublst in lst:
+                file.write(str(sublst.tolist())+'\n')
 
     def test_min_relative_distances(self):
         self.assertAlmostEqual(int(

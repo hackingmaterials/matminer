@@ -18,6 +18,8 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint
 from matminer.featurizers.stats import PropertyStats
 
+import qmmlpack.representations as qmml
+
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
 # ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
@@ -683,7 +685,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         s *= [3, 3, 3]
         ofms, counts = self.get_atom_ofms(s, True)
         mean_ofm = self.get_mean_ofm(ofms, counts)
-        return [mean_ofm]
+        return [mean_ofm.A]
 
     def feature_labels(self):
         return ["orbital field matrix"]
@@ -707,6 +709,55 @@ class OrbitalFieldMatrix(BaseFeaturizer):
     def implementors(self):
         return ["Kyle Bystrom"]
 
+
+class ManyBodyTensor(BaseFeaturizer):
+
+    #Elements in the Materials Project Database
+    PMG_PRESET = [i for i in range(1,84)] + [i for i in range(89,95)]
+
+    def __init__(self, d, k, geomf, weightf, distrf, corrf, eindexf, aindexf,
+        elems=None, acc=1e-3, flatten=False):
+
+        if elems == None:
+            elems = PMG_PRESET
+        self.d = d
+        self.kgwdcea = [k, geomf, weightf, distrf, corrf, eindexf, aindexf]
+        self.elems = elems
+        self.acc = acc
+        self.flatten = flatten
+
+    def featurize(self, struct):
+
+        z = [[s.specie.Z for s in struct]]
+        r = [[s.specie.coords for s in struct]]
+        basis = [struct.lattice.matrix.tolist()]
+
+        return [many_body_tensor(z, r, self.d, self.kgwdcea, basis, self.elems, self.acc, self.flatten)[0]]
+
+    def featurize_multiple(self, struct):
+
+        z = [[s.specie.Z for s in struct] for struct in structs]
+        r = [[s.specie.coords.tolist() for s in struct] for struct in structs]
+        basis = [struct.lattice.matrix.tolist() for struct in structs]
+
+        return many_body_tensor(z, r, self.d, self.kgwdcea, basis, self.elems, self.acc, self.flatten)
+
+    @staticmethod
+    def from_structures(structs, d, k, geomf, weightf, distrf, corrf,
+        eindexf, aindexf, acc=1e-3, flatten=False):
+
+        kgwdcea = [k, geomf, weightf, distrf, corrf, eindexf, aindexf]
+        z = [[s.specie.Z for s in struct] for struct in structs]
+        r = [[s.coords.tolist() for s in struct] for struct in structs]
+        basis = [struct.lattice.matrix.tolist() for struct in structs]
+        elems = []
+        for Zlst in z:
+            for Z in Zlst:
+                if not Z in elems:
+                    elems.append(Z)
+        elems = sorted(elems)
+
+        return qmml.many_body_tensor(z, r, d, kgwdcea, basis, elems, acc, flatten)
 
 class MinimumRelativeDistances(BaseFeaturizer):
     """
