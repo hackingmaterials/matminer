@@ -1,6 +1,6 @@
 from __future__ import division
 
-import numpy as np
+import pandas as pd
 from six import string_types
 
 
@@ -41,23 +41,14 @@ class BaseFeaturizer(object):
                 else:
                     raise
 
-        # Add features to dataframe
-        features = np.array(features)
-
-        #  Special case: For single attribute, add an axis
-        if len(features.shape) == 1:
-            features = features[:, np.newaxis]
-
-        # TODO: @JFChen3 @WardLT - is df.join() more efficient than df.assign? -computron
-        # Add features to dataframe
+        # Generate the feature labels
         labels = self.feature_labels()
-        df = df.assign(**dict(zip(labels, features.T)))
-        for col in df:
-            try:
-                df[col] = df[col].astype(float)
-            except:
-                pass
-        return df
+
+        # Create dataframe with the new features
+        new_cols = dict(zip(labels, [pd.Series(x) for x in zip(*features)]))
+
+        # Update the dataframe
+        return df.assign(**new_cols)
 
     def featurize(self, *x):
         """
