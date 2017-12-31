@@ -49,8 +49,9 @@ class TestPymatgenData(TestCase):
         self.assertAlmostEquals(1.26, self.data_source.get_charge_dependent_property(Element("Ac"), 3, "ionic_radii"))
 
     def test_get_oxidation(self):
-        self.assertEquals((3,), self.data_source.get_oxidation_states(Element("Nd"), common=True))
-        self.assertEquals((2, 3), self.data_source.get_oxidation_states(Element("Nd"), common=False))
+        self.assertEquals((3,), self.data_source.get_oxidation_states(Element("Nd")))
+        self.data_source.use_common_oxi_states = False
+        self.assertEquals((2, 3), self.data_source.get_oxidation_states(Element("Nd")))
 
 if __name__ == "__main__":
     unittest.main()

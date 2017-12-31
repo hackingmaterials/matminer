@@ -57,7 +57,7 @@ class OxidationStatesMixin(six.with_metaclass(abc.ABCMeta)):
     of each element"""
 
     @abc.abstractmethod
-    def get_oxidation_states(self, elem, **kwargs):
+    def get_oxidation_states(self, elem):
         """Retrieve the possible oxidation states of an element
 
         Args:
@@ -160,7 +160,7 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
         else:
             return self.all_props[property_name].get(elem.symbol, float("NaN"))
 
-    def get_oxidation_states(self, elem, **kwargs):
+    def get_oxidation_states(self, elem):
         return self.all_props["charge_states"][elem.symbol]
 
     def get_charge_dependent_property(self, element, charge, property_name):
@@ -212,7 +212,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     def get_elemental_property(self, elem, property_name):
         return self.all_elemental_props[property_name][elem.symbol]
 
-    def get_oxidation_states(self, elem, **kwargs):
+    def get_oxidation_states(self, elem):
         return self.all_elemental_props["OxidationStates"][elem.symbol]
 
 
@@ -224,6 +224,9 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
     for materials analysis, Comput. Mater. Sci. 68 (2013) 314-319.
     """
 
+    def __init__(self, use_common_oxi_states=True):
+        self.use_common_oxi_states = use_common_oxi_states
+
     def get_elemental_property(self, elem, property_name):
         if property_name == "block":
             block_key = {"s": 1.0, "p": 2.0, "d": 3.0, "f": 3.0}
@@ -232,7 +235,7 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
             value = getattr(elem, property_name)
             return np.nan if value is None else value
 
-    def get_oxidation_states(self, elem, common=True):
+    def get_oxidation_states(self, elem):
         """Get the oxidation states of an element
 
         Args:
@@ -242,7 +245,8 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
         Returns:
             [int] list of oxidation states
             """
-        return elem.common_oxidation_states if common else elem.oxidation_states
+        return elem.common_oxidation_states if self.use_common_oxi_states \
+            else elem.oxidation_states
 
     def get_charge_dependent_property(self, element, charge, property_name):
         return getattr(element, property_name)[charge]
