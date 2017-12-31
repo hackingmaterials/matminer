@@ -52,6 +52,16 @@ class TestBaseClass(PymatgenTest):
         """Test the ability to add features that are matrices to a dataframe"""
         data = pd.DataFrame({'x': [1, 2, 3]})
         data = self.matrix.featurize_dataframe(data, 'x')
+        self.assertArrayAlmostEqual(np.eye(2, 2), data['representation'][0])
+
+    def test_inplace(self):
+        data = pd.DataFrame({'x': [1, 2, 3]})
+
+        self.single.featurize_dataframe(data, 'x', inplace=False)
+        self.assertNotIn('y', data.columns)
+
+        self.single.featurize_dataframe(data, 'x', inplace=True)
+        self.assertIn('y', data)
 
 
 if __name__ == '__main__':

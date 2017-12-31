@@ -7,7 +7,7 @@ from six import string_types
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True):
         """
         Compute features for all entries contained in input dataframe
         
@@ -19,6 +19,7 @@ class BaseFeaturizer(object):
             ignore_errors (bool): Returns NaN for dataframe rows where
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
+            inplace (bool): Whether to add new columns to input dataframe (df)
 
         Returns:
             updated Dataframe
@@ -48,7 +49,12 @@ class BaseFeaturizer(object):
         new_cols = dict(zip(labels, [pd.Series(x) for x in zip(*features)]))
 
         # Update the dataframe
-        return df.assign(**new_cols)
+        if inplace:
+            for key, value in new_cols.items():
+                df[key] = value
+            return df
+        else:
+            return df.assign(**new_cols)
 
     def featurize(self, *x):
         """
