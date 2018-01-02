@@ -96,35 +96,35 @@ class FingerprintTests(PymatgenTest):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 35)
-        self.assertAlmostEqual(round(ops[opsf.feature_labels().index(
-            'oct CN_6')]), 1)
+        self.assertAlmostEqual(ops[opsf.feature_labels().index(
+            'oct CN_6')], 0.9995, places=7)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEqual(round(ops[opsf.feature_labels().index(
-            'bcc CN_8')]), 1)
+        self.assertAlmostEqual(ops[opsf.feature_labels().index(
+            'bcc CN_8')], 0.8955, places=7)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEqual(round(ops[opsf.feature_labels().index(
-            'bcc CN_8')]), 1)
+        self.assertAlmostEqual(ops[opsf.feature_labels().index(
+            'bcc CN_8')], 0.9555, places=7)
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
         l = cefp.feature_labels()
         cevals = cefp.featurize(self.sc, 0)
         self.assertEqual(len(cevals), 66)
-        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 1)
-        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 0)
+        self.assertAlmostEqual(cevals[l.index('O:6')], 1, places=7)
+        self.assertAlmostEqual(cevals[l.index('C:8')], 0, places=7)
         cevals = cefp.featurize(self.cscl, 0)
-        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 1)
-        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 0)
+        self.assertAlmostEqual(cevals[l.index('C:8')],  0.9953721, places=7)
+        self.assertAlmostEqual(cevals[l.index('O:6')], 0, places=7)
         cefp = ChemEnvSiteFingerprint.from_preset('simple')
         l = cefp.feature_labels()
         cevals = cefp.featurize(self.sc, 0)
         self.assertEqual(len(cevals), 66)
-        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 1)
-        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 0)
+        self.assertAlmostEqual(cevals[l.index('O:6')], 1, places=7)
+        self.assertAlmostEqual(cevals[l.index('C:8')], 0, places=7)
         cevals = cefp.featurize(self.cscl, 0)
-        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 1)
-        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 0)
+        self.assertAlmostEqual(cevals[l.index('C:8')], 0.9953721, places=7)
+        self.assertAlmostEqual(cevals[l.index('O:6')], 0, places=7)
 
     # test Voronoi indices
     def test_voronoi_site(self):
