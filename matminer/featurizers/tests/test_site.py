@@ -96,15 +96,15 @@ class FingerprintTests(PymatgenTest):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 35)
-        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
-            'oct CN_6')]), 999)
+        self.assertAlmostEqual(round(ops[opsf.feature_labels().index(
+            'oct CN_6')]), 1)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
-            'bcc CN_8')] + 0.5), 896)
+        self.assertAlmostEqual(round(ops[opsf.feature_labels().index(
+            'bcc CN_8')]), 1)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
-            'bcc CN_8')] + 0.5), 956)
+        self.assertAlmostEqual(round(ops[opsf.feature_labels().index(
+            'bcc CN_8')]), 1)
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
