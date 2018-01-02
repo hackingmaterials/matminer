@@ -284,8 +284,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(int(opvals[16][0] * 1000 + 0.5), 1000)
         self.assertAlmostEqual(int(opvals[16][1] * 1000 + 0.5), 1000)
         opvals = op_struct_fp.featurize(self.cscl)
-        self.assertAlmostEqual(int(opvals[20][0] * 1000), 998)
-        self.assertAlmostEqual(int(opvals[20][1] * 1000), 998)
+        self.assertAlmostEqual(int(opvals[20][0] * 1000), 999)
+        self.assertAlmostEqual(int(opvals[20][1] * 1000), 999)
 
         # Test stats.
         op_struct_fp = OPStructureFingerprint()
