@@ -286,8 +286,6 @@ class OPSiteFingerprint(BaseFeaturizer):
                             opval[0] = 0
                         else:
                             opval[0] = d_fac * opval[0]
-                        if self.optypes[cn][it] == 'bcc':
-                            opval[0] = opval[0] / 0.976
                         opvals[i].append(opval[0])
                 prev_cn = this_cn
                 if prev_cn >= 12:
