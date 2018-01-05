@@ -9,9 +9,11 @@ from pymatgen import Composition, MPRester
 from pymatgen.core.periodic_table import Specie
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, \
-    ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, CohesiveEnergy, \
-    BandCenter, Miedema, CationProperty, OxidationStates
+from matminer.featurizers.composition import Stoichiometry, ElementProperty, \
+    ValenceOrbital, IonProperty, \
+    ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, \
+    CohesiveEnergy, \
+    BandCenter, Miedema, CationProperty, OxidationStates, AtomicOrbitals
 
 
 class CompositionFeaturesTest(PymatgenTest):

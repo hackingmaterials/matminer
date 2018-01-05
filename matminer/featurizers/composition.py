@@ -1,10 +1,5 @@
 from __future__ import division
 
-
-from pymatgen import Element, MPRester
-from pymatgen.core.periodic_table import get_el_sp
-from pymatgen.core.molecular_orbitals import MolecularOrbitals
-
 import itertools
 import os
 from functools import reduce
@@ -14,6 +9,7 @@ import numpy as np
 import pandas as pd
 from pymatgen import Element, MPRester
 from pymatgen.core.periodic_table import get_el_sp, Specie
+from pymatgen.core.molecular_orbitals import MolecularOrbitals
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.stats import PropertyStats
@@ -22,6 +18,7 @@ from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
+
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
