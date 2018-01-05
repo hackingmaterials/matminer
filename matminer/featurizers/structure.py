@@ -10,6 +10,7 @@ import scipy.constants as const
 
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
+from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -266,11 +267,11 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
     def featurize(self, rdf):
         """
         Get location of highest peaks in RDF.
-    
+
         Args:
             rdf: (ndarray) RDF as obtained from the
                     RadialDistributionFunction class.
-    
+
         Returns: (ndarray) distances of highest peaks in descending order
                 of the peak height
         """
@@ -393,10 +394,10 @@ class CoulombMatrix(BaseFeaturizer):
     def featurize(self, s):
         """
         Get Coulomb matrix of input structure.
-    
+
         Args:
             s: input Structure (or Molecule) object.
-    
+
         Returns:
             m: (Nsites x Nsites matrix) Coulomb matrix.
         """
@@ -728,7 +729,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
     def featurize(self, s, cutoff=10.0):
         """
         Get minimum relative distances of all sites of the input structure.
-    
+
         Args:
             s: Pymatgen Structure object.
 
@@ -912,3 +913,50 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
 
     return dr[idx], delta[idx]
 
+
+class EwaldEnergy(BaseFeaturizer):
+    """Compute the energy from Coulombic interactions
+
+    Note: The energy is computed using _charges already defined for the structure_.
+
+    Features:
+        ewald_energy - Coulomb interaction energy of the structure"""
+
+    def __init__(self, accuracy=None):
+        """
+        Args:
+            accuracy (int): Accuracy of Ewald summation, number of decimal places
+        """
+        self.accuracy = accuracy
+
+    def featurize(self, strc):
+        """
+
+        Args:
+             (Structure) - Structure being analyzed
+        Returns:
+            ([float]) - Electrostatic energy of the structure
+        """
+        # Compute the total energy
+        ewald = EwaldSummation(strc, acc_factor=self.accuracy)
+        return [ewald.total_energy]
+
+    def feature_labels(self):
+        return ("ewald_energy",)
+
+    def implementors(self):
+        return ("Logan Ward",)
+
+    def citations(self):
+        return ["@Article{Ewald1921,"
+                "author = {Ewald, P. P.},"
+                "doi = {10.1002/andp.19213690304},"
+                "issn = {00033804},"
+                "journal = {Annalen der Physik},"
+                "number = {3},"
+                "pages = {253--287},"
+                "title = {{Die Berechnung optischer und elektrostatischer Gitterpotentiale}},"
+                "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
+                "volume = {369},"
+                "year = {1921}"
+                "}"]

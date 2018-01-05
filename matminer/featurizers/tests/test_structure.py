@@ -17,7 +17,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
     OPStructureFingerprint, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures
+    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, EwaldEnergy
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -304,10 +304,21 @@ class StructureFeaturesTest(PymatgenTest):
         for i in range(52, len(opvals)):
             self.assertAlmostEqual(opvals[i], 0, places=2)
 
-    def tearDown(self):
-        del self.diamond
-        del self.nacl
-        del self.cscl
+    def test_ewald(self):
+        # Add oxidation states to all of the structures
+        for s in [self.nacl, self.cscl, self.diamond]:
+            s.add_oxidation_state_by_guess()
+
+        # Test basic
+        ewald = EwaldEnergy(accuracy=2)
+        self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
+        self.assertAlmostEquals(ewald.featurize(self.nacl)[0], -8.84173626, 2)
+        self.assertLess(ewald.featurize(self.nacl),
+                        ewald.featurize(self.cscl))  # Atoms are closer in NaCl
+
+        # Perform Ewald summation by "hand",
+        #  Using the result from GULP
+        self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
 
 
 if __name__ == '__main__':
