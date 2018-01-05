@@ -14,7 +14,7 @@ Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the Hacking
 ----------------------------------------------------------------
 
 * Anubhav Jain
-* Saurabh Bajaj (currently at Citrine Informatics)
+* Saurabh Bajaj (further contributions through Citrine Informatics)
 * Alireza Faghaninia
 * Nils Zimmermann
 * Qi Wang
