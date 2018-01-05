@@ -1,6 +1,7 @@
 from __future__ import division, unicode_literals, print_function
 
 import numpy as np
+from collections import OrderedDict
 from numpy.linalg import norm
 from scipy.interpolate import griddata
 
@@ -166,10 +167,17 @@ class BandFeaturizer(BaseFeaturizer):
         band_gap = bs.get_band_gap()
 
         # featurize
-        self.feat = {}
-        self.feat['band_gap'] = band_gap['energy']
-        self.feat['is_gap_direct'] = band_gap['direct']
-        self.feat['direct_gap'] = min(cvd['n']['Es'] - cvd['p']['Es'])
+        feat = OrderedDict()
+        feat['band_gap'] = band_gap['energy']
+        feat['is_gap_direct'] = band_gap['direct']
+        feat['direct_gap'] = min(cvd['n']['Es'] - cvd['p']['Es'])
+        for tp in ['p', 'n']:
+            feat['{}_ex1_norm'.format(tp)] = norm(cvd[tp]['k'])
+            if bs.structure:
+                feat['{}_ex1_degen'.format(tp)] = bs.get_kpoint_degeneracy(cvd[tp]['k'])
+            else:
+                feat['{}_ex1_degen'.format(tp)] = float('NaN')
+
         if self.kpoints:
             obands = {'n': [], 'p': []}
             for spin in bs.bands:
@@ -191,21 +199,21 @@ class BandFeaturizer(BaseFeaturizer):
                     for ib in range(self.nbands):
                         k_name = '{}_{};{};{}_en{}'.format(tp, k[0], k[1], k[2], ib+1)
                         try:
-                            self.feat[k_name] = sorted_band[ib]
+                            feat[k_name] = sorted_band[ib]
                         except IndexError:
-                            self.feat[k_name] = float('NaN')
-
-        for tp in ['p', 'n']:
-            self.feat['{}_ex1_norm'.format(tp)] = norm(cvd[tp]['k'])
-            if bs.structure:
-                self.feat['{}_ex1_degen'.format(tp)] = \
-                    bs.get_kpoint_degeneracy(cvd[tp]['k'])
-            else:
-                self.feat['{}_ex1_degen'.format(tp)] = float('NaN')
-        return list(self.feat.values())
+                            feat[k_name] = float('NaN')
+        return list(feat.values())
 
     def feature_labels(self):
-        return list(self.feat.keys())
+        labels = ['band_gap', 'is_gap_direct', 'direct_gap',
+                  'p_ex1_norm', 'p_ex1_degen', 'n_ex1_norm', 'n_ex1_degen']
+        if self.kpoints:
+            for tp in ['p', 'n']:
+                for k in self.kpoints:
+                    for ib in range(self.nbands):
+                        labels.append('{}_{};{};{}_en{}'.format(
+                                tp, k[0], k[1], k[2], ib + 1))
+        return labels
 
     @staticmethod
     def get_bindex_bspin(extremum, is_cbm):
