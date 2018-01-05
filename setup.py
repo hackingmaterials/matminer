@@ -11,7 +11,7 @@ if __name__ == "__main__":
         name='matminer',
         version='0.1.9',
         description='matminer is a library that contains tools for data mining in Materials Science',
-        long_description=open(os.path.join(module_dir, 'README.rst')).read(),
+        long_description=open(os.path.join(module_dir, 'README.md')).read(),
         url='https://github.com/hackingmaterials/matminer',
         author='Anubhav Jain',
         author_email='anubhavster@gmail.com',
