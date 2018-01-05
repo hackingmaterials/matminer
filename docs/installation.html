@@ -48,11 +48,11 @@
             
   <div class="section" id="installing-matminer">
 <span id="installation-tutorial"></span><h1>Installing matminer<a class="headerlink" href="#installing-matminer" title="Permalink to this headline">¶</a></h1>
+<p>Matminer requires Python 3.x (Python 2.x might work for some time, but the underlying pymatgen library is discontinuing Python 2 support in 2018).</p>
 <p>There are a couple of quick and easy ways to install matminer:</p>
-<div class="section" id="quick-install">
-<h2>Quick install<a class="headerlink" href="#quick-install" title="Permalink to this headline">¶</a></h2>
-<p>(Note: this may not install the latest changes to matminer. To install the version with the latest commits, install in development mode)</p>
-<p>For a quick install of matminer, and all of its dependencies, simply run the command in a bash terminal:</p>
+<div class="section" id="install-and-update-via-pip">
+<h2>Install and update via pip<a class="headerlink" href="#install-and-update-via-pip" title="Permalink to this headline">¶</a></h2>
+<p>If you have installed pip, simply run the command in a bash terminal:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install matminer
 </pre></div>
 </div>
@@ -60,24 +60,24 @@
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install matminer --user
 </pre></div>
 </div>
-<p>One way to obtain <code class="code docutils literal"><span class="pre">pip</span></code> if not already installed is through <code class="code docutils literal"><span class="pre">conda</span></code>, which is useful when you are working with many python packages and want to use separate configuration settings and environment for each package. You can then install matminer and packages required by it in its own environment. Some useful links are <a class="reference external" href="https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/20/conda/">here</a> and <a class="reference external" href="http://conda.pydata.org/docs/using/index.html">here</a>.</p>
+<p>To update matminer, simply type <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">matminer</span></code>.</p>
 </div>
 <div class="section" id="install-in-development-mode">
 <h2>Install in development mode<a class="headerlink" href="#install-in-development-mode" title="Permalink to this headline">¶</a></h2>
-<p>To install the full and latest source of the matminer code in developmental mode, along with its important dependencies, clone the Git source in a folder of your choosing by entering the following command:</p>
+<p>To install from the latest source of the matminer code in developmental mode, clone the Git source:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone https://github.com/hackingmaterials/matminer.git
 </pre></div>
 </div>
-<p>and then entering the cloned repository/folder to install in developer mode:</p>
+<p>and then enter the cloned repository/folder to install in developer mode:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> matminer
 $ python setup.py develop
 </pre></div>
 </div>
-<p>Depending on how many of the required dependencies were already installed on your system, you’ll see a few or many warnings, but everything should be installed successfully.</p>
+<p>To update matminer, enter your cloned folder and type <code class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></code> followed by <code class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">develop</span></code>.</p>
 </div>
 <div class="section" id="troubleshooting-issues">
 <h2>Troubleshooting/Issues<a class="headerlink" href="#troubleshooting-issues" title="Permalink to this headline">¶</a></h2>
-<p>Having issues installing? Open up an issue on our <a class="reference external" href="https://github.com/hackingmaterials/matminer">Github repo</a>  describing your problem in full, with all your system specifications and python version information.</p>
+<p>Having issues installing? Open up an issue on our <a class="reference external" href="https://groups.google.com/forum/#!forum/matminer">forum</a>  describing your problem in full (including your system specifications, Python version information, and input/output log).</p>
 </div>
 </div>
 
@@ -90,7 +90,7 @@ $ python setup.py develop
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Installing matminer</a><ul>
-<li><a class="reference internal" href="#quick-install">Quick install</a></li>
+<li><a class="reference internal" href="#install-and-update-via-pip">Install and update via pip</a></li>
 <li><a class="reference internal" href="#install-in-development-mode">Install in development mode</a></li>
 <li><a class="reference internal" href="#troubleshooting-issues">Troubleshooting/Issues</a></li>
 </ul>
