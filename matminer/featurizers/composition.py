@@ -1,5 +1,10 @@
 from __future__ import division
 
+
+from pymatgen import Element, MPRester
+from pymatgen.core.periodic_table import get_el_sp
+from pymatgen.core.molecular_orbitals import MolecularOrbitals
+
 import itertools
 import os
 from functools import reduce
@@ -16,7 +21,7 @@ from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     CohesiveEnergyData
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
-             'Saurabh Bajaj, Qi Wang, Anubhav Jain'
+             'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -176,7 +181,7 @@ class ElementProperty(BaseFeaturizer):
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
 
-
+      
 class CationProperty(ElementProperty):
     """Features based on the properties of cations in a material
 
@@ -279,6 +284,67 @@ class OxidationStates(BaseFeaturizer):
 
     def implementors(self):
         return ('Logan Ward',)
+
+class AtomicOrbitals(BaseFeaturizer):
+    '''
+    class to determine the highest occupied molecular orbital (HOMO) and
+    lowest unocupied molecular orbital LUMO in a composition. The atomic
+    orbital energies of neutral ions with LDA DFT were computed by NIST.
+    https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
+    '''
+        
+    def featurize(self, comp):
+        '''
+        Args:
+            comp: (Composition)
+                pymatgen Composition object
+
+        Returns:
+            HOMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
+            HOMO_element: (str) symbol of element for HOMO
+            HOMO_energy: (float in eV) absolute energy of HOMO
+            LUMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
+            LUMO_element: (str) symbol of element for LUMO
+            LUMO_energy: (float in eV) absolute energy of LUMO
+            bandgap: (float in eV)
+                the estimated bandgap from HOMO and LUMO energeis
+        '''
+
+        string_comp = comp.reduced_formula
+
+        homo_lumo = MolecularOrbitals(string_comp).band_edges
+
+        feat = collections.OrderedDict()
+        for edge in ['HOMO', 'LUMO']:
+            feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
+            feat['{}_element'.format(edge)] = homo_lumo[edge][0]
+            feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
+        feat['gap'] = feat['LUMO_energy'] - feat['HOMO_energy']
+
+        return list(feat.values())
+
+    def feature_labels(self):
+        feat = []
+        for edge in ['HOMO', 'LUMO']:
+            feat.extend(['{}_character'.format(edge),
+                         '{}_element'.format(edge),
+                         '{}_energy'.format(edge)])
+        feat.append("gap")
+        return feat
+
+    def citations(self):
+        return [
+            "@article{PhysRevA.55.191,"
+            "title = {Local-density-functional calculations of the energy of atoms},"
+            "author = {Kotochigova, Svetlana and Levine, Zachary H. and Shirley, "
+            "Eric L. and Stiles, M. D. and Clark, Charles W.},"
+            "journal = {Phys. Rev. A}, volume = {55}, issue = {1}, pages = {191--199},"
+            "year = {1997}, month = {Jan}, publisher = {American Physical Society},"
+            "doi = {10.1103/PhysRevA.55.191}, "
+            "url = {https://link.aps.org/doi/10.1103/PhysRevA.55.191}}"]
+
+    def implementors(self):
+        return ['Maxwell Dylla', 'Anubhav Jain']
 
 
 class BandCenter(BaseFeaturizer):
@@ -702,7 +768,7 @@ class IonProperty(BaseFeaturizer):
     def implementors(self):
         return ["Jiming Chen", "Logan Ward"]
 
-
+      
 # TODO: is this descriptor useful or just noise?
 class ElementFraction(BaseFeaturizer):
     """
