@@ -49,14 +49,23 @@
   <img alt="matminer logo" src="_images/matminer_logo_small.png" />
 <div class="section" id="matminer">
 <h1>matminer<a class="headerlink" href="#matminer" title="Permalink to this headline">¶</a></h1>
-<p>matminer is an open-source Python library for performing data mining and analysis in the field of Materials Science. It is meant to make accessible the application of state-of-the-art statistical and machine learning algorithms to materials science data with just a <em>few</em> lines of code. It is currently in development, however it is a <a class="reference external" href="https://github.com/hackingmaterials/matminer">working code</a>.</p>
+<p>matminer is a Python library for data mining the properties of materials. It contains routines for obtaining data on materials properties from various databases, featurizing complex materials attributes (e.g., composition, crystal structure, band structure) into physically-relevant numerical quantities, and analyzing the results of data mining.</p>
+<p>matminer works with the <a class="reference external" href="https://pandas.pydata.org">pandas</a> data format in order to make various downstream machine learning libraries and tools available to materials science applications.</p>
+<p>matminer is <a class="reference external" href="https://github.com/hackingmaterials/matminer">open source</a>.</p>
 <div class="section" id="installing-matminer">
 <h2>Installing matminer<a class="headerlink" href="#installing-matminer" title="Permalink to this headline">¶</a></h2>
-<p>Install matminer by following our short <a class="reference internal" href="installation.html"><span class="doc">installation tutorial.</span></a></p>
+<p>To install matminer, follow the short <a class="reference internal" href="installation.html"><span class="doc">installation tutorial.</span></a></p>
 </div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>Below is a general workflow that shows the different tools and utilities available within matminer, and how they could be implemented with each other, as well as with external libraries, in your own materials data mining/analysis study.</p>
+<p>Matminer makes it easy to:</p>
+<ul class="simple">
+<li>obtain materials data from various sources into the <a class="reference external" href="https://pandas.pydata.org">pandas</a> data format. Through pandas, matminer enables professional-level data manipulation and analysis capabilities for materials data.</li>
+<li>transform and featurize complex materials attributes into numerical descriptors for data mining. For example, matminer can turn a composition such as <code class="docutils literal"><span class="pre">Fe3O4</span></code> into arrays of numbers representing things like average electronegativity or difference in ionic radii of the substituent elements. Matminer also contains sophisticated crystal structure and site featurizers as well as featurizers for complex materials data such as band structures and density of states. All of these various featurizers are available under a consistent interface, making it easy to try different types of materials descriptors in an analysis.</li>
+<li>perform data mining on materials. Although matminer itself does not contain implementations of machine learning algorithms, it makes it easy to prepare and transform data sets for use with standard data mining packages such as <cite>scikit-learn http://scikit-learn.org</cite>. See our examples for more details.</li>
+<li>generate interactive plots through an interface to the <a class="reference external" href="https://plot.ly">plotly</a> visualization package.</li>
+</ul>
+<p>A general workflow and overview of matminer’s capabilities is presented below:</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
