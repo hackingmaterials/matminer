@@ -1,4 +1,4 @@
-# <img alt="matminer" src="docs_rst/_static/matminer_logo_small.png" width="200">
+# <img alt="matminer" src="docs_rst/_static/matminer_logo_small.png" width="300">
 
 matminer is a library for performing data mining in the field of materials science.
 
