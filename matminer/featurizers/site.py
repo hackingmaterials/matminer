@@ -518,9 +518,6 @@ class CrystalSiteFingerprint(BaseFeaturizer):
 
                     opval = opval or 0  # handles None
 
-                    if self.optypes[cn][opidx] == 'bcc':  # TODO: remove after pymatgen update
-                        opval = opval / 0.976
-
                     # figure out the weight for this opval based on semicircle integration method
                     x1 = 1 - dist
                     x2 = 1 if dist_idx == len(dist_bins) - 1 else \
