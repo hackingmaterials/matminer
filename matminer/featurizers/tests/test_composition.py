@@ -1,27 +1,36 @@
 from __future__ import unicode_literals, division, print_function
 
+import math
 import unittest
 from unittest import SkipTest
 
-import math
 import pandas as pd
-
 from pymatgen import Composition, MPRester
+from pymatgen.core.periodic_table import Specie
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, FERECorrection, CohesiveEnergy, BandCenter, Miedema, AtomicOrbitals
+from matminer.featurizers.composition import Stoichiometry, ElementProperty, ValenceOrbital, IonProperty, \
+    ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, CohesiveEnergy, \
+    BandCenter, Miedema, CationProperty, OxidationStates
 
 
 class CompositionFeaturesTest(PymatgenTest):
 
     def setUp(self):
-        self.df = pd.DataFrame({"composition":[Composition("Fe2O3")]})
+        self.df = pd.DataFrame({"composition": [Composition("Fe2O3"),
+                                                Composition({Specie("Fe", 2): 1, Specie("O", -2): 1})]})
 
     def test_stoich(self):
+        featurizer = Stoichiometry(num_atoms=True)
         df_stoich = Stoichiometry(num_atoms=True).featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_stoich["num atoms"][0], 5)
         self.assertAlmostEqual(df_stoich["0-norm"][0], 2)
         self.assertAlmostEqual(df_stoich["7-norm"][0], 0.604895199)
+
+        # Test whether the number of formula units affects result
+        original_value = featurizer.featurize(Composition("FeO"))
+        self.assertArrayAlmostEqual(featurizer.featurize(Composition("Fe0.5O0.5")), original_value)
+        self.assertArrayAlmostEqual(featurizer.featurize(Composition("Fe2O2")), original_value)
 
     def test_elem(self):
         df_elem = ElementProperty.from_preset("magpie").featurize_dataframe(self.df, col_id="composition")
@@ -38,13 +47,16 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem_deml["maximum atom_num"][0], 26)
         self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)
         self.assertAlmostEqual(df_elem_deml["mean atom_num"][0], 15.2)
-        self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 8.81816307)
-        #Charge dependent property
-        self.assertAlmostEqual(df_elem_deml["minimum magn_moment"][0], 0)
-        self.assertAlmostEqual(df_elem_deml["maximum magn_moment"][0], 5.2)
-        self.assertAlmostEqual(df_elem_deml["range magn_moment"][0], 5.2)
-        self.assertAlmostEqual(df_elem_deml["mean magn_moment"][0], 2.08)
-        self.assertAlmostEqual(df_elem_deml["std_dev magn_moment"][0], 2.547469332)
+        self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 12.7279, 4)
+
+    def test_cation_properties(self):
+        featurizer = CationProperty.from_preset("deml")
+        features = dict(zip(featurizer.feature_labels(), featurizer.featurize(self.df["composition"][1])))
+        self.assertAlmostEqual(features["minimum magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["maximum magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["range magn_moment of cations"], 0)
+        self.assertAlmostEqual(features["mean magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["std_dev magn_moment of cations"], 0)
 
     def test_elem_matminer(self):
         df_elem = ElementProperty.from_preset("matminer").featurize_dataframe(self.df, col_id="composition")
@@ -52,6 +64,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertTrue(math.isnan(df_elem["maximum bulk_modulus"][0]))
         self.assertAlmostEqual(df_elem["range X"][0], 1.61, 1)
         self.assertAlmostEqual(df_elem["mean X"][0], 2.796, 1)
+        self.assertAlmostEqual(df_elem["maximum block"][0], 3, 1)
 
     def test_valence(self):
         df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")
@@ -65,36 +78,51 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_val["frac f valence electrons"][0], 0)
 
     def test_ionic(self):
-        df_ionic = IonProperty().featurize_dataframe(self.df, col_id="composition")
+        featurizer = IonProperty()
+        df_ionic = featurizer.featurize_dataframe(self.df, col_id="composition")
         self.assertEqual(df_ionic["compound possible"][0], 1.0)
         self.assertAlmostEqual(df_ionic["max ionic char"][0], 0.476922164)
         self.assertAlmostEqual(df_ionic["avg ionic char"][0], 0.114461319)
+
+        # Test 'fast'
+        self.assertEquals(1.0, featurizer.featurize(Composition("Fe3O4"))[0])
+        featurizer.fast = True
+        self.assertEquals(0, featurizer.featurize(Composition("Fe3O4"))[0])
+
+        # Make sure 'fast' works if I use-precomputed oxidation states
+        self.assertEquals(1, featurizer.featurize(Composition({
+            Specie('Fe', 2): 1,
+            Specie('Fe', 3): 2,
+            Specie('O', -2): 4
+        }))[0])
 
     def test_fraction(self):
         df_frac = ElementFraction().featurize_dataframe(self.df, col_id="composition")
         self.assertEqual(df_frac["O"][0], 0.6)
         self.assertEqual(df_frac["Fe"][0], 0.4)
-        #self.assertAlmostEqual(df_frac["Fe"][1], 0.42857143)
-        #self.assertAlmostEqual(df_frac["Li"][1], 0.57142857)
 
     def test_tm_fraction(self):
         df_tm_frac = TMetalFraction().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_tm_frac["transition metal fraction"][0], 0.4)
 
     def test_elec_affin(self):
-        df_elec_affin = ElectronAffinity().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elec_affin["avg anion electron affinity "][0], -169200)
+        featurizer = ElectronAffinity()
+        self.assertAlmostEqual(-141000*2, featurizer.featurize(self.df["composition"][1])[0])
 
     def test_en_diff(self):
-        df_en_diff = ElectronegativityDiff().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_en_diff["minimum EN difference"][0], 1.6099999999)
-        self.assertAlmostEqual(df_en_diff["maximum EN difference"][0], 1.6099999999)
-        self.assertAlmostEqual(df_en_diff["range EN difference"][0], 0)
-        self.assertAlmostEqual(df_en_diff["mean EN difference"][0], 1.6099999999)
-        self.assertAlmostEqual(df_en_diff["std_dev EN difference"][0], 0)
+        featurizer = ElectronegativityDiff()
+        features = dict(zip(featurizer.feature_labels(), featurizer.featurize(self.df["composition"][1])))
+        self.assertAlmostEqual(features["minimum EN difference"], 1.6099999999)
+        self.assertAlmostEqual(features["maximum EN difference"], 1.6099999999)
+        self.assertAlmostEqual(features["range EN difference"], 0)
+        self.assertAlmostEqual(features["mean EN difference"], 1.6099999999)
+        self.assertAlmostEqual(features["std_dev EN difference"], 0)
 
     def test_fere_corr(self):
-        df_fere_corr = FERECorrection().featurize_dataframe(self.df, col_id="composition")
+        df_fere_corr = ElementProperty(features=["FERE correction"],
+                                       stats=["minimum", "maximum", "range", "mean", "std_dev"],
+                                       data_source="deml")\
+            .featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_fere_corr["minimum FERE correction"][0], -0.15213431610903)
         self.assertAlmostEqual(df_fere_corr["maximum FERE correction"][0], 0.23)
         self.assertAlmostEqual(df_fere_corr["range FERE correction"][0], 0.382134316)
@@ -114,6 +142,12 @@ class CompositionFeaturesTest(PymatgenTest):
     def test_band_center(self):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_band_center["band center"][0], -2.672486385)
+
+    def test_oxidation_states(self):
+        featurizer = OxidationStates.from_preset("deml")
+        features = dict(zip(featurizer.feature_labels(), featurizer.featurize(self.df["composition"][1])))
+        self.assertAlmostEquals(4, features["range oxidation state"])
+        self.assertAlmostEquals(2, features["maximum oxidation state"])
 
     def test_cohesive_energy(self):
         mpr = MPRester()

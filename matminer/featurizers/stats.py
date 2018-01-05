@@ -61,7 +61,7 @@ class PropertyStats(object):
         Returns: 
             minimum value
         """
-        return min(data_lst) if float("nan") not in data_lst else float("nan")
+        return min(data_lst) if not np.any(np.isnan(data_lst)) else float("nan")
 
     @staticmethod
     def maximum(data_lst, weights=None):
@@ -73,7 +73,7 @@ class PropertyStats(object):
         Returns: 
             maximum value
         """
-        return max(data_lst) if float("nan") not in data_lst else float("nan")
+        return max(data_lst) if not np.any(np.isnan(data_lst)) else float("nan")
 
     @staticmethod
     def range(data_lst, weights=None):
@@ -85,7 +85,7 @@ class PropertyStats(object):
         Returns: 
             range
         """
-        return (max(data_lst) - min(data_lst)) if float("nan") not in data_lst \
+        return (max(data_lst) - min(data_lst)) if not np.any(np.isnan(data_lst)) \
             else float("nan")
 
     @staticmethod
@@ -139,6 +139,11 @@ class PropertyStats(object):
         Returns:
             standard deviation
         """
+        # Special case: Only one entry
+        if len(data_lst) == 1:
+            # This prevents numerical issues in the weighted std_dev
+            return 0
+
         if weights is None:
             return np.std(data_lst)
         else:
