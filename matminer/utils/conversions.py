@@ -53,6 +53,8 @@ def struct_to_oxidstruct(series, inplace=False, **kwargs):
 
     Args:
         series: a pd.Series with Structure object components
+        inplace: (bool) whether to override original Series (this is faster)
+        **kwargs: parameters to control Structure.add_oxidation_state_by_guess()
 
     Returns:
         a pd.Series with oxidation state Structure object components
@@ -62,5 +64,5 @@ def struct_to_oxidstruct(series, inplace=False, **kwargs):
     else:
         copy = Series(data=[x.copy() for x in series.tolist()],
                       index=series.index, dtype=series.dtype)
-        copy.map(lambda s: s.add_oxidation_state_by_guess(**kwargs))
+        copy.map(lambda s: s.(**kwargs))
         return copy
