@@ -165,7 +165,7 @@ class AtomicOrbitals(BaseFeaturizer):
     orbital energies of neutral ions with LDA DFT were computed by NIST.
     https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
     '''
-
+        
     def featurize(self, comp):
         '''
         Args:
@@ -173,13 +173,13 @@ class AtomicOrbitals(BaseFeaturizer):
                 pymatgen Composition object
 
         Returns:
-            HOMO_character: (str)
-            HOMO_element: (Element)
-            HOMO_energy: (float in eV)
-            LUMO_character: (str)
-            LUMO_element: (Element)
-            LUMO_energy: (float in eV)
-            gap: (float in eV)
+            HOMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
+            HOMO_element: (str) symbol of element for HOMO
+            HOMO_energy: (float in eV) absolute energy of HOMO
+            LUMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
+            LUMO_element: (str) symbol of element for LUMO
+            LUMO_energy: (float in eV) absolute energy of LUMO
+            bandgap: (float in eV)
                 the estimated bandgap from HOMO and LUMO energeis
         '''
 
@@ -187,17 +187,23 @@ class AtomicOrbitals(BaseFeaturizer):
 
         homo_lumo = MolecularOrbitals(string_comp).band_edges
 
-        self.feat = collections.OrderedDict()
+        feat = collections.OrderedDict()
         for edge in ['HOMO', 'LUMO']:
-            self.feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
-            self.feat['{}_element'.format(edge)] = homo_lumo[edge][0]
-            self.feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
-        self.feat['gap'] = self.feat['LUMO_energy'] - self.feat['HOMO_energy']
+            feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
+            feat['{}_element'.format(edge)] = homo_lumo[edge][0]
+            feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
+        feat['gap'] = feat['LUMO_energy'] - feat['HOMO_energy']
 
-        return list(self.feat.values())
+        return list(feat.values())
 
     def feature_labels(self):
-        return list(self.feat.keys())
+        feat = []
+        for edge in ['HOMO', 'LUMO']:
+            feat.extend(['{}_character'.format(edge),
+                         '{}_element'.format(edge),
+                         '{}_energy'.format(edge)])
+        feat.append("gap")
+        return feat
 
     def citations(self):
         return [
@@ -211,7 +217,7 @@ class AtomicOrbitals(BaseFeaturizer):
             "url = {https://link.aps.org/doi/10.1103/PhysRevA.55.191}}"]
 
     def implementors(self):
-        return ['Maxwell Dylla']
+        return ['Maxwell Dylla', 'Anubhav Jain']
 
 
 class BandCenter(BaseFeaturizer):
