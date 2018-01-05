@@ -54,6 +54,7 @@ class BandstructureFeaturesTest(PymatgenTest):
     def test_BandFeaturizer(self):
         # silicon:
         bs_featurizer = BandFeaturizer(kpoints=self.si_kpts, nbands=5)
+        assert(len(bs_featurizer.feature_labels()) > 0)
         df_bf = bs_featurizer.featurize_dataframe(self.df, col_id='bs_line')
         self.assertAlmostEqual(df_bf['band_gap'][0], 0.612, 3)
         self.assertAlmostEqual(df_bf['direct_gap'][0], 2.557, 3)
