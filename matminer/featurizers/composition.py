@@ -2,6 +2,7 @@ from __future__ import division
 
 from pymatgen import Element, MPRester
 from pymatgen.core.periodic_table import get_el_sp
+from pymatgen.core.molecular_orbitals import MolecularOrbitals
 
 import os
 import itertools
@@ -18,7 +19,7 @@ from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
 from matminer.featurizers.stats import PropertyStats
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
-             'Saurabh Bajaj, Qi Wang, Anubhav Jain'
+             'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 class ElementProperty(BaseFeaturizer):
@@ -155,6 +156,62 @@ class ElementProperty(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
+
+
+class AtomicOrbitals(BaseFeaturizer):
+    '''
+    class to determine the highest occupied molecular orbital (HOMO) and
+    lowest unocupied molecular orbital LUMO in a composition. The atomic
+    orbital energies of neutral ions with LDA DFT were computed by NIST.
+    https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
+    '''
+
+    def featurize(self, comp):
+        '''
+        Args:
+            comp: (Composition)
+                pymatgen Composition object
+
+        Returns:
+            HOMO_character: (str)
+            HOMO_element: (Element)
+            HOMO_energy: (float in eV)
+            LUMO_character: (str)
+            LUMO_element: (Element)
+            LUMO_energy: (float in eV)
+            gap: (float in eV)
+                the estimated bandgap from HOMO and LUMO energeis
+        '''
+
+        string_comp = comp.reduced_formula
+
+        homo_lumo = MolecularOrbitals(string_comp).band_edges
+
+        self.feat = collections.OrderedDict()
+        for edge in ['HOMO', 'LUMO']:
+            self.feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
+            self.feat['{}_element'.format(edge)] = homo_lumo[edge][0]
+            self.feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
+        self.feat['gap'] = self.feat['LUMO_energy'] - self.feat['HOMO_energy']
+
+        return list(self.feat.values())
+
+    def feature_labels(self):
+        return list(self.feat.keys())
+
+    def citations(self):
+        return [
+            "@article{PhysRevA.55.191,"
+            "title = {Local-density-functional calculations of the energy of atoms},"
+            "author = {Kotochigova, Svetlana and Levine, Zachary H. and Shirley, "
+            "Eric L. and Stiles, M. D. and Clark, Charles W.},"
+            "journal = {Phys. Rev. A}, volume = {55}, issue = {1}, pages = {191--199},"
+            "year = {1997}, month = {Jan}, publisher = {American Physical Society},"
+            "doi = {10.1103/PhysRevA.55.191}, "
+            "url = {https://link.aps.org/doi/10.1103/PhysRevA.55.191}}"]
+
+    def implementors(self):
+        return ['Maxwell Dylla']
 
 
 class BandCenter(BaseFeaturizer):
@@ -353,8 +410,8 @@ class Stoichiometry(BaseFeaturizer):
         Args:
             comp: Pymatgen composition object
             p_list (list of ints)
-        
-        Returns: 
+
+        Returns:
             p_norm (list of floats): Lp norm-based stoichiometric attributes.
                 Returns number of atoms if no p-values specified.
         """
