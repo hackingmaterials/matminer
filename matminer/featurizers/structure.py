@@ -19,7 +19,6 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint
 from matminer.featurizers.stats import PropertyStats
 
-import qmmlpack.representations as qmml
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
