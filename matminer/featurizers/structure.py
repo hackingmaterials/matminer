@@ -10,6 +10,7 @@ import scipy.constants as const
 
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
+from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -268,11 +269,11 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
     def featurize(self, rdf):
         """
         Get location of highest peaks in RDF.
-    
+
         Args:
             rdf: (ndarray) RDF as obtained from the
                     RadialDistributionFunction class.
-    
+
         Returns: (ndarray) distances of highest peaks in descending order
                 of the peak height
         """
@@ -395,10 +396,10 @@ class CoulombMatrix(BaseFeaturizer):
     def featurize(self, s):
         """
         Get Coulomb matrix of input structure.
-    
+
         Args:
             s: input Structure (or Molecule) object.
-    
+
         Returns:
             m: (Nsites x Nsites matrix) Coulomb matrix.
         """
@@ -710,55 +711,6 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         return ["Kyle Bystrom"]
 
 
-class ManyBodyTensor(BaseFeaturizer):
-
-    #Elements in the Materials Project Database
-    PMG_PRESET = [i for i in range(1,84)] + [i for i in range(89,95)]
-
-    def __init__(self, d, k, geomf, weightf, distrf, corrf, eindexf, aindexf,
-        elems=None, acc=1e-3, flatten=False):
-
-        if elems == None:
-            elems = PMG_PRESET
-        self.d = d
-        self.kgwdcea = [k, geomf, weightf, distrf, corrf, eindexf, aindexf]
-        self.elems = elems
-        self.acc = acc
-        self.flatten = flatten
-
-    def featurize(self, struct):
-
-        z = [[s.specie.Z for s in struct]]
-        r = [[s.specie.coords for s in struct]]
-        basis = [struct.lattice.matrix.tolist()]
-
-        return [many_body_tensor(z, r, self.d, self.kgwdcea, basis, self.elems, self.acc, self.flatten)[0]]
-
-    def featurize_multiple(self, struct):
-
-        z = [[s.specie.Z for s in struct] for struct in structs]
-        r = [[s.specie.coords.tolist() for s in struct] for struct in structs]
-        basis = [struct.lattice.matrix.tolist() for struct in structs]
-
-        return many_body_tensor(z, r, self.d, self.kgwdcea, basis, self.elems, self.acc, self.flatten)
-
-    @staticmethod
-    def from_structures(structs, d, k, geomf, weightf, distrf, corrf,
-        eindexf, aindexf, acc=1e-3, flatten=False):
-
-        kgwdcea = [k, geomf, weightf, distrf, corrf, eindexf, aindexf]
-        z = [[s.specie.Z for s in struct] for struct in structs]
-        r = [[s.coords.tolist() for s in struct] for struct in structs]
-        basis = [struct.lattice.matrix.tolist() for struct in structs]
-        elems = []
-        for Zlst in z:
-            for Z in Zlst:
-                if not Z in elems:
-                    elems.append(Z)
-        elems = sorted(elems)
-
-        return qmml.many_body_tensor(z, r, d, kgwdcea, basis, elems, acc, flatten)
-
 class MinimumRelativeDistances(BaseFeaturizer):
     """
     Determines the relative distance of each site to its closest
@@ -779,7 +731,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
     def featurize(self, s, cutoff=10.0):
         """
         Get minimum relative distances of all sites of the input structure.
-    
+
         Args:
             s: Pymatgen Structure object.
 
@@ -963,3 +915,50 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
 
     return dr[idx], delta[idx]
 
+
+class EwaldEnergy(BaseFeaturizer):
+    """Compute the energy from Coulombic interactions
+
+    Note: The energy is computed using _charges already defined for the structure_.
+
+    Features:
+        ewald_energy - Coulomb interaction energy of the structure"""
+
+    def __init__(self, accuracy=None):
+        """
+        Args:
+            accuracy (int): Accuracy of Ewald summation, number of decimal places
+        """
+        self.accuracy = accuracy
+
+    def featurize(self, strc):
+        """
+
+        Args:
+             (Structure) - Structure being analyzed
+        Returns:
+            ([float]) - Electrostatic energy of the structure
+        """
+        # Compute the total energy
+        ewald = EwaldSummation(strc, acc_factor=self.accuracy)
+        return [ewald.total_energy]
+
+    def feature_labels(self):
+        return ("ewald_energy",)
+
+    def implementors(self):
+        return ("Logan Ward",)
+
+    def citations(self):
+        return ["@Article{Ewald1921,"
+                "author = {Ewald, P. P.},"
+                "doi = {10.1002/andp.19213690304},"
+                "issn = {00033804},"
+                "journal = {Annalen der Physik},"
+                "number = {3},"
+                "pages = {253--287},"
+                "title = {{Die Berechnung optischer und elektrostatischer Gitterpotentiale}},"
+                "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
+                "volume = {369},"
+                "year = {1921}"
+                "}"]

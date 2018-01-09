@@ -7,9 +7,18 @@ Subpackages
 .. toctree::
 
     matminer.utils.data_files
+    matminer.utils.tests
 
 Submodules
 ----------
+
+matminer\.utils\.conversions module
+-----------------------------------
+
+.. automodule:: matminer.utils.conversions
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 matminer\.utils\.data module
 ----------------------------

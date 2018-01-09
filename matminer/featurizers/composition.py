@@ -1,25 +1,43 @@
 from __future__ import division
 
-from pymatgen import Element, MPRester
-from pymatgen.core.periodic_table import get_el_sp
-
-import os
 import itertools
+import os
+from functools import reduce
 import collections
 
 import numpy as np
 import pandas as pd
-import math
-from functools import reduce
+from pymatgen import Element, MPRester
+from pymatgen.core.periodic_table import get_el_sp, Specie
+from pymatgen.core.molecular_orbitals import MolecularOrbitals
 
 from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     CohesiveEnergyData
-from matminer.featurizers.stats import PropertyStats
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
-             'Saurabh Bajaj, Qi Wang, Anubhav Jain'
+             'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
+
 module_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+# Utility operations
+def has_oxidation_states(comp):
+    """Check if a composition object has oxidation states for each element
+
+    TODO: Does this make sense to add to pymatgen? -wardlt
+
+    Args:
+        comp - (Composition) Composition to check
+    Returns:
+        (Boolean) Whether this composition object contains oxidation states
+    """
+    for el in comp.elements:
+        if not isinstance(el, Specie) or el.oxi_state is None:
+            return False
+    return True
+
 
 class ElementProperty(BaseFeaturizer):
     """
@@ -32,7 +50,7 @@ class ElementProperty(BaseFeaturizer):
             "magpie", or "deml")
         features (list of strings): List of elemental properties to use
             (these must be supported by data_source)
-        stats (string): a list of weighted statistics to compute to for each
+        stats (list of strings): a list of weighted statistics to compute to for each
             property (see PropertyStats for available stats)
     """
 
@@ -49,8 +67,8 @@ class ElementProperty(BaseFeaturizer):
         self.features = features
         self.stats = stats
 
-    @staticmethod
-    def from_preset(preset_name):
+    @classmethod
+    def from_preset(cls, preset_name):
         """
         Return ElementProperty from a preset string
         Args:
@@ -76,10 +94,9 @@ class ElementProperty(BaseFeaturizer):
             features = ["atom_num", "atom_mass", "row_num", "col_num",
                         "atom_radius", "molar_vol", "heat_fusion",
                         "melting_point", "boiling_point", "heat_cap",
-                        "first_ioniz", "total_ioniz", "electronegativity",
-                        "formal_charge", "xtal_field_split",
-                        "magn_moment", "so_coupling", "sat_magn",
-                        "electric_pol", "GGAU_Etot", "mus_fere"]
+                        "first_ioniz", "electronegativity",
+                        "electric_pol", "GGAU_Etot", "mus_fere",
+                        "FERE correction"]
 
         elif preset_name == "matminer":
             data_source = "pymatgen"
@@ -94,7 +111,7 @@ class ElementProperty(BaseFeaturizer):
         else:
             raise ValueError("Invalid preset_name specified!")
 
-        return ElementProperty(data_source, features, stats)
+        return cls(data_source, features, stats)
 
     def featurize(self, comp):
         """
@@ -109,12 +126,17 @@ class ElementProperty(BaseFeaturizer):
 
         all_attributes = []
 
+        # Initialize stats computer
+        pstats = PropertyStats()
+
+        # Get the element names and fractions
+        elements, fractions = zip(*comp.element_composition.items())
+
         for attr in self.features:
-            elem_data = self.data_source.get_property(comp, attr)
+            elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
 
             for stat in self.stats:
-                all_attributes.append(
-                    PropertyStats().calc_stat(elem_data, stat))
+                all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
 
         return all_attributes
 
@@ -123,7 +145,6 @@ class ElementProperty(BaseFeaturizer):
         for attr in self.features:
             for stat in self.stats:
                 labels.append("%s %s" % (stat, attr))
-
         return labels
 
     def citations(self):
@@ -150,11 +171,177 @@ class ElementProperty(BaseFeaturizer):
                 "publisher = {Elsevier B.V.}, title = {{Python Materials Genomics (pymatgen): A robust, open-source python "
                 "library for materials analysis}}, url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
                 "volume = {68}, year = {2013} } ")
-
+        else:
+            citation = []
         return citation
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
+
+      
+class CationProperty(ElementProperty):
+    """Features based on the properties of cations in a material
+
+    Requires that oxidation states have already been determined
+
+    Computes composition-weighted statistics of different elemental properties"""
+
+    @classmethod
+    def from_preset(cls, preset_name):
+        if preset_name == "deml":
+            data_source = "deml"
+            features=["total_ioniz", "xtal_field_split", "magn_moment",
+                      "so_coupling", "sat_magn",]
+            stats = ["minimum", "maximum", "range", "mean", "std_dev"]
+        else:
+            raise ValueError('Preset "%s" not found'%preset_name)
+        return cls(data_source, features, stats)
+
+    def feature_labels(self):
+        labels = []
+        for attr in self.features:
+            for stat in self.stats:
+                labels.append("%s %s of cations" % (stat, attr))
+
+        return labels
+
+    def featurize(self, comp):
+        # Check if oxidation states are present
+        if not has_oxidation_states(comp):
+            raise ValueError('Oxidation states have not been determined')
+
+        # Prepare to store the attributes
+        all_attributes = []
+
+        # Initialize stats computer
+        pstats = PropertyStats()
+
+        # Get the cation species and fractions
+        cations, fractions = zip(*[(s, f) for s, f in comp.items() if s.oxi_state > 0])
+
+        for attr in self.features:
+            elem_data = [self.data_source.get_charge_dependent_property_from_specie(c, attr) for c in cations]
+
+            for stat in self.stats:
+                all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
+
+        return all_attributes
+
+    def citations(self):
+        return ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+                "functional theory total energies and enthalpies of formation of metal-nonmetal "
+                "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+                "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}",)
+
+
+class OxidationStates(BaseFeaturizer):
+    """
+    Statistics about the oxidation states for each specie.
+
+    Features are concentration-weighted statistics of the oxidation states.
+    """
+
+    def __init__(self, stats):
+        """
+
+        Args:
+             stats - (list of string), which statistics compute
+        """
+        self.stats = stats
+
+    @classmethod
+    def from_preset(cls, preset_name):
+        if preset_name == "deml":
+            stats = ["minimum", "maximum", "range", "std_dev"]
+        else:
+            ValueError('Preset "%s" not found' % preset_name)
+        return cls(stats=stats)
+
+    def featurize(self, comp):
+        # Check if oxidation states are present
+        if not has_oxidation_states(comp):
+            raise ValueError('Oxidation states have not been determined')
+
+        # Get the oxidation states and their proportions
+        oxid_states, fractions = zip(*[(s.oxi_state, f) for s,f in comp.items()])
+
+        # Compute statistics
+        return [PropertyStats.calc_stat(oxid_states, s, fractions) for s in self.stats]
+
+    def feature_labels(self):
+        return ["%s oxidation state"%s for s in self.stats]
+
+    def citations(self):
+        return ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+                "functional theory total energies and enthalpies of formation of metal-nonmetal "
+                "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+                "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}",)
+
+    def implementors(self):
+        return ('Logan Ward',)
+
+class AtomicOrbitals(BaseFeaturizer):
+    '''
+    class to determine the highest occupied molecular orbital (HOMO) and
+    lowest unocupied molecular orbital LUMO in a composition. The atomic
+    orbital energies of neutral ions with LDA DFT were computed by NIST.
+    https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
+    '''
+        
+    def featurize(self, comp):
+        '''
+        Args:
+            comp: (Composition)
+                pymatgen Composition object
+
+        Returns:
+            HOMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
+            HOMO_element: (str) symbol of element for HOMO
+            HOMO_energy: (float in eV) absolute energy of HOMO
+            LUMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
+            LUMO_element: (str) symbol of element for LUMO
+            LUMO_energy: (float in eV) absolute energy of LUMO
+            bandgap: (float in eV)
+                the estimated bandgap from HOMO and LUMO energeis
+        '''
+
+        string_comp = comp.reduced_formula
+
+        homo_lumo = MolecularOrbitals(string_comp).band_edges
+
+        feat = collections.OrderedDict()
+        for edge in ['HOMO', 'LUMO']:
+            feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
+            feat['{}_element'.format(edge)] = homo_lumo[edge][0]
+            feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
+        feat['gap'] = feat['LUMO_energy'] - feat['HOMO_energy']
+
+        return list(feat.values())
+
+    def feature_labels(self):
+        feat = []
+        for edge in ['HOMO', 'LUMO']:
+            feat.extend(['{}_character'.format(edge),
+                         '{}_element'.format(edge),
+                         '{}_energy'.format(edge)])
+        feat.append("gap")
+        return feat
+
+    def citations(self):
+        return [
+            "@article{PhysRevA.55.191,"
+            "title = {Local-density-functional calculations of the energy of atoms},"
+            "author = {Kotochigova, Svetlana and Levine, Zachary H. and Shirley, "
+            "Eric L. and Stiles, M. D. and Clark, Charles W.},"
+            "journal = {Phys. Rev. A}, volume = {55}, issue = {1}, pages = {191--199},"
+            "year = {1997}, month = {Jan}, publisher = {American Physical Society},"
+            "doi = {10.1103/PhysRevA.55.191}, "
+            "url = {https://link.aps.org/doi/10.1103/PhysRevA.55.191}}"]
+
+    def implementors(self):
+        return ['Maxwell Dylla', 'Anubhav Jain']
 
 
 class BandCenter(BaseFeaturizer):
@@ -195,8 +382,18 @@ class BandCenter(BaseFeaturizer):
 
 class ElectronegativityDiff(BaseFeaturizer):
     """
-    Calculate electronegativity difference between cations and anions
-    (average, max, range, etc.)
+    Features based on the electronegativity difference between the anions and
+    cations in the material.
+
+    These features are computed by first determining the concentration-weighted
+    average electronegativity of the anions. For example, the average
+    electronegativity of the anions in CaCoSO is equal to 1/2 of that of S and 1/2 of that of O.
+    We then compute the difference between the electronegativity of each cation
+    and the average anion electronegativity.
+
+    The feature values are then determined based on the concentration-weighted statistics
+    in the same manner as ElementProperty features. For example, one value could be
+    the mean electronegativity difference over all the anions.
 
     Parameters:
         data_source (data class): source from which to retrieve element data
@@ -205,8 +402,7 @@ class ElectronegativityDiff(BaseFeaturizer):
     Generates average electronegativity difference between cations and anions
     """
 
-    def __init__(self, data_source=DemlData(), stats=None):
-        self.data_source = data_source
+    def __init__(self, stats=None):
         if stats == None:
             self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
@@ -220,43 +416,26 @@ class ElectronegativityDiff(BaseFeaturizer):
         Returns:
             en_diff_stats (list of floats): Property stats of electronegativity difference
         """
-        el_amt = comp.fractional_composition.get_el_amt_dict()
 
-        best_guess = comp.oxi_state_guesses(max_sites=-1)[0]
-        cations = [x for x in best_guess if best_guess[x] > 0]
-        anions = [x for x in best_guess if best_guess[x] < 0]
+        # Check if oxidation states have been determined
+        if not has_oxidation_states(comp):
+            raise ValueError('Oxidation states have not yet been determined')
 
-        cation_en = [Element(x).X for x in cations]
-        anion_en = [Element(x).X for x in anions]
+        # Determine the average anion EN
+        anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
 
-        if len(cations) == 0 or len(anions) == 0:
-            return len(self.stats) * [float("NaN")]
+        anion_en = [s.element.X for s in anions]
+        mean_anion_en = PropertyStats.mean(anion_en, anion_fractions)
 
-        avg_en_diff = []
-        n_anions = sum([el_amt[el] for el in anions])
+        # Determine the EN difference for each cation
+        cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
 
-        # TODO: @WardLT, @JFChen3 I left this code as-is but am not quite sure what's going on. Why is there some normalization applied to anions but not cations? -computron
-        for cat_en in cation_en:
-            en_diff = 0
-            for i in range(len(anions)):
-                frac_anion = el_amt[anions[i]] / n_anions
-                an_en = anion_en[i]
-                en_diff += abs(cat_en - an_en) * frac_anion
-            avg_en_diff.append(en_diff)
+        en_difference = [mean_anion_en - s.element.X for s in cations]
 
-        cation_fracs = [el_amt[el] for el in cations]
-        en_diff_stats = []
-
-        for stat in self.stats:
-            if stat == "std_dev":
-                en_diff_stats.append(
-                    PropertyStats().calc_stat(avg_en_diff, stat))
-            else:
-                en_diff_stats.append(
-                    PropertyStats().calc_stat(avg_en_diff, stat,
-                                              weights=cation_fracs))
-
-        return en_diff_stats
+        # Compute the statistics
+        return [
+            PropertyStats.calc_stat(en_difference, stat, cation_fractions) for stat in self.stats
+        ]
 
     def feature_labels(self):
 
@@ -281,45 +460,47 @@ class ElectronegativityDiff(BaseFeaturizer):
 
 class ElectronAffinity(BaseFeaturizer):
     """
-    Class to calculate average electron affinity times formal charge of anion elements
+    Calculate average electron affinity times formal charge of anion elements
 
-    Parameters:
-        data_source (data class): source from which to retrieve element data
+    Note: The formal charges must already be computed before calling `featurize`
 
     Generates average (electron affinity*formal charge) of anions
     """
 
-    def __init__(self, data_source=DemlData()):
-        self.data_source = data_source
+    def __init__(self):
+        self.data_source = DemlData()
 
     def featurize(self, comp):
         """
         Args:
-            comp: Pymatgen Composition object
+            comp: (Composition) Composition to be featurized
 
         Returns:
             avg_anion_affin (single-element list): average electron affinity*formal charge of anions
         """
-        electron_affin = self.data_source.get_property(comp, "electron_affin",
-                                                       combine_by_element=True)
 
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        electron_affin = dict(zip(elements, electron_affin))
+        # Check if oxidation states have been computed
+        if not has_oxidation_states(comp):
+            raise ValueError('Composition lacks oxidation states')
 
-        oxi_states = comp.oxi_state_guesses(max_sites=-1)[0]
+        # Get the species and fractions
+        species, fractions = zip(*comp.items())
 
-        avg_anion_affin = 0
-        for i, el in enumerate(oxi_states):
-            if oxi_states[el] < 0:
-                avg_anion_affin += oxi_states[el] * electron_affin[el] * \
-                                   el_amt[el]
+        # Determine which species are anions
+        anions, fractions = zip(*[(s, f) for s,f in zip(species, fractions) if s.oxi_state < 0])
+
+        # Compute the electron_affinity*formal_charge for each anion
+        electron_affin = [
+            self.data_source.get_elemental_property(s.element, "electron_affin") * s.oxi_state for s in anions
+        ]
+
+        # Compute the average affinity
+        avg_anion_affin = PropertyStats.mean(electron_affin, fractions)
 
         return [avg_anion_affin]
 
     def feature_labels(self):
-        labels = ["avg anion electron affinity "]
-        return labels
+        return ["avg anion electron affinity"]
 
     def citations(self):
         citation = (
@@ -340,10 +521,10 @@ class Stoichiometry(BaseFeaturizer):
 
     Parameters:
         p_list (list of ints): list of norms to calculate
-        num_atoms (bool): whether to return number of atoms
+        num_atoms (bool): whether to return number of atoms per formula unit
     """
 
-    def __init__(self, p_list=[0, 2, 3, 5, 7, 10], num_atoms=False):
+    def __init__(self, p_list=(0, 2, 3, 5, 7, 10), num_atoms=False):
         self.p_list = p_list
         self.num_atoms = num_atoms
 
@@ -353,18 +534,19 @@ class Stoichiometry(BaseFeaturizer):
         Args:
             comp: Pymatgen composition object
             p_list (list of ints)
-        
-        Returns: 
+
+        Returns:
             p_norm (list of floats): Lp norm-based stoichiometric attributes.
                 Returns number of atoms if no p-values specified.
         """
 
         el_amt = comp.get_el_amt_dict()
 
-        n_atoms = comp.num_atoms
+        # Compute the number of atoms per formula unit
+        n_atoms_per_unit = comp.num_atoms / comp.get_integer_formula_and_factor()[1]
 
         if self.p_list == None:
-            stoich_attr = [n_atoms]  # return num atoms if no norms specified
+            stoich_attr = [n_atoms_per_unit]  # return num atoms if no norms specified
         else:
             p_norms = [0] * len(self.p_list)
             n_atoms = sum(el_amt.values())
@@ -380,7 +562,7 @@ class Stoichiometry(BaseFeaturizer):
                     p_norms[i] = p_norms[i] ** (1.0 / self.p_list[i])
 
             if self.num_atoms:
-                stoich_attr = [n_atoms] + p_norms
+                stoich_attr = [n_atoms_per_unit] + p_norms
             else:
                 stoich_attr = p_norms
 
@@ -421,9 +603,8 @@ class ValenceOrbital(BaseFeaturizer):
                 fraction of electrons in each orbital, or both
     """
 
-    def __init__(self, data_source=MagpieData(), orbitals=["s", "p", "d", "f"],
-                 props=["avg", "frac"]):
-        self.data_source = data_source
+    def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac")):
+        self.data_source = MagpieData()
         self.orbitals = orbitals
         self.props = props
 
@@ -434,29 +615,27 @@ class ValenceOrbital(BaseFeaturizer):
                 comp: Pymatgen composition object
 
            Returns:
-                valence_attributes (list of floats): Average number and/or fraction of valence electrons in specfied orbitals
+                valence_attributes (list of floats): Average number and/or
+                    fraction of valence electrons in specfied orbitals
         """
 
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        el_fracs = [el_amt[el] for el in elements]
+        elements, fractions = zip(*comp.element_composition.items())
 
-        avg = []
+        # Get the mean number of electrons in each shell
+        avg = [
+            PropertyStats.mean(self.data_source.get_elemental_properties(elements, "N%sValence" % orb),
+                               weights=fractions)
+            for orb in self.orbitals
+        ]
 
-        for orb in self.orbitals:
-            avg.append(
-                PropertyStats().mean(
-                    self.data_source.get_property(comp, "N%sValence" % orb,
-                                                  combine_by_element=True),
-                    weights=el_fracs))
-
+        # If needed, get fraction of electrons in each shell
         if "frac" in self.props:
-            avg_total_valence = PropertyStats().mean(
-                self.data_source.get_property(comp, "NValance",
-                                              combine_by_element=True),
-                weights=el_fracs)
+            avg_total_valence = PropertyStats.mean(
+                self.data_source.get_elemental_properties(elements, "NValance"),
+                weights=fractions)
             frac = [a / avg_total_valence for a in avg]
 
+        # Get the desired attributes
         valence_attributes = []
         for prop in self.props:
             valence_attributes += locals()[prop]
@@ -494,20 +673,27 @@ class ValenceOrbital(BaseFeaturizer):
 class IonProperty(BaseFeaturizer):
     """
     Class to calculate ionic property attributes
-
-    Parameters:
-        data_source (data class): source from which to retrieve element data
     """
 
-    def __init__(self, data_source=MagpieData()):
+    def __init__(self, data_source=PymatgenData(), fast=False):
+        """
+
+        Args:
+             data_source - (OxidationStateMixin) - A AbstractData class that supports
+                the `get_oxidation_state` method.
+            fast - (boolean) whether to assume elements exist in a single oxidation state,
+                which can dramatically accelerate the calculation of whether an ionic compound
+                is possible, but will miss heterovalent compounds like Fe3O4.
+        """
         self.data_source = data_source
+        self.fast = fast
 
     def featurize(self, comp):
         """
         Ionic character attributes
 
         Args:
-            comp: Pymatgen composition object
+            comp: (Composition) Composition to be featurized
 
         Returns:
             cpd_possible (bool): Indicates if a neutral ionic compound is possible
@@ -515,9 +701,7 @@ class IonProperty(BaseFeaturizer):
             avg_ionic_char (float): Average ionic character
         """
 
-        el_amt = comp.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        values = [el_amt[el] for el in elements]
+        elements, fractions = zip(*comp.element_composition.items())
 
         if len(elements) < 2:  # Single element
             cpd_possible = True
@@ -525,25 +709,31 @@ class IonProperty(BaseFeaturizer):
             avg_ionic_char = 0
         else:
             # Get magpie data for each element
-            ox_states = self.data_source.get_property(comp, "OxidationStates",
-                                                      combine_by_element=True)
-            elec = self.data_source.get_property(comp, "Electronegativity",
-                                                 combine_by_element=True)
-
-            # TODO: consider replacing with oxi_state_guesses - depends on
-            # whether Magpie oxidation states table matches oxi_states table
+            elec = self.data_source.get_elemental_properties(elements, "X")
 
             # Determine if neutral compound is possible
-            cpd_possible = False
-            ox_sets = itertools.product(*ox_states)
-            for ox in ox_sets:
-                if abs(np.dot(ox, values)) < 1e-4:
-                    cpd_possible = True
-                    break
+            if has_oxidation_states(comp):
+                charges, fractions = zip(*[(s.oxi_state, f) for s,f in comp.items()])
+                cpd_possible = np.isclose(np.dot(charges, fractions), 0)
+            else:
+                oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
+                if self.fast:
+                    # Assume each element can have only 1 oxidation state
+                    cpd_possible = False
+                    for ox in itertools.product(*oxidation_states):
+                        if np.isclose(np.dot(ox, fractions), 0):
+                            cpd_possible = True
+                            break
+                else:
+                    #  Use pymatgen's oxidation state checker which
+                    #   can detect whether an takes >1 oxidation state (as in Fe3O4)
+                    oxi_state_dict = dict(zip([e.symbol for e in elements],
+                                              oxidation_states))
+                    cpd_possible = len(comp.oxi_state_guesses(oxi_states_override=oxi_state_dict)) > 0
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
-            el_frac = list(np.true_divide(values, sum(values)))
+            el_frac = list(np.true_divide(fractions, sum(fractions)))
 
             ionic_char = []
             avg_ionic_char = 0
@@ -557,7 +747,7 @@ class IonProperty(BaseFeaturizer):
 
             max_ionic_char = np.max(ionic_char)
 
-        return list((cpd_possible, max_ionic_char, avg_ionic_char))
+        return [cpd_possible, max_ionic_char, avg_ionic_char]
 
     def feature_labels(self):
         labels = ["compound possible", "max ionic char", "avg ionic char"]
@@ -575,7 +765,7 @@ class IonProperty(BaseFeaturizer):
     def implementors(self):
         return ["Jiming Chen", "Logan Ward"]
 
-
+      
 # TODO: is this descriptor useful or just noise?
 class ElementFraction(BaseFeaturizer):
     """
@@ -664,78 +854,6 @@ class TMetalFraction(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen, Logan Ward"]
-
-
-# TODO: why is this a "feature" of a compound? Seems more like a pymatgen analysis thing?
-#   Deml *et al.* PRB 085142 use the FERE correction energy as the basis for features. I've adjusted the class
-#    documentation to make it clearer that this class computes features related to the FERE correction values, and
-#    not that it is performing some kind of thermodynamic analysis. Really, we should pre-compute these correction
-#    values and combine this with the ElementProperty class.
-class FERECorrection(BaseFeaturizer):
-    """
-    Class to calculate features related to the difference between fitted elemental-phase reference
-    energy (FERE) and GGA+U energy
-
-    Parameters:
-        data_source (data class): source from which to retrieve element data
-        stats: Property statistics to compute
-
-    Generates: Property statistics of difference between FERE and GGA+U energy
-    """
-
-    def __init__(self, data_source=DemlData(), stats=None):
-        self.data_source = data_source
-        if stats == None:
-            self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
-        else:
-            self.stats = stats
-
-    def featurize(self, comp):
-        """
-        Args:
-            comp: Pymatgen Composition object
-
-        Returns:
-            fere_corr_stats (list of floats): Property stats of FERE correction
-        """
-
-        el_amt = comp.fractional_composition.get_el_amt_dict()
-        elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).Z)
-        el_frac = [el_amt[el] for el in elements]
-
-        GGAU_Etot = self.data_source.get_property(comp, "GGAU_Etot",
-                                                  combine_by_element=True)
-        mus_fere = self.data_source.get_property(comp, "mus_fere",
-                                                 combine_by_element=True)
-
-        fere_corr = [mus_fere[i] - GGAU_Etot[i] for i in range(len(GGAU_Etot))]
-
-        fere_corr_stats = []
-        for stat in self.stats:
-            fere_corr_stats.append(
-                PropertyStats().calc_stat(fere_corr, stat, weights=el_frac))
-
-        return fere_corr_stats
-
-    def feature_labels(self):
-
-        labels = []
-        for stat in self.stats:
-            labels.append("%s FERE correction" % stat)
-
-        return labels
-
-    def citations(self):
-        citation = (
-            "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
-            "functional theory total energies and enthalpies of formation of metal-nonmetal "
-            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
-            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
-        return citation
-
-    def implementors(self):
-        return ["Jiming Chen", "Logan Ward"]
 
 
 class CohesiveEnergy(BaseFeaturizer):

@@ -6,7 +6,7 @@ from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, ChemEnvSiteFingerprint, VoronoiIndex
+    OPSiteFingerprint, EwaldSiteEnergy, VoronoiIndex, ChemEnvSiteFingerprint
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -96,35 +96,35 @@ class FingerprintTests(PymatgenTest):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 35)
-        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
-            'oct CN_6')]), 999)
+        self.assertAlmostEqual(ops[opsf.feature_labels().index(
+            'oct CN_6')], 0.9995, places=7)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
-            'bcc CN_8')] + 0.5), 895)
+        self.assertAlmostEqual(ops[opsf.feature_labels().index(
+            'bcc CN_8')], 0.8955, places=7)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
-        self.assertAlmostEqual(int(1000 * ops[opsf.feature_labels().index(
-            'bcc CN_8')] + 0.5), 955)
+        self.assertAlmostEqual(ops[opsf.feature_labels().index(
+            'bcc CN_8')], 0.9555, places=7)
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
         l = cefp.feature_labels()
         cevals = cefp.featurize(self.sc, 0)
         self.assertEqual(len(cevals), 66)
-        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 1)
-        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 0)
+        self.assertAlmostEqual(cevals[l.index('O:6')], 1, places=7)
+        self.assertAlmostEqual(cevals[l.index('C:8')], 0, places=7)
         cevals = cefp.featurize(self.cscl, 0)
-        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 1)
-        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 0)
+        self.assertAlmostEqual(cevals[l.index('C:8')],  0.9953721, places=7)
+        self.assertAlmostEqual(cevals[l.index('O:6')], 0, places=7)
         cefp = ChemEnvSiteFingerprint.from_preset('simple')
         l = cefp.feature_labels()
         cevals = cefp.featurize(self.sc, 0)
         self.assertEqual(len(cevals), 66)
-        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 1)
-        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 0)
+        self.assertAlmostEqual(cevals[l.index('O:6')], 1, places=7)
+        self.assertAlmostEqual(cevals[l.index('C:8')], 0, places=7)
         cevals = cefp.featurize(self.cscl, 0)
-        self.assertAlmostEqual(round(cevals[l.index('C:8')]), 1)
-        self.assertAlmostEqual(round(cevals[l.index('O:6')]), 0)
+        self.assertAlmostEqual(cevals[l.index('C:8')], 0.9953721, places=7)
+        self.assertAlmostEqual(cevals[l.index('O:6')], 0, places=7)
 
     # test Voronoi indices
     def test_voronoi_site(self):
@@ -140,6 +140,25 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(test_featurize['voro_index_9'][0], 0.0)
         self.assertAlmostEqual(test_featurize['voro_index_10'][0], 0.0)
         self.assertAlmostEqual(test_featurize['voro_index_sum'][0], 6.0)
+
+    def test_ewald_site(self):
+        ewald = EwaldSiteEnergy(accuracy=4)
+
+        # Set the charges
+        for s in [self.sc, self.cscl]:
+            s.add_oxidation_state_by_guess()
+
+        # Run the sc-Al structure
+        self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
+
+        # Run the cscl-structure
+        #   Compared to a result computed using GULP
+        self.assertAlmostEquals(ewald.featurize(self.cscl, 0), ewald.featurize(self.cscl, 1))
+        self.assertAlmostEquals(ewald.featurize(self.cscl, 0)[0], -6.98112443 / 2, 3)
+
+        # Re-run the Al structure to make sure it is accurate
+        #  This is to test the caching feature
+        self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
 
 if __name__ == '__main__':
     import unittest

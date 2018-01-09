@@ -17,8 +17,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
     OPStructureFingerprint, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    ManyBodyTensor
+    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, EwaldEnergy
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -263,19 +262,6 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
-    def test_many_body_tensor(self):
-        structs = [self.diamond, self.nacl, self.cscl, self.ni3al]
-
-        m = ManyBodyTensor.from_structures(structs, [0.1, 0.01, 100], 2,
-            '1/distance', 'identity', ['normal', [0.01]], 'identity',
-            'full', 'full')
-
-
-        file = open('tst.txt', 'w')
-        for lst in m:
-            for sublst in lst:
-                file.write(str(sublst.tolist())+'\n')
-
     def test_min_relative_distances(self):
         self.assertAlmostEqual(int(
             1000 * MinimumRelativeDistances().featurize(
@@ -292,36 +278,47 @@ class StructureFeaturesTest(PymatgenTest):
         op_struct_fp = OPStructureFingerprint(stats=None)
         opvals = op_struct_fp.featurize(self.diamond)
         oplabels = op_struct_fp.feature_labels()
-        self.assertAlmostEqual(int(opvals[10][0] * 1000 + 0.5), 1000)
-        self.assertAlmostEqual(int(opvals[10][1] * 1000 + 0.5), 1000)
+        self.assertAlmostEqual(opvals[10][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[10][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.nacl)
-        self.assertAlmostEqual(int(opvals[16][0] * 1000 + 0.5), 1000)
-        self.assertAlmostEqual(int(opvals[16][1] * 1000 + 0.5), 1000)
+        self.assertAlmostEqual(opvals[16][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[16][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.cscl)
-        self.assertAlmostEqual(int(opvals[20][0] * 1000), 998)
-        self.assertAlmostEqual(int(opvals[20][1] * 1000), 998)
+        self.assertAlmostEqual(opvals[20][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[20][1], 0.9995, places=7)
 
         # Test stats.
         op_struct_fp = OPStructureFingerprint()
         opvals = op_struct_fp.featurize(self.diamond)
-        self.assertAlmostEqual(int(opvals[0] * 10000 + 0.5), 5)
-        self.assertAlmostEqual(int(opvals[1] * 10000 + 0.5), 0)
-        self.assertAlmostEqual(int(opvals[2] * 10000 + 0.5), 5)
-        self.assertAlmostEqual(int(opvals[3] * 10000 + 0.5), 5)
-        self.assertAlmostEqual(int(opvals[4] * 10000 + 0.5), 5)
-        self.assertAlmostEqual(int(opvals[32] * 1000 + 0.5), 38)
-        self.assertAlmostEqual(int(opvals[40] * 1000 + 0.5), 1000)
-        self.assertAlmostEqual(int(opvals[41] * 1000 + 0.5), 0)
-        self.assertAlmostEqual(int(opvals[42] * 1000 + 0.5), 1000)
-        self.assertAlmostEqual(int(opvals[43] * 1000 + 0.5), 1000)
-        self.assertAlmostEqual(int(opvals[44] * 1000 + 0.5), 1)
+        self.assertAlmostEqual(opvals[0], 0.0005, places=7)
+        self.assertAlmostEqual(opvals[1], 0, places=7)
+        self.assertAlmostEqual(opvals[2], 0.0005, places=7)
+        self.assertAlmostEqual(opvals[3], 0.0005, places=7)
+        self.assertAlmostEqual(opvals[4], 0.0005, places=7)
+        self.assertAlmostEqual(opvals[32], 0.03825, places=7)
+        self.assertAlmostEqual(opvals[40], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[41], 0, places=7)
+        self.assertAlmostEqual(opvals[42], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[43], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[44], 0.0005, places=7)
         for i in range(52, len(opvals)):
-            self.assertAlmostEqual(int(opvals[i] * 500 + 0.5), 0)
+            self.assertAlmostEqual(opvals[i], 0, places=2)
 
-    def tearDown(self):
-        del self.diamond
-        del self.nacl
-        del self.cscl
+    def test_ewald(self):
+        # Add oxidation states to all of the structures
+        for s in [self.nacl, self.cscl, self.diamond]:
+            s.add_oxidation_state_by_guess()
+
+        # Test basic
+        ewald = EwaldEnergy(accuracy=2)
+        self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
+        self.assertAlmostEquals(ewald.featurize(self.nacl)[0], -8.84173626, 2)
+        self.assertLess(ewald.featurize(self.nacl),
+                        ewald.featurize(self.cscl))  # Atoms are closer in NaCl
+
+        # Perform Ewald summation by "hand",
+        #  Using the result from GULP
+        self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
 
 
 if __name__ == '__main__':

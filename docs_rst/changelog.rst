@@ -5,6 +5,17 @@
 matminer Changelog
 ==================
 
+**v0.1.9**
+
+* overhaul of data API classes (L. Ward)
+* change to oxidation-state dependent classes, now require oxidation set in advance (L. Ward)
+* Ewald site and structure energy featurizers (L. Ward)
+* AtomicOrbital featurizer (M. Dylla)
+* Updates to OP fingerprints based on new bcc renormalization (N. Zimmermann)
+* fix to include sample data sets in pip install (A. Jain, K. Bostrom)
+* add several utility functions for turning strings to compositions, dicts/jsons to pymatgen objects, and quickly adding oxidation state to structure (A. Jain)
+* code cleanups (L. Ward, A. Jain)
+
 **v0.1.8**
 
 * extend Miedema model to ternaries and higher (Q. Wang, A. Faghaninia)

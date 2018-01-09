@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.utils package &#8212; matminer 0.1.8 documentation</title>
+    <title>matminer.utils package &#8212; matminer 0.1.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.8',
+        VERSION:     '0.1.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -22,7 +22,10 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+ 
+<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -34,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.8 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -55,11 +58,72 @@
 <li class="toctree-l2"><a class="reference internal" href="matminer.utils.data_files.html#module-matminer.utils.data_files">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="matminer.utils.tests.html">matminer.utils.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#module-matminer.utils.tests.test_conversions">matminer.utils.tests.test_conversions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#module-matminer.utils.tests.test_data">matminer.utils.tests.test_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#module-matminer.utils.tests">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matminer.utils.conversions">
+<span id="matminer-utils-conversions-module"></span><h2>matminer.utils.conversions module<a class="headerlink" href="#module-matminer.utils.conversions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="matminer.utils.conversions.dict_to_object">
+<code class="descclassname">matminer.utils.conversions.</code><code class="descname">dict_to_object</code><span class="sig-paren">(</span><em>series</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.dict_to_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decodes a dict Series to Python object series via MSON</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>series: a pd.Series with MSONable dict components, e.g.,
+pymatgen Structure.as_dict()</dd>
+<dt>Returns:</dt>
+<dd>a pd.Series with MSON objects, e.g. Structure objects</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.utils.conversions.json_to_object">
+<code class="descclassname">matminer.utils.conversions.</code><code class="descname">json_to_object</code><span class="sig-paren">(</span><em>series</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.json_to_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decodes a json series to Python object series via MSON</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>series: a pd.Series with MSONable JSON components (string)</dd>
+<dt>Returns:</dt>
+<dd>a pd.Series with MSON objects, e.g. Structure objects</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.utils.conversions.str_to_composition">
+<code class="descclassname">matminer.utils.conversions.</code><code class="descname">str_to_composition</code><span class="sig-paren">(</span><em>series</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.str_to_composition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a String series to a Composition series</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>series: a pd.Series with str components, e.g. “Fe2O3”</dd>
+<dt>Returns:</dt>
+<dd>a pd.Series with pymatgen Composition components</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.utils.conversions.struct_to_oxidstruct">
+<code class="descclassname">matminer.utils.conversions.</code><code class="descname">struct_to_oxidstruct</code><span class="sig-paren">(</span><em>series</em>, <em>inplace=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.struct_to_oxidstruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds oxidation states to a structure using pymatgen’s guessing routines</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>series: a pd.Series with Structure object components
+inplace: (bool) whether to override original Series (this is faster)
+<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: parameters to control to Structure.add_oxidation_state_by_guess</dd>
+<dt>Returns:</dt>
+<dd>a pd.Series with oxidation state Structure object components</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-matminer.utils.data">
 <span id="matminer-utils-data-module"></span><h2>matminer.utils.data module<a class="headerlink" href="#module-matminer.utils.data" title="Permalink to this headline">¶</a></h2>
@@ -67,24 +131,167 @@
 <dt id="matminer.utils.data.AbstractData">
 <em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">AbstractData</code><a class="headerlink" href="#matminer.utils.data.AbstractData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Abstract class for retrieving elemental properties</p>
+<p>All classes must implement the <cite>get_elemental_property</cite> operation. These operations
+should return scalar values (ideally floats) and <cite>nan</cite> if a property does not exist</p>
 <dl class="method">
-<dt id="matminer.utils.data.AbstractData.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>x</em>, <em>property_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.AbstractData.get_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetches data / information for an object x.</p>
+<dt id="matminer.utils.data.AbstractData.get_elemental_properties">
+<code class="descname">get_elemental_properties</code><span class="sig-paren">(</span><em>elems</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.AbstractData.get_elemental_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get elemental properties for a list of elements</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>x: input data/object to retrieve the property of. Input type depends</dt>
-<dd>on type of abstract data, e.g., a Composition for MagpieData</dd>
-</dl>
-<p class="last">property_name (str): Name of property to retrieve
-<a href="#id1"><span class="problematic" id="id2">*</span></a>args: other arguments needed by the AbstractData object
-<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: other keyword arguments needed by the AbstractData object</p>
-</dd>
+<dd>elems - ([Element]) list of elements
+property_name - (str) property to be retrieved</dd>
 <dt>Returns:</dt>
-<dd>Property value(s), typically either float or list of float.
-Note: if multiple values are returned for a Composition, the
-convention is to sort values by the element’s atomic number.</dd>
+<dd>[float], properties of elements</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.AbstractData.get_elemental_property">
+<code class="descname">get_elemental_property</code><span class="sig-paren">(</span><em>elem</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.AbstractData.get_elemental_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a certain elemental property for a certain element.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elem - (Element) element to be assessed
+property_name - (str) property to be retreived</dd>
+<dt>Returns:</dt>
+<dd>float, property of that element</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.utils.data.CohesiveEnergyData">
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">CohesiveEnergyData</code><a class="headerlink" href="#matminer.utils.data.CohesiveEnergyData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.utils.data.AbstractData" title="matminer.utils.data.AbstractData"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.AbstractData</span></code></a></p>
+<p>Get the cohesive energy of an element.</p>
+<p>TODO: Where is this data from? -wardlt</p>
+<dl class="method">
+<dt id="matminer.utils.data.CohesiveEnergyData.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.CohesiveEnergyData.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.CohesiveEnergyData.get_elemental_property">
+<code class="descname">get_elemental_property</code><span class="sig-paren">(</span><em>elem</em>, <em>property_name='cohesive energy'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.CohesiveEnergyData.get_elemental_property" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd>elem: (Element) Element of interest
+property_name (str): unused, always returns cohesive energy</dd>
+<dt>Returns:</dt>
+<dd>(float): cohesive energy of the element</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.utils.data.DemlData">
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">DemlData</code><a class="headerlink" href="#matminer.utils.data.DemlData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.utils.data.OxidationStateDependentData" title="matminer.utils.data.OxidationStateDependentData"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.OxidationStateDependentData</span></code></a>, <a class="reference internal" href="#matminer.utils.data.OxidationStatesMixin" title="matminer.utils.data.OxidationStatesMixin"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.OxidationStatesMixin</span></code></a></p>
+<p>Class to get data from Deml data file. See also: A.M. Deml,
+R. O’Hayre, C. Wolverton, V. Stevanovic, Predicting density functional
+theory total energies and enthalpies of formation of metal-nonmetal
+compounds by linear regression, Phys. Rev. B - Condens. Matter Mater. Phys.
+93 (2016).</p>
+<dl class="method">
+<dt id="matminer.utils.data.DemlData.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.DemlData.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.DemlData.get_charge_dependent_property">
+<code class="descname">get_charge_dependent_property</code><span class="sig-paren">(</span><em>element</em>, <em>charge</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.DemlData.get_charge_dependent_property" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.DemlData.get_elemental_property">
+<code class="descname">get_elemental_property</code><span class="sig-paren">(</span><em>elem</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.DemlData.get_elemental_property" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.DemlData.get_oxidation_states">
+<code class="descname">get_oxidation_states</code><span class="sig-paren">(</span><em>elem</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.DemlData.get_oxidation_states" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.utils.data.MagpieData">
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">MagpieData</code><a class="headerlink" href="#matminer.utils.data.MagpieData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.utils.data.AbstractData" title="matminer.utils.data.AbstractData"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.AbstractData</span></code></a>, <a class="reference internal" href="#matminer.utils.data.OxidationStatesMixin" title="matminer.utils.data.OxidationStatesMixin"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.OxidationStatesMixin</span></code></a></p>
+<p>Class to get data from Magpie files. See also:
+L. Ward, A. Agrawal, A. Choudhary, C. Wolverton, A general-purpose machine
+learning framework for predicting properties of inorganic materials,
+Npj Comput. Mater. 2 (2016) 16028.</p>
+<dl class="method">
+<dt id="matminer.utils.data.MagpieData.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.MagpieData.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.MagpieData.get_elemental_property">
+<code class="descname">get_elemental_property</code><span class="sig-paren">(</span><em>elem</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.MagpieData.get_elemental_property" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.MagpieData.get_oxidation_states">
+<code class="descname">get_oxidation_states</code><span class="sig-paren">(</span><em>elem</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.MagpieData.get_oxidation_states" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.utils.data.OxidationStateDependentData">
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">OxidationStateDependentData</code><a class="headerlink" href="#matminer.utils.data.OxidationStateDependentData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.utils.data.AbstractData" title="matminer.utils.data.AbstractData"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.AbstractData</span></code></a></p>
+<p>Abstract class that also includes oxidation-state-dependent properties</p>
+<dl class="method">
+<dt id="matminer.utils.data.OxidationStateDependentData.get_charge_dependent_property">
+<code class="descname">get_charge_dependent_property</code><span class="sig-paren">(</span><em>element</em>, <em>charge</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.OxidationStateDependentData.get_charge_dependent_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a oxidation-state dependent elemental property</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>element - (Element), Target element
+charge - (int), Oxidation state
+property_name - (string), name of property</dd>
+<dt>Return:</dt>
+<dd>(float) - Value of property</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.OxidationStateDependentData.get_charge_dependent_property_from_specie">
+<code class="descname">get_charge_dependent_property_from_specie</code><span class="sig-paren">(</span><em>specie</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.OxidationStateDependentData.get_charge_dependent_property_from_specie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a oxidation-state dependent elemental property</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>specie - (Specie), Specie of interest
+property_name - (string), name of property</dd>
+<dt>Return:</dt>
+<dd>(float) - Value of property</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.utils.data.OxidationStatesMixin">
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">OxidationStatesMixin</code><a class="headerlink" href="#matminer.utils.data.OxidationStatesMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Abstract class interface for retrieving the oxidation states
+of each element</p>
+<dl class="method">
+<dt id="matminer.utils.data.OxidationStatesMixin.get_oxidation_states">
+<code class="descname">get_oxidation_states</code><span class="sig-paren">(</span><em>elem</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.OxidationStatesMixin.get_oxidation_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the possible oxidation states of an element</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elem - (Element), Target element</dd>
+<dt>Returns:</dt>
+<dd>[int] - oxidation states</dd>
 </dl>
 </dd></dl>
 
@@ -92,31 +299,40 @@ convention is to sort values by the element’s atomic number.</dd>
 
 <dl class="class">
 <dt id="matminer.utils.data.PymatgenData">
-<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">PymatgenData</code><a class="headerlink" href="#matminer.utils.data.PymatgenData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matminer.utils.data.AbstractData" title="matminer.utils.data.AbstractData"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.AbstractData</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">PymatgenData</code><span class="sig-paren">(</span><em>use_common_oxi_states=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.PymatgenData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.utils.data.OxidationStateDependentData" title="matminer.utils.data.OxidationStateDependentData"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.OxidationStateDependentData</span></code></a>, <a class="reference internal" href="#matminer.utils.data.OxidationStatesMixin" title="matminer.utils.data.OxidationStatesMixin"><code class="xref py py-class docutils literal"><span class="pre">matminer.utils.data.OxidationStatesMixin</span></code></a></p>
 <p>Class to get data from pymatgen. See also:
 S.P. Ong, W.D. Richards, A. Jain, G. Hautier, M. Kocher, S. Cholia, et al.,
 Python Materials Genomics (pymatgen): A robust, open-source python library
 for materials analysis, Comput. Mater. Sci. 68 (2013) 314-319.</p>
 <dl class="method">
-<dt id="matminer.utils.data.PymatgenData.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>comp</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.PymatgenData.get_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get descriptor data for elements in a compound from pymatgen.</p>
+<dt id="matminer.utils.data.PymatgenData.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>use_common_oxi_states=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.PymatgenData.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.PymatgenData.get_charge_dependent_property">
+<code class="descname">get_charge_dependent_property</code><span class="sig-paren">(</span><em>element</em>, <em>charge</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.PymatgenData.get_charge_dependent_property" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.PymatgenData.get_elemental_property">
+<code class="descname">get_elemental_property</code><span class="sig-paren">(</span><em>elem</em>, <em>property_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.PymatgenData.get_elemental_property" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.PymatgenData.get_oxidation_states">
+<code class="descname">get_oxidation_states</code><span class="sig-paren">(</span><em>elem</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.PymatgenData.get_oxidation_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the oxidation states of an element</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">comp (str/Composition): pymatgen Composition object
-property_name (str): pymatgen element attribute name, as defined in</p>
+<dd><p class="first">elem - (Element) target element
+common - (boolean), whether to return only the common oxidation states,</p>
 <blockquote class="last">
-<div>the Element class at <a class="reference external" href="http://pymatgen.org/_modules/pymatgen/core/periodic_table.html">http://pymatgen.org/_modules/pymatgen/core/periodic_table.html</a>.
-For ‘ionic_radii’ property, the Composition object must consist
-of oxidation state decorated Specie objects (not plain Element objects).</div></blockquote>
+<div>or all known oxidation states</div></blockquote>
 </dd>
 <dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) of values containing descriptor floats for each atom in the</dt>
-<dd>compound (sorted by the atomic number Z of the constituent atoms)</dd>
-</dl>
-</dd>
+<dd>[int] list of oxidation states</dd>
 </dl>
 </dd></dl>
 
@@ -205,6 +421,7 @@ For a more advanced concept, see the classmethod builtin.</p>
 <li><a class="reference internal" href="#">matminer.utils package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-matminer.utils.conversions">matminer.utils.conversions module</a></li>
 <li><a class="reference internal" href="#module-matminer.utils.data">matminer.utils.data module</a></li>
 <li><a class="reference internal" href="#module-matminer.utils.flattendict">matminer.utils.flattendict module</a></li>
 <li><a class="reference internal" href="#module-matminer.utils.kernels">matminer.utils.kernels module</a></li>
@@ -243,12 +460,14 @@ For a more advanced concept, see the classmethod builtin.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.8 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.9 documentation</a> &#187;</li> 
       </ul>
     </div>
+
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
+
   </body>
 </html>

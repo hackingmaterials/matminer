@@ -22,6 +22,7 @@ from collections import defaultdict
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters, \
     VoronoiAnalyzer, VoronoiCoordFinder
+from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
     import LocalGeometryFinder
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
@@ -285,8 +286,6 @@ class OPSiteFingerprint(BaseFeaturizer):
                             opval[0] = 0
                         else:
                             opval[0] = d_fac * opval[0]
-                        if self.optypes[cn][it] == 'bcc':
-                            opval[0] = opval[0] / 0.976
                         opvals[i].append(opval[0])
                 prev_cn = this_cn
                 if prev_cn >= 12:
@@ -520,9 +519,6 @@ class CrystalSiteFingerprint(BaseFeaturizer):
 
                     opval = opval or 0  # handles None
 
-                    if self.optypes[cn][opidx] == 'bcc':  # TODO: remove after pymatgen update
-                        opval = opval / 0.976
-
                     # figure out the weight for this opval based on semicircle integration method
                     x1 = 1 - dist
                     x2 = 1 if dist_idx == len(dist_bins) - 1 else \
@@ -631,6 +627,74 @@ class VoronoiIndex(BaseFeaturizer):
         return ['Qi Wang']
 
 
+class EwaldSiteEnergy:
+    """Compute site energy from Coulombic interactions
+
+    User notes:
+        - This class uses that `charges that are already-defined for the structure`.
+
+        - Ewald summations can be expensive. If you evaluating every site in many
+          large structures, run all of the sites for each structure at the same time.
+          We cache the Ewald result for the structure that was run last, so looping
+          over sites and then structures is faster than structures than sites.
+
+    Features:
+        ewald_site_energy - Energy for the site computed from Coulombic interactions"""
+
+    def __init__(self, accuracy=None):
+        """
+        Args:
+            accuracy (int): Accuracy of Ewald summation, number of decimal places
+        """
+        self.accuracy = accuracy
+
+        # Variables used then caching the Ewald result
+        self.__last_structure = None
+        self.__last_ewald = None
+
+    def featurize(self, strc, idx):
+        """
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            ([float]) - Electrostatic energy of the site
+        """
+
+        # Check if the new input is the last
+        #  Note: We use 'is' rather than structure comparisons for speed
+        #
+        #  TODO: Figure out if this implementation is thread-safe! I was debating adding
+        #        Locks, but think we are OK
+        if strc is self.__last_structure:
+            ewald = self.__last_ewald
+        else:
+            self.__last_structure = strc
+            ewald = EwaldSummation(strc, acc_factor=self.accuracy)
+            self.__last_ewald = ewald
+        return [ewald.get_site_energy(idx)]
+
+    def feature_labels(self):
+        return ("ewald_site_energy",)
+
+    def implementors(self):
+        return ("Logan Ward",)
+
+    def citations(self):
+        return ["@Article{Ewald1921,"
+                "author = {Ewald, P. P.},"
+                "doi = {10.1002/andp.19213690304},"
+                "issn = {00033804},"
+                "journal = {Annalen der Physik},"
+                "number = {3},"
+                "pages = {253--287},"
+                "title = {{Die Berechnung optischer und elektrostatischer Gitterpotentiale}},"
+                "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
+                "volume = {369},"
+                "year = {1921}"
+                "}"]
+
+
 class ChemEnvSiteFingerprint(BaseFeaturizer):
     """
     Site fingerprint computed from pymatgen's ChemEnv package
@@ -736,4 +800,3 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
 
     def implementors(self):
         return ['Nils E. R. Zimmermann']
-
