@@ -39,7 +39,8 @@ class TestBaseClass(PymatgenTest):
         self.multi = MultipleFeaturizer()
         self.matrix = MatrixFeaturizer()
 
-    def make_test_data(self):
+    @staticmethod
+    def make_test_data():
         return pd.DataFrame({'x': [1, 2, 3]})
 
     def test_dataframe(self):
@@ -50,7 +51,6 @@ class TestBaseClass(PymatgenTest):
         data = self.multi.featurize_dataframe(data, 'x')
         self.assertArrayAlmostEqual(data['y'], [0, 1, 2])
         self.assertArrayAlmostEqual(data['z'], [3, 4, 5])
-
 
     def test_matrix(self):
         """Test the ability to add features that are matrices to a dataframe"""
