@@ -39,8 +39,12 @@ class TestBaseClass(PymatgenTest):
         self.multi = MultipleFeaturizer()
         self.matrix = MatrixFeaturizer()
 
+    @staticmethod
+    def make_test_data():
+        return pd.DataFrame({'x': [1, 2, 3]})
+
     def test_dataframe(self):
-        data = pd.DataFrame({'x': [1, 2, 3]})
+        data = self.make_test_data()
         data = self.single.featurize_dataframe(data, 'x')
         self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
 
@@ -50,18 +54,25 @@ class TestBaseClass(PymatgenTest):
 
     def test_matrix(self):
         """Test the ability to add features that are matrices to a dataframe"""
-        data = pd.DataFrame({'x': [1, 2, 3]})
+        data = self.make_test_data()
         data = self.matrix.featurize_dataframe(data, 'x')
         self.assertArrayAlmostEqual(np.eye(2, 2), data['representation'][0])
 
     def test_inplace(self):
-        data = pd.DataFrame({'x': [1, 2, 3]})
+        data = self.make_test_data()
 
         self.single.featurize_dataframe(data, 'x', inplace=False)
         self.assertNotIn('y', data.columns)
 
         self.single.featurize_dataframe(data, 'x', inplace=True)
         self.assertIn('y', data)
+
+    def test_indices(self):
+        data = self.make_test_data()
+        data.index = [4, 6, 6]
+
+        data = self.single.featurize_dataframe(data, 'x')
+        self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
 
 
 if __name__ == '__main__':

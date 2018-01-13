@@ -46,7 +46,7 @@ class BaseFeaturizer(object):
         labels = self.feature_labels()
 
         # Create dataframe with the new features
-        new_cols = dict(zip(labels, [pd.Series(x) for x in zip(*features)]))
+        new_cols = dict(zip(labels, [pd.Series(x, index=df.index) for x in zip(*features)]))
 
         # Update the dataframe
         if inplace:
