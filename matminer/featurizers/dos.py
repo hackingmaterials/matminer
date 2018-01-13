@@ -1,4 +1,5 @@
 import numpy as np
+from collections import OrderedDict
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen import Spin
 from pymatgen.electronic_structure.dos import CompleteDos
@@ -57,31 +58,44 @@ class DOSFeaturizer(BaseFeaturizer):
             dos = CompleteDos.from_dict(dos)
         if dos.structure is None:
             raise ValueError('The input dos must contain the structure.')
+
         orbscores = get_cbm_vbm_scores(dos, self.energy_cutoff,
-                self.sampling_resolution, self.gaussian_smear)
-        self.feat = {}
+                                       self.sampling_resolution,
+                                       self.gaussian_smear)
+
+        feat = OrderedDict()
         for ex in ['cbm', 'vbm']:
             orbscores.sort(key=lambda x: x['{}_score'.format(ex)], reverse=True)
             scores = np.array([s['{}_score'.format(ex)] for s in orbscores])
-            self.feat['{}_nsignificant'.format(ex)] = len(scores[scores>self.significance_threshold])
+            feat['{}_nsignificant'.format(ex)] = len(scores[scores > self.significance_threshold])
+
             i = 0
             while i < self.contributors:
                 sd = orbscores[i]
                 if i < len(orbscores):
                     for p in ['character', 'specie']:
-                        self.feat['{}_{}_{}'.format(ex, p, i + 1)] = sd[p]
-                    self.feat['{}_location_{}'.format(ex, i+1)] = '{};{};{}'.format(
+                        feat['{}_{}_{}'.format(ex, p, i + 1)] = sd[p]
+                    feat['{}_location_{}'.format(ex, i + 1)] = '{};{};{}'.format(
                         sd['location'][0], sd['location'][1], sd['location'][2])
-                    self.feat['{}_score_{}'.format(ex, i+1)] = float(sd['{}_score'.format(ex)])
+                    feat['{}_score_{}'.format(ex, i + 1)] = float(sd['{}_score'.format(ex)])
                 else:
-                    for p in ['{}_score'.format(ex), 'character', 'specie',
-                              'location']:
-                        self.feat['{}_{}_{}'.format(ex, p, i+1)] = float('NaN')
+                    for p in ['character', 'specie', 'location', 'score']:
+                        feat['{}_{}_{}'.format(ex, p, i + 1)] = float('NaN')
                 i += 1
-        return list(self.feat.values())
+
+        return list(feat.values())
 
     def feature_labels(self):
-        return list(self.feat.keys())
+        labels = []
+        for ex in ['cbm', 'vbm']:
+            labels.append('{}_nsignificant'.format(ex))
+            i = 0
+            while i < self.contributors:
+                for p in ['character', 'specie', 'location', 'score']:
+                    labels.append('{}_{}_{}'.format(ex, p, i + 1))
+                i += 1
+
+        return labels
 
     def implementors(self):
         return ['Maxwell Dylla', 'Alireza Faghaninia', 'Anubhav Jain']
