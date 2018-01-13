@@ -19,6 +19,7 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint
 from matminer.featurizers.stats import PropertyStats
 
+
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
 # ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
@@ -684,7 +685,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         s *= [3, 3, 3]
         ofms, counts = self.get_atom_ofms(s, True)
         mean_ofm = self.get_mean_ofm(ofms, counts)
-        return [mean_ofm]
+        return [mean_ofm.A]
 
     def feature_labels(self):
         return ["orbital field matrix"]
