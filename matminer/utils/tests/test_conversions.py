@@ -6,7 +6,7 @@ from pandas import DataFrame
 import json
 
 from matminer.utils.conversions import dict_to_object, struct_to_oxidstruct, \
-    str_to_composition, json_to_object
+    str_to_composition, json_to_object, structure_to_composition
 from pymatgen import Composition, Lattice, Structure, Element
 
 
@@ -19,6 +19,17 @@ class TestConversions(TestCase):
         df["composition"] = str_to_composition(df["comp_str"])
         self.assertEqual(df["composition"].tolist(), [Composition("Fe"),
                                                       Composition("MnO2")])
+
+    def test_structure_to_composition(self):
+        coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
+        lattice = Lattice([[3.8401979337, 0.00, 0.00],
+                           [1.9200989668, 3.3257101909, 0.00],
+                           [0.00, -2.2171384943, 3.1355090603]])
+        struct = Structure(lattice, ["Si"] * 2, coords)
+        df = DataFrame(data={'structure': [struct]})
+
+        df["composition"] = structure_to_composition(df["structure"])
+        self.assertEqual(df["composition"].tolist()[0], Composition("Si2"))
 
     def test_dict_to_object(self):
         coords = [[0, 0, 0], [0.75, 0.5, 0.75]]

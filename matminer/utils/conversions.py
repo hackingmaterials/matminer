@@ -19,6 +19,19 @@ def str_to_composition(series):
     return series.map(Composition)
 
 
+def structure_to_composition(series):
+    """
+    Converts a Structure series to a Composition series
+
+    Args:
+        series: a pd.Series with pymatgen.Structure components
+
+    Returns:
+        a pd.Series with pymatgen Composition components
+    """
+    return series.map(lambda x: x.composition)
+
+
 def dict_to_object(series):
     """
         Decodes a dict Series to Python object series via MSON
