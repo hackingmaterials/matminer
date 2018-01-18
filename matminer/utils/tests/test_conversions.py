@@ -31,6 +31,10 @@ class TestConversions(TestCase):
         df["composition"] = structure_to_composition(df["structure"])
         self.assertEqual(df["composition"].tolist()[0], Composition("Si2"))
 
+        df["composition_red"] = structure_to_composition(df["structure"],
+                                                         reduce=True)
+        self.assertEqual(df["composition_red"].tolist()[0], Composition("Si"))
+
     def test_dict_to_object(self):
         coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
         lattice = Lattice([[3.8401979337, 0.00, 0.00],
