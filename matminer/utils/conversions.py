@@ -6,16 +6,20 @@ from pandas import Series
 from pymatgen import Composition
 
 
-def str_to_composition(series):
+def str_to_composition(series, reduce=False):
     """
     Converts a String series to a Composition series
 
     Args:
         series: a pd.Series with str components, e.g. "Fe2O3"
+        reduce: (bool) whether to return a reduced Composition
 
     Returns:
         a pd.Series with pymatgen Composition components
     """
+    if reduce:
+        return series.map(lambda x: Composition(x).reduced_composition)
+
     return series.map(Composition)
 
 
@@ -25,14 +29,15 @@ def structure_to_composition(series, reduce=False):
 
     Args:
         series: a pd.Series with pymatgen.Structure components
+        reduce: (bool) whether to return a reduced Composition
 
     Returns:
         a pd.Series with pymatgen Composition components
     """
     if reduce:
         return series.map(lambda x: x.composition.reduced_composition)
-    else:
-        return series.map(lambda x: x.composition)
+
+    return series.map(lambda x: x.composition)
 
 
 def dict_to_object(series):

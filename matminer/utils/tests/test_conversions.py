@@ -13,12 +13,16 @@ from pymatgen import Composition, Lattice, Structure, Element
 class TestConversions(TestCase):
 
     def test_str_to_composition(self):
-        d = {'comp_str': ["Fe", "MnO2"]}
+        d = {'comp_str': ["Fe2", "MnO2"]}
 
         df = DataFrame(data=d)
         df["composition"] = str_to_composition(df["comp_str"])
-        self.assertEqual(df["composition"].tolist(), [Composition("Fe"),
+        self.assertEqual(df["composition"].tolist(), [Composition("Fe2"),
                                                       Composition("MnO2")])
+
+        df["composition_red"] = str_to_composition(df["comp_str"], reduce=True)
+        self.assertEqual(df["composition_red"].tolist(), [Composition("Fe"),
+                                                           Composition("MnO2")])
 
     def test_structure_to_composition(self):
         coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
