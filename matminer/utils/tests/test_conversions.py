@@ -5,7 +5,7 @@ from pandas import DataFrame
 
 import json
 
-from matminer.utils.conversions import dict_to_object, struct_to_oxidstruct, \
+from matminer.utils.conversions import dict_to_object, structure_to_oxidstructure, \
     str_to_composition, json_to_object, structure_to_composition
 from pymatgen import Composition, Lattice, Structure, Element
 
@@ -74,11 +74,11 @@ class TestConversions(TestCase):
         d = {'structure': [cscl]}
         df = DataFrame(data=d)
 
-        df["struct_oxid"] = struct_to_oxidstruct(df["structure"])
+        df["struct_oxid"] = structure_to_oxidstructure(df["structure"])
         self.assertEqual(df["struct_oxid"].tolist()[0][0].specie.oxi_state, -1)
         self.assertEqual(df["struct_oxid"].tolist()[0][1].specie.oxi_state, +1)
 
-        df["struct_oxid2"] = struct_to_oxidstruct(df["structure"], oxi_states_override={"Cl": [-2], "Cs": [+2]})
+        df["struct_oxid2"] = structure_to_oxidstructure(df["structure"], oxi_states_override={"Cl": [-2], "Cs": [+2]})
         self.assertEqual(df["struct_oxid2"].tolist()[0][0].specie.oxi_state, -2)
         self.assertEqual(df["struct_oxid2"].tolist()[0][1].specie.oxi_state, +2)
 
@@ -86,5 +86,5 @@ class TestConversions(TestCase):
         self.assertEqual(df["structure"].tolist()[0][0].specie, Element("Cl"))
 
         # test in-place
-        struct_to_oxidstruct(df["structure"], inplace=True)
+        structure_to_oxidstructure(df["structure"], inplace=True)
         self.assertEqual(df["structure"].tolist()[0][0].specie.oxi_state, -1)

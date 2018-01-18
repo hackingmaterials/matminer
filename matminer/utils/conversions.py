@@ -68,7 +68,7 @@ def json_to_object(series):
     return series.map(lambda x: json.loads(x, cls=MontyDecoder))
 
 
-def struct_to_oxidstruct(series, inplace=False, **kwargs):
+def structure_to_oxidstructure(series, inplace=False, **kwargs):
     """
     Adds oxidation states to a structure using pymatgen's guessing routines
 
