@@ -70,7 +70,7 @@ def json_to_object(series):
 
 def structure_to_oxidstructure(series, inplace=False, **kwargs):
     """
-    Adds oxidation states to a structure using pymatgen's guessing routines
+    Adds oxidation states to a Structure using pymatgen's guessing routines
 
     Args:
         series: a pd.Series with Structure object components
@@ -87,3 +87,18 @@ def structure_to_oxidstructure(series, inplace=False, **kwargs):
                       index=series.index, dtype=series.dtype)
         copy.map(lambda s: s.add_oxidation_state_by_guess(**kwargs))
         return copy
+
+
+def composition_to_oxidcomposition(series, **kwargs):
+    """
+    Adds oxidation states to a Composition using pymatgen's guessing routines
+
+    Args:
+        series: a pd.Series with Composition object components
+        **kwargs: parameters to control Composition.oxi_state_guesses()
+
+    Returns:
+        a pd.Series with oxidation state Composition object components
+    """
+    
+    return series.map(lambda c: c.add_charges_from_oxi_state_guesses(**kwargs))

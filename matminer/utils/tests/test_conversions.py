@@ -5,8 +5,10 @@ from pandas import DataFrame
 
 import json
 
-from matminer.utils.conversions import dict_to_object, structure_to_oxidstructure, \
-    str_to_composition, json_to_object, structure_to_composition
+from matminer.utils.conversions import dict_to_object, \
+    structure_to_oxidstructure, \
+    str_to_composition, json_to_object, structure_to_composition, \
+    composition_to_oxidcomposition
 from pymatgen import Composition, Lattice, Structure, Element
 
 
@@ -67,8 +69,7 @@ class TestConversions(TestCase):
         df["structure"] = json_to_object(df["structure_json"])
         self.assertEqual(df["structure"].tolist()[0], struct)
 
-
-    def struct_to_oxidstruct(self):
+    def test_structure_to_oxidstructure(self):
         cscl = Structure(Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
                          ["Cl", "Cs"], [[0.45, 0.5, 0.5], [0, 0, 0]])
         d = {'structure': [cscl]}
@@ -88,3 +89,8 @@ class TestConversions(TestCase):
         # test in-place
         structure_to_oxidstructure(df["structure"], inplace=True)
         self.assertEqual(df["structure"].tolist()[0][0].specie.oxi_state, -1)
+
+    def test_composition_to_oxidcomposition(self):
+        df = DataFrame(data={"composition": [Composition("Fe2O3")]})
+        df["composition_oxid"] = composition_to_oxidcomposition(df["composition"])
+        self.assertEqual(df["composition_oxid"].tolist()[0], Composition({"Fe3+": 2, "O2-":3}))
