@@ -1,6 +1,7 @@
 from __future__ import division
 
 import pandas as pd
+import numpy as np
 from six import string_types
 
 
@@ -102,3 +103,29 @@ class BaseFeaturizer(object):
         """
 
         raise NotImplementedError("implementors() is not defined!")
+
+
+class MultipleFeaturizer(BaseFeaturizer):
+    """Class that runs multiple featurizers on the same data
+
+    All featurizers must take the same kind of data as input to the featurize function."""
+
+    def __init__(self, featurizers):
+        """Create a new instance of this featurizer
+
+        Args:
+            featurizers - [BaseFeaturizer], list of featurizers to run
+        """
+        self.featurizers = featurizers
+
+    def featurize(self, *x):
+        return np.hstack(f.featurize(*x) for f in self.featurizers)
+
+    def feature_labels(self):
+        return sum([f.feature_labels() for f in self.featurizers], [])
+
+    def citations(self):
+        return list(set(sum([f.citations() for f in self.featurizers], [])))
+
+    def implementors(self):
+        return list(set(sum([f.implementors() for f in self.featurizers], [])))
