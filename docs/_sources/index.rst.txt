@@ -108,20 +108,16 @@ A few examples demonstrating usage can be found in the notebook hosted on `Githu
 --------
 Examples
 --------
+
 Check out some examples of how to use matminer!
 
-1. :doc:`Use matminer and sklearn to train/predict bulk moduli. </example_bulkmod>`
-
-.. image:: _static/example_bulkmod_rf.png
-   :scale: 50
+1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://gist.github.com/computron/660f76810ad8d07a43b696028a6cd59f>`_)
 
 2. Get all experimentally measured band gaps of PbTe from Citrine's database (`Jupyter Notebook <https://gist.github.com/saurabh02/cf37de8ab77505a05e1bec952f0cb0c3>`_)
 
 3. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://gist.github.com/saurabh02/8f7727b2ed1f95d2a40fdefd0a90bec0>`_)
 
-4. Use matminer and sklearn to train/predict band gaps. (`Jupyter Notebook <https://gist.github.com/saurabh02/b0296747064599ad2a6ab69ddc64eb92>`_)
-
-5. Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (`Jupyter Notebook <https://gist.github.com/blokhin/a9eddca705aa6d54552bc8b6d7bddbb8>`_)
+4. Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (`Jupyter Notebook <https://gist.github.com/blokhin/a9eddca705aa6d54552bc8b6d7bddbb8>`_)
 
 
 ---------------
