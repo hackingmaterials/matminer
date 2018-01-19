@@ -5,6 +5,14 @@
 matminer Changelog
 ==================
 
+**v0.2.0**
+
+* improvements to test data sets (K. Bystrom)
+* new conversion utility functions (A. Jain)
+* updated example and removed outdated examples (A. Jain)
+* some featurizer internal fixes (A. Faghaninia, M. Dylla, A. Jain)
+* minor bugfixes (L. Ward, A. Jain)
+
 **v0.1.9**
 
 * overhaul of data API classes (L. Ward)
