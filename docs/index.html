@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer (Materials Data Mining) &#8212; matminer 0.1.9 documentation</title>
+    <title>matminer (Materials Data Mining) &#8212; matminer 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.9',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">matminer 0.1.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">matminer 0.2.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -97,19 +97,7 @@
 <div class="section" id="decorate-the-dataframe-with-composition-structural-and-or-band-structure-descriptors-features">
 <h3>Decorate the dataframe with composition, structural, and/or band structure descriptors/features<a class="headerlink" href="#decorate-the-dataframe-with-composition-structural-and-or-band-structure-descriptors-features" title="Permalink to this headline">¶</a></h3>
 <p>We have developed utilities to help describe a material from its composition or structure, and represent them in number format such that they are readily usable as features.</p>
-<p>The <code class="code docutils literal"><span class="pre">get_pymatgen_descriptor</span></code> function is used to encode a material’s composition using tabulated elemental properties in the <a class="reference external" href="http://pymatgen.org/_modules/pymatgen/core/periodic_table.html">pymatgen</a> library. There are about 50 attributes available in the pymatgen library for most elements in the periodic table, some of which include electronegativity, atomic numbers, atomic masses, sound velocity, boiling point, etc. The <code class="code docutils literal"><span class="pre">get_pymatgen_descriptor</span></code> function takes as input a material composition and name of the desired property, and returns a list of floating point property values for each atom in that composition. This list can than be fed into a statistical function to obtain a single heuristic quantity representative of the entire composition. The following code block shows a few
-descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.descriptors.composition_features</span> <span class="kn">import</span> <span class="n">get_pymatgen_descriptor</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-
-<span class="n">avg_mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">get_pymatgen_descriptor</span><span class="p">(</span><span class="s1">&#39;LiFePO4&#39;</span><span class="p">,</span> <span class="s1">&#39;atomic_mass&#39;</span><span class="p">))</span>    <span class="c1"># Average atomic mass</span>
-<span class="n">std_num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">get_pymatgen_descriptor</span><span class="p">(</span><span class="s1">&#39;LiFePO4&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">))</span>    <span class="c1"># Standard deviation of atomic numbers</span>
-<span class="n">range_elect</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">get_pymatgen_descriptor</span><span class="p">(</span><span class="s1">&#39;LiFePO4&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">))</span> <span class="o">-</span> \
-           <span class="nb">min</span><span class="p">(</span><span class="n">get_pymatgen_descriptor</span><span class="p">(</span><span class="s1">&#39;LiFePO4&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">))</span>      <span class="c1"># Maximum difference in electronegativity</span>
-</pre></div>
-</div>
-<p>The function <code class="code docutils literal"><span class="pre">get_magpie_descriptor</span></code> operates in a similar way and obtains its data from the tables accumulated in the <a class="reference external" href="https://bitbucket.org/wolverton/magpie">Magpie repository</a>, some of which are sourced from elemental data compiled by Mathematica (more information can be found <a class="reference external" href="https://reference.wolfram.com/language/ref/ElementData.html">here</a>). Some properties that don’t overlap with the pymatgen library include heat capacity, enthalpy of fusion of elements at melting points, pseudopotential radii, etc.</p>
-<p>Other descriptors provided by matminer can be found in the <a class="reference external" href="https://github.com/hackingmaterials/matminer/tree/master/matminer/featurizers">Github repo.</a></p>
+<p>For now, check out the examples below to see how to use the descriptor functionality.</p>
 </div>
 </div>
 <div class="section" id="plotting-tools">
@@ -118,20 +106,16 @@ descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
 <h3>Plot data from either arrays or dataframes using either <a class="reference external" href="https://plot.ly/">Plotly</a> or <a class="reference external" href="http://matplotlib.org/">matplotlib</a> with figrecipes<a class="headerlink" href="#plot-data-from-either-arrays-or-dataframes-using-either-plotly-or-matplotlib-with-figrecipes" title="Permalink to this headline">¶</a></h3>
 <p>In the figrecipes module of the matminer library, we have developed utilities that make it easier and faster to plot common figures with Plotly and matplotlib. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly and matplotlib, while at the same time sheilding the complexities involved.</p>
 <p>The Plotly module contains the <code class="code docutils literal"><span class="pre">PlotlyFig</span></code> class that wraps around Plotly’s Python API and follows its JSON schema. The matplotlib module contains plotting wrapper classes for each kind of popular plot, including XY-scatter plots and heat maps.</p>
-<p>A few examples demonstrating usage can be found in the notebook hosted on <a class="reference external" href="https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb">Github</a>. <em>Note: these examples may be out of date</em>.</p>
+<p>For now, check out the examples below to see how to use the plotting functionality.</p>
 </div>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>Check out some examples of how to use matminer!</p>
 <ol class="arabic simple">
-<li><a class="reference internal" href="example_bulkmod.html"><span class="doc">Use matminer and sklearn to train/predict bulk moduli.</span></a></li>
-</ol>
-<a class="reference internal image-reference" href="_images/example_bulkmod_rf.png"><img alt="_images/example_bulkmod_rf.png" src="_images/example_bulkmod_rf.png" style="width: 404.0px; height: 323.5px;" /></a>
-<ol class="arabic simple" start="2">
+<li>Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (<a class="reference external" href="https://gist.github.com/computron/660f76810ad8d07a43b696028a6cd59f">Jupyter Notebook</a>)</li>
 <li>Get all experimentally measured band gaps of PbTe from Citrine’s database (<a class="reference external" href="https://gist.github.com/saurabh02/cf37de8ab77505a05e1bec952f0cb0c3">Jupyter Notebook</a>)</li>
 <li>Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (<a class="reference external" href="https://gist.github.com/saurabh02/8f7727b2ed1f95d2a40fdefd0a90bec0">Jupyter Notebook</a>)</li>
-<li>Use matminer and sklearn to train/predict band gaps. (<a class="reference external" href="https://gist.github.com/saurabh02/b0296747064599ad2a6ab69ddc64eb92">Jupyter Notebook</a>)</li>
 <li>Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (<a class="reference external" href="https://gist.github.com/blokhin/a9eddca705aa6d54552bc8b6d7bddbb8">Jupyter Notebook</a>)</li>
 </ol>
 </div>
@@ -227,7 +211,7 @@ descriptors that can be obtained for LiFePO<sub>4</sub>:</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">matminer 0.1.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">matminer 0.2.0 documentation</a> &#187;</li> 
       </ul>
     </div>
 

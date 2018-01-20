@@ -148,21 +148,21 @@ class ElementProperty(BaseFeaturizer):
         return labels
 
     def citations(self):
-        if self.data_source == "magpie":
+        if self.data_source.__class__.__name__ == "MagpieData":
             citation = (
                 "@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
                 "machine learning framework for predicting properties of inorganic materials}, "
                 "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
                 "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
                 "Alok and Wolverton, Christopher}, year={2016}}")
-        elif self.data_source == "deml":
+        elif self.data_source.__class__.__name__ == "DemlData":
             citation = (
                 "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
                 "functional theory total energies and enthalpies of formation of metal-nonmetal "
                 "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
                 "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
                 "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
-        elif self.data_source == "pymatgen":
+        elif self.data_source.__class__.__name__ == "PymatgenData":
             citation = (
                 "@article{Ong2013, author = {Ong, Shyue Ping and Richards, William Davidson and Jain, Anubhav and Hautier, "
                 "Geoffroy and Kocher, Michael and Cholia, Shreyas and Gunter, Dan and Chevrier, Vincent L. and Persson, "
@@ -242,13 +242,13 @@ class OxidationStates(BaseFeaturizer):
     Features are concentration-weighted statistics of the oxidation states.
     """
 
-    def __init__(self, stats):
+    def __init__(self, stats=None):
         """
 
         Args:
              stats - (list of string), which statistics compute
         """
-        self.stats = stats
+        self.stats = stats or ["minimum", "maximum", "range", "std_dev"]
 
     @classmethod
     def from_preset(cls, preset_name):
@@ -379,7 +379,7 @@ class BandCenter(BaseFeaturizer):
     def implementors(self):
         return ["Anubhav Jain"]
 
-
+# TODO: this featurizer should fail gracefully for compounds with no clear anions (e.g., metals where all elements have zero oxidation) - returning either NaN or zero.
 class ElectronegativityDiff(BaseFeaturizer):
     """
     Features based on the electronegativity difference between the anions and

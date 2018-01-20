@@ -6,17 +6,38 @@ from pandas import Series
 from pymatgen import Composition
 
 
-def str_to_composition(series):
+def str_to_composition(series, reduce=False):
     """
     Converts a String series to a Composition series
 
     Args:
         series: a pd.Series with str components, e.g. "Fe2O3"
+        reduce: (bool) whether to return a reduced Composition
 
     Returns:
         a pd.Series with pymatgen Composition components
     """
+    if reduce:
+        return series.map(lambda x: Composition(x).reduced_composition)
+
     return series.map(Composition)
+
+
+def structure_to_composition(series, reduce=False):
+    """
+    Converts a Structure series to a Composition series
+
+    Args:
+        series: a pd.Series with pymatgen.Structure components
+        reduce: (bool) whether to return a reduced Composition
+
+    Returns:
+        a pd.Series with pymatgen Composition components
+    """
+    if reduce:
+        return series.map(lambda x: x.composition.reduced_composition)
+
+    return series.map(lambda x: x.composition)
 
 
 def dict_to_object(series):
@@ -47,9 +68,9 @@ def json_to_object(series):
     return series.map(lambda x: json.loads(x, cls=MontyDecoder))
 
 
-def struct_to_oxidstruct(series, inplace=False, **kwargs):
+def structure_to_oxidstructure(series, inplace=False, **kwargs):
     """
-    Adds oxidation states to a structure using pymatgen's guessing routines
+    Adds oxidation states to a Structure using pymatgen's guessing routines
 
     Args:
         series: a pd.Series with Structure object components
@@ -66,3 +87,18 @@ def struct_to_oxidstruct(series, inplace=False, **kwargs):
                       index=series.index, dtype=series.dtype)
         copy.map(lambda s: s.add_oxidation_state_by_guess(**kwargs))
         return copy
+
+
+def composition_to_oxidcomposition(series, **kwargs):
+    """
+    Adds oxidation states to a Composition using pymatgen's guessing routines
+
+    Args:
+        series: a pd.Series with Composition object components
+        **kwargs: parameters to control Composition.oxi_state_guesses()
+
+    Returns:
+        a pd.Series with oxidation state Composition object components
+    """
+    
+    return series.map(lambda c: c.add_charges_from_oxi_state_guesses(**kwargs))
