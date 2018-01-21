@@ -5,6 +5,11 @@
 matminer Changelog
 ==================
 
+**v0.2.1**
+
+* further improvements to test data sets (K. Bystrom)
+* new MultiFeaturizer to combine multiple featurizers (L. Ward)
+
 **v0.2.0**
 
 * improvements to test data sets (K. Bystrom)
