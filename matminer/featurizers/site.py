@@ -22,6 +22,8 @@ from collections import defaultdict
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters, \
     VoronoiAnalyzer, VoronoiCoordFinder
+from pymatgen.analysis.local_env import NearNeighbors, VoronoiNN, JMolNN, \
+    MinimumDistanceNN, MinimumOKeeffeNN, MinimumVIRENN
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
     import LocalGeometryFinder
@@ -800,3 +802,59 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
 
     def implementors(self):
         return ['Nils E. R. Zimmermann']
+
+class CoordinationNumber(BaseFeaturizer):
+    """
+    Coordination number (CN) computed using one of pymatgen's
+    NearNeighbor classes for determinatioin of near neighbors
+    contributing to the CN.
+    Args:
+        nn (NearNeighbor): instance of one of pymatgen's NearNeighbor
+                           classes.
+    """
+
+    @staticmethod
+    def from_preset(preset):
+        """
+        Use one of the standard instances of a given NearNeighbor
+        class.
+        Args:
+            preset (str): preset type (e.g., "MiniumDistanceNN").
+        Returns:
+            CoordinationNumber from a preset.
+        """
+        if preset == "VoronoiNN":
+            return CoordinationNumber(VoronoiNN())
+        if preset == "JMolNN":
+            return CoordinationNumber(JMolNN())
+        if preset == "MinimumDistanceNN":
+            return CoordinationNumber(MinimumDistanceNN())
+        if preset == "MinimumOKeeffeNN":
+            return CoordinationNumber(MinimumOKeeffeNN())
+        if preset == "MinimumVIRENN":
+            return CoordinationNumber(MinimumVIRENN())
+
+    def __init__(self, nn, use_weights=False):
+        self.nn = nn
+        self.use_weights = use_weights
+
+    def featurize(self, struct, idx):
+        """
+        Get coordintion number of site with given index in input
+        structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure struct.
+        Returns:
+            (float): coordination number.
+        """
+        return [self.nn.get_cn(struct, idx, use_weights=self.use_weights)]
+
+    def feature_labels(self):
+        return ('CN_{}'.format(self.nn.__class__.__name__),)
+
+    def citations(self):
+        return ('',)
+
+    def implementors(self):
+        return ('Nils E. R. Zimmermann',)
