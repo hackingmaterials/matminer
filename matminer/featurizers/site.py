@@ -874,7 +874,7 @@ class CoordinationNumber(BaseFeaturizer):
         if self.nn.__class__.__name__ == 'JMolNN':
             citations.append('@misc{jmol, title = {Jmol: an open-source Java '
                 'viewer for chemical structures in 3D}, howpublished = {'
-                '\url{http://www.jmol.org/}}}')
+                '\\url{http://www.jmol.org/}}}')
         if self.nn.__class__.__name__ == 'MinimumOKeeffeNN':
             citations.append('@article{okeeffe_jamchemsoc_1991, title={Atom '
                 'sizes and bond lengths in molecules and crystals}, journal='
