@@ -16,7 +16,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
-    OPStructureFingerprint, \
+    SiteStatsFingerprint, \
     CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, EwaldEnergy
 
 
@@ -273,9 +273,10 @@ class StructureFeaturesTest(PymatgenTest):
             1000 * MinimumRelativeDistances().featurize(
                 self.cscl)[0][0]), 1006)
 
-    def test_op_structure_fingerprint(self):
+    def test_sitestatsfingerprint(self):
         # Test matrix.
-        op_struct_fp = OPStructureFingerprint(stats=None)
+        op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint",
+                                                        stats=None)
         opvals = op_struct_fp.featurize(self.diamond)
         oplabels = op_struct_fp.feature_labels()
         self.assertAlmostEqual(opvals[10][0], 0.9995, places=7)
@@ -288,7 +289,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(opvals[20][1], 0.9995, places=7)
 
         # Test stats.
-        op_struct_fp = OPStructureFingerprint()
+        op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint")
         opvals = op_struct_fp.featurize(self.diamond)
         self.assertAlmostEqual(opvals[0], 0.0005, places=7)
         self.assertAlmostEqual(opvals[1], 0, places=7)
