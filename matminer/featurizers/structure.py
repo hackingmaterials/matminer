@@ -16,7 +16,8 @@ from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint
+from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
+    CoordinationNumber
 from matminer.featurizers.stats import PropertyStats
 
 
@@ -757,13 +758,12 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return ("Nils E. R. Zimmermann",)
 
 
-class OPStructureFingerprint(BaseFeaturizer):
+class SiteStatsFingerprint(BaseFeaturizer):
     """
     Calculates all order parameters (OPs) for all sites in a crystal
     structure.
     Args:
-        op_site_fp (OPSiteFingerprint): defines the types of order
-            parameters to be calculated.
+        site_featurizer (BaseFeaturizer): a site-based featurizer
         stats ([str]): list of weighted statistics to compute for each feature.
             If stats is None, for each order parameter, a list is returned that
             contains the calculated parameter for each site in the structure.
@@ -772,13 +772,12 @@ class OPStructureFingerprint(BaseFeaturizer):
             zero means metals/cations only)
         max_oxi (int): maximum site oxidation state for inclusion
     """
-    def __init__(self, op_site_fp=None, stats=('mean', 'std_dev', 'minimum',
+    def __init__(self, site_featurizer, stats=('mean', 'std_dev', 'minimum',
                                                'maximum'), min_oxi=None,
                  max_oxi=None):
 
-        self.op_site_fp = OPSiteFingerprint() if op_site_fp is None \
-            else op_site_fp
-        self._labels = self.op_site_fp.feature_labels()
+        self.site_featurizer = site_featurizer
+        self._labels = self.site_featurizer.feature_labels()
         self.stats = tuple([stats]) if type(stats) == str else stats
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
@@ -798,43 +797,44 @@ class OPStructureFingerprint(BaseFeaturizer):
             s: Pymatgen Structure object.
 
             Returns:
-                opvals: (2D array of floats) LSOP values of all sites'
+                vals: (2D array of floats) LSOP values of all sites'
                 (1st dimension) order parameters (2nd dimension). 46 order
                 parameters are computed per site: q_cn (coordination
                 number), q_lin, 35 x q_bent (starting with a target angle
                 of 5 degrees and, increasing by 5 degrees, until 175 degrees),
                 q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
         """
-        opvals = [[] for t in self._labels]
+        vals = [[] for t in self._labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
                     and (self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
-                opvalstmp = self.op_site_fp.featurize(s, i)
+                opvalstmp = self.site_featurizer.featurize(s, i)
                 for j, opval in enumerate(opvalstmp):
                     if opval is None:
-                        opvals[j].append(0.0)
+                        vals[j].append(0.0)
                     else:
-                        opvals[j].append(opval)
+                        vals[j].append(opval)
 
         if self.stats:
-            opstats = []
-            for op in opvals:
+            stats = []
+            for op in vals:
                 if '_mode' in ''.join(self.stats):
                     modes = self.n_numerical_modes(op, self.nmodes, 0.01)
                 for stat in self.stats:
                     if '_mode' in stat:
-                        opstats.append(modes[int(stat[0])-1])
+                        stats.append(modes[int(stat[0])-1])
                     else:
-                        opstats.append(PropertyStats().calc_stat(op, stat))
+                        stats.append(PropertyStats().calc_stat(op, stat))
 
-            return opstats
+            return stats
         else:
-            return opvals
+            return vals
 
     def feature_labels(self):
         if self.stats:
             labels = []
             for attr in self._labels:
+
                 for stat in self.stats:
                     labels.append('%s %s' % (stat, attr))
             return labels
@@ -849,6 +849,47 @@ class OPStructureFingerprint(BaseFeaturizer):
     def implementors(self):
         return ('Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain')
 
+
+    @staticmethod
+    def from_preset(preset, **kwargs):
+
+        if preset == "OPSiteFingerprint":
+            return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_cn":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("cn", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_cn_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("cn", cation_anion=True),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_ops":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("ops", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_ops_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("ops", cation_anion=True),
+                **kwargs)
+
+        else:
+            # One of the various Coordination Number presets:
+            # MinimumVIRENN, MinimumDistanceNN, JMolNN, VoronoiNN, etc.
+            try:
+                return SiteStatsFingerprint(
+                    CoordinationNumber.from_preset(preset), **kwargs)
+            except:
+                pass
+
+        raise ValueError("Unrecognized preset!")
+
+    # TODO: @nisse3000, move this function elsewhere. Probably the PropertyStats
+    # packages which is responsible for turning higher-dimensional data into
+    # lower dimensional data
     @staticmethod
     def n_numerical_modes(data_lst, n=2, dl=0.1):
         """
@@ -869,6 +910,7 @@ class OPStructureFingerprint(BaseFeaturizer):
         return modes + [float('NaN') for _ in range(n-len(modes))]
 
 
+# TODO: @nisse3000, move this function elsewhere
 def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     """
     Determine the difference vector between two order parameter-statistics
@@ -893,7 +935,7 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     nbins = int(max_dr/ddr) + 1
     for i in range(nbins):
         dr.append(float(i+1)*ddr)
-        opsf = OPStructureFingerprint(op_site_fp=OPSiteFingerprint(dr=dr[i]))
+        opsf = SiteStatsFingerprint(site_featurizer=OPSiteFingerprint(dr=dr[i]))
         delta.append(np.array(
             opsf.featurize(s1)) - np.array(opsf.featurize(s2)))
         dist.append(np.linalg.norm(delta[i]))
