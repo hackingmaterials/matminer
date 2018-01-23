@@ -128,13 +128,13 @@ class AGNIFingerprints(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return "@article{Botu2015, author = {Botu, Venkatesh and Ramprasad, Rampi},doi = {10.1002/qua.24836}," \
+        return ("@article{Botu2015, author = {Botu, Venkatesh and Ramprasad, Rampi},doi = {10.1002/qua.24836}," \
                "journal = {International Journal of Quantum Chemistry},number = {16},pages = {1074--1083}," \
                "title = {{Adaptive machine learning framework to accelerate ab initio molecular dynamics}}," \
-               "volume = {115},year = {2015}}"
+               "volume = {115},year = {2015}}",)
 
     def implementors(self):
-        return ['Logan Ward']
+        return ('Logan Ward',)
 
 
 class OPSiteFingerprint(BaseFeaturizer):
@@ -361,10 +361,10 @@ class OPSiteFingerprint(BaseFeaturizer):
     def citations(self):
         return ('@article{zimmermann_jain_2017, title={Applications of order'
                 ' parameter feature vectors}, journal={in progress}, author={'
-                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}',)
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann']
+        return ('Nils E. R. Zimmermann',)
 
 
 # TODO: unit tests!!
@@ -552,10 +552,10 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return ['']
+        return tuple([])
 
     def implementors(self):
-        return ['Anubhav Jain', 'Nils E.R. Zimmermann']
+        return ('Anubhav Jain', 'Nils E.R. Zimmermann')
 
     @staticmethod
     def _semicircle_integral(x, r=1):
@@ -622,11 +622,11 @@ class VoronoiIndex(BaseFeaturizer):
                     'title={Spatial tessellations}, '
                     'author={Okabe, Atsuyuki}, '
                     'year={1992}, '
-                    'publisher={Wiley Online Library}}')
+                    'publisher={Wiley Online Library}}',)
         return citation
 
     def implementors(self):
-        return ['Qi Wang']
+        return ('Qi Wang',)
 
 
 class EwaldSiteEnergy:
@@ -683,7 +683,7 @@ class EwaldSiteEnergy:
         return ("Logan Ward",)
 
     def citations(self):
-        return ["@Article{Ewald1921,"
+        return ("@Article{Ewald1921,"
                 "author = {Ewald, P. P.},"
                 "doi = {10.1002/andp.19213690304},"
                 "issn = {00033804},"
@@ -694,7 +694,7 @@ class EwaldSiteEnergy:
                 "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
                 "volume = {369},"
                 "year = {1921}"
-                "}"]
+                "}",)
 
 
 class ChemEnvSiteFingerprint(BaseFeaturizer):
@@ -798,10 +798,10 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
                 'author={Waroquiers, D. and Gonze, X. and Rignanese, G.-M.'
                 'and Welker-Nieuwoudt, C. and Rosowski, F. and Goebel, M. '
                 'and Schenk, S. and Degelmann, P. and Andre, R. '
-                'and Glaum, R. and Hautier, G.}, year={2017}}')
+                'and Glaum, R. and Hautier, G.}, year={2017}}',)
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann']
+        return ('Nils E. R. Zimmermann',)
 
 class CoordinationNumber(BaseFeaturizer):
     """
