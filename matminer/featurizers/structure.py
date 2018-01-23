@@ -64,10 +64,10 @@ class DensityFeatures(BaseFeaturizer):
         return [x for x in all_features if x in self.features]
 
     def citations(self):
-        return [""]
+        return tuple([])
 
     def implementors(self):
-        return ["Saurabh Bajaj", "Anubhav Jain"]
+        return ("Saurabh Bajaj", "Anubhav Jain")
 
 
 class GlobalSymmetryFeatures(BaseFeaturizer):
@@ -111,10 +111,10 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         return [x for x in all_features if x in self.features]
 
     def citations(self):
-        return [""]
+        return tuple([])
 
     def implementors(self):
-        return ["Anubhav Jain"]
+        return ("Anubhav Jain",)
 
 
 class RadialDistributionFunction(BaseFeaturizer):
@@ -166,10 +166,10 @@ class RadialDistributionFunction(BaseFeaturizer):
         return ["radial distribution function"]
 
     def citations(self):
-        return ("")
+        return tuple([])
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ("Saurabh Bajaj",)
 
 
 class PartialRadialDistributionFunction(BaseFeaturizer):
@@ -248,10 +248,10 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         return ["partial radial distribution functions"]
 
     def citations(self):
-        return ("")
+        return tuple([])
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ("Saurabh Bajaj",)
 
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
@@ -284,10 +284,10 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
         return ["radial distribution function peaks"]
 
     def citations(self):
-        return ("")
+        return tuple([])
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ("Saurabh Bajaj",)
 
 
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
@@ -368,10 +368,10 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 " DOI={10.1107/S0108768104028344},"
                 " journal={Acta Crystallographica Section B},"
                 " author={Willighagen, E. L. and Wehrens, R. and Verwer,"
-                " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}")
+                " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}",)
 
     def implementors(self):
-        return ("Nils E. R. Zimmermann")
+        return ("Nils E. R. Zimmermann",)
 
 
 class CoulombMatrix(BaseFeaturizer):
@@ -431,10 +431,10 @@ class CoulombMatrix(BaseFeaturizer):
                 " DOI={10.1103/PhysRevLett.108.058301}, number={5},"
                 " pages={058301}, journal={Physical Review Letters}, author={"
                 "Rupp, Matthias and Tkatchenko, Alexandre and M\"uller,"
-                " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}")
+                " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}",)
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ("Nils E. R. Zimmermann",)
 
 
 class SineCoulombMatrix(BaseFeaturizer):
@@ -500,10 +500,10 @@ class SineCoulombMatrix(BaseFeaturizer):
                 "pages = {1094--1101},"
                 "keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
                 "year = {2015},"
-                "}")
+                "}",)
 
     def implementors(self):
-        return ["Kyle Bystrom"]
+        return ("Kyle Bystrom",)
 
 
 class OrbitalFieldMatrix(BaseFeaturizer):
@@ -704,10 +704,10 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                 "url = {https://www.tandfonline.com/doi/full/10.1080/14686996.2017.1378060},"
                 "volume = {18},"
                 "year = {2017}"
-                "}")
+                "}",)
 
     def implementors(self):
-        return ["Kyle Bystrom"]
+        return ("Kyle Bystrom",)
 
 
 class MinimumRelativeDistances(BaseFeaturizer):
@@ -751,10 +751,10 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return ["minimum relative distance of each site"]
 
     def citations(self):
-        return ("")
+        return tuple([])
 
     def implementors(self):
-        return ("Nils E. R. Zimmermann")
+        return ("Nils E. R. Zimmermann",)
 
 
 class OPStructureFingerprint(BaseFeaturizer):
@@ -844,10 +844,10 @@ class OPStructureFingerprint(BaseFeaturizer):
     def citations(self):
         return ('@article{zimmermann_jain_2017, title={Applications of order'
                 ' parameter feature vectors}, journal={in progress}, author={'
-                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}',)
 
     def implementors(self):
-        return (['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain'])
+        return ('Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain')
 
     @staticmethod
     def n_numerical_modes(data_lst, n=2, dl=0.1):
@@ -949,7 +949,7 @@ class EwaldEnergy(BaseFeaturizer):
         return ("Logan Ward",)
 
     def citations(self):
-        return ["@Article{Ewald1921,"
+        return ("@Article{Ewald1921,"
                 "author = {Ewald, P. P.},"
                 "doi = {10.1002/andp.19213690304},"
                 "issn = {00033804},"
@@ -960,4 +960,4 @@ class EwaldEnergy(BaseFeaturizer):
                 "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
                 "volume = {369},"
                 "year = {1921}"
-                "}"]
+                "}",)
