@@ -858,7 +858,7 @@ class CoordinationNumber(BaseFeaturizer):
         return ('CN_{}'.format(self.nn.__class__.__name__),)
 
     def citations(self):
-        return ('',)
+        return ('',) # TODO: Add citations.
 
     def implementors(self):
         return ('Nils E. R. Zimmermann',)
