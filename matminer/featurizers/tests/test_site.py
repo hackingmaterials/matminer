@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
-from pymatgen.analysis.local_env import VoronoiNN
+from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, EwaldSiteEnergy, VoronoiIndex, ChemEnvSiteFingerprint, \
@@ -171,19 +171,22 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEquals(cnv.featurize(self.cscl, 0)[0], 9.2584516)
         self.assertAlmostEquals(cnv.featurize(self.cscl, 1)[0], 9.2584516)
         cnj = CoordinationNumber.from_preset('JMolNN')
-        # Gives 0
-        #self.assertAlmostEquals(cnj.featurize(self.sc, 0)[0], 6)
-        #self.assertAlmostEquals(cnj.featurize(self.cscl, 0)[0], 14)
-        #self.assertAlmostEquals(cnj.featurize(self.cscl, 1)[0], 14)
+        self.assertAlmostEquals(cnj.featurize(self.sc, 0)[0], 0)
+        self.assertAlmostEquals(cnj.featurize(self.cscl, 0)[0], 0)
+        self.assertAlmostEquals(cnj.featurize(self.cscl, 1)[0], 0)
+        jmnn = JMolNN(el_radius_updates={"Al": 1.55, "Cl": 1.7, "Cs": 1.7})
+        cnj = CoordinationNumber(jmnn)
+        self.assertAlmostEquals(cnj.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEquals(cnj.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEquals(cnj.featurize(self.cscl, 1)[0], 8)
         cnmd = CoordinationNumber.from_preset('MinimumDistanceNN')
         self.assertAlmostEquals(cnmd.featurize(self.sc, 0)[0], 6)
         self.assertAlmostEquals(cnmd.featurize(self.cscl, 0)[0], 8)
         self.assertAlmostEquals(cnmd.featurize(self.cscl, 1)[0], 8)
-        cnmok = CoordinationNumber.from_preset('MinimumOKeefeNN')
-        # Gives NoneTypes
-        #self.assertAlmostEquals(cnmok.featurize(self.sc, 0)[0], 6)
-        #self.assertAlmostEquals(cnmok.featurize(self.cscl, 0)[0], 8)
-        #self.assertAlmostEquals(cnmok.featurize(self.cscl, 1)[0], 8)
+        cnmok = CoordinationNumber.from_preset('MinimumOKeeffeNN')
+        self.assertAlmostEquals(cnmok.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEquals(cnmok.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEquals(cnmok.featurize(self.cscl, 1)[0], 6)
         cnmvire = CoordinationNumber.from_preset('MinimumVIRENN')
         self.assertAlmostEquals(cnmvire.featurize(self.sc, 0)[0], 6)
         self.assertAlmostEquals(cnmvire.featurize(self.cscl, 0)[0], 8)

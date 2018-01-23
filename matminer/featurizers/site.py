@@ -825,14 +825,16 @@ class CoordinationNumber(BaseFeaturizer):
         """
         if preset == "VoronoiNN":
             return CoordinationNumber(VoronoiNN())
-        if preset == "JMolNN":
+        elif preset == "JMolNN":
             return CoordinationNumber(JMolNN())
-        if preset == "MinimumDistanceNN":
+        elif preset == "MinimumDistanceNN":
             return CoordinationNumber(MinimumDistanceNN())
-        if preset == "MinimumOKeeffeNN":
+        elif preset == "MinimumOKeeffeNN":
             return CoordinationNumber(MinimumOKeeffeNN())
-        if preset == "MinimumVIRENN":
+        elif preset == "MinimumVIRENN":
             return CoordinationNumber(MinimumVIRENN())
+        else:
+            raise RuntimeError('Unknown preset.')
 
     def __init__(self, nn, use_weights=False):
         self.nn = nn
