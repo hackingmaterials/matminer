@@ -806,7 +806,7 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
 class CoordinationNumber(BaseFeaturizer):
     """
     Coordination number (CN) computed using one of pymatgen's
-    NearNeighbor classes for determinatioin of near neighbors
+    NearNeighbor classes for determination of near neighbors
     contributing to the CN.
     Args:
         nn (NearNeighbor): instance of one of pymatgen's NearNeighbor
