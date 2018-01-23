@@ -22,7 +22,7 @@ from collections import defaultdict
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters, \
     VoronoiAnalyzer, VoronoiCoordFinder
-from pymatgen.analysis.local_env import NearNeighbors, VoronoiNN, JMolNN, \
+from pymatgen.analysis.local_env import VoronoiNN, JMolNN, \
     MinimumDistanceNN, MinimumOKeeffeNN, MinimumVIRENN
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
@@ -858,7 +858,7 @@ class CoordinationNumber(BaseFeaturizer):
         return ('CN_{}'.format(self.nn.__class__.__name__),)
 
     def citations(self):
-        return ('',) # TODO: Add citations.
+        return tuple([]) # TODO: Add citations.
 
     def implementors(self):
         return ('Nils E. R. Zimmermann',)
