@@ -305,6 +305,11 @@ class StructureFeaturesTest(PymatgenTest):
         for i in range(52, len(opvals)):
             self.assertAlmostEqual(opvals[i], 0, places=2)
 
+        # Test coordination number
+        cn_fp = SiteStatsFingerprint.from_preset("JMolNN", stats=("mean",))
+        cn_vals = cn_fp.featurize(self.diamond)
+        self.assertEqual(cn_vals[0], 4.0)
+
     def test_ewald(self):
         # Add oxidation states to all of the structures
         for s in [self.nacl, self.cscl, self.diamond]:

@@ -16,7 +16,8 @@ from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint
+from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
+    CoordinationNumber
 from matminer.featurizers.stats import PropertyStats
 
 
@@ -874,6 +875,15 @@ class SiteStatsFingerprint(BaseFeaturizer):
             return SiteStatsFingerprint(
                 CrystalSiteFingerprint.from_preset("ops", cation_anion=True),
                 **kwargs)
+
+        else:
+            # One of the various Coordination Number presets:
+            # MinimumVIRENN, MinimumDistanceNN, JMolNN, VoronoiNN, etc.
+            try:
+                return SiteStatsFingerprint(
+                    CoordinationNumber.from_preset(preset), **kwargs)
+            except:
+                pass
 
         raise ValueError("Unrecognized preset!")
 
