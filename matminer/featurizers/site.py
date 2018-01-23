@@ -819,7 +819,9 @@ class CoordinationNumber(BaseFeaturizer):
         Use one of the standard instances of a given NearNeighbor
         class.
         Args:
-            preset (str): preset type (e.g., "MiniumDistanceNN").
+            preset (str): preset type ("VoronoiNN", "JMolNN",
+                          "MiniumDistanceNN", "MinimumOKeeffeNN",
+                          or "MinimumVIRENN").
         Returns:
             CoordinationNumber from a preset.
         """
