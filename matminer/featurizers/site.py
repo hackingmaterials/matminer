@@ -128,10 +128,10 @@ class AGNIFingerprints(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return "@article{Botu2015, author = {Botu, Venkatesh and Ramprasad, Rampi},doi = {10.1002/qua.24836}," \
+        return ["@article{Botu2015, author = {Botu, Venkatesh and Ramprasad, Rampi},doi = {10.1002/qua.24836}," \
                "journal = {International Journal of Quantum Chemistry},number = {16},pages = {1074--1083}," \
                "title = {{Adaptive machine learning framework to accelerate ab initio molecular dynamics}}," \
-               "volume = {115},year = {2015}}"
+               "volume = {115},year = {2015}}"]
 
     def implementors(self):
         return ['Logan Ward']
@@ -359,9 +359,9 @@ class OPSiteFingerprint(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return ('@article{zimmermann_jain_2017, title={Applications of order'
+        return ['@article{zimmermann_jain_2017, title={Applications of order'
                 ' parameter feature vectors}, journal={in progress}, author={'
-                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}']
 
     def implementors(self):
         return ['Nils E. R. Zimmermann']
@@ -552,7 +552,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return ['']
+        return []
 
     def implementors(self):
         return ['Anubhav Jain', 'Nils E.R. Zimmermann']
@@ -618,11 +618,11 @@ class VoronoiIndex(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = ('@book{okabe1992spatial,  '
+        citation = ['@book{okabe1992spatial,  '
                     'title={Spatial tessellations}, '
                     'author={Okabe, Atsuyuki}, '
                     'year={1992}, '
-                    'publisher={Wiley Online Library}}')
+                    'publisher={Wiley Online Library}}']
         return citation
 
     def implementors(self):
@@ -680,7 +680,7 @@ class EwaldSiteEnergy:
         return ("ewald_site_energy",)
 
     def implementors(self):
-        return ("Logan Ward",)
+        return ["Logan Ward"]
 
     def citations(self):
         return ["@Article{Ewald1921,"
@@ -792,13 +792,13 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         return self.cetypes
 
     def citations(self):
-        return ('@article{waroquiers_chemmater_2017, '
+        return ['@article{waroquiers_chemmater_2017, '
                 'title={Statistical analysis of coordination environments '
                 'in oxides}, journal={Chemistry of Materials},'
                 'author={Waroquiers, D. and Gonze, X. and Rignanese, G.-M.'
                 'and Welker-Nieuwoudt, C. and Rosowski, F. and Goebel, M. '
                 'and Schenk, S. and Degelmann, P. and Andre, R. '
-                'and Glaum, R. and Hautier, G.}, year={2017}}')
+                'and Glaum, R. and Hautier, G.}, year={2017}}']
 
     def implementors(self):
         return ['Nils E. R. Zimmermann']
@@ -897,7 +897,7 @@ class CoordinationNumber(BaseFeaturizer):
                 'journal={Frontiers in Materials}, author={Zimmermann, '
                 'N. E. R. and Horton, M. K. and Jain, A. and Haranczyk, M.}, '
                 'number={4:34}, doi={10.3389/fmats.2017.00034}, year={2017}}')
-        return tuple(citations)
+        return citations
 
     def implementors(self):
-        return ('Nils E. R. Zimmermann',)
+        return ['Nils E. R. Zimmermann']
