@@ -985,7 +985,7 @@ class EwaldEnergy(BaseFeaturizer):
         return [ewald.total_energy]
 
     def feature_labels(self):
-        return ("ewald_energy",)
+        return ["ewald_energy"]
 
     def implementors(self):
         return ["Logan Ward"]

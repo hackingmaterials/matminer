@@ -677,7 +677,7 @@ class EwaldSiteEnergy:
         return [ewald.get_site_energy(idx)]
 
     def feature_labels(self):
-        return ("ewald_site_energy",)
+        return ["ewald_site_energy"]
 
     def implementors(self):
         return ["Logan Ward"]
@@ -789,7 +789,7 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         return np.array(cevals)
 
     def feature_labels(self):
-        return self.cetypes
+        return list(self.cetypes)
 
     def citations(self):
         return ['@article{waroquiers_chemmater_2017, '
@@ -855,7 +855,7 @@ class CoordinationNumber(BaseFeaturizer):
         return [self.nn.get_cn(struct, idx, use_weights=self.use_weights)]
 
     def feature_labels(self):
-        return ('CN_{}'.format(self.nn.__class__.__name__),)
+        return ['CN_{}'.format(self.nn.__class__.__name__)]
 
     def citations(self):
         citations = []
