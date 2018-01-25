@@ -8,7 +8,8 @@ from six import string_types
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True, multiindex=False):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True,
+                            multiindex=False):
         """
         Compute features for all entries contained in input dataframe
         
@@ -21,35 +22,56 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
+            multiindex (bool): Whether to create tiered columns,
 
         Returns:
             updated Dataframe
         """
-
         # If only one column and user provided a string, put it inside a list
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-        arg_tuples = pd.Series.from_array(zip(*[df[cid] for cid in col_id]))
-        feature_matrix = arg_tuples.apply(lambda x: self.featurize(*x))
+        # Define all arguments to the featurizer in a series of tuples, then featurize
+        args = pd.Series.from_array(zip(*[df[cid] for cid in col_id]))
+        feature_vals = args.apply(lambda x: self.featurize_wrapper(ignore_errors, *x))
+
         if multiindex:
-            cols = pd.MultiIndex.from_product([[self.__class__.__name__], self.feature_labels()])
-            res_df = pd.DataFrame(feature_matrix.values.tolist(), index=df.index, columns=cols)
+            cols = pd.MultiIndex.from_product([[self.__class__.__name__],
+                                               self.feature_labels()])
         else:
-            res_df = pd.DataFrame(feature_matrix.values.tolist(), index=df.index, columns=self.feature_labels())
+            cols = self.feature_labels()
+        res_df = pd.DataFrame(feature_vals.values.tolist(), index=df.index, columns=cols)
 
         if inplace:
-            # Replace data in pre-existing columns. Add columns for features with no previous data.
             for k in self.feature_labels():
                 df[k] = res_df[k]
             return df
-
         else:
-            # Add new columns for everything. May create 2+ copies of features.
             if multiindex and df.columns.nlevels < 2:
-                # Add an 'original data' multiindex to the input df, stops pandas 'tupling' a mismatched multiindex
-                df.columns = pd.MultiIndex.from_product([["Original Data"], df.columns.values])
+                # Add an 'original data' multiindex to the input df
+                df.columns = pd.MultiIndex.from_product([["Original Data"],
+                                                         df.columns.values])
             return pd.concat([df, res_df], axis=1)
+
+
+    def featurize_wrapper(self, ignore_errors, *x):
+        """
+        Error wrapper for featurizer.
+
+        Args:
+            ignore_errors (bool): features return nan arrays if True
+            x: input data to featurizer
+
+        Returns:
+            list of one or more features from featurize
+        """
+        try:
+            return self.featurize(*x)
+        except:
+            if ignore_errors:
+                return [float("nan")] * len(self.feature_labels())
+            else:
+                raise
 
 
     def featurize(self, *x):
