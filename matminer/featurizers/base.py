@@ -8,7 +8,7 @@ from six import string_types
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True, multiindex=False):
         """
         Compute features for all entries contained in input dataframe
         
@@ -30,10 +30,22 @@ class BaseFeaturizer(object):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
+
         arg_tuples = pd.Series.from_array(zip(*[df[cid] for cid in col_id]))
         feature_matrix = arg_tuples.apply(lambda x: self.featurize(*x))
-        df[self.feature_labels()] = pd.DataFrame(feature_matrix.values.tolist(), index=df.index)
-        return df
+        if multiindex:
+            cols = pd.MultiIndex.from_product([[self.__class__.__name__], self.feature_labels()])
+            res_df = pd.DataFrame(feature_matrix.values.tolist(), index=df.index, columns=cols)
+        else:
+            res_df = pd.DataFrame(feature_matrix.values.tolist(), index=df.index, columns=self.feature_labels())
+
+        if inplace:
+            if multiindex:
+                # Add an 'original data' multiindex to the input df, stops pandas 'tupling' a mismatched multiindex
+                df.columns = pd.MultiIndex.from_product([["Original Data"], df.columns.values])
+            return pd.concat([df, res_df], axis=1)
+        else:
+            return res_df
 
 
     def featurize(self, *x):
