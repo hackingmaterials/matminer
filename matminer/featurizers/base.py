@@ -22,16 +22,17 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
-            multiindex (bool): Whether to create tiered columns,
+            multiindex (bool): Whether to create tiered columns
 
         Returns:
             updated Dataframe
         """
+
         # If only one column and user provided a string, put it inside a list
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-        # Define all arguments to the featurizer in a series of tuples, then featurize
+        # Define all arguments to the featurizer in Series of tuples, then featurize
         args = pd.Series.from_array(zip(*[df[cid] for cid in col_id]))
         feature_vals = args.apply(lambda x: self.featurize_wrapper(ignore_errors, *x))
 
