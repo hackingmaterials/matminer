@@ -30,7 +30,6 @@ class BaseFeaturizer(object):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-
         arg_tuples = pd.Series.from_array(zip(*[df[cid] for cid in col_id]))
         feature_matrix = arg_tuples.apply(lambda x: self.featurize(*x))
         if multiindex:
@@ -40,12 +39,17 @@ class BaseFeaturizer(object):
             res_df = pd.DataFrame(feature_matrix.values.tolist(), index=df.index, columns=self.feature_labels())
 
         if inplace:
-            if multiindex:
+            # Replace data in pre-existing columns. Add columns for features with no previous data.
+            for k in self.feature_labels():
+                df[k] = res_df[k]
+            return df
+
+        else:
+            # Add new columns for everything. May create 2+ copies of features.
+            if multiindex and df.columns.nlevels < 2:
                 # Add an 'original data' multiindex to the input df, stops pandas 'tupling' a mismatched multiindex
                 df.columns = pd.MultiIndex.from_product([["Original Data"], df.columns.values])
             return pd.concat([df, res_df], axis=1)
-        else:
-            return res_df
 
 
     def featurize(self, *x):
