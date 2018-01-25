@@ -30,32 +30,11 @@ class BaseFeaturizer(object):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-        # Compute the features
-        features = []
-        x_list = df[col_id]
-        for x in x_list.values:
-            try:
-                features.append(self.featurize(*x))
-            except:
-                if ignore_errors:
-                    features.append([float("nan")]
-                                    * len(self.feature_labels()))
-                else:
-                    raise
+        arg_tuples = pd.Series.from_array(zip(*[df[cid] for cid in col_id]))
+        feature_matrix = arg_tuples.apply(lambda x: self.featurize(*x))
+        df[self.feature_labels()] = pd.DataFrame(feature_matrix.values.tolist(), index=df.index)
+        return df
 
-        # Generate the feature labels
-        labels = self.feature_labels()
-
-        # Create dataframe with the new features
-        new_cols = dict(zip(labels, [pd.Series(x, index=df.index) for x in zip(*features)]))
-
-        # Update the dataframe
-        if inplace:
-            for key, value in new_cols.items():
-                df[key] = value
-            return df
-        else:
-            return df.assign(**new_cols)
 
     def featurize(self, *x):
         """
