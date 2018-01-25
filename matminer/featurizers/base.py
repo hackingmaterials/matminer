@@ -6,13 +6,14 @@ from six import string_types
 from multiprocessing import Pool, cpu_count
 from functools import partial
 
-def featurize_wrapper(x_list, ignore_errors, labels, f_obj):
+
+def featurize_wrapper(x_split, ignore_errors, labels, f_obj):
     """
 
     A multiprocessing-oriented wrapper for BaseFeaturizer().featurize
 
     Args:
-        x_list (ndarray): Array of x vectors to use for featurization
+        x_split (ndarray): Array of x vectors to use for featurization
             by this process
         ignore_errors (bool): Returns NaN for dataframe rows where the
             exceptions are thrown if True. If False, exceptions are
@@ -25,7 +26,7 @@ def featurize_wrapper(x_list, ignore_errors, labels, f_obj):
     """
 
     features = []
-    for x in x_list.values:
+    for x in x_split.values:
         try:
             features.append(f_obj.featurize(*x))
         except:
@@ -34,6 +35,7 @@ def featurize_wrapper(x_list, ignore_errors, labels, f_obj):
             else:
                 raise
     return features
+
 
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
@@ -70,13 +72,14 @@ class BaseFeaturizer(object):
         # Generate the feature labels
         labels = self.feature_labels()
         if multiindex:
-            cols = pd.MultiIndex.from_product([[self.__class__.__name__], labels])
+            cols = pd.MultiIndex.from_product(
+                [[self.__class__.__name__], labels])
         else:
             cols = labels
 
         # Compute the features
         x_list = df[col_id]
-        n_procs = cpu_count() if n_procs=='auto' else n_procs
+        n_procs = cpu_count() if n_procs == 'auto' else n_procs
         pool = Pool(n_procs)
         x_split = np.array_split(x_list, n_procs)
         featurize = partial(featurize_wrapper,
