@@ -3,12 +3,43 @@ from __future__ import division
 import pandas as pd
 import numpy as np
 from six import string_types
+from multiprocessing import Pool, cpu_count
+from functools import partial
 
+def featurize_wrapper(x_list, ignore_errors, labels, f_obj):
+    """
+
+    A multiprocessing-oriented wrapper for BaseFeaturizer().featurize
+
+    Args:
+        x_list (ndarray): Array of x vectors to use for featurization
+            by this process
+        ignore_errors (bool): Returns NaN for dataframe rows where the
+            exceptions are thrown if True. If False, exceptions are
+            thrown as normal.
+        labels: The set of featurization labels for the f_obj object.
+        f_obj (BaseFeaturizer): The featurizer instance undergoing
+            featurization.
+    Returns:
+        features (list): The list of features computed based on x_list
+    """
+
+    features = []
+    for x in x_list.values:
+        try:
+            features.append(f_obj.featurize(*x))
+        except:
+            if ignore_errors:
+                features.append([float("nan")] * labels)
+            else:
+                raise
+    return features
 
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True, multiindex=False):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False,
+                            inplace=True, multiindex=False, n_procs=1):
         """
         Compute features for all entries contained in input dataframe
 
@@ -29,32 +60,32 @@ class BaseFeaturizer(object):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-        # Compute the features
-        features = []
-        x_list = df[col_id]
-        for x in x_list.values:
-            try:
-                features.append(self.featurize(*x))
-            except:
-                if ignore_errors:
-                    features.append([float("nan")]
-                                    * len(self.feature_labels()))
-                else:
-                    raise
-
         # Generate the feature labels
         labels = self.feature_labels()
-
         if multiindex:
-            cols = pd.MultiIndex.from_product([[self.__class__.__name__],
-                                               self.feature_labels()])
+            cols = pd.MultiIndex.from_product([[self.__class__.__name__], labels])
         else:
             cols = labels
+
+        # Compute the features
+        x_list = df[col_id]
+        n_procs = cpu_count() if n_procs=='auto' else n_procs
+        pool = Pool(n_procs)
+        x_split = np.array_split(x_list, n_procs)
+        featurize = partial(featurize_wrapper,
+                            ignore_errors=ignore_errors,
+                            labels=labels,
+                            f_obj=self)
+        features = [i for j in pool.map(featurize, x_split) for i in j]
+        pool.close()
+        pool.join()
+
+        print n_procs
 
         # Create dataframe with the new features
         res_df = pd.DataFrame(features, index=df.index, columns=cols)
 
-        # Update the dataframe
+        # Update the existing dataframe
         if inplace:
             for k in self.feature_labels():
                 df[k] = res_df[k]
