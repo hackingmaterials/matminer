@@ -8,12 +8,11 @@ from six import string_types
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True,
-                            multiindex=False):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True, multiindex=False):
         """
         Compute features for all entries contained in input dataframe
-        
-        Args: 
+
+        Args:
             df (Pandas dataframe): Dataframe containing input data
             col_id (str or list of str): column label containing objects to
                 featurize. Can be multiple labels if the featurize function
@@ -22,8 +21,6 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
-            multiindex (bool): Whether to create tiered columns
-
         Returns:
             updated Dataframe
         """
@@ -32,17 +29,32 @@ class BaseFeaturizer(object):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-        # Define all arguments to the featurizer in Series of tuples, then featurize
-        args = pd.Series.from_array(zip(*[df[cid] for cid in col_id]))
-        feature_vals = args.apply(lambda x: self.featurize_wrapper(ignore_errors, *x))
+        # Compute the features
+        features = []
+        x_list = df[col_id]
+        for x in x_list.values:
+            try:
+                features.append(self.featurize(*x))
+            except:
+                if ignore_errors:
+                    features.append([float("nan")]
+                                    * len(self.feature_labels()))
+                else:
+                    raise
+
+        # Generate the feature labels
+        labels = self.feature_labels()
 
         if multiindex:
             cols = pd.MultiIndex.from_product([[self.__class__.__name__],
                                                self.feature_labels()])
         else:
-            cols = self.feature_labels()
-        res_df = pd.DataFrame(feature_vals.values.tolist(), index=df.index, columns=cols)
+            cols = labels
 
+        # Create dataframe with the new features
+        res_df = pd.DataFrame(features, index=df.index, columns=cols)
+
+        # Update the dataframe
         if inplace:
             for k in self.feature_labels():
                 df[k] = res_df[k]
@@ -54,34 +66,11 @@ class BaseFeaturizer(object):
                                                          df.columns.values])
             return pd.concat([df, res_df], axis=1)
 
-
-    def featurize_wrapper(self, ignore_errors, *x):
-        """
-        Error wrapper for featurizer.
-
-        Args:
-            ignore_errors (bool): features return nan arrays if True
-            x: input data to featurizer
-
-        Returns:
-            list of one or more features from featurize
-        """
-        try:
-            return self.featurize(*x)
-        except:
-            if ignore_errors:
-                return [float("nan")] * len(self.feature_labels())
-            else:
-                raise
-
-
     def featurize(self, *x):
         """
         Main featurizer function. Only defined in feature subclasses.
-
         Args:
             x: input data to featurize (type depends on featurizer)
-
         Returns:
             list of one or more features
         """
@@ -91,7 +80,7 @@ class BaseFeaturizer(object):
     def feature_labels(self):
         """
         Generate attribute names
-        
+
         Returns:
             list of strings for attribute labels
         """
@@ -101,7 +90,6 @@ class BaseFeaturizer(object):
     def citations(self):
         """
         Citation / reference for feature
-
         Returns:
             array - each element should be str citation, ideally in BibTeX
                 format
@@ -112,7 +100,6 @@ class BaseFeaturizer(object):
     def implementors(self):
         """
         List of implementors of the feature
-
         Returns:
             array - each element should either be str with author name (e.g.,
                 "Anubhav Jain") or dict with required key "name" and other
@@ -125,12 +112,10 @@ class BaseFeaturizer(object):
 
 class MultipleFeaturizer(BaseFeaturizer):
     """Class that runs multiple featurizers on the same data
-
     All featurizers must take the same kind of data as input to the featurize function."""
 
     def __init__(self, featurizers):
         """Create a new instance of this featurizer
-
         Args:
             featurizers - [BaseFeaturizer], list of featurizers to run
         """
