@@ -52,6 +52,13 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
+            multiindex (bool): Whether multiple levels of column header will
+                show up in the table. When True, column headings are grouped
+                and labelled by their featurizer class.
+            n_procs (int, str): Number of parallel processes to execute when
+                featurizing the dataframe. 'auto' automatically determines the
+                number of processing cores on the system and sets n_procs to
+                this number.
         Returns:
             updated Dataframe
         """
@@ -79,8 +86,6 @@ class BaseFeaturizer(object):
         features = [i for j in pool.map(featurize, x_split) for i in j]
         pool.close()
         pool.join()
-
-        print n_procs
 
         # Create dataframe with the new features
         res_df = pd.DataFrame(features, index=df.index, columns=cols)
