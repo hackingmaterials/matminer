@@ -42,7 +42,7 @@ class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True, multiindex=False, n_procs=1):
+                            inplace=True, multiindex=False, n_procs=None):
         """
         Compute features for all entries contained in input dataframe
 
@@ -58,8 +58,8 @@ class BaseFeaturizer(object):
             multiindex (bool): Whether multiple levels of column header will
                 show up in the table. When True, column headings are grouped
                 and labelled by their featurizer class.
-            n_procs (int, str): Number of parallel processes to execute when
-                featurizing the dataframe. 'auto' automatically determines the
+            n_procs (int): Number of parallel processes to execute when
+                featurizing the dataframe. If None, automatically determines the
                 number of processing cores on the system and sets n_procs to
                 this number.
         Returns:
@@ -73,14 +73,42 @@ class BaseFeaturizer(object):
 
         # Generate the feature labels
         labels = self.feature_labels()
-        if multiindex:
-            cols = pd.MultiIndex.from_product(
-                [[self.__class__.__name__], labels])
-        else:
-            cols = labels
 
         # Compute the features
         x_list = df[col_id]
+        if n_procs == 1:
+            features = featurize_wrapper(x_list, ignore_errors, labels, self)
+        else:
+            features = self.featurize_many(x_list, ignore_errors, labels, n_procs)
+
+        # Create dataframe with the new features
+        res_df = pd.DataFrame(features, index=df.index, columns=labels)
+
+        # Update the existing dataframe
+        if inplace:
+            for k in self.feature_labels():
+                df[k] = res_df[k]
+            return df
+        else:
+            return pd.concat([df, res_df], axis=1)
+
+    def featurize_many(self, x_list, ignore_errors, labels, n_procs):
+        """
+        Featurize a list in parallel.
+
+        Args:
+            x_list (ndarray/list): The list of x to pass to featurize.
+            ignore_errors (bool): Returns NaN for dataframe rows where
+                exceptions are thrown if True. If False, exceptions
+                are thrown as normal.
+            n_procs (int/str): Number of parallel processes to execute when
+                featurizing the dataframe. 'auto' automatically determines the
+                number of processing cores on the system and sets n_procs to
+                this number.
+
+        Returns:
+            (list) Features computed from input list.
+        """
         n_procs = cpu_count() if n_procs == 'auto' else n_procs
         pool = Pool(n_procs)
         x_split = np.array_split(x_list, n_procs)
@@ -91,21 +119,7 @@ class BaseFeaturizer(object):
         features = [i for j in pool.map(featurize, x_split) for i in j]
         pool.close()
         pool.join()
-
-        # Create dataframe with the new features
-        res_df = pd.DataFrame(features, index=df.index, columns=cols)
-
-        # Update the existing dataframe
-        if inplace:
-            for k in self.feature_labels():
-                df[k] = res_df[k]
-            return df
-        else:
-            if multiindex and df.columns.nlevels < 2:
-                # Add an 'original data' multiindex to the input df
-                df.columns = pd.MultiIndex.from_product([["Original Data"],
-                                                         df.columns.values])
-            return pd.concat([df, res_df], axis=1)
+        return features
 
     def featurize(self, *x):
         """
