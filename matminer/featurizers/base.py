@@ -42,7 +42,7 @@ class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True, multiindex=False, n_procs=None):
+                            inplace=True, n_procs=None):
         """
         Compute features for all entries contained in input dataframe
 
@@ -55,9 +55,7 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
-            multiindex (bool): Whether multiple levels of column header will
-                show up in the table. When True, column headings are grouped
-                and labelled by their featurizer class.
+            m
             n_procs (int): Number of parallel processes to execute when
                 featurizing the dataframe. If None, automatically determines the
                 number of processing cores on the system and sets n_procs to
@@ -109,7 +107,7 @@ class BaseFeaturizer(object):
         Returns:
             (list) Features computed from input list.
         """
-        n_procs = cpu_count() if n_procs == 'auto' else n_procs
+        n_procs = cpu_count() if n_procs is None else n_procs
         pool = Pool(n_procs)
         x_split = np.array_split(x_list, n_procs)
         featurize = partial(featurize_wrapper,
