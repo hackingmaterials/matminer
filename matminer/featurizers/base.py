@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, unicode_literals
 
 import pandas as pd
 import numpy as np
@@ -26,6 +26,7 @@ def featurize_wrapper(x_split, ignore_errors, labels, f_obj):
     """
 
     features = []
+
     for x in x_split.values:
         try:
             features.append(f_obj.featurize(*x))
@@ -68,6 +69,7 @@ class BaseFeaturizer(object):
         # If only one column and user provided a string, put it inside a list
         if isinstance(col_id, string_types):
             col_id = [col_id]
+
 
         # Generate the feature labels
         labels = self.feature_labels()
