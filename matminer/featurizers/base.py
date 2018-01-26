@@ -42,7 +42,7 @@ class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True, n_procs=None):
+                            inplace=True, n_jobs=None):
         """
         Compute features for all entries contained in input dataframe
 
@@ -56,7 +56,7 @@ class BaseFeaturizer(object):
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
             m
-            n_procs (int): Number of parallel processes to execute when
+            n_jobs (int): Number of parallel processes to execute when
                 featurizing the dataframe. If None, automatically determines the
                 number of processing cores on the system and sets n_procs to
                 this number.
@@ -74,10 +74,10 @@ class BaseFeaturizer(object):
 
         # Compute the features
         x_list = df[col_id]
-        if n_procs == 1:
+        if n_jobs == 1:
             features = featurize_wrapper(x_list, ignore_errors, labels, self)
         else:
-            features = self.featurize_many(x_list, ignore_errors, labels, n_procs)
+            features = self.featurize_many(x_list, ignore_errors, labels, n_jobs)
 
         # Create dataframe with the new features
         res_df = pd.DataFrame(features, index=df.index, columns=labels)
@@ -90,7 +90,7 @@ class BaseFeaturizer(object):
         else:
             return pd.concat([df, res_df], axis=1)
 
-    def featurize_many(self, x_list, ignore_errors, labels, n_procs):
+    def featurize_many(self, x_list, ignore_errors, labels, n_jobs):
         """
         Featurize a list in parallel.
 
@@ -99,7 +99,7 @@ class BaseFeaturizer(object):
             ignore_errors (bool): Returns NaN for dataframe rows where
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
-            n_procs (int/str): Number of parallel processes to execute when
+            n_jobs (int/str): Number of parallel processes to execute when
                 featurizing the dataframe. 'auto' automatically determines the
                 number of processing cores on the system and sets n_procs to
                 this number.
@@ -107,9 +107,9 @@ class BaseFeaturizer(object):
         Returns:
             (list) Features computed from input list.
         """
-        n_procs = cpu_count() if n_procs is None else n_procs
-        pool = Pool(n_procs)
-        x_split = np.array_split(x_list, n_procs)
+        n_jobs = cpu_count() if n_jobs is None else n_jobs
+        pool = Pool(n_jobs)
+        x_split = np.array_split(x_list, n_jobs)
         featurize = partial(featurize_wrapper,
                             ignore_errors=ignore_errors,
                             labels=labels,
