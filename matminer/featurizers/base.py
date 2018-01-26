@@ -32,7 +32,7 @@ def featurize_wrapper(x_split, ignore_errors, labels, f_obj):
             features.append(f_obj.featurize(*x))
         except:
             if ignore_errors:
-                features.append([float("nan")] * labels)
+                features.append([float("nan")] * len(labels))
             else:
                 raise
     return features
@@ -55,7 +55,6 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
-            m
             n_jobs (int): Number of parallel processes to execute when
                 featurizing the dataframe. If None, automatically determines the
                 number of processing cores on the system and sets n_procs to
@@ -67,7 +66,6 @@ class BaseFeaturizer(object):
         # If only one column and user provided a string, put it inside a list
         if isinstance(col_id, string_types):
             col_id = [col_id]
-
 
         # Generate the feature labels
         labels = self.feature_labels()
