@@ -10,7 +10,7 @@ class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True, n_jobs=None):
+                            inplace=True, n_jobs=cpu_count()):
         """
         Compute features for all entries contained in input dataframe
 
@@ -31,9 +31,6 @@ class BaseFeaturizer(object):
             updated Dataframe
         """
 
-        # Make n_jobs the number of cores by default
-        n_jobs = n_jobs if not n_jobs else cpu_count()
-
         # If only one column and user provided a string, put it inside a list
         if isinstance(col_id, string_types):
             col_id = [col_id]
@@ -45,17 +42,17 @@ class BaseFeaturizer(object):
         features = self.featurize_many(df[col_id].values, n_jobs, ignore_errors)
 
         # Create dataframe with the new features
-        res_df = pd.DataFrame(features, index=df.index, columns=labels)
+        res = pd.DataFrame(features, index=df.index, columns=labels)
 
         # Update the existing dataframe
         if inplace:
             for k in self.feature_labels():
-                df[k] = res_df[k]
+                df[k] = res[k]
             return df
         else:
-            return pd.concat([df, res_df], axis=1)
+            return pd.concat([df, res], axis=1)
 
-    def featurize_many(self, entries, n_jobs, ignore_errors=False):
+    def featurize_many(self, entries, n_jobs=cpu_count(), ignore_errors=False):
         """
         Featurize a list of entries.
 
@@ -66,6 +63,7 @@ class BaseFeaturizer(object):
         Returns:
            list - features for each entry
         """
+
         # Check inputs
         if not hasattr(entries, '__getitem__'):
             raise Exception("'entries' must be a list-like object")
