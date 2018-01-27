@@ -25,8 +25,8 @@ class SingleFeaturizer(BaseFeaturizer):
 
 
 class SingleFeaturizerMultiArgs(SingleFeaturizer):
-    def featurize(self, x1, x2):
-        return [x1 + x2]
+    def featurize(self, *x):
+        return [x[0] + x[1]]
 
 
 class MultipleFeatureFeaturizer(BaseFeaturizer):
