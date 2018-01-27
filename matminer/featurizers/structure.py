@@ -1086,7 +1086,8 @@ class BagofBonds(BaseFeaturizer):
         delattr(self, 'unified_bonds')
         return df
 
-    def enumerate_bonds(self, s):
+    @staticmethod
+    def enumerate_bonds(s):
         """
         Lists out all the bond possibilities in a single structure.
 
@@ -1104,7 +1105,7 @@ class BagofBonds(BaseFeaturizer):
         het_bonds = [tuple(sorted([str(i) for i in j])) for j in het_bonds]
         hom_bonds = [(str(el), str(el)) for el in els]
         bond_types = [k[0] + '-' + k[1] for k in het_bonds + hom_bonds]
-        return bond_types
+        return sorted(bond_types)
 
     def enumerate_all_bonds(self, structures):
         """
@@ -1124,7 +1125,7 @@ class BagofBonds(BaseFeaturizer):
             for bt in bts:
                 if bt not in bond_types:
                     bond_types.append(bt)
-        return tuple(bond_types)
+        return tuple(sorted(bond_types))
 
     def featurize(self, s):
         """
@@ -1166,8 +1167,7 @@ class BagofBonds(BaseFeaturizer):
             ordered_bonds = self.local_bonds
 
         tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
-        bond_fracs = {e: bonds[e] / tot_bonds for e in bonds}
-        return [bond_fracs[b] for b in ordered_bonds]
+        return [bonds[b] / tot_bonds for b in ordered_bonds]
 
     def feature_labels(self):
         """
