@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, division, print_function
 
+import sys
 import unittest
 import pandas as pd
 import numpy as np
@@ -21,6 +22,11 @@ class SingleFeaturizer(BaseFeaturizer):
 
     def implementors(self):
         return ["Us"]
+
+
+class SingleFeaturizerMultiArgs(SingleFeaturizer):
+    def featurize(self, x1, x2):
+        return [x1 + x2]
 
 
 class MultipleFeatureFeaturizer(BaseFeaturizer):
@@ -56,6 +62,10 @@ class TestBaseClass(PymatgenTest):
         self.single = SingleFeaturizer()
         self.multi = MultipleFeatureFeaturizer()
         self.matrix = MatrixFeaturizer()
+        self.multiargs = SingleFeaturizerMultiArgs()
+
+        # Disable multiprocessing test for Py 2.x versions
+        self.n_jobs = 1 if sys.version_info[0] < 3 else 2
 
     @staticmethod
     def make_test_data():
@@ -78,7 +88,6 @@ class TestBaseClass(PymatgenTest):
 
     def test_inplace(self):
         data = self.make_test_data()
-
         self.single.featurize_dataframe(data, 'x', inplace=False)
         self.assertNotIn('y', data.columns)
 
@@ -109,6 +118,32 @@ class TestBaseClass(PymatgenTest):
         self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
         self.assertArrayAlmostEqual(data['w'], [0, 1, 2])
         self.assertArrayAlmostEqual(data['z'], [3, 4, 5])
+
+    def test_featurize_many(self):
+
+        # Single argument
+        s = self.single
+        mat = s.featurize_many([1, 2, 3], self.n_jobs)
+        self.assertArrayAlmostEqual(mat, [[2], [3], [4]])
+
+        # Multi-argument
+        s = self.multiargs
+        mat = s.featurize_many([[1, 4], [2, 5], [3, 6]], self.n_jobs)
+        self.assertArrayAlmostEqual(mat, [[5], [7], [9]])
+
+    def test_multiprocessing_df(self):
+
+        # Single argument
+        s = self.single
+        data = self.make_test_data()
+        data = s.featurize_dataframe(data, 'x', n_jobs=self.n_jobs)
+        self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
+
+        # Multi-argument
+        s = self.multiargs
+        data['x2'] = [4, 5, 6]
+        data = s.featurize_dataframe(data, ['x', 'x2'], n_jobs=self.n_jobs)
+        self.assertArrayAlmostEqual(data['y'], [5, 7, 9])
 
 
 if __name__ == '__main__':
