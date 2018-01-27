@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.utils package &#8212; matminer 0.1.9 documentation</title>
+    <title>matminer.utils package &#8212; matminer 0.2.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.9',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -74,6 +74,19 @@
 <div class="section" id="module-matminer.utils.conversions">
 <span id="matminer-utils-conversions-module"></span><h2>matminer.utils.conversions module<a class="headerlink" href="#module-matminer.utils.conversions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
+<dt id="matminer.utils.conversions.composition_to_oxidcomposition">
+<code class="descclassname">matminer.utils.conversions.</code><code class="descname">composition_to_oxidcomposition</code><span class="sig-paren">(</span><em>series</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.composition_to_oxidcomposition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds oxidation states to a Composition using pymatgen’s guessing routines</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>series: a pd.Series with Composition object components
+<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: parameters to control Composition.oxi_state_guesses()</dd>
+<dt>Returns:</dt>
+<dd>a pd.Series with oxidation state Composition object components</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="matminer.utils.conversions.dict_to_object">
 <code class="descclassname">matminer.utils.conversions.</code><code class="descname">dict_to_object</code><span class="sig-paren">(</span><em>series</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.dict_to_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decodes a dict Series to Python object series via MSON</p>
@@ -100,25 +113,39 @@ pymatgen Structure.as_dict()</dd>
 
 <dl class="function">
 <dt id="matminer.utils.conversions.str_to_composition">
-<code class="descclassname">matminer.utils.conversions.</code><code class="descname">str_to_composition</code><span class="sig-paren">(</span><em>series</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.str_to_composition" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">matminer.utils.conversions.</code><code class="descname">str_to_composition</code><span class="sig-paren">(</span><em>series</em>, <em>reduce=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.str_to_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a String series to a Composition series</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>series: a pd.Series with str components, e.g. “Fe2O3”</dd>
+<dd>series: a pd.Series with str components, e.g. “Fe2O3”
+reduce: (bool) whether to return a reduced Composition</dd>
 <dt>Returns:</dt>
 <dd>a pd.Series with pymatgen Composition components</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="matminer.utils.conversions.struct_to_oxidstruct">
-<code class="descclassname">matminer.utils.conversions.</code><code class="descname">struct_to_oxidstruct</code><span class="sig-paren">(</span><em>series</em>, <em>inplace=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.struct_to_oxidstruct" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds oxidation states to a structure using pymatgen’s guessing routines</p>
+<dt id="matminer.utils.conversions.structure_to_composition">
+<code class="descclassname">matminer.utils.conversions.</code><code class="descname">structure_to_composition</code><span class="sig-paren">(</span><em>series</em>, <em>reduce=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.structure_to_composition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Structure series to a Composition series</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>series: a pd.Series with pymatgen.Structure components
+reduce: (bool) whether to return a reduced Composition</dd>
+<dt>Returns:</dt>
+<dd>a pd.Series with pymatgen Composition components</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.utils.conversions.structure_to_oxidstructure">
+<code class="descclassname">matminer.utils.conversions.</code><code class="descname">structure_to_oxidstructure</code><span class="sig-paren">(</span><em>series</em>, <em>inplace=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.conversions.structure_to_oxidstructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds oxidation states to a Structure using pymatgen’s guessing routines</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>series: a pd.Series with Structure object components
 inplace: (bool) whether to override original Series (this is faster)
-<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: parameters to control to Structure.add_oxidation_state_by_guess</dd>
+<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: parameters to control to Structure.add_oxidation_state_by_guess</dd>
 <dt>Returns:</dt>
 <dd>a pd.Series with oxidation state Structure object components</dd>
 </dl>
@@ -460,7 +487,7 @@ For a more advanced concept, see the classmethod builtin.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.1.9 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 

@@ -4,9 +4,11 @@ import numpy as np
 import pandas as pd
 from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
+from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, EwaldSiteEnergy, VoronoiIndex, ChemEnvSiteFingerprint
+    OPSiteFingerprint, EwaldSiteEnergy, VoronoiIndex, ChemEnvSiteFingerprint, \
+    CoordinationNumber
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -159,6 +161,53 @@ class FingerprintTests(PymatgenTest):
         # Re-run the Al structure to make sure it is accurate
         #  This is to test the caching feature
         self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
+
+    def test_cns(self):
+        cnv = CoordinationNumber.from_preset('VoronoiNN')
+        self.assertEquals(len(cnv.feature_labels()), 1)
+        self.assertEquals(cnv.feature_labels()[0], 'CN_VoronoiNN')
+        self.assertAlmostEquals(cnv.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEquals(cnv.featurize(self.cscl, 0)[0], 14)
+        self.assertAlmostEquals(cnv.featurize(self.cscl, 1)[0], 14)
+        self.assertEquals(len(cnv.citations()), 2)
+        cnv = CoordinationNumber(VoronoiNN(), use_weights=True)
+        self.assertEquals(cnv.feature_labels()[0], 'CN_VoronoiNN')
+        self.assertAlmostEquals(cnv.featurize(self.cscl, 0)[0], 9.2584516)
+        self.assertAlmostEquals(cnv.featurize(self.cscl, 1)[0], 9.2584516)
+        self.assertEquals(len(cnv.citations()), 2)
+        cnj = CoordinationNumber.from_preset('JMolNN')
+        self.assertEquals(cnj.feature_labels()[0], 'CN_JMolNN')
+        self.assertAlmostEquals(cnj.featurize(self.sc, 0)[0], 0)
+        self.assertAlmostEquals(cnj.featurize(self.cscl, 0)[0], 0)
+        self.assertAlmostEquals(cnj.featurize(self.cscl, 1)[0], 0)
+        self.assertEquals(len(cnj.citations()), 1)
+        jmnn = JMolNN(el_radius_updates={"Al": 1.55, "Cl": 1.7, "Cs": 1.7})
+        cnj = CoordinationNumber(jmnn)
+        self.assertEquals(cnj.feature_labels()[0], 'CN_JMolNN')
+        self.assertAlmostEquals(cnj.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEquals(cnj.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEquals(cnj.featurize(self.cscl, 1)[0], 8)
+        self.assertEquals(len(cnj.citations()), 1)
+        cnmd = CoordinationNumber.from_preset('MinimumDistanceNN')
+        self.assertEquals(cnmd.feature_labels()[0], 'CN_MinimumDistanceNN')
+        self.assertAlmostEquals(cnmd.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEquals(cnmd.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEquals(cnmd.featurize(self.cscl, 1)[0], 8)
+        self.assertEquals(len(cnmd.citations()), 1)
+        cnmok = CoordinationNumber.from_preset('MinimumOKeeffeNN')
+        self.assertEquals(cnmok.feature_labels()[0], 'CN_MinimumOKeeffeNN')
+        self.assertAlmostEquals(cnmok.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEquals(cnmok.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEquals(cnmok.featurize(self.cscl, 1)[0], 6)
+        self.assertEquals(len(cnmok.citations()), 2)
+        cnmvire = CoordinationNumber.from_preset('MinimumVIRENN')
+        self.assertEquals(cnmvire.feature_labels()[0], 'CN_MinimumVIRENN')
+        self.assertAlmostEquals(cnmvire.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEquals(cnmvire.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEquals(cnmvire.featurize(self.cscl, 1)[0], 14)
+        self.assertEquals(len(cnmvire.citations()), 2)
+        self.assertEquals(len(cnmvire.implementors()), 1)
+        self.assertEquals(cnmvire.implementors()[0], 'Nils E. R. Zimmermann')
 
 if __name__ == '__main__':
     import unittest

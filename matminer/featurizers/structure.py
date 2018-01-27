@@ -16,7 +16,8 @@ from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint
+from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
+    CoordinationNumber
 from matminer.featurizers.stats import PropertyStats
 
 
@@ -64,7 +65,7 @@ class DensityFeatures(BaseFeaturizer):
         return [x for x in all_features if x in self.features]
 
     def citations(self):
-        return [""]
+        return []
 
     def implementors(self):
         return ["Saurabh Bajaj", "Anubhav Jain"]
@@ -111,7 +112,7 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         return [x for x in all_features if x in self.features]
 
     def citations(self):
-        return [""]
+        return []
 
     def implementors(self):
         return ["Anubhav Jain"]
@@ -166,10 +167,10 @@ class RadialDistributionFunction(BaseFeaturizer):
         return ["radial distribution function"]
 
     def citations(self):
-        return ("")
+        return []
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ["Saurabh Bajaj"]
 
 
 class PartialRadialDistributionFunction(BaseFeaturizer):
@@ -248,10 +249,10 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         return ["partial radial distribution functions"]
 
     def citations(self):
-        return ("")
+        return []
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ["Saurabh Bajaj"]
 
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
@@ -284,10 +285,10 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
         return ["radial distribution function peaks"]
 
     def citations(self):
-        return ("")
+        return []
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ["Saurabh Bajaj"]
 
 
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
@@ -363,15 +364,15 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         return ["electronic radial distribution function"]
 
     def citations(self):
-        return ("@article{title={Method for the computational comparison"
+        return ["@article{title={Method for the computational comparison"
                 " of crystal structures}, volume={B61}, pages={29-36},"
                 " DOI={10.1107/S0108768104028344},"
                 " journal={Acta Crystallographica Section B},"
                 " author={Willighagen, E. L. and Wehrens, R. and Verwer,"
-                " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}")
+                " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}"]
 
     def implementors(self):
-        return ("Nils E. R. Zimmermann")
+        return ["Nils E. R. Zimmermann"]
 
 
 class CoulombMatrix(BaseFeaturizer):
@@ -425,13 +426,13 @@ class CoulombMatrix(BaseFeaturizer):
         return ["coulomb matrix"]
 
     def citations(self):
-        return ("@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
+        return ["@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
                 "Fast and accurate modeling of molecular atomization energies"
                 " with machine learning}, volume={108},"
                 " DOI={10.1103/PhysRevLett.108.058301}, number={5},"
                 " pages={058301}, journal={Physical Review Letters}, author={"
                 "Rupp, Matthias and Tkatchenko, Alexandre and M\"uller,"
-                " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}")
+                " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}"]
 
     def implementors(self):
         return ["Nils E. R. Zimmermann"]
@@ -488,7 +489,7 @@ class SineCoulombMatrix(BaseFeaturizer):
         return ["sine coulomb matrix"]
 
     def citations(self):
-        return ("@article {QUA:QUA24917,"
+        return ["@article {QUA:QUA24917,"
                 "author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
                 "title = {Crystal structure representations for machine learning models of formation energies},"
                 "journal = {International Journal of Quantum Chemistry},"
@@ -500,7 +501,7 @@ class SineCoulombMatrix(BaseFeaturizer):
                 "pages = {1094--1101},"
                 "keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
                 "year = {2015},"
-                "}")
+                "}"]
 
     def implementors(self):
         return ["Kyle Bystrom"]
@@ -691,7 +692,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         return ["orbital field matrix"]
 
     def citations(self):
-        return ("@article{LamPham2017,"
+        return ["@article{LamPham2017,"
                 "author = {{Lam Pham}, Tien and Kino, Hiori and Terakura, Kiyoyuki and "
                 "Miyake, Takashi and Tsuda, Koji and Takigawa, Ichigaku and {Chi Dam}, Hieu},"
                 "doi = {10.1080/14686996.2017.1378060},"
@@ -704,7 +705,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                 "url = {https://www.tandfonline.com/doi/full/10.1080/14686996.2017.1378060},"
                 "volume = {18},"
                 "year = {2017}"
-                "}")
+                "}"]
 
     def implementors(self):
         return ["Kyle Bystrom"]
@@ -751,19 +752,18 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return ["minimum relative distance of each site"]
 
     def citations(self):
-        return ("")
+        return []
 
     def implementors(self):
-        return ("Nils E. R. Zimmermann")
+        return ["Nils E. R. Zimmermann"]
 
 
-class OPStructureFingerprint(BaseFeaturizer):
+class SiteStatsFingerprint(BaseFeaturizer):
     """
     Calculates all order parameters (OPs) for all sites in a crystal
     structure.
     Args:
-        op_site_fp (OPSiteFingerprint): defines the types of order
-            parameters to be calculated.
+        site_featurizer (BaseFeaturizer): a site-based featurizer
         stats ([str]): list of weighted statistics to compute for each feature.
             If stats is None, for each order parameter, a list is returned that
             contains the calculated parameter for each site in the structure.
@@ -772,13 +772,12 @@ class OPStructureFingerprint(BaseFeaturizer):
             zero means metals/cations only)
         max_oxi (int): maximum site oxidation state for inclusion
     """
-    def __init__(self, op_site_fp=None, stats=('mean', 'std_dev', 'minimum',
+    def __init__(self, site_featurizer, stats=('mean', 'std_dev', 'minimum',
                                                'maximum'), min_oxi=None,
                  max_oxi=None):
 
-        self.op_site_fp = OPSiteFingerprint() if op_site_fp is None \
-            else op_site_fp
-        self._labels = self.op_site_fp.feature_labels()
+        self.site_featurizer = site_featurizer
+        self._labels = self.site_featurizer.feature_labels()
         self.stats = tuple([stats]) if type(stats) == str else stats
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
@@ -798,43 +797,44 @@ class OPStructureFingerprint(BaseFeaturizer):
             s: Pymatgen Structure object.
 
             Returns:
-                opvals: (2D array of floats) LSOP values of all sites'
+                vals: (2D array of floats) LSOP values of all sites'
                 (1st dimension) order parameters (2nd dimension). 46 order
                 parameters are computed per site: q_cn (coordination
                 number), q_lin, 35 x q_bent (starting with a target angle
                 of 5 degrees and, increasing by 5 degrees, until 175 degrees),
                 q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
         """
-        opvals = [[] for t in self._labels]
+        vals = [[] for t in self._labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
                     and (self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
-                opvalstmp = self.op_site_fp.featurize(s, i)
+                opvalstmp = self.site_featurizer.featurize(s, i)
                 for j, opval in enumerate(opvalstmp):
                     if opval is None:
-                        opvals[j].append(0.0)
+                        vals[j].append(0.0)
                     else:
-                        opvals[j].append(opval)
+                        vals[j].append(opval)
 
         if self.stats:
-            opstats = []
-            for op in opvals:
+            stats = []
+            for op in vals:
                 if '_mode' in ''.join(self.stats):
                     modes = self.n_numerical_modes(op, self.nmodes, 0.01)
                 for stat in self.stats:
                     if '_mode' in stat:
-                        opstats.append(modes[int(stat[0])-1])
+                        stats.append(modes[int(stat[0])-1])
                     else:
-                        opstats.append(PropertyStats().calc_stat(op, stat))
+                        stats.append(PropertyStats().calc_stat(op, stat))
 
-            return opstats
+            return stats
         else:
-            return opvals
+            return vals
 
     def feature_labels(self):
         if self.stats:
             labels = []
             for attr in self._labels:
+
                 for stat in self.stats:
                     labels.append('%s %s' % (stat, attr))
             return labels
@@ -842,13 +842,54 @@ class OPStructureFingerprint(BaseFeaturizer):
             return self._labels
 
     def citations(self):
-        return ('@article{zimmermann_jain_2017, title={Applications of order'
+        return ['@article{zimmermann_jain_2017, title={Applications of order'
                 ' parameter feature vectors}, journal={in progress}, author={'
-                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}']
 
     def implementors(self):
-        return (['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain'])
+        return ['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain']
 
+
+    @staticmethod
+    def from_preset(preset, **kwargs):
+
+        if preset == "OPSiteFingerprint":
+            return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_cn":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("cn", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_cn_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("cn", cation_anion=True),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_ops":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("ops", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_ops_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("ops", cation_anion=True),
+                **kwargs)
+
+        else:
+            # One of the various Coordination Number presets:
+            # MinimumVIRENN, MinimumDistanceNN, JMolNN, VoronoiNN, etc.
+            try:
+                return SiteStatsFingerprint(
+                    CoordinationNumber.from_preset(preset), **kwargs)
+            except:
+                pass
+
+        raise ValueError("Unrecognized preset!")
+
+    # TODO: @nisse3000, move this function elsewhere. Probably the PropertyStats
+    # packages which is responsible for turning higher-dimensional data into
+    # lower dimensional data
     @staticmethod
     def n_numerical_modes(data_lst, n=2, dl=0.1):
         """
@@ -869,6 +910,7 @@ class OPStructureFingerprint(BaseFeaturizer):
         return modes + [float('NaN') for _ in range(n-len(modes))]
 
 
+# TODO: @nisse3000, move this function elsewhere
 def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     """
     Determine the difference vector between two order parameter-statistics
@@ -893,7 +935,7 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     nbins = int(max_dr/ddr) + 1
     for i in range(nbins):
         dr.append(float(i+1)*ddr)
-        opsf = OPStructureFingerprint(op_site_fp=OPSiteFingerprint(dr=dr[i]))
+        opsf = SiteStatsFingerprint(site_featurizer=OPSiteFingerprint(dr=dr[i]))
         delta.append(np.array(
             opsf.featurize(s1)) - np.array(opsf.featurize(s2)))
         dist.append(np.linalg.norm(delta[i]))
@@ -943,10 +985,10 @@ class EwaldEnergy(BaseFeaturizer):
         return [ewald.total_energy]
 
     def feature_labels(self):
-        return ("ewald_energy",)
+        return ["ewald_energy"]
 
     def implementors(self):
-        return ("Logan Ward",)
+        return ["Logan Ward"]
 
     def citations(self):
         return ["@Article{Ewald1921,"

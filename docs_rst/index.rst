@@ -74,22 +74,7 @@ ________________________________________________________________________________
 
 We have developed utilities to help describe a material from its composition or structure, and represent them in number format such that they are readily usable as features.
 
-The :code:`get_pymatgen_descriptor` function is used to encode a material's composition using tabulated elemental properties in the `pymatgen <http://pymatgen.org/_modules/pymatgen/core/periodic_table.html>`_ library. There are about 50 attributes available in the pymatgen library for most elements in the periodic table, some of which include electronegativity, atomic numbers, atomic masses, sound velocity, boiling point, etc. The :code:`get_pymatgen_descriptor` function takes as input a material composition and name of the desired property, and returns a list of floating point property values for each atom in that composition. This list can than be fed into a statistical function to obtain a single heuristic quantity representative of the entire composition. The following code block shows a few 
-descriptors that can be obtained for LiFePO\ :sub:`4`:
-
-.. code-block:: python
-      
-   from matminer.descriptors.composition_features import get_pymatgen_descriptor
-   import numpy as np
-      
-   avg_mass = np.mean(get_pymatgen_descriptor('LiFePO4', 'atomic_mass'))    # Average atomic mass
-   std_num = np.std(get_pymatgen_descriptor('LiFePO4', 'Z'))    # Standard deviation of atomic numbers
-   range_elect = max(get_pymatgen_descriptor('LiFePO4', 'X')) - \
-              min(get_pymatgen_descriptor('LiFePO4', 'X'))      # Maximum difference in electronegativity
-
-The function :code:`get_magpie_descriptor` operates in a similar way and obtains its data from the tables accumulated in the `Magpie repository <https://bitbucket.org/wolverton/magpie>`_, some of which are sourced from elemental data compiled by Mathematica (more information can be found `here <https://reference.wolfram.com/language/ref/ElementData.html>`_). Some properties that don't overlap with the pymatgen library include heat capacity, enthalpy of fusion of elements at melting points, pseudopotential radii, etc.
-
-Other descriptors provided by matminer can be found in the `Github repo. <https://github.com/hackingmaterials/matminer/tree/master/matminer/featurizers>`_
+For now, check out the examples below to see how to use the descriptor functionality.
    
 --------------
 Plotting tools
@@ -102,26 +87,21 @@ In the figrecipes module of the matminer library, we have developed utilities th
 
 The Plotly module contains the :code:`PlotlyFig` class that wraps around Plotly's Python API and follows its JSON schema. The matplotlib module contains plotting wrapper classes for each kind of popular plot, including XY-scatter plots and heat maps.
 
-A few examples demonstrating usage can be found in the notebook hosted on `Github <https://github.com/hackingmaterials/FigRecipes/blob/master/figrecipes/plotly/examples/plotly_examples.ipynb>`_. *Note: these examples may be out of date*.
-
+For now, check out the examples below to see how to use the plotting functionality.
 
 --------
 Examples
 --------
+
 Check out some examples of how to use matminer!
 
-1. :doc:`Use matminer and sklearn to train/predict bulk moduli. </example_bulkmod>`
-
-.. image:: _static/example_bulkmod_rf.png
-   :scale: 50
+1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://gist.github.com/computron/660f76810ad8d07a43b696028a6cd59f>`_)
 
 2. Get all experimentally measured band gaps of PbTe from Citrine's database (`Jupyter Notebook <https://gist.github.com/saurabh02/cf37de8ab77505a05e1bec952f0cb0c3>`_)
 
 3. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://gist.github.com/saurabh02/8f7727b2ed1f95d2a40fdefd0a90bec0>`_)
 
-4. Use matminer and sklearn to train/predict band gaps. (`Jupyter Notebook <https://gist.github.com/saurabh02/b0296747064599ad2a6ab69ddc64eb92>`_)
-
-5. Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (`Jupyter Notebook <https://gist.github.com/blokhin/a9eddca705aa6d54552bc8b6d7bddbb8>`_)
+4. Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (`Jupyter Notebook <https://gist.github.com/blokhin/a9eddca705aa6d54552bc8b6d7bddbb8>`_)
 
 
 ---------------

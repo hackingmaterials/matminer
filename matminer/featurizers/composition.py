@@ -148,29 +148,29 @@ class ElementProperty(BaseFeaturizer):
         return labels
 
     def citations(self):
-        if self.data_source == "magpie":
-            citation = (
+        if self.data_source.__class__.__name__ == "MagpieData":
+            citation = [
                 "@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
                 "machine learning framework for predicting properties of inorganic materials}, "
                 "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
                 "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-                "Alok and Wolverton, Christopher}, year={2016}}")
-        elif self.data_source == "deml":
-            citation = (
+                "Alok and Wolverton, Christopher}, year={2016}}"]
+        elif self.data_source.__class__.__name__ == "DemlData":
+            citation = [
                 "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
                 "functional theory total energies and enthalpies of formation of metal-nonmetal "
                 "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
                 "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
-        elif self.data_source == "pymatgen":
-            citation = (
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+        elif self.data_source.__class__.__name__ == "PymatgenData":
+            citation = [
                 "@article{Ong2013, author = {Ong, Shyue Ping and Richards, William Davidson and Jain, Anubhav and Hautier, "
                 "Geoffroy and Kocher, Michael and Cholia, Shreyas and Gunter, Dan and Chevrier, Vincent L. and Persson, "
                 "Kristin A. and Ceder, Gerbrand}, doi = {10.1016/j.commatsci.2012.10.028}, issn = {09270256}, "
                 "journal = {Computational Materials Science}, month = {feb}, pages = {314--319}, "
                 "publisher = {Elsevier B.V.}, title = {{Python Materials Genomics (pymatgen): A robust, open-source python "
                 "library for materials analysis}}, url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
-                "volume = {68}, year = {2013} } ")
+                "volume = {68}, year = {2013} } "]
         else:
             citation = []
         return citation
@@ -228,11 +228,11 @@ class CationProperty(ElementProperty):
         return all_attributes
 
     def citations(self):
-        return ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        return ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
                 "functional theory total energies and enthalpies of formation of metal-nonmetal "
                 "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
                 "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}",)
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
 
 
 class OxidationStates(BaseFeaturizer):
@@ -242,13 +242,13 @@ class OxidationStates(BaseFeaturizer):
     Features are concentration-weighted statistics of the oxidation states.
     """
 
-    def __init__(self, stats):
+    def __init__(self, stats=None):
         """
 
         Args:
              stats - (list of string), which statistics compute
         """
-        self.stats = stats
+        self.stats = stats or ["minimum", "maximum", "range", "std_dev"]
 
     @classmethod
     def from_preset(cls, preset_name):
@@ -273,14 +273,14 @@ class OxidationStates(BaseFeaturizer):
         return ["%s oxidation state"%s for s in self.stats]
 
     def citations(self):
-        return ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        return ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
                 "functional theory total energies and enthalpies of formation of metal-nonmetal "
                 "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
                 "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}",)
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
 
     def implementors(self):
-        return ('Logan Ward',)
+        return ['Logan Ward']
 
 class AtomicOrbitals(BaseFeaturizer):
     '''
@@ -379,7 +379,7 @@ class BandCenter(BaseFeaturizer):
     def implementors(self):
         return ["Anubhav Jain"]
 
-
+# TODO: this featurizer should fail gracefully for compounds with no clear anions (e.g., metals where all elements have zero oxidation) - returning either NaN or zero.
 class ElectronegativityDiff(BaseFeaturizer):
     """
     Features based on the electronegativity difference between the anions and
@@ -446,12 +446,12 @@ class ElectronegativityDiff(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
         return citation
 
     def implementors(self):
@@ -503,12 +503,12 @@ class ElectronAffinity(BaseFeaturizer):
         return ["avg anion electron affinity"]
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
         return citation
 
     def implementors(self):
@@ -580,12 +580,12 @@ class Stoichiometry(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-            "Alok and Wolverton, Christopher}, year={2016}}")
+            "Alok and Wolverton, Christopher}, year={2016}}"]
         return citation
 
     def implementors(self):
@@ -754,12 +754,12 @@ class IonProperty(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-            "Alok and Wolverton, Christopher}, year={2016}}")
+            "Alok and Wolverton, Christopher}, year={2016}}"]
         return citation
 
     def implementors(self):
@@ -844,12 +844,12 @@ class TMetalFraction(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
         return citation
 
     def implementors(self):

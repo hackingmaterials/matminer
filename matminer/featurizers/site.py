@@ -22,6 +22,8 @@ from collections import defaultdict
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen.analysis.structure_analyzer import OrderParameters, \
     VoronoiAnalyzer, VoronoiCoordFinder
+from pymatgen.analysis.local_env import VoronoiNN, JMolNN, \
+    MinimumDistanceNN, MinimumOKeeffeNN, MinimumVIRENN
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
     import LocalGeometryFinder
@@ -126,10 +128,10 @@ class AGNIFingerprints(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return "@article{Botu2015, author = {Botu, Venkatesh and Ramprasad, Rampi},doi = {10.1002/qua.24836}," \
+        return ["@article{Botu2015, author = {Botu, Venkatesh and Ramprasad, Rampi},doi = {10.1002/qua.24836}," \
                "journal = {International Journal of Quantum Chemistry},number = {16},pages = {1074--1083}," \
                "title = {{Adaptive machine learning framework to accelerate ab initio molecular dynamics}}," \
-               "volume = {115},year = {2015}}"
+               "volume = {115},year = {2015}}"]
 
     def implementors(self):
         return ['Logan Ward']
@@ -357,9 +359,9 @@ class OPSiteFingerprint(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return ('@article{zimmermann_jain_2017, title={Applications of order'
+        return ['@article{zimmermann_jain_2017, title={Applications of order'
                 ' parameter feature vectors}, journal={in progress}, author={'
-                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}']
 
     def implementors(self):
         return ['Nils E. R. Zimmermann']
@@ -550,7 +552,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return ['']
+        return []
 
     def implementors(self):
         return ['Anubhav Jain', 'Nils E.R. Zimmermann']
@@ -616,11 +618,11 @@ class VoronoiIndex(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = ('@book{okabe1992spatial,  '
+        citation = ['@book{okabe1992spatial,  '
                     'title={Spatial tessellations}, '
                     'author={Okabe, Atsuyuki}, '
                     'year={1992}, '
-                    'publisher={Wiley Online Library}}')
+                    'publisher={Wiley Online Library}}']
         return citation
 
     def implementors(self):
@@ -675,10 +677,10 @@ class EwaldSiteEnergy:
         return [ewald.get_site_energy(idx)]
 
     def feature_labels(self):
-        return ("ewald_site_energy",)
+        return ["ewald_site_energy"]
 
     def implementors(self):
-        return ("Logan Ward",)
+        return ["Logan Ward"]
 
     def citations(self):
         return ["@Article{Ewald1921,"
@@ -787,16 +789,115 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         return np.array(cevals)
 
     def feature_labels(self):
-        return self.cetypes
+        return list(self.cetypes)
 
     def citations(self):
-        return ('@article{waroquiers_chemmater_2017, '
+        return ['@article{waroquiers_chemmater_2017, '
                 'title={Statistical analysis of coordination environments '
                 'in oxides}, journal={Chemistry of Materials},'
                 'author={Waroquiers, D. and Gonze, X. and Rignanese, G.-M.'
                 'and Welker-Nieuwoudt, C. and Rosowski, F. and Goebel, M. '
                 'and Schenk, S. and Degelmann, P. and Andre, R. '
-                'and Glaum, R. and Hautier, G.}, year={2017}}')
+                'and Glaum, R. and Hautier, G.}, year={2017}}']
+
+    def implementors(self):
+        return ['Nils E. R. Zimmermann']
+
+class CoordinationNumber(BaseFeaturizer):
+    """
+    Coordination number (CN) computed using one of pymatgen's
+    NearNeighbor classes for determination of near neighbors
+    contributing to the CN.
+    Args:
+        nn (NearNeighbor): instance of one of pymatgen's NearNeighbor
+                           classes.
+    """
+
+    @staticmethod
+    def from_preset(preset):
+        """
+        Use one of the standard instances of a given NearNeighbor
+        class.
+        Args:
+            preset (str): preset type ("VoronoiNN", "JMolNN",
+                          "MiniumDistanceNN", "MinimumOKeeffeNN",
+                          or "MinimumVIRENN").
+        Returns:
+            CoordinationNumber from a preset.
+        """
+        if preset == "VoronoiNN":
+            return CoordinationNumber(VoronoiNN())
+        elif preset == "JMolNN":
+            return CoordinationNumber(JMolNN())
+        elif preset == "MinimumDistanceNN":
+            return CoordinationNumber(MinimumDistanceNN())
+        elif preset == "MinimumOKeeffeNN":
+            return CoordinationNumber(MinimumOKeeffeNN())
+        elif preset == "MinimumVIRENN":
+            return CoordinationNumber(MinimumVIRENN())
+        else:
+            raise RuntimeError('Unknown preset.')
+
+    def __init__(self, nn, use_weights=False):
+        self.nn = nn
+        self.use_weights = use_weights
+
+    def featurize(self, struct, idx):
+        """
+        Get coordintion number of site with given index in input
+        structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure struct.
+        Returns:
+            (float): coordination number.
+        """
+        return [self.nn.get_cn(struct, idx, use_weights=self.use_weights)]
+
+    def feature_labels(self):
+        return ['CN_{}'.format(self.nn.__class__.__name__)]
+
+    def citations(self):
+        citations = []
+        if self.nn.__class__.__name__ == 'VoronoiNN':
+            citations.append('@article{voronoi_jreineangewmath_1908, title={'
+                'Nouvelles applications des param\\`{e}tres continus \\`{a} la '
+                'th\'{e}orie des formes quadratiques. Sur quelques '
+                'propri\'{e}t\'{e}s des formes quadratiques positives'
+                ' parfaites}, journal={Journal f\"ur die reine und angewandte '
+                'Mathematik}, number={133}, pages={97-178}, year={1908}}')
+            citations.append('@article{dirichlet_jreineangewmath_1850, title={'
+                '\"{U}ber die Reduction der positiven quadratischen Formen '
+                'mit drei unbestimmten ganzen Zahlen}, journal={Journal '
+                'f\"ur die reine und angewandte Mathematik}, number={40}, '
+                'pages={209-227}, doi={10.1515/crll.1850.40.209}, year={1850}}')
+        if self.nn.__class__.__name__ == 'JMolNN':
+            citations.append('@misc{jmol, title = {Jmol: an open-source Java '
+                'viewer for chemical structures in 3D}, howpublished = {'
+                '\\url{http://www.jmol.org/}}}')
+        if self.nn.__class__.__name__ == 'MinimumOKeeffeNN':
+            citations.append('@article{okeeffe_jamchemsoc_1991, title={Atom '
+                'sizes and bond lengths in molecules and crystals}, journal='
+                '{Journal of the American Chemical Society}, author={'
+                'O\'Keeffe, M. and Brese, N. E.}, number={113}, pages={'
+                '3226-3229}, doi={doi:10.1021/ja00009a002}, year={1991}}')
+        if self.nn.__class__.__name__ == 'MinimumVIRENN':
+            citations.append('@article{shannon_actacryst_1976, title={'
+                'Revised effective ionic radii and systematic studies of '
+                'interatomic distances in halides and chalcogenides}, '
+                'journal={Acta Crystallographica}, author={Shannon, R. D.}, '
+                'number={A32}, pages={751-767}, doi={'
+                '10.1107/S0567739476001551}, year={1976}')
+        if self.nn.__class__.__name__ in [
+                'MinimumDistanceNN', 'MinimumOKeeffeNN', 'MinimumVIRENN']:
+            citations.append('@article{zimmermann_frontmater_2017, '
+                'title={Assessing local structure motifs using order '
+                'parameters for motif recognition, interstitial '
+                'identification, and diffusion path characterization}, '
+                'journal={Frontiers in Materials}, author={Zimmermann, '
+                'N. E. R. and Horton, M. K. and Jain, A. and Haranczyk, M.}, '
+                'number={4:34}, doi={10.3389/fmats.2017.00034}, year={2017}}')
+        return citations
 
     def implementors(self):
         return ['Nils E. R. Zimmermann']
