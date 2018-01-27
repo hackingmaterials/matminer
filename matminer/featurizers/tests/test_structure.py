@@ -13,13 +13,11 @@ from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.structure import DensityFeatures, \
-    RadialDistributionFunction, \
-    RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
-    ElectronicRadialDistributionFunction, \
-    MinimumRelativeDistances, \
-    SiteStatsFingerprint, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, \
-    GlobalSymmetryFeatures, EwaldEnergy, BagofBonds
+    RadialDistributionFunction, RadialDistributionFunctionPeaks, \
+    PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
+    MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
+    SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
+    EwaldEnergy, BagofBonds
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -332,45 +330,36 @@ class StructureFeaturesTest(PymatgenTest):
     def test_bag_of_bonds(self):
 
         # Test individual structures with featurize
-        bob = BagofBonds.from_preset("MinimumDistanceNN")
-        self.assertArrayEqual(bob.featurize(self.diamond), [1.0])
-        self.assertArrayEqual(bob.featurize(self.diamond_no_oxi), [1.0])
-        self.assertArrayEqual(bob.featurize(self.nacl), [1.0, 0.0, 0.0])
-        self.assertArrayEqual(bob.featurize(self.cscl), [1.0, 0.0, 0.0])
-        self.assertArrayEqual(bob.featurize(self.ni3al), [0.5, 0.0, 0.5])
-        bob = BagofBonds.from_preset("VoronoiNN")
-        self.assertArrayEqual(bob.featurize(self.diamond), [1.0])
-        self.assertArrayEqual(bob.featurize(self.diamond_no_oxi), [1.0])
-        self.assertArrayEqual(bob.featurize(self.nacl), [0.5, 0.25, 0.25])
-        self.assertArrayAlmostEqual(bob.featurize(self.cscl),
-                                    [0.5714, 0.2143, 0.2143], decimal=3)
-        self.assertArrayEqual(bob.featurize(self.ni3al), [0.5, 0.0, 0.5])
+        bob_md = BagofBonds.from_preset("MinimumDistanceNN")
+        self.assertArrayEqual(bob_md.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
+
+        bob_voronoi = BagofBonds.from_preset("VoronoiNN")
+        bond_fracs = bob_voronoi.featurize(self.nacl)
+        bond_names = bob_voronoi.feature_labels()
+        ref = {'Na+-Na+ bond frac.': 0.25, 'Cl--Na+ bond frac.': 0.5,
+               'Cl--Cl- bond frac.': 0.25}
+        self.assertDictEqual(dict(zip(bond_names, bond_fracs)), ref)
 
         # Test to make sure dataframe behavior is as intended
         s_list = [self.diamond_no_oxi, self.ni3al]
         df = pd.DataFrame.from_dict({'s': s_list})
-        df_data = bob.featurize_dataframe(df, 's')
-        df_data = df_data.drop(axis=1, labels='s')
+        df = bob_voronoi.featurize_dataframe(df, 's')
 
-        # Assert all appropriate labels are present
-        correct_labels = ['C-C bond frac.', 'Al-Ni bond frac.',
-                          'Al-Al bond frac.', 'Ni-Ni bond frac.']
-        self.assertListEqual(df_data.columns.values.tolist(), correct_labels)
-
-        # Assert labels are in the same order as the matrix
-        NaN = float("nan")
-        correct_matrix = np.asarray([[1.0, NaN, NaN, NaN],
-                                     [NaN, 0.5, 0.0, 0.5]])
-        self.assertArrayAlmostEqual(df_data.as_matrix(), correct_matrix)
+        # Ensure all data is properly labelled and organized
+        self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, np.nan])
+        self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+        self.assertArrayEqual(df['Al-Al bond frac.'].as_matrix(), [np.nan, 0.0])
+        self.assertArrayEqual(df['Ni-Ni bond frac.'].as_matrix(), [np.nan, 0.5])
 
         # Test to make sure bad_bond_values (bbv) are still changed correctly
-        # and check inplace behavior of featurize dataframe
-        bob.bbv = 0.0
-        df_bbv = bob.featurize_dataframe(df, 's')
-        df_bbv = df_bbv.drop(axis=1, labels='s')
-        correct_matrix = np.asarray([[1.0, 0.0, 0.0, 0.0],
-                                     [0.0, 0.5, 0.0, 0.5]])
-        self.assertArrayAlmostEqual(df_bbv.as_matrix(), correct_matrix)
+        # and check inplace behavior of featurize dataframe.
+        bob_voronoi.bbv = 0.0
+        df = bob_voronoi.featurize_dataframe(df, 's')
+        self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, 0.0])
+        self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [0.0, 0.5])
+        self.assertArrayEqual(df['Al-Al bond frac.'].as_matrix(), [0.0, 0.0])
+        self.assertArrayEqual(df['Ni-Ni bond frac.'].as_matrix(), [0.0, 0.5])
 
 
 if __name__ == '__main__':
