@@ -7,17 +7,17 @@ from __future__ import unicode_literals, division
 import unittest
 
 import numpy as np
+import pandas as pd
 
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.structure import DensityFeatures, \
-    RadialDistributionFunction, \
-    RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
-    ElectronicRadialDistributionFunction, \
-    MinimumRelativeDistances, \
-    SiteStatsFingerprint, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, EwaldEnergy
+    RadialDistributionFunction, RadialDistributionFunctionPeaks, \
+    PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
+    MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
+    SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
+    EwaldEnergy, BagofBonds
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -32,7 +32,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.diamond_no_oxi = Structure(
             Lattice([[2.189, 0, 1.264], [0.73, 2.064, 1.264],
                      [0, 0, 2.528]]), ["C", "C"], [[2.554, 1.806, 4.423],
-                                                   [0.365, 0.258, 0.632]], validate_proximity=False,
+                                                   [0.365, 0.258, 0.632]],
+            validate_proximity=False,
             to_unit_cell=False, coords_are_cartesian=True,
             site_properties=None)
         self.nacl = Structure(
@@ -325,6 +326,40 @@ class StructureFeaturesTest(PymatgenTest):
         # Perform Ewald summation by "hand",
         #  Using the result from GULP
         self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
+
+    def test_bag_of_bonds(self):
+
+        # Test individual structures with featurize
+        bob_md = BagofBonds.from_preset("MinimumDistanceNN")
+        self.assertArrayEqual(bob_md.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
+
+        bob_voronoi = BagofBonds.from_preset("VoronoiNN")
+        bond_fracs = bob_voronoi.featurize(self.nacl)
+        bond_names = bob_voronoi.feature_labels()
+        ref = {'Na+-Na+ bond frac.': 0.25, 'Cl--Na+ bond frac.': 0.5,
+               'Cl--Cl- bond frac.': 0.25}
+        self.assertDictEqual(dict(zip(bond_names, bond_fracs)), ref)
+
+        # Test to make sure dataframe behavior is as intended
+        s_list = [self.diamond_no_oxi, self.ni3al]
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = bob_voronoi.featurize_dataframe(df, 's')
+
+        # Ensure all data is properly labelled and organized
+        self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, np.nan])
+        self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+        self.assertArrayEqual(df['Al-Al bond frac.'].as_matrix(), [np.nan, 0.0])
+        self.assertArrayEqual(df['Ni-Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+
+        # Test to make sure bad_bond_values (bbv) are still changed correctly
+        # and check inplace behavior of featurize dataframe.
+        bob_voronoi.bbv = 0.0
+        df = bob_voronoi.featurize_dataframe(df, 's')
+        self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, 0.0])
+        self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [0.0, 0.5])
+        self.assertArrayEqual(df['Al-Al bond frac.'].as_matrix(), [0.0, 0.0])
+        self.assertArrayEqual(df['Ni-Ni bond frac.'].as_matrix(), [0.0, 0.5])
 
 
 if __name__ == '__main__':
