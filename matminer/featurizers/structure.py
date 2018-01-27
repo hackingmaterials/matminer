@@ -1066,7 +1066,7 @@ class BagofBonds(BaseFeaturizer):
         else:
             raise RuntimeError('Unknown preset.')
 
-    def featurize_dataframe(self, df, col_id, *args, **kwargs):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True):
         """
         Compute features for all entries contained in input dataframe.
         Necessary for returning the correct unified dataframe.
