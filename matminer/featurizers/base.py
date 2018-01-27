@@ -3,14 +3,14 @@ from __future__ import division, unicode_literals
 import pandas as pd
 import numpy as np
 from six import string_types
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool
 
 
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True, n_jobs=cpu_count()):
+                            inplace=True, n_jobs=1):
         """
         Compute features for all entries contained in input dataframe
 
@@ -52,7 +52,7 @@ class BaseFeaturizer(object):
         else:
             return pd.concat([df, res], axis=1)
 
-    def featurize_many(self, entries, n_jobs=cpu_count(), ignore_errors=False):
+    def featurize_many(self, entries, n_jobs=1, ignore_errors=False):
         """
         Featurize a list of entries.
 
