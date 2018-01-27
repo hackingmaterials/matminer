@@ -1081,8 +1081,9 @@ class BagofBonds(BaseFeaturizer):
 
         # unified_bonds attribute only lives if dataframe is being featurized.
         self.unified_bonds = self.enumerate_all_bonds(df[col_id])
-        df = super(BagofBonds, self).featurize_dataframe(df, col_id, *args,
-                                                         **kwargs)
+        df = super(BagofBonds, self).featurize_dataframe(df, col_id,
+                                                         ignore_errors=ignore_errors,
+                                                         inplace=inplace)
         delattr(self, 'unified_bonds')
         return df
 
