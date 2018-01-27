@@ -8,18 +8,20 @@ import warnings
 import numpy as np
 import scipy.constants as const
 
+from pymatgen import Structure
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.analysis.local_env import VoronoiNN, JMolNN, \
+    MinimumDistanceNN, MinimumOKeeffeNN, MinimumVIRENN
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
     CoordinationNumber
 from matminer.featurizers.stats import PropertyStats
-
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
@@ -72,7 +74,6 @@ class DensityFeatures(BaseFeaturizer):
 
 
 class GlobalSymmetryFeatures(BaseFeaturizer):
-
     crystal_idx = {"triclinic": 7,
                    "monoclinic": 6,
                    "orthorhombic": 5,
@@ -82,7 +83,7 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
                    "cubic": 1
                    }
 
-    def __init__(self, desired_features = None):
+    def __init__(self, desired_features=None):
         self.features = ["spacegroup_num", "crystal_system",
                          "crystal_system_int", "is_centrosymmetric"] if not \
             desired_features else desired_features
@@ -108,7 +109,8 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
 
     def feature_labels(self):
         all_features = ["spacegroup_num", "crystal_system",
-                        "crystal_system_int", "is_centrosymmetric"]  # enforce order
+                        "crystal_system_int",
+                        "is_centrosymmetric"]  # enforce order
         return [x for x in all_features if x in self.features]
 
     def citations(self):
@@ -219,7 +221,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             return site.specie.symbol if isinstance(site.specie,
                                                     Element) else site.specie.element.symbol
 
-        for site, nlst in zip(s.sites, neighbors_lst):  # Each list is a list for each site
+        for site, nlst in zip(s.sites,
+                              neighbors_lst):  # Each list is a list for each site
             my_elem = get_symbol(site)
 
             for neighbor in nlst:
@@ -232,7 +235,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         prdf = {}
         dist_bins = np.arange(0, self.cutoff + self.bin_size, self.bin_size)
         shell_volume = 4.0 / 3.0 * pi * (
-            np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+                np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
             dist_hist, dist_bins = np.histogram(distances,
@@ -355,8 +358,8 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 neigh_charge = float(neigh.specie.oxi_state)
                 bin_index = int(dist / self.dr)
                 redf_dict["distribution"][bin_index] += (
-                                                            this_charge * neigh_charge) / (
-                                                            struct.num_sites * dist)
+                                                                this_charge * neigh_charge) / (
+                                                                struct.num_sites * dist)
 
         return [redf_dict]
 
@@ -479,7 +482,8 @@ class SineCoulombMatrix(BaseFeaturizer):
                 elif i < j:
                     vec = coords[i] - coords[j]
                     coord_vec = np.sin(pi * vec) ** 2
-                    trig_dist = np.linalg.norm((np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
+                    trig_dist = np.linalg.norm(
+                        (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
                     sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
@@ -532,7 +536,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         Either 32 or 39, the size of the vectors used to describe elements.
     """
 
-    def __init__(self, period_tag = False):
+    def __init__(self, period_tag=False):
         my_ohvs = {}
         if period_tag:
             self.size = 39
@@ -565,11 +569,13 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             if el_struct[-1 - shell_num][0] < max_n - 2:
                 shell_num += 1
                 continue
-            elif el_struct[-1 - shell_num][0] < max_n - 1 and el_struct[-1 - shell_num][1] != u'f':
+            elif el_struct[-1 - shell_num][0] < max_n - 1 and \
+                    el_struct[-1 - shell_num][1] != u'f':
                 shell_num += 1
                 continue
             elif el_struct[-1 - shell_num][0] < max_n and (
-                            el_struct[-1 - shell_num][1] != u'd' and el_struct[-1 - shell_num][1] != u'f'):
+                    el_struct[-1 - shell_num][1] != u'd' and
+                    el_struct[-1 - shell_num][1] != u'f'):
                 shell_num += 1
                 continue
             curr_shell = el_struct[-1 - shell_num]
@@ -594,7 +600,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             row = sp.row
             if row > 7:
                 row -= 2
-            my_ohv[row+31] = 1
+            my_ohv[row + 31] = 1
         return my_ohv
 
     def get_single_ofm(self, site, site_dict):
@@ -617,7 +623,8 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         for other_site in site_dict:
             scale = site_dict[other_site]
             other_atom = ohvs[other_site.specie.Z]
-            atom_ofm += other_atom.T * ref_atom * scale / site.distance(other_site) / ANG_TO_BOHR
+            atom_ofm += other_atom.T * ref_atom * scale / site.distance(
+                other_site) / ANG_TO_BOHR
         return atom_ofm
 
     def get_atom_ofms(self, struct, symm=False):
@@ -743,9 +750,10 @@ class MinimumRelativeDistances(BaseFeaturizer):
         min_rel_dists = []
         for site in vire.structure:
             min_rel_dists.append(min([dist / (
-                vire.radii[site.species_string] +
-                vire.radii[neigh.species_string]) for neigh, dist in \
-                                      vire.structure.get_neighbors(site, self.cutoff)]))
+                    vire.radii[site.species_string] +
+                    vire.radii[neigh.species_string]) for neigh, dist in \
+                                      vire.structure.get_neighbors(site,
+                                                                   self.cutoff)]))
         return [min_rel_dists[:]]
 
     def feature_labels(self):
@@ -772,6 +780,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
             zero means metals/cations only)
         max_oxi (int): maximum site oxidation state for inclusion
     """
+
     def __init__(self, site_featurizer, stats=('mean', 'std_dev', 'minimum',
                                                'maximum'), min_oxi=None,
                  max_oxi=None):
@@ -807,7 +816,8 @@ class SiteStatsFingerprint(BaseFeaturizer):
         vals = [[] for t in self._labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
-                    and (self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
+                    and (
+                    self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
                 opvalstmp = self.site_featurizer.featurize(s, i)
                 for j, opval in enumerate(opvalstmp):
                     if opval is None:
@@ -822,7 +832,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
                     modes = self.n_numerical_modes(op, self.nmodes, 0.01)
                 for stat in self.stats:
                     if '_mode' in stat:
-                        stats.append(modes[int(stat[0])-1])
+                        stats.append(modes[int(stat[0]) - 1])
                     else:
                         stats.append(PropertyStats().calc_stat(op, stat))
 
@@ -848,7 +858,6 @@ class SiteStatsFingerprint(BaseFeaturizer):
 
     def implementors(self):
         return ['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain']
-
 
     @staticmethod
     def from_preset(preset, **kwargs):
@@ -903,11 +912,11 @@ class SiteStatsFingerprint(BaseFeaturizer):
             ([float]): first n most frequent entries (or nan if not found).
         """
         if len(set(data_lst)) == 1:
-            return [data_lst[0]] + [float('NaN') for _ in range(n-1)]
+            return [data_lst[0]] + [float('NaN') for _ in range(n - 1)]
         hist, bins = np.histogram(data_lst, bins=np.arange(
-                min(data_lst), max(data_lst), dl), density=False)
+            min(data_lst), max(data_lst), dl), density=False)
         modes = list(bins[np.argsort(hist)[-n:]][::-1])
-        return modes + [float('NaN') for _ in range(n-len(modes))]
+        return modes + [float('NaN') for _ in range(n - len(modes))]
 
 
 # TODO: @nisse3000, move this function elsewhere
@@ -932,9 +941,9 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     dr = []
     dist = []
     delta = []
-    nbins = int(max_dr/ddr) + 1
+    nbins = int(max_dr / ddr) + 1
     for i in range(nbins):
-        dr.append(float(i+1)*ddr)
+        dr.append(float(i + 1) * ddr)
         opsf = SiteStatsFingerprint(site_featurizer=OPSiteFingerprint(dr=dr[i]))
         delta.append(np.array(
             opsf.featurize(s1)) - np.array(opsf.featurize(s2)))
@@ -944,10 +953,10 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     # of smallest dr with peak value.
     nbins = int(max(dist) / ddist) + 1
     hist, bin_edges = np.histogram(
-        dist, bins=[float(i)*ddist for i in range(nbins)],
+        dist, bins=[float(i) * ddist for i in range(nbins)],
         normed=False, weights=None, density=False)
     idx = list(hist).index(max(hist))
-    dist_peak = 0.5 * (bin_edges[idx] + bin_edges[idx+1])
+    dist_peak = 0.5 * (bin_edges[idx] + bin_edges[idx + 1])
     idx = -1
     for i, d in enumerate(dist):
         if fabs(d - dist_peak) <= ddist:
@@ -1003,3 +1012,177 @@ class EwaldEnergy(BaseFeaturizer):
                 "volume = {369},"
                 "year = {1921}"
                 "}"]
+
+
+class BondFractions(BaseFeaturizer):
+    """
+    Compute the number of each kind of bond in a structure, as a fraction of
+    the total number of bonds, based on NearestNeighbors.
+    For example, in a structure with 2 Li-O bonds and 3 Li-P bonds:
+
+    Li-0: 0.4
+    Li-P: 0.6
+
+    For dataframes containing structures with various compositions, a unified
+    dataframe is returned which has the collection of bond types gathered
+    from all structures as columns.
+
+    Args:
+        nn (NearestNeighbors): A Pymatgen nearest neighbors derived object.
+        bbv (float): The 'bad bond values', values substituted for
+            structure-bond combinations which can not physically exist, but
+            exist in the unified dataframe. For example, if a dataframe contains
+            structures of BaLiP and BaTiO3, determines the value to place in
+            the Li-P column for the BaTiO3 row; by default, is None, resulting
+            in NaN.
+    """
+
+    def __init__(self, nn, bbv=None):
+        self.nn = nn
+        self.bbv = bbv
+
+    @staticmethod
+    def from_preset(preset):
+        """
+        Use one of the standard instances of a given NearNeighbor class.
+
+        Args:
+            preset (str): preset type ("VoronoiNN", "JMolNN",
+            "MiniumDistanceNN", "MinimumOKeeffeNN", or "MinimumVIRENN").
+
+        Returns:
+            CoordinationNumber from a preset.
+        """
+        if preset == "VoronoiNN":
+            return BondFractions(VoronoiNN())
+        elif preset == "JMolNN":
+            return BondFractions(JMolNN())
+        elif preset == "MinimumDistanceNN":
+            return BondFractions(MinimumDistanceNN())
+        elif preset == "MinimumOKeeffeNN":
+            return BondFractions(MinimumOKeeffeNN())
+        elif preset == "MinimumVIRENN":
+            return BondFractions(MinimumVIRENN())
+        else:
+            raise RuntimeError('Unknown preset.')
+
+    def featurize_dataframe(self, df, col_id, *args, **kwargs):
+        """
+        Compute features for all entries contained in input dataframe.
+        Necessary for returning the correct unified dataframe.
+
+        Args:
+            df (Pandas dataframe): Dataframe containing input data
+            col_id (str or [str]): The dataframe key corresponding to structures
+
+        Returns:
+            (DataFrame) BagofBonds-featurized dataframe
+        """
+
+        # unified_bonds attribute only lives if dataframe is being featurized.
+        self.unified_bonds = self.enumerate_all_bonds(df[col_id])
+        df = super(BondFractions, self).featurize_dataframe(df, col_id, *args,
+                                                            **kwargs)
+        delattr(self, 'unified_bonds')
+        return df
+
+    def enumerate_bonds(self, s):
+        """
+        Lists out all the bond possibilities in a single structure.
+
+        Args:
+            s (Structure): A pymatgen structure
+
+        Returns:
+            A list of bond types in 'Li-O' form, where the order of the
+            elements in each bond type is alphabetic.
+        """
+        if isinstance(s, dict):
+            s = Structure.from_dict(s)
+        els = s.composition.elements
+        het_bonds = list(itertools.combinations(els, 2))
+        het_bonds = [tuple(sorted([str(i) for i in j])) for j in het_bonds]
+        hom_bonds = [(str(el), str(el)) for el in els]
+        bond_types = [k[0] + '-' + k[1] for k in het_bonds + hom_bonds]
+        return bond_types
+
+    def enumerate_all_bonds(self, structures):
+        """
+        Identify all the unique, possible bonds types of all structures present,
+        and create the 'unified' bonds list.
+
+        Args:
+             structures (list/ndarray): List of pymatgen Structures
+
+        Returns:
+            A tuple of unique, possible bond types for an entire list of
+            structures. This tuple is used to form the unified feature labels.
+        """
+        bond_types = []
+        for s in structures:
+            bts = self.enumerate_bonds(s)
+            for bt in bts:
+                if bt not in bond_types:
+                    bond_types.append(bt)
+        return tuple(bond_types)
+
+    def featurize(self, s):
+        """
+        Quantify the fractions of each bond type in a structure.
+
+        For collections of structures, bonds types which are not found in a
+        particular structure (e.g., Li-P in BaTiO3) are represented as NaN.
+
+        Args:
+            s (Structure): A pymatgen structure object
+        """
+
+        if isinstance(s, dict):
+            s = Structure.from_dict(s)
+
+        bond_types = tuple(self.enumerate_bonds(s))
+        bonds = {k: 0.0 for k in bond_types}
+
+        for i, _ in enumerate(s.sites):
+            nearest = self.nn.get_nn(s, i)
+            origin = s.sites[i].specie
+
+            for neigh in nearest:
+                btup = tuple(sorted([str(origin), str(neigh.specie)]))
+                b = btup[0] + '-' + btup[1]
+                bonds[b] += 1.0
+
+        # If featurize is being called from a dataframe or featurize_many,
+        # a comprehensize 'unified' bond list is created. The following code
+        # places nan in all bad bond values, where bonds are not physically
+        # possible.
+        if hasattr(self, 'unified_bonds'):
+            for b in self.unified_bonds:
+                if b not in self.enumerate_bonds(s):
+                    bonds[b] = float("nan") if self.bbv is None else self.bbv
+        else:
+            self.local_bonds = bond_types
+
+        tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
+        bond_fracs = {e: bonds[e] / tot_bonds for e in bonds}
+        return list(bond_fracs.values())
+
+    def feature_labels(self):
+        """
+        If an entire dataframe is featurized, returns all unique possible
+        bonds gathered across all structures.
+
+        If only .featurize called, returns all bond labels for the last structure
+        featurized.
+        """
+        if hasattr(self, 'unified_bonds'):
+            labels = self.unified_bonds
+        else:
+            labels = self.local_bonds
+        return [b + " bond frac." for b in labels]
+
+    def implementors(self):
+        return ["Alex Dunn"]
+
+    def citations(self):
+        return [""]
