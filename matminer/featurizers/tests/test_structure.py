@@ -19,7 +19,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     MinimumRelativeDistances, \
     SiteStatsFingerprint, \
     CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, \
-    GlobalSymmetryFeatures, EwaldEnergy, BondFractions
+    GlobalSymmetryFeatures, EwaldEnergy, BagofBonds
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -329,27 +329,27 @@ class StructureFeaturesTest(PymatgenTest):
         #  Using the result from GULP
         self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
 
-    def test_bond_fractions(self):
+    def test_bag_of_bonds(self):
 
         # Test individual structures with featurize
-        bf = BondFractions.from_preset("MinimumDistanceNN")
-        self.assertArrayEqual(bf.featurize(self.diamond), [1.0])
-        self.assertArrayEqual(bf.featurize(self.diamond_no_oxi), [1.0])
-        self.assertArrayEqual(bf.featurize(self.nacl), [1.0, 0.0, 0.0])
-        self.assertArrayEqual(bf.featurize(self.cscl), [1.0, 0.0, 0.0])
-        self.assertArrayEqual(bf.featurize(self.ni3al), [0.5, 0.0, 0.5])
-        bf = BondFractions.from_preset("VoronoiNN")
-        self.assertArrayEqual(bf.featurize(self.diamond), [1.0])
-        self.assertArrayEqual(bf.featurize(self.diamond_no_oxi), [1.0])
-        self.assertArrayEqual(bf.featurize(self.nacl), [0.5, 0.25, 0.25])
-        self.assertArrayAlmostEqual(bf.featurize(self.cscl),
+        bob = BagofBonds.from_preset("MinimumDistanceNN")
+        self.assertArrayEqual(bob.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bob.featurize(self.diamond_no_oxi), [1.0])
+        self.assertArrayEqual(bob.featurize(self.nacl), [1.0, 0.0, 0.0])
+        self.assertArrayEqual(bob.featurize(self.cscl), [1.0, 0.0, 0.0])
+        self.assertArrayEqual(bob.featurize(self.ni3al), [0.5, 0.0, 0.5])
+        bob = BagofBonds.from_preset("VoronoiNN")
+        self.assertArrayEqual(bob.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bob.featurize(self.diamond_no_oxi), [1.0])
+        self.assertArrayEqual(bob.featurize(self.nacl), [0.5, 0.25, 0.25])
+        self.assertArrayAlmostEqual(bob.featurize(self.cscl),
                                     [0.5714, 0.2143, 0.2143], decimal=3)
-        self.assertArrayEqual(bf.featurize(self.ni3al), [0.5, 0.0, 0.5])
+        self.assertArrayEqual(bob.featurize(self.ni3al), [0.5, 0.0, 0.5])
 
         # Test to make sure dataframe behavior is as intended
         s_list = [self.diamond_no_oxi, self.ni3al]
         df = pd.DataFrame.from_dict({'s': s_list})
-        df_data = bf.featurize_dataframe(df, 's')
+        df_data = bob.featurize_dataframe(df, 's')
         df_data = df_data.drop(axis=1, labels='s')
 
         # Assert all appropriate labels are present
@@ -360,16 +360,16 @@ class StructureFeaturesTest(PymatgenTest):
         # Assert labels are in the same order as the matrix
         NaN = float("nan")
         correct_matrix = np.asarray([[1.0, NaN, NaN, NaN],
-                                     [0.5, 0.0, 0.5, NaN]])
+                                     [NaN, 0.5, 0.0, 0.5]])
         self.assertArrayAlmostEqual(df_data.as_matrix(), correct_matrix)
 
         # Test to make sure bad_bond_values (bbv) are still changed correctly
         # and check inplace behavior of featurize dataframe
-        bf.bbv = 0.0
-        df_bbv = bf.featurize_dataframe(df, 's')
+        bob.bbv = 0.0
+        df_bbv = bob.featurize_dataframe(df, 's')
         df_bbv = df_bbv.drop(axis=1, labels='s')
         correct_matrix = np.asarray([[1.0, 0.0, 0.0, 0.0],
-                                     [0.5, 0.0, 0.5, 0.0]])
+                                     [0.0, 0.5, 0.0, 0.5]])
         self.assertArrayAlmostEqual(df_bbv.as_matrix(), correct_matrix)
 
 

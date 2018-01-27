@@ -21,6 +21,7 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
+
         Returns:
             updated Dataframe
         """
@@ -59,8 +60,10 @@ class BaseFeaturizer(object):
     def featurize(self, *x):
         """
         Main featurizer function. Only defined in feature subclasses.
+
         Args:
             x: input data to featurize (type depends on featurizer)
+
         Returns:
             list of one or more features
         """
@@ -80,6 +83,7 @@ class BaseFeaturizer(object):
     def citations(self):
         """
         Citation / reference for feature
+
         Returns:
             array - each element should be str citation, ideally in BibTeX
                 format
@@ -90,6 +94,7 @@ class BaseFeaturizer(object):
     def implementors(self):
         """
         List of implementors of the feature
+
         Returns:
             array - each element should either be str with author name (e.g.,
                 "Anubhav Jain") or dict with required key "name" and other
@@ -102,10 +107,12 @@ class BaseFeaturizer(object):
 
 class MultipleFeaturizer(BaseFeaturizer):
     """Class that runs multiple featurizers on the same data
+
     All featurizers must take the same kind of data as input to the featurize function."""
 
     def __init__(self, featurizers):
         """Create a new instance of this featurizer
+
         Args:
             featurizers - [BaseFeaturizer], list of featurizers to run
         """

@@ -1014,7 +1014,7 @@ class EwaldEnergy(BaseFeaturizer):
                 "}"]
 
 
-class BondFractions(BaseFeaturizer):
+class BagofBonds(BaseFeaturizer):
     """
     Compute the number of each kind of bond in a structure, as a fraction of
     the total number of bonds, based on NearestNeighbors.
@@ -1054,15 +1054,15 @@ class BondFractions(BaseFeaturizer):
             CoordinationNumber from a preset.
         """
         if preset == "VoronoiNN":
-            return BondFractions(VoronoiNN())
+            return BagofBonds(VoronoiNN())
         elif preset == "JMolNN":
-            return BondFractions(JMolNN())
+            return BagofBonds(JMolNN())
         elif preset == "MinimumDistanceNN":
-            return BondFractions(MinimumDistanceNN())
+            return BagofBonds(MinimumDistanceNN())
         elif preset == "MinimumOKeeffeNN":
-            return BondFractions(MinimumOKeeffeNN())
+            return BagofBonds(MinimumOKeeffeNN())
         elif preset == "MinimumVIRENN":
-            return BondFractions(MinimumVIRENN())
+            return BagofBonds(MinimumVIRENN())
         else:
             raise RuntimeError('Unknown preset.')
 
@@ -1081,8 +1081,8 @@ class BondFractions(BaseFeaturizer):
 
         # unified_bonds attribute only lives if dataframe is being featurized.
         self.unified_bonds = self.enumerate_all_bonds(df[col_id])
-        df = super(BondFractions, self).featurize_dataframe(df, col_id, *args,
-                                                            **kwargs)
+        df = super(BagofBonds, self).featurize_dataframe(df, col_id, *args,
+                                                         **kwargs)
         delattr(self, 'unified_bonds')
         return df
 
@@ -1199,6 +1199,7 @@ class BondFractions(BaseFeaturizer):
                 "number = {12},"
                 "pages = {2326-2331},"
                 "year = {2015},"
-                "doi = {10.1021/acs.jpclett.5b00831}, note ={PMID: 26113956},"
+                "doi = {10.1021/acs.jpclett.5b00831}, "
+                "note ={PMID: 26113956},"
                 "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
                 "}"]
