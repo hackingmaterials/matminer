@@ -7,6 +7,7 @@ from __future__ import unicode_literals, division
 import unittest
 
 import numpy as np
+import pandas as pd
 
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
@@ -17,7 +18,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, \
     SiteStatsFingerprint, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, EwaldEnergy
+    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, \
+    GlobalSymmetryFeatures, EwaldEnergy, BondFractions
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -32,7 +34,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.diamond_no_oxi = Structure(
             Lattice([[2.189, 0, 1.264], [0.73, 2.064, 1.264],
                      [0, 0, 2.528]]), ["C", "C"], [[2.554, 1.806, 4.423],
-                                                   [0.365, 0.258, 0.632]], validate_proximity=False,
+                                                   [0.365, 0.258, 0.632]],
+            validate_proximity=False,
             to_unit_cell=False, coords_are_cartesian=True,
             site_properties=None)
         self.nacl = Structure(
@@ -148,10 +151,12 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             prdf[('C', 'C')]['distribution'][int(round(1.4 / 0.1))], 0)
         self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(1.5 / 0.1))], 1.32445167622)
+            prdf[('C', 'C')]['distribution'][int(round(1.5 / 0.1))],
+            1.32445167622)
         self.assertAlmostEqual(max(prdf[('C', 'C')]['distances']), 20.0)
         self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(19.9 / 0.1))], 0.07197902)
+            prdf[('C', 'C')]['distribution'][int(round(19.9 / 0.1))],
+            0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
         prdf = PartialRadialDistributionFunction(cutoff=10).featurize(
@@ -159,9 +164,11 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(prdf.values()), 4)
         self.assertAlmostEqual(max(prdf[('Cs', 'Cl')]['distances']), 10.0)
         self.assertAlmostEqual(
-            prdf[('Cs', 'Cl')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
+            prdf[('Cs', 'Cl')]['distribution'][int(round(3.6 / 0.1))],
+            0.477823197)
         self.assertAlmostEqual(
-            prdf[('Cl', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
+            prdf[('Cl', 'Cs')]['distribution'][int(round(3.6 / 0.1))],
+            0.477823197)
         self.assertAlmostEqual(
             prdf[('Cs', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0)
 
@@ -170,7 +177,8 @@ class StructureFeaturesTest(PymatgenTest):
             cutoff=10, bin_size=0.5).featurize(self.ni3al)[0]
         self.assertEqual(len(prdf.values()), 4)
         self.assertAlmostEqual(
-            prdf[('Ni', 'Al')]['distribution'][int(round(2 / 0.5))], 0.125236677)
+            prdf[('Ni', 'Al')]['distribution'][int(round(2 / 0.5))],
+            0.125236677)
         self.assertAlmostEqual(
             prdf[('Al', 'Ni')]['distribution'][int(round(2 / 0.5))], 0.37571003)
         self.assertAlmostEqual(
@@ -324,7 +332,51 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Perform Ewald summation by "hand",
         #  Using the result from GULP
-        self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
+        self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl),
+                                    2)
+
+    def test_bond_fractions(self):
+
+        # Test individual structures with featurize
+        bf = BondFractions.from_preset("MinimumDistanceNN")
+        self.assertArrayEqual(bf.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bf.featurize(self.diamond_no_oxi), [1.0])
+        self.assertArrayEqual(bf.featurize(self.nacl), [1.0, 0.0, 0.0])
+        self.assertArrayEqual(bf.featurize(self.cscl), [1.0, 0.0, 0.0])
+        self.assertArrayEqual(bf.featurize(self.ni3al), [0.5, 0.0, 0.5])
+        bf = BondFractions.from_preset("VoronoiNN")
+        self.assertArrayEqual(bf.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bf.featurize(self.diamond_no_oxi), [1.0])
+        self.assertArrayEqual(bf.featurize(self.nacl), [0.5, 0.25, 0.25])
+        self.assertArrayAlmostEqual(bf.featurize(self.cscl),
+                                    [0.5714, 0.2143, 0.2143], decimal=3)
+        self.assertArrayEqual(bf.featurize(self.ni3al), [0.5, 0.0, 0.5])
+
+        # Test to make sure dataframe behavior is as intended
+        s_list = [self.diamond_no_oxi, self.ni3al]
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df_data = bf.featurize_dataframe(df, 's')
+        df_data = df_data.drop(axis=1, labels='s')
+
+        # Assert all appropriate labels are present
+        correct_labels = ['C-C bond frac.', 'Al-Ni bond frac.',
+                          'Al-Al bond frac.', 'Ni-Ni bond frac.']
+        self.assertListEqual(df_data.columns.values.tolist(), correct_labels)
+
+        # Assert labels are in the same order as the matrix
+        NaN = float("nan")
+        correct_matrix = np.asarray([[1.0, NaN, NaN, NaN],
+                                     [0.5, 0.0, 0.5, NaN]])
+        self.assertArrayAlmostEqual(df_data.as_matrix(), correct_matrix)
+
+        # Test to make sure bad_bond_values (bbv) are still changed correctly
+        # and check inplace behavior of featurize dataframe
+        bf.bbv = 0.0
+        df_bbv = bf.featurize_dataframe(df, 's')
+        df_bbv = df_bbv.drop(axis=1, labels='s')
+        correct_matrix = np.asarray([[1.0, 0.0, 0.0, 0.0],
+                                     [0.5, 0.0, 0.5, 0.0]])
+        self.assertArrayAlmostEqual(df_bbv.as_matrix(), correct_matrix)
 
 
 if __name__ == '__main__':
