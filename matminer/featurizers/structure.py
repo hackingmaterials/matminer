@@ -1158,12 +1158,12 @@ class BagofBonds(BaseFeaturizer):
         # possible.
         if hasattr(self, 'unified_bonds'):
             for b in self.unified_bonds:
-                if b not in self.enumerate_bonds(s):
+                if b not in bond_types:
                     bonds[b] = float("nan") if self.bbv is None else self.bbv
             ordered_bonds = self.unified_bonds
         else:
             self.local_bonds = bond_types
-            ordered_bonds = bond_types
+            ordered_bonds = self.local_bonds
 
         tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
         bond_fracs = {e: bonds[e] / tot_bonds for e in bonds}
