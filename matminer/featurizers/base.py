@@ -8,12 +8,11 @@ from six import string_types
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True):
         """
         Compute features for all entries contained in input dataframe
-
-        Args:
+        
+        Args: 
             df (Pandas dataframe): Dataframe containing input data
             col_id (str or list of str): column label containing objects to
                 featurize. Can be multiple labels if the featurize function
@@ -47,8 +46,7 @@ class BaseFeaturizer(object):
         labels = self.feature_labels()
 
         # Create dataframe with the new features
-        new_cols = dict(
-            zip(labels, [pd.Series(x, index=df.index) for x in zip(*features)]))
+        new_cols = dict(zip(labels, [pd.Series(x, index=df.index) for x in zip(*features)]))
 
         # Update the dataframe
         if inplace:
@@ -72,7 +70,7 @@ class BaseFeaturizer(object):
     def feature_labels(self):
         """
         Generate attribute names
-
+        
         Returns:
             list of strings for attribute labels
         """
