@@ -1189,9 +1189,9 @@ class BagofBonds(BaseFeaturizer):
     def citations(self):
         return ["@article{doi:10.1021/acs.jpclett.5b00831, "
                 "author = {Hansen, Katja and Biegler, "
-                "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor "
-                "and von Lilienfeld, O. Anatole and Müller, Klaus-Robert and "
-                "Tkatchenko, Alexandre}, "
+                "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor"
+                "and von Lilienfeld, O. Anatole and Muller, Klaus-Robert and"
+                "Tkatchenko, Alexandre},"
                 "title = {Machine Learning Predictions of Molecular Properties: "
                 "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
                 "journal = {The Journal of Physical Chemistry Letters},"
