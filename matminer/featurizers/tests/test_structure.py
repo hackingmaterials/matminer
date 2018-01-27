@@ -151,12 +151,10 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             prdf[('C', 'C')]['distribution'][int(round(1.4 / 0.1))], 0)
         self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(1.5 / 0.1))],
-            1.32445167622)
+            prdf[('C', 'C')]['distribution'][int(round(1.5 / 0.1))], 1.32445167622)
         self.assertAlmostEqual(max(prdf[('C', 'C')]['distances']), 20.0)
         self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(19.9 / 0.1))],
-            0.07197902)
+            prdf[('C', 'C')]['distribution'][int(round(19.9 / 0.1))], 0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
         prdf = PartialRadialDistributionFunction(cutoff=10).featurize(
@@ -164,11 +162,9 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(prdf.values()), 4)
         self.assertAlmostEqual(max(prdf[('Cs', 'Cl')]['distances']), 10.0)
         self.assertAlmostEqual(
-            prdf[('Cs', 'Cl')]['distribution'][int(round(3.6 / 0.1))],
-            0.477823197)
+            prdf[('Cs', 'Cl')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
         self.assertAlmostEqual(
-            prdf[('Cl', 'Cs')]['distribution'][int(round(3.6 / 0.1))],
-            0.477823197)
+            prdf[('Cl', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
         self.assertAlmostEqual(
             prdf[('Cs', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0)
 
@@ -177,8 +173,7 @@ class StructureFeaturesTest(PymatgenTest):
             cutoff=10, bin_size=0.5).featurize(self.ni3al)[0]
         self.assertEqual(len(prdf.values()), 4)
         self.assertAlmostEqual(
-            prdf[('Ni', 'Al')]['distribution'][int(round(2 / 0.5))],
-            0.125236677)
+            prdf[('Ni', 'Al')]['distribution'][int(round(2 / 0.5))], 0.125236677)
         self.assertAlmostEqual(
             prdf[('Al', 'Ni')]['distribution'][int(round(2 / 0.5))], 0.37571003)
         self.assertAlmostEqual(
@@ -332,8 +327,7 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Perform Ewald summation by "hand",
         #  Using the result from GULP
-        self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl),
-                                    2)
+        self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
 
     def test_bond_fractions(self):
 
