@@ -1,16 +1,15 @@
-from __future__ import division, unicode_literals
+from __future__ import division
 
 import pandas as pd
 import numpy as np
 from six import string_types
-from multiprocessing import Pool
 
 
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True, n_jobs=1):
+                            inplace=True):
         """
         Compute features for all entries contained in input dataframe
 
@@ -23,10 +22,6 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
-            n_jobs (int): Number of parallel processes to execute when
-                featurizing the dataframe. If None, automatically determines the
-                number of processing cores on the system and sets n_procs to
-                this number.
         Returns:
             updated Dataframe
         """
@@ -35,64 +30,33 @@ class BaseFeaturizer(object):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
+        # Compute the features
+        features = []
+        x_list = df[col_id]
+        for x in x_list.values:
+            try:
+                features.append(self.featurize(*x))
+            except:
+                if ignore_errors:
+                    features.append([float("nan")]
+                                    * len(self.feature_labels()))
+                else:
+                    raise
+
         # Generate the feature labels
         labels = self.feature_labels()
 
-        # Compute the features
-        features = self.featurize_many(df[col_id].values, n_jobs, ignore_errors)
-
         # Create dataframe with the new features
-        res = pd.DataFrame(features, index=df.index, columns=labels)
+        new_cols = dict(
+            zip(labels, [pd.Series(x, index=df.index) for x in zip(*features)]))
 
-        # Update the existing dataframe
+        # Update the dataframe
         if inplace:
-            for k in self.feature_labels():
-                df[k] = res[k]
+            for key, value in new_cols.items():
+                df[key] = value
             return df
         else:
-            return pd.concat([df, res], axis=1)
-
-    def featurize_many(self, entries, n_jobs=1, ignore_errors=False):
-        """
-        Featurize a list of entries.
-
-        If `featurize` takes multiple inputs, supply inputs as a list of tuples.
-
-        Args:
-           entries (list): A list of entries to be featurized
-        Returns:
-           list - features for each entry
-        """
-
-        # Check inputs
-        if not hasattr(entries, '__getitem__'):
-            raise Exception("'entries' must be a list-like object")
-
-        # Special case: Empty lis
-        if len(entries) is 0:
-            return []
-
-        # If the featurize function only has a single arg, zip the inputs
-        if not hasattr(entries[0], '__getitem__'):
-            entries = zip(entries)
-
-        self.ignore_errors = ignore_errors
-
-        # Run the actual featurization
-        if n_jobs == 1:
-            return [self.featurize_wrapper(x) for x in entries]
-        else:
-            with Pool(n_jobs) as p:
-                return p.map(self.featurize_wrapper, entries)
-
-    def featurize_wrapper(self, x):
-        try:
-            return self.featurize(*x)
-        except:
-            if self.ignore_errors:
-                return [float("nan")] * len(self.feature_labels())
-            else:
-                raise
+            return df.assign(**new_cols)
 
     def featurize(self, *x):
         """
