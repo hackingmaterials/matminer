@@ -1160,12 +1160,14 @@ class BondFractions(BaseFeaturizer):
             for b in self.unified_bonds:
                 if b not in self.enumerate_bonds(s):
                     bonds[b] = float("nan") if self.bbv is None else self.bbv
+            ordered_bonds = self.unified_bonds
         else:
             self.local_bonds = bond_types
+            ordered_bonds = bond_types
 
         tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
         bond_fracs = {e: bonds[e] / tot_bonds for e in bonds}
-        return list(bond_fracs.values())
+        return [bond_fracs[b] for b in ordered_bonds]
 
     def feature_labels(self):
         """
