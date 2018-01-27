@@ -4,38 +4,6 @@ import pandas as pd
 import numpy as np
 from six import string_types
 from multiprocessing import Pool, cpu_count
-from functools import partial
-
-
-def featurize_wrapper(x_split, ignore_errors, labels, f_obj):
-    """
-
-    A multiprocessing-oriented wrapper for BaseFeaturizer().featurize
-
-    Args:
-        x_split (ndarray): Array of x vectors to use for featurization
-            by this process
-        ignore_errors (bool): Returns NaN for dataframe rows where the
-            exceptions are thrown if True. If False, exceptions are
-            thrown as normal.
-        labels: The set of featurization labels for the f_obj object.
-        f_obj (BaseFeaturizer): The featurizer instance undergoing
-            featurization.
-    Returns:
-        features (list): The list of features computed based on x_list
-    """
-
-    features = []
-
-    for x in x_split.values:
-        try:
-            features.append(f_obj.featurize(*x))
-        except:
-            if ignore_errors:
-                features.append([float("nan")] * len(labels))
-            else:
-                raise
-    return features
 
 
 class BaseFeaturizer(object):
@@ -63,6 +31,9 @@ class BaseFeaturizer(object):
             updated Dataframe
         """
 
+        # Make n_jobs the number of cores by default
+        n_jobs = n_jobs if not n_jobs else cpu_count()
+
         # If only one column and user provided a string, put it inside a list
         if isinstance(col_id, string_types):
             col_id = [col_id]
@@ -71,11 +42,7 @@ class BaseFeaturizer(object):
         labels = self.feature_labels()
 
         # Compute the features
-        x_list = df[col_id]
-        if n_jobs == 1:
-            features = featurize_wrapper(x_list, ignore_errors, labels, self)
-        else:
-            features = self.featurize_many(x_list, ignore_errors, labels, n_jobs)
+        features = self.featurize_many(df[col_id].values, n_jobs, ignore_errors)
 
         # Create dataframe with the new features
         res_df = pd.DataFrame(features, index=df.index, columns=labels)
@@ -88,34 +55,46 @@ class BaseFeaturizer(object):
         else:
             return pd.concat([df, res_df], axis=1)
 
-    def featurize_many(self, x_list, ignore_errors, labels, n_jobs):
+    def featurize_many(self, entries, n_jobs, ignore_errors=False):
         """
-        Featurize a list in parallel.
+        Featurize a list of entries.
+
+        If `featurize` takes multiple inputs, supply inputs as a list of tuples.
 
         Args:
-            x_list (ndarray/list): The list of x to pass to featurize.
-            ignore_errors (bool): Returns NaN for dataframe rows where
-                exceptions are thrown if True. If False, exceptions
-                are thrown as normal.
-            n_jobs (int/str): Number of parallel processes to execute when
-                featurizing the dataframe. 'auto' automatically determines the
-                number of processing cores on the system and sets n_procs to
-                this number.
-
+           entries (list): A list of entries to be featurized
         Returns:
-            (list) Features computed from input list.
+           list - features for each entry
         """
-        n_jobs = cpu_count() if n_jobs is None else n_jobs
-        pool = Pool(n_jobs)
-        x_split = np.array_split(x_list, n_jobs)
-        featurize = partial(featurize_wrapper,
-                            ignore_errors=ignore_errors,
-                            labels=labels,
-                            f_obj=self)
-        features = [i for j in pool.map(featurize, x_split) for i in j]
-        pool.close()
-        pool.join()
-        return features
+        # Check inputs
+        if not hasattr(entries, '__getitem__'):
+            raise Exception("'entries' must be a list-like object")
+
+        # Special case: Empty lis
+        if len(entries) is 0:
+            return []
+
+        # If the featurize function only has a single arg, zip the inputs
+        if not hasattr(entries[0], '__getitem__'):
+            entries = zip(entries)
+
+        self.ignore_errors = ignore_errors
+
+        # Run the actual featurization
+        if n_jobs == 1:
+            return [self.featurize_wrapper(x) for x in entries]
+        else:
+            with Pool(n_jobs) as p:
+                return p.map(self.featurize_wrapper, entries)
+
+    def featurize_wrapper(self, x):
+        try:
+            return self.featurize(*x)
+        except:
+            if self.ignore_errors:
+                return [float("nan")] * len(self.feature_labels())
+            else:
+                raise
 
     def featurize(self, *x):
         """
