@@ -1187,4 +1187,18 @@ class BondFractions(BaseFeaturizer):
         return ["Alex Dunn"]
 
     def citations(self):
-        return [""]
+        return ["@article{doi:10.1021/acs.jpclett.5b00831, "
+                "author = {Hansen, Katja and Biegler, "
+                "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor "
+                "and von Lilienfeld, O. Anatole and Müller, Klaus-Robert and "
+                "Tkatchenko, Alexandre}, "
+                "title = {Machine Learning Predictions of Molecular Properties: "
+                "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
+                "journal = {The Journal of Physical Chemistry Letters},"
+                "volume = {6},"
+                "number = {12},"
+                "pages = {2326-2331},"
+                "year = {2015},"
+                "doi = {10.1021/acs.jpclett.5b00831}, note ={PMID: 26113956},"
+                "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
+                "}"]
