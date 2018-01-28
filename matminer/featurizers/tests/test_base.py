@@ -63,9 +63,7 @@ class TestBaseClass(PymatgenTest):
         self.multi = MultipleFeatureFeaturizer()
         self.matrix = MatrixFeaturizer()
         self.multiargs = SingleFeaturizerMultiArgs()
-
-        # Disable multiprocessing test for Py 2.x versions
-        self.n_jobs = 1 if sys.version_info[0] < 3 else 2
+        self.n_jobs = 2
 
     @staticmethod
     def make_test_data():
