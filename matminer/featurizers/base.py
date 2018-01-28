@@ -1,5 +1,7 @@
 from __future__ import division, unicode_literals
 
+import sys
+import warnings
 import pandas as pd
 import numpy as np
 from six import string_types
@@ -82,6 +84,10 @@ class BaseFeaturizer(object):
         if n_jobs == 1:
             return [self.featurize_wrapper(x) for x in entries]
         else:
+            if sys.version_info[0] < 3:
+                warnings.warn("Multiprocessing dataframes is not supported in"
+                              "matminer for Python 2.x. Multiprocessing has "
+                              "been disabled.")
             with Pool(n_jobs) as p:
                 return p.map(self.featurize_wrapper, entries)
 
