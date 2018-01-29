@@ -13,7 +13,6 @@ from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
-from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.analysis.local_env import VoronoiNN, JMolNN, \
     MinimumDistanceNN, MinimumOKeeffeNN, MinimumVIRENN
@@ -647,7 +646,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                 counts: number of identical sites for each ofm
         """
         ofms = []
-        vcf = VCF(struct, allow_pathological=True)
+        vnn = VoronoiNN(allow_pathological=True)
         if symm:
             symm_struct = SpacegroupAnalyzer(struct).get_symmetrized_structure()
             indices = [lst[0] for lst in symm_struct.equivalent_indices]
@@ -656,7 +655,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             indices = [i for i in range(len(struct.sites))]
         for index in indices:
             ofms.append(self.get_single_ofm(struct.sites[index], \
-                                            vcf.get_voronoi_polyhedra(index)))
+                                            vnn.get_voronoi_polyhedra(struct, index)))
         if symm:
             return ofms, counts
         return ofms

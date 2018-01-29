@@ -302,7 +302,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(opvals[41], 0, places=7)
         self.assertAlmostEqual(opvals[42], 0.9995, places=7)
         self.assertAlmostEqual(opvals[43], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[44], 0.0005, places=7)
+        self.assertAlmostEqual(opvals[44], 0.0075, places=7)
         for i in range(52, len(opvals)):
             self.assertAlmostEqual(opvals[i], 0, places=2)
 

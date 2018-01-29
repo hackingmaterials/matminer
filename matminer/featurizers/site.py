@@ -20,10 +20,10 @@ import math
 from collections import defaultdict
 
 from matminer.featurizers.base import BaseFeaturizer
-from pymatgen.analysis.structure_analyzer import OrderParameters, \
-    VoronoiAnalyzer, VoronoiCoordFinder
-from pymatgen.analysis.local_env import VoronoiNN, JMolNN, \
-    MinimumDistanceNN, MinimumOKeeffeNN, MinimumVIRENN
+from pymatgen.analysis.structure_analyzer import VoronoiAnalyzer
+from pymatgen.analysis.local_env import LocalStructOrderParas, \
+    VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
+    MinimumVIRENN
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
     import LocalGeometryFinder
@@ -178,7 +178,7 @@ class OPSiteFingerprint(BaseFeaturizer):
             1: ["sgl_bd"],
             2: ["bent180", "bent45", "bent90", "bent135"],
             3: ["tri_plan", "tet", "T"],
-            4: ["sq_plan", "sq", "tet", "see_saw", "tri_pyr"],
+            4: ["sq_plan", "sq", "tet", "see_saw_rect", "tri_pyr"],
             5: ["pent_plan", "sq_pyr", "tri_bipyr"],
             6: ["oct", "pent_pyr"],
             7: ["hex_pyr", "pent_bipyr"],
@@ -199,11 +199,11 @@ class OPSiteFingerprint(BaseFeaturizer):
             self.ops[cn] = []
             for t in t_list:
                 if t[:4] == 'bent':
-                    self.ops[cn].append(OrderParameters(
+                    self.ops[cn].append(LocalStructOrderParas(
                         [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
                                               'IGW_TA': 1.0 / 0.0667}]))
                 else:
-                    self.ops[cn].append(OrderParameters([t]))
+                    self.ops[cn].append(LocalStructOrderParas([t]))
 
     def featurize(self, struct, idx):
         """
@@ -397,7 +397,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 1: ["wt"],
                 2: ["wt", "bent180", "bent45", "bent90", "bent135"],
                 3: ["wt", "tri_plan", "tet", "T"],
-                4: ["wt", "sq_plan", "sq", "tet", "see_saw", "tri_pyr"],
+                4: ["wt", "sq_plan", "sq", "tet", "see_saw_rect", "tri_pyr"],
                 5: ["wt", "pent_plan", "sq_pyr", "tri_bipyr"],
                 6: ["wt", "oct", "pent_pyr"],
                 7: ["wt", "hex_pyr", "pent_bipyr"],
@@ -449,11 +449,11 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                     self.ops[cn].append(t)
 
                 elif t[:4] == 'bent':
-                    self.ops[cn].append(OrderParameters(
+                    self.ops[cn].append(LocalStructOrderParas(
                         [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
                                               'IGW_TA': 1.0 / 0.0667}]))
                 else:
-                    self.ops[cn].append(OrderParameters([t]))
+                    self.ops[cn].append(LocalStructOrderParas([t]))
 
     def featurize(self, struct, idx):
         """
@@ -481,9 +481,9 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 raise ValueError(
                     "No valid targets for site within cation_anion constraint!")
 
-        vcf = VoronoiCoordFinder(struct, cutoff=self.cutoff_radius,
-                                 target=target)
-        n_w = vcf.get_voronoi_polyhedra(idx)
+        vnn = VoronoiNN(cutoff=self.cutoff_radius,
+                        target=target)
+        n_w = vnn.get_voronoi_polyhedra(idx, struct, use_weights=True)
 
         dist_sorted = (sorted(n_w.values(), reverse=True))
 
