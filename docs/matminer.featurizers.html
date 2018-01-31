@@ -1437,6 +1437,76 @@ Args:</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="matminer.featurizers.site.CoordinationNumber">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">CoordinationNumber</code><span class="sig-paren">(</span><em>nn</em>, <em>use_weights=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Coordination number (CN) computed using one of pymatgen’s
+NearNeighbor classes for determination of near neighbors
+contributing to the CN.
+Args:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>nn (NearNeighbor): instance of one of pymatgen’s NearNeighbor</dt>
+<dd>classes.</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="matminer.featurizers.site.CoordinationNumber.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nn</em>, <em>use_weights=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CoordinationNumber.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CoordinationNumber.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CoordinationNumber.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>struct</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get coordintion number of site with given index in input
+structure.
+Args:</p>
+<blockquote>
+<div>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure struct.</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(float): coordination number.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.site.CoordinationNumber.from_preset">
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use one of the standard instances of a given NearNeighbor
+class.
+Args:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>preset (str): preset type (“VoronoiNN”, “JMolNN”,</dt>
+<dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
+or “MinimumVIRENN”).</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>CoordinationNumber from a preset.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CoordinationNumber.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="matminer.featurizers.site.CrystalSiteFingerprint">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">CrystalSiteFingerprint</code><span class="sig-paren">(</span><em>optypes</em>, <em>override_cn1=True</em>, <em>cutoff_radius=8</em>, <em>tol=0.01</em>, <em>cation_anion=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalSiteFingerprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
@@ -1916,6 +1986,122 @@ weights (list of floats): Weights for each value</dd>
 <div class="section" id="module-matminer.featurizers.structure">
 <span id="matminer-featurizers-structure-module"></span><h2>matminer.featurizers.structure module<a class="headerlink" href="#module-matminer.featurizers.structure" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="matminer.featurizers.structure.BagofBonds">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">BagofBonds</code><span class="sig-paren">(</span><em>nn</em>, <em>bbv=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Compute the number of each kind of bond in a structure, as a fraction of
+the total number of bonds, based on NearestNeighbors.
+For example, in a structure with 2 Li-O bonds and 3 Li-P bonds:</p>
+<p>Li-0: 0.4
+Li-P: 0.6</p>
+<p>For dataframes containing structures with various compositions, a unified
+dataframe is returned which has the collection of bond types gathered
+from all structures as columns.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">nn (NearestNeighbors): A Pymatgen nearest neighbors derived object.
+bbv (float): The ‘bad bond values’, values substituted for</p>
+<blockquote class="last">
+<div>structure-bond combinations which can not physically exist, but
+exist in the unified dataframe. For example, if a dataframe contains
+structures of BaLiP and BaTiO3, determines the value to place in
+the Li-P column for the BaTiO3 row; by default, is None, resulting
+in NaN.</div></blockquote>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.structure.BagofBonds.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nn</em>, <em>bbv=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.BagofBonds.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.BagofBonds.enumerate_all_bonds">
+<code class="descname">enumerate_all_bonds</code><span class="sig-paren">(</span><em>structures</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.enumerate_all_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify all the unique, possible bonds types of all structures present,
+and create the ‘unified’ bonds list.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structures (list/ndarray): List of pymatgen Structures</dd>
+<dt>Returns:</dt>
+<dd>A tuple of unique, possible bond types for an entire list of
+structures. This tuple is used to form the unified feature labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.structure.BagofBonds.enumerate_bonds">
+<em class="property">static </em><code class="descname">enumerate_bonds</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.enumerate_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists out all the bond possibilities in a single structure.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>s (Structure): A pymatgen structure</dd>
+<dt>Returns:</dt>
+<dd>A list of bond types in ‘Li-O’ form, where the order of the
+elements in each bond type is alphabetic.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.BagofBonds.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>If an entire dataframe is featurized, returns all unique possible
+bonds gathered across all structures.</p>
+<p>If only .featurize called, returns all bond labels for the last structure
+featurized.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.BagofBonds.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quantify the fractions of each bond type in a structure.</p>
+<p>For collections of structures, bonds types which are not found in a
+particular structure (e.g., Li-P in BaTiO3) are represented as NaN.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>s (Structure): A pymatgen structure object</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.BagofBonds.featurize_dataframe">
+<code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>ignore_errors=False</em>, <em>inplace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute features for all entries contained in input dataframe.
+Necessary for returning the correct unified dataframe.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>df (Pandas dataframe): Dataframe containing input data
+col_id (str or [str]): The dataframe key corresponding to structures</dd>
+<dt>Returns:</dt>
+<dd>(DataFrame) BagofBonds-featurized dataframe</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.structure.BagofBonds.from_preset">
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use one of the standard instances of a given NearNeighbor class.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>preset (str): preset type (“VoronoiNN”, “JMolNN”,
+“MiniumDistanceNN”, “MinimumOKeeffeNN”, or “MinimumVIRENN”).</dd>
+<dt>Returns:</dt>
+<dd>CoordinationNumber from a preset.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.BagofBonds.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="matminer.featurizers.structure.CoulombMatrix">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">CoulombMatrix</code><span class="sig-paren">(</span><em>diag_elems=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CoulombMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
@@ -2193,83 +2379,6 @@ are to be determined.</dd>
 <dt id="matminer.featurizers.structure.MinimumRelativeDistances.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.MinimumRelativeDistances.implementors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="matminer.featurizers.structure.OPStructureFingerprint">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OPStructureFingerprint</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=('mean'</em>, <em>'std_dev'</em>, <em>'minimum'</em>, <em>'maximum')</em>, <em>min_oxi=None</em>, <em>max_oxi=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Calculates all order parameters (OPs) for all sites in a crystal
-structure.
-Args:</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>op_site_fp (OPSiteFingerprint): defines the types of order</dt>
-<dd>parameters to be calculated.</dd>
-<dt>stats ([str]): list of weighted statistics to compute for each feature.</dt>
-<dd>If stats is None, for each order parameter, a list is returned that
-contains the calculated parameter for each site in the structure.
-<a href="#id7"><span class="problematic" id="id8">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</dd>
-<dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
-<dd>zero means metals/cations only)</dd>
-</dl>
-<p>max_oxi (int): maximum site oxidation state for inclusion</p>
-</div></blockquote>
-<dl class="method">
-<dt id="matminer.featurizers.structure.OPStructureFingerprint.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>op_site_fp=None</em>, <em>stats=('mean'</em>, <em>'std_dev'</em>, <em>'minimum'</em>, <em>'maximum')</em>, <em>min_oxi=None</em>, <em>max_oxi=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.OPStructureFingerprint.citations">
-<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.citations" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.OPStructureFingerprint.feature_labels">
-<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.feature_labels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.OPStructureFingerprint.featurize">
-<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate all sites’ local structure order parameters (LSOPs).</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">s: Pymatgen Structure object.</p>
-<dl class="last docutils">
-<dt>Returns:</dt>
-<dd>opvals: (2D array of floats) LSOP values of all sites’
-(1st dimension) order parameters (2nd dimension). 46 order
-parameters are computed per site: q_cn (coordination
-number), q_lin, 35 x q_bent (starting with a target angle
-of 5 degrees and, increasing by 5 degrees, until 175 degrees),
-q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.structure.OPStructureFingerprint.implementors">
-<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="matminer.featurizers.structure.OPStructureFingerprint.n_numerical_modes">
-<em class="property">static </em><code class="descname">n_numerical_modes</code><span class="sig-paren">(</span><em>data_lst</em>, <em>n=2</em>, <em>dl=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OPStructureFingerprint.n_numerical_modes" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Returns the n first modes of a data set that are obtained with</dt>
-<dd>a finite bin size for the underlying frequency distribution.</dd>
-<dt>Args:</dt>
-<dd>data_lst ([float]): data values.
-n (integer): number of most frequent elements to be determined.
-dl (float): bin size of underlying (coarsened) distribution.</dd>
-<dt>Returns:</dt>
-<dd>([float]): first n most frequent entries (or nan if not found).</dd>
-</dl>
-</dd></dl>
 
 </dd></dl>
 
@@ -2616,6 +2725,88 @@ if set to False, the diagonal elements are set to 0</dd>
 <dt id="matminer.featurizers.structure.SineCoulombMatrix.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SineCoulombMatrix.implementors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.structure.SiteStatsFingerprint">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">SiteStatsFingerprint</code><span class="sig-paren">(</span><em>site_featurizer</em>, <em>stats=('mean'</em>, <em>'std_dev'</em>, <em>'minimum'</em>, <em>'maximum')</em>, <em>min_oxi=None</em>, <em>max_oxi=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Calculates all order parameters (OPs) for all sites in a crystal
+structure.
+Args:</p>
+<blockquote>
+<div><p>site_featurizer (BaseFeaturizer): a site-based featurizer
+stats ([str]): list of weighted statistics to compute for each feature.</p>
+<blockquote>
+<div>If stats is None, for each order parameter, a list is returned that
+contains the calculated parameter for each site in the structure.
+<a href="#id7"><span class="problematic" id="id8">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
+<dl class="docutils">
+<dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
+<dd>zero means metals/cations only)</dd>
+</dl>
+<p>max_oxi (int): maximum site oxidation state for inclusion</p>
+</div></blockquote>
+<dl class="method">
+<dt id="matminer.featurizers.structure.SiteStatsFingerprint.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>site_featurizer</em>, <em>stats=('mean'</em>, <em>'std_dev'</em>, <em>'minimum'</em>, <em>'maximum')</em>, <em>min_oxi=None</em>, <em>max_oxi=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.SiteStatsFingerprint.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.citations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.SiteStatsFingerprint.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.SiteStatsFingerprint.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate all sites’ local structure order parameters (LSOPs).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">s: Pymatgen Structure object.</p>
+<dl class="last docutils">
+<dt>Returns:</dt>
+<dd>vals: (2D array of floats) LSOP values of all sites’
+(1st dimension) order parameters (2nd dimension). 46 order
+parameters are computed per site: q_cn (coordination
+number), q_lin, 35 x q_bent (starting with a target angle
+of 5 degrees and, increasing by 5 degrees, until 175 degrees),
+q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.structure.SiteStatsFingerprint.from_preset">
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.SiteStatsFingerprint.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.structure.SiteStatsFingerprint.n_numerical_modes">
+<em class="property">static </em><code class="descname">n_numerical_modes</code><span class="sig-paren">(</span><em>data_lst</em>, <em>n=2</em>, <em>dl=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.n_numerical_modes" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Returns the n first modes of a data set that are obtained with</dt>
+<dd>a finite bin size for the underlying frequency distribution.</dd>
+<dt>Args:</dt>
+<dd>data_lst ([float]): data values.
+n (integer): number of most frequent elements to be determined.
+dl (float): bin size of underlying (coarsened) distribution.</dd>
+<dt>Returns:</dt>
+<dd>([float]): first n most frequent entries (or nan if not found).</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
