@@ -5,6 +5,19 @@
 matminer Changelog
 ==================
 
+**v0.2.2**
+
+.. warning:: Py2 compatibility is officially dropped in this version. Please upgrade to Python 3.x.
+
+* multiprocessing for pandas dataframes (A. Dunn, L. Ward)
+* new CoordinationNumber site featurizer based on NearNeighbor algos (N. Zimmermann)
+* update OP fingerprints for latest pymatgen (N. Zimmermann)
+* OPStructureFingerprint -> SiteStatsFingerprint that takes in any site fingerprint function (A. Jain)
+* Add BondFractions featurizer (A. Dunn)
+* multi-index for pandas dataframes (A. Dunn)
+* cleanup of formatting for citations, implementors, feature_labels to always be list (N. Zimmermann)
+* minor bug fixes, cleanups, slighly improved docs, etc.
+
 **v0.2.1**
 
 * further improvements to test data sets (K. Bystrom)
