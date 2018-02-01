@@ -78,14 +78,14 @@ class BaseFeaturizer(object):
         if not hasattr(entries[0], '__getitem__'):
             entries = zip(entries)
 
-        self.ignore_errors = ignore_errors
+        self.__ignore_errors = ignore_errors
 
         # Run the actual featurization
         if n_jobs == 1:
             return [self.featurize_wrapper(x) for x in entries]
         else:
             if sys.version_info[0] < 3:
-                warnings.warn("Multiprocessing dataframes is not supported in"
+                warnings.warn("Multiprocessing dataframes is not supported in "
                               "matminer for Python 2.x. Multiprocessing has "
                               "been disabled. Please upgrade to Python 3.x to "
                               "enable multiprocessing.")
@@ -98,7 +98,7 @@ class BaseFeaturizer(object):
         try:
             return self.featurize(*x)
         except:
-            if self.ignore_errors:
+            if self.__ignore_errors:
                 return [float("nan")] * len(self.feature_labels())
             else:
                 raise
