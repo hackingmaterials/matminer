@@ -38,6 +38,8 @@ A general workflow and overview of matminer's capabilities is presented below:
 |
 .. image:: _static/Flowchart.png
    :align: center
+   :width: 1000px
+   :alt: Flow chart of matminer features
 |
 |
 

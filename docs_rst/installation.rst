@@ -7,7 +7,7 @@
 Installing matminer
 ===================
 
-Matminer requires Python 3.x (Python 2.x might work for some time, but the underlying pymatgen library is discontinuing Python 2 support in 2018).
+Matminer requires Python 3.x (Python 2.x might work sporadically, but you may get errors for certain features and is **unsupported**. We really recommend you upgrade to Py3.x).
 
 There are a couple of quick and easy ways to install matminer:
 

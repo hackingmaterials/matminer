@@ -9,7 +9,7 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.2.1',
+        version='0.2.2',
         description='matminer is a library that contains tools for data mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
         url='https://github.com/hackingmaterials/matminer',
@@ -17,9 +17,11 @@ if __name__ == "__main__":
         author_email='anubhavster@gmail.com',
         license='modified BSD',
         packages=find_packages(),
-        package_data={'matminer.datasets': ['*.csv']},
+        package_data={'matminer.datasets': ['*.csv'],
+                      'matminer.utils.data_files': ['*.csv', '*.json'],
+                      'matminer.utils.data_files.magpie_elementdata': ['*.table']},
         zip_safe=False,
-        install_requires=['pymatgen>=2017.12.30', 'tqdm>=4.14.0', 'pandas>=0.20.1',
+        install_requires=['pymatgen>=2018.1.29', 'tqdm>=4.14.0', 'pandas>=0.20.1',
                           'pymongo>=3.4.0', 'pint>=0.8.1', 'six>=1.10.0',
                           'citrination-client>=2.1.0', 'plotly>=2.0.12'],
         extras_require={'mpds': ['jmespath>=0.9.3', 'ujson>=1.35', 'httplib2>=0.10.3', 'ase>=3.14.1'],
