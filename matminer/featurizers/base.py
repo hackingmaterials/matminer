@@ -88,6 +88,8 @@ class BaseFeaturizer(object):
                 warnings.warn("Multiprocessing dataframes is not supported in"
                               "matminer for Python 2.x. Multiprocessing has "
                               "been disabled.")
+                return self.featurize_many(entries, n_jobs=1,
+                                           ignore_errors=ignore_errors)
             with Pool(n_jobs) as p:
                 return p.map(self.featurize_wrapper, entries)
 
