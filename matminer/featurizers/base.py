@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import numpy as np
 from six import string_types
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 
 
 class BaseFeaturizer(object):
@@ -66,6 +66,8 @@ class BaseFeaturizer(object):
            list - features for each entry
         """
 
+        self.__ignore_errors = ignore_errors
+
         # Check inputs
         if not hasattr(entries, '__getitem__'):
             raise Exception("'entries' must be a list-like object")
@@ -78,7 +80,8 @@ class BaseFeaturizer(object):
         if not hasattr(entries[0], '__getitem__'):
             entries = zip(entries)
 
-        self.__ignore_errors = ignore_errors
+        # set the number of processes to the number of cores on the system
+        n_jobs = cpu_count() if n_jobs is None else n_jobs
 
         # Run the actual featurization
         if n_jobs == 1:
