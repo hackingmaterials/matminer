@@ -72,12 +72,12 @@ class BaseFeaturizer(object):
         if not hasattr(entries, '__getitem__'):
             raise Exception("'entries' must be a list-like object")
 
-        # Special case: Empty lis
+        # Special case: Empty list
         if len(entries) is 0:
             return []
 
         # If the featurize function only has a single arg, zip the inputs
-        if not hasattr(entries[0], '__getitem__'):
+        if not type(entries[0]) in [tuple, list, np.ndarray]:
             entries = zip(entries)
 
         # set the number of processes to the number of cores on the system
