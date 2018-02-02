@@ -1,3 +1,9 @@
+# coding: utf-8
+
+from __future__ import division, unicode_literals, absolute_import
+import collections
+
+
 def flatten_dict(nested_dict, lead_key=None, unwind_arrays=True):
     """
     Helper function to flatten nested dictionary, recursively
@@ -21,8 +27,7 @@ def flatten_dict(nested_dict, lead_key=None, unwind_arrays=True):
         flat_key = "{}.{}".format(lead_key, key) if lead_key else key
 
         if isinstance(value, dict):
-            flattened.update(flatten_dict(value, flat_key,
-                                                 unwind_arrays))
+            flattened.update(flatten_dict(value, flat_key, unwind_arrays))
         elif isinstance(value, collections.Sequence) and unwind_arrays:
             array_dict = {n: elt for n, elt in enumerate(value)}
             flattened.update(flatten_dict(array_dict, flat_key, unwind_arrays))
