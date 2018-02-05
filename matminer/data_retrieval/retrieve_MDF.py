@@ -12,7 +12,7 @@ class MDFDataRetrieval:
     Materials Data Facility database and convert them
     into a Pandas dataframe.
     
-    Note that invocation with full access to MDF will 
+    Note that invocation with full access to MDF will
     require authentication via https://materialsdatafacility.org/,
     but an anonymous mode is supported, which can be used with
     anonymous=True as a keyword arg.
@@ -82,7 +82,7 @@ class MDFDataRetrieval:
                             "exclude_ranges"]:
             query_value = search_args.get(query_field)
             if query_value:
-                fn = getattr(self.forge, query_field[:-1]) # remove 's' at end
+                fn = getattr(self.forge, query_field[:-1])  # remove 's' at end
                 for field, value in query_value.items():
                     if "ranges" in query_field:
                         fn(field, *value)
@@ -103,7 +103,7 @@ class MDFDataRetrieval:
         """
         
         Args:
-            query (str): String for explicit query 
+            query (str): String for explicit query
             raw (bool): whether or not to return raw (non-dataframe)
                 output, defaults to False
             unwind_arrays (bool): whether or not to unwind arrays in
@@ -121,23 +121,24 @@ class MDFDataRetrieval:
             return self.make_dataframe(results, unwind_arrays=unwind_arrays)
 
 
-    #TODO: could add parallel functionality, but doesn't seem to be too slow
-    #TODO: also might be useful to handle units more intelligently
-    def make_dataframe(self, docs, unwind_arrays=True):
-        """
-        Formats raw docs returned from search into a dataframe
-        
-        Args:
-            docs [{}]: list of documents from forge search
-                or aggregation
 
-        Returns: DataFrame corresponding to formatted docs
+#TODO: could add parallel functionality, but doesn't seem to be too slow
+#TODO: also might be useful to handle units more intelligently
+def make_dataframe(docs, unwind_arrays=True):
+    """
+    Formats raw docs returned from search into a dataframe
+    
+    Args:
+        docs [{}]: list of documents from forge search
+            or aggregation
 
-        """
-        flattened_docs = [flatten_dict(doc, unwind_arrays=unwind_arrays)
-                          for doc in docs]
-        df = pd.DataFrame(flattened_docs)
-        return df
+    Returns: DataFrame corresponding to formatted docs
+
+    """
+    flattened_docs = [flatten_dict(doc, unwind_arrays=unwind_arrays)
+                      for doc in docs]
+    df = pd.DataFrame(flattened_docs)
+    return df
 
 
 
