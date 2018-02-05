@@ -11,6 +11,13 @@ from scipy import stats
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 
 
+# todo: df as attribute, but can still pass x as list or whatever
+# todo: sankey
+# todo: scatter matrix
+# todo: font_scale instead of all options, etc.
+# todo: all of them: if mpid or formula in columns, use as interactive index?
+# todo: xyplot (X), heatmap (X), violin, histogram, barchart, scatter matrix (X), sankey
+
 class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
@@ -471,7 +478,7 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def scatter_matrix(self, dataframe, select_columns=None, index_colname=None, diag_kind='scatter', marker_size=10,
+    def scatter_matrix(self, dataframe, select_columns=None, index_colname=None, diag_kind='histogram', marker_size=10,
                        height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
         """
         Create a scatter matrix plot from dataframes using Plotly.
@@ -502,7 +509,7 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def histogram(self, x, histnorm="probability density", x_start=None, x_end=None, bin_size=1,
+    def histogram(self, x, histnorm="probability density", x_start=None, x_end=None, bin_size=None,
                   color='rgba(70, 130, 180, 1)', bargap=0):
         """
         Create a histogram using Plotly
@@ -534,6 +541,9 @@ class PlotlyFig:
 
         if not x_end:
             x_end = max(x)
+
+        if not bin_size:
+            bin_size = (x_start - x_end)/10.0
 
         # plotly fig does not render correctly if x has shape (_, 1), such as the result of a dataframe.as_matrix()
         # The array must have shape (_,).
@@ -568,3 +578,8 @@ class PlotlyFig:
         data = [barplot]
         fig = dict(data=data, layout=self.layout)
         self._create_plot(fig)
+
+    def sankey(self):
+        pass
+
+
