@@ -95,7 +95,7 @@ class MDFDataRetrieval:
         if raw:
             return results
         else:
-            return self.make_dataframe(results, unwind_arrays=unwind_arrays)
+            return make_dataframe(results, unwind_arrays=unwind_arrays)
 
 
     def search_by_query(self, query, unwind_arrays=True,
@@ -118,7 +118,7 @@ class MDFDataRetrieval:
         if raw:
             return results
         else:
-            return self.make_dataframe(results, unwind_arrays=unwind_arrays)
+            return make_dataframe(results, unwind_arrays=unwind_arrays)
 
 
 

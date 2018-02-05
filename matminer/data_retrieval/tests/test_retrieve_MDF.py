@@ -2,7 +2,8 @@
 
 from __future__ import division, unicode_literals, absolute_import
 import unittest
-from matminer.data_retrieval.retrieve_MDF import MDFDataRetrieval
+from matminer.data_retrieval.retrieve_MDF import MDFDataRetrieval, \
+    make_dataframe
 import pandas as pd
 
 pd.set_option('display.width', 1000)
@@ -44,7 +45,7 @@ class MDFDataRetrievalTest(unittest.TestCase):
                 "oqmd": {"band_gap": 0.5, "total_energy": 1.5}},
                {"mdf": {"elements": ["Ag", "Be"]},
                 "oqmd": {"band_gap": 0.5, "total_energy": 1.5}}]
-        df = self.mdf_dr.make_dataframe(raw, )
+        df = make_dataframe(raw, )
         self.assertEqual(df['oqmd.band_gap'][0], 0.5)
 
 
