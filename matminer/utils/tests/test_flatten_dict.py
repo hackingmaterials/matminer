@@ -13,6 +13,10 @@ class FlattenDictTest(unittest.TestCase):
         self.assertEqual(flattened["a.b"], 1)
         self.assertEqual(flattened["a.c"], 2)
 
+        deep = {"a": {"b": {"c": {"d": 1}}}}
+        deep_flat = flatten_dict(deep)
+        self.assertEqual(deep_flat['a.b.c.d'], 1)
+
         # test array functionality
         test2 = {"a": {"b": (0, 1, 2), "c": 2}}
         flattened = flatten_dict(test2)
