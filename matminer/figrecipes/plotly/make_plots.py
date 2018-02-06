@@ -484,32 +484,39 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def scatter_matrix(self, df, index_col=None, marker_size=None,
-                       height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
+    def scatter_matrix(self, df, index_col=None, marker=None,
+                       height=800, width=1000):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
             df (pandas.DataFrame): scatter matrix plotted for all columns
             index_col: (str) name of the index column used for colorscale
-            marker_size (float): if set, it will override the automatic size
+            marker (dict): if size is set, it will override the automatic size
             height: (int/float) sets the height of the chart
             width: (int/float) sets the width of the chart
-            marker_outline_width: (int) thickness of marker outline (currently affects the outline of histograms too
-                when "diag_kind" = 'histogram')
-            marker_outline_color: (str/array) color of marker outline - accepts similar formats as other color variables
-
         Returns: a Plotly scatter matrix plot
 
+        # Example for more control over markers:
+        from matminer.figrecipes.plotly.make_plots import PlotlyFig
+        from matminer.datasets.dataframe_loader import load_elastic_tensor
+        df = load_elastic_tensor()
+        pf = PlotlyFig()
+        pf.scatter_matrix(df[['volume', 'G_VRH', 'K_VRH']],
+                  marker={'symbol': 'diamond', 'size': 8,
+                          'line': {'width': 1, 'color': 'black'}})
         """
-        marker_size = marker_size or 15.0/len(df.columns)**0.5 * self.marker_scale
+        marker = marker or {}
+        nplots = len(df.columns) - int(index_col is not None)
+        marker_size = marker.get('size') or 15.0/len(df.columns)**0.5 * self.marker_scale
         fig = FF.create_scatterplotmatrix(df, index=index_col, diag='histogram',
                         size=marker_size, height=height, width=width)
 
-        # Add outline to markers
-        for trace in fig['data']:
-            trace['marker']['line'] = dict(width=marker_outline_width, color=marker_outline_color)
-
+        # update each plot; we don't update the histograms:
+        for nplot in range(nplots**2):
+            if nplot % (nplots+1) != 0:
+                fig['data'][nplot].update(marker=marker)
         self._create_plot(fig)
+
 
     def histogram(self, x, histnorm="probability density", x_start=None, x_end=None, bin_size=None,
                   color='rgba(70, 130, 180, 1)', bargap=0):
