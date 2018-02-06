@@ -60,7 +60,7 @@ class MDFDataRetrieval:
                 output, defaults to False
             unwind_arrays (bool): whether or not to unwind arrays in
                 flattening docs for dataframe
- 
+
         Returns:
             DataFrame corresponding to all documents from aggregated query
         """
