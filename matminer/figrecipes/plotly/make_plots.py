@@ -484,8 +484,8 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def scatter_matrix(self, df, index_col=None, marker=None,
-                       height=800, width=1000):
+    def scatter_matrix(self, df, index_col=None, marker=None, text=None,
+                       height=800, width=1000, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -509,12 +509,13 @@ class PlotlyFig:
         nplots = len(df.columns) - int(index_col is not None)
         marker_size = marker.get('size') or 15.0/len(df.columns)**0.5 * self.marker_scale
         fig = FF.create_scatterplotmatrix(df, index=index_col, diag='histogram',
-                        size=marker_size, height=height, width=width)
+                        size=marker_size, height=height, width=width, **kwargs)
 
         # update each plot; we don't update the histograms:
-        for nplot in range(nplots**2):
-            if nplot % (nplots+1) != 0:
-                fig['data'][nplot].update(marker=marker)
+        for iplot in range(nplots**2):
+            fig['data'][iplot].update(hoverinfo='x+y+text')
+            if iplot % (nplots+1) != 0:
+                fig['data'][iplot].update(marker=marker, text=text)
         self._create_plot(fig)
 
 
