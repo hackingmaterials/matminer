@@ -479,15 +479,14 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def scatter_matrix(self, df, index_colname=None, diag_kind='histogram', marker_size=10,
+    def scatter_matrix(self, df, index_col=None, diag_kind='histogram', marker_size=10,
                        height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
         """
         Create a scatter matrix plot from dataframes using Plotly.
 
         Args:
             df (pandas.DataFrame): scatter matrix plotted for all columns
-            select_columns: (list) names/headers of columns to plot from the dataframe
-            index_colname: (str) name of the index column in data array
+            index_col: (str) name of the index column used for colorscale
             diag_kind: (str) sets the chart type for the main diagonal plots (default='scatter')
                 Choose from 'scatter'/'box'/'histogram'
             marker_size: (float) sets the marker size (in px)
@@ -500,7 +499,7 @@ class PlotlyFig:
         Returns: a Plotly scatter matrix plot
 
         """
-        fig = FF.create_scatterplotmatrix(df, index=index_colname, diag=diag_kind, size=marker_size,
+        fig = FF.create_scatterplotmatrix(df, index=index_col, diag=diag_kind, size=marker_size,
                                           height=height, width=width)
 
         # Add outline to markers
