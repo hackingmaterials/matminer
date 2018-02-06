@@ -478,13 +478,13 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def scatter_matrix(self, dataframe, select_columns=None, index_colname=None, diag_kind='histogram', marker_size=10,
+    def scatter_matrix(self, df, index_colname=None, diag_kind='histogram', marker_size=10,
                        height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
         """
         Create a scatter matrix plot from dataframes using Plotly.
 
         Args:
-            dataframe: (array) array of the data with column headers
+            df (pandas.DataFrame): scatter matrix plotted for all columns
             select_columns: (list) names/headers of columns to plot from the dataframe
             index_colname: (str) name of the index column in data array
             diag_kind: (str) sets the chart type for the main diagonal plots (default='scatter')
@@ -499,7 +499,6 @@ class PlotlyFig:
         Returns: a Plotly scatter matrix plot
 
         """
-        df = dataframe[select_columns] if select_columns else dataframe
         fig = FF.create_scatterplotmatrix(df, index=index_colname, diag=diag_kind, size=marker_size,
                                           height=height, width=width)
 
