@@ -568,12 +568,22 @@ class CrystalSiteFingerprint(BaseFeaturizer):
 
 class VoronoiIndex(BaseFeaturizer):
     """
-    The Voronoi indices n_i and the fractional Voronoi indices n_i/sum(n_i) that
-    reflects the i-fold symmetry in the local sites.
-    n_i denotes the number of the i-edged faces, and i is in the range of 3-10 here.
+    Calculate two sets of features based on Voronoi index around each site:
+    Voronoi indices [n_i], where n_i denotes the number of i-edged faces,
+    and i is in the range of 3-10 here.
     e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...]
          for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...]
          for icosahedra, the Voronoi indices are [0,0,12,0,...]
+
+    Fractional Voronoi indices, or say i-fold symmetry indices, computed as
+    n_i/sum(n_i), to reflects the strength of i-fold symmetry in local sites.
+    e.g. for bcc lattice, the i-fold symmetry factors are [0,6/14,0,8/14,0,0...]
+            indicating both 4-fold and a stronger 6-fold symmetry is present
+         for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
+            indicating only 4-fold symmetry is present
+         for icosahedra, the Voronoi indices are [0,0,1,0,...],
+            indicating only 5-fold symmetry is present
+
     """
 
     def __init__(self, cutoff=6.0):
@@ -591,8 +601,8 @@ class VoronoiIndex(BaseFeaturizer):
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
         Returns:
-            list including Voronoi indices, sum of Voronoi indices, and
-            fractional Voronoi indices
+            list of Voronoi indices and sum of Voronoi indices
+            list of fractional Voronoi indices
         """
 
         voro_index_result = []
