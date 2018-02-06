@@ -16,7 +16,7 @@ def flatten_dict(nested_dict, lead_key=None, unwind_arrays=True):
             with numerically indexed dot notation, defaults to True
         lead_key (str): string to append to front of all keys,
             used primarily for recursion
-            
+
     Returns:
         non-nested dictionary
     """

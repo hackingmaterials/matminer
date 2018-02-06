@@ -19,7 +19,7 @@ class MDFDataRetrieval:
     Examples:
         >>>mdf_dr = MDFDataRetrieval(anonymous=True)
         >>>results = mdf_dr.search(elements=["Ag", "Be"], sources=["oqmd"])
-        
+ 
         >>>results = mdf_dr.search(sources=['oqmd'],
         >>>               match_ranges={"oqmd.band_gap.value": [4.0, "*"]})
     """
@@ -38,7 +38,7 @@ class MDFDataRetrieval:
                match_ranges=None, exclude_ranges=None, raw=False,
                unwind_arrays=True):
         """
-        
+
         Args:
             sources ([str]): source names to include, e. g. ["oqmd"]
             elements ([str]): elements to include, e. g. ["Ag", "Si"]
@@ -60,7 +60,7 @@ class MDFDataRetrieval:
                 output, defaults to False
             unwind_arrays (bool): whether or not to unwind arrays in
                 flattening docs for dataframe
-                
+   
         Returns:
             DataFrame corresponding to all documents from aggregated query
         """
@@ -100,7 +100,7 @@ class MDFDataRetrieval:
     def search_by_query(self, query, unwind_arrays=True,
                         raw=False, **kwargs):
         """
-        
+
         Args:
             query (str): String for explicit query
             raw (bool): whether or not to return raw (non-dataframe)
@@ -126,7 +126,7 @@ class MDFDataRetrieval:
 def make_dataframe(docs, unwind_arrays=True):
     """
     Formats raw docs returned from search into a dataframe
-    
+
     Args:
         docs [{}]: list of documents from forge search
             or aggregation
