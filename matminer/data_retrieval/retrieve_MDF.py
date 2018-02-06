@@ -19,7 +19,7 @@ class MDFDataRetrieval:
     Examples:
         >>>mdf_dr = MDFDataRetrieval(anonymous=True)
         >>>results = mdf_dr.search(elements=["Ag", "Be"], sources=["oqmd"])
- 
+
         >>>results = mdf_dr.search(sources=['oqmd'],
         >>>               match_ranges={"oqmd.band_gap.value": [4.0, "*"]})
     """
