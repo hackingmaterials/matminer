@@ -23,7 +23,7 @@ class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
                  fontfamily=None, height=800, width=1000, scale=None, margin_top=150, margin_bottom=80, margin_left=80,
-                 margin_right=80, pad=0):
+                 margin_right=80, pad=0, marker_scale=1.0):
         """
         Class for making Plotly plots
 
@@ -62,6 +62,7 @@ class PlotlyFig:
             margin_left: (float) Sets the left margin (in px)
             margin_right: (float) Sets the right margin (in px)
             pad: (float) Sets the amount of padding (in px) between the plotting area and the axis lines
+            marker_scale (float): scale the size of all markers w.r.t. defaults
 
         Returns: None
 
@@ -81,6 +82,10 @@ class PlotlyFig:
         self.height = height
         self.width = width
         self.scale = scale
+
+        # AF: the following is what I added
+        self.marker_scale = marker_scale
+
 
         # Make default layout
         self.layout = dict(
@@ -479,17 +484,14 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def scatter_matrix(self, df, index_col=None, diag_kind='histogram', marker_size=10,
+    def scatter_matrix(self, df, index_col=None, marker_size=None,
                        height=800, width=1000, marker_outline_width=0, marker_outline_color='black'):
         """
-        Create a scatter matrix plot from dataframes using Plotly.
-
+        Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
             df (pandas.DataFrame): scatter matrix plotted for all columns
             index_col: (str) name of the index column used for colorscale
-            diag_kind: (str) sets the chart type for the main diagonal plots (default='scatter')
-                Choose from 'scatter'/'box'/'histogram'
-            marker_size: (float) sets the marker size (in px)
+            marker_size (float): if set, it will override the automatic size
             height: (int/float) sets the height of the chart
             width: (int/float) sets the width of the chart
             marker_outline_width: (int) thickness of marker outline (currently affects the outline of histograms too
@@ -499,8 +501,9 @@ class PlotlyFig:
         Returns: a Plotly scatter matrix plot
 
         """
-        fig = FF.create_scatterplotmatrix(df, index=index_col, diag=diag_kind, size=marker_size,
-                                          height=height, width=width)
+        marker_size = marker_size or 15.0/len(df.columns)**0.5 * self.marker_scale
+        fig = FF.create_scatterplotmatrix(df, index=index_col, diag='histogram',
+                        size=marker_size, height=height, width=width)
 
         # Add outline to markers
         for trace in fig['data']:
