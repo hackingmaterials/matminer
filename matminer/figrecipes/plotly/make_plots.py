@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 import plotly
 import plotly.graph_objs as go
-from plotly.tools import FigureFactory as FF
+# from plotly.tools import FigureFactory as FF
+import plotly.figure_factory as FF
 from scipy import stats
 
 __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
