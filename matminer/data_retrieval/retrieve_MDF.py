@@ -10,13 +10,12 @@ class MDFDataRetrieval:
     """
     MDFDataRetrieval is used to retrieve data from the
     Materials Data Facility database and convert them
-    into a Pandas dataframe.
-    
-    Note that invocation with full access to MDF will
-    require authentication via https://materialsdatafacility.org/,
-    but an anonymous mode is supported, which can be used with
+    into a Pandas dataframe.  Note that invocation with
+    full access to MDF will require authentication via
+    https://materialsdatafacility.org/, but an anonymous
+    mode is supported, which can be used with
     anonymous=True as a keyword arg.
-    
+
     Examples:
         >>>mdf_dr = MDFDataRetrieval(anonymous=True)
         >>>results = mdf_dr.search(elements=["Ag", "Be"], sources=["oqmd"])

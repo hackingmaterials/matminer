@@ -9,7 +9,7 @@ def flatten_dict(nested_dict, lead_key=None, unwind_arrays=True):
     walks through nested dictionary to get keys corresponding
     to dot-notation keys, e. g. converts
     {"a": {"b": 1, "c": 2}} to {"a.b": 1, "a.c": 2}
-    
+
     Args:
         nested_dict ({}): nested dictionary to flatten
         unwind_arrays (bool): whether to flatten lists/tuples
