@@ -602,7 +602,7 @@ class VoronoiIndex(BaseFeaturizer):
             idx (int): index of target site in structure.
         Returns:
             list of Voronoi indices and sum of Voronoi indices
-            list of fractional Voronoi indices
+            list of fractional Voronoi indices or say i-fold symmetry indices
         """
 
         voro_index_result = []
