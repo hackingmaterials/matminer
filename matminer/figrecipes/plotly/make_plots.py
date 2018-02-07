@@ -163,6 +163,19 @@ class PlotlyFig:
 
     def xy_plot_simple(self, xy_tuples, markers=None, lines=None,
                        mode='markers', texts=None):
+        """
+        Make an XY scatter plot, either using arrays of values, or a dataframe.
+        Args:
+            xy_tuples (tuple or [tuple]): x & y columns of scatter plots
+                with possibly different lengths are extracted from this arg
+            markers (dict or [dict]): gives the ability to fine tune marker
+                of each scatter plot individually if list of dicts passed
+            lines (dict or [dict]: similar to markers though only if mode=='lines'
+            mode (str): trace style; can be 'markers'/'lines'/'lines+markers'
+            texts (list or [list]): to individually set annotation for scatter
+                point either the same for all traces or can be set for each
+        Returns (XY scatter plot): with one or multiple traces
+        """
         if not isinstance(xy_tuples, list):
             xy_tuples = [xy_tuples]
         if not isinstance(texts, list):
@@ -170,6 +183,8 @@ class PlotlyFig:
         markers = markers or [{'symbol': 'circle', 'size': 10*self.marker_scale
                     ,'line': {'width': 1}}]*len(xy_tuples)
         lines = lines or [{'dash': 'solid', 'width': 2}]*len(xy_tuples)
+        for var in [texts, markers, lines]:
+            assert len(var) == len(xy_tuples)
         traces = []
         for i, xy_tup in enumerate(xy_tuples):
             traces.append(go.Scatter(x=xy_tup[0], y=xy_tup[1], mode=mode,
