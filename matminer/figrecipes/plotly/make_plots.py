@@ -17,7 +17,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # todo: scatter matrix
 # todo: font_scale instead of all options, etc.
 # todo: all of them: if mpid or formula in columns, use as interactive index?
-# todo: xyplot (X), heatmap (X), violin, histogram, barchart, scatter matrix (X), sankey
+# todo: xyplot (X), heatmap (X), histogram, barchart, scatter matrix (X), sankey
 
 class PlotlyFig:
     def __init__(self, df=None, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
@@ -455,17 +455,16 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def violin_plot(self, data=None, cols=None, group_col=None, groups=None, title=None, colors=None,
-                    use_colorscale=False):
+    def violin_plot(self, data=None, cols=None, group_col=None, groups=None, title=None, colors=None, use_colorscale=False):
         """
         Create a violin plot using Plotly.
 
         Args:
             data: (DataFrame or list) A dataframe containing at least one numerical column. Also accepts lists of numerical values. If None, uses the dataframe passed into the constructor.
-            cols: ([str]) The labels for the columns to be included in the plot.
-            group_col: (str) applicable if grouping data by a variable. 'group_header' must be set to the name of the
-                grouping variable
-            title: (str) the title of the violin plot
+            cols: ([str]) The labels for the columns of the dataframe to be included in the plot. Not used if data is passed in as list.
+            group_col: (str) Name of the column containing the group for each row, if it exists. Used only if there is one entry in cols.
+            groups: ([str]): All group names to be included in the violin plot. Used only if there is one entry in cols.
+            title: (str) Title of the violin plot
             colors: (str/tuple/list/dict) either a plotly scale name (Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu,
                 Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot, Blackbody, Earth, Electric, Viridis), an rgb or hex
                 color, a color tuple, a list of colors or a dictionary. An rgb color is of the form 'rgb(x, y, z)'
@@ -476,8 +475,7 @@ class PlotlyFig:
             use_colorscale: (bool) Only applicable if grouping by another variable. Will implement a colorscale based
                 on the first 2 colors of param colors. This means colors must be a list with at least 2 colors in it
                 (Plotly colorscales are accepted since they map to a list of two rgb colors)
-            groups: (list) list of group names (strings). This field is used when the same colorscale is required to be
-                used for all violins.
+
 
         Returns: a Plotly violin plot
 
