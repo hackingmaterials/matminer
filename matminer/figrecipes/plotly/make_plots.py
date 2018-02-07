@@ -20,7 +20,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # todo: xyplot (X), heatmap (X), violin, histogram, barchart, scatter matrix (X), sankey
 
 class PlotlyFig:
-    def __init__(self, df, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
+    def __init__(self, df=None, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
                  fontfamily=None, height=800, width=1000, scale=None, margins = 100, pad=0, marker_scale=1.0, x_type='linear', y_type='linear', hoverinfo='x+y+text'):
         """
@@ -166,6 +166,8 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=filename,
                     height=self.height, width=self.width, scale=self.scale)
         self.plot_counter += 1
+
+
 
     def xy_plot_simple(self, xy_tuples, markers=None, lines=None,
                        mode='markers', texts=None):
@@ -452,16 +454,14 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def violin_plot(self, data, data_col=None, group_col=None, title=None, height=800, width=1000, colors=None,
+    def violin_plot(self, data=None, cols=None, group_col=None, title=None, height=800, width=1000, colors=None,
                     use_colorscale=False, groups=None):
         """
         Create a violin plot using Plotly.
 
         Args:
-            data: (list/array) accepts either a list of numerical values, a list of dictionaries all with identical keys
-                and at least one column of numeric values, or a pandas dataframe with at least one column of numbers
-            data_col: (str) the header of the data column to be used from an inputted pandas dataframe. Not applicable
-                if 'data' is a list of numeric values
+            data: (DataFrame or list) A dataframe containing at least one numerical column. Also accepts lists of numerical values. If None, uses the dataframe passed into the constructor.
+            cols: ([str]) The labels for the columns to be included in the plot.
             group_col: (str) applicable if grouping data by a variable. 'group_header' must be set to the name of the
                 grouping variable
             title: (str) the title of the violin plot
@@ -483,32 +483,53 @@ class PlotlyFig:
         Returns: a Plotly violin plot
 
         """
-        if groups and isinstance(data, pd.DataFrame):
+        if data is None:
+            if cols is None or self.df is None:
+                raise ValueError("Violin plot requires either dataframe labels and a dataframe or a list of numerical values.")
+            data = self.df
+
+        if isinstance(data, pd.DataFrame):
+            if groups is None:
+                if group_col is None:
+                    grouped = pd.DataFrame({'data': [], 'group': []})
+
+                    for col in cols:
+                        d = data[col].tolist()
+                        temp_df = pd.DataFrame({'data': d, 'group': [col] * len(d)})
+                        grouped = grouped.append(temp_df)
+                    data = grouped
+                    group_col = 'group'
+                    groups = cols
+                    cols = ['data']
+                else:
+                    groups = data[group_col].unique()
+            else:
+                if group_col is None:
+                    raise ValueError("Please specify group_col, the label of the column containing the groups for each row.")
+
             use_colorscale = True
             group_stats = {}
-            groupby_data = data.groupby([group_col])
 
-            for group in groups:
-                data_from_group = groupby_data.get_group(group)[data_col]
-                stat = np.median(data_from_group)
-                group_stats[group] = stat
+            for g in groups:
+                group_data = data.loc[data[group_col] == g]
+                group_stats[g] = np.median(group_data[cols])
 
-        else:
-            group_stats = None
-
-        # Filter out groups from dataframe that have only 1 row.
-        if isinstance(data, pd.DataFrame):
+            # Filter out groups from dataframe that have only 1 row.
             group_value_counts = data[group_col].value_counts().to_dict()
 
             for j in group_value_counts:
                 if group_value_counts[j] == 1:
                     data = data[data[group_col] != j]
-                    warnings.warn('Omitting rows with group = ' + str(
-                        j) + ' which have only one row in the dataframe.')
+                    warnings.warn('Omitting rows with group = {} which have only one row in the dataframe.'.format(j))
+        else:
 
-        fig = FF.create_violin(data=data, data_header=data_col, group_header=group_col, title=title,
-                               height=height,
-                               width=width, colors=colors, use_colorscale=use_colorscale,
+            data = pd.DataFrame({'data': np.asarray(data)})
+            cols = ['data']
+            group_col = None
+            group_stats = None
+
+        fig = FF.create_violin(data=data, data_header=cols[0], group_header=group_col, title=title,
+                               height=height, width=width, colors=colors, use_colorscale=use_colorscale,
                                group_stats=group_stats)
 
         # Cannot add x-axis title as the above object populates it with group names.
