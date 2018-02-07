@@ -20,14 +20,14 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # todo: xyplot (X), heatmap (X), violin, histogram, barchart, scatter matrix (X), sankey
 
 class PlotlyFig:
-    def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
+    def __init__(self, df, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
-                 fontfamily=None, height=800, width=1000, scale=None, margin_top=150, margin_bottom=50, margin_left=50,
-                 margin_right=50, pad=0, marker_scale=1.0, x_type='linear', y_type='linear', hoverinfo='x+y+text'):
+                 fontfamily=None, height=800, width=1000, scale=None, margins = 100, pad=0, marker_scale=1.0, x_type='linear', y_type='linear', hoverinfo='x+y+text'):
         """
         Class for making Plotly plots
 
         Args:
+            df (DataFrame): A pandas dataframe object which can be used to generate several plots.
             plot_title: (str) title of plot
             x_title: (str) title of x-axis
             y_title: (str) title of y-axis
@@ -57,10 +57,8 @@ class PlotlyFig:
             width: (float) output width (in pixels)
             scale: (float) Increase the resolution of the image by `scale` amount, eg: 3. Only valid for PNG and
                 JPEG images.
-            margin_top: (float) Sets the top margin (in px)
-            margin_bottom: (float) Sets the bottom margin (in px)
-            margin_left: (float) Sets the left margin (in px)
-            margin_right: (float) Sets the right margin (in px)
+            margins (float or [float]): Specify the margin (in px) with a list [top, bottom, right, left], or a
+                number which will set all margins.
             pad: (float) Sets the amount of padding (in px) between the plotting area and the axis lines
             marker_scale (float): scale the size of all markers w.r.t. defaults
             x_type: (str) Sets the x axis scaling type. Select from 'linear', 'log', 'date', 'category'.
@@ -73,6 +71,7 @@ class PlotlyFig:
         Returns: None
 
         """
+        self.df = df
         self.title = plot_title
         self.x_title = x_title
         self.y_title = y_title
@@ -88,8 +87,15 @@ class PlotlyFig:
         self.height = height
         self.width = width
         self.scale = scale
-        self.margins = dict(t=margin_top, b=margin_bottom+self.ticksize+self.textsize,
-                            l=margin_left+self.ticksize+self.textsize, r=margin_right, pad=pad)
+
+        if not isinstance(margins, (list, tuple, np.ndarray)):
+            margins = [margins] * 4
+
+        self.margins = dict(t=margins[0],
+                            b=margins[1] + self.ticksize + self.textsize,
+                            r=margins[2],
+                            l=margins[3] + self.ticksize + self.textsize,
+                            pad=pad)
 
         # AF: the following is what I added
         self.marker_scale = marker_scale
