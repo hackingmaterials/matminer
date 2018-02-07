@@ -614,12 +614,12 @@ class VoronoiFingerprint(BaseFeaturizer):
         """
         Args:
             cutoff (float): cutoff distance in determining the potential
-                  neighbors for Voronoi tessellation analysis
+                  neighbors for Voronoi tessellation analysis.
             use_weights(bool): whether to use weights to derive weighted
-                  i-fold symmetry indices
-            stats_vol (list of str): volume statistics types
-            stats_area (list of str): area statistics types
-            stats_dist (list of str): neighboring distance statistics types
+                  i-fold symmetry indices.
+            stats_vol (list of str): volume statistics types.
+            stats_area (list of str): area statistics types.
+            stats_dist (list of str): neighboring distance statistics types.
         """
 
         self.cutoff = cutoff
@@ -633,15 +633,16 @@ class VoronoiFingerprint(BaseFeaturizer):
 
     def vol_tetra(self, vt1, vt2, vt3, vt4):
         """
-        Calculate the volume of a tetrahedron, given vertices a,b,c and d
+        Calculate the volume of a tetrahedron, given the four vertices of vt1,
+        vt2, vt3 and vt4
         Args:
-            vt1: coordinates of vertex 1
-            vt2: coordinates of vertex 2
-            vt3: coordinates of vertex 3
-            vt4: coordinates of vertex 4
+            vt1: coordinates of vertex 1.
+            vt2: coordinates of vertex 2.
+            vt3: coordinates of vertex 3.
+            vt4: coordinates of vertex 4.
 
         Returns:
-            volume of the tetrahedron
+            volume of the tetrahedron.
         """
 
         vol_tetra = np.abs(np.dot((vt1 - vt4),
@@ -655,14 +656,14 @@ class VoronoiFingerprint(BaseFeaturizer):
             idx (int): index of target site in structure.
 
         Returns:
-            list of Voronoi indices
-            list of i-fold symmetry indices
-            list of weighted i-fold symmetry indices, if use_weights=True
-            Voronoi volume
-            list of Voronoi volume statistics
-            Voronoi area
-            list of Voronoi area statistics
-            list of neighboring distance statistics
+            list of Voronoi indices.
+            list of i-fold symmetry indices.
+            list of weighted i-fold symmetry indices, if use_weights=True.
+            Voronoi volume.
+            list of Voronoi volume statistics.
+            Voronoi area.
+            list of Voronoi area statistics.
+            list of neighboring distance statistics.
         """
 
         n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
