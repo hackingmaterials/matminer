@@ -20,10 +20,10 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # todo: xyplot (X), heatmap (X), violin, histogram, barchart, scatter matrix (X), sankey
 
 class PlotlyFig:
-    def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
+    def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
                  fontfamily=None, height=800, width=1000, scale=None, margin_top=150, margin_bottom=50, margin_left=50,
-                 margin_right=50, pad=0, marker_scale=1.0):
+                 margin_right=50, pad=0, marker_scale=1.0, x_type='linear', y_type='linear'):
         """
         Class for making Plotly plots
 
@@ -87,16 +87,16 @@ class PlotlyFig:
 
         # AF: the following is what I added
         self.marker_scale = marker_scale
-
+        self.plot_counter = 1
 
         # Make default layout
         self.layout = dict(
             title=self.title,
             titlefont=dict(size=self.textsize, family=self.fontfamily),
-            xaxis=dict(title=self.x_title,
+            xaxis=dict(title=self.x_title, type=x_type,
                        titlefont=dict(size=self.textsize, family=self.fontfamily),
                        tickfont=dict(size=self.ticksize, family=self.fontfamily)),
-            yaxis=dict(title=self.y_title,
+            yaxis=dict(title=self.y_title, type=y_type,
                        titlefont=dict(size=self.textsize, family=self.fontfamily),
                        tickfont=dict(size=self.ticksize, family=self.fontfamily)),
             hovermode=self.hovermode,
@@ -130,27 +130,40 @@ class PlotlyFig:
             fig: (dictionary) contains data and layout information
 
         """
+        if self.filename == 'auto':
+            filename = 'auto_{}'.format(self.plot_counter)
+        else:
+            filename = self.filename
         if self.plot_mode == 'offline':
-            if self.filename:
-                plotly.offline.plot(fig, filename=self.filename, auto_open=self.show_offline_plot)
-            else:
-                plotly.offline.plot(fig, auto_open=self.show_offline_plot)
+            if not filename.endswith('.html'):
+                filename += '.html'
+            # if filename:
+            plotly.offline.plot(fig, filename=filename, auto_open=self.show_offline_plot)
+            # else:
+            #     plotly.offline.plot(fig, auto_open=self.show_offline_plot)
 
         elif self.plot_mode == 'notebook':
             plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
             plotly.offline.iplot(fig)
 
         elif self.plot_mode == 'online':
-            if self.filename:
-                plotly.plotly.plot(fig, filename=self.filename, sharing='public')
+            if filename:
+                plotly.plotly.plot(fig, filename=filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.plot_mode == 'static':
-            plotly.plotly.image.save_as(fig, filename=self.filename, height=self.height, width=self.width,
-                                        scale=self.scale)
+            plotly.plotly.image.save_as(fig, filename=filename,
+                    height=self.height, width=self.width, scale=self.scale)
+        self.plot_counter += 1
 
-    def xy_plot(self, x_col, y_col, x_axis_type='linear', y_axis_type='linear', text=None, color='rgba(70, 130, 180, 1)', size=6, colorscale='Viridis', legend=None,
+    def xy_plot_simple(self, xy_tuples):
+
+
+        return
+
+    def xy_plot(self, x_col, y_col, x_axis_type='linear', y_axis_type='linear', text=None, color='rgba(70, 130, 180, 1)',
+                size=6, colorscale='Viridis', legend=None,
                 showlegend=False, mode='markers', marker='circle', marker_fill='fill', hoverinfo='x+y+text',
                 add_xy_plot=None, marker_outline_width=0, marker_outline_color='black', linedash='solid',
                 linewidth=2, lineshape='linear', error_type=None, error_direction=None, error_array=None,
@@ -217,15 +230,13 @@ class PlotlyFig:
             error_valueminus: (float) Sets the value of either the percentage (if `error_type` is set to "percent") or
                 the constant (if `error_type` is set to "constant") corresponding to the lengths of the error bars in
                 the bottom (left) direction for vertical (horizontal) bars
-
         Returns: XY scatter plot
 
         """
-        if isinstance(color, str) or isinstance(color, basestring):
+        if isinstance(color, str):
             showscale = False
         else:
             showscale = True
-
 
         # Use z-scores for sizes
         # If size is a list, convert to array for z-score calculation
@@ -263,8 +274,8 @@ class PlotlyFig:
             ),
             line=dict(dash=linedash, width=linewidth, shape=lineshape)
         )
-        self.layout['xaxis']['type'] = x_axis_type
-        self.layout['yaxis']['type'] = y_axis_type
+        # self.layout['xaxis']['type'] = x_axis_type
+        # self.layout['yaxis']['type'] = y_axis_type
 
         # Add error bars
         if error_type:
@@ -333,6 +344,8 @@ class PlotlyFig:
         fig = dict(data=data, layout=self.layout)
 
         self._create_plot(fig)
+
+
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None, colorscale='Viridis', colorscale_range=None,
                      annotations_text=None, annotations_text_size=20, annotations_color='white'):
