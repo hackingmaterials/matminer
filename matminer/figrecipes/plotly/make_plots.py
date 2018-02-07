@@ -166,6 +166,7 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=filename,
                     height=self.height, width=self.width, scale=self.scale)
         self.plot_counter += 1
+        return fig
 
 
 
