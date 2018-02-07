@@ -22,8 +22,8 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename=None,
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
-                 fontfamily=None, height=800, width=1000, scale=None, margin_top=150, margin_bottom=80, margin_left=80,
-                 margin_right=80, pad=0, marker_scale=1.0):
+                 fontfamily=None, height=800, width=1000, scale=None, margin_top=150, margin_bottom=50, margin_left=50,
+                 margin_right=50, pad=0, marker_scale=1.0):
         """
         Class for making Plotly plots
 
@@ -82,6 +82,8 @@ class PlotlyFig:
         self.height = height
         self.width = width
         self.scale = scale
+        self.margins = dict(t=margin_top, b=margin_bottom+self.ticksize+self.textsize,
+                            l=margin_left+self.ticksize+self.textsize, r=margin_right, pad=pad)
 
         # AF: the following is what I added
         self.marker_scale = marker_scale
@@ -100,7 +102,7 @@ class PlotlyFig:
             hovermode=self.hovermode,
             width=self.width,
             height=self.height,
-            margin=dict(t=margin_top, b=margin_bottom, l=margin_left, r=margin_right, pad=pad)
+            margin=self.margins
         )
 
         if self.plot_mode == 'online' or self.plot_mode == 'static':
@@ -484,16 +486,20 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def scatter_matrix(self, df, index_col=None, marker=None, text=None,
-                       height=800, width=1000, **kwargs):
+    def scatter_matrix(self, df, colbar_col=None, marker=None, text=None,
+                       height=800, width=1000, hoverinfo='text+x+y', **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
             df (pandas.DataFrame): scatter matrix plotted for all columns
-            index_col: (str) name of the index column used for colorscale
+            colbar_col: (str) name of the column used for colorbar
             marker (dict): if size is set, it will override the automatic size
-            height: (int/float) sets the height of the chart
-            width: (int/float) sets the width of the chart
+            text (see PlotlyFig.xy_plot documentation):
+            height (int/float): sets the height of the chart
+            width (int/float): sets the width of the chart
+            hoverinfo (str): see PlotlyFig.xy_plot documentation
+            **kwargs: keyword arguments of scatterplot. Forbidden args are
+                'size', 'color' and 'colorscale' in 'marker'. See example below
         Returns: a Plotly scatter matrix plot
 
         # Example for more control over markers:
@@ -501,19 +507,32 @@ class PlotlyFig:
         from matminer.datasets.dataframe_loader import load_elastic_tensor
         df = load_elastic_tensor()
         pf = PlotlyFig()
-        pf.scatter_matrix(df[['volume', 'G_VRH', 'K_VRH']],
-                  marker={'symbol': 'diamond', 'size': 8,
-                          'line': {'width': 1, 'color': 'black'}})
+        pf.scatter_matrix(df[['volume', 'G_VRH', 'K_VRH', 'poisson_ratio']],
+                colbar_col='poisson_ratio', text=df['material_id'],
+                marker={'symbol': 'diamond', 'size': 8, 'line': {'width': 1,
+                'color': 'black'}}, colormap='Viridis',
+                title='Elastic Properties Scatter Matrix')
         """
-        marker = marker or {}
-        nplots = len(df.columns) - int(index_col is not None)
-        marker_size = marker.get('size') or 15.0/len(df.columns)**0.5 * self.marker_scale
-        fig = FF.create_scatterplotmatrix(df, index=index_col, diag='histogram',
-                        size=marker_size, height=height, width=width, **kwargs)
+        marker = marker or {'symbol': 'circle-open'}
+        nplots = len(df.columns) - int(colbar_col is not None)
+        scatter_scale = 1/nplots**0.2
+        marker_size = marker.get('size') or 10.0 * scatter_scale * self.marker_scale
+        fig = FF.create_scatterplotmatrix(df, index=colbar_col, diag='histogram',
+                size=marker_size, height=height, width=width, **kwargs)
 
-        # update each plot; we don't update the histograms:
+        # also update fig layout as scatter plot ignores PlotlyFig layout for some reason
+        fig['layout'].update(
+            titlefont = {'family': self.fontfamily, 'size': self.textsize*scatter_scale},
+            margin = self.margins)
+
+        # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots**2):
-            fig['data'][iplot].update(hoverinfo='x+y+text')
+            fig['data'][iplot].update(hoverinfo=hoverinfo)
+            for ax in ['x', 'y']:
+                fig['layout']['{}axis{}'.format(ax, iplot+1)]['titlefont']['family'] = self.fontfamily
+                fig['layout']['{}axis{}'.format(ax, iplot+1)]['titlefont']['size'] = self.textsize * scatter_scale
+                fig['layout']['{}axis{}'.format(ax, iplot+1)]['tickfont']['family'] = self.fontfamily
+                fig['layout']['{}axis{}'.format(ax, iplot+1)]['tickfont']['size'] = self.textsize * scatter_scale
             if iplot % (nplots+1) != 0:
                 fig['data'][iplot].update(marker=marker, text=text)
         self._create_plot(fig)
