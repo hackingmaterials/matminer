@@ -604,58 +604,98 @@ class PlotlyFig:
         self._create_plot(fig)
 
 
-    def histogram(self, x, histnorm="probability density", x_start=None, x_end=None, bin_size=None,
-                  color='rgba(70, 130, 180, 1)', bargap=0):
+    def histogram(self, data=None, cols=None, orientation="vertical", histnorm="count", n_bins=None, start=None, end=None, size=None, colors=None, bargap=0):
         """
-        Create a histogram using Plotly
+        Creates a Plotly histogram. If multiple series of data are available, will create an overlaid histogram.
+
+        For n_bins, start, end, size, colors, and bargaps, all defaults are Plotly defaults.
 
         Args:
-            x: (list) sample data
-            histnorm: (str) Specifies the type of normalization used for this histogram trace. If "", the span of each
-                bar corresponds to the number of occurrences (i.e. the number of data points lying inside the bins). If
-                "percent", the span of each bar corresponds to the percentage of occurrences with respect to the total
-                number of sample points (here, the sum of all bin area equals 100%). If "density", the span of each bar
-                corresponds to the number of occurrences in a bin divided by the size of the bin interval (here, the
-                sum of all bin area equals the total number of sample points). If "probability density", the span of
-                each bar corresponds to the probability that an event will fall into the corresponding bin (here, the
-                sum of all bin area equals 1)
-            x_start: (float) starting value for x-axis bins. Note: after some testing, this variable does not seem to
-                be read by Plotly when set to 0 for the latest version of Plotly as of this commit (Nov'16).
-            x_end: (float) end value for x-axis bins
-            bin_size: (float) step in-between value of each x axis bin
-            color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
-                (eg: "rgba(255, 0, 0, 0.8)"), where the last number represents the marker opacity/transparency, which
-                must be between 0.0 and 1.0., or (iii) hexagonal code (eg: "FFBAD2")
-            bargap: (float) gap between bars
+            data (DataFrame or list): A dataframe containing at least one numerical column. Also accepts lists of numerical values. If None, uses the dataframe passed into the constructor.
+            cols ([str]): A list of strings specifying the columns of the dataframe to use. Each column will be represented with its own histogram in the overlay.
+            orientation (str): Determines whether histogram is oriented horizontally or vertically. Use "vertical" or "horizontal".
+            histnorm: The technique for creating the plot. Can be "probability density", "probability", "density", or "" (count).
+            n_bins (int): The number of binds to include on each plot.
+            start (float or list): The list of starting points for each histogram's bins (if overlaid). If only one series of data is present or all series should have the same value, a single float/int determines the starting point.
+            end (float or list): The list of ending points for each histogram's bins (if overlaid). If only one series of data is present or all series should have the same value, a single float/int determines the ending point.
+            size (float or list): The list of sizes of each histogram's bins (if overlaid). If only one series of data is present or all series should have the same value, a single float/int determines the size of the bins.
+            colors (str or list): The list of colors for each histogram (if overlaid). If only one series of data is present or all series should have the same value, a single str determines the color of the bins.
+            bargaps (float or list): The gaps between bars for all histograms shown.
 
-        Returns: a Plotly histogram plot
+        Returns:
+            Plotly histogram figure.
 
         """
-        if not x_start:
-            x_start = min(x)
 
-        if not x_end:
-            x_end = max(x)
+        # todo: bargap not working? -AD
+        
+        if data is None:
+            if cols is None or self.df is None:
+                raise ValueError("Histogram requires either dataframe labels and a dataframe or a list of numerical values.")
+            data = self.df[cols]
 
-        if not bin_size:
-            bin_size = (x_start - x_end)/10.0
+        if isinstance(cols, str):
+            cols = [cols]
 
-        # plotly fig does not render correctly if x has shape (_, 1), such as the result of a dataframe.as_matrix()
-        # The array must have shape (_,).
-        if isinstance(x, np.ndarray):
-            if len(x.shape) == 2:
-                x = x.reshape((len(x),))
+        if not isinstance(data, pd.DataFrame):
+            if isinstance(data, pd.Series):
+                data = data.tolist()
+            data = pd.DataFrame({'trace1': data})
+            cols = ['trace1']
 
-        histogram = go.Histogram(x=x, histnorm=histnorm,
-                                 xbins=dict(start=x_start, end=x_end, size=bin_size),
-                                 marker=dict(color=color))
+        # Transform all entries to listlike, if given as str or numbers
+        dtypes = (list, np.ndarray, tuple)
+        attrdict = {'start': start, 'end': end, 'size': size, 'colors': colors, 'n_bins': n_bins}
+        for k, v in attrdict.items():
+            v = [None] * len(cols) if v is None else v
+            v = [v] * len(cols) if not isinstance(v, dtypes) else v
+            attrdict[k] = v
 
-        data = [histogram]
+        start = attrdict['start']
+        end = attrdict['end']
+        size = attrdict['size']
+        colors = attrdict['colors']
+        n_bins = attrdict['n_bins']
 
-        self.layout['hovermode'] = 'x'
+        hgrams = []
+        for i, col in enumerate(cols):
+            d = data[col]
+            if isinstance(d, np.ndarray):
+                if len(d.shape) == 2:
+                    d = d.reshape((len(d),))
+
+            if orientation == 'vertical':
+
+                h = go.Histogram(x=d, histnorm=histnorm,
+                                 xbins=dict(start=start[i], end=end[i], size=size[i]),
+                                 nbinsx = n_bins[i],
+                                 marker=dict(color=colors[i]), name=col)
+            elif orientation == 'horizontal':
+                h = go.Histogram(y=d, histnorm=histnorm,
+                                 ybins=dict(start=start[i], end=end[i], size=size[i]),
+                                 nbinsy=n_bins[i],
+                                 marker=dict(color=colors[i]), name=col)
+            else:
+                raise ValueError("The orientation must be either 'horizontal' or 'vertical'.")
+            hgrams.append(h)
+
+        self.layout['hovermode'] = 'x' if orientation == 'vertical' else 'y'
         self.layout['bargap'] = bargap
-        fig = dict(data=data, layout=self.layout)
 
+        if orientation == 'vertical':
+            if not self.y_title:
+                self.layout['yaxis']['title'] = histnorm
+        elif orientation == 'horizontal':
+            if not self.x_title:
+                self.layout['xaxis']['title'] = histnorm
+
+
+
+        if len(hgrams) > 1:
+            self.layout['barmode'] = 'overlay'
+            for h in hgrams:
+                h['opacity'] = 1.0/float(len(hgrams)) + 0.1
+        fig = dict(data=hgrams, layout=self.layout)
         self._create_plot(fig)
 
     def bar_chart(self, x, y):
