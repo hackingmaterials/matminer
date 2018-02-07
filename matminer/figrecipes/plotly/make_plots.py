@@ -155,10 +155,20 @@ class PlotlyFig:
                     height=self.height, width=self.width, scale=self.scale)
         self.plot_counter += 1
 
-    def xy_plot_simple(self, xy_tuples):
+    def xy_plot_simple(self, xy_tuples, colors='rgba(70, 130, 180, 1)',
+                       markers=None, mode='markers'):
+        if not isinstance(xy_tuples, list):
+            xy_tuples = [xy_tuples]
+        markers = markers or [{'symbol': 'circle'} for _ in xy_tuples]
+        traces = []
+        for i, xy_tup in enumerate(xy_tuples):
+            traces.append(go.Scatter(x=xy_tup[0], y=xy_tup[1], mode=mode,
+                    marker=markers[i])
+                          )
 
+        fig = dict(data=traces, layout=self.layout)
+        self._create_plot(fig)
 
-        return
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)',
                 size=6, colorscale='Viridis', legend=None,
@@ -270,8 +280,6 @@ class PlotlyFig:
             ),
             line=dict(dash=linedash, width=linewidth, shape=lineshape)
         )
-        # self.layout['xaxis']['type'] = x_axis_type
-        # self.layout['yaxis']['type'] = y_axis_type
 
         # Add error bars
         if error_type:
