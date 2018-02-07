@@ -566,7 +566,6 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
 
 
-
 class VoronoiFingerprint(BaseFeaturizer):
     """
     Calculate the following sets of features based on Voronoi tessellation
@@ -578,8 +577,8 @@ class VoronoiFingerprint(BaseFeaturizer):
           for icosahedra, the Voronoi indices are [0,0,12,0,...];
 
     *i-fold symmetry indices
-     computed as n_i/sum(n_i), and i is in the range of 3-10, reflect the
-     strength of i-fold symmetry in local sites.
+     computed as n_i/sum(n_i), and i is in the range of 3-10.
+     reflect the strength of i-fold symmetry in local sites.
      e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,0,0...]
              indicating both 4-fold and a stronger 6-fold symmetries are present;
           for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
@@ -588,7 +587,7 @@ class VoronoiFingerprint(BaseFeaturizer):
              indicating only 5-fold symmetry is present;
 
      *Weighted i-fold symmetry indices
-     if use_weights = True
+      if use_weights = True
 
      *Voronoi volume
       total volume of the Voronoi polyhedron around the target site
@@ -687,7 +686,7 @@ class VoronoiFingerprint(BaseFeaturizer):
                     voro_idx_list[len(vind) - 3] += 1
                     if self.use_weights:
                         for key, value in n_w.items():
-                            if (key.coords == vertices[sorted(nn)[1]]).all():
+                            if str(key.coords) == str(vertices[sorted(nn)[1]]):
                                 voro_idx_weights[len(vind) - 3] += value
 
                 except IndexError:
