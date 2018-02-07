@@ -23,7 +23,7 @@ class PlotlyFig:
     def __init__(self, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
                  fontfamily=None, height=800, width=1000, scale=None, margin_top=150, margin_bottom=50, margin_left=50,
-                 margin_right=50, pad=0, marker_scale=1.0, x_type='linear', y_type='linear'):
+                 margin_right=50, pad=0, marker_scale=1.0, x_type='linear', y_type='linear', hoverinfo='x+y+text'):
         """
         Class for making Plotly plots
 
@@ -65,6 +65,11 @@ class PlotlyFig:
             marker_scale (float): scale the size of all markers w.r.t. defaults
             x_type: (str) Sets the x axis scaling type. Select from 'linear', 'log', 'date', 'category'.
             y_type: (str) Sets the y axis scaling type. Select from 'linear', 'log', 'date', 'category'.
+            hoverinfo: (str) Any combination of "x", "y", "z", "text", "name"
+                joined with a "+" OR "all" or "none" or "skip".
+                Examples: "x", "y", "x+y", "x+y+z", "all"
+                Determines which trace information appear on hover. If `none` or `skip` are set, no information is
+                displayed upon hovering. But, if `none` is set, click and hover events are still fired.
         Returns: None
 
         """
@@ -89,6 +94,7 @@ class PlotlyFig:
         # AF: the following is what I added
         self.marker_scale = marker_scale
         self.plot_counter = 1
+        self.hoverinfo = hoverinfo
 
         # Make default layout
         self.layout = dict(
@@ -155,15 +161,19 @@ class PlotlyFig:
                     height=self.height, width=self.width, scale=self.scale)
         self.plot_counter += 1
 
-    def xy_plot_simple(self, xy_tuples, colors='rgba(70, 130, 180, 1)',
-                       markers=None, mode='markers'):
+    def xy_plot_simple(self, xy_tuples, markers=None, lines=None,
+                       mode='markers', texts=None):
         if not isinstance(xy_tuples, list):
             xy_tuples = [xy_tuples]
-        markers = markers or [{'symbol': 'circle'} for _ in xy_tuples]
+        if not isinstance(texts, list):
+            texts = [texts]*len(xy_tuples)
+        markers = markers or [{'symbol': 'circle', 'size': 10*self.marker_scale
+                    ,'line': {'width': 1}}]*len(xy_tuples)
+        lines = lines or [{'dash': 'solid', 'width': 2}]*len(xy_tuples)
         traces = []
         for i, xy_tup in enumerate(xy_tuples):
             traces.append(go.Scatter(x=xy_tup[0], y=xy_tup[1], mode=mode,
-                    marker=markers[i])
+                    marker=markers[i], line=lines[i], text=texts[i], hoverinfo=self.hoverinfo)
                           )
 
         fig = dict(data=traces, layout=self.layout)
@@ -504,7 +514,7 @@ class PlotlyFig:
         self._create_plot(fig)
 
     def scatter_matrix(self, df, colbar_col=None, marker=None, text=None,
-                       height=800, width=1000, hoverinfo='text+x+y', **kwargs):
+                       height=800, width=1000, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -514,7 +524,6 @@ class PlotlyFig:
             text (see PlotlyFig.xy_plot documentation):
             height (int/float): sets the height of the chart
             width (int/float): sets the width of the chart
-            hoverinfo (str): see PlotlyFig.xy_plot documentation
             **kwargs: keyword arguments of scatterplot. Forbidden args are
                 'size', 'color' and 'colorscale' in 'marker'. See example below
         Returns: a Plotly scatter matrix plot
@@ -544,7 +553,7 @@ class PlotlyFig:
 
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots**2):
-            fig['data'][iplot].update(hoverinfo=hoverinfo)
+            fig['data'][iplot].update(hoverinfo=self.hoverinfo)
             for ax in ['x', 'y']:
                 fig['layout']['{}axis{}'.format(ax, iplot+1)]['titlefont']['family'] = self.fontfamily
                 fig['layout']['{}axis{}'.format(ax, iplot+1)]['titlefont']['size'] = self.textsize * scatter_scale
