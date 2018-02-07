@@ -631,7 +631,8 @@ class VoronoiFingerprint(BaseFeaturizer):
         self.stats_dist = ['mean', 'std_dev', 'minimum', 'maximum'] \
             if stats_dist is None else stats_dist.copy()
 
-    def vol_tetra(self, vt1, vt2, vt3, vt4):
+    @staticmethod
+    def vol_tetra(vt1, vt2, vt3, vt4):
         """
         Calculate the volume of a tetrahedron, given the four vertices of vt1,
         vt2, vt3 and vt4
@@ -646,7 +647,7 @@ class VoronoiFingerprint(BaseFeaturizer):
         """
 
         vol_tetra = np.abs(np.dot((vt1 - vt4),
-                               np.cross((vt2 - vt4), (vt3 - vt4))))/6
+                                  np.cross((vt2 - vt4), (vt3 - vt4))))/6
         return vol_tetra
 
     def featurize(self, struct, idx):
