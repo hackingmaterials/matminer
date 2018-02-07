@@ -63,7 +63,8 @@ class PlotlyFig:
             margin_right: (float) Sets the right margin (in px)
             pad: (float) Sets the amount of padding (in px) between the plotting area and the axis lines
             marker_scale (float): scale the size of all markers w.r.t. defaults
-
+            x_type: (str) Sets the x axis scaling type. Select from 'linear', 'log', 'date', 'category'.
+            y_type: (str) Sets the y axis scaling type. Select from 'linear', 'log', 'date', 'category'.
         Returns: None
 
         """
@@ -137,10 +138,7 @@ class PlotlyFig:
         if self.plot_mode == 'offline':
             if not filename.endswith('.html'):
                 filename += '.html'
-            # if filename:
             plotly.offline.plot(fig, filename=filename, auto_open=self.show_offline_plot)
-            # else:
-            #     plotly.offline.plot(fig, auto_open=self.show_offline_plot)
 
         elif self.plot_mode == 'notebook':
             plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
@@ -162,7 +160,7 @@ class PlotlyFig:
 
         return
 
-    def xy_plot(self, x_col, y_col, x_axis_type='linear', y_axis_type='linear', text=None, color='rgba(70, 130, 180, 1)',
+    def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)',
                 size=6, colorscale='Viridis', legend=None,
                 showlegend=False, mode='markers', marker='circle', marker_fill='fill', hoverinfo='x+y+text',
                 add_xy_plot=None, marker_outline_width=0, marker_outline_color='black', linedash='solid',
@@ -174,8 +172,6 @@ class PlotlyFig:
         Args:
             x_col: (array) x-axis values, which can be a list/array/dataframe column
             y_col: (array) y-axis values, which can be a list/array/dataframe column
-            x_axis_type: (str) Sets the x axis scaling type. Select from 'linear', 'log', 'date', 'category'.
-            y_axis_type: (str) Sets the y axis scaling type. Select from 'linear', 'log', 'date', 'category'.
             text: (str/array) text to use when hovering over points; a single string, or an array of strings, or a
                 dataframe column containing text strings
             color: (str/array) in the format of a (i) color name (eg: "red"), or (ii) a RGB tuple,
