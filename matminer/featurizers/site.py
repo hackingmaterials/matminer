@@ -20,7 +20,7 @@ import math
 from collections import defaultdict
 
 from matminer.featurizers.base import BaseFeaturizer
-from pymatgen.analysis.structure_analyzer import VoronoiAnalyzer
+from scipy.spatial import Voronoi, Delaunay
 from pymatgen.analysis.local_env import LocalStructOrderParas, \
     VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
     MinimumVIRENN
@@ -566,65 +566,175 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
 
 
-class VoronoiIndex(BaseFeaturizer):
+
+class VoronoiFingerprint(BaseFeaturizer):
     """
-    Calculate two sets of features based on Voronoi index around each site:
-    Voronoi indices [n_i], where n_i denotes the number of i-edged faces,
-    and i is in the range of 3-10 here.
-    e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...]
-         for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...]
-         for icosahedra, the Voronoi indices are [0,0,12,0,...]
+    Calculate the following sets of features based on Voronoi tessellation
+    analysis around the target site:
+    *Voronoi indices {n_i}
+     n_i denotes the number of i-edged facets, and i is in the range of 3-10.
+     e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...];
+          for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...];
+          for icosahedra, the Voronoi indices are [0,0,12,0,...];
 
-    Fractional Voronoi indices, or say i-fold symmetry indices, computed as
-    n_i/sum(n_i), to reflects the strength of i-fold symmetry in local sites.
-    e.g. for bcc lattice, the i-fold symmetry factors are [0,6/14,0,8/14,0,0...]
-            indicating both 4-fold and a stronger 6-fold symmetry is present
-         for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
-            indicating only 4-fold symmetry is present
-         for icosahedra, the Voronoi indices are [0,0,1,0,...],
-            indicating only 5-fold symmetry is present
+    *i-fold symmetry indices
+     computed as n_i/sum(n_i), and i is in the range of 3-10, reflect the
+     strength of i-fold symmetry in local sites.
+     e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,0,0...]
+             indicating both 4-fold and a stronger 6-fold symmetries are present;
+          for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
+             indicating only 4-fold symmetry is present;
+          for icosahedra, the Voronoi indices are [0,0,1,0,...],
+             indicating only 5-fold symmetry is present;
+
+     *Weighted i-fold symmetry indices
+     if use_weights = True
+
+     *Voronoi volume
+      total volume of the Voronoi polyhedron around the target site
+
+     *Voronoi volume statistics of the sub_polyhedra formed by each facet
+      and the center site
+      e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
+
+     *Voronoi area
+      total area of the Voronoi polyhedron around the target site
+
+     *Voronoi area statistics of the facets
+      e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
+
+     *Voronoi nearest-neighboring distance statistics
+      e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
 
     """
 
-    def __init__(self, cutoff=6.0):
+    def __init__(self, cutoff=6.0, use_weights=False, stats_vol=None,
+                 stats_area=None, stats_dist=None):
+
         """
         Args:
             cutoff (float): cutoff distance in determining the potential
-                neighbors for Voronoi tessellation analysis
+                  neighbors for Voronoi tessellation analysis
+            use_weights(bool): whether to use weights to derive weighted
+                  i-fold symmetry indices
+            stats_vol (list of str): volume statistics types
+            stats_area (list of str): area statistics types
+            stats_dist (list of str): neighboring distance statistics types
         """
+
         self.cutoff = cutoff
-        self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
+        self.use_weights = use_weights
+        self.stats_vol = ['mean', 'std_dev', 'minimum', 'maximum'] \
+            if stats_vol is None else stats_vol.copy()
+        self.stats_area = ['mean', 'std_dev', 'minimum', 'maximum'] \
+            if stats_area is None else stats_area.copy()
+        self.stats_dist = ['mean', 'std_dev', 'minimum', 'maximum'] \
+            if stats_dist is None else stats_dist.copy()
+
+    def vol_tetra(self, vt1, vt2, vt3, vt4):
+        """
+        Calculate the volume of a tetrahedron, given vertices a,b,c and d
+        Args:
+            vt1: coordinates of vertex 1
+            vt2: coordinates of vertex 2
+            vt3: coordinates of vertex 3
+            vt4: coordinates of vertex 4
+
+        Returns:
+            volume of the tetrahedron
+        """
+
+        vol_tetra = np.abs(np.dot((vt1 - vt4),
+                               np.cross((vt2 - vt4), (vt3 - vt4))))/6
+        return vol_tetra
 
     def featurize(self, struct, idx):
         """
         Args:
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
+
         Returns:
-            list of Voronoi indices and sum of Voronoi indices
-            list of fractional Voronoi indices or say i-fold symmetry indices
+            list of Voronoi indices
+            list of i-fold symmetry indices
+            list of weighted i-fold symmetry indices, if use_weights=True
+            Voronoi volume
+            list of Voronoi volume statistics
+            Voronoi area
+            list of Voronoi area statistics
+            list of neighboring distance statistics
         """
 
-        voro_index_result = []
-        voro_index_list = self.voronoi_analyzer.analyze(struct, n=idx)
-        for voro_index in voro_index_list:
-            voro_index_result.append(voro_index)
-        voro_index_sum = sum(voro_index_list)
-        voro_index_result.append(voro_index_sum)
+        n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
+        voro_idx_list = np.array([0, 0, 0, 0, 0, 0, 0, 0])
+        voro_idx_weights = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
 
-        voro_index_frac_list = voro_index_list / voro_index_sum
-        for voro_index_frac in voro_index_frac_list:
-            voro_index_result.append(voro_index_frac)
+        vertices = [struct[idx].coords] + [key.coords for key in n_w.keys()]
+        voro = Voronoi(vertices)
 
-        return voro_index_result
+        vol_list = []
+        area_list = []
+        dist_list = [np.linalg.norm(vertices[0] - vertices[i]) for i in
+                     range(1, len(vertices))]
+
+        for nn, vind in voro.ridge_dict.items():
+            if 0 in nn:
+                if -1 in vind:
+                    continue
+                try:
+                    voro_idx_list[len(vind) - 3] += 1
+                    if self.use_weights:
+                        for key, value in n_w.items():
+                            if (key.coords == vertices[sorted(nn)[1]]).all():
+                                voro_idx_weights[len(vind) - 3] += value
+
+                except IndexError:
+                    # If a facet has more than 10 edges, it's skipped here.
+                    pass
+
+                polysub = [vertices[0]]
+                vol = 0
+                for v in vind:
+                    polysub.append(list(voro.vertices[v]))
+                tetra = Delaunay(np.array(polysub))
+                for simplex in tetra.simplices:
+                    vol += self.vol_tetra(np.array(polysub[simplex[0]]),
+                                          np.array(polysub[simplex[1]]),
+                                          np.array(polysub[simplex[2]]),
+                                          np.array(polysub[simplex[3]]))
+                vol_list.append(vol)
+                area_list.append(vol * 6 / dist_list[sorted(nn)[1] - 1])
+
+        symmetry_idx_list = voro_idx_list / sum(voro_idx_list)
+        if self.use_weights:
+            symmetry_wt_list = voro_idx_weights / sum(voro_idx_weights)
+            voro_fingerprint = list(np.concatenate((voro_idx_list,
+                                                    symmetry_idx_list,
+                                                    symmetry_wt_list), axis=0))
+        else:
+            voro_fingerprint = list(np.concatenate((voro_idx_list,
+                                                    symmetry_idx_list), axis=0))
+
+        voro_fingerprint.append(sum(vol_list))
+        voro_fingerprint.append(sum(area_list))
+        voro_fingerprint += [PropertyStats().calc_stat(vol_list, stat_vol)
+                             for stat_vol in self.stats_vol]
+        voro_fingerprint += [PropertyStats().calc_stat(area_list, stat_area)
+                             for stat_area in self.stats_area]
+        voro_fingerprint += [PropertyStats().calc_stat(dist_list, stat_dist)
+                             for stat_dist in self.stats_dist]
+        return voro_fingerprint
 
     def feature_labels(self):
-        labels = []
-        for i in range(3, 11):
-            labels.append('voro_index_%d' % i)
-        labels.append('voro_index_sum')
-        for i in range(3, 11):
-            labels.append('voro_index_frac_%d' % i)
+        labels = ['Voro_index_%d' % i for i in range(3, 11)]
+        labels += ['Symmetry_index_%d' % i for i in range(3, 11)]
+        if self.use_weights:
+            labels += ['Symmetry_weighted_index_%d' % i for i in range(3, 11)]
+        labels.append('Voro_vol_sum')
+        labels.append('Voro_area_sum')
+        labels += ['Voro_vol_%s' % stat_vol for stat_vol in self.stats_vol]
+        labels += ['Voro_area_%s' % stat_area for stat_area in self.stats_area]
+        labels += ['Voro_dist_%s' % stat_dist for stat_dist in self.stats_dist]
         return labels
 
     def citations(self):
