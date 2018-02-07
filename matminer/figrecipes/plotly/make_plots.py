@@ -22,7 +22,7 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 class PlotlyFig:
     def __init__(self, df=None, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
                  plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
-                 fontfamily=None, height=800, width=1000, scale=None, margins = 100, pad=0, marker_scale=1.0, x_type='linear', y_type='linear', hoverinfo='x+y+text'):
+                 fontfamily=None, height=800, width=1000, scale=None, margins=100, pad=10, marker_scale=1.0, x_type='linear', y_type='linear', hoverinfo='x+y+text'):
         """
         Class for making Plotly plots
 
@@ -74,7 +74,9 @@ class PlotlyFig:
         self.df = df
         self.title = plot_title
         self.x_title = x_title
+        self.x_type = x_type
         self.y_title = y_title
+        self.y_type = y_type
         self.hovermode = hovermode
         self.filename = filename
         self.plot_mode = plot_mode
@@ -166,8 +168,6 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=filename,
                     height=self.height, width=self.width, scale=self.scale)
         self.plot_counter += 1
-        return fig
-
 
 
     def xy_plot_simple(self, xy_tuples, markers=None, lines=None,
@@ -455,8 +455,8 @@ class PlotlyFig:
 
         self._create_plot(fig)
 
-    def violin_plot(self, data=None, cols=None, group_col=None, title=None, height=800, width=1000, colors=None,
-                    use_colorscale=False, groups=None):
+    def violin_plot(self, data=None, cols=None, group_col=None, groups=None, title=None, colors=None,
+                    use_colorscale=False):
         """
         Create a violin plot using Plotly.
 
@@ -466,8 +466,6 @@ class PlotlyFig:
             group_col: (str) applicable if grouping data by a variable. 'group_header' must be set to the name of the
                 grouping variable
             title: (str) the title of the violin plot
-            height: (float) the height of the violin plot
-            width: (float) the width of the violin plot
             colors: (str/tuple/list/dict) either a plotly scale name (Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu,
                 Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot, Blackbody, Earth, Electric, Viridis), an rgb or hex
                 color, a color tuple, a list of colors or a dictionary. An rgb color is of the form 'rgb(x, y, z)'
@@ -523,6 +521,8 @@ class PlotlyFig:
                     data = data[data[group_col] != j]
                     warnings.warn('Omitting rows with group = {} which have only one row in the dataframe.'.format(j))
         else:
+            if isinstance(data, pd.Series):
+                data = data.tolist()
 
             data = pd.DataFrame({'data': np.asarray(data)})
             cols = ['data']
@@ -530,7 +530,7 @@ class PlotlyFig:
             group_stats = None
 
         fig = FF.create_violin(data=data, data_header=cols[0], group_header=group_col, title=title,
-                               height=height, width=width, colors=colors, use_colorscale=use_colorscale,
+                               height=self.height, width=self.width, colors=colors, use_colorscale=use_colorscale,
                                group_stats=group_stats)
 
         # Cannot add x-axis title as the above object populates it with group names.
@@ -538,7 +538,7 @@ class PlotlyFig:
             layout=dict(
                 title=self.title,
                 titlefont=dict(size=self.textsize, family=self.fontfamily),
-                yaxis=dict(title=self.y_title,
+                yaxis=dict(title=self.y_title, type=self.y_type,
                            titlefont=dict(size=self.textsize, family=self.fontfamily),
                            tickfont=dict(size=self.ticksize, family=self.fontfamily)),
             )
@@ -553,7 +553,6 @@ class PlotlyFig:
                         tickfont=dict(size=self.ticksize, family=self.fontfamily)
                     )
                 )
-
         self._create_plot(fig)
 
     def scatter_matrix(self, df, colbar_col=None, marker=None, text=None,
