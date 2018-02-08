@@ -1,6 +1,7 @@
 from __future__ import division, unicode_literals, print_function
 import warnings
 import os.path
+from copy import deepcopy
 import numpy as np
 import pandas as pd
 import plotly
@@ -9,15 +10,11 @@ import plotly.graph_objs as go
 import plotly.figure_factory as FF
 from scipy import stats
 
-__authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, Alireza Faghaninia  <alireza@lbl.gov>'
+__authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
+              'Alireza Faghaninia  <alireza@lbl.gov>'
 
-
-# todo: df as attribute, but can still pass x as list or whatever
-# todo: sankey
-# todo: scatter matrix
 # todo: font_scale instead of all options, etc.
-# todo: all of them: if mpid or formula in columns, use as interactive index?
-# todo: xyplot (X), heatmap (X), barchart, scatter matrix (X), sankey(?)
+# todo: xyplot (X), heatmap (X), scatter_matrix (X)
 
 class PlotlyFig:
     def __init__(self, df=None, plot_mode='offline', plot_title=None, x_title=None, y_title=None,
@@ -510,8 +507,8 @@ class PlotlyFig:
 
         return self.create_plot(fig)
 
-    def violin_plot(self, data=None, cols=None, group_col=None, groups=None,
-                    title=None, colors=None, use_colorscale=False):
+    def violin(self, data=None, cols=None, group_col=None, groups=None,
+               title=None, colors=None, use_colorscale=False):
         """
         Create a violin plot using Plotly.
 
@@ -818,19 +815,97 @@ class PlotlyFig:
         fig = dict(data=hgrams, layout=self.layout)
         return self.create_plot(fig)
 
-    def bar_chart(self, x, y):
+    def bar(self, data=None, cols=None, x=None, y=None, labels=None,
+            barmode='group', colors=None):
         """
-        Create a bar chart using Plotly
+        Create a bar chart using Plotly.
+
+        Can be used with x and y arguments or with a dataframe (passed as 'data'
+        or taken from constructor).
+
         Args:
-            x: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the x coordinates
-            y: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the y coordinates
-        Returns: a Plotly bar chart
+            data (DataFrame): The column names will become the 'x' axis. The
+                rows will become sets of bars (e.g., 3 rows = 3 sets of bars
+                for each x point).
+            cols ([str]): A list of strings specifying columns of a DataFrame
+                passed into the constructor to be used as data. Should not be
+                used with 'data'.
+            x (list or [list]): A list containing 'x' axis values. Can be a list
+                of lists if there is more than one set of bars.
+            y (list or [list]): A list containing 'y' values. Can be a list of
+                lists if there is more than one set of bars (more than one set
+                of data for each 'x' axis value).
+            labels (str or [str]): Defines the label for each set of bars. If
+                str, defines the column of the DataFrame to use for labelling.
+                The column's entry for a row will be the label for that row. If
+                it is a list of strings, should be used with x and y, and
+                defines the label for each set of bars.
+            barmode: Defines how sets of bars are displayed. Can be set to
+                "group" or "stack".
+            colors ([str]): The list of colors to use for each set of bars.
+                The length of this list should be equal to the number of rows
+                (sets of bars) present in your data.
+
+        Returns:
+            A Plotly bar chart object.
         """
 
-        barplot = go.Bar(x=x, y=y)
-        data = [barplot]
-        fig = dict(data=data, layout=self.layout)
-        return self.create_plot(fig)
+        if data is None:
+            if self.df is None:
+                if cols is None:
+                    if x is None and y is None:
+                        raise ValueError(
+                            "Bar chart requires either dataframe labels and a "
+                            "dataframe or lists of values for x and y.")
+            else:
+                # Default to having all columns represented.
+                if cols is None:
+                    cols = self.df.columns.values
+                data = self.df[cols]
 
-    def sankey(self):
-        pass
+        # If data is passed in as a dataframe, not as x,y
+        if data is not None and x is None and y is None:
+            if not isinstance(data, pd.DataFrame):
+                raise TypeError("'data' input type invalid. Valid types are"
+                                "DataFrames.")
+
+            if isinstance(labels, str):
+                strlabel = deepcopy(labels)
+                labels = data[labels]
+                data = data.drop(labels=[strlabel], axis=1)
+            else:
+                labels = data.index.values
+
+        if x is not None and y is not None:
+            assert (len(x) == len(y))
+            if not isinstance(y[0], (list, tuple, np.ndarray)):
+                y = [y]
+            if not isinstance(x[0], (list, tuple, np.ndarray)):
+                x = [x]
+            if labels is None:
+                labels = [None] * len(y)
+        else:
+            y = data.as_matrix().tolist()
+            x = [data.columns.values] * len(y)
+
+        if colors is not None:
+            if not isinstance(colors, (tuple, list, np.ndarray, pd.Series)):
+                if isinstance(colors, str):
+                    colors = [colors] * len(y)
+                else:
+                    raise ValueError("Invalid data type for 'colors.' Please "
+                                     "use a list-like object or pandas Series.")
+        else:
+            colors = [None] * len(y)
+
+        barplots = []
+        for i in range(len(x)):
+            barplot = go.Bar(x=x[i], y=y[i], name=labels[i],
+                             marker=dict(color=colors[i]))
+            barplots.append(barplot)
+
+        # Prevent linear default from altering categorical bar plot
+        self.layout['xaxis']['type'] = None
+        self.layout['barmode'] = barmode
+        fig = dict(data=barplots, layout=self.layout)
+        return self.create_plot(fig)
