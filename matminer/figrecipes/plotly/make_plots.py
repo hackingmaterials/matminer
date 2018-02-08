@@ -739,6 +739,7 @@ class PlotlyFig:
         """
 
         # todo: bargap not working? -AD
+        # todo: size not working? -AD
 
         if data is None:
             if cols is None or self.df is None:
