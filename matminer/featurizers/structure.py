@@ -1079,7 +1079,8 @@ class BagofBonds(BaseFeaturizer):
         """
 
         # unified_bonds attribute only lives if dataframe is being featurized.
-        self.unified_bonds = self.enumerate_all_bonds(df[col_id])
+        self.unified_bonds = self.enumerate_all_bonds(df[col_id],
+                                                      ignore_errors=ignore_errors)
         df = super(BagofBonds, self).featurize_dataframe(df, col_id,
                                                          ignore_errors=ignore_errors,
                                                          inplace=inplace)
@@ -1107,7 +1108,7 @@ class BagofBonds(BaseFeaturizer):
         bond_types = [k[0] + '-' + k[1] for k in het_bonds + hom_bonds]
         return sorted(bond_types)
 
-    def enumerate_all_bonds(self, structures):
+    def enumerate_all_bonds(self, structures, ignore_errors=False):
         """
         Identify all the unique, possible bonds types of all structures present,
         and create the 'unified' bonds list.
@@ -1121,6 +1122,8 @@ class BagofBonds(BaseFeaturizer):
         """
         bond_types = []
         for s in structures:
+            if s is None and ignore_errors:
+                continue
             bts = self.enumerate_bonds(s)
             for bt in bts:
                 if bt not in bond_types:
