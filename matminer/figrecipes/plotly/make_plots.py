@@ -20,9 +20,9 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, Alire
 # todo: xyplot (X), heatmap (X), barchart, scatter matrix (X), sankey(?)
 
 class PlotlyFig:
-    def __init__(self, df=None, plot_title=None, x_title=None, y_title=None,
+    def __init__(self, df=None, plot_mode='offline', plot_title=None, x_title=None, y_title=None,
                  hovermode='closest', filename='auto',
-                 plot_mode='offline', show_offline_plot=True, username=None,
+                 show_offline_plot=True, username=None,
                  api_key=None, textsize=25, ticksize=25,
                  fontfamily=None, height=800, width=1000, scale=None,
                  margins=100, pad=0, marker_scale=1.0, x_type='linear',
@@ -31,21 +31,28 @@ class PlotlyFig:
         Class for making Plotly plots
 
         Args:
-            df (DataFrame): A pandas dataframe object which can be used to generate several plots.
+            df (DataFrame): A pandas dataframe object which can be used to
+                generate several plots.
+            plot_mode: (str)
+                (i) 'offline': creates and saves plots on the local disk
+                (ii) 'notebook': to embed plots in a IPython/Jupyter notebook,
+                (iii) 'online': save the plot in your online plotly account,
+                (iv) 'static': save a static image of the plot locally (but
+                requiring plotly account credentials) or (v) 'return': to return
+                a dict representation of the plot for fine tuning.
+                (v) 'return': Any plotting method returns its Plotly Figure
+                object. Useful for fine tuning the plot.
+                NOTE: Both 'online' and 'static' modes require either the fields
+                'username' and 'api_key' or the plotly credentials file to be
+                set. See plotly website and documentation for details.
             plot_title: (str) title of plot
             x_title: (str) title of x-axis
             y_title: (str) title of y-axis
-            hovermode: (str) determines the mode of hover interactions. Can be 'x'/'y'/'closest'/False
+            hovermode: (str) determines the mode of hover interactions. Can be
+                'x'/'y'/'closest'/False
             filename: (str) name/filepath of plot file
-            plot_mode: (str) (i) 'offline': creates and saves plots on the local disk, (ii) 'notebook': to embed plots
-                in a IPython/Jupyter notebook, (iii) 'online': save the plot in your online plotly account, or (iv)
-                'static': save a static image of the plot locally (but requiring plotly account credentials). Valid
-                image formats are 'png', 'svg', 'jpeg', and 'pdf'. The format is taken as the extension of the filename
-                or as the supplied format.
-                NOTE: Both 'online' and 'static' modes require either the fields 'username' and 'api_key' or
-                the plotly credentials file to be set. See plotly website and documentation for details.
-            show_offline_plot: (bool) automatically open the plot (the plot is saved either way); only applies to
-                'offline' mode
+            show_offline_plot: (bool) automatically open the plot (the plot is
+                saved either way); only applies to 'offline' mode.
             username: (str) plotly account username
             api_key: (str) plotly account API key
             textsize: (int) size of text of plot title and axis titles
@@ -133,10 +140,12 @@ class PlotlyFig:
             if not os.path.isfile('~/.plotly/.credentials'):
                 if not self.username:
                     raise ValueError(
-                        'field "username" must be filled in online plotting mode')
+                        'field "username" must be filled in online plotting '
+                        'mode')
                 if not self.api_key:
                     raise ValueError(
-                        'field "api_key" must be filled in online plotting mode')
+                        'field "api_key" must be filled in online plotting '
+                        'mode')
                 plotly.tools.set_credentials_file(username=self.username,
                                                   api_key=self.api_key)
 
@@ -148,14 +157,21 @@ class PlotlyFig:
                     'and must have an extension ending in ('
                     '".png", ".svg", ".jpeg", ".pdf")')
 
-    def _create_plot(self, fig):
+    def create_plot(self, fig):
         """
-        Warning: not to be explicitly called by the user
-        Creates the specific plot that has been set up by one of the functions below, and shows and/or saves the plot
-        depending on user specification
+        Creates a plotly plot based on its dictionary representation.
+        The modes of plotting are:
+            (i) offline: Makes an offline html.
+            (ii) notebook: Embeds in Jupyter notebook
+            (iii) online: Send to Plotly, requires credentials
+            (iv) static: Creates a static image of the plot
+            (v) return: Returns the dictionary representation of the plot.
 
         Args:
             fig: (dictionary) contains data and layout information
+
+        Returns:
+            A Plotly Figure object (if self.plot_mode = 'return')
 
         """
 
@@ -163,14 +179,14 @@ class PlotlyFig:
             filename = 'auto_{}'.format(self.plot_counter)
         else:
             filename = self.filename
+
         if self.plot_mode == 'offline':
             if not filename.endswith('.html'):
                 filename += '.html'
             plotly.offline.plot(fig, filename=filename,
                                 auto_open=self.show_offline_plot)
-
         elif self.plot_mode == 'notebook':
-            plotly.offline.init_notebook_mode()  # run at the start of every notebook; version 1.9.4 required
+            plotly.offline.init_notebook_mode()
             plotly.offline.iplot(fig)
 
         elif self.plot_mode == 'online':
@@ -183,6 +199,10 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=filename,
                                         height=self.height, width=self.width,
                                         scale=self.scale)
+
+        elif self.plot_mode == 'return':
+            return fig
+
         self.plot_counter += 1
 
     def xy_plot_simple(self, xy_tuples, markers=None, lines=None,
@@ -198,7 +218,8 @@ class PlotlyFig:
             mode (str): trace style; can be 'markers'/'lines'/'lines+markers'
             texts (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
-        Returns (XY scatter plot): with one or multiple traces
+
+        Returns: A Plotly Scatter plot Figure object.
         """
         if not isinstance(xy_tuples, list):
             xy_tuples = [xy_tuples]
@@ -218,7 +239,7 @@ class PlotlyFig:
                           )
 
         fig = dict(data=traces, layout=self.layout)
-        self._create_plot(fig)
+        return self.create_plot(fig)
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)',
                 size=6, colorscale='Viridis', legend=None,
@@ -290,7 +311,8 @@ class PlotlyFig:
             error_valueminus: (float) Sets the value of either the percentage (if `error_type` is set to "percent") or
                 the constant (if `error_type` is set to "constant") corresponding to the lengths of the error bars in
                 the bottom (left) direction for vertical (horizontal) bars
-        Returns: XY scatter plot
+
+        Returns: A Plotly Scatter plot Figure object.
 
         """
         if isinstance(color, str):
@@ -411,7 +433,7 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        self._create_plot(fig)
+        return self.create_plot(fig)
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None,
                      colorscale='Viridis', colorscale_range=None,
@@ -437,7 +459,7 @@ class PlotlyFig:
             annotations_text_size: (int) size of annotation text
             annotations_color: (str/array) color of annotation text - accepts similar formats as other color variables
 
-        Returns: heatmap plot
+        Returns: A Plotly heatmap plot Figure object.
 
         """
         if not colorscale_range:
@@ -486,7 +508,7 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        self._create_plot(fig)
+        return self.create_plot(fig)
 
     def violin_plot(self, data=None, cols=None, group_col=None, groups=None,
                     title=None, colors=None, use_colorscale=False):
@@ -494,30 +516,39 @@ class PlotlyFig:
         Create a violin plot using Plotly.
 
         Args:
-            data: (DataFrame or list) A dataframe containing at least one numerical column. Also accepts lists of numerical values. If None, uses the dataframe passed into the constructor.
-            cols: ([str]) The labels for the columns of the dataframe to be included in the plot. Not used if data is passed in as list.
-            group_col: (str) Name of the column containing the group for each row, if it exists. Used only if there is one entry in cols.
-            groups: ([str]): All group names to be included in the violin plot. Used only if there is one entry in cols.
+            data: (DataFrame or list) A dataframe containing at least one
+                numerical column. Also accepts lists of numerical values. If
+                None, uses the dataframe passed into the constructor.
+            cols: ([str]) The labels for the columns of the dataframe to be
+                included in the plot. Not used if data is passed in as list.
+            group_col: (str) Name of the column containing the group for each
+                row, if it exists. Used only if there is one entry in cols.
+            groups: ([str]): All group names to be included in the violin plot.
+                Used only if there is one entry in cols.
             title: (str) Title of the violin plot
-            colors: (str/tuple/list/dict) either a plotly scale name (Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu,
-                Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot, Blackbody, Earth, Electric, Viridis), an rgb or hex
-                color, a color tuple, a list of colors or a dictionary. An rgb color is of the form 'rgb(x, y, z)'
-                where x, y and z belong to the interval [0, 255] and a color tuple is a tuple of the form (a, b, c)
-                where a, b and c belong to [0, 1]. If colors is a list, it must contain valid color types as its
-                members. If colors is a dictionary, its keys must represent group names, and corresponding values must
-                be valid color types (str).
-            use_colorscale: (bool) Only applicable if grouping by another variable. Will implement a colorscale based
-                on the first 2 colors of param colors. This means colors must be a list with at least 2 colors in it
-                (Plotly colorscales are accepted since they map to a list of two rgb colors)
+            colors: (str/tuple/list/dict) either a plotly scale name (Greys,
+                YlGnBu, Greens, etc.), an rgb or hex color, a color tuple, a
+                list/dict of colors. An rgb color is of the form 'rgb(x, y, z)'
+                where x, y and z belong to the interval [0, 255] and a color
+                tuple is a tuple of the form (a, b, c) where a, b and c belong
+                to [0, 1]. If colors is a list, it must contain valid color
+                types as its members. If colors is a dictionary, its keys must
+                represent group names, and corresponding values must be valid
+                color types (str).
+            use_colorscale: (bool) Only applicable if grouping by another
+                variable. Will implement a colorscale based on the first 2
+                colors of param colors. This means colors must be a list with
+                at least 2 colors in it (Plotly colorscales are accepted since
+                they map to a list of two rgb colors)
 
-
-        Returns: a Plotly violin plot
+        Returns: A Plotly violin plot Figure object.
 
         """
         if data is None:
             if cols is None or self.df is None:
                 raise ValueError(
-                    "Violin plot requires either dataframe labels and a dataframe or a list of numerical values.")
+                    "Violin plot requires either dataframe labels and a "
+                    "dataframe or a list of numerical values.")
             data = self.df
 
         if isinstance(data, pd.Series):
@@ -546,7 +577,8 @@ class PlotlyFig:
             else:
                 if group_col is None:
                     raise ValueError(
-                        "Please specify group_col, the label of the column containing the groups for each row.")
+                        "Please specify group_col, the label of the column "
+                        "containing the groups for each row.")
 
             use_colorscale = True
             group_stats = {}
@@ -562,7 +594,8 @@ class PlotlyFig:
                 if group_value_counts[j] == 1:
                     data = data[data[group_col] != j]
                     warnings.warn(
-                        'Omitting rows with group = {} which have only one row in the dataframe.'.format(
+                        'Omitting rows with group = {} which have only one row '
+                        'in the dataframe.'.format(
                             j))
         else:
             data = pd.DataFrame({'data': np.asarray(data)})
@@ -576,7 +609,6 @@ class PlotlyFig:
                                colors=colors, use_colorscale=use_colorscale,
                                group_stats=group_stats)
 
-        # Cannot add x-axis title as the above object populates it with group names.
         fig.update(dict(
             layout=dict(
                 title=self.title,
@@ -600,7 +632,7 @@ class PlotlyFig:
                                       family=self.fontfamily)
                     )
                 )
-        self._create_plot(fig)
+        return self.create_plot(fig)
 
     def scatter_matrix(self, df, colbar_col=None, marker=None, text=None,
                        height=800, width=1000, **kwargs):
@@ -658,7 +690,7 @@ class PlotlyFig:
                     'size'] = self.textsize * scatter_scale
             if iplot % (nplots + 1) != 0:
                 fig['data'][iplot].update(marker=marker, text=text)
-        self._create_plot(fig)
+        return self.create_plot(fig)
 
     def histogram(self, data=None, cols=None, orientation="vertical",
                   histnorm="count", n_bins=None, start=None, end=None,
@@ -783,7 +815,7 @@ class PlotlyFig:
             for h in hgrams:
                 h['opacity'] = 1.0 / float(len(hgrams)) + 0.1
         fig = dict(data=hgrams, layout=self.layout)
-        self._create_plot(fig)
+        return self.create_plot(fig)
 
     def bar_chart(self, x, y):
         """
@@ -797,7 +829,7 @@ class PlotlyFig:
         barplot = go.Bar(x=x, y=y)
         data = [barplot]
         fig = dict(data=data, layout=self.layout)
-        self._create_plot(fig)
+        return self.create_plot(fig)
 
     def sankey(self):
         pass
