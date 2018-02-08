@@ -176,17 +176,17 @@ class OPSiteFingerprint(BaseFeaturizer):
                  dist_exp=2, zero_ops=True):
         self.optypes = {
             1: ["sgl_bd"],
-            2: ["bent180", "bent45", "bent90", "bent135"],
-            3: ["tri_plan", "tet", "T"],
-            4: ["sq_plan", "sq", "tet", "see_saw_rect", "tri_pyr"],
-            5: ["pent_plan", "sq_pyr", "tri_bipyr"],
-            6: ["oct", "pent_pyr"],
+            2: ["bent180", "bent150", "bent120", "bent104.5", "bent90"],
+            3: ["tri_plan_max", "tet_max", "T"],
+            4: ["sq_plan_max", "tet_max", "see_saw_rect", "tri_bipyr", "tri_pyr"],
+            5: ["pent_plan_max", "sq_pyr", "tri_bipyr"],
+            6: ["hex_plan_max", "oct_max", "pent_pyr"],
             7: ["hex_pyr", "pent_bipyr"],
             8: ["bcc", "hex_bipyr"],
             9: ["q2", "q4", "q6"],
             10: ["q2", "q4", "q6"],
             11: ["q2", "q4", "q6"],
-            12: ["cuboct", "q2", "q4", "q6"]} if optypes is None \
+            12: ["cuboct_max", "q2", "q4", "q6"]} if optypes is None \
             else optypes.copy()
         self.dr = dr
         self.ddr = ddr
