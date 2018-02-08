@@ -816,7 +816,7 @@ class PlotlyFig:
         return self.create_plot(fig)
 
     def bar(self, data=None, cols=None, x=None, y=None, labels=None,
-            barmode='group', colors=None):
+            barmode='group', colors=None, bargap=None):
         """
         Create a bar chart using Plotly.
 
@@ -845,6 +845,7 @@ class PlotlyFig:
             colors ([str]): The list of colors to use for each set of bars.
                 The length of this list should be equal to the number of rows
                 (sets of bars) present in your data.
+            bargap (int/float): Separation between bars.
 
         Returns:
             A Plotly bar chart object.
@@ -907,5 +908,6 @@ class PlotlyFig:
         # Prevent linear default from altering categorical bar plot
         self.layout['xaxis']['type'] = None
         self.layout['barmode'] = barmode
+        self.layout['bargap'] = bargap
         fig = dict(data=barplots, layout=self.layout)
         return self.create_plot(fig)
