@@ -520,10 +520,17 @@ class PlotlyFig:
                     "Violin plot requires either dataframe labels and a dataframe or a list of numerical values.")
             data = self.df
 
+        if isinstance(data, pd.Series):
+            cols = [data.name]
+            data = pd.DataFrame({data.name: data.tolist()})
+
         if isinstance(data, pd.DataFrame):
             if groups is None:
                 if group_col is None:
                     grouped = pd.DataFrame({'data': [], 'group': []})
+
+                    if cols is None:
+                        cols = data.columns.values
 
                     for col in cols:
                         d = data[col].tolist()
@@ -558,9 +565,6 @@ class PlotlyFig:
                         'Omitting rows with group = {} which have only one row in the dataframe.'.format(
                             j))
         else:
-            if isinstance(data, pd.Series):
-                data = data.tolist()
-
             data = pd.DataFrame({'data': np.asarray(data)})
             cols = ['data']
             group_col = None
@@ -660,21 +664,42 @@ class PlotlyFig:
                   histnorm="count", n_bins=None, start=None, end=None,
                   size=None, colors=None, bargap=0):
         """
-        Creates a Plotly histogram. If multiple series of data are available, will create an overlaid histogram.
+        Creates a Plotly histogram. If multiple series of data are available,
+        will create an overlaid histogram.
 
-        For n_bins, start, end, size, colors, and bargaps, all defaults are Plotly defaults.
+        For n_bins, start, end, size, colors, and bargaps, all defaults are
+        Plotly defaults.
 
         Args:
-            data (DataFrame or list): A dataframe containing at least one numerical column. Also accepts lists of numerical values. If None, uses the dataframe passed into the constructor.
-            cols ([str]): A list of strings specifying the columns of the dataframe to use. Each column will be represented with its own histogram in the overlay.
-            orientation (str): Determines whether histogram is oriented horizontally or vertically. Use "vertical" or "horizontal".
-            histnorm: The technique for creating the plot. Can be "probability density", "probability", "density", or "" (count).
+            data (DataFrame or list): A dataframe containing at least
+                one numerical column. Also accepts lists of numerical values.
+                If None, uses the dataframe passed into the constructor.
+            cols ([str]): A list of strings specifying the columns of the
+                dataframe to use. Each column will be represented with its own
+                histogram in the overlay.
+            orientation (str): Determines whether histogram is oriented
+                horizontally or vertically. Use "vertical" or "horizontal".
+            histnorm: The technique for creating the plot. Can be "probability
+                density", "probability", "density", or "" (count).
             n_bins (int): The number of binds to include on each plot.
-            start (float or list): The list of starting points for each histogram's bins (if overlaid). If only one series of data is present or all series should have the same value, a single float/int determines the starting point.
-            end (float or list): The list of ending points for each histogram's bins (if overlaid). If only one series of data is present or all series should have the same value, a single float/int determines the ending point.
-            size (float or list): The list of sizes of each histogram's bins (if overlaid). If only one series of data is present or all series should have the same value, a single float/int determines the size of the bins.
-            colors (str or list): The list of colors for each histogram (if overlaid). If only one series of data is present or all series should have the same value, a single str determines the color of the bins.
-            bargaps (float or list): The gaps between bars for all histograms shown.
+            start (float or list): The list of starting points for each
+                histogram's bins (if overlaid). If only one series of data is
+                present or all series should have the same value, a single
+                float/int determines the starting point.
+            end (float or list): The list of ending points for each histogram's
+                bins (if overlaid). If only one series of data is present or
+                all series should have the same value, a single float/int
+                determines the ending point.
+            size (float or list): The list of sizes of each histogram's bins
+                (if overlaid). If only one series of data is present or all
+                series should have the same value, a single float/int determines
+                the size of the bins.
+            colors (str or list): The list of colors for each histogram (if
+                overlaid). If only one series of data is present or all series
+                should have the same value, a single str determines the color
+                of the bins.
+            bargaps (float or list): The gaps between bars for all histograms
+                shown.
 
         Returns:
             Plotly histogram figure.
@@ -686,15 +711,17 @@ class PlotlyFig:
         if data is None:
             if cols is None or self.df is None:
                 raise ValueError(
-                    "Histogram requires either dataframe labels and a dataframe or a list of numerical values.")
+                    "Histogram requires either dataframe labels and a dataframe"
+                    " or a list of numerical values.")
             data = self.df[cols]
+
+        if cols is None:
+            cols = data.columns.values
 
         if isinstance(cols, str):
             cols = [cols]
 
         if not isinstance(data, pd.DataFrame):
-            if isinstance(data, pd.Series):
-                data = data.tolist()
             data = pd.DataFrame({'trace1': data})
             cols = ['trace1']
 
@@ -735,7 +762,7 @@ class PlotlyFig:
                                  marker=dict(color=colors[i]), name=col)
             else:
                 raise ValueError(
-                    "The orientation must be either 'horizontal' or 'vertical'.")
+                    "The orientation must be 'horizontal' or 'vertical'.")
             hgrams.append(h)
 
         self.layout['hovermode'] = 'x' if orientation == 'vertical' else 'y'
