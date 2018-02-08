@@ -9,7 +9,7 @@ import plotly.graph_objs as go
 import plotly.figure_factory as FF
 from scipy import stats
 
-__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
+__authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, Alireza Faghaninia  <alireza@lbl.gov>'
 
 
 # todo: df as attribute, but can still pass x as list or whatever
@@ -17,12 +17,12 @@ __author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>'
 # todo: scatter matrix
 # todo: font_scale instead of all options, etc.
 # todo: all of them: if mpid or formula in columns, use as interactive index?
-# todo: xyplot (X), heatmap (X), histogram, barchart, scatter matrix (X), sankey
+# todo: xyplot (X), heatmap (X), barchart, scatter matrix (X), sankey(?)
 
 class PlotlyFig:
     def __init__(self, df=None, plot_title=None, x_title=None, y_title=None, hovermode='closest', filename='auto',
-                 plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=30, ticksize=25,
-                 fontfamily=None, height=800, width=1000, scale=None, margins=100, pad=10, marker_scale=1.0, x_type='linear', y_type='linear', hoverinfo='x+y+text'):
+                 plot_mode='offline', show_offline_plot=True, username=None, api_key=None, textsize=25, ticksize=25,
+                 fontfamily=None, height=800, width=1000, scale=None, margins=100, pad=0, marker_scale=1.0, x_type='linear', y_type='linear', hoverinfo='x+y+text'):
         """
         Class for making Plotly plots
 
@@ -117,7 +117,8 @@ class PlotlyFig:
             hovermode=self.hovermode,
             width=self.width,
             height=self.height,
-            margin=self.margins
+            margin=self.margins,
+            legend=dict(font=dict(family=self.fontfamily))
         )
 
         if self.plot_mode == 'online' or self.plot_mode == 'static':
@@ -145,6 +146,7 @@ class PlotlyFig:
             fig: (dictionary) contains data and layout information
 
         """
+
         if self.filename == 'auto':
             filename = 'auto_{}'.format(self.plot_counter)
         else:
@@ -628,7 +630,7 @@ class PlotlyFig:
         """
 
         # todo: bargap not working? -AD
-        
+
         if data is None:
             if cols is None or self.df is None:
                 raise ValueError("Histogram requires either dataframe labels and a dataframe or a list of numerical values.")
@@ -689,8 +691,6 @@ class PlotlyFig:
             if not self.x_title:
                 self.layout['xaxis']['title'] = histnorm
 
-
-
         if len(hgrams) > 1:
             self.layout['barmode'] = 'overlay'
             for h in hgrams:
@@ -701,11 +701,9 @@ class PlotlyFig:
     def bar_chart(self, x, y):
         """
         Create a bar chart using Plotly
-
         Args:
             x: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the x coordinates
             y: (list/numpy array/Pandas series of numbers, strings, or datetimes) sets the y coordinates
-
         Returns: a Plotly bar chart
         """
 
@@ -716,5 +714,3 @@ class PlotlyFig:
 
     def sankey(self):
         pass
-
-
