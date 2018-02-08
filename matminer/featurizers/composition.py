@@ -303,7 +303,7 @@ class AtomicOrbitals(BaseFeaturizer):
             LUMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
             LUMO_element: (str) symbol of element for LUMO
             LUMO_energy: (float in eV) absolute energy of LUMO
-            bandgap: (float in eV)
+            gap_AO: (float in eV)
                 the estimated bandgap from HOMO and LUMO energeis
         '''
 
@@ -316,7 +316,7 @@ class AtomicOrbitals(BaseFeaturizer):
             feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
             feat['{}_element'.format(edge)] = homo_lumo[edge][0]
             feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
-        feat['gap'] = feat['LUMO_energy'] - feat['HOMO_energy']
+        feat['gap_AO'] = feat['LUMO_energy'] - feat['HOMO_energy']
 
         return list(feat.values())
 
