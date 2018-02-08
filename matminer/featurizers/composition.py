@@ -326,7 +326,7 @@ class AtomicOrbitals(BaseFeaturizer):
             feat.extend(['{}_character'.format(edge),
                          '{}_element'.format(edge),
                          '{}_energy'.format(edge)])
-        feat.append("gap")
+        feat.append("gap_AO")
         return feat
 
     def citations(self):
