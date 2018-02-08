@@ -1122,16 +1122,12 @@ class BagofBonds(BaseFeaturizer):
         """
         bond_types = []
         for s in structures:
-            try:
-                bts = self.enumerate_bonds(s)
-                for bt in bts:
-                    if bt not in bond_types:
-                        bond_types.append(bt)
-            except:
-                if ignore_errors:
-                    continue
-                else:
-                    raise
+            if s is None and ignore_errors:
+                continue
+            bts = self.enumerate_bonds(s)
+            for bt in bts:
+                if bt not in bond_types:
+                    bond_types.append(bt)
         return tuple(sorted(bond_types))
 
     def featurize(self, s):
