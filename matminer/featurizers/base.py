@@ -26,6 +26,13 @@ class BaseFeaturizer(object):
             updated Dataframe
         """
 
+        # Generate the feature labels
+        labels = self.feature_labels()
+
+        for col in df.columns.values:
+            if col in labels:
+                raise ValueError('"{}" exists in input dataframe'.format(col))
+
         # If only one column and user provided a string, put it inside a list
         if isinstance(col_id, string_types):
             col_id = [col_id]
@@ -38,16 +45,13 @@ class BaseFeaturizer(object):
                 features.append(self.featurize(*x))
             except:
                 if ignore_errors:
-                    features.append([float("nan")]
-                                    * len(self.feature_labels()))
+                    features.append([float("nan")] * len(labels))
                 else:
                     raise
 
-        # Generate the feature labels
-        labels = self.feature_labels()
-
         # Create dataframe with the new features
-        new_cols = dict(zip(labels, [pd.Series(x, index=df.index) for x in zip(*features)]))
+        new_cols = dict(zip(labels, [pd.Series(x, index=df.index) for x in
+                                     zip(*features)]))
 
         # Update the dataframe
         if inplace:
