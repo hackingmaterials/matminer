@@ -535,18 +535,15 @@ class PlotlyFig:
         marker = marker or {'symbol': 'circle-open'}
         nplots = len(df.columns) - int(colbar_col is not None)
         scatter_scale = 1 / nplots ** 0.2
-        marker_size = marker.get(
-            'size') or 10.0 * scatter_scale * self.marker_scale
+        marker_size = marker.get('size') or 10.0 * scatter_scale * self.marker_scale
         fig = FF.create_scatterplotmatrix(df, index=colbar_col,
                                           diag='histogram',
                                           size=marker_size, height=height,
                                           width=width, **kwargs)
 
         # also update fig layout as scatter plot ignores PlotlyFig layout for some reason
-        fig['layout'].update(
-            titlefont={'family': self.fontfamily,
-                       'size': self.textsize * scatter_scale},
-            margin=self.margins)
+        fig['layout'].update(titlefont={'family': self.fontfamily,
+                'size': self.textsize * scatter_scale}, margin=self.margins)
 
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots ** 2):
@@ -559,9 +556,10 @@ class PlotlyFig:
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
                     'family'] = self.fontfamily
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
-                    'size'] = self.textsize * scatter_scale
+                    'size'] = self.textsize * scatter_scale * 0.8
             if iplot % (nplots + 1) != 0:
                 fig['data'][iplot].update(marker=marker, text=text)
+                # fig['layout']['margin']['b'] += 20
         return self.create_plot(fig)
 
     def histogram(self, data=None, cols=None, orientation="vertical",
