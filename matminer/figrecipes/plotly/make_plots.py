@@ -715,15 +715,18 @@ class PlotlyFig:
                     " or a list of numerical values.")
             data = self.df[cols]
 
-        if cols is None:
-            cols = data.columns.values
-
         if isinstance(cols, str):
             cols = [cols]
 
-        if not isinstance(data, pd.DataFrame):
-            data = pd.DataFrame({'trace1': data})
-            cols = ['trace1']
+        if cols is None:
+            if isinstance(data, pd.Series):
+                cols = [data.name]
+                data = pd.DataFrame({cols[0]: data.tolist()})
+            elif isinstance(data, pd.DataFrame):
+                cols = data.columns.values
+            else:
+                data = pd.DataFrame({'trace1': data})
+                cols = ['trace1']
 
         # Transform all entries to listlike, if given as str or numbers
         dtypes = (list, np.ndarray, tuple)
