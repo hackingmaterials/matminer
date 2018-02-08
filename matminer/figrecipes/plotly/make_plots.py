@@ -507,130 +507,6 @@ class PlotlyFig:
 
         return self.create_plot(fig)
 
-    def violin(self, data=None, cols=None, group_col=None, groups=None,
-               title=None, colors=None, use_colorscale=False):
-        """
-        Create a violin plot using Plotly.
-
-        Args:
-            data: (DataFrame or list) A dataframe containing at least one
-                numerical column. Also accepts lists of numerical values. If
-                None, uses the dataframe passed into the constructor.
-            cols: ([str]) The labels for the columns of the dataframe to be
-                included in the plot. Not used if data is passed in as list.
-            group_col: (str) Name of the column containing the group for each
-                row, if it exists. Used only if there is one entry in cols.
-            groups: ([str]): All group names to be included in the violin plot.
-                Used only if there is one entry in cols.
-            title: (str) Title of the violin plot
-            colors: (str/tuple/list/dict) either a plotly scale name (Greys,
-                YlGnBu, Greens, etc.), an rgb or hex color, a color tuple, a
-                list/dict of colors. An rgb color is of the form 'rgb(x, y, z)'
-                where x, y and z belong to the interval [0, 255] and a color
-                tuple is a tuple of the form (a, b, c) where a, b and c belong
-                to [0, 1]. If colors is a list, it must contain valid color
-                types as its members. If colors is a dictionary, its keys must
-                represent group names, and corresponding values must be valid
-                color types (str).
-            use_colorscale: (bool) Only applicable if grouping by another
-                variable. Will implement a colorscale based on the first 2
-                colors of param colors. This means colors must be a list with
-                at least 2 colors in it (Plotly colorscales are accepted since
-                they map to a list of two rgb colors)
-
-        Returns: A Plotly violin plot Figure object.
-
-        """
-        if data is None:
-            if cols is None or self.df is None:
-                raise ValueError(
-                    "Violin plot requires either dataframe labels and a "
-                    "dataframe or a list of numerical values.")
-            data = self.df
-
-        if isinstance(data, pd.Series):
-            cols = [data.name]
-            data = pd.DataFrame({data.name: data.tolist()})
-
-        if isinstance(data, pd.DataFrame):
-            if groups is None:
-                if group_col is None:
-                    grouped = pd.DataFrame({'data': [], 'group': []})
-
-                    if cols is None:
-                        cols = data.columns.values
-
-                    for col in cols:
-                        d = data[col].tolist()
-                        temp_df = pd.DataFrame(
-                            {'data': d, 'group': [col] * len(d)})
-                        grouped = grouped.append(temp_df)
-                    data = grouped
-                    group_col = 'group'
-                    groups = cols
-                    cols = ['data']
-                else:
-                    groups = data[group_col].unique()
-            else:
-                if group_col is None:
-                    raise ValueError(
-                        "Please specify group_col, the label of the column "
-                        "containing the groups for each row.")
-
-            use_colorscale = True
-            group_stats = {}
-
-            for g in groups:
-                group_data = data.loc[data[group_col] == g]
-                group_stats[g] = np.median(group_data[cols])
-
-            # Filter out groups from dataframe that have only 1 row.
-            group_value_counts = data[group_col].value_counts().to_dict()
-
-            for j in group_value_counts:
-                if group_value_counts[j] == 1:
-                    data = data[data[group_col] != j]
-                    warnings.warn(
-                        'Omitting rows with group = {} which have only one row '
-                        'in the dataframe.'.format(
-                            j))
-        else:
-            data = pd.DataFrame({'data': np.asarray(data)})
-            cols = ['data']
-            group_col = None
-            group_stats = None
-
-        fig = FF.create_violin(data=data, data_header=cols[0],
-                               group_header=group_col, title=title,
-                               height=self.height, width=self.width,
-                               colors=colors, use_colorscale=use_colorscale,
-                               group_stats=group_stats)
-
-        fig.update(dict(
-            layout=dict(
-                title=self.title,
-                titlefont=dict(size=self.textsize, family=self.fontfamily),
-                yaxis=dict(title=self.y_title, type=self.y_type,
-                           titlefont=dict(size=self.textsize,
-                                          family=self.fontfamily),
-                           tickfont=dict(size=self.ticksize,
-                                         family=self.fontfamily)),
-            )
-        ))
-
-        # Change sizes in all x-axis
-        for item in fig['layout']:
-            if item.startswith('xaxis'):
-                fig['layout'][item].update(
-                    dict(
-                        titlefont=dict(size=self.textsize,
-                                       family=self.fontfamily),
-                        tickfont=dict(size=self.ticksize,
-                                      family=self.fontfamily)
-                    )
-                )
-        return self.create_plot(fig)
-
     def scatter_matrix(self, df, colbar_col=None, marker=None, text=None,
                        height=800, width=1000, **kwargs):
         """
@@ -910,4 +786,128 @@ class PlotlyFig:
         self.layout['barmode'] = barmode
         self.layout['bargap'] = bargap
         fig = dict(data=barplots, layout=self.layout)
+        return self.create_plot(fig)
+
+    def violin(self, data=None, cols=None, group_col=None, groups=None,
+               title=None, colors=None, use_colorscale=False):
+        """
+        Create a violin plot using Plotly.
+
+        Args:
+            data: (DataFrame or list) A dataframe containing at least one
+                numerical column. Also accepts lists of numerical values. If
+                None, uses the dataframe passed into the constructor.
+            cols: ([str]) The labels for the columns of the dataframe to be
+                included in the plot. Not used if data is passed in as list.
+            group_col: (str) Name of the column containing the group for each
+                row, if it exists. Used only if there is one entry in cols.
+            groups: ([str]): All group names to be included in the violin plot.
+                Used only if there is one entry in cols.
+            title: (str) Title of the violin plot
+            colors: (str/tuple/list/dict) either a plotly scale name (Greys,
+                YlGnBu, Greens, etc.), an rgb or hex color, a color tuple, a
+                list/dict of colors. An rgb color is of the form 'rgb(x, y, z)'
+                where x, y and z belong to the interval [0, 255] and a color
+                tuple is a tuple of the form (a, b, c) where a, b and c belong
+                to [0, 1]. If colors is a list, it must contain valid color
+                types as its members. If colors is a dictionary, its keys must
+                represent group names, and corresponding values must be valid
+                color types (str).
+            use_colorscale: (bool) Only applicable if grouping by another
+                variable. Will implement a colorscale based on the first 2
+                colors of param colors. This means colors must be a list with
+                at least 2 colors in it (Plotly colorscales are accepted since
+                they map to a list of two rgb colors)
+
+        Returns: A Plotly violin plot Figure object.
+
+        """
+        if data is None:
+            if cols is None or self.df is None:
+                raise ValueError(
+                    "Violin plot requires either dataframe labels and a "
+                    "dataframe or a list of numerical values.")
+            data = self.df
+
+        if isinstance(data, pd.Series):
+            cols = [data.name]
+            data = pd.DataFrame({data.name: data.tolist()})
+
+        if isinstance(data, pd.DataFrame):
+            if groups is None:
+                if group_col is None:
+                    grouped = pd.DataFrame({'data': [], 'group': []})
+
+                    if cols is None:
+                        cols = data.columns.values
+
+                    for col in cols:
+                        d = data[col].tolist()
+                        temp_df = pd.DataFrame(
+                            {'data': d, 'group': [col] * len(d)})
+                        grouped = grouped.append(temp_df)
+                    data = grouped
+                    group_col = 'group'
+                    groups = cols
+                    cols = ['data']
+                else:
+                    groups = data[group_col].unique()
+            else:
+                if group_col is None:
+                    raise ValueError(
+                        "Please specify group_col, the label of the column "
+                        "containing the groups for each row.")
+
+            use_colorscale = True
+            group_stats = {}
+
+            for g in groups:
+                group_data = data.loc[data[group_col] == g]
+                group_stats[g] = np.median(group_data[cols])
+
+            # Filter out groups from dataframe that have only 1 row.
+            group_value_counts = data[group_col].value_counts().to_dict()
+
+            for j in group_value_counts:
+                if group_value_counts[j] == 1:
+                    data = data[data[group_col] != j]
+                    warnings.warn(
+                        'Omitting rows with group = {} which have only one row '
+                        'in the dataframe.'.format(
+                            j))
+        else:
+            data = pd.DataFrame({'data': np.asarray(data)})
+            cols = ['data']
+            group_col = None
+            group_stats = None
+
+        fig = FF.create_violin(data=data, data_header=cols[0],
+                               group_header=group_col, title=title,
+                               height=self.height, width=self.width,
+                               colors=colors, use_colorscale=use_colorscale,
+                               group_stats=group_stats)
+
+        fig.update(dict(
+            layout=dict(
+                title=self.title,
+                titlefont=dict(size=self.textsize, family=self.fontfamily),
+                yaxis=dict(title=self.y_title, type=self.y_type,
+                           titlefont=dict(size=self.textsize,
+                                          family=self.fontfamily),
+                           tickfont=dict(size=self.ticksize,
+                                         family=self.fontfamily)),
+            )
+        ))
+
+        # Change sizes in all x-axis
+        for item in fig['layout']:
+            if item.startswith('xaxis'):
+                fig['layout'][item].update(
+                    dict(
+                        titlefont=dict(size=self.textsize,
+                                       family=self.fontfamily),
+                        tickfont=dict(size=self.ticksize,
+                                      family=self.fontfamily)
+                    )
+                )
         return self.create_plot(fig)
