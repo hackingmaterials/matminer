@@ -14,8 +14,7 @@ from pymatgen.analysis.defects.point_defects import \
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from pymatgen.analysis.local_env import VoronoiNN, JMolNN, \
-    MinimumDistanceNN, MinimumOKeeffeNN, MinimumVIRENN
+import pymatgen.analysis.local_env
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
@@ -1052,20 +1051,10 @@ class BagofBonds(BaseFeaturizer):
         Returns:
             CoordinationNumber from a preset.
         """
-        if preset == "VoronoiNN":
-            return BagofBonds(VoronoiNN())
-        elif preset == "JMolNN":
-            return BagofBonds(JMolNN())
-        elif preset == "MinimumDistanceNN":
-            return BagofBonds(MinimumDistanceNN())
-        elif preset == "MinimumOKeeffeNN":
-            return BagofBonds(MinimumOKeeffeNN())
-        elif preset == "MinimumVIRENN":
-            return BagofBonds(MinimumVIRENN())
-        else:
-            raise RuntimeError('Unknown preset.')
+        nn = getattr(pymatgen.analysis.local_env, preset)
+        return BagofBonds(nn())
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True):
+    def featurize_dataframe(self, df, col_id, *args, **kwargs):
         """
         Compute features for all entries contained in input dataframe.
         Necessary for returning the correct unified dataframe.
@@ -1080,9 +1069,8 @@ class BagofBonds(BaseFeaturizer):
 
         # unified_bonds attribute only lives if dataframe is being featurized.
         self.unified_bonds = self.enumerate_all_bonds(df[col_id])
-        df = super(BagofBonds, self).featurize_dataframe(df, col_id,
-                                                         ignore_errors=ignore_errors,
-                                                         inplace=inplace)
+        df = super(BagofBonds, self).featurize_dataframe(df, col_id, *args,
+                                                         **kwargs)
         delattr(self, 'unified_bonds')
         return df
 
