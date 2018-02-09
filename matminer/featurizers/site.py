@@ -760,7 +760,7 @@ class ChemicalSRO(BaseFeaturizer):
     Here the calculation is run for each element present in the structure.
 
     A positive f_el indicates the "bonding" with the specific element
-    is favored around the target site;
+    is favored, at least in the target site;
     A negative f_el indicates the "bonding" is not favored, at least
     in the target site.
 
