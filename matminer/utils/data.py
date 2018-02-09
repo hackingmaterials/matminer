@@ -210,7 +210,11 @@ class MagpieData(AbstractData, OxidationStatesMixin):
                         Element.from_Z(atomic_no).symbol] = prop_value
 
     def get_elemental_property(self, elem, property_name):
-        return self.all_elemental_props[property_name][elem.symbol]
+        try:
+            return self.all_elemental_props[property_name][elem.symbol]
+        except KeyError:
+            print('Property: {} not found for {}'.format(property_name, elem.symbol))
+            return float("NaN")
 
     def get_oxidation_states(self, elem):
         return self.all_elemental_props["OxidationStates"][elem.symbol]
