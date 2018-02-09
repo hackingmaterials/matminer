@@ -303,7 +303,7 @@ class AtomicOrbitals(BaseFeaturizer):
             LUMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
             LUMO_element: (str) symbol of element for LUMO
             LUMO_energy: (float in eV) absolute energy of LUMO
-            bandgap: (float in eV)
+            gap_AO: (float in eV)
                 the estimated bandgap from HOMO and LUMO energeis
         '''
 
