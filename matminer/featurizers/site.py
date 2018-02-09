@@ -14,6 +14,8 @@ index and the structure. For example:
     f.featurize_dataframe(data, ['structure', 'site_idx'])
 """
 
+import os
+import yaml
 import numpy as np
 import math
 
@@ -24,6 +26,7 @@ from scipy.spatial import Voronoi, Delaunay
 from pymatgen.analysis.local_env import LocalStructOrderParas, \
     VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
     MinimumVIRENN
+import pymatgen.analysis
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
     import LocalGeometryFinder
@@ -32,6 +35,18 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
 from pymatgen.analysis.chemenv.coordination_environments.structure_environments import LightStructureEnvironments
 
 from matminer.featurizers.stats import PropertyStats
+
+cn_motif_op_paras = {}
+with open(os.path.join(os.path.dirname(
+        pymatgen.analysis.__file__), 'cn_opt_paras.yaml'), 'r') as f:
+    cn_motif_op_paras = yaml.safe_load(f)
+    f.close()
+cn_target_motif_op = {}
+with open(os.path.join(os.path.dirname(
+        __file__), 'cn_target_motif_op.yaml'), 'r') as f:
+    cn_target_motif_op = yaml.safe_load(f)
+    f.close()
+
 
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -149,6 +164,9 @@ class OPSiteFingerprint(BaseFeaturizer):
     or evaluated with the shell of the next largest observed
     coordination number.
     Args:
+        targets (dict): target op or motif type where keys
+                        are corresponding coordination numbers
+                        (e.g., {4: "tetrahedral"}).
         dr (float): width for binning neighbors in unit of relative
                     distances (= distance/nearest neighbor
                     distance).  The binning is necessary to make the
@@ -172,22 +190,24 @@ class OPSiteFingerprint(BaseFeaturizer):
                             default: True).
     """
 
-    def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
+    def __init__(self, targets=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
                  dist_exp=2, zero_ops=True):
-        self.optypes = {
-            1: ["sgl_bd"],
-            2: ["bent180", "bent150", "bent120", "bent104.5", "bent90"],
-            3: ["tri_plan_max", "tet_max", "T"],
-            4: ["sq_plan_max", "tet_max", "see_saw_rect", "tri_bipyr", "tri_pyr"],
-            5: ["pent_plan_max", "sq_pyr", "tri_bipyr"],
-            6: ["hex_plan_max", "oct_max", "pent_pyr"],
-            7: ["hex_pyr", "pent_bipyr"],
-            8: ["bcc", "hex_bipyr"],
-            9: ["q2", "q4", "q6"],
-            10: ["q2", "q4", "q6"],
-            11: ["q2", "q4", "q6"],
-            12: ["cuboct_max", "q2", "q4", "q6"]} if optypes is None \
-            else optypes.copy()
+        #self.optypes = {
+        #    1: ["sgl_bd"],
+        #    2: ["bent180", "bent150", "bent120", "bent104.5", "bent90"],
+        #    3: ["tri_plan_max", "tet_max", "T"],
+        #    4: ["sq_plan_max", "tet_max", "see_saw_rect", "tri_bipyr", "tri_pyr"],
+        #    5: ["pent_plan_max", "sq_pyr", "tri_bipyr"],
+        #    6: ["hex_plan_max", "oct_max", "pent_pyr"],
+        #    7: ["hex_pyr", "pent_bipyr"],
+        #    8: ["bcc", "hex_bipyr"],
+        #    9: ["q2", "q4", "q6"],
+        #    10: ["q2", "q4", "q6"],
+        #    11: ["q2", "q4", "q6"],
+        #    12: ["cuboct_max", "q2", "q4", "q6"]} if optypes is None \
+        #    else optypes.copy()
+        self.cn_target_motif_op = cn_target_motif_op if targets is None \
+            else targets
         self.dr = dr
         self.ddr = ddr
         self.ndr = ndr
@@ -195,15 +215,24 @@ class OPSiteFingerprint(BaseFeaturizer):
         self.dist_exp = dist_exp
         self.zero_ops = zero_ops
         self.ops = {}
-        for cn, t_list in self.optypes.items():
+        #for cn, t_list in self.optypes.items():
+        for cn, t_list in self.cn_target_motif_op.items():
             self.ops[cn] = []
             for t in t_list:
-                if t[:4] == 'bent':
-                    self.ops[cn].append(LocalStructOrderParas(
-                        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
-                                              'IGW_TA': 1.0 / 0.0667}]))
-                else:
-                    self.ops[cn].append(LocalStructOrderParas([t]))
+                #if t[:4] == 'bent':
+                #    self.ops[cn].append(LocalStructOrderParas(
+                #        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
+                #                              'IGW_TA': 1.0 / 0.0667}]))
+                #else:
+                #    self.ops[cn].append(LocalStructOrderParas([t]))
+                ot = t
+                p = None
+                if cn in cn_motif_op_paras.keys():
+                    if t in cn_motif_op_paras[cn].keys():
+                        ot = cn_motif_op_paras[cn][t][0]
+                        if len(cn_motif_op_paras[cn][t]) > 1:
+                            p = cn_motif_op_paras[cn][t][1]
+                self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
         """
@@ -247,7 +276,8 @@ class OPSiteFingerprint(BaseFeaturizer):
             d_sorted_alldrs[i] = sorted(d_sorted_alldrs[i])
 
         # Do q_sgl_bd separately.
-        if self.optypes[1][0] == "sgl_bd":
+        #if self.optypes[1][0] == "sgl_bd":
+        if self.cn_target_motif_op[1][0] == "sgl_bd":
             for i in range(-self.ndr, self.ndr + 1):
                 site_list = [s]
                 for n, dn in neigh_dist_alldrs[i]:
@@ -274,12 +304,12 @@ class OPSiteFingerprint(BaseFeaturizer):
                     # Set all OPs of non-CN-complying neighbor environments
                     # to zero if applicable.
                     if self.zero_ops and cn != this_cn:
-                        for it in range(len(self.optypes[cn])):
+                        for it in range(len(self.cn_target_motif_op[cn])):
                             opvals[i].append(0)
                         continue
 
                     # Set all (remaining) OPs.
-                    for it in range(len(self.optypes[cn])):
+                    for it in range(len(self.cn_target_motif_op[cn])):
                         opval = self.ops[cn][it].get_order_parameters(
                             site_list, 0,
                             indices_neighs=[j for j in
@@ -353,7 +383,7 @@ class OPSiteFingerprint(BaseFeaturizer):
 
     def feature_labels(self):
         labels = []
-        for cn, li in self.optypes.items():
+        for cn, li in self.cn_target_motif_op.items():
             for e in li:
                 labels.append('{} CN_{}'.format(e, cn))
         return labels

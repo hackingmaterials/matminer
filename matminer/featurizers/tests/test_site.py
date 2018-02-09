@@ -84,29 +84,34 @@ class FingerprintTests(PymatgenTest):
     def test_op_site_fingerprint(self):
         opsf = OPSiteFingerprint()
         l = opsf.feature_labels()
-        t = ["sgl_bd CN_1", "bent180 CN_2", "bent45 CN_2", "bent90 CN_2", \
-            "bent135 CN_2", "tri_plan CN_3", "tet CN_3", "T CN_3", \
-            "sq_plan CN_4", "sq CN_4", "tet CN_4", "see_saw_rect CN_4", \
-            "tri_pyr CN_4", "pent_plan CN_5", "sq_pyr CN_5", \
-            "tri_bipyr CN_5", "oct CN_6", "pent_pyr CN_6", "hex_pyr CN_7", \
-            "pent_bipyr CN_7", "bcc CN_8", "hex_bipyr CN_8", \
-            "q2 CN_9", "q4 CN_9", "q6 CN_9", \
-            "q2 CN_10", "q4 CN_10", "q6 CN_10",
-            "q2 CN_11", "q4 CN_11", "q6 CN_11", \
-            "cuboct CN_12", "q2 CN_12", "q4 CN_12", "q6 CN_12"]
+        t = ['sgl_bd CN_1', 'L-shaped CN_2', 'water-like CN_2', \
+             'bent 120 degrees CN_2', 'bent 150 degrees CN_2', \
+             'linear CN_2', 'trigonal planar CN_3', \
+             'trigonal non-coplanar CN_3', 'T-shaped CN_3', \
+             'square co-planar CN_4', 'tetrahedral CN_4', \
+             'rectangular see-saw-like CN_4', 'see-saw-like CN_4', \
+             'trigonal pyramidal CN_4', 'pentagonal planar CN_5', \
+             'square pyramidal CN_5', 'trigonal bipyramidal CN_5', \
+             'hexagonal planar CN_6', 'octahedral CN_6', \
+             'pentagonal pyramidal CN_6', 'hexagonal pyramidal CN_7', \
+             'pentagonal bipyramidal CN_7', 'body-centered cubic CN_8', \
+             'hexagonal bipyramidal CN_8', 'q2 CN_9', 'q4 CN_9', 'q6 CN_9', \
+             'q2 CN_10', 'q4 CN_10', 'q6 CN_10', \
+             'q2 CN_11', 'q4 CN_11', 'q6 CN_11', \
+             'cuboctahedral CN_12', 'q2 CN_12', 'q4 CN_12', 'q6 CN_12']
         for i in range(len(l)):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
-        self.assertEqual(len(ops), 35)
+        self.assertEqual(len(ops), 37)
         self.assertAlmostEqual(ops[opsf.feature_labels().index(
-            'oct CN_6')], 0.9995, places=7)
+            'octahedral CN_6')], 0.9995, places=7)
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEqual(ops[opsf.feature_labels().index(
-            'bcc CN_8')], 0.8955, places=7)
+            'body-centered cubic CN_8')], 0.8955, places=7)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEqual(ops[opsf.feature_labels().index(
-            'bcc CN_8')], 0.9555, places=7)
+            'body-centered cubic CN_8')], 0.9555, places=7)
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
