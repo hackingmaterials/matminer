@@ -995,4 +995,10 @@ class PlotlyFig:
                                       family=self.fontfamily)
                     )
                 )
+
+        if self.height is None:
+            fig['layout']['height'] = 1000
+        if self.width is None:
+            fig['layout']['width'] = 1400
+
         return self.create_plot(fig)
