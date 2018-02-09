@@ -223,8 +223,8 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_pairs, markers=None, lines=None, names=None,
-                       mode='markers', texts=None):
+    def xy(self, xy_pairs, markers=None, lines=None, names=None, mode='markers',
+           texts=None, showlegends=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
@@ -241,11 +241,17 @@ class PlotlyFig:
             mode (str): trace style; can be 'markers'/'lines'/'lines+markers'
             texts (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
+            showlegends (bool or [bool]): indicating whether to show legend
+                for each trace (or simply turn it on/off for all if not list)
 
         Returns: A Plotly Scatter plot Figure object.
         """
         if not isinstance(xy_pairs, list):
             xy_pairs = [xy_pairs]
+        if not isinstance(showlegends, list):
+            showlegends = [showlegends]
+        if len(showlegends) == 1:
+            showlegends *= len(xy_pairs)
         if isinstance(names, str):
             names = [names]
         if names is None:
@@ -277,7 +283,8 @@ class PlotlyFig:
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=mode,
                                      marker=markers[i], line=lines[i],
                                      text=texts[i], hoverinfo=self.hoverinfo,
-                                     name=names[i]))
+                                     name=names[i], showlegend=showlegends[i]
+                                     ))
 
         fig = dict(data=traces, layout=self.layout)
         return self.create_plot(fig)
