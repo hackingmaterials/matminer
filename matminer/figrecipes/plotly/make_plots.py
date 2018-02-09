@@ -508,13 +508,17 @@ class PlotlyFig:
 
         return self.create_plot(fig)
 
-    def scatter_matrix(self, df, colbar_col=None, marker=None, text=None,
-                       height=800, width=1000, **kwargs):
+    def scatter_matrix(self, data=None, cols=None, colbar=None, marker=None,
+                       text=None, height=800, width=1000, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
-            df (pandas.DataFrame): scatter matrix plotted for all columns
-            colbar_col: (str) name of the column used for colorbar
+            data (DataFrame or list): A dataframe containing at least
+                one numerical column. Also accepts lists of numerical values.
+                If None, uses the dataframe passed into the constructor.
+            cols ([str]): A list of strings specifying the columns of the
+                dataframe to use.
+            colbar: (str) name of the column used for colorbar
             marker (dict): if size is set, it will override the automatic size
             text (see PlotlyFig.xy_plot documentation):
             height (int/float): sets the height of the chart
@@ -534,21 +538,39 @@ class PlotlyFig:
                 'color': 'black'}}, colormap='Viridis',
                 title='Elastic Properties Scatter Matrix')
         """
+        # making sure the combination of input args make sense
+        if data is None:
+            if cols is None or self.df is None:
+                raise ValueError(
+                    "scatter_matrix requires either dataframe labels and a "
+                    "dataframe or a list of numerical values.")
+            data = self.df[cols]
+        elif isinstance(data, pd.DataFrame):
+            data = pd.DataFrame(data, columns=cols)
+        if isinstance(text, str):
+            if text in data:
+                text = data[text]
+            elif text in self.df:
+                text = self.df[text]
+            else:
+                raise ValueError('string "text" arg must be present in data')
+        if colbar and colbar not in data:
+            if colbar in self.df:
+                data[colbar] = self.df[colbar]
+            else:
+                raise ValueError('"{}" not found in the data'.format(colbar))
+
+        # actual ploting:
         marker = marker or {'symbol': 'circle-open'}
-        nplots = len(df.columns) - int(colbar_col is not None)
+        nplots = len(data.columns) - int(colbar is not None)
         scatter_scale = 1 / nplots ** 0.2
-        marker_size = marker.get(
-            'size') or 10.0 * scatter_scale * self.marker_scale
-        fig = FF.create_scatterplotmatrix(df, index=colbar_col,
-                                          diag='histogram',
-                                          size=marker_size, height=height,
-                                          width=width, **kwargs)
+        marker_size = marker.get('size') or 10.0 * scatter_scale * self.marker_scale
+        fig = FF.create_scatterplotmatrix(data, index=colbar, diag='histogram',
+                        size=marker_size, height=height,width=width, **kwargs)
 
         # also update fig layout as scatter plot ignores PlotlyFig layout for some reason
-        fig['layout'].update(
-            titlefont={'family': self.fontfamily,
-                       'size': self.textsize * scatter_scale},
-            margin=self.margins)
+        fig['layout'].update(titlefont={'family': self.fontfamily,
+                'size': self.textsize * scatter_scale}, margin=self.margins)
 
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots ** 2):
@@ -561,10 +583,11 @@ class PlotlyFig:
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
                     'family'] = self.fontfamily
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
-                    'size'] = self.textsize * scatter_scale
+                    'size'] = self.textsize * scatter_scale * 0.8
             if iplot % (nplots + 1) != 0:
                 fig['data'][iplot].update(marker=marker, text=text)
         return self.create_plot(fig)
+
 
     def histogram(self, data=None, cols=None, orientation="vertical",
                   histnorm="count", n_bins=None, start=None, end=None,
