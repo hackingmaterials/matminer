@@ -607,9 +607,9 @@ class VoronoiFingerprint(BaseFeaturizer):
 
     Args:
         cutoff (float): cutoff distance in determining the potential
-            neighbors for Voronoi tessellation analysis.
+                        neighbors for Voronoi tessellation analysis.
         use_weights(bool): whether to use weights to derive weighted
-            i-fold symmetry indices.
+                           i-fold symmetry indices.
         stats_vol (list of str): volume statistics types.
         stats_area (list of str): area statistics types.
         stats_dist (list of str): neighboring distance statistics types.
@@ -637,7 +637,7 @@ class VoronoiFingerprint(BaseFeaturizer):
             vt3 (array-like): coordinates of vertex 3.
             vt4 (array-like): coordinates of vertex 4.
         Returns:
-            vol_tetra (float): volume of the tetrahedron.
+            (float): volume of the tetrahedron.
         """
 
         vol_tetra = np.abs(np.dot((vt1 - vt4),
@@ -646,11 +646,12 @@ class VoronoiFingerprint(BaseFeaturizer):
 
     def featurize(self, struct, idx):
         """
+        Get Voronoi fingerprints of site with given index in input structure.
         Args:
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
         Returns:
-            voro_fingerprint (list of floats): Voronoi fingerprints
+            (list of floats): Voronoi fingerprints
                 -Voronoi indices
                 -i-fold symmetry indices
                 -weighted i-fold symmetry indices (if use_weights = True)
@@ -747,28 +748,121 @@ class VoronoiFingerprint(BaseFeaturizer):
 
 class ChemicalSRO(BaseFeaturizer):
     """
-     Chemical short-range ordering (SRO) features to evaluate the deviation
-     of local chemistry with the nominal composition of the structure.
+    Chemical short-range ordering (SRO) features to evaluate the deviation
+    of local chemistry with the nominal composition of the structure.
 
-     f_el = N_el/(sum of N_el) - c_el,
-     where N_el is the number of each element type in the neighbors around
-     the target site, sum of N_el is the sum of all possible element types
-     (coordination number), and c_el is the composition of the specific
-     element in the entire structure.
+    f_el = N_el/(sum of N_el) - c_el,
+    where N_el is the number of each element type in the neighbors around
+    the target site, sum of N_el is the sum of all possible element types
+    (coordination number), and c_el is the composition of the specific
+    element in the entire structure.
 
-     Here the calculation is run for each element present in the structure.
+    Here the calculation is run for each element present in the structure.
 
-     A positive f_el indicating the "bonding" with the specific element
-     is favored around the target site;
-     A negative f_el means the "bonding" is not favored, at least around
-     the target site.
+    A positive f_el indicates the "bonding" with the specific element
+    is favored around the target site;
+    A negative f_el indicates the "bonding" is not favored, at least
+    in the target site.
 
-     Args:
-         nn (NearNeighbor): instance of one of pymatgen's NearNeighbor
-                            classes.
-     Returns:
+    Args:
+        nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
+                              classes.
+    """
 
-     """
+    @staticmethod
+    def from_preset(preset):
+        """
+        Use one of the standard instances of a given NearNeighbor class.
+        Args:
+            preset (str): preset type ("VoronoiNN", "JMolNN",
+                          "MiniumDistanceNN", "MinimumOKeeffeNN",
+                          or "MinimumVIRENN").
+        Returns:
+            ChemicalSRO from a preset.
+        """
+        if preset == "VoronoiNN":
+            return ChemicalSRO(VoronoiNN())
+        elif preset == "JMolNN":
+            return ChemicalSRO(JMolNN())
+        elif preset == "MinimumDistanceNN":
+            return ChemicalSRO(MinimumDistanceNN())
+        elif preset == "MinimumOKeeffeNN":
+            return ChemicalSRO(MinimumOKeeffeNN())
+        elif preset == "MinimumVIRENN":
+            return ChemicalSRO(MinimumVIRENN())
+        else:
+            raise RuntimeError('Unknown preset.')
+
+    def __init__(self, nn):
+        self.nn = nn
+        self.elements = None
+
+    def featurize(self, struct, idx):
+        """
+        Get CSRO features of site with given index in input structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            (list of floats): Chemical SRO features for each element.
+        """
+        el_amt = struct.composition.fractional_composition.get_el_amt_dict()
+        self.elements = el_amt.keys()
+        nn_list = self.nn.get_nn(struct, idx)
+        nn_el_amt = dict.fromkeys(el_amt, 0)
+        for nn in nn_list:
+            nn_el_amt[str(nn.specie)] += 1/len(nn_list)
+        csro_el = [el_amt[el] - nn_el_amt[el] for el in self.elements]
+        return csro_el
+
+    def feature_labels(self):
+        return ['CSRO_{}_{}'.format(el, self.nn.__class__.__name__)
+                for el in self.elements]
+
+    def citations(self):
+        citations = []
+        if self.nn.__class__.__name__ == 'VoronoiNN':
+            citations.append('@article{voronoi_jreineangewmath_1908, title={'
+                'Nouvelles applications des param\\`{e}tres continus \\`{a} la '
+                'th\'{e}orie des formes quadratiques. Sur quelques '
+                'propri\'{e}t\'{e}s des formes quadratiques positives'
+                ' parfaites}, journal={Journal f\"ur die reine und angewandte '
+                'Mathematik}, number={133}, pages={97-178}, year={1908}}')
+            citations.append('@article{dirichlet_jreineangewmath_1850, title={'
+                '\"{U}ber die Reduction der positiven quadratischen Formen '
+                'mit drei unbestimmten ganzen Zahlen}, journal={Journal '
+                'f\"ur die reine und angewandte Mathematik}, number={40}, '
+                'pages={209-227}, doi={10.1515/crll.1850.40.209}, year={1850}}')
+        if self.nn.__class__.__name__ == 'JMolNN':
+            citations.append('@misc{jmol, title = {Jmol: an open-source Java '
+                'viewer for chemical structures in 3D}, howpublished = {'
+                '\\url{http://www.jmol.org/}}}')
+        if self.nn.__class__.__name__ == 'MinimumOKeeffeNN':
+            citations.append('@article{okeeffe_jamchemsoc_1991, title={Atom '
+                'sizes and bond lengths in molecules and crystals}, journal='
+                '{Journal of the American Chemical Society}, author={'
+                'O\'Keeffe, M. and Brese, N. E.}, number={113}, pages={'
+                '3226-3229}, doi={doi:10.1021/ja00009a002}, year={1991}}')
+        if self.nn.__class__.__name__ == 'MinimumVIRENN':
+            citations.append('@article{shannon_actacryst_1976, title={'
+                'Revised effective ionic radii and systematic studies of '
+                'interatomic distances in halides and chalcogenides}, '
+                'journal={Acta Crystallographica}, author={Shannon, R. D.}, '
+                'number={A32}, pages={751-767}, doi={'
+                '10.1107/S0567739476001551}, year={1976}')
+        if self.nn.__class__.__name__ in [
+                'MinimumDistanceNN', 'MinimumOKeeffeNN', 'MinimumVIRENN']:
+            citations.append('@article{zimmermann_frontmater_2017, '
+                'title={Assessing local structure motifs using order '
+                'parameters for motif recognition, interstitial '
+                'identification, and diffusion path characterization}, '
+                'journal={Frontiers in Materials}, author={Zimmermann, '
+                'N. E. R. and Horton, M. K. and Jain, A. and Haranczyk, M.}, '
+                'number={4:34}, doi={10.3389/fmats.2017.00034}, year={2017}}')
+        return citations
+
+    def implementors(self):
+        return ['Qi Wang']
 
 
 class EwaldSiteEnergy:
