@@ -223,12 +223,12 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_tuples, markers=None, lines=None,
+    def xy(self, xy_pairs, markers=None, lines=None,
                        mode='markers', texts=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
-            xy_tuples (tuple or [tuple]): x & y columns of scatter plots
+            xy_pairs (tuple or [tuple]): x & y columns of scatter plots
                 with possibly different lengths are extracted from this arg
                 example 1: ([1, 2], [3, 4])
                 example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
@@ -242,8 +242,8 @@ class PlotlyFig:
 
         Returns: A Plotly Scatter plot Figure object.
         """
-        if not isinstance(xy_tuples, list):
-            xy_tuples = [xy_tuples]
+        if not isinstance(xy_pairs, list):
+            xy_tuples = [xy_pairs]
         data = []
         for xy_pair in xy_tuples:
             data.append((self.data_from_col(xy_pair[0]),
