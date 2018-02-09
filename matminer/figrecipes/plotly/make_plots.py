@@ -639,10 +639,12 @@ class PlotlyFig:
         # todo: size not working? -AD
 
         if data is None:
-            if cols is None or self.df is None:
+            if cols is None and self.df is None:
                 raise ValueError(
                     "Histogram requires either dataframe labels and a dataframe"
                     " or a list of numerical values.")
+            elif self.df is not None:
+                cols = self.df.columns.values
             data = self.df[cols]
 
         if isinstance(cols, str):
