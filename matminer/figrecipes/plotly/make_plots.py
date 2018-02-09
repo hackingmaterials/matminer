@@ -133,7 +133,7 @@ class PlotlyFig:
             height=self.height,
             autosize=self.autosize,
             margin=self.margins,
-            legend=dict(font=dict(family=self.fontfamily))
+            legend=dict(font=dict(family=self.fontfamily, size=self.textsize))
         )
 
         if self.plot_mode == 'online' or self.plot_mode == 'static':
@@ -288,6 +288,7 @@ class PlotlyFig:
 
         fig = dict(data=traces, layout=self.layout)
         return self.create_plot(fig)
+
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)',
                 size=6, colorscale='Viridis', legend=None,
