@@ -509,7 +509,7 @@ class PlotlyFig:
         return self.create_plot(fig)
 
     def scatter_matrix(self, data=None, cols=None, colbar=None, marker=None,
-                       text=None, height=800, width=1000, **kwargs):
+                       text=None, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
