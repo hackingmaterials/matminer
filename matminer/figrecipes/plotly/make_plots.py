@@ -563,7 +563,7 @@ class PlotlyFig:
         return self.create_plot(fig)
 
     def scatter_matrix(self, data=None, cols=None, colbar=None, marker=None,
-                       text=None, height=800, width=1000, **kwargs):
+                       text=None, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -575,8 +575,6 @@ class PlotlyFig:
             colbar: (str) name of the column used for colorbar
             marker (dict): if size is set, it will override the automatic size
             text (see PlotlyFig.xy_plot documentation):
-            height (int/float): sets the height of the chart
-            width (int/float): sets the width of the chart
             **kwargs: keyword arguments of scatterplot. Forbidden args are
                 'size', 'color' and 'colorscale' in 'marker'. See example below
         Returns: a Plotly scatter matrix plot
@@ -592,6 +590,9 @@ class PlotlyFig:
                 'color': 'black'}}, colormap='Viridis',
                 title='Elastic Properties Scatter Matrix')
         """
+        height = self.height or 800
+        width = self.width or 1000
+
         # making sure the combination of input args make sense
         if data is None:
             if self.df is None:
