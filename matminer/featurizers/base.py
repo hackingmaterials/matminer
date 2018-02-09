@@ -44,7 +44,7 @@ class BaseFeaturizer(object):
         for col in df.columns.values:
             if col in labels:
                 raise ValueError('"{}" exists in input dataframe'.format(col))
-            
+
         # Compute the features
         features = self.featurize_many(df[col_id].values, n_jobs, ignore_errors)
 
