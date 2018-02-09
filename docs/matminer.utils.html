@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.utils package &#8212; matminer 0.2.2 documentation</title>
+    <title>matminer.utils package &#8212; matminer 0.2.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -62,6 +62,7 @@
 <li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#module-matminer.utils.tests.test_conversions">matminer.utils.tests.test_conversions module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#module-matminer.utils.tests.test_data">matminer.utils.tests.test_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#module-matminer.utils.tests.test_flatten_dict">matminer.utils.tests.test_flatten_dict module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.utils.tests.html#module-matminer.utils.tests">Module contents</a></li>
 </ul>
 </li>
@@ -366,20 +367,29 @@ common - (boolean), whether to return only the common oxidation states,</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-matminer.utils.flattendict">
-<span id="matminer-utils-flattendict-module"></span><h2>matminer.utils.flattendict module<a class="headerlink" href="#module-matminer.utils.flattendict" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-matminer.utils.flatten_dict">
+<span id="matminer-utils-flatten-dict-module"></span><h2>matminer.utils.flatten_dict module<a class="headerlink" href="#module-matminer.utils.flatten_dict" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="matminer.utils.flattendict.flattenDict">
-<code class="descclassname">matminer.utils.flattendict.</code><code class="descname">flattenDict</code><span class="sig-paren">(</span><em>d</em>, <em>result=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.flattendict.flattenDict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to flatten a JSON dictionary. Taken from: <a class="reference external" href="https://gist.github.com/higarmi/6708779">https://gist.github.com/higarmi/6708779</a></p>
-<p>example: The following JSON document:
-{“maps”:[{“id1”:”blabla”,”iscategorical1”:”0”, “perro”:[{“dog1”: “1”, “dog2”: “2”}]},{“id2”:”blabla”,”iscategorical2”:”0”}],
-“masks”:{“id”:”valore”},
-“om_points”:”value”,
-“parameters”:{“id”:”valore”}}</p>
-<p>will have the following output:
-{‘masks.id’: ‘valore’, ‘maps.iscategorical2’: ‘0’, ‘om_points’: ‘value’, ‘maps.iscategorical1’: ‘0’,
-‘maps.id1’: ‘blabla’, ‘parameters.id’: ‘valore’, ‘maps.perro.dog2’: ‘2’, ‘maps.perro.dog1’: ‘1’, ‘maps.id2’: ‘blabla’}</p>
+<dt id="matminer.utils.flatten_dict.flatten_dict">
+<code class="descclassname">matminer.utils.flatten_dict.</code><code class="descname">flatten_dict</code><span class="sig-paren">(</span><em>nested_dict</em>, <em>lead_key=None</em>, <em>unwind_arrays=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.flatten_dict.flatten_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to flatten nested dictionary, recursively
+walks through nested dictionary to get keys corresponding
+to dot-notation keys, e. g. converts
+{“a”: {“b”: 1, “c”: 2}} to {“a.b”: 1, “a.c”: 2}</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">nested_dict ({}): nested dictionary to flatten
+unwind_arrays (bool): whether to flatten lists/tuples</p>
+<blockquote>
+<div>with numerically indexed dot notation, defaults to True</div></blockquote>
+<dl class="last docutils">
+<dt>lead_key (str): string to append to front of all keys,</dt>
+<dd>used primarily for recursion</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>non-nested dictionary</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -450,7 +460,7 @@ For a more advanced concept, see the classmethod builtin.</p>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-matminer.utils.conversions">matminer.utils.conversions module</a></li>
 <li><a class="reference internal" href="#module-matminer.utils.data">matminer.utils.data module</a></li>
-<li><a class="reference internal" href="#module-matminer.utils.flattendict">matminer.utils.flattendict module</a></li>
+<li><a class="reference internal" href="#module-matminer.utils.flatten_dict">matminer.utils.flatten_dict module</a></li>
 <li><a class="reference internal" href="#module-matminer.utils.kernels">matminer.utils.kernels module</a></li>
 <li><a class="reference internal" href="#module-matminer.utils">Module contents</a></li>
 </ul>
@@ -487,7 +497,7 @@ For a more advanced concept, see the classmethod builtin.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 
