@@ -7,3 +7,5 @@ six==1.10.0
 citrination-client==3.0.0
 plotly==2.0.12
 future==0.16.0
+sympy==1.1.1
+numpy==1.14.0
