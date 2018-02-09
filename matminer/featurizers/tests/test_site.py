@@ -7,8 +7,8 @@ from pymatgen.util.testing import PymatgenTest
 from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, EwaldSiteEnergy, VoronoiIndex, ChemEnvSiteFingerprint, \
-    CoordinationNumber
+    OPSiteFingerprint, EwaldSiteEnergy, VoronoiFingerprint, ChemEnvSiteFingerprint, \
+    CoordinationNumber, ChemicalSRO
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -46,7 +46,7 @@ class FingerprintTests(PymatgenTest):
         self.assertEqual(0.8, agni.etas[0])
         self.assertAlmostEqual(6 * np.exp(-(3.52 / 0.8) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[0])
         self.assertAlmostEqual(6 * np.exp(-(3.52 / 16) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[-1])
-        
+
         # Test that passing etas to constructor works
         new_etas = np.logspace(-4, 2, 6)
         agni = AGNIFingerprints(directions=['x', 'y', 'z'], etas=new_etas)
@@ -128,20 +128,66 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(cevals[l.index('C:8')], 0.9953721, places=7)
         self.assertAlmostEqual(cevals[l.index('O:6')], 0, places=7)
 
-    # test Voronoi indices
-    def test_voronoi_site(self):
+    def test_voronoifingerprint(self):
         data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
-        test_site_voronoi = VoronoiIndex()
+        test_site_voronoi = VoronoiFingerprint(use_weights=True)
         test_featurize = test_site_voronoi.featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(test_featurize['voro_index_3'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_4'][0], 6.0)
-        self.assertAlmostEqual(test_featurize['voro_index_5'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_6'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_7'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_8'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_9'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_10'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_sum'][0], 6.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_3'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_4'][0], 6.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_5'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_6'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_7'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_8'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_9'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_10'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_3'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_4'][0], 1.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_5'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_6'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_7'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_8'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_9'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_10'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_3'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_4'][0], 1.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_5'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_6'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_7'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_8'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_9'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_10'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_vol_sum'][0], 43.614208)
+        self.assertAlmostEqual(test_featurize['Voro_area_sum'][0], 74.3424)
+        self.assertAlmostEqual(test_featurize['Voro_vol_mean'][0], 7.269034667)
+        self.assertAlmostEqual(test_featurize['Voro_vol_std_dev'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_vol_minimum'][0], 7.269034667)
+        self.assertAlmostEqual(test_featurize['Voro_vol_maximum'][0], 7.269034667)
+        self.assertAlmostEqual(test_featurize['Voro_area_mean'][0], 12.3904)
+        self.assertAlmostEqual(test_featurize['Voro_area_std_dev'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_area_minimum'][0], 12.3904)
+        self.assertAlmostEqual(test_featurize['Voro_area_maximum'][0], 12.3904)
+        self.assertAlmostEqual(test_featurize['Voro_dist_mean'][0], 3.52)
+        self.assertAlmostEqual(test_featurize['Voro_dist_std_dev'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_dist_minimum'][0], 3.52)
+        self.assertAlmostEqual(test_featurize['Voro_dist_maximum'][0], 3.52)
+
+    def test_chemicalSRO(self):
+        data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
+        test_featurize = ChemicalSRO.from_preset("VoronoiNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_VoronoiNN'][0], 0.0)
+        test_featurize = ChemicalSRO(JMolNN(el_radius_updates = {"Al": 1.55})).\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_JMolNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumDistanceNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumDistanceNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumOKeeffeNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumOKeeffeNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumVIRENN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumVIRENN'][0], 0.0)
 
     def test_ewald_site(self):
         ewald = EwaldSiteEnergy(accuracy=4)
