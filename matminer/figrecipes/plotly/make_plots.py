@@ -129,12 +129,15 @@ class PlotlyFig:
                        tickfont=dict(size=self.ticksize,
                                      family=self.fontfamily)),
             hovermode=self.hovermode,
-            width=self.width,
-            height=self.height,
             autosize=self.autosize,
             margin=self.margins,
             legend=dict(font=dict(family=self.fontfamily, size=self.textsize))
         )
+
+        if width is not None:
+            self.layout['width'] = width
+        if height is not None:
+            self.layout['height'] = height
 
         if self.plot_mode == 'online' or self.plot_mode == 'static':
             if not os.path.isfile('~/.plotly/.credentials'):
@@ -699,7 +702,7 @@ class PlotlyFig:
                 raise ValueError(
                     "Histogram requires either dataframe labels and a dataframe"
                     " or a list of numerical values.")
-            elif self.df is not None:
+            elif self.df is not None and cols is None:
                 cols = self.df.columns.values
             data = self.df[cols]
 
