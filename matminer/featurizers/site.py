@@ -570,13 +570,13 @@ class VoronoiFingerprint(BaseFeaturizer):
     """
     Calculate the following sets of features based on Voronoi tessellation
     analysis around the target site:
-    *Voronoi indices {n_i}
+    -Voronoi indices {n_i}
      n_i denotes the number of i-edged facets, and i is in the range of 3-10.
      e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...];
           for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...];
           for icosahedra, the Voronoi indices are [0,0,12,0,...];
 
-    *i-fold symmetry indices
+    -i-fold symmetry indices
      computed as n_i/sum(n_i), and i is in the range of 3-10.
      reflect the strength of i-fold symmetry in local sites.
      e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,0,0...]
@@ -586,41 +586,38 @@ class VoronoiFingerprint(BaseFeaturizer):
           for icosahedra, the Voronoi indices are [0,0,1,0,...],
              indicating only 5-fold symmetry is present;
 
-     *Weighted i-fold symmetry indices
-      if use_weights = True
+    -weighted i-fold symmetry indices
+     if use_weights = True
 
-     *Voronoi volume
-      total volume of the Voronoi polyhedron around the target site
+    -Voronoi volume
+     total volume of the Voronoi polyhedron around the target site
 
-     *Voronoi volume statistics of the sub_polyhedra formed by each facet
-      and the center site
-      e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
+    -Voronoi volume statistics of the sub_polyhedra formed by each facet
+     and the center site
+     e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
 
-     *Voronoi area
-      total area of the Voronoi polyhedron around the target site
+    -Voronoi area
+     total area of the Voronoi polyhedron around the target site
 
-     *Voronoi area statistics of the facets
-      e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
+    -Voronoi area statistics of the facets
+     e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
 
-     *Voronoi nearest-neighboring distance statistics
-      e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
+    -Voronoi nearest-neighboring distance statistics
+     e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
+
+    Args:
+        cutoff (float): cutoff distance in determining the potential
+            neighbors for Voronoi tessellation analysis.
+        use_weights(bool): whether to use weights to derive weighted
+            i-fold symmetry indices.
+        stats_vol (list of str): volume statistics types.
+        stats_area (list of str): area statistics types.
+        stats_dist (list of str): neighboring distance statistics types.
 
     """
 
     def __init__(self, cutoff=6.0, use_weights=False, stats_vol=None,
                  stats_area=None, stats_dist=None):
-
-        """
-        Args:
-            cutoff (float): cutoff distance in determining the potential
-                  neighbors for Voronoi tessellation analysis.
-            use_weights(bool): whether to use weights to derive weighted
-                  i-fold symmetry indices.
-            stats_vol (list of str): volume statistics types.
-            stats_area (list of str): area statistics types.
-            stats_dist (list of str): neighboring distance statistics types.
-        """
-
         self.cutoff = cutoff
         self.use_weights = use_weights
         self.stats_vol = ['mean', 'std_dev', 'minimum', 'maximum'] \
@@ -636,13 +633,12 @@ class VoronoiFingerprint(BaseFeaturizer):
         Calculate the volume of a tetrahedron, given the four vertices of vt1,
         vt2, vt3 and vt4
         Args:
-            vt1: coordinates of vertex 1.
-            vt2: coordinates of vertex 2.
-            vt3: coordinates of vertex 3.
-            vt4: coordinates of vertex 4.
-
+            vt1 (array-like): coordinates of vertex 1.
+            vt2 (array-like): coordinates of vertex 2.
+            vt3 (array-like): coordinates of vertex 3.
+            vt4 (array-like): coordinates of vertex 4.
         Returns:
-            volume of the tetrahedron.
+            vol_tetra (float): volume of the tetrahedron.
         """
 
         vol_tetra = np.abs(np.dot((vt1 - vt4),
@@ -654,16 +650,16 @@ class VoronoiFingerprint(BaseFeaturizer):
         Args:
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
-
         Returns:
-            list of Voronoi indices.
-            list of i-fold symmetry indices.
-            list of weighted i-fold symmetry indices, if use_weights=True.
-            Voronoi volume.
-            list of Voronoi volume statistics.
-            Voronoi area.
-            list of Voronoi area statistics.
-            list of neighboring distance statistics.
+            voro_fingerprint (list of floats): Voronoi fingerprints
+                -Voronoi indices
+                -i-fold symmetry indices
+                -weighted i-fold symmetry indices (if use_weights = True)
+                -Voronoi volume
+                -Voronoi volume statistics
+                -Voronoi area
+                -Voronoi area statistics
+                -Voronoi area statistics
         """
 
         n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
