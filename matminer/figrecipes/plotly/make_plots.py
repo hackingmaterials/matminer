@@ -20,7 +20,7 @@ class PlotlyFig:
                  hovermode='closest', filename='auto',
                  show_offline_plot=True, username=None,
                  api_key=None, textsize=25, ticksize=25,
-                 fontfamily=None, height=800, width=1000, scale=None,
+                 fontfamily=None, height=None, width=None, scale=None,
                  margins=100, pad=0, marker_scale=1.0, x_type='linear',
                  y_type='linear', hoverinfo='x+y+text'):
         """
@@ -96,6 +96,7 @@ class PlotlyFig:
         self.height = height
         self.width = width
         self.scale = scale
+        self.autosize = True if not height and not width else False
 
         if not isinstance(margins, (list, tuple, np.ndarray)):
             margins = [margins] * 4
@@ -128,6 +129,7 @@ class PlotlyFig:
             hovermode=self.hovermode,
             width=self.width,
             height=self.height,
+            autosize=self.autosize,
             margin=self.margins,
             legend=dict(font=dict(family=self.fontfamily))
         )
