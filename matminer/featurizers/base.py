@@ -8,11 +8,12 @@ from six import string_types
 class BaseFeaturizer(object):
     """Abstract class to calculate attributes for compounds"""
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False,
+                            inplace=True, label_props=None, **kwargs):
         """
         Compute features for all entries contained in input dataframe
-        
-        Args: 
+
+        Args:
             df (Pandas dataframe): Dataframe containing input data
             col_id (str or list of str): column label containing objects to
                 featurize. Can be multiple labels if the featurize function
@@ -21,6 +22,9 @@ class BaseFeaturizer(object):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
+            label_props (dict): properties to be fed as kwargs to
+                feature_labels, e. g. {"postprocess": sympy.latex}
+            **kwargs (kwargs): kwargs to be passed to featurize()
 
         Returns:
             updated Dataframe
@@ -35,7 +39,7 @@ class BaseFeaturizer(object):
         x_list = df[col_id]
         for x in x_list.values:
             try:
-                features.append(self.featurize(*x))
+                features.append(self.featurize(*x, **kwargs))
             except:
                 if ignore_errors:
                     features.append([float("nan")]
@@ -44,10 +48,12 @@ class BaseFeaturizer(object):
                     raise
 
         # Generate the feature labels
-        labels = self.feature_labels()
+        label_props = label_props if label_props is not None else {}
+        labels = self.feature_labels(col_id, **label_props)
 
         # Create dataframe with the new features
-        new_cols = dict(zip(labels, [pd.Series(x, index=df.index) for x in zip(*features)]))
+        new_cols = dict(zip(labels, [pd.Series(x, index=df.index)
+                                     for x in zip(*features)]))
 
         # Update the dataframe
         if inplace:
@@ -70,10 +76,14 @@ class BaseFeaturizer(object):
 
         raise NotImplementedError("featurize() is not defined!")
 
-    def feature_labels(self):
+    def feature_labels(self, col_id=None):
         """
         Generate attribute names
-        
+
+        Args:
+            col_id: some featurizers (e. g. Functional Featurizer)
+                need column information to generate labels
+
         Returns:
             list of strings for attribute labels
         """
