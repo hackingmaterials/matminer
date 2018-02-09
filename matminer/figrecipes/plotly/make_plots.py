@@ -21,7 +21,7 @@ class PlotlyFig:
                  show_offline_plot=True, username=None,
                  api_key=None, textsize=25, ticksize=25,
                  fontfamily=None, height=None, width=None, scale=None,
-                 margins=100, pad=0, marker_scale=1.0, x_type='linear',
+                 margins=100, pad=0, marker_scale=1.0, text_scale=1.0, tick_scale=1.0, x_type='linear',
                  y_type='linear', hoverinfo='x+y+text'):
         """
         Class for making Plotly plots
@@ -109,6 +109,8 @@ class PlotlyFig:
 
         # AF: the following is what I added
         self.marker_scale = marker_scale
+        self.text_scale = text_scale
+        self.tick_scale = tick_scale
         self.plot_counter = 1
         self.hoverinfo = hoverinfo
 
@@ -540,11 +542,15 @@ class PlotlyFig:
         """
         # making sure the combination of input args make sense
         if data is None:
-            if cols is None or self.df is None:
+            if self.df is None:
                 raise ValueError(
                     "scatter_matrix requires either dataframe labels and a "
                     "dataframe or a list of numerical values.")
-            data = self.df[cols]
+            elif cols is None:
+                    data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+            else:
+                data = self.df[cols]
+
         elif isinstance(data, pd.DataFrame):
             data = pd.DataFrame(data, columns=cols)
         if isinstance(text, str):
@@ -563,15 +569,16 @@ class PlotlyFig:
         # actual ploting:
         marker = marker or {'symbol': 'circle-open'}
         nplots = len(data.columns) - int(colbar is not None)
-        scatter_scale = 1 / nplots ** 0.2
-        marker_size = marker.get('size') or 10.0 * scatter_scale * self.marker_scale
+        marker_size = marker.get('size') or 5.0 * self.marker_scale
+        text_scale = self.text_scale * 0.9 / nplots**0.2
+        tick_scale = self.tick_scale * 0.7 / nplots**0.3
         fig = FF.create_scatterplotmatrix(data, index=colbar, diag='histogram',
                         size=marker_size, height=height,width=width, **kwargs)
 
         # also update fig layout as scatter plot ignores PlotlyFig layout for some reason
         fig['layout'].update(titlefont={'family': self.fontfamily,
-                'size': self.textsize * scatter_scale}, margin=self.margins)
-
+                    'size': self.textsize * text_scale})
+        ratio ={'x': min(1., width/float(height)), 'y': min(1., height/float(width))}
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots ** 2):
             fig['data'][iplot].update(hoverinfo=self.hoverinfo)
@@ -579,11 +586,11 @@ class PlotlyFig:
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'][
                     'family'] = self.fontfamily
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'][
-                    'size'] = self.textsize * scatter_scale
+                    'size'] = self.textsize * text_scale * ratio[ax]
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
                     'family'] = self.fontfamily
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
-                    'size'] = self.textsize * scatter_scale * 0.8
+                    'size'] = self.textsize * tick_scale
             if iplot % (nplots + 1) != 0:
                 fig['data'][iplot].update(marker=marker, text=text)
         return self.create_plot(fig)
