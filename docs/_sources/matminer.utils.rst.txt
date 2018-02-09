@@ -28,10 +28,10 @@ matminer\.utils\.data module
     :undoc-members:
     :show-inheritance:
 
-matminer\.utils\.flattendict module
------------------------------------
+matminer\.utils\.flatten\_dict module
+-------------------------------------
 
-.. automodule:: matminer.utils.flattendict
+.. automodule:: matminer.utils.flatten_dict
     :members:
     :undoc-members:
     :show-inheritance:

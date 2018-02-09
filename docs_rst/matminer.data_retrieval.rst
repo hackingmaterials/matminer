@@ -12,6 +12,14 @@ matminer\.data\_retrieval\.retrieve\_Citrine module
     :undoc-members:
     :show-inheritance:
 
+matminer\.data\_retrieval\.retrieve\_MDF module
+-----------------------------------------------
+
+.. automodule:: matminer.data_retrieval.retrieve_MDF
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer\.data\_retrieval\.retrieve\_MP module
 ----------------------------------------------
 
