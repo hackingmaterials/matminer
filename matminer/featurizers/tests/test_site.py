@@ -8,7 +8,7 @@ from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, EwaldSiteEnergy, VoronoiFingerprint, ChemEnvSiteFingerprint, \
-    CoordinationNumber
+    CoordinationNumber, ChemicalSRO
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -46,7 +46,7 @@ class FingerprintTests(PymatgenTest):
         self.assertEqual(0.8, agni.etas[0])
         self.assertAlmostEqual(6 * np.exp(-(3.52 / 0.8) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[0])
         self.assertAlmostEqual(6 * np.exp(-(3.52 / 16) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[-1])
-        
+
         # Test that passing etas to constructor works
         new_etas = np.logspace(-4, 2, 6)
         agni = AGNIFingerprints(directions=['x', 'y', 'z'], etas=new_etas)
@@ -170,6 +170,24 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(test_featurize['Voro_dist_std_dev'][0], 0.0)
         self.assertAlmostEqual(test_featurize['Voro_dist_minimum'][0], 3.52)
         self.assertAlmostEqual(test_featurize['Voro_dist_maximum'][0], 3.52)
+
+    def test_chemicalSRO(self):
+        data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
+        test_featurize = ChemicalSRO.from_preset("VoronoiNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_VoronoiNN'][0], 0.0)
+        test_featurize = ChemicalSRO(JMolNN(el_radius_updates = {"Al": 1.55})).\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_JMolNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumDistanceNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumDistanceNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumOKeeffeNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumOKeeffeNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumVIRENN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumVIRENN'][0], 0.0)
 
     def test_ewald_site(self):
         ewald = EwaldSiteEnergy(accuracy=4)
