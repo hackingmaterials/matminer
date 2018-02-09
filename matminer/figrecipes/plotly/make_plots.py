@@ -223,7 +223,7 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_pairs, markers=None, lines=None,
+    def xy(self, xy_pairs, markers=None, lines=None, names=None,
                        mode='markers', texts=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
@@ -236,6 +236,8 @@ class PlotlyFig:
             markers (dict or [dict]): gives the ability to fine tune marker
                 of each scatter plot individually if list of dicts passed
             lines (dict or [dict]: similar to markers though only if mode=='lines'
+            names (str or [str]): list of trace names used for legend. By
+                default column name (or trace if NA) used if pd.Series passed
             mode (str): trace style; can be 'markers'/'lines'/'lines+markers'
             texts (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
@@ -243,11 +245,24 @@ class PlotlyFig:
         Returns: A Plotly Scatter plot Figure object.
         """
         if not isinstance(xy_pairs, list):
-            xy_tuples = [xy_pairs]
+            xy_pairs = [xy_pairs]
+        if isinstance(names, str):
+            names = [names]
+        if names is None:
+            names = []
+        else:
+            assert len(names) == len(xy_pairs)
         data = []
-        for xy_pair in xy_tuples:
-            data.append((self.data_from_col(xy_pair[0]),
-                         self.data_from_col(xy_pair[1])))
+        for pair in xy_pairs:
+            data.append((self.data_from_col(pair[0]),
+                         self.data_from_col(pair[1])))
+            if isinstance(pair[1], str):
+                names.append(pair[1])
+            else:
+                try:
+                    names.append(pair[1].name)
+                except:
+                    names.append(None)
 
         if not isinstance(texts, list):
             texts = [texts] * len(data)
@@ -261,8 +276,8 @@ class PlotlyFig:
         for i, xy_pair in enumerate(data):
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=mode,
                                      marker=markers[i], line=lines[i],
-                                     text=texts[i], hoverinfo=self.hoverinfo)
-                          )
+                                     text=texts[i], hoverinfo=self.hoverinfo,
+                                     name=names[i]))
 
         fig = dict(data=traces, layout=self.layout)
         return self.create_plot(fig)
