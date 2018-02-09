@@ -205,13 +205,34 @@ class PlotlyFig:
 
         self.plot_counter += 1
 
-    def xy_plot_simple(self, xy_tuples, markers=None, lines=None,
+
+    def data_from_col(self, col, df=None):
+        """
+        try to get data based on column name in dataframe and return
+            informative error if failed.
+        Args:
+            col (str): column name to look for
+        Returns (pd.Series or col itself):
+        """
+        if isinstance(col, str):
+            try:
+                return self.df[col]
+            except:
+                raise ValueError('"{}" not in the data!'.format(col))
+        else:
+            return col
+
+
+    def xy(self, xy_tuples, markers=None, lines=None,
                        mode='markers', texts=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
             xy_tuples (tuple or [tuple]): x & y columns of scatter plots
                 with possibly different lengths are extracted from this arg
+                example 1: ([1, 2], [3, 4])
+                example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
+                example 3: [('x1', 'y1'), ('x2', 'y2')]
             markers (dict or [dict]): gives the ability to fine tune marker
                 of each scatter plot individually if list of dicts passed
             lines (dict or [dict]: similar to markers though only if mode=='lines'
@@ -223,17 +244,22 @@ class PlotlyFig:
         """
         if not isinstance(xy_tuples, list):
             xy_tuples = [xy_tuples]
+        data = []
+        for xy_pair in xy_tuples:
+            data.append((self.data_from_col(xy_pair[0]),
+                         self.data_from_col(xy_pair[1])))
+
         if not isinstance(texts, list):
-            texts = [texts] * len(xy_tuples)
+            texts = [texts] * len(data)
         markers = markers or [
             {'symbol': 'circle', 'size': 10 * self.marker_scale
-                , 'line': {'width': 1}}] * len(xy_tuples)
-        lines = lines or [{'dash': 'solid', 'width': 2}] * len(xy_tuples)
+                , 'line': {'width': 1}}] * len(data)
+        lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
         for var in [texts, markers, lines]:
-            assert len(var) == len(xy_tuples)
+            assert len(var) == len(data)
         traces = []
-        for i, xy_tup in enumerate(xy_tuples):
-            traces.append(go.Scatter(x=xy_tup[0], y=xy_tup[1], mode=mode,
+        for i, xy_pair in enumerate(data):
+            traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=mode,
                                      marker=markers[i], line=lines[i],
                                      text=texts[i], hoverinfo=self.hoverinfo)
                           )
