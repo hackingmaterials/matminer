@@ -6,6 +6,7 @@ from operator import itemgetter
 import warnings
 
 import numpy as np
+import pandas as pd
 import scipy.constants as const
 
 from pymatgen import Structure
@@ -1035,9 +1036,11 @@ class BagofBonds(BaseFeaturizer):
             in NaN.
     """
 
-    def __init__(self, nn, bbv=None):
+    def __init__(self, nn, bbv=None, allowed_bonds=None, approx=False):
         self.nn = nn
         self.bbv = bbv
+        self.allowed_bonds = allowed_bonds
+        self.approx = approx
 
     @staticmethod
     def from_preset(preset):
@@ -1054,6 +1057,30 @@ class BagofBonds(BaseFeaturizer):
         nn = getattr(pymatgen.analysis.local_env, preset)
         return BagofBonds(nn())
 
+    def sanitize_bonds(self, bonds):
+        """
+        Prevent errors and/or bond duplicates from badly formatted allowed_bonds
+
+        Args:
+            bonds ([str]): A listlike object of bond types, specified as strings
+                with the general format "El-Sp", where El or Sp can be a specie
+                or an element with pymatgen's str representation of a bond. For
+                example, a Cesium Chloride bond could be represented as either
+                "Cs-Cl" or "Cs+-Cl-" or "Cl-Cs" or "Cl--Cs+".
+        Returns:
+            bonds ([str]): A listlike object containing alphabetized bond types.
+                Note that ions and elements will still have distinct bonds if
+                the bonds list originally contained them.
+        """
+        for i, bond in enumerate(bonds):
+            if not isinstance(bond, str) or "-" not in bond:
+                raise TypeError("Bonds must be specified as strings between"
+                                "elements or species, for example Cl-Cs")
+            species = sorted(bond.split("-", 1))
+            bonds[i] = "-".join(species)
+        return tuple(sorted(bonds))
+
+
     def featurize_dataframe(self, df, col_id, *args, **kwargs):
         """
         Compute features for all entries contained in input dataframe.
@@ -1067,10 +1094,18 @@ class BagofBonds(BaseFeaturizer):
             (DataFrame) BagofBonds-featurized dataframe
         """
 
-        # unified_bonds attribute only lives if dataframe is being featurized.
-        self.unified_bonds = self.enumerate_all_bonds(df[col_id])
+        if self.allowed_bonds is None:
+            self.unified_bonds = self.enumerate_all_bonds(df[col_id])
+        else:
+            listlike = (tuple, list, np.ndarray, pd.Series)
+            if not isinstance(self.allowed_bonds, listlike):
+                raise TypeError("allowed_bonds must be a list of strings.")
+            self.unified_bonds = self.sanitize_bonds(self.allowed_bonds)
+
         df = super(BagofBonds, self).featurize_dataframe(df, col_id, *args,
                                                          **kwargs)
+
+        # unified_bonds attribute only lives if dataframe is being featurized.
         delattr(self, 'unified_bonds')
         return df
 
@@ -1115,6 +1150,38 @@ class BagofBonds(BaseFeaturizer):
                     bond_types.append(bt)
         return tuple(sorted(bond_types))
 
+    def approximate_bonds(self, local_bonds):
+        """
+        Approximate a structure's bonds if the structure contains bonds not in
+        allowed_bonds.
+
+        Local bonds are approximated according to the "nearest"
+        bonds present in allowed_bonds (the unified list). Nearness is measured
+        by summing the difference in mendeleev number of each element. For
+        example a Na-O bond could be approximated as a Li-O bond (sum of
+        mendeleev distances is 1).
+
+        Args:
+            local_bonds (dict): The bonds present in the structure with the bond
+                types as keys ("Cl--Cs+") and the bond fraction as values (0.7).
+
+        Returns:
+
+        """
+
+        ubonds_dict = {k: 0.0 for k in self.unified_bonds}
+
+        for lb in local_bonds:
+            if lb in self.unified_bonds:
+                ubonds_dict[lb] = local_bonds[lb]
+            else:
+                species = lb.split("-")
+                # Strip down species to elements only
+                els = [s.replace("+", "").replace("-", "") for s in species]
+
+
+
+
     def featurize(self, s):
         """
         Quantify the fractions of each bond type in a structure.
@@ -1132,6 +1199,31 @@ class BagofBonds(BaseFeaturizer):
         bond_types = tuple(self.enumerate_bonds(s))
         bonds = {k: 0.0 for k in bond_types}
 
+        # If featurize is being called from a dataframe or featurize_many,
+        # a comprehensize 'unified' bond list is created. The following code
+        # places nan in all bad bond values, where bonds are not physically
+        # possible.
+        if hasattr(self, 'unified_bonds'):
+            if self.allowed_bonds is None:
+                for b in self.unified_bonds:
+                    if b not in bond_types:
+                        if self.bbv is None:
+                            bonds[b] = float("nan")
+                        else:
+                            bonds[b] = self.bbv
+            else:
+                # allowed_bonds is defined, we want to fail anything having a
+                # bond not in allowed bonds
+                if not self.approx:
+                    for b in bond_types:
+                        if b not in self.unified_bonds:
+                            return float("nan") * len(self.unified_bonds)
+
+            ordered_bonds = self.unified_bonds
+        else:
+            self.local_bonds = bond_types
+            ordered_bonds = self.local_bonds
+
         for i, _ in enumerate(s.sites):
             nearest = self.nn.get_nn(s, i)
             origin = s.sites[i].specie
@@ -1141,21 +1233,11 @@ class BagofBonds(BaseFeaturizer):
                 b = btup[0] + '-' + btup[1]
                 bonds[b] += 1.0
 
-        # If featurize is being called from a dataframe or featurize_many,
-        # a comprehensize 'unified' bond list is created. The following code
-        # places nan in all bad bond values, where bonds are not physically
-        # possible.
-        if hasattr(self, 'unified_bonds'):
-            for b in self.unified_bonds:
-                if b not in bond_types:
-                    bonds[b] = float("nan") if self.bbv is None else self.bbv
-            ordered_bonds = self.unified_bonds
-        else:
-            self.local_bonds = bond_types
-            ordered_bonds = self.local_bonds
-
         tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
-        return [bonds[b] / tot_bonds for b in ordered_bonds]
+        if self.approx:
+            return self.approximate_bonds(bonds)
+        else:
+            return [bonds[b] / tot_bonds for b in ordered_bonds]
 
     def feature_labels(self):
         """
