@@ -316,7 +316,7 @@ class AtomicOrbitals(BaseFeaturizer):
             feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
             feat['{}_element'.format(edge)] = homo_lumo[edge][0]
             feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
-        feat['gap'] = feat['LUMO_energy'] - feat['HOMO_energy']
+        feat['gap_AO'] = feat['LUMO_energy'] - feat['HOMO_energy']
 
         return list(feat.values())
 
@@ -326,7 +326,7 @@ class AtomicOrbitals(BaseFeaturizer):
             feat.extend(['{}_character'.format(edge),
                          '{}_element'.format(edge),
                          '{}_energy'.format(edge)])
-        feat.append("gap")
+        feat.append("gap_AO")
         return feat
 
     def citations(self):
