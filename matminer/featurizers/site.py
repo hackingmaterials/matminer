@@ -572,14 +572,14 @@ class VoronoiFingerprint(BaseFeaturizer):
     analysis around the target site:
     -Voronoi indices {n_i}
      n_i denotes the number of i-edged facets, and i is in the range of 3-10.
-     e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...];
+     e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,...];
           for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...];
           for icosahedra, the Voronoi indices are [0,0,12,0,...];
 
     -i-fold symmetry indices
      computed as n_i/sum(n_i), and i is in the range of 3-10.
      reflect the strength of i-fold symmetry in local sites.
-     e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,0,0...]
+     e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,...]
              indicating both 4-fold and a stronger 6-fold symmetries are present;
           for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
              indicating only 4-fold symmetry is present;
@@ -613,7 +613,6 @@ class VoronoiFingerprint(BaseFeaturizer):
         stats_vol (list of str): volume statistics types.
         stats_area (list of str): area statistics types.
         stats_dist (list of str): neighboring distance statistics types.
-
     """
 
     def __init__(self, cutoff=6.0, use_weights=False, stats_vol=None,
@@ -744,6 +743,32 @@ class VoronoiFingerprint(BaseFeaturizer):
 
     def implementors(self):
         return ['Qi Wang']
+
+
+class ChemicalSRO(BaseFeaturizer):
+    """
+     Chemical short-range ordering (SRO) features to evaluate the deviation
+     of local chemistry with the nominal composition of the structure.
+
+     f_el = N_el/(sum of N_el) - c_el,
+     where N_el is the number of each element type in the neighbors around
+     the target site, sum of N_el is the sum of all possible element types
+     (coordination number), and c_el is the composition of the specific
+     element in the entire structure.
+
+     Here the calculation is run for each element present in the structure.
+
+     A positive f_el indicating the "bonding" with the specific element
+     is favored around the target site;
+     A negative f_el means the "bonding" is not favored, at least around
+     the target site.
+
+     Args:
+         nn (NearNeighbor): instance of one of pymatgen's NearNeighbor
+                            classes.
+     Returns:
+
+     """
 
 
 class EwaldSiteEnergy:
