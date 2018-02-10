@@ -226,8 +226,8 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_pairs, markers=None, lines=None, names=None, modes='markers',
-           labels=None, showlegends=None):
+    def xy(self, xy_pairs, colorbar=None, labels=None, names=None, modes='markers',
+           markers=None, lines=None, colorscale='Viridis', showlegends=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
@@ -236,16 +236,27 @@ class PlotlyFig:
                 example 1: ([1, 2], [3, 4])
                 example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example 3: [('x1', 'y1'), ('x2', 'y2')]
-            markers (dict or [dict]): gives the ability to fine tune marker
-                of each scatter plot individually if list of dicts passed
-            lines (dict or [dict]: similar to markers though only if mode=='lines'
+            colorbar (list or np.ndarray or pd.Series): set the colorscale for
+                the colorbar (list of numbers)
+            labels (list or [list]): to individually set annotation for scatter
+                point either the same for all traces or can be set for each
             names (str or [str]): list of trace names used for legend. By
                 default column name (or trace if NA) used if pd.Series passed
             modes (str or [str]): trace style; can be 'markers'/'lines'/'lines+markers'
-            labels (list or [list]): to individually set annotation for scatter
-                point either the same for all traces or can be set for each
+            markers (dict or [dict]): gives the ability to fine tune marker
+                of each scatter plot individually if list of dicts passed
+            lines (dict or [dict]: similar to markers though only if mode=='lines'
+            colorscale: (str) Sets the colorscale (colormap). It can be an array
+                containing arrays mapping a normalized value to an rgb, rgba,
+                hex, hsl, hsv, or named color string. At minimum, a mapping for
+                the lowest (0) and highest (1) values are required.
+                Example: '[[0, 'rgb(0,0,255)', [1, 'rgb(255,0,0)']]'.
+                Alternatively, it may be a palette name from the following list:
+                Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Jet,
+                Picnic, Rainbow, Portland, Hot, Blackbody, Earth, Electric, Viridis
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
+
 
         Returns: A Plotly Scatter plot Figure object.
         """
@@ -255,17 +266,23 @@ class PlotlyFig:
             showlegends = [showlegends]
         if len(showlegends) == 1:
             showlegends *= len(xy_pairs)
-        if isinstance(names, str):
-            names = [names]
         if names is None:
             names = []
+        elif isinstance(names, str):
+            names = [names] * len(xy_pairs)
         else:
             assert len(names) == len(xy_pairs)
+
         if isinstance(modes, str):
             modes = [modes] * len(xy_pairs)
         else:
             assert len(modes) == len(xy_pairs)
-
+        if colorbar is None:
+            showscale = False
+        else:
+            showscale = True
+            colorbar = self.data_from_col(colorbar)
+            assert isinstance(colorbar, (list, np.ndarray, pd.Series))
         data = []
         for pair in xy_pairs:
             data.append((self.data_from_col(pair[0]),
@@ -279,24 +296,34 @@ class PlotlyFig:
                     names.append(None)
 
         if not isinstance(labels, list):
+            labels = self.data_from_col(labels)
             labels = [labels] * len(data)
         markers = markers or [
             {'symbol': 'circle', 'size': 10 * self.marker_scale
-                , 'line': {'width': 1}}] * len(data)
+                , 'line': {'width': 1},
+             'showscale': showscale,
+             'color': colorbar,
+             'colorbar': {'tickfont': {'family': self.fontfamily,
+                            'size': 0.75*self.ticksize * self.tick_scale}},
+             'colorscale': colorscale
+             }
+        ] * len(data)
+        if isinstance(markers, dict):
+            markers = [markers] * len(xy_pairs)
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
         for var in [labels, markers, lines]:
-            assert len(var) == len(data)
+            assert len(list(var)) == len(data)
         traces = []
         for i, xy_pair in enumerate(data):
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
                                      marker=markers[i], line=lines[i],
                                      text=labels[i], hoverinfo=self.hoverinfo,
-                                     name=names[i], showlegend=showlegends[i]
+                                     name=names[i], showlegend=showlegends[i],
                                      ))
-
         fig = dict(data=traces, layout=self.layout)
+        if showscale:
+            fig['layout']['legend']['x'] = 0.9
         return self.create_plot(fig)
-
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)',
                 size=6, colorscale='Viridis', legend=None,
