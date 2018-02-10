@@ -908,7 +908,7 @@ class PlotlyFig:
 
         """
         if data is None:
-            if cols is None or self.df is None:
+            if self.df is None:
                 raise ValueError(
                     "Violin plot requires either dataframe labels and a "
                     "dataframe or a list of numerical values.")
