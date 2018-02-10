@@ -639,7 +639,6 @@ class VoronoiFingerprint(BaseFeaturizer):
         Returns:
             (float): volume of the tetrahedron.
         """
-
         vol_tetra = np.abs(np.dot((vt1 - vt4),
                                   np.cross((vt2 - vt4), (vt3 - vt4))))/6
         return vol_tetra
@@ -661,7 +660,6 @@ class VoronoiFingerprint(BaseFeaturizer):
                 -Voronoi area statistics
                 -Voronoi area statistics
         """
-
         n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
         voro_idx_list = np.array([0, 0, 0, 0, 0, 0, 0, 0])
         voro_idx_weights = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
@@ -760,7 +758,7 @@ class ChemicalSRO(BaseFeaturizer):
     Here the calculation is run for each element present in the structure.
 
     A positive f_el indicates the "bonding" with the specific element
-    is favored, at least in the target site;
+    is favored, at lea the target site;
     A negative f_el indicates the "bonding" is not favored, at least
     in the target site.
 
@@ -795,7 +793,50 @@ class ChemicalSRO(BaseFeaturizer):
 
     def __init__(self, nn):
         self.nn = nn
-        self.elements = None
+        self.el_amt_dict = None
+        self.el_list = None
+
+    @staticmethod
+    def cal_el_amt(structs):
+        """
+        Identify and "store" the element types and composition of structures,
+        avoiding repeated calculation of composition while featurizing many
+        sites in one structure.
+        Args:
+             structs (pandas series): series of pymatgen Structures
+        Returns:
+
+        """
+        el_amt_dict = {}
+        el_list = set()
+        for s in structs.values:
+            if str(s) not in el_amt_dict.keys():
+                el_amt = s.composition.fractional_composition.\
+                         get_el_amt_dict()
+                el_amt_dict[str(s)] = el_amt
+                elements = set(el_amt.keys())
+                el_list = el_list | elements
+        return list(el_list), el_amt_dict
+
+    def featurize_dataframe(self, df, col_id, ignore_errors=True,
+                            inplace=True, n_jobs=1):
+        """
+        Featurize the dataframe with ChemicalSRO features.
+        Args:
+            df (Pandas dataframe): Dataframe containing input data
+            col_id (str or [str]): The dataframe key corresponding to structures
+        Returns:
+            (Pandas dataframe) ChemicalSRO-featurized dataframe
+        """
+        self.el_list, self.el_amt_dict = self.cal_el_amt(df[col_id[0]])
+        df = super(ChemicalSRO, self).\
+             featurize_dataframe(df, col_id,
+                                 ignore_errors=ignore_errors,
+                                 inplace=inplace,
+                                 n_jobs=n_jobs)
+        delattr(self, 'el_list')
+        delattr(self, 'el_amt_dict')
+        return df
 
     def featurize(self, struct, idx):
         """
@@ -806,18 +847,19 @@ class ChemicalSRO(BaseFeaturizer):
         Returns:
             (list of floats): Chemical SRO features for each element.
         """
-        el_amt = struct.composition.fractional_composition.get_el_amt_dict()
-        self.elements = el_amt.keys()
+        csro_el = [np.nan]*len(self.el_list)
+        el_amt = self.el_amt_dict[str(struct)]
         nn_list = self.nn.get_nn(struct, idx)
         nn_el_amt = dict.fromkeys(el_amt, 0)
         for nn in nn_list:
             nn_el_amt[str(nn.specie)] += 1/len(nn_list)
-        csro_el = [el_amt[el] - nn_el_amt[el] for el in self.elements]
+        for el in el_amt.keys():
+            csro_el[self.el_list.index(el)] = nn_el_amt[el] - el_amt[el]
         return csro_el
 
     def feature_labels(self):
         return ['CSRO_{}_{}'.format(el, self.nn.__class__.__name__)
-                for el in self.elements]
+                for el in self.el_list]
 
     def citations(self):
         citations = []
