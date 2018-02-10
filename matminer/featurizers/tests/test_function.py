@@ -7,7 +7,6 @@ from matminer.featurizers.function import FunctionFeaturizer, \
     generate_expressions_combinations
 import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
-import sympy as sp
 
 
 class TestFunctionFeaturizer(unittest.TestCase):

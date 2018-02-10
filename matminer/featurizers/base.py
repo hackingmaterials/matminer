@@ -127,13 +127,9 @@ class BaseFeaturizer(object):
 
         raise NotImplementedError("featurize() is not defined!")
 
-    def feature_labels(self, col_id=None):
+    def feature_labels(self):
         """
         Generate attribute names
-
-        Args:
-            col_id: some featurizers (e. g. Functional Featurizer)
-                need column information to generate labels
 
         Returns:
             list of strings for attribute labels

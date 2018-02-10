@@ -145,7 +145,7 @@ class FunctionFeaturizer(BaseFeaturizer):
         postprocess = postprocess or (lambda x: x)
         for n in range(1, self.multi_feature_depth + 1):
             for arg_combo in itertools.combinations(args, n):
-                subs_dict = {"x{}".format(m) : arg
+                subs_dict = {"x{}".format(m): arg
                              for m, arg in enumerate(arg_combo)}
                 for exp in self.exp_dict[n]:
                     # TODO: this is a workaround for the problem
@@ -155,7 +155,6 @@ class FunctionFeaturizer(BaseFeaturizer):
                         yield postprocess(exp.subs(subs_dict))
                     except (TypeError, ValueError):
                         yield None
-
 
 
     def citations(self):
@@ -210,5 +209,5 @@ def generate_expressions_combinations(expressions, combo_depth=2,
             combo_exps.append(combo_function(exp_perm))
 
     # Filter for unique combinations, also remove identity
-    unique_exps = list(set(combo_exps) - set([parse_expr('x0')]t ))
+    unique_exps = list(set(combo_exps) - {parse_expr('x0')})
     return unique_exps
