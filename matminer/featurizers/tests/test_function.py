@@ -14,7 +14,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
     def setUp(self):
         self.test_df = pd.DataFrame(
             [{"a": n, "b": n+1, "c": n+2} for n in range(-1, 10)])
-        pass
+
 
     def test_featurize(self):
         ff = FunctionFeaturizer()
