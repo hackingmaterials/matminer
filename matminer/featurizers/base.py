@@ -44,7 +44,7 @@ class BaseFeaturizer(object):
 
         # Generate the feature labels
         label_props = label_props if label_props is not None else {}
-        labels = self.feature_labels(col_id, **label_props)
+        labels = self.feature_labels(**label_props)
 
         # Compute the features
         features = self.featurize_many(df[col_id].values, n_jobs, ignore_errors,

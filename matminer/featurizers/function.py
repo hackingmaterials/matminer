@@ -16,6 +16,7 @@ import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
 import sympy as sp
 import itertools
+from six import string_types
 
 from collections import OrderedDict
 
@@ -63,6 +64,31 @@ class FunctionFeaturizer(BaseFeaturizer):
             [(n, generate_expressions_combinations(self.expressions, n))
              for n in range(1, multi_feature_depth+1)])
 
+    def featurize_dataframe(self, df, col_id, latexify_labels=False,
+                            **kwargs):
+        """
+        Custom featurize class so we can rename columns
+
+        Args:
+            df (DataFrame): dataframe containing input data
+            col_id (str or list of str): column label containing objects to
+                featurize. Can be multiple labels if the featurize function
+                requires multiple inputs
+            latexify_labels (bool): whether or not to latexify feature labels
+            **kwargs (kwargs): kwargs to BaseFeaturizer.featurize_dataframe,
+                including featurizer kwargs
+
+        Returns:
+            updated DataFrame
+
+        """
+        if isinstance(col_id, string_types):
+            col_id = [col_id]
+        # Construct label properties
+        label_props = {"col_id": col_id, "latexify_labels": latexify_labels}
+        return super(FunctionFeaturizer, self).featurize_dataframe(
+            df, col_id, label_props=label_props, **kwargs)
+
 
     def featurize(self, *args, postprocess=float):
         """
@@ -83,21 +109,20 @@ class FunctionFeaturizer(BaseFeaturizer):
         return list(self._exp_iter(*args, postprocess=postprocess))
 
 
-    def feature_labels(self, col_id, postprocess=str):
+    def feature_labels(self, col_id, latexify_labels=False):
         """
 
         Args:
             col_id ([str]): column names
-            postprocess (function): function used to postprocess
-                data that's run through the expression, primarily
-                for casting symbolic expressions to strings,
-                defaults to str
+            latexify_labels (bool): whether to latexify labels
+                in output feature labels
 
         Returns:
             Set of feature labels corresponding to expressions
                 substituted with column names
 
         """
+        postprocess = sp.latex if latexify_labels else str
         return list(self._exp_iter(*col_id, postprocess=postprocess))
 
 
@@ -184,6 +209,6 @@ def generate_expressions_combinations(expressions, combo_depth=2,
         for exp_perm in itertools.permutations(exp_set):
             combo_exps.append(combo_function(exp_perm))
 
-    # Filter for unique combinations
-    unique_exps = list(set(combo_exps))
+    # Filter for unique combinations, also remove identity
+    unique_exps = list(set(combo_exps) - set([parse_expr('x0')]t ))
     return unique_exps

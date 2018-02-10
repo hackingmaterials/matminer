@@ -66,7 +66,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
         # Test latexification
         ff = FunctionFeaturizer()
         new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False,
-                                        label_props={"postprocess": sp.latex})
+                                        latexify_labels=True)
         self.assertTrue("\sqrt{a}" in new_df.columns)
 
 
