@@ -20,6 +20,14 @@ matminer\.utils\.tests\.test\_data module
     :undoc-members:
     :show-inheritance:
 
+matminer\.utils\.tests\.test\_flatten\_dict module
+--------------------------------------------------
+
+.. automodule:: matminer.utils.tests.test_flatten_dict
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

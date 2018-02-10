@@ -9,7 +9,7 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.2.2',
+        version='0.2.3',
         description='matminer is a library that contains tools for data mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
         url='https://github.com/hackingmaterials/matminer',
@@ -18,8 +18,7 @@ if __name__ == "__main__":
         license='modified BSD',
         packages=find_packages(),
         package_data={'matminer.datasets': ['*.csv'],
-                      'matminer.utils.data_files': ['*.csv', '*.json'],
-                      'matminer.utils.data_files.magpie_elementdata': ['*.table']},
+                      'matminer.utils.data_files': ['*.csv', '*.json', 'magpie_elementdata/*.table']},
         zip_safe=False,
         install_requires=['pymatgen>=2018.1.29', 'tqdm>=4.14.0', 'pandas>=0.20.1',
                           'pymongo>=3.4.0', 'pint>=0.8.1', 'six>=1.10.0',
@@ -27,6 +26,7 @@ if __name__ == "__main__":
                           'sympy>=1.1.1', 'numpy>=1.14.0'],
         extras_require={'mpds': ['jmespath>=0.9.3', 'ujson>=1.35', 'httplib2>=0.10.3', 'ase>=3.14.1'],
                         'plot': ['matplotlib>=2.0.0'],
+                        'mdf': ['mdf_forge>=0.5.1'],
                         'pycookiecheat': ['pycookiecheat>=0.4.0']},
         classifiers=['Programming Language :: Python :: 2.7',
                      'Programming Language :: Python :: 3.6',

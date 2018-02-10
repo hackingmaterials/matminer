@@ -5,6 +5,14 @@
 matminer Changelog
 ==================
 
+**v0.2.3**
+
+* MDF data retrieval (J. Montoya)
+* new VoronoiFingerprint descriptors (Q. Wang)
+* new ChemicalSRO descriptors (Q. Wang)
+* bugfixes to featurize_many (A. Dunn)
+* minor bug fixes, cleanups, slighly improved docs, etc.
+
 **v0.2.2**
 
 .. warning:: Py2 compatibility is officially dropped in this version. Please upgrade to Python 3.x.
