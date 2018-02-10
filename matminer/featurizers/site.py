@@ -758,7 +758,7 @@ class ChemicalSRO(BaseFeaturizer):
     Here the calculation is run for each element present in the structure.
 
     A positive f_el indicates the "bonding" with the specific element
-    is favored, at lea the target site;
+    is favored, at least in the target site;
     A negative f_el indicates the "bonding" is not favored, at least
     in the target site.
 
@@ -800,12 +800,13 @@ class ChemicalSRO(BaseFeaturizer):
     def cal_el_amt(structs):
         """
         Identify and "store" the element types and composition of structures,
-        avoiding repeated calculation of composition while featurizing many
+        avoiding repeated calculation of composition when featurizing many
         sites in one structure.
         Args:
-             structs (pandas series): series of pymatgen Structures
+            structs (pandas series): series of pymatgen Structures
         Returns:
-
+            (list of str): elements present in the structures
+            (dict): composition dicts of the structures
         """
         el_amt_dict = {}
         el_list = set()
@@ -823,10 +824,10 @@ class ChemicalSRO(BaseFeaturizer):
         """
         Featurize the dataframe with ChemicalSRO features.
         Args:
-            df (Pandas dataframe): Dataframe containing input data
+            df (pandas dataframe): Dataframe containing input data
             col_id (str or [str]): The dataframe key corresponding to structures
         Returns:
-            (Pandas dataframe) ChemicalSRO-featurized dataframe
+            (pandas dataframe) ChemicalSRO-featurized dataframe
         """
         self.el_list, self.el_amt_dict = self.cal_el_amt(df[col_id[0]])
         df = super(ChemicalSRO, self).\
