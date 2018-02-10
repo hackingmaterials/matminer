@@ -1038,13 +1038,13 @@ class BagofBonds(BaseFeaturizer):
             in NaN.
         allowed_bonds ([str]): A list of allowed bond types; limits the possible
             columns in the output dataframe. If a structure has a bond type not
-            in allowed_bonds, NaN is returned for all bonds in the structure.
-            Behavior can be changed with approx_bonds. The output of
-            .feature_labels() will return a list of allowed_bonds for that
-            BagofBonds object.
+            in allowed_bonds, the bond is skipped and all allowed bonds are
+            returned as normal (including bad bond values. Behavior can be
+            changed with approx_bonds. The output of .feature_labels() will
+            return a list of allowed_bonds for that BagofBonds object.
         approx_bonds (bool): If True, approximates the fractions of bonds not
-            in allowed_bonds with similar bonds actually found in allowed_bonds.
-             Chemical rules are used to determine which bonds are most 'similar'
+            in allowed_bonds (forbidden bonds) with similar allowed bonds.
+            Chemical rules are used to determine which bonds are most 'similar'
     """
 
     def __init__(self, nn, bbv=None, allowed_bonds=None, approx_bonds=False):
@@ -1294,7 +1294,8 @@ class BagofBonds(BaseFeaturizer):
             if not self.approx_bonds:
                 for b in bond_types:
                     if b not in self.unified_bonds:
-                        return [float("nan")] * len(self.unified_bonds)
+                        # return [float("nan")] * len(self.unified_bonds)
+                        bonds.pop(b)
             ordered_bonds = self.unified_bonds
         else:
             self.local_bonds = bond_types
@@ -1307,12 +1308,19 @@ class BagofBonds(BaseFeaturizer):
             for neigh in nearest:
                 btup = tuple(sorted([str(origin), str(neigh.specie)]))
                 b = btup[0] + ' - ' + btup[1]
-                bonds[b] += 1.0
+                # The bond will not be in bonds if it is a forbidden bond
+                # (when a local bond is not in allowed_bonds)
+                if b in bonds:
+                    bonds[b] += 1.0
 
         if self.approx_bonds:
             bonds = self._approximate_bonds(bonds)
 
         tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
+
+        # If allowed_bonds caused no bonds to be present, all bonds will be 0.
+        # Prevent division by zero error.
+        tot_bonds = tot_bonds or 1.0
 
         return [bonds[b] / tot_bonds for b in ordered_bonds]
 
