@@ -33,14 +33,11 @@ class PlotlyFig:
                 (i) 'offline': creates and saves plots on the local disk
                 (ii) 'notebook': to embed plots in a IPython/Jupyter notebook,
                 (iii) 'online': save the plot in your online plotly account,
-                (iv) 'static': save a static image of the plot locally (but
-                requiring plotly account credentials) or (v) 'return': to return
-                a dict representation of the plot for fine tuning.
+                (iv) 'static': save a static image of the plot locally
                 (v) 'return': Any plotting method returns its Plotly Figure
                 object. Useful for fine tuning the plot.
                 NOTE: Both 'online' and 'static' modes require either the fields
-                'username' and 'api_key' or the plotly credentials file to be
-                set. See plotly website and documentation for details.
+                'username' and 'api_key' or Plotly credentials file.
             plot_title: (str) title of plot
             x_title: (str) title of x-axis
             y_title: (str) title of y-axis
