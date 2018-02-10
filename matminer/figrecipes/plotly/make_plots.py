@@ -227,7 +227,7 @@ class PlotlyFig:
 
 
     def xy(self, xy_pairs, markers=None, lines=None, names=None, modes='markers',
-           texts=None, showlegends=None):
+           labels=None, showlegends=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
@@ -242,7 +242,7 @@ class PlotlyFig:
             names (str or [str]): list of trace names used for legend. By
                 default column name (or trace if NA) used if pd.Series passed
             modes (str or [str]): trace style; can be 'markers'/'lines'/'lines+markers'
-            texts (list or [list]): to individually set annotation for scatter
+            labels (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
@@ -278,19 +278,19 @@ class PlotlyFig:
                 except:
                     names.append(None)
 
-        if not isinstance(texts, list):
-            texts = [texts] * len(data)
+        if not isinstance(labels, list):
+            labels = [labels] * len(data)
         markers = markers or [
             {'symbol': 'circle', 'size': 10 * self.marker_scale
                 , 'line': {'width': 1}}] * len(data)
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
-        for var in [texts, markers, lines]:
+        for var in [labels, markers, lines]:
             assert len(var) == len(data)
         traces = []
         for i, xy_pair in enumerate(data):
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
                                      marker=markers[i], line=lines[i],
-                                     text=texts[i], hoverinfo=self.hoverinfo,
+                                     text=labels[i], hoverinfo=self.hoverinfo,
                                      name=names[i], showlegend=showlegends[i]
                                      ))
 
