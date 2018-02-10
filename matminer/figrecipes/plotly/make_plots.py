@@ -226,7 +226,7 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_pairs, markers=None, lines=None, names=None, mode='markers',
+    def xy(self, xy_pairs, markers=None, lines=None, names=None, modes='markers',
            texts=None, showlegends=None):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
@@ -241,7 +241,7 @@ class PlotlyFig:
             lines (dict or [dict]: similar to markers though only if mode=='lines'
             names (str or [str]): list of trace names used for legend. By
                 default column name (or trace if NA) used if pd.Series passed
-            mode (str): trace style; can be 'markers'/'lines'/'lines+markers'
+            modes (str or [str]): trace style; can be 'markers'/'lines'/'lines+markers'
             texts (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
             showlegends (bool or [bool]): indicating whether to show legend
@@ -261,6 +261,11 @@ class PlotlyFig:
             names = []
         else:
             assert len(names) == len(xy_pairs)
+        if isinstance(modes, str):
+            modes = [modes] * len(xy_pairs)
+        else:
+            assert len(modes) == len(xy_pairs)
+
         data = []
         for pair in xy_pairs:
             data.append((self.data_from_col(pair[0]),
@@ -283,7 +288,7 @@ class PlotlyFig:
             assert len(var) == len(data)
         traces = []
         for i, xy_pair in enumerate(data):
-            traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=mode,
+            traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
                                      marker=markers[i], line=lines[i],
                                      text=texts[i], hoverinfo=self.hoverinfo,
                                      name=names[i], showlegend=showlegends[i]
@@ -563,7 +568,7 @@ class PlotlyFig:
         return self.create_plot(fig)
 
     def scatter_matrix(self, data=None, cols=None, colbar=None, marker=None,
-                       text=None, height=800, width=1000, **kwargs):
+                       text=None, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -575,8 +580,6 @@ class PlotlyFig:
             colbar: (str) name of the column used for colorbar
             marker (dict): if size is set, it will override the automatic size
             text (see PlotlyFig.xy_plot documentation):
-            height (int/float): sets the height of the chart
-            width (int/float): sets the width of the chart
             **kwargs: keyword arguments of scatterplot. Forbidden args are
                 'size', 'color' and 'colorscale' in 'marker'. See example below
         Returns: a Plotly scatter matrix plot
@@ -592,6 +595,9 @@ class PlotlyFig:
                 'color': 'black'}}, colormap='Viridis',
                 title='Elastic Properties Scatter Matrix')
         """
+        height = self.height or 800
+        width = self.width or 1000
+
         # making sure the combination of input args make sense
         if data is None:
             if self.df is None:
@@ -599,7 +605,7 @@ class PlotlyFig:
                     "scatter_matrix requires either dataframe labels and a "
                     "dataframe or a list of numerical values.")
             elif cols is None:
-                    data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
             else:
                 data = self.df[cols]
 
