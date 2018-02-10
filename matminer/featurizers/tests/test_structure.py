@@ -337,8 +337,8 @@ class StructureFeaturesTest(PymatgenTest):
         bob_voronoi = BagofBonds.from_preset("VoronoiNN")
         bond_fracs = bob_voronoi.featurize(self.nacl)
         bond_names = bob_voronoi.feature_labels()
-        ref = {'Na+-Na+ bond frac.': 0.25, 'Cl--Na+ bond frac.': 0.5,
-               'Cl--Cl- bond frac.': 0.25}
+        ref = {'Na+ - Na+ bond frac.': 0.25, 'Cl- - Na+ bond frac.': 0.5,
+               'Cl- - Cl- bond frac.': 0.25}
         self.assertDictEqual(dict(zip(bond_names, bond_fracs)), ref)
 
         # Test to make sure dataframe behavior is as intended
@@ -347,19 +347,19 @@ class StructureFeaturesTest(PymatgenTest):
         df = bob_voronoi.featurize_dataframe(df, 's')
 
         # Ensure all data is properly labelled and organized
-        self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, np.nan])
-        self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [np.nan, 0.5])
-        self.assertArrayEqual(df['Al-Al bond frac.'].as_matrix(), [np.nan, 0.0])
-        self.assertArrayEqual(df['Ni-Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+        self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, np.nan])
+        self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+        self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [np.nan, 0.0])
+        self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [np.nan, 0.5])
 
         # Test to make sure bad_bond_values (bbv) are still changed correctly
         # and check inplace behavior of featurize dataframe.
         bob_voronoi.bbv = 0.0
         df = bob_voronoi.featurize_dataframe(df, 's')
-        self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, 0.0])
-        self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [0.0, 0.5])
-        self.assertArrayEqual(df['Al-Al bond frac.'].as_matrix(), [0.0, 0.0])
-        self.assertArrayEqual(df['Ni-Ni bond frac.'].as_matrix(), [0.0, 0.5])
+        self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, 0.0])
+        self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [0.0, 0.5])
+        self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [0.0, 0.0])
+        self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [0.0, 0.5])
 
 
 if __name__ == '__main__':
