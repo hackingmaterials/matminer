@@ -700,8 +700,7 @@ class PlotlyFig:
 
         """
 
-        # todo: bargap not working? -AD
-        # todo: size not working? -AD
+        # todo: bargap, start, end, size not working?
 
         if data is None:
             if cols is None and self.df is None:
@@ -748,7 +747,6 @@ class PlotlyFig:
                     d = d.reshape((len(d),))
 
             if orientation == 'vertical':
-
                 h = go.Histogram(x=d, histnorm=histnorm,
                                  xbins=dict(start=start[i], end=end[i],
                                             size=size[i]),
