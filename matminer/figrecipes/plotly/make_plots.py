@@ -20,9 +20,9 @@ class PlotlyFig:
                  hovermode='closest', filename='auto',
                  show_offline_plot=True, username=None,
                  api_key=None, textsize=25, ticksize=25,
-                 fontfamily=None, height=None, width=None, scale=None,
-                 margins=100, pad=0, marker_scale=1.0, text_scale=1.0, tick_scale=1.0, x_type='linear',
-                 y_type='linear', hoverinfo='x+y+text'):
+                 fontfamily='Courier', height=None, width=None, scale=None,
+                 margins=100, pad=0, marker_scale=1.0, text_scale=1.0, tick_scale=1.0, x_scale='linear',
+                 y_scale='linear', hoverinfo='x+y+text'):
         """
         Class for making Plotly plots
 
@@ -68,8 +68,8 @@ class PlotlyFig:
                 number which will set all margins.
             pad: (float) Sets the amount of padding (in px) between the plotting area and the axis lines
             marker_scale (float): scale the size of all markers w.r.t. defaults
-            x_type: (str) Sets the x axis scaling type. Select from 'linear', 'log', 'date', 'category'.
-            y_type: (str) Sets the y axis scaling type. Select from 'linear', 'log', 'date', 'category'.
+            x_scale: (str) Sets the x axis scaling type. Select from 'linear', 'log', 'date', 'category'.
+            y_scale: (str) Sets the y axis scaling type. Select from 'linear', 'log', 'date', 'category'.
             hoverinfo: (str) Any combination of "x", "y", "z", "text", "name"
                 joined with a "+" OR "all" or "none" or "skip".
                 Examples: "x", "y", "x+y", "x+y+z", "all"
@@ -81,9 +81,9 @@ class PlotlyFig:
         self.df = df
         self.title = plot_title
         self.x_title = x_title
-        self.x_type = x_type
+        self.x_type = x_scale
         self.y_title = y_title
-        self.y_type = y_type
+        self.y_type = y_scale
         self.hovermode = hovermode
         self.filename = filename
         self.plot_mode = plot_mode
@@ -118,12 +118,12 @@ class PlotlyFig:
         self.layout = dict(
             title=self.title,
             titlefont=dict(size=self.textsize, family=self.fontfamily),
-            xaxis=dict(title=self.x_title, type=x_type,
+            xaxis=dict(title=self.x_title, type=x_scale,
                        titlefont=dict(size=self.textsize,
                                       family=self.fontfamily),
                        tickfont=dict(size=self.ticksize,
                                      family=self.fontfamily)),
-            yaxis=dict(title=self.y_title, type=y_type,
+            yaxis=dict(title=self.y_title, type=y_scale,
                        titlefont=dict(size=self.textsize,
                                       family=self.fontfamily),
                        tickfont=dict(size=self.ticksize,
