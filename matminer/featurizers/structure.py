@@ -1225,16 +1225,28 @@ class BagofBonds(BaseFeaturizer):
             if lb in self.unified_bonds:
                 ubonds_data[lb] += local_bonds[lb]
             else:
-                species = self._species_from_bondstr(lb)
+                lbs = self._species_from_bondstr(lb)
 
                 nearest = []
                 d_min = None
                 for ubs in ubonds_species.keys():
-                    dm0 = float(ubs[0].element.mendeleev_no -
-                                species[0].element.mendeleev_no)
-                    dm1 = float(ubs[1].element.mendeleev_no -
-                                species[1].element.mendeleev_no)
-                    d = (dm0**2.0 + dm1**2.0)**0.5
+
+                    u_mends = [j.element.mendeleev_no for j in ubs]
+                    l_mends = [j.element.mendeleev_no for j in lbs]
+
+                    # The distance between bonds is euclidean. To get a good
+                    # measure of the coordinate between mendeleev numbers for
+                    # each specie, we use the minumum difference. ie, for
+                    # finding the distance between Na-O and O-Li, we would
+                    # not want the distance between (Na and O) and (O and Li),
+                    # we want the distance between (Na and Li) and (O and O).
+                    d1 = min([abs(u_mends[0] - l_mends[0]),
+                              abs(u_mends[1] - l_mends[0])])
+
+                    d2 = min([abs(u_mends[0] - l_mends[1]),
+                              abs(u_mends[1] - l_mends[1])])
+
+                    d = (d1**2.0 + d2**2.0)**0.5
                     if not d_min:
                         d_min = d
                         nearest = [ubs]
@@ -1273,6 +1285,7 @@ class BagofBonds(BaseFeaturizer):
 
         bond_types = tuple(self.enumerate_bonds(s))
         bonds = {k: 0.0 for k in bond_types}
+        tot_bonds = 0.0
 
         # If featurize is being called from a dataframe or featurize_many,
         # a comprehensize 'unified' bond list is created. The following code
@@ -1310,13 +1323,14 @@ class BagofBonds(BaseFeaturizer):
                 b = btup[0] + ' - ' + btup[1]
                 # The bond will not be in bonds if it is a forbidden bond
                 # (when a local bond is not in allowed_bonds)
+                tot_bonds += 1.0
                 if b in bonds:
                     bonds[b] += 1.0
 
         if self.approx_bonds:
             bonds = self._approximate_bonds(bonds)
 
-        tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
+        # tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
 
         # If allowed_bonds caused no bonds to be present, all bonds will be 0.
         # Prevent division by zero error.
