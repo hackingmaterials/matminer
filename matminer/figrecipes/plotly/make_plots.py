@@ -81,9 +81,9 @@ class PlotlyFig:
         self.df = df
         self.title = plot_title
         self.x_title = x_title
-        self.x_type = x_scale
+        self.x_scale = x_scale
         self.y_title = y_title
-        self.y_type = y_scale
+        self.y_scale = y_scale
         self.hovermode = hovermode
         self.filename = filename
         self.plot_mode = plot_mode
@@ -118,12 +118,12 @@ class PlotlyFig:
         self.layout = dict(
             title=self.title,
             titlefont=dict(size=self.textsize, family=self.fontfamily),
-            xaxis=dict(title=self.x_title, type=x_scale,
+            xaxis=dict(title=self.x_title, type=self.x_scale,
                        titlefont=dict(size=self.textsize,
                                       family=self.fontfamily),
                        tickfont=dict(size=self.ticksize,
                                      family=self.fontfamily)),
-            yaxis=dict(title=self.y_title, type=y_scale,
+            yaxis=dict(title=self.y_title, type=self.y_scale,
                        titlefont=dict(size=self.textsize,
                                       family=self.fontfamily),
                        tickfont=dict(size=self.ticksize,
@@ -855,6 +855,8 @@ class PlotlyFig:
                 if cols is None:
                     cols = self.df.columns.values
                 data = self.df[cols]
+                if isinstance(labels, str):
+                    data[labels] = self.df[labels]
 
         # If data is passed in as a dataframe, not as x,y
         if data is not None and x is None and y is None:
@@ -1007,7 +1009,7 @@ class PlotlyFig:
             layout=dict(
                 title=self.title,
                 titlefont=dict(size=self.textsize, family=self.fontfamily),
-                yaxis=dict(title=self.y_title, type=self.y_type,
+                yaxis=dict(title=self.y_title, type=self.y_scale,
                            titlefont=dict(size=self.textsize,
                                           family=self.fontfamily),
                            tickfont=dict(size=self.ticksize,
