@@ -1025,7 +1025,7 @@ class BagofBonds(BaseFeaturizer):
     For dataframes containing structures with various compositions, a unified
     dataframe is returned which has the collection of bond types gathered
     from all structures as columns. Use allowed_bonds and approx_bonds to
-    intelligently limit the possible bonds in the possible dataframe.
+    intelligently limit the possible bonds in the dataframe.
 
     Args:
         nn (NearestNeighbors): A Pymatgen nearest neighbors derived object. For
@@ -1039,12 +1039,15 @@ class BagofBonds(BaseFeaturizer):
         allowed_bonds ([str]): A list of allowed bond types; limits the possible
             columns in the output dataframe. If a structure has a bond type not
             in allowed_bonds, the bond is skipped and all allowed bonds are
-            returned as normal (including bad bond values. Behavior can be
+            returned as normal (including bad bond values). Behavior can be
             changed with approx_bonds. The output of .feature_labels() will
             return a list of allowed_bonds for that BagofBonds object.
         approx_bonds (bool): If True, approximates the fractions of bonds not
             in allowed_bonds (forbidden bonds) with similar allowed bonds.
-            Chemical rules are used to determine which bonds are most 'similar'
+            Chemical rules are used to determine which bonds are most 'similar';
+            particularly, the Euclidean distance between the 2-tuples of the
+            bonds in Mendeleev no. space is minimized for the approximate
+            bond chosen.
     """
 
     def __init__(self, nn, bbv=None, allowed_bonds=None, approx_bonds=False):
@@ -1169,7 +1172,7 @@ class BagofBonds(BaseFeaturizer):
 
     def _species_from_bondstr(self, bondstr):
         """
-        Create a species object from a bond string.
+        Create a tuple of species objects from a bond string.
 
         Args:
             bondstr (str): A string representing a bond between elements or
@@ -1204,7 +1207,9 @@ class BagofBonds(BaseFeaturizer):
                 types as keys ("Cl--Cs+") and the bond fraction as values (0.7).
 
         Returns:
-            ubonds_data (dict):
+            ubonds_data (dict): A dictionary of the unified (allowed) bonds
+                with the bond names as keys and the corresponding bond fractions
+                (whether approximated or true) as values.
 
         """
 
@@ -1279,6 +1284,10 @@ class BagofBonds(BaseFeaturizer):
 
         Args:
             s (Structure): A pymatgen structure object
+
+        Returns:
+            (list) The feature list of bond fractions, in the order of the
+                alphabetized corresponding bond names.
         """
         if isinstance(s, dict):
             s = Structure.from_dict(s)
@@ -1301,9 +1310,7 @@ class BagofBonds(BaseFeaturizer):
                     else:
                         bonds[b] = self.bbv
 
-            # if we find a bond in bond_types not in unified_bonds, then
-            # allowed bonds is specified. We should return a nan vector unless
-            # we are going to approximate those bonds later.
+            # if we find a bond in bond_types not in unified_bonds, skip
             if not self.approx_bonds:
                 for b in bond_types:
                     if b not in self.unified_bonds:
