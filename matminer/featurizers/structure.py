@@ -15,8 +15,7 @@ from pymatgen.analysis.defects.point_defects import \
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-import pymatgen.analysis.local_env
-
+import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
     CoordinationNumber
@@ -646,7 +645,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                 counts: number of identical sites for each ofm
         """
         ofms = []
-        vnn = VoronoiNN(allow_pathological=True)
+        vnn = pmg_le.VoronoiNN(allow_pathological=True)
         if symm:
             symm_struct = SpacegroupAnalyzer(struct).get_symmetrized_structure()
             indices = [lst[0] for lst in symm_struct.equivalent_indices]
@@ -1074,7 +1073,7 @@ class BagofBonds(BaseFeaturizer):
         Returns:
             CoordinationNumber from a preset.
         """
-        nn = getattr(pymatgen.analysis.local_env, preset)
+        nn = getattr(pmg_le, preset)
         return BagofBonds(nn())
 
     def featurize_dataframe(self, df, col_id, *args, **kwargs):
