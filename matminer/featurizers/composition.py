@@ -303,7 +303,7 @@ class AtomicOrbitals(BaseFeaturizer):
             LUMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
             LUMO_element: (str) symbol of element for LUMO
             LUMO_energy: (float in eV) absolute energy of LUMO
-            bandgap: (float in eV)
+            gap_AO: (float in eV)
                 the estimated bandgap from HOMO and LUMO energeis
         '''
 
@@ -316,7 +316,7 @@ class AtomicOrbitals(BaseFeaturizer):
             feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
             feat['{}_element'.format(edge)] = homo_lumo[edge][0]
             feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
-        feat['gap'] = feat['LUMO_energy'] - feat['HOMO_energy']
+        feat['gap_AO'] = feat['LUMO_energy'] - feat['HOMO_energy']
 
         return list(feat.values())
 
@@ -326,7 +326,7 @@ class AtomicOrbitals(BaseFeaturizer):
             feat.extend(['{}_character'.format(edge),
                          '{}_element'.format(edge),
                          '{}_energy'.format(edge)])
-        feat.append("gap")
+        feat.append("gap_AO")
         return feat
 
     def citations(self):
@@ -923,8 +923,6 @@ class CohesiveEnergy(BaseFeaturizer):
             "Physics, 8th Edition}}, year = {2005}}"]
 
 
-# TODO: read data file only once!! (on init, then store)
-# TODO: general code review, typo fixes, etc
 class Miedema(BaseFeaturizer):
     """
     Class to calculate the formation enthalpies of the intermetallic compound,
@@ -979,14 +977,12 @@ class Miedema(BaseFeaturizer):
                          'structural_stability'
 
     Returns:
-        a list of Miedema formation enthalpies (per atom) of target structures
-        for a given composition:
-            formation_enthalpy_inter: for interatomic compound
-            formation_enthalpy_ss: for solid solution, can be divided into
+        (list of floats) Miedema formation enthalpies (per atom)
+            -formation_enthalpy_inter: for interatomic compound
+            -formation_enthalpy_ss: for solid solution, can be divided into
                                    'min', 'fcc', 'bcc', 'hcp', 'no_latt'
                                     for different lattice_types
-            formation_enthalpy_amor: for amorphous phase
-
+            -formation_enthalpy_amor: for amorphous phase
     """
 
     data_dir = os.path.join(module_dir, "..", "utils", "data_files")
@@ -1017,16 +1013,14 @@ class Miedema(BaseFeaturizer):
                                       format(self, data_source))
 
     def deltaH_chem(self, elements, fracs, struct):
-        """chemical term of formation enthalpy
-
+        """
+        Chemical term of formation enthalpy
         Args:
             elements (list of str): list of elements
             fracs (list of floats): list of atomic fractions
             struct (str): 'inter', 'ss' or 'amor'
-
         Returns:
             deltaH_chem (float): chemical term of formation enthalpy
-
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -1085,19 +1079,16 @@ class Miedema(BaseFeaturizer):
 
         deltaH_chem = (f_alloy[0] * fracs[0] * v_alloy[0] * eta_ab +
                        np.dot(fracs, H_trans))
-
         return deltaH_chem
 
     def deltaH_elast(self, elements, fracs):
-        """elastic term of formation enthalpy
-
+        """
+        Elastic term of formation enthalpy
         Args:
             elements (list of str): list of elements
             fracs (list of floats): list of atomic fractions
-
         Returns:
             deltaH_elastic (float): elastic term of formation enthalpy
-
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -1142,20 +1133,17 @@ class Miedema(BaseFeaturizer):
 
         deltaH_elast = (np.multiply.reduce(fracs) *
                         (fracs[1] * Hab_elast + fracs[0] * Hba_elast))
-
         return deltaH_elast
 
     def deltaH_struct(self, elements, fracs, latt):
-        """structural term of formation enthalpy, only for solid solution
-
+        """
+        Structural term of formation enthalpy, only for solid solution
         Args:
             elements (list of str): list of elements
             fracs (list of floats): list of atomic fractions
             latt (str): 'fcc', 'bcc', 'hcp' or 'no_latt'
-
         Returns:
             deltaH_struct (float): structural term of formation enthalpy
-
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -1202,15 +1190,13 @@ class Miedema(BaseFeaturizer):
         return deltaH_struct
 
     def deltaH_topo(self, elements, fracs):
-        """topological term of formation enthalpy, only for amorphous phase
-
+        """
+        Topological term of formation enthalpy, only for amorphous phase
         Args:
             elements (list of str): list of elements
             fracs (list of floats): list of atomic fractions
-
         Returns:
             deltaH_topo (float): topological term of formation enthalpy
-
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -1223,16 +1209,14 @@ class Miedema(BaseFeaturizer):
         return deltaH_topo
 
     def featurize(self, comp):
-        """Get Miedema formation enthalpies of target structures: inter, amor,
-           ss (can be further divided into 'min', 'fcc', 'bcc', 'hcp', 'no_latt'
-               for different lattice_types)
-
+        """
+        Get Miedema formation enthalpies of target structures: inter, amor,
+        ss (can be further divided into 'min', 'fcc', 'bcc', 'hcp', 'no_latt'
+            for different lattice_types)
         Args:
             comp: Pymatgen composition object
-
         Returns:
             miedema (list of floats): formation enthalpies of target structures
-
         """
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
