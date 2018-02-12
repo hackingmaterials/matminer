@@ -192,20 +192,6 @@ class OPSiteFingerprint(BaseFeaturizer):
 
     def __init__(self, targets=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
                  dist_exp=2, zero_ops=True):
-        #self.optypes = {
-        #    1: ["sgl_bd"],
-        #    2: ["bent180", "bent150", "bent120", "bent104.5", "bent90"],
-        #    3: ["tri_plan_max", "tet_max", "T"],
-        #    4: ["sq_plan_max", "tet_max", "see_saw_rect", "tri_bipyr", "tri_pyr"],
-        #    5: ["pent_plan_max", "sq_pyr", "tri_bipyr"],
-        #    6: ["hex_plan_max", "oct_max", "pent_pyr"],
-        #    7: ["hex_pyr", "pent_bipyr"],
-        #    8: ["bcc", "hex_bipyr"],
-        #    9: ["q2", "q4", "q6"],
-        #    10: ["q2", "q4", "q6"],
-        #    11: ["q2", "q4", "q6"],
-        #    12: ["cuboct_max", "q2", "q4", "q6"]} if optypes is None \
-        #    else optypes.copy()
         self.cn_target_motif_op = cn_target_motif_op if targets is None \
             else targets
         self.dr = dr
@@ -215,16 +201,9 @@ class OPSiteFingerprint(BaseFeaturizer):
         self.dist_exp = dist_exp
         self.zero_ops = zero_ops
         self.ops = {}
-        #for cn, t_list in self.optypes.items():
         for cn, t_list in self.cn_target_motif_op.items():
             self.ops[cn] = []
             for t in t_list:
-                #if t[:4] == 'bent':
-                #    self.ops[cn].append(LocalStructOrderParas(
-                #        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
-                #                              'IGW_TA': 1.0 / 0.0667}]))
-                #else:
-                #    self.ops[cn].append(LocalStructOrderParas([t]))
                 ot = t
                 p = None
                 if cn in cn_motif_op_paras.keys():
@@ -423,25 +402,15 @@ class CrystalSiteFingerprint(BaseFeaturizer):
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
 
         elif preset == "ops":
-            optypes = {
-                1: ["wt"],
-                2: ["wt", "bent180", "bent45", "bent90", "bent135"],
-                3: ["wt", "tri_plan", "tet", "T"],
-                4: ["wt", "sq_plan", "sq", "tet", "see_saw_rect", "tri_pyr"],
-                5: ["wt", "pent_plan", "sq_pyr", "tri_bipyr"],
-                6: ["wt", "oct", "pent_pyr"],
-                7: ["wt", "hex_pyr", "pent_bipyr"],
-                8: ["wt", "bcc", "hex_bipyr"],
-                9: ["wt", "q2", "q4", "q6"],
-                10: ["wt", "q2", "q4", "q6"],
-                11: ["wt", "q2", "q4", "q6"],
-                12: ["wt", "cuboct", "q2", "q4", "q6"],
-                13: ["wt"],
-                14: ["wt"],
-                15: ["wt"],
-                16: ["wt"]}
-
+            optypes = cn_target_motif_op.copy()
+            optypes[1] = []
+            for cn in optypes.keys():
+                optypes[cn].insert(0, "wt")
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
+
+        else:
+            raise RuntimeError('preset "{}" is not supported in '
+                               'CrystalSiteFingerprint'.format(preset))
 
     def __init__(self, optypes, override_cn1=True, cutoff_radius=8, tol=1E-2,
                  cation_anion=False):
@@ -478,12 +447,15 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 if t == "wt":
                     self.ops[cn].append(t)
 
-                elif t[:4] == 'bent':
-                    self.ops[cn].append(LocalStructOrderParas(
-                        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
-                                              'IGW_TA': 1.0 / 0.0667}]))
                 else:
-                    self.ops[cn].append(LocalStructOrderParas([t]))
+                    ot = t
+                    p = None
+                    if cn in cn_motif_op_paras.keys():
+                        if t in cn_motif_op_paras[cn].keys():
+                            ot = cn_motif_op_paras[cn][t][0]
+                            if len(cn_motif_op_paras[cn][t]) > 1:
+                                p = cn_motif_op_paras[cn][t][1]
+                    self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
         """
