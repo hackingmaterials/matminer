@@ -138,6 +138,7 @@ class TestBaseClass(PymatgenTest):
 
         # Multi-argument
         s = self.multiargs
+        data = self.make_test_data()
         data['x2'] = [4, 5, 6]
         data = s.featurize_dataframe(data, ['x', 'x2'], n_jobs=self.n_jobs)
         self.assertArrayAlmostEqual(data['y'], [5, 7, 9])
