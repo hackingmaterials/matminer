@@ -1016,6 +1016,7 @@ class BagofBonds(BaseFeaturizer):
     """
     Compute the number of each kind of bond in a structure, as a fraction of
     the total number of bonds, based on NearestNeighbors.
+
     For example, in a structure with 2 Li-O bonds and 3 Li-P bonds:
 
     Li-0: 0.4
@@ -1059,6 +1060,7 @@ class BagofBonds(BaseFeaturizer):
                              "are enabled. Define a list of allowed bonds or "
                              "set approx_bonds=False.")
 
+        self._token = ' - '
         self._dataframe_featurizing = False
 
     @staticmethod
@@ -1103,8 +1105,7 @@ class BagofBonds(BaseFeaturizer):
         self._dataframe_featurizing = False
         return df
 
-    @staticmethod
-    def enumerate_bonds(s):
+    def enumerate_bonds(self, s):
         """
         Lists out all the bond possibilities in a single structure.
 
@@ -1121,7 +1122,7 @@ class BagofBonds(BaseFeaturizer):
         het_bonds = list(itertools.combinations(els, 2))
         het_bonds = [tuple(sorted([str(i) for i in j])) for j in het_bonds]
         hom_bonds = [(str(el), str(el)) for el in els]
-        bond_types = [k[0] + ' - ' + k[1] for k in het_bonds + hom_bonds]
+        bond_types = [k[0] + self._token + k[1] for k in het_bonds + hom_bonds]
         return sorted(bond_types)
 
     def enumerate_all_bonds(self, structures):
@@ -1165,13 +1166,13 @@ class BagofBonds(BaseFeaturizer):
                 raise TypeError("Bonds must be specified as strings between"
                                 "elements or species, for example Cl-Cs")
             bond = bond.replace(" bond frac.", "")
-            species = sorted(bond.split(" - "))
-            bonds[i] = " - ".join(species)
+            species = sorted(bond.split(self._token))
+            bonds[i] = self._token.join(species)
         return tuple(sorted(bonds))
 
     def _species_from_bondstr(self, bondstr):
         """
-        Create a tuple of species objects from a bond string.
+        Create a 2-tuple of species objects from a bond string.
 
         Args:
             bondstr (str): A string representing a bond between elements or
@@ -1182,7 +1183,7 @@ class BagofBonds(BaseFeaturizer):
                 order.
         """
         species = []
-        for ss in bondstr.split(" - "):
+        for ss in bondstr.split(self._token):
             try:
                 species.append(Specie.from_string(ss))
             except ValueError:
@@ -1326,7 +1327,7 @@ class BagofBonds(BaseFeaturizer):
 
             for neigh in nearest:
                 btup = tuple(sorted([str(origin), str(neigh.specie)]))
-                b = btup[0] + ' - ' + btup[1]
+                b = btup[0] + self._token + btup[1]
                 # The bond will not be in bonds if it is a forbidden bond
                 # (when a local bond is not in allowed_bonds)
                 tot_bonds += 1.0
