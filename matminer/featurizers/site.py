@@ -192,8 +192,8 @@ class OPSiteFingerprint(BaseFeaturizer):
 
     def __init__(self, targets=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
                  dist_exp=2, zero_ops=True):
-        self.cn_target_motif_op = cn_target_motif_op if targets is None \
-            else targets
+        self.cn_target_motif_op = cn_target_motif_op.copy() \
+            if targets is None else targets.copy()
         self.dr = dr
         self.ddr = ddr
         self.ndr = ndr
@@ -402,7 +402,9 @@ class CrystalSiteFingerprint(BaseFeaturizer):
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
 
         elif preset == "ops":
-            optypes = cn_target_motif_op.copy()
+            optypes = {}
+            for cn, li in cn_target_motif_op.items():
+                optypes[cn] = li.copy()
             optypes[1] = []
             for cn in optypes.keys():
                 optypes[cn].insert(0, "wt")
@@ -484,8 +486,8 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                     "No valid targets for site within cation_anion constraint!")
 
         vnn = VoronoiNN(cutoff=self.cutoff_radius,
-                        target=target)
-        n_w = vnn.get_voronoi_polyhedra(idx, struct, use_weights=True)
+                        targets=target)
+        n_w = vnn.get_voronoi_polyhedra(struct, idx)
 
         dist_sorted = (sorted(n_w.values(), reverse=True))
 
