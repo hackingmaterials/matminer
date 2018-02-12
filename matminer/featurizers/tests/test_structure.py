@@ -355,6 +355,7 @@ class StructureFeaturesTest(PymatgenTest):
         # Test to make sure bad_bond_values (bbv) are still changed correctly
         # and check inplace behavior of featurize dataframe.
         bob_voronoi.bbv = 0.0
+        df = pd.DataFrame.from_dict({'s': s_list})
         df = bob_voronoi.featurize_dataframe(df, 's')
         self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, 0.0])
         self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [0.0, 0.5])

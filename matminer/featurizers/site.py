@@ -20,7 +20,7 @@ import math
 from collections import defaultdict
 
 from matminer.featurizers.base import BaseFeaturizer
-from pymatgen.analysis.structure_analyzer import VoronoiAnalyzer
+from scipy.spatial import Voronoi, Delaunay
 from pymatgen.analysis.local_env import LocalStructOrderParas, \
     VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
     MinimumVIRENN
@@ -566,55 +566,170 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
 
 
-class VoronoiIndex(BaseFeaturizer):
+class VoronoiFingerprint(BaseFeaturizer):
     """
-    The Voronoi indices n_i and the fractional Voronoi indices n_i/sum(n_i) that
-    reflects the i-fold symmetry in the local sites.
-    n_i denotes the number of the i-edged faces, and i is in the range of 3-10 here.
-    e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,0,0...]
-         for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...]
-         for icosahedra, the Voronoi indices are [0,0,12,0,...]
+    Calculate the following sets of features based on Voronoi tessellation
+    analysis around the target site:
+    -Voronoi indices {n_i}
+     n_i denotes the number of i-edged facets, and i is in the range of 3-10.
+     e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,...];
+          for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...];
+          for icosahedra, the Voronoi indices are [0,0,12,0,...];
+
+    -i-fold symmetry indices
+     computed as n_i/sum(n_i), and i is in the range of 3-10.
+     reflect the strength of i-fold symmetry in local sites.
+     e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,...]
+             indicating both 4-fold and a stronger 6-fold symmetries are present;
+          for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
+             indicating only 4-fold symmetry is present;
+          for icosahedra, the Voronoi indices are [0,0,1,0,...],
+             indicating only 5-fold symmetry is present;
+
+    -weighted i-fold symmetry indices
+     if use_weights = True
+
+    -Voronoi volume
+     total volume of the Voronoi polyhedron around the target site
+
+    -Voronoi volume statistics of the sub_polyhedra formed by each facet
+     and the center site
+     e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
+
+    -Voronoi area
+     total area of the Voronoi polyhedron around the target site
+
+    -Voronoi area statistics of the facets
+     e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
+
+    -Voronoi nearest-neighboring distance statistics
+     e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
+
+    Args:
+        cutoff (float): cutoff distance in determining the potential
+                        neighbors for Voronoi tessellation analysis.
+        use_weights(bool): whether to use weights to derive weighted
+                           i-fold symmetry indices.
+        stats_vol (list of str): volume statistics types.
+        stats_area (list of str): area statistics types.
+        stats_dist (list of str): neighboring distance statistics types.
     """
 
-    def __init__(self, cutoff=6.0):
-        """
-        Args:
-            cutoff (float): cutoff distance in determining the potential
-                neighbors for Voronoi tessellation analysis
-        """
+    def __init__(self, cutoff=6.0, use_weights=False, stats_vol=None,
+                 stats_area=None, stats_dist=None):
         self.cutoff = cutoff
-        self.voronoi_analyzer = VoronoiAnalyzer(cutoff=self.cutoff)
+        self.use_weights = use_weights
+        self.stats_vol = ['mean', 'std_dev', 'minimum', 'maximum'] \
+            if stats_vol is None else stats_vol.copy()
+        self.stats_area = ['mean', 'std_dev', 'minimum', 'maximum'] \
+            if stats_area is None else stats_area.copy()
+        self.stats_dist = ['mean', 'std_dev', 'minimum', 'maximum'] \
+            if stats_dist is None else stats_dist.copy()
+
+    @staticmethod
+    def vol_tetra(vt1, vt2, vt3, vt4):
+        """
+        Calculate the volume of a tetrahedron, given the four vertices of vt1,
+        vt2, vt3 and vt4
+        Args:
+            vt1 (array-like): coordinates of vertex 1.
+            vt2 (array-like): coordinates of vertex 2.
+            vt3 (array-like): coordinates of vertex 3.
+            vt4 (array-like): coordinates of vertex 4.
+        Returns:
+            (float): volume of the tetrahedron.
+        """
+        vol_tetra = np.abs(np.dot((vt1 - vt4),
+                                  np.cross((vt2 - vt4), (vt3 - vt4))))/6
+        return vol_tetra
 
     def featurize(self, struct, idx):
         """
+        Get Voronoi fingerprints of site with given index in input structure.
         Args:
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
         Returns:
-            list including Voronoi indices, sum of Voronoi indices, and
-            fractional Voronoi indices
+            (list of floats): Voronoi fingerprints
+                -Voronoi indices
+                -i-fold symmetry indices
+                -weighted i-fold symmetry indices (if use_weights = True)
+                -Voronoi volume
+                -Voronoi volume statistics
+                -Voronoi area
+                -Voronoi area statistics
+                -Voronoi area statistics
         """
+        n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
+        voro_idx_list = np.array([0, 0, 0, 0, 0, 0, 0, 0])
+        voro_idx_weights = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
 
-        voro_index_result = []
-        voro_index_list = self.voronoi_analyzer.analyze(struct, n=idx)
-        for voro_index in voro_index_list:
-            voro_index_result.append(voro_index)
-        voro_index_sum = sum(voro_index_list)
-        voro_index_result.append(voro_index_sum)
+        vertices = [struct[idx].coords] + [key.coords for key in n_w.keys()]
+        voro = Voronoi(vertices)
 
-        voro_index_frac_list = voro_index_list / voro_index_sum
-        for voro_index_frac in voro_index_frac_list:
-            voro_index_result.append(voro_index_frac)
+        vol_list = []
+        area_list = []
+        dist_list = [np.linalg.norm(vertices[0] - vertices[i]) for i in
+                     range(1, len(vertices))]
 
-        return voro_index_result
+        for nn, vind in voro.ridge_dict.items():
+            if 0 in nn:
+                if -1 in vind:
+                    continue
+                try:
+                    voro_idx_list[len(vind) - 3] += 1
+                    if self.use_weights:
+                        for key, value in n_w.items():
+                            if str(key.coords) == str(vertices[sorted(nn)[1]]):
+                                voro_idx_weights[len(vind) - 3] += value
+
+                except IndexError:
+                    # If a facet has more than 10 edges, it's skipped here.
+                    pass
+
+                polysub = [vertices[0]]
+                vol = 0
+                for v in vind:
+                    polysub.append(list(voro.vertices[v]))
+                tetra = Delaunay(np.array(polysub))
+                for simplex in tetra.simplices:
+                    vol += self.vol_tetra(np.array(polysub[simplex[0]]),
+                                          np.array(polysub[simplex[1]]),
+                                          np.array(polysub[simplex[2]]),
+                                          np.array(polysub[simplex[3]]))
+                vol_list.append(vol)
+                area_list.append(vol * 6 / dist_list[sorted(nn)[1] - 1])
+
+        symmetry_idx_list = voro_idx_list / sum(voro_idx_list)
+        if self.use_weights:
+            symmetry_wt_list = voro_idx_weights / sum(voro_idx_weights)
+            voro_fingerprint = list(np.concatenate((voro_idx_list,
+                                                    symmetry_idx_list,
+                                                    symmetry_wt_list), axis=0))
+        else:
+            voro_fingerprint = list(np.concatenate((voro_idx_list,
+                                                    symmetry_idx_list), axis=0))
+
+        voro_fingerprint.append(sum(vol_list))
+        voro_fingerprint.append(sum(area_list))
+        voro_fingerprint += [PropertyStats().calc_stat(vol_list, stat_vol)
+                             for stat_vol in self.stats_vol]
+        voro_fingerprint += [PropertyStats().calc_stat(area_list, stat_area)
+                             for stat_area in self.stats_area]
+        voro_fingerprint += [PropertyStats().calc_stat(dist_list, stat_dist)
+                             for stat_dist in self.stats_dist]
+        return voro_fingerprint
 
     def feature_labels(self):
-        labels = []
-        for i in range(3, 11):
-            labels.append('voro_index_%d' % i)
-        labels.append('voro_index_sum')
-        for i in range(3, 11):
-            labels.append('voro_index_frac_%d' % i)
+        labels = ['Voro_index_%d' % i for i in range(3, 11)]
+        labels += ['Symmetry_index_%d' % i for i in range(3, 11)]
+        if self.use_weights:
+            labels += ['Symmetry_weighted_index_%d' % i for i in range(3, 11)]
+        labels.append('Voro_vol_sum')
+        labels.append('Voro_area_sum')
+        labels += ['Voro_vol_%s' % stat_vol for stat_vol in self.stats_vol]
+        labels += ['Voro_area_%s' % stat_area for stat_area in self.stats_area]
+        labels += ['Voro_dist_%s' % stat_dist for stat_dist in self.stats_dist]
         return labels
 
     def citations(self):
@@ -624,6 +739,170 @@ class VoronoiIndex(BaseFeaturizer):
                     'year={1992}, '
                     'publisher={Wiley Online Library}}']
         return citation
+
+    def implementors(self):
+        return ['Qi Wang']
+
+
+class ChemicalSRO(BaseFeaturizer):
+    """
+    Chemical short-range ordering (SRO) features to evaluate the deviation
+    of local chemistry with the nominal composition of the structure.
+
+    f_el = N_el/(sum of N_el) - c_el,
+    where N_el is the number of each element type in the neighbors around
+    the target site, sum of N_el is the sum of all possible element types
+    (coordination number), and c_el is the composition of the specific
+    element in the entire structure.
+
+    Here the calculation is run for each element present in the structure.
+
+    A positive f_el indicates the "bonding" with the specific element
+    is favored, at least in the target site;
+    A negative f_el indicates the "bonding" is not favored, at least
+    in the target site.
+
+    Args:
+        nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
+                              classes.
+    """
+
+    @staticmethod
+    def from_preset(preset):
+        """
+        Use one of the standard instances of a given NearNeighbor class.
+        Args:
+            preset (str): preset type ("VoronoiNN", "JMolNN",
+                          "MiniumDistanceNN", "MinimumOKeeffeNN",
+                          or "MinimumVIRENN").
+        Returns:
+            ChemicalSRO from a preset.
+        """
+        if preset == "VoronoiNN":
+            return ChemicalSRO(VoronoiNN())
+        elif preset == "JMolNN":
+            return ChemicalSRO(JMolNN())
+        elif preset == "MinimumDistanceNN":
+            return ChemicalSRO(MinimumDistanceNN())
+        elif preset == "MinimumOKeeffeNN":
+            return ChemicalSRO(MinimumOKeeffeNN())
+        elif preset == "MinimumVIRENN":
+            return ChemicalSRO(MinimumVIRENN())
+        else:
+            raise RuntimeError('Unknown preset.')
+
+    def __init__(self, nn):
+        self.nn = nn
+        self.el_amt_dict = None
+        self.el_list = None
+
+    @staticmethod
+    def cal_el_amt(structs):
+        """
+        Identify and "store" the element types and composition of structures,
+        avoiding repeated calculation of composition when featurizing many
+        sites in one structure.
+        Args:
+            structs (pandas series): series of pymatgen Structures
+        Returns:
+            (list of str): elements present in the structures
+            (dict): composition dicts of the structures
+        """
+        el_amt_dict = {}
+        el_list = set()
+        for s in structs.values:
+            if str(s) not in el_amt_dict.keys():
+                el_amt = s.composition.fractional_composition.\
+                         get_el_amt_dict()
+                el_amt_dict[str(s)] = el_amt
+                elements = set(el_amt.keys())
+                el_list = el_list | elements
+        return list(el_list), el_amt_dict
+
+    def featurize_dataframe(self, df, col_id, ignore_errors=True,
+                            inplace=True, n_jobs=1):
+        """
+        Featurize the dataframe with ChemicalSRO features.
+        Args:
+            df (pandas dataframe): Dataframe containing input data
+            col_id (str or [str]): The dataframe key corresponding to structures
+        Returns:
+            (pandas dataframe) ChemicalSRO-featurized dataframe
+        """
+        self.el_list, self.el_amt_dict = self.cal_el_amt(df[col_id[0]])
+        df = super(ChemicalSRO, self).\
+             featurize_dataframe(df, col_id,
+                                 ignore_errors=ignore_errors,
+                                 inplace=inplace,
+                                 n_jobs=n_jobs)
+        delattr(self, 'el_list')
+        delattr(self, 'el_amt_dict')
+        return df
+
+    def featurize(self, struct, idx):
+        """
+        Get CSRO features of site with given index in input structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            (list of floats): Chemical SRO features for each element.
+        """
+        csro_el = [np.nan]*len(self.el_list)
+        el_amt = self.el_amt_dict[str(struct)]
+        nn_list = self.nn.get_nn(struct, idx)
+        nn_el_amt = dict.fromkeys(el_amt, 0)
+        for nn in nn_list:
+            nn_el_amt[str(nn.specie)] += 1/len(nn_list)
+        for el in el_amt.keys():
+            csro_el[self.el_list.index(el)] = nn_el_amt[el] - el_amt[el]
+        return csro_el
+
+    def feature_labels(self):
+        return ['CSRO_{}_{}'.format(el, self.nn.__class__.__name__)
+                for el in self.el_list]
+
+    def citations(self):
+        citations = []
+        if self.nn.__class__.__name__ == 'VoronoiNN':
+            citations.append('@article{voronoi_jreineangewmath_1908, title={'
+                'Nouvelles applications des param\\`{e}tres continus \\`{a} la '
+                'th\'{e}orie des formes quadratiques. Sur quelques '
+                'propri\'{e}t\'{e}s des formes quadratiques positives'
+                ' parfaites}, journal={Journal f\"ur die reine und angewandte '
+                'Mathematik}, number={133}, pages={97-178}, year={1908}}')
+            citations.append('@article{dirichlet_jreineangewmath_1850, title={'
+                '\"{U}ber die Reduction der positiven quadratischen Formen '
+                'mit drei unbestimmten ganzen Zahlen}, journal={Journal '
+                'f\"ur die reine und angewandte Mathematik}, number={40}, '
+                'pages={209-227}, doi={10.1515/crll.1850.40.209}, year={1850}}')
+        if self.nn.__class__.__name__ == 'JMolNN':
+            citations.append('@misc{jmol, title = {Jmol: an open-source Java '
+                'viewer for chemical structures in 3D}, howpublished = {'
+                '\\url{http://www.jmol.org/}}}')
+        if self.nn.__class__.__name__ == 'MinimumOKeeffeNN':
+            citations.append('@article{okeeffe_jamchemsoc_1991, title={Atom '
+                'sizes and bond lengths in molecules and crystals}, journal='
+                '{Journal of the American Chemical Society}, author={'
+                'O\'Keeffe, M. and Brese, N. E.}, number={113}, pages={'
+                '3226-3229}, doi={doi:10.1021/ja00009a002}, year={1991}}')
+        if self.nn.__class__.__name__ == 'MinimumVIRENN':
+            citations.append('@article{shannon_actacryst_1976, title={'
+                'Revised effective ionic radii and systematic studies of '
+                'interatomic distances in halides and chalcogenides}, '
+                'journal={Acta Crystallographica}, author={Shannon, R. D.}, '
+                'number={A32}, pages={751-767}, doi={'
+                '10.1107/S0567739476001551}, year={1976}')
+        if self.nn.__class__.__name__ in [
+                'MinimumDistanceNN', 'MinimumOKeeffeNN', 'MinimumVIRENN']:
+            citations.append('@article{zimmermann_frontmater_2017, '
+                'title={Assessing local structure motifs using order '
+                'parameters for motif recognition, interstitial '
+                'identification, and diffusion path characterization}, '
+                'journal={Frontiers in Materials}, author={Zimmermann, '
+                'N. E. R. and Horton, M. K. and Jain, A. and Haranczyk, M.}, '
+                'number={4:34}, doi={10.3389/fmats.2017.00034}, year={2017}}')
+        return citations
 
     def implementors(self):
         return ['Qi Wang']
