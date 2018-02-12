@@ -782,18 +782,8 @@ class ChemicalSRO(BaseFeaturizer):
         Returns:
             ChemicalSRO from a preset.
         """
-        if preset == "VoronoiNN":
-            return ChemicalSRO(VoronoiNN())
-        elif preset == "JMolNN":
-            return ChemicalSRO(JMolNN())
-        elif preset == "MinimumDistanceNN":
-            return ChemicalSRO(MinimumDistanceNN())
-        elif preset == "MinimumOKeeffeNN":
-            return ChemicalSRO(MinimumOKeeffeNN())
-        elif preset == "MinimumVIRENN":
-            return ChemicalSRO(MinimumVIRENN())
-        else:
-            raise RuntimeError('Unknown preset.')
+        nn_ = getattr(pymatgen.analysis.local_env, preset)
+        return ChemicalSRO(nn_())
 
     def __init__(self, nn):
         self.nn = nn
@@ -1108,18 +1098,8 @@ class CoordinationNumber(BaseFeaturizer):
         Returns:
             CoordinationNumber from a preset.
         """
-        if preset == "VoronoiNN":
-            return CoordinationNumber(VoronoiNN())
-        elif preset == "JMolNN":
-            return CoordinationNumber(JMolNN())
-        elif preset == "MinimumDistanceNN":
-            return CoordinationNumber(MinimumDistanceNN())
-        elif preset == "MinimumOKeeffeNN":
-            return CoordinationNumber(MinimumOKeeffeNN())
-        elif preset == "MinimumVIRENN":
-            return CoordinationNumber(MinimumVIRENN())
-        else:
-            raise RuntimeError('Unknown preset.')
+        nn_ = getattr(pymatgen.analysis.local_env, preset)
+        return CoordinationNumber(nn_())
 
     def __init__(self, nn, use_weights=False):
         self.nn = nn
