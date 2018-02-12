@@ -12,8 +12,10 @@ from scipy import stats
 __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
               'Alireza Faghaninia  <alireza@lbl.gov>'
 
-# todo: font_scale instead of all options, etc.
-# todo: xyplot (X), heatmap (X), scatter_matrix (X)
+# todo: font_scale instead of all options, etc., bigger fonts
+# todo: No multiple colors on violin
+# todo: Change plot mode in each method if you want
+# todo: heatmap convert
 
 class PlotlyFig:
     def __init__(self, df=None, plot_mode='offline', plot_title=None, x_title=None, y_title=None,
@@ -214,6 +216,7 @@ class PlotlyFig:
             col (str): column name to look for
         Returns (pd.Series or col itself):
         """
+        # todo: df arg is not doing anything?
         if isinstance(col, str):
             try:
                 return self.df[col]
