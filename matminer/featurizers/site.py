@@ -15,7 +15,7 @@ index and the structure. For example:
 """
 
 import os
-import yaml
+import ruamel.yaml as yaml
 import numpy as np
 import math
 
