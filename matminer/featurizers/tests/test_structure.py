@@ -335,6 +335,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
 
         bob_voronoi = BagofBonds.from_preset("VoronoiNN")
+        bob_voronoi.bbv = float("nan")
         bond_fracs = bob_voronoi.featurize(self.nacl)
         bond_names = bob_voronoi.feature_labels()
         ref = {'Na+ - Na+ bond frac.': 0.25, 'Cl- - Na+ bond frac.': 0.5,
