@@ -985,6 +985,7 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
             larger than max_csm will be set to max_csm in order
             to avoid negative values (i.e., all features are
             constrained to be between 0 and 1).
+        max_dist_fac (float): maximum distance factor (default: 1.41).
     """
 
     @staticmethod
@@ -1029,11 +1030,13 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         else:
             raise RuntimeError('unknown neighbor-finding strategy preset.')
 
-    def __init__(self, cetypes, strategy, geom_finder, max_csm=8):
+    def __init__(self, cetypes, strategy, geom_finder, max_csm=8, \
+            max_dist_fac=1.41):
         self.cetypes = tuple(cetypes)
         self.strat = strategy
         self.lgf = geom_finder
         self.max_csm = max_csm
+        self.max_dist_fac = max_dist_fac
 
     def featurize(self, struct, idx):
         """
@@ -1048,8 +1051,8 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         """
         cevals = []
         self.lgf.setup_structure(structure=struct)
-        se = self.lgf.compute_structure_environments()
-        #        maximum_distance_factor=1.41)
+        se = self.lgf.compute_structure_environments(
+                maximum_distance_factor=self.max_dist_fac)
         for ce in self.cetypes:
             try:
                 tmp = se.get_csms(idx, ce)
