@@ -1034,8 +1034,7 @@ class BagofBonds(BaseFeaturizer):
             structure-bond combinations which can not physically exist, but
             exist in the unified dataframe. For example, if a dataframe contains
             structures of BaLiP and BaTiO3, determines the value to place in
-            the Li-P column for the BaTiO3 row; by default, is None, resulting
-            in NaN.
+            the Li-P column for the BaTiO3 row; by default, is 0.
         allowed_bonds ([str]): A list of allowed bond types; limits the possible
             columns in the output dataframe. If a structure has a bond type not
             in allowed_bonds, the bond is skipped and all allowed bonds are
@@ -1050,7 +1049,7 @@ class BagofBonds(BaseFeaturizer):
             bond chosen.
     """
 
-    def __init__(self, nn, bbv=None, allowed_bonds=None, approx_bonds=False):
+    def __init__(self, nn, bbv=0.0, allowed_bonds=None, approx_bonds=False):
         self.nn = nn
         self.bbv = bbv
         self.allowed_bonds = allowed_bonds
@@ -1236,22 +1235,20 @@ class BagofBonds(BaseFeaturizer):
                 d_min = None
                 for ubs in ubonds_species.keys():
 
-                    u_mends = [j.element.mendeleev_no for j in ubs]
-                    l_mends = [j.element.mendeleev_no for j in lbs]
-
                     # The distance between bonds is euclidean. To get a good
                     # measure of the coordinate between mendeleev numbers for
                     # each specie, we use the minumum difference. ie, for
                     # finding the distance between Na-O and O-Li, we would
                     # not want the distance between (Na and O) and (O and Li),
                     # we want the distance between (Na and Li) and (O and O).
-                    d1 = min([abs(u_mends[0] - l_mends[0]),
-                              abs(u_mends[1] - l_mends[0])])
 
-                    d2 = min([abs(u_mends[0] - l_mends[1]),
-                              abs(u_mends[1] - l_mends[1])])
+                    u_mends = sorted([j.element.mendeleev_no for j in ubs])
+                    l_mends = sorted([j.element.mendeleev_no for j in lbs])
 
-                    d = (d1**2.0 + d2**2.0)**0.5
+                    d0 = u_mends[0] - l_mends[0]
+                    d1 = u_mends[1] - l_mends[1]
+
+                    d = (d0**2.0 + d1**2.0)**0.5
                     if not d_min:
                         d_min = d
                         nearest = [ubs]
