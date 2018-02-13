@@ -263,7 +263,7 @@ class PlotlyFig:
                 Picnic, Rainbow, Portland, Hot, Blackbody, Earth, Electric, Viridis
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
-
+            zscore_size (bool): if True, scale the size lists based on zscore
 
         Returns: A Plotly Scatter plot Figure object.
         """
