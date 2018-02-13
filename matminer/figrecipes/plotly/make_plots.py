@@ -682,7 +682,7 @@ class PlotlyFig:
                 raise ValueError('"{}" not found in the data'.format(colbar))
 
         # actual ploting:
-        marker = marker or {'symbol': 'circle-open'}
+        marker = marker or {'symbol': 'circle', 'line': {'width': 1, 'color': 'black'}}
         nplots = len(data.columns) - int(colbar is not None)
         marker_size = marker.get('size') or 5.0 * self.marker_scale
         text_scale = self.text_scale * 0.9 / nplots**0.2
