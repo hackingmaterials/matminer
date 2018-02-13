@@ -549,6 +549,66 @@ class PlotlyFig:
 
         return self.create_plot(fig)
 
+    def heatmap(self, data=None, cols=None, x_prop=None, x_bins=None, y_prop=None,
+                y_bins = None, col_prop=None,):
+
+        if data is None:
+            if self.df is None:
+                raise ValueError(
+                    "scatter_matrix requires either dataframe labels and a "
+                    "dataframe or a list of numerical values.")
+            elif cols is None:
+                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+            else:
+                data = self.df[cols]
+        elif isinstance(data, (np.ndarray, list)):
+            data = pd.DataFrame(data, columns=cols)
+
+        cols = data.columns.values
+        x_prop = cols[0]
+        y_prop = cols[1]
+        col_prop = cols[2]
+        y_bins = y_bins or 4
+        x_bins = x_bins or 6
+
+        data = data.sort_values(y_prop, ascending=False)
+        if len(data[y_prop].unique()) > y_bins:
+            data['y_bin'] = pd.cut(data[y_prop], bins=y_bins).astype(str)
+            y_labels = data['y_bin'].unique()
+        else:
+            y_labels = data[y_prop].unique()
+
+        data = data.sort_values(x_prop, ascending=True)
+        if len(data[x_prop].unique()) > x_bins:
+            data['x_bin'] = pd.cut(data[x_prop], bins=x_bins).astype(str)
+            x_labels = data['x_bin'].unique()
+        else:
+            x_labels = data[x_prop].unique()
+
+        data_ = []
+        for y in y_labels:
+            temp = data[data['y_bin'].values == y]
+            grouped = temp.groupby('x_bin').mean().reset_index()
+            x_data = []
+            for x in x_labels:
+                if x in grouped['x_bin'].values:
+                    x_data.append(grouped[grouped['x_bin'].values==x][col_prop].values[0])
+                else:
+                    x_data.append(float('NaN'))
+            data_.append(x_data)
+
+        data = data_
+        print(data)
+        print(x_labels)
+        print(y_labels)
+        trace = go.Heatmap(z=data, x=x_labels, y=y_labels)
+        fig = {'data': [trace]}
+        return self.create_plot(fig)
+
+        # THIS RESULTS IN AN EMPTY PLOT:
+        # self.heatmap_plot(data=data_, x_labels=x_labels, y_labels=y_labels)
+
+
     def heatmap_plot(self, data, x_labels=None, y_labels=None,
                      colorscale='Viridis', colorscale_range=None,
                      annotations_text=None, annotations_text_size=20,
@@ -624,6 +684,8 @@ class PlotlyFig:
 
         return self.create_plot(fig)
 
+
+
     def scatter_matrix(self, data=None, cols=None, colbar=None, marker=None,
                        text=None, **kwargs):
         """
@@ -665,9 +727,9 @@ class PlotlyFig:
                 data = self.df.select_dtypes(include=['float', 'int', 'bool'])
             else:
                 data = self.df[cols]
-
-        elif isinstance(data, pd.DataFrame):
+        elif isinstance(data, np.ndarray):
             data = pd.DataFrame(data, columns=cols)
+
         if isinstance(text, str):
             if text in data:
                 text = data[text]
