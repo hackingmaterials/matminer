@@ -848,7 +848,7 @@ class ChemicalSRO(BaseFeaturizer):
         Returns:
             (list of floats): Chemical SRO features for each element.
         """
-        csro_el = [np.nan]*len(self.el_list)
+        csro_el = [0.]*len(self.el_list)
         el_amt = self.el_amt_dict[str(struct)]
         nn_list = self.nn.get_nn(struct, idx)
         nn_el_amt = dict.fromkeys(el_amt, 0)
