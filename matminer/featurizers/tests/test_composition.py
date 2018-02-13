@@ -139,7 +139,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertEqual(df_atomic_orbitals['LUMO_character'][0], 'd')
         self.assertEqual(df_atomic_orbitals['LUMO_element'][0], 'Fe')
         self.assertEqual(df_atomic_orbitals['LUMO_energy'][0], -0.295049)
-        self.assertEqual(df_atomic_orbitals['gap'][0], 0.0)
+        self.assertEqual(df_atomic_orbitals['gap_AO'][0], 0.0)
 
     def test_band_center(self):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
