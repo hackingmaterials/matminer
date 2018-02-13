@@ -226,8 +226,9 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_pairs, colorbar=None, labels=None, names=None, modes='markers',
-           markers=None, lines=None, colorscale='Viridis', showlegends=None):
+    def xy(self, xy_pairs, colorbar=None, labels=None, names=None, sizes=None,
+           modes='markers', markers=None, lines=None, colorscale='Viridis',
+           showlegends=None, zscore_size=True):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
@@ -237,14 +238,20 @@ class PlotlyFig:
                 example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example 3: [('x1', 'y1'), ('x2', 'y2')]
             colorbar (list or np.ndarray or pd.Series): set the colorscale for
-                the colorbar (list of numbers)
+                the colorbar (list of numbers); overwrites marker['color']
             labels (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
             names (str or [str]): list of trace names used for legend. By
                 default column name (or trace if NA) used if pd.Series passed
+            sizes (str, float, [float], [list]). Options:
+                str: column name in data with list of numbers used for marker size
+                float: a single size used for all traces in xy_pairs
+                [float]: list of fixed sizes used for traces (length==len(xy_pairs))
+                [list]: list of list of sizes for each trace in xy_pairs
             modes (str or [str]): trace style; can be 'markers'/'lines'/'lines+markers'
             markers (dict or [dict]): gives the ability to fine tune marker
-                of each scatter plot individually if list of dicts passed
+                of each scatter plot individually if list of dicts passed. Note
+                that the key "size" is forbidden in markers. Use sizes arg instead.
             lines (dict or [dict]: similar to markers though only if mode=='lines'
             colorscale: (str) Sets the colorscale (colormap). It can be an array
                 containing arrays mapping a normalized value to an rgb, rgba,
@@ -272,6 +279,19 @@ class PlotlyFig:
             names = [names] * len(xy_pairs)
         else:
             assert len(names) == len(xy_pairs)
+        if sizes is None:
+            sizes = [10 * self.marker_scale] * len(xy_pairs)
+        elif isinstance(sizes, str):
+            sizes = [self.data_from_col(sizes)] * len(xy_pairs)
+        else:
+            assert len(sizes) == len(xy_pairs)
+            for i, _ in enumerate(sizes):
+                sizes[i] = self.data_from_col(sizes[i])
+
+        if zscore_size:
+            for i, _ in enumerate(sizes):
+                if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
+                    sizes[i] = (stats.zscore(pd.Series(sizes[i])) + 5) * 3
 
         if isinstance(modes, str):
             modes = [modes] * len(xy_pairs)
@@ -298,21 +318,29 @@ class PlotlyFig:
         if not isinstance(labels, list):
             labels = self.data_from_col(labels)
             labels = [labels] * len(data)
-        markers = markers or [
-            {'symbol': 'circle', 'size': 10 * self.marker_scale
-                , 'line': {'width': 1},
-             'showscale': showscale,
-             'color': colorbar,
-             'colorbar': {'tickfont': {'family': self.fontfamily,
-                            'size': 0.75*self.ticksize * self.tick_scale}},
-             'colorscale': colorscale
-             }
-        ] * len(data)
+        else:
+            labels = [self.data_from_col(l) for l in labels]
+        markers = markers or [{'symbol': 'circle', 'line': {'width': 1,
+                    'color': 'black'}} for _ in data]
         if isinstance(markers, dict):
-            markers = [markers] * len(xy_pairs)
+            [markers.copy() for _ in data]
+
+        for im, marker in enumerate(markers):
+            markers[im]['showscale'] = showscale
+            if markers[im].get('size', None) is None:
+                markers[im]['size'] = sizes[im]
+            else:
+                raise ValueError('"size" must not be set in markers, use sizes argument instead')
+            if colorbar is not None:
+                markers[im]['color'] = colorbar
+                markers[im]['colorbar'] = {'tickfont': {
+                    'family': self.fontfamily, 'size': 0.75*self.ticksize * self.tick_scale}}
+            if markers[im].get('colorscale') is None:
+                markers[im]['colorscale'] = colorscale
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
         for var in [labels, markers, lines]:
             assert len(list(var)) == len(data)
+
         traces = []
         for i, xy_pair in enumerate(data):
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
@@ -320,10 +348,12 @@ class PlotlyFig:
                                      text=labels[i], hoverinfo=self.hoverinfo,
                                      name=names[i], showlegend=showlegends[i],
                                      ))
-        fig = dict(data=traces, layout=self.layout)
+        fig = {'data': traces, 'layout': self.layout}
         if showscale:
             fig['layout']['legend']['x'] = 0.9
         return self.create_plot(fig)
+
+
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)',
                 size=6, colorscale='Viridis', legend=None,
