@@ -470,20 +470,20 @@ class CrystalSiteFingerprint(BaseFeaturizer):
             list)  # dict where key = CN, val is array that contains each OP for that CN
         total_weight = math.pi / 4  # 1/4 unit circle area
 
-        target = None
+        targets = None
         if self.cation_anion:
-            target = []
+            targets = []
             m_oxi = struct[idx].specie.oxi_state
             for site in struct:
                 if site.specie.oxi_state * m_oxi <= 0:  # opposite charge
-                    target.append(site.specie)
-            if not target:
+                    targets.append(site.specie)
+            if not targets:
                 raise ValueError(
                     "No valid targets for site within cation_anion constraint!")
 
         vnn = VoronoiNN(cutoff=self.cutoff_radius,
-                        target=target)
-        n_w = vnn.get_voronoi_polyhedra(idx, struct, use_weights=True)
+                        targets=targets)
+        n_w = vnn.get_voronoi_polyhedra(idx, struct)
 
         dist_sorted = (sorted(n_w.values(), reverse=True))
 
