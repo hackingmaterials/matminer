@@ -1145,4 +1145,4 @@ class CoordinationNumber(BaseFeaturizer):
         return citations
 
     def implementors(self):
-return ['Nils E. R. Zimmermann']
+        return ['Nils E. R. Zimmermann']
