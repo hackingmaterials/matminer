@@ -23,7 +23,7 @@ class PlotlyFig:
                  show_offline_plot=True, username=None,
                  api_key=None, textsize=25, ticksize=25,
                  fontfamily='Courier', height=None, width=None, scale=None,
-                 margins=100, pad=0, marker_scale=1.0, text_scale=1.0, tick_scale=1.0, x_scale='linear',
+                 margins=100, pad=0, marker_scale=1.0, x_scale='linear',
                  y_scale='linear', hoverinfo='x+y+text'):
         """
         Class for making Plotly plots
@@ -108,8 +108,6 @@ class PlotlyFig:
 
         # AF: the following is what I added
         self.marker_scale = marker_scale
-        self.text_scale = text_scale
-        self.tick_scale = tick_scale
         self.plot_counter = 1
         self.hoverinfo = hoverinfo
 
@@ -334,7 +332,7 @@ class PlotlyFig:
             if colorbar is not None:
                 markers[im]['color'] = colorbar
                 markers[im]['colorbar'] = {'tickfont': {
-                    'family': self.fontfamily, 'size': 0.75*self.ticksize * self.tick_scale}}
+                    'family': self.fontfamily, 'size': 0.75*self.ticksize}}
             if markers[im].get('colorscale') is None:
                 markers[im]['colorscale'] = colorscale
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
@@ -550,7 +548,7 @@ class PlotlyFig:
         return self.create_plot(fig)
 
     def heatmap(self, data=None, cols=None, x_prop=None, x_bins=None, y_prop=None,
-                y_bins = None, col_prop=None,):
+                y_bins = None, col_prop=None, precision=1):
 
         if data is None:
             if self.df is None:
@@ -573,14 +571,14 @@ class PlotlyFig:
 
         data = data.sort_values(y_prop, ascending=False)
         if len(data[y_prop].unique()) > y_bins:
-            data['y_bin'] = pd.cut(data[y_prop], bins=y_bins).astype(str)
+            data['y_bin'] = pd.cut(data[y_prop], bins=y_bins, precision=precision).astype(str)
             y_labels = data['y_bin'].unique()
         else:
             y_labels = data[y_prop].unique()
 
         data = data.sort_values(x_prop, ascending=True)
         if len(data[x_prop].unique()) > x_bins:
-            data['x_bin'] = pd.cut(data[x_prop], bins=x_bins).astype(str)
+            data['x_bin'] = pd.cut(data[x_prop], bins=x_bins, precision=precision).astype(str)
             x_labels = data['x_bin'].unique()
         else:
             x_labels = data[x_prop].unique()
@@ -601,8 +599,25 @@ class PlotlyFig:
         print(data)
         print(x_labels)
         print(y_labels)
-        trace = go.Heatmap(z=data, x=x_labels, y=y_labels)
-        fig = {'data': [trace]}
+        trace = go.Heatmap(z=data, x=x_labels, y=y_labels, colorbar={
+            'title': None,
+            'tickfont': {'size': 0.75 * self.ticksize,'family': self.fontfamily},
+            'titlefont': {'size': self.textsize, 'family': self.fontfamily}
+        })
+        layout = self.layout.copy()
+
+        # heatmap specific formatting:
+        layout['xaxis'].pop('type')
+        layout['yaxis'].pop('type')
+        layout['margin']['l'] += self.ticksize * (2+precision/10.0) + 30
+        if layout['xaxis']['title'] is None:
+            warnings.warn('xaxis title was automatically set to x_prop value')
+            layout['xaxis']['title'] = x_prop
+        if layout['yaxis']['title'] is None:
+            warnings.warn('yaxis title was automatically set to y_prop value')
+            layout['yaxis']['title'] = y_prop
+
+        fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig)
 
         # THIS RESULTS IN AN EMPTY PLOT:
@@ -747,8 +762,8 @@ class PlotlyFig:
         marker = marker or {'symbol': 'circle', 'line': {'width': 1, 'color': 'black'}}
         nplots = len(data.columns) - int(colbar is not None)
         marker_size = marker.get('size') or 5.0 * self.marker_scale
-        text_scale = self.text_scale * 0.9 / nplots**0.2
-        tick_scale = self.tick_scale * 0.7 / nplots**0.3
+        text_scale = 0.9 / nplots**0.2
+        tick_scale = 0.7 / nplots**0.3
         fig = FF.create_scatterplotmatrix(data, index=colbar, diag='histogram',
                         size=marker_size, height=height,width=width, **kwargs)
 
