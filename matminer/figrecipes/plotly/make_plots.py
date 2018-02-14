@@ -774,8 +774,7 @@ class PlotlyFig:
 
 
     def histogram(self, data=None, cols=None, orientation="vertical",
-                  histnorm="count", n_bins=None, start=None, end=None,
-                  size=None, colors=None, bargap=0):
+                  histnorm="count", n_bins=None, bins=None, colors=None, bargap=0):
         """
         Creates a Plotly histogram. If multiple series of data are available,
         will create an overlaid histogram.
@@ -794,19 +793,14 @@ class PlotlyFig:
                 horizontally or vertically. Use "vertical" or "horizontal".
             histnorm: The technique for creating the plot. Can be "probability
                 density", "probability", "density", or "" (count).
-            n_bins (int): The number of binds to include on each plot.
-            start (float or list): The list of starting points for each
-                histogram's bins (if overlaid). If only one series of data is
-                present or all series should have the same value, a single
-                float/int determines the starting point.
-            end (float or list): The list of ending points for each histogram's
-                bins (if overlaid). If only one series of data is present or
-                all series should have the same value, a single float/int
-                determines the ending point.
-            size (float or list): The list of sizes of each histogram's bins
-                (if overlaid). If only one series of data is present or all
-                series should have the same value, a single float/int determines
-                the size of the bins.
+            n_bins (int or [int]): The number of binds to include on each plot.
+                if only one number specified, all histograms will have the same
+                number of bins
+            bins (dict or [dict]): specifications of the bins including start,
+                end and size. If n_bins is set, size cannot be set in bins.
+                Also size is ignored if start or end not specified.
+                Examples: 1) bins=None, n_bins = 25
+                2) bins={'start': 0, 'end': 50, 'size': 2.0}, n_bins=None
             colors (str or list): The list of colors for each histogram (if
                 overlaid). If only one series of data is present or all series
                 should have the same value, a single str determines the color
@@ -845,21 +839,30 @@ class PlotlyFig:
 
         # Transform all entries to listlike, if given as str or numbers
         dtypes = (list, np.ndarray, tuple)
-        attrdict = {'start': start, 'end': end, 'size': size, 'colors': colors,
-                    'n_bins': n_bins}
+        attrdict = {'colors': colors, 'n_bins': n_bins, 'bins': bins}
         for k, v in attrdict.items():
-            v = [None] * len(cols) if v is None else v
-            v = [v] * len(cols) if not isinstance(v, dtypes) else v
-            attrdict[k] = v
-
-        start = attrdict['start']
-        end = attrdict['end']
-        size = attrdict['size']
+            if v is None:
+                attrdict[k] = [None for _ in cols]
+            elif not isinstance(v, dtypes):
+                attrdict[k] = [v for _ in cols]
         colors = attrdict['colors']
         n_bins = attrdict['n_bins']
+        bins = attrdict['bins']
+
 
         hgrams = []
         for i, col in enumerate(cols):
+            if bins[i] is not None:
+                if bins[i].get('size'):
+                    if n_bins[i] is not None:
+                        raise ValueError('either set "n_bins" or "bins" to avoid confusion.')
+                    if not bins[i].get('start') or not bins[i].get('end'):
+                        warnings.warn('size key in bins ignored when start or end not specified')
+                elif n_bins[i] is not None:
+                    warnings.warn('"size" not specified in "bins", "n_bins" is ignored. Either fully set "bins" or only "n_bins"')
+                if bins[i].get('start') is None != bins[i].get('end') is None:
+                    warnings.warn('both "start" and "end" must be present; otherwise, it is ignored.')
+
             d = data[col]
             if isinstance(d, np.ndarray):
                 if len(d.shape) == 2:
@@ -867,14 +870,12 @@ class PlotlyFig:
 
             if orientation == 'vertical':
                 h = go.Histogram(x=d, histnorm=histnorm,
-                                 xbins=dict(start=start[i], end=end[i],
-                                            size=size[i]),
+                                 xbins=bins[i],
                                  nbinsx=n_bins[i],
                                  marker=dict(color=colors[i]), name=col)
             elif orientation == 'horizontal':
                 h = go.Histogram(y=d, histnorm=histnorm,
-                                 ybins=dict(start=start[i], end=end[i],
-                                            size=size[i]),
+                                 ybins=bins[i],
                                  nbinsy=n_bins[i],
                                  marker=dict(color=colors[i]), name=col)
             else:
@@ -896,7 +897,8 @@ class PlotlyFig:
             self.layout['barmode'] = 'overlay'
             for h in hgrams:
                 h['opacity'] = 1.0 / float(len(hgrams)) + 0.1
-        fig = dict(data=hgrams, layout=self.layout)
+        # fig = dict(data=hgrams, layout=self.layout)
+        fig = {'data': hgrams, 'layout': self.layout}
         return self.create_plot(fig)
 
     def bar(self, data=None, cols=None, x=None, y=None, labels=None,
