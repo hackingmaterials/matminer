@@ -61,20 +61,16 @@ class AGNIFingerprints(BaseFeaturizer):
     where :math:`i` is the index of the atom, :math:`j` is the index of a neighboring atom, :math:`\eta` is a scaling function,
     :math:`r_{ij}` is the distance between atoms :math:`i` and :math:`j`, and :math:`f(r)` is a cutoff function where
     :math:`f(r) = 0.5[cos(\frac{\pi r_{ij}}{R_c}) + 1]` if :math:`r < R_c:math:` and 0 otherwise.
-
     The direction-resolved fingerprints are computed using
     :math:`V_i^k(\eta) = \sum\limits_{i \ne j} \frac{r_{ij}^k}{r_{ij}} e^{-(\frac{r_{ij}}{\eta})^2} f(r_{ij})`
     where :math:`r_{ij}^k` is the :math:`k^{th}` component of :math:`\bold{r}_i - \bold{r}_j`.
-
     Parameters:
-
     TODO: Differentiate between different atom types (maybe as another class)
     """
 
     def __init__(self, directions=(None, 'x', 'y', 'z'), etas=None,
                  cutoff=8):
         """
-
         Args:
             directions (iterable): List of directions for the fingerprints. Can
                 be one or more of 'None`, 'x', 'y', or 'z'
@@ -391,7 +387,6 @@ class CrystalSiteFingerprint(BaseFeaturizer):
     def from_preset(preset, cation_anion=False):
         """
         Use preset parameters to get the fingerprint
-
         Args:
             preset (str): name of preset ("cn" or "ops")
             cation_anion (bool): whether to only consider cation<->anion bonds
@@ -419,7 +414,6 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         """
         Initialize the CrystalSiteFingerprint. Use the from_preset() function to
         use default params.
-
         Args:
             optypes (dict): a dict of coordination number (int) to a list of str
                 representing the order parameter types
@@ -579,7 +573,6 @@ class VoronoiFingerprint(BaseFeaturizer):
      e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,...];
           for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...];
           for icosahedra, the Voronoi indices are [0,0,12,0,...];
-
     -i-fold symmetry indices
      computed as n_i/sum(n_i), and i is in the range of 3-10.
      reflect the strength of i-fold symmetry in local sites.
@@ -589,26 +582,19 @@ class VoronoiFingerprint(BaseFeaturizer):
              indicating only 4-fold symmetry is present;
           for icosahedra, the Voronoi indices are [0,0,1,0,...],
              indicating only 5-fold symmetry is present;
-
     -weighted i-fold symmetry indices
      if use_weights = True
-
     -Voronoi volume
      total volume of the Voronoi polyhedron around the target site
-
     -Voronoi volume statistics of the sub_polyhedra formed by each facet
      and the center site
      e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
-
     -Voronoi area
      total area of the Voronoi polyhedron around the target site
-
     -Voronoi area statistics of the facets
      e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
-
     -Voronoi nearest-neighboring distance statistics
      e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
-
     Args:
         cutoff (float): cutoff distance in determining the potential
                         neighbors for Voronoi tessellation analysis.
@@ -752,20 +738,16 @@ class ChemicalSRO(BaseFeaturizer):
     """
     Chemical short-range ordering (SRO) features to evaluate the deviation
     of local chemistry with the nominal composition of the structure.
-
     f_el = N_el/(sum of N_el) - c_el,
     where N_el is the number of each element type in the neighbors around
     the target site, sum of N_el is the sum of all possible element types
     (coordination number), and c_el is the composition of the specific
     element in the entire structure.
-
     Here the calculation is run for each element present in the structure.
-
     A positive f_el indicates the "bonding" with the specific element
     is favored, at least in the target site;
     A negative f_el indicates the "bonding" is not favored, at least
     in the target site.
-
     Args:
         nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
                               classes.
@@ -904,15 +886,12 @@ class ChemicalSRO(BaseFeaturizer):
 
 class EwaldSiteEnergy:
     """Compute site energy from Coulombic interactions
-
     User notes:
         - This class uses that `charges that are already-defined for the structure`.
-
         - Ewald summations can be expensive. If you evaluating every site in many
           large structures, run all of the sites for each structure at the same time.
           We cache the Ewald result for the structure that was run last, so looping
           over sites and then structures is faster than structures than sites.
-
     Features:
         ewald_site_energy - Energy for the site computed from Coulombic interactions"""
 
@@ -1166,4 +1145,4 @@ class CoordinationNumber(BaseFeaturizer):
         return citations
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann']
+return ['Nils E. R. Zimmermann']
