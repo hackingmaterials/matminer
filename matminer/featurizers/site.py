@@ -14,6 +14,8 @@ index and the structure. For example:
     f.featurize_dataframe(data, ['structure', 'site_idx'])
 """
 
+import os
+import ruamel.yaml as yaml
 import numpy as np
 import math
 
@@ -24,6 +26,7 @@ from scipy.spatial import Voronoi, Delaunay
 from pymatgen.analysis.local_env import LocalStructOrderParas, \
     VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
     MinimumVIRENN
+import pymatgen.analysis
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
     import LocalGeometryFinder
@@ -32,6 +35,18 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
 from pymatgen.analysis.chemenv.coordination_environments.structure_environments import LightStructureEnvironments
 
 from matminer.featurizers.stats import PropertyStats
+
+cn_motif_op_paras = {}
+with open(os.path.join(os.path.dirname(
+        pymatgen.analysis.__file__), 'cn_opt_paras.yaml'), 'r') as f:
+    cn_motif_op_paras = yaml.safe_load(f)
+    f.close()
+cn_target_motif_op = {}
+with open(os.path.join(os.path.dirname(
+        __file__), 'cn_target_motif_op.yaml'), 'r') as f:
+    cn_target_motif_op = yaml.safe_load(f)
+    f.close()
+
 
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -46,20 +61,16 @@ class AGNIFingerprints(BaseFeaturizer):
     where :math:`i` is the index of the atom, :math:`j` is the index of a neighboring atom, :math:`\eta` is a scaling function,
     :math:`r_{ij}` is the distance between atoms :math:`i` and :math:`j`, and :math:`f(r)` is a cutoff function where
     :math:`f(r) = 0.5[cos(\frac{\pi r_{ij}}{R_c}) + 1]` if :math:`r < R_c:math:` and 0 otherwise.
-
     The direction-resolved fingerprints are computed using
     :math:`V_i^k(\eta) = \sum\limits_{i \ne j} \frac{r_{ij}^k}{r_{ij}} e^{-(\frac{r_{ij}}{\eta})^2} f(r_{ij})`
     where :math:`r_{ij}^k` is the :math:`k^{th}` component of :math:`\bold{r}_i - \bold{r}_j`.
-
     Parameters:
-
     TODO: Differentiate between different atom types (maybe as another class)
     """
 
     def __init__(self, directions=(None, 'x', 'y', 'z'), etas=None,
                  cutoff=8):
         """
-
         Args:
             directions (iterable): List of directions for the fingerprints. Can
                 be one or more of 'None`, 'x', 'y', or 'z'
@@ -149,6 +160,9 @@ class OPSiteFingerprint(BaseFeaturizer):
     or evaluated with the shell of the next largest observed
     coordination number.
     Args:
+        targets (dict): target op or motif type where keys
+                        are corresponding coordination numbers
+                        (e.g., {4: "tetrahedral"}).
         dr (float): width for binning neighbors in unit of relative
                     distances (= distance/nearest neighbor
                     distance).  The binning is necessary to make the
@@ -172,22 +186,10 @@ class OPSiteFingerprint(BaseFeaturizer):
                             default: True).
     """
 
-    def __init__(self, optypes=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
+    def __init__(self, targets=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
                  dist_exp=2, zero_ops=True):
-        self.optypes = {
-            1: ["sgl_bd"],
-            2: ["bent180", "bent45", "bent90", "bent135"],
-            3: ["tri_plan", "tet", "T"],
-            4: ["sq_plan", "sq", "tet", "see_saw_rect", "tri_pyr"],
-            5: ["pent_plan", "sq_pyr", "tri_bipyr"],
-            6: ["oct", "pent_pyr"],
-            7: ["hex_pyr", "pent_bipyr"],
-            8: ["bcc", "hex_bipyr"],
-            9: ["q2", "q4", "q6"],
-            10: ["q2", "q4", "q6"],
-            11: ["q2", "q4", "q6"],
-            12: ["cuboct", "q2", "q4", "q6"]} if optypes is None \
-            else optypes.copy()
+        self.cn_target_motif_op = cn_target_motif_op.copy() \
+            if targets is None else targets.copy()
         self.dr = dr
         self.ddr = ddr
         self.ndr = ndr
@@ -195,15 +197,17 @@ class OPSiteFingerprint(BaseFeaturizer):
         self.dist_exp = dist_exp
         self.zero_ops = zero_ops
         self.ops = {}
-        for cn, t_list in self.optypes.items():
+        for cn, t_list in self.cn_target_motif_op.items():
             self.ops[cn] = []
             for t in t_list:
-                if t[:4] == 'bent':
-                    self.ops[cn].append(LocalStructOrderParas(
-                        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
-                                              'IGW_TA': 1.0 / 0.0667}]))
-                else:
-                    self.ops[cn].append(LocalStructOrderParas([t]))
+                ot = t
+                p = None
+                if cn in cn_motif_op_paras.keys():
+                    if t in cn_motif_op_paras[cn].keys():
+                        ot = cn_motif_op_paras[cn][t][0]
+                        if len(cn_motif_op_paras[cn][t]) > 1:
+                            p = cn_motif_op_paras[cn][t][1]
+                self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
         """
@@ -247,7 +251,8 @@ class OPSiteFingerprint(BaseFeaturizer):
             d_sorted_alldrs[i] = sorted(d_sorted_alldrs[i])
 
         # Do q_sgl_bd separately.
-        if self.optypes[1][0] == "sgl_bd":
+        #if self.optypes[1][0] == "sgl_bd":
+        if self.cn_target_motif_op[1][0] == "sgl_bd":
             for i in range(-self.ndr, self.ndr + 1):
                 site_list = [s]
                 for n, dn in neigh_dist_alldrs[i]:
@@ -274,12 +279,12 @@ class OPSiteFingerprint(BaseFeaturizer):
                     # Set all OPs of non-CN-complying neighbor environments
                     # to zero if applicable.
                     if self.zero_ops and cn != this_cn:
-                        for it in range(len(self.optypes[cn])):
+                        for it in range(len(self.cn_target_motif_op[cn])):
                             opvals[i].append(0)
                         continue
 
                     # Set all (remaining) OPs.
-                    for it in range(len(self.optypes[cn])):
+                    for it in range(len(self.cn_target_motif_op[cn])):
                         opval = self.ops[cn][it].get_order_parameters(
                             site_list, 0,
                             indices_neighs=[j for j in
@@ -353,7 +358,7 @@ class OPSiteFingerprint(BaseFeaturizer):
 
     def feature_labels(self):
         labels = []
-        for cn, li in self.optypes.items():
+        for cn, li in self.cn_target_motif_op.items():
             for e in li:
                 labels.append('{} CN_{}'.format(e, cn))
         return labels
@@ -382,7 +387,6 @@ class CrystalSiteFingerprint(BaseFeaturizer):
     def from_preset(preset, cation_anion=False):
         """
         Use preset parameters to get the fingerprint
-
         Args:
             preset (str): name of preset ("cn" or "ops")
             cation_anion (bool): whether to only consider cation<->anion bonds
@@ -393,32 +397,23 @@ class CrystalSiteFingerprint(BaseFeaturizer):
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
 
         elif preset == "ops":
-            optypes = {
-                1: ["wt"],
-                2: ["wt", "bent180", "bent45", "bent90", "bent135"],
-                3: ["wt", "tri_plan", "tet", "T"],
-                4: ["wt", "sq_plan", "sq", "tet", "see_saw_rect", "tri_pyr"],
-                5: ["wt", "pent_plan", "sq_pyr", "tri_bipyr"],
-                6: ["wt", "oct", "pent_pyr"],
-                7: ["wt", "hex_pyr", "pent_bipyr"],
-                8: ["wt", "bcc", "hex_bipyr"],
-                9: ["wt", "q2", "q4", "q6"],
-                10: ["wt", "q2", "q4", "q6"],
-                11: ["wt", "q2", "q4", "q6"],
-                12: ["wt", "cuboct", "q2", "q4", "q6"],
-                13: ["wt"],
-                14: ["wt"],
-                15: ["wt"],
-                16: ["wt"]}
-
+            optypes = {}
+            for cn, li in cn_target_motif_op.items():
+                optypes[cn] = li.copy()
+            optypes[1] = []
+            for cn in optypes.keys():
+                optypes[cn].insert(0, "wt")
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
+
+        else:
+            raise RuntimeError('preset "{}" is not supported in '
+                               'CrystalSiteFingerprint'.format(preset))
 
     def __init__(self, optypes, override_cn1=True, cutoff_radius=8, tol=1E-2,
                  cation_anion=False):
         """
         Initialize the CrystalSiteFingerprint. Use the from_preset() function to
         use default params.
-
         Args:
             optypes (dict): a dict of coordination number (int) to a list of str
                 representing the order parameter types
@@ -448,12 +443,15 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 if t == "wt":
                     self.ops[cn].append(t)
 
-                elif t[:4] == 'bent':
-                    self.ops[cn].append(LocalStructOrderParas(
-                        [t[:4]], parameters=[{'TA': float(t[4:]) / 180.0, \
-                                              'IGW_TA': 1.0 / 0.0667}]))
                 else:
-                    self.ops[cn].append(LocalStructOrderParas([t]))
+                    ot = t
+                    p = None
+                    if cn in cn_motif_op_paras.keys():
+                        if t in cn_motif_op_paras[cn].keys():
+                            ot = cn_motif_op_paras[cn][t][0]
+                            if len(cn_motif_op_paras[cn][t]) > 1:
+                                p = cn_motif_op_paras[cn][t][1]
+                    self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
         """
@@ -470,20 +468,20 @@ class CrystalSiteFingerprint(BaseFeaturizer):
             list)  # dict where key = CN, val is array that contains each OP for that CN
         total_weight = math.pi / 4  # 1/4 unit circle area
 
-        targets = None
+        target = None
         if self.cation_anion:
-            targets = []
+            target = []
             m_oxi = struct[idx].specie.oxi_state
             for site in struct:
                 if site.specie.oxi_state * m_oxi <= 0:  # opposite charge
-                    targets.append(site.specie)
-            if not targets:
+                    target.append(site.specie)
+            if not target:
                 raise ValueError(
                     "No valid targets for site within cation_anion constraint!")
 
         vnn = VoronoiNN(cutoff=self.cutoff_radius,
-                        targets=targets)
-        n_w = vnn.get_voronoi_polyhedra(idx, struct)
+                        targets=target)
+        n_w = vnn.get_voronoi_polyhedra(struct, idx)
 
         dist_sorted = (sorted(n_w.values(), reverse=True))
 
@@ -575,7 +573,6 @@ class VoronoiFingerprint(BaseFeaturizer):
      e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,...];
           for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...];
           for icosahedra, the Voronoi indices are [0,0,12,0,...];
-
     -i-fold symmetry indices
      computed as n_i/sum(n_i), and i is in the range of 3-10.
      reflect the strength of i-fold symmetry in local sites.
@@ -585,26 +582,19 @@ class VoronoiFingerprint(BaseFeaturizer):
              indicating only 4-fold symmetry is present;
           for icosahedra, the Voronoi indices are [0,0,1,0,...],
              indicating only 5-fold symmetry is present;
-
     -weighted i-fold symmetry indices
      if use_weights = True
-
     -Voronoi volume
      total volume of the Voronoi polyhedron around the target site
-
     -Voronoi volume statistics of the sub_polyhedra formed by each facet
      and the center site
      e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
-
     -Voronoi area
      total area of the Voronoi polyhedron around the target site
-
     -Voronoi area statistics of the facets
      e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
-
     -Voronoi nearest-neighboring distance statistics
      e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
-
     Args:
         cutoff (float): cutoff distance in determining the potential
                         neighbors for Voronoi tessellation analysis.
@@ -748,20 +738,16 @@ class ChemicalSRO(BaseFeaturizer):
     """
     Chemical short-range ordering (SRO) features to evaluate the deviation
     of local chemistry with the nominal composition of the structure.
-
     f_el = N_el/(sum of N_el) - c_el,
     where N_el is the number of each element type in the neighbors around
     the target site, sum of N_el is the sum of all possible element types
     (coordination number), and c_el is the composition of the specific
     element in the entire structure.
-
     Here the calculation is run for each element present in the structure.
-
     A positive f_el indicates the "bonding" with the specific element
     is favored, at least in the target site;
     A negative f_el indicates the "bonding" is not favored, at least
     in the target site.
-
     Args:
         nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
                               classes.
@@ -778,18 +764,8 @@ class ChemicalSRO(BaseFeaturizer):
         Returns:
             ChemicalSRO from a preset.
         """
-        if preset == "VoronoiNN":
-            return ChemicalSRO(VoronoiNN())
-        elif preset == "JMolNN":
-            return ChemicalSRO(JMolNN())
-        elif preset == "MinimumDistanceNN":
-            return ChemicalSRO(MinimumDistanceNN())
-        elif preset == "MinimumOKeeffeNN":
-            return ChemicalSRO(MinimumOKeeffeNN())
-        elif preset == "MinimumVIRENN":
-            return ChemicalSRO(MinimumVIRENN())
-        else:
-            raise RuntimeError('Unknown preset.')
+        nn_ = getattr(pymatgen.analysis.local_env, preset)
+        return ChemicalSRO(nn_())
 
     def __init__(self, nn):
         self.nn = nn
@@ -910,15 +886,12 @@ class ChemicalSRO(BaseFeaturizer):
 
 class EwaldSiteEnergy:
     """Compute site energy from Coulombic interactions
-
     User notes:
         - This class uses that `charges that are already-defined for the structure`.
-
         - Ewald summations can be expensive. If you evaluating every site in many
           large structures, run all of the sites for each structure at the same time.
           We cache the Ewald result for the structure that was run last, so looping
           over sites and then structures is faster than structures than sites.
-
     Features:
         ewald_site_energy - Energy for the site computed from Coulombic interactions"""
 
@@ -991,6 +964,7 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
             larger than max_csm will be set to max_csm in order
             to avoid negative values (i.e., all features are
             constrained to be between 0 and 1).
+        max_dist_fac (float): maximum distance factor (default: 1.41).
     """
 
     @staticmethod
@@ -1035,11 +1009,13 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         else:
             raise RuntimeError('unknown neighbor-finding strategy preset.')
 
-    def __init__(self, cetypes, strategy, geom_finder, max_csm=8):
+    def __init__(self, cetypes, strategy, geom_finder, max_csm=8, \
+            max_dist_fac=1.41):
         self.cetypes = tuple(cetypes)
         self.strat = strategy
         self.lgf = geom_finder
         self.max_csm = max_csm
+        self.max_dist_fac = max_dist_fac
 
     def featurize(self, struct, idx):
         """
@@ -1054,8 +1030,8 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         """
         cevals = []
         self.lgf.setup_structure(structure=struct)
-        se = self.lgf.compute_structure_environments()
-        #        maximum_distance_factor=1.41)
+        se = self.lgf.compute_structure_environments(
+                maximum_distance_factor=self.max_dist_fac)
         for ce in self.cetypes:
             try:
                 tmp = se.get_csms(idx, ce)
@@ -1104,18 +1080,8 @@ class CoordinationNumber(BaseFeaturizer):
         Returns:
             CoordinationNumber from a preset.
         """
-        if preset == "VoronoiNN":
-            return CoordinationNumber(VoronoiNN())
-        elif preset == "JMolNN":
-            return CoordinationNumber(JMolNN())
-        elif preset == "MinimumDistanceNN":
-            return CoordinationNumber(MinimumDistanceNN())
-        elif preset == "MinimumOKeeffeNN":
-            return CoordinationNumber(MinimumOKeeffeNN())
-        elif preset == "MinimumVIRENN":
-            return CoordinationNumber(MinimumVIRENN())
-        else:
-            raise RuntimeError('Unknown preset.')
+        nn_ = getattr(pymatgen.analysis.local_env, preset)
+        return CoordinationNumber(nn_())
 
     def __init__(self, nn, use_weights=False):
         self.nn = nn
@@ -1179,4 +1145,4 @@ class CoordinationNumber(BaseFeaturizer):
         return citations
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann']
+return ['Nils E. R. Zimmermann']
