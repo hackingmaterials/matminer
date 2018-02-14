@@ -399,7 +399,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         elif preset == "ops":
             optypes = {}
             for cn, li in cn_target_motif_op.items():
-                optypes[cn] = li.copy()
+                optypes[cn] = li[:]
             optypes[1] = []
             for cn in optypes.keys():
                 optypes[cn].insert(0, "wt")
