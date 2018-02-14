@@ -36,16 +36,14 @@ from pymatgen.analysis.chemenv.coordination_environments.structure_environments 
 
 from matminer.featurizers.stats import PropertyStats
 
-cn_motif_op_paras = {}
+cn_motif_op_params = {}
 with open(os.path.join(os.path.dirname(
         pymatgen.analysis.__file__), 'cn_opt_paras.yaml'), 'r') as f:
-    cn_motif_op_paras = yaml.safe_load(f)
-    f.close()
+    cn_motif_op_params = yaml.safe_load(f)
 cn_target_motif_op = {}
 with open(os.path.join(os.path.dirname(
         __file__), 'cn_target_motif_op.yaml'), 'r') as f:
     cn_target_motif_op = yaml.safe_load(f)
-    f.close()
 
 
 
@@ -160,9 +158,9 @@ class OPSiteFingerprint(BaseFeaturizer):
     or evaluated with the shell of the next largest observed
     coordination number.
     Args:
-        targets (dict): target op or motif type where keys
-                        are corresponding coordination numbers
-                        (e.g., {4: "tetrahedral"}).
+        target_motifs (dict): target op or motif type where keys
+                              are corresponding coordination numbers
+                              (e.g., {4: "tetrahedral"}).
         dr (float): width for binning neighbors in unit of relative
                     distances (= distance/nearest neighbor
                     distance).  The binning is necessary to make the
@@ -186,10 +184,10 @@ class OPSiteFingerprint(BaseFeaturizer):
                             default: True).
     """
 
-    def __init__(self, targets=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
+    def __init__(self, target_motifs=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
                  dist_exp=2, zero_ops=True):
         self.cn_target_motif_op = cn_target_motif_op.copy() \
-            if targets is None else targets.copy()
+            if target_motifs is None else target_motifs.copy()
         self.dr = dr
         self.ddr = ddr
         self.ndr = ndr
@@ -202,11 +200,11 @@ class OPSiteFingerprint(BaseFeaturizer):
             for t in t_list:
                 ot = t
                 p = None
-                if cn in cn_motif_op_paras.keys():
-                    if t in cn_motif_op_paras[cn].keys():
-                        ot = cn_motif_op_paras[cn][t][0]
-                        if len(cn_motif_op_paras[cn][t]) > 1:
-                            p = cn_motif_op_paras[cn][t][1]
+                if cn in cn_motif_op_params.keys():
+                    if t in cn_motif_op_params[cn].keys():
+                        ot = cn_motif_op_params[cn][t][0]
+                        if len(cn_motif_op_params[cn][t]) > 1:
+                            p = cn_motif_op_params[cn][t][1]
                 self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
@@ -446,11 +444,11 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 else:
                     ot = t
                     p = None
-                    if cn in cn_motif_op_paras.keys():
-                        if t in cn_motif_op_paras[cn].keys():
-                            ot = cn_motif_op_paras[cn][t][0]
-                            if len(cn_motif_op_paras[cn][t]) > 1:
-                                p = cn_motif_op_paras[cn][t][1]
+                    if cn in cn_motif_op_params.keys():
+                        if t in cn_motif_op_params[cn].keys():
+                            ot = cn_motif_op_params[cn][t][0]
+                            if len(cn_motif_op_params[cn][t]) > 1:
+                                p = cn_motif_op_params[cn][t][1]
                     self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
