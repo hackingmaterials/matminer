@@ -546,16 +546,38 @@ class PlotlyFig:
         self.layout['showlegend'] = showlegend
 
         fig = dict(data=data, layout=self.layout)
-
         return self.create_plot(fig)
 
-    def heatmap(self, data=None, cols=None, x_bins=None, y_bins = None, precision=1,
-                annotation='count', annotation_color='black', colorscale=None):
+
+    def heatmap(self, data=None, cols=None, x_bins=6, y_bins = 4, precision=1,
+                annotation='count', annotation_color='black', colorscale=None,
+                colbar_title='auto'):
+        """
+        Args:
+            data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
+            cols ([str]): A list of strings specifying the columns of the
+                dataframe (either data or self.df) to use. Currenly, only 3
+                columns is supported. Note that the order in cols matter, the
+                firts is considered x, second y and the third as z (color)
+            x_bins (int or None): if the unique values for x_prop is more than
+                x_bins, x_prop is binned to the number of x_bins for better
+                presentation
+            y_bins (int or None): similar to x_bins
+            precision (int): number of floating points used for binning/display
+            annotation (str or None): mode of annotation. Options are: None or
+                "count": the number of data available in each cell displayed
+                "value": the actual value of the cell in addition to colorbar
+            annotation_color (str): the color of annotation (text inside cells)
+            colorscale: see the __init__ doc for colorscale
+            colbar_title (str or None): the colorbar (z) title. If set to
+                "auto" the name of the third column displayed.
+        Returns: A Plotly heatmap plot Figure object.
+        """
 
         if data is None:
             if self.df is None:
                 raise ValueError(
-                    "scatter_matrix requires either dataframe labels and a "
+                    "heatmap requires either dataframe labels and a "
                     "dataframe or a list of numerical values.")
             elif cols is None:
                 data = self.df.select_dtypes(include=['float', 'int', 'bool'])
@@ -568,18 +590,16 @@ class PlotlyFig:
         x_prop = cols[0]
         y_prop = cols[1]
         col_prop = cols[2]
-        y_bins = y_bins or 4
-        x_bins = x_bins or 6
 
         data = data.sort_values(y_prop, ascending=False)
-        if len(data[y_prop].unique()) > y_bins:
+        if y_bins is None or len(data[y_prop].unique()) > y_bins:
             data['y_bin'] = pd.cut(data[y_prop], bins=y_bins, precision=precision).astype(str)
             y_labels = data['y_bin'].unique()
         else:
             y_labels = data[y_prop].unique()
 
         data = data.sort_values(x_prop, ascending=True)
-        if len(data[x_prop].unique()) > x_bins:
+        if x_bins is None or len(data[x_prop].unique()) > x_bins:
             data['x_bin'] = pd.cut(data[x_prop], bins=x_bins, precision=precision).astype(str)
             x_labels = data['x_bin'].unique()
         else:
@@ -613,13 +633,12 @@ class PlotlyFig:
                 else:
                     a_d['text'] = annotation
                 annotations.append(a_d)
-                print(annotations)
             data_.append(x_data)
 
-        data = data_
-
-        trace = go.Heatmap(z=data, x=x_labels, y=y_labels,
-            colorscale = colorscale or self.colorscale, colorbar={'title': None,
+        if colbar_title is not None and colbar_title=='auto':
+            colbar_title = col_prop
+        trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
+            colorscale = colorscale or self.colorscale, colorbar={'title': colbar_title,
             'tickfont': {'size': 0.75 * self.ticksize,'family': self.fontfamily},
             'titlefont': {'size': self.textsize, 'family': self.fontfamily}
         })
@@ -638,9 +657,6 @@ class PlotlyFig:
         layout['annotations'] = annotations
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig)
-
-        # THIS RESULTS IN AN EMPTY PLOT:
-        # self.heatmap_plot(data=data_, x_labels=x_labels, y_labels=y_labels)
 
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None,
