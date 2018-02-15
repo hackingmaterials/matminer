@@ -20,7 +20,7 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 class PlotlyFig:
     def __init__(self, df=None, plot_mode='offline', plot_title=None, x_title=None, y_title=None,
                  hovermode='closest', filename='auto',
-                 show_offline_plot=True, username=None,
+                 show_offline_plot=True, username=None, colorscale='Viridis',
                  api_key=None, textsize=25, ticksize=25,
                  fontfamily='Courier', height=None, width=None, scale=None,
                  margins=100, pad=0, marker_scale=1.0, x_scale='linear',
@@ -49,6 +49,14 @@ class PlotlyFig:
             show_offline_plot: (bool) automatically open the plot (the plot is
                 saved either way); only applies to 'offline' mode.
             username: (str) plotly account username
+            colorscale: (str) Sets the colorscale (colormap). It can be an array
+                containing arrays mapping a normalized value to an rgb, rgba,
+                hex, hsl, hsv, or named color string. At minimum, a mapping for
+                the lowest (0) and highest (1) values are required.
+                Example: '[[0, 'rgb(0,0,255)', [1, 'rgb(255,0,0)']]'.
+                Alternatively, it may be a palette name from the following list:
+                Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Jet,
+                Picnic, Rainbow, Portland, Hot, Blackbody, Earth, Electric, Viridis
             api_key: (str) plotly account API key
             textsize: (int) size of text of plot title and axis titles
             ticksize: (int) size of ticks
@@ -88,6 +96,7 @@ class PlotlyFig:
         self.plot_mode = plot_mode
         self.show_offline_plot = show_offline_plot
         self.username = username
+        self.colorscale = colorscale
         self.api_key = api_key
         self.textsize = textsize
         self.ticksize = ticksize
@@ -225,7 +234,7 @@ class PlotlyFig:
 
 
     def xy(self, xy_pairs, colorbar=None, labels=None, names=None, sizes=None,
-           modes='markers', markers=None, lines=None, colorscale='Viridis',
+           modes='markers', markers=None, lines=None, colorscale=None,
            showlegends=None, zscore_size=True):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
@@ -251,14 +260,7 @@ class PlotlyFig:
                 of each scatter plot individually if list of dicts passed. Note
                 that the key "size" is forbidden in markers. Use sizes arg instead.
             lines (dict or [dict]: similar to markers though only if mode=='lines'
-            colorscale: (str) Sets the colorscale (colormap). It can be an array
-                containing arrays mapping a normalized value to an rgb, rgba,
-                hex, hsl, hsv, or named color string. At minimum, a mapping for
-                the lowest (0) and highest (1) values are required.
-                Example: '[[0, 'rgb(0,0,255)', [1, 'rgb(255,0,0)']]'.
-                Alternatively, it may be a palette name from the following list:
-                Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Jet,
-                Picnic, Rainbow, Portland, Hot, Blackbody, Earth, Electric, Viridis
+            colorscale (str):  see the colorscale doc in __init__
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
             zscore_size (bool): if True, scale the size lists based on zscore
@@ -334,7 +336,7 @@ class PlotlyFig:
                 markers[im]['colorbar'] = {'tickfont': {
                     'family': self.fontfamily, 'size': 0.75*self.ticksize}}
             if markers[im].get('colorscale') is None:
-                markers[im]['colorscale'] = colorscale
+                markers[im]['colorscale'] = colorscale or self.colorscale
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
         for var in [labels, markers, lines]:
             assert len(list(var)) == len(data)
@@ -547,8 +549,8 @@ class PlotlyFig:
 
         return self.create_plot(fig)
 
-    def heatmap(self, data=None, cols=None, x_prop=None, x_bins=None, y_prop=None,
-                y_bins = None, col_prop=None, precision=1):
+    def heatmap(self, data=None, cols=None, x_bins=None, y_bins = None, precision=1,
+                annotation='count', annotation_color='black', colorscale=None):
 
         if data is None:
             if self.df is None:
@@ -584,23 +586,40 @@ class PlotlyFig:
             x_labels = data[x_prop].unique()
 
         data_ = []
+        annotations = []
+        annotation_template = {'font': {'color' : annotation_color,
+                'size': 0.7*self.textsize, 'family': self.fontfamily}, 'showarrow': False}
         for y in y_labels:
             temp = data[data['y_bin'].values == y]
             grouped = temp.groupby('x_bin').mean().reset_index()
+            g_count = temp.groupby('x_bin').count().reset_index()
             x_data = []
             for x in x_labels:
                 if x in grouped['x_bin'].values:
-                    x_data.append(grouped[grouped['x_bin'].values==x][col_prop].values[0])
+                    val = grouped[grouped['x_bin'].values == x][col_prop].values[0]
+                    count = g_count[g_count['x_bin'].values == x][col_prop].values[0]
+                    val = str(round(val, precision))
                 else:
-                    x_data.append(float('NaN'))
+                    count = 0
+                    val = 'N/A'
+                x_data.append(val)
+                a_d = annotation_template.copy()
+                a_d['x'] = x
+                a_d['y'] = y
+                if annotation == 'value':
+                    a_d['text'] = val
+                elif annotation == 'count':
+                    a_d['text'] = count
+                else:
+                    a_d['text'] = annotation
+                annotations.append(a_d)
+                print(annotations)
             data_.append(x_data)
 
         data = data_
-        print(data)
-        print(x_labels)
-        print(y_labels)
-        trace = go.Heatmap(z=data, x=x_labels, y=y_labels, colorbar={
-            'title': None,
+
+        trace = go.Heatmap(z=data, x=x_labels, y=y_labels,
+            colorscale = colorscale or self.colorscale, colorbar={'title': None,
             'tickfont': {'size': 0.75 * self.ticksize,'family': self.fontfamily},
             'titlefont': {'size': self.textsize, 'family': self.fontfamily}
         })
@@ -609,14 +628,14 @@ class PlotlyFig:
         # heatmap specific formatting:
         layout['xaxis'].pop('type')
         layout['yaxis'].pop('type')
-        layout['margin']['l'] += self.ticksize * (2+precision/10.0) + 30
+        layout['margin']['l'] += self.ticksize * (2+precision/10.0) + 35
         if layout['xaxis']['title'] is None:
             warnings.warn('xaxis title was automatically set to x_prop value')
             layout['xaxis']['title'] = x_prop
         if layout['yaxis']['title'] is None:
             warnings.warn('yaxis title was automatically set to y_prop value')
             layout['yaxis']['title'] = y_prop
-
+        layout['annotations'] = annotations
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig)
 
