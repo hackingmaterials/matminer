@@ -354,7 +354,7 @@ class PlotlyFig:
             if colorbar is not None:
                 markers[im]['color'] = colorbar
                 fontd = {'family': self.fontfamily, 'size': 0.75*self.ticksize}
-                markers[im]['colorbar'] = {'title': colbar_title,
+                markers[im]['colorbar'] = {'title': colbar_title, 'titleside': 'right',
                                            'tickfont': fontd, 'titlefont': fontd}
                 if colbar_range is not None:
                     tickvals = np.linspace(colbar_range[0], colbar_range[1], 6)
