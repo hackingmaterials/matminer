@@ -239,7 +239,7 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_pairs, colorbar=None, colbar_range=None, labels=None,
+    def xy(self, xy_pairs, colbar=None, colbar_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None, lines=None,
            colorscale=None, showlegends=None, normalize_size=True):
         """
@@ -250,7 +250,7 @@ class PlotlyFig:
                 example 1: ([1, 2], [3, 4])
                 example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example 3: [('x1', 'y1'), ('x2', 'y2')]
-            colorbar (list or np.ndarray or pd.Series): set the colorscale for
+            colbar (list or np.ndarray or pd.Series): set the colorscale for
                 the colorbar (list of numbers); overwrites marker['color']
             colbar_range ([min, max]): the range of numbers included in colorbar.
                 if any number is outside of this range, it will be forced to
@@ -313,11 +313,11 @@ class PlotlyFig:
             modes = [modes] * len(xy_pairs)
         else:
             assert len(modes) == len(xy_pairs)
-        if colorbar is None:
+        if colbar is None:
             showscale = False
         else:
             showscale = True
-            colorbar = self.data_from_col(colorbar)
+            colorbar = self.data_from_col(colbar)
             assert isinstance(colorbar, (list, np.ndarray, pd.Series))
             if colbar_range:
                 colorbar = pd.Series(colorbar)
