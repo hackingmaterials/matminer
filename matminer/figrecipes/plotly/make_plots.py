@@ -20,7 +20,8 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 # todo: heatmap convert
 
 class PlotlyFig:
-    def __init__(self, df=None, plot_mode='offline', plot_title=None, x_title=None, y_title=None,
+    def __init__(self, df=None, plot_mode='offline', plot_title=None,
+                 x_title=None, y_title=None, colbar_title='auto',
                  hovermode='closest', filename='auto',
                  show_offline_plot=True, username=None, colorscale='Viridis',
                  api_key=None, textsize=25, ticksize=25,
@@ -45,6 +46,8 @@ class PlotlyFig:
             plot_title: (str) title of plot
             x_title: (str) title of x-axis
             y_title: (str) title of y-axis
+            colbar_title (str or None): the colorbar (z) title. If set to
+                "auto" the name of the third column (if pd.Series) is chosen.
             hovermode: (str) determines the mode of hover interactions. Can be
                 'x'/'y'/'closest'/False
             filename: (str) name/filepath of plot file
@@ -93,6 +96,7 @@ class PlotlyFig:
         self.x_scale = x_scale
         self.y_title = y_title
         self.y_scale = y_scale
+        self.colbar_title = colbar_title
         self.hovermode = hovermode
         self.filename = filename
         self.plot_mode = plot_mode
@@ -237,8 +241,7 @@ class PlotlyFig:
 
     def xy(self, xy_pairs, colorbar=None, colbar_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None, lines=None,
-           colorscale=None, showlegends=None, normalize_size=True,
-           colbar_title='auto'):
+           colorscale=None, showlegends=None, normalize_size=True):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
@@ -271,8 +274,6 @@ class PlotlyFig:
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
             normalize_size (bool): if True, normalize the size list.
-            colbar_title (str or None): the colorbar (z) title. If set to
-                "auto" the name of the third column displayed.
         Returns: A Plotly Scatter plot Figure object.
         """
         if not isinstance(xy_pairs, list):
@@ -344,8 +345,10 @@ class PlotlyFig:
         if isinstance(markers, dict):
             [markers.copy() for _ in data]
 
-        if colbar_title is not None and colbar_title=='auto':
+        if self.colbar_title=='auto':
             colbar_title = pd.Series(colorbar).name
+        else:
+            colbar_title = self.colbar_title
 
         for im, marker in enumerate(markers):
             markers[im]['showscale'] = showscale
@@ -367,7 +370,9 @@ class PlotlyFig:
                     markers[im]['colorbar']['ticktext'] = ticktext
             if markers[im].get('colorscale') is None:
                 markers[im]['colorscale'] = colorscale or self.colorscale
+
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
+
         for var in [labels, markers, lines]:
             assert len(list(var)) == len(data)
 
@@ -586,8 +591,7 @@ class PlotlyFig:
 
 
     def heatmap(self, data=None, cols=None, x_bins=6, y_bins = 4, precision=1,
-                annotation='count', annotation_color='black', colorscale=None,
-                colbar_title='auto'):
+                annotation='count', annotation_color='black', colorscale=None):
         """
         Args:
             data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
@@ -605,8 +609,6 @@ class PlotlyFig:
                 "value": the actual value of the cell in addition to colorbar
             annotation_color (str): the color of annotation (text inside cells)
             colorscale: see the __init__ doc for colorscale
-            colbar_title (str or None): the colorbar (z) title. If set to
-                "auto" the name of the third column displayed.
         Returns: A Plotly heatmap plot Figure object.
         """
 
@@ -671,8 +673,10 @@ class PlotlyFig:
                 annotations.append(a_d)
             data_.append(x_data)
 
-        if colbar_title is not None and colbar_title=='auto':
+        if self.colbar_title=='auto':
             colbar_title = col_prop
+        else:
+            colbar_title = self.colbar_title
         trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
             colorscale = colorscale or self.colorscale, colorbar={'title': colbar_title,
             'tickfont': {'size': 0.75 * self.ticksize,'family': self.fontfamily},
@@ -1216,7 +1220,8 @@ class PlotlyFig:
 
         return self.create_plot(fig)
 
-    def parallel_coordinates(self, data=None, cols=None, line=None, precision=2):
+    def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
+                             colbar=None):
         """
         Create a Plotly Parcoords plot from dataframes.
         Args:
@@ -1254,7 +1259,19 @@ class PlotlyFig:
                 values = data[col]
             dimensions.append({'label': col, 'values': values})
 
-        line = line or {'color': 'blue'}
+        if colbar is None:
+            colbar = 'blue'
+        else:
+            colbar = self.data_from_col(colbar)
+        if self.colbar_title=='auto':
+            colbar_title = pd.Series(colbar).name
+        else:
+            colbar_title = self.colbar_title
+
+        fontd = {'family': self.fontfamily, 'size': 0.75 * self.ticksize}
+        line = line or {'color': colbar,
+                        'colorbar': {'title': colbar_title, 'titleside': 'right',
+                                   'tickfont': fontd, 'titlefont': fontd}}
         par_coords = go.Parcoords(line=line, dimensions=dimensions)
 
         fig = {'data': [par_coords]}
