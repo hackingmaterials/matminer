@@ -17,7 +17,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BagofBonds
+    EwaldEnergy, BagofBonds, GeneralizedRadialDistributionFunction
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -71,6 +71,44 @@ class StructureFeaturesTest(PymatgenTest):
     def test_global_symmetry(self):
         gsf = GlobalSymmetryFeatures()
         self.assertEqual(gsf.featurize(self.diamond), [227, "cubic", 1, True])
+
+    def test_grdf(self):
+        f1 = lambda x: np.exp(-(x**2.))
+        f2 = lambda x: np.exp(-(x - 1.)**2.)
+        f3 = lambda x: np.exp(-(x - 5.)**2.)
+
+        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
+                                                     mode='RDF')
+        f = grdf.featurize(self.diamond)
+        self.assertAlmostEqual(f[0], 0.1387, 3)
+        self.assertAlmostEqual(f[1], 0.2652, 3)
+        self.assertAlmostEqual(f[2], 0.3520, 3)
+
+        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
+                                                     mode='GRDF')
+        f = grdf.featurize(self.diamond)
+        self.assertAlmostEqual(f[0], 0.0693, 3)
+        self.assertAlmostEqual(f[1], 0.1326, 3)
+        self.assertAlmostEqual(f[2], 0.1760, 3)
+        self.assertAlmostEqual(f[3], 0.0693, 3)
+        self.assertAlmostEqual(f[4], 0.1326, 3)
+        self.assertAlmostEqual(f[5], 0.1760, 3)
+
+        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
+                                                     mode='pairwise_GRDF')
+        f = grdf.featurize(self.diamond)
+        self.assertAlmostEqual(f[0], 0.0036, 3)
+        self.assertAlmostEqual(f[1], 0.0353, 3)
+        self.assertAlmostEqual(f[2], 0.0872, 3)
+        self.assertAlmostEqual(f[3], 0.0657, 3)
+        self.assertAlmostEqual(f[4], 0.0972, 3)
+        self.assertAlmostEqual(f[5], 0.0887, 3)
+        self.assertAlmostEqual(f[6], 0.0657, 3)
+        self.assertAlmostEqual(f[7], 0.0972, 3)
+        self.assertAlmostEqual(f[8], 0.0887, 3)
+        self.assertAlmostEqual(f[9], 0.0036, 3)
+        self.assertAlmostEqual(f[10], 0.0353, 3)
+        self.assertAlmostEqual(f[11], 0.0872, 3)
 
     def test_rdf_and_peaks(self):
         ## Test diamond
