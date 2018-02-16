@@ -629,7 +629,7 @@ class PlotlyFig:
         y_prop = cols[1]
         col_prop = cols[2]
 
-        data = data.sort_values(y_prop, ascending=False)
+        data = data.sort_values(y_prop, ascending=True)
         if y_bins is None or len(data[y_prop].unique()) > y_bins:
             data['y_bin'] = pd.cut(data[y_prop], bins=y_bins, precision=precision).astype(str)
             y_labels = data['y_bin'].unique()
