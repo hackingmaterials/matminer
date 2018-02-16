@@ -20,7 +20,7 @@ if __name__ == "__main__":
         package_data={'matminer.datasets': ['*.csv'],
                       'matminer.utils.data_files': ['*.csv', '*.json', 'magpie_elementdata/*.table']},
         zip_safe=False,
-        install_requires=['pymatgen>=2018.1.29', 'tqdm>=4.14.0', 'pandas>=0.20.1',
+        install_requires=['pymatgen>=2018.2.13', 'tqdm>=4.14.0', 'pandas>=0.20.1',
                           'pymongo>=3.4.0', 'pint>=0.8.1', 'six>=1.10.0',
                           'citrination-client>=2.1.0', 'plotly>=2.0.12',
                           'mdf_forge>=0.5.1'],
