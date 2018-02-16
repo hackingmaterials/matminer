@@ -1252,14 +1252,6 @@ class PlotlyFig:
         if cols is None:
             cols = data.columns.values
 
-        dimensions = []
-        for col in cols:
-            if is_numeric_dtype(data[col]) and 'int' not in str(data[col].dtype):
-                values = data[col].apply(lambda x: round(x, precision))
-            else:
-                values = data[col]
-            dimensions.append({'label': col, 'values': values})
-
         if colbar is None:
             colbar = 'blue'
         else:
@@ -1268,6 +1260,20 @@ class PlotlyFig:
             colbar_title = pd.Series(colbar).name
         else:
             colbar_title = self.colbar_title
+
+        cols = list(cols)
+        try:
+            cols.remove(pd.Series(colbar).name)
+        except:
+            pass
+
+        dimensions = []
+        for col in cols:
+            if is_numeric_dtype(data[col]) and 'int' not in str(data[col].dtype):
+                values = data[col].apply(lambda x: round(x, precision))
+            else:
+                values = data[col]
+            dimensions.append({'label': col, 'values': values})
 
         fontd = {'family': self.fontfamily, 'size': 0.75 * self.ticksize}
         line = line or {'color': colbar,
