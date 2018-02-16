@@ -233,9 +233,10 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_pairs, colorbar=None, labels=None, names=None, sizes=None,
-           modes='markers', markers=None, lines=None, colorscale=None,
-           showlegends=None, zscore_size=True):
+    def xy(self, xy_pairs, colorbar=None, colbar_range=None, labels=None,
+           names=None, sizes=None, modes='markers', markers=None, lines=None,
+           colorscale=None, showlegends=None, normalize_size=True,
+           colbar_title='auto'):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
@@ -246,6 +247,8 @@ class PlotlyFig:
                 example 3: [('x1', 'y1'), ('x2', 'y2')]
             colorbar (list or np.ndarray or pd.Series): set the colorscale for
                 the colorbar (list of numbers); overwrites marker['color']
+            colbar_range ([min, max]): the range of numbers included in colorbar.
+                if any number is outside of this range, it will be forced to either
             labels (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
             names (str or [str]): list of trace names used for legend. By
@@ -263,8 +266,9 @@ class PlotlyFig:
             colorscale (str):  see the colorscale doc in __init__
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
-            zscore_size (bool): if True, scale the size lists based on zscore
-
+            normalize_size (bool): if True, normalize the size list.
+            colbar_title (str or None): the colorbar (z) title. If set to
+                "auto" the name of the third column displayed.
         Returns: A Plotly Scatter plot Figure object.
         """
         if not isinstance(xy_pairs, list):
@@ -288,10 +292,17 @@ class PlotlyFig:
             for i, _ in enumerate(sizes):
                 sizes[i] = self.data_from_col(sizes[i])
 
-        if zscore_size:
-            for i, _ in enumerate(sizes):
+        # if zscore_size:
+        #     for i, _ in enumerate(sizes):
+        #         if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
+        #             sizes[i] = (stats.zscore(pd.Series(sizes[i])) + 5) * 3
+
+        if normalize_size:
+            for i, size in enumerate(sizes):
                 if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
-                    sizes[i] = (stats.zscore(pd.Series(sizes[i])) + 5) * 3
+                    size = pd.Series(size).fillna(size.min())
+                    sizes[i] = ((size-size.min())/(size.max()-size.min())+0.05)* 30 * self.marker_scale
+                    print(sizes[i])
 
         if isinstance(modes, str):
             modes = [modes] * len(xy_pairs)
@@ -303,6 +314,10 @@ class PlotlyFig:
             showscale = True
             colorbar = self.data_from_col(colorbar)
             assert isinstance(colorbar, (list, np.ndarray, pd.Series))
+            if colbar_range:
+                colorbar = pd.Series(colorbar)
+                colorbar[colorbar < colbar_range[0]] = colbar_range[0]+0.1
+                colorbar[colorbar > colbar_range[1]] = colbar_range[1]-0.1
         data = []
         for pair in xy_pairs:
             data.append((self.data_from_col(pair[0]),
@@ -325,6 +340,9 @@ class PlotlyFig:
         if isinstance(markers, dict):
             [markers.copy() for _ in data]
 
+        if colbar_title is not None and colbar_title=='auto':
+            colbar_title = pd.Series(colorbar).name
+
         for im, marker in enumerate(markers):
             markers[im]['showscale'] = showscale
             if markers[im].get('size', None) is None:
@@ -333,7 +351,7 @@ class PlotlyFig:
                 raise ValueError('"size" must not be set in markers, use sizes argument instead')
             if colorbar is not None:
                 markers[im]['color'] = colorbar
-                markers[im]['colorbar'] = {'tickfont': {
+                markers[im]['colorbar'] = {'title': colbar_title, 'tickfont': {
                     'family': self.fontfamily, 'size': 0.75*self.ticksize}}
             if markers[im].get('colorscale') is None:
                 markers[im]['colorscale'] = colorscale or self.colorscale
@@ -348,7 +366,13 @@ class PlotlyFig:
                                      text=labels[i], hoverinfo=self.hoverinfo,
                                      name=names[i], showlegend=showlegends[i],
                                      ))
-        fig = {'data': traces, 'layout': self.layout}
+        layout = self.layout.copy()
+        if layout['xaxis'].get('title') is None and len(data) == 1:
+            layout['xaxis']['title'] = pd.Series(data[0][0]).name
+        if layout['yaxis'].get('title') is None and len(data) == 1:
+            layout['yaxis']['title'] = pd.Series(data[0][1]).name
+
+        fig = {'data': traces, 'layout': layout}
         if showscale:
             fig['layout']['legend']['x'] = 0.9
         return self.create_plot(fig)
