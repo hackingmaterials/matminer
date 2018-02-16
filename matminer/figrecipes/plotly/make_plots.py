@@ -1,13 +1,15 @@
 from __future__ import division, unicode_literals, print_function
-import warnings
-import os.path
-from copy import deepcopy
 import numpy as np
+import os.path
 import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import plotly.figure_factory as FF
+import warnings
+
+from copy import deepcopy
 from scipy import stats
+from pandas.api.types import is_numeric_dtype
 
 __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
               'Alireza Faghaninia  <alireza@lbl.gov>'
@@ -18,7 +20,8 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 # todo: heatmap convert
 
 class PlotlyFig:
-    def __init__(self, df=None, plot_mode='offline', plot_title=None, x_title=None, y_title=None,
+    def __init__(self, df=None, plot_mode='offline', plot_title=None,
+                 x_title=None, y_title=None, colbar_title='auto',
                  hovermode='closest', filename='auto',
                  show_offline_plot=True, username=None, colorscale='Viridis',
                  api_key=None, textsize=25, ticksize=25,
@@ -43,6 +46,8 @@ class PlotlyFig:
             plot_title: (str) title of plot
             x_title: (str) title of x-axis
             y_title: (str) title of y-axis
+            colbar_title (str or None): the colorbar (z) title. If set to
+                "auto" the name of the third column (if pd.Series) is chosen.
             hovermode: (str) determines the mode of hover interactions. Can be
                 'x'/'y'/'closest'/False
             filename: (str) name/filepath of plot file
@@ -91,6 +96,7 @@ class PlotlyFig:
         self.x_scale = x_scale
         self.y_title = y_title
         self.y_scale = y_scale
+        self.colbar_title = colbar_title
         self.hovermode = hovermode
         self.filename = filename
         self.plot_mode = plot_mode
@@ -233,10 +239,9 @@ class PlotlyFig:
             return col
 
 
-    def xy(self, xy_pairs, colorbar=None, colbar_range=None, labels=None,
+    def xy(self, xy_pairs, colbar=None, colbar_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None, lines=None,
-           colorscale=None, showlegends=None, normalize_size=True,
-           colbar_title='auto'):
+           colorscale=None, showlegends=None, normalize_size=True):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
@@ -245,7 +250,7 @@ class PlotlyFig:
                 example 1: ([1, 2], [3, 4])
                 example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example 3: [('x1', 'y1'), ('x2', 'y2')]
-            colorbar (list or np.ndarray or pd.Series): set the colorscale for
+            colbar (list or np.ndarray or pd.Series): set the colorscale for
                 the colorbar (list of numbers); overwrites marker['color']
             colbar_range ([min, max]): the range of numbers included in colorbar.
                 if any number is outside of this range, it will be forced to
@@ -269,8 +274,6 @@ class PlotlyFig:
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
             normalize_size (bool): if True, normalize the size list.
-            colbar_title (str or None): the colorbar (z) title. If set to
-                "auto" the name of the third column displayed.
         Returns: A Plotly Scatter plot Figure object.
         """
         if not isinstance(xy_pairs, list):
@@ -310,11 +313,11 @@ class PlotlyFig:
             modes = [modes] * len(xy_pairs)
         else:
             assert len(modes) == len(xy_pairs)
-        if colorbar is None:
+        if colbar is None:
             showscale = False
         else:
             showscale = True
-            colorbar = self.data_from_col(colorbar)
+            colorbar = self.data_from_col(colbar)
             assert isinstance(colorbar, (list, np.ndarray, pd.Series))
             if colbar_range:
                 colorbar = pd.Series(colorbar)
@@ -342,8 +345,10 @@ class PlotlyFig:
         if isinstance(markers, dict):
             [markers.copy() for _ in data]
 
-        if colbar_title is not None and colbar_title=='auto':
+        if self.colbar_title=='auto':
             colbar_title = pd.Series(colorbar).name
+        else:
+            colbar_title = self.colbar_title
 
         for im, marker in enumerate(markers):
             markers[im]['showscale'] = showscale
@@ -365,7 +370,9 @@ class PlotlyFig:
                     markers[im]['colorbar']['ticktext'] = ticktext
             if markers[im].get('colorscale') is None:
                 markers[im]['colorscale'] = colorscale or self.colorscale
+
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
+
         for var in [labels, markers, lines]:
             assert len(list(var)) == len(data)
 
@@ -584,8 +591,7 @@ class PlotlyFig:
 
 
     def heatmap(self, data=None, cols=None, x_bins=6, y_bins = 4, precision=1,
-                annotation='count', annotation_color='black', colorscale=None,
-                colbar_title='auto'):
+                annotation='count', annotation_color='black', colorscale=None):
         """
         Args:
             data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
@@ -603,8 +609,6 @@ class PlotlyFig:
                 "value": the actual value of the cell in addition to colorbar
             annotation_color (str): the color of annotation (text inside cells)
             colorscale: see the __init__ doc for colorscale
-            colbar_title (str or None): the colorbar (z) title. If set to
-                "auto" the name of the third column displayed.
         Returns: A Plotly heatmap plot Figure object.
         """
 
@@ -625,7 +629,7 @@ class PlotlyFig:
         y_prop = cols[1]
         col_prop = cols[2]
 
-        data = data.sort_values(y_prop, ascending=False)
+        data = data.sort_values(y_prop, ascending=True)
         if y_bins is None or len(data[y_prop].unique()) > y_bins:
             data['y_bin'] = pd.cut(data[y_prop], bins=y_bins, precision=precision).astype(str)
             y_labels = data['y_bin'].unique()
@@ -669,10 +673,13 @@ class PlotlyFig:
                 annotations.append(a_d)
             data_.append(x_data)
 
-        if colbar_title is not None and colbar_title=='auto':
+        if self.colbar_title=='auto':
             colbar_title = col_prop
+        else:
+            colbar_title = self.colbar_title
         trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
-            colorscale = colorscale or self.colorscale, colorbar={'title': colbar_title,
+            colorscale = colorscale or self.colorscale, colorbar={
+                'title': colbar_title, 'titleside': 'right',
             'tickfont': {'size': 0.75 * self.ticksize,'family': self.fontfamily},
             'titlefont': {'size': self.textsize, 'family': self.fontfamily}
         })
@@ -1212,4 +1219,61 @@ class PlotlyFig:
         if self.width is None:
             fig['layout']['width'] = 1400
 
+        return self.create_plot(fig)
+
+    def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
+                             colbar=None):
+        """
+        Create a Plotly Parcoords plot from dataframes.
+        Args:
+            data (DataFrame or list): A dataframe containing at least
+                one numerical column. Also accepts lists of numerical values.
+                If None, uses the dataframe passed into the constructor.
+            cols ([str]): A list of strings specifying the columns of the
+                dataframe to use.
+            line (dict): plotly line dict with keys such as "color" or "width"
+            precision (int): the number of floating points for columns with
+                float data type (2 is recommended for a nice visualization)
+        Returns: a Plotly scatter matrix plot
+        """
+        # making sure the combination of input args make sense
+        if data is None:
+            if self.df is None:
+                raise ValueError(
+                    "scatter_matrix requires either dataframe labels and a "
+                    "dataframe or a list of numerical values.")
+            elif cols is None:
+                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+            else:
+                data = self.df[cols]
+        elif isinstance(data, np.ndarray):
+            data = pd.DataFrame(data, columns=cols)
+
+        if cols is None:
+            cols = data.columns.values
+
+        dimensions = []
+        for col in cols:
+            if is_numeric_dtype(data[col]) and 'int' not in str(data[col].dtype):
+                values = data[col].apply(lambda x: round(x, precision))
+            else:
+                values = data[col]
+            dimensions.append({'label': col, 'values': values})
+
+        if colbar is None:
+            colbar = 'blue'
+        else:
+            colbar = self.data_from_col(colbar)
+        if self.colbar_title=='auto':
+            colbar_title = pd.Series(colbar).name
+        else:
+            colbar_title = self.colbar_title
+
+        fontd = {'family': self.fontfamily, 'size': 0.75 * self.ticksize}
+        line = line or {'color': colbar,
+                        'colorbar': {'title': colbar_title, 'titleside': 'right',
+                                   'tickfont': fontd, 'titlefont': fontd}}
+        par_coords = go.Parcoords(line=line, dimensions=dimensions)
+
+        fig = {'data': [par_coords]}
         return self.create_plot(fig)
