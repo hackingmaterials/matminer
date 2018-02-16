@@ -678,7 +678,8 @@ class PlotlyFig:
         else:
             colbar_title = self.colbar_title
         trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
-            colorscale = colorscale or self.colorscale, colorbar={'title': colbar_title,
+            colorscale = colorscale or self.colorscale, colorbar={
+                'title': colbar_title, 'titleside': 'right',
             'tickfont': {'size': 0.75 * self.ticksize,'family': self.fontfamily},
             'titlefont': {'size': self.textsize, 'family': self.fontfamily}
         })
