@@ -248,7 +248,9 @@ class PlotlyFig:
             colorbar (list or np.ndarray or pd.Series): set the colorscale for
                 the colorbar (list of numbers); overwrites marker['color']
             colbar_range ([min, max]): the range of numbers included in colorbar.
-                if any number is outside of this range, it will be forced to either
+                if any number is outside of this range, it will be forced to
+                either one. Note that if colbar_range is set, the colorbar ticks
+                will be updated to reflext -min or max+ at the two ends.
             labels (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
             names (str or [str]): list of trace names used for legend. By
@@ -316,8 +318,8 @@ class PlotlyFig:
             assert isinstance(colorbar, (list, np.ndarray, pd.Series))
             if colbar_range:
                 colorbar = pd.Series(colorbar)
-                colorbar[colorbar < colbar_range[0]] = colbar_range[0]+0.1
-                colorbar[colorbar > colbar_range[1]] = colbar_range[1]-0.1
+                colorbar[colorbar < colbar_range[0]] = colbar_range[0]
+                colorbar[colorbar > colbar_range[1]] = colbar_range[1]
         data = []
         for pair in xy_pairs:
             data.append((self.data_from_col(pair[0]),
@@ -351,8 +353,16 @@ class PlotlyFig:
                 raise ValueError('"size" must not be set in markers, use sizes argument instead')
             if colorbar is not None:
                 markers[im]['color'] = colorbar
-                markers[im]['colorbar'] = {'title': colbar_title, 'tickfont': {
-                    'family': self.fontfamily, 'size': 0.75*self.ticksize}}
+                fontd = {'family': self.fontfamily, 'size': 0.75*self.ticksize}
+                markers[im]['colorbar'] = {'title': colbar_title, 'titleside': 'right',
+                                           'tickfont': fontd, 'titlefont': fontd}
+                if colbar_range is not None:
+                    tickvals = np.linspace(colbar_range[0], colbar_range[1], 6)
+                    ticktext = [str(round(tick, 1)) for tick in tickvals]
+                    ticktext[0] = '-'+ ticktext[0]
+                    ticktext[-1] = ticktext[-1] + '+'
+                    markers[im]['colorbar']['tickvals'] = tickvals
+                    markers[im]['colorbar']['ticktext'] = ticktext
             if markers[im].get('colorscale') is None:
                 markers[im]['colorscale'] = colorscale or self.colorscale
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
