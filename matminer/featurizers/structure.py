@@ -3,11 +3,12 @@ from __future__ import division, unicode_literals, print_function
 import itertools
 from math import pi, fabs
 from operator import itemgetter
-import warnings
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
 import scipy.constants as const
+import scipy.integrate as integrate
 
 from pymatgen import Structure
 from pymatgen.analysis.defects.point_defects import \
@@ -22,7 +23,8 @@ from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint,
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
-              'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
+              'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>' \
+              'Maxwell Dylla <280mtd@gmail.com>'
 # ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
 
 ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
@@ -116,6 +118,158 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
 
     def implementors(self):
         return ["Anubhav Jain"]
+
+
+class GeneralizedRadialDistributionFunction(BaseFeaturizer):
+    """
+    Compute the general radial distribution function (GRDF) for a crystal
+    structure. The GRDF is a site-specific measure of cyrstal order. There are
+    three featurizing modes:
+
+    1. RDF: (recommended)
+        In RDF mode, the GRDFs from every site are combined. Every structure
+        will have the same number of features, since the site-specific
+        imformation is suppressed.
+
+    2. GRDF: (advanced users)
+        In GRDF mode, GRDFs are computed for every site. This can lead to
+        different structures having a different number of features if the
+        number of sites are not equal. It is the burden of the user to combine
+        the site specific GRDFs in a meaningful way (e.g. by coordination
+        geometry or element type) to make structural comparisons.
+
+    3. pairwise GRDF: (advanced users)
+        In this mode, GRDFs are computed for every pairwise site and their
+        eqivalant translational sites (e.g. site 1 with site 2 and the
+        translational equivalants of site 2). This results in the square number
+        of GRDF features.
+
+    The GRDF is a generalization of the partial radial distribution function
+    (PRDF). In contrast with the PRDF, the bins of the GRDF are not mutually-
+    exclusive and need not carry a constant weight of 1. The PRDF is a case of
+    the GRDF when the bins are rectangular functions. Examples of other
+    functions to use with the GRDF are gaussians, trig, and bessel functions.
+
+    Args:
+        bins:   (list of functions) a list of callable distance functionals.
+                    the arguments of each function should be a floating point
+                    distance and the function should return a float. Functions
+                    should support calling with scalar numpy arrays.
+                    (e.g. lambda d: exp( a_0 * (d - b_0)**2 ))
+        cutoff: (float) maximum distance to look for neighbors
+        mode:   (str) the featurizing mode. supported options are:
+                    'RDF', 'GRDF', and 'pairwise_GRDF'
+    """
+
+    def __init__(self, bins, cutoff=20.0, mode='RDF'):
+        self.bins = bins
+        self.cutoff = cutoff
+
+        if mode not in ['RDF', 'GRDF', 'pairwise_GRDF']:
+            raise AttributeError('{} is not a valid GRDF mode. try "RDF", '
+                                 '"GRDF", or "pairwise_GRDF"'.format(mode))
+        else:
+            self.mode = mode
+
+        self.GRDFs = None
+
+    def featurize(self, s):
+        """
+        Get GRDF of the input structure.
+        Args:
+            s: Pymatgen Structure object.
+
+        Returns:
+            Flattened list of GRDF values. For each run mode the list order is:
+                RDF:           bin#
+                GRDF:          site# bin#
+                pairwise GRDF: site1# site2# bin#
+            The site# corresponds to the pymatgen site index.
+        """
+
+        if not s.is_ordered:
+            raise ValueError("Disordered structure support not built yet")
+
+        # Get list of neighbors by site
+        # Idexing is [site#][neighbor#][pymatgen Site, distance, site index]
+        neighbors_lst = s.get_all_neighbors(self.cutoff, include_index=True)
+        sites = range(0, len(neighbors_lst))
+
+        # Generate lists of pairwise distances according to run mode
+        distance_collection = OrderedDict()
+
+        if self.mode == 'RDF':
+
+            # Combine distances from all sites into one collection
+            distance_collection['all'] = [neighbor[1] for site in neighbors_lst
+                                          for neighbor in site]
+
+        elif self.mode == 'GRDF':
+
+            # Make a distance collection for each site
+            for site in sites:
+                distance_collection['site {}'.format(site)] = [
+                    neighbor[1] for neighbor in neighbors_lst[site]]
+
+        else:
+
+            # Make pairwise distance collections for pairwise GRDF
+            sites = range(0, len(neighbors_lst))
+            for site1 in sites:
+                for site2 in sites:
+                    distance_collection['site {} site {}'.format(site1,
+                                                                 site2)] = [
+                        neighbor[1] for neighbor in neighbors_lst[site1]
+                        if neighbor[2] == site2]
+
+        # compute bin counts for each list of pairwise distances
+        GRDFs = OrderedDict()
+
+        for key, value in distance_collection.items():
+            value = np.array(value)  # use scalar array function calling
+            GRDFs[key] = [sum(bin(value)) for bin in self.bins]
+
+        # Compute "volume" of each bin to normalize GRDFs
+        integrations = [integrate.quad(lambda x: 4. * pi * bin(x) * x**2.,
+                                       0, self.cutoff) for bin in self.bins]
+
+        volumes = [item[0] for item in integrations]
+        errors = [item[1] for item in integrations]
+        if max(errors) > 1e-5:
+            raise ValueError('Numerical integration does not play well with '
+                             'the chosen bin functionals, choose new ones.')
+
+        features = []
+        for key, value in GRDFs.items():
+            gdrfs = np.array(value) / np.array(volumes)
+            features.extend([('{} bin {}'.format(key, i), gdrfs[i]) for i in
+                             range(0, len(gdrfs))])
+        self.GRDFs = dict(features)
+
+        return list(self.GRDFs.values())
+
+    def feature_labels(self):
+        # the features are not always homogeneous if you use GDRF or pairwise
+        # GDRF mode, so you need to call feature_labels() after featurize()
+        if self.GRDFs is None:
+            raise ValueError('You need to call featurize() before '
+                             'feature_labels(). In some modes, the features '
+                             'which are returned are not homogeneous for all '
+                             'compounds.')
+        else:
+            return list(self.GRDFs.keys())
+
+    def citations(self):
+        return ['@article{PhysRevB.95.144110, title = {Representation of compo'
+                'unds for machine-learning prediction of physical properties},'
+                ' author = {Seko, Atsuto and Hayashi, Hiroyuki and Nakayama, '
+                'Keita and Takahashi, Akira and Tanaka, Isao},'
+                'journal = {Phys. Rev. B}, volume = {95}, issue = {14}, '
+                'pages = {144110}, year = {2017}, publisher = {American Physic'
+                'al Society}, doi = {10.1103/PhysRevB.95.144110}}']
+
+    def implementors(self):
+        return ["Maxwell Dylla", "Saurabh Bajaj"]
 
 
 class RadialDistributionFunction(BaseFeaturizer):
