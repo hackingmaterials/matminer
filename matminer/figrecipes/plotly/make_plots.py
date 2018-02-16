@@ -357,7 +357,7 @@ class PlotlyFig:
                 markers[im]['colorbar'] = {'title': colbar_title,
                                            'tickfont': fontd, 'titlefont': fontd}
                 if colbar_range is not None:
-                    tickvals = np.linspace(colbar_range[0], colbar_range[1], 7)
+                    tickvals = np.linspace(colbar_range[0], colbar_range[1], 6)
                     ticktext = [str(round(tick, 1)) for tick in tickvals]
                     ticktext[0] = '-'+ ticktext[0]
                     ticktext[-1] = ticktext[-1] + '+'
