@@ -1,13 +1,15 @@
 from __future__ import division, unicode_literals, print_function
-import warnings
-import os.path
-from copy import deepcopy
 import numpy as np
+import os.path
 import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import plotly.figure_factory as FF
+import warnings
+
+from copy import deepcopy
 from scipy import stats
+from pandas.api.types import is_numeric_dtype
 
 __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
               'Alireza Faghaninia  <alireza@lbl.gov>'
@@ -1212,4 +1214,48 @@ class PlotlyFig:
         if self.width is None:
             fig['layout']['width'] = 1400
 
+        return self.create_plot(fig)
+
+    def parallel_coordinates(self, data=None, cols=None, line=None, precision=2):
+        """
+        Create a Plotly Parcoords plot from dataframes.
+        Args:
+            data (DataFrame or list): A dataframe containing at least
+                one numerical column. Also accepts lists of numerical values.
+                If None, uses the dataframe passed into the constructor.
+            cols ([str]): A list of strings specifying the columns of the
+                dataframe to use.
+            line (dict): plotly line dict with keys such as "color" or "width"
+            precision (int): the number of floating points for columns with
+                float data type (2 is recommended for a nice visualization)
+        Returns: a Plotly scatter matrix plot
+        """
+        # making sure the combination of input args make sense
+        if data is None:
+            if self.df is None:
+                raise ValueError(
+                    "scatter_matrix requires either dataframe labels and a "
+                    "dataframe or a list of numerical values.")
+            elif cols is None:
+                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+            else:
+                data = self.df[cols]
+        elif isinstance(data, np.ndarray):
+            data = pd.DataFrame(data, columns=cols)
+
+        if cols is None:
+            cols = data.columns.values
+
+        dimensions = []
+        for col in cols:
+            if is_numeric_dtype(data[col]) and 'int' not in str(data[col].dtype):
+                values = data[col].apply(lambda x: round(x, precision))
+            else:
+                values = data[col]
+            dimensions.append({'label': col, 'values': values})
+
+        line = line or {'color': 'blue'}
+        par_coords = go.Parcoords(line=line, dimensions=dimensions)
+
+        fig = {'data': [par_coords]}
         return self.create_plot(fig)
