@@ -76,6 +76,7 @@ class StructureFeaturesTest(PymatgenTest):
         f1 = lambda x: np.exp(-(x**2.))
         f2 = lambda x: np.exp(-(x - 1.)**2.)
         f3 = lambda x: np.exp(-(x - 5.)**2.)
+        s_list = [self.diamond, self.ni3al]
 
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
                                                      mode='RDF')
@@ -83,6 +84,10 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(f[0], 0.1387, 3)
         self.assertAlmostEqual(f[1], 0.2652, 3)
         self.assertAlmostEqual(f[2], 0.3520, 3)
+
+        # test dataframe functionality
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = grdf.featurize_dataframe(df, 's')
 
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
                                                      mode='GRDF')
@@ -93,6 +98,10 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(f[3], 0.0693, 3)
         self.assertAlmostEqual(f[4], 0.1326, 3)
         self.assertAlmostEqual(f[5], 0.1760, 3)
+
+        # check whether heterogeneous features work
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = grdf.featurize_dataframe(df, 's')
 
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
                                                      mode='pairwise_GRDF')
@@ -109,6 +118,10 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(f[9], 0.0036, 3)
         self.assertAlmostEqual(f[10], 0.0353, 3)
         self.assertAlmostEqual(f[11], 0.0872, 3)
+
+        # check whether heterogeneous features work
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = grdf.featurize_dataframe(df, 's')
 
     def test_rdf_and_peaks(self):
         ## Test diamond
