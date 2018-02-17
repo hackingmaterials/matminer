@@ -294,7 +294,8 @@ class PlotlyFig:
         elif isinstance(sizes, str):
             sizes = [self.data_from_col(sizes)] * len(xy_pairs)
         else:
-            assert len(sizes) == len(xy_pairs)
+            if len(sizes) != len(xy_pairs):
+                raise ValueError('"sizes" must be the same length as "xy_pairs"')
             for i, _ in enumerate(sizes):
                 sizes[i] = self.data_from_col(sizes[i])
 
@@ -344,14 +345,14 @@ class PlotlyFig:
         markers = markers or [{'symbol': 'circle', 'line': {'width': 1,
                     'color': 'black'}} for _ in data]
         if isinstance(markers, dict):
-            [markers.copy() for _ in data]
+            markers = [markers.copy() for _ in data]
 
         if self.colbar_title=='auto':
             colbar_title = pd.Series(colorbar).name
         else:
             colbar_title = self.colbar_title
 
-        for im, marker in enumerate(markers):
+        for im, _ in enumerate(markers):
             markers[im]['showscale'] = showscale
             if markers[im].get('size', None) is None:
                 markers[im]['size'] = sizes[im]
@@ -1263,10 +1264,8 @@ class PlotlyFig:
             colbar_title = self.colbar_title
 
         cols = list(cols)
-        try:
+        if pd.Series(colbar).name in cols:
             cols.remove(pd.Series(colbar).name)
-        except:
-            pass
 
         dimensions = []
         for col in cols:
