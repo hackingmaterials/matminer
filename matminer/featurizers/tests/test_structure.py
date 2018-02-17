@@ -283,11 +283,11 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(opvals[10][0], 0.9995, places=7)
         self.assertAlmostEqual(opvals[10][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.nacl)
-        self.assertAlmostEqual(opvals[16][0], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[16][1], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[18][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[18][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.cscl)
-        self.assertAlmostEqual(opvals[20][0], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[20][1], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[22][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[22][1], 0.9995, places=7)
 
         # Test stats.
         op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint")
@@ -297,13 +297,13 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(opvals[2], 0.0005, places=7)
         self.assertAlmostEqual(opvals[3], 0.0005, places=7)
         self.assertAlmostEqual(opvals[4], 0.0005, places=7)
-        self.assertAlmostEqual(opvals[32], 0.03825, places=7)
+        self.assertAlmostEqual(opvals[36], 0.0805, places=7)
         self.assertAlmostEqual(opvals[40], 0.9995, places=7)
         self.assertAlmostEqual(opvals[41], 0, places=7)
         self.assertAlmostEqual(opvals[42], 0.9995, places=7)
         self.assertAlmostEqual(opvals[43], 0.9995, places=7)
         self.assertAlmostEqual(opvals[44], 0.0075, places=7)
-        for i in range(52, len(opvals)):
+        for i in range(56, len(opvals)):
             self.assertAlmostEqual(opvals[i], 0, places=2)
 
         # Test coordination number
