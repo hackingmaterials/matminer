@@ -18,7 +18,7 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 # todo: No multiple colors on violin
 # todo: Change plot mode in each method if you want, and accept a plotlydict obj
 # todo: fix nonetypes in __init__
-# todo: heatmap convert
+# todo: clean this mess
 
 class PlotlyFig:
     def __init__(self, df=None, plot_mode='offline', plot_title=None,
