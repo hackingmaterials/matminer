@@ -419,9 +419,6 @@ class AngularFourierSeries(BaseFeaturizer):
                                                         bin_names[i][1])] =\
                         AFSs[site][i]
 
-        for key, value in self.AFSs.items():
-            print(key, value)
-
         return list(self.AFSs.values())
 
     def feature_labels(self):

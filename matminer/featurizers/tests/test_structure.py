@@ -17,7 +17,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BagofBonds, GeneralizedRadialDistributionFunction
+    EwaldEnergy, BagofBonds, GeneralizedRadialDistributionFunction, \
+    AngularFourierSeries
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -122,6 +123,46 @@ class StructureFeaturesTest(PymatgenTest):
         # check whether heterogeneous features work
         df = pd.DataFrame.from_dict({'s': s_list})
         df = grdf.featurize_dataframe(df, 's')
+
+    def test_afs(self):
+        f1 = lambda x: np.exp(-(x**2.))
+        f2 = lambda x: np.exp(-(x - 1.)**2.)
+        f3 = lambda x: np.exp(-(x - 5.)**2.)
+        s_list = [self.diamond, self.ni3al]
+
+        afs = AngularFourierSeries(bins=[f1, f2, f3], cutoff=10.0,
+                                   site_specific=True, full_matrix=True)
+        f = afs.featurize(self.diamond)
+        self.assertArrayAlmostEqual(f, [
+            -0.03320191940377959, -0.2717505135352605, -7.942501181754852e-05,
+            -0.2717505135352624, -2.3120043152799004, -0.008666157689362373,
+            -7.942501181750938e-05, -0.008666157689356321, -71.08316906505284,
+            -0.03320191940377943, -0.2717505135352638, -7.942501181767598e-05,
+            -0.2717505135352619, -2.312004315279895, -0.008666157689371607,
+            -7.94250118175171e-05, -0.008666157689354892, -71.08316906505387],
+            3)
+
+        afs = AngularFourierSeries(bins=[f1, f2, f3], cutoff=10.0,
+                                   site_specific=True, full_matrix=False)
+        f = afs.featurize(self.diamond)
+        self.assertArrayAlmostEqual(f, [
+            -0.03320191940377959, -2.3120043152799004, -71.08316906505284,
+            -0.03320191940377943, -2.312004315279895, -71.08316906505387], 3)
+
+        afs = AngularFourierSeries(bins=[f1, f2, f3], cutoff=10.0,
+                                   site_specific=False, full_matrix=True)
+        f = afs.featurize(self.diamond)
+        self.assertArrayAlmostEqual(f, [
+            -0.06640383880755901, -0.5435010270705243, -0.0001588500236352245,
+            -0.5435010270705243, -4.624008630559795, -0.017332315378733983,
+            -0.00015885002363502648, -0.017332315378711213,
+            -142.1663381301067], 3)
+
+        afs = AngularFourierSeries(bins=[f1, f2, f3], cutoff=10.0,
+                                   site_specific=False, full_matrix=False)
+        f = afs.featurize(self.diamond)
+        self.assertArrayAlmostEqual(f, [
+            -0.06640383880755901, -4.624008630559795, -142.1663381301067], 3)
 
     def test_rdf_and_peaks(self):
         ## Test diamond
