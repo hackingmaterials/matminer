@@ -11,14 +11,13 @@ import scipy.constants as const
 import scipy.integrate as integrate
 
 from pymatgen import Structure
-from pymatgen.util.coord import get_angle
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import pymatgen.analysis.local_env as pmg_le
-from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.base import BaseFeaturizer, HeterogeneousFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
     CoordinationNumber
 from matminer.featurizers.stats import PropertyStats
@@ -121,7 +120,7 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         return ["Anubhav Jain"]
 
 
-class GeneralizedRadialDistributionFunction(BaseFeaturizer):
+class GeneralizedRadialDistributionFunction(HeterogeneousFeaturizer):
     """
     Compute the general radial distribution function (GRDF) for a crystal
     structure. The GRDF is a site-specific measure of cyrstal order. There are
@@ -243,22 +242,11 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         features = []
         for key, value in GRDFs.items():
             gdrfs = np.array(value) / np.array(volumes)
-            features.extend([('{} bin {}'.format(key, i), gdrfs[i]) for i in
-                             range(0, len(gdrfs))])
-        self.GRDFs = dict(features)
+            features.extend([('GRDF {} bin {}'.format(key, i), gdrfs[i])
+                             for i in range(len(gdrfs))])
+        features = OrderedDict(features)
 
-        return list(self.GRDFs.values())
-
-    def feature_labels(self):
-        # the features are not always homogeneous if you use GDRF or pairwise
-        # GDRF mode, so you need to call feature_labels() after featurize()
-        if self.GRDFs is None:
-            raise ValueError('You need to call featurize() before '
-                             'feature_labels(). In some modes, the features '
-                             'which are returned are not homogeneous for all '
-                             'compounds.')
-        else:
-            return list(self.GRDFs.keys())
+        return features
 
     def citations(self):
         return ['@article{PhysRevB.95.144110, title = {Representation of compo'
@@ -273,7 +261,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         return ["Maxwell Dylla", "Saurabh Bajaj"]
 
 
-class AngularFourierSeries(BaseFeaturizer):
+class AngularFourierSeries(HeterogeneousFeaturizer):
     """
     Compute the angular fourier series (AFS) for a structure. The AFS includes
     both radial and angular information for a structure. The AFS is the product
@@ -319,7 +307,6 @@ class AngularFourierSeries(BaseFeaturizer):
         self.cutoff = cutoff
         self.site_specific = site_specific
         self.full_matrix = full_matrix
-        self.AFSs = None
 
     def featurize(self, s):
         """
@@ -399,38 +386,27 @@ class AngularFourierSeries(BaseFeaturizer):
                              cos_angles) for combo in bin_combos]
 
         # Pair AFS values with bin labels
-        self.AFSs = OrderedDict()
+        features = OrderedDict()
 
         if not self.site_specific:
 
             # sum all AFS from each site
             total_AFS = sum(np.array([item for item in AFSs.values()]))
-            for i in range(0, len(total_AFS)):
-                self.AFSs['all bin {} bin {}'.format(bin_names[i][0],
-                                                     bin_names[i][1])] =\
+            for i, item in enumerate(bin_names):
+                features['AFS all bin {} bin {}'.format(item[0],
+                                                        item[1])] =\
                     total_AFS[i]
         else:
 
             # Make features for every site
-            for site, values in AFSs.items():
-                for i in range(0, len(bin_combos)):
-                    self.AFSs['{} bin {} bin {}'.format(site,
-                                                        bin_names[i][0],
-                                                        bin_names[i][1])] =\
-                        AFSs[site][i]
+            for site, site_afs in AFSs.items():
+                for i, item in enumerate(bin_names):
+                    features['AFS {} bin {} bin {}'.format(site,
+                                                           item[0],
+                                                           item[1])] =\
+                        site_afs[i]
 
-        return list(self.AFSs.values())
-
-    def feature_labels(self):
-        # the features are not always homogeneous if you use GDRF or pairwise
-        # GDRF mode, so you need to call feature_labels() after featurize()
-        if self.AFSs is None:
-            raise ValueError('You need to call featurize() before '
-                             'feature_labels(). In some modes, the features '
-                             'which are returned are not homogeneous for all '
-                             'compounds.')
-        else:
-            return list(self.GRDFs.keys())
+        return features
 
     def citations(self):
         return ['@article{PhysRevB.95.144110, title = {Representation of compo'

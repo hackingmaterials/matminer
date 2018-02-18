@@ -81,7 +81,7 @@ class StructureFeaturesTest(PymatgenTest):
 
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
                                                      mode='RDF')
-        f = grdf.featurize(self.diamond)
+        f = list(grdf.featurize(self.diamond).values())
         self.assertAlmostEqual(f[0], 0.1387, 3)
         self.assertAlmostEqual(f[1], 0.2652, 3)
         self.assertAlmostEqual(f[2], 0.3520, 3)
@@ -92,7 +92,7 @@ class StructureFeaturesTest(PymatgenTest):
 
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
                                                      mode='GRDF')
-        f = grdf.featurize(self.diamond)
+        f = list(grdf.featurize(self.diamond).values())
         self.assertAlmostEqual(f[0], 0.0693, 3)
         self.assertAlmostEqual(f[1], 0.1326, 3)
         self.assertAlmostEqual(f[2], 0.1760, 3)
@@ -106,7 +106,7 @@ class StructureFeaturesTest(PymatgenTest):
 
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
                                                      mode='pairwise_GRDF')
-        f = grdf.featurize(self.diamond)
+        f = list(grdf.featurize(self.diamond).values())
         self.assertAlmostEqual(f[0], 0.0036, 3)
         self.assertAlmostEqual(f[1], 0.0353, 3)
         self.assertAlmostEqual(f[2], 0.0872, 3)
@@ -132,7 +132,7 @@ class StructureFeaturesTest(PymatgenTest):
 
         afs = AngularFourierSeries(bins=[f1, f2, f3], cutoff=10.0,
                                    site_specific=True, full_matrix=True)
-        f = afs.featurize(self.diamond)
+        f = list(afs.featurize(self.diamond).values())
         self.assertArrayAlmostEqual(f, [
             -0.03320191940377959, -0.2717505135352605, -7.942501181754852e-05,
             -0.2717505135352624, -2.3120043152799004, -0.008666157689362373,
@@ -142,27 +142,43 @@ class StructureFeaturesTest(PymatgenTest):
             -7.94250118175171e-05, -0.008666157689354892, -71.08316906505387],
             3)
 
+        # check whether heterogeneous features work
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = afs.featurize_dataframe(df, 's')
+
         afs = AngularFourierSeries(bins=[f1, f2, f3], cutoff=10.0,
                                    site_specific=True, full_matrix=False)
-        f = afs.featurize(self.diamond)
+        f = list(afs.featurize(self.diamond).values())
         self.assertArrayAlmostEqual(f, [
             -0.03320191940377959, -2.3120043152799004, -71.08316906505284,
             -0.03320191940377943, -2.312004315279895, -71.08316906505387], 3)
 
+        # check whether heterogeneous features work
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = afs.featurize_dataframe(df, 's')
+
         afs = AngularFourierSeries(bins=[f1, f2, f3], cutoff=10.0,
                                    site_specific=False, full_matrix=True)
-        f = afs.featurize(self.diamond)
+        f = list(afs.featurize(self.diamond).values())
         self.assertArrayAlmostEqual(f, [
             -0.06640383880755901, -0.5435010270705243, -0.0001588500236352245,
             -0.5435010270705243, -4.624008630559795, -0.017332315378733983,
             -0.00015885002363502648, -0.017332315378711213,
             -142.1663381301067], 3)
 
+        # check whether heterogeneous features work
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = afs.featurize_dataframe(df, 's')
+
         afs = AngularFourierSeries(bins=[f1, f2, f3], cutoff=10.0,
                                    site_specific=False, full_matrix=False)
-        f = afs.featurize(self.diamond)
+        f = list(afs.featurize(self.diamond).values())
         self.assertArrayAlmostEqual(f, [
             -0.06640383880755901, -4.624008630559795, -142.1663381301067], 3)
+
+        # check whether heterogeneous features work
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = afs.featurize_dataframe(df, 's')
 
     def test_rdf_and_peaks(self):
         ## Test diamond
