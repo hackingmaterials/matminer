@@ -9,18 +9,22 @@ from multiprocessing import Pool, cpu_count
 
 
 class BaseFeaturizer(object):
-    """Abstract class to calculate attributes for compounds"""
+    """
+    Abstract class to calculate attributes from raw materials input data
+    such a compound formula or a pymatgen crystal structure or
+    bandstructure object.
+    """
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             inplace=True, n_jobs=1):
         """
-        Compute features for all entries contained in input dataframe
+        Compute features for all entries contained in input dataframe.
 
         Args:
-            df (Pandas dataframe): Dataframe containing input data
+            df (Pandas dataframe): Dataframe containing input data.
             col_id (str or list of str): column label containing objects to
                 featurize. Can be multiple labels if the featurize function
-                requires multiple inputs
+                requires multiple inputs.
             ignore_errors (bool): Returns NaN for dataframe rows where
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
@@ -29,8 +33,9 @@ class BaseFeaturizer(object):
                 featurizing the dataframe. If None, automatically determines the
                 number of processing cores on the system and sets n_procs to
                 this number.
+
         Returns:
-            updated Dataframe
+            updated dataframe.
         """
 
         # If only one column and user provided a string, put it inside a list
@@ -62,13 +67,13 @@ class BaseFeaturizer(object):
     def featurize_many(self, entries, n_jobs=1, ignore_errors=False):
         """
         Featurize a list of entries.
-
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
 
         Args:
-           entries (list): A list of entries to be featurized
+           entries (list): A list of entries to be featurized.
+
         Returns:
-           list - features for each entry
+           (list) features for each entry.
         """
 
         self.__ignore_errors = ignore_errors
@@ -103,6 +108,7 @@ class BaseFeaturizer(object):
                 return p.map(self.featurize_wrapper, entries)
 
     def featurize_wrapper(self, x):
+        #TODO: documentation!
         try:
             return self.featurize(*x)
         except:
@@ -113,41 +119,46 @@ class BaseFeaturizer(object):
 
     def featurize(self, *x):
         """
-        Main featurizer function. Only defined in feature subclasses.
+        Main featurizer function, which has to be implemented
+        in any derived featurizer subclass.
+
         Args:
-            x: input data to featurize (type depends on featurizer)
+            x: input data to featurize (type depends on featurizer).
+
         Returns:
-            list of one or more features
+            (list) one or more features.
         """
 
         raise NotImplementedError("featurize() is not defined!")
 
     def feature_labels(self):
         """
-        Generate attribute names
+        Generate attribute names.
 
         Returns:
-            list of strings for attribute labels
+            ([str]) attribute labels.
         """
 
         raise NotImplementedError("feature_labels() is not defined!")
 
     def citations(self):
         """
-        Citation / reference for feature
+        Citation(s) and reference(s) for this feature.
+
         Returns:
-            array - each element should be str citation, ideally in BibTeX
-                format
+            (list) each element should be a string citation,
+                ideally in BibTeX format.
         """
 
         raise NotImplementedError("citations() is not defined!")
 
     def implementors(self):
         """
-        List of implementors of the feature
+        List of implementors of the feature.
+
         Returns:
-            array - each element should either be str with author name (e.g.,
-                "Anubhav Jain") or dict with required key "name" and other
+            (list) each element should either be a string with author name (e.g.,
+                "Anubhav Jain") or a dictionary  with required key "name" and other
                 keys like "email" or "institution" (e.g., {"name": "Anubhav
                 Jain", "email": "ajain@lbl.gov", "institution": "LBNL"}).
         """
@@ -156,13 +167,17 @@ class BaseFeaturizer(object):
 
 
 class MultipleFeaturizer(BaseFeaturizer):
-    """Class that runs multiple featurizers on the same data
-    All featurizers must take the same kind of data as input to the featurize function."""
+    """
+    Class that runs multiple featurizers on the same data
+    All featurizers must take the same kind of data as input
+    to the featurize function."""
 
     def __init__(self, featurizers):
-        """Create a new instance of this featurizer
+        """
+        Create a new instance of this featurizer.
+
         Args:
-            featurizers - [BaseFeaturizer], list of featurizers to run
+            featurizers ([BaseFeaturizer]): list of featurizers to run.
         """
         self.featurizers = featurizers
 

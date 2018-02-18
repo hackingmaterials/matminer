@@ -238,7 +238,6 @@ class CationProperty(ElementProperty):
 class OxidationStates(BaseFeaturizer):
     """
     Statistics about the oxidation states for each specie.
-
     Features are concentration-weighted statistics of the oxidation states.
     """
 
@@ -283,15 +282,15 @@ class OxidationStates(BaseFeaturizer):
         return ['Logan Ward']
 
 class AtomicOrbitals(BaseFeaturizer):
-    '''
-    class to determine the highest occupied molecular orbital (HOMO) and
-    lowest unocupied molecular orbital LUMO in a composition. The atomic
-    orbital energies of neutral ions with LDA DFT were computed by NIST.
+    """
+    Determine the highest occupied molecular orbital (HOMO) and
+    lowest unocupied molecular orbital (LUMO) in a composition. The atomic
+    orbital energies of neutral ions with LDA-DFT were computed by NIST.
     https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
-    '''
+    """
         
     def featurize(self, comp):
-        '''
+        """
         Args:
             comp: (Composition)
                 pymatgen Composition object
@@ -305,7 +304,7 @@ class AtomicOrbitals(BaseFeaturizer):
             LUMO_energy: (float in eV) absolute energy of LUMO
             gap_AO: (float in eV)
                 the estimated bandgap from HOMO and LUMO energeis
-        '''
+        """
 
         string_comp = comp.reduced_formula
 
@@ -351,9 +350,10 @@ class BandCenter(BaseFeaturizer):
         geometric mean of electronegativity.
 
         Args:
-            comp: (Composition)
+            comp (Composition).
 
-        Returns: (float) band center
+        Returns:
+            (float) band center.
 
         """
         prod = 1.0
@@ -460,11 +460,9 @@ class ElectronegativityDiff(BaseFeaturizer):
 
 class ElectronAffinity(BaseFeaturizer):
     """
-    Calculate average electron affinity times formal charge of anion elements
-
-    Note: The formal charges must already be computed before calling `featurize`
-
-    Generates average (electron affinity*formal charge) of anions
+    Calculate average electron affinity times formal charge of anion elements.
+    Note: The formal charges must already be computed before calling `featurize`.
+    Generates average (electron affinity*formal charge) of anions.
     """
 
     def __init__(self):
@@ -517,7 +515,7 @@ class ElectronAffinity(BaseFeaturizer):
 
 class Stoichiometry(BaseFeaturizer):
     """
-    Class to calculate stoichiometric attributes.
+    Calculate stoichiometric attributes.
 
     Parameters:
         p_list (list of ints): list of norms to calculate
@@ -765,13 +763,12 @@ class IonProperty(BaseFeaturizer):
     def implementors(self):
         return ["Jiming Chen", "Logan Ward"]
 
-      
-# TODO: is this descriptor useful or just noise?
+
+# TODO: implement citations
 class ElementFraction(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
-
-    Generates: vector where each index represents an element in atomic number order.
+    Generates a vector where each index represents an element in atomic number order.
     """
 
     def __init__(self):
@@ -860,7 +857,7 @@ class CohesiveEnergy(BaseFeaturizer):
 
     def __init__(self, mapi_key=None):
         """
-        Class to get cohesive energy per atom of a compound by adding known
+        Get cohesive energy per atom of a compound by adding known
         elemental cohesive energies from the formation energy of the
         compound.
 
@@ -925,7 +922,7 @@ class CohesiveEnergy(BaseFeaturizer):
 
 class Miedema(BaseFeaturizer):
     """
-    Class to calculate the formation enthalpies of the intermetallic compound,
+    Calculate the formation enthalpies of the intermetallic compound,
     solid solution and amorphous phase of a given composition, based on the
     semi-empirical Miedema model (and some extensions), particularly for
     transitional metal alloys.
