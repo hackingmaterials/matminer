@@ -5,6 +5,12 @@
 matminer Changelog
 ==================
 
+**v0.2.4**
+
+* updates to PlotlyFig (A. Dunn, A. Faghaninia)
+* adapt to new OP parameters (N. Zimmermann)
+* bugfixes, cleanups, doc updates (A. Faghaninia, A. Dunn, Q. Wang, N. Zimmermann, A. Jain)
+
 **v0.2.3**
 
 * MDF data retrieval (J. Montoya)

@@ -1061,7 +1061,19 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return ["minimum relative distance of each site"]
 
     def citations(self):
-        return []
+        return ["@article{Zimmermann2017,"
+                "author = {Zimmermann, Nils E. R. and Horton, Matthew K."
+                " and Jain, Anubhav and Haranczyk, Maciej},"
+                "doi = {10.3389/fmats.2017.00034},"
+                "journal = {Frontiers in Materials},"
+                "pages = {34},"
+                "title = {{Assessing Local Structure Motifs Using Order"
+                " Parameters for Motif Recognition, Interstitial"
+                " Identification, and Diffusion Path Characterization}},"
+                "url = {https://www.frontiersin.org/articles/10.3389/fmats.2017.00034},"
+                "volume = {4},"
+                "year = {2017}"
+                "}"]
 
     def implementors(self):
         return ["Nils E. R. Zimmermann"]

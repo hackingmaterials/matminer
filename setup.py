@@ -9,7 +9,7 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.2.3',
+        version='0.2.4',
         description='matminer is a library that contains tools for data mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
         url='https://github.com/hackingmaterials/matminer',
@@ -25,8 +25,7 @@ if __name__ == "__main__":
                           'citrination-client>=2.1.0', 'plotly>=2.0.12',
                           'mdf_forge>=0.5.1'],
         extras_require={'mpds': ['jmespath>=0.9.3', 'ujson>=1.35', 'httplib2>=0.10.3', 'ase>=3.14.1'],
-                        'plot': ['matplotlib>=2.0.0'],
-                        'pycookiecheat': ['pycookiecheat>=0.4.0']},
+                        'plot': ['matplotlib>=2.0.0']},
         classifiers=['Programming Language :: Python :: 2.7',
                      'Programming Language :: Python :: 3.6',
                      'Development Status :: 4 - Beta',

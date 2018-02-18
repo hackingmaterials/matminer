@@ -13,18 +13,6 @@ Subpackages
     matminer.figrecipes
     matminer.utils
 
-Submodules
-----------
-
-matminer\.pyCookieCheat module
-------------------------------
-
-.. automodule:: matminer.pyCookieCheat
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Module contents
 ---------------
 
