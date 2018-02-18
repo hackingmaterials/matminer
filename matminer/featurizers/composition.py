@@ -379,7 +379,7 @@ class BandCenter(BaseFeaturizer):
     def implementors(self):
         return ["Anubhav Jain"]
 
-# TODO: this featurizer should fail gracefully for compounds with no clear anions (e.g., metals where all elements have zero oxidation) - returning either NaN or zero.
+
 class ElectronegativityDiff(BaseFeaturizer):
     """
     Features based on the electronegativity difference between the anions and
@@ -424,11 +424,21 @@ class ElectronegativityDiff(BaseFeaturizer):
         # Determine the average anion EN
         anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
 
+        # If there are no anions, raise an Exception
+        if len(anions) == 0:
+            raise Exception('Features not applicable: Compound contains no anions')
+
         anion_en = [s.element.X for s in anions]
         mean_anion_en = PropertyStats.mean(anion_en, anion_fractions)
 
         # Determine the EN difference for each cation
         cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
+
+        # If there are no cations, raise an Exception
+        #  It is possible to construct a non-charge-balanced Composition, so we have
+        #   to check for both the presence of anions and cations
+        if len(cations) == 0:
+            raise Exception('Features not applicable: Compound contains no cations')
 
         en_difference = [mean_anion_en - s.element.X for s in cations]
 
