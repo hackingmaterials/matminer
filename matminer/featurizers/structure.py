@@ -11,6 +11,7 @@ import scipy.constants as const
 import scipy.integrate as integrate
 
 from pymatgen import Structure
+from pymatgen.util.coord import get_angle
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
 from pymatgen.analysis.ewald import EwaldSummation
@@ -270,6 +271,181 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
     def implementors(self):
         return ["Maxwell Dylla", "Saurabh Bajaj"]
+
+
+class AngularFourierSeries(BaseFeaturizer):
+    """
+    Compute the angular fourier series (AFS) for a structure. The AFS includes
+    both radial and angular information for a structure. The AFS is the product
+    of distance functionals (g_n, g_n') between two pairs of atoms (sharing one
+    site in common) and the cosine of the angle between the two pairs. The AFS
+    is site-specific and given a list of distance functionals, it is a
+    3-dimentional feature (the axes are g_n, g_n', site). There are several
+    options using this featurizer:
+
+    1. total-structure (reccomended) v.s. site-specific (advanced users)
+        This option controls whether to compute AFS for each site independantly
+        or to combine all sites into one AFS. If using site-specific, the
+        number of features may not be the same for all structures.
+
+    2. full-matrix v.s. diagonal
+        Whether to compute the full matrix of (g_n, g_n') features or to only
+        compute the diagonal elements (g_n = g_n')
+
+    Examples of distance functionals are square functions, gaussians, trig
+    functions, and bessel functions. An example for gaussians:
+        lambda d: exp( -(d - d_n)**2 ), where d_n is the coefficient for g_n
+
+    Args:
+        bins:          (list of functions) a list of callable distance
+                        functionals. the arguments of each function should be a
+                        floating point distance and the function should return
+                        a float. Functions should support calling with scalar
+                        numpy arrays.
+                            (e.g. lambda d: exp( a_0 * (d - b_0)**2 ))
+        cutoff:        (float) maximum distance to look for neighbors. The
+                        featurizer will run slowly for large distance cutoffs
+                        because of the number of neighbor pairs scales as
+                        the square of the number of neighbors
+        site_specific: (bool) whether to compute site specific AFS. If false,
+                        sum AFS from all sites
+        full_matrix:   (bool) whether to compute full (g_n, g_n') matrix. If
+                        false, only compute diagonal elements
+    """
+
+    def __init__(self, bins, cutoff=20.0, site_specific=False,
+                 full_matrix=True):
+        self.bins = bins
+        self.cutoff = cutoff
+        self.site_specific = site_specific
+        self.full_matrix = full_matrix
+        self.AFSs = None
+
+    def featurize(self, s):
+        """
+        Get AFS of the input structure.
+        Args:
+            s: Pymatgen Structure object.
+
+        Returns:
+            Flattened list of AFS values. The list order is (site# bin# bin#)
+            The site# corresponds to the pymatgen site index.
+        """
+
+        if not s.is_ordered:
+            raise ValueError("Disordered structure support not built yet")
+
+        # Generate list of neighbor position vectors (relative to central
+        # atom) and distances from each central site as touples
+        sites = s._sites
+        site_indicies = range(0, len(sites))
+        neighbors_lst = s.get_all_neighbors(self.cutoff, include_index=False)
+
+        neighbor_collection = OrderedDict()
+        for site_index in site_indicies:
+            central_site = sites[site_index]
+            neighbor_collection['site {}'.format(site_index)] = [
+                (neighbor[0].coords - central_site.coords, neighbor[1])
+                for neighbor in neighbors_lst[site_index]]
+
+        # Generate exaustive permutations of neighbor pairs around each central
+        # site (order matters). Does not allow repeat elements (i.e. there
+        # are two distinct sites in every permutation)
+        neighbor_touples = OrderedDict()
+        for site_index in site_indicies:
+            key = 'site {}'.format(site_index)
+            neighbor_touples[key] = itertools.permutations(
+                neighbor_collection[key], 2)
+
+        # Generate cos(theta) between neighbor pairs for each central site.
+        # Also, retain data on neighbor distances for each pair
+        neighbor_collection = OrderedDict()
+        for site_index in site_indicies:
+            key = 'site {}'.format(site_index)
+
+            # process with matrix algebra, we really need the speed here
+            data = np.array(list(neighbor_touples[key]))
+            v1, v2 = np.vstack(data[:, 0, 0]), np.vstack(data[:, 1, 0])
+            distances = data[:, :, 1]
+
+            neighbor_collection[key] = np.concatenate([
+                np.clip(np.einsum('ij,ij->i', v1, v2) /
+                        np.linalg.norm(v1, axis=1) /
+                        np.linalg.norm(v2, axis=1), -1.0, 1.0).reshape(-1, 1),
+                distances], axis=1)
+
+        # Generate distance functional matrix (g_n, g_n')
+        if self.full_matrix:
+
+            # generate full matrix of combinations
+            bin_combos = list(itertools.product(self.bins, repeat=2))
+            bin_names = list(itertools.product(range(0, len(self.bins)),
+                                               repeat=2))
+
+        else:
+
+            # only generate diagonal elements
+            bin_combos = [(bin, bin) for bin in self.bins]
+            bin_names = [(i, i) for i in range(0, len(self.bins))]
+
+        # Compute AFS values for each element of the bin matrix for each site
+        AFSs = OrderedDict()
+        for key, value in neighbor_collection.items():
+
+            # need to cast arrays as floats to use np.exp
+            cos_angles, dist1, dist2 = value[:, 0].astype(float),\
+                value[:, 1].astype(float), value[:, 2].astype(float)
+            AFSs[key] = [sum(combo[0](dist1) * combo[1](dist2) *
+                             cos_angles) for combo in bin_combos]
+
+        # Pair AFS values with bin labels
+        self.AFSs = OrderedDict()
+
+        if not self.site_specific:
+
+            # sum all AFS from each site
+            total_AFS = sum(np.array([item for item in AFSs.values()]))
+            for i in range(0, len(total_AFS)):
+                self.AFSs['all bin {} bin {}'.format(bin_names[i][0],
+                                                     bin_names[i][1])] =\
+                    total_AFS[i]
+        else:
+
+            # Make features for every site
+            for site, values in AFSs.items():
+                for i in range(0, len(bin_combos)):
+                    self.AFSs['{} bin {} bin {}'.format(site,
+                                                        bin_names[i][0],
+                                                        bin_names[i][1])] =\
+                        AFSs[site][i]
+
+        for key, value in self.AFSs.items():
+            print(key, value)
+
+        return list(self.AFSs.values())
+
+    def feature_labels(self):
+        # the features are not always homogeneous if you use GDRF or pairwise
+        # GDRF mode, so you need to call feature_labels() after featurize()
+        if self.AFSs is None:
+            raise ValueError('You need to call featurize() before '
+                             'feature_labels(). In some modes, the features '
+                             'which are returned are not homogeneous for all '
+                             'compounds.')
+        else:
+            return list(self.GRDFs.keys())
+
+    def citations(self):
+        return ['@article{PhysRevB.95.144110, title = {Representation of compo'
+                'unds for machine-learning prediction of physical properties},'
+                ' author = {Seko, Atsuto and Hayashi, Hiroyuki and Nakayama, '
+                'Keita and Takahashi, Akira and Tanaka, Isao},'
+                'journal = {Phys. Rev. B}, volume = {95}, issue = {14}, '
+                'pages = {144110}, year = {2017}, publisher = {American Physic'
+                'al Society}, doi = {10.1103/PhysRevB.95.144110}}']
+
+    def implementors(self):
+        return ["Maxwell Dylla"]
 
 
 class RadialDistributionFunction(BaseFeaturizer):
