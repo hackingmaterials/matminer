@@ -764,7 +764,6 @@ class IonProperty(BaseFeaturizer):
         return ["Jiming Chen", "Logan Ward"]
 
 
-# TODO: implement citations
 class ElementFraction(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
@@ -799,6 +798,9 @@ class ElementFraction(BaseFeaturizer):
 
     def implementors(self):
         return ["Ashwin Aggarwal, Logan Ward"]
+
+    def citations(self):
+        return []
 
 
 class TMetalFraction(BaseFeaturizer):
