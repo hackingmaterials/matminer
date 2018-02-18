@@ -915,9 +915,6 @@ class EwaldSiteEnergy:
 
         # Check if the new input is the last
         #  Note: We use 'is' rather than structure comparisons for speed
-        #
-        #  TODO: Figure out if this implementation is thread-safe! I was debating adding
-        #        Locks, but think we are OK
         if strc is self.__last_structure:
             ewald = self.__last_ewald
         else:
