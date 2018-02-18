@@ -765,8 +765,8 @@ class IonProperty(BaseFeaturizer):
     def implementors(self):
         return ["Jiming Chen", "Logan Ward"]
 
-      
-# TODO: is this descriptor useful or just noise?
+
+# TODO: implement citations
 class ElementFraction(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
