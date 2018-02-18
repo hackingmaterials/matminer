@@ -393,7 +393,7 @@ HOMO_energy: (float in eV) absolute energy of HOMO
 LUMO_character: (str) orbital symbol (‘s’, ‘p’, ‘d’, or ‘f’)
 LUMO_element: (str) symbol of element for LUMO
 LUMO_energy: (float in eV) absolute energy of LUMO
-bandgap: (float in eV)</p>
+gap_AO: (float in eV)</p>
 <blockquote class="last">
 <div>the estimated bandgap from HOMO and LUMO energeis</div></blockquote>
 </dd>
@@ -827,19 +827,19 @@ containing following parameters for 73 types of elements:</p>
 </dl>
 </dd>
 <dt>Returns:</dt>
-<dd><p class="first">a list of Miedema formation enthalpies (per atom) of target structures
-for a given composition:</p>
-<blockquote class="last">
-<div><p>formation_enthalpy_inter: for interatomic compound
-formation_enthalpy_ss: for solid solution, can be divided into</p>
+<dd><dl class="first last docutils">
+<dt>(list of floats) Miedema formation enthalpies (per atom)</dt>
+<dd><p class="first">-formation_enthalpy_inter: for interatomic compound
+-formation_enthalpy_ss: for solid solution, can be divided into</p>
 <blockquote>
 <div><dl class="docutils">
 <dt>‘min’, ‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’</dt>
 <dd>for different lattice_types</dd>
 </dl>
 </div></blockquote>
-<p>formation_enthalpy_amor: for amorphous phase</p>
-</div></blockquote>
+<p class="last">-formation_enthalpy_amor: for amorphous phase</p>
+</dd>
+</dl>
 </dd>
 </dl>
 <dl class="method">
@@ -860,12 +860,13 @@ formation_enthalpy_ss: for solid solution, can be divided into</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.deltaH_chem">
 <code class="descname">deltaH_chem</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em>, <em>struct</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_chem" title="Permalink to this definition">¶</a></dt>
-<dd><p>chemical term of formation enthalpy</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>elements (list of str): list of elements
+<dd><p>Chemical term of formation enthalpy
+Args:</p>
+<blockquote>
+<div>elements (list of str): list of elements
 fracs (list of floats): list of atomic fractions
-struct (str): ‘inter’, ‘ss’ or ‘amor’</dd>
+struct (str): ‘inter’, ‘ss’ or ‘amor’</div></blockquote>
+<dl class="docutils">
 <dt>Returns:</dt>
 <dd>deltaH_chem (float): chemical term of formation enthalpy</dd>
 </dl>
@@ -874,11 +875,12 @@ struct (str): ‘inter’, ‘ss’ or ‘amor’</dd>
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.deltaH_elast">
 <code class="descname">deltaH_elast</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_elast" title="Permalink to this definition">¶</a></dt>
-<dd><p>elastic term of formation enthalpy</p>
+<dd><p>Elastic term of formation enthalpy
+Args:</p>
+<blockquote>
+<div>elements (list of str): list of elements
+fracs (list of floats): list of atomic fractions</div></blockquote>
 <dl class="docutils">
-<dt>Args:</dt>
-<dd>elements (list of str): list of elements
-fracs (list of floats): list of atomic fractions</dd>
 <dt>Returns:</dt>
 <dd>deltaH_elastic (float): elastic term of formation enthalpy</dd>
 </dl>
@@ -887,12 +889,13 @@ fracs (list of floats): list of atomic fractions</dd>
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.deltaH_struct">
 <code class="descname">deltaH_struct</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em>, <em>latt</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_struct" title="Permalink to this definition">¶</a></dt>
-<dd><p>structural term of formation enthalpy, only for solid solution</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>elements (list of str): list of elements
+<dd><p>Structural term of formation enthalpy, only for solid solution
+Args:</p>
+<blockquote>
+<div>elements (list of str): list of elements
 fracs (list of floats): list of atomic fractions
-latt (str): ‘fcc’, ‘bcc’, ‘hcp’ or ‘no_latt’</dd>
+latt (str): ‘fcc’, ‘bcc’, ‘hcp’ or ‘no_latt’</div></blockquote>
+<dl class="docutils">
 <dt>Returns:</dt>
 <dd>deltaH_struct (float): structural term of formation enthalpy</dd>
 </dl>
@@ -901,11 +904,12 @@ latt (str): ‘fcc’, ‘bcc’, ‘hcp’ or ‘no_latt’</dd>
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.deltaH_topo">
 <code class="descname">deltaH_topo</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_topo" title="Permalink to this definition">¶</a></dt>
-<dd><p>topological term of formation enthalpy, only for amorphous phase</p>
+<dd><p>Topological term of formation enthalpy, only for amorphous phase
+Args:</p>
+<blockquote>
+<div>elements (list of str): list of elements
+fracs (list of floats): list of atomic fractions</div></blockquote>
 <dl class="docutils">
-<dt>Args:</dt>
-<dd>elements (list of str): list of elements
-fracs (list of floats): list of atomic fractions</dd>
 <dt>Returns:</dt>
 <dd>deltaH_topo (float): topological term of formation enthalpy</dd>
 </dl>
@@ -919,13 +923,11 @@ fracs (list of floats): list of atomic fractions</dd>
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.featurize">
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Get Miedema formation enthalpies of target structures: inter, amor,</dt>
-<dd><dl class="first last docutils">
-<dt>ss (can be further divided into ‘min’, ‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’</dt>
-<dd>for different lattice_types)</dd>
-</dl>
-</dd>
+<dd><p>Get Miedema formation enthalpies of target structures: inter, amor,
+ss (can be further divided into ‘min’, ‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’</p>
+<blockquote>
+<div>for different lattice_types)</div></blockquote>
+<dl class="docutils">
 <dt>Args:</dt>
 <dd>comp: Pymatgen composition object</dd>
 <dt>Returns:</dt>
@@ -1272,15 +1274,16 @@ rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <div>where <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/9172efc523d7488d4c3ed299d0be813de01503b8.png" alt="\eta"/> is a scaling function,
 <img class="math" src="_images/math/35bab58b40a77a2e24ecb9f58898f1813de64459.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> and <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/>, and <img class="math" src="_images/math/074903764bb5a464b7c346e84f43cba2174f3ab0.png" alt="f(r)"/> is a cutoff function where
 :math:<a href="#id3"><span class="problematic" id="id4">`</span></a>f(r) = 0.5[cos(</div></blockquote>
-<p>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/b851d3a5fb872ad82d61f964772ca1cc2520a590.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</p>
-<blockquote>
-<div>The direction-resolved fingerprints are computed using
-:math:<a href="#id5"><span class="problematic" id="id6">`</span></a>V_i^k(eta) = sumlimits_{i</div></blockquote>
+<dl class="docutils">
+<dt>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/b851d3a5fb872ad82d61f964772ca1cc2520a590.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</dt>
+<dd>The direction-resolved fingerprints are computed using
+:math:<a href="#id5"><span class="problematic" id="id6">`</span></a>V_i^k(eta) = sumlimits_{i</dd>
+</dl>
 <p>e j} 
 rac{r_{ij}^k}{r_{ij}} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <blockquote>
-<div><p>where <img class="math" src="_images/math/22a57909899e26fbb172500446c43f2ba7ebd563.png" alt="r_{ij}^k"/> is the <img class="math" src="_images/math/95cd8c0e712982ebb308efa59408cf9962067b3c.png" alt="k^{th}"/> component of <div class="system-message">
+<div>where <img class="math" src="_images/math/22a57909899e26fbb172500446c43f2ba7ebd563.png" alt="r_{ij}^k"/> is the <img class="math" src="_images/math/95cd8c0e712982ebb308efa59408cf9962067b3c.png" alt="k^{th}"/> component of <div class="system-message">
 <p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">old{r}_i - old{r}_j</tt>)</p>
 latex exited with error
 [stdout]
@@ -1335,10 +1338,9 @@ l.12 $^^Hold{r}_i - ^^H
 Output written on math.dvi (1 page, 328 bytes).
 Transcript written on math.log.
 </div>
-.</p>
-<p>Parameters:</p>
-<p>TODO: Differentiate between different atom types (maybe as another class)</p>
-</div></blockquote>
+.
+Parameters:
+TODO: Differentiate between different atom types (maybe as another class)</div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.site.AGNIFingerprints.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>directions=(None</em>, <em>'x'</em>, <em>'y'</em>, <em>'z')</em>, <em>etas=None</em>, <em>cutoff=8</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AGNIFingerprints.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1378,7 +1380,7 @@ cutoff (float): Cutoff distance (Angstroms)</p>
 
 <dl class="class">
 <dt id="matminer.featurizers.site.ChemEnvSiteFingerprint">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">ChemEnvSiteFingerprint</code><span class="sig-paren">(</span><em>cetypes</em>, <em>strategy</em>, <em>geom_finder</em>, <em>max_csm=8</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemEnvSiteFingerprint" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">ChemEnvSiteFingerprint</code><span class="sig-paren">(</span><em>cetypes</em>, <em>strategy</em>, <em>geom_finder</em>, <em>max_csm=8</em>, <em>max_dist_fac=1.41</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemEnvSiteFingerprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Site fingerprint computed from pymatgen’s ChemEnv package
 that provides resemblance percentages of a given site
@@ -1397,10 +1399,11 @@ max_csm (float): maximum continuous symmetry measure (CSM;</p>
 larger than max_csm will be set to max_csm in order
 to avoid negative values (i.e., all features are
 constrained to be between 0 and 1).</div></blockquote>
+<p>max_dist_fac (float): maximum distance factor (default: 1.41).</p>
 </div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.site.ChemEnvSiteFingerprint.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>cetypes</em>, <em>strategy</em>, <em>geom_finder</em>, <em>max_csm=8</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemEnvSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>cetypes</em>, <em>strategy</em>, <em>geom_finder</em>, <em>max_csm=8</em>, <em>max_dist_fac=1.41</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemEnvSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1462,29 +1465,44 @@ Args:</p>
 <em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">ChemicalSRO</code><span class="sig-paren">(</span><em>nn</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemicalSRO" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Chemical short-range ordering (SRO) features to evaluate the deviation
-of local chemistry with the nominal composition of the structure.</p>
-<p>f_el = N_el/(sum of N_el) - c_el,
+of local chemistry with the nominal composition of the structure.
+f_el = N_el/(sum of N_el) - c_el,
 where N_el is the number of each element type in the neighbors around
 the target site, sum of N_el is the sum of all possible element types
 (coordination number), and c_el is the composition of the specific
-element in the entire structure.</p>
-<p>Here the calculation is run for each element present in the structure.</p>
-<p>A positive f_el indicates the “bonding” with the specific element
+element in the entire structure.
+Here the calculation is run for each element present in the structure.
+A positive f_el indicates the “bonding” with the specific element
 is favored, at least in the target site;
 A negative f_el indicates the “bonding” is not favored, at least
-in the target site.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
+in the target site.
+Args:</p>
+<blockquote>
+<div><dl class="docutils">
 <dt>nn (NearestNeighbor): instance of one of pymatgen’s Nearest Neighbor</dt>
 <dd>classes.</dd>
 </dl>
-</dd>
-</dl>
+</div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.site.ChemicalSRO.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>nn</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemicalSRO.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.site.ChemicalSRO.cal_el_amt">
+<em class="property">static </em><code class="descname">cal_el_amt</code><span class="sig-paren">(</span><em>structs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemicalSRO.cal_el_amt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify and “store” the element types and composition of structures,
+avoiding repeated calculation of composition when featurizing many
+sites in one structure.
+Args:</p>
+<blockquote>
+<div>structs (pandas series): series of pymatgen Structures</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(list of str): elements present in the structures
+(dict): composition dicts of the structures</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.site.ChemicalSRO.citations">
@@ -1507,6 +1525,20 @@ idx (int): index of target site in structure.</div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>(list of floats): Chemical SRO features for each element.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.ChemicalSRO.featurize_dataframe">
+<code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>ignore_errors=True</em>, <em>inplace=True</em>, <em>n_jobs=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemicalSRO.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Featurize the dataframe with ChemicalSRO features.
+Args:</p>
+<blockquote>
+<div>df (pandas dataframe): Dataframe containing input data
+col_id (str or [str]): The dataframe key corresponding to structures</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(pandas dataframe) ChemicalSRO-featurized dataframe</dd>
 </dl>
 </dd></dl>
 
@@ -1619,10 +1651,10 @@ parameter which is always set to 1.</p>
 <dt id="matminer.featurizers.site.CrystalSiteFingerprint.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>optypes</em>, <em>override_cn1=True</em>, <em>cutoff_radius=8</em>, <em>tol=0.01</em>, <em>cation_anion=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the CrystalSiteFingerprint. Use the from_preset() function to
-use default params.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
+use default params.
+Args:</p>
+<blockquote>
+<div><dl class="docutils">
 <dt>optypes (dict): a dict of coordination number (int) to a list of str</dt>
 <dd>representing the order parameter types</dd>
 <dt>override_cn1 (bool): whether to use a special function for the single</dt>
@@ -1632,12 +1664,11 @@ use default params.</p>
 tol (float): numerical tolerance (in case your site distances are</p>
 <blockquote>
 <div>not perfect or to correct for float tolerances)</div></blockquote>
-<dl class="last docutils">
+<dl class="docutils">
 <dt>cation_anion (bool): whether to only consider cation&lt;-&gt;anion bonds</dt>
 <dd>(bonds with zero charge are also allowed)</dd>
 </dl>
-</dd>
-</dl>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -1668,15 +1699,14 @@ idx (int): index of target site in structure.</div></blockquote>
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.CrystalSiteFingerprint.from_preset">
 <em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>cation_anion=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalSiteFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use preset parameters to get the fingerprint</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">preset (str): name of preset (“cn” or “ops”)
+<dd><p>Use preset parameters to get the fingerprint
+Args:</p>
+<blockquote>
+<div><p>preset (str): name of preset (“cn” or “ops”)
 cation_anion (bool): whether to only consider cation&lt;-&gt;anion bonds</p>
-<blockquote class="last">
+<blockquote>
 <div>(bonds with zero charge are also allowed)</div></blockquote>
-</dd>
-</dl>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -1690,17 +1720,18 @@ cation_anion (bool): whether to only consider cation&lt;-&gt;anion bonds</p>
 <dt id="matminer.featurizers.site.EwaldSiteEnergy">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">EwaldSiteEnergy</code><span class="sig-paren">(</span><em>accuracy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.EwaldSiteEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Compute site energy from Coulombic interactions</p>
-<dl class="docutils">
-<dt>User notes:</dt>
-<dd><ul class="first last simple">
+<p>Compute site energy from Coulombic interactions
+User notes:</p>
+<blockquote>
+<div><ul class="simple">
 <li>This class uses that <cite>charges that are already-defined for the structure</cite>.</li>
 <li>Ewald summations can be expensive. If you evaluating every site in many
 large structures, run all of the sites for each structure at the same time.
 We cache the Ewald result for the structure that was run last, so looping
 over sites and then structures is faster than structures than sites.</li>
 </ul>
-</dd>
+</div></blockquote>
+<dl class="docutils">
 <dt>Features:</dt>
 <dd>ewald_site_energy - Energy for the site computed from Coulombic interactions</dd>
 </dl>
@@ -1744,7 +1775,7 @@ idx (int): index of target site in structure.</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.site.OPSiteFingerprint">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">OPSiteFingerprint</code><span class="sig-paren">(</span><em>optypes=None</em>, <em>dr=0.1</em>, <em>ddr=0.01</em>, <em>ndr=1</em>, <em>dop=0.001</em>, <em>dist_exp=2</em>, <em>zero_ops=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">OPSiteFingerprint</code><span class="sig-paren">(</span><em>target_motifs=None</em>, <em>dr=0.1</em>, <em>ddr=0.01</em>, <em>ndr=1</em>, <em>dop=0.001</em>, <em>dist_exp=2</em>, <em>zero_ops=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Local structure order parameters computed from the neighbor
 environment of a site. For each order parameter, we determine
@@ -1758,6 +1789,9 @@ coordination number.
 Args:</p>
 <blockquote>
 <div><dl class="docutils">
+<dt>target_motifs (dict): target op or motif type where keys</dt>
+<dd>are corresponding coordination numbers
+(e.g., {4: “tetrahedral”}).</dd>
 <dt>dr (float): width for binning neighbors in unit of relative</dt>
 <dd>distances (= distance/nearest neighbor
 distance).  The binning is necessary to make the
@@ -1786,7 +1820,7 @@ default: True).</dd>
 </div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.site.OPSiteFingerprint.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>optypes=None</em>, <em>dr=0.1</em>, <em>ddr=0.01</em>, <em>ndr=1</em>, <em>dop=0.001</em>, <em>dist_exp=2</em>, <em>zero_ops=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_motifs=None</em>, <em>dr=0.1</em>, <em>ddr=0.01</em>, <em>ndr=1</em>, <em>dop=0.001</em>, <em>dist_exp=2</em>, <em>zero_ops=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.OPSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2151,31 +2185,45 @@ weights (list of floats): Weights for each value</dd>
 <span id="matminer-featurizers-structure-module"></span><h2>matminer.featurizers.structure module<a class="headerlink" href="#module-matminer.featurizers.structure" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.featurizers.structure.BagofBonds">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">BagofBonds</code><span class="sig-paren">(</span><em>nn</em>, <em>bbv=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">BagofBonds</code><span class="sig-paren">(</span><em>nn</em>, <em>bbv=0.0</em>, <em>allowed_bonds=None</em>, <em>approx_bonds=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Compute the number of each kind of bond in a structure, as a fraction of
-the total number of bonds, based on NearestNeighbors.
-For example, in a structure with 2 Li-O bonds and 3 Li-P bonds:</p>
+the total number of bonds, based on NearestNeighbors.</p>
+<p>For example, in a structure with 2 Li-O bonds and 3 Li-P bonds:</p>
 <p>Li-0: 0.4
 Li-P: 0.6</p>
 <p>For dataframes containing structures with various compositions, a unified
 dataframe is returned which has the collection of bond types gathered
-from all structures as columns.</p>
+from all structures as columns. Use allowed_bonds and approx_bonds to
+intelligently limit the possible bonds in the dataframe.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">nn (NearestNeighbors): A Pymatgen nearest neighbors derived object.
-bbv (float): The ‘bad bond values’, values substituted for</p>
-<blockquote class="last">
-<div>structure-bond combinations which can not physically exist, but
+<dd><dl class="first last docutils">
+<dt>nn (NearestNeighbors): A Pymatgen nearest neighbors derived object. For</dt>
+<dd>example, pymatgen.analysis.local_env.VoronoiNN().</dd>
+<dt>bbv (float): The ‘bad bond values’, values substituted for</dt>
+<dd>structure-bond combinations which can not physically exist, but
 exist in the unified dataframe. For example, if a dataframe contains
 structures of BaLiP and BaTiO3, determines the value to place in
-the Li-P column for the BaTiO3 row; by default, is None, resulting
-in NaN.</div></blockquote>
+the Li-P column for the BaTiO3 row; by default, is 0.</dd>
+<dt>allowed_bonds ([str]): A list of allowed bond types; limits the possible</dt>
+<dd>columns in the output dataframe. If a structure has a bond type not
+in allowed_bonds, the bond is skipped and all allowed bonds are
+returned as normal (including bad bond values). Behavior can be
+changed with approx_bonds. The output of .feature_labels() will
+return a list of allowed_bonds for that BagofBonds object.</dd>
+<dt>approx_bonds (bool): If True, approximates the fractions of bonds not</dt>
+<dd>in allowed_bonds (forbidden bonds) with similar allowed bonds.
+Chemical rules are used to determine which bonds are most ‘similar’;
+particularly, the Euclidean distance between the 2-tuples of the
+bonds in Mendeleev no. space is minimized for the approximate
+bond chosen.</dd>
+</dl>
 </dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.structure.BagofBonds.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>nn</em>, <em>bbv=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nn</em>, <em>bbv=0.0</em>, <em>allowed_bonds=None</em>, <em>approx_bonds=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2197,9 +2245,9 @@ structures. This tuple is used to form the unified feature labels.</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.structure.BagofBonds.enumerate_bonds">
-<em class="property">static </em><code class="descname">enumerate_bonds</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.enumerate_bonds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">enumerate_bonds</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.enumerate_bonds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lists out all the bond possibilities in a single structure.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -2228,12 +2276,18 @@ particular structure (e.g., Li-P in BaTiO3) are represented as NaN.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>s (Structure): A pymatgen structure object</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) The feature list of bond fractions, in the order of the</dt>
+<dd>alphabetized corresponding bond names.</dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.structure.BagofBonds.featurize_dataframe">
-<code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>ignore_errors=False</em>, <em>inplace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute features for all entries contained in input dataframe.
 Necessary for returning the correct unified dataframe.</p>
 <dl class="docutils">
