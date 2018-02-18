@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.figrecipes.plotly package &#8212; matminer 0.2.3 documentation</title>
+    <title>matminer.figrecipes.plotly package &#8212; matminer 0.2.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.3',
+        VERSION:     '0.2.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -55,11 +55,11 @@
 <span id="matminer-figrecipes-plotly-make-plots-module"></span><h2>matminer.figrecipes.plotly.make_plots module<a class="headerlink" href="#module-matminer.figrecipes.plotly.make_plots" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig">
-<em class="property">class </em><code class="descclassname">matminer.figrecipes.plotly.make_plots.</code><code class="descname">PlotlyFig</code><span class="sig-paren">(</span><em>df=None</em>, <em>plot_mode='offline'</em>, <em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode='closest'</em>, <em>filename='auto'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=25</em>, <em>ticksize=25</em>, <em>fontfamily='Courier'</em>, <em>height=None</em>, <em>width=None</em>, <em>scale=None</em>, <em>margins=100</em>, <em>pad=0</em>, <em>marker_scale=1.0</em>, <em>text_scale=1.0</em>, <em>tick_scale=1.0</em>, <em>x_scale='linear'</em>, <em>y_scale='linear'</em>, <em>hoverinfo='x+y+text'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.figrecipes.plotly.make_plots.</code><code class="descname">PlotlyFig</code><span class="sig-paren">(</span><em>df=None</em>, <em>plot_mode='offline'</em>, <em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>colbar_title='auto'</em>, <em>hovermode='closest'</em>, <em>filename='auto'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>colorscale='Viridis'</em>, <em>api_key=None</em>, <em>textsize=25</em>, <em>ticksize=25</em>, <em>fontfamily='Courier'</em>, <em>height=None</em>, <em>width=None</em>, <em>scale=None</em>, <em>margins=100</em>, <em>pad=0</em>, <em>marker_scale=1.0</em>, <em>x_scale='linear'</em>, <em>y_scale='linear'</em>, <em>hoverinfo='x+y+text'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>df=None</em>, <em>plot_mode='offline'</em>, <em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>hovermode='closest'</em>, <em>filename='auto'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>api_key=None</em>, <em>textsize=25</em>, <em>ticksize=25</em>, <em>fontfamily='Courier'</em>, <em>height=None</em>, <em>width=None</em>, <em>scale=None</em>, <em>margins=100</em>, <em>pad=0</em>, <em>marker_scale=1.0</em>, <em>text_scale=1.0</em>, <em>tick_scale=1.0</em>, <em>x_scale='linear'</em>, <em>y_scale='linear'</em>, <em>hoverinfo='x+y+text'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>df=None</em>, <em>plot_mode='offline'</em>, <em>plot_title=None</em>, <em>x_title=None</em>, <em>y_title=None</em>, <em>colbar_title='auto'</em>, <em>hovermode='closest'</em>, <em>filename='auto'</em>, <em>show_offline_plot=True</em>, <em>username=None</em>, <em>colorscale='Viridis'</em>, <em>api_key=None</em>, <em>textsize=25</em>, <em>ticksize=25</em>, <em>fontfamily='Courier'</em>, <em>height=None</em>, <em>width=None</em>, <em>scale=None</em>, <em>margins=100</em>, <em>pad=0</em>, <em>marker_scale=1.0</em>, <em>x_scale='linear'</em>, <em>y_scale='linear'</em>, <em>hoverinfo='x+y+text'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for making Plotly plots</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -82,15 +82,28 @@ NOTE: Both ‘online’ and ‘static’ modes require either the fields
 <p>plot_title: (str) title of plot
 x_title: (str) title of x-axis
 y_title: (str) title of y-axis
-hovermode: (str) determines the mode of hover interactions. Can be</p>
+colbar_title (str or None): the colorbar (z) title. If set to</p>
 <blockquote>
-<div>‘x’/’y’/’closest’/False</div></blockquote>
+<div>“auto” the name of the third column (if pd.Series) is chosen.</div></blockquote>
+<dl class="docutils">
+<dt>hovermode: (str) determines the mode of hover interactions. Can be</dt>
+<dd>‘x’/’y’/’closest’/False</dd>
+</dl>
 <p>filename: (str) name/filepath of plot file
 show_offline_plot: (bool) automatically open the plot (the plot is</p>
 <blockquote>
 <div>saved either way); only applies to ‘offline’ mode.</div></blockquote>
 <p>username: (str) plotly account username
-api_key: (str) plotly account API key
+colorscale: (str) Sets the colorscale (colormap). It can be an array</p>
+<blockquote>
+<div>containing arrays mapping a normalized value to an rgb, rgba,
+hex, hsl, hsv, or named color string. At minimum, a mapping for
+the lowest (0) and highest (1) values are required.
+Example: ‘[[0, ‘rgb(0,0,255)’, [1, ‘rgb(255,0,0)’]]’.
+Alternatively, it may be a palette name from the following list:
+Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Jet,
+Picnic, Rainbow, Portland, Hot, Blackbody, Earth, Electric, Viridis</div></blockquote>
+<p>api_key: (str) plotly account API key
 textsize: (int) size of text of plot title and axis titles
 ticksize: (int) size of ticks
 fontfamily: (str) HTML font family - the typeface that will be applied by the web browser. The web browser</p>
@@ -200,6 +213,35 @@ The modes of plotting are:</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.heatmap">
+<code class="descname">heatmap</code><span class="sig-paren">(</span><em>data=None</em>, <em>cols=None</em>, <em>x_bins=6</em>, <em>y_bins=4</em>, <em>precision=1</em>, <em>annotation='count'</em>, <em>annotation_color='black'</em>, <em>colorscale=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.heatmap" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">data: (array) an array of arrays. For example, in case of a pandas dataframe ‘df’, data=df.values.tolist()
+cols ([str]): A list of strings specifying the columns of the</p>
+<blockquote>
+<div>dataframe (either data or self.df) to use. Currenly, only 3
+columns is supported. Note that the order in cols matter, the
+firts is considered x, second y and the third as z (color)</div></blockquote>
+<dl class="docutils">
+<dt>x_bins (int or None): if the unique values for x_prop is more than</dt>
+<dd>x_bins, x_prop is binned to the number of x_bins for better
+presentation</dd>
+</dl>
+<p>y_bins (int or None): similar to x_bins
+precision (int): number of floating points used for binning/display
+annotation (str or None): mode of annotation. Options are: None or</p>
+<blockquote>
+<div>“count”: the number of data available in each cell displayed
+“value”: the actual value of the cell in addition to colorbar</div></blockquote>
+<p class="last">annotation_color (str): the color of annotation (text inside cells)
+colorscale: see the __init__ doc for colorscale</p>
+</dd>
+</dl>
+<p>Returns: A Plotly heatmap plot Figure object.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.heatmap_plot">
 <code class="descname">heatmap_plot</code><span class="sig-paren">(</span><em>data</em>, <em>x_labels=None</em>, <em>y_labels=None</em>, <em>colorscale='Viridis'</em>, <em>colorscale_range=None</em>, <em>annotations_text=None</em>, <em>annotations_text_size=20</em>, <em>annotations_color='white'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.heatmap_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a heatmap plot, either using 2D arrays of values, or a dataframe.</p>
@@ -230,14 +272,14 @@ annotations_color: (str/array) color of annotation text - accepts similar format
 
 <dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.histogram">
-<code class="descname">histogram</code><span class="sig-paren">(</span><em>data=None</em>, <em>cols=None</em>, <em>orientation='vertical'</em>, <em>histnorm='count'</em>, <em>n_bins=None</em>, <em>start=None</em>, <em>end=None</em>, <em>size=None</em>, <em>colors=None</em>, <em>bargap=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.histogram" title="Permalink to this definition">¶</a></dt>
+<code class="descname">histogram</code><span class="sig-paren">(</span><em>data=None</em>, <em>cols=None</em>, <em>orientation='vertical'</em>, <em>histnorm='count'</em>, <em>n_bins=None</em>, <em>bins=None</em>, <em>colors=None</em>, <em>bargap=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a Plotly histogram. If multiple series of data are available,
 will create an overlaid histogram.</p>
 <p>For n_bins, start, end, size, colors, and bargaps, all defaults are
 Plotly defaults.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><dl class="first docutils">
+<dd><dl class="first last docutils">
 <dt>data (DataFrame or list): A dataframe containing at least</dt>
 <dd>one numerical column. Also accepts lists of numerical values.
 If None, uses the dataframe passed into the constructor.</dd>
@@ -248,22 +290,14 @@ histogram in the overlay.</dd>
 <dd>horizontally or vertically. Use “vertical” or “horizontal”.</dd>
 <dt>histnorm: The technique for creating the plot. Can be “probability</dt>
 <dd>density”, “probability”, “density”, or “” (count).</dd>
-</dl>
-<p>n_bins (int): The number of binds to include on each plot.
-start (float or list): The list of starting points for each</p>
-<blockquote>
-<div>histogram’s bins (if overlaid). If only one series of data is
-present or all series should have the same value, a single
-float/int determines the starting point.</div></blockquote>
-<dl class="last docutils">
-<dt>end (float or list): The list of ending points for each histogram’s</dt>
-<dd>bins (if overlaid). If only one series of data is present or
-all series should have the same value, a single float/int
-determines the ending point.</dd>
-<dt>size (float or list): The list of sizes of each histogram’s bins</dt>
-<dd>(if overlaid). If only one series of data is present or all
-series should have the same value, a single float/int determines
-the size of the bins.</dd>
+<dt>n_bins (int or [int]): The number of binds to include on each plot.</dt>
+<dd>if only one number specified, all histograms will have the same
+number of bins</dd>
+<dt>bins (dict or [dict]): specifications of the bins including start,</dt>
+<dd>end and size. If n_bins is set, size cannot be set in bins.
+Also size is ignored if start or end not specified.
+Examples: 1) bins=None, n_bins = 25
+2) bins={‘start’: 0, ‘end’: 50, ‘size’: 2.0}, n_bins=None</dd>
 <dt>colors (str or list): The list of colors for each histogram (if</dt>
 <dd>overlaid). If only one series of data is present or all series
 should have the same value, a single str determines the color
@@ -275,6 +309,27 @@ of the bins.</dd>
 <dt>Returns:</dt>
 <dd>Plotly histogram figure.</dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.parallel_coordinates">
+<code class="descname">parallel_coordinates</code><span class="sig-paren">(</span><em>data=None</em>, <em>cols=None</em>, <em>line=None</em>, <em>precision=2</em>, <em>colbar=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.parallel_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Plotly Parcoords plot from dataframes.
+Args:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>data (DataFrame or list): A dataframe containing at least</dt>
+<dd>one numerical column. Also accepts lists of numerical values.
+If None, uses the dataframe passed into the constructor.</dd>
+<dt>cols ([str]): A list of strings specifying the columns of the</dt>
+<dd>dataframe to use.</dd>
+</dl>
+<p>line (dict): plotly line dict with keys such as “color” or “width”
+precision (int): the number of floating points for columns with</p>
+<blockquote>
+<div>float data type (2 is recommended for a nice visualization)</div></blockquote>
+</div></blockquote>
+<p>Returns: a Plotly scatter matrix plot</p>
 </dd></dl>
 
 <dl class="method">
@@ -353,7 +408,7 @@ they map to a list of two rgb colors)</dd>
 
 <dl class="method">
 <dt id="matminer.figrecipes.plotly.make_plots.PlotlyFig.xy">
-<code class="descname">xy</code><span class="sig-paren">(</span><em>xy_pairs</em>, <em>colorbar=None</em>, <em>labels=None</em>, <em>names=None</em>, <em>modes='markers'</em>, <em>markers=None</em>, <em>lines=None</em>, <em>colorscale='Viridis'</em>, <em>showlegends=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.xy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">xy</code><span class="sig-paren">(</span><em>xy_pairs</em>, <em>colbar=None</em>, <em>colbar_range=None</em>, <em>labels=None</em>, <em>names=None</em>, <em>sizes=None</em>, <em>modes='markers'</em>, <em>markers=None</em>, <em>lines=None</em>, <em>colorscale=None</em>, <em>showlegends=None</em>, <em>normalize_size=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plotly.make_plots.PlotlyFig.xy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make an XY scatter plot, either using arrays of values, or a dataframe.
 Args:</p>
 <blockquote>
@@ -363,31 +418,33 @@ Args:</p>
 example 1: ([1, 2], [3, 4])
 example 2: [(df[‘x1’], df[‘y1’]), (df[‘x2’], df[‘y2’])]
 example 3: [(‘x1’, ‘y1’), (‘x2’, ‘y2’)]</dd>
-<dt>colorbar (list or np.ndarray or pd.Series): set the colorscale for</dt>
-<dd>the colorbar (list of numbers)</dd>
+<dt>colbar (list or np.ndarray or pd.Series): set the colorscale for</dt>
+<dd>the colorbar (list of numbers); overwrites marker[‘color’]</dd>
+<dt>colbar_range ([min, max]): the range of numbers included in colorbar.</dt>
+<dd>if any number is outside of this range, it will be forced to
+either one. Note that if colbar_range is set, the colorbar ticks
+will be updated to reflext -min or max+ at the two ends.</dd>
 <dt>labels (list or [list]): to individually set annotation for scatter</dt>
 <dd>point either the same for all traces or can be set for each</dd>
 <dt>names (str or [str]): list of trace names used for legend. By</dt>
 <dd>default column name (or trace if NA) used if pd.Series passed</dd>
+<dt>sizes (str, float, [float], [list]). Options:</dt>
+<dd>str: column name in data with list of numbers used for marker size
+float: a single size used for all traces in xy_pairs
+[float]: list of fixed sizes used for traces (length==len(xy_pairs))
+[list]: list of list of sizes for each trace in xy_pairs</dd>
 </dl>
 <p>modes (str or [str]): trace style; can be ‘markers’/’lines’/’lines+markers’
 markers (dict or [dict]): gives the ability to fine tune marker</p>
 <blockquote>
-<div>of each scatter plot individually if list of dicts passed</div></blockquote>
+<div>of each scatter plot individually if list of dicts passed. Note
+that the key “size” is forbidden in markers. Use sizes arg instead.</div></blockquote>
 <p>lines (dict or [dict]: similar to markers though only if mode==’lines’
-colorscale: (str) Sets the colorscale (colormap). It can be an array</p>
+colorscale (str):  see the colorscale doc in __init__
+showlegends (bool or [bool]): indicating whether to show legend</p>
 <blockquote>
-<div>containing arrays mapping a normalized value to an rgb, rgba,
-hex, hsl, hsv, or named color string. At minimum, a mapping for
-the lowest (0) and highest (1) values are required.
-Example: ‘[[0, ‘rgb(0,0,255)’, [1, ‘rgb(255,0,0)’]]’.
-Alternatively, it may be a palette name from the following list:
-Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Jet,
-Picnic, Rainbow, Portland, Hot, Blackbody, Earth, Electric, Viridis</div></blockquote>
-<dl class="docutils">
-<dt>showlegends (bool or [bool]): indicating whether to show legend</dt>
-<dd>for each trace (or simply turn it on/off for all if not list)</dd>
-</dl>
+<div>for each trace (or simply turn it on/off for all if not list)</div></blockquote>
+<p>normalize_size (bool): if True, normalize the size list.</p>
 </div></blockquote>
 <p>Returns: A Plotly Scatter plot Figure object.</p>
 </dd></dl>
@@ -527,7 +584,7 @@ the bottom (left) direction for vertical (horizontal) bars</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.4 documentation</a> &#187;</li> 
       </ul>
     </div>
 

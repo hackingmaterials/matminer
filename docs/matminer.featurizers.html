@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.2.3 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.2.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.3',
+        VERSION:     '0.2.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -218,54 +218,57 @@ calculate_band_edges: (bool) whether to also return band edge</p>
 <dt id="matminer.featurizers.base.BaseFeaturizer">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.base.</code><code class="descname">BaseFeaturizer</code><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Abstract class to calculate attributes for compounds</p>
+<p>Abstract class to calculate attributes from raw materials input data
+such a compound formula or a pymatgen crystal structure or
+bandstructure object.</p>
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.citations">
 <code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Citation / reference for feature
-Returns:</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>array - each element should be str citation, ideally in BibTeX</dt>
-<dd>format</dd>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate attribute names</p>
+<dd><p>Generate attribute names.</p>
 <dl class="docutils">
 <dt>Returns:</dt>
-<dd>list of strings for attribute labels</dd>
+<dd>([str]) attribute labels.</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.featurize">
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main featurizer function. Only defined in feature subclasses.
-Args:</p>
-<blockquote>
-<div>x: input data to featurize (type depends on featurizer)</div></blockquote>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
 <dt>Returns:</dt>
-<dd>list of one or more features</dd>
+<dd>(list) one or more features.</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.featurize_dataframe">
 <code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>ignore_errors=False</em>, <em>inplace=True</em>, <em>n_jobs=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute features for all entries contained in input dataframe</p>
+<dd><p>Compute features for all entries contained in input dataframe.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">df (Pandas dataframe): Dataframe containing input data
+<dd><p class="first">df (Pandas dataframe): Dataframe containing input data.
 col_id (str or list of str): column label containing objects to</p>
 <blockquote>
 <div>featurize. Can be multiple labels if the featurize function
-requires multiple inputs</div></blockquote>
+requires multiple inputs.</div></blockquote>
 <dl class="docutils">
 <dt>ignore_errors (bool): Returns NaN for dataframe rows where</dt>
 <dd>exceptions are thrown if True. If False, exceptions
@@ -279,20 +282,20 @@ number of processing cores on the system and sets n_procs to
 this number.</div></blockquote>
 </dd>
 <dt>Returns:</dt>
-<dd>updated Dataframe</dd>
+<dd>updated dataframe.</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.featurize_many">
 <code class="descname">featurize_many</code><span class="sig-paren">(</span><em>entries</em>, <em>n_jobs=1</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.featurize_many" title="Permalink to this definition">¶</a></dt>
-<dd><p>Featurize a list of entries.</p>
-<p>If <cite>featurize</cite> takes multiple inputs, supply inputs as a list of tuples.</p>
+<dd><p>Featurize a list of entries.
+If <cite>featurize</cite> takes multiple inputs, supply inputs as a list of tuples.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>entries (list): A list of entries to be featurized</dd>
+<dd>entries (list): A list of entries to be featurized.</dd>
 <dt>Returns:</dt>
-<dd>list - features for each entry</dd>
+<dd>(list) features for each entry.</dd>
 </dl>
 </dd></dl>
 
@@ -304,16 +307,17 @@ this number.</div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of implementors of the feature
-Returns:</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>array - each element should either be str with author name (e.g.,</dt>
-<dd>“Anubhav Jain”) or dict with required key “name” and other
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
 keys like “email” or “institution” (e.g., {“name”: “Anubhav
 Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -323,14 +327,16 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <em class="property">class </em><code class="descclassname">matminer.featurizers.base.</code><code class="descname">MultipleFeaturizer</code><span class="sig-paren">(</span><em>featurizers</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Class that runs multiple featurizers on the same data
-All featurizers must take the same kind of data as input to the featurize function.</p>
+All featurizers must take the same kind of data as input
+to the featurize function.</p>
 <dl class="method">
 <dt id="matminer.featurizers.base.MultipleFeaturizer.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>featurizers</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new instance of this featurizer
-Args:</p>
-<blockquote>
-<div>featurizers - [BaseFeaturizer], list of featurizers to run</div></blockquote>
+<dd><p>Create a new instance of this featurizer.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>featurizers ([BaseFeaturizer]): list of featurizers to run.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -362,9 +368,9 @@ Args:</p>
 <dt id="matminer.featurizers.composition.AtomicOrbitals">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">AtomicOrbitals</code><a class="headerlink" href="#matminer.featurizers.composition.AtomicOrbitals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>class to determine the highest occupied molecular orbital (HOMO) and
-lowest unocupied molecular orbital LUMO in a composition. The atomic
-orbital energies of neutral ions with LDA DFT were computed by NIST.
+<p>Determine the highest occupied molecular orbital (HOMO) and
+lowest unocupied molecular orbital (LUMO) in a composition. The atomic
+orbital energies of neutral ions with LDA-DFT were computed by NIST.
 <a class="reference external" href="https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations">https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations</a></p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.AtomicOrbitals.citations">
@@ -428,9 +434,10 @@ gap_AO: (float in eV)</p>
 geometric mean of electronegativity.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>comp: (Composition)</dd>
+<dd>comp (Composition).</dd>
+<dt>Returns:</dt>
+<dd>(float) band center.</dd>
 </dl>
-<p>Returns: (float) band center</p>
 </dd></dl>
 
 <dl class="method">
@@ -476,7 +483,7 @@ geometric mean of electronegativity.</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.CohesiveEnergy.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>mapi_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to get cohesive energy per atom of a compound by adding known
+<dd><p>Get cohesive energy per atom of a compound by adding known
 elemental cohesive energies from the formation energy of the
 compound.</p>
 <dl class="docutils">
@@ -525,9 +532,9 @@ formation energy from the Materials Project database.</div></blockquote>
 <dt id="matminer.featurizers.composition.ElectronAffinity">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">ElectronAffinity</code><a class="headerlink" href="#matminer.featurizers.composition.ElectronAffinity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Calculate average electron affinity times formal charge of anion elements</p>
-<p>Note: The formal charges must already be computed before calling <cite>featurize</cite></p>
-<p>Generates average (electron affinity*formal charge) of anions</p>
+<p>Calculate average electron affinity times formal charge of anion elements.
+Note: The formal charges must already be computed before calling <cite>featurize</cite>.
+Generates average (electron affinity*formal charge) of anions.</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.ElectronAffinity.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ElectronAffinity.__init__" title="Permalink to this definition">¶</a></dt>
@@ -618,8 +625,8 @@ stats: Property statistics to compute</dd>
 <dt id="matminer.featurizers.composition.ElementFraction">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">ElementFraction</code><a class="headerlink" href="#matminer.featurizers.composition.ElementFraction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Class to calculate the atomic fraction of each element in a composition.</p>
-<p>Generates: vector where each index represents an element in atomic number order.</p>
+<p>Class to calculate the atomic fraction of each element in a composition.
+Generates a vector where each index represents an element in atomic number order.</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.ElementFraction.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ElementFraction.__init__" title="Permalink to this definition">¶</a></dt>
@@ -771,7 +778,7 @@ avg_ionic_char (float): Average ionic character</dd>
 <dt id="matminer.featurizers.composition.Miedema">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">Miedema</code><span class="sig-paren">(</span><em>struct_types='inter'</em>, <em>ss_types='min'</em>, <em>data_source='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Class to calculate the formation enthalpies of the intermetallic compound,
+<p>Calculate the formation enthalpies of the intermetallic compound,
 solid solution and amorphous phase of a given composition, based on the
 semi-empirical Miedema model (and some extensions), particularly for
 transitional metal alloys.</p>
@@ -946,8 +953,8 @@ ss (can be further divided into ‘min’, ‘fcc’, ‘bcc’, ‘hcp’, ‘n
 <dt id="matminer.featurizers.composition.OxidationStates">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">OxidationStates</code><span class="sig-paren">(</span><em>stats=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.OxidationStates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Statistics about the oxidation states for each specie.</p>
-<p>Features are concentration-weighted statistics of the oxidation states.</p>
+<p>Statistics about the oxidation states for each specie.
+Features are concentration-weighted statistics of the oxidation states.</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.OxidationStates.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>stats=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.OxidationStates.__init__" title="Permalink to this definition">¶</a></dt>
@@ -988,7 +995,7 @@ ss (can be further divided into ‘min’, ‘fcc’, ‘bcc’, ‘hcp’, ‘n
 <dt id="matminer.featurizers.composition.Stoichiometry">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">Stoichiometry</code><span class="sig-paren">(</span><em>p_list=(0</em>, <em>2</em>, <em>3</em>, <em>5</em>, <em>7</em>, <em>10)</em>, <em>num_atoms=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Stoichiometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Class to calculate stoichiometric attributes.</p>
+<p>Calculate stoichiometric attributes.</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
 <dd>p_list (list of ints): list of norms to calculate
@@ -3105,7 +3112,7 @@ two input structures (s1 - s2).</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.4 documentation</a> &#187;</li> 
       </ul>
     </div>
 
