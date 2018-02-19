@@ -6,14 +6,81 @@ import pandas as pd
 import numpy as np
 from six import string_types
 from multiprocessing import Pool, cpu_count
+from sklearn.base import TransformerMixin, BaseEstimator
 
 
-class BaseFeaturizer(object):
+class BaseFeaturizer(BaseEstimator, TransformerMixin):
     """
-    Abstract class to calculate attributes from raw materials input data
+    Abstract class to calculate features from raw materials input data
     such a compound formula or a pymatgen crystal structure or
     bandstructure object.
+
+    ## Using a BaseFeaturizer Class
+
+    There are multiple ways for running the featurize routines:
+
+        `featurize`: Featurize a single entry
+        `featurize_many`: Featurize a list of entries
+        `featurize_dataframe`: Compute features for many entries, store results as
+            columns in a dataframe
+
+    Some featurizers require first calling the `fit` method before the
+    featurization methods can function. Generally, you pass the dataset to
+    fit to determine which features a featurizer should compute. For example,
+    a featurizer that returns the partial radial distribution function
+    may need to know which elements are present in a dataset.
+
+    You can also employ the featurizer as part of a ScikitLearn Pipeline object.
+    For these cases, scikit-learn calls the `transform` function of the `BaseFeaturizer`
+    which is a less-featured wrapper of `featurize_many`. You would then provide your input
+    data as an array to the Pipeline, which would output the featurers as an array.
+
+    Beyond the featurizing capability, BaseFeaturizer also includes methods
+    for retrieving proper references for a featurizer. The `citations` function
+    returns a list of papers that should be cited. The `implementors` function
+    returns a list of people who wrote the featurizer, so that you know
+    who to contact with questions.
+
+    ## Implementing a New BaseFeaturizer Class
+
+    These operations must be implemented for each new featurizer:
+        `featurize` - Takes a single material as input, returns the features of that material.
+        `feature_labels` - Generates a human-meaningful name for each of the features
+        `citations` - Returns a list of citations in BibTeX format
+        `implementors` - Returns a list of people who contributed writing a paper
+
+    None of these operations should change the state of the featurizer. I.e., running each
+    method twice should no produce different results, no class attributes should be changed,
+    running one operation should not affect the output of another.
+
+    All options of the featurizer must be set by the `__init__` function. All options must
+    be listed as keyword arguments, and the value must be saved as a class attribute with
+    the same name (e.g., argument `n` should be stored in `self.n`). These requirements
+    are necessary for compatibility with the `get_params` and `set_params` methods
+    of `BaseEstimator`.
+
+    Depending on the complexity of your featurizer, it may be worthwhile to implement a
+    `from_preset` class method. The `from_preset` method takes the name of a preset and
+    returns an instance of the featurizer with some hard-coded set of inputs. The `from_preset`
+    option is particularly useful for defining the settings used by papers in the literature.
+
+    Optionally, you can implement the `fit` operation if there are attributes of your featurizer that
+    must be set for the featurizer to work. Any variables that are set by fitting should be stored
+    as class attributes that end with an underscore. (This follows the pattern used by
+    scikit-learn).
     """
+
+    def fit(self, X, y=None):
+        """Update the parameters of this featurizer based on available data
+
+        Args:
+            X - [list of tuples], training data"""
+        pass
+
+    def transform(self, X):
+        """Compute features for a list of inputs"""
+
+        return self.featurize_many(X, ignore_errors=True)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             inplace=True, n_jobs=1):
@@ -102,8 +169,7 @@ class BaseFeaturizer(object):
                               "matminer for Python 2.x. Multiprocessing has "
                               "been disabled. Please upgrade to Python 3.x to "
                               "enable multiprocessing.")
-                return self.featurize_many(entries, n_jobs=1,
-                                           ignore_errors=ignore_errors)
+                return self.featurize_many(entries, n_jobs=1, ignore_errors=ignore_errors)
             with Pool(n_jobs) as p:
                 return p.map(self.featurize_wrapper, entries)
 
