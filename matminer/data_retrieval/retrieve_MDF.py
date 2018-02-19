@@ -18,10 +18,10 @@ class MDFDataRetrieval:
 
     Examples:
         >>>mdf_dr = MDFDataRetrieval(anonymous=True)
-        >>>results = mdf_dr.search(elements=["Ag", "Be"], sources=["oqmd"])
+        >>>results = mdf_dr.get_dataframe(elements=["Ag", "Be"], sources=["oqmd"])
 
-        >>>results = mdf_dr.search(sources=['oqmd'],
-        >>>               match_ranges={"oqmd.band_gap.value": [4.0, "*"]})
+        >>>results = mdf_dr.get_dataframe(sources=['oqmd'],
+        >>>              match_ranges={"oqmd.band_gap.value": [4.0, "*"]})
     """
 
     def __init__(self, anonymous=False, **kwargs):
@@ -41,6 +41,8 @@ class MDFDataRetrieval:
                       exclude_fields=None, match_ranges=None,
                       exclude_ranges=None, unwind_arrays=True):
         """
+        Retrieves data from the MDF API and formats it as
+        a Pandas Dataframe
 
         Args:
             sources ([str]): source names to include, e. g. ["oqmd"]
@@ -99,6 +101,8 @@ class MDFDataRetrieval:
 
     def get_dataframe_by_query(self, query, unwind_arrays=True, **kwargs):
         """
+        Gets a dataframe from the MDF API from an explicit string
+        query (rather than input args like get_dataframe).
 
         Args:
             query (str): String for explicit query
@@ -107,7 +111,7 @@ class MDFDataRetrieval:
             **kwargs: kwargs for query
 
         Returns:
-            aggregated data corresponding to query
+            dataframe corresponding to query
 
         """
         results = self.forge.aggregate(q=query, **kwargs)
@@ -119,7 +123,7 @@ class MDFDataRetrieval:
 #TODO: also might be useful to handle units more intelligently
 def make_dataframe(docs, unwind_arrays=True):
     """
-    Formats raw docs returned from search into a dataframe
+    Formats raw docs returned from MDF API search into a dataframe
 
     Args:
         docs [{}]: list of documents from forge search
