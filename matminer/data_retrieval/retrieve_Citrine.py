@@ -48,7 +48,10 @@ class CitrineDataRetrieval:
                       from_record=None, data_set_id=None, max_results=None,
                       show_columns=None):
         """
-        Converts list of json/pifs to a Pandas dataframe
+        Gets a Pandas dataframe object from data retrieved from
+        the Citrine API.  See client docs at
+        http://citrineinformatics.github.io/api-documentation/
+        for more details on input parameters.
 
         Args:
             formula: (str) filter for the chemical formula field; only those
