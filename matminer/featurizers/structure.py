@@ -180,14 +180,49 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     broken down for each pair of atom types.  The PRDF was proposed as a
     structural descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
+
     Args:
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
+
+    Features:
+        Each feature corresponds to the density of number of bonds
+           for a certain pair of elements at a certain range of
+           distances. For example, "Al-Al PRDF r=1.00-1.50" corresponds
+           to the density of Al-Al bonds between 1 and 1.5 distance units
+           By default, this featurizer generates RDFs for each pair
+           of elements in the training set. 
     """
 
     def __init__(self, cutoff=20.0, bin_size=0.1):
         self.cutoff = cutoff
         self.bin_size = bin_size
+        self.elements_ = None
+
+    def fit(self, X, y=None, include_elems=list(), exclude_elems=list()):
+        """Define the list of elements to be included in the PRDF. By default,
+        the PRDF will include all of the elements in `X`
+
+        Args:
+            X: (numpy array nx1) structures used in the training set. Each entry
+                must be Pymatgen Structure objects.
+            y: *Not used*
+            include_elems: (list of string), list of elements that must be included in PRDF
+            exclude_elems: (list of string), list of elmeents that should not be included in PRDF
+        """
+
+        # Initialize list with included elements
+        elements = set([Element(e) for e in include_elems])
+
+        # Get all of elements that appaer
+        for strc, in X:
+            elements.update([e.element if isinstance(e,Specie) else e for e in strc.composition.keys()])
+
+        # Remove the elements excluded by the user
+        elements.difference_update([Element(e) for e in exclude_elems])
+
+        # Store the elements
+        self.elements_ = [e.symbol for e in sorted(elements)]
 
     def featurize(self, s):
         """
@@ -203,7 +238,30 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         if not s.is_ordered:
             raise ValueError("Disordered structure support not built yet")
+        if self.elements_ is None:
+            raise Exception("You must run 'fit' first!")
 
+        dist_bins, prdf = self.compute_prdf(s)  # Assemble the PRDF for each pair
+
+        # Convert the PRDF into a feature array
+        zeros = np.zeros_like(dist_bins)  # Zeros if elements don't appear
+        output = []
+        for key in itertools.combinations_with_replacement(self.elements_, 2):
+            output.append(prdf.get(key, zeros))
+
+        # Stack them together
+        return np.hstack(output)
+
+    def compute_prdf(self, s):
+        """Compute the PRDF for a structure
+
+        Args:
+            s: (Structure), structure to be evaluated
+        Returns:
+            dist_bins - float, start of each of the bins
+            prdf - dict, where the keys is a pair of elements (strings),
+                and the value is the radial distribution function for those paris of elements
+        """
         # Get the composition of the array
         composition = s.composition.fractional_composition.to_reduced_dict
 
@@ -231,29 +289,54 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         # Compute and normalize the prdfs
         prdf = {}
-        dist_bins = np.arange(0, self.cutoff + self.bin_size, self.bin_size)
+        dist_bins = self._make_bins()
         shell_volume = 4.0 / 3.0 * pi * (
-                np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+            np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
-            dist_hist, dist_bins = np.histogram(distances,
-                                                bins=dist_bins, density=False)
+            dist_hist, dist_bins = np.histogram(distances, bins=dist_bins, density=False)
             # Normalize
             n_alpha = composition[key[0]] * s.num_sites
             rdf = dist_hist / shell_volume / n_alpha
 
-            prdf[key] = {'distances': dist_bins, 'distribution': rdf}
+            prdf[key] = rdf
 
-        return [prdf]
+        return dist_bins, prdf
+
+    def _make_bins(self):
+        """Generate the edges of the bins for the PRDF
+
+        Returns:
+            [list of float], edges of the bins
+            """
+        return np.arange(0, self.cutoff + self.bin_size, self.bin_size)
 
     def feature_labels(self):
-        return ["partial radial distribution functions"]
+        if self.elements_ is None:
+            raise Exception("You must run 'fit' first!")
+        bin_edges = self._make_bins()
+        labels = []
+        for e1, e2 in itertools.combinations_with_replacement(self.elements_, 2):
+            for r_start, r_end in zip(bin_edges, bin_edges[1:]):
+                labels.append("{}-{} PRDF r={:.2f}-{:.2f}".format(
+                    e1, e2, r_start, r_end
+                ))
+        return labels
 
     def citations(self):
-        return []
+        return ["@article{Schutt2014,"
+                "author = {Sch{\"{u}}tt, K. T. and Glawe, H. and Brockherde, F. "
+                "and Sanna, A. and M{\"{u}}ller, K. R. and Gross, E. K. U.},"
+                "doi = {10.1103/PhysRevB.89.205118},"
+                "journal = {Physical Review B},"
+                "month = {may},number = {20},pages = {205118},"
+                "title = {{How to represent crystal structures for machine learning:"
+                " Towards fast prediction of electronic properties}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.89.205118},"
+                "volume = {89},""year = {2014}}"]
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ["Logan Ward", "Saurabh Bajaj"]
 
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
