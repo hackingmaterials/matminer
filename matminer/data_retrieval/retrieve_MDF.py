@@ -24,19 +24,22 @@ class MDFDataRetrieval:
         >>>               match_ranges={"oqmd.band_gap.value": [4.0, "*"]})
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, anonymous=False, **kwargs):
         """
         Args:
+            anonymous (bool): whether to use anonymous login (i. e. no
+                globus authentication)
             **kwargs: kwargs for Forge, including index (globus search index
                 to search on), local_ep, anonymous
         """
 
-        self.forge = Forge(**kwargs)
+        self.forge = Forge(anonymous=anonymous, **kwargs)
 
-    def search(self, sources=None, elements=None, titles=None, tags=None,
-               resource_types=None, match_fields=None, exclude_fields=None,
-               match_ranges=None, exclude_ranges=None, raw=False,
-               unwind_arrays=True):
+
+    def get_dataframe(self, sources=None, elements=None, titles=None,
+                      tags=None, resource_types=None, match_fields=None,
+                      exclude_fields=None, match_ranges=None,
+                      exclude_ranges=None, unwind_arrays=True):
         """
 
         Args:
@@ -91,20 +94,14 @@ class MDFDataRetrieval:
         results = self.forge.aggregate()
 
         # Make into DataFrame
-        if raw:
-            return results
-        else:
-            return make_dataframe(results, unwind_arrays=unwind_arrays)
+        return make_dataframe(results, unwind_arrays=unwind_arrays)
 
 
-    def search_by_query(self, query, unwind_arrays=True,
-                        raw=False, **kwargs):
+    def get_dataframe_by_query(self, query, unwind_arrays=True, **kwargs):
         """
 
         Args:
             query (str): String for explicit query
-            raw (bool): whether or not to return raw (non-dataframe)
-                output, defaults to False
             unwind_arrays (bool): whether or not to unwind arrays in
                 flattening docs for dataframe
             **kwargs: kwargs for query
@@ -114,10 +111,7 @@ class MDFDataRetrieval:
 
         """
         results = self.forge.aggregate(q=query, **kwargs)
-        if raw:
-            return results
-        else:
-            return make_dataframe(results, unwind_arrays=unwind_arrays)
+        return make_dataframe(results, unwind_arrays=unwind_arrays)
 
 
 
