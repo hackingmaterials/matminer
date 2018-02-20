@@ -15,7 +15,6 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
               'Alireza Faghaninia  <alireza@lbl.gov>'
 
 # todo: font_scale instead of all options, etc., bigger fonts
-# todo: No multiple colors on violin
 # todo: Change plot mode in each method if you want, and accept a plotlydict obj
 # todo: fix nonetypes in __init__
 # todo: clean this mess
@@ -1117,7 +1116,7 @@ class PlotlyFig:
                 to [0, 1]. If colors is a list, it must contain valid color
                 types as its members. If colors is a dictionary, its keys must
                 represent group names, and corresponding values must be valid
-                color types (str).
+                color types (str). If None, uses grey as all colors.
             use_colorscale: (bool) Only applicable if grouping by another
                 variable. Will implement a colorscale based on the first 2
                 colors of param colors. This means colors must be a list with
@@ -1185,6 +1184,10 @@ class PlotlyFig:
             cols = ['data']
             group_col = None
             group_stats = None
+
+        if not colors:
+            use_colorscale = False
+            colors = ['rgb(105,105,105)'] * data.shape[0]
 
         fig = FF.create_violin(data=data, data_header=cols[0],
                                group_header=group_col, title=title,
