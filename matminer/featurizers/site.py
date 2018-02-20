@@ -897,8 +897,9 @@ class GaussianSymmFunc(BaseFeaturizer):
     neural network potentials”, J Behler, J Chem Phys 134, 074106 (2011).
     The cutoff function is taken as the polynomial form (cosine_cutoff)
     to give a smoothed truncation.
-    A Fortran version can be found in code Amp: Atomistic Machine-learning
-    Package (https://bitbucket.org/andrewpeterson/amp).
+    A Fortran and a different Python version can be found in the code
+    Amp: Atomistic Machine-learning Package
+    (https://bitbucket.org/andrewpeterson/amp).
     Args:
         etas_g2 (list of floats): etas used in radial functions.
                                   (default: [0.05, 4., 20., 80.])
@@ -1027,18 +1028,22 @@ class GaussianSymmFunc(BaseFeaturizer):
                 for gamma_g4 in self.gammas_g4]
 
     def citations(self):
-        citation = ['@Article{Behler2011, '
-                    'author  = {Jörg Behler}, '
-                    'title   = {Atom-centered symmetry functions for '
-                    'constructing high-dimensional neural network potentials}, '
-                    'journal = {The Journal of Chemical Physics}, '
-                    'year    = {2011}, '
-                    'volume  = {134}, '
-                    'number  = {7}, '
-                    'pages   = {074106}, '
-                    'doi     = {10.1063/1.3553717},'
-                    '}']
-        return citation
+        gsf_citation = (
+            '@Article{Behler2011, author = {Jörg Behler}, '
+            'title = {Atom-centered symmetry functions for constructing '
+            'high-dimensional neural network potentials}, '
+            'journal = {The Journal of Chemical Physics}, year = {2011}, '
+            'volume = {134}, number = {7}, pages = {074106}, '
+            'doi = {10.1063/1.3553717}}')
+        amp_citation = (
+            '@Article{Khorshidi2016, '
+            'author = {Alireza Khorshidi and Andrew A. Peterson}, '
+            'title = {Amp : A modular approach to machine learning in '
+            'atomistic simulations}, '
+            'journal = {Computer Physics Communications}, year = {2016}, '
+            'volume = {207}, pages = {310--324}, '
+            'doi = {10.1016/j.cpc.2016.05.010}}')
+        return [gsf_citation, amp_citation]
 
     def implementors(self):
         return ['Qi Wang']
