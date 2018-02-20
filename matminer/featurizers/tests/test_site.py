@@ -9,7 +9,7 @@ from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, CrystalSiteFingerprint, EwaldSiteEnergy, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
-    CoordinationNumber, ChemicalSRO
+    CoordinationNumber, ChemicalSRO, GaussianSymmFunc
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -226,6 +226,19 @@ class FingerprintTests(PymatgenTest):
         csros = ChemicalSRO.from_preset("MinimumVIRENN").\
             featurize_dataframe(data, ['struct', 'site'])
         self.assertAlmostEqual(csros['CSRO_Al_MinimumVIRENN'][0], 0.0)
+
+    def test_gaussiansymmfunc(self):
+        data = pd.DataFrame({'struct': [self.cscl], 'site': [0]})
+        gsf = GaussianSymmFunc()
+        gsfs = gsf.featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(gsfs['G2_0.05'][0], 6.0086817867593822)
+        self.assertAlmostEqual(gsfs['G2_4.0'][0], 2.2415138042932981)
+        self.assertAlmostEqual(gsfs['G2_20.0'][0], 1.00696)
+        self.assertAlmostEqual(gsfs['G2_80.0'][0], 1.0)
+        self.assertAlmostEqual(gsfs['G4_0.005_1.0_1.0'][0], 2.6399416897128658)
+        self.assertAlmostEqual(gsfs['G4_0.005_1.0_-1.0'][0], 0.90049182882301426)
+        self.assertAlmostEqual(gsfs['G4_0.005_4.0_1.0'][0], 1.1810690738596332)
+        self.assertAlmostEqual(gsfs['G4_0.005_4.0_-1.0'][0], 0.033850556557100071)
 
     def test_ewald_site(self):
         ewald = EwaldSiteEnergy(accuracy=4)
