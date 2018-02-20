@@ -575,7 +575,7 @@ class VoronoiFingerprint(BaseFeaturizer):
      computed as n_i/sum(n_i), and i is in the range of 3-10.
      reflect the strength of i-fold symmetry in local sites.
      e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,...]
-             indicating both 4-fold and a stronger 6-fold symmetries are present;
+             indicating both 4-fold and stronger 6-fold symmetries are present;
           for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
              indicating only 4-fold symmetry is present;
           for icosahedra, the Voronoi indices are [0,0,1,0,...],
@@ -884,28 +884,29 @@ class ChemicalSRO(BaseFeaturizer):
 
 class GaussianSymmFunc(BaseFeaturizer):
     """
-    Gaussian symmetry function features suggested by Behler et al., based on
-    pair distances and threefold angles, to approximate functional dependence
-    of local energies, originally used in fitting machine-learning potentials.
-    The symmetry functions can be divided into a set of radial fingerprint
-    (g2 function), and a set of angular fingerprint (g4 function).
-    The number of symmetry functions returned are based on the input arguments
+    Gaussian symmetry function features suggested by Behler et al.,
+    based on pair distances and angles, to approximate the functional
+    dependence of local energies, originally used in the fitting of
+    machine-learning potentials.
+    The symmetry functions can be divided to a set of radial functions
+    (g2 function), and a set of angular functions (g4 function).
+    The number of symmetry functions returned are based on parameters
     of etas_g2, etas_g4, zetas_g4 and gammas_g4.
     See the original papers for more details:
-    “Atom-centered symmetry functions for constructing high-dimensional neural
-    network potentials”, J Behler, J Chem Phys 134, 074106 (2011).
-    The cutoff function is taken as the polynomial form (cosine_cutoff) to give
-    a smoothed truncation.
-    A Fortran version can be found in the code Amp: Atomistic Machine-learning
+    “Atom-centered symmetry functions for constructing high-dimensional
+    neural network potentials”, J Behler, J Chem Phys 134, 074106 (2011).
+    The cutoff function is taken as the polynomial form (cosine_cutoff)
+    to give a smoothed truncation.
+    A Fortran version can be found in code Amp: Atomistic Machine-learning
     Package (https://bitbucket.org/andrewpeterson/amp).
     Args:
-        etas_g2 (list of floats): etas used in radial symmetry functions.
+        etas_g2 (list of floats): etas used in radial functions.
                                   (default: [0.05, 4., 20., 80.])
-        etas_g4 (list of floats): etas used in angular symmetry functions.
+        etas_g4 (list of floats): etas used in angular functions.
                                   (default: [0.005])
-        zetas_g4 (list of floats): zetas used in angular symmetry functions.
+        zetas_g4 (list of floats): zetas used in angular functions.
                                    (default: [1., 4.])
-        gammas_g4 (list of floats): gammas used in angular symmetry functions.
+        gammas_g4 (list of floats): gammas used in angular functions.
                                     (default: [+1., -1.])
         cutoff (float): cutoff distance. (default: 6.5)
     """
