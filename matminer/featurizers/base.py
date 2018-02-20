@@ -96,6 +96,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     able to reproduce the feature, just to get an idea what it is.
     """
 
+    def set_n_jobs(self, n_jobs):
+        """Set the number of threads for this """
+        self._n_jobs = n_jobs
+
+    @property
+    def n_jobs(self):
+        return self._n_jobs if hasattr(self, '_n_jobs') else 1
+
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
 
@@ -108,8 +116,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         return self.featurize_many(X, ignore_errors=True)
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True, n_jobs=1):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True):
         """
         Compute features for all entries contained in input dataframe.
 
@@ -122,10 +129,6 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
             inplace (bool): Whether to add new columns to input dataframe (df)
-            n_jobs (int): Number of parallel processes to execute when
-                featurizing the dataframe. If None, automatically determines the
-                number of processing cores on the system and sets n_procs to
-                this number.
 
         Returns:
             updated dataframe.
@@ -144,7 +147,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 raise ValueError('"{}" exists in input dataframe'.format(col))
 
         # Compute the features
-        features = self.featurize_many(df[col_id].values, n_jobs, ignore_errors)
+        features = self.featurize_many(df[col_id].values, ignore_errors)
 
         # Create dataframe with the new features
         res = pd.DataFrame(features, index=df.index, columns=labels)
@@ -157,13 +160,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         else:
             return pd.concat([df, res], axis=1)
 
-    def featurize_many(self, entries, n_jobs=1, ignore_errors=False):
+    def featurize_many(self, entries, ignore_errors=False):
         """
         Featurize a list of entries.
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
 
         Args:
            entries (list): A list of entries to be featurized.
+           ignore_errors (boolean): Whether to raise Exceptions, or simply
 
         Returns:
            (list) features for each entry.
@@ -183,20 +187,18 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if not isinstance(entries[0], (tuple, list, np.ndarray)):
             entries = zip(entries)
 
-        # set the number of processes to the number of cores on the system
-        n_jobs = cpu_count() if n_jobs is None else n_jobs
-
         # Run the actual featurization
-        if n_jobs == 1:
+        if self.n_jobs == 1:
             return [self.featurize_wrapper(x) for x in entries]
         else:
             if sys.version_info[0] < 3:
-                warnings.warn("Multiprocessing dataframes is not supported in "
+                warnings.warn("Multiprocessing is not supported in "
                               "matminer for Python 2.x. Multiprocessing has "
                               "been disabled. Please upgrade to Python 3.x to "
                               "enable multiprocessing.")
-                return self.featurize_many(entries, n_jobs=1, ignore_errors=ignore_errors)
-            with Pool(n_jobs) as p:
+                self.set_n_jobs(1)
+                return self.featurize_many(entries, ignore_errors=ignore_errors)
+            with Pool(self.n_jobs) as p:
                 return p.map(self.featurize_wrapper, entries)
 
     def featurize_wrapper(self, x):
