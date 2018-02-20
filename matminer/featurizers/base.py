@@ -54,10 +54,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     running one operation should not affect the output of another.
 
     All options of the featurizer must be set by the `__init__` function. All options must
-    be listed as keyword arguments, and the value must be saved as a class attribute with
-    the same name (e.g., argument `n` should be stored in `self.n`). These requirements
-    are necessary for compatibility with the `get_params` and `set_params` methods
-    of `BaseEstimator`.
+    be listed as keyword arguments with default values, and the value must be saved as a
+    class attribute with the same name (e.g., argument `n` should be stored in `self.n`).
+    These requirements are necessary for compatibility with the `get_params` and `set_params`
+    methods of `BaseEstimator`, which enable easy interoperability with scikit-learn.
 
     Depending on the complexity of your featurizer, it may be worthwhile to implement a
     `from_preset` class method. The `from_preset` method takes the name of a preset and
@@ -68,9 +68,35 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     must be set for the featurizer to work. Any variables that are set by fitting should be stored
     as class attributes that end with an underscore. (This follows the pattern used by
     scikit-learn).
+
+    Another implementation to consider is whether it is worth making any utility operations
+    for your featurizer. `featurize` must return a list of features, but this may not be the most
+    natural representation for your features (e.g., a `dict` could be better). Making a separate
+    function for computing features in this natural representation and having the `featurize` function
+    call this method and then convert the data into a list is a recommended approach. Users who want
+    to compute the representation in the natural form can use the utility function and users who
+    want the data in a ML-ready format (list) can call `featurize`. See `PartialRadialDistributionFunction`
+    for an example of this concept.
+
+    ## Documenting a BaseFeaturizer
+
+    The class documentation for each featurizer must contain a description of the options and
+    the features that will be computed. The options of the class must all be defined in the
+    `__init__` function of the class, and we recommend documenting them using the
+    [Google style](https://google.github.io/styleguide/pyguide.html).
+
+    We recommend starting the class documentation with a high-level overview of the features.
+    For example, mention what kind of characteristics of the material they describe and refer
+    the reader to a paper that describes these features well (use a hyperlink if possible, so
+    that the readthedocs will like to that paper). Then, describe each of the individual feautres
+    in a block named "Features". It is necessary here to give the user enough information for user
+    to map a feature name what it means. The objective in this part is to allow people to
+    understand what each column of their dataframe is without having to read the Python code.
+    You do not need to explain all of the math/algorithms behind each feature for them to be
+    able to reproduce the feature, just to get an idea what it is.
     """
 
-    def fit(self, X, y=None):
+    def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
 
         Args:
