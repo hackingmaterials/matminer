@@ -884,14 +884,13 @@ class ChemicalSRO(BaseFeaturizer):
 
 class GaussianSymmFunc(BaseFeaturizer):
     """
-    Gaussian symmetry function fingerprints suggested by Behler et al.,
-    based on pair distances and threefold angles, to approximate functional
-    dependence of local energies, originally used in fitting machine-learning
-    interatomic potentials.
+    Gaussian symmetry function features suggested by Behler et al., based on
+    pair distances and threefold angles, to approximate functional dependence
+    of local energies, originally used in fitting machine-learning potentials.
     The symmetry functions can be divided into a set of radial fingerprint
-    (g2 function), and a set of angular fingerprint (g4 function). The number
-    of symmetry functions returned are based on the input arguments of etas_g2,
-    etas_g4, zetas_g4 and gammas_g4.
+    (g2 function), and a set of angular fingerprint (g4 function).
+    The number of symmetry functions returned are based on the input arguments
+    of etas_g2, etas_g4, zetas_g4 and gammas_g4.
     See the original papers for more details:
     “Atom-centered symmetry functions for constructing high-dimensional neural
     network potentials”, J Behler, J Chem Phys 134, 074106 (2011).
@@ -987,13 +986,13 @@ class GaussianSymmFunc(BaseFeaturizer):
 
     def featurize(self, struct, idx):
         """
-        Get Gaussian Symmetry Function features of site with given index
+        Get Gaussian symmetry function features of site with given index
         in input structure.
         Args:
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
         Returns:
-            (list of floats): Gaussian Symmetry Function features.
+            (list of floats): Gaussian symmetry function features.
         """
         gaussian_funcs = []
         neighbors = struct.get_sites_in_sphere(
