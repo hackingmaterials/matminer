@@ -882,6 +882,83 @@ class ChemicalSRO(BaseFeaturizer):
         return ['Qi Wang']
 
 
+class GaussianSymmFunc(BaseFeaturizer):
+    """
+    Makes symmetry functions as in Nano Letters 14:2670, 2014.
+
+    """
+    @staticmethod
+    def cosine_cutoff(cutoff, R):
+        if R > cutoff:
+            return 0.
+        else:
+            return 0.5 * (np.cos(np.pi * R / cutoff) + 1.)
+
+    @classmethod
+    def g2(cls, eta, center_coord, neigh_coords, cutoff):
+        ridge = 0.
+        for neigh_coord in neigh_coords:
+            R = np.linalg.norm(neigh_coord - center_coord)
+            ridge += (np.exp(-eta * (R ** 2.) / (cutoff ** 2.)) *
+                      cls.cosine_cutoff(R, cutoff))
+        return ridge
+
+    @classmethod
+    def g4(cls, eta, zeta, gamma, center_coord, neigh_coords, cutoff):
+        ridge = 0.
+        for j, neigh_j in enumerate(neigh_coords):
+            for neigh_k in neigh_coords[j+1:]:
+                R_ij = np.linalg.norm(neigh_j - center_coord)
+                R_ik = np.linalg.norm(neigh_k - center_coord)
+                R_jk = np.linalg.norm(neigh_k - neigh_j)
+                cos_theta = np.dot((neigh_j - center_coord),
+                                   (neigh_k - center_coord)) / R_ij / R_ik
+                term = (1. + gamma * cos_theta) ** zeta * \
+                       np.exp(-eta * (R_ij ** 2. + R_ik ** 2. + R_jk ** 2.) /
+                              (cutoff ** 2.)) * \
+                       cls.cosine_cutoff(R_ij, cutoff) * \
+                       cls.cosine_cutoff(R_ik, cutoff) * \
+                       cls.cosine_cutoff(R_jk, cutoff)
+                ridge += term
+        ridge *= 2. ** (1. - zeta)
+        return ridge
+
+    def __init__(self, cutoff=6.0, etas_g2 = None, etas_g4 = None,
+                 zetas_g4 = None, gammas_g4 = None):
+        self.cutoff = cutoff
+        self.etas_g2 = etas_g2 if etas_g2 else [0.05, 4., 20., 80.]
+        self.etas_g4 = etas_g4 if etas_g4 else [0.005]
+        self.zetas_g4 = zetas_g4 if zetas_g4 else [1., 4.]
+        self.gammas_g4 = gammas_g4 if gammas_g4 else [+1., -1.]
+
+    def featurize(self, struct, idx):
+        """
+
+        """
+        gaussian_funcs = []
+
+        neighbors = struct.get_sites_in_sphere(
+            struct[idx].coords, self.cutoff)
+        neigh_coords = [neigh.coords for neigh in neighbors]
+        for eta_g2 in self.etas_g2:
+            gaussian_funcs.append(self.g2(eta_g2,
+                                          struct[idx].coords,
+                                          neigh_coords,
+                                          self.cutoff))
+
+        for eta_g4, zeta_g4, gamma_g4 in zip(self.etas_g4, self.zetas_g4,
+                                             self.gammas_g4):
+            gaussian_funcs.append(self.g4(eta_g4, zeta_g4, gamma_g4,
+                                          struct[idx].coords,
+                                          neigh_coords,
+                                          self.cutoff))
+        return gaussian_funcs
+
+
+    def implementors(self):
+        return ['Qi Wang']
+
+
 class EwaldSiteEnergy:
     """Compute site energy from Coulombic interactions
     User notes:
