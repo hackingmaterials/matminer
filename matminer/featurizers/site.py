@@ -961,6 +961,8 @@ class GaussianSymmFunc(BaseFeaturizer):
         ridge = 0.
         for j, neigh_j in enumerate(neigh_coords):
             for neigh_k in neigh_coords[j+1:]:
+                if str(neigh_j) == str(center_coord) or str(neigh_k) == str(center_coord):
+                    continue
                 r_ij = np.linalg.norm(neigh_j - center_coord)
                 r_ik = np.linalg.norm(neigh_k - center_coord)
                 r_jk = np.linalg.norm(neigh_k - neigh_j)
@@ -997,26 +999,28 @@ class GaussianSymmFunc(BaseFeaturizer):
         gaussian_funcs = []
         neighbors = struct.get_sites_in_sphere(
             struct[idx].coords, self.cutoff)
-        neigh_coords = [neigh.coords for neigh in neighbors]
+        neigh_coords = [neigh[0].coords for neigh in neighbors]
         for eta_g2 in self.etas_g2:
             gaussian_funcs.append(self.g2(eta_g2,
                                           struct[idx].coords,
                                           neigh_coords,
                                           self.cutoff))
 
-        for eta_g4, zeta_g4, gamma_g4 in zip(self.etas_g4, self.zetas_g4,
-                                             self.gammas_g4):
-            gaussian_funcs.append(self.g4(eta_g4, zeta_g4, gamma_g4,
-                                          struct[idx].coords,
-                                          neigh_coords,
-                                          self.cutoff))
+        for eta_g4 in self.etas_g4:
+            for zeta_g4 in self.zetas_g4:
+                for gamma_g4 in self.gammas_g4:
+                    gaussian_funcs.append(self.g4(eta_g4, zeta_g4, gamma_g4,
+                                                  struct[idx].coords,
+                                                  neigh_coords,
+                                                  self.cutoff))
         return gaussian_funcs
 
     def feature_labels(self):
         return ['G2_{}'.format(eta_g2) for eta_g2 in self.etas_g2] + \
                ['G4_{}_{}_{}'.format(eta_g4, zeta_g4, gamma_g4)
-                for eta_g4, zeta_g4, gamma_g4 in
-                zip(self.etas_g4, self.zetas_g4, self.gammas_g4)]
+                for eta_g4 in self.etas_g4
+                for zeta_g4 in self.zetas_g4
+                for gamma_g4 in self.gammas_g4]
 
     def citations(self):
         citation = ['@Article{Behler2011, '
