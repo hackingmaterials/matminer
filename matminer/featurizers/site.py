@@ -884,12 +884,14 @@ class ChemicalSRO(BaseFeaturizer):
 
 class GaussianSymmFunc(BaseFeaturizer):
     """
-    Gaussian Symmetry Functions suggested by Behler et al., based on pair
-    distances and threefold angles, to approximatefunctional dependence of
-    local energies, originally used in fitting machine-learning interatomic
-    potentials.
-    The Symmetry Functions are divided into a set of radial fingerprint
-    (g2 function), and a set of angular fingerprint (g4 function).
+    Gaussian symmetry function fingerprints suggested by Behler et al.,
+    based on pair distances and threefold angles, to approximate functional
+    dependence of local energies, originally used in fitting machine-learning
+    interatomic potentials.
+    The symmetry functions can be divided into a set of radial fingerprint
+    (g2 function), and a set of angular fingerprint (g4 function). The number
+    of symmetry functions returned are based on the input arguments of etas_g2,
+    etas_g4, zetas_g4 and gammas_g4.
     See the original papers for more details:
     “Atom-centered symmetry functions for constructing high-dimensional neural
     network potentials”, J Behler, J Chem Phys 134, 074106 (2011).
@@ -899,10 +901,14 @@ class GaussianSymmFunc(BaseFeaturizer):
     Package (https://bitbucket.org/andrewpeterson/amp).
     Args:
         etas_g2 (list of floats): etas used in radial symmetry functions.
+                                  (default: [0.05, 4., 20., 80.])
         etas_g4 (list of floats): etas used in angular symmetry functions.
+                                  (default: [0.005])
         zetas_g4 (list of floats): zetas used in angular symmetry functions.
+                                   (default: [1., 4.])
         gammas_g4 (list of floats): gammas used in angular symmetry functions.
-        cutoff (float): cutoff distance.
+                                    (default: [+1., -1.])
+        cutoff (float): cutoff distance. (default: 6.5)
     """
 
     @staticmethod
@@ -1029,6 +1035,7 @@ class GaussianSymmFunc(BaseFeaturizer):
 
     def implementors(self):
         return ['Qi Wang']
+
 
 class EwaldSiteEnergy:
     """Compute site energy from Coulombic interactions
