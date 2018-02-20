@@ -107,10 +107,7 @@ class PlotlyFig:
                      'l': margins[3] + tick_size + font_size,
                      'pad': pad}
 
-        kwargs = {'df': df,
-                  'mode': mode,
-                  'filename': filename,
-                  'y_scale': y_scale,
+        kwargs = {'y_scale': y_scale,
                   'x_scale': x_scale,
                   'colbar_title': colbar_title,
                   'font_size': font_size,
@@ -122,9 +119,6 @@ class PlotlyFig:
                   'width': width,
                   'height': height,
                   'colorscale': colorscale,
-                  'show_offline_plot': show_offline_plot,
-                  'username': username,
-                  'api_key': api_key,
                   'resolution_scale': resolution_scale,
                   'font_scale': font_scale,
                   'tick_size': tick_size,
@@ -132,8 +126,17 @@ class PlotlyFig:
                   'y_title': y_title,
                   'title': title}
 
-        # Remove Nonetype entries from the dictionary
+        # Remove None entries to prevent Plotly silent errors
         kwargs = {k: v for (k, v) in kwargs.items() if v is not None}
+
+        # Set all attr dictionary entries which can be None
+        pfkwargs = {'df': df,
+                    'mode': mode,
+                    'filename': filename,
+                    'show_offline_plot': show_offline_plot,
+                    'username': username,
+                    'api_key': api_key}
+        kwargs.update(pfkwargs)
 
         # Fix attributes of PlotlyFig object
         for k, v in kwargs.items():
