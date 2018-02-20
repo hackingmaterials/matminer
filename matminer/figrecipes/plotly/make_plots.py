@@ -16,7 +16,6 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 
 # todo: font_scale instead of all options, etc., bigger fonts
 # todo: Add return_plot to each method
-# todo: fix nonetypes in __init__
 # todo: clean this mess
 # todo: common function for if then checking data types
 # todo: all class attrs should be set in __init__
@@ -118,7 +117,7 @@ class PlotlyFig:
                   'font_family': font_family,
                   'hoverinfo': hoverinfo,
                   'hovermode': hovermode,
-                  'margins': margins,
+                  'margin': margins,
                   'pad': pad,
                   'width': width,
                   'height': height,
@@ -131,8 +130,7 @@ class PlotlyFig:
                   'tick_size': tick_size,
                   'x_title': x_title,
                   'y_title': y_title,
-                  'title': title,
-                  }
+                  'title': title}
 
         # Remove Nonetype entries from the dictionary
         kwargs = {k: v for (k, v) in kwargs.items() if v is not None}
@@ -150,7 +148,7 @@ class PlotlyFig:
         self.layout['yaxis'] = {'title': self.y_title, 'type': self.y_scale,
                                 'titlefont': font_style,'tickfont': font_style}
 
-        optional_fields = ['hovermode', 'margins', 'autosize', 'width',
+        optional_fields = ['hovermode', 'margin', 'autosize', 'width',
                            'height']
         for k in optional_fields:
             if k in kwargs.keys():
@@ -180,7 +178,7 @@ class PlotlyFig:
         self.plot_counter = 1
         self.font_style = font_style
 
-    def create_plot(self, fig):
+    def create_plot(self, fig, return_plot=False):
         """
         Creates a plotly plot based on its dictionary representation.
         The modes of plotting are:
@@ -223,7 +221,7 @@ class PlotlyFig:
                                         height=self.height, width=self.width,
                                         scale=self.resolution_scale)
 
-        elif self.mode == 'return':
+        if return_plot:
             return fig
 
         self.plot_counter += 1
@@ -248,8 +246,8 @@ class PlotlyFig:
 
 
     def xy(self, xy_pairs, colbar=None, colbar_range=None, labels=None,
-           names=None, sizes=None, modes='markers', markers=None, lines=None,
-           colorscale=None, showlegends=None, normalize_size=True):
+           names=None, sizes=None, modes='markers', markers=None, marker_scale=1.0, lines=None,
+           colorscale=None, showlegends=None, normalize_size=True, return_plot=False):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
         Args:
@@ -297,7 +295,7 @@ class PlotlyFig:
         else:
             assert len(names) == len(xy_pairs)
         if sizes is None:
-            sizes = [10 * self.marker_scale] * len(xy_pairs)
+            sizes = [10 * marker_scale] * len(xy_pairs)
         elif isinstance(sizes, str):
             sizes = [self.data_from_col(sizes)] * len(xy_pairs)
         else:
@@ -315,7 +313,7 @@ class PlotlyFig:
             for i, size in enumerate(sizes):
                 if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
                     size = pd.Series(size).fillna(size.min())
-                    sizes[i] = ((size-size.min())/(size.max()-size.min())+0.05)* 30 * self.marker_scale
+                    sizes[i] = ((size-size.min())/(size.max()-size.min())+0.05)* 30 * marker_scale
                     print(sizes[i])
 
         if isinstance(modes, str):
@@ -402,7 +400,7 @@ class PlotlyFig:
         fig = {'data': traces, 'layout': layout}
         if showscale:
             fig['layout']['legend']['x'] = 0.9
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
 
 
 
@@ -415,7 +413,7 @@ class PlotlyFig:
                 linewidth=2, lineshape='linear', error_type=None,
                 error_direction=None, error_array=None,
                 error_value=None, error_symmetric=True, error_arrayminus=None,
-                error_valueminus=None):
+                error_valueminus=None, return_plot=False):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -597,11 +595,12 @@ class PlotlyFig:
         self.layout['showlegend'] = showlegend
 
         fig = dict(data=data, layout=self.layout)
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
 
 
     def heatmap(self, data=None, cols=None, x_bins=6, y_bins = 4, precision=1,
-                annotation='count', annotation_color='black', colorscale=None):
+                annotation='count', annotation_color='black', colorscale=None,
+                return_plot=False):
         """
         Args:
             data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
@@ -707,13 +706,13 @@ class PlotlyFig:
             layout['yaxis']['title'] = y_prop
         layout['annotations'] = annotations
         fig = {'data': [trace], 'layout': layout}
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
 
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None,
                      colorscale='Viridis', colorscale_range=None,
                      annotations_text=None, annotations_font_size=20,
-                     annotations_color='white'):
+                     annotations_color='white', return_plot=False):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
@@ -783,12 +782,12 @@ class PlotlyFig:
 
         fig = dict(data=data, layout=self.layout)
 
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
 
 
 
     def scatter_matrix(self, data=None, cols=None, colbar=None, marker=None,
-                       text=None, **kwargs):
+                       text=None, return_plot=False, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -871,11 +870,11 @@ class PlotlyFig:
                     'size'] = self.font_size * tick_scale
             if iplot % (nplots + 1) != 0:
                 fig['data'][iplot].update(marker=marker, text=text)
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
 
 
     def histogram(self, data=None, cols=None, orientation="vertical",
-                  histnorm="count", n_bins=None, bins=None, colors=None, bargap=0):
+                  histnorm="count", n_bins=None, bins=None, colors=None, bargap=0, return_plot=False):
         """
         Creates a Plotly histogram. If multiple series of data are available,
         will create an overlaid histogram.
@@ -1000,10 +999,10 @@ class PlotlyFig:
                 h['opacity'] = 1.0 / float(len(hgrams)) + 0.1
         # fig = dict(data=hgrams, layout=self.layout)
         fig = {'data': hgrams, 'layout': self.layout}
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
 
     def bar(self, data=None, cols=None, x=None, y=None, labels=None,
-            barmode='group', colors=None, bargap=None):
+            barmode='group', colors=None, bargap=None, return_plot=False):
         """
         Create a bar chart using Plotly.
 
@@ -1099,10 +1098,10 @@ class PlotlyFig:
         self.layout['barmode'] = barmode
         self.layout['bargap'] = bargap
         fig = dict(data=barplots, layout=self.layout)
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
 
     def violin(self, data=None, cols=None, group_col=None, groups=None,
-               title=None, colors=None, use_colorscale=False):
+               title=None, colors=None, use_colorscale=False, return_plot=False):
         """
         Create a violin plot using Plotly.
 
@@ -1217,10 +1216,10 @@ class PlotlyFig:
             fig['layout']['width'] = 1400
         if not hasattr(self, 'height'):
             fig['layout']['height'] = 1000
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
 
     def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
-                             colbar=None):
+                             colbar=None, return_plot=False):
         """
         Create a Plotly Parcoords plot from dataframes.
         Args:
@@ -1278,4 +1277,4 @@ class PlotlyFig:
         par_coords = go.Parcoords(line=line, dimensions=dimensions)
 
         fig = {'data': [par_coords]}
-        return self.create_plot(fig)
+        return self.create_plot(fig, return_plot)
