@@ -882,7 +882,7 @@ class ChemicalSRO(BaseFeaturizer):
         return ['Qi Wang']
 
 
-class EwaldSiteEnergy:
+class EwaldSiteEnergy(BaseFeaturizer):
     """Compute site energy from Coulombic interactions
     User notes:
         - This class uses that `charges that are already-defined for the structure`.
