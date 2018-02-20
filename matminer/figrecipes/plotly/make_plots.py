@@ -21,7 +21,7 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 # todo: clean this mess
 
 class PlotlyFig:
-    def __init__(self, df=None, plot_mode='offline', plot_title=None,
+    def __init__(self, df=None, mode='offline', plot_title=None,
                  x_title=None, y_title=None, colbar_title='auto',
                  hovermode='closest', filename='auto',
                  show_offline_plot=True, username=None, colorscale='Viridis',
@@ -35,7 +35,7 @@ class PlotlyFig:
         Args:
             df (DataFrame): A pandas dataframe object which can be used to
                 generate several plots.
-            plot_mode: (str)
+            mode: (str)
                 (i) 'offline': creates and saves plots on the local disk
                 (ii) 'notebook': to embed plots in a IPython/Jupyter notebook,
                 (iii) 'online': save the plot in your online plotly account,
@@ -100,7 +100,7 @@ class PlotlyFig:
         self.colbar_title = colbar_title
         self.hovermode = hovermode
         self.filename = filename
-        self.plot_mode = plot_mode
+        self.plot_mode = mode
         self.show_offline_plot = show_offline_plot
         self.username = username
         self.colorscale = colorscale
