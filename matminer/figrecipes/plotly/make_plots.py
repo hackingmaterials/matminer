@@ -15,19 +15,24 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
               'Alireza Faghaninia  <alireza@lbl.gov>'
 
 # todo: font_scale instead of all options, etc., bigger fonts
-# todo: Change plot mode in each method if you want, and accept a plotlydict obj
+# todo: Add return_plot to each method
 # todo: fix nonetypes in __init__
 # todo: clean this mess
+# todo: common function for if then checking data types
+# todo: all class attrs should be set in __init__
+# todo: heatmap optional convert + works if plotly proper
+# todo: add tests
+# todo: work on parallel coordinates (font size, opacity if too crowded)
 
 class PlotlyFig:
-    def __init__(self, df=None, mode='offline', title=None,
-                 x_title=None, y_title=None, colbar_title='auto',
-                 hovermode='closest', filename='auto',
-                 show_offline_plot=True, username=None, colorscale='Viridis',
-                 api_key=None, textsize=25, ticksize=25,
-                 fontfamily='Courier', height=None, width=None, scale=None,
-                 margins=100, pad=0, marker_scale=1.0, x_scale='linear',
-                 y_scale='linear', hoverinfo='x+y+text'):
+    def __init__(self, df=None, mode='offline', title="",
+                 x_title="", y_title="", x_scale='linear',
+                 y_scale='linear', colbar_title='auto',
+                 filename='auto', font_scale=1, font_size=25, tick_size=25,
+                 colorscale='Viridis',
+                 show_offline_plot=True, username=None, api_key=None,
+                 font_family='Courier', height=None, width=None, resolution_scale=None,
+                 hovermode='closest', hoverinfo='x+y+text', margins=100, pad=0):
         """
         Class for making Plotly plots
 
@@ -63,9 +68,9 @@ class PlotlyFig:
                 Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Jet,
                 Picnic, Rainbow, Portland, Hot, Blackbody, Earth, Electric, Viridis
             api_key: (str) plotly account API key
-            textsize: (int) size of text of plot title and axis titles
-            ticksize: (int) size of ticks
-            fontfamily: (str) HTML font family - the typeface that will be applied by the web browser. The web browser
+            font_size: (int) size of text of plot title and axis titles
+            tick_size: (int) size of ticks
+            font_family: (str) HTML font family - the typeface that will be applied by the web browser. The web browser
                 will only be able to apply a font if it is available on the system which it operates. Provide multiple
                 font families, separated by commas, to indicate the preference in which to apply fonts if they aren't
                 available on the system. The plotly service (at https://plot.ly or on-premise) generates images on a
@@ -90,87 +95,90 @@ class PlotlyFig:
         Returns: None
 
         """
-        self.df = df
-        self.title = title
-        self.x_title = x_title
-        self.x_scale = x_scale
-        self.y_title = y_title
-        self.y_scale = y_scale
-        self.colbar_title = colbar_title
-        self.hovermode = hovermode
-        self.filename = filename
-        self.plot_mode = mode
-        self.show_offline_plot = show_offline_plot
-        self.username = username
-        self.colorscale = colorscale
-        self.api_key = api_key
-        self.textsize = textsize
-        self.ticksize = ticksize
-        self.fontfamily = fontfamily
-        self.height = height
-        self.width = width
-        self.scale = scale
-        self.autosize = True if not height and not width else False
 
+        # Fix fonts
+        font_size = float(font_size) * float(font_scale)
+
+        # Fix margins
         if not isinstance(margins, (list, tuple, np.ndarray)):
             margins = [margins] * 4
+        margins = {'t': margins[0],
+                     'b': margins[1] + tick_size + font_size,
+                     'r': margins[2],
+                     'l': margins[3] + tick_size + font_size,
+                     'pad': pad}
 
-        self.margins = dict(t=margins[0],
-                            b=margins[1] + self.ticksize + self.textsize,
-                            r=margins[2],
-                            l=margins[3] + self.ticksize + self.textsize,
-                            pad=pad)
+        kwargs = {'df': df,
+                  'mode': mode,
+                  'filename': filename,
+                  'y_scale': y_scale,
+                  'x_scale': x_scale,
+                  'colbar_title': colbar_title,
+                  'font_size': font_size,
+                  'font_family': font_family,
+                  'hoverinfo': hoverinfo,
+                  'hovermode': hovermode,
+                  'margins': margins,
+                  'pad': pad,
+                  'width': width,
+                  'height': height,
+                  'colorscale': colorscale,
+                  'show_offline_plot': show_offline_plot,
+                  'username': username,
+                  'api_key': api_key,
+                  'resolution_scale': resolution_scale,
+                  'font_scale': font_scale,
+                  'tick_size': tick_size,
+                  'x_title': x_title,
+                  'y_title': y_title,
+                  'title': title,
+                  }
 
-        # AF: the following is what I added
-        self.marker_scale = marker_scale
-        self.plot_counter = 1
-        self.hoverinfo = hoverinfo
+        # Remove Nonetype entries from the dictionary
+        kwargs = {k: v for (k, v) in kwargs.items() if v is not None}
 
-        # Make default layout
-        self.layout = dict(
-            title=self.title,
-            titlefont=dict(size=self.textsize, family=self.fontfamily),
-            xaxis=dict(title=self.x_title, type=self.x_scale,
-                       titlefont=dict(size=self.textsize,
-                                      family=self.fontfamily),
-                       tickfont=dict(size=self.ticksize,
-                                     family=self.fontfamily)),
-            yaxis=dict(title=self.y_title, type=self.y_scale,
-                       titlefont=dict(size=self.textsize,
-                                      family=self.fontfamily),
-                       tickfont=dict(size=self.ticksize,
-                                     family=self.fontfamily)),
-            hovermode=self.hovermode,
-            autosize=self.autosize,
-            margin=self.margins,
-            legend=dict(font=dict(family=self.fontfamily, size=self.textsize))
-        )
+        # Fix attributes of PlotlyFig object
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
-        if width is not None:
-            self.layout['width'] = width
-        if height is not None:
-            self.layout['height'] = height
+        self.layout = {}
+        font_style = {'size': self.font_size, 'family': self.font_family}
+        self.layout['titlefont'] = font_style
+        self.layout['legend'] = {'font': font_style}
+        self.layout['xaxis'] = {'title': self.x_title, 'type': self.x_scale,
+                                'titlefont': font_style,'tickfont': font_style}
+        self.layout['yaxis'] = {'title': self.y_title, 'type': self.y_scale,
+                                'titlefont': font_style,'tickfont': font_style}
 
-        if self.plot_mode == 'online' or self.plot_mode == 'static':
+        optional_fields = ['hovermode', 'margins', 'autosize', 'width',
+                           'height']
+        for k in optional_fields:
+            if k in kwargs.keys():
+                self.layout[k] = kwargs[k]
+
+        if self.mode in ['online', 'static']:
             if not os.path.isfile('~/.plotly/.credentials'):
-                if not self.username:
+                if 'username' not in kwargs.keys():
                     raise ValueError(
-                        'field "username" must be filled in online plotting '
-                        'mode')
-                if not self.api_key:
+                        'Field "username" must be filled in online and static '
+                        'plotting modes.')
+                if 'api_key' not in kwargs.keys():
                     raise ValueError(
-                        'field "api_key" must be filled in online plotting '
-                        'mode')
+                        'Field "api_key" must be filled in online and static'
+                        'plotting modes.')
                 plotly.tools.set_credentials_file(username=self.username,
                                                   api_key=self.api_key)
 
-        if self.plot_mode == 'static':
+        if self.mode == 'static':
             if not self.filename or not self.filename.lower().endswith(
                     ('.png', '.svg', '.jpeg', '.pdf')):
                 raise ValueError(
                     'field "filename" must be filled in static plotting mode '
                     'and must have an extension ending in ('
                     '".png", ".svg", ".jpeg", ".pdf")')
+
+        self.plot_counter = 1
+        self.font_style = font_style
 
     def create_plot(self, fig):
         """
@@ -195,27 +203,27 @@ class PlotlyFig:
         else:
             filename = self.filename
 
-        if self.plot_mode == 'offline':
+        if self.mode == 'offline':
             if not filename.endswith('.html'):
                 filename += '.html'
             plotly.offline.plot(fig, filename=filename,
                                 auto_open=self.show_offline_plot)
-        elif self.plot_mode == 'notebook':
+        elif self.mode == 'notebook':
             plotly.offline.init_notebook_mode()
             plotly.offline.iplot(fig)
 
-        elif self.plot_mode == 'online':
+        elif self.mode == 'online':
             if filename:
                 plotly.plotly.plot(fig, filename=filename, sharing='public')
             else:
                 plotly.plotly.plot(fig, sharing='public')
 
-        elif self.plot_mode == 'static':
+        elif self.mode == 'static':
             plotly.plotly.image.save_as(fig, filename=filename,
                                         height=self.height, width=self.width,
-                                        scale=self.scale)
+                                        scale=self.resolution_scale)
 
-        elif self.plot_mode == 'return':
+        elif self.mode == 'return':
             return fig
 
         self.plot_counter += 1
@@ -359,7 +367,7 @@ class PlotlyFig:
                 raise ValueError('"size" must not be set in markers, use sizes argument instead')
             if colorbar is not None:
                 markers[im]['color'] = colorbar
-                fontd = {'family': self.fontfamily, 'size': 0.75*self.ticksize}
+                fontd = {'family': self.font_family, 'size': 0.75*self.tick_size}
                 markers[im]['colorbar'] = {'title': colbar_title, 'titleside': 'right',
                                            'tickfont': fontd, 'titlefont': fontd}
                 if colbar_range is not None:
@@ -509,8 +517,8 @@ class PlotlyFig:
                           color=marker_outline_color,
                           colorscale=colorscale),
                 symbol=marker,
-                colorbar=dict(tickfont=dict(size=int(0.75 * self.ticksize),
-                                            family=self.fontfamily))
+                colorbar=dict(tickfont=dict(size=int(0.75 * self.tick_size),
+                                            family=self.font_family))
             ),
             line=dict(dash=linedash, width=linewidth, shape=lineshape)
         )
@@ -578,8 +586,8 @@ class PlotlyFig:
                                       colorscale=colorscale),
                             symbol=plot_data['marker'],
                             colorbar=dict(
-                                tickfont=dict(size=int(0.75 * self.ticksize),
-                                              family=self.fontfamily))
+                                tickfont=dict(size=int(0.75 * self.tick_size),
+                                              family=self.font_family))
                         )
                     )
                 )
@@ -647,7 +655,7 @@ class PlotlyFig:
         data_ = []
         annotations = []
         annotation_template = {'font': {'color' : annotation_color,
-                'size': 0.7*self.textsize, 'family': self.fontfamily}, 'showarrow': False}
+                'size': 0.7*self.font_size, 'family': self.font_family}, 'showarrow': False}
         for y in y_labels:
             temp = data[data['y_bin'].values == y]
             grouped = temp.groupby('x_bin').mean().reset_index()
@@ -681,15 +689,15 @@ class PlotlyFig:
         trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
             colorscale = colorscale or self.colorscale, colorbar={
                 'title': colbar_title, 'titleside': 'right',
-            'tickfont': {'size': 0.75 * self.ticksize,'family': self.fontfamily},
-            'titlefont': {'size': self.textsize, 'family': self.fontfamily}
+            'tickfont': {'size': 0.75 * self.tick_size,'family': self.font_family},
+            'titlefont': {'size': self.font_size, 'family': self.font_family}
         })
         layout = self.layout.copy()
 
         # heatmap specific formatting:
         layout['xaxis'].pop('type')
         layout['yaxis'].pop('type')
-        layout['margin']['l'] += self.ticksize * (2+precision/10.0) + 35
+        layout['margin']['l'] += self.tick_size * (2+precision/10.0) + 35
         if layout['xaxis']['title'] is None:
             warnings.warn('xaxis title was automatically set to x_prop value')
             layout['xaxis']['title'] = x_prop
@@ -703,7 +711,7 @@ class PlotlyFig:
 
     def heatmap_plot(self, data, x_labels=None, y_labels=None,
                      colorscale='Viridis', colorscale_range=None,
-                     annotations_text=None, annotations_text_size=20,
+                     annotations_text=None, annotations_font_size=20,
                      annotations_color='white'):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
@@ -722,7 +730,7 @@ class PlotlyFig:
                 of the colorscale
             annotations_text: (array) an array of arrays, with each value being a string annotation to the corresponding
                 value in 'data'
-            annotations_text_size: (int) size of annotation text
+            annotations_font_size: (int) size of annotation text
             annotations_color: (str/array) color of annotation text - accepts similar formats as other color variables
 
         Returns: A Plotly heatmap plot Figure object.
@@ -750,8 +758,8 @@ class PlotlyFig:
                             x=x_labels[m], y=y_labels[n],
                             xref='x1', yref='y1',
                             font=dict(color=annotations_color,
-                                      size=annotations_text_size,
-                                      family=self.fontfamily),
+                                      size=annotations_font_size,
+                                      family=self.font_family),
                             showarrow=False)
                     )
         else:
@@ -763,8 +771,8 @@ class PlotlyFig:
             x=x_labels,
             y=y_labels,
             zmin=colorscale_min, zmax=colorscale_max,
-            colorbar=dict(tickfont=dict(size=int(0.75 * self.ticksize),
-                                        family=self.fontfamily))
+            colorbar=dict(tickfont=dict(size=int(0.75 * self.tick_size),
+                                        family=self.font_family))
         )
 
         data = [trace0]
@@ -845,21 +853,21 @@ class PlotlyFig:
                         size=marker_size, height=height,width=width, **kwargs)
 
         # also update fig layout as scatter plot ignores PlotlyFig layout for some reason
-        fig['layout'].update(titlefont={'family': self.fontfamily,
-                    'size': self.textsize * text_scale})
+        fig['layout'].update(titlefont={'family': self.font_family,
+                    'size': self.font_size * text_scale})
         ratio ={'x': min(1., width/float(height)), 'y': min(1., height/float(width))}
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots ** 2):
             fig['data'][iplot].update(hoverinfo=self.hoverinfo)
             for ax in ['x', 'y']:
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'][
-                    'family'] = self.fontfamily
+                    'family'] = self.font_family
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'][
-                    'size'] = self.textsize * text_scale * ratio[ax]
+                    'size'] = self.font_size * text_scale * ratio[ax]
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
-                    'family'] = self.fontfamily
+                    'family'] = self.font_family
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
-                    'size'] = self.textsize * tick_scale
+                    'size'] = self.font_size * tick_scale
             if iplot % (nplots + 1) != 0:
                 fig['data'][iplot].update(marker=marker, text=text)
         return self.create_plot(fig)
@@ -1191,39 +1199,23 @@ class PlotlyFig:
 
         fig = FF.create_violin(data=data, data_header=cols[0],
                                group_header=group_col, title=title,
-                               height=self.height, width=self.width,
                                colors=colors, use_colorscale=use_colorscale,
                                group_stats=group_stats)
 
-        fig.update(dict(
-            layout=dict(
-                title=self.title,
-                titlefont=dict(size=self.textsize, family=self.fontfamily),
-                yaxis=dict(title=self.y_title, type=self.y_scale,
-                           titlefont=dict(size=self.textsize,
-                                          family=self.fontfamily),
-                           tickfont=dict(size=self.ticksize,
-                                         family=self.fontfamily)),
-            )
-        ))
+        fig.update({'layout': {'title': self.title,
+                               'titlefont': self.font_style,
+                               'yaxis': self.layout['yaxis']}})
 
         # Change sizes in all x-axis
         for item in fig['layout']:
             if item.startswith('xaxis'):
-                fig['layout'][item].update(
-                    dict(
-                        titlefont=dict(size=self.textsize,
-                                       family=self.fontfamily),
-                        tickfont=dict(size=self.ticksize,
-                                      family=self.fontfamily)
-                    )
-                )
+                fig['layout'][item].update({'titlefont': self.font_style,
+                                            'tickfont': self.font_style})
 
-        if self.height is None:
-            fig['layout']['height'] = 1000
-        if self.width is None:
+        if not hasattr(self, 'width'):
             fig['layout']['width'] = 1400
-
+        if not hasattr(self, 'height'):
+            fig['layout']['height'] = 1000
         return self.create_plot(fig)
 
     def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
@@ -1278,7 +1270,7 @@ class PlotlyFig:
                 values = data[col]
             dimensions.append({'label': col, 'values': values})
 
-        fontd = {'family': self.fontfamily, 'size': 0.75 * self.ticksize}
+        fontd = {'family': self.font_family, 'size': 0.75 * self.tick_size}
         line = line or {'color': colbar,
                         'colorbar': {'title': colbar_title, 'titleside': 'right',
                                    'tickfont': fontd, 'titlefont': fontd}}
