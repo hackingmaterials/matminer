@@ -20,7 +20,7 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 # todo: clean this mess
 
 class PlotlyFig:
-    def __init__(self, df=None, mode='offline', plot_title=None,
+    def __init__(self, df=None, mode='offline', title=None,
                  x_title=None, y_title=None, colbar_title='auto',
                  hovermode='closest', filename='auto',
                  show_offline_plot=True, username=None, colorscale='Viridis',
@@ -43,7 +43,7 @@ class PlotlyFig:
                 object. Useful for fine tuning the plot.
                 NOTE: Both 'online' and 'static' modes require either the fields
                 'username' and 'api_key' or Plotly credentials file.
-            plot_title: (str) title of plot
+            title: (str) title of plot
             x_title: (str) title of x-axis
             y_title: (str) title of y-axis
             colbar_title (str or None): the colorbar (z) title. If set to
@@ -91,7 +91,7 @@ class PlotlyFig:
 
         """
         self.df = df
-        self.title = plot_title
+        self.title = title
         self.x_title = x_title
         self.x_scale = x_scale
         self.y_title = y_title
