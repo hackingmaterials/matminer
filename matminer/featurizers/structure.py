@@ -191,15 +191,14 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
            distances. For example, "Al-Al PRDF r=1.00-1.50" corresponds
            to the density of Al-Al bonds between 1 and 1.5 distance units
            By default, this featurizer generates RDFs for each pair
-           of elements in the training set. 
-    """
+           of elements in the training set."""
 
     def __init__(self, cutoff=20.0, bin_size=0.1):
         self.cutoff = cutoff
         self.bin_size = bin_size
         self.elements_ = None
 
-    def fit(self, X, y=None, include_elems=list(), exclude_elems=list()):
+    def fit(self, X, y=None, include_elems=(), exclude_elems=()):
         """Define the list of elements to be included in the PRDF. By default,
         the PRDF will include all of the elements in `X`
 
@@ -216,7 +215,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         # Get all of elements that appaer
         for strc, in X:
-            elements.update([e.element if isinstance(e,Specie) else e for e in strc.composition.keys()])
+            elements.update([e.element if isinstance(e, Specie) else e for e in strc.composition.keys()])
 
         # Remove the elements excluded by the user
         elements.difference_update([Element(e) for e in exclude_elems])
