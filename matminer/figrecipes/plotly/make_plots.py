@@ -324,6 +324,7 @@ class PlotlyFig:
             assert len(modes) == len(xy_pairs)
         if colbar is None:
             showscale = False
+            colorbar = None
         else:
             showscale = True
             colorbar = self.data_from_col(colbar)
