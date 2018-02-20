@@ -888,8 +888,8 @@ class GaussianSymmFunc(BaseFeaturizer):
     distances and threefold angles, to approximatefunctional dependence of
     local energies, originally used in fitting machine-learning interatomic
     potentials.
-    The Symmetry Functions are divided into a set of radial fingerprint (g2
-    function), and a set of angular fingerprint (g4 function).
+    The Symmetry Functions are divided into a set of radial fingerprint
+    (g2 function), and a set of angular fingerprint (g4 function).
     See the original papers for more details:
     “Atom-centered symmetry functions for constructing high-dimensional neural
     network potentials”, J Behler, J Chem Phys 134, 074106 (2011).
@@ -916,10 +916,7 @@ class GaussianSymmFunc(BaseFeaturizer):
         Returns:
             (float) cutoff function.
         """
-        if r > cutoff:
-            return 0.
-        else:
-            return 0.5 * (np.cos(np.pi * r / cutoff) + 1.)
+        return 0 if r > cutoff else 0.5 * (np.cos(np.pi * r / cutoff) + 1.)
 
     @classmethod
     def g2(cls, eta, center_coord, neigh_coords, cutoff):
