@@ -15,9 +15,8 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
               'Alireza Faghaninia  <alireza@lbl.gov>'
 
 
-# todo: common function for if then checking data types (Alireza?)
-# todo: heatmap optional convert + works if passed heatmap data in good format? (Alireza)
-# todo: add tests (Alex)
+# todo: common function for if then checking data types + automatically ignore non-numerical data
+# todo: add tests
 # todo: nuke *_plot methods?
 
 class PlotlyFig:
@@ -72,7 +71,10 @@ class PlotlyFig:
                 colorscale: (str/list) Sets the colorscale (colormap). See
                     https://plot.ly/python/colorscales/ for details on what
                     data types are acceptable for color maps. String names
-                    of colormaps can also be used, e.g., 'Jet' or 'Viridis'.
+                    of colormaps can also be used, e.g., 'Jet' or 'Viridis'. A
+                    useful list of Plotly builtins is: Greys, YlGnBu, Greens,
+                    YlOrRd, Bluered, RdBu, Reds, Blues, Picnic, Rainbow,
+                    Portland, Jet, Hot, Blackbody, Earth, Electric, Viridis.
 
             Formatting:
                 height: (float) output height (in pixels)
@@ -268,11 +270,16 @@ class PlotlyFig:
 
     def xy(self, xy_pairs, colbar=None, colbar_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None,
-           marker_scale=1.0, lines=None,
-           colorscale=None, showlegends=None, normalize_size=True,
-           return_plot=False):
+           marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
+           normalize_size=True, return_plot=False):
+        #todo: Stuff that I think would be good to see in xy - alex
+        #todo: 1. colorscale for each xy relationship
+        #todo: 2. not sure what colbar does here or how to use it
+        #todo: 3. (super) simple error bar for x and y
+
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
+
         Args:
             xy_pairs (tuple or [tuple]): x & y columns of scatter plots
                 with possibly different lengths are extracted from this arg
@@ -438,6 +445,9 @@ class PlotlyFig:
     def heatmap(self, data=None, cols=None, x_bins=6, y_bins=4, precision=1,
                 annotation='count', annotation_color='black', colorscale=None,
                 return_plot=False):
+        #todo: Stuff that I think would be good to see in heatmap - alex
+        #todo: 1. Ability to take in x_label, y_label, and a matrix like heatmap_plot
+
         """
         Args:
             data: (array) an array of arrays. For example, in case of a pandas
@@ -558,7 +568,7 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
     def scatter_matrix(self, data=None, cols=None, colbar=None, marker=None,
-                       text=None, return_plot=False, **kwargs):
+                       text=None, marker_scale=1.0, return_plot=False, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -588,8 +598,14 @@ class PlotlyFig:
                 'color': 'black'}}, colormap='Viridis',
                 title='Elastic Properties Scatter Matrix')
         """
-        height = self.height or 800
-        width = self.width or 1000
+        #todo: Stuff that would be good to see in scatter matrix
+        #todo: 1. One color by default
+        #todo: 2. Hovertext font/info is not the same as the class
+        #todo: 3. Colorscale/colbar doesn't work?
+
+
+        height = 800 if not hasattr(self, 'height') else self.height
+        width = 1000 if not hasattr(self, 'wdith') else self.width
 
         # making sure the combination of input args make sense
         if data is None:
@@ -621,7 +637,7 @@ class PlotlyFig:
         marker = marker or {'symbol': 'circle',
                             'line': {'width': 1, 'color': 'black'}}
         nplots = len(data.columns) - int(colbar is not None)
-        marker_size = marker.get('size') or 5.0 * self.marker_scale
+        marker_size = marker.get('size') or 5.0 * marker_scale
         text_scale = 0.9 / nplots ** 0.2
         tick_scale = 0.7 / nplots ** 0.3
         fig = FF.create_scatterplotmatrix(data, index=colbar, diag='histogram',
