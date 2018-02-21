@@ -29,7 +29,8 @@ class PlotlyFig:
                  colorscale='Viridis',
                  show_offline_plot=True, username=None, api_key=None,
                  font_family='Courier', height=None, width=None, resolution_scale=None,
-                 hovermode='closest', hoverinfo='x+y+text', margins=100, pad=0):
+                 hovermode='closest', hoverinfo='x+y+text', margins=100, pad=0,
+                 bg_color="white"):
         """
         Class for making Plotly plots
 
@@ -124,7 +125,8 @@ class PlotlyFig:
                   'tick_size': tick_size,
                   'x_title': x_title,
                   'y_title': y_title,
-                  'title': title}
+                  'title': title,
+                  'bg_color': bg_color}
 
         # Remove None entries to prevent Plotly silent errors
         kwargs = {k: v for (k, v) in kwargs.items() if v is not None}
@@ -150,6 +152,8 @@ class PlotlyFig:
                                 'titlefont': font_style,'tickfont': font_style}
         self.layout['yaxis'] = {'title': self.y_title, 'type': self.y_scale,
                                 'titlefont': font_style,'tickfont': font_style}
+        self.layout['plot_bgcolor'] = self.bg_color
+        self.layout['paper_bgcolor'] = self.bg_color
 
         optional_fields = ['hovermode', 'margin', 'autosize', 'width',
                            'height']
@@ -1274,14 +1278,16 @@ class PlotlyFig:
                 values = data[col]
             dimensions.append({'label': col, 'values': values})
 
-        fontd = {'family': self.font_family, 'size': 0.75 * self.tick_size}
-        line = line or {'color': colbar,
-                        'colorbar': {'title': colbar_title, 'titleside': 'right',
-                                   'tickfont': fontd, 'titlefont': fontd}}
-        par_coords = go.Parcoords(line=line, dimensions=dimensions)
-
         font_style = self.font_style
         font_style['size'] = 0.65 * font_style['size']
+        line = line or {'color': colbar,
+                        'colorbar': {'title': colbar_title,
+                                     'titleside': 'right',
+                                     'tickfont': font_style,
+                                     'titlefont': font_style,
+                                     }}
+        par_coords = go.Parcoords(line=line, dimensions=dimensions)
+
         par_coords.tickfont = font_style
         par_coords.labelfont = font_style
         par_coords.rangefont = font_style
