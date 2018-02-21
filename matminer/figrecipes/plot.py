@@ -25,7 +25,7 @@ class PlotlyFig:
     def __init__(self, df=None, mode='offline', title="",
                  x_title="", y_title="", x_scale='linear',
                  y_scale='linear', colbar_title='auto',
-                 filename='auto', font_scale=1, font_size=25, tick_size=25,
+                 filename='auto', font_scale=1, font_size=25, font_color='black', tick_size=25,
                  colorscale='Viridis',
                  show_offline_plot=True, username=None, api_key=None,
                  font_family='Courier', height=None, width=None, resolution_scale=None,
@@ -113,6 +113,7 @@ class PlotlyFig:
                   'colbar_title': colbar_title,
                   'font_size': font_size,
                   'font_family': font_family,
+                  'font_color': font_color,
                   'hoverinfo': hoverinfo,
                   'hovermode': hovermode,
                   'margin': margins,
@@ -145,7 +146,8 @@ class PlotlyFig:
             setattr(self, k, v)
 
         self.layout = {}
-        font_style = {'size': self.font_size, 'family': self.font_family}
+        font_style = {'size': self.font_size, 'family': self.font_family,
+                      'color': self.font_color}
         self.layout['titlefont'] = font_style
         self.layout['legend'] = {'font': font_style}
         self.layout['xaxis'] = {'title': self.x_title, 'type': self.x_scale,
