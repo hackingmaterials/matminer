@@ -167,6 +167,7 @@ class PlotlyFig:
                                 'titlefont': font_style, 'tickfont': font_style}
         self.layout['plot_bgcolor'] = self.bg_color
         self.layout['paper_bgcolor'] = self.bg_color
+        self.layout['hoverlabel'] = {'font': font_style}
 
         optional_fields = ['hovermode', 'margin', 'autosize', 'width',
                            'height']
@@ -1077,6 +1078,7 @@ class PlotlyFig:
         par_coords.tickfont = font_style
         par_coords.labelfont = font_style
         par_coords.rangefont = font_style
+
         fig = {'data': [par_coords], 'layout': self.layout}
         return self.create_plot(fig, return_plot)
 
