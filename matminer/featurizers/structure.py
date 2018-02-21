@@ -6,19 +6,20 @@ from operator import itemgetter
 import warnings
 
 import numpy as np
+import pandas as pd
 import scipy.constants as const
 
+from pymatgen import Structure
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.core.periodic_table import Specie, Element
-from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder as VCF
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-
+import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint
+from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
+    CoordinationNumber
 from matminer.featurizers.stats import PropertyStats
-
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
@@ -64,14 +65,13 @@ class DensityFeatures(BaseFeaturizer):
         return [x for x in all_features if x in self.features]
 
     def citations(self):
-        return [""]
+        return []
 
     def implementors(self):
         return ["Saurabh Bajaj", "Anubhav Jain"]
 
 
 class GlobalSymmetryFeatures(BaseFeaturizer):
-
     crystal_idx = {"triclinic": 7,
                    "monoclinic": 6,
                    "orthorhombic": 5,
@@ -81,7 +81,7 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
                    "cubic": 1
                    }
 
-    def __init__(self, desired_features = None):
+    def __init__(self, desired_features=None):
         self.features = ["spacegroup_num", "crystal_system",
                          "crystal_system_int", "is_centrosymmetric"] if not \
             desired_features else desired_features
@@ -107,11 +107,12 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
 
     def feature_labels(self):
         all_features = ["spacegroup_num", "crystal_system",
-                        "crystal_system_int", "is_centrosymmetric"]  # enforce order
+                        "crystal_system_int",
+                        "is_centrosymmetric"]  # enforce order
         return [x for x in all_features if x in self.features]
 
     def citations(self):
-        return [""]
+        return []
 
     def implementors(self):
         return ["Anubhav Jain"]
@@ -166,10 +167,10 @@ class RadialDistributionFunction(BaseFeaturizer):
         return ["radial distribution function"]
 
     def citations(self):
-        return ("")
+        return []
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ["Saurabh Bajaj"]
 
 
 class PartialRadialDistributionFunction(BaseFeaturizer):
@@ -218,7 +219,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             return site.specie.symbol if isinstance(site.specie,
                                                     Element) else site.specie.element.symbol
 
-        for site, nlst in zip(s.sites, neighbors_lst):  # Each list is a list for each site
+        for site, nlst in zip(s.sites,
+                              neighbors_lst):  # Each list is a list for each site
             my_elem = get_symbol(site)
 
             for neighbor in nlst:
@@ -231,7 +233,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         prdf = {}
         dist_bins = np.arange(0, self.cutoff + self.bin_size, self.bin_size)
         shell_volume = 4.0 / 3.0 * pi * (
-            np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+                np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
             dist_hist, dist_bins = np.histogram(distances,
@@ -248,10 +250,10 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         return ["partial radial distribution functions"]
 
     def citations(self):
-        return ("")
+        return []
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ["Saurabh Bajaj"]
 
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
@@ -284,10 +286,10 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
         return ["radial distribution function peaks"]
 
     def citations(self):
-        return ("")
+        return []
 
     def implementors(self):
-        return ("Saurabh Bajaj")
+        return ["Saurabh Bajaj"]
 
 
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
@@ -354,8 +356,8 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 neigh_charge = float(neigh.specie.oxi_state)
                 bin_index = int(dist / self.dr)
                 redf_dict["distribution"][bin_index] += (
-                                                            this_charge * neigh_charge) / (
-                                                            struct.num_sites * dist)
+                                                                this_charge * neigh_charge) / (
+                                                                struct.num_sites * dist)
 
         return [redf_dict]
 
@@ -363,15 +365,15 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         return ["electronic radial distribution function"]
 
     def citations(self):
-        return ("@article{title={Method for the computational comparison"
+        return ["@article{title={Method for the computational comparison"
                 " of crystal structures}, volume={B61}, pages={29-36},"
                 " DOI={10.1107/S0108768104028344},"
                 " journal={Acta Crystallographica Section B},"
                 " author={Willighagen, E. L. and Wehrens, R. and Verwer,"
-                " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}")
+                " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}"]
 
     def implementors(self):
-        return ("Nils E. R. Zimmermann")
+        return ["Nils E. R. Zimmermann"]
 
 
 class CoulombMatrix(BaseFeaturizer):
@@ -425,13 +427,13 @@ class CoulombMatrix(BaseFeaturizer):
         return ["coulomb matrix"]
 
     def citations(self):
-        return ("@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
+        return ["@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
                 "Fast and accurate modeling of molecular atomization energies"
                 " with machine learning}, volume={108},"
                 " DOI={10.1103/PhysRevLett.108.058301}, number={5},"
                 " pages={058301}, journal={Physical Review Letters}, author={"
                 "Rupp, Matthias and Tkatchenko, Alexandre and M\"uller,"
-                " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}")
+                " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}"]
 
     def implementors(self):
         return ["Nils E. R. Zimmermann"]
@@ -478,7 +480,8 @@ class SineCoulombMatrix(BaseFeaturizer):
                 elif i < j:
                     vec = coords[i] - coords[j]
                     coord_vec = np.sin(pi * vec) ** 2
-                    trig_dist = np.linalg.norm((np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
+                    trig_dist = np.linalg.norm(
+                        (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
                     sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
@@ -488,7 +491,7 @@ class SineCoulombMatrix(BaseFeaturizer):
         return ["sine coulomb matrix"]
 
     def citations(self):
-        return ("@article {QUA:QUA24917,"
+        return ["@article {QUA:QUA24917,"
                 "author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
                 "title = {Crystal structure representations for machine learning models of formation energies},"
                 "journal = {International Journal of Quantum Chemistry},"
@@ -500,7 +503,7 @@ class SineCoulombMatrix(BaseFeaturizer):
                 "pages = {1094--1101},"
                 "keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
                 "year = {2015},"
-                "}")
+                "}"]
 
     def implementors(self):
         return ["Kyle Bystrom"]
@@ -531,7 +534,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         Either 32 or 39, the size of the vectors used to describe elements.
     """
 
-    def __init__(self, period_tag = False):
+    def __init__(self, period_tag=False):
         my_ohvs = {}
         if period_tag:
             self.size = 39
@@ -564,11 +567,13 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             if el_struct[-1 - shell_num][0] < max_n - 2:
                 shell_num += 1
                 continue
-            elif el_struct[-1 - shell_num][0] < max_n - 1 and el_struct[-1 - shell_num][1] != u'f':
+            elif el_struct[-1 - shell_num][0] < max_n - 1 and \
+                    el_struct[-1 - shell_num][1] != u'f':
                 shell_num += 1
                 continue
             elif el_struct[-1 - shell_num][0] < max_n and (
-                            el_struct[-1 - shell_num][1] != u'd' and el_struct[-1 - shell_num][1] != u'f'):
+                    el_struct[-1 - shell_num][1] != u'd' and
+                    el_struct[-1 - shell_num][1] != u'f'):
                 shell_num += 1
                 continue
             curr_shell = el_struct[-1 - shell_num]
@@ -593,7 +598,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             row = sp.row
             if row > 7:
                 row -= 2
-            my_ohv[row+31] = 1
+            my_ohv[row + 31] = 1
         return my_ohv
 
     def get_single_ofm(self, site, site_dict):
@@ -616,7 +621,8 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         for other_site in site_dict:
             scale = site_dict[other_site]
             other_atom = ohvs[other_site.specie.Z]
-            atom_ofm += other_atom.T * ref_atom * scale / site.distance(other_site) / ANG_TO_BOHR
+            atom_ofm += other_atom.T * ref_atom * scale / site.distance(
+                other_site) / ANG_TO_BOHR
         return atom_ofm
 
     def get_atom_ofms(self, struct, symm=False):
@@ -639,7 +645,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                 counts: number of identical sites for each ofm
         """
         ofms = []
-        vcf = VCF(struct, allow_pathological=True)
+        vnn = pmg_le.VoronoiNN(allow_pathological=True)
         if symm:
             symm_struct = SpacegroupAnalyzer(struct).get_symmetrized_structure()
             indices = [lst[0] for lst in symm_struct.equivalent_indices]
@@ -648,7 +654,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             indices = [i for i in range(len(struct.sites))]
         for index in indices:
             ofms.append(self.get_single_ofm(struct.sites[index], \
-                                            vcf.get_voronoi_polyhedra(index)))
+                                            vnn.get_voronoi_polyhedra(struct, index)))
         if symm:
             return ofms, counts
         return ofms
@@ -691,7 +697,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         return ["orbital field matrix"]
 
     def citations(self):
-        return ("@article{LamPham2017,"
+        return ["@article{LamPham2017,"
                 "author = {{Lam Pham}, Tien and Kino, Hiori and Terakura, Kiyoyuki and "
                 "Miyake, Takashi and Tsuda, Koji and Takigawa, Ichigaku and {Chi Dam}, Hieu},"
                 "doi = {10.1080/14686996.2017.1378060},"
@@ -704,7 +710,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                 "url = {https://www.tandfonline.com/doi/full/10.1080/14686996.2017.1378060},"
                 "volume = {18},"
                 "year = {2017}"
-                "}")
+                "}"]
 
     def implementors(self):
         return ["Kyle Bystrom"]
@@ -742,28 +748,40 @@ class MinimumRelativeDistances(BaseFeaturizer):
         min_rel_dists = []
         for site in vire.structure:
             min_rel_dists.append(min([dist / (
-                vire.radii[site.species_string] +
-                vire.radii[neigh.species_string]) for neigh, dist in \
-                                      vire.structure.get_neighbors(site, self.cutoff)]))
+                    vire.radii[site.species_string] +
+                    vire.radii[neigh.species_string]) for neigh, dist in \
+                                      vire.structure.get_neighbors(site,
+                                                                   self.cutoff)]))
         return [min_rel_dists[:]]
 
     def feature_labels(self):
         return ["minimum relative distance of each site"]
 
     def citations(self):
-        return ("")
+        return ["@article{Zimmermann2017,"
+                "author = {Zimmermann, Nils E. R. and Horton, Matthew K."
+                " and Jain, Anubhav and Haranczyk, Maciej},"
+                "doi = {10.3389/fmats.2017.00034},"
+                "journal = {Frontiers in Materials},"
+                "pages = {34},"
+                "title = {{Assessing Local Structure Motifs Using Order"
+                " Parameters for Motif Recognition, Interstitial"
+                " Identification, and Diffusion Path Characterization}},"
+                "url = {https://www.frontiersin.org/articles/10.3389/fmats.2017.00034},"
+                "volume = {4},"
+                "year = {2017}"
+                "}"]
 
     def implementors(self):
-        return ("Nils E. R. Zimmermann")
+        return ["Nils E. R. Zimmermann"]
 
 
-class OPStructureFingerprint(BaseFeaturizer):
+class SiteStatsFingerprint(BaseFeaturizer):
     """
     Calculates all order parameters (OPs) for all sites in a crystal
     structure.
     Args:
-        op_site_fp (OPSiteFingerprint): defines the types of order
-            parameters to be calculated.
+        site_featurizer (BaseFeaturizer): a site-based featurizer
         stats ([str]): list of weighted statistics to compute for each feature.
             If stats is None, for each order parameter, a list is returned that
             contains the calculated parameter for each site in the structure.
@@ -772,13 +790,13 @@ class OPStructureFingerprint(BaseFeaturizer):
             zero means metals/cations only)
         max_oxi (int): maximum site oxidation state for inclusion
     """
-    def __init__(self, op_site_fp=None, stats=('mean', 'std_dev', 'minimum',
+
+    def __init__(self, site_featurizer, stats=('mean', 'std_dev', 'minimum',
                                                'maximum'), min_oxi=None,
                  max_oxi=None):
 
-        self.op_site_fp = OPSiteFingerprint() if op_site_fp is None \
-            else op_site_fp
-        self._labels = self.op_site_fp.feature_labels()
+        self.site_featurizer = site_featurizer
+        self._labels = self.site_featurizer.feature_labels()
         self.stats = tuple([stats]) if type(stats) == str else stats
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
@@ -798,43 +816,45 @@ class OPStructureFingerprint(BaseFeaturizer):
             s: Pymatgen Structure object.
 
             Returns:
-                opvals: (2D array of floats) LSOP values of all sites'
+                vals: (2D array of floats) LSOP values of all sites'
                 (1st dimension) order parameters (2nd dimension). 46 order
                 parameters are computed per site: q_cn (coordination
                 number), q_lin, 35 x q_bent (starting with a target angle
                 of 5 degrees and, increasing by 5 degrees, until 175 degrees),
                 q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
         """
-        opvals = [[] for t in self._labels]
+        vals = [[] for t in self._labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
-                    and (self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
-                opvalstmp = self.op_site_fp.featurize(s, i)
+                    and (
+                    self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
+                opvalstmp = self.site_featurizer.featurize(s, i)
                 for j, opval in enumerate(opvalstmp):
                     if opval is None:
-                        opvals[j].append(0.0)
+                        vals[j].append(0.0)
                     else:
-                        opvals[j].append(opval)
+                        vals[j].append(opval)
 
         if self.stats:
-            opstats = []
-            for op in opvals:
+            stats = []
+            for op in vals:
                 if '_mode' in ''.join(self.stats):
                     modes = self.n_numerical_modes(op, self.nmodes, 0.01)
                 for stat in self.stats:
                     if '_mode' in stat:
-                        opstats.append(modes[int(stat[0])-1])
+                        stats.append(modes[int(stat[0]) - 1])
                     else:
-                        opstats.append(PropertyStats().calc_stat(op, stat))
+                        stats.append(PropertyStats().calc_stat(op, stat))
 
-            return opstats
+            return stats
         else:
-            return opvals
+            return vals
 
     def feature_labels(self):
         if self.stats:
             labels = []
             for attr in self._labels:
+
                 for stat in self.stats:
                     labels.append('%s %s' % (stat, attr))
             return labels
@@ -842,13 +862,53 @@ class OPStructureFingerprint(BaseFeaturizer):
             return self._labels
 
     def citations(self):
-        return ('@article{zimmermann_jain_2017, title={Applications of order'
+        return ['@article{zimmermann_jain_2017, title={Applications of order'
                 ' parameter feature vectors}, journal={in progress}, author={'
-                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}')
+                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}']
 
     def implementors(self):
-        return (['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain'])
+        return ['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain']
 
+    @staticmethod
+    def from_preset(preset, **kwargs):
+
+        if preset == "OPSiteFingerprint":
+            return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_cn":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("cn", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_cn_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("cn", cation_anion=True),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_ops":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("ops", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalSiteFingerprint_ops_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalSiteFingerprint.from_preset("ops", cation_anion=True),
+                **kwargs)
+
+        else:
+            # One of the various Coordination Number presets:
+            # MinimumVIRENN, MinimumDistanceNN, JMolNN, VoronoiNN, etc.
+            try:
+                return SiteStatsFingerprint(
+                    CoordinationNumber.from_preset(preset), **kwargs)
+            except:
+                pass
+
+        raise ValueError("Unrecognized preset!")
+
+    # TODO: @nisse3000, move this function elsewhere. Probably the PropertyStats
+    # packages which is responsible for turning higher-dimensional data into
+    # lower dimensional data
     @staticmethod
     def n_numerical_modes(data_lst, n=2, dl=0.1):
         """
@@ -862,13 +922,14 @@ class OPStructureFingerprint(BaseFeaturizer):
             ([float]): first n most frequent entries (or nan if not found).
         """
         if len(set(data_lst)) == 1:
-            return [data_lst[0]] + [float('NaN') for _ in range(n-1)]
+            return [data_lst[0]] + [float('NaN') for _ in range(n - 1)]
         hist, bins = np.histogram(data_lst, bins=np.arange(
-                min(data_lst), max(data_lst), dl), density=False)
+            min(data_lst), max(data_lst), dl), density=False)
         modes = list(bins[np.argsort(hist)[-n:]][::-1])
-        return modes + [float('NaN') for _ in range(n-len(modes))]
+        return modes + [float('NaN') for _ in range(n - len(modes))]
 
 
+# TODO: @nisse3000, move this function elsewhere
 def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     """
     Determine the difference vector between two order parameter-statistics
@@ -890,10 +951,10 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     dr = []
     dist = []
     delta = []
-    nbins = int(max_dr/ddr) + 1
+    nbins = int(max_dr / ddr) + 1
     for i in range(nbins):
-        dr.append(float(i+1)*ddr)
-        opsf = OPStructureFingerprint(op_site_fp=OPSiteFingerprint(dr=dr[i]))
+        dr.append(float(i + 1) * ddr)
+        opsf = SiteStatsFingerprint(site_featurizer=OPSiteFingerprint(dr=dr[i]))
         delta.append(np.array(
             opsf.featurize(s1)) - np.array(opsf.featurize(s2)))
         dist.append(np.linalg.norm(delta[i]))
@@ -902,10 +963,10 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
     # of smallest dr with peak value.
     nbins = int(max(dist) / ddist) + 1
     hist, bin_edges = np.histogram(
-        dist, bins=[float(i)*ddist for i in range(nbins)],
+        dist, bins=[float(i) * ddist for i in range(nbins)],
         normed=False, weights=None, density=False)
     idx = list(hist).index(max(hist))
-    dist_peak = 0.5 * (bin_edges[idx] + bin_edges[idx+1])
+    dist_peak = 0.5 * (bin_edges[idx] + bin_edges[idx + 1])
     idx = -1
     for i, d in enumerate(dist):
         if fabs(d - dist_peak) <= ddist:
@@ -943,10 +1004,10 @@ class EwaldEnergy(BaseFeaturizer):
         return [ewald.total_energy]
 
     def feature_labels(self):
-        return ("ewald_energy",)
+        return ["ewald_energy"]
 
     def implementors(self):
-        return ("Logan Ward",)
+        return ["Logan Ward"]
 
     def citations(self):
         return ["@Article{Ewald1921,"
@@ -960,4 +1021,373 @@ class EwaldEnergy(BaseFeaturizer):
                 "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
                 "volume = {369},"
                 "year = {1921}"
+                "}"]
+
+
+class BagofBonds(BaseFeaturizer):
+    """
+    Compute the number of each kind of bond in a structure, as a fraction of
+    the total number of bonds, based on NearestNeighbors.
+
+    For example, in a structure with 2 Li-O bonds and 3 Li-P bonds:
+
+    Li-0: 0.4
+    Li-P: 0.6
+
+    For dataframes containing structures with various compositions, a unified
+    dataframe is returned which has the collection of bond types gathered
+    from all structures as columns. Use allowed_bonds and approx_bonds to
+    intelligently limit the possible bonds in the dataframe.
+
+    Args:
+        nn (NearestNeighbors): A Pymatgen nearest neighbors derived object. For
+            example, pymatgen.analysis.local_env.VoronoiNN().
+        bbv (float): The 'bad bond values', values substituted for
+            structure-bond combinations which can not physically exist, but
+            exist in the unified dataframe. For example, if a dataframe contains
+            structures of BaLiP and BaTiO3, determines the value to place in
+            the Li-P column for the BaTiO3 row; by default, is 0.
+        allowed_bonds ([str]): A list of allowed bond types; limits the possible
+            columns in the output dataframe. If a structure has a bond type not
+            in allowed_bonds, the bond is skipped and all allowed bonds are
+            returned as normal (including bad bond values). Behavior can be
+            changed with approx_bonds. The output of .feature_labels() will
+            return a list of allowed_bonds for that BagofBonds object.
+        approx_bonds (bool): If True, approximates the fractions of bonds not
+            in allowed_bonds (forbidden bonds) with similar allowed bonds.
+            Chemical rules are used to determine which bonds are most 'similar';
+            particularly, the Euclidean distance between the 2-tuples of the
+            bonds in Mendeleev no. space is minimized for the approximate
+            bond chosen.
+    """
+
+    def __init__(self, nn, bbv=0.0, allowed_bonds=None, approx_bonds=False):
+        self.nn = nn
+        self.bbv = bbv
+        self.allowed_bonds = allowed_bonds
+        self.approx_bonds = approx_bonds
+        if self.approx_bonds and self.allowed_bonds is None:
+            raise ValueError("allowed_bonds was not defined but approx_bonds "
+                             "are enabled. Define a list of allowed bonds or "
+                             "set approx_bonds=False.")
+
+        self._token = ' - '
+        self._dataframe_featurizing = False
+
+    @staticmethod
+    def from_preset(preset):
+        """
+        Use one of the standard instances of a given NearNeighbor class.
+
+        Args:
+            preset (str): preset type ("VoronoiNN", "JMolNN",
+            "MiniumDistanceNN", "MinimumOKeeffeNN", or "MinimumVIRENN").
+
+        Returns:
+            CoordinationNumber from a preset.
+        """
+        nn = getattr(pmg_le, preset)
+        return BagofBonds(nn())
+
+    def featurize_dataframe(self, df, col_id, *args, **kwargs):
+        """
+        Compute features for all entries contained in input dataframe.
+        Necessary for returning the correct unified dataframe.
+
+        Args:
+            df (Pandas dataframe): Dataframe containing input data
+            col_id (str or [str]): The dataframe key corresponding to structures
+
+        Returns:
+            (DataFrame) BagofBonds-featurized dataframe
+        """
+
+        self._dataframe_featurizing = True
+        if self.allowed_bonds is None:
+            self.unified_bonds = self.enumerate_all_bonds(df[col_id])
+        else:
+            listlike = (tuple, list, np.ndarray, pd.Series)
+            if not isinstance(self.allowed_bonds, listlike):
+                raise TypeError("allowed_bonds must be a list of strings.")
+            self.unified_bonds = self._sanitize_bonds(self.allowed_bonds)
+
+        df = super(BagofBonds, self).featurize_dataframe(df, col_id, *args,
+                                                         **kwargs)
+        self._dataframe_featurizing = False
+        return df
+
+    def enumerate_bonds(self, s):
+        """
+        Lists out all the bond possibilities in a single structure.
+
+        Args:
+            s (Structure): A pymatgen structure
+
+        Returns:
+            A list of bond types in 'Li-O' form, where the order of the
+            elements in each bond type is alphabetic.
+        """
+        if isinstance(s, dict):
+            s = Structure.from_dict(s)
+        els = s.composition.elements
+        het_bonds = list(itertools.combinations(els, 2))
+        het_bonds = [tuple(sorted([str(i) for i in j])) for j in het_bonds]
+        hom_bonds = [(str(el), str(el)) for el in els]
+        bond_types = [k[0] + self._token + k[1] for k in het_bonds + hom_bonds]
+        return sorted(bond_types)
+
+    def enumerate_all_bonds(self, structures):
+        """
+        Identify all the unique, possible bonds types of all structures present,
+        and create the 'unified' bonds list.
+
+        Args:
+             structures (list/ndarray): List of pymatgen Structures
+
+        Returns:
+            A tuple of unique, possible bond types for an entire list of
+            structures. This tuple is used to form the unified feature labels.
+        """
+        bond_types = []
+        for s in structures:
+            bts = self.enumerate_bonds(s)
+            for bt in bts:
+                if bt not in bond_types:
+                    bond_types.append(bt)
+        return tuple(sorted(bond_types))
+
+    def _sanitize_bonds(self, bonds):
+        """
+        Prevent errors and/or bond duplicates from badly formatted allowed_bonds
+
+        Args:
+            bonds ([str]): A listlike object of bond types, specified as strings
+                with the general format "El-Sp", where El or Sp can be a specie
+                or an element with pymatgen's str representation of a bond. For
+                example, a Cesium Chloride bond could be represented as either
+                "Cs-Cl" or "Cs+-Cl-" or "Cl-Cs" or "Cl--Cs+". "bond frac." may
+                be present at the end of each bond, as it will be sanitized.
+        Returns:
+            bonds ([str]): A listlike object containing alphabetized bond types.
+                Note that ions and elements will still have distinct bonds if
+                the bonds list originally contained them.
+        """
+        for i, bond in enumerate(bonds):
+            if not isinstance(bond, str) or "-" not in bond:
+                raise TypeError("Bonds must be specified as strings between"
+                                "elements or species, for example Cl-Cs")
+            bond = bond.replace(" bond frac.", "")
+            species = sorted(bond.split(self._token))
+            bonds[i] = self._token.join(species)
+        return tuple(sorted(bonds))
+
+    def _species_from_bondstr(self, bondstr):
+        """
+        Create a 2-tuple of species objects from a bond string.
+
+        Args:
+            bondstr (str): A string representing a bond between elements or
+                species, or a combination of the two. For example, "Cl- - Cs+".
+
+        Returns:
+            ((Species)): A tuple of pymatgen Species objects in alphabetical
+                order.
+        """
+        species = []
+        for ss in bondstr.split(self._token):
+            try:
+                species.append(Specie.from_string(ss))
+            except ValueError:
+                d = {'element': ss, 'oxidation_state': 0}
+                species.append(Specie.from_dict(d))
+        return tuple(species)
+
+    def _approximate_bonds(self, local_bonds):
+        """
+        Approximate a structure's bonds if the structure contains bonds not in
+        allowed_bonds.
+
+        Local bonds are approximated according to the "nearest" bonds present in
+        allowed_bonds (the unified list). Nearness is measured by the euclidean
+        distance (diff) in mendeleev number of each element. For example a Na-O
+        bond could be approximated as a Li-O bond ( distance is sqrt(0^2 + 1^2)
+         = 1).
+
+        Args:
+            local_bonds (dict): The bonds present in the structure with the bond
+                types as keys ("Cl--Cs+") and the bond fraction as values (0.7).
+
+        Returns:
+            ubonds_data (dict): A dictionary of the unified (allowed) bonds
+                with the bond names as keys and the corresponding bond fractions
+                (whether approximated or true) as values.
+
+        """
+
+        # At this stage, local_bonds may contain unified bonds which
+        # are nan.
+
+        ubonds_data = {k: 0.0 for k in self.unified_bonds}
+        ubonds_species = {k: None for k in self.unified_bonds}
+        for ub in self.unified_bonds:
+            species = self._species_from_bondstr(ub)
+            ubonds_species[ub] = tuple(species)
+        # keys are pairs of species, values are bond names in unified_bonds
+        ubonds_species = {v: k for k, v in ubonds_species.items()}
+
+        for lb in local_bonds.keys():
+            local_bonds[lb] = 0.0 if np.isnan(local_bonds[lb]) else local_bonds[lb]
+
+            if lb in self.unified_bonds:
+                ubonds_data[lb] += local_bonds[lb]
+            else:
+                lbs = self._species_from_bondstr(lb)
+
+                nearest = []
+                d_min = None
+                for ubs in ubonds_species.keys():
+
+                    # The distance between bonds is euclidean. To get a good
+                    # measure of the coordinate between mendeleev numbers for
+                    # each specie, we use the minumum difference. ie, for
+                    # finding the distance between Na-O and O-Li, we would
+                    # not want the distance between (Na and O) and (O and Li),
+                    # we want the distance between (Na and Li) and (O and O).
+
+                    u_mends = sorted([j.element.mendeleev_no for j in ubs])
+                    l_mends = sorted([j.element.mendeleev_no for j in lbs])
+
+                    d0 = u_mends[0] - l_mends[0]
+                    d1 = u_mends[1] - l_mends[1]
+
+                    d = (d0**2.0 + d1**2.0)**0.5
+                    if not d_min:
+                        d_min = d
+                        nearest = [ubs]
+                    elif d < d_min:
+                        # A new best approximation has been found
+                        d_min = d
+                        nearest = [ubs]
+                    elif d == d_min:
+                        # An equivalent approximation has been found
+                        nearest += [ubs]
+                    else:
+                        pass
+
+                # Divide bond fraction equally among all equiv. approximate bonds
+                bond_frac = local_bonds[lb]/len(nearest)
+                for n in nearest:
+                    # Get the name of the approximate bond from the map
+                    ub = ubonds_species[n]
+
+                    # Add the bond frac to that/those nearest bond(s)
+                    ubonds_data[ub] += bond_frac
+        return ubonds_data
+
+    def featurize(self, s):
+        """
+        Quantify the fractions of each bond type in a structure.
+
+        For collections of structures, bonds types which are not found in a
+        particular structure (e.g., Li-P in BaTiO3) are represented as NaN.
+
+        Args:
+            s (Structure): A pymatgen structure object
+
+        Returns:
+            (list) The feature list of bond fractions, in the order of the
+                alphabetized corresponding bond names.
+        """
+        if isinstance(s, dict):
+            s = Structure.from_dict(s)
+
+        bond_types = tuple(self.enumerate_bonds(s))
+        bonds = {k: 0.0 for k in bond_types}
+        tot_bonds = 0.0
+
+        # If featurize is being called from a dataframe or featurize_many,
+        # a comprehensize 'unified' bond list is created. The following code
+        # places nan in all bad bond values, where bonds are not physically
+        # possible.
+        if hasattr(self, 'unified_bonds'):
+
+            # if we find a bond in unified_bonds not in bond_types, mark as nan
+            for b in self.unified_bonds:
+                if b not in bond_types:
+                    if self.bbv is None:
+                        bonds[b] = float("nan")
+                    else:
+                        bonds[b] = self.bbv
+
+            # if we find a bond in bond_types not in unified_bonds, skip
+            if not self.approx_bonds:
+                for b in bond_types:
+                    if b not in self.unified_bonds:
+                        # return [float("nan")] * len(self.unified_bonds)
+                        bonds.pop(b)
+            ordered_bonds = self.unified_bonds
+        else:
+            self.local_bonds = bond_types
+            ordered_bonds = self.local_bonds
+
+        for i, _ in enumerate(s.sites):
+            nearest = self.nn.get_nn(s, i)
+            origin = s.sites[i].specie
+
+            for neigh in nearest:
+                btup = tuple(sorted([str(origin), str(neigh.specie)]))
+                b = btup[0] + self._token + btup[1]
+                # The bond will not be in bonds if it is a forbidden bond
+                # (when a local bond is not in allowed_bonds)
+                tot_bonds += 1.0
+                if b in bonds:
+                    bonds[b] += 1.0
+
+        if self.approx_bonds:
+            bonds = self._approximate_bonds(bonds)
+
+        # tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
+
+        # If allowed_bonds caused no bonds to be present, all bonds will be 0.
+        # Prevent division by zero error.
+        tot_bonds = tot_bonds or 1.0
+
+        return [bonds[b] / tot_bonds for b in ordered_bonds]
+
+    def feature_labels(self):
+        """
+        If an entire dataframe is featurized, returns all unique possible
+        bonds gathered across all structures.
+
+        If only .featurize called, returns all bond labels for the last structure
+        featurized.
+        """
+        if self._dataframe_featurizing:
+            labels = self.unified_bonds
+        else:
+            if hasattr(self, 'unified_bonds'):
+                labels = self.unified_bonds
+            else:
+                labels = self.local_bonds
+        return [b + " bond frac." for b in labels]
+
+    def implementors(self):
+        return ["Alex Dunn"]
+
+    def citations(self):
+        return ["@article{doi:10.1021/acs.jpclett.5b00831, "
+                "author = {Hansen, Katja and Biegler, "
+                "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor"
+                "and von Lilienfeld, O. Anatole and Muller, Klaus-Robert and"
+                "Tkatchenko, Alexandre},"
+                "title = {Machine Learning Predictions of Molecular Properties: "
+                "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
+                "journal = {The Journal of Physical Chemistry Letters},"
+                "volume = {6},"
+                "number = {12},"
+                "pages = {2326-2331},"
+                "year = {2015},"
+                "doi = {10.1021/acs.jpclett.5b00831}, "
+                "note ={PMID: 26113956},"
+                "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
                 "}"]

@@ -7,17 +7,17 @@ from __future__ import unicode_literals, division
 import unittest
 
 import numpy as np
+import pandas as pd
 
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.structure import DensityFeatures, \
-    RadialDistributionFunction, \
-    RadialDistributionFunctionPeaks, PartialRadialDistributionFunction, \
-    ElectronicRadialDistributionFunction, \
-    MinimumRelativeDistances, \
-    OPStructureFingerprint, \
-    CoulombMatrix, SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, EwaldEnergy
+    RadialDistributionFunction, RadialDistributionFunctionPeaks, \
+    PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
+    MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
+    SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
+    EwaldEnergy, BagofBonds
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -32,7 +32,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.diamond_no_oxi = Structure(
             Lattice([[2.189, 0, 1.264], [0.73, 2.064, 1.264],
                      [0, 0, 2.528]]), ["C", "C"], [[2.554, 1.806, 4.423],
-                                                   [0.365, 0.258, 0.632]], validate_proximity=False,
+                                                   [0.365, 0.258, 0.632]],
+            validate_proximity=False,
             to_unit_cell=False, coords_are_cartesian=True,
             site_properties=None)
         self.nacl = Structure(
@@ -273,36 +274,42 @@ class StructureFeaturesTest(PymatgenTest):
             1000 * MinimumRelativeDistances().featurize(
                 self.cscl)[0][0]), 1006)
 
-    def test_op_structure_fingerprint(self):
+    def test_sitestatsfingerprint(self):
         # Test matrix.
-        op_struct_fp = OPStructureFingerprint(stats=None)
+        op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint",
+                                                        stats=None)
         opvals = op_struct_fp.featurize(self.diamond)
         oplabels = op_struct_fp.feature_labels()
         self.assertAlmostEqual(opvals[10][0], 0.9995, places=7)
         self.assertAlmostEqual(opvals[10][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.nacl)
-        self.assertAlmostEqual(opvals[16][0], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[16][1], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[18][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[18][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.cscl)
-        self.assertAlmostEqual(opvals[20][0], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[20][1], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[22][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[22][1], 0.9995, places=7)
 
         # Test stats.
-        op_struct_fp = OPStructureFingerprint()
+        op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint")
         opvals = op_struct_fp.featurize(self.diamond)
         self.assertAlmostEqual(opvals[0], 0.0005, places=7)
         self.assertAlmostEqual(opvals[1], 0, places=7)
         self.assertAlmostEqual(opvals[2], 0.0005, places=7)
         self.assertAlmostEqual(opvals[3], 0.0005, places=7)
         self.assertAlmostEqual(opvals[4], 0.0005, places=7)
-        self.assertAlmostEqual(opvals[32], 0.03825, places=7)
+        self.assertAlmostEqual(opvals[36], 0.0805, places=7)
         self.assertAlmostEqual(opvals[40], 0.9995, places=7)
         self.assertAlmostEqual(opvals[41], 0, places=7)
         self.assertAlmostEqual(opvals[42], 0.9995, places=7)
         self.assertAlmostEqual(opvals[43], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[44], 0.0005, places=7)
-        for i in range(52, len(opvals)):
+        self.assertAlmostEqual(opvals[44], 0.0075, places=7)
+        for i in range(56, len(opvals)):
             self.assertAlmostEqual(opvals[i], 0, places=2)
+
+        # Test coordination number
+        cn_fp = SiteStatsFingerprint.from_preset("JMolNN", stats=("mean",))
+        cn_vals = cn_fp.featurize(self.diamond)
+        self.assertEqual(cn_vals[0], 4.0)
 
     def test_ewald(self):
         # Add oxidation states to all of the structures
@@ -319,6 +326,42 @@ class StructureFeaturesTest(PymatgenTest):
         # Perform Ewald summation by "hand",
         #  Using the result from GULP
         self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
+
+    def test_bag_of_bonds(self):
+
+        # Test individual structures with featurize
+        bob_md = BagofBonds.from_preset("MinimumDistanceNN")
+        self.assertArrayEqual(bob_md.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
+
+        bob_voronoi = BagofBonds.from_preset("VoronoiNN")
+        bob_voronoi.bbv = float("nan")
+        bond_fracs = bob_voronoi.featurize(self.nacl)
+        bond_names = bob_voronoi.feature_labels()
+        ref = {'Na+ - Na+ bond frac.': 0.25, 'Cl- - Na+ bond frac.': 0.5,
+               'Cl- - Cl- bond frac.': 0.25}
+        self.assertDictEqual(dict(zip(bond_names, bond_fracs)), ref)
+
+        # Test to make sure dataframe behavior is as intended
+        s_list = [self.diamond_no_oxi, self.ni3al]
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = bob_voronoi.featurize_dataframe(df, 's')
+
+        # Ensure all data is properly labelled and organized
+        self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, np.nan])
+        self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+        self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [np.nan, 0.0])
+        self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+
+        # Test to make sure bad_bond_values (bbv) are still changed correctly
+        # and check inplace behavior of featurize dataframe.
+        bob_voronoi.bbv = 0.0
+        df = pd.DataFrame.from_dict({'s': s_list})
+        df = bob_voronoi.featurize_dataframe(df, 's')
+        self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, 0.0])
+        self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [0.0, 0.5])
+        self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [0.0, 0.0])
+        self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [0.0, 0.5])
 
 
 if __name__ == '__main__':

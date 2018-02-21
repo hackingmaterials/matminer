@@ -149,28 +149,28 @@ class ElementProperty(BaseFeaturizer):
 
     def citations(self):
         if self.data_source.__class__.__name__ == "MagpieData":
-            citation = (
+            citation = [
                 "@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
                 "machine learning framework for predicting properties of inorganic materials}, "
                 "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
                 "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-                "Alok and Wolverton, Christopher}, year={2016}}")
+                "Alok and Wolverton, Christopher}, year={2016}}"]
         elif self.data_source.__class__.__name__ == "DemlData":
-            citation = (
+            citation = [
                 "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
                 "functional theory total energies and enthalpies of formation of metal-nonmetal "
                 "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
                 "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
         elif self.data_source.__class__.__name__ == "PymatgenData":
-            citation = (
+            citation = [
                 "@article{Ong2013, author = {Ong, Shyue Ping and Richards, William Davidson and Jain, Anubhav and Hautier, "
                 "Geoffroy and Kocher, Michael and Cholia, Shreyas and Gunter, Dan and Chevrier, Vincent L. and Persson, "
                 "Kristin A. and Ceder, Gerbrand}, doi = {10.1016/j.commatsci.2012.10.028}, issn = {09270256}, "
                 "journal = {Computational Materials Science}, month = {feb}, pages = {314--319}, "
                 "publisher = {Elsevier B.V.}, title = {{Python Materials Genomics (pymatgen): A robust, open-source python "
                 "library for materials analysis}}, url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
-                "volume = {68}, year = {2013} } ")
+                "volume = {68}, year = {2013} } "]
         else:
             citation = []
         return citation
@@ -228,17 +228,16 @@ class CationProperty(ElementProperty):
         return all_attributes
 
     def citations(self):
-        return ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        return ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
                 "functional theory total energies and enthalpies of formation of metal-nonmetal "
                 "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
                 "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}",)
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
 
 
 class OxidationStates(BaseFeaturizer):
     """
     Statistics about the oxidation states for each specie.
-
     Features are concentration-weighted statistics of the oxidation states.
     """
 
@@ -273,25 +272,25 @@ class OxidationStates(BaseFeaturizer):
         return ["%s oxidation state"%s for s in self.stats]
 
     def citations(self):
-        return ("@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        return ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
                 "functional theory total energies and enthalpies of formation of metal-nonmetal "
                 "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
                 "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}",)
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
 
     def implementors(self):
-        return ('Logan Ward',)
+        return ['Logan Ward']
 
 class AtomicOrbitals(BaseFeaturizer):
-    '''
-    class to determine the highest occupied molecular orbital (HOMO) and
-    lowest unocupied molecular orbital LUMO in a composition. The atomic
-    orbital energies of neutral ions with LDA DFT were computed by NIST.
+    """
+    Determine the highest occupied molecular orbital (HOMO) and
+    lowest unocupied molecular orbital (LUMO) in a composition. The atomic
+    orbital energies of neutral ions with LDA-DFT were computed by NIST.
     https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
-    '''
+    """
         
     def featurize(self, comp):
-        '''
+        """
         Args:
             comp: (Composition)
                 pymatgen Composition object
@@ -303,9 +302,9 @@ class AtomicOrbitals(BaseFeaturizer):
             LUMO_character: (str) orbital symbol ('s', 'p', 'd', or 'f')
             LUMO_element: (str) symbol of element for LUMO
             LUMO_energy: (float in eV) absolute energy of LUMO
-            bandgap: (float in eV)
+            gap_AO: (float in eV)
                 the estimated bandgap from HOMO and LUMO energeis
-        '''
+        """
 
         string_comp = comp.reduced_formula
 
@@ -316,7 +315,7 @@ class AtomicOrbitals(BaseFeaturizer):
             feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
             feat['{}_element'.format(edge)] = homo_lumo[edge][0]
             feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
-        feat['gap'] = feat['LUMO_energy'] - feat['HOMO_energy']
+        feat['gap_AO'] = feat['LUMO_energy'] - feat['HOMO_energy']
 
         return list(feat.values())
 
@@ -326,7 +325,7 @@ class AtomicOrbitals(BaseFeaturizer):
             feat.extend(['{}_character'.format(edge),
                          '{}_element'.format(edge),
                          '{}_energy'.format(edge)])
-        feat.append("gap")
+        feat.append("gap_AO")
         return feat
 
     def citations(self):
@@ -351,9 +350,10 @@ class BandCenter(BaseFeaturizer):
         geometric mean of electronegativity.
 
         Args:
-            comp: (Composition)
+            comp (Composition).
 
-        Returns: (float) band center
+        Returns:
+            (float) band center.
 
         """
         prod = 1.0
@@ -379,7 +379,7 @@ class BandCenter(BaseFeaturizer):
     def implementors(self):
         return ["Anubhav Jain"]
 
-# TODO: this featurizer should fail gracefully for compounds with no clear anions (e.g., metals where all elements have zero oxidation) - returning either NaN or zero.
+
 class ElectronegativityDiff(BaseFeaturizer):
     """
     Features based on the electronegativity difference between the anions and
@@ -424,11 +424,21 @@ class ElectronegativityDiff(BaseFeaturizer):
         # Determine the average anion EN
         anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
 
+        # If there are no anions, raise an Exception
+        if len(anions) == 0:
+            raise Exception('Features not applicable: Compound contains no anions')
+
         anion_en = [s.element.X for s in anions]
         mean_anion_en = PropertyStats.mean(anion_en, anion_fractions)
 
         # Determine the EN difference for each cation
         cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
+
+        # If there are no cations, raise an Exception
+        #  It is possible to construct a non-charge-balanced Composition, so we have
+        #   to check for both the presence of anions and cations
+        if len(cations) == 0:
+            raise Exception('Features not applicable: Compound contains no cations')
 
         en_difference = [mean_anion_en - s.element.X for s in cations]
 
@@ -446,12 +456,12 @@ class ElectronegativityDiff(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
         return citation
 
     def implementors(self):
@@ -460,11 +470,9 @@ class ElectronegativityDiff(BaseFeaturizer):
 
 class ElectronAffinity(BaseFeaturizer):
     """
-    Calculate average electron affinity times formal charge of anion elements
-
-    Note: The formal charges must already be computed before calling `featurize`
-
-    Generates average (electron affinity*formal charge) of anions
+    Calculate average electron affinity times formal charge of anion elements.
+    Note: The formal charges must already be computed before calling `featurize`.
+    Generates average (electron affinity*formal charge) of anions.
     """
 
     def __init__(self):
@@ -503,12 +511,12 @@ class ElectronAffinity(BaseFeaturizer):
         return ["avg anion electron affinity"]
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
         return citation
 
     def implementors(self):
@@ -517,7 +525,7 @@ class ElectronAffinity(BaseFeaturizer):
 
 class Stoichiometry(BaseFeaturizer):
     """
-    Class to calculate stoichiometric attributes.
+    Calculate stoichiometric attributes.
 
     Parameters:
         p_list (list of ints): list of norms to calculate
@@ -580,12 +588,12 @@ class Stoichiometry(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-            "Alok and Wolverton, Christopher}, year={2016}}")
+            "Alok and Wolverton, Christopher}, year={2016}}"]
         return citation
 
     def implementors(self):
@@ -754,24 +762,22 @@ class IonProperty(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A general-purpose "
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-            "Alok and Wolverton, Christopher}, year={2016}}")
+            "Alok and Wolverton, Christopher}, year={2016}}"]
         return citation
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward"]
 
-      
-# TODO: is this descriptor useful or just noise?
+
 class ElementFraction(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
-
-    Generates: vector where each index represents an element in atomic number order.
+    Generates a vector where each index represents an element in atomic number order.
     """
 
     def __init__(self):
@@ -802,6 +808,9 @@ class ElementFraction(BaseFeaturizer):
 
     def implementors(self):
         return ["Ashwin Aggarwal, Logan Ward"]
+
+    def citations(self):
+        return []
 
 
 class TMetalFraction(BaseFeaturizer):
@@ -844,12 +853,12 @@ class TMetalFraction(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = (
+        citation = [
             "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
         return citation
 
     def implementors(self):
@@ -860,7 +869,7 @@ class CohesiveEnergy(BaseFeaturizer):
 
     def __init__(self, mapi_key=None):
         """
-        Class to get cohesive energy per atom of a compound by adding known
+        Get cohesive energy per atom of a compound by adding known
         elemental cohesive energies from the formation energy of the
         compound.
 
@@ -923,11 +932,9 @@ class CohesiveEnergy(BaseFeaturizer):
             "Physics, 8th Edition}}, year = {2005}}"]
 
 
-# TODO: read data file only once!! (on init, then store)
-# TODO: general code review, typo fixes, etc
 class Miedema(BaseFeaturizer):
     """
-    Class to calculate the formation enthalpies of the intermetallic compound,
+    Calculate the formation enthalpies of the intermetallic compound,
     solid solution and amorphous phase of a given composition, based on the
     semi-empirical Miedema model (and some extensions), particularly for
     transitional metal alloys.
@@ -979,14 +986,12 @@ class Miedema(BaseFeaturizer):
                          'structural_stability'
 
     Returns:
-        a list of Miedema formation enthalpies (per atom) of target structures
-        for a given composition:
-            formation_enthalpy_inter: for interatomic compound
-            formation_enthalpy_ss: for solid solution, can be divided into
+        (list of floats) Miedema formation enthalpies (per atom)
+            -formation_enthalpy_inter: for interatomic compound
+            -formation_enthalpy_ss: for solid solution, can be divided into
                                    'min', 'fcc', 'bcc', 'hcp', 'no_latt'
                                     for different lattice_types
-            formation_enthalpy_amor: for amorphous phase
-
+            -formation_enthalpy_amor: for amorphous phase
     """
 
     data_dir = os.path.join(module_dir, "..", "utils", "data_files")
@@ -1017,16 +1022,14 @@ class Miedema(BaseFeaturizer):
                                       format(self, data_source))
 
     def deltaH_chem(self, elements, fracs, struct):
-        """chemical term of formation enthalpy
-
+        """
+        Chemical term of formation enthalpy
         Args:
             elements (list of str): list of elements
             fracs (list of floats): list of atomic fractions
             struct (str): 'inter', 'ss' or 'amor'
-
         Returns:
             deltaH_chem (float): chemical term of formation enthalpy
-
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -1085,19 +1088,16 @@ class Miedema(BaseFeaturizer):
 
         deltaH_chem = (f_alloy[0] * fracs[0] * v_alloy[0] * eta_ab +
                        np.dot(fracs, H_trans))
-
         return deltaH_chem
 
     def deltaH_elast(self, elements, fracs):
-        """elastic term of formation enthalpy
-
+        """
+        Elastic term of formation enthalpy
         Args:
             elements (list of str): list of elements
             fracs (list of floats): list of atomic fractions
-
         Returns:
             deltaH_elastic (float): elastic term of formation enthalpy
-
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -1142,20 +1142,17 @@ class Miedema(BaseFeaturizer):
 
         deltaH_elast = (np.multiply.reduce(fracs) *
                         (fracs[1] * Hab_elast + fracs[0] * Hba_elast))
-
         return deltaH_elast
 
     def deltaH_struct(self, elements, fracs, latt):
-        """structural term of formation enthalpy, only for solid solution
-
+        """
+        Structural term of formation enthalpy, only for solid solution
         Args:
             elements (list of str): list of elements
             fracs (list of floats): list of atomic fractions
             latt (str): 'fcc', 'bcc', 'hcp' or 'no_latt'
-
         Returns:
             deltaH_struct (float): structural term of formation enthalpy
-
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -1202,15 +1199,13 @@ class Miedema(BaseFeaturizer):
         return deltaH_struct
 
     def deltaH_topo(self, elements, fracs):
-        """topological term of formation enthalpy, only for amorphous phase
-
+        """
+        Topological term of formation enthalpy, only for amorphous phase
         Args:
             elements (list of str): list of elements
             fracs (list of floats): list of atomic fractions
-
         Returns:
             deltaH_topo (float): topological term of formation enthalpy
-
         """
         for el in elements:
             if el not in self.df_dataset.index:
@@ -1223,16 +1218,14 @@ class Miedema(BaseFeaturizer):
         return deltaH_topo
 
     def featurize(self, comp):
-        """Get Miedema formation enthalpies of target structures: inter, amor,
-           ss (can be further divided into 'min', 'fcc', 'bcc', 'hcp', 'no_latt'
-               for different lattice_types)
-
+        """
+        Get Miedema formation enthalpies of target structures: inter, amor,
+        ss (can be further divided into 'min', 'fcc', 'bcc', 'hcp', 'no_latt'
+            for different lattice_types)
         Args:
             comp: Pymatgen composition object
-
         Returns:
             miedema (list of floats): formation enthalpies of target structures
-
         """
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)

@@ -5,6 +5,38 @@
 matminer Changelog
 ==================
 
+**v0.2.4**
+
+* updates to PlotlyFig (A. Dunn, A. Faghaninia)
+* adapt to new OP parameters (N. Zimmermann)
+* bugfixes, cleanups, doc updates (A. Faghaninia, A. Dunn, Q. Wang, N. Zimmermann, A. Jain)
+
+**v0.2.3**
+
+* MDF data retrieval (J. Montoya)
+* new VoronoiFingerprint descriptors (Q. Wang)
+* new ChemicalSRO descriptors (Q. Wang)
+* bugfixes to featurize_many (A. Dunn)
+* minor bug fixes, cleanups, slighly improved docs, etc.
+
+**v0.2.2**
+
+.. warning:: Py2 compatibility is officially dropped in this version. Please upgrade to Python 3.x.
+
+* multiprocessing for pandas dataframes (A. Dunn, L. Ward)
+* new CoordinationNumber site featurizer based on NearNeighbor algos (N. Zimmermann)
+* update OP fingerprints for latest pymatgen (N. Zimmermann)
+* OPStructureFingerprint -> SiteStatsFingerprint that takes in any site fingerprint function (A. Jain)
+* Add BondFractions featurizer (A. Dunn)
+* multi-index for pandas dataframes (A. Dunn)
+* cleanup of formatting for citations, implementors, feature_labels to always be list (N. Zimmermann)
+* minor bug fixes, cleanups, slighly improved docs, etc.
+
+**v0.2.1**
+
+* further improvements to test data sets (K. Bystrom)
+* new MultiFeaturizer to combine multiple featurizers (L. Ward)
+
 **v0.2.0**
 
 * improvements to test data sets (K. Bystrom)

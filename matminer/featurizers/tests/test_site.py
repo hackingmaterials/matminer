@@ -4,9 +4,12 @@ import numpy as np
 import pandas as pd
 from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
+from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, EwaldSiteEnergy, VoronoiIndex, ChemEnvSiteFingerprint
+    OPSiteFingerprint, CrystalSiteFingerprint, EwaldSiteEnergy, \
+    VoronoiFingerprint, ChemEnvSiteFingerprint, \
+    CoordinationNumber, ChemicalSRO
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -44,7 +47,7 @@ class FingerprintTests(PymatgenTest):
         self.assertEqual(0.8, agni.etas[0])
         self.assertAlmostEqual(6 * np.exp(-(3.52 / 0.8) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[0])
         self.assertAlmostEqual(6 * np.exp(-(3.52 / 16) ** 2) * 0.5 * (np.cos(np.pi * 3.52 / 3.75) + 1), features[-1])
-        
+
         # Test that passing etas to constructor works
         new_etas = np.logspace(-4, 2, 6)
         agni = AGNIFingerprints(directions=['x', 'y', 'z'], etas=new_etas)
@@ -82,29 +85,66 @@ class FingerprintTests(PymatgenTest):
     def test_op_site_fingerprint(self):
         opsf = OPSiteFingerprint()
         l = opsf.feature_labels()
-        t = ["sgl_bd CN_1", "bent180 CN_2", "bent45 CN_2", "bent90 CN_2", \
-            "bent135 CN_2", "tri_plan CN_3", "tet CN_3", "T CN_3", \
-            "sq_plan CN_4", "sq CN_4", "tet CN_4", "see_saw CN_4", \
-            "tri_pyr CN_4", "pent_plan CN_5", "sq_pyr CN_5", \
-            "tri_bipyr CN_5", "oct CN_6", "pent_pyr CN_6", "hex_pyr CN_7", \
-            "pent_bipyr CN_7", "bcc CN_8", "hex_bipyr CN_8", \
-            "q2 CN_9", "q4 CN_9", "q6 CN_9", \
-            "q2 CN_10", "q4 CN_10", "q6 CN_10",
-            "q2 CN_11", "q4 CN_11", "q6 CN_11", \
-            "cuboct CN_12", "q2 CN_12", "q4 CN_12", "q6 CN_12"]
+        t = ['sgl_bd CN_1', 'L-shaped CN_2', 'water-like CN_2', \
+             'bent 120 degrees CN_2', 'bent 150 degrees CN_2', \
+             'linear CN_2', 'trigonal planar CN_3', \
+             'trigonal non-coplanar CN_3', 'T-shaped CN_3', \
+             'square co-planar CN_4', 'tetrahedral CN_4', \
+             'rectangular see-saw-like CN_4', 'see-saw-like CN_4', \
+             'trigonal pyramidal CN_4', 'pentagonal planar CN_5', \
+             'square pyramidal CN_5', 'trigonal bipyramidal CN_5', \
+             'hexagonal planar CN_6', 'octahedral CN_6', \
+             'pentagonal pyramidal CN_6', 'hexagonal pyramidal CN_7', \
+             'pentagonal bipyramidal CN_7', 'body-centered cubic CN_8', \
+             'hexagonal bipyramidal CN_8', 'q2 CN_9', 'q4 CN_9', 'q6 CN_9', \
+             'q2 CN_10', 'q4 CN_10', 'q6 CN_10', \
+             'q2 CN_11', 'q4 CN_11', 'q6 CN_11', \
+             'cuboctahedral CN_12', 'q2 CN_12', 'q4 CN_12', 'q6 CN_12']
         for i in range(len(l)):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
-        self.assertEqual(len(ops), 35)
+        self.assertEqual(len(ops), 37)
         self.assertAlmostEqual(ops[opsf.feature_labels().index(
-            'oct CN_6')], 0.9995, places=7)
+            'octahedral CN_6')], 0.9995, places=7)
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEqual(ops[opsf.feature_labels().index(
-            'bcc CN_8')], 0.8955, places=7)
+            'body-centered cubic CN_8')], 0.8955, places=7)
         opsf = OPSiteFingerprint(dist_exp=0)
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEqual(ops[opsf.feature_labels().index(
-            'bcc CN_8')], 0.9555, places=7)
+            'body-centered cubic CN_8')], 0.9555, places=7)
+
+    def test_crystal_site_fingerprint(self):
+        csf = CrystalSiteFingerprint.from_preset('ops')
+        l = csf.feature_labels()
+        t = ['wt CN_1', 'wt CN_2', 'L-shaped CN_2', 'water-like CN_2', \
+             'bent 120 degrees CN_2', 'bent 150 degrees CN_2', 'linear CN_2', \
+             'wt CN_3', 'trigonal planar CN_3', 'trigonal non-coplanar CN_3', \
+             'T-shaped CN_3', 'wt CN_4', 'square co-planar CN_4', \
+             'tetrahedral CN_4', 'rectangular see-saw-like CN_4', \
+             'see-saw-like CN_4', 'trigonal pyramidal CN_4', 'wt CN_5', \
+             'pentagonal planar CN_5', 'square pyramidal CN_5', \
+             'trigonal bipyramidal CN_5', 'wt CN_6', 'hexagonal planar CN_6', \
+             'octahedral CN_6', 'pentagonal pyramidal CN_6', 'wt CN_7', \
+             'hexagonal pyramidal CN_7', 'pentagonal bipyramidal CN_7', \
+             'wt CN_8', 'body-centered cubic CN_8', \
+             'hexagonal bipyramidal CN_8', 'wt CN_9', 'q2 CN_9', 'q4 CN_9', \
+             'q6 CN_9', 'wt CN_10', 'q2 CN_10', 'q4 CN_10', 'q6 CN_10', \
+             'wt CN_11', 'q2 CN_11', 'q4 CN_11', 'q6 CN_11', 'wt CN_12', \
+             'cuboctahedral CN_12', 'q2 CN_12', 'q4 CN_12', 'q6 CN_12']
+        for i in range(len(l)):
+            self.assertEqual(l[i], t[i])
+        ops = csf.featurize(self.sc, 0)
+        self.assertEqual(len(ops), 48)
+        self.assertAlmostEqual(ops[csf.feature_labels().index(
+            'wt CN_6')], 1, places=7)
+        self.assertAlmostEqual(ops[csf.feature_labels().index(
+            'octahedral CN_6')], 1, places=7)
+        ops = csf.featurize(self.cscl, 0)
+        self.assertAlmostEqual(ops[csf.feature_labels().index(
+            'wt CN_8')], 0.5575257, places=7)
+        self.assertAlmostEqual(ops[csf.feature_labels().index(
+            'body-centered cubic CN_8')], 0.5329344, places=7)
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
@@ -126,20 +166,66 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(cevals[l.index('C:8')], 0.9953721, places=7)
         self.assertAlmostEqual(cevals[l.index('O:6')], 0, places=7)
 
-    # test Voronoi indices
-    def test_voronoi_site(self):
+    def test_voronoifingerprint(self):
         data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
-        test_site_voronoi = VoronoiIndex()
+        test_site_voronoi = VoronoiFingerprint(use_weights=True)
         test_featurize = test_site_voronoi.featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(test_featurize['voro_index_3'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_4'][0], 6.0)
-        self.assertAlmostEqual(test_featurize['voro_index_5'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_6'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_7'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_8'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_9'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_10'][0], 0.0)
-        self.assertAlmostEqual(test_featurize['voro_index_sum'][0], 6.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_3'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_4'][0], 6.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_5'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_6'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_7'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_8'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_9'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_index_10'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_3'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_4'][0], 1.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_5'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_6'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_7'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_8'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_9'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_index_10'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_3'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_4'][0], 1.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_5'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_6'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_7'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_8'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_9'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Symmetry_weighted_index_10'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_vol_sum'][0], 43.614208)
+        self.assertAlmostEqual(test_featurize['Voro_area_sum'][0], 74.3424)
+        self.assertAlmostEqual(test_featurize['Voro_vol_mean'][0], 7.269034667)
+        self.assertAlmostEqual(test_featurize['Voro_vol_std_dev'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_vol_minimum'][0], 7.269034667)
+        self.assertAlmostEqual(test_featurize['Voro_vol_maximum'][0], 7.269034667)
+        self.assertAlmostEqual(test_featurize['Voro_area_mean'][0], 12.3904)
+        self.assertAlmostEqual(test_featurize['Voro_area_std_dev'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_area_minimum'][0], 12.3904)
+        self.assertAlmostEqual(test_featurize['Voro_area_maximum'][0], 12.3904)
+        self.assertAlmostEqual(test_featurize['Voro_dist_mean'][0], 3.52)
+        self.assertAlmostEqual(test_featurize['Voro_dist_std_dev'][0], 0.0)
+        self.assertAlmostEqual(test_featurize['Voro_dist_minimum'][0], 3.52)
+        self.assertAlmostEqual(test_featurize['Voro_dist_maximum'][0], 3.52)
+
+    def test_chemicalSRO(self):
+        data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
+        test_featurize = ChemicalSRO.from_preset("VoronoiNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_VoronoiNN'][0], 0.0)
+        test_featurize = ChemicalSRO(JMolNN(el_radius_updates = {"Al": 1.55})).\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_JMolNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumDistanceNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumDistanceNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumOKeeffeNN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumOKeeffeNN'][0], 0.0)
+        test_featurize = ChemicalSRO.from_preset("MinimumVIRENN").\
+            featurize_dataframe(data, ['struct', 'site'])
+        self.assertAlmostEqual(test_featurize['CSRO_Al_MinimumVIRENN'][0], 0.0)
 
     def test_ewald_site(self):
         ewald = EwaldSiteEnergy(accuracy=4)
@@ -153,12 +239,63 @@ class FingerprintTests(PymatgenTest):
 
         # Run the cscl-structure
         #   Compared to a result computed using GULP
-        self.assertAlmostEquals(ewald.featurize(self.cscl, 0), ewald.featurize(self.cscl, 1))
-        self.assertAlmostEquals(ewald.featurize(self.cscl, 0)[0], -6.98112443 / 2, 3)
+        self.assertAlmostEqual(ewald.featurize(self.cscl, 0), ewald.featurize(self.cscl, 1))
+        self.assertAlmostEqual(ewald.featurize(self.cscl, 0)[0], -6.98112443 / 2, 3)
 
         # Re-run the Al structure to make sure it is accurate
         #  This is to test the caching feature
         self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
+
+    def test_cns(self):
+        cnv = CoordinationNumber.from_preset('VoronoiNN')
+        self.assertEqual(len(cnv.feature_labels()), 1)
+        self.assertEqual(cnv.feature_labels()[0], 'CN_VoronoiNN')
+        self.assertAlmostEqual(cnv.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEqual(cnv.featurize(self.cscl, 0)[0], 14)
+        self.assertAlmostEqual(cnv.featurize(self.cscl, 1)[0], 14)
+        self.assertEqual(len(cnv.citations()), 2)
+        cnv = CoordinationNumber(VoronoiNN(), use_weights=True)
+        self.assertEqual(cnv.feature_labels()[0], 'CN_VoronoiNN')
+        self.assertAlmostEqual(cnv.featurize(self.cscl, 0)[0], 9.2584516)
+        self.assertAlmostEqual(cnv.featurize(self.cscl, 1)[0], 9.2584516)
+        self.assertEqual(len(cnv.citations()), 2)
+        cnj = CoordinationNumber.from_preset('JMolNN')
+        self.assertEqual(cnj.feature_labels()[0], 'CN_JMolNN')
+        self.assertAlmostEqual(cnj.featurize(self.sc, 0)[0], 0)
+        self.assertAlmostEqual(cnj.featurize(self.cscl, 0)[0], 0)
+        self.assertAlmostEqual(cnj.featurize(self.cscl, 1)[0], 0)
+        self.assertEqual(len(cnj.citations()), 1)
+        jmnn = JMolNN(el_radius_updates={"Al": 1.55, "Cl": 1.7, "Cs": 1.7})
+        cnj = CoordinationNumber(jmnn)
+        self.assertEqual(cnj.feature_labels()[0], 'CN_JMolNN')
+        self.assertAlmostEqual(cnj.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEqual(cnj.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEqual(cnj.featurize(self.cscl, 1)[0], 8)
+        self.assertEqual(len(cnj.citations()), 1)
+        cnmd = CoordinationNumber.from_preset('MinimumDistanceNN')
+        self.assertEqual(cnmd.feature_labels()[0], 'CN_MinimumDistanceNN')
+        self.assertAlmostEqual(cnmd.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEqual(cnmd.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEqual(cnmd.featurize(self.cscl, 1)[0], 8)
+        self.assertEqual(len(cnmd.citations()), 1)
+        cnmok = CoordinationNumber.from_preset('MinimumOKeeffeNN')
+        self.assertEqual(cnmok.feature_labels()[0], 'CN_MinimumOKeeffeNN')
+        self.assertAlmostEqual(cnmok.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEqual(cnmok.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEqual(cnmok.featurize(self.cscl, 1)[0], 6)
+        self.assertEqual(len(cnmok.citations()), 2)
+        cnmvire = CoordinationNumber.from_preset('MinimumVIRENN')
+        self.assertEqual(cnmvire.feature_labels()[0], 'CN_MinimumVIRENN')
+        self.assertAlmostEqual(cnmvire.featurize(self.sc, 0)[0], 6)
+        self.assertAlmostEqual(cnmvire.featurize(self.cscl, 0)[0], 8)
+        self.assertAlmostEqual(cnmvire.featurize(self.cscl, 1)[0], 14)
+        self.assertEqual(len(cnmvire.citations()), 2)
+        self.assertEqual(len(cnmvire.implementors()), 1)
+        self.assertEqual(cnmvire.implementors()[0], 'Nils E. R. Zimmermann')
+
+    def tearDown(self):
+        del self.sc
+        del self.cscl
 
 if __name__ == '__main__':
     import unittest
