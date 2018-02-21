@@ -198,6 +198,8 @@ class PlotlyFig:
             A Plotly Figure object (if self.plot_mode = 'return')
 
         """
+        if return_plot:
+            return fig
 
         if self.filename == 'auto':
             filename = 'auto_{}'.format(self.plot_counter)
@@ -223,9 +225,6 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=filename,
                                         height=self.height, width=self.width,
                                         scale=self.resolution_scale)
-
-        if return_plot:
-            return fig
 
         self.plot_counter += 1
 
@@ -1235,13 +1234,14 @@ class PlotlyFig:
             line (dict): plotly line dict with keys such as "color" or "width"
             precision (int): the number of floating points for columns with
                 float data type (2 is recommended for a nice visualization)
-        Returns: a Plotly scatter matrix plot
+        Returns:
+            a Plotly parallel coordinates plot.
         """
         # making sure the combination of input args make sense
         if data is None:
             if self.df is None:
                 raise ValueError(
-                    "scatter_matrix requires either dataframe labels and a "
+                    "Parallel coordinates requires either dataframe labels and a "
                     "dataframe or a list of numerical values.")
             elif cols is None:
                 data = self.df.select_dtypes(include=['float', 'int', 'bool'])
@@ -1280,5 +1280,10 @@ class PlotlyFig:
                                    'tickfont': fontd, 'titlefont': fontd}}
         par_coords = go.Parcoords(line=line, dimensions=dimensions)
 
-        fig = {'data': [par_coords]}
+        font_style = self.font_style
+        font_style['size'] = 0.65 * font_style['size']
+        par_coords.tickfont = font_style
+        par_coords.labelfont = font_style
+        par_coords.rangefont = font_style
+        fig = {'data': [par_coords], 'layout': self.layout}
         return self.create_plot(fig, return_plot)
