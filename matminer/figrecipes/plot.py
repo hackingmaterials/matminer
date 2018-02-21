@@ -21,7 +21,7 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 
 class PlotlyFig:
     def __init__(self, df=None, mode='offline', title="", x_title="",
-                 y_title="", colbar_title='auto', x_scale='linear',
+                 y_title="", colorbar_title='auto', x_scale='linear',
                  y_scale='linear', tick_size=25, font_scale=1, font_size=25,
                  font_family='Courier', bg_color="white", font_color='black',
                  colorscale='Viridis', height=None, width=None,
@@ -48,7 +48,7 @@ class PlotlyFig:
                 title: (str) title of plot
                 x_title: (str) title of x-axis
                 y_title: (str) title of y-axis
-                colbar_title (str or None): the colorbar (z) title. If set to
+                colorbar_title (str or None): the colorbar (z) title. If set to
                     "auto" the name of the third column (if pd.Series) is chosen.
                 x_scale: (str) Sets the x axis scaling type. Select from
                     'linear', 'log', 'date', 'category'.
@@ -123,7 +123,7 @@ class PlotlyFig:
 
         kwargs = {'y_scale': y_scale,
                   'x_scale': x_scale,
-                  'colbar_title': colbar_title,
+                  'colorbar_title': colorbar_title,
                   'font_size': font_size,
                   'font_family': font_family,
                   'font_color': font_color,
@@ -268,13 +268,13 @@ class PlotlyFig:
         else:
             return col
 
-    def xy(self, xy_pairs, colbar=None, colbar_range=None, labels=None,
+    def xy(self, xy_pairs, colorcol=None, colorcol_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None,
            marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
            normalize_size=True, return_plot=False):
         #todo: Stuff that I think would be good to see in xy - alex
         #todo: 1. colorscale for each xy relationship
-        #todo: 2. not sure what colbar does here or how to use it
+        #todo: 2. not sure what colorcol does here or how to use it
         #todo: 3. (super) simple error bar for x and y
 
         """
@@ -286,11 +286,11 @@ class PlotlyFig:
                 example 1: ([1, 2], [3, 4])
                 example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example 3: [('x1', 'y1'), ('x2', 'y2')]
-            colbar (list or np.ndarray or pd.Series): set the colorscale for
+            colorcol (list or np.ndarray or pd.Series): set the colorscale for
                 the colorbar (list of numbers); overwrites marker['color']
-            colbar_range ([min, max]): the range of numbers included in colorbar.
+            colorcol_range ([min, max]): the range of numbers included in colorbar.
                 if any number is outside of this range, it will be forced to
-                either one. Note that if colbar_range is set, the colorbar ticks
+                either one. Note that if colorcol_range is set, the colorbar ticks
                 will be updated to reflext -min or max+ at the two ends.
             labels (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
@@ -355,17 +355,17 @@ class PlotlyFig:
             modes = [modes] * len(xy_pairs)
         else:
             assert len(modes) == len(xy_pairs)
-        if colbar is None:
+        if colorcol is None:
             showscale = False
             colorbar = None
         else:
             showscale = True
-            colorbar = self.data_from_col(colbar)
+            colorbar = self.data_from_col(colorcol)
             assert isinstance(colorbar, (list, np.ndarray, pd.Series))
-            if colbar_range:
+            if colorcol_range:
                 colorbar = pd.Series(colorbar)
-                colorbar[colorbar < colbar_range[0]] = colbar_range[0]
-                colorbar[colorbar > colbar_range[1]] = colbar_range[1]
+                colorbar[colorbar < colorcol_range[0]] = colorcol_range[0]
+                colorbar[colorbar > colorcol_range[1]] = colorcol_range[1]
         data = []
         for pair in xy_pairs:
             data.append((self.data_from_col(pair[0]),
@@ -389,10 +389,10 @@ class PlotlyFig:
         if isinstance(markers, dict):
             markers = [markers.copy() for _ in data]
 
-        if self.colbar_title == 'auto':
-            colbar_title = pd.Series(colorbar).name
+        if self.colorbar_title == 'auto':
+            colorbar_title = pd.Series(colorbar).name
         else:
-            colbar_title = self.colbar_title
+            colorbar_title = self.colorbar_title
 
         for im, _ in enumerate(markers):
             markers[im]['showscale'] = showscale
@@ -405,12 +405,12 @@ class PlotlyFig:
                 markers[im]['color'] = colorbar
                 fontd = {'family': self.font_family,
                          'size': 0.75 * self.tick_size}
-                markers[im]['colorbar'] = {'title': colbar_title,
+                markers[im]['colorbar'] = {'title': colorbar_title,
                                            'titleside': 'right',
                                            'tickfont': fontd,
                                            'titlefont': fontd}
-                if colbar_range is not None:
-                    tickvals = np.linspace(colbar_range[0], colbar_range[1], 6)
+                if colorcol_range is not None:
+                    tickvals = np.linspace(colorcol_range[0], colorcol_range[1], 6)
                     ticktext = [str(round(tick, 1)) for tick in tickvals]
                     ticktext[0] = '-' + ticktext[0]
                     ticktext[-1] = ticktext[-1] + '+'
@@ -539,13 +539,13 @@ class PlotlyFig:
                 annotations.append(a_d)
             data_.append(x_data)
 
-        if self.colbar_title == 'auto':
-            colbar_title = col_prop
+        if self.colorbar_title == 'auto':
+            colorbar_title = col_prop
         else:
-            colbar_title = self.colbar_title
+            colorbar_title = self.colorbar_title
         trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
                            colorscale=colorscale or self.colorscale, colorbar={
-                'title': colbar_title, 'titleside': 'right',
+                'title': colorbar_title, 'titleside': 'right',
                 'tickfont': {'size': 0.75 * self.tick_size,
                              'family': self.font_family},
                 'titlefont': {'size': self.font_size,
@@ -567,7 +567,7 @@ class PlotlyFig:
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig, return_plot)
 
-    def scatter_matrix(self, data=None, cols=None, colbar=None, marker=None,
+    def scatter_matrix(self, data=None, cols=None, colorcol=None, marker=None,
                        text=None, marker_scale=1.0, return_plot=False, **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
@@ -577,7 +577,7 @@ class PlotlyFig:
                 If None, uses the dataframe passed into the constructor.
             cols ([str]): A list of strings specifying the columns of the
                 dataframe to use.
-            colbar: (str) name of the column used for colorbar
+            colorcol: (str) name of the column used for colorbar
             marker (dict): if size is set, it will override the automatic size
             return_plot (bool): Returns the dictionary representation of the
                 figure if True. If False, prints according to self.mode (set
@@ -593,7 +593,7 @@ class PlotlyFig:
         df = load_elastic_tensor()
         pf = PlotlyFig()
         pf.scatter_matrix(df[['volume', 'G_VRH', 'K_VRH', 'poisson_ratio']],
-                colbar_col='poisson_ratio', text=df['material_id'],
+                colorcol_col='poisson_ratio', text=df['material_id'],
                 marker={'symbol': 'diamond', 'size': 8, 'line': {'width': 1,
                 'color': 'black'}}, colormap='Viridis',
                 title='Elastic Properties Scatter Matrix')
@@ -601,7 +601,7 @@ class PlotlyFig:
         #todo: Stuff that would be good to see in scatter matrix
         #todo: 1. One color by default
         #todo: 2. Hovertext font/info is not the same as the class
-        #todo: 3. Colorscale/colbar doesn't work?
+        #todo: 3. Colorscale/colorcol doesn't work?
 
 
         height = 800 if not hasattr(self, 'height') else self.height
@@ -627,20 +627,20 @@ class PlotlyFig:
                 text = self.df[text]
             else:
                 raise ValueError('string "text" arg must be present in data')
-        if colbar and colbar not in data:
-            if colbar in self.df:
-                data[colbar] = self.df[colbar]
+        if colorcol and colorcol not in data:
+            if colorcol in self.df:
+                data[colorcol] = self.df[colorcol]
             else:
-                raise ValueError('"{}" not found in the data'.format(colbar))
+                raise ValueError('"{}" not found in the data'.format(colorcol))
 
         # actual ploting:
         marker = marker or {'symbol': 'circle',
                             'line': {'width': 1, 'color': 'black'}}
-        nplots = len(data.columns) - int(colbar is not None)
+        nplots = len(data.columns) - int(colorcol is not None)
         marker_size = marker.get('size') or 5.0 * marker_scale
         text_scale = 0.9 / nplots ** 0.2
         tick_scale = 0.7 / nplots ** 0.3
-        fig = FF.create_scatterplotmatrix(data, index=colbar, diag='histogram',
+        fig = FF.create_scatterplotmatrix(data, index=colorcol, diag='histogram',
                                           size=marker_size, height=height,
                                           width=width, **kwargs)
 
@@ -1024,7 +1024,7 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
     def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
-                             colbar=None, return_plot=False):
+                             colorcol=None, return_plot=False):
         """
         Create a Plotly Parcoords plot from dataframes.
 
@@ -1034,6 +1034,7 @@ class PlotlyFig:
                 If None, uses the dataframe passed into the constructor.
             cols ([str]): A list of strings specifying the columns of the
                 dataframe to use.
+            colorcol (str): The name of the column to use for the color bar.
             line (dict): plotly line dict with keys such as "color" or "width"
             precision (int): the number of floating points for columns with
                 float data type (2 is recommended for a nice visualization)
@@ -1059,18 +1060,18 @@ class PlotlyFig:
         if cols is None:
             cols = data.columns.values
 
-        if colbar is None:
-            colbar = 'blue'
+        if colorcol is None:
+            colorcol = 'blue'
         else:
-            colbar = self.data_from_col(colbar)
-        if self.colbar_title == 'auto':
-            colbar_title = pd.Series(colbar).name
+            colorcol = self.data_from_col(colorcol)
+        if self.colorbar_title == 'auto':
+            colorbar_title = pd.Series(colorcol).name
         else:
-            colbar_title = self.colbar_title
+            colorbar_title = self.colorbar_title
 
         cols = list(cols)
-        if pd.Series(colbar).name in cols:
-            cols.remove(pd.Series(colbar).name)
+        if pd.Series(colorcol).name in cols:
+            cols.remove(pd.Series(colorcol).name)
 
         dimensions = []
         for col in cols:
@@ -1083,8 +1084,9 @@ class PlotlyFig:
 
         font_style = self.font_style
         font_style['size'] = 0.65 * font_style['size']
-        line = line or {'color': colbar,
-                        'colorbar': {'title': colbar_title,
+        line = line or {'color': colorcol,
+                        'colorscale': self.colorscale,
+                        'colorbar': {'title': colorbar_title,
                                      'titleside': 'right',
                                      'tickfont': font_style,
                                      'titlefont': font_style,
