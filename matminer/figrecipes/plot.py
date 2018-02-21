@@ -258,6 +258,7 @@ class PlotlyFig:
         Args:
             col (str): column name to look for
             data (pandas.DataFrame): if dataframe try to get col column from it
+            allow_str (bool): if True: pass col even if not in data or self.df
         Returns (pd.Series or col itself):
         """
         if isinstance(col, str):
@@ -285,9 +286,9 @@ class PlotlyFig:
         Args:
             xy_pairs (tuple or [tuple]): x & y columns of scatter plots
                 with possibly different lengths are extracted from this arg
-                example 1: ([1, 2], [3, 4])
-                example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
-                example 3: [('x1', 'y1'), ('x2', 'y2')]
+                example: ([1, 2], [3, 4])
+                example: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
+                example: [('x1', 'y1'), ('x2', 'y2')]
             colors (list or np.ndarray or pd.Series): set the colorscale for
                 the colorbar (list of numbers); overwrites marker['color']
             color_range ([min, max]): the range of numbers included in colorbar.
@@ -566,7 +567,7 @@ class PlotlyFig:
 
     def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
                        labels=None, marker_scale=1.0, return_plot=False,
-                       **kwargs):
+                       default_color='gray', **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -581,6 +582,8 @@ class PlotlyFig:
                 figure if True. If False, prints according to self.mode (set
                 with mode in __init__).
             labels (see PlotlyFig.xy_plot documentation):
+            default_color (color): default marker color. Ignored if colors is
+                set. Histograms color is always set by this default_color.
             **kwargs: keyword arguments of scatterplot. Forbidden args are
                 'size', 'color' and 'colorscale' in 'marker'. See example below
         Returns: a Plotly scatter matrix plot
@@ -620,11 +623,24 @@ class PlotlyFig:
             data = pd.DataFrame(data, columns=cols)
 
         labels = self.data_from_col(labels, data)
-        colors = self.data_from_col(colors, data)
+        if self.colorbar_title == 'auto':
+            colors_ = self.data_from_col(colors, data)
+            colorbar_title = pd.Series(colors_).name
+        else:
+            colorbar_title = self.colorbar_title
 
         # actual ploting:
         marker = marker or {'symbol': 'circle',
-                            'line': {'width': 1, 'color': 'black'}}
+                            'line': {'width': 0.5, 'color': 'black'},
+                            'colorbar': {'title': colorbar_title,
+                                         'titleside': 'right',
+                                         'tickfont': self.font_style,
+                                         'titlefont': self.font_style}
+                            }
+        if colors is None:
+            marker['color'] = default_color
+            marker['showscale'] = False
+
         nplots = len(data.columns) - int(colors is not None)
         marker_size = marker.get('size') or 5.0 * marker_scale
         text_scale = 0.9 / nplots ** 0.2
@@ -635,10 +651,6 @@ class PlotlyFig:
         badf = ['xaxis', 'yaxis']
         scatter_layout = {k: v for (k, v) in self.layout.items() if k not in badf}
         fig.update({'layout': scatter_layout})
-
-        #todo: not sure ratio made it look better
-        # ratio = {'x': min(1., width / float(height)),
-        #          'y': min(1., height / float(width))}
 
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots ** 2):
@@ -658,7 +670,13 @@ class PlotlyFig:
                     'size'] = self.font_size * tick_scale
             if iplot % (nplots + 1) != 0:
                 fig['data'][iplot].update(marker=marker, text=labels)
+            else:
+                fig['data'][iplot].update(marker={'color': default_color,
+                                    'line': {'width': 0.5, 'color': 'black'}})
+        if (default_color=='gray' or default_color=='black') and colors is None:
+            fig['layout']['hoverlabel']['font']['color'] = 'white'
         return self.create_plot(fig, return_plot)
+
 
     def histogram(self, data=None, cols=None, orientation="vertical",
                   histnorm="count", n_bins=None, bins=None, colors=None,
@@ -1058,7 +1076,7 @@ class PlotlyFig:
         if colors is None:
             colors = 'blue'
         else:
-            colors = self.data_from_col(colors)
+            colors = self.data_from_col(colors, data)
         if self.colorbar_title == 'auto':
             colorbar_title = pd.Series(colors).name
         else:
