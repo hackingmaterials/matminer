@@ -248,25 +248,29 @@ class PlotlyFig:
             plotly.plotly.image.save_as(fig, filename=filename,
                                         height=self.height, width=self.width,
                                         scale=self.resolution_scale)
-
         self.plot_counter += 1
 
-    def data_from_col(self, col, df=None):
+
+    def data_from_col(self, col, data=None):
         """
         try to get data based on column name in dataframe and return
             informative error if failed.
         Args:
             col (str): column name to look for
+            data (pandas.DataFrame): if dataframe try to get col column from it
         Returns (pd.Series or col itself):
         """
-        # todo: df arg is not doing anything?
         if isinstance(col, str):
             try:
-                return self.df[col]
+                return data[col]
             except:
-                raise ValueError('"{}" not in the data!'.format(col))
+                if col in self.df:
+                    return self.df[col]
+                else:
+                    raise ValueError('"{}" not in the data!'.format(col))
         else:
             return col
+
 
     def xy(self, xy_pairs, colors=None, color_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None,
@@ -335,11 +339,6 @@ class PlotlyFig:
                     '"sizes" must be the same length as "xy_pairs"')
             for i, _ in enumerate(sizes):
                 sizes[i] = self.data_from_col(sizes[i])
-
-        # if zscore_size:
-        #     for i, _ in enumerate(sizes):
-        #         if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
-        #             sizes[i] = (stats.zscore(pd.Series(sizes[i])) + 5) * 3
 
         if normalize_size:
             for i, size in enumerate(sizes):
@@ -620,18 +619,8 @@ class PlotlyFig:
         elif isinstance(data, np.ndarray):
             data = pd.DataFrame(data, columns=cols)
 
-        if isinstance(labels, str):
-            if labels in data:
-                labels = data[labels]
-            elif labels in self.df:
-                labels = self.df[labels]
-            else:
-                raise ValueError('string "labels" arg must be present in data')
-        if colors and colors not in data:
-            if colors in self.df:
-                data[colors] = self.df[colors]
-            else:
-                raise ValueError('"{}" not found in the data'.format(colors))
+        labels = self.data_from_col(labels, data)
+        colors = self.data_from_col(colors, data)
 
         # actual ploting:
         marker = marker or {'symbol': 'circle',
