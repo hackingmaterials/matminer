@@ -15,7 +15,6 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
               'Alireza Faghaninia  <alireza@lbl.gov>'
 
 
-# todo: cleanup (both, save for last)
 # todo: common function for if then checking data types (Alireza?)
 # todo: heatmap optional convert + works if passed heatmap data in good format? (Alireza)
 # todo: add tests (Alex)
@@ -211,8 +210,9 @@ class PlotlyFig:
 
         Args:
             fig: (dictionary) contains data and layout information
-            return_plot (bool): If true, returns a dictionary representation
-                of the plot object for editing.
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
 
         Returns:
             A Plotly Figure object (if self.plot_mode = 'return')
@@ -302,6 +302,9 @@ class PlotlyFig:
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
             normalize_size (bool): if True, normalize the size list.
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
         Returns: A Plotly Scatter plot Figure object.
         """
         if not isinstance(xy_pairs, list):
@@ -451,6 +454,9 @@ class PlotlyFig:
                 "value": the actual value of the cell in addition to colorbar
             annotation_color (str): the color of annotation (text inside cells)
             colorscale: see the __init__ doc for colorscale
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
         Returns: A Plotly heatmap plot Figure object.
         """
 
@@ -561,6 +567,9 @@ class PlotlyFig:
                 dataframe to use.
             colbar: (str) name of the column used for colorbar
             marker (dict): if size is set, it will override the automatic size
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
             text (see PlotlyFig.xy_plot documentation):
             **kwargs: keyword arguments of scatterplot. Forbidden args are
                 'size', 'color' and 'colorscale' in 'marker'. See example below
@@ -673,6 +682,9 @@ class PlotlyFig:
                 of the bins.
             bargaps (float or list): The gaps between bars for all histograms
                 shown.
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
 
         Returns:
             Plotly histogram figure.
@@ -800,6 +812,9 @@ class PlotlyFig:
                 The length of this list should be equal to the number of rows
                 (sets of bars) present in your data.
             bargap (int/float): Separation between bars.
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
 
         Returns:
             A Plotly bar chart object.
@@ -899,6 +914,9 @@ class PlotlyFig:
                 colors of param colors. This means colors must be a list with
                 at least 2 colors in it (Plotly colorscales are accepted since
                 they map to a list of two rgb colors)
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
 
         Returns: A Plotly violin plot Figure object.
 
@@ -991,6 +1009,7 @@ class PlotlyFig:
                              colbar=None, return_plot=False):
         """
         Create a Plotly Parcoords plot from dataframes.
+
         Args:
             data (DataFrame or list): A dataframe containing at least
                 one numerical column. Also accepts lists of numerical values.
@@ -1000,6 +1019,9 @@ class PlotlyFig:
             line (dict): plotly line dict with keys such as "color" or "width"
             precision (int): the number of floating points for columns with
                 float data type (2 is recommended for a nice visualization)
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
         Returns:
             a Plotly parallel coordinates plot.
         """
