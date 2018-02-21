@@ -439,7 +439,8 @@ class PlotlyFig:
                 return_plot=False):
         """
         Args:
-            data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
+            data: (array) an array of arrays. For example, in case of a pandas
+                dataframe 'df', data=df.values.tolist()
             cols ([str]): A list of strings specifying the columns of the
                 dataframe (either data or self.df) to use. Currenly, only 3
                 columns is supported. Note that the order in cols matter, the
