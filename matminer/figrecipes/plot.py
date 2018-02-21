@@ -230,7 +230,7 @@ class PlotlyFig:
         self.plot_counter += 1
 
 
-    def _data_from_col(self, col, df=None):
+    def data_from_col(self, col, df=None):
         """
         try to get data based on column name in dataframe and return
             informative error if failed.
