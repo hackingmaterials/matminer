@@ -170,9 +170,9 @@ class PlotlyFig:
         self.layout['plot_bgcolor'] = self.bg_color
         self.layout['paper_bgcolor'] = self.bg_color
         self.layout['hoverlabel'] = {'font': font_style}
+        self.layout['title'] = self.title
 
-        optional_fields = ['hovermode', 'margin', 'autosize', 'width',
-                           'height']
+        optional_fields = ['hovermode', 'margin', 'autosize', 'width', 'height']
         for k in optional_fields:
             if k in kwargs.keys():
                 self.layout[k] = kwargs[k]
@@ -268,15 +268,13 @@ class PlotlyFig:
         else:
             return col
 
-    def xy(self, xy_pairs, colorcol=None, colorcol_range=None, labels=None,
+    def xy(self, xy_pairs, colors=None, color_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None,
            marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
            normalize_size=True, return_plot=False):
         #todo: Stuff that I think would be good to see in xy - alex
-        #todo: 1. colorscale for each xy relationship
-        #todo: 2. not sure what colorcol does here or how to use it
-        #todo: 3. (super) simple error bar for x and y
-
+        #todo: 1. colorscale for each xy relationship(? maybe not tho if too hard)
+        #todo: 2. (super) simple error bar for x and y
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -286,9 +284,9 @@ class PlotlyFig:
                 example 1: ([1, 2], [3, 4])
                 example 2: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example 3: [('x1', 'y1'), ('x2', 'y2')]
-            colorcol (list or np.ndarray or pd.Series): set the colorscale for
+            colors (list or np.ndarray or pd.Series): set the colorscale for
                 the colorbar (list of numbers); overwrites marker['color']
-            colorcol_range ([min, max]): the range of numbers included in colorbar.
+            color_range ([min, max]): the range of numbers included in colorbar.
                 if any number is outside of this range, it will be forced to
                 either one. Note that if colorcol_range is set, the colorbar ticks
                 will be updated to reflext -min or max+ at the two ends.
@@ -355,17 +353,17 @@ class PlotlyFig:
             modes = [modes] * len(xy_pairs)
         else:
             assert len(modes) == len(xy_pairs)
-        if colorcol is None:
+        if colors is None:
             showscale = False
             colorbar = None
         else:
             showscale = True
-            colorbar = self.data_from_col(colorcol)
+            colorbar = self.data_from_col(colors)
             assert isinstance(colorbar, (list, np.ndarray, pd.Series))
-            if colorcol_range:
+            if color_range:
                 colorbar = pd.Series(colorbar)
-                colorbar[colorbar < colorcol_range[0]] = colorcol_range[0]
-                colorbar[colorbar > colorcol_range[1]] = colorcol_range[1]
+                colorbar[colorbar < color_range[0]] = color_range[0]
+                colorbar[colorbar > color_range[1]] = color_range[1]
         data = []
         for pair in xy_pairs:
             data.append((self.data_from_col(pair[0]),
@@ -409,8 +407,8 @@ class PlotlyFig:
                                            'titleside': 'right',
                                            'tickfont': fontd,
                                            'titlefont': fontd}
-                if colorcol_range is not None:
-                    tickvals = np.linspace(colorcol_range[0], colorcol_range[1], 6)
+                if color_range is not None:
+                    tickvals = np.linspace(color_range[0], color_range[1], 6)
                     ticktext = [str(round(tick, 1)) for tick in tickvals]
                     ticktext[0] = '-' + ticktext[0]
                     ticktext[-1] = ticktext[-1] + '+'
@@ -567,8 +565,9 @@ class PlotlyFig:
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig, return_plot)
 
-    def scatter_matrix(self, data=None, cols=None, colorcol=None, marker=None,
-                       text=None, marker_scale=1.0, return_plot=False, **kwargs):
+    def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
+                       labels=None, marker_scale=1.0, return_plot=False,
+                       **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -577,12 +576,12 @@ class PlotlyFig:
                 If None, uses the dataframe passed into the constructor.
             cols ([str]): A list of strings specifying the columns of the
                 dataframe to use.
-            colorcol: (str) name of the column used for colorbar
+            colors: (str) name of the column used for colorbar
             marker (dict): if size is set, it will override the automatic size
             return_plot (bool): Returns the dictionary representation of the
                 figure if True. If False, prints according to self.mode (set
                 with mode in __init__).
-            text (see PlotlyFig.xy_plot documentation):
+            labels (see PlotlyFig.xy_plot documentation):
             **kwargs: keyword arguments of scatterplot. Forbidden args are
                 'size', 'color' and 'colorscale' in 'marker'. See example below
         Returns: a Plotly scatter matrix plot
@@ -593,19 +592,20 @@ class PlotlyFig:
         df = load_elastic_tensor()
         pf = PlotlyFig()
         pf.scatter_matrix(df[['volume', 'G_VRH', 'K_VRH', 'poisson_ratio']],
-                colorcol_col='poisson_ratio', text=df['material_id'],
+                colorcol='poisson_ratio', text=df['material_id'],
                 marker={'symbol': 'diamond', 'size': 8, 'line': {'width': 1,
                 'color': 'black'}}, colormap='Viridis',
                 title='Elastic Properties Scatter Matrix')
         """
-        #todo: Stuff that would be good to see in scatter matrix
-        #todo: 1. One color by default
-        #todo: 2. Hovertext font/info is not the same as the class
-        #todo: 3. Colorscale/colorcol doesn't work?
+        #todo: Can't get colorscale/colormap kwarg to have right colorbar font
+        #todo: single color by default?
 
+        if 'colorscale' in kwargs.keys():
+            kwargs['colormap'] = kwargs['colorscale']
+            kwargs.pop('colorscale')
 
         height = 800 if not hasattr(self, 'height') else self.height
-        width = 1000 if not hasattr(self, 'wdith') else self.width
+        width = 1000 if not hasattr(self, 'width') else self.width
 
         # making sure the combination of input args make sense
         if data is None:
@@ -620,49 +620,55 @@ class PlotlyFig:
         elif isinstance(data, np.ndarray):
             data = pd.DataFrame(data, columns=cols)
 
-        if isinstance(text, str):
-            if text in data:
-                text = data[text]
-            elif text in self.df:
-                text = self.df[text]
+        if isinstance(labels, str):
+            if labels in data:
+                labels = data[labels]
+            elif labels in self.df:
+                labels = self.df[labels]
             else:
-                raise ValueError('string "text" arg must be present in data')
-        if colorcol and colorcol not in data:
-            if colorcol in self.df:
-                data[colorcol] = self.df[colorcol]
+                raise ValueError('string "labels" arg must be present in data')
+        if colors and colors not in data:
+            if colors in self.df:
+                data[colors] = self.df[colors]
             else:
-                raise ValueError('"{}" not found in the data'.format(colorcol))
+                raise ValueError('"{}" not found in the data'.format(colors))
 
         # actual ploting:
         marker = marker or {'symbol': 'circle',
                             'line': {'width': 1, 'color': 'black'}}
-        nplots = len(data.columns) - int(colorcol is not None)
+        nplots = len(data.columns) - int(colors is not None)
         marker_size = marker.get('size') or 5.0 * marker_scale
         text_scale = 0.9 / nplots ** 0.2
         tick_scale = 0.7 / nplots ** 0.3
-        fig = FF.create_scatterplotmatrix(data, index=colorcol, diag='histogram',
+        fig = FF.create_scatterplotmatrix(data, index=colors, diag='histogram',
                                           size=marker_size, height=height,
                                           width=width, **kwargs)
+        badf = ['xaxis', 'yaxis']
+        scatter_layout = {k: v for (k, v) in self.layout.items() if k not in badf}
+        fig.update({'layout': scatter_layout})
 
-        # also update fig layout as scatter plot ignores PlotlyFig layout for some reason
-        fig['layout'].update(titlefont={'family': self.font_family,
-                                        'size': self.font_size * text_scale})
-        ratio = {'x': min(1., width / float(height)),
-                 'y': min(1., height / float(width))}
+        #todo: not sure ratio made it look better
+        # ratio = {'x': min(1., width / float(height)),
+        #          'y': min(1., height / float(width))}
+
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots ** 2):
             fig['data'][iplot].update(hoverinfo=self.hoverinfo)
             for ax in ['x', 'y']:
+                fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'] = \
+                    self.font_style
+                fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'] = \
+                    self.font_style
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'][
                     'family'] = self.font_family
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'][
-                    'size'] = self.font_size * text_scale * ratio[ax]
+                    'size'] = self.font_size * text_scale
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
                     'family'] = self.font_family
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
                     'size'] = self.font_size * tick_scale
             if iplot % (nplots + 1) != 0:
-                fig['data'][iplot].update(marker=marker, text=text)
+                fig['data'][iplot].update(marker=marker, text=labels)
         return self.create_plot(fig, return_plot)
 
     def histogram(self, data=None, cols=None, orientation="vertical",
@@ -1007,9 +1013,9 @@ class PlotlyFig:
                                colors=colors, use_colorscale=use_colorscale,
                                group_stats=group_stats)
 
-        fig.update({'layout': {'title': self.title,
-                               'titlefont': self.font_style,
-                               'yaxis': self.layout['yaxis']}})
+
+        violin_layout = {k: v for (k, v) in self.layout.items() if k != 'xaxis'}
+        fig.update({'layout': violin_layout})
 
         # Change sizes in all x-axis
         for item in fig['layout']:
@@ -1024,7 +1030,7 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
     def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
-                             colorcol=None, return_plot=False):
+                             colors=None, return_plot=False):
         """
         Create a Plotly Parcoords plot from dataframes.
 
@@ -1034,7 +1040,7 @@ class PlotlyFig:
                 If None, uses the dataframe passed into the constructor.
             cols ([str]): A list of strings specifying the columns of the
                 dataframe to use.
-            colorcol (str): The name of the column to use for the color bar.
+            colors (str): The name of the column to use for the color bar.
             line (dict): plotly line dict with keys such as "color" or "width"
             precision (int): the number of floating points for columns with
                 float data type (2 is recommended for a nice visualization)
@@ -1060,18 +1066,18 @@ class PlotlyFig:
         if cols is None:
             cols = data.columns.values
 
-        if colorcol is None:
-            colorcol = 'blue'
+        if colors is None:
+            colors = 'blue'
         else:
-            colorcol = self.data_from_col(colorcol)
+            colors = self.data_from_col(colors)
         if self.colorbar_title == 'auto':
-            colorbar_title = pd.Series(colorcol).name
+            colorbar_title = pd.Series(colors).name
         else:
             colorbar_title = self.colorbar_title
 
         cols = list(cols)
-        if pd.Series(colorcol).name in cols:
-            cols.remove(pd.Series(colorcol).name)
+        if pd.Series(colors).name in cols:
+            cols.remove(pd.Series(colors).name)
 
         dimensions = []
         for col in cols:
@@ -1084,7 +1090,7 @@ class PlotlyFig:
 
         font_style = self.font_style
         font_style['size'] = 0.65 * font_style['size']
-        line = line or {'color': colorcol,
+        line = line or {'color': colors,
                         'colorscale': self.colorscale,
                         'colorbar': {'title': colorbar_title,
                                      'titleside': 'right',
