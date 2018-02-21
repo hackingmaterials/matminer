@@ -582,7 +582,7 @@ class PlotlyFig:
                 figure if True. If False, prints according to self.mode (set
                 with mode in __init__).
             labels (see PlotlyFig.xy_plot documentation):
-            default_color (color): default marker color. Ignored if colors is
+            default_color (str): default marker color. Ignored if colors is
                 set. Histograms color is always set by this default_color.
             **kwargs: keyword arguments of scatterplot. Forbidden args are
                 'size', 'color' and 'colorscale' in 'marker'. See example below
@@ -599,9 +599,6 @@ class PlotlyFig:
                 'color': 'black'}}, colormap='Viridis',
                 title='Elastic Properties Scatter Matrix')
         """
-        #todo: Can't get colorscale/colormap kwarg to have right colorbar font
-        #todo: single color by default?
-
         if 'colorscale' in kwargs.keys():
             kwargs['colormap'] = kwargs['colorscale']
             kwargs.pop('colorscale')
