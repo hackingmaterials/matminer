@@ -14,11 +14,12 @@ from pandas.api.types import is_numeric_dtype
 __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
               'Alireza Faghaninia  <alireza@lbl.gov>'
 
-# todo: clean this mess
-# todo: common function for if then checking data types
-# todo: heatmap optional convert + works if plotly proper
-# todo: add tests
-# todo: work on parallel coordinates (font size, opacity if too crowded)
+# todo: clean this mess (both, save for last)
+# todo: common function for if then checking data types (Alireza?)
+# todo: heatmap optional convert + works if passed heatmap data in good format? (Alireza)
+# todo: add tests (Alex)
+# todo: work on parallel coordinates (font size, opacity if too crowded) (Alex)
+# todo: nuke *_plot methods?
 
 class PlotlyFig:
     def __init__(self, df=None, mode='offline', title="",
