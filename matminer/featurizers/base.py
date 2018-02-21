@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import numpy as np
 from six import string_types
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool
 from sklearn.base import TransformerMixin, BaseEstimator
 
 
