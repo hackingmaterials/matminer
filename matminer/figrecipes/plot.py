@@ -17,6 +17,7 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 
 # todo: common function for if then checking data types + automatically ignore non-numerical data
 # todo: add tests
+# todo: clean up argument names and docs
 # todo: nuke *_plot methods?
 
 class PlotlyFig:
@@ -177,8 +178,10 @@ class PlotlyFig:
         self.layout['plot_bgcolor'] = self.bg_color
         self.layout['paper_bgcolor'] = self.bg_color
         self.layout['hoverlabel'] = {'font': font_style}
-        self.layout['hoverlabel']['bgcolor'] = hovercolor
         self.layout['title'] = self.title
+
+        if hasattr(self, 'hovercolor'):
+            self.layout['hoverlabel']['bgcolor'] = hovercolor
 
         optional_fields = ['hovermode', 'margin', 'autosize', 'width', 'height']
         for k in optional_fields:
