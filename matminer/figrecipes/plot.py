@@ -20,8 +20,8 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 # todo: nuke *_plot methods?
 
 class PlotlyFig:
-    def __init__(self, df=None, mode='offline', title="", x_title="",
-                 y_title="", colorbar_title='auto', x_scale='linear',
+    def __init__(self, df=None, mode='offline', title=None, x_title=None,
+                 y_title=None, colorbar_title='auto', x_scale='linear',
                  y_scale='linear', tick_size=25, font_scale=1, font_size=25,
                  font_family='Courier', bg_color="white", font_color='black',
                  colorscale='Viridis', height=None, width=None,
@@ -111,6 +111,10 @@ class PlotlyFig:
 
         # Fix fonts
         font_size = float(font_size) * float(font_scale)
+
+        title = "" if title is None else title
+        y_title = "" if y_title is None else y_title
+        x_title = "" if x_title is None else x_title
 
         # Fix margins
         if not isinstance(margins, (list, tuple, np.ndarray)):
@@ -277,8 +281,6 @@ class PlotlyFig:
            names=None, sizes=None, modes='markers', markers=None,
            marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
            error_bars = None, normalize_size=True, return_plot=False):
-        #todo: Stuff that I think would be good to see in xy - alex
-        #todo: 1. colorscale for each xy relationship(? maybe not tho if too hard); -AF: this would need multiple colorbars and shifting them for all of them to be visible and honestly I don't see much value in it
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
