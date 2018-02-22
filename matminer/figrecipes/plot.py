@@ -27,7 +27,7 @@ class PlotlyFig:
                  colorscale='Viridis', height=None, width=None,
                  resolution_scale=None, margins=100, pad=0, username=None,
                  api_key=None, filename='auto', show_offline_plot=True,
-                 hovermode='closest', hoverinfo='x+y+text'):
+                 hovermode='closest', hoverinfo='x+y+text', hovercolor=None):
         """
         Class for making Plotly plots
 
@@ -102,6 +102,8 @@ class PlotlyFig:
                     Any combination of "x", "y", "z", "text", "name" with a "+"
                     OR "all" or "none" or "skip".
                     Examples: "x", "y", "x+y", "x+y+z", "all"
+                hovercolor: (str) The color to set for the hover background.
+                    If None, uses the trace color.
 
         Returns: None
 
@@ -133,6 +135,7 @@ class PlotlyFig:
                   'font_color': font_color,
                   'hoverinfo': hoverinfo,
                   'hovermode': hovermode,
+                  'hovercolor': hovercolor,
                   'margin': margins,
                   'pad': pad,
                   'width': width,
@@ -174,6 +177,7 @@ class PlotlyFig:
         self.layout['plot_bgcolor'] = self.bg_color
         self.layout['paper_bgcolor'] = self.bg_color
         self.layout['hoverlabel'] = {'font': font_style}
+        self.layout['hoverlabel']['bgcolor'] = hovercolor
         self.layout['title'] = self.title
 
         optional_fields = ['hovermode', 'margin', 'autosize', 'width', 'height']
@@ -222,7 +226,7 @@ class PlotlyFig:
                 with mode in __init__).
 
         Returns:
-            A Plotly Figure object (if self.plot_mode = 'return')
+            A Plotly Figure object (if return_plot = True)
 
         """
         if return_plot:
@@ -709,7 +713,7 @@ class PlotlyFig:
             else:
                 fig['data'][iplot].update(marker={'color': default_color,
                                     'line': {'width': 0.5, 'color': 'black'}})
-        if (default_color=='gray' or default_color=='black') and colors is None:
+        if (default_color in ['grey', 'black']) and colors is None:
             fig['layout']['hoverlabel']['font']['color'] = 'white'
         return self.create_plot(fig, return_plot)
 
