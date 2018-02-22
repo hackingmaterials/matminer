@@ -350,7 +350,7 @@ class PlotlyFig:
                 error_bars = [error_bars] * len(xy_pairs)
             error_bars = [self.data_from_col(ebar) for ebar in error_bars]
             if len(error_bars) != len(xy_pairs):
-                raise ValueError('"error_nars" must be the same length as "xy_pairs"')
+                raise ValueError('"error_bars" must be the same length as "xy_pairs"')
 
         if normalize_size:
             for i, size in enumerate(sizes):
