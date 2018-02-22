@@ -587,8 +587,9 @@ class PlotlyFig:
         layout = self.layout.copy()
 
         # heatmap specific formatting:
-        layout['xaxis'].pop('type')
-        layout['yaxis'].pop('type')
+        for ax in ['x', 'y']:
+            if 'type' in layout['{}axis'.format(ax)]:
+                layout['{}axis'.format(ax)].pop('type')
         layout['margin']['l'] += self.tick_size * (2 + precision / 10.0) + 35
         if not layout['xaxis'].get('title'):
             warnings.warn('xaxis title was automatically set to x_prop value')
