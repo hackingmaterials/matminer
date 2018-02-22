@@ -924,8 +924,8 @@ class GaussianSymmFunc(BaseFeaturizer):
         """
         return 0 if r > cutoff else 0.5 * (np.cos(np.pi * r / cutoff) + 1.)
 
-    @classmethod
-    def g2(cls, eta, center_coord, neigh_coords, cutoff):
+    @staticmethod
+    def g2(eta, center_coord, neigh_coords, cutoff):
         """
         Gaussian radial symmetry function of the center atom,
         given an eta parameter.
@@ -943,11 +943,11 @@ class GaussianSymmFunc(BaseFeaturizer):
                 continue
             r = np.linalg.norm(neigh_coord - center_coord)
             ridge += (np.exp(-eta * (r ** 2.) / (cutoff ** 2.)) *
-                      cls.cosine_cutoff(r, cutoff))
+                      GaussianSymmFunc.cosine_cutoff(r, cutoff))
         return ridge
 
-    @classmethod
-    def g4(cls, eta, zeta, gamma, center_coord, neigh_coords, cutoff):
+    @staticmethod
+    def g4(eta, zeta, gamma, center_coord, neigh_coords, cutoff):
         """
         Gaussian angular symmetry function of the center atom,
         given a set of eta, zeta and gamma parameters.
@@ -975,9 +975,9 @@ class GaussianSymmFunc(BaseFeaturizer):
                 term = (1. + gamma * cos_theta) ** zeta * \
                        np.exp(-eta * (r_ij ** 2. + r_ik ** 2. + r_jk ** 2.) /
                               (cutoff ** 2.)) * \
-                       cls.cosine_cutoff(r_ij, cutoff) * \
-                       cls.cosine_cutoff(r_ik, cutoff) * \
-                       cls.cosine_cutoff(r_jk, cutoff)
+                       GaussianSymmFunc.cosine_cutoff(r_ij, cutoff) * \
+                       GaussianSymmFunc.cosine_cutoff(r_ik, cutoff) * \
+                       GaussianSymmFunc.cosine_cutoff(r_jk, cutoff)
                 ridge += term
         ridge *= 2. ** (1. - zeta)
         return ridge
