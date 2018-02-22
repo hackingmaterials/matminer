@@ -276,9 +276,9 @@ class PlotlyFig:
     def xy(self, xy_pairs, colors=None, color_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None,
            marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
-           normalize_size=True, return_plot=False):
+           error_bars = None, normalize_size=True, return_plot=False):
         #todo: Stuff that I think would be good to see in xy - alex
-        #todo: 1. colorscale for each xy relationship(? maybe not tho if too hard)
+        #todo: 1. colorscale for each xy relationship(? maybe not tho if too hard); -AF: this would need multiple colorbars and shifting them for all of them to be visible and honestly I don't see much value in it
         #todo: 2. (super) simple error bar for x and y
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
@@ -341,6 +341,9 @@ class PlotlyFig:
             for i, _ in enumerate(sizes):
                 sizes[i] = self.data_from_col(sizes[i])
 
+        if error_bars is not None and len(error_bars) != len(xy_pairs):
+            raise ValueError('"error_nars" must be the same length as "xy_pairs"')
+
         if normalize_size:
             for i, size in enumerate(sizes):
                 if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
@@ -382,8 +385,7 @@ class PlotlyFig:
         else:
             labels = [self.data_from_col(l) for l in labels]
         markers = markers or [{'symbol': 'circle', 'line': {'width': 1,
-                                                            'color': 'black'}}
-                              for _ in data]
+                                            'color': 'black'}} for _ in data]
         if isinstance(markers, dict):
             markers = [markers.copy() for _ in data]
 
@@ -434,6 +436,11 @@ class PlotlyFig:
             layout['xaxis']['title'] = pd.Series(data[0][0]).name
         if layout['yaxis'].get('title') is None and len(data) == 1:
             layout['yaxis']['title'] = pd.Series(data[0][1]).name
+
+        if error_bars is not None:
+            for i, _ in enumerate(traces):
+                traces[i].error_y = {'type': 'data', 'array':error_bars[i],
+                                     'visible': True}
 
         fig = {'data': traces, 'layout': layout}
         if showscale:
