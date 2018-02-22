@@ -184,6 +184,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     Args:
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
+        include_elems: (list of string), list of elements that must be included in PRDF
+        exclude_elems: (list of string), list of elmeents that should not be included in PRDF
 
     Features:
         Each feature corresponds to the density of number of bonds
@@ -193,12 +195,14 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
            By default, this featurizer generates RDFs for each pair
            of elements in the training set."""
 
-    def __init__(self, cutoff=20.0, bin_size=0.1):
+    def __init__(self, cutoff=20.0, bin_size=0.1, include_elems=(), exclude_elems=()):
         self.cutoff = cutoff
         self.bin_size = bin_size
         self.elements_ = None
+        self.include_elems = list(include_elems)  # Makes sure the element lists are ordered
+        self.exclude_elems = list(exclude_elems)
 
-    def fit(self, X, y=None, include_elems=(), exclude_elems=()):
+    def fit(self, X, y=None):
         """Define the list of elements to be included in the PRDF. By default,
         the PRDF will include all of the elements in `X`
 
@@ -206,19 +210,18 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             X: (numpy array nx1) structures used in the training set. Each entry
                 must be Pymatgen Structure objects.
             y: *Not used*
-            include_elems: (list of string), list of elements that must be included in PRDF
-            exclude_elems: (list of string), list of elmeents that should not be included in PRDF
+            fit_kwargs: *not used*
         """
 
         # Initialize list with included elements
-        elements = set([Element(e) for e in include_elems])
+        elements = set([Element(e) for e in self.include_elems])
 
         # Get all of elements that appaer
         for strc, in X:
             elements.update([e.element if isinstance(e, Specie) else e for e in strc.composition.keys()])
 
         # Remove the elements excluded by the user
-        elements.difference_update([Element(e) for e in exclude_elems])
+        elements.difference_update([Element(e) for e in self.exclude_elems])
 
         # Store the elements
         self.elements_ = [e.symbol for e in sorted(elements)]
