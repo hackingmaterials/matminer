@@ -457,12 +457,11 @@ class PlotlyFig:
                 y_labels=None, y_nqs=4, precision=1, annotation='count',
                 annotation_color='black', colorscale=None, return_plot=False):
         #todo: Stuff that I think would be good to see in heatmap - alex
-        #todo: 1. Ability to take in x_label, y_label, and a matrix like heatmap_plot
+        #todo: 1. Ability to take in x_label, y_label, and a matrix like heatmap_plot: I vote for keeping heatmap_plot
 
         """
         Args:
-            data: (array) an array of arrays. For example, in case of a pandas
-                dataframe 'df', data=df.values.tolist()
+            data: (dataframe): only the first 3 numerical columns considered
             cols ([str]): A list of strings specifying the columns of the
                 dataframe (either data or self.df) to use. Currenly, only 3
                 columns is supported. Note that the order in cols matter, the
@@ -495,8 +494,9 @@ class PlotlyFig:
                 data = self.df.select_dtypes(include=['float', 'int', 'bool'])
             else:
                 data = self.df[cols]
-        elif isinstance(data, (np.ndarray, list)):
-            data = pd.DataFrame(data, columns=cols)
+        elif not isinstance(data, pd.DataFrame):
+            raise ValueError('"heatmap" only supports dataframes with numerical'
+                             ' columns. Please use heatmap_plot instead.')
 
         cols = data.columns.values
         x_prop = cols[0]
@@ -596,10 +596,10 @@ class PlotlyFig:
         if not layout['yaxis'].get('xaxis'):
             warnings.warn('yaxis title was automatically set to y_prop value')
             layout['yaxis']['title'] = y_prop
-        # layout['xaxis']['title'] = 'TEST!!!!'
         layout['annotations'] = annotations
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig, return_plot)
+
 
     def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
                        labels=None, marker_scale=1.0, return_plot=False,
@@ -1219,8 +1219,8 @@ class PlotlyFig:
         self.layout['annotations'] = annotations
 
         fig = dict(data=data, layout=self.layout)
-
         return self.create_plot(fig, return_plot)
+
 
     def xy_plot(self, x_col, y_col, text=None, color='rgba(70, 130, 180, 1)',
                 size=6, colorscale='Viridis', legend=None,
