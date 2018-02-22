@@ -607,6 +607,8 @@ class PlotlyFig:
             warnings.warn('yaxis title was automatically set to y_prop value')
             layout['yaxis']['title'] = y_prop
         layout['annotations'] = annotations
+        if not hasattr(self, 'hovercolor'):
+            layout['hoverlabel']['bgcolor'] = 'white'
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig, return_plot)
 
