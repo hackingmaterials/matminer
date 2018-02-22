@@ -12,7 +12,7 @@ from scipy import stats
 from pandas.api.types import is_numeric_dtype
 
 __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
-              'Alireza Faghaninia  <alireza@lbl.gov>'
+              'Alireza Faghaninia  <alireza.faghaninia@gmail.com>'
 
 
 # todo: common function for if then checking data types + automatically ignore non-numerical data
@@ -279,7 +279,6 @@ class PlotlyFig:
            error_bars = None, normalize_size=True, return_plot=False):
         #todo: Stuff that I think would be good to see in xy - alex
         #todo: 1. colorscale for each xy relationship(? maybe not tho if too hard); -AF: this would need multiple colorbars and shifting them for all of them to be visible and honestly I don't see much value in it
-        #todo: 2. (super) simple error bar for x and y
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -304,7 +303,8 @@ class PlotlyFig:
                 float: a single size used for all traces in xy_pairs
                 [float]: list of fixed sizes used for traces (length==len(xy_pairs))
                 [list]: list of list of sizes for each trace in xy_pairs
-            modes (str or [str]): trace style; can be 'markers'/'lines'/'lines+markers'
+            modes (str or [str]): trace style; can be 'markers', 'lines' or
+                'lines+markers'.
             markers (dict or [dict]): gives the ability to fine tune marker
                 of each scatter plot individually if list of dicts passed. Note
                 that the key "size" is forbidden in markers. Use sizes arg instead.
@@ -312,6 +312,8 @@ class PlotlyFig:
             colorscale (str):  see the colorscale doc in __init__
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
+            error_bars ([str or list]): numbers used for error bars in the y
+                direction. String input is interpreted as dataframe column name
             normalize_size (bool): if True, normalize the size list.
             return_plot (bool): Returns the dictionary representation of the
                 figure if True. If False, prints according to self.mode (set
@@ -341,8 +343,12 @@ class PlotlyFig:
             for i, _ in enumerate(sizes):
                 sizes[i] = self.data_from_col(sizes[i])
 
-        if error_bars is not None and len(error_bars) != len(xy_pairs):
-            raise ValueError('"error_nars" must be the same length as "xy_pairs"')
+        if error_bars is not None:
+            if isinstance(error_bars, str):
+                error_bars = [error_bars] * len(xy_pairs)
+            error_bars = [self.data_from_col(ebar) for ebar in error_bars]
+            if len(error_bars) != len(xy_pairs):
+                raise ValueError('"error_nars" must be the same length as "xy_pairs"')
 
         if normalize_size:
             for i, size in enumerate(sizes):
@@ -447,9 +453,9 @@ class PlotlyFig:
             fig['layout']['legend']['x'] = 0.9
         return self.create_plot(fig, return_plot)
 
-    def heatmap(self, data=None, cols=None, x_bins=6, y_bins=4, precision=1,
-                annotation='count', annotation_color='black', colorscale=None,
-                return_plot=False):
+    def heatmap(self, data=None, cols=None, x_labels=None, x_nqs=6,
+                y_labels=None, y_nqs=4, precision=1, annotation='count',
+                annotation_color='black', colorscale=None, return_plot=False):
         #todo: Stuff that I think would be good to see in heatmap - alex
         #todo: 1. Ability to take in x_label, y_label, and a matrix like heatmap_plot
 
@@ -460,13 +466,16 @@ class PlotlyFig:
             cols ([str]): A list of strings specifying the columns of the
                 dataframe (either data or self.df) to use. Currenly, only 3
                 columns is supported. Note that the order in cols matter, the
-                firts is considered x, second y and the third as z (color)
-            x_bins (int or None): if the unique values for x_prop is more than
-                x_bins, x_prop is binned to the number of x_bins for better
-                presentation
-            y_bins (int or None): similar to x_bins
+                first is considered x, second y and the third as z (color)
+            x_labels ([str]): labels for the categories in x data (first column)
+            x_nqs (int or None): if unique values for x_prop is more than this,
+                x_prop is divided into x_nqs quantiles for better presentation
+                *if x_labels is set, x_nqs ignored (i.e. x_nqs = len(x_labels))
+            y_labels ([str]): similar to x_labels but for the 2nd column in data
+            y_nqs (int or None): similar to x_nqs but for the 2nd column in data
             precision (int): number of floating points used for binning/display
-            annotation (str or None): mode of annotation. Options are: None or
+            annotation (str or None): mode of annotation. Options are:
+                None: no annotations
                 "count": the number of data available in each cell displayed
                 "value": the actual value of the cell in addition to colorbar
             annotation_color (str): the color of annotation (text inside cells)
@@ -493,22 +502,38 @@ class PlotlyFig:
         x_prop = cols[0]
         y_prop = cols[1]
         col_prop = cols[2]
+        if x_labels is not None:
+            x_nqs = len(x_labels)
+        if y_labels is not None:
+            y_nqs = len(y_labels)
 
         data = data.sort_values(y_prop, ascending=True)
-        if y_bins is None or len(data[y_prop].unique()) > y_bins:
-            data['y_bin'] = pd.cut(data[y_prop], bins=y_bins,
-                                   precision=precision).astype(str)
-            y_labels = data['y_bin'].unique()
+        if y_nqs is None or len(data[y_prop].unique()) > y_nqs:
+            try:
+                data['y_bin'] = pd.qcut(data[y_prop], y_nqs, labels=y_labels,
+                                       precision=precision).astype(str)
+                y_groups = data['y_bin'].unique()
+            except:
+                warnings.warn('pd.qcut failed! categorizing on unique values')
+                y_groups = data[y_prop].unique()
+                data['y_bin'] = data[y_prop]
         else:
-            y_labels = data[y_prop].unique()
+            y_groups = data[y_prop].unique()
+            data['y_bin'] = data[y_prop]
 
         data = data.sort_values(x_prop, ascending=True)
-        if x_bins is None or len(data[x_prop].unique()) > x_bins:
-            data['x_bin'] = pd.cut(data[x_prop], bins=x_bins,
-                                   precision=precision).astype(str)
-            x_labels = data['x_bin'].unique()
+        if x_nqs is None or len(data[x_prop].unique()) > x_nqs:
+            try:
+                data['x_bin'] = pd.qcut(data[x_prop], x_nqs, labels=x_labels,
+                                       precision=precision).astype(str)
+                x_groups = data['x_bin'].unique()
+            except:
+                warnings.warn('pd.qcut failed! categorizing on unique values')
+                x_groups = data[x_prop].unique()
+                data['x_bin'] = data[x_prop]
         else:
-            x_labels = data[x_prop].unique()
+            x_groups = data[x_prop].unique()
+            data['x_bin'] = data[x_prop]
 
         data_ = []
         annotations = []
@@ -516,17 +541,15 @@ class PlotlyFig:
                                         'size': 0.7 * self.font_size,
                                         'family': self.font_family},
                                'showarrow': False}
-        for y in y_labels:
+        for y in y_groups:
             temp = data[data['y_bin'].values == y]
-            grouped = temp.groupby('x_bin').mean().reset_index()
-            g_count = temp.groupby('x_bin').count().reset_index()
+            grpd = temp.groupby('x_bin').mean().reset_index()
+            gcnt = temp.groupby('x_bin').count().reset_index()
             x_data = []
-            for x in x_labels:
-                if x in grouped['x_bin'].values:
-                    val = \
-                    grouped[grouped['x_bin'].values == x][col_prop].values[0]
-                    count = \
-                    g_count[g_count['x_bin'].values == x][col_prop].values[0]
+            for x in x_groups:
+                if x in grpd['x_bin'].values:
+                    val = grpd[grpd['x_bin'].values == x][col_prop].values[0]
+                    count = gcnt[gcnt['x_bin'].values == x][col_prop].values[0]
                     val = str(round(val, precision))
                 else:
                     count = 0
@@ -535,7 +558,9 @@ class PlotlyFig:
                 a_d = annotation_template.copy()
                 a_d['x'] = x
                 a_d['y'] = y
-                if annotation == 'value':
+                if annotation is None:
+                    a_d['text'] = ''
+                elif annotation == 'value':
                     a_d['text'] = val
                 elif annotation == 'count':
                     a_d['text'] = count
@@ -543,6 +568,9 @@ class PlotlyFig:
                     a_d['text'] = annotation
                 annotations.append(a_d)
             data_.append(x_data)
+
+        x_labels = x_labels or x_groups
+        y_labels = y_labels or y_groups
 
         if self.colorbar_title == 'auto':
             colorbar_title = col_prop
@@ -562,12 +590,13 @@ class PlotlyFig:
         layout['xaxis'].pop('type')
         layout['yaxis'].pop('type')
         layout['margin']['l'] += self.tick_size * (2 + precision / 10.0) + 35
-        if layout['xaxis']['title'] is None:
+        if not layout['xaxis'].get('title'):
             warnings.warn('xaxis title was automatically set to x_prop value')
             layout['xaxis']['title'] = x_prop
-        if layout['yaxis']['title'] is None:
+        if not layout['yaxis'].get('xaxis'):
             warnings.warn('yaxis title was automatically set to y_prop value')
             layout['yaxis']['title'] = y_prop
+        # layout['xaxis']['title'] = 'TEST!!!!'
         layout['annotations'] = annotations
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig, return_plot)
