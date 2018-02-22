@@ -234,6 +234,7 @@ class GeneralizedRadialDistributionFunction(HeterogeneousFeaturizer):
                                        0, self.cutoff) for bin in self.bins]
 
         volumes = [item[0] for item in integrations]
+        print(volumes)
         errors = [item[1] for item in integrations]
         if max(errors) > 1e-5:
             raise ValueError('Numerical integration does not play well with '
