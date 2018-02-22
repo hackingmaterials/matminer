@@ -1,5 +1,7 @@
 from __future__ import absolute_import, division
-from citrination_client import *
+from citrination_client import CitrinationClient, ChemicalFieldQuery, \
+    ChemicalFilter, FieldQuery, PropertyQuery, Filter, ReferenceQuery, \
+    PifSystemQuery, DatasetQuery, DataQuery, PifSystemReturningQuery
 import os
 import time
 import pandas as pd
