@@ -45,7 +45,7 @@ class CitrineDataRetrieval:
         self.client = CitrinationClient(api_key, "https://citrination.com")
 
 
-    def get_dataframe(self, formula=None, property=None, data_type=None,
+    def get_dataframe(self, formula=None, prop=None, data_type=None,
                       reference=None, min_measurement=None, max_measurement=None,
                       from_record=None, data_set_id=None, max_results=None,
                       show_columns=None):
@@ -59,7 +59,7 @@ class CitrineDataRetrieval:
             formula: (str) filter for the chemical formula field; only those
                 results that have chemical formulas that contain this string
                 will be returned
-            property: (str) name of the property to search for
+            prop: (str) name of the property to search for
             data_type: (str) 'EXPERIMENTAL'/'COMPUTATIONAL'/'MACHINE_LEARNING';
                 filter for properties obtained from experimental work,
                 computational methods, or machine learning.
@@ -79,7 +79,7 @@ class CitrineDataRetrieval:
         """
         # Get all of the jsons from client
         jsons = self.get_api_data(
-            formula=formula, property=property, data_type=data_type,
+            formula=formula, prop=prop, data_type=data_type,
             reference=reference, min_measurement=min_measurement,
             max_measurement=max_measurement, from_record=from_record,
             data_set_id=data_set_id, max_results=max_results)
@@ -166,7 +166,7 @@ class CitrineDataRetrieval:
         return df
 
 
-    def get_api_data(self, formula=None, property=None, data_type=None,
+    def get_api_data(self, formula=None, prop=None, data_type=None,
                      reference=None, min_measurement=None, max_measurement=None,
                      from_record=None, data_set_id=None, max_results=None):
         """
@@ -178,7 +178,7 @@ class CitrineDataRetrieval:
             formula: (str) filter for the chemical formula field; only those
                 results that have chemical formulas that contain this string
                 will be returned
-            property: (str) name of the property to search for
+            prop: (str) name of the property to search for
             data_type: (str) 'EXPERIMENTAL'/'COMPUTATIONAL'/'MACHINE_LEARNING';
                 filter for properties obtained from experimental work,
                 computational methods, or machine learning.
@@ -201,7 +201,7 @@ class CitrineDataRetrieval:
 
         # Construct all of the relevant queries from input args
         formula_query = ChemicalFieldQuery(filter=ChemicalFilter(equal=formula))
-        prop_query = PropertyQuery(name=FieldQuery(filter=Filter(equal=property)),
+        prop_query = PropertyQuery(name=FieldQuery(filter=Filter(equal=prop)),
                                    value=FieldQuery(filter=Filter(min=min_measurement,
                                                                   max=max_measurement)),
                                    data_type=FieldQuery(filter=Filter(equal=data_type)))
