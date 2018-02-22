@@ -606,7 +606,7 @@ class PlotlyFig:
 
     def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
                        labels=None, marker_scale=1.0, return_plot=False,
-                       default_color='blue', **kwargs):
+                       default_color='#98AFC7', **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
