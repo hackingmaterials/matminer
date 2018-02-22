@@ -605,7 +605,7 @@ class PlotlyFig:
 
     def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
                        labels=None, marker_scale=1.0, return_plot=False,
-                       default_color='gray', **kwargs):
+                       default_color='blue', **kwargs):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -641,8 +641,8 @@ class PlotlyFig:
             kwargs['colormap'] = kwargs['colorscale']
             kwargs.pop('colorscale')
 
-        height = 800 if not hasattr(self, 'height') else self.height
-        width = 1000 if not hasattr(self, 'width') else self.width
+        height = 1000 if not hasattr(self, 'height') else self.height
+        width = 1300 if not hasattr(self, 'width') else self.width
 
         # making sure the combination of input args make sense
         if data is None:
@@ -678,8 +678,8 @@ class PlotlyFig:
 
         nplots = len(data.columns) - int(colors is not None)
         marker_size = marker.get('size') or 5.0 * marker_scale
-        text_scale = 0.9 / nplots ** 0.2
-        tick_scale = 0.7 / nplots ** 0.3
+        text_scale = 1.0 / (nplots ** 0.2)
+        tick_scale = 0.9 / (nplots ** 0.3)
         fig = FF.create_scatterplotmatrix(data, index=colors, diag='histogram',
                                           size=marker_size, height=height,
                                           width=width, **kwargs)
