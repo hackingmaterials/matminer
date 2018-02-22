@@ -1,5 +1,7 @@
 from __future__ import absolute_import, division
-from citrination_client import *
+from citrination_client import CitrinationClient, ChemicalFieldQuery, \
+    ChemicalFilter, FieldQuery, PropertyQuery, Filter, ReferenceQuery, \
+    PifSystemQuery, DatasetQuery, DataQuery, PifSystemReturningQuery
 import os
 import time
 import pandas as pd
@@ -21,105 +23,73 @@ def get_value(dict_item):
     if "value" in dict_item:
         return dict_item["value"]
     elif "minimum" in dict_item and "maximum" in dict_item:
-        return "Minimum = {}, Maximum = {}".format(dict_item["minimum"], dict_item["maximum"])
+        return "Minimum = {}, Maximum = {}".format(dict_item["minimum"],
+                                                   dict_item["maximum"])
 
 
 class CitrineDataRetrieval:
+    """
+    CitrineDataRetrieval is used to retrieve data from
+    the Citrination database.  See API client docs at
+    http://citrineinformatics.github.io/api-documentation/
+    """
     def __init__(self, api_key=None):
         """
         Args:
-            api_key: (str) Your Citrine API key, or None if you've set the CITRINE_KEY environment variable
+            api_key: (str) Your Citrine API key, or None if
+                you've set the CITRINE_KEY environment variable
 
         Returns: None
         """
         api_key = api_key if api_key else os.environ["CITRINE_KEY"]
         self.client = CitrinationClient(api_key, "https://citrination.com")
 
-    def get_api_data(self, formula=None, property=None, data_type=None, reference=None, min_measurement=None,
-                      max_measurement=None, from_record=None, data_set_id=None, max_results=None):
+
+    def get_dataframe(self, formula=None, prop=None, data_type=None,
+                      reference=None, min_measurement=None, max_measurement=None,
+                      from_record=None, data_set_id=None, max_results=None,
+                      show_columns=None):
         """
-        Gets data from Citrine in a dataframe format.
-        See client docs at http://citrineinformatics.github.io/api-documentation/ for more details on these parameters.
+        Gets a Pandas dataframe object from data retrieved from
+        the Citrine API.  See client docs at
+        http://citrineinformatics.github.io/api-documentation/
+        for more details on input parameters.
 
         Args:
-            formula: (str) filter for the chemical formula field; only those results that have chemical formulas that
-                contain this string will be returned
-            property: (str) name of the property to search for
+            formula: (str) filter for the chemical formula field; only those
+                results that have chemical formulas that contain this string
+                will be returned
+            prop: (str) name of the property to search for
             data_type: (str) 'EXPERIMENTAL'/'COMPUTATIONAL'/'MACHINE_LEARNING';
-                filter for properties obtained from experimental work, computational methods, or machine learning.
-            reference: (str) filter for the reference field; only those results that have contributors that contain
-                this string will be returned
+                filter for properties obtained from experimental work,
+                computational methods, or machine learning.
+            reference: (str) filter for the reference field; only those
+                results that have contributors that contain this string
+                will be returned
             min_measurement: (str/num) minimum of the property value range
             max_measurement: (str/num) maximum of the property value range
-            from_record: (int) index of the first record to return (indexed from 0)
+            from_record: (int) index of first record to return (indexed from 0)
             data_set_id: (int) id of the particular data set to search on
             max_results: (int) number of records to limit the results to
-
-        Returns: (list) of jsons/pifs returned by Citrine's API
-        """
-
-        json_data = []
-        start = from_record if from_record else 0
-        per_page = 100
-        refresh_time = 3  # seconds to wait between search calls
-
-        while True:
-            if max_results and max_results < per_page:  # use per_page=max_results, eg: in case of max_results=68 < 100
-                pif_query = PifSystemReturningQuery(query=DataQuery(system=PifSystemQuery(
-                    chemical_formula=ChemicalFieldQuery(filter=ChemicalFilter(equal=formula)),
-                    properties=PropertyQuery(name=FieldQuery(filter=Filter(equal=property)),
-                                             value=FieldQuery(filter=Filter(min=min_measurement,
-                                                                            max=max_measurement)),
-                                             data_type=FieldQuery(filter=Filter(equal=data_type))),
-                    references=ReferenceQuery(doi=FieldQuery(filter=Filter(equal=reference)))),
-                    dataset=DatasetQuery(id=Filter(equal=data_set_id))), from_index=start, size=max_results)
-
-            else:
-                pif_query = PifSystemReturningQuery(query=DataQuery(system=PifSystemQuery(
-                    chemical_formula=ChemicalFieldQuery(filter=ChemicalFilter(equal=formula)),
-                    properties=PropertyQuery(name=FieldQuery(filter=Filter(equal=property)),
-                                             value=FieldQuery(filter=Filter(min=min_measurement,
-                                                                            max=max_measurement)),
-                                             data_type=FieldQuery(filter=Filter(equal=data_type))),
-                    references=ReferenceQuery(doi=FieldQuery(filter=Filter(equal=reference)))),
-                    dataset=DatasetQuery(id=Filter(equal=data_set_id))), from_index=start, size=per_page)
-
-            # Check if any results found
-            if "hits" not in self.client.search(pif_query).as_dictionary():
-                raise KeyError("No results found!")
-
-            data = self.client.search(pif_query).as_dictionary()["hits"]
-            size = len(data)
-            start += size
-            json_data.extend(data)
-
-            if max_results and len(json_data) > max_results:                 # check if limit is reached
-                json_data = json_data[:max_results]             # get first multiple of 100 records
-                break
-            if size < per_page:  # break out of last loop of results
-                break
-
-            time.sleep(refresh_time)
-
-        return json_data
-
-    def get_dataframe(self, json_lst, show_columns=None):
-        """
-        Converts list of json/pifs to a Pandas dataframe
-
-        Args:
-            json_lst: (list) of json/pifs
-            show_columns: (list) list of columns to show from the resulting dataframe
+            show_columns: (list) list of columns to show from the
+                resulting dataframe
 
         Returns: (object) Pandas dataframe object containing the results
 
         """
+        # Get all of the jsons from client
+        jsons = self.get_api_data(
+            formula=formula, prop=prop, data_type=data_type,
+            reference=reference, min_measurement=min_measurement,
+            max_measurement=max_measurement, from_record=from_record,
+            data_set_id=data_set_id, max_results=max_results)
+
         non_prop_df = pd.DataFrame()  # df w/o measurement column
         prop_df = pd.DataFrame()  # df containing only measurement column
 
         counter = 0  # variable to keep count of sample hit and set indexes
 
-        for hit in tqdm(json_lst):
+        for hit in tqdm(jsons):
 
             counter += 1  # Keep a count to appropriately index the rows
 
@@ -128,7 +98,8 @@ class CitrineDataRetrieval:
                 system_normdf = json_normalize(system_value)
 
                 # Make a DF of all non-'properties' fields
-                non_prop_cols = [cols for cols in system_normdf.columns if "properties" not in cols]
+                non_prop_cols = [cols for cols in system_normdf.columns
+                                 if "properties" not in cols]
                 non_prop_row = pd.DataFrame()
                 for col in non_prop_cols:
                     non_prop_row[col] = system_normdf[col]
@@ -193,3 +164,83 @@ class CitrineDataRetrieval:
             df = df[show_columns]
 
         return df
+
+
+    def get_api_data(self, formula=None, prop=None, data_type=None,
+                     reference=None, min_measurement=None, max_measurement=None,
+                     from_record=None, data_set_id=None, max_results=None):
+        """
+        Gets raw api data from Citrine in json format. See client docs
+        at http://citrineinformatics.github.io/api-documentation/
+        for more details on these parameters.
+
+        Args:
+            formula: (str) filter for the chemical formula field; only those
+                results that have chemical formulas that contain this string
+                will be returned
+            prop: (str) name of the property to search for
+            data_type: (str) 'EXPERIMENTAL'/'COMPUTATIONAL'/'MACHINE_LEARNING';
+                filter for properties obtained from experimental work,
+                computational methods, or machine learning.
+            reference: (str) filter for the reference field; only those
+                results that have contributors that contain this string
+                will be returned
+            min_measurement: (str/num) minimum of the property value range
+            max_measurement: (str/num) maximum of the property value range
+            from_record: (int) index of first record to return (indexed from 0)
+            data_set_id: (int) id of the particular data set to search on
+            max_results: (int) number of records to limit the results to
+
+        Returns: (list) of jsons/pifs returned by Citrine's API
+        """
+
+        json_data = []
+        start = from_record if from_record else 0
+        per_page = 100
+        refresh_time = 3  # seconds to wait between search calls
+
+        # Construct all of the relevant queries from input args
+        formula_query = ChemicalFieldQuery(filter=ChemicalFilter(equal=formula))
+        prop_query = PropertyQuery(name=FieldQuery(filter=Filter(equal=prop)),
+                                   value=FieldQuery(filter=Filter(min=min_measurement,
+                                                                  max=max_measurement)),
+                                   data_type=FieldQuery(filter=Filter(equal=data_type)))
+        ref_query = ReferenceQuery(doi=FieldQuery(filter=Filter(equal=reference)))
+
+        system_query = PifSystemQuery(chemical_formula=formula_query,
+                                      properties=prop_query,
+                                      references=ref_query)
+        dataset_query = DatasetQuery(id=Filter(equal=data_set_id))
+        data_query = DataQuery(system=system_query, dataset=dataset_query)
+
+        while True:
+            # use per_page=max_results, eg: in case of max_results=68 < 100
+            if max_results and max_results < per_page:
+                pif_query = PifSystemReturningQuery(query=data_query,
+                                                    from_index=start,
+                                                    size=max_results)
+            else:
+                pif_query = PifSystemReturningQuery(query=data_query,
+                                                    from_index=start,
+                                                    size=per_page)
+
+            # Check if any results found
+            if "hits" not in self.client.search(pif_query).as_dictionary():
+                raise KeyError("No results found!")
+
+            data = self.client.search(pif_query).as_dictionary()["hits"]
+            size = len(data)
+            start += size
+            json_data.extend(data)
+
+            # check if limit is reached
+            if max_results and len(json_data) > max_results:
+                # get first multiple of 100 records
+                json_data = json_data[:max_results]
+                break
+            if size < per_page:  # break out of last loop of results
+                break
+
+            time.sleep(refresh_time)
+
+        return json_data

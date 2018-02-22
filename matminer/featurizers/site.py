@@ -575,7 +575,7 @@ class VoronoiFingerprint(BaseFeaturizer):
      computed as n_i/sum(n_i), and i is in the range of 3-10.
      reflect the strength of i-fold symmetry in local sites.
      e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,...]
-             indicating both 4-fold and a stronger 6-fold symmetries are present;
+             indicating both 4-fold and stronger 6-fold symmetries are present;
           for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
              indicating only 4-fold symmetry is present;
           for icosahedra, the Voronoi indices are [0,0,1,0,...],
@@ -618,7 +618,7 @@ class VoronoiFingerprint(BaseFeaturizer):
     def vol_tetra(vt1, vt2, vt3, vt4):
         """
         Calculate the volume of a tetrahedron, given the four vertices of vt1,
-        vt2, vt3 and vt4
+        vt2, vt3 and vt4.
         Args:
             vt1 (array-like): coordinates of vertex 1.
             vt2 (array-like): coordinates of vertex 2.
@@ -638,7 +638,7 @@ class VoronoiFingerprint(BaseFeaturizer):
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
         Returns:
-            (list of floats): Voronoi fingerprints
+            (list of floats): Voronoi fingerprints.
                 -Voronoi indices
                 -i-fold symmetry indices
                 -weighted i-fold symmetry indices (if use_weights = True)
@@ -722,10 +722,10 @@ class VoronoiFingerprint(BaseFeaturizer):
 
     def citations(self):
         citation = ['@book{okabe1992spatial,  '
-                    'title={Spatial tessellations}, '
-                    'author={Okabe, Atsuyuki}, '
-                    'year={1992}, '
-                    'publisher={Wiley Online Library}}']
+                    'title  = {Spatial tessellations}, '
+                    'author = {Okabe, Atsuyuki}, '
+                    'year   = {1992}, '
+                    'publisher = {Wiley Online Library}}']
         return citation
 
     def implementors(self):
@@ -777,10 +777,10 @@ class ChemicalSRO(BaseFeaturizer):
         avoiding repeated calculation of composition when featurizing many
         sites in one structure.
         Args:
-            structs (pandas series): series of pymatgen Structures
+            structs (pandas series): series of pymatgen Structures.
         Returns:
-            (list of str): elements present in the structures
-            (dict): composition dicts of the structures
+            (list of str): elements present in the structures.
+            (dict): composition dicts of the structures.
         """
         el_amt_dict = {}
         el_list = set()
@@ -794,21 +794,20 @@ class ChemicalSRO(BaseFeaturizer):
         return list(el_list), el_amt_dict
 
     def featurize_dataframe(self, df, col_id, ignore_errors=True,
-                            inplace=True, n_jobs=1):
+                            inplace=True):
         """
         Featurize the dataframe with ChemicalSRO features.
         Args:
-            df (pandas dataframe): Dataframe containing input data
-            col_id (str or [str]): The dataframe key corresponding to structures
+            df (pandas dataframe): Dataframe containing input data.
+            col_id (str or [str]): Dataframe key corresponding to structures.
         Returns:
-            (pandas dataframe) ChemicalSRO-featurized dataframe
+            (pandas dataframe) ChemicalSRO-featurized dataframe.
         """
         self.el_list, self.el_amt_dict = self.cal_el_amt(df[col_id[0]])
         df = super(ChemicalSRO, self).\
              featurize_dataframe(df, col_id,
                                  ignore_errors=ignore_errors,
-                                 inplace=inplace,
-                                 n_jobs=n_jobs)
+                                 inplace=inplace)
         delattr(self, 'el_list')
         delattr(self, 'el_amt_dict')
         return df
@@ -822,7 +821,7 @@ class ChemicalSRO(BaseFeaturizer):
         Returns:
             (list of floats): Chemical SRO features for each element.
         """
-        csro_el = [np.nan]*len(self.el_list)
+        csro_el = [0.]*len(self.el_list)
         el_amt = self.el_amt_dict[str(struct)]
         nn_list = self.nn.get_nn(struct, idx)
         nn_el_amt = dict.fromkeys(el_amt, 0)
@@ -882,7 +881,174 @@ class ChemicalSRO(BaseFeaturizer):
         return ['Qi Wang']
 
 
-class EwaldSiteEnergy:
+class GaussianSymmFunc(BaseFeaturizer):
+    """
+    Gaussian symmetry function features suggested by Behler et al.,
+    based on pair distances and angles, to approximate the functional
+    dependence of local energies, originally used in the fitting of
+    machine-learning potentials.
+    The symmetry functions can be divided to a set of radial functions
+    (g2 function), and a set of angular functions (g4 function).
+    The number of symmetry functions returned are based on parameters
+    of etas_g2, etas_g4, zetas_g4 and gammas_g4.
+    See the original papers for more details:
+    “Atom-centered symmetry functions for constructing high-dimensional
+    neural network potentials”, J Behler, J Chem Phys 134, 074106 (2011).
+    The cutoff function is taken as the polynomial form (cosine_cutoff)
+    to give a smoothed truncation.
+    A Fortran and a different Python version can be found in the code
+    Amp: Atomistic Machine-learning Package
+    (https://bitbucket.org/andrewpeterson/amp).
+    Args:
+        etas_g2 (list of floats): etas used in radial functions.
+                                  (default: [0.05, 4., 20., 80.])
+        etas_g4 (list of floats): etas used in angular functions.
+                                  (default: [0.005])
+        zetas_g4 (list of floats): zetas used in angular functions.
+                                   (default: [1., 4.])
+        gammas_g4 (list of floats): gammas used in angular functions.
+                                    (default: [+1., -1.])
+        cutoff (float): cutoff distance. (default: 6.5)
+    """
+
+    @staticmethod
+    def cosine_cutoff(r, cutoff):
+        """
+        Polynomial cutoff function to give a smoothed truncation of the Gaussian
+        symmetry functions.
+        Args:
+            r (float): distance.
+            cutoff (float): cutoff distance.
+        Returns:
+            (float) cutoff function.
+        """
+        return 0 if r > cutoff else 0.5 * (np.cos(np.pi * r / cutoff) + 1.)
+
+    @staticmethod
+    def g2(eta, center_coord, neigh_coords, cutoff):
+        """
+        Gaussian radial symmetry function of the center atom,
+        given an eta parameter.
+        Args:
+            eta: radial function parameter.
+            center_coord (list of floats): coordinates of center atom.
+            neigh_coords (list of [floats]): coordinates of neighboring atoms.
+            cutoff (float): cutoff distance.
+        Returns:
+            (float) Gaussian radial symmetry function.
+        """
+        ridge = 0.
+        for neigh_coord in neigh_coords:
+            if str(neigh_coord) == str(center_coord):
+                continue
+            r = np.linalg.norm(neigh_coord - center_coord)
+            ridge += (np.exp(-eta * (r ** 2.) / (cutoff ** 2.)) *
+                      GaussianSymmFunc.cosine_cutoff(r, cutoff))
+        return ridge
+
+    @staticmethod
+    def g4(eta, zeta, gamma, center_coord, neigh_coords, cutoff):
+        """
+        Gaussian angular symmetry function of the center atom,
+        given a set of eta, zeta and gamma parameters.
+        Args:
+            eta (float): angular function parameter.
+            zeta (float): angular function parameter.
+            gamma (float): angular function parameter.
+            center_coord (list of floats): coordinates of center atom.
+            neigh_coords (list of [floats]): coordinates of neighboring atoms.
+            cutoff (float): cutoff parameter.
+        Returns:
+            (float) Gaussian angular symmetry function.
+        """
+        ridge = 0.
+        for j, neigh_j in enumerate(neigh_coords):
+            for neigh_k in neigh_coords[j+1:]:
+                if str(neigh_j) == str(center_coord) or \
+                   str(neigh_k) == str(center_coord):
+                    continue
+                r_ij = np.linalg.norm(neigh_j - center_coord)
+                r_ik = np.linalg.norm(neigh_k - center_coord)
+                r_jk = np.linalg.norm(neigh_k - neigh_j)
+                cos_theta = np.dot((neigh_j - center_coord),
+                                   (neigh_k - center_coord)) / r_ij / r_ik
+                term = (1. + gamma * cos_theta) ** zeta * \
+                       np.exp(-eta * (r_ij ** 2. + r_ik ** 2. + r_jk ** 2.) /
+                              (cutoff ** 2.)) * \
+                       GaussianSymmFunc.cosine_cutoff(r_ij, cutoff) * \
+                       GaussianSymmFunc.cosine_cutoff(r_ik, cutoff) * \
+                       GaussianSymmFunc.cosine_cutoff(r_jk, cutoff)
+                ridge += term
+        ridge *= 2. ** (1. - zeta)
+        return ridge
+
+    def __init__(self, etas_g2=None, etas_g4=None, zetas_g4=None,
+                 gammas_g4=None, cutoff=6.5):
+        self.etas_g2 = etas_g2 if etas_g2 else [0.05, 4., 20., 80.]
+        self.etas_g4 = etas_g4 if etas_g4 else [0.005]
+        self.zetas_g4 = zetas_g4 if zetas_g4 else [1., 4.]
+        self.gammas_g4 = gammas_g4 if gammas_g4 else [+1., -1.]
+        self.cutoff = cutoff
+
+    def featurize(self, struct, idx):
+        """
+        Get Gaussian symmetry function features of site with given index
+        in input structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            (list of floats): Gaussian symmetry function features.
+        """
+        gaussian_funcs = []
+        neighbors = struct.get_sites_in_sphere(
+            struct[idx].coords, self.cutoff)
+        neigh_coords = [neigh[0].coords for neigh in neighbors]
+        for eta_g2 in self.etas_g2:
+            gaussian_funcs.append(self.g2(eta_g2,
+                                          struct[idx].coords,
+                                          neigh_coords,
+                                          self.cutoff))
+
+        for eta_g4 in self.etas_g4:
+            for zeta_g4 in self.zetas_g4:
+                for gamma_g4 in self.gammas_g4:
+                    gaussian_funcs.append(self.g4(eta_g4, zeta_g4, gamma_g4,
+                                                  struct[idx].coords,
+                                                  neigh_coords,
+                                                  self.cutoff))
+        return gaussian_funcs
+
+    def feature_labels(self):
+        return ['G2_{}'.format(eta_g2) for eta_g2 in self.etas_g2] + \
+               ['G4_{}_{}_{}'.format(eta_g4, zeta_g4, gamma_g4)
+                for eta_g4 in self.etas_g4
+                for zeta_g4 in self.zetas_g4
+                for gamma_g4 in self.gammas_g4]
+
+    def citations(self):
+        gsf_citation = (
+            '@Article{Behler2011, author = {Jörg Behler}, '
+            'title = {Atom-centered symmetry functions for constructing '
+            'high-dimensional neural network potentials}, '
+            'journal = {The Journal of Chemical Physics}, year = {2011}, '
+            'volume = {134}, number = {7}, pages = {074106}, '
+            'doi = {10.1063/1.3553717}}')
+        amp_citation = (
+            '@Article{Khorshidi2016, '
+            'author = {Alireza Khorshidi and Andrew A. Peterson}, '
+            'title = {Amp : A modular approach to machine learning in '
+            'atomistic simulations}, '
+            'journal = {Computer Physics Communications}, year = {2016}, '
+            'volume = {207}, pages = {310--324}, '
+            'doi = {10.1016/j.cpc.2016.05.010}}')
+        return [gsf_citation, amp_citation]
+
+    def implementors(self):
+        return ['Qi Wang']
+
+
+class EwaldSiteEnergy(BaseFeaturizer):
     """Compute site energy from Coulombic interactions
     User notes:
         - This class uses that `charges that are already-defined for the structure`.
