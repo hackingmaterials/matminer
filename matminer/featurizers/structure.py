@@ -1136,7 +1136,8 @@ class BagofBonds(BaseFeaturizer):
             exist in the unified dataframe. For example, if a dataframe contains
             structures of BaLiP and BaTiO3, determines the value to place in
             the Li-P column for the BaTiO3 row; by default, is 0.
-        no_oxi (bool): If True, prevents oxidation states from  differentiating
+        no_oxi (bool): If True, the featurizer will be agnostic to oxidation
+            states, which prevents oxidation states from  differentiating
             bonds. For example, if True, Ca - O is identical to Ca2+ - O2-,
             Ca3+ - O-, etc., and all of them will be included in Ca - O column.
         approx_bonds (bool): If True, approximates the fractions of bonds not
@@ -1208,8 +1209,6 @@ class BagofBonds(BaseFeaturizer):
             if not isinstance(structures, listlike):
                 structures = [structures]
             self.allowed_bonds_ = self.enumerate_all_bonds(structures)
-
-            print(self.allowed_bonds_)
             self.allowed_bonds_ = self._sanitize_bonds(self.allowed_bonds_)
 
     def enumerate_bonds(self, s):
@@ -1320,7 +1319,7 @@ class BagofBonds(BaseFeaturizer):
         """
         Ensure the Featurizer has been fit to the dataframe
         """
-        if not hasattr(self, "allowed_bonds"):
+        if not hasattr(self, "allowed_bonds_"):
             raise AttributeError("BagofBonds must be fit before it can be "
                                  "featurized! Use .fit to define all bond types"
                                  " before featurizing!")
