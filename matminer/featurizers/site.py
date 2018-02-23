@@ -794,7 +794,7 @@ class ChemicalSRO(BaseFeaturizer):
         return list(el_list), el_amt_dict
 
     def featurize_dataframe(self, df, col_id, ignore_errors=True,
-                            inplace=True, n_jobs=1):
+                            inplace=True):
         """
         Featurize the dataframe with ChemicalSRO features.
         Args:
@@ -807,8 +807,7 @@ class ChemicalSRO(BaseFeaturizer):
         df = super(ChemicalSRO, self).\
              featurize_dataframe(df, col_id,
                                  ignore_errors=ignore_errors,
-                                 inplace=inplace,
-                                 n_jobs=n_jobs)
+                                 inplace=inplace)
         delattr(self, 'el_list')
         delattr(self, 'el_amt_dict')
         return df

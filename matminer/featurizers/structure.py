@@ -4,6 +4,7 @@ import itertools
 from math import pi, fabs
 from operator import itemgetter
 import warnings
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -180,14 +181,48 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     broken down for each pair of atom types.  The PRDF was proposed as a
     structural descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
+
     Args:
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
-    """
+
+    Features:
+        Each feature corresponds to the density of number of bonds
+           for a certain pair of elements at a certain range of
+           distances. For example, "Al-Al PRDF r=1.00-1.50" corresponds
+           to the density of Al-Al bonds between 1 and 1.5 distance units
+           By default, this featurizer generates RDFs for each pair
+           of elements in the training set."""
 
     def __init__(self, cutoff=20.0, bin_size=0.1):
         self.cutoff = cutoff
         self.bin_size = bin_size
+        self.elements_ = None
+
+    def fit(self, X, y=None, include_elems=(), exclude_elems=()):
+        """Define the list of elements to be included in the PRDF. By default,
+        the PRDF will include all of the elements in `X`
+
+        Args:
+            X: (numpy array nx1) structures used in the training set. Each entry
+                must be Pymatgen Structure objects.
+            y: *Not used*
+            include_elems: (list of string), list of elements that must be included in PRDF
+            exclude_elems: (list of string), list of elmeents that should not be included in PRDF
+        """
+
+        # Initialize list with included elements
+        elements = set([Element(e) for e in include_elems])
+
+        # Get all of elements that appaer
+        for strc, in X:
+            elements.update([e.element if isinstance(e, Specie) else e for e in strc.composition.keys()])
+
+        # Remove the elements excluded by the user
+        elements.difference_update([Element(e) for e in exclude_elems])
+
+        # Store the elements
+        self.elements_ = [e.symbol for e in sorted(elements)]
 
     def featurize(self, s):
         """
@@ -203,7 +238,30 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         if not s.is_ordered:
             raise ValueError("Disordered structure support not built yet")
+        if self.elements_ is None:
+            raise Exception("You must run 'fit' first!")
 
+        dist_bins, prdf = self.compute_prdf(s)  # Assemble the PRDF for each pair
+
+        # Convert the PRDF into a feature array
+        zeros = np.zeros_like(dist_bins)  # Zeros if elements don't appear
+        output = []
+        for key in itertools.combinations_with_replacement(self.elements_, 2):
+            output.append(prdf.get(key, zeros))
+
+        # Stack them together
+        return np.hstack(output)
+
+    def compute_prdf(self, s):
+        """Compute the PRDF for a structure
+
+        Args:
+            s: (Structure), structure to be evaluated
+        Returns:
+            dist_bins - float, start of each of the bins
+            prdf - dict, where the keys is a pair of elements (strings),
+                and the value is the radial distribution function for those paris of elements
+        """
         # Get the composition of the array
         composition = s.composition.fractional_composition.to_reduced_dict
 
@@ -231,29 +289,54 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         # Compute and normalize the prdfs
         prdf = {}
-        dist_bins = np.arange(0, self.cutoff + self.bin_size, self.bin_size)
+        dist_bins = self._make_bins()
         shell_volume = 4.0 / 3.0 * pi * (
-                np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+            np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
-            dist_hist, dist_bins = np.histogram(distances,
-                                                bins=dist_bins, density=False)
+            dist_hist, dist_bins = np.histogram(distances, bins=dist_bins, density=False)
             # Normalize
             n_alpha = composition[key[0]] * s.num_sites
             rdf = dist_hist / shell_volume / n_alpha
 
-            prdf[key] = {'distances': dist_bins, 'distribution': rdf}
+            prdf[key] = rdf
 
-        return [prdf]
+        return dist_bins, prdf
+
+    def _make_bins(self):
+        """Generate the edges of the bins for the PRDF
+
+        Returns:
+            [list of float], edges of the bins
+            """
+        return np.arange(0, self.cutoff + self.bin_size, self.bin_size)
 
     def feature_labels(self):
-        return ["partial radial distribution functions"]
+        if self.elements_ is None:
+            raise Exception("You must run 'fit' first!")
+        bin_edges = self._make_bins()
+        labels = []
+        for e1, e2 in itertools.combinations_with_replacement(self.elements_, 2):
+            for r_start, r_end in zip(bin_edges, bin_edges[1:]):
+                labels.append("{}-{} PRDF r={:.2f}-{:.2f}".format(
+                    e1, e2, r_start, r_end
+                ))
+        return labels
 
     def citations(self):
-        return []
+        return ["@article{Schutt2014,"
+                "author = {Sch{\"{u}}tt, K. T. and Glawe, H. and Brockherde, F. "
+                "and Sanna, A. and M{\"{u}}ller, K. R. and Gross, E. K. U.},"
+                "doi = {10.1103/PhysRevB.89.205118},"
+                "journal = {Physical Review B},"
+                "month = {may},number = {20},pages = {205118},"
+                "title = {{How to represent crystal structures for machine learning:"
+                " Towards fast prediction of electronic properties}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.89.205118},"
+                "volume = {89},""year = {2014}}"]
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ["Logan Ward", "Saurabh Bajaj"]
 
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
@@ -1034,10 +1117,16 @@ class BagofBonds(BaseFeaturizer):
     Li-0: 0.4
     Li-P: 0.6
 
-    For dataframes containing structures with various compositions, a unified
-    dataframe is returned which has the collection of bond types gathered
-    from all structures as columns. Use allowed_bonds and approx_bonds to
-    intelligently limit the possible bonds in the dataframe.
+    Features:
+
+    BagofBonds must be fit with iterable of structures before featurization in
+    order to define the allowed bond types (features). To do this, use 'fit'.
+    For dataframes containing structures of various compositions, a unified
+    dataframe is returned which has the collection of all possible bond types
+    gathered from all structures as columns. To approximate bonds based on
+    chemical rules (ie, for a structure which you'd like to featurize but has
+    bonds not in the allowed set), use approx_bonds = True.
+
 
     Args:
         nn (NearestNeighbors): A Pymatgen nearest neighbors derived object. For
@@ -1047,32 +1136,27 @@ class BagofBonds(BaseFeaturizer):
             exist in the unified dataframe. For example, if a dataframe contains
             structures of BaLiP and BaTiO3, determines the value to place in
             the Li-P column for the BaTiO3 row; by default, is 0.
-        allowed_bonds ([str]): A list of allowed bond types; limits the possible
-            columns in the output dataframe. If a structure has a bond type not
-            in allowed_bonds, the bond is skipped and all allowed bonds are
-            returned as normal (including bad bond values). Behavior can be
-            changed with approx_bonds. The output of .feature_labels() will
-            return a list of allowed_bonds for that BagofBonds object.
+        no_oxi (bool): If True, the featurizer will be agnostic to oxidation
+            states, which prevents oxidation states from  differentiating
+            bonds. For example, if True, Ca - O is identical to Ca2+ - O2-,
+            Ca3+ - O-, etc., and all of them will be included in Ca - O column.
         approx_bonds (bool): If True, approximates the fractions of bonds not
             in allowed_bonds (forbidden bonds) with similar allowed bonds.
             Chemical rules are used to determine which bonds are most 'similar';
             particularly, the Euclidean distance between the 2-tuples of the
             bonds in Mendeleev no. space is minimized for the approximate
             bond chosen.
+        token (str): The string used to separate species in a bond, including
+            spaces. For example, for the bond Cs+ - Cl-, the token is ' - '.
+            This determines how bonds are represented in the dataframe.
     """
 
-    def __init__(self, nn, bbv=0.0, allowed_bonds=None, approx_bonds=False):
+    def __init__(self, nn, bbv=0, no_oxi=False, approx_bonds=False, token='-'):
         self.nn = nn
         self.bbv = bbv
-        self.allowed_bonds = allowed_bonds
+        self.no_oxi = no_oxi
         self.approx_bonds = approx_bonds
-        if self.approx_bonds and self.allowed_bonds is None:
-            raise ValueError("allowed_bonds was not defined but approx_bonds "
-                             "are enabled. Define a list of allowed bonds or "
-                             "set approx_bonds=False.")
-
-        self._token = ' - '
-        self._dataframe_featurizing = False
+        self._token = " " + token + " "
 
     @staticmethod
     def from_preset(preset):
@@ -1089,32 +1173,43 @@ class BagofBonds(BaseFeaturizer):
         nn = getattr(pmg_le, preset)
         return BagofBonds(nn())
 
-    def featurize_dataframe(self, df, col_id, *args, **kwargs):
+    def fit(self, structures=None, allowed_bonds=None):
         """
-        Compute features for all entries contained in input dataframe.
-        Necessary for returning the correct unified dataframe.
+        Define the bond types allowed to be returned during each featurization.
+        Bonds found during featurization which are not allowed will be omitted
+        from the returned dataframe or matrix.
+
+        Fit BagofBonds by either passing an iterable of structures to
+        training_data or by defining the bonds explicitly with allowed_bonds.
 
         Args:
-            df (Pandas dataframe): Dataframe containing input data
-            col_id (str or [str]): The dataframe key corresponding to structures
+            structures (Series/list): An iterable of pymatgen Structure
+                objects which will be used to determine the allowed bond
+                types.
+            allowed_bonds ([str]): A listlike object containing bond types as
+                strings. For example, Cs - Cl, or Li+ - O2-. Ions and elements
+                will still have distinct bonds if (1) the bonds list originally
+                contained them and (2) no_oxi is False. These must match the
+                token specified in __init__.
 
         Returns:
-            (DataFrame) BagofBonds-featurized dataframe
+            None
         """
+        listlike = (tuple, list, np.ndarray, pd.Series)
 
-        self._dataframe_featurizing = True
-        if self.allowed_bonds is None:
-            self.unified_bonds = self.enumerate_all_bonds(df[col_id])
+        if structures is None:
+            if allowed_bonds is None:
+                raise ValueError("Please fit using an iterable of pymatgen"
+                                 "structures or with a list of allowed bonds.")
+            else:
+                if not isinstance(allowed_bonds, listlike):
+                    raise TypeError("allowed_bonds must be a list of strings.")
+                self.allowed_bonds_ = allowed_bonds
         else:
-            listlike = (tuple, list, np.ndarray, pd.Series)
-            if not isinstance(self.allowed_bonds, listlike):
-                raise TypeError("allowed_bonds must be a list of strings.")
-            self.unified_bonds = self._sanitize_bonds(self.allowed_bonds)
-
-        df = super(BagofBonds, self).featurize_dataframe(df, col_id, *args,
-                                                         **kwargs)
-        self._dataframe_featurizing = False
-        return df
+            if not isinstance(structures, listlike):
+                structures = [structures]
+            self.allowed_bonds_ = self.enumerate_all_bonds(structures)
+            self.allowed_bonds_ = self._sanitize_bonds(self.allowed_bonds_)
 
     def enumerate_bonds(self, s):
         """
@@ -1156,30 +1251,132 @@ class BagofBonds(BaseFeaturizer):
                     bond_types.append(bt)
         return tuple(sorted(bond_types))
 
+    def featurize(self, s):
+        """
+        Quantify the fractions of each bond type in a structure.
+
+        For collections of structures, bonds types which are not found in a
+        particular structure (e.g., Li-P in BaTiO3) are represented as NaN.
+
+        Args:
+            s (Structure): A pymatgen structure object
+
+        Returns:
+            (list) The feature list of bond fractions, in the order of the
+                alphabetized corresponding bond names.
+        """
+
+        self._check_fitted()
+
+        if isinstance(s, dict):
+            s = Structure.from_dict(s)
+
+        bond_types = tuple(self.enumerate_bonds(s))
+        bond_types = self._sanitize_bonds(bond_types)
+        bonds = {k: 0.0 for k in bond_types}
+        tot_bonds = 0.0
+
+        # if we find a bond in allowed_bonds not in bond_types, mark as bbv
+        for b in self.allowed_bonds_:
+            if b not in bond_types:
+                if self.bbv is None:
+                    bonds[b] = float("nan")
+                else:
+                    bonds[b] = self.bbv
+
+        for i, _ in enumerate(s.sites):
+            nearest = self.nn.get_nn(s, i)
+            origin = s.sites[i].specie
+
+            for neigh in nearest:
+                btup = tuple(sorted([str(origin), str(neigh.specie)]))
+                b = self._sanitize_bonds(btup[0] + self._token + btup[1])
+                # The bond will not be in bonds if it is a forbidden bond
+                # (when a local bond is not in allowed_bonds)
+                tot_bonds += 1.0
+                if b in bonds:
+                    bonds[b] += 1.0
+
+        if self.approx_bonds:
+            bonds = self._approximate_bonds(bonds)
+
+        # If allowed_bonds caused no bonds to be present, all bonds will be 0.
+        # Prevent division by zero error.
+        tot_bonds = tot_bonds or 1.0
+
+        # if we find a bond in bond_types not in allowed_bonds, skip
+        return [bonds[b] / tot_bonds for b in self.allowed_bonds_]
+
+    def feature_labels(self):
+        """
+        Returns the list of allowed bonds. Throws an error if the featurizer
+        has not been fit.
+        """
+        self._check_fitted()
+        return [b + " bond frac." for b in self.allowed_bonds_]
+
+    def _check_fitted(self):
+        """
+        Ensure the Featurizer has been fit to the dataframe
+        """
+        if not hasattr(self, "allowed_bonds_"):
+            raise AttributeError("BagofBonds must be fit before it can be "
+                                 "featurized! Use .fit to define all bond types"
+                                 " before featurizing!")
+        elif self.allowed_bonds_ is None:
+            raise AttributeError("BagofBonds must be fit before it can be "
+                                 "featurized! Use .fit to define all bond types"
+                                 " before featurizing!")
+
     def _sanitize_bonds(self, bonds):
         """
         Prevent errors and/or bond duplicates from badly formatted allowed_bonds
 
         Args:
-            bonds ([str]): A listlike object of bond types, specified as strings
+            bonds (str/[str]): An iterable of bond types, specified as strings
                 with the general format "El-Sp", where El or Sp can be a specie
                 or an element with pymatgen's str representation of a bond. For
                 example, a Cesium Chloride bond could be represented as either
                 "Cs-Cl" or "Cs+-Cl-" or "Cl-Cs" or "Cl--Cs+". "bond frac." may
                 be present at the end of each bond, as it will be sanitized.
+                Can also be a single string bond type.
         Returns:
             bonds ([str]): A listlike object containing alphabetized bond types.
                 Note that ions and elements will still have distinct bonds if
                 the bonds list originally contained them.
         """
+        if isinstance(bonds, str):
+            single = True
+            bonds = [bonds]
+        else:
+            single = False
+            try:
+                bonds = list(bonds)
+            except:
+                # In the case of a series object
+                bonds = bonds.tolist()
+
         for i, bond in enumerate(bonds):
-            if not isinstance(bond, str) or "-" not in bond:
-                raise TypeError("Bonds must be specified as strings between"
-                                "elements or species, for example Cl-Cs")
+            if not isinstance(bond, str) or self._token not in bond:
+                raise TypeError("Bonds must be specified as strings between "
+                                "elements or species with the token in between, "
+                                "for example Cl - Cs")
             bond = bond.replace(" bond frac.", "")
             species = sorted(bond.split(self._token))
+
+            if self.no_oxi:
+                alphabetized = self._token.join(species)
+                species = self._species_from_bondstr(alphabetized)
+                species = [str(s.element) for s in species]
+
             bonds[i] = self._token.join(species)
-        return tuple(sorted(bonds))
+
+        bonds = list(OrderedDict.fromkeys(bonds))
+
+        if single:
+            return bonds[0]
+        else:
+            return tuple(sorted(bonds))
 
     def _species_from_bondstr(self, bondstr):
         """
@@ -1218,7 +1415,7 @@ class BagofBonds(BaseFeaturizer):
                 types as keys ("Cl--Cs+") and the bond fraction as values (0.7).
 
         Returns:
-            ubonds_data (dict): A dictionary of the unified (allowed) bonds
+            abonds_data (dict): A dictionary of the unified (allowed) bonds
                 with the bond names as keys and the corresponding bond fractions
                 (whether approximated or true) as values.
 
@@ -1227,25 +1424,25 @@ class BagofBonds(BaseFeaturizer):
         # At this stage, local_bonds may contain unified bonds which
         # are nan.
 
-        ubonds_data = {k: 0.0 for k in self.unified_bonds}
-        ubonds_species = {k: None for k in self.unified_bonds}
-        for ub in self.unified_bonds:
+        abonds_data = {k: 0.0 for k in self.allowed_bonds_}
+        abonds_species = {k: None for k in self.allowed_bonds_}
+        for ub in self.allowed_bonds_:
             species = self._species_from_bondstr(ub)
-            ubonds_species[ub] = tuple(species)
+            abonds_species[ub] = tuple(species)
         # keys are pairs of species, values are bond names in unified_bonds
-        ubonds_species = {v: k for k, v in ubonds_species.items()}
+        abonds_species = {v: k for k, v in abonds_species.items()}
 
         for lb in local_bonds.keys():
             local_bonds[lb] = 0.0 if np.isnan(local_bonds[lb]) else local_bonds[lb]
 
-            if lb in self.unified_bonds:
-                ubonds_data[lb] += local_bonds[lb]
+            if lb in self.allowed_bonds_:
+                abonds_data[lb] += local_bonds[lb]
             else:
                 lbs = self._species_from_bondstr(lb)
 
                 nearest = []
                 d_min = None
-                for ubs in ubonds_species.keys():
+                for abss in abonds_species.keys():
 
                     # The distance between bonds is euclidean. To get a good
                     # measure of the coordinate between mendeleev numbers for
@@ -1254,7 +1451,7 @@ class BagofBonds(BaseFeaturizer):
                     # not want the distance between (Na and O) and (O and Li),
                     # we want the distance between (Na and Li) and (O and O).
 
-                    u_mends = sorted([j.element.mendeleev_no for j in ubs])
+                    u_mends = sorted([j.element.mendeleev_no for j in abss])
                     l_mends = sorted([j.element.mendeleev_no for j in lbs])
 
                     d0 = u_mends[0] - l_mends[0]
@@ -1263,14 +1460,14 @@ class BagofBonds(BaseFeaturizer):
                     d = (d0**2.0 + d1**2.0)**0.5
                     if not d_min:
                         d_min = d
-                        nearest = [ubs]
+                        nearest = [abss]
                     elif d < d_min:
                         # A new best approximation has been found
                         d_min = d
-                        nearest = [ubs]
+                        nearest = [abss]
                     elif d == d_min:
                         # An equivalent approximation has been found
-                        nearest += [ubs]
+                        nearest += [abss]
                     else:
                         pass
 
@@ -1278,98 +1475,11 @@ class BagofBonds(BaseFeaturizer):
                 bond_frac = local_bonds[lb]/len(nearest)
                 for n in nearest:
                     # Get the name of the approximate bond from the map
-                    ub = ubonds_species[n]
+                    ab = abonds_species[n]
 
                     # Add the bond frac to that/those nearest bond(s)
-                    ubonds_data[ub] += bond_frac
-        return ubonds_data
-
-    def featurize(self, s):
-        """
-        Quantify the fractions of each bond type in a structure.
-
-        For collections of structures, bonds types which are not found in a
-        particular structure (e.g., Li-P in BaTiO3) are represented as NaN.
-
-        Args:
-            s (Structure): A pymatgen structure object
-
-        Returns:
-            (list) The feature list of bond fractions, in the order of the
-                alphabetized corresponding bond names.
-        """
-        if isinstance(s, dict):
-            s = Structure.from_dict(s)
-
-        bond_types = tuple(self.enumerate_bonds(s))
-        bonds = {k: 0.0 for k in bond_types}
-        tot_bonds = 0.0
-
-        # If featurize is being called from a dataframe or featurize_many,
-        # a comprehensize 'unified' bond list is created. The following code
-        # places nan in all bad bond values, where bonds are not physically
-        # possible.
-        if hasattr(self, 'unified_bonds'):
-
-            # if we find a bond in unified_bonds not in bond_types, mark as nan
-            for b in self.unified_bonds:
-                if b not in bond_types:
-                    if self.bbv is None:
-                        bonds[b] = float("nan")
-                    else:
-                        bonds[b] = self.bbv
-
-            # if we find a bond in bond_types not in unified_bonds, skip
-            if not self.approx_bonds:
-                for b in bond_types:
-                    if b not in self.unified_bonds:
-                        # return [float("nan")] * len(self.unified_bonds)
-                        bonds.pop(b)
-            ordered_bonds = self.unified_bonds
-        else:
-            self.local_bonds = bond_types
-            ordered_bonds = self.local_bonds
-
-        for i, _ in enumerate(s.sites):
-            nearest = self.nn.get_nn(s, i)
-            origin = s.sites[i].specie
-
-            for neigh in nearest:
-                btup = tuple(sorted([str(origin), str(neigh.specie)]))
-                b = btup[0] + self._token + btup[1]
-                # The bond will not be in bonds if it is a forbidden bond
-                # (when a local bond is not in allowed_bonds)
-                tot_bonds += 1.0
-                if b in bonds:
-                    bonds[b] += 1.0
-
-        if self.approx_bonds:
-            bonds = self._approximate_bonds(bonds)
-
-        # tot_bonds = sum(v for v in bonds.values() if not np.isnan(v))
-
-        # If allowed_bonds caused no bonds to be present, all bonds will be 0.
-        # Prevent division by zero error.
-        tot_bonds = tot_bonds or 1.0
-
-        return [bonds[b] / tot_bonds for b in ordered_bonds]
-
-    def feature_labels(self):
-        """
-        If an entire dataframe is featurized, returns all unique possible
-        bonds gathered across all structures.
-
-        If only .featurize called, returns all bond labels for the last structure
-        featurized.
-        """
-        if self._dataframe_featurizing:
-            labels = self.unified_bonds
-        else:
-            if hasattr(self, 'unified_bonds'):
-                labels = self.unified_bonds
-            else:
-                labels = self.local_bonds
-        return [b + " bond frac." for b in labels]
+                    abonds_data[ab] += bond_frac
+        return abonds_data
 
     def implementors(self):
         return ["Alex Dunn"]
