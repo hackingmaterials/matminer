@@ -821,8 +821,6 @@ class PlotlyFig:
                     warnings.warn('Both "start" and "end" must be present in '
                                   'bins; otherwise, it is ignored.')
 
-            print(bins[i])
-
             d = data[col]
             if isinstance(d, np.ndarray):
                 if len(d.shape) == 2:
