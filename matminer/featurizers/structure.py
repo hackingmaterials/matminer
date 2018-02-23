@@ -1117,9 +1117,11 @@ class BagofBonds(BaseFeaturizer):
     Li-0: 0.4
     Li-P: 0.6
 
+    Features:
+
     BagofBonds must be fit with iterable of structures before featurization in
-    order to define the allowed bond types. Use the 'fit' method for this. For
-    dataframes containing structures of various compositions, a unified
+    order to define the allowed bond types (features). To do this, use 'fit'.
+    For dataframes containing structures of various compositions, a unified
     dataframe is returned which has the collection of all possible bond types
     gathered from all structures as columns. To approximate bonds based on
     chemical rules (ie, for a structure which you'd like to featurize but has
@@ -1201,14 +1203,14 @@ class BagofBonds(BaseFeaturizer):
             else:
                 if not isinstance(allowed_bonds, listlike):
                     raise TypeError("allowed_bonds must be a list of strings.")
-                self.allowed_bonds = allowed_bonds
+                self.allowed_bonds_ = allowed_bonds
         else:
             if not isinstance(structures, listlike):
                 structures = [structures]
-            self.allowed_bonds = self.enumerate_all_bonds(structures)
+            self.allowed_bonds_ = self.enumerate_all_bonds(structures)
 
-            print(self.allowed_bonds)
-            self.allowed_bonds = self._sanitize_bonds(self.allowed_bonds)
+            print(self.allowed_bonds_)
+            self.allowed_bonds_ = self._sanitize_bonds(self.allowed_bonds_)
 
     def enumerate_bonds(self, s):
         """
@@ -1276,7 +1278,7 @@ class BagofBonds(BaseFeaturizer):
         tot_bonds = 0.0
 
         # if we find a bond in allowed_bonds not in bond_types, mark as bbv
-        for b in self.allowed_bonds:
+        for b in self.allowed_bonds_:
             if b not in bond_types:
                 if self.bbv is None:
                     bonds[b] = float("nan")
@@ -1304,7 +1306,7 @@ class BagofBonds(BaseFeaturizer):
         tot_bonds = tot_bonds or 1.0
 
         # if we find a bond in bond_types not in allowed_bonds, skip
-        return [bonds[b] / tot_bonds for b in self.allowed_bonds]
+        return [bonds[b] / tot_bonds for b in self.allowed_bonds_]
 
     def feature_labels(self):
         """
@@ -1312,7 +1314,7 @@ class BagofBonds(BaseFeaturizer):
         has not been fit.
         """
         self._check_fitted()
-        return [b + " bond frac." for b in self.allowed_bonds]
+        return [b + " bond frac." for b in self.allowed_bonds_]
 
     def _check_fitted(self):
         """
@@ -1322,7 +1324,7 @@ class BagofBonds(BaseFeaturizer):
             raise AttributeError("BagofBonds must be fit before it can be "
                                  "featurized! Use .fit to define all bond types"
                                  " before featurizing!")
-        elif self.allowed_bonds is None:
+        elif self.allowed_bonds_ is None:
             raise AttributeError("BagofBonds must be fit before it can be "
                                  "featurized! Use .fit to define all bond types"
                                  " before featurizing!")
@@ -1423,9 +1425,9 @@ class BagofBonds(BaseFeaturizer):
         # At this stage, local_bonds may contain unified bonds which
         # are nan.
 
-        abonds_data = {k: 0.0 for k in self.allowed_bonds}
-        abonds_species = {k: None for k in self.allowed_bonds}
-        for ub in self.allowed_bonds:
+        abonds_data = {k: 0.0 for k in self.allowed_bonds_}
+        abonds_species = {k: None for k in self.allowed_bonds_}
+        for ub in self.allowed_bonds_:
             species = self._species_from_bondstr(ub)
             abonds_species[ub] = tuple(species)
         # keys are pairs of species, values are bond names in unified_bonds
@@ -1434,7 +1436,7 @@ class BagofBonds(BaseFeaturizer):
         for lb in local_bonds.keys():
             local_bonds[lb] = 0.0 if np.isnan(local_bonds[lb]) else local_bonds[lb]
 
-            if lb in self.allowed_bonds:
+            if lb in self.allowed_bonds_:
                 abonds_data[lb] += local_bonds[lb]
             else:
                 lbs = self._species_from_bondstr(lb)
