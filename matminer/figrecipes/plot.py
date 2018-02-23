@@ -369,8 +369,8 @@ class PlotlyFig:
 
         if isinstance(modes, str):
             modes = [modes] * len(xy_pairs)
-        else:
-            assert len(modes) == len(xy_pairs)
+        if len(modes) != len(xy_pairs):
+            raise ValueError('"modes" and "xy_pairs" have different lengths!')
         if colors is None:
             showscale = False
             colorbar = None
