@@ -348,7 +348,6 @@ class FingerprintTests(PymatgenTest):
         f1 = ('Gauss b=0', lambda x: np.exp(-(x**2.)))
         f2 = ('Gauss b=1', lambda x: np.exp(-(x - 1.)**2.))
         f3 = ('Gauss b=5', lambda x: np.exp(-(x - 5.)**2.))
-        s_list = [self.sc, self.cscl]
         s_touples = [(self.sc, 0), (self.cscl, 0)]
 
         # test transform,and featurize dataframe
@@ -356,7 +355,7 @@ class FingerprintTests(PymatgenTest):
         features = afs.transform(s_touples)
         self.assertArrayAlmostEqual(features, [[-1.0374e-10, -4.3563e-08, -2.7914e-06,
                                                 -4.3563e-08, -1.8292e-05, -0.0011,
-                                                -2.7914e-06, -0.0011, -12.7863], 
+                                                -2.7914e-06, -0.0011, -12.7863],
                                                [-1.7403e-11, -1.0886e-08, -3.5985e-06,
                                                 -1.0886e-08, -6.0597e-06, -0.0016,
                                                 -3.5985e-06, -0.0016, -3.9052]],
