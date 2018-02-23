@@ -1442,7 +1442,7 @@ class BagofBonds(BaseFeaturizer):
 
                 nearest = []
                 d_min = None
-                for abs in abonds_species.keys():
+                for abss in abonds_species.keys():
 
                     # The distance between bonds is euclidean. To get a good
                     # measure of the coordinate between mendeleev numbers for
@@ -1451,7 +1451,7 @@ class BagofBonds(BaseFeaturizer):
                     # not want the distance between (Na and O) and (O and Li),
                     # we want the distance between (Na and Li) and (O and O).
 
-                    u_mends = sorted([j.element.mendeleev_no for j in abs])
+                    u_mends = sorted([j.element.mendeleev_no for j in abss])
                     l_mends = sorted([j.element.mendeleev_no for j in lbs])
 
                     d0 = u_mends[0] - l_mends[0]
@@ -1460,14 +1460,14 @@ class BagofBonds(BaseFeaturizer):
                     d = (d0**2.0 + d1**2.0)**0.5
                     if not d_min:
                         d_min = d
-                        nearest = [abs]
+                        nearest = [abss]
                     elif d < d_min:
                         # A new best approximation has been found
                         d_min = d
-                        nearest = [abs]
+                        nearest = [abss]
                     elif d == d_min:
                         # An equivalent approximation has been found
-                        nearest += [abs]
+                        nearest += [abss]
                     else:
                         pass
 
