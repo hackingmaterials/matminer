@@ -459,156 +459,6 @@ class PlotlyFig:
             fig['layout']['legend']['x'] = 0.9
         return self.create_plot(fig, return_plot)
 
-    def heatmap(self, data=None, cols=None, x_labels=None, x_nqs=6,
-                y_labels=None, y_nqs=4, precision=1, annotation='count',
-                annotation_color='black', colorscale=None, return_plot=False):
-        #todo: Stuff that I think would be good to see in heatmap - alex
-        #todo: 1. Ability to take in x_label, y_label, and a matrix like heatmap_plot: I vote for keeping heatmap_plot
-
-        """
-        Args:
-            data: (dataframe): only the first 3 numerical columns considered
-            cols ([str]): A list of strings specifying the columns of the
-                dataframe (either data or self.df) to use. Currenly, only 3
-                columns is supported. Note that the order in cols matter, the
-                first is considered x, second y and the third as z (color)
-            x_labels ([str]): labels for the categories in x data (first column)
-            x_nqs (int or None): if unique values for x_prop is more than this,
-                x_prop is divided into x_nqs quantiles for better presentation
-                *if x_labels is set, x_nqs ignored (i.e. x_nqs = len(x_labels))
-            y_labels ([str]): similar to x_labels but for the 2nd column in data
-            y_nqs (int or None): similar to x_nqs but for the 2nd column in data
-            precision (int): number of floating points used for binning/display
-            annotation (str or None): mode of annotation. Options are:
-                None: no annotations
-                "count": the number of data available in each cell displayed
-                "value": the actual value of the cell in addition to colorbar
-            annotation_color (str): the color of annotation (text inside cells)
-            colorscale: see the __init__ doc for colorscale
-            return_plot (bool): Returns the dictionary representation of the
-                figure if True. If False, prints according to self.mode (set
-                with mode in __init__).
-        Returns: A Plotly heatmap plot Figure object.
-        """
-
-        if data is None:
-            if self.df is None:
-                raise ValueError(
-                    "heatmap requires either dataframe labels and a "
-                    "dataframe or a list of numerical values.")
-            elif cols is None:
-                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
-            else:
-                data = self.df[cols]
-        elif not isinstance(data, pd.DataFrame):
-            raise ValueError('"heatmap" only supports dataframes with numerical'
-                             ' columns. Please use heatmap_plot instead.')
-
-        cols = data.columns.values
-        x_prop = cols[0]
-        y_prop = cols[1]
-        col_prop = cols[2]
-        if x_labels is not None:
-            x_nqs = len(x_labels)
-        if y_labels is not None:
-            y_nqs = len(y_labels)
-
-        data = data.sort_values(y_prop, ascending=True)
-        if y_nqs is None or len(data[y_prop].unique()) > y_nqs:
-            try:
-                data['y_bin'] = pd.qcut(data[y_prop], y_nqs, labels=y_labels,
-                                       precision=precision).astype(str)
-                y_groups = data['y_bin'].unique()
-            except:
-                warnings.warn('pd.qcut failed! categorizing on unique values')
-                y_groups = data[y_prop].unique()
-                data['y_bin'] = data[y_prop]
-        else:
-            y_groups = data[y_prop].unique()
-            data['y_bin'] = data[y_prop]
-
-        data = data.sort_values(x_prop, ascending=True)
-        if x_nqs is None or len(data[x_prop].unique()) > x_nqs:
-            try:
-                data['x_bin'] = pd.qcut(data[x_prop], x_nqs, labels=x_labels,
-                                       precision=precision).astype(str)
-                x_groups = data['x_bin'].unique()
-            except:
-                warnings.warn('pd.qcut failed! categorizing on unique values')
-                x_groups = data[x_prop].unique()
-                data['x_bin'] = data[x_prop]
-        else:
-            x_groups = data[x_prop].unique()
-            data['x_bin'] = data[x_prop]
-
-        data_ = []
-        annotations = []
-        annotation_template = {'font': {'color': annotation_color,
-                                        'size': 0.7 * self.font_size,
-                                        'family': self.font_family},
-                               'showarrow': False}
-        for y in y_groups:
-            temp = data[data['y_bin'].values == y]
-            grpd = temp.groupby('x_bin').mean().reset_index()
-            gcnt = temp.groupby('x_bin').count().reset_index()
-            x_data = []
-            for x in x_groups:
-                if x in grpd['x_bin'].values:
-                    val = grpd[grpd['x_bin'].values == x][col_prop].values[0]
-                    count = gcnt[gcnt['x_bin'].values == x][col_prop].values[0]
-                    val = str(round(val, precision))
-                else:
-                    count = 0
-                    val = 'N/A'
-                x_data.append(val)
-                a_d = annotation_template.copy()
-                a_d['x'] = x
-                a_d['y'] = y
-                if annotation is None:
-                    a_d['text'] = ''
-                elif annotation == 'value':
-                    a_d['text'] = val
-                elif annotation == 'count':
-                    a_d['text'] = count
-                else:
-                    a_d['text'] = annotation
-                annotations.append(a_d)
-            data_.append(x_data)
-
-        x_labels = x_labels or x_groups
-        y_labels = y_labels or y_groups
-
-        if self.colorbar_title == 'auto':
-            colorbar_title = col_prop
-        else:
-            colorbar_title = self.colorbar_title
-        trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
-                           colorscale=colorscale or self.colorscale, colorbar={
-                'title': colorbar_title, 'titleside': 'right',
-                'tickfont': {'size': 0.75 * self.tick_size,
-                             'family': self.font_family},
-                'titlefont': {'size': self.font_size,
-                              'family': self.font_family}
-            })
-        layout = self.layout.copy()
-
-        # heatmap specific formatting:
-        for ax in ['x', 'y']:
-            if 'type' in layout['{}axis'.format(ax)]:
-                layout['{}axis'.format(ax)].pop('type')
-        layout['margin']['l'] += self.tick_size * (2 + precision / 10.0) + 35
-        if not layout['xaxis'].get('title'):
-            warnings.warn('xaxis title was automatically set to x_prop value')
-            layout['xaxis']['title'] = x_prop
-        if not layout['yaxis'].get('xaxis'):
-            warnings.warn('yaxis title was automatically set to y_prop value')
-            layout['yaxis']['title'] = y_prop
-        layout['annotations'] = annotations
-        if not hasattr(self, 'hovercolor'):
-            layout['hoverlabel']['bgcolor'] = 'white'
-        fig = {'data': [trace], 'layout': layout}
-        return self.create_plot(fig, return_plot)
-
 
     def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
                        labels=None, marker_scale=1.0, return_plot=False,
@@ -1078,6 +928,7 @@ class PlotlyFig:
             fig['layout']['height'] = 1000
         return self.create_plot(fig, return_plot)
 
+
     def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
                              colors=None, return_plot=False):
         """
@@ -1155,8 +1006,9 @@ class PlotlyFig:
         fig = {'data': [par_coords], 'layout': self.layout}
         return self.create_plot(fig, return_plot)
 
-    def heatmap_plot(self, data, x_labels=None, y_labels=None,
-                     colorscale='Viridis', colorscale_range=None,
+
+    def heatmap(self, data, x_labels=None, y_labels=None,
+                     colorscale=None, colorscale_range=None,
                      annotations_text=None, annotations_font_size=20,
                      annotations_color='white', return_plot=False):
         """
@@ -1180,7 +1032,6 @@ class PlotlyFig:
             annotations_color: (str/array) color of annotation text - accepts similar formats as other color variables
 
         Returns: A Plotly heatmap plot Figure object.
-
         """
 
         if not colorscale_range:
@@ -1212,22 +1063,186 @@ class PlotlyFig:
         else:
             annotations = []
 
+        if self.colorbar_title == 'auto':
+            colorbar_title = pd.Series(data).name
+        else:
+            colorbar_title = self.colorbar_title
+
         trace0 = go.Heatmap(
             z=data,
-            colorscale=colorscale,
             x=x_labels,
             y=y_labels,
             zmin=colorscale_min, zmax=colorscale_max,
-            colorbar=dict(tickfont=dict(size=int(0.75 * self.tick_size),
-                                        family=self.font_family))
-        )
+            colorscale=colorscale or self.colorscale,
+            colorbar={
+                'title': colorbar_title, 'titleside': 'right',
+                'tickfont': {'size': 0.75 * self.tick_size,
+                             'family': self.font_family},
+                'titlefont': {'size': self.font_size,
+                              'family': self.font_family}
+            })
 
-        data = [trace0]
 
-        # Add annotations
-        self.layout['annotations'] = annotations
+        layout = self.layout.copy()
 
-        fig = dict(data=data, layout=self.layout)
+        # heatmap specific formatting:
+        for ax in ['x', 'y']:
+            if 'type' in layout['{}axis'.format(ax)]:
+                layout['{}axis'.format(ax)].pop('type')
+        layout['annotations'] = annotations
+        if not hasattr(self, 'hovercolor'):
+            layout['hoverlabel']['bgcolor'] = 'white'
+        fig = {'data': [trace0], 'layout': layout}
+
+        return self.create_plot(fig, return_plot)
+
+
+    def heatmap_df(self, data=None, cols=None, x_labels=None, x_nqs=6,
+                y_labels=None, y_nqs=4, precision=1, annotation='count',
+                annotation_color='black', colorscale=None, return_plot=False):
+        #todo: Stuff that I think would be good to see in heatmap - alex
+        #todo: 1. Ability to take in x_label, y_label, and a matrix like heatmap_plot: -AF: see heatmap instead of heatmap_df
+        """
+        Args:
+            data: (dataframe): only the first 3 numerical columns considered
+            cols ([str]): A list of strings specifying the columns of the
+                dataframe (either data or self.df) to use. Currenly, only 3
+                columns is supported. Note that the order in cols matter, the
+                first is considered x, second y and the third as z (color)
+            x_labels ([str]): labels for the categories in x data (first column)
+            x_nqs (int or None): if unique values for x_prop is more than this,
+                x_prop is divided into x_nqs quantiles for better presentation
+                *if x_labels is set, x_nqs ignored (i.e. x_nqs = len(x_labels))
+            y_labels ([str]): similar to x_labels but for the 2nd column in data
+            y_nqs (int or None): similar to x_nqs but for the 2nd column in data
+            precision (int): number of floating points used for binning/display
+            annotation (str or None): mode of annotation. Options are:
+                None: no annotations
+                "count": the number of data available in each cell displayed
+                "value": the actual value of the cell in addition to colorbar
+            annotation_color (str): the color of annotation (text inside cells)
+            colorscale: see the __init__ doc for colorscale
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True. If False, prints according to self.mode (set
+                with mode in __init__).
+
+        Returns: A Plotly heatmap plot Figure object.
+        """
+
+        if data is None:
+            if self.df is None:
+                raise ValueError("heatmap_df requires dataframe input.")
+            elif cols is None:
+                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+            else:
+                data = self.df[cols]
+        elif not isinstance(data, pd.DataFrame):
+            raise ValueError('"heatmap_df" only supports dataframes with '
+                             'numerical columns. Please use heatmap instead.')
+
+        cols = data.columns.values
+        x_prop = cols[0]
+        y_prop = cols[1]
+        col_prop = cols[2]
+        if x_labels is not None:
+            x_nqs = len(x_labels)
+        if y_labels is not None:
+            y_nqs = len(y_labels)
+
+        data = data.sort_values(y_prop, ascending=True)
+        if y_nqs is None or len(data[y_prop].unique()) > y_nqs:
+            try:
+                data['y_bin'] = pd.qcut(data[y_prop], y_nqs, labels=y_labels,
+                                       precision=precision).astype(str)
+                y_groups = data['y_bin'].unique()
+            except:
+                warnings.warn('pd.qcut failed! categorizing on unique values')
+                y_groups = data[y_prop].unique()
+                data['y_bin'] = data[y_prop]
+        else:
+            y_groups = data[y_prop].unique()
+            data['y_bin'] = data[y_prop]
+
+        data = data.sort_values(x_prop, ascending=True)
+        if x_nqs is None or len(data[x_prop].unique()) > x_nqs:
+            try:
+                data['x_bin'] = pd.qcut(data[x_prop], x_nqs, labels=x_labels,
+                                       precision=precision).astype(str)
+                x_groups = data['x_bin'].unique()
+            except:
+                warnings.warn('pd.qcut failed! categorizing on unique values')
+                x_groups = data[x_prop].unique()
+                data['x_bin'] = data[x_prop]
+        else:
+            x_groups = data[x_prop].unique()
+            data['x_bin'] = data[x_prop]
+
+        data_ = []
+        annotations = []
+        annotation_template = {'font': {'color': annotation_color,
+                                        'size': 0.7 * self.font_size,
+                                        'family': self.font_family},
+                               'showarrow': False}
+        for y in y_groups:
+            temp = data[data['y_bin'].values == y]
+            grpd = temp.groupby('x_bin').mean().reset_index()
+            gcnt = temp.groupby('x_bin').count().reset_index()
+            x_data = []
+            for x in x_groups:
+                if x in grpd['x_bin'].values:
+                    val = grpd[grpd['x_bin'].values == x][col_prop].values[0]
+                    count = gcnt[gcnt['x_bin'].values == x][col_prop].values[0]
+                    val = str(round(val, precision))
+                else:
+                    count = 0
+                    val = 'N/A'
+                x_data.append(val)
+                a_d = annotation_template.copy()
+                a_d['x'] = x
+                a_d['y'] = y
+                if annotation is None:
+                    a_d['text'] = ''
+                elif annotation == 'value':
+                    a_d['text'] = val
+                elif annotation == 'count':
+                    a_d['text'] = count
+                else:
+                    a_d['text'] = annotation
+                annotations.append(a_d)
+            data_.append(x_data)
+
+        x_labels = x_labels or x_groups
+        y_labels = y_labels or y_groups
+
+        if self.colorbar_title == 'auto':
+            colorbar_title = col_prop
+        else:
+            colorbar_title = self.colorbar_title
+        trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
+                           colorscale=colorscale or self.colorscale, colorbar={
+                'title': colorbar_title, 'titleside': 'right',
+                'tickfont': {'size': 0.75 * self.tick_size,
+                             'family': self.font_family},
+                'titlefont': {'size': self.font_size,
+                              'family': self.font_family}
+            })
+        layout = self.layout.copy()
+
+        # heatmap specific formatting:
+        for ax in ['x', 'y']:
+            if 'type' in layout['{}axis'.format(ax)]:
+                layout['{}axis'.format(ax)].pop('type')
+        layout['margin']['l'] += self.tick_size * (2 + precision / 10.0) + 35
+        if not layout['xaxis'].get('title'):
+            warnings.warn('xaxis title was automatically set to x_prop value')
+            layout['xaxis']['title'] = x_prop
+        if not layout['yaxis'].get('xaxis'):
+            warnings.warn('yaxis title was automatically set to y_prop value')
+            layout['yaxis']['title'] = y_prop
+        layout['annotations'] = annotations
+        if not hasattr(self, 'hovercolor'):
+            layout['hoverlabel']['bgcolor'] = 'white'
+        fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig, return_plot)
 
 
