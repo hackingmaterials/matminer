@@ -1,6 +1,6 @@
 from __future__ import division, unicode_literals
 
-import sys
+import sys, traceback
 import warnings
 import pandas as pd
 import numpy as np
@@ -116,7 +116,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         return self.featurize_many(X, ignore_errors=True)
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False, inplace=True):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False,
+                            return_errors=False, inplace=True):
         """
         Compute features for all entries contained in input dataframe.
 
@@ -128,6 +129,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             ignore_errors (bool): Returns NaN for dataframe rows where
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
+            return_errors (bool). Returns the errors encountered for each
+                row in a separate `XFeaturizer errors` column if True. Requires
+                ignore_errors to be True.
             inplace (bool): Whether to add new columns to input dataframe (df)
 
         Returns:
@@ -147,33 +151,47 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 raise ValueError('"{}" exists in input dataframe'.format(col))
 
         # Compute the features
-        features = self.featurize_many(df[col_id].values, ignore_errors)
+        features = self.featurize_many(df[col_id].values,
+                                       ignore_errors=ignore_errors,
+                                       return_errors=return_errors)
+        if return_errors:
+            labels.append(self.__class__.__name__ + " Exceptions")
 
         # Create dataframe with the new features
         res = pd.DataFrame(features, index=df.index, columns=labels)
 
         # Update the existing dataframe
         if inplace:
-            for k in self.feature_labels():
+            for k in labels:
                 df[k] = res[k]
             return df
         else:
             return pd.concat([df, res], axis=1)
 
-    def featurize_many(self, entries, ignore_errors=False):
+    def featurize_many(self, entries, ignore_errors=False, return_errors=False):
         """
         Featurize a list of entries.
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
 
         Args:
-           entries (list): A list of entries to be featurized.
-           ignore_errors (boolean): Whether to raise Exceptions, or simply
+            entries (list): A list of entries to be featurized.
+            ignore_errors (bool): Returns NaN for entries where exceptions are
+                thrown if True. If False, exceptions are thrown as normal.
+            return_errors (bool): If True, returns the feature list as
+                determined by ignore_errors with traceback strings added
+                as an extra 'feature'. Entries which featurize without
+                exceptions have this extra feature set to NaN.
 
         Returns:
-           (list) features for each entry.
+            (list) features for each entry.
         """
 
+        if return_errors and not ignore_errors:
+            raise ValueError("Please set ignore_errors to True to use"
+                             " return_errors.")
+
         self.__ignore_errors = ignore_errors
+        self.__return_errors = return_errors
 
         # Check inputs
         if not hasattr(entries, '__getitem__'):
@@ -197,17 +215,38 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                               "been disabled. Please upgrade to Python 3.x to "
                               "enable multiprocessing.")
                 self.set_n_jobs(1)
-                return self.featurize_many(entries, ignore_errors=ignore_errors)
+                return self.featurize_many(entries,
+                                           ignore_errors=ignore_errors,
+                                           return_errors=return_errors)
             with Pool(self.n_jobs) as p:
                 return p.map(self.featurize_wrapper, entries)
 
     def featurize_wrapper(self, x):
-        #TODO: documentation!
+        """
+        An exception wrapper for featurize, used in featurize_many and
+        featurize_dataframe. featurize_wrapper changes the behavior of featurize
+        when ignore_errors is True in featurize_many/dataframe.
+
+        Args:
+             x: input data to featurize (type depends on featurizer).
+
+        Returns:
+            (list) one or more features.
+        """
         try:
-            return self.featurize(*x)
-        except:
+            # Successful featurization returns nan for an error.
+            if self.__return_errors:
+                return self.featurize(*x) +  [float("nan")]
+            else:
+                return self.featurize(*x)
+        except BaseException:
             if self.__ignore_errors:
-                return [float("nan")] * len(self.feature_labels())
+                if self.__return_errors:
+                    features = [float("nan")] * len(self.feature_labels())
+                    error = traceback.format_exception(*sys.exc_info())
+                    return features + ["".join(error)]
+                else:
+                    return [float("nan")] * len(self.feature_labels())
             else:
                 raise
 
