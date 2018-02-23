@@ -1322,26 +1322,26 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
     GRDF is a radial measure of crystal order around a site. There are two
     featurizing modes:
 
-    1. GRDF: (reccomended) - n_bins length vector
+    1. GRDF: (recommended) - n_bins length vector
         In GRDF mode, The GRDF is computed by considering all sites around a
-        central site (i.e., no sites are ommited when computing the GRDF). The
+        central site (i.e., no sites are omitted when computing the GRDF). The
         features output from this mode will be vectors with length n_bins.
 
     2. pairwise GRDF: (advanced users) - n_bins x n_sites matrix
         In this mode, GRDFs are are still computed around a central site, but
-        only one other site (and their translational eqivalants) are used to
+        only one other site (and their translational equivalents) are used to
         compute a GRDF (e.g. site 1 with site 2 and the translational
-        equivalants of site 2). This results in a a n_sites x n_bins matix of
+        equivalents of site 2). This results in a a n_sites x n_bins matrix of
         features. Requires `fit` for determining the max number of sites for
 
     The GRDF is a generalization of the partial radial distribution function
     (PRDF). In contrast with the PRDF, the bins of the GRDF are not mutually-
     exclusive and need not carry a constant weight of 1. The PRDF is a case of
     the GRDF when the bins are rectangular functions. Examples of other
-    functions to use with the GRDF are gaussians, trig, and bessel functions.
+    functions to use with the GRDF are Gaussian, trig, and Bessel functions.
 
     Args:
-        bins:   (list of touples) a list of (str, functions). The str is a text
+        bins:   (list of tuples) a list of (str, functions). The str is a text
                     label for each bin functional. The functions should accept
                     scalar numpy arrays (each scalar value corresponds to a
                     distance) and return arrays of floats.
@@ -1396,7 +1396,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
             raise ValueError("Disordered structure support not built yet")
 
         # Get list of neighbors by site
-        # Idexing is [site#][neighbor#][pymatgen Site, distance, site index]
+        # Indexing is [site#][neighbor#][pymatgen Site, distance, site index]
         sites = struct._sites
         central_site = sites[idx]
         neighbors_lst = struct.get_neighbors(central_site, self.cutoff,
@@ -1462,18 +1462,18 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
 class AngularFourierSeries(BaseFeaturizer):
     """
-    Compute the angular fourier series (AFS) for a site. The AFS includes
+    Compute the angular Fourier series (AFS) for a site. The AFS includes
     both radial and angular information about site neighbors. The AFS is the
     product of distance functionals (g_n, g_n') between two pairs of atoms
     (sharing the common central site) and the cosine of the angle between the
-    two pairs. The AFS is a 2-dimentional feature (the axes are g_n, g_n').
+    two pairs. The AFS is a 2-dimensional feature (the axes are g_n, g_n').
 
-    Examples of distance functionals are square functions, gaussians, trig
-    functions, and bessel functions. An example for gaussians:
+    Examples of distance functionals are square functions, Gaussian, trig
+    functions, and Bessel functions. An example for Gaussian:
         lambda d: exp( -(d - d_n)**2 ), where d_n is the coefficient for g_n
 
     Args:
-        bins:   (list of touples) a list of (str, functions). The str is a text
+        bins:   (list of tuples) a list of (str, functions). The str is a text
                  label for each bin functional. The functions should accept
                  scalar numpy arrays (each scalar value corresponds to a
                  distance) and return arrays of floats.
@@ -1504,7 +1504,7 @@ class AngularFourierSeries(BaseFeaturizer):
             raise ValueError("Disordered structure support not built yet")
 
         # Generate list of neighbor position vectors (relative to central
-        # atom) and distances from each central site as touples
+        # atom) and distances from each central site as tuples
         sites = struct._sites
         central_site = sites[idx]
         neighbors_lst = struct.get_neighbors(central_site, self.cutoff)
@@ -1512,9 +1512,9 @@ class AngularFourierSeries(BaseFeaturizer):
             (neighbor[0].coords - central_site.coords, neighbor[1])
             for neighbor in neighbors_lst]
 
-        # Generate exaustive permutations of neighbor pairs around each central
-        # site (order matters). Does not allow repeat elements (i.e. there
-        # are two distinct sites in every permutation)
+        # Generate exhaustive permutations of neighbor pairs around each
+        # central site (order matters). Does not allow repeat elements (i.e.
+        # there are two distinct sites in every permutation)
         neighbor_touples = itertools.permutations(neighbor_collection, 2)
 
         # Generate cos(theta) between neighbor pairs for each central site.
