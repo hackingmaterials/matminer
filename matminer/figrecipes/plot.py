@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import plotly.figure_factory as FF
 import warnings
 
-from copy import deepcopy
+from copy import copy, deepcopy
 from scipy import stats
 from pandas.api.types import is_numeric_dtype
 
@@ -17,6 +17,7 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 
 # todo: common function for if then checking data types + automatically ignore non-numerical data
 # todo: add tests
+# todo: clean up argument names and docs
 # todo: nuke *_plot methods?
 
 class PlotlyFig:
@@ -177,8 +178,10 @@ class PlotlyFig:
         self.layout['plot_bgcolor'] = self.bg_color
         self.layout['paper_bgcolor'] = self.bg_color
         self.layout['hoverlabel'] = {'font': font_style}
-        self.layout['hoverlabel']['bgcolor'] = hovercolor
         self.layout['title'] = self.title
+
+        if hasattr(self, 'hovercolor'):
+            self.layout['hoverlabel']['bgcolor'] = hovercolor
 
         optional_fields = ['hovermode', 'margin', 'autosize', 'width', 'height']
         for k in optional_fields:
@@ -652,7 +655,9 @@ class PlotlyFig:
 
         hgrams = []
         for i, col in enumerate(cols):
-            if bins[i] is not None:
+            if bins[i] is None:
+                bins[i] = {}
+            else:
                 if bins[i].get('size'):
                     if n_bins[i] is not None:
                         raise ValueError('Either set "n_bins" or "bins".')
@@ -988,7 +993,7 @@ class PlotlyFig:
                 values = data[col]
             dimensions.append({'label': col, 'values': values})
 
-        font_style = self.font_style
+        font_style = copy(self.font_style)
         font_style['size'] = 0.65 * font_style['size']
         line = line or {'color': colors,
                         'colorscale': self.colorscale,
@@ -1002,7 +1007,6 @@ class PlotlyFig:
         par_coords.tickfont = font_style
         par_coords.labelfont = font_style
         par_coords.rangefont = font_style
-
         fig = {'data': [par_coords], 'layout': self.layout}
         return self.create_plot(fig, return_plot)
 
@@ -1033,6 +1037,9 @@ class PlotlyFig:
 
         Returns: A Plotly heatmap plot Figure object.
         """
+
+        warnings.warn("heatmap_plot is deprecated. Please use .heatmap() instead.",
+                      DeprecationWarning)
 
         if not colorscale_range:
             colorscale_min = None
