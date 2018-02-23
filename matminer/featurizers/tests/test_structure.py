@@ -17,8 +17,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BagofBonds, GeneralizedRadialDistributionFunction, \
-    AngularFourierSeries
+    EwaldEnergy, BagofBonds
 
 
 class StructureFeaturesTest(PymatgenTest):
