@@ -1019,24 +1019,24 @@ class PlotlyFig:
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
         Args:
-            data: (array) an array of arrays. For example, in case of a pandas dataframe 'df', data=df.values.tolist()
+            data: (array) an array of arrays. For example, in case of a pandas
+                dataframe 'df', data=df.values.tolist()
             x_labels: (array) an array of strings to label the heatmap columns
             y_labels: (array) an array of strings to label the heatmap rows
-            colorscale: (str/array) Sets the colorscale. The colorscale must be an array containing arrays mapping a
-                normalized value to an rgb, rgba, hex, hsl, hsv, or named color string. At minimum, a mapping for the
-                lowest (0) and highest (1) values are required. For example, `[[0, 'rgb(0,0,255)',
-                [1, 'rgb(255,0,0)']]`. Alternatively, `colorscale` may be a palette name string of the following list:
-                Greys, YlGnBu, Greens, YlOrRd, Bluered, RdBu, Reds, Blues, Picnic, Rainbow, Portland, Jet, Hot,
-                Blackbody, Earth, Electric, Viridis
-            colorscale_range: (array) Sets the minimum (first array item) and maximum value (second array item)
-                of the colorscale
-            annotations_text: (array) an array of arrays, with each value being a string annotation to the corresponding
-                value in 'data'
+            colorscale (str/array): See colorscale in __init__.
+            colorscale_range: (array) Sets the minimum (first array item) and
+                maximum value (second array item) of the colorscale.
+            annotations_text: (array) an array of arrays, with each value being
+                a string annotation to the corresponding value in 'data'
             annotations_font_size: (int) size of annotation text
-            annotations_color: (str/array) color of annotation text - accepts similar formats as other color variables
+            annotations_color: (str/array) color of annotation text - accepts
+                similar formats as other color variables
 
         Returns: A Plotly heatmap plot Figure object.
         """
+
+        if not colorscale:
+            colorscale = self.colorscale
 
         if not colorscale_range:
             colorscale_min = None
@@ -1072,20 +1072,20 @@ class PlotlyFig:
         else:
             colorbar_title = self.colorbar_title
 
-        trace0 = go.Heatmap(
+        data = go.Heatmap(
             z=data,
             x=x_labels,
             y=y_labels,
-            zmin=colorscale_min, zmax=colorscale_max,
+            zmin=colorscale_min,
+            zmax=colorscale_max,
             colorscale=colorscale or self.colorscale,
             colorbar={
                 'title': colorbar_title, 'titleside': 'right',
                 'tickfont': {'size': 0.75 * self.tick_size,
                              'family': self.font_family},
                 'titlefont': {'size': self.font_size,
-                              'family': self.font_family}
-            })
-
+                              'family': self.font_family}}
+        )
 
         layout = self.layout.copy()
 
@@ -1096,7 +1096,7 @@ class PlotlyFig:
         layout['annotations'] = annotations
         if not hasattr(self, 'hovercolor'):
             layout['hoverlabel']['bgcolor'] = 'white'
-        fig = {'data': [trace0], 'layout': layout}
+        fig = {'data': [data], 'layout': layout}
 
         return self.create_plot(fig, return_plot)
 
