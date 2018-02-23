@@ -805,7 +805,9 @@ class PlotlyFig:
 
         hgrams = []
         for i, col in enumerate(cols):
-            if bins[i] is not None:
+            if bins[i] is None:
+                bins[i] = {}
+            else:
                 if bins[i].get('size'):
                     if n_bins[i] is not None:
                         raise ValueError('Either set "n_bins" or "bins".')
@@ -818,6 +820,8 @@ class PlotlyFig:
                 if bins[i].get('start') is None != bins[i].get('end') is None:
                     warnings.warn('Both "start" and "end" must be present in '
                                   'bins; otherwise, it is ignored.')
+
+            print(bins[i])
 
             d = data[col]
             if isinstance(d, np.ndarray):
