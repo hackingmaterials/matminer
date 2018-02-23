@@ -1038,9 +1038,6 @@ class PlotlyFig:
         Returns: A Plotly heatmap plot Figure object.
         """
 
-        warnings.warn("heatmap_plot is deprecated. Please use .heatmap() instead.",
-                      DeprecationWarning)
-
         if not colorscale_range:
             colorscale_min = None
             colorscale_max = None
