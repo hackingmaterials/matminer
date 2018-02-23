@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import plotly.figure_factory as FF
 import warnings
 
-from copy import deepcopy
+from copy import copy, deepcopy
 from scipy import stats
 from pandas.api.types import is_numeric_dtype
 
@@ -1140,7 +1140,7 @@ class PlotlyFig:
                 values = data[col]
             dimensions.append({'label': col, 'values': values})
 
-        font_style = self.font_style
+        font_style = copy(self.font_style)
         font_style['size'] = 0.65 * font_style['size']
         line = line or {'color': colors,
                         'colorscale': self.colorscale,
@@ -1154,7 +1154,6 @@ class PlotlyFig:
         par_coords.tickfont = font_style
         par_coords.labelfont = font_style
         par_coords.rangefont = font_style
-
         fig = {'data': [par_coords], 'layout': self.layout}
         return self.create_plot(fig, return_plot)
 
