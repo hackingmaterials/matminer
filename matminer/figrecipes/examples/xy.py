@@ -6,6 +6,9 @@ from pymatgen import Composition
 
 """
 This script shows some basic examples of xy plot using figrecipes in matminer.
+
+To see the examples plot_thermoelectrics and plot_expt_compt_band_gaps, make
+sure to enter your Citrine API key!
 """
 
 def plot_simple_xy():
@@ -14,7 +17,7 @@ def plot_simple_xy():
     Returns:
         plotly plot in "offline" mode poped in the default browser.
     """
-    pf = PlotlyFig()
+    pf = PlotlyFig(title="Basic Example", filename="basic.html")
     pf.xy(([1, 2, 3], [4, 5, 6]))
 
 
@@ -37,18 +40,20 @@ def plot_bulk_shear_moduli():
           colorscale='Picnic')
 
 
-def plot_thermoelectrics(limit=0):
+def plot_thermoelectrics(citrine_api_key, limit=0):
     """
     Scatter plot of the properties of thermoelectric materials based on the data
         available in http://www.mrl.ucsb.edu:8080/datamine/thermoelectric.jsp
         The data is extracted via Citrine data retrieval tools. The dataset
         id on Citrine is 150557
     Args:
+        citrine_api_key (str): Your Citrine API key for getting data. Don't have
+            a Citrine account? Visit https://citrine.io/
         limit (int): limit the number of entries (0 means no limit)
     Returns:
         plotly plot in "offline" mode poped in the default browser.
     """
-    cdr = CitrineDataRetrieval()
+    cdr = CitrineDataRetrieval(api_key=citrine_api_key)
     json_list = cdr.get_api_data(data_type='experimental', data_set_id=150557,
                                  max_results=limit)
     cols = ['chemicalFormula', 'Electrical resistivity', 'Seebeck coefficient',
@@ -76,7 +81,7 @@ def plot_thermoelectrics(limit=0):
           color_range=[0, 5])
 
 
-def plot_expt_compt_band_gaps(limit=0):
+def plot_expt_compt_band_gaps(citrine_api_key, limit=0):
     """
     Pulls experimental band gaps from Citrine (w/o dataset limitations) and
         evaluate the DFT computed band gaps (data from materialsproject.org)
@@ -84,13 +89,15 @@ def plot_expt_compt_band_gaps(limit=0):
         band gaps calculated for a chemical formula that has the lowest energy
         above hull (the most stable structure).
     Args:
+        citrine_api_key (str): Your Citrine API key for getting data. Don't have
+            a Citrine account? Visit https://citrine.io/
         limit (int): limit the number of entries (0 means no limit)
     Returns:
         plotly plots in "offline" mode poped in the default browser.
     """
 
     # pull experimental band gaps from Citrine
-    cdr = CitrineDataRetrieval()
+    cdr = CitrineDataRetrieval(api_key=citrine_api_key)
     json_list = cdr.get_api_data(property='band gap',
                                  data_type='experimental',
                                  max_results=limit)
@@ -139,5 +146,7 @@ def plot_expt_compt_band_gaps(limit=0):
 if __name__ == '__main__':
     plot_simple_xy()
     plot_bulk_shear_moduli()
-    plot_thermoelectrics(limit=0)
-    plot_expt_compt_band_gaps(limit=0)
+
+    MY_CITRINE_API_KEY=""
+    plot_thermoelectrics(MY_CITRINE_API_KEY, limit=0)
+    plot_expt_compt_band_gaps(MY_CITRINE_API_KEY, limit=0)
