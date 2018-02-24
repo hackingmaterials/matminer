@@ -437,7 +437,7 @@ class PlotlyFig:
             else:
                 try:
                     names.append(pair[1].name)
-                except:
+                except AttributeError:
                     names.append(None)
 
         if not isinstance(labels, list):
@@ -1256,7 +1256,7 @@ class PlotlyFig:
                 data['y_bin'] = pd.qcut(data[y_prop], y_nqs, labels=y_labels,
                                         precision=precision).astype(str)
                 y_groups = data['y_bin'].unique()
-            except:
+            except BaseException:
                 warnings.warn('pd.qcut failed! categorizing on unique values')
                 y_groups = data[y_prop].unique()
                 data['y_bin'] = data[y_prop]
@@ -1270,7 +1270,7 @@ class PlotlyFig:
                 data['x_bin'] = pd.qcut(data[x_prop], x_nqs, labels=x_labels,
                                         precision=precision).astype(str)
                 x_groups = data['x_bin'].unique()
-            except:
+            except BaseException:
                 warnings.warn('pd.qcut failed! categorizing on unique values')
                 x_groups = data[x_prop].unique()
                 data['x_bin'] = data[x_prop]
