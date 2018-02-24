@@ -359,14 +359,11 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test individual structures with featurize
         bob_md = BagofBonds.from_preset("MinimumDistanceNN")
-        bob_md.no_oxi = True
-        bob_md.fit(self.diamond_no_oxi)
         self.assertArrayEqual(bob_md.featurize(self.diamond), [1.0])
         self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
 
         bob_voronoi = BagofBonds.from_preset("VoronoiNN")
         bob_voronoi.bbv = float("nan")
-        bob_voronoi.fit(self.nacl)
         bond_fracs = bob_voronoi.featurize(self.nacl)
         bond_names = bob_voronoi.feature_labels()
         ref = {'Na+ - Na+ bond frac.': 0.25, 'Cl- - Na+ bond frac.': 0.5,
@@ -376,7 +373,6 @@ class StructureFeaturesTest(PymatgenTest):
         # Test to make sure dataframe behavior is as intended
         s_list = [self.diamond_no_oxi, self.ni3al]
         df = pd.DataFrame.from_dict({'s': s_list})
-        bob_voronoi.fit(df['s'])
         df = bob_voronoi.featurize_dataframe(df, 's')
 
         # Ensure all data is properly labelled and organized
