@@ -116,5 +116,5 @@ class PlotlyFigTest(PymatgenTest):
 
 if __name__ == "__main__":
 
-    # refresh(open_plots=False)
+    # refresh(open_plots=True)
     unittest.main()
