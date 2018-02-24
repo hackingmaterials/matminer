@@ -23,7 +23,7 @@ class PlotlyFig:
     def __init__(self, df=None, mode='offline', title=None, x_title=None,
                  y_title=None, colorbar_title='auto', x_scale='linear',
                  y_scale='linear', ticksize=25, fontscale=1, fontsize=25,
-                 fontfamily='Courier', bgcolor="white", fontcolor='black',
+                 fontfamily='Courier', bgcolor="white", fontcolor=None,
                  colorscale='Viridis', height=None, width=None,
                  resolution_scale=None, margins=100, pad=0, username=None,
                  api_key=None, filename='temp-plot', show_offline_plot=True,
@@ -187,8 +187,11 @@ class PlotlyFig:
             setattr(self, k, v)
 
         self.layout = {}
-        font_style = {'size': fontsize, 'family': fontfamily,
-                      'color': fontcolor}
+        font_style = {'size': fontsize, 'family': fontfamily}
+
+        if fontcolor:
+            font_style['color'] = fontcolor
+
         self.layout['titlefont'] = font_style
         self.layout['legend'] = {'font': font_style}
         self.layout['xaxis'] = {'title': x_title, 'type': x_scale,
@@ -732,12 +735,20 @@ class PlotlyFig:
                 h = go.Histogram(x=d, histnorm=histnorm,
                                  xbins=bins[i],
                                  nbinsx=n_bins[i],
-                                 marker=dict(color=colors[i]), name=col)
+                                 marker=dict(color=colors[i]),
+                                 name=col,
+                                 hoverinfo=self.hoverinfo,
+                                 hoverlabel=self.layout['hoverlabel'])
+
             elif orientation == 'horizontal':
                 h = go.Histogram(y=d, histnorm=histnorm,
                                  ybins=bins[i],
                                  nbinsy=n_bins[i],
-                                 marker=dict(color=colors[i]), name=col)
+                                 marker=dict(color=colors[i]),
+                                 name=col,
+                                 hoverinfo=self.hoverinfo,
+                                 hoverlabel=self.layout['hoverlabel']
+                                 )
             else:
                 raise ValueError(
                     "The orientation must be 'horizontal' or 'vertical'.")
