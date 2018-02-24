@@ -236,7 +236,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         try:
             # Successful featurization returns nan for an error.
             if self.__return_errors:
-                return self.featurize(*x) + [float("nan")]
+                return self.featurize(*x) +  [float("nan")]
             else:
                 return self.featurize(*x)
         except BaseException:
