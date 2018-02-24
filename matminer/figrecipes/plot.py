@@ -731,7 +731,7 @@ class PlotlyFig:
                     "The orientation must be 'horizontal' or 'vertical'.")
             hgrams.append(h)
 
-        layout = self.layout.copy()
+        layout = deepcopy(self.layout)
 
         layout['hovermode'] = 'x' if orientation == 'vertical' else 'y'
         layout['bargap'] = bargap
@@ -846,7 +846,7 @@ class PlotlyFig:
                              marker=dict(color=colors[i]))
             barplots.append(barplot)
 
-        layout = self.layout.copy()
+        layout = deepcopy(self.layout)
         # Prevent linear default from altering categorical bar plot
         layout['xaxis']['type'] = None
         layout['barmode'] = barmode
@@ -949,7 +949,7 @@ class PlotlyFig:
                         "Please specify group_col, the label of the column "
                         "containing the groups for each row.")
 
-            use_colorscale = True
+            # use_colorscale = True
             group_stats = {}
 
             for g in groups:
@@ -966,17 +966,20 @@ class PlotlyFig:
                         'Omitting rows with group = {} which have only one row '
                         'in the dataframe.'.format(j))
 
-        if not use_colorscale:
-            colorscale = ['rgb(105,105,105)'] * len(data)
-        else:
+        #todo: fix colorscale nonsense
+        if use_colorscale:
             colorscale = colorscale or self.colorscale
+        else:
+            colorscale = ['rgb(105,105,105)'] * len(data)
 
         fig = FF.create_violin(data=data, data_header=cols[0],
                                group_header=group_col, title=title,
                                colors=colorscale, use_colorscale=use_colorscale,
                                group_stats=group_stats)
-
         layout = self.layout.copy()
+        font_style = self.font_style.copy()
+        font_style['size'] = 0.65 * font_style['size']
+
         violin_layout = {k: v for (k, v) in layout.items() if k != 'xaxis'}
         violin_layout['hoverlabel']['font'].pop('color')
 
@@ -1154,7 +1157,7 @@ class PlotlyFig:
                               'family': font_family}}
         )
 
-        layout = self.layout.copy()
+        layout = deepcopy(self.layout)
 
         # heatmap specific formatting:
         for ax in ['x', 'y']:
@@ -1296,7 +1299,7 @@ class PlotlyFig:
                               'family': self.font_style['family']}
             })
 
-        layout = self.layout.copy()
+        layout = deepcopy(self.layout)
 
         # heatmap specific formatting:
         for ax in ['x', 'y']:
