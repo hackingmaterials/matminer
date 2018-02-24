@@ -319,7 +319,7 @@ class PlotlyFig:
         if isinstance(col, str):
             try:
                 return data[col]
-            except:
+            except KeyError:
                 if col in self.df:
                     return self.df[col]
                 else:
