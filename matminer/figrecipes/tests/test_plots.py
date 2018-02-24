@@ -66,56 +66,49 @@ class PlotlyFigTest(PymatgenTest):
         self.base_dir =  os.path.dirname(os.path.realpath(__file__))
 
     def fopen(self, fname):
+        fname = self.base_dir + "/" + fname
         with open(fname, 'r') as f:
             return json.load(f)
 
     def test_xy(self):
         # Single trace
         xys_test = self.pf.xy([(a, b)], return_plot=True)
-        xys_fname = self.base_dir + "/template_xys.json"
-        xys_true = self.fopen(xys_fname)
+        xys_true = self.fopen("template_xys.json")
         self.assertTrue(xys_test == xys_true)
 
         # Multi trace
         xym_test = self.pf.xy([(a, b), (b, a)], return_plot=True)
-        xym_fname = self.base_dir + "/template_xym.json"
-        xym_true = self.fopen(xym_fname)
+        xym_true = self.fopen("template_xym.json")
         self.assertTrue(xym_test == xym_true)
 #
     def test_heatmap_basic(self):
         hmb_test = self.pf.heatmap_basic([a, b, c], xlabels, ylabels, return_plot=True)
-        fname = self.base_dir + "/template_hmb.json"
-        hmb_true = self.fopen(fname)
+        hmb_true = self.fopen("template_hmb.json")
         self.assertTrue(hmb_test == hmb_true)
 
     def test_histogram(self):
         his_test = self.pf.histogram(a + b + c, n_bins=5, return_plot=True)
-        fname = self.base_dir + "/template_his.json"
-        his_true = self.fopen(fname)
+        his_true = self.fopen("template_his.json")
         self.assertTrue(his_test == his_true)
 
     def test_bar(self):
         bar_test = self.pf.bar(x=a, y=b, labels=xlabels, return_plot=True)
-        fname = self.base_dir + "/template_bar.json"
-        bar_true = self.fopen(fname)
+        bar_true = self.fopen("template_bar.json")
         self.assertTrue(bar_test == bar_true)
 
     def test_parallel_coordinates(self):
         pcp_test = self.pf.parallel_coordinates([a, b], cols=xlabels, return_plot=True)
-        fname = self.base_dir + "/template_pcp.json"
-        pcp_true = self.fopen(fname)
+        pcp_true = self.fopen("template_pcp.json")
         self.assertTrue(pcp_test == pcp_true)
 
     def test_violin(self):
         vio_test = self.pf.violin([a, b, c, b, a, c, b], cols=xlabels,return_plot=True)['layout']
-        fname = self.base_dir + "/template_vio.json"
-        vio_true = self.fopen(fname)
+        vio_true = self.fopen("template_vio.json")
         self.assertTrue(vio_test == vio_true)
 
     def test_scatter_matrix(self):
         scm_test = self.pf.scatter_matrix([a, b, c], return_plot=True)['layout']
-        fname = self.base_dir + "/template_scm.json"
-        scm_true = self.fopen(fname)
+        scm_true = self.fopen("template_scm.json")
         self.assertTrue(scm_test == scm_true)
 
     def test_heatmap_df(self):

@@ -106,7 +106,7 @@ class PlotlyFig:
                     If None, uses the trace color.
 
         Returns: None
-        
+
         Attributes:
         These are either fields that Plotly's 'layout' cannot work with directly
         or are managerial values PlotlyFig uses separate from PlotlyDict.
@@ -118,16 +118,16 @@ class PlotlyFig:
             username (str): The Plotly username
             api_key (str): The Plotly api key
             resolution_scale (int/float): Scale up the resolution of static
-                images proportionally using this parameter. 
-            layout (dict): The dictionary passed to Plotly which specifies 
-                the PlotlyDict 'layout' value. 
+                images proportionally using this parameter.
+            layout (dict): The dictionary passed to Plotly which specifies
+                the PlotlyDict 'layout' value.
             font_style (dict): The general font style, in Plotly syntax.
             plot_counter (int): The number appended onto generated offline plots
             colorbar_title (str): The title of the colorbar
             colorscale (str): See argument documentation above.
             hoverinfo (str): See argument documentation above.
             ticksize (int): See argument documentation above.
-            
+
 
         """
 
@@ -236,7 +236,6 @@ class PlotlyFig:
         self.plot_counter = 0
         self.font_style = font_style
 
-
     def set_argument(self, **kwargs):
         """
         Method to modify some of the layout arguments after instantiation
@@ -252,7 +251,6 @@ class PlotlyFig:
                 self.plot_counter = 0
             else:
                 raise ValueError('changing "{}" is not supported!'.format(kw))
-
 
     def create_plot(self, fig, return_plot=False):
         """
@@ -301,13 +299,12 @@ class PlotlyFig:
                 height = 600
             if 'width' not in self.layout.keys():
                 width = 800
-            
+
             plotly.plotly.image.save_as(fig, filename=filename,
-                                        height=height, 
+                                        height=height,
                                         width=width,
                                         scale=self.resolution_scale)
         self.plot_counter += 1
-
 
     def data_from_col(self, col, data=None):
         """
@@ -330,11 +327,10 @@ class PlotlyFig:
         else:
             return col
 
-
     def xy(self, xy_pairs, colors=None, color_range=None, labels=None,
            names=None, sizes=None, modes='markers', markers=None,
            marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
-           error_bars = None, normalize_size=True, return_plot=False):
+           error_bars=None, normalize_size=True, return_plot=False):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -404,14 +400,15 @@ class PlotlyFig:
                 error_bars = [error_bars] * len(xy_pairs)
             error_bars = [self.data_from_col(ebar) for ebar in error_bars]
             if len(error_bars) != len(xy_pairs):
-                raise ValueError('"error_bars" must be the same length as "xy_pairs"')
+                raise ValueError(
+                    '"error_bars" must be the same length as "xy_pairs"')
 
         if normalize_size:
             for i, size in enumerate(sizes):
                 if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
                     size = pd.Series(size).fillna(size.min())
                     sizes[i] = ((size - size.min()) / (
-                                size.max() - size.min()) + 0.05) * 30 * marker_scale
+                            size.max() - size.min()) + 0.05) * 30 * marker_scale
                     print(sizes[i])
 
         if isinstance(modes, str):
@@ -447,7 +444,8 @@ class PlotlyFig:
         else:
             labels = [self.data_from_col(l) for l in labels]
         markers = markers or [{'symbol': 'circle', 'line': {'width': 1,
-                                            'color': 'black'}} for _ in data]
+                                                            'color': 'black'}}
+                              for _ in data]
         if isinstance(markers, dict):
             markers = [markers.copy() for _ in data]
 
@@ -507,14 +505,13 @@ class PlotlyFig:
 
         if error_bars is not None:
             for i, _ in enumerate(traces):
-                traces[i].error_y = {'type': 'data', 'array':error_bars[i],
+                traces[i].error_y = {'type': 'data', 'array': error_bars[i],
                                      'visible': True}
 
         fig = {'data': traces, 'layout': layout}
         if showscale:
             fig['layout']['legend']['x'] = 0.9
         return self.create_plot(fig, return_plot)
-
 
     def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
                        labels=None, marker_scale=1.0, return_plot=False,
@@ -622,11 +619,11 @@ class PlotlyFig:
                 fig['data'][iplot].update(marker=marker, text=labels)
             else:
                 fig['data'][iplot].update(marker={'color': default_color,
-                                    'line': {'width': 0.5, 'color': 'black'}})
+                                                  'line': {'width': 0.5,
+                                                           'color': 'black'}})
         if (default_color in ['grey', 'black']) and colors is None:
             fig['layout']['hoverlabel']['font']['color'] = 'white'
         return self.create_plot(fig, return_plot)
-
 
     def histogram(self, data=None, cols=None, orientation="vertical",
                   histnorm="count", n_bins=None, bins=None, colors=None,
@@ -693,8 +690,6 @@ class PlotlyFig:
             else:
                 data = {'trace1': data}
                 cols = ['trace1']
-
-
 
         # Transform all entries to listlike, if given as single entries
         dtypes = (list, np.ndarray, tuple)
@@ -878,7 +873,7 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
     def violin(self, data=None, cols=None, group_col=None, groups=None,
-               colorscale=None, use_colorscale=False,return_plot=False):
+               colorscale=None, use_colorscale=False, return_plot=False):
         """
         Create a violin plot using Plotly.
 
@@ -923,7 +918,6 @@ class PlotlyFig:
                     "dataframe or a list of numerical values.")
             data = self.df
 
-
         # No matter the data type, data is converted into a dataframe
 
         if isinstance(data, pd.Series):
@@ -943,7 +937,6 @@ class PlotlyFig:
             raise ValueError('"data" was set to an unknown datatype. Please'
                              'use a list, a list of lists/numpy array, a series'
                              ' or a DataFrame.')
-
 
         if isinstance(data, pd.DataFrame):
             if groups is None:
@@ -987,7 +980,7 @@ class PlotlyFig:
                         'Omitting rows with group = {} which have only one row '
                         'in the dataframe.'.format(j))
 
-        #todo: fix colorscale nonsense
+        # todo: fix colorscale nonsense
         if use_colorscale:
             colorscale = colorscale or self.colorscale
         else:
@@ -1022,7 +1015,6 @@ class PlotlyFig:
         if not hasattr(self, 'height'):
             fig['layout']['height'] = 1000
         return self.create_plot(fig, return_plot)
-
 
     def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
                              colors=None, return_plot=False):
@@ -1100,11 +1092,10 @@ class PlotlyFig:
         fig = {'data': [par_coords], 'layout': self.layout}
         return self.create_plot(fig, return_plot)
 
-
     def heatmap_basic(self, data=None, x_labels=None, y_labels=None,
-                     colorscale=None, colorscale_range=None,
-                     annotations_text=None, annotations_font_size=20,
-                     annotations_color='white', return_plot=False):
+                      colorscale=None, colorscale_range=None,
+                      annotations_text=None, annotations_font_size=20,
+                      annotations_color='white', return_plot=False):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
@@ -1203,10 +1194,10 @@ class PlotlyFig:
 
         return self.create_plot(fig, return_plot)
 
-
     def heatmap_df(self, data=None, cols=None, x_labels=None, x_nqs=6,
-                y_labels=None, y_nqs=4, precision=1, annotation='count',
-                annotation_color='black', colorscale=None, return_plot=False):
+                   y_labels=None, y_nqs=4, precision=1, annotation='count',
+                   annotation_color='black', colorscale=None,
+                   return_plot=False):
         """
         A heatmap which can accept a dataframe as input directly.
 
@@ -1260,7 +1251,7 @@ class PlotlyFig:
         if y_nqs is None or len(data[y_prop].unique()) > y_nqs:
             try:
                 data['y_bin'] = pd.qcut(data[y_prop], y_nqs, labels=y_labels,
-                                       precision=precision).astype(str)
+                                        precision=precision).astype(str)
                 y_groups = data['y_bin'].unique()
             except:
                 warnings.warn('pd.qcut failed! categorizing on unique values')
@@ -1274,7 +1265,7 @@ class PlotlyFig:
         if x_nqs is None or len(data[x_prop].unique()) > x_nqs:
             try:
                 data['x_bin'] = pd.qcut(data[x_prop], x_nqs, labels=x_labels,
-                                       precision=precision).astype(str)
+                                        precision=precision).astype(str)
                 x_groups = data['x_bin'].unique()
             except:
                 warnings.warn('pd.qcut failed! categorizing on unique values')
