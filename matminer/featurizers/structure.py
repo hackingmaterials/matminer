@@ -23,7 +23,8 @@ from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint,
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
-              'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>'
+              'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
+              'Alex Dunn <ardunn@lbl.gov>'
 # ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
 
 ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
@@ -1123,7 +1124,11 @@ class BagofBonds(BaseFeaturizer):
     Features:
 
     BagofBonds must be fit with iterable of structures before featurization in
-    order to define the allowed bond types (features). To do this, use 'fit'.
+    order to define the allowed bond types (features). To do this, pass a list
+    of allowed_bonds. Otherwise, fit based on a list of structures. If
+    allowed_bonds is defined and BagofBonds is also fit, the intersection
+    of the two lists of possible bonds is used.
+
     For dataframes containing structures of various compositions, a unified
     dataframe is returned which has the collection of all possible bond types
     gathered from all structures as columns. To approximate bonds based on
@@ -1150,21 +1155,51 @@ class BagofBonds(BaseFeaturizer):
             bonds in Mendeleev no. space is minimized for the approximate
             bond chosen.
         token (str): The string used to separate species in a bond, including
-            spaces. For example, for the bond Cs+ - Cl-, the token is ' - '.
-            This determines how bonds are represented in the dataframe.
+            spaces. The token must contain at least one space and cannot have
+            alphabetic characters in it, and should be padded by spaces. For
+            example, for the bond Cs+ - Cl-, the token is ' - '. This determines
+            how bonds are represented in the dataframe.
+        allowed_bonds ([str]): A listlike object containing bond types as
+            strings. For example, Cs - Cl, or Li+ - O2-. Ions and elements
+            will still have distinct bonds if (1) the bonds list originally
+            contained them and (2) no_oxi is False. These must match the
+            token specified.
     """
 
-    def __init__(self, nn, bbv=0, no_oxi=False, approx_bonds=False, token='-'):
+    def __init__(self, nn, bbv=0, no_oxi=False, approx_bonds=False, token=' - ',
+                 allowed_bonds=None):
         self.nn = nn
         self.bbv = bbv
         self.no_oxi = no_oxi
         self.approx_bonds = approx_bonds
-        self._token = " " + token + " "
+
+        if " " not in token:
+            raise ValueError("A space must be present in the token.")
+
+        if any([str.isalnum(i) for i in token]):
+            raise ValueError("The token cannot have any alphanumeric "
+                             "characters.")
+
+        token_els = token.split(" ")
+        if len(token_els) != 3 and token != " ":
+            raise ValueError("The token must either be a space or be padded by"
+                             "single spaces with no spaces in between.")
+
+        self.token = token
+
+        if allowed_bonds is None:
+            self.allowed_bonds = allowed_bonds
+            self.fitted_bonds_ = allowed_bonds
+        else:
+            self.allowed_bonds = self._sanitize_bonds(allowed_bonds)
+            self.fitted_bonds_ = self._sanitize_bonds(allowed_bonds)
+
 
     @staticmethod
-    def from_preset(preset):
+    def from_preset(preset, **kwargs):
         """
         Use one of the standard instances of a given NearNeighbor class.
+        Pass args to __init__, such as allowed_bonds, using this method as well.
 
         Args:
             preset (str): preset type ("VoronoiNN", "JMolNN",
@@ -1174,45 +1209,44 @@ class BagofBonds(BaseFeaturizer):
             CoordinationNumber from a preset.
         """
         nn = getattr(pmg_le, preset)
-        return BagofBonds(nn())
+        return BagofBonds(nn(), **kwargs)
 
-    def fit(self, structures=None, allowed_bonds=None):
+    def fit(self, structures):
         """
         Define the bond types allowed to be returned during each featurization.
         Bonds found during featurization which are not allowed will be omitted
         from the returned dataframe or matrix.
 
         Fit BagofBonds by either passing an iterable of structures to
-        training_data or by defining the bonds explicitly with allowed_bonds.
+        training_data or by defining the bonds explicitly with allowed_bonds
+        in __init__.
 
         Args:
             structures (Series/list): An iterable of pymatgen Structure
                 objects which will be used to determine the allowed bond
                 types.
-            allowed_bonds ([str]): A listlike object containing bond types as
-                strings. For example, Cs - Cl, or Li+ - O2-. Ions and elements
-                will still have distinct bonds if (1) the bonds list originally
-                contained them and (2) no_oxi is False. These must match the
-                token specified in __init__.
 
         Returns:
             None
         """
         listlike = (tuple, list, np.ndarray, pd.Series)
+        if not isinstance(structures, listlike):
+            structures = [structures]
+        if not isinstance(structures[0], (Structure, dict)):
+            raise ValueError("Structures must either be pymatgen Structure"
+                             "objects or dictionaries representing Structure"
+                             "objects.")
 
-        if structures is None:
-            if allowed_bonds is None:
-                raise ValueError("Please fit using an iterable of pymatgen"
-                                 "structures or with a list of allowed bonds.")
-            else:
-                if not isinstance(allowed_bonds, listlike):
-                    raise TypeError("allowed_bonds must be a list of strings.")
-                self.allowed_bonds_ = allowed_bonds
+        sanitized = self._sanitize_bonds(self.enumerate_all_bonds(structures))
+
+        if self.allowed_bonds is None:
+            self.fitted_bonds_ = sanitized
         else:
-            if not isinstance(structures, listlike):
-                structures = [structures]
-            self.allowed_bonds_ = self.enumerate_all_bonds(structures)
-            self.allowed_bonds_ = self._sanitize_bonds(self.allowed_bonds_)
+            self.fitted_bonds_ = [b for b in sanitized if b in self.allowed_bonds]
+            if len(self.fitted_bonds_) == 0:
+                warnings.warn("The intersection between the allowed bonds "
+                              "and the fitted bonds is zero. There's no bonds"
+                              "to be featurized!")
 
     def enumerate_bonds(self, s):
         """
@@ -1231,7 +1265,7 @@ class BagofBonds(BaseFeaturizer):
         het_bonds = list(itertools.combinations(els, 2))
         het_bonds = [tuple(sorted([str(i) for i in j])) for j in het_bonds]
         hom_bonds = [(str(el), str(el)) for el in els]
-        bond_types = [k[0] + self._token + k[1] for k in het_bonds + hom_bonds]
+        bond_types = [k[0] + self.token + k[1] for k in het_bonds + hom_bonds]
         return sorted(bond_types)
 
     def enumerate_all_bonds(self, structures):
@@ -1280,7 +1314,7 @@ class BagofBonds(BaseFeaturizer):
         tot_bonds = 0.0
 
         # if we find a bond in allowed_bonds not in bond_types, mark as bbv
-        for b in self.allowed_bonds_:
+        for b in self.fitted_bonds_:
             if b not in bond_types:
                 if self.bbv is None:
                     bonds[b] = float("nan")
@@ -1293,7 +1327,7 @@ class BagofBonds(BaseFeaturizer):
 
             for neigh in nearest:
                 btup = tuple(sorted([str(origin), str(neigh.specie)]))
-                b = self._sanitize_bonds(btup[0] + self._token + btup[1])
+                b = self._sanitize_bonds(btup[0] + self.token + btup[1])
                 # The bond will not be in bonds if it is a forbidden bond
                 # (when a local bond is not in allowed_bonds)
                 tot_bonds += 1.0
@@ -1308,7 +1342,7 @@ class BagofBonds(BaseFeaturizer):
         tot_bonds = tot_bonds or 1.0
 
         # if we find a bond in bond_types not in allowed_bonds, skip
-        return [bonds[b] / tot_bonds for b in self.allowed_bonds_]
+        return [bonds[b] / tot_bonds for b in self.fitted_bonds_]
 
     def feature_labels(self):
         """
@@ -1316,20 +1350,18 @@ class BagofBonds(BaseFeaturizer):
         has not been fit.
         """
         self._check_fitted()
-        return [b + " bond frac." for b in self.allowed_bonds_]
+        return [b + " bond frac." for b in self.fitted_bonds_]
 
     def _check_fitted(self):
         """
         Ensure the Featurizer has been fit to the dataframe
         """
-        if not hasattr(self, "allowed_bonds_"):
-            raise AttributeError("BagofBonds must be fit before it can be "
-                                 "featurized! Use .fit to define all bond types"
-                                 " before featurizing!")
-        elif self.allowed_bonds_ is None:
-            raise AttributeError("BagofBonds must be fit before it can be "
-                                 "featurized! Use .fit to define all bond types"
-                                 " before featurizing!")
+        if self.fitted_bonds_ is None:
+            raise AttributeError('BagofBonds must have a list of allowed bonds.'
+                                 ' Either pass in a list of bonds to the '
+                                 'initializer with allowed_bonds, use "fit" with'
+                                 ' a list of structures, or do both to sets the '
+                                 'intersection of the two as the allowed list.')
 
     def _sanitize_bonds(self, bonds):
         """
@@ -1337,7 +1369,7 @@ class BagofBonds(BaseFeaturizer):
 
         Args:
             bonds (str/[str]): An iterable of bond types, specified as strings
-                with the general format "El-Sp", where El or Sp can be a specie
+                with the general format "El - Sp", where El or Sp can be specie
                 or an element with pymatgen's str representation of a bond. For
                 example, a Cesium Chloride bond could be represented as either
                 "Cs-Cl" or "Cs+-Cl-" or "Cl-Cs" or "Cl--Cs+". "bond frac." may
@@ -1360,19 +1392,22 @@ class BagofBonds(BaseFeaturizer):
                 bonds = bonds.tolist()
 
         for i, bond in enumerate(bonds):
-            if not isinstance(bond, str) or self._token not in bond:
+            if not isinstance(bond, str):
                 raise TypeError("Bonds must be specified as strings between "
                                 "elements or species with the token in between, "
                                 "for example Cl - Cs")
+            if not self.token in bond:
+                raise ValueError('Token "{}" not found in bond: {}'.format(
+                    self.token, bond))
             bond = bond.replace(" bond frac.", "")
-            species = sorted(bond.split(self._token))
+            species = sorted(bond.split(self.token))
 
             if self.no_oxi:
-                alphabetized = self._token.join(species)
+                alphabetized = self.token.join(species)
                 species = self._species_from_bondstr(alphabetized)
                 species = [str(s.element) for s in species]
 
-            bonds[i] = self._token.join(species)
+            bonds[i] = self.token.join(species)
 
         bonds = list(OrderedDict.fromkeys(bonds))
 
@@ -1394,7 +1429,7 @@ class BagofBonds(BaseFeaturizer):
                 order.
         """
         species = []
-        for ss in bondstr.split(self._token):
+        for ss in bondstr.split(self.token):
             try:
                 species.append(Specie.from_string(ss))
             except ValueError:
@@ -1415,7 +1450,8 @@ class BagofBonds(BaseFeaturizer):
 
         Args:
             local_bonds (dict): The bonds present in the structure with the bond
-                types as keys ("Cl--Cs+") and the bond fraction as values (0.7).
+                types as keys ("Cl- - Cs+") and the bond fraction as values
+                (0.7).
 
         Returns:
             abonds_data (dict): A dictionary of the unified (allowed) bonds
@@ -1427,9 +1463,9 @@ class BagofBonds(BaseFeaturizer):
         # At this stage, local_bonds may contain unified bonds which
         # are nan.
 
-        abonds_data = {k: 0.0 for k in self.allowed_bonds_}
-        abonds_species = {k: None for k in self.allowed_bonds_}
-        for ub in self.allowed_bonds_:
+        abonds_data = {k: 0.0 for k in self.fitted_bonds_}
+        abonds_species = {k: None for k in self.fitted_bonds_}
+        for ub in self.fitted_bonds_:
             species = self._species_from_bondstr(ub)
             abonds_species[ub] = tuple(species)
         # keys are pairs of species, values are bond names in unified_bonds
@@ -1438,7 +1474,7 @@ class BagofBonds(BaseFeaturizer):
         for lb in local_bonds.keys():
             local_bonds[lb] = 0.0 if np.isnan(local_bonds[lb]) else local_bonds[lb]
 
-            if lb in self.allowed_bonds_:
+            if lb in self.fitted_bonds_:
                 abonds_data[lb] += local_bonds[lb]
             else:
                 lbs = self._species_from_bondstr(lb)
