@@ -6,8 +6,17 @@ from pymatgen import Composition
 
 """
 This script shows some basic examples of xy plot using figrecipes in matminer.
-Each functions demonstrates an application of the xy plot.
 """
+
+def plot_simple_xy():
+    """
+    Very simple xy plot with all default settings.
+    Returns:
+        plotly plot in "offline" mode poped in the default browser.
+    """
+    pf = PlotlyFig()
+    pf.xy(([1, 2, 3], [4, 5, 6]))
+
 
 def plot_bulk_shear_moduli():
     """
@@ -129,6 +138,7 @@ def plot_expt_compt_band_gaps(limit=0):
 
 
 if __name__ == '__main__':
+    plot_simple_xy()
     plot_bulk_shear_moduli()
     plot_thermoelectrics(limit=0)
     plot_expt_compt_band_gaps(limit=0)
