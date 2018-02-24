@@ -27,7 +27,7 @@ class PlotlyFig:
                  font_family='Courier', bg_color="white", font_color='black',
                  colorscale='Viridis', height=None, width=None,
                  resolution_scale=None, margins=100, pad=0, username=None,
-                 api_key=None, filename='auto', show_offline_plot=True,
+                 api_key=None, filename='temp-plot', show_offline_plot=True,
                  hovermode='closest', hoverinfo='x+y+text', hovercolor=None):
         """
         Class for making Plotly plots
@@ -209,8 +209,20 @@ class PlotlyFig:
                     'and must have an extension ending in ('
                     '".png", ".svg", ".jpeg", ".pdf")')
 
-        self.plot_counter = 1
+        self.plot_counter = 0
         self.font_style = font_style
+
+
+    def set_argument(self, **kwargs):
+        for kw in kwargs:
+            if kw in ['x_title', 'y_title']:
+                self.layout['{}axis'.format(kw[0])]['title'] = kwargs[kw]
+            elif kw in ['filename']:
+                self.filename = kwargs[kw]
+                self.plot_counter = 0
+            else:
+                raise ValueError('"{}" is not supported!'.format(kw))
+
 
     def create_plot(self, fig, return_plot=False):
         """
@@ -234,9 +246,8 @@ class PlotlyFig:
         """
         if return_plot:
             return fig
-
-        if self.filename == 'auto':
-            filename = 'auto_{}'.format(self.plot_counter)
+        if self.plot_counter > 0:
+            filename = '{}_{}'.format(self.filename, self.plot_counter)
         else:
             filename = self.filename
 
@@ -369,8 +380,8 @@ class PlotlyFig:
 
         if isinstance(modes, str):
             modes = [modes] * len(xy_pairs)
-        else:
-            assert len(modes) == len(xy_pairs)
+        if len(modes) != len(xy_pairs):
+            raise ValueError('"modes" and "xy_pairs" have different lengths!')
         if colors is None:
             showscale = False
             colorbar = None
