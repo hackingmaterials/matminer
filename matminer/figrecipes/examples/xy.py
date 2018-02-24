@@ -10,8 +10,8 @@ This script shows some basic examples of xy plot using figrecipes in matminer.
 To see the examples plot_thermoelectrics and plot_expt_compt_band_gaps, make
 sure to enter your Citrine API key or have it set inside CITRINE_KEY
 environment variable. Also, when using MPDataRetrieval make sure your API key
-for the Materials Project (https://materialsproject.org/open) is set 
-inside MAPI_KEY environment variable.
+for the Materials Project (https://materialsproject.org/open) is set inside 
+MAPI_KEY environment variable.
 """
 
 def plot_simple_xy():
