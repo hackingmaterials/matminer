@@ -29,6 +29,7 @@ def refresh(open_plots=False):
     Args:
         open_plots (bool): If True, opens all plots generated. Useful if you
             want to check the current build outputs to make sure they look good.
+            If False, just generates the json files and quits.
     """
 
     pf = PlotlyFig()
