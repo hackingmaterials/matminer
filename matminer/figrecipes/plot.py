@@ -235,6 +235,12 @@ class PlotlyFig:
 
 
     def set_argument(self, **kwargs):
+        """
+        Method to modify some of the layout arguments after instantiation
+        Args:
+            **kwargs: allowed variables to change are listed below:
+        Returns: None
+        """
         for kw in kwargs:
             if kw in ['x_title', 'y_title']:
                 self.layout['{}axis'.format(kw[0])]['title'] = kwargs[kw]
@@ -242,7 +248,7 @@ class PlotlyFig:
                 self.filename = kwargs[kw]
                 self.plot_counter = 0
             else:
-                raise ValueError('"{}" is not supported!'.format(kw))
+                raise ValueError('changing "{}" is not supported!'.format(kw))
 
 
     def create_plot(self, fig, return_plot=False):
@@ -555,12 +561,13 @@ class PlotlyFig:
                     "scatter_matrix requires either dataframe labels and a "
                     "dataframe or a list of numerical values.")
             elif cols is None:
-                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+                data = self.df
             else:
                 data = self.df[cols]
         elif isinstance(data, (np.ndarray, list)):
             data = pd.DataFrame(data, columns=cols)
 
+        data = data.select_dtypes(include=['float', 'int', 'bool'])
         labels = self.data_from_col(labels, data)
         if self.colorbar_title == 'auto':
             colors_ = self.data_from_col(colors, data)
