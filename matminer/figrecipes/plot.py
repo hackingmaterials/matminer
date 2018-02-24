@@ -860,8 +860,7 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
     def violin(self, data=None, cols=None, group_col=None, groups=None,
-               title=None, colorscale=None, use_colorscale=False,
-               return_plot=False):
+               colorscale=None, use_colorscale=False,return_plot=False):
         """
         Create a violin plot using Plotly.
 
@@ -878,7 +877,6 @@ class PlotlyFig:
                 row, if it exists. Used only if there is one entry in cols.
             groups: ([str]): All group names to be included in the violin plot.
                 Used only if there is one entry in cols.
-            title: (str) Title of the violin plot
             colorscale: (str/tuple/list/dict) either a plotly scale name (Greys,
                 YlGnBu, Greens, etc.), an rgb or hex color, a color tuple, a
                 list/dict of colors. An rgb color is of the form 'rgb(x, y, z)'
@@ -978,7 +976,8 @@ class PlotlyFig:
             colorscale = ['rgb(105,105,105)'] * len(data)
 
         fig = FF.create_violin(data=data, data_header=cols[0],
-                               group_header=group_col, title=title,
+                               group_header=group_col,
+                               title=self.layout['title'],
                                colors=colorscale, use_colorscale=use_colorscale,
                                group_stats=group_stats)
         layout = deepcopy(self.layout)
