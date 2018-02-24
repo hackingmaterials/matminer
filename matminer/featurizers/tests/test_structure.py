@@ -172,14 +172,17 @@ class StructureFeaturesTest(PymatgenTest):
         featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
         self.assertEquals({'Cs', 'Cl', 'C', 'Ni', 'Al'}, set(featurizer.elements_))
 
-        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]), exclude_elems=['Cs', 'Al'])
+        featurizer.exclude_elems = ['Cs', 'Al']
+        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
         self.assertEquals({'Cl', 'C', 'Ni'}, set(featurizer.elements_))
 
-        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]), exclude_elems=['Cs', 'Al'],
-                       include_elems=['H'])
+        featurizer.include_elems = ['H']
+        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
         self.assertEquals({'H', 'Cl', 'C', 'Ni'}, set(featurizer.elements_))
 
         # Check the feature labels
+        featurizer.exclude_elems = ()
+        featurizer.include_elems = ()
         featurizer.elements_ = ['Al', 'Ni']
         labels = featurizer.feature_labels()
         n_bins = len(featurizer._make_bins()) - 1
