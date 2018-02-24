@@ -514,7 +514,7 @@ class PlotlyFig:
                 data = self.df.select_dtypes(include=['float', 'int', 'bool'])
             else:
                 data = self.df[cols]
-        elif isinstance(data, np.ndarray):
+        elif isinstance(data, (np.ndarray, list)):
             data = pd.DataFrame(data, columns=cols)
 
         labels = self.data_from_col(labels, data)
@@ -636,7 +636,7 @@ class PlotlyFig:
             elif isinstance(data, pd.DataFrame):
                 cols = data.columns.values
             else:
-                data = pd.DataFrame({'trace1': data})
+                data = {'trace1': data}
                 cols = ['trace1']
 
 
@@ -704,8 +704,8 @@ class PlotlyFig:
         if len(hgrams) > 1:
             self.layout['barmode'] = 'overlay'
             for h in hgrams:
-                h['opacity'] = 1.0 / float(len(hgrams)) + 0.1
-        # fig = dict(data=hgrams, layout=self.layout)
+                h['opacity'] = 1.0 / float(len(hgrams)) + 0.2
+
         fig = {'data': hgrams, 'layout': self.layout}
         return self.create_plot(fig, return_plot)
 
@@ -818,11 +818,14 @@ class PlotlyFig:
         Create a violin plot using Plotly.
 
         Args:
-            data: (DataFrame or list) A dataframe containing at least one
-                numerical column. Also accepts lists of numerical values. If
-                None, uses the dataframe passed into the constructor.
+            data: (DataFrame/list) A dataframe containing at least one
+                numerical column. Also accepts lists/arrays of numerical
+                values, using columns as separate variables (distributions are
+                down rows). If None, uses the dataframe passed into the
+                constructor.
             cols: ([str]) The labels for the columns of the dataframe to be
-                included in the plot. Not used if data is passed in as list.
+                included in the plot. If data is passed as a list/array, pass
+                a list of cols to be used as labels for the violins.
             group_col: (str) Name of the column containing the group for each
                 row, if it exists. Used only if there is one entry in cols.
             groups: ([str]): All group names to be included in the violin plot.
@@ -856,9 +859,27 @@ class PlotlyFig:
                     "dataframe or a list of numerical values.")
             data = self.df
 
+
+        # No matter the data type, data is converted into a dataframe
+
         if isinstance(data, pd.Series):
             cols = [data.name]
             data = pd.DataFrame({data.name: data.tolist()})
+        elif isinstance(data, (list, np.ndarray)):
+
+            data = np.array(data)
+            if data.shape[0] == 1:
+                data = np.array([data])
+
+            if not cols:
+                cols = ['data{}'.format(i) for i in range(data.shape[1])]
+            data = pd.DataFrame(data=data, columns=cols)
+
+        else:
+            raise ValueError('"data" was set to an unknown datatype. Please'
+                             'use a list, a list of lists/numpy array, a series'
+                             ' or a DataFrame.')
+
 
         if isinstance(data, pd.DataFrame):
             if groups is None:
@@ -900,17 +921,11 @@ class PlotlyFig:
                     data = data[data[group_col] != j]
                     warnings.warn(
                         'Omitting rows with group = {} which have only one row '
-                        'in the dataframe.'.format(
-                            j))
-        else:
-            data = pd.DataFrame({'data': np.asarray(data)})
-            cols = ['data']
-            group_col = None
-            group_stats = None
+                        'in the dataframe.'.format(j))
 
         if not colors:
             use_colorscale = False
-            colors = ['rgb(105,105,105)'] * data.shape[0]
+            colors = ['rgb(105,105,105)'] * len(data)
 
         fig = FF.create_violin(data=data, data_header=cols[0],
                                group_header=group_col, title=title,
@@ -918,7 +933,12 @@ class PlotlyFig:
                                group_stats=group_stats)
 
 
-        violin_layout = {k: v for (k, v) in self.layout.items() if k != 'xaxis'}
+        violin_layout = {k: v for (k, v) in copy(self.layout.items()) if k != 'xaxis'}
+        violin_layout['hoverlabel']['font'].pop('color')
+
+        if 'bgcolor' in violin_layout['hoverlabel']:
+            violin_layout['hoverlabel'].pop('bgcolor')
+
         fig.update({'layout': violin_layout})
 
         # Change sizes in all x-axis
@@ -965,7 +985,7 @@ class PlotlyFig:
                 data = self.df.select_dtypes(include=['float', 'int', 'bool'])
             else:
                 data = self.df[cols]
-        elif isinstance(data, np.ndarray):
+        elif isinstance(data, (np.ndarray, list)):
             data = pd.DataFrame(data, columns=cols)
 
         if cols is None:
@@ -991,7 +1011,7 @@ class PlotlyFig:
                 values = data[col].apply(lambda x: round(x, precision))
             else:
                 values = data[col]
-            dimensions.append({'label': col, 'values': values})
+            dimensions.append({'label': col, 'values': values.tolist()})
 
         font_style = copy(self.font_style)
         font_style['size'] = 0.65 * font_style['size']
