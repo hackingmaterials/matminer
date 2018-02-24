@@ -3,7 +3,7 @@ This script shows some basic examples of histogram plot using figrecipes in matm
 """
 
 from matminer.datasets.dataframe_loader import load_elastic_tensor, \
-    load_piezoelectric_tensor, load_dielectric_constant
+    load_dielectric_constant
 from matminer.figrecipes.plot import PlotlyFig
 
 
