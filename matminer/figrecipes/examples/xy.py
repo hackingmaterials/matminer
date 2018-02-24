@@ -105,8 +105,7 @@ def plot_expt_compt_band_gaps(limit=0):
     # pull computational band gaps from the Materials Project
     df = MPDataRetrieval().get_dataframe(
         criteria={'pretty_formula': {'$in': list(df_ct['Formula'].values)}},
-        properties=['pretty_formula', 'material_id', 'band_gap',
-                    'e_above_hull'],
+        properties=['pretty_formula', 'material_id', 'band_gap', 'e_above_hull'],
         index_mpid=False).rename(
         columns={'pretty_formula': 'Formula', 'band_gap': 'MP computed gap',
                  'material_id': 'mpid'})
@@ -114,7 +113,6 @@ def plot_expt_compt_band_gaps(limit=0):
 
     # pick the most stable structure
     df_mp = df.loc[df.groupby("Formula")["e_above_hull"].idxmin()]
-
     df_final = df_ct.merge(df_mp, on='Formula').drop(
                                     'e_above_hull', axis=1).set_index('mpid')
     pf = PlotlyFig(df_final, x_title='Experimental band gap (eV)',
@@ -126,19 +124,20 @@ def plot_expt_compt_band_gaps(limit=0):
         ('Expt. gap', 'MP computed gap'),
         ([0, 12], [0, 12])
     ],
-          labels=df_final.index, modes=['markers', 'lines'],
-          names=['Computed vs. expt.', 'Expt. gap'])
+        lines={'color': 'black'},
+        labels=df_final.index, modes=['markers', 'lines'],
+        names=['Computed vs. expt.', 'Expt. gap'])
 
+    # residual:
+    residuals = df_final['MP computed gap']-df_final['Expt. gap'].astype(float)
     pf.set_argument(x_title='Experimental band gap (eV)',
                     y_title='Residual (Computed - Expt.) Band Gap (eV)',
                     filename='band_gap_residuals')
-    pf.x_title = 'test'
-    residuals = df_final['MP computed gap']-df_final['Expt. gap'].astype(float)
     pf.xy(('Expt. gap', residuals), labels = df_final.index)
 
 
 if __name__ == '__main__':
     plot_simple_xy()
     plot_bulk_shear_moduli()
-    plot_thermoelectrics(limit=0)
-    plot_expt_compt_band_gaps(limit=0)
+    plot_thermoelectrics(limit=10)
+    plot_expt_compt_band_gaps(limit=10)
