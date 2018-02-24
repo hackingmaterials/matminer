@@ -108,6 +108,9 @@ class PlotlyFig:
         Returns: None
         
         Attributes:
+        These are either fields that Plotly's 'layout' cannot work with directly
+        or are managerial values PlotlyFig uses separate from PlotlyDict.
+
             df (DataFrame): The dataframe which can be used to generate multiple
                 plots.
             mode (str): The plot mode, specified above in the argument.
@@ -119,7 +122,11 @@ class PlotlyFig:
             layout (dict): The dictionary passed to Plotly which specifies 
                 the PlotlyDict 'layout' value. 
             font_style (dict): The general font style, in Plotly syntax.
-            plot_counter (int): The number appended onto generated offline plots. 
+            plot_counter (int): The number appended onto generated offline plots
+            colorbar_title (str): The title of the colorbar
+            colorscale (str): See argument documentation above.
+            hoverinfo (str): See argument documentation above.
+            ticksize (int): See argument documentation above.
             
 
         """
@@ -140,22 +147,19 @@ class PlotlyFig:
                    'l': margins[3] + ticksize + fontsize,
                    'pad': pad}
 
+        # kwargs which can be directly used in Plotly layout
         kwargs = {'y_scale': y_scale,
                   'x_scale': x_scale,
-                  'colorbar_title': colorbar_title,
                   'font_size': fontsize,
                   'fontfamily': fontfamily,
                   'fontcolor': fontcolor,
-                  'hoverinfo': hoverinfo,
                   'hovermode': hovermode,
                   'hovercolor': hovercolor,
                   'margin': margins,
                   'pad': pad,
                   'width': width,
                   'height': height,
-                  'colorscale': colorscale,
                   'fontscale': fontscale,
-                  'ticksize': ticksize,
                   'x_title': x_title,
                   'y_title': y_title,
                   'title': title,
@@ -171,7 +175,12 @@ class PlotlyFig:
                     'show_offline_plot': show_offline_plot,
                     'username': username,
                     'api_key': api_key,
-                    'resolution_scale': resolution_scale}
+                    'resolution_scale': resolution_scale,
+                    'colorscale': colorscale,
+                    'colorbar_title': colorbar_title,
+                    'hoverinfo': hoverinfo,
+                    'ticksize': ticksize,
+                    }
 
         # Fix attributes of PlotlyFig object
         for k, v in pfkwargs.items():
@@ -223,7 +232,6 @@ class PlotlyFig:
 
         self.plot_counter = 0
         self.font_style = font_style
-        self.colorbar_title = colorbar_title
 
 
     def set_argument(self, **kwargs):
@@ -462,7 +470,7 @@ class PlotlyFig:
                     markers[im]['colorbar']['tickvals'] = tickvals
                     markers[im]['colorbar']['ticktext'] = ticktext
             if markers[im].get('colorscale') is None:
-                markers[im]['colorscale'] = colorscale or self.layout['colorscale']
+                markers[im]['colorscale'] = colorscale or self.colorscale
 
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
 
@@ -474,7 +482,7 @@ class PlotlyFig:
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
                                      marker=markers[i], line=lines[i],
                                      text=labels[i],
-                                     hoverinfo=self.layout['hoverinfo'],
+                                     hoverinfo=self.hoverinfo,
                                      name=names[i], showlegend=showlegends[i],
                                      ))
         layout = self.layout.copy()
@@ -581,7 +589,7 @@ class PlotlyFig:
 
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots ** 2):
-            fig['data'][iplot].update(hoverinfo=layout['hoverinfo'])
+            fig['data'][iplot].update(hoverinfo=self.hoverinfo)
             for ax in ['x', 'y']:
                 fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'] = \
                     self.font_style
@@ -847,7 +855,7 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
     def violin(self, data=None, cols=None, group_col=None, groups=None,
-               title=None, colors=None, use_colorscale=False,
+               title=None, colorscale=None, use_colorscale=False,
                return_plot=False):
         """
         Create a violin plot using Plotly.
@@ -866,7 +874,7 @@ class PlotlyFig:
             groups: ([str]): All group names to be included in the violin plot.
                 Used only if there is one entry in cols.
             title: (str) Title of the violin plot
-            colors: (str/tuple/list/dict) either a plotly scale name (Greys,
+            colorscale: (str/tuple/list/dict) either a plotly scale name (Greys,
                 YlGnBu, Greens, etc.), an rgb or hex color, a color tuple, a
                 list/dict of colors. An rgb color is of the form 'rgb(x, y, z)'
                 where x, y and z belong to the interval [0, 255] and a color
@@ -958,13 +966,14 @@ class PlotlyFig:
                         'Omitting rows with group = {} which have only one row '
                         'in the dataframe.'.format(j))
 
-        if not colors:
-            use_colorscale = False
-            colors = ['rgb(105,105,105)'] * len(data)
+        if not use_colorscale:
+            colorscale = ['rgb(105,105,105)'] * len(data)
+        else:
+            colorscale = colorscale or self.colorscale
 
         fig = FF.create_violin(data=data, data_header=cols[0],
                                group_header=group_col, title=title,
-                               colors=colors, use_colorscale=use_colorscale,
+                               colors=colorscale, use_colorscale=use_colorscale,
                                group_stats=group_stats)
 
         layout = self.layout.copy()
@@ -1051,7 +1060,7 @@ class PlotlyFig:
         font_style = self.font_style.copy()
         font_style['size'] = 0.65 * font_style['size']
         line = line or {'color': colors,
-                        'colorscale': self.layout['colorscale'],
+                        'colorscale': self.colorscale,
                         'colorbar': {'title': colorbar_title,
                                      'titleside': 'right',
                                      'tickfont': font_style,
@@ -1091,7 +1100,7 @@ class PlotlyFig:
         """
 
         if not colorscale:
-            colorscale = self.layout['colorscale']
+            colorscale = self.colorscale
 
         if not colorscale_range:
             colorscale_min = None
@@ -1105,7 +1114,6 @@ class PlotlyFig:
 
         font_family = self.font_style['family']
         font_size = self.font_style['size']
-        tick_size = self.layout['ticksize']
 
         if annotations_text:
             annotations = []
@@ -1137,10 +1145,10 @@ class PlotlyFig:
             y=y_labels,
             zmin=colorscale_min,
             zmax=colorscale_max,
-            colorscale=colorscale or self.layout['colorscale'],
+            colorscale=colorscale or self.colorscale,
             colorbar={
                 'title': colorbar_title, 'titleside': 'right',
-                'tickfont': {'size': 0.75 * tick_size,
+                'tickfont': {'size': 0.75 * self.ticksize,
                              'family': font_family},
                 'titlefont': {'size': font_size,
                               'family': font_family}}
@@ -1280,9 +1288,9 @@ class PlotlyFig:
         else:
             colorbar_title = self.colorbar_title
         trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
-                           colorscale=colorscale or self.layout['colorbar'], colorbar={
+                           colorscale=colorscale or self.colorscale, colorbar={
                 'title': colorbar_title, 'titleside': 'right',
-                'tickfont': {'size': 0.75 * self.layout['ticksize'],
+                'tickfont': {'size': 0.75 * self.ticksize,
                              'family': self.font_style['family']},
                 'titlefont': {'size': self.font_style['size'],
                               'family': self.font_style['family']}
@@ -1294,7 +1302,7 @@ class PlotlyFig:
         for ax in ['x', 'y']:
             if 'type' in layout['{}axis'.format(ax)]:
                 layout['{}axis'.format(ax)].pop('type')
-        layout['margin']['l'] += self.layout['ticksize'] * \
+        layout['margin']['l'] += self.ticksize * \
                                  (2 + precision / 10.0) + 35
         if not layout['xaxis'].get('title'):
             warnings.warn('xaxis title was automatically set to x_prop value')
