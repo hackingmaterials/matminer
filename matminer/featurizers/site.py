@@ -2,8 +2,8 @@ from __future__ import division
 
 """
 Features that describe the local environment of a single atom. Note that
-structural featues can be constructed from a combination of site features from
-every stite in the structure.
+structural features can be constructed from a combination of site features from
+every site in the structure.
 
 The `featurize` function takes two arguments:
     struct (Structure): Object representing the structure containing the site
