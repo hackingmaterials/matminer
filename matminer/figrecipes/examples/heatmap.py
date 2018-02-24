@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn import datasets
-from matminer.figrecipes.plot import PlotlyFig
+from matminer import PlotlyFig
 
 """
 This script shows some basic examples of heatmap plot using figrecipes in matminer.
@@ -49,7 +49,7 @@ def plot_boston_dataset_heatmap_df():
     df_boston = pd.DataFrame(boston['data'], columns=boston['feature_names'])
     df_boston['Median value'] = boston.target
 
-    pf = PlotlyFig(font_scale=0.8, filename='boston', colorscale='RdBu')
+    pf = PlotlyFig(fontscale=0.8, filename='boston', colorscale='RdBu')
     pf.heatmap_df(df_boston[['NOX', 'CHAS', 'Median value']],
                x_nqs=4,
                y_labels=['otherwise', 'tract bounds river'])

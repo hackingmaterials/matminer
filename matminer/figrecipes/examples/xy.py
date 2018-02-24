@@ -63,7 +63,7 @@ def plot_thermoelectrics(limit=0):
     print(df_te.head())
     pf = PlotlyFig(df_te,
                    x_scale='log',
-                   font_family='Times New Roman',
+                   fontfamily='Times New Roman',
                    hovercolor='white',
                    x_title='Electrical Resistivity (cm/S)',
                    y_title='Seebeck Coefficient (uV/K)',
