@@ -382,8 +382,8 @@ class PlotlyFig:
             names = []
         elif isinstance(names, str):
             names = [names] * len(xy_pairs)
-        else:
-            assert len(names) == len(xy_pairs)
+        elif len(names) != len(xy_pairs):
+            raise ValueError('"names" must have the same length as "xy_pairs"')
         if sizes is None:
             sizes = [10 * marker_scale] * len(xy_pairs)
         elif isinstance(sizes, str):
