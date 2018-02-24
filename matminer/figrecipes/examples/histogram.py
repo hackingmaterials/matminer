@@ -1,10 +1,11 @@
-from matminer.datasets.dataframe_loader import load_elastic_tensor, load_piezoelectric_tensor, load_dielectric_constant
+from matminer.datasets.dataframe_loader import load_elastic_tensor, \
+    load_piezoelectric_tensor, load_dielectric_constant
 from matminer.figrecipes.plot import PlotlyFig
 
 """
 This script shows some basic examples of histogram plot using figrecipes in matminer.
-
 """
+
 
 def basic_histogram():
     """
@@ -24,7 +25,7 @@ def advanced_histogram():
     """
     This is a work in progress
     """
-    
+
     df = load_elastic_tensor()
     pf = PlotlyFig(df, title="Various Histograms")
     pf.histogram(cols=['G_Reuss', 'G_VRH', 'G_Voigt'], bins={'size': 10})
