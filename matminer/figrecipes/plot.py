@@ -473,9 +473,13 @@ class PlotlyFig:
                 markers[im]['colorscale'] = colorscale or self.colorscale
 
         lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
+        if isinstance(lines, dict):
+            lines = [lines.copy() for _ in data]
 
         for var in [labels, markers, lines]:
-            assert len(list(var)) == len(data)
+            if len(list(var)) != len(data):
+                raise ValueError('"labels", "markers" or "lines" length does'
+                                 ' not match with that of xy_pairs')
 
         traces = []
         for i, xy_pair in enumerate(data):

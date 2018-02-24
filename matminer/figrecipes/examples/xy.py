@@ -124,7 +124,7 @@ def plot_expt_compt_band_gaps(limit=0):
         ('Expt. gap', 'MP computed gap'),
         ([0, 12], [0, 12])
     ],
-        lines={'color': 'black'},
+        lines=[{}, {'color': 'black', 'dash': 'dash'}],
         labels=df_final.index, modes=['markers', 'lines'],
         names=['Computed vs. expt.', 'Expt. gap'])
 
@@ -139,5 +139,5 @@ def plot_expt_compt_band_gaps(limit=0):
 if __name__ == '__main__':
     plot_simple_xy()
     plot_bulk_shear_moduli()
-    plot_thermoelectrics(limit=10)
-    plot_expt_compt_band_gaps(limit=10)
+    plot_thermoelectrics(limit=0)
+    plot_expt_compt_band_gaps(limit=0)
