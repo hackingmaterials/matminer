@@ -7,8 +7,7 @@ import plotly.graph_objs as go
 import plotly.figure_factory as FF
 import warnings
 
-from copy import copy, deepcopy
-from scipy import stats
+from copy import deepcopy
 from pandas.api.types import is_numeric_dtype
 
 __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
@@ -16,8 +15,9 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 
 
 # todo: common function for if then checking data types + automatically ignore non-numerical data
-# todo: add tests
 # todo: clean up argument names and docs
+# todo: remove boilerplate code
+
 
 class PlotlyFig:
     def __init__(self, df=None, mode='offline', title=None, x_title=None,
@@ -1168,6 +1168,8 @@ class PlotlyFig:
             if 'type' in layout['{}axis'.format(ax)]:
                 layout['{}axis'.format(ax)].pop('type')
         layout['annotations'] = annotations
+        if 'bgcolor' not in layout['hoverlabel']:
+            layout['hoverlabel']['bgcolor'] = 'white'
         fig = {'data': [data], 'layout': layout}
 
         return self.create_plot(fig, return_plot)
@@ -1316,7 +1318,7 @@ class PlotlyFig:
             warnings.warn('yaxis title was automatically set to y_prop value')
             layout['yaxis']['title'] = y_prop
         layout['annotations'] = annotations
-        if not hasattr(self, 'hovercolor'):
+        if 'bgcolor' not in layout['hoverlabel']:
             layout['hoverlabel']['bgcolor'] = 'white'
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig, return_plot)
