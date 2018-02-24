@@ -1,11 +1,6 @@
-import numpy as np
-import pandas as pd
 from matminer.datasets.dataframe_loader import load_elastic_tensor
 from matminer import PlotlyFig
 
-"""
-This script shows some basic examples of scatter_matrix using figrecipes in matminer.
-"""
 
 def plot_scatter_matrix():
     """

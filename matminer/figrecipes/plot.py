@@ -382,8 +382,8 @@ class PlotlyFig:
             names = []
         elif isinstance(names, str):
             names = [names] * len(xy_pairs)
-        else:
-            assert len(names) == len(xy_pairs)
+        elif len(names) != len(xy_pairs):
+            raise ValueError('"names" must have the same length as "xy_pairs"')
         if sizes is None:
             sizes = [10 * marker_scale] * len(xy_pairs)
         elif isinstance(sizes, str):
@@ -421,7 +421,9 @@ class PlotlyFig:
         else:
             showscale = True
             colorbar = self.data_from_col(colors)
-            assert isinstance(colorbar, (list, np.ndarray, pd.Series))
+            if not isinstance(colorbar, (list, np.ndarray, pd.Series)):
+                raise ValueError('"colorbar" must be a dataframe column name, '
+                                 'list, np.ndarray or pd.Series')
             if color_range:
                 colorbar = pd.Series(colorbar)
                 colorbar[colorbar < color_range[0]] = color_range[0]
@@ -837,7 +839,8 @@ class PlotlyFig:
                 labels = data.index.values
 
         if x is not None and y is not None:
-            assert (len(x) == len(y))
+            if len(x) != len(y):
+                raise ValueError('x and y must be of the same length')
             if not isinstance(y[0], (list, tuple, np.ndarray)):
                 y = [y]
             if not isinstance(x[0], (list, tuple, np.ndarray)):
@@ -859,7 +862,7 @@ class PlotlyFig:
             colors = [None] * len(y)
 
         barplots = []
-        for i in range(len(x)):
+        for i, _ in enumerate(x):
             barplot = go.Bar(x=x[i], y=y[i], name=labels[i],
                              marker=dict(color=colors[i]))
             barplots.append(barplot)
@@ -1146,7 +1149,7 @@ class PlotlyFig:
             annotations = []
 
             for n, row in enumerate(data):
-                for m, val in enumerate(row):
+                for m, _ in enumerate(row):
                     var = annotations_text[n][m]
                     annotations.append(
                         dict(

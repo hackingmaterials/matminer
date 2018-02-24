@@ -8,7 +8,10 @@ from pymatgen import Composition
 This script shows some basic examples of xy plot using figrecipes in matminer.
 
 To see the examples plot_thermoelectrics and plot_expt_compt_band_gaps, make
-sure to enter your Citrine API key!
+sure to enter your Citrine API key or have it set inside CITRINE_KEY
+environment variable. Also, when using MPDataRetrieval make sure your API key
+for the Materials Project (https://materialsproject.org/open) is set 
+inside MAPI_KEY environment variable.
 """
 
 def plot_simple_xy():
@@ -54,11 +57,10 @@ def plot_thermoelectrics(citrine_api_key, limit=0):
         plotly plot in "offline" mode poped in the default browser.
     """
     cdr = CitrineDataRetrieval(api_key=citrine_api_key)
-    json_list = cdr.get_api_data(data_type='experimental', data_set_id=150557,
-                                 max_results=limit)
     cols = ['chemicalFormula', 'Electrical resistivity', 'Seebeck coefficient',
             'Thermal conductivity', 'Thermoelectric figure of merit (zT)']
-    df_te = cdr.get_dataframe(json_list, show_columns=cols
+    df_te = cdr.get_dataframe(data_type='experimental', data_set_id=150557,
+                              show_columns=cols, max_results=limit
                               ).set_index('chemicalFormula').astype(float)
     df_te = df_te[(df_te['Electrical resistivity'] > 5e-4) & \
                   (df_te['Electrical resistivity'] < 0.1)]
@@ -98,12 +100,10 @@ def plot_expt_compt_band_gaps(citrine_api_key, limit=0):
 
     # pull experimental band gaps from Citrine
     cdr = CitrineDataRetrieval(api_key=citrine_api_key)
-    json_list = cdr.get_api_data(property='band gap',
-                                 data_type='experimental',
-                                 max_results=limit)
     cols = ['chemicalFormula', 'Band gap']
-    df_ct = cdr.get_dataframe(json_list, show_columns=cols).rename(columns={
-                'chemicalFormula': 'Formula', 'Band gap': 'Expt. gap'})
+    df_ct = cdr.get_dataframe(prop='band gap', data_type='experimental',
+                              show_columns=cols, max_results=limit).rename(
+        columns={'chemicalFormula': 'Formula', 'Band gap': 'Expt. gap'})
     df_ct = df_ct[df_ct['Formula'] != 'In1p1'] # p1 not recognized in Composition
     df_ct = df_ct.dropna() # null band gaps cause problem when plotting residuals
     df_ct['Formula'] = df_ct['Formula'].transform(
