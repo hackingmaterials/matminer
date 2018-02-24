@@ -3,9 +3,6 @@ import pandas as pd
 from sklearn import datasets
 from matminer import PlotlyFig
 
-"""
-This script shows some basic examples of heatmap plot using figrecipes in matminer.
-"""
 
 def plot_simple_heatmap_df():
     """
