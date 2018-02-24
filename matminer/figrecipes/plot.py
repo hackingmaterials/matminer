@@ -480,6 +480,7 @@ class PlotlyFig:
             if len(list(var)) != len(data):
                 raise ValueError('"labels", "markers" or "lines" length does'
                                  ' not match with that of xy_pairs')
+        layout = deepcopy(self.layout)
 
         traces = []
         for i, xy_pair in enumerate(data):
@@ -487,9 +488,9 @@ class PlotlyFig:
                                      marker=markers[i], line=lines[i],
                                      text=labels[i],
                                      hoverinfo=self.hoverinfo,
+                                     hoverlabel=layout['hoverlabel'],
                                      name=names[i], showlegend=showlegends[i],
                                      ))
-        layout = self.layout.copy()
         if layout['xaxis'].get('title') is None and len(data) == 1:
             layout['xaxis']['title'] = pd.Series(data[0][0]).name
         if layout['yaxis'].get('title') is None and len(data) == 1:
@@ -587,7 +588,7 @@ class PlotlyFig:
                                           size=marker_size, height=height,
                                           width=width, **kwargs)
         badf = ['xaxis', 'yaxis']
-        layout = self.layout.copy()
+        layout = deepcopy(self.layout)
         scatter_layout = {k: v for (k, v) in layout.items() if k not in badf}
         fig.update({'layout': scatter_layout})
 
@@ -980,7 +981,7 @@ class PlotlyFig:
                                group_header=group_col, title=title,
                                colors=colorscale, use_colorscale=use_colorscale,
                                group_stats=group_stats)
-        layout = self.layout.copy()
+        layout = deepcopy(self.layout)
         font_style = self.font_style.copy()
         font_style['size'] = 0.65 * font_style['size']
 
@@ -1168,8 +1169,6 @@ class PlotlyFig:
             if 'type' in layout['{}axis'.format(ax)]:
                 layout['{}axis'.format(ax)].pop('type')
         layout['annotations'] = annotations
-        if not hasattr(self, 'hovercolor'):
-            layout['hoverlabel']['bgcolor'] = 'white'
         fig = {'data': [data], 'layout': layout}
 
         return self.create_plot(fig, return_plot)
