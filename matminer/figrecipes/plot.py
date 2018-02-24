@@ -1089,7 +1089,7 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
 
-    def heatmap_basic(self, data, x_labels=None, y_labels=None,
+    def heatmap_basic(self, data=None, x_labels=None, y_labels=None,
                      colorscale=None, colorscale_range=None,
                      annotations_text=None, annotations_font_size=20,
                      annotations_color='white', return_plot=False):
@@ -1098,7 +1098,8 @@ class PlotlyFig:
 
         Args:
             data: (array) an array of arrays. For example, in case of a pandas
-                dataframe 'df', data=df.values.tolist()
+                dataframe 'df', data=df.values.tolist(). If None, uses the data
+                frame passed into the constructor.
             x_labels: (array) an array of strings to label the heatmap columns
             y_labels: (array) an array of strings to label the heatmap rows
             colorscale (str/array): See colorscale in __init__.
@@ -1112,6 +1113,15 @@ class PlotlyFig:
 
         Returns: A Plotly heatmap plot Figure object.
         """
+
+        if not data:
+            if not self.df:
+                raise ValueError("Either data or self.df (set in initializer)"
+                                 "must be defined.")
+            else:
+                data = self.df.as_matrix()
+                x_labels = self.df.columns.values.tolist()
+                y_labels = self.df.index.values.tolist()
 
         if not colorscale:
             colorscale = self.colorscale
@@ -1186,6 +1196,8 @@ class PlotlyFig:
                 y_labels=None, y_nqs=4, precision=1, annotation='count',
                 annotation_color='black', colorscale=None, return_plot=False):
         """
+        A heatmap which can accept a dataframe as input directly.
+
         Args:
             data: (dataframe): only the first 3 numerical columns considered
             cols ([str]): A list of strings specifying the columns of the
