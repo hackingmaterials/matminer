@@ -1003,7 +1003,8 @@ class PlotlyFig:
         font_style['size'] = 0.65 * font_style['size']
 
         violin_layout = {k: v for (k, v) in layout.items() if k != 'xaxis'}
-        violin_layout['hoverlabel']['font'].pop('color')
+        if 'color' in violin_layout['hoverlabel']['font']:
+            violin_layout['hoverlabel']['font'].pop('color')
 
         if 'bgcolor' in violin_layout['hoverlabel']:
             violin_layout['hoverlabel'].pop('bgcolor')
@@ -1083,7 +1084,7 @@ class PlotlyFig:
             dimensions.append({'label': col, 'values': values.tolist()})
 
         font_style = self.font_style.copy()
-        font_style['size'] = 0.65 * font_style['size']
+        font_style['size'] = 0.7 * font_style['size']
         line = line or {'color': colors,
                         'colorscale': self.colorscale,
                         'colorbar': {'title': colorbar_title,
