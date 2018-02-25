@@ -752,7 +752,7 @@ class ChemicalSRO(BaseFeaturizer):
     """
 
     @staticmethod
-    def from_preset(preset):
+    def from_preset(preset, **kwargs):
         """
         Use one of the standard instances of a given NearNeighbor class.
         Args:
@@ -763,7 +763,7 @@ class ChemicalSRO(BaseFeaturizer):
             ChemicalSRO from a preset.
         """
         nn_ = getattr(pymatgen.analysis.local_env, preset)
-        return ChemicalSRO(nn_())
+        return ChemicalSRO(nn_(**kwargs))
 
     def __init__(self, nn):
         self.nn = nn
@@ -1230,7 +1230,7 @@ class CoordinationNumber(BaseFeaturizer):
     """
 
     @staticmethod
-    def from_preset(preset):
+    def from_preset(preset, **kwargs):
         """
         Use one of the standard instances of a given NearNeighbor
         class.
@@ -1242,7 +1242,7 @@ class CoordinationNumber(BaseFeaturizer):
             CoordinationNumber from a preset.
         """
         nn_ = getattr(pymatgen.analysis.local_env, preset)
-        return CoordinationNumber(nn_())
+        return CoordinationNumber(nn_(**kwargs))
 
     def __init__(self, nn, use_weights=False):
         self.nn = nn
