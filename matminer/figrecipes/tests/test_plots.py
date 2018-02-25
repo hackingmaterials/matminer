@@ -52,7 +52,9 @@ def refresh(open_plots=False):
     for fname, obj in fnamedict.items():
         if obj in [vio, scm]:
             obj = obj['layout']
-        json.dump(obj, open("template_{}.json".format(fname), "w"))
+
+        with open("template_{}.json".format(fname), "w") as f:
+            json.dump(obj, f)
 
     if open_plots:
         for obj in fnamedict.values():
