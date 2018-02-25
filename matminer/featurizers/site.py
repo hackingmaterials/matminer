@@ -1515,12 +1515,12 @@ class AngularFourierSeries(BaseFeaturizer):
         # Generate exhaustive permutations of neighbor pairs around each
         # central site (order matters). Does not allow repeat elements (i.e.
         # there are two distinct sites in every permutation)
-        neighbor_touples = itertools.permutations(neighbor_collection, 2)
+        neighbor_tuples = itertools.permutations(neighbor_collection, 2)
 
         # Generate cos(theta) between neighbor pairs for each central site.
         # Also, retain data on neighbor distances for each pair
         # process with matrix algebra, we really need the speed here
-        data = np.array(list(neighbor_touples))
+        data = np.array(list(neighbor_tuples))
         v1, v2 = np.vstack(data[:, 0, 0]), np.vstack(data[:, 1, 0])
         distances = data[:, :, 1]
         neighbor_pairs = np.concatenate([
