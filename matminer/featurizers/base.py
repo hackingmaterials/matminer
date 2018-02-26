@@ -21,8 +21,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         `featurize`: Featurize a single entry
         `featurize_many`: Featurize a list of entries
-        `featurize_dataframe`: Compute features for many entries, store results as
-            columns in a dataframe
+        `featurize_dataframe`: Compute features for many entries, store results
+            as columns in a dataframe
 
     Some featurizers require first calling the `fit` method before the
     featurization methods can function. Generally, you pass the dataset to
@@ -31,9 +31,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     may need to know which elements are present in a dataset.
 
     You can also employ the featurizer as part of a ScikitLearn Pipeline object.
-    For these cases, scikit-learn calls the `transform` function of the `BaseFeaturizer`
-    which is a less-featured wrapper of `featurize_many`. You would then provide your input
-    data as an array to the Pipeline, which would output the featurers as an array.
+    For these cases, scikit-learn calls the `transform` function of the
+    `BaseFeaturizer` which is a less-featured wrapper of `featurize_many`. You
+    would then provide your input data as an array to the Pipeline, which would
+    output the featurers as an array.
 
     Beyond the featurizing capability, BaseFeaturizer also includes methods
     for retrieving proper references for a featurizer. The `citations` function
@@ -44,56 +45,66 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     ## Implementing a New BaseFeaturizer Class
 
     These operations must be implemented for each new featurizer:
-        `featurize` - Takes a single material as input, returns the features of that material.
-        `feature_labels` - Generates a human-meaningful name for each of the features
+        `featurize` - Takes a single material as input, returns the features of
+            that material.
+        `feature_labels` - Generates a human-meaningful name for each of the
+            features.
         `citations` - Returns a list of citations in BibTeX format
         `implementors` - Returns a list of people who contributed writing a paper
 
-    None of these operations should change the state of the featurizer. I.e., running each
-    method twice should no produce different results, no class attributes should be changed,
-    running one operation should not affect the output of another.
+    None of these operations should change the state of the featurizer. I.e.,
+    running each method twice should no produce different results, no class
+    attributes should be changed, unning one operation should not affect the
+    output of another.
 
-    All options of the featurizer must be set by the `__init__` function. All options must
-    be listed as keyword arguments with default values, and the value must be saved as a
-    class attribute with the same name (e.g., argument `n` should be stored in `self.n`).
-    These requirements are necessary for compatibility with the `get_params` and `set_params`
-    methods of `BaseEstimator`, which enable easy interoperability with scikit-learn.
+    All options of the featurizer must be set by the `__init__` function. All
+    options must be listed as keyword arguments with default values, and the
+    value must be saved as a class attribute with the same name (e.g., argument
+    `n` should be stored in `self.n`). These requirements are necessary for
+    compatibility with the `get_params` and `set_params` methods of
+    `BaseEstimator`, which enable easy interoperability with scikit-learn.
 
-    Depending on the complexity of your featurizer, it may be worthwhile to implement a
-    `from_preset` class method. The `from_preset` method takes the name of a preset and
-    returns an instance of the featurizer with some hard-coded set of inputs. The `from_preset`
-    option is particularly useful for defining the settings used by papers in the literature.
+    Depending on the complexity of your featurizer, it may be worthwhile to
+    implement a `from_preset` class method. The `from_preset` method takes the
+    name of a preset and returns an instance of the featurizer with some
+    hard-coded set of inputs. The `from_preset` option is particularly useful
+    for defining the settings used by papers in the literature.
 
-    Optionally, you can implement the `fit` operation if there are attributes of your featurizer that
-    must be set for the featurizer to work. Any variables that are set by fitting should be stored
-    as class attributes that end with an underscore. (This follows the pattern used by
-    scikit-learn).
+    Optionally, you can implement the `fit` operation if there are attributes of
+    your featurizer that must be set for the featurizer to work. Any variables
+    that are set by fitting should be stored as class attributes that end with
+    an underscore. (This follows the pattern used by scikit-learn).
 
-    Another implementation to consider is whether it is worth making any utility operations
-    for your featurizer. `featurize` must return a list of features, but this may not be the most
-    natural representation for your features (e.g., a `dict` could be better). Making a separate
-    function for computing features in this natural representation and having the `featurize` function
-    call this method and then convert the data into a list is a recommended approach. Users who want
-    to compute the representation in the natural form can use the utility function and users who
-    want the data in a ML-ready format (list) can call `featurize`. See `PartialRadialDistributionFunction`
-    for an example of this concept.
+    Another implementation to consider is whether it is worth making any utility
+    operations for your featurizer. `featurize` must return a list of features,
+    but this may not be the most natural representation for your features (e.g.,
+    a `dict` could be better). Making a separate function for computing features
+    in this natural representation and having the `featurize` function call this
+    method and then convert the data into a list is a recommended approach.
+    Users who want to compute the representation in the natural form can use the
+    utility function and users who want the data in a ML-ready format (list) can
+    call `featurize`. See `PartialRadialDistributionFunction` for an example of
+    this concept.
 
     ## Documenting a BaseFeaturizer
 
-    The class documentation for each featurizer must contain a description of the options and
-    the features that will be computed. The options of the class must all be defined in the
-    `__init__` function of the class, and we recommend documenting them using the
+    The class documentation for each featurizer must contain a description of
+    the options and the features that will be computed. The options of the class
+     must all be defined in the `__init__` function of the class, and we
+     recommend documenting them using the
     [Google style](https://google.github.io/styleguide/pyguide.html).
 
-    We recommend starting the class documentation with a high-level overview of the features.
-    For example, mention what kind of characteristics of the material they describe and refer
-    the reader to a paper that describes these features well (use a hyperlink if possible, so
-    that the readthedocs will like to that paper). Then, describe each of the individual feautres
-    in a block named "Features". It is necessary here to give the user enough information for user
-    to map a feature name what it means. The objective in this part is to allow people to
-    understand what each column of their dataframe is without having to read the Python code.
-    You do not need to explain all of the math/algorithms behind each feature for them to be
-    able to reproduce the feature, just to get an idea what it is.
+    We recommend starting the class documentation with a high-level overview of
+    the features. For example, mention what kind of characteristics of the
+    material they describe and refer the reader to a paper that describes these
+    features well (use a hyperlink if possible, so that the readthedocs will
+    like to that paper). Then, describe each of the individual features in a
+    block named "Features". It is necessary here to give the user enough
+    information for user to map a feature name what it means. The objective in
+    this part is to allow people to understand what each column of their
+    dataframe is without having to read the Python code. You do not need to
+    explain all of the math/algorithms behind each feature for them to be able
+    to reproduce the feature, just to get an idea what it is.
     """
 
     def set_n_jobs(self, n_jobs):
@@ -236,7 +247,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         try:
             # Successful featurization returns nan for an error.
             if self.__return_errors:
-                return self.featurize(*x) +  [float("nan")]
+                return self.featurize(*x) + [float("nan")]
             else:
                 return self.featurize(*x)
         except BaseException:
