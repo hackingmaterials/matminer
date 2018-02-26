@@ -1231,11 +1231,10 @@ class BagofBonds(BaseFeaturizer):
         """
         listlike = (tuple, list, np.ndarray, pd.Series)
         if not isinstance(structures, listlike):
-            structures = [structures]
+            raise ValueError("structures must be a list of pymatgen Structures")
         if not isinstance(structures[0], (Structure, dict)):
-            raise ValueError("Structures must either be pymatgen Structure"
-                             "objects or dictionaries representing Structure"
-                             "objects.")
+            raise ValueError("structures must either pymatgen Structure "
+                             "objects")
 
         sanitized = self._sanitize_bonds(self.enumerate_all_bonds(structures))
 
@@ -1259,8 +1258,6 @@ class BagofBonds(BaseFeaturizer):
             A list of bond types in 'Li-O' form, where the order of the
             elements in each bond type is alphabetic.
         """
-        if isinstance(s, dict):
-            s = Structure.from_dict(s)
         els = s.composition.elements
         het_bonds = list(itertools.combinations(els, 2))
         het_bonds = [tuple(sorted([str(i) for i in j])) for j in het_bonds]
@@ -1296,7 +1293,7 @@ class BagofBonds(BaseFeaturizer):
         particular structure (e.g., Li-P in BaTiO3) are represented as NaN.
 
         Args:
-            s (Structure): A pymatgen structure object
+            s (Structure): A pymatgen Structure object
 
         Returns:
             (list) The feature list of bond fractions, in the order of the
@@ -1304,9 +1301,6 @@ class BagofBonds(BaseFeaturizer):
         """
 
         self._check_fitted()
-
-        if isinstance(s, dict):
-            s = Structure.from_dict(s)
 
         bond_types = tuple(self.enumerate_bonds(s))
         bond_types = self._sanitize_bonds(bond_types)
