@@ -312,32 +312,35 @@ class FingerprintTests(PymatgenTest):
         f1 = ('Gauss b=0', lambda x: np.exp(-(x**2.)))
         f2 = ('Gauss b=1', lambda x: np.exp(-(x - 1.)**2.))
         f3 = ('Gauss b=5', lambda x: np.exp(-(x - 5.)**2.))
-        s_touples = [(self.sc, 0), (self.cscl, 0)]
+        s_tuples = [(self.sc, 0), (self.cscl, 0)]
 
         # test fit, transform, and featurize dataframe for both run modes
         # GRDF mode
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
                                                      mode='GRDF')
-        grdf.fit(s_touples)
-        features = grdf.transform(s_touples)
+        grdf.fit(s_tuples)
+        features = grdf.transform(s_tuples)
         self.assertArrayAlmostEqual(features, [[4.4807e-06, 0.00031, 0.02670],
                                                [3.3303e-06, 0.00026, 0.01753]],
                                     3)
-        features = grdf.featurize_dataframe(pd.DataFrame(s_touples),
+        features = grdf.featurize_dataframe(pd.DataFrame(s_tuples),
                                             [0, 1])
         self.assertArrayEqual(list(features.columns.values),
                               [0, 1, 'Gauss b=0', 'Gauss b=1', 'Gauss b=5'])
 
-        # pariwise GRDF mode
+        # pairwise GRDF mode
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
                                                      mode='pairwise_GRDF')
-        grdf.fit(s_touples)
-        features = grdf.transform(s_touples)
-        # self.assertArrayAlmostEqual(features, [[4.4807e-06, 0.0003, 0.0267],
-        #                                        [2.1807e-08, 6.1119e-06, 0.0142,
-        #                                         3.3085e-06, 0.0002, 0.0032]],
-        #                             3)
-        features = grdf.featurize_dataframe(pd.DataFrame(s_touples),
+        grdf.fit(s_tuples)
+        features = grdf.transform(s_tuples)
+        self.assertArrayAlmostEqual(features[0],
+                                    [4.4807e-06, 3.1661e-04, 0.0267],
+                                    3)
+        self.assertArrayAlmostEqual(features[1],
+                                    [2.1807e-08, 6.1119e-06, 0.0142,
+                                     3.3085e-06, 2.5898e-04, 0.0032],
+                                    3)
+        features = grdf.featurize_dataframe(pd.DataFrame(s_tuples),
                                             [0, 1])
         self.assertArrayEqual(list(features.columns.values),
                               [0, 1, 'site2 0 Gauss b=0', 'site2 1 Gauss b=0',
@@ -348,30 +351,31 @@ class FingerprintTests(PymatgenTest):
         f1 = ('Gauss b=0', lambda x: np.exp(-(x**2.)))
         f2 = ('Gauss b=1', lambda x: np.exp(-(x - 1.)**2.))
         f3 = ('Gauss b=5', lambda x: np.exp(-(x - 5.)**2.))
-        s_touples = [(self.sc, 0), (self.cscl, 0)]
+        s_tuples = [(self.sc, 0), (self.cscl, 0)]
 
         # test transform,and featurize dataframe
         afs = AngularFourierSeries(bins=[f1, f2, f3])
-        features = afs.transform(s_touples)
-        self.assertArrayAlmostEqual(features, [[-1.0374e-10, -4.3563e-08, -2.7914e-06,
-                                                -4.3563e-08, -1.8292e-05, -0.0011,
-                                                -2.7914e-06, -0.0011, -12.7863],
-                                               [-1.7403e-11, -1.0886e-08, -3.5985e-06,
-                                                -1.0886e-08, -6.0597e-06, -0.0016,
-                                                -3.5985e-06, -0.0016, -3.9052]],
+        features = afs.transform(s_tuples)
+        self.assertArrayAlmostEqual(features,
+                                    [[-1.0374e-10, -4.3563e-08, -2.7914e-06,
+                                      -4.3563e-08, -1.8292e-05, -0.0011,
+                                      -2.7914e-06, -0.0011, -12.7863],
+                                     [-1.7403e-11, -1.0886e-08, -3.5985e-06,
+                                      -1.0886e-08, -6.0597e-06, -0.0016,
+                                      -3.5985e-06, -0.0016, -3.9052]],
                                     3)
-        features = afs.featurize_dataframe(pd.DataFrame(s_touples),
-                                            [0, 1])
+        features = afs.featurize_dataframe(pd.DataFrame(s_tuples),
+                                           [0, 1])
         self.assertArrayEqual(list(features.columns.values),
                               [0, 1, 'bin Gauss b=0 bin Gauss b=0',
-                              'bin Gauss b=0 bin Gauss b=1',
-                              'bin Gauss b=0 bin Gauss b=5',
-                              'bin Gauss b=1 bin Gauss b=0',
-                              'bin Gauss b=1 bin Gauss b=1',
-                              'bin Gauss b=1 bin Gauss b=5',
-                              'bin Gauss b=5 bin Gauss b=0',
-                              'bin Gauss b=5 bin Gauss b=1',
-                              'bin Gauss b=5 bin Gauss b=5'])
+                               'bin Gauss b=0 bin Gauss b=1',
+                               'bin Gauss b=0 bin Gauss b=5',
+                               'bin Gauss b=1 bin Gauss b=0',
+                               'bin Gauss b=1 bin Gauss b=1',
+                               'bin Gauss b=1 bin Gauss b=5',
+                               'bin Gauss b=5 bin Gauss b=0',
+                               'bin Gauss b=5 bin Gauss b=1',
+                               'bin Gauss b=5 bin Gauss b=5'])
 
     def tearDown(self):
         del self.sc
