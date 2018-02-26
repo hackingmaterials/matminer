@@ -1,5 +1,5 @@
-import numpy as np 
-import pandas as pd 
+import numpy as np
+import pandas as pd
 
 from pymatgen.core.structure import Structure
 
@@ -13,7 +13,6 @@ from matminer.data_retrieval.retrieve_MP import MPDataRetrieval
 from matminer.datasets.dataframe_loader import load_flla
 
 import time
-import ast
 
 """
 The following script is an example of how to use matminer to run a kernel
@@ -64,7 +63,7 @@ else:
     # Create the formation_energy feature for the SCM regression, since the SCM
     # model learns formation energy per unit cell rather than per atom.
     df['formation_energy'] = df['formation_energy_per_atom'] * df['nsites']
-    # Structures are retrieved as dictionaries but can easily be converted to 
+    # Structures are retrieved as dictionaries but can easily be converted to
     # pymatgen.core.Structure objects as shown.
     df['structure'] = pd.Series([Structure.from_dict(df['structure'][i])\
         for i in range(df.shape[0])], df.index)
@@ -119,7 +118,7 @@ class KrrScm(KernelRidge):
         sizes = np.array([self.length(row) for row in X])
         y_pred = self.predict(X) / sizes
         y_true = y / sizes
-        return sklearn.metrics.r2_score(y_true, y_pred) 
+        return sklearn.metrics.r2_score(y_true, y_pred)
 
     def length(self, vec):
         return vec[vec != 0].shape[0]
