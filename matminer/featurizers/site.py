@@ -23,6 +23,7 @@ from collections import defaultdict
 
 from matminer.featurizers.base import BaseFeaturizer
 from scipy.spatial import Voronoi, Delaunay
+from pymatgen import Structure
 from pymatgen.analysis.local_env import LocalStructOrderParas, \
     VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
     MinimumVIRENN
@@ -765,13 +766,21 @@ class ChemicalSRO(BaseFeaturizer):
         nn_ = getattr(pymatgen.analysis.local_env, preset)
         return ChemicalSRO(nn_(**kwargs))
 
+    def _check_is_fitted(self, attributes, msg=None, all_or_any=all):
+        if msg is None:
+            msg = ("This %(name)s instance is not fitted yet. Call 'fit' with "
+                   "appropriate arguments before using this method.")
+
+        if not isinstance(attributes, (list, tuple)):
+            attributes = [attributes]
+
+        if not all_or_any([hasattr(self, attr) for attr in attributes]):
+            raise RuntimeError(msg % {'name': type(self).__name__})
+
     def __init__(self, nn):
         self.nn = nn
-        self.el_amt_dict = None
-        self.el_list = None
 
-    @staticmethod
-    def cal_el_amt(structs):
+    def fit(self, structs):
         """
         Identify and "store" the element types and composition of structures,
         avoiding repeated calculation of composition when featurizing many
@@ -782,35 +791,21 @@ class ChemicalSRO(BaseFeaturizer):
             (list of str): elements present in the structures.
             (dict): composition dicts of the structures.
         """
-        el_amt_dict = {}
-        el_list = set()
-        for s in structs.values:
-            if str(s) not in el_amt_dict.keys():
+        self.el_amt_dict_ = {}
+        self.el_list_ = set()
+
+        if isinstance(structs, Structure):
+            structs = [structs]
+
+        for s in structs:
+            if str(s) not in self.el_amt_dict_.keys():
                 el_amt = s.composition.fractional_composition.\
                          get_el_amt_dict()
-                el_amt_dict[str(s)] = el_amt
+                self.el_amt_dict_[str(s)] = el_amt
                 elements = set(el_amt.keys())
-                el_list = el_list | elements
-        return list(el_list), el_amt_dict
-
-    def featurize_dataframe(self, df, col_id, ignore_errors=True,
-                            inplace=True):
-        """
-        Featurize the dataframe with ChemicalSRO features.
-        Args:
-            df (pandas dataframe): Dataframe containing input data.
-            col_id (str or [str]): Dataframe key corresponding to structures.
-        Returns:
-            (pandas dataframe) ChemicalSRO-featurized dataframe.
-        """
-        self.el_list, self.el_amt_dict = self.cal_el_amt(df[col_id[0]])
-        df = super(ChemicalSRO, self).\
-             featurize_dataframe(df, col_id,
-                                 ignore_errors=ignore_errors,
-                                 inplace=inplace)
-        delattr(self, 'el_list')
-        delattr(self, 'el_amt_dict')
-        return df
+                self.el_list_ = self.el_list_ | elements
+        self.el_list_ = list(self.el_list_)
+        return self
 
     def featurize(self, struct, idx):
         """
@@ -821,19 +816,22 @@ class ChemicalSRO(BaseFeaturizer):
         Returns:
             (list of floats): Chemical SRO features for each element.
         """
-        csro_el = [0.]*len(self.el_list)
-        el_amt = self.el_amt_dict[str(struct)]
+
+        self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=any)
+        csro = [0.]*len(self.el_list_)
+        el_amt = self.el_amt_dict_[str(struct)]
         nn_list = self.nn.get_nn(struct, idx)
         nn_el_amt = dict.fromkeys(el_amt, 0)
         for nn in nn_list:
-            nn_el_amt[str(nn.specie)] += 1/len(nn_list)
+            nn_el_amt[str(nn.specie.symbol)] += 1/len(nn_list)
         for el in el_amt.keys():
-            csro_el[self.el_list.index(el)] = nn_el_amt[el] - el_amt[el]
-        return csro_el
+            csro[self.el_list_.index(el)] = nn_el_amt[el] - el_amt[el]
+        return csro
 
     def feature_labels(self):
+        self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=any)
         return ['CSRO_{}_{}'.format(el, self.nn.__class__.__name__)
-                for el in self.el_list]
+                for el in self.el_list_]
 
     def citations(self):
         citations = []
