@@ -3,6 +3,7 @@ import os
 import ast
 import numpy as np
 from pymatgen.io.vasp.inputs import Poscar
+from pymatgen.core.structure import Structure
 
 
 __author__ = "Kyle Bystrom <kylebystrom@berkeley.edu>, " \
@@ -78,5 +79,6 @@ def load_flla():
     column_headers = ['material_id', 'e_above_hull', 'formula',
                         'nsites', 'structure', 'formation_energy',
                         'formation_energy_per_atom']
-    df['structure'] = pandas.Series([Poscar.from_string(s).structure for s in df['poscar']])
+    df['structure'] = pandas.Series([Structure.from_dict(ast.literal_eval(s))
+        for s in df['structure']], df.index)
     return df[column_headers]
