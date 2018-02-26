@@ -220,7 +220,7 @@ class FingerprintTests(PymatgenTest):
         jmnn_csro.fit(data_sc['struct'])
         jmnn_csros = jmnn_csro.featurize_dataframe(data_sc, ['struct', 'site'])
         self.assertAlmostEqual(jmnn_csros['CSRO_Al_JMolNN'][0], 0.0)
-        jmnn_csro = ChemicalSRO(JMolNN(el_radius_updates={"Al": 1.55}))
+        jmnn_csro = ChemicalSRO.from_preset("JMolNN")
         jmnn_csro.fit(data_cscl['struct'])
         jmnn_csros = jmnn_csro.featurize_dataframe(data_cscl, ['struct', 'site'])
         self.assertAlmostEqual(jmnn_csros['CSRO_Cs_JMolNN'][0], -0.5)
