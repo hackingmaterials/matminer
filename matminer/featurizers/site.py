@@ -653,7 +653,7 @@ class VoronoiFingerprint(BaseFeaturizer):
         voro_idx_list = np.array([0, 0, 0, 0, 0, 0, 0, 0])
         voro_idx_weights = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
 
-        vertices = [struct[idx].coords] + [key.coords for key in n_w.keys()]
+        vertices = [struct[idx].coords] + [nn.coords for nn in n_w.keys()]
         voro = Voronoi(vertices)
 
         vol_list = []
@@ -668,9 +668,10 @@ class VoronoiFingerprint(BaseFeaturizer):
                 try:
                     voro_idx_list[len(vind) - 3] += 1
                     if self.use_weights:
-                        for key, value in n_w.items():
-                            if str(key.coords) == str(vertices[sorted(nn)[1]]):
-                                voro_idx_weights[len(vind) - 3] += value
+                        for nn, weight in n_w.items():
+                            if np.array_equal(nn.coords,
+                                              vertices[sorted(nn)[1]]):
+                                voro_idx_weights[len(vind) - 3] += weight
 
                 except IndexError:
                     # If a facet has more than 10 edges, it's skipped here.
