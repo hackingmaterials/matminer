@@ -753,6 +753,9 @@ class ChemicalSRO(BaseFeaturizer):
                               classes.
     """
 
+    def __init__(self, nn):
+        self.nn = nn
+
     @staticmethod
     def from_preset(preset, **kwargs):
         """
@@ -767,7 +770,6 @@ class ChemicalSRO(BaseFeaturizer):
         nn_ = getattr(pymatgen.analysis.local_env, preset)
         return ChemicalSRO(nn_(**kwargs))
 
-
     @staticmethod
     def cal_el_amt(structs):
         """
@@ -780,8 +782,8 @@ class ChemicalSRO(BaseFeaturizer):
             (list of str): elements present in the structures.
             (dict): composition dicts of the structures.
         """
-        el_amt_dict = {}
         el_list = set()
+        el_amt_dict = {}
         for s in structs.values:
             if str(s) not in el_amt_dict.keys():
                 el_amt = s.composition.fractional_composition.\
@@ -790,20 +792,6 @@ class ChemicalSRO(BaseFeaturizer):
                 elements = set(el_amt.keys())
                 el_list = el_list | elements
         return list(el_list), el_amt_dict
-
-    def _check_is_fitted(self, attributes, msg=None, all_or_any=all):
-        if msg is None:
-            msg = ("This %(name)s instance is not fitted yet. Call 'fit' with "
-                   "appropriate arguments before using this method.")
-
-        if not isinstance(attributes, (list, tuple)):
-            attributes = [attributes]
-
-        if not all_or_any([hasattr(self, attr) for attr in attributes]):
-            raise RuntimeError(msg % {'name': type(self).__name__})
-
-    def __init__(self, nn):
-        self.nn = nn
 
     def fit(self, structs):
         """
@@ -821,6 +809,17 @@ class ChemicalSRO(BaseFeaturizer):
         self.el_list_, self.el_amt_dict_ = self.cal_el_amt(structs)
         return self
 
+    def _check_is_fitted(self, attributes, msg=None, all_or_any=all):
+        if msg is None:
+            msg = ("This %(name)s instance is not fitted yet. Call 'fit' with "
+                   "appropriate arguments before using this method.")
+
+        if not isinstance(attributes, (list, tuple)):
+            attributes = [attributes]
+
+        if not all_or_any([hasattr(self, attr) for attr in attributes]):
+            raise RuntimeError(msg % {'name': type(self).__name__})
+
     def featurize(self, struct, idx):
         """
         Get CSRO features of site with given index in input structure.
@@ -834,8 +833,8 @@ class ChemicalSRO(BaseFeaturizer):
         self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=any)
         csro = [0.]*len(self.el_list_)
         el_amt = self.el_amt_dict_[str(struct)]
-        nn_list = self.nn.get_nn(struct, idx)
         nn_el_amt = dict.fromkeys(el_amt, 0)
+        nn_list = self.nn.get_nn(struct, idx)
         for nn in nn_list:
             nn_el_amt[str(nn.specie.symbol)] += 1/len(nn_list)
         for el in el_amt.keys():
@@ -923,6 +922,14 @@ class GaussianSymmFunc(BaseFeaturizer):
         cutoff (float): cutoff distance. (default: 6.5)
     """
 
+    def __init__(self, etas_g2=None, etas_g4=None, zetas_g4=None,
+                 gammas_g4=None, cutoff=6.5):
+        self.etas_g2 = etas_g2 if etas_g2 else [0.05, 4., 20., 80.]
+        self.etas_g4 = etas_g4 if etas_g4 else [0.005]
+        self.zetas_g4 = zetas_g4 if zetas_g4 else [1., 4.]
+        self.gammas_g4 = gammas_g4 if gammas_g4 else [+1., -1.]
+        self.cutoff = cutoff
+
     @staticmethod
     def cosine_cutoff(r, cutoff):
         """
@@ -993,14 +1000,6 @@ class GaussianSymmFunc(BaseFeaturizer):
                 ridge += term
         ridge *= 2. ** (1. - zeta)
         return ridge
-
-    def __init__(self, etas_g2=None, etas_g4=None, zetas_g4=None,
-                 gammas_g4=None, cutoff=6.5):
-        self.etas_g2 = etas_g2 if etas_g2 else [0.05, 4., 20., 80.]
-        self.etas_g4 = etas_g4 if etas_g4 else [0.005]
-        self.zetas_g4 = zetas_g4 if zetas_g4 else [1., 4.]
-        self.gammas_g4 = gammas_g4 if gammas_g4 else [+1., -1.]
-        self.cutoff = cutoff
 
     def featurize(self, struct, idx):
         """
