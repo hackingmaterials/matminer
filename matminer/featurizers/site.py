@@ -766,6 +766,30 @@ class ChemicalSRO(BaseFeaturizer):
         nn_ = getattr(pymatgen.analysis.local_env, preset)
         return ChemicalSRO(nn_(**kwargs))
 
+
+    @staticmethod
+    def cal_el_amt(structs):
+        """
+        Identify and "store" the element types and composition of structures,
+        avoiding repeated calculation of composition when featurizing many
+        sites in one structure.
+        Args:
+            structs (pandas series): series of pymatgen Structures.
+        Returns:
+            (list of str): elements present in the structures.
+            (dict): composition dicts of the structures.
+        """
+        el_amt_dict = {}
+        el_list = set()
+        for s in structs.values:
+            if str(s) not in el_amt_dict.keys():
+                el_amt = s.composition.fractional_composition.\
+                         get_el_amt_dict()
+                el_amt_dict[str(s)] = el_amt
+                elements = set(el_amt.keys())
+                el_list = el_list | elements
+        return list(el_list), el_amt_dict
+
     def _check_is_fitted(self, attributes, msg=None, all_or_any=all):
         if msg is None:
             msg = ("This %(name)s instance is not fitted yet. Call 'fit' with "
@@ -791,20 +815,9 @@ class ChemicalSRO(BaseFeaturizer):
             (list of str): elements present in the structures.
             (dict): composition dicts of the structures.
         """
-        self.el_amt_dict_ = {}
-        self.el_list_ = set()
-
         if isinstance(structs, Structure):
             structs = [structs]
-
-        for s in structs:
-            if str(s) not in self.el_amt_dict_.keys():
-                el_amt = s.composition.fractional_composition.\
-                         get_el_amt_dict()
-                self.el_amt_dict_[str(s)] = el_amt
-                elements = set(el_amt.keys())
-                self.el_list_ = self.el_list_ | elements
-        self.el_list_ = list(self.el_list_)
+        self.el_list_, self.el_amt_dict_ = self.cal_el_amt(structs)
         return self
 
     def featurize(self, struct, idx):
