@@ -68,3 +68,15 @@ def load_dielectric_constant(include_metadata = False):
     if include_metadata:
         new_columns += ['cif', 'meta', 'poscar']
     return df[new_columns]
+
+def load_flla():
+    # ref: F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
+    # Crystal structure representations for machine learning models
+    # of formation energies, Int. J. Quantum Chem. 115 (2015) 1094–1101.
+    # doi:10.1002/qua.24917.
+    df = pandas.read_csv(os.path.join(module_dir, "flla_2015.csv"), comment="#")
+    column_headers = ['material_id', 'e_above_hull', 'formula',
+                        'nsites', 'structure', 'formation_energy',
+                        'formation_energy_per_atom']
+    df['structure'] = pandas.Series([Poscar.from_string(s).structure for s in df['poscar']])
+    return df[column_headers]

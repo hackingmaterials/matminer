@@ -10,6 +10,7 @@ from sklearn.utils import shuffle
 
 import matminer.featurizers.structure as MM
 from matminer.data_retrieval.retrieve_MP import MPDataRetrieval
+from matminer.datasets import load_flla
 
 import time
 import ast
@@ -42,25 +43,25 @@ matrices (SCM) and orbital field matrices (OFM). The script follows 4 main steps
 # and structure size.
 FABER = False
 FILTER = not FABER
+NJOBS = 24
 # Print parameters.
 print("REMOVE UNSTABLE ENTRIES", FILTER)
 print("USE FABER DATASET", FABER)
 print("USE TERNARY OXIDE DATASET", not FABER)
+print("NUMBER OF JOBS", NJOBS)
 
 # Initialize data retrieval class
 mpr = MPDataRetrieval()
 # Choose query criteria
 if FABER:
-	f = open('mpids.txt')
-	criteria = {'material_id': {'$in': ast.literal_eval(f.read())}}
-	f.close()
+	df = load_flla()
 else:
 	criteria = "*-*-O"
-# Choose list of properties to retrive
-properties = ['structure', 'nsites', 'formation_energy_per_atom', 'e_above_hull']
+	# Choose list of properties to retrive
+	properties = ['structure', 'nsites', 'formation_energy_per_atom', 'e_above_hull']
+	# Get the dataframe with the matching structure from the Materials Project
+	df = mpr.get_dataframe(criteria=criteria, properties=properties)
 
-# Get the dataframe with the matching structure from the Materials Project
-df = mpr.get_dataframe(criteria=criteria, properties=properties)
 # Filter the dataset if it consists of ternary oxides
 if FILTER:
 	df = df[df['e_above_hull'] < 0.1]
@@ -101,9 +102,11 @@ kf = KFold(NUM_SPLITS, False)
 
 # Custom SCM KernelRidge estimator
 # This estimator ensures that scores are based on formation energy per atom
-# rather than formation energy by dividing predicted and actual y values
-# by the number of nonzero items in each row of the X matrix, which is equivalent
-# to the number of sites in the corresponding structure.
+# by dividing predicted and actual y values
+# by the number of nonzero items in each row of the X matrix. This is equivalent
+# to dividing by the number of sites in the corresponding structure
+# because each vector descriptor is a list of eigenvalues of the SCM.
+# The SCM is positive definite, so its eigenvalues are positive.
 # This class only changes the results slightly, however, so the script can
 # be simplified by replacing the SCM estimator below with a plain KernelRide()
 # instance.
@@ -122,52 +125,54 @@ class KrrScm(KernelRidge):
 		return vec[vec != 0].shape[0]
 
 # SCM evaluation
-for DIAG in [True]:
-	print ("DIAG ELEMS", DIAG)
+DIAG = True
+print ("DIAG ELEMS", DIAG)
 
-	# Featurize dataframe with sine coulomb matrix and time it
-	start = time.monotonic()
-	scm = MM.SineCoulombMatrix(DIAG)
-	df = scm.featurize_dataframe(df, 'structure', n_jobs = 24)
-	# Take the eigenvalues of the SCMs to form vector descriptors
-	df['sine coulomb matrix'] = pd.Series([np.sort(np.linalg.eigvals(s))[::-1] \
-		for s in df['sine coulomb matrix']], df.index)
-	finish = time.monotonic()
-	print ("TIME TO FEATURIZE SCM %f SECONDS" % (finish-start))
-	print()
+# Featurize dataframe with sine coulomb matrix and time it
+start = time.monotonic()
+scm = MM.SineCoulombMatrix(DIAG)
+# Set the number of jobs for parallelization
+scm.set_n_jobs(NJOBS)
+df = scm.featurize_dataframe(df, 'structure')
+# Take the eigenvalues of the SCMs to form vector descriptors
+df['sine coulomb matrix'] = pd.Series([np.sort(np.linalg.eigvals(s))[::-1] \
+	for s in df['sine coulomb matrix']], df.index)
+finish = time.monotonic()
+print ("TIME TO FEATURIZE SCM %f SECONDS" % (finish-start))
+print()
 
-	# Set up KRR model
-	krr = KrrScm()
-	print(krr.get_params().keys())
-	# Initialize hyperparameter grid search
-	hpsel = GridSearchCV(krr, params['sine coulomb matrix'], cv=inner_cv, refit=True)
-	X = df['sine coulomb matrix'].as_matrix()
-	# Append each vector descriptor with zeroes to make them all the same size.
-	XLIST = []
-	for i in range(len(X)):
-		XLIST.append(np.append(X[i], np.zeros(nt - X[i].shape[0])))
-	X = np.array(XLIST)
-	print(X.shape)
-	Y = df['formation_energy'].as_matrix()
-	N = df['nsites'].as_matrix()
-	mae, rmse, r2 = 0, 0, 0
-	# Evaluate SCM and time it
-	start = time.monotonic()
-	for train_index, test_index in kf.split(X):
-		X_train, X_test = X[train_index], X[test_index]
-		Y_train, Y_test = Y[train_index], Y[test_index]
-		N_train, N_test = N[train_index], N[test_index]
-		hpsel.fit(X_train, Y_train)
-		print("--- SCM PARAM OPT")
-		print("---", hpsel.best_params_)
-		Y_pred = hpsel.predict(X_test)
-		mae += np.mean(np.abs(Y_pred - Y_test) / N_test) / NUM_SPLITS
-		rmse += np.mean(((Y_pred - Y_test) / N_test)**2)**0.5 / NUM_SPLITS
-		r2 += sklearn.metrics.r2_score(Y_test / N_test, Y_pred / N_test) / NUM_SPLITS
-	print ("SCM RESULTS MAE = %f, RMSE = %f, R-SQUARED = %f" % (mae, rmse, r2))
-	finish = time.monotonic()
-	print ("TIME TO TEST SCM %f SECONDS" % (finish-start))
-	print()
+# Set up KRR model
+krr = KrrScm()
+print(krr.get_params().keys())
+# Initialize hyperparameter grid search
+hpsel = GridSearchCV(krr, params['sine coulomb matrix'], cv=inner_cv, refit=True)
+X = df['sine coulomb matrix'].as_matrix()
+# Append each vector descriptor with zeroes to make them all the same size.
+XLIST = []
+for i in range(len(X)):
+	XLIST.append(np.append(X[i], np.zeros(nt - X[i].shape[0])))
+X = np.array(XLIST)
+print(X.shape)
+Y = df['formation_energy'].as_matrix()
+N = df['nsites'].as_matrix()
+mae, rmse, r2 = 0, 0, 0
+# Evaluate SCM and time it
+start = time.monotonic()
+for train_index, test_index in kf.split(X):
+	X_train, X_test = X[train_index], X[test_index]
+	Y_train, Y_test = Y[train_index], Y[test_index]
+	N_train, N_test = N[train_index], N[test_index]
+	hpsel.fit(X_train, Y_train)
+	print("--- SCM PARAM OPT")
+	print("---", hpsel.best_params_)
+	Y_pred = hpsel.predict(X_test)
+	mae += np.mean(np.abs(Y_pred - Y_test) / N_test) / NUM_SPLITS
+	rmse += np.mean(((Y_pred - Y_test) / N_test)**2)**0.5 / NUM_SPLITS
+	r2 += sklearn.metrics.r2_score(Y_test / N_test, Y_pred / N_test) / NUM_SPLITS
+print ("SCM RESULTS MAE = %f, RMSE = %f, R-SQUARED = %f" % (mae, rmse, r2))
+finish = time.monotonic()
+print ("TIME TO TEST SCM %f SECONDS" % (finish-start))
+print()
 
 # OFM evaluation
 for ROW in [False, True]:
@@ -176,6 +181,7 @@ for ROW in [False, True]:
 	# Featurize dataframe with OFM and time it
 	start = time.monotonic()
 	ofm = MM.OrbitalFieldMatrix(ROW)
+	ofm.set_n_jobs(NJOBS)
 	df = ofm.featurize_dataframe(df, 'structure', n_jobs = 24)
 	df['orbital field matrix'] = pd.Series([s.flatten() \
 		for s in df['orbital field matrix']], df.index)
@@ -219,6 +225,7 @@ OUTPUT FOR FABER=True
 REMOVE UNSTABLE ENTRIES False
 USE FABER DATASET True
 USE TERNARY OXIDE DATASET False
+NUMBER OF JOBS 24
 DF SHAPE (3938, 5)
 
 DIAG ELEMS True
