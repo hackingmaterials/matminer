@@ -951,7 +951,7 @@ class GaussianSymmFunc(BaseFeaturizer):
         """
         ridge = 0.
         for neigh_coord in neigh_coords:
-            if str(neigh_coord) == str(center_coord):
+            if np.array_equal(neigh_coord, center_coord):
                 continue
             r = np.linalg.norm(neigh_coord - center_coord)
             ridge += (np.exp(-eta * (r ** 2.) / (cutoff ** 2.)) *
@@ -976,8 +976,8 @@ class GaussianSymmFunc(BaseFeaturizer):
         ridge = 0.
         for j, neigh_j in enumerate(neigh_coords):
             for neigh_k in neigh_coords[j+1:]:
-                if str(neigh_j) == str(center_coord) or \
-                   str(neigh_k) == str(center_coord):
+                if np.array_equal(neigh_j, center_coord) or \
+                   np.array_equal(neigh_k, center_coord):
                     continue
                 r_ij = np.linalg.norm(neigh_j - center_coord)
                 r_ik = np.linalg.norm(neigh_k - center_coord)
