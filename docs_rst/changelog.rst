@@ -5,6 +5,15 @@
 matminer Changelog
 ==================
 
+**v0.2.5**
+
+* Major rework of BaseFeaturizer to subclass BaseEstimator/TransformerMixin of sklearn. Allows for support of fit() function needed by many featurizers (L. Ward)
+* BaseFeaturizer can return errors as a new column (A. Dunn)
+* Clean up data getter signatures (J. Montoya)
+* Re-implement PRDF (L. Ward)
+* GaussianSymmFunc featurizer (Q. Wang)
+* misc code clean up (L. Ward, A. Jain)
+
 **v0.2.4**
 
 * updates to PlotlyFig (A. Dunn, A. Faghaninia)

@@ -19,21 +19,21 @@ class MDFDataRetrievalTest(unittest.TestCase):
     def setUpClass(cls):
         cls.mdf_dr = MDFDataRetrieval(anonymous=True)
 
-    def test_search(self):
-        results = self.mdf_dr.search(sources=['oqmd'],
-                                     elements=["Ag", "Be", "V"],
-                                     unwind_arrays=False)
+    def test_get_dataframe(self):
+        results = self.mdf_dr.get_dataframe(sources=['oqmd'],
+                                            elements=["Ag", "Be", "V"],
+                                            unwind_arrays=False)
         for elts in results['mdf.elements']:
             self.assertTrue("Be" in elts)
             self.assertTrue("Ag" in elts)
             self.assertTrue("V" in elts)
 
 
-    def test_search_by_query(self):
+    def test_get_dataframe_by_query(self):
         qstring = "(mdf.source_name:oqmd) AND "\
                   "(mdf.elements:Si AND mdf.elements:V AND "\
                   "oqmd.band_gap.value:[0.5 TO *])"
-        results = self.mdf_dr.search_by_query(qstring, unwind_arrays=False)
+        results = self.mdf_dr.get_dataframe_by_query(qstring, unwind_arrays=False)
         self.assertTrue(all(results['oqmd.band_gap.value'] > 0.5))
         for elts in results['mdf.elements']:
             self.assertTrue("Si" in elts)

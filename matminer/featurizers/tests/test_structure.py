@@ -144,38 +144,69 @@ class StructureFeaturesTest(PymatgenTest):
         # Test a few peaks in diamond
         # These expected numbers were derived by performing
         # the calculation in another code
-        prdf = PartialRadialDistributionFunction().featurize(self.diamond)[0]
+        distances, prdf = PartialRadialDistributionFunction().compute_prdf(self.diamond)
         self.assertEqual(len(prdf.values()), 1)
-        self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(1.4 / 0.1))], 0)
-        self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(1.5 / 0.1))], 1.32445167622)
-        self.assertAlmostEqual(max(prdf[('C', 'C')]['distances']), 20.0)
-        self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(19.9 / 0.1))], 0.07197902)
+        self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.4 / 0.1))], 0)
+        self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.5 / 0.1))], 1.32445167622)
+        self.assertAlmostEqual(max(distances), 20.0)
+        self.assertAlmostEqual(prdf[('C', 'C')][int(round(19.9 / 0.1))], 0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
-        prdf = PartialRadialDistributionFunction(cutoff=10).featurize(
-            self.cscl)[0]
+        distances, prdf = PartialRadialDistributionFunction(cutoff=10).compute_prdf(self.cscl)
         self.assertEqual(len(prdf.values()), 4)
-        self.assertAlmostEqual(max(prdf[('Cs', 'Cl')]['distances']), 10.0)
-        self.assertAlmostEqual(
-            prdf[('Cs', 'Cl')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
-        self.assertAlmostEqual(
-            prdf[('Cl', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
-        self.assertAlmostEqual(
-            prdf[('Cs', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0)
+        self.assertAlmostEqual(max(distances), 10.0)
+        self.assertAlmostEqual(prdf[('Cs', 'Cl')][int(round(3.6 / 0.1))], 0.477823197)
+        self.assertAlmostEqual(prdf[('Cl', 'Cs')][int(round(3.6 / 0.1))], 0.477823197)
+        self.assertAlmostEqual(prdf[('Cs', 'Cs')][int(round(3.6 / 0.1))], 0)
 
         # Do Ni3Al, make sure it captures the antisymmetry of Ni/Al sites
-        prdf = PartialRadialDistributionFunction(
-            cutoff=10, bin_size=0.5).featurize(self.ni3al)[0]
+        distances, prdf = PartialRadialDistributionFunction(cutoff=10, bin_size=0.5)\
+            .compute_prdf(self.ni3al)
         self.assertEqual(len(prdf.values()), 4)
-        self.assertAlmostEqual(
-            prdf[('Ni', 'Al')]['distribution'][int(round(2 / 0.5))], 0.125236677)
-        self.assertAlmostEqual(
-            prdf[('Al', 'Ni')]['distribution'][int(round(2 / 0.5))], 0.37571003)
-        self.assertAlmostEqual(
-            prdf[('Al', 'Al')]['distribution'][int(round(2 / 0.5))], 0)
+        self.assertAlmostEqual(prdf[('Ni', 'Al')][int(round(2 / 0.5))], 0.125236677)
+        self.assertAlmostEqual(prdf[('Al', 'Ni')][int(round(2 / 0.5))], 0.37571003)
+        self.assertAlmostEqual(prdf[('Al', 'Al')][int(round(2 / 0.5))], 0)
+
+        # Check the fit operation
+        featurizer = PartialRadialDistributionFunction()
+        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        self.assertEquals({'Cs', 'Cl', 'C', 'Ni', 'Al'}, set(featurizer.elements_))
+
+        featurizer.exclude_elems = ['Cs', 'Al']
+        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        self.assertEquals({'Cl', 'C', 'Ni'}, set(featurizer.elements_))
+
+        featurizer.include_elems = ['H']
+        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        self.assertEquals({'H', 'Cl', 'C', 'Ni'}, set(featurizer.elements_))
+
+        # Check the feature labels
+        featurizer.exclude_elems = ()
+        featurizer.include_elems = ()
+        featurizer.elements_ = ['Al', 'Ni']
+        labels = featurizer.feature_labels()
+        n_bins = len(featurizer._make_bins()) - 1
+
+        self.assertEquals(3 * n_bins, len(labels))
+        self.assertIn('Al-Ni PRDF r=0.00-0.10', labels)
+
+        # Check the featurize method
+        featurizer.elements_ = ['C']
+        features = featurizer.featurize(self.diamond)
+        prdf = featurizer.compute_prdf(self.diamond)[1]
+        self.assertArrayAlmostEqual(features, prdf[('C', 'C')])
+
+        # Make sure labels and features are in the same order
+        featurizer.elements_ = ['Al', 'Ni']
+        features = featurizer.featurize(self.ni3al)
+        labels = featurizer.feature_labels()
+        prdf = featurizer.compute_prdf(self.ni3al)[1]
+        self.assertEquals((n_bins * 3,), features.shape)
+        self.assertTrue(labels[0].startswith('Al-Al'))
+        self.assertTrue(labels[n_bins].startswith('Al-Ni'))
+        self.assertTrue(labels[2 * n_bins].startswith('Ni-Ni'))
+        self.assertArrayAlmostEqual(features, np.hstack(
+            [prdf[('Al', 'Al')], prdf[('Al', 'Ni')], prdf[('Ni', 'Ni')]]))
 
     def test_redf(self):
         d = ElectronicRadialDistributionFunction().featurize(
@@ -331,11 +362,14 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test individual structures with featurize
         bob_md = BagofBonds.from_preset("MinimumDistanceNN")
+        bob_md.no_oxi = True
+        bob_md.fit([self.diamond_no_oxi])
         self.assertArrayEqual(bob_md.featurize(self.diamond), [1.0])
         self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
 
         bob_voronoi = BagofBonds.from_preset("VoronoiNN")
         bob_voronoi.bbv = float("nan")
+        bob_voronoi.fit([self.nacl])
         bond_fracs = bob_voronoi.featurize(self.nacl)
         bond_names = bob_voronoi.feature_labels()
         ref = {'Na+ - Na+ bond frac.': 0.25, 'Cl- - Na+ bond frac.': 0.5,
@@ -345,6 +379,7 @@ class StructureFeaturesTest(PymatgenTest):
         # Test to make sure dataframe behavior is as intended
         s_list = [self.diamond_no_oxi, self.ni3al]
         df = pd.DataFrame.from_dict({'s': s_list})
+        bob_voronoi.fit(df['s'])
         df = bob_voronoi.featurize_dataframe(df, 's')
 
         # Ensure all data is properly labelled and organized
