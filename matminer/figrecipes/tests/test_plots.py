@@ -14,14 +14,20 @@ import pandas as pd
 from pymatgen.util.testing import PymatgenTest
 from matminer.figrecipes.plot import PlotlyFig
 
-
 a = [1.6, 2.1, 3]
 b = [1, 4.2, 9]
 c = [14, 15, 17]
 xlabels = ['low', 'med', 'high']
 ylabels = ['worst', 'mediocre', 'best']
+pfkwargs = {'mode': 'offline', 'colorbar_title': 'auto', 'y_scale': 'linear',
+            'x_scale': 'linear', 'ticksize': 25, 'fontscale': 1.0,
+            'fontsize': 25, 'fontfamily': 'Courier', 'bgcolor': 'white',
+            'colorscale': 'Viridis', 'margins': 120, 'pad': 0,
+            'filename': 'offline_plot', 'show_offline_plot': True,
+            'hovermode': 'closest','hoverinfo': 'x+y+text'}
 
-def refresh(open_plots=False):
+
+def refresh_json(open_plots=False):
     """
     For developer use. Refresh the json files and open plots to see if they
     look good. Use this function to set the current PlotlyFig build outputs
@@ -33,7 +39,7 @@ def refresh(open_plots=False):
             If False, just generates the json files and quits.
     """
 
-    pf = PlotlyFig()
+    pf = PlotlyFig(**pfkwargs)
     xys = pf.xy([(a, b)], return_plot=True)
     xym = pf.xy([(a, b), (b, a)], return_plot=True)
     hmb = pf.heatmap_basic([a, b, c], xlabels, ylabels, return_plot=True)
@@ -61,11 +67,10 @@ def refresh(open_plots=False):
             pf.create_plot(obj, return_plot=False)
 
 
-
 class PlotlyFigTest(PymatgenTest):
     def setUp(self):
-        self.pf = PlotlyFig()
-        self.base_dir =  os.path.dirname(os.path.realpath(__file__))
+        self.pf = PlotlyFig(**pfkwargs)
+        self.base_dir = os.path.dirname(os.path.realpath(__file__))
 
     def fopen(self, fname):
         fname = self.base_dir + "/" + fname
@@ -82,9 +87,11 @@ class PlotlyFigTest(PymatgenTest):
         xym_test = self.pf.xy([(a, b), (b, a)], return_plot=True)
         xym_true = self.fopen("template_xym.json")
         self.assertTrue(xym_test == xym_true)
-#
+
+    #
     def test_heatmap_basic(self):
-        hmb_test = self.pf.heatmap_basic([a, b, c], xlabels, ylabels, return_plot=True)
+        hmb_test = self.pf.heatmap_basic([a, b, c], xlabels, ylabels,
+                                         return_plot=True)
         hmb_true = self.fopen("template_hmb.json")
         self.assertTrue(hmb_test == hmb_true)
 
@@ -99,12 +106,15 @@ class PlotlyFigTest(PymatgenTest):
         self.assertTrue(bar_test == bar_true)
 
     def test_parallel_coordinates(self):
-        pcp_test = self.pf.parallel_coordinates([a, b], cols=xlabels, return_plot=True)
+        pcp_test = self.pf.parallel_coordinates([a, b], cols=xlabels,
+                                                return_plot=True)
         pcp_true = self.fopen("template_pcp.json")
         self.assertTrue(pcp_test == pcp_true)
 
     def test_violin(self):
-        vio_test = self.pf.violin([a, b, c, b, a, c, b], cols=xlabels,return_plot=True)['layout']
+        vio_test = \
+        self.pf.violin([a, b, c, b, a, c, b], cols=xlabels, return_plot=True)[
+            'layout']
         vio_true = self.fopen("template_vio.json")
         self.assertTrue(vio_test == vio_true)
 
@@ -123,7 +133,7 @@ class PlotlyFigTest(PymatgenTest):
         self.pf.heatmap_df(df, x_labels=x_labels, y_labels=y_labels,
                            return_plot=True)
 
-if __name__ == "__main__":
 
-    # refresh(open_plots=True)
+if __name__ == "__main__":
+    # refresh_json(open_plots=True)
     unittest.main()
