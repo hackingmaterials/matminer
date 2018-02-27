@@ -3,7 +3,7 @@ import numpy as np
 from pymatgen.core.structure import Structure
 
 from matminer.datasets.dataframe_loader import load_elastic_tensor, \
-    load_piezoelectric_tensor, load_dielectric_constant
+    load_piezoelectric_tensor, load_dielectric_constant, load_flla
 
 
 class DataSetTest(unittest.TestCase):
@@ -42,7 +42,6 @@ class DataSetTest(unittest.TestCase):
         df = load_dielectric_constant()
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(len(df), 1056)
-        print(list(df))
         column_headers = ['material_id', 'formula',
                           'nsites', 'space_group', 'volume',
                           'structure',
@@ -52,6 +51,15 @@ class DataSetTest(unittest.TestCase):
         self.assertEqual(list(df), column_headers)
         df = load_dielectric_constant(include_metadata = True)
         column_headers += ['cif', 'meta', 'poscar']
+        self.assertEqual(list(df), column_headers)
+
+    def test_flla(self):
+        df = load_flla()
+        self.assertEqual(type(df['structure'][0]), Structure)
+        self.assertEqual(len(df), 3938)
+        column_headers = ['material_id', 'e_above_hull', 'formula',
+                          'nsites', 'structure', 'formation_energy',
+                          'formation_energy_per_atom']
         self.assertEqual(list(df), column_headers)
 
 
