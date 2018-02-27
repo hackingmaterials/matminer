@@ -131,6 +131,23 @@ class PlotlyFig:
 
         """
 
+        # Plotly offline latex does not work (a Plotly issue).
+        if mode == 'offline':
+            for s in [title, x_title, y_title]:
+                if s is not None and s.count('$') > 1:
+                    warnings.warn("Plotly currently does not support LaTeX in"
+                                  "offline plotting mode. To render LaTeX, please"
+                                  "use Plotly online by setting changing the mode"
+                                  "of PlotlyFig, or by clicking 'Export to Plotly'"
+                                  "in the opened broswer window.")
+            if fontfamily not in ['Courier', 'Times New Roman', 'Arial']:
+                warnings.warn("The font family selected may not render "
+                              "correctly in offline mode. To render more fonts,"
+                              " use Plotly online by setting changing the mode"
+                              "of PlotlyFig, or by clicking 'Export to Plotly' "
+                              "in the opened broswer window.")
+
+
         # Fix fonts
         fontsize = float(fontsize) * float(fontscale)
 
@@ -212,31 +229,10 @@ class PlotlyFig:
             if k in kwargs.keys():
                 self.layout[k] = kwargs[k]
 
-        if self.mode in ['online', 'static']:
-            if not os.path.isfile('~/.plotly/.credentials'):
-                if 'username' not in pfkwargs.keys():
-                    raise ValueError(
-                        'Field "username" must be filled in online and static '
-                        'plotting modes.')
-                if 'api_key' not in pfkwargs.keys():
-                    raise ValueError(
-                        'Field "api_key" must be filled in online and static'
-                        'plotting modes.')
-                plotly.tools.set_credentials_file(username=self.username,
-                                                  api_key=self.api_key)
-
-        if self.mode == 'static':
-            if not self.filename or not self.filename.lower().endswith(
-                    ('.png', '.svg', '.jpeg', '.pdf')):
-                raise ValueError(
-                    'field "filename" must be filled in static plotting mode '
-                    'and must have an extension ending in ('
-                    '".png", ".svg", ".jpeg", ".pdf")')
-
         self.plot_counter = 0
         self.font_style = font_style
 
-    def set_argument(self, **kwargs):
+    def set_arguments(self, **kwargs):
         """
         Method to modify some of the layout arguments after instantiation
         Args:
@@ -246,9 +242,10 @@ class PlotlyFig:
         for kw in kwargs:
             if kw in ['x_title', 'y_title']:
                 self.layout['{}axis'.format(kw[0])]['title'] = kwargs[kw]
-            elif kw in ['filename']:
-                self.filename = kwargs[kw]
-                self.plot_counter = 0
+            elif kw in ['filename', 'mode', 'api_key', 'username']:
+                setattr(self, kw, kwargs[kw])
+                if kw in ['filename', 'mode']:
+                    self.plot_counter = 0
             else:
                 raise ValueError('changing "{}" is not supported!'.format(kw))
 
@@ -278,6 +275,28 @@ class PlotlyFig:
             filename = '{}_{}'.format(self.filename, self.plot_counter)
         else:
             filename = self.filename
+
+        if self.mode in ['online', 'static']:
+            plotly.tools.set_credentials_file(username=self.username,
+                                              api_key=self.api_key)
+
+            if not os.path.isfile('~/.plotly/.credentials'):
+                if self.username is None:
+                    raise ValueError(
+                        'Field "username" must be filled in online and static '
+                        'plotting modes.')
+                if self.api_key is None:
+                    raise ValueError(
+                        'Field "api_key" must be filled in online and static'
+                        'plotting modes.')
+
+            if self.mode == 'static':
+                if not self.filename or not self.filename.lower().endswith(
+                        ('.png', '.svg', '.jpeg', '.pdf')):
+                    raise ValueError(
+                        'field "filename" must be filled in static plotting '
+                        'mode and must have an extension ending in ('
+                        '".png", ".svg", ".jpeg", ".pdf")')
 
         if self.mode == 'offline':
             if not filename.endswith('.html'):
@@ -319,7 +338,7 @@ class PlotlyFig:
         if isinstance(col, str):
             try:
                 return data[col]
-            except KeyError:
+            except (KeyError, TypeError):
                 if col in self.df:
                     return self.df[col]
                 else:
@@ -415,6 +434,7 @@ class PlotlyFig:
             modes = [modes] * len(xy_pairs)
         if len(modes) != len(xy_pairs):
             raise ValueError('"modes" and "xy_pairs" have different lengths!')
+
         if colors is None:
             showscale = False
             colorbar = None
