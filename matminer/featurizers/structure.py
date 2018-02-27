@@ -22,7 +22,7 @@ from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint,
     CoordinationNumber
 from matminer.featurizers.stats import PropertyStats
 
-__authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
+__authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
               'Alex Dunn <ardunn@lbl.gov>'
 # ("@article{label, title={}, volume={}, DOI={}, number={}, pages={}, journal={}, author={}, year={}}")
