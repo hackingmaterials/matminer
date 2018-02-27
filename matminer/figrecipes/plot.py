@@ -875,8 +875,8 @@ class PlotlyFig:
         fig = {'data': barplots, 'layout': layout}
         return self.create_plot(fig, return_plot)
 
-    def violin(self, data=None, cols=None, group_col=None, groups=None,
-               colorscale=None, use_colorscale=False, return_plot=False):
+    def violin(self, data=None, cols=None, use_colorscale=False, rugplot=False,
+               group_col=None, groups=None, colorscale=None, return_plot=False):
         """
         Create a violin plot using Plotly.
 
@@ -889,19 +889,16 @@ class PlotlyFig:
             cols: ([str]) The labels for the columns of the dataframe to be
                 included in the plot. If data is passed as a list/array, pass
                 a list of cols to be used as labels for the violins.
+            rugplot: (bool) If True, plots the distribution of the data next
+                to the violin with a 'rugplot'.
             group_col: (str) Name of the column containing the group for each
                 row, if it exists. Used only if there is one entry in cols.
             groups: ([str]): All group names to be included in the violin plot.
                 Used only if there is one entry in cols.
             colorscale: (str/tuple/list/dict) either a plotly scale name (Greys,
                 YlGnBu, Greens, etc.), an rgb or hex color, a color tuple, a
-                list/dict of colors. An rgb color is of the form 'rgb(x, y, z)'
-                where x, y and z belong to the interval [0, 255] and a color
-                tuple is a tuple of the form (a, b, c) where a, b and c belong
-                to [0, 1]. If colors is a list, it must contain valid color
-                types as its members. If colors is a dictionary, its keys must
-                represent group names, and corresponding values must be valid
-                color types (str). If None, uses grey as all colors.
+                list/dict of colors. The color is representative of the median
+                value of the violin.
             use_colorscale: (bool) Only applicable if grouping by another
                 variable. Will implement a colorscale based on the first 2
                 colors of param colors. This means colors must be a list with
@@ -935,8 +932,7 @@ class PlotlyFig:
             if not cols:
                 cols = ['data{}'.format(i) for i in range(data.shape[1])]
             data = pd.DataFrame(data=data, columns=cols)
-
-        else:
+        elif not isinstance(data, pd.DataFrame):
             raise ValueError('"data" was set to an unknown datatype. Please'
                              'use a list, a list of lists/numpy array, a series'
                              ' or a DataFrame.')
@@ -993,7 +989,7 @@ class PlotlyFig:
                                group_header=group_col,
                                title=self.layout['title'],
                                colors=colorscale, use_colorscale=use_colorscale,
-                               group_stats=group_stats)
+                               group_stats=group_stats, rugplot=rugplot)
         layout = deepcopy(self.layout)
         font_style = self.font_style.copy()
         font_style['size'] = 0.65 * font_style['size']
