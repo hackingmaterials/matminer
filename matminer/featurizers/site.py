@@ -17,6 +17,7 @@ index and the structure. For example:
 import os
 import ruamel.yaml as yaml
 import numpy as np
+import pandas as pd
 import math
 
 from collections import defaultdict
@@ -24,6 +25,7 @@ from collections import defaultdict
 from matminer.featurizers.base import BaseFeaturizer
 from scipy.spatial import Voronoi, Delaunay
 from pymatgen import Structure
+from pymatgen.core.periodic_table import Element
 from pymatgen.analysis.local_env import LocalStructOrderParas, \
     VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
     MinimumVIRENN
@@ -668,8 +670,8 @@ class VoronoiFingerprint(BaseFeaturizer):
                 try:
                     voro_idx_list[len(vind) - 3] += 1
                     if self.use_weights:
-                        for nn, weight in n_w.items():
-                            if np.array_equal(nn.coords,
+                        for neigh, weight in n_w.items():
+                            if np.array_equal(neigh.coords,
                                               vertices[sorted(nn)[1]]):
                                 voro_idx_weights[len(vind) - 3] += weight
 
@@ -751,10 +753,29 @@ class ChemicalSRO(BaseFeaturizer):
     Args:
         nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
                               classes.
+        includes (array-like or str): elements that are included to calculate
+                                      CSRO in neighboring environments.
+        excludes (array-like or str): elements that are excluded.
+        sort (boolean): whether to sort elements by mendeleev number.
     """
 
-    def __init__(self, nn):
+    def __init__(self, nn, includes=None, excludes=None, sort=True):
         self.nn = nn
+        self.includes = includes
+        if self.includes:
+            if not isinstance(self.includes,
+                              (tuple, set, list, np.ndarray, pd.Series)):
+                self.includes = [self.includes]
+            self.includes = [Element(el).symbol for el in self.includes]
+        self.excludes = excludes
+        if self.excludes:
+            if not isinstance(self.excludes,
+                              (tuple, set, list, np.ndarray)):
+                self.excludes = [self.excludes]
+            self.excludes = [Element(el).symbol for el in self.excludes]
+        self.sort = sort
+        self.el_list_ = None
+        self.el_amt_dict_ = None
 
     @staticmethod
     def from_preset(preset, **kwargs):
@@ -764,14 +785,14 @@ class ChemicalSRO(BaseFeaturizer):
             preset (str): preset type ("VoronoiNN", "JMolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
                           or "MinimumVIRENN").
+            **kwargs: allow to pass args to the preset NearNeighbor class.
         Returns:
             ChemicalSRO from a preset.
         """
         nn_ = getattr(pymatgen.analysis.local_env, preset)
         return ChemicalSRO(nn_(**kwargs))
 
-    @staticmethod
-    def cal_el_amt(structs):
+    def cal_el_amt(self, structs):
         """
         Identify and "store" the element types and composition of structures,
         avoiding repeated calculation of composition when featurizing many
@@ -782,16 +803,20 @@ class ChemicalSRO(BaseFeaturizer):
             (list of str): elements present in the structures.
             (dict): composition dicts of the structures.
         """
-        el_list = set()
         el_amt_dict = {}
+        el_list = set()
         for s in structs.values:
             if str(s) not in el_amt_dict.keys():
-                el_amt = s.composition.fractional_composition.\
-                         get_el_amt_dict()
-                el_amt_dict[str(s)] = el_amt
-                elements = set(el_amt.keys())
-                el_list = el_list | elements
-        return list(el_list), el_amt_dict
+                el_amt = s.composition.fractional_composition.get_el_amt_dict()
+                els = set(el_amt.keys()) if self.includes is None \
+                    else set([el for el in el_amt.keys() if el in self.includes])
+                els = els if self.excludes is None else els - set(self.excludes)
+                if els:
+                    el_amt_dict[str(s)] = el_amt
+                el_list = el_list | els
+        el_list = sorted(list(el_list), key=lambda el:
+                Element(el).mendeleev_no) if self.sort else list(el_list)
+        return el_list, el_amt_dict
 
     def fit(self, structs):
         """
@@ -809,15 +834,15 @@ class ChemicalSRO(BaseFeaturizer):
         self.el_list_, self.el_amt_dict_ = self.cal_el_amt(structs)
         return self
 
-    def _check_is_fitted(self, attributes, msg=None, all_or_any=all):
+    def _check_is_fitted(self, attrs, msg=None, all_or_any=all):
         if msg is None:
-            msg = ("This %(name)s instance is not fitted yet. Call 'fit' with "
-                   "appropriate arguments before using this method.")
+            msg = ("This %(name)s instance is not fitted yet! Call 'fit' "
+                   "with appropriate arguments before using this method.")
 
-        if not isinstance(attributes, (list, tuple)):
-            attributes = [attributes]
+        if not isinstance(attrs, (tuple, set, list, np.ndarray, pd.Series)):
+            attrs = [attrs]
 
-        if not all_or_any([hasattr(self, attr) for attr in attributes]):
+        if not all_or_any([hasattr(self, attr) for attr in attrs]):
             raise RuntimeError(msg % {'name': type(self).__name__})
 
     def featurize(self, struct, idx):
@@ -831,18 +856,23 @@ class ChemicalSRO(BaseFeaturizer):
         """
 
         self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=any)
+
         csro = [0.]*len(self.el_list_)
-        el_amt = self.el_amt_dict_[str(struct)]
-        nn_el_amt = dict.fromkeys(el_amt, 0)
-        nn_list = self.nn.get_nn(struct, idx)
-        for nn in nn_list:
-            nn_el_amt[str(nn.specie.symbol)] += 1/len(nn_list)
-        for el in el_amt.keys():
-            csro[self.el_list_.index(el)] = nn_el_amt[el] - el_amt[el]
+        if str(struct) in self.el_amt_dict_.keys():
+            el_amt = self.el_amt_dict_[str(struct)]
+            nn_el_amt = dict.fromkeys(el_amt, 0)
+            nn_list = self.nn.get_nn(struct, idx)
+            for nn in nn_list:
+                if str(nn.specie.symbol) in self.el_list_:
+                    nn_el_amt[str(nn.specie.symbol)] += 1/len(nn_list)
+            for el in el_amt.keys():
+                if el in self.el_list_:
+                    csro[self.el_list_.index(el)] = nn_el_amt[el] - el_amt[el]
         return csro
 
     def feature_labels(self):
         self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=any)
+
         return ['CSRO_{}_{}'.format(el, self.nn.__class__.__name__)
                 for el in self.el_list_]
 
@@ -1249,6 +1279,7 @@ class CoordinationNumber(BaseFeaturizer):
             preset (str): preset type ("VoronoiNN", "JMolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
                           or "MinimumVIRENN").
+            **kwargs: allow to pass args to the preset NearNeighbor class.
         Returns:
             CoordinationNumber from a preset.
         """
