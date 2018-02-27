@@ -15,8 +15,8 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 
 
 # todo: common function for if then checking data types + automatically ignore non-numerical data
+# todo: remove boilerplate code (would be mostly done by ^^^)
 # todo: clean up argument names and docs
-# todo: remove boilerplate code
 
 
 class PlotlyFig:
@@ -962,7 +962,6 @@ class PlotlyFig:
                         "Please specify group_col, the label of the column "
                         "containing the groups for each row.")
 
-            # use_colorscale = True
             group_stats = {}
 
             for g in groups:
@@ -979,7 +978,6 @@ class PlotlyFig:
                         'Omitting rows with group = {} which have only one row '
                         'in the dataframe.'.format(j))
 
-        # todo: fix colorscale nonsense
         if use_colorscale:
             colorscale = colorscale or self.colorscale
         else:
@@ -1013,6 +1011,8 @@ class PlotlyFig:
             fig['layout']['width'] = 1400
         if not hasattr(self, 'height'):
             fig['layout']['height'] = 1000
+
+        fig['layout']['font'] = font_style
         return self.create_plot(fig, return_plot)
 
     def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
