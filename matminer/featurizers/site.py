@@ -745,18 +745,20 @@ class ChemicalSRO(BaseFeaturizer):
     the target site, sum of N_el is the sum of all possible element types
     (coordination number), and c_el is the composition of the specific
     element in the entire structure.
-    Here the calculation is run for each element present in the structure.
     A positive f_el indicates the "bonding" with the specific element
     is favored, at least in the target site;
     A negative f_el indicates the "bonding" is not favored, at least
     in the target site.
+
+    Note that ChemicalSRO is only featurized for elements identified by
+    "fit" (see following), thus "fit" must be called before "featurize",
+    or else an error will be raised.
     Args:
         nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
                               classes.
-        includes (array-like or str): elements that are included to calculate
-                                      CSRO in neighboring environments.
-        excludes (array-like or str): elements that are excluded.
-        sort (boolean): whether to sort elements by mendeleev number.
+        includes (array-like or str): elements included to calculate CSRO.
+        excludes (array-like or str): elements excluded to calculate CSRO.
+        sort (bool): whether to sort elements by mendeleev number.
     """
 
     def __init__(self, nn, includes=None, excludes=None, sort=True):
@@ -764,13 +766,13 @@ class ChemicalSRO(BaseFeaturizer):
         self.includes = includes
         if self.includes:
             if not isinstance(self.includes,
-                              (tuple, set, list, np.ndarray, pd.Series)):
+                              (list, tuple, set, np.ndarray, pd.Series)):
                 self.includes = [self.includes]
             self.includes = [Element(el).symbol for el in self.includes]
         self.excludes = excludes
         if self.excludes:
             if not isinstance(self.excludes,
-                              (tuple, set, list, np.ndarray)):
+                              (list, tuple, set, np.ndarray, pd.Series)):
                 self.excludes = [self.excludes]
             self.excludes = [Element(el).symbol for el in self.excludes]
         self.sort = sort
@@ -785,61 +787,72 @@ class ChemicalSRO(BaseFeaturizer):
             preset (str): preset type ("VoronoiNN", "JMolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
                           or "MinimumVIRENN").
-            **kwargs: allow to pass args to the preset NearNeighbor class.
+            **kwargs: allow to pass args to the NearNeighbor class.
         Returns:
             ChemicalSRO from a preset.
         """
         nn_ = getattr(pymatgen.analysis.local_env, preset)
         return ChemicalSRO(nn_(**kwargs))
 
-    def cal_el_amt(self, structs):
-        """
-        Identify and "store" the element types and composition of structures,
-        avoiding repeated calculation of composition when featurizing many
-        sites in one structure.
-        Args:
-            structs (pandas series): series of pymatgen Structures.
-        Returns:
-            (list of str): elements present in the structures.
-            (dict): composition dicts of the structures.
-        """
-        el_amt_dict = {}
-        el_list = set()
-        for s in structs.values:
-            if str(s) not in el_amt_dict.keys():
-                el_amt = s.composition.fractional_composition.get_el_amt_dict()
-                els = set(el_amt.keys()) if self.includes is None \
-                    else set([el for el in el_amt.keys() if el in self.includes])
-                els = els if self.excludes is None else els - set(self.excludes)
-                if els:
-                    el_amt_dict[str(s)] = el_amt
-                el_list = el_list | els
-        el_list = sorted(list(el_list), key=lambda el:
-                Element(el).mendeleev_no) if self.sort else list(el_list)
-        return el_list, el_amt_dict
-
     def fit(self, structs):
         """
-        Identify and "store" the element types and composition of structures,
-        avoiding repeated calculation of composition when featurizing many
-        sites in one structure.
+        Identify elements to be included in the following featurization,
+        by intersecting the elements present in the passed structures with
+        those explicitly included (or excluded) in __init__. Only elements
+        in the self.el_list_ will be featurized.
+        Besides, compositions of the passed structures will also be "stored"
+        in a dict of self.el_amt_dict_, avoiding repeated calculation of
+        composition when featurizing multiple sites in the same structure.
         Args:
             structs (pandas series): series of pymatgen Structures.
         Returns:
-            (list of str): elements present in the structures.
-            (dict): composition dicts of the structures.
+            self
         """
         if isinstance(structs, Structure):
             structs = [structs]
-        self.el_list_, self.el_amt_dict_ = self.cal_el_amt(structs)
+        self.el_amt_dict_ = {}
+        el_set_ = set()
+        for s in structs.values:
+            if str(s) not in self.el_amt_dict_.keys():
+                el_amt_ = s.composition.fractional_composition.get_el_amt_dict()
+                els_ = set(el_amt_.keys()) if self.includes is None \
+                    else set([el for el in el_amt_.keys()
+                              if el in self.includes])
+                els_ = els_ if self.excludes is None \
+                    else els_ - set(self.excludes)
+                if els_:
+                    self.el_amt_dict_[str(s)] = el_amt_
+                el_set_ = el_set_ | els_
+        self.el_list_ = sorted(list(el_set_), key=lambda el:
+                Element(el).mendeleev_no) if self.sort else list(el_set_)
         return self
 
     def _check_is_fitted(self, attrs, msg=None, all_or_any=all):
+        """
+        Checks if the featurizer is fitted by verifying the presence of
+        "all_or_any" of the passed attributes and raises a RuntimeError
+        with the given message if not fitted.
+        Args:
+            attrs (array-like or str): attribute name(s) given as string or
+                                       an array-like strings
+            msg (str): error message raised if not fitted.
+                The default error message is, "This %(name)s featurizer is not
+                fitted yet! Call 'fit' with appropriate arguments before using
+                this method."
+                For custom messages if "%(name)s" is present in the message
+                string, it is substituted for the featurizer name.
+            all_or_any: callable, {all, any}, default: all.
+                Specify whether all or any of the given attributes must exist.
+        Returns:
+            None
+        Raises:
+            RuntimeError
+        """
         if msg is None:
-            msg = ("This %(name)s instance is not fitted yet! Call 'fit' "
+            msg = ("This %(name)s featurizer is not fitted yet! Call 'fit' "
                    "with appropriate arguments before using this method.")
 
-        if not isinstance(attrs, (tuple, set, list, np.ndarray, pd.Series)):
+        if not isinstance(attrs, (list, tuple, set, np.ndarray, pd.Series)):
             attrs = [attrs]
 
         if not all_or_any([hasattr(self, attr) for attr in attrs]):
@@ -855,7 +868,7 @@ class ChemicalSRO(BaseFeaturizer):
             (list of floats): Chemical SRO features for each element.
         """
 
-        self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=any)
+        self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=all)
 
         csro = [0.]*len(self.el_list_)
         if str(struct) in self.el_amt_dict_.keys():
@@ -871,7 +884,7 @@ class ChemicalSRO(BaseFeaturizer):
         return csro
 
     def feature_labels(self):
-        self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=any)
+        self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=all)
 
         return ['CSRO_{}_{}'.format(el, self.nn.__class__.__name__)
                 for el in self.el_list_]
@@ -1279,7 +1292,7 @@ class CoordinationNumber(BaseFeaturizer):
             preset (str): preset type ("VoronoiNN", "JMolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
                           or "MinimumVIRENN").
-            **kwargs: allow to pass args to the preset NearNeighbor class.
+            **kwargs: allow to pass args to the NearNeighbor class.
         Returns:
             CoordinationNumber from a preset.
         """
