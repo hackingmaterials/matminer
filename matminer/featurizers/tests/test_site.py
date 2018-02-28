@@ -250,17 +250,17 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(mvnn_csros['CSRO_Cl_MinimumVIRENN'][0], -0.5)
         # test fit + transform
         vnn = ChemicalSRO.from_preset("VoronoiNN")
-        vnn.fit(df_cscl[['struct', 'site']])
+        vnn.fit(df_cscl[['struct', 'site']])  # dataframe
         vnn_csros = vnn.transform(df_cscl[['struct', 'site']].values)
         self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
         self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
         vnn = ChemicalSRO.from_preset("VoronoiNN")
-        vnn.fit(df_cscl[['struct', 'site']].values)
+        vnn.fit(df_cscl[['struct', 'site']].values)  # np.array
         vnn_csros = vnn.transform(df_cscl[['struct', 'site']].values)
         self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
         self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
         vnn = ChemicalSRO.from_preset("VoronoiNN")
-        vnn.fit([[self.cscl, 0]])
+        vnn.fit([[self.cscl, 0]])  # list
         vnn_csros = vnn.transform([[self.cscl, 0]])
         self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
         self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
