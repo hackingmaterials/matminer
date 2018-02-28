@@ -15,8 +15,8 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 
 
 # todo: common function for if then checking data types + automatically ignore non-numerical data
+# todo: remove boilerplate code (would be mostly done by ^^^)
 # todo: clean up argument names and docs
-# todo: remove boilerplate code
 
 
 class PlotlyFig:
@@ -131,6 +131,23 @@ class PlotlyFig:
 
         """
 
+        # Plotly offline latex does not work (a Plotly issue).
+        if mode == 'offline':
+            for s in [title, x_title, y_title]:
+                if s is not None and s.count('$') > 1:
+                    warnings.warn("Plotly currently does not support LaTeX in"
+                                  "offline plotting mode. To render LaTeX, please"
+                                  "use Plotly online by setting changing the mode"
+                                  "of PlotlyFig, or by clicking 'Export to Plotly'"
+                                  "in the opened broswer window.")
+            if fontfamily not in ['Courier', 'Times New Roman', 'Arial']:
+                warnings.warn("The font family selected may not render "
+                              "correctly in offline mode. To render more fonts,"
+                              " use Plotly online by setting changing the mode"
+                              "of PlotlyFig, or by clicking 'Export to Plotly' "
+                              "in the opened broswer window.")
+
+
         # Fix fonts
         fontsize = float(fontsize) * float(fontscale)
 
@@ -212,33 +229,17 @@ class PlotlyFig:
             if k in kwargs.keys():
                 self.layout[k] = kwargs[k]
 
-        if self.mode in ['online', 'static']:
-            if not os.path.isfile('~/.plotly/.credentials'):
-                if 'username' not in pfkwargs.keys():
-                    raise ValueError(
-                        'Field "username" must be filled in online and static '
-                        'plotting modes.')
-                if 'api_key' not in pfkwargs.keys():
-                    raise ValueError(
-                        'Field "api_key" must be filled in online and static'
-                        'plotting modes.')
-                plotly.tools.set_credentials_file(username=self.username,
-                                                  api_key=self.api_key)
-
-        if self.mode == 'static':
-            if not self.filename or not self.filename.lower().endswith(
-                    ('.png', '.svg', '.jpeg', '.pdf')):
-                raise ValueError(
-                    'field "filename" must be filled in static plotting mode '
-                    'and must have an extension ending in ('
-                    '".png", ".svg", ".jpeg", ".pdf")')
-
         self.plot_counter = 0
         self.font_style = font_style
 
-    def set_argument(self, **kwargs):
+    def set_arguments(self, **kwargs):
         """
-        Method to modify some of the layout arguments after instantiation
+        Method to modify some of the layout and PlotlyFig arguments after
+        instantiation.
+
+        Allowed arguments: title, x_title, y_title, colorbar_title, filename,
+        mode, api_key, username, show_offline_plot
+
         Args:
             **kwargs: allowed variables to change are listed below:
         Returns: None
@@ -246,9 +247,13 @@ class PlotlyFig:
         for kw in kwargs:
             if kw in ['x_title', 'y_title']:
                 self.layout['{}axis'.format(kw[0])]['title'] = kwargs[kw]
-            elif kw in ['filename']:
-                self.filename = kwargs[kw]
-                self.plot_counter = 0
+            elif kw == 'title':
+                self.layout[kw] = kwargs[kw]
+            elif kw in ['filename', 'mode', 'api_key', 'username',
+                        'show_offline_plot', 'colorbar_title']:
+                setattr(self, kw, kwargs[kw])
+                if kw in ['filename', 'mode']:
+                    self.plot_counter = 0
             else:
                 raise ValueError('changing "{}" is not supported!'.format(kw))
 
@@ -279,6 +284,20 @@ class PlotlyFig:
         else:
             filename = self.filename
 
+        if self.mode in ['online', 'static']:
+            plotly.tools.set_credentials_file(username=self.username,
+                                              api_key=self.api_key)
+
+            if not os.path.isfile('~/.plotly/.credentials'):
+                if self.username is None:
+                    raise ValueError(
+                        'Field "username" must be filled in online and static '
+                        'plotting modes.')
+                if self.api_key is None:
+                    raise ValueError(
+                        'Field "api_key" must be filled in online and static'
+                        'plotting modes.')
+
         if self.mode == 'offline':
             if not filename.endswith('.html'):
                 filename += '.html'
@@ -296,14 +315,23 @@ class PlotlyFig:
 
         elif self.mode == 'static':
             if 'height' not in self.layout.keys():
-                height = 600
+                height = 1080
             if 'width' not in self.layout.keys():
-                width = 800
+                width = 1920
+
+            allowed_extensions = ('.png', '.svg', '.jpeg', '.pdf')
+            if not self.filename or not self.filename.lower().endswith(
+                    allowed_extensions):
+                raise ValueError(
+                    'field "filename" must be filled in static plotting '
+                    'mode and must have an extension ending in '
+                    '{}'.format(allowed_extensions))
 
             plotly.plotly.image.save_as(fig, filename=filename,
                                         height=height,
                                         width=width,
                                         scale=self.resolution_scale)
+
         self.plot_counter += 1
 
     def data_from_col(self, col, data=None):
@@ -319,7 +347,7 @@ class PlotlyFig:
         if isinstance(col, str):
             try:
                 return data[col]
-            except KeyError:
+            except (KeyError, TypeError):
                 if col in self.df:
                     return self.df[col]
                 else:
@@ -415,6 +443,7 @@ class PlotlyFig:
             modes = [modes] * len(xy_pairs)
         if len(modes) != len(xy_pairs):
             raise ValueError('"modes" and "xy_pairs" have different lengths!')
+
         if colors is None:
             showscale = False
             colorbar = None
@@ -466,7 +495,8 @@ class PlotlyFig:
             if colorbar is not None:
                 markers[im]['color'] = colorbar
                 fontd = {'family': self.font_style['family'],
-                         'size': 0.75 * self.font_style['size']}
+                         'size': 0.75 * self.font_style['size'],
+                         'color': self.font_style['color']}
                 markers[im]['colorbar'] = {'title': colorbar_title,
                                            'titleside': 'right',
                                            'tickfont': fontd,
@@ -875,8 +905,8 @@ class PlotlyFig:
         fig = {'data': barplots, 'layout': layout}
         return self.create_plot(fig, return_plot)
 
-    def violin(self, data=None, cols=None, group_col=None, groups=None,
-               colorscale=None, use_colorscale=False, return_plot=False):
+    def violin(self, data=None, cols=None, use_colorscale=False, rugplot=False,
+               group_col=None, groups=None, colorscale=None, return_plot=False):
         """
         Create a violin plot using Plotly.
 
@@ -889,19 +919,16 @@ class PlotlyFig:
             cols: ([str]) The labels for the columns of the dataframe to be
                 included in the plot. If data is passed as a list/array, pass
                 a list of cols to be used as labels for the violins.
+            rugplot: (bool) If True, plots the distribution of the data next
+                to the violin with a 'rugplot'.
             group_col: (str) Name of the column containing the group for each
                 row, if it exists. Used only if there is one entry in cols.
             groups: ([str]): All group names to be included in the violin plot.
                 Used only if there is one entry in cols.
             colorscale: (str/tuple/list/dict) either a plotly scale name (Greys,
                 YlGnBu, Greens, etc.), an rgb or hex color, a color tuple, a
-                list/dict of colors. An rgb color is of the form 'rgb(x, y, z)'
-                where x, y and z belong to the interval [0, 255] and a color
-                tuple is a tuple of the form (a, b, c) where a, b and c belong
-                to [0, 1]. If colors is a list, it must contain valid color
-                types as its members. If colors is a dictionary, its keys must
-                represent group names, and corresponding values must be valid
-                color types (str). If None, uses grey as all colors.
+                list/dict of colors. The color is representative of the median
+                value of the violin.
             use_colorscale: (bool) Only applicable if grouping by another
                 variable. Will implement a colorscale based on the first 2
                 colors of param colors. This means colors must be a list with
@@ -935,8 +962,7 @@ class PlotlyFig:
             if not cols:
                 cols = ['data{}'.format(i) for i in range(data.shape[1])]
             data = pd.DataFrame(data=data, columns=cols)
-
-        else:
+        elif not isinstance(data, pd.DataFrame):
             raise ValueError('"data" was set to an unknown datatype. Please'
                              'use a list, a list of lists/numpy array, a series'
                              ' or a DataFrame.')
@@ -966,7 +992,6 @@ class PlotlyFig:
                         "Please specify group_col, the label of the column "
                         "containing the groups for each row.")
 
-            # use_colorscale = True
             group_stats = {}
 
             for g in groups:
@@ -983,7 +1008,6 @@ class PlotlyFig:
                         'Omitting rows with group = {} which have only one row '
                         'in the dataframe.'.format(j))
 
-        # todo: fix colorscale nonsense
         if use_colorscale:
             colorscale = colorscale or self.colorscale
         else:
@@ -993,7 +1017,7 @@ class PlotlyFig:
                                group_header=group_col,
                                title=self.layout['title'],
                                colors=colorscale, use_colorscale=use_colorscale,
-                               group_stats=group_stats)
+                               group_stats=group_stats, rugplot=rugplot)
         layout = deepcopy(self.layout)
         font_style = self.font_style.copy()
         font_style['size'] = 0.65 * font_style['size']
@@ -1017,6 +1041,8 @@ class PlotlyFig:
             fig['layout']['width'] = 1400
         if not hasattr(self, 'height'):
             fig['layout']['height'] = 1000
+
+        fig['layout']['font'] = font_style
         return self.create_plot(fig, return_plot)
 
     def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
