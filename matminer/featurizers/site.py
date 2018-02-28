@@ -1401,11 +1401,14 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         Args:
             X - [list of tuples], training data
                 tuple values should be (struc, idx)
+        Returns:
+            self
         """
 
         max_sites = max([len(X[i][0]._sites) for i in range(len(X))])
         self.fit_labels = ['site2 {} {}'.format(i, bin[0]) for bin in self.bins
                            for i in range(max_sites)]
+        return self
 
     def featurize(self, struct, idx):
         """
