@@ -234,7 +234,12 @@ class PlotlyFig:
 
     def set_arguments(self, **kwargs):
         """
-        Method to modify some of the layout arguments after instantiation
+        Method to modify some of the layout and PlotlyFig arguments after
+        instantiation.
+
+        Allowed arguments: title, x_title, y_title, colorbar_title, filename,
+        mode, api_key, username, show_offline_plot
+
         Args:
             **kwargs: allowed variables to change are listed below:
         Returns: None
@@ -242,7 +247,10 @@ class PlotlyFig:
         for kw in kwargs:
             if kw in ['x_title', 'y_title']:
                 self.layout['{}axis'.format(kw[0])]['title'] = kwargs[kw]
-            elif kw in ['filename', 'mode', 'api_key', 'username']:
+            elif kw == 'title':
+                self.layout[kw] = kwargs[kw]
+            elif kw in ['filename', 'mode', 'api_key', 'username',
+                        'show_offline_plot', 'colorbar_title']:
                 setattr(self, kw, kwargs[kw])
                 if kw in ['filename', 'mode']:
                     self.plot_counter = 0
@@ -290,14 +298,6 @@ class PlotlyFig:
                         'Field "api_key" must be filled in online and static'
                         'plotting modes.')
 
-            if self.mode == 'static':
-                if not self.filename or not self.filename.lower().endswith(
-                        ('.png', '.svg', '.jpeg', '.pdf')):
-                    raise ValueError(
-                        'field "filename" must be filled in static plotting '
-                        'mode and must have an extension ending in ('
-                        '".png", ".svg", ".jpeg", ".pdf")')
-
         if self.mode == 'offline':
             if not filename.endswith('.html'):
                 filename += '.html'
@@ -315,14 +315,23 @@ class PlotlyFig:
 
         elif self.mode == 'static':
             if 'height' not in self.layout.keys():
-                height = 600
+                height = 1080
             if 'width' not in self.layout.keys():
-                width = 800
+                width = 1920
+
+            allowed_extensions = ('.png', '.svg', '.jpeg', '.pdf')
+            if not self.filename or not self.filename.lower().endswith(
+                    allowed_extensions):
+                raise ValueError(
+                    'field "filename" must be filled in static plotting '
+                    'mode and must have an extension ending in '
+                    '{}'.format(allowed_extensions))
 
             plotly.plotly.image.save_as(fig, filename=filename,
                                         height=height,
                                         width=width,
                                         scale=self.resolution_scale)
+
         self.plot_counter += 1
 
     def data_from_col(self, col, data=None):
@@ -486,7 +495,8 @@ class PlotlyFig:
             if colorbar is not None:
                 markers[im]['color'] = colorbar
                 fontd = {'family': self.font_style['family'],
-                         'size': 0.75 * self.font_style['size']}
+                         'size': 0.75 * self.font_style['size'],
+                         'color': self.font_style['color']}
                 markers[im]['colorbar'] = {'title': colorbar_title,
                                            'titleside': 'right',
                                            'tickfont': fontd,
