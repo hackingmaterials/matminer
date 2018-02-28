@@ -20,7 +20,7 @@ c = [14, 15, 17]
 xlabels = ['low', 'med', 'high']
 ylabels = ['worst', 'mediocre', 'best']
 pfkwargs = {'mode': 'offline', 'colorbar_title': 'auto', 'y_scale': 'linear',
-            'x_scale': 'linear', 'ticksize': 25, 'fontscale': 1.0,
+            'x_scale': 'linear', 'ticksize': 25, 'fontscale': 0.9,
             'fontsize': 25, 'fontfamily': 'Courier', 'bgcolor': 'white',
             'colorscale': 'Viridis', 'margins': 120, 'pad': 0,
             'filename': 'offline_plot', 'show_offline_plot': True,
