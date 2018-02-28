@@ -41,7 +41,6 @@ from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_f
     import LocalGeometryFinder
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
    import SimplestChemenvStrategy, MultiWeightsChemenvStrategy
-from pymatgen.analysis.chemenv.coordination_environments.structure_environments import LightStructureEnvironments
 
 from matminer.featurizers.stats import PropertyStats
 from sklearn.utils.validation import check_is_fitted
@@ -815,8 +814,6 @@ class ChemicalSRO(BaseFeaturizer):
                             -Pandas dataframe:
                              e.g. df[['struct', 'site']]
             y : unused (added for consistency with overridden method signature)
-        Returns:
-            self
         """
         structs = np.atleast_2d(X)[:, 0]
         if not all([isinstance(struct, Structure) for struct in structs]):
@@ -838,7 +835,6 @@ class ChemicalSRO(BaseFeaturizer):
                 el_set_ = el_set_ | els_
         self.el_list_ = sorted(list(el_set_), key=lambda el:
                 Element(el).mendeleev_no) if self.sort else list(el_set_)
-        return self
 
     def featurize(self, struct, idx):
         """
