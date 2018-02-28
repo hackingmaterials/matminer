@@ -137,7 +137,7 @@ def plot_expt_compt_band_gaps(citrine_api_key, limit=0):
 
     # residual:
     residuals = df_final['MP computed gap']-df_final['Expt. gap'].astype(float)
-    pf.set_argument(x_title='Experimental band gap (eV)',
+    pf.set_arguments(x_title='Experimental band gap (eV)',
                     y_title='Residual (Computed - Expt.) Band Gap (eV)',
                     filename='band_gap_residuals')
     pf.xy(('Expt. gap', residuals), labels = df_final.index)

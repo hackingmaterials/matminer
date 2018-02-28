@@ -1,5 +1,5 @@
 """
-This script shows some basic examples of histogram plot using figrecipes in matminer.
+PlotlyFig examples of histogram plots.
 """
 
 from matminer.datasets.dataframe_loader import load_elastic_tensor, \

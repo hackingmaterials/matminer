@@ -1,5 +1,6 @@
-# PlotlyFig violin examples will go here
-
+"""
+PlotlyFig examples of bar plots.
+"""
 
 from matminer import PlotlyFig
 from matminer.datasets.dataframe_loader import load_elastic_tensor

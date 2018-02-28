@@ -1,3 +1,7 @@
+"""
+PlotlyFig examples of heatmap plots.
+"""
+
 import numpy as np
 import pandas as pd
 from sklearn import datasets
@@ -7,7 +11,8 @@ from matminer import PlotlyFig
 def plot_simple_heatmap_df():
     """
     Very basic example shows how heatmap_df takes a dataframe and returns
-        an overview heatmap of the data with the help of pandas.qcut
+    an overview heatmap of the data with the help of pandas.qcut
+
     Returns:
         plotly plot in "offline" mode poped in the default browser.
     """
@@ -23,7 +28,8 @@ def plot_simple_heatmap_df():
 def plot_basic_heatmap():
     """
     Very basic heatmap plot when the data is already in the right format.
-        Duplicate example; see https://plot.ly/python/heatmaps/ for more info
+    Duplicate example; see https://plot.ly/python/heatmaps/ for more info
+
     Returns:
         plotly plot in "offline" mode poped in the default browser.
     """
@@ -37,8 +43,9 @@ def plot_basic_heatmap():
 def plot_boston_dataset_heatmap_df():
     """
     This example uses sklearn boston dataset to plot a heatmap based on the
-        binned data to see if there is a relationship between the Median house
-        value w/ air NOX concentration and CHAS (Charles River dummy variable)
+    binned data to see if there is a relationship between the Median house
+    value w/ air NOX concentration and CHAS (Charles River dummy variable)
+
     Returns:
         plotly plot in "offline" mode poped in the default browser.
     """

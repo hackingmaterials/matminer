@@ -1,3 +1,7 @@
+"""
+PlotlyFig examples of scatter matrix plots.
+"""
+
 from matminer.datasets.dataframe_loader import load_elastic_tensor
 from matminer import PlotlyFig
 

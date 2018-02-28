@@ -133,7 +133,6 @@ class PlotlyFigTest(PymatgenTest):
         self.pf.heatmap_df(df, x_labels=x_labels, y_labels=y_labels,
                            return_plot=True)
 
-
 if __name__ == "__main__":
     # refresh_json(open_plots=True)
     unittest.main()
