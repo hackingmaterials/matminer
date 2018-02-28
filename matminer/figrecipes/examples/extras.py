@@ -91,6 +91,9 @@ def formatting_example(api_key, username):
     Chart-specific formatting options can be passed to plotting methods.
     """
 
+    if not api_key or not username:
+        raise ValueError("Specify your Plotly api_key and username!")
+
     df = load_elastic_tensor()
 
     pf = PlotlyFig(df=df,
@@ -126,7 +129,7 @@ def formatting_example(api_key, username):
 
 if __name__ == "__main__":
 
-    MY_PLOTLY_USERNAME = "ardunn"
-    MY_PLOTLY_API_KEY = "KwBnIZbGdlnqVH4MzIbA"
+    MY_PLOTLY_USERNAME = ""
+    MY_PLOTLY_API_KEY = ""
     plot_modes(MY_PLOTLY_API_KEY, MY_PLOTLY_USERNAME)
     formatting_example(MY_PLOTLY_API_KEY, MY_PLOTLY_USERNAME)
