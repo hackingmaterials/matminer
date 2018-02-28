@@ -248,6 +248,17 @@ class FingerprintTests(PymatgenTest):
         mvnn_csros = mvnn.featurize_dataframe(df_cscl, ['struct', 'site'])
         self.assertAlmostEqual(mvnn_csros['CSRO_Cs_MinimumVIRENN'][0], 0.5)
         self.assertAlmostEqual(mvnn_csros['CSRO_Cl_MinimumVIRENN'][0], -0.5)
+        # test fit + transform
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn.fit(df_cscl[['struct', 'site']])
+        vnn_csros = vnn.transform(df_cscl[['struct', 'site']].values)
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
+        # test fit_transform
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn_csros = vnn.fit_transform(df_cscl[['struct', 'site']].values)
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
 
     def test_gaussiansymmfunc(self):
         data = pd.DataFrame({'struct': [self.cscl], 'site': [0]})

@@ -38,6 +38,7 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
 from pymatgen.analysis.chemenv.coordination_environments.structure_environments import LightStructureEnvironments
 
 from matminer.featurizers.stats import PropertyStats
+from sklearn.utils.validation import check_is_fitted
 
 cn_motif_op_params = {}
 with open(os.path.join(os.path.dirname(
@@ -765,16 +766,12 @@ class ChemicalSRO(BaseFeaturizer):
         self.nn = nn
         self.includes = includes
         if self.includes:
-            if not isinstance(self.includes,
-                              (list, tuple, set, np.ndarray, pd.Series)):
-                self.includes = [self.includes]
-            self.includes = [Element(el).symbol for el in self.includes]
+            self.includes = [Element(el).symbol
+                             for el in np.atleast_1d(self.includes)]
         self.excludes = excludes
         if self.excludes:
-            if not isinstance(self.excludes,
-                              (list, tuple, set, np.ndarray, pd.Series)):
-                self.excludes = [self.excludes]
-            self.excludes = [Element(el).symbol for el in self.excludes]
+            self.excludes = [Element(el).symbol
+                             for el in np.atleast_1d(self.excludes)]
         self.sort = sort
         self.el_list_ = None
         self.el_amt_dict_ = None
@@ -794,7 +791,7 @@ class ChemicalSRO(BaseFeaturizer):
         nn_ = getattr(pymatgen.analysis.local_env, preset)
         return ChemicalSRO(nn_(**kwargs))
 
-    def fit(self, structs):
+    def fit(self, X, y=None):
         """
         Identify elements to be included in the following featurization,
         by intersecting the elements present in the passed structures with
@@ -804,15 +801,19 @@ class ChemicalSRO(BaseFeaturizer):
         in a dict of self.el_amt_dict_, avoiding repeated calculation of
         composition when featurizing multiple sites in the same structure.
         Args:
-            structs (pandas series): series of pymatgen Structures.
+            X (pandas series): series of pymatgen Structures.
+            y : to be compatible with the overridden fit method.
         Returns:
             self
         """
-        if isinstance(structs, Structure):
-            structs = [structs]
+        structs = np.atleast_2d(X)[:, 0]
+        if not all([isinstance(struct, Structure) for struct in structs]):
+            raise TypeError("This fit requires an array-like input of Pymatgen "
+                            "Structures and sites!")
+
         self.el_amt_dict_ = {}
         el_set_ = set()
-        for s in structs.values:
+        for s in structs:
             if str(s) not in self.el_amt_dict_.keys():
                 el_amt_ = s.composition.fractional_composition.get_el_amt_dict()
                 els_ = set(el_amt_.keys()) if self.includes is None \
@@ -827,37 +828,6 @@ class ChemicalSRO(BaseFeaturizer):
                 Element(el).mendeleev_no) if self.sort else list(el_set_)
         return self
 
-    def _check_is_fitted(self, attrs, msg=None, all_or_any=all):
-        """
-        Checks if the featurizer is fitted by verifying the presence of
-        "all_or_any" of the passed attributes and raises a RuntimeError
-        with the given message if not fitted.
-        Args:
-            attrs (array-like or str): attribute name(s) given as string or
-                                       an array-like strings
-            msg (str): error message raised if not fitted.
-                The default error message is, "This %(name)s featurizer is not
-                fitted yet! Call 'fit' with appropriate arguments before using
-                this method."
-                For custom messages if "%(name)s" is present in the message
-                string, it is substituted for the featurizer name.
-            all_or_any: callable, {all, any}, default: all.
-                Specify whether all or any of the given attributes must exist.
-        Returns:
-            None
-        Raises:
-            RuntimeError
-        """
-        if msg is None:
-            msg = ("This %(name)s featurizer is not fitted yet! Call 'fit' "
-                   "with appropriate arguments before using this method.")
-
-        if not isinstance(attrs, (list, tuple, set, np.ndarray, pd.Series)):
-            attrs = [attrs]
-
-        if not all_or_any([hasattr(self, attr) for attr in attrs]):
-            raise RuntimeError(msg % {'name': type(self).__name__})
-
     def featurize(self, struct, idx):
         """
         Get CSRO features of site with given index in input structure.
@@ -868,7 +838,7 @@ class ChemicalSRO(BaseFeaturizer):
             (list of floats): Chemical SRO features for each element.
         """
 
-        self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=all)
+        check_is_fitted(self, ['el_amt_dict_', 'el_list_'])
 
         csro = [0.]*len(self.el_list_)
         if str(struct) in self.el_amt_dict_.keys():
@@ -884,7 +854,7 @@ class ChemicalSRO(BaseFeaturizer):
         return csro
 
     def feature_labels(self):
-        self._check_is_fitted(['el_amt_dict_', 'el_list_'], all_or_any=all)
+        check_is_fitted(self, ['el_amt_dict_', 'el_list_'])
 
         return ['CSRO_{}_{}'.format(el, self.nn.__class__.__name__)
                 for el in self.el_list_]
