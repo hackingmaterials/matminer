@@ -17,7 +17,6 @@ index and the structure. For example:
 import os
 import ruamel.yaml as yaml
 import numpy as np
-import pandas as pd
 import math
 
 from collections import defaultdict
@@ -801,8 +800,14 @@ class ChemicalSRO(BaseFeaturizer):
         in a dict of self.el_amt_dict_, avoiding repeated calculation of
         composition when featurizing multiple sites in the same structure.
         Args:
-            X (pandas series): series of pymatgen Structures.
-            y : to be compatible with the overridden fit method.
+            X (array-like): containing Pymatgen structures and sites, supports
+                            multiple choices:
+                            -2D array-like object:
+                             e.g. [[struct, site], [struct, site], …]
+                                  np.array([[struct, site], [struct, site], …])
+                            -Pandas dataframe:
+                             e.g. df[['struct', 'site']]
+            y : unused (added for consistency with overridden method signature)
         Returns:
             self
         """
