@@ -33,8 +33,7 @@ from scipy.spatial import Voronoi, Delaunay
 from pymatgen import Structure
 from pymatgen.core.periodic_table import Element
 from pymatgen.analysis.local_env import LocalStructOrderParas, \
-    VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
-    MinimumVIRENN
+    VoronoiNN
 import pymatgen.analysis
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
@@ -660,16 +659,16 @@ class VoronoiFingerprint(BaseFeaturizer):
                 -Voronoi area statistics
         """
         n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
-        voro_idx_list = np.array([0, 0, 0, 0, 0, 0, 0, 0])
-        voro_idx_weights = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
+        voro_idx_list = np.zeros(8, int)
+        voro_idx_weights = np.zeros(8)
 
         vertices = [struct[idx].coords] + [nn.coords for nn in n_w.keys()]
         voro = Voronoi(vertices)
 
         vol_list = []
         area_list = []
-        dist_list = [np.linalg.norm(vertices[0] - vertices[i]) for i in
-                     range(1, len(vertices))]
+        dist_list = [np.linalg.norm(vertices[0] - vertices[i])
+                     for i in range(1, len(vertices))]
 
         for nn, vind in voro.ridge_dict.items():
             if 0 in nn:
@@ -712,11 +711,11 @@ class VoronoiFingerprint(BaseFeaturizer):
         voro_fps.append(sum(vol_list))
         voro_fps.append(sum(area_list))
         voro_fps += [PropertyStats().calc_stat(vol_list, stat_vol)
-                    for stat_vol in self.stats_vol]
+                     for stat_vol in self.stats_vol]
         voro_fps += [PropertyStats().calc_stat(area_list, stat_area)
-                    for stat_area in self.stats_area]
+                     for stat_area in self.stats_area]
         voro_fps += [PropertyStats().calc_stat(dist_list, stat_dist)
-                    for stat_dist in self.stats_dist]
+                     for stat_dist in self.stats_dist]
         return voro_fps
 
     def feature_labels(self):
