@@ -1232,11 +1232,11 @@ class Miedema(BaseFeaturizer):
             elif struct_type == 'ss':
                 deltaH_chem_ss = 0
                 deltaH_elast_ss = 0
-                for bin, el_bin in enumerate(el_bins):
+                for sub_bin, el_bin in enumerate(el_bins):
                     deltaH_chem_ss += self.deltaH_chem(el_bin,
-                                                       frac_bins[bin], 'ss')
+                                                       frac_bins[sub_bin], 'ss')
                     deltaH_elast_ss += self.deltaH_elast(el_bin,
-                                                         frac_bins[bin])
+                                                         frac_bins[sub_bin])
 
                 for ss_type in self.ss_types:
                     if ss_type == 'min':
@@ -1256,9 +1256,9 @@ class Miedema(BaseFeaturizer):
             elif struct_type == 'amor':
                 deltaH_chem_amor = 0
                 deltaH_topo_amor = self.deltaH_topo(elements, fracs)
-                for bin, el_bin in enumerate(el_bins):
+                for sub_bin, el_bin in enumerate(el_bins):
                     deltaH_chem_amor += self.deltaH_chem(el_bin,
-                                                         frac_bins[bin], 'amor')
+                                                         frac_bins[sub_bin], 'amor')
                 miedema.append(deltaH_chem_amor + deltaH_topo_amor)
 
         # convert kJ/mol to eV/atom. The original Miedema model is in kJ/mol.
