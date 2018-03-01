@@ -272,7 +272,6 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
         self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
 
-
     def test_gaussiansymmfunc(self):
         data = pd.DataFrame({'struct': [self.cscl], 'site': [0]})
         gsf = GaussianSymmFunc()
