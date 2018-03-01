@@ -590,7 +590,7 @@ class VoronoiFingerprint(BaseFeaturizer):
             indicating only 4-fold symmetry is present;
         for icosahedra, the Voronoi indices are [0,0,1,0,...],
             indicating only 5-fold symmetry is present;
-    weighted i-fold symmetry indices
+    Weighted i-fold symmetry indices
         if use_weights = True
     Voronoi volume
         total volume of the Voronoi polyhedron around the target site
@@ -606,6 +606,7 @@ class VoronoiFingerprint(BaseFeaturizer):
     Args:
         cutoff (float): cutoff distance in determining the potential
                         neighbors for Voronoi tessellation analysis.
+                        (default: 6.5)
         use_weights(bool): whether to use weights to derive weighted
                            i-fold symmetry indices.
         stats_vol (list of str): volume statistics types.
@@ -613,7 +614,7 @@ class VoronoiFingerprint(BaseFeaturizer):
         stats_dist (list of str): neighboring distance statistics types.
     """
 
-    def __init__(self, cutoff=6.0, use_weights=False, stats_vol=None,
+    def __init__(self, cutoff=6.5, use_weights=False, stats_vol=None,
                  stats_area=None, stats_dist=None):
         self.cutoff = cutoff
         self.use_weights = use_weights
@@ -681,7 +682,6 @@ class VoronoiFingerprint(BaseFeaturizer):
                             if np.array_equal(neigh.coords,
                                               vertices[sorted(nn)[1]]):
                                 voro_idx_weights[len(vind) - 3] += weight
-
                 except IndexError:
                     # If a facet has more than 10 edges, it's skipped here.
                     pass

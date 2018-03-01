@@ -946,7 +946,7 @@ class Miedema(BaseFeaturizer):
         ternary alloys, but needs to be careful with quaternary alloys and more.
 
     Args:
-        struct_types (str / list of str): default='inter'
+        struct_types (str or list of str): default='inter'
             if str, one target structure;
             if list, a list of target structures.
             e.g.
@@ -955,7 +955,7 @@ class Miedema(BaseFeaturizer):
             'amor': amorphous phase
             'all': same for ['inter', 'ss', 'amor']
             ['inter', 'ss']: amorphous phase and solid solution, as an example
-        ss_types (str / list of str): only for ss, default='min'
+        ss_types (str or list of str): only for ss, default='min'
             if str, one structure type of ss;
             if list, a list of structure types of ss.
             e.g.
@@ -1028,9 +1028,8 @@ class Miedema(BaseFeaturizer):
         Returns:
             deltaH_chem (float): chemical term of formation enthalpy
         """
-        for el in elements:
-            if el not in self.df_dataset.index:
-                return np.nan
+        if any([el not in self.df_dataset.index for el in elements]):
+            return np.nan
         df_el = self.df_dataset.loc[elements]
         v_molar = np.array(df_el['molar_volume'])
         n_ws = np.array(df_el['electron_density'])
@@ -1038,7 +1037,7 @@ class Miedema(BaseFeaturizer):
         val = np.array(df_el['valence_electrons'])
         a = np.array(df_el['a_const'])
         r = np.array(df_el['R_const'])
-        H_trans = np.array(df_el['H_trans'])
+        h_trans = np.array(df_el['H_trans'])
 
         if struct == 'inter':
             gamma = 8
@@ -1049,14 +1048,14 @@ class Miedema(BaseFeaturizer):
 
         c_sf = (fracs * np.power(v_molar, 2/3) /
                 np.dot(fracs, np.power(v_molar, 2/3)))
-        f = (c_sf * (1 + gamma * np.power(np.multiply.reduce(c_sf), 2)))[::-1]
+        f = (c_sf * (1 + gamma * np.power(np.multiply.reduce(c_sf, 0), 2)))[::-1]
         v_a = np.array([np.power(v_molar[0], 2/3) *
                         (1 + a[0] * f[0] * (elec[0] - elec[1])),
                         np.power(v_molar[1], 2/3) *
                         (1 + a[1] * f[1] * (elec[1] - elec[0]))])
         c_sf_a = fracs * v_a / np.dot(fracs, v_a)
         f_a = (c_sf_a * (1 + gamma * np.power(np.multiply.reduce
-                                              (c_sf_a), 2)))[::-1]
+                                              (c_sf_a, 0), 2)))[::-1]
 
         threshold = range(3, 12)
         if (val[0] in threshold) and (val[1] in threshold):
@@ -1067,7 +1066,7 @@ class Miedema(BaseFeaturizer):
             r = 0.
         else:
             p = 12.35
-            r = np.multiply.reduce(r) * p
+            r = np.multiply.reduce(r, 0) * p
         q = p * 9.4
 
         eta_ab = (2 * (-p * np.power(elec[0] - elec[1], 2) - r +
@@ -1076,7 +1075,7 @@ class Miedema(BaseFeaturizer):
                   reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
 
         deltaH_chem = (f_a[0] * fracs[0] * v_a[0] * eta_ab +
-                       np.dot(fracs, H_trans))
+                       np.dot(fracs, h_trans))
         return deltaH_chem
 
     def deltaH_elast(self, elements, fracs):
@@ -1088,9 +1087,8 @@ class Miedema(BaseFeaturizer):
         Returns:
             deltaH_elastic (float): elastic term of formation enthalpy
         """
-        for el in elements:
-            if el not in self.df_dataset.index:
-                return np.nan
+        if any([el not in self.df_dataset.index for el in elements]):
+            return np.nan
         df_el = self.df_dataset.loc[elements]
         v_molar = np.array(df_el['molar_volume'])
         n_ws = np.array(df_el['electron_density'])
@@ -1098,11 +1096,11 @@ class Miedema(BaseFeaturizer):
         compr = np.array(df_el['compressibility'])
         shear_mod = np.array(df_el['shear_modulus'])
 
-        alp = (1.5 * np.power(v_molar, 2/3) /
+        alp = (np.multiply(1.5, np.power(v_molar, 2/3)) /
                reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
         v_a = (v_molar + np.array([alp[0] * (elec[0] - elec[1]) / n_ws[0],
                                    alp[1] * (elec[1] - elec[0]) / n_ws[1]]))
-        alp_a = (1.5 * np.power(v_a, 2/3) /
+        alp_a = (np.multiply(1.5, np.power(v_a, 2/3)) /
                  reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
 
         # effective volume in alloy
@@ -1124,7 +1122,7 @@ class Miedema(BaseFeaturizer):
                      (4 * shear_mod[0] * vba_a[1] +
                       3 * compr[1] * vab_a[1]))
 
-        deltaH_elast = (np.multiply.reduce(fracs) *
+        deltaH_elast = (np.multiply.reduce(fracs, 0) *
                         (fracs[1] * hab_elast + fracs[0] * hba_elast))
         return deltaH_elast
 
@@ -1138,9 +1136,8 @@ class Miedema(BaseFeaturizer):
         Returns:
             deltaH_struct (float): structural term of formation enthalpy
         """
-        for el in elements:
-            if el not in self.df_dataset.index:
-                return np.nan
+        if any([el not in self.df_dataset.index for el in elements]):
+            return np.nan
         df_el = self.df_dataset.loc[elements]
         val = np.array(df_el['valence_electrons'])
         struct_stab = np.array(df_el['structural_stability'])
@@ -1191,12 +1188,10 @@ class Miedema(BaseFeaturizer):
         Returns:
             deltaH_topo (float): topological term of formation enthalpy
         """
-        for el in elements:
-            if el not in self.df_dataset.index:
-                return np.nan
-        else:
-            df_el = self.df_dataset.loc[elements]
-            melt_point = np.array(df_el['melting_point'])
+        if any([el not in self.df_dataset.index for el in elements]):
+            return np.nan
+        df_el = self.df_dataset.loc[elements]
+        melt_point = np.array(df_el['melting_point'])
 
         deltaH_topo = 3.5 * np.dot(fracs, melt_point) / 1000
         return deltaH_topo
@@ -1214,13 +1209,13 @@ class Miedema(BaseFeaturizer):
         el_amt = comp.fractional_composition.get_el_amt_dict()
         elements = sorted(el_amt.keys(), key=lambda sym: get_el_sp(sym).X)
         fracs = [el_amt[el] for el in elements]
-        len_elements = len(elements)
+        el_num = len(elements)
         # divide into a list of sub-binaries
-        element_bins = []
+        el_bins = []
         frac_bins = []
-        for i in range(len_elements - 1):
-            for j in range(i+1, len_elements):
-                element_bins.append([elements[i], elements[j]])
+        for i in range(el_num - 1):
+            for j in range(i+1, el_num):
+                el_bins.append([elements[i], elements[j]])
                 frac_bins.append([fracs[i], fracs[j]])
 
         miedema = []
@@ -1228,8 +1223,8 @@ class Miedema(BaseFeaturizer):
             # inter: intermetallic compound
             if struct_type == 'inter':
                 deltaH_chem_inter = 0
-                for i_inter, element_bin in enumerate(element_bins):
-                    deltaH_chem_inter += self.deltaH_chem(element_bin,
+                for i_inter, el_bin in enumerate(el_bins):
+                    deltaH_chem_inter += self.deltaH_chem(el_bin,
                                                           frac_bins[i_inter],
                                                           'inter')
                 miedema.append(deltaH_chem_inter)
@@ -1237,10 +1232,10 @@ class Miedema(BaseFeaturizer):
             elif struct_type == 'ss':
                 deltaH_chem_ss = 0
                 deltaH_elast_ss = 0
-                for bin, element_bin in enumerate(element_bins):
-                    deltaH_chem_ss += self.deltaH_chem(element_bin,
+                for bin, el_bin in enumerate(el_bins):
+                    deltaH_chem_ss += self.deltaH_chem(el_bin,
                                                        frac_bins[bin], 'ss')
-                    deltaH_elast_ss += self.deltaH_elast(element_bin,
+                    deltaH_elast_ss += self.deltaH_elast(el_bin,
                                                          frac_bins[bin])
 
                 for ss_type in self.ss_types:
@@ -1261,8 +1256,8 @@ class Miedema(BaseFeaturizer):
             elif struct_type == 'amor':
                 deltaH_chem_amor = 0
                 deltaH_topo_amor = self.deltaH_topo(elements, fracs)
-                for bin, element_bin in enumerate(element_bins):
-                    deltaH_chem_amor += self.deltaH_chem(element_bin,
+                for bin, el_bin in enumerate(el_bins):
+                    deltaH_chem_amor += self.deltaH_chem(el_bin,
                                                          frac_bins[bin], 'amor')
                 miedema.append(deltaH_chem_amor + deltaH_topo_amor)
 
@@ -1275,9 +1270,9 @@ class Miedema(BaseFeaturizer):
         for struct_type in self.struct_types:
             if struct_type == 'ss':
                 for ss_type in self.ss_types:
-                    labels.append('formation_enthalpy_ss_'+ss_type)
+                    labels.append('Miedema_deltaH_ss_'+ss_type)
             else:
-                labels.append('formation_enthalpy_'+struct_type)
+                labels.append('Miedema_deltaH_'+struct_type)
         return labels
 
     def citations(self):
