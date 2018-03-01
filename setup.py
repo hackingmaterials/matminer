@@ -18,6 +18,7 @@ if __name__ == "__main__":
         license='modified BSD',
         packages=find_packages(),
         package_data={'matminer.datasets': ['*.csv'],
+                      'matminer.featurizers': ["*.yaml"],
                       'matminer.utils.data_files': ['*.csv', '*.json', 'magpie_elementdata/*.table']},
         zip_safe=False,
         install_requires=['pymatgen>=2018.2.13', 'tqdm>=4.14.0', 'pandas>=0.20.1',
