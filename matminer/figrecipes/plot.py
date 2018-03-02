@@ -495,8 +495,9 @@ class PlotlyFig:
             if colorbar is not None:
                 markers[im]['color'] = colorbar
                 fontd = {'family': self.font_style['family'],
-                         'size': 0.75 * self.font_style['size'],
-                         'color': self.font_style['color']}
+                         'size': 0.75 * self.font_style['size']}
+                if 'color' in self.font_style.keys():
+                    fontd['color'] = self.font_style['color']
                 markers[im]['colorbar'] = {'title': colorbar_title,
                                            'titleside': 'right',
                                            'tickfont': fontd,
