@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import numpy as np
 from six import string_types
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from sklearn.base import TransformerMixin, BaseEstimator
 
 
@@ -113,7 +113,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
     @property
     def n_jobs(self):
-        return self._n_jobs if hasattr(self, '_n_jobs') else 1
+        return self._n_jobs if hasattr(self, '_n_jobs') else cpu_count()
 
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
