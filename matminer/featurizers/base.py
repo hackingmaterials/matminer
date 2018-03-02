@@ -119,8 +119,11 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         """Update the parameters of this featurizer based on available data
 
         Args:
-            X - [list of tuples], training data"""
-        pass
+            X - [list of tuples], training data
+        Returns:
+            self
+            """
+        return self
 
     def transform(self, X):
         """Compute features for a list of inputs"""

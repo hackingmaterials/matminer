@@ -213,6 +213,9 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
                 must be Pymatgen Structure objects.
             y: *Not used*
             fit_kwargs: *not used*
+
+        Returns:
+            self
         """
 
         # Initialize list with included elements
@@ -227,6 +230,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         # Store the elements
         self.elements_ = [e.symbol for e in sorted(elements)]
+
+        return self
 
     def featurize(self, s):
         """
@@ -1227,7 +1232,7 @@ class BagofBonds(BaseFeaturizer):
                 types.
 
         Returns:
-            None
+            self
         """
         listlike = (tuple, list, np.ndarray, pd.Series)
         if not isinstance(structures, listlike):
@@ -1246,6 +1251,8 @@ class BagofBonds(BaseFeaturizer):
                 warnings.warn("The intersection between the allowed bonds "
                               "and the fitted bonds is zero. There's no bonds"
                               "to be featurized!")
+
+        return self
 
     def enumerate_bonds(self, s):
         """

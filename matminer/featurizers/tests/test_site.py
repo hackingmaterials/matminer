@@ -169,9 +169,9 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(cevals[l.index('O:6')], 0, places=7)
 
     def test_voronoifingerprint(self):
-        data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
+        df_sc= pd.DataFrame({'struct': [self.sc], 'site': [0]})
         vorofp = VoronoiFingerprint(use_weights=True)
-        vorofps = vorofp.featurize_dataframe(data, ['struct', 'site'])
+        vorofps = vorofp.featurize_dataframe(df_sc, ['struct', 'site'])
         self.assertAlmostEqual(vorofps['Voro_index_3'][0], 0.0)
         self.assertAlmostEqual(vorofps['Voro_index_4'][0], 6.0)
         self.assertAlmostEqual(vorofps['Voro_index_5'][0], 0.0)
@@ -212,22 +212,65 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(vorofps['Voro_dist_maximum'][0], 3.52)
 
     def test_chemicalSRO(self):
-        data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
-        csros = ChemicalSRO.from_preset("VoronoiNN").\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_VoronoiNN'][0], 0.0)
-        csros = ChemicalSRO(JMolNN(el_radius_updates = {"Al": 1.55})).\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_JMolNN'][0], 0.0)
-        csros = ChemicalSRO.from_preset("MinimumDistanceNN").\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_MinimumDistanceNN'][0], 0.0)
-        csros = ChemicalSRO.from_preset("MinimumOKeeffeNN").\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_MinimumOKeeffeNN'][0], 0.0)
-        csros = ChemicalSRO.from_preset("MinimumVIRENN").\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_MinimumVIRENN'][0], 0.0)
+        df_sc = pd.DataFrame({'struct': [self.sc], 'site': [0]})
+        df_cscl = pd.DataFrame({'struct': [self.cscl], 'site': [0]})
+        vnn = ChemicalSRO.from_preset("VoronoiNN", cutoff=6.0)
+        vnn.fit(df_sc[['struct', 'site']])
+        vnn_csros = vnn.featurize_dataframe(df_sc, ['struct', 'site'])
+        self.assertAlmostEqual(vnn_csros['CSRO_Al_VoronoiNN'][0], 0.0)
+        vnn = ChemicalSRO(VoronoiNN(), includes="Cs")
+        vnn.fit(df_cscl[['struct', 'site']])
+        vnn_csros = vnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(vnn_csros['CSRO_Cs_VoronoiNN'][0], 0.0714285714)
+        vnn = ChemicalSRO(VoronoiNN(), excludes="Cs")
+        vnn.fit(df_cscl[['struct', 'site']])
+        vnn_csros = vnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(vnn_csros['CSRO_Cl_VoronoiNN'][0], -0.0714285714)
+        jmnn = ChemicalSRO.from_preset("JMolNN", el_radius_updates={"Al": 1.55})
+        jmnn.fit(df_sc[['struct', 'site']])
+        jmnn_csros = jmnn.featurize_dataframe(df_sc, ['struct', 'site'])
+        self.assertAlmostEqual(jmnn_csros['CSRO_Al_JMolNN'][0], 0.0)
+        jmnn = ChemicalSRO.from_preset("JMolNN")
+        jmnn.fit(df_cscl[['struct', 'site']])
+        jmnn_csros = jmnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(jmnn_csros['CSRO_Cs_JMolNN'][0], -0.5)
+        self.assertAlmostEqual(jmnn_csros['CSRO_Cl_JMolNN'][0], -0.5)
+        mdnn = ChemicalSRO.from_preset("MinimumDistanceNN")
+        mdnn.fit(df_cscl[['struct', 'site']])
+        mdnn_csros = mdnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(mdnn_csros['CSRO_Cs_MinimumDistanceNN'][0], 0.5)
+        self.assertAlmostEqual(mdnn_csros['CSRO_Cl_MinimumDistanceNN'][0], -0.5)
+        monn = ChemicalSRO.from_preset("MinimumOKeeffeNN")
+        monn.fit(df_cscl[['struct', 'site']])
+        monn_csros = monn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(monn_csros['CSRO_Cs_MinimumOKeeffeNN'][0], 0.5)
+        self.assertAlmostEqual(monn_csros['CSRO_Cl_MinimumOKeeffeNN'][0], -0.5)
+        mvnn = ChemicalSRO.from_preset("MinimumVIRENN")
+        mvnn.fit(df_cscl[['struct', 'site']])
+        mvnn_csros = mvnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(mvnn_csros['CSRO_Cs_MinimumVIRENN'][0], 0.5)
+        self.assertAlmostEqual(mvnn_csros['CSRO_Cl_MinimumVIRENN'][0], -0.5)
+        # test fit + transform
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn.fit(df_cscl[['struct', 'site']])  # dataframe
+        vnn_csros = vnn.transform(df_cscl[['struct', 'site']].values)
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn.fit(df_cscl[['struct', 'site']].values)  # np.array
+        vnn_csros = vnn.transform(df_cscl[['struct', 'site']].values)
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn.fit([[self.cscl, 0]])  # list
+        vnn_csros = vnn.transform([[self.cscl, 0]])
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
+        # test fit_transform
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn_csros = vnn.fit_transform(df_cscl[['struct', 'site']].values)
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
 
     def test_gaussiansymmfunc(self):
         data = pd.DataFrame({'struct': [self.cscl], 'site': [0]})
