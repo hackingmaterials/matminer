@@ -5,6 +5,13 @@
 matminer Changelog
 ==================
 
+**v0.2.6**
+
+* modify ChemicalRSO to use fit() method (Q. Wang)
+* more updates to FigRecipes (A. Dunn, A. Faghaninia)
+* misc code cleanups (M. Dylla, A. Faghaninia, A. Jain, K. Bostrom, Q. Wang)
+* fix missing yaml file from package data (A. Jain)
+
 **v0.2.5**
 
 * Major rework of BaseFeaturizer to subclass BaseEstimator/TransformerMixin of sklearn. Allows for support of fit() function needed by many featurizers (L. Ward)
