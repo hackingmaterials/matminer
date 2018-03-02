@@ -213,6 +213,9 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
                 must be Pymatgen Structure objects.
             y: *Not used*
             fit_kwargs: *not used*
+
+        Returns:
+            self
         """
 
         # Initialize list with included elements
@@ -227,6 +230,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         # Store the elements
         self.elements_ = [e.symbol for e in sorted(elements)]
+
+        return self
 
     def featurize(self, s):
         """
@@ -1211,7 +1216,7 @@ class BagofBonds(BaseFeaturizer):
         nn = getattr(pmg_le, preset)
         return BagofBonds(nn(), **kwargs)
 
-    def fit(self, structures):
+    def fit(self, X, y=None):
         """
         Define the bond types allowed to be returned during each featurization.
         Bonds found during featurization which are not allowed will be omitted
@@ -1222,21 +1227,23 @@ class BagofBonds(BaseFeaturizer):
         in __init__.
 
         Args:
-            structures (Series/list): An iterable of pymatgen Structure
+            X (Series/list): An iterable of pymatgen Structure
                 objects which will be used to determine the allowed bond
                 types.
+            y : unused (added for consistency with overridden method signature)
 
         Returns:
-            None
+            self
+
         """
         listlike = (tuple, list, np.ndarray, pd.Series)
-        if not isinstance(structures, listlike):
-            raise ValueError("structures must be a list of pymatgen Structures")
-        if not isinstance(structures[0], (Structure, dict)):
-            raise ValueError("structures must either pymatgen Structure "
-                             "objects")
+        if not isinstance(X, listlike):
+            raise ValueError("X must be a list of pymatgen Structures")
+        if not isinstance(X[0], (Structure, dict)):
+            raise ValueError("Each structure must be a pymatgen Structure "
+                             "object.")
 
-        sanitized = self._sanitize_bonds(self.enumerate_all_bonds(structures))
+        sanitized = self._sanitize_bonds(self.enumerate_all_bonds(X))
 
         if self.allowed_bonds is None:
             self.fitted_bonds_ = sanitized
@@ -1246,6 +1253,8 @@ class BagofBonds(BaseFeaturizer):
                 warnings.warn("The intersection between the allowed bonds "
                               "and the fitted bonds is zero. There's no bonds"
                               "to be featurized!")
+
+        return self
 
     def enumerate_bonds(self, s):
         """

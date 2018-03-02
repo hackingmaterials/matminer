@@ -30,9 +30,10 @@ from collections import defaultdict
 from matminer.featurizers.base import BaseFeaturizer
 from math import pi
 from scipy.spatial import Voronoi, Delaunay
+from pymatgen import Structure
+from pymatgen.core.periodic_table import Element
 from pymatgen.analysis.local_env import LocalStructOrderParas, \
-    VoronoiNN, JMolNN, MinimumDistanceNN, MinimumOKeeffeNN, \
-    MinimumVIRENN
+    VoronoiNN
 import pymatgen.analysis
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
@@ -42,6 +43,7 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
 from pymatgen.analysis.chemenv.coordination_environments.structure_environments import LightStructureEnvironments
 
 from matminer.featurizers.stats import PropertyStats
+from sklearn.utils.validation import check_is_fitted
 
 cn_motif_op_params = {}
 with open(os.path.join(os.path.dirname(
@@ -573,36 +575,39 @@ class VoronoiFingerprint(BaseFeaturizer):
     """
     Calculate the following sets of features based on Voronoi tessellation
     analysis around the target site:
-    -Voronoi indices {n_i}
-     n_i denotes the number of i-edged facets, and i is in the range of 3-10.
-     e.g. for bcc lattice, the Voronoi indices are [0,6,0,8,...];
-          for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...];
-          for icosahedra, the Voronoi indices are [0,0,12,0,...];
-    -i-fold symmetry indices
-     computed as n_i/sum(n_i), and i is in the range of 3-10.
-     reflect the strength of i-fold symmetry in local sites.
-     e.g. for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,...]
-             indicating both 4-fold and stronger 6-fold symmetries are present;
-          for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
-             indicating only 4-fold symmetry is present;
-          for icosahedra, the Voronoi indices are [0,0,1,0,...],
-             indicating only 5-fold symmetry is present;
-    -weighted i-fold symmetry indices
-     if use_weights = True
-    -Voronoi volume
-     total volume of the Voronoi polyhedron around the target site
-    -Voronoi volume statistics of the sub_polyhedra formed by each facet
-     and the center site
-     e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
-    -Voronoi area
-     total area of the Voronoi polyhedron around the target site
-    -Voronoi area statistics of the facets
-     e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
-    -Voronoi nearest-neighboring distance statistics
-     e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
+    Voronoi indices
+        n_i denotes the number of i-edged facets, and i is in the range of 3-10.
+        e.g.
+        for bcc lattice, the Voronoi indices are [0,6,0,8,...];
+        for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,...];
+        for icosahedra, the Voronoi indices are [0,0,12,0,...];
+    i-fold symmetry indices
+        computed as n_i/sum(n_i), and i is in the range of 3-10.
+        reflect the strength of i-fold symmetry in local sites.
+        e.g.
+        for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,...]
+            indicating both 4-fold and a stronger 6-fold symmetries are present;
+        for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,...],
+            indicating only 4-fold symmetry is present;
+        for icosahedra, the Voronoi indices are [0,0,1,0,...],
+            indicating only 5-fold symmetry is present;
+    Weighted i-fold symmetry indices
+        if use_weights = True
+    Voronoi volume
+        total volume of the Voronoi polyhedron around the target site
+    Voronoi volume statistics of sub_polyhedra formed by each facet + center
+        e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
+    Voronoi area
+        total area of the Voronoi polyhedron around the target site
+    Voronoi area statistics of the facets
+        e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
+    Voronoi nearest-neighboring distance statistics
+        e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
+
     Args:
         cutoff (float): cutoff distance in determining the potential
                         neighbors for Voronoi tessellation analysis.
+                        (default: 6.5)
         use_weights(bool): whether to use weights to derive weighted
                            i-fold symmetry indices.
         stats_vol (list of str): volume statistics types.
@@ -610,7 +615,7 @@ class VoronoiFingerprint(BaseFeaturizer):
         stats_dist (list of str): neighboring distance statistics types.
     """
 
-    def __init__(self, cutoff=6.0, use_weights=False, stats_vol=None,
+    def __init__(self, cutoff=6.5, use_weights=False, stats_vol=None,
                  stats_area=None, stats_dist=None):
         self.cutoff = cutoff
         self.use_weights = use_weights
@@ -656,16 +661,16 @@ class VoronoiFingerprint(BaseFeaturizer):
                 -Voronoi area statistics
         """
         n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
-        voro_idx_list = np.array([0, 0, 0, 0, 0, 0, 0, 0])
-        voro_idx_weights = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
+        voro_idx_list = np.zeros(8, int)
+        voro_idx_weights = np.zeros(8)
 
-        vertices = [struct[idx].coords] + [key.coords for key in n_w.keys()]
+        vertices = [struct[idx].coords] + [nn.coords for nn in n_w.keys()]
         voro = Voronoi(vertices)
 
         vol_list = []
         area_list = []
-        dist_list = [np.linalg.norm(vertices[0] - vertices[i]) for i in
-                     range(1, len(vertices))]
+        dist_list = [np.linalg.norm(vertices[0] - vertices[i])
+                     for i in range(1, len(vertices))]
 
         for nn, vind in voro.ridge_dict.items():
             if 0 in nn:
@@ -674,10 +679,10 @@ class VoronoiFingerprint(BaseFeaturizer):
                 try:
                     voro_idx_list[len(vind) - 3] += 1
                     if self.use_weights:
-                        for key, value in n_w.items():
-                            if str(key.coords) == str(vertices[sorted(nn)[1]]):
-                                voro_idx_weights[len(vind) - 3] += value
-
+                        for neigh, weight in n_w.items():
+                            if np.array_equal(neigh.coords,
+                                              vertices[sorted(nn)[1]]):
+                                voro_idx_weights[len(vind) - 3] += weight
                 except IndexError:
                     # If a facet has more than 10 edges, it's skipped here.
                     pass
@@ -695,25 +700,24 @@ class VoronoiFingerprint(BaseFeaturizer):
                 vol_list.append(vol)
                 area_list.append(vol * 6 / dist_list[sorted(nn)[1] - 1])
 
-        symmetry_idx_list = voro_idx_list / sum(voro_idx_list)
+        symm_idx_list = voro_idx_list / sum(voro_idx_list)
         if self.use_weights:
-            symmetry_wt_list = voro_idx_weights / sum(voro_idx_weights)
-            voro_fingerprint = list(np.concatenate((voro_idx_list,
-                                                    symmetry_idx_list,
-                                                    symmetry_wt_list), axis=0))
+            symm_wt_list = voro_idx_weights / sum(voro_idx_weights)
+            voro_fps = list(np.concatenate((voro_idx_list, symm_idx_list,
+                                           symm_wt_list), axis=0))
         else:
-            voro_fingerprint = list(np.concatenate((voro_idx_list,
-                                                    symmetry_idx_list), axis=0))
+            voro_fps = list(np.concatenate((voro_idx_list,
+                                           symm_idx_list), axis=0))
 
-        voro_fingerprint.append(sum(vol_list))
-        voro_fingerprint.append(sum(area_list))
-        voro_fingerprint += [PropertyStats().calc_stat(vol_list, stat_vol)
-                             for stat_vol in self.stats_vol]
-        voro_fingerprint += [PropertyStats().calc_stat(area_list, stat_area)
-                             for stat_area in self.stats_area]
-        voro_fingerprint += [PropertyStats().calc_stat(dist_list, stat_dist)
-                             for stat_dist in self.stats_dist]
-        return voro_fingerprint
+        voro_fps.append(sum(vol_list))
+        voro_fps.append(sum(area_list))
+        voro_fps += [PropertyStats().calc_stat(vol_list, stat_vol)
+                     for stat_vol in self.stats_vol]
+        voro_fps += [PropertyStats().calc_stat(area_list, stat_area)
+                     for stat_area in self.stats_area]
+        voro_fps += [PropertyStats().calc_stat(dist_list, stat_dist)
+                     for stat_dist in self.stats_dist]
+        return voro_fps
 
     def feature_labels(self):
         labels = ['Voro_index_%d' % i for i in range(3, 11)]
@@ -748,76 +752,93 @@ class ChemicalSRO(BaseFeaturizer):
     the target site, sum of N_el is the sum of all possible element types
     (coordination number), and c_el is the composition of the specific
     element in the entire structure.
-    Here the calculation is run for each element present in the structure.
     A positive f_el indicates the "bonding" with the specific element
     is favored, at least in the target site;
     A negative f_el indicates the "bonding" is not favored, at least
     in the target site.
+
+    Note that ChemicalSRO is only featurized for elements identified by
+    "fit" (see following), thus "fit" must be called before "featurize",
+    or else an error will be raised.
     Args:
         nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
                               classes.
+        includes (array-like or str): elements included to calculate CSRO.
+        excludes (array-like or str): elements excluded to calculate CSRO.
+        sort (bool): whether to sort elements by mendeleev number.
     """
 
+    def __init__(self, nn, includes=None, excludes=None, sort=True):
+        self.nn = nn
+        self.includes = includes
+        if self.includes:
+            self.includes = [Element(el).symbol
+                             for el in np.atleast_1d(self.includes)]
+        self.excludes = excludes
+        if self.excludes:
+            self.excludes = [Element(el).symbol
+                             for el in np.atleast_1d(self.excludes)]
+        self.sort = sort
+        self.el_list_ = None
+        self.el_amt_dict_ = None
+
     @staticmethod
-    def from_preset(preset):
+    def from_preset(preset, **kwargs):
         """
         Use one of the standard instances of a given NearNeighbor class.
         Args:
             preset (str): preset type ("VoronoiNN", "JMolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
                           or "MinimumVIRENN").
+            **kwargs: allow to pass args to the NearNeighbor class.
         Returns:
             ChemicalSRO from a preset.
         """
         nn_ = getattr(pymatgen.analysis.local_env, preset)
-        return ChemicalSRO(nn_())
+        return ChemicalSRO(nn_(**kwargs))
 
-    def __init__(self, nn):
-        self.nn = nn
-        self.el_amt_dict = None
-        self.el_list = None
-
-    @staticmethod
-    def cal_el_amt(structs):
+    def fit(self, X, y=None):
         """
-        Identify and "store" the element types and composition of structures,
-        avoiding repeated calculation of composition when featurizing many
-        sites in one structure.
+        Identify elements to be included in the following featurization,
+        by intersecting the elements present in the passed structures with
+        those explicitly included (or excluded) in __init__. Only elements
+        in the self.el_list_ will be featurized.
+        Besides, compositions of the passed structures will also be "stored"
+        in a dict of self.el_amt_dict_, avoiding repeated calculation of
+        composition when featurizing multiple sites in the same structure.
         Args:
-            structs (pandas series): series of pymatgen Structures.
+            X (array-like): containing Pymatgen structures and sites, supports
+                            multiple choices:
+                            -2D array-like object:
+                             e.g. [[struct, site], [struct, site], …]
+                                  np.array([[struct, site], [struct, site], …])
+                            -Pandas dataframe:
+                             e.g. df[['struct', 'site']]
+            y : unused (added for consistency with overridden method signature)
         Returns:
-            (list of str): elements present in the structures.
-            (dict): composition dicts of the structures.
+            self
         """
-        el_amt_dict = {}
-        el_list = set()
-        for s in structs.values:
-            if str(s) not in el_amt_dict.keys():
-                el_amt = s.composition.fractional_composition.\
-                         get_el_amt_dict()
-                el_amt_dict[str(s)] = el_amt
-                elements = set(el_amt.keys())
-                el_list = el_list | elements
-        return list(el_list), el_amt_dict
+        structs = np.atleast_2d(X)[:, 0]
+        if not all([isinstance(struct, Structure) for struct in structs]):
+            raise TypeError("This fit requires an array-like input of Pymatgen "
+                            "Structures and sites!")
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=True,
-                            inplace=True):
-        """
-        Featurize the dataframe with ChemicalSRO features.
-        Args:
-            df (pandas dataframe): Dataframe containing input data.
-            col_id (str or [str]): Dataframe key corresponding to structures.
-        Returns:
-            (pandas dataframe) ChemicalSRO-featurized dataframe.
-        """
-        self.el_list, self.el_amt_dict = self.cal_el_amt(df[col_id[0]])
-        df = super(ChemicalSRO, self).\
-             featurize_dataframe(df, col_id,
-                                 ignore_errors=ignore_errors,
-                                 inplace=inplace)
-        delattr(self, 'el_list')
-        delattr(self, 'el_amt_dict')
-        return df
+        self.el_amt_dict_ = {}
+        el_set_ = set()
+        for s in structs:
+            if str(s) not in self.el_amt_dict_.keys():
+                el_amt_ = s.composition.fractional_composition.get_el_amt_dict()
+                els_ = set(el_amt_.keys()) if self.includes is None \
+                    else set([el for el in el_amt_.keys()
+                              if el in self.includes])
+                els_ = els_ if self.excludes is None \
+                    else els_ - set(self.excludes)
+                if els_:
+                    self.el_amt_dict_[str(s)] = el_amt_
+                el_set_ = el_set_ | els_
+        self.el_list_ = sorted(list(el_set_), key=lambda el:
+                Element(el).mendeleev_no) if self.sort else list(el_set_)
+        return self
 
     def featurize(self, struct, idx):
         """
@@ -828,19 +849,27 @@ class ChemicalSRO(BaseFeaturizer):
         Returns:
             (list of floats): Chemical SRO features for each element.
         """
-        csro_el = [0.]*len(self.el_list)
-        el_amt = self.el_amt_dict[str(struct)]
-        nn_list = self.nn.get_nn(struct, idx)
-        nn_el_amt = dict.fromkeys(el_amt, 0)
-        for nn in nn_list:
-            nn_el_amt[str(nn.specie)] += 1/len(nn_list)
-        for el in el_amt.keys():
-            csro_el[self.el_list.index(el)] = nn_el_amt[el] - el_amt[el]
-        return csro_el
+
+        check_is_fitted(self, ['el_amt_dict_', 'el_list_'])
+
+        csro = [0.]*len(self.el_list_)
+        if str(struct) in self.el_amt_dict_.keys():
+            el_amt = self.el_amt_dict_[str(struct)]
+            nn_el_amt = dict.fromkeys(el_amt, 0)
+            nn_list = self.nn.get_nn(struct, idx)
+            for nn in nn_list:
+                if str(nn.specie.symbol) in self.el_list_:
+                    nn_el_amt[str(nn.specie.symbol)] += 1/len(nn_list)
+            for el in el_amt.keys():
+                if el in self.el_list_:
+                    csro[self.el_list_.index(el)] = nn_el_amt[el] - el_amt[el]
+        return csro
 
     def feature_labels(self):
+        check_is_fitted(self, ['el_amt_dict_', 'el_list_'])
+
         return ['CSRO_{}_{}'.format(el, self.nn.__class__.__name__)
-                for el in self.el_list]
+                for el in self.el_list_]
 
     def citations(self):
         citations = []
@@ -918,6 +947,14 @@ class GaussianSymmFunc(BaseFeaturizer):
         cutoff (float): cutoff distance. (default: 6.5)
     """
 
+    def __init__(self, etas_g2=None, etas_g4=None, zetas_g4=None,
+                 gammas_g4=None, cutoff=6.5):
+        self.etas_g2 = etas_g2 if etas_g2 else [0.05, 4., 20., 80.]
+        self.etas_g4 = etas_g4 if etas_g4 else [0.005]
+        self.zetas_g4 = zetas_g4 if zetas_g4 else [1., 4.]
+        self.gammas_g4 = gammas_g4 if gammas_g4 else [+1., -1.]
+        self.cutoff = cutoff
+
     @staticmethod
     def cosine_cutoff(r, cutoff):
         """
@@ -946,7 +983,7 @@ class GaussianSymmFunc(BaseFeaturizer):
         """
         ridge = 0.
         for neigh_coord in neigh_coords:
-            if str(neigh_coord) == str(center_coord):
+            if np.array_equal(neigh_coord, center_coord):
                 continue
             r = np.linalg.norm(neigh_coord - center_coord)
             ridge += (np.exp(-eta * (r ** 2.) / (cutoff ** 2.)) *
@@ -971,8 +1008,8 @@ class GaussianSymmFunc(BaseFeaturizer):
         ridge = 0.
         for j, neigh_j in enumerate(neigh_coords):
             for neigh_k in neigh_coords[j+1:]:
-                if str(neigh_j) == str(center_coord) or \
-                   str(neigh_k) == str(center_coord):
+                if np.array_equal(neigh_j, center_coord) or \
+                   np.array_equal(neigh_k, center_coord):
                     continue
                 r_ij = np.linalg.norm(neigh_j - center_coord)
                 r_ik = np.linalg.norm(neigh_k - center_coord)
@@ -988,14 +1025,6 @@ class GaussianSymmFunc(BaseFeaturizer):
                 ridge += term
         ridge *= 2. ** (1. - zeta)
         return ridge
-
-    def __init__(self, etas_g2=None, etas_g4=None, zetas_g4=None,
-                 gammas_g4=None, cutoff=6.5):
-        self.etas_g2 = etas_g2 if etas_g2 else [0.05, 4., 20., 80.]
-        self.etas_g4 = etas_g4 if etas_g4 else [0.005]
-        self.zetas_g4 = zetas_g4 if zetas_g4 else [1., 4.]
-        self.gammas_g4 = gammas_g4 if gammas_g4 else [+1., -1.]
-        self.cutoff = cutoff
 
     def featurize(self, struct, idx):
         """
@@ -1237,7 +1266,7 @@ class CoordinationNumber(BaseFeaturizer):
     """
 
     @staticmethod
-    def from_preset(preset):
+    def from_preset(preset, **kwargs):
         """
         Use one of the standard instances of a given NearNeighbor
         class.
@@ -1245,11 +1274,12 @@ class CoordinationNumber(BaseFeaturizer):
             preset (str): preset type ("VoronoiNN", "JMolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
                           or "MinimumVIRENN").
+            **kwargs: allow to pass args to the NearNeighbor class.
         Returns:
             CoordinationNumber from a preset.
         """
         nn_ = getattr(pymatgen.analysis.local_env, preset)
-        return CoordinationNumber(nn_())
+        return CoordinationNumber(nn_(**kwargs))
 
     def __init__(self, nn, use_weights=False):
         self.nn = nn
@@ -1371,11 +1401,14 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         Args:
             X - [list of tuples], training data
                 tuple values should be (struc, idx)
+        Returns:
+            self
         """
 
         max_sites = max([len(X[i][0]._sites) for i in range(len(X))])
         self.fit_labels = ['site2 {} {}'.format(i, bin[0]) for bin in self.bins
                            for i in range(max_sites)]
+        return self
 
     def featurize(self, struct, idx):
         """
