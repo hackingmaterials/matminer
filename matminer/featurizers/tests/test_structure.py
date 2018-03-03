@@ -295,15 +295,12 @@ class StructureFeaturesTest(PymatgenTest):
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
     def test_min_relative_distances(self):
-        self.assertAlmostEqual(int(
-            1000 * MinimumRelativeDistances().featurize(
-                self.diamond_no_oxi)[0][0]), 1105)
-        self.assertAlmostEqual(int(
-            1000 * MinimumRelativeDistances().featurize(
-                self.nacl)[0][0]), 1005)
-        self.assertAlmostEqual(int(
-            1000 * MinimumRelativeDistances().featurize(
-                self.cscl)[0][0]), 1006)
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+                self.diamond_no_oxi)[0][0], 1.1052576)
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+                self.nacl)[0][0], 0.8891443)
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+                self.cscl)[0][0], 0.9875975)
 
     def test_sitestatsfingerprint(self):
         # Test matrix.
