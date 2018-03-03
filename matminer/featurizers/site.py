@@ -19,6 +19,7 @@ index and the structure. For example:
 """
 
 import os
+import warnings
 import ruamel.yaml as yaml
 import itertools
 import numpy as np
@@ -1393,6 +1394,10 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
         self.fit_labels = None
 
+        if self.n_jobs != 1:
+            warnings.warn("This featurizer does not support n_jobs > 1.")
+            self.set_n_jobs(1)
+
     def fit(self, X, y=None, **fit_kwargs):
         """
         Determine the maximum number of sites in X to assign correct feature
@@ -1520,6 +1525,10 @@ class AngularFourierSeries(BaseFeaturizer):
     def __init__(self, bins, cutoff=10.0):
         self.bins = bins
         self.cutoff = cutoff
+
+        if self.n_jobs != 1:
+            warnings.warn("This featurizer does not support n_jobs > 1.")
+            self.set_n_jobs(1)
 
     def featurize(self, struct, idx):
         """
