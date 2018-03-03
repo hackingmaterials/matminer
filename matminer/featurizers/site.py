@@ -48,7 +48,7 @@ from sklearn.utils.validation import check_is_fitted
 
 cn_motif_op_params = {}
 with open(os.path.join(os.path.dirname(
-        pymatgen.analysis.__file__), 'cn_opt_paras.yaml'), 'r') as f:
+        pymatgen.analysis.__file__), 'cn_opt_params.yaml'), 'r') as f:
     cn_motif_op_params = yaml.safe_load(f)
 cn_target_motif_op = {}
 with open(os.path.join(os.path.dirname(
