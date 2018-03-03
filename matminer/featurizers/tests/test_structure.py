@@ -170,15 +170,15 @@ class StructureFeaturesTest(PymatgenTest):
         # Check the fit operation
         featurizer = PartialRadialDistributionFunction()
         featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
-        self.assertEquals({'Cs', 'Cl', 'C', 'Ni', 'Al'}, set(featurizer.elements_))
+        self.assertEqual({'Cs', 'Cl', 'C', 'Ni', 'Al'}, set(featurizer.elements_))
 
         featurizer.exclude_elems = ['Cs', 'Al']
         featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
-        self.assertEquals({'Cl', 'C', 'Ni'}, set(featurizer.elements_))
+        self.assertEqual({'Cl', 'C', 'Ni'}, set(featurizer.elements_))
 
         featurizer.include_elems = ['H']
         featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
-        self.assertEquals({'H', 'Cl', 'C', 'Ni'}, set(featurizer.elements_))
+        self.assertEqual({'H', 'Cl', 'C', 'Ni'}, set(featurizer.elements_))
 
         # Check the feature labels
         featurizer.exclude_elems = ()
@@ -187,7 +187,7 @@ class StructureFeaturesTest(PymatgenTest):
         labels = featurizer.feature_labels()
         n_bins = len(featurizer._make_bins()) - 1
 
-        self.assertEquals(3 * n_bins, len(labels))
+        self.assertEqual(3 * n_bins, len(labels))
         self.assertIn('Al-Ni PRDF r=0.00-0.10', labels)
 
         # Check the featurize method
@@ -201,7 +201,7 @@ class StructureFeaturesTest(PymatgenTest):
         features = featurizer.featurize(self.ni3al)
         labels = featurizer.feature_labels()
         prdf = featurizer.compute_prdf(self.ni3al)[1]
-        self.assertEquals((n_bins * 3,), features.shape)
+        self.assertEqual((n_bins * 3,), features.shape)
         self.assertTrue(labels[0].startswith('Al-Al'))
         self.assertTrue(labels[n_bins].startswith('Al-Ni'))
         self.assertTrue(labels[2 * n_bins].startswith('Ni-Ni'))
@@ -350,7 +350,7 @@ class StructureFeaturesTest(PymatgenTest):
         # Test basic
         ewald = EwaldEnergy(accuracy=2)
         self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
-        self.assertAlmostEquals(ewald.featurize(self.nacl)[0], -8.84173626, 2)
+        self.assertAlmostEqual(ewald.featurize(self.nacl)[0], -8.84173626, 2)
         self.assertLess(ewald.featurize(self.nacl),
                         ewald.featurize(self.cscl))  # Atoms are closer in NaCl
 
