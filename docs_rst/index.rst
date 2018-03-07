@@ -12,7 +12,7 @@ matminer is a Python library for data mining the properties of materials. It con
 
 matminer works with the `pandas <https://pandas.pydata.org>`_ data format in order to make various downstream machine learning libraries and tools available to materials science applications.
 
-matminer is `open source <https://github.com/hackingmaterials/matminer>`_.
+matminer is `open source <https://github.com/hackingmaterials/matminer>`_ via a BSD-style license.
 
 
 -------------------
