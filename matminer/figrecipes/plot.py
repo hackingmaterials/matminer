@@ -336,12 +336,13 @@ class PlotlyFig:
 
     def data_from_col(self, col, data=None):
         """
-        try to get data based on column name in dataframe and return
-            informative error if failed.
+        Try to get data based on column name in dataframe and return
+        informative error if failed.
+
         Args:
             col (str): column name to look for
             data (pandas.DataFrame): if dataframe try to get col column from it
-            allow_str (bool): if True: pass col even if not in data or self.df
+
         Returns (pd.Series or col itself):
         """
         if isinstance(col, str):
@@ -398,6 +399,7 @@ class PlotlyFig:
             return_plot (bool): Returns the dictionary representation of the
                 figure if True. If False, prints according to self.mode (set
                 with mode in __init__).
+
         Returns: A Plotly Scatter plot Figure object.
         """
         if not isinstance(xy_pairs, list):
@@ -437,7 +439,6 @@ class PlotlyFig:
                     size = pd.Series(size).fillna(size.min())
                     sizes[i] = ((size - size.min()) / (
                             size.max() - size.min()) + 0.05) * 30 * marker_scale
-                    print(sizes[i])
 
         if isinstance(modes, str):
             modes = [modes] * len(xy_pairs)
