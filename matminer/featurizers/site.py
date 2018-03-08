@@ -1371,6 +1371,10 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
     the GRDF when the bins are rectangular functions. Examples of other
     functions to use with the GRDF are Gaussian, trig, and Bessel functions.
 
+    There are two preset conditions:
+        gaussian: bin functionals are gaussians
+        histogram: bin functionals are rectangular functions
+
     Args:
         bins:   (list of tuples) a list of (str, functions). The str is a text
                     label for each bin functional. The functions should accept
@@ -1485,6 +1489,42 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
                 raise AttributeError('the fit method must be called first, to '
                                      'determine the correct feature labels.')
 
+    @staticmethod
+    def from_preset(preset, width=0.5, spacing=0.5, cutoff=10, mode='GRDF'):
+        '''
+        Preset bin functionals for this featurizer. Example use:
+            >>> GRDF = GeneralizedRadialDistributionFunction.from_preset('gaussian')
+            >>> GRDF.featurize(struct, idx)
+
+        Args:
+            preset (str): shape of bin (either 'gaussian' or 'histogram')
+            width (float): bin width. std dev for gaussian, width for histogram
+            spacing (float): the spacing between bin centers
+            cutoff (float): maximum distance to look for neighbors
+            mode (str): featurizing mode. either 'GRDF' or 'pairwise_GRDF'
+        '''
+
+        if preset == "gaussian":
+            bins = []
+            for center in np.arange(0., cutoff, spacing):
+                bins.append(('Gauss {}'.format(center),
+                             lambda d: np.exp(-width * (d - center)**2.)))
+            return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
+                                                         mode=mode)
+
+        elif preset == "histogram":
+            bins = []
+            for center in np.arange(0. + (width / 2.), cutoff, spacing):
+                bins.append(('Hist {}'.format(center),
+                             lambda d: np.where(center - (width / 2.) <= d,
+                                                1., 0.) *
+                             np.where(d < center + (width / 2.), 1., 0.)))
+            return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
+                                                         mode=mode)
+
+        else:
+            raise ValueError('Not a valid preset condition.')
+
     def citations(self):
         return ['@article{PhysRevB.95.144110, title = {Representation of compo'
                 'unds for machine-learning prediction of physical properties},'
@@ -1510,12 +1550,16 @@ class AngularFourierSeries(BaseFeaturizer):
     functions, and Bessel functions. An example for Gaussian:
         lambda d: exp( -(d - d_n)**2 ), where d_n is the coefficient for g_n
 
+    There are two preset conditions:
+        gaussian: bin functionals are gaussians
+        histogram: bin functionals are rectangular functions
+
     Args:
         bins:   (list of tuples) a list of (str, functions). The str is a text
                  label for each bin functional. The functions should accept
                  scalar numpy arrays (each scalar value corresponds to a
                  distance) and return arrays of floats.
-                  (e.g. lambda d: exp( a_0 * (d - b_0)**2 ))
+                  (e.g. lambda d: exp( - a_0 * (d - b_0)**2 ))
         cutoff: (float) maximum distance to look for neighbors. The
                  featurizer will run slowly for large distance cutoffs
                  because of the number of neighbor pairs scales as
@@ -1588,6 +1632,39 @@ class AngularFourierSeries(BaseFeaturizer):
         bin_combos = list(itertools.product(self.bins, repeat=2))
         return ['bin {} bin {}'.format(combo[0][0], combo[1][0])
                 for combo in bin_combos]
+
+    @staticmethod
+    def from_preset(preset, width=0.5, spacing=0.5, cutoff=10):
+        '''
+        Preset bin functionals for this featurizer. Example use:
+            >>> AFS = AngularFourierSeries.from_preset('gaussian')
+            >>> AFS.featurize(struct, idx)
+
+        Args:
+            preset (str): shape of bin (either 'gaussian' or 'histogram')
+            width (float): bin width. std dev for gaussian, width for histogram
+            spacing (float): the spacing between bin centers
+            cutoff (float): maximum distance to look for neighbors
+        '''
+
+        if preset == "gaussian":
+            bins = []
+            for center in np.arange(0., cutoff, spacing):
+                bins.append(('Gauss {}'.format(center),
+                             lambda d: np.exp(-width * (d - center)**2.)))
+            return AngularFourierSeries(bins, cutoff=cutoff)
+
+        elif preset == "histogram":
+            bins = []
+            for center in np.arange(0. + (width / 2.), cutoff, spacing):
+                bins.append(('Hist {}'.format(center),
+                             lambda d: np.where(center - (width / 2.) <= d,
+                                                1., 0.) *
+                             np.where(d < center + (width / 2.), 1., 0.)))
+            return AngularFourierSeries(bins, cutoff=cutoff)
+
+        else:
+            raise ValueError('Not a valid preset condition.')
 
     def citations(self):
         return ['@article{PhysRevB.95.144110, title = {Representation of compo'

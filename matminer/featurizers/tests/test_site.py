@@ -390,6 +390,18 @@ class FingerprintTests(PymatgenTest):
                                'site2 0 Gauss b=1', 'site2 1 Gauss b=1',
                                'site2 0 Gauss b=5', 'site2 1 Gauss b=5'])
 
+        # test preset
+        grdf = GeneralizedRadialDistributionFunction.from_preset('gaussian')
+        grdf.featurize(self.sc, 0)
+        self.assertArrayEqual([bin[0] for bin in grdf.bins],
+                              ['Gauss 0.0', 'Gauss 0.5', 'Gauss 1.0',
+                               'Gauss 1.5', 'Gauss 2.0', 'Gauss 2.5',
+                               'Gauss 3.0', 'Gauss 3.5', 'Gauss 4.0',
+                               'Gauss 4.5', 'Gauss 5.0', 'Gauss 5.5',
+                               'Gauss 6.0', 'Gauss 6.5', 'Gauss 7.0',
+                               'Gauss 7.5', 'Gauss 8.0', 'Gauss 8.5',
+                               'Gauss 9.0', 'Gauss 9.5'])
+
     def test_afs(self):
         f1 = ('Gauss b=0', lambda x: np.exp(-(x**2.)))
         f2 = ('Gauss b=1', lambda x: np.exp(-(x - 1.)**2.))
@@ -419,6 +431,29 @@ class FingerprintTests(PymatgenTest):
                                'bin Gauss b=5 bin Gauss b=0',
                                'bin Gauss b=5 bin Gauss b=1',
                                'bin Gauss b=5 bin Gauss b=5'])
+
+        # test preset
+        afs = AngularFourierSeries.from_preset('gaussian')
+        afs.featurize(self.sc, 0)
+        self.assertArrayEqual([bin[0] for bin in afs.bins],
+                              ['Gauss 0.0', 'Gauss 0.5', 'Gauss 1.0',
+                               'Gauss 1.5', 'Gauss 2.0', 'Gauss 2.5',
+                               'Gauss 3.0', 'Gauss 3.5', 'Gauss 4.0',
+                               'Gauss 4.5', 'Gauss 5.0', 'Gauss 5.5',
+                               'Gauss 6.0', 'Gauss 6.5', 'Gauss 7.0',
+                               'Gauss 7.5', 'Gauss 8.0', 'Gauss 8.5',
+                               'Gauss 9.0', 'Gauss 9.5'])
+
+        afs = AngularFourierSeries.from_preset('histogram')
+        afs.featurize(self.sc, 0)
+        self.assertArrayEqual([bin[0] for bin in afs.bins],
+                              ['Hist 0.25', 'Hist 0.75', 'Hist 1.25',
+                               'Hist 1.75', 'Hist 2.25', 'Hist 2.75',
+                               'Hist 3.25', 'Hist 3.75', 'Hist 4.25',
+                               'Hist 4.75', 'Hist 5.25', 'Hist 5.75',
+                               'Hist 6.25', 'Hist 6.75', 'Hist 7.25',
+                               'Hist 7.75', 'Hist 8.25', 'Hist 8.75',
+                               'Hist 9.25', 'Hist 9.75'])
 
     def tearDown(self):
         del self.sc
