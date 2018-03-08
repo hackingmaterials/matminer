@@ -910,7 +910,7 @@ class CohesiveEnergy(BaseFeaturizer):
         cohesive_energy = -formation_energy_per_atom * comp.num_atoms
         for el in el_amt_dict:
             cohesive_energy += el_amt_dict[el] * \
-                               CohesiveEnergyData().get_property(el)
+                               CohesiveEnergyData().get_elemental_property(el)
 
         cohesive_energy_per_atom = cohesive_energy / comp.num_atoms
 
