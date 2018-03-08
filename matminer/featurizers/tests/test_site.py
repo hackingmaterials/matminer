@@ -391,7 +391,6 @@ class FingerprintTests(PymatgenTest):
                                'site2 0 Gauss b=5', 'site2 1 Gauss b=5'])
 
         # test preset
-        # test preset
         grdf = GeneralizedRadialDistributionFunction.from_preset('gaussian')
         grdf.featurize(self.sc, 0)
         self.assertArrayEqual([bin[0] for bin in grdf.bins],

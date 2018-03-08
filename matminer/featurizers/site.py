@@ -1371,6 +1371,10 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
     the GRDF when the bins are rectangular functions. Examples of other
     functions to use with the GRDF are Gaussian, trig, and Bessel functions.
 
+    There are two preset conditions:
+        gaussian: bin functionals are gaussians
+        histogram: bin functionals are rectangular functions
+
     Args:
         bins:   (list of tuples) a list of (str, functions). The str is a text
                     label for each bin functional. The functions should accept
@@ -1547,8 +1551,8 @@ class AngularFourierSeries(BaseFeaturizer):
         lambda d: exp( -(d - d_n)**2 ), where d_n is the coefficient for g_n
 
     There are two preset conditions:
-        gaussian: bin functionals are gaussians with std dev of 1
-        histogram: bin functionals are rectangular functions with width of 1
+        gaussian: bin functionals are gaussians
+        histogram: bin functionals are rectangular functions
 
     Args:
         bins:   (list of tuples) a list of (str, functions). The str is a text
