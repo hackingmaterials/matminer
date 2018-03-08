@@ -1485,6 +1485,42 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
                 raise AttributeError('the fit method must be called first, to '
                                      'determine the correct feature labels.')
 
+    @staticmethod
+    def from_preset(preset, width=0.5, spacing=0.5, cutoff=10, mode='GRDF'):
+        '''
+        Preset bin functionals for this featurizer. Example use:
+            >>> GRDF = GeneralizedRadialDistributionFunction.from_preset('gaussian')
+            >>> GRDF.featurize(struct, idx)
+
+        Args:
+            preset (str): shape of bin (either 'gaussian' or 'histogram')
+            width (float): bin width. std dev for gaussian, width for histogram
+            spacing (float): the spacing between bin centers
+            cutoff (float): maximum distance to look for neighbors
+            mode (str): featurizing mode. either 'GRDF' or 'pairwise_GRDF'
+        '''
+
+        if preset == "gaussian":
+            bins = []
+            for center in np.arange(0., cutoff, spacing):
+                bins.append(('Gauss {}'.format(center),
+                             lambda d: np.exp(-width * (d - center)**2.)))
+            return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
+                                                         mode=mode)
+
+        elif preset == "histogram":
+            bins = []
+            for center in np.arange(0. + (width / 2.), cutoff, spacing):
+                bins.append(('Hist {}'.format(center),
+                             lambda d: np.where(center - (width / 2.) <= d,
+                                                1., 0.) *
+                             np.where(d < center + (width / 2.), 1., 0.)))
+            return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
+                                                         mode=mode)
+
+        else:
+            raise ValueError('Not a valid preset condition.')
+
     def citations(self):
         return ['@article{PhysRevB.95.144110, title = {Representation of compo'
                 'unds for machine-learning prediction of physical properties},'
