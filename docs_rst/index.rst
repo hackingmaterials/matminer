@@ -101,13 +101,15 @@ Check out some examples of how to use matminer!
 
 2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/experiment_vs_computed_bandgap.ipynb>`_)
 
-3. Retrieve data from various online materials repositories (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/data_retrieval_basics.ipynb>`_)
+3. Compare and plot U-O bond lengths in various compounds from the MPDS (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/u-o_bondlength_analysis.ipynb>`_)
 
-4. Basic Visualization using FigRecipes (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/visualization_with_figrecipes.ipynb>`_)
+4. Retrieve data from various online materials repositories (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/data_retrieval_basics.ipynb>`_)
 
-5. Advanced Visualization (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/advanced_visualization.ipynb>`_)
+5. Basic Visualization using FigRecipes (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/visualization_with_figrecipes.ipynb>`_)
 
-6. Running a kernel ridge regression model on vector descriptors (`Python script <https://github.com/hackingmaterials/matminer_examples/blob/master/scripts/kernel_ridge_SCM_OFM.py>`_)
+6. Advanced Visualization (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/advanced_visualization.ipynb>`_)
+
+7. Running a kernel ridge regression model on vector descriptors (`Python script <https://github.com/hackingmaterials/matminer_examples/blob/master/scripts/kernel_ridge_SCM_OFM.py>`_)
 
 ---------------
 Citing matminer
