@@ -1,13 +1,17 @@
 matminer\.figrecipes package
 ============================
 
-Subpackages
------------
+Submodules
+----------
 
-.. toctree::
+matminer\.figrecipes\.plot module
+---------------------------------
 
-    matminer.figrecipes.matplotlib
-    matminer.figrecipes.plotly
+.. automodule:: matminer.figrecipes.plot
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

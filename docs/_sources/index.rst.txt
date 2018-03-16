@@ -12,7 +12,7 @@ matminer is a Python library for data mining the properties of materials. It con
 
 matminer works with the `pandas <https://pandas.pydata.org>`_ data format in order to make various downstream machine learning libraries and tools available to materials science applications.
 
-matminer is `open source <https://github.com/hackingmaterials/matminer>`_.
+matminer is `open source <https://github.com/hackingmaterials/matminer>`_ via a BSD-style license.
 
 
 -------------------
@@ -63,7 +63,7 @@ For example, to compare experimental and computed band gaps of Si, one can emplo
 
    df_citrine = CitrineDataRetrieval().get_dataframe(formula='Si', property='band gap', data_type='EXPERIMENTAL')
    df_mp = MPDataRetrieval().get_dataframe(criteria='Si', properties=['band_gap'])
-   
+
 `MongoDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MongoDB.py>`_ is another data retrieval tool developed that allows for the parsing of any `MongoDB <https://www.mongodb.com/>`_ collection (which follows a flexible JSON schema), into a Pandas dataframe that has a format similar to the output dataframe from the above data retrieval tools. The arguments of the :code:`get_dataframe` method allow to utilize MongoDB's rich and powerful query/aggregation syntax structure. More information on customization of queries can be found in the `MongoDB documentation <https://docs.mongodb.com/manual/>`_.
 
 
@@ -77,7 +77,7 @@ ________________________________________________________________________________
 We have developed utilities to help describe a material from its composition or structure, and represent them in number format such that they are readily usable as features.
 
 For now, check out the examples below to see how to use the descriptor functionality.
-   
+
 --------------
 Plotting tools
 --------------
@@ -97,14 +97,19 @@ Examples
 
 Check out some examples of how to use matminer!
 
-1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://gist.github.com/computron/660f76810ad8d07a43b696028a6cd59f>`_)
+1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/experiment_vs_computed_bandgap.ipynb>`_)
 
-2. Get all experimentally measured band gaps of PbTe from Citrine's database (`Jupyter Notebook <https://gist.github.com/saurabh02/cf37de8ab77505a05e1bec952f0cb0c3>`_)
+2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/experiment_vs_computed_bandgap.ipynb>`_)
 
-3. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://gist.github.com/saurabh02/8f7727b2ed1f95d2a40fdefd0a90bec0>`_)
+3. Compare and plot U-O bond lengths in various compounds from the MPDS (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/u-o_bondlength_analysis.ipynb>`_)
 
-4. Analyze Uranium-Oxygen bond lengths from gathered from the MPDS database. (`Jupyter Notebook <https://gist.github.com/blokhin/a9eddca705aa6d54552bc8b6d7bddbb8>`_)
+4. Retrieve data from various online materials repositories (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/data_retrieval_basics.ipynb>`_)
 
+5. Basic Visualization using FigRecipes (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/visualization_with_figrecipes.ipynb>`_)
+
+6. Advanced Visualization (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/advanced_visualization.ipynb>`_)
+
+7. Running a kernel ridge regression model on vector descriptors (`Python script <https://github.com/hackingmaterials/matminer_examples/blob/master/scripts/kernel_ridge_SCM_OFM.py>`_)
 
 ---------------
 Citing matminer

@@ -9,7 +9,9 @@ from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, CrystalSiteFingerprint, EwaldSiteEnergy, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
-    CoordinationNumber, ChemicalSRO, GaussianSymmFunc
+    CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
+    GeneralizedRadialDistributionFunction, AngularFourierSeries
+
 
 class FingerprintTests(PymatgenTest):
     def setUp(self):
@@ -167,9 +169,9 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(cevals[l.index('O:6')], 0, places=7)
 
     def test_voronoifingerprint(self):
-        data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
+        df_sc= pd.DataFrame({'struct': [self.sc], 'site': [0]})
         vorofp = VoronoiFingerprint(use_weights=True)
-        vorofps = vorofp.featurize_dataframe(data, ['struct', 'site'])
+        vorofps = vorofp.featurize_dataframe(df_sc, ['struct', 'site'])
         self.assertAlmostEqual(vorofps['Voro_index_3'][0], 0.0)
         self.assertAlmostEqual(vorofps['Voro_index_4'][0], 6.0)
         self.assertAlmostEqual(vorofps['Voro_index_5'][0], 0.0)
@@ -210,22 +212,65 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(vorofps['Voro_dist_maximum'][0], 3.52)
 
     def test_chemicalSRO(self):
-        data = pd.DataFrame({'struct': [self.sc], 'site': [0]})
-        csros = ChemicalSRO.from_preset("VoronoiNN").\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_VoronoiNN'][0], 0.0)
-        csros = ChemicalSRO(JMolNN(el_radius_updates = {"Al": 1.55})).\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_JMolNN'][0], 0.0)
-        csros = ChemicalSRO.from_preset("MinimumDistanceNN").\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_MinimumDistanceNN'][0], 0.0)
-        csros = ChemicalSRO.from_preset("MinimumOKeeffeNN").\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_MinimumOKeeffeNN'][0], 0.0)
-        csros = ChemicalSRO.from_preset("MinimumVIRENN").\
-            featurize_dataframe(data, ['struct', 'site'])
-        self.assertAlmostEqual(csros['CSRO_Al_MinimumVIRENN'][0], 0.0)
+        df_sc = pd.DataFrame({'struct': [self.sc], 'site': [0]})
+        df_cscl = pd.DataFrame({'struct': [self.cscl], 'site': [0]})
+        vnn = ChemicalSRO.from_preset("VoronoiNN", cutoff=6.0)
+        vnn.fit(df_sc[['struct', 'site']])
+        vnn_csros = vnn.featurize_dataframe(df_sc, ['struct', 'site'])
+        self.assertAlmostEqual(vnn_csros['CSRO_Al_VoronoiNN'][0], 0.0)
+        vnn = ChemicalSRO(VoronoiNN(), includes="Cs")
+        vnn.fit(df_cscl[['struct', 'site']])
+        vnn_csros = vnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(vnn_csros['CSRO_Cs_VoronoiNN'][0], 0.0714285714)
+        vnn = ChemicalSRO(VoronoiNN(), excludes="Cs")
+        vnn.fit(df_cscl[['struct', 'site']])
+        vnn_csros = vnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(vnn_csros['CSRO_Cl_VoronoiNN'][0], -0.0714285714)
+        jmnn = ChemicalSRO.from_preset("JMolNN", el_radius_updates={"Al": 1.55})
+        jmnn.fit(df_sc[['struct', 'site']])
+        jmnn_csros = jmnn.featurize_dataframe(df_sc, ['struct', 'site'])
+        self.assertAlmostEqual(jmnn_csros['CSRO_Al_JMolNN'][0], 0.0)
+        jmnn = ChemicalSRO.from_preset("JMolNN")
+        jmnn.fit(df_cscl[['struct', 'site']])
+        jmnn_csros = jmnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(jmnn_csros['CSRO_Cs_JMolNN'][0], -0.5)
+        self.assertAlmostEqual(jmnn_csros['CSRO_Cl_JMolNN'][0], -0.5)
+        mdnn = ChemicalSRO.from_preset("MinimumDistanceNN")
+        mdnn.fit(df_cscl[['struct', 'site']])
+        mdnn_csros = mdnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(mdnn_csros['CSRO_Cs_MinimumDistanceNN'][0], 0.5)
+        self.assertAlmostEqual(mdnn_csros['CSRO_Cl_MinimumDistanceNN'][0], -0.5)
+        monn = ChemicalSRO.from_preset("MinimumOKeeffeNN")
+        monn.fit(df_cscl[['struct', 'site']])
+        monn_csros = monn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(monn_csros['CSRO_Cs_MinimumOKeeffeNN'][0], 0.5)
+        self.assertAlmostEqual(monn_csros['CSRO_Cl_MinimumOKeeffeNN'][0], -0.5)
+        mvnn = ChemicalSRO.from_preset("MinimumVIRENN")
+        mvnn.fit(df_cscl[['struct', 'site']])
+        mvnn_csros = mvnn.featurize_dataframe(df_cscl, ['struct', 'site'])
+        self.assertAlmostEqual(mvnn_csros['CSRO_Cs_MinimumVIRENN'][0], 0.5)
+        self.assertAlmostEqual(mvnn_csros['CSRO_Cl_MinimumVIRENN'][0], -0.5)
+        # test fit + transform
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn.fit(df_cscl[['struct', 'site']])  # dataframe
+        vnn_csros = vnn.transform(df_cscl[['struct', 'site']].values)
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn.fit(df_cscl[['struct', 'site']].values)  # np.array
+        vnn_csros = vnn.transform(df_cscl[['struct', 'site']].values)
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn.fit([[self.cscl, 0]])  # list
+        vnn_csros = vnn.transform([[self.cscl, 0]])
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
+        # test fit_transform
+        vnn = ChemicalSRO.from_preset("VoronoiNN")
+        vnn_csros = vnn.fit_transform(df_cscl[['struct', 'site']].values)
+        self.assertAlmostEqual(vnn_csros[0][0], 0.071428571428571286)
+        self.assertAlmostEqual(vnn_csros[0][1], -0.071428571428571286)
 
     def test_gaussiansymmfunc(self):
         data = pd.DataFrame({'struct': [self.cscl], 'site': [0]})
@@ -305,6 +350,110 @@ class FingerprintTests(PymatgenTest):
         self.assertEqual(len(cnmvire.citations()), 2)
         self.assertEqual(len(cnmvire.implementors()), 1)
         self.assertEqual(cnmvire.implementors()[0], 'Nils E. R. Zimmermann')
+
+    def test_grdf(self):
+        f1 = ('Gauss b=0', lambda x: np.exp(-(x**2.)))
+        f2 = ('Gauss b=1', lambda x: np.exp(-(x - 1.)**2.))
+        f3 = ('Gauss b=5', lambda x: np.exp(-(x - 5.)**2.))
+        s_tuples = [(self.sc, 0), (self.cscl, 0)]
+
+        # test fit, transform, and featurize dataframe for both run modes
+        # GRDF mode
+        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
+                                                     mode='GRDF')
+        grdf.fit(s_tuples)
+        features = grdf.transform(s_tuples)
+        self.assertArrayAlmostEqual(features, [[4.4807e-06, 0.00031, 0.02670],
+                                               [3.3303e-06, 0.00026, 0.01753]],
+                                    3)
+        features = grdf.featurize_dataframe(pd.DataFrame(s_tuples),
+                                            [0, 1])
+        self.assertArrayEqual(list(features.columns.values),
+                              [0, 1, 'Gauss b=0', 'Gauss b=1', 'Gauss b=5'])
+
+        # pairwise GRDF mode
+        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
+                                                     mode='pairwise_GRDF')
+        grdf.fit(s_tuples)
+        features = grdf.transform(s_tuples)
+        self.assertArrayAlmostEqual(features[0],
+                                    [4.4807e-06, 3.1661e-04, 0.0267],
+                                    3)
+        self.assertArrayAlmostEqual(features[1],
+                                    [2.1807e-08, 6.1119e-06, 0.0142,
+                                     3.3085e-06, 2.5898e-04, 0.0032],
+                                    3)
+        features = grdf.featurize_dataframe(pd.DataFrame(s_tuples),
+                                            [0, 1])
+        self.assertArrayEqual(list(features.columns.values),
+                              [0, 1, 'site2 0 Gauss b=0', 'site2 1 Gauss b=0',
+                               'site2 0 Gauss b=1', 'site2 1 Gauss b=1',
+                               'site2 0 Gauss b=5', 'site2 1 Gauss b=5'])
+
+        # test preset
+        grdf = GeneralizedRadialDistributionFunction.from_preset('gaussian')
+        grdf.featurize(self.sc, 0)
+        self.assertArrayEqual([bin[0] for bin in grdf.bins],
+                              ['Gauss 0.0', 'Gauss 0.5', 'Gauss 1.0',
+                               'Gauss 1.5', 'Gauss 2.0', 'Gauss 2.5',
+                               'Gauss 3.0', 'Gauss 3.5', 'Gauss 4.0',
+                               'Gauss 4.5', 'Gauss 5.0', 'Gauss 5.5',
+                               'Gauss 6.0', 'Gauss 6.5', 'Gauss 7.0',
+                               'Gauss 7.5', 'Gauss 8.0', 'Gauss 8.5',
+                               'Gauss 9.0', 'Gauss 9.5'])
+
+    def test_afs(self):
+        f1 = ('Gauss b=0', lambda x: np.exp(-(x**2.)))
+        f2 = ('Gauss b=1', lambda x: np.exp(-(x - 1.)**2.))
+        f3 = ('Gauss b=5', lambda x: np.exp(-(x - 5.)**2.))
+        s_tuples = [(self.sc, 0), (self.cscl, 0)]
+
+        # test transform,and featurize dataframe
+        afs = AngularFourierSeries(bins=[f1, f2, f3])
+        features = afs.transform(s_tuples)
+        self.assertArrayAlmostEqual(features,
+                                    [[-1.0374e-10, -4.3563e-08, -2.7914e-06,
+                                      -4.3563e-08, -1.8292e-05, -0.0011,
+                                      -2.7914e-06, -0.0011, -12.7863],
+                                     [-1.7403e-11, -1.0886e-08, -3.5985e-06,
+                                      -1.0886e-08, -6.0597e-06, -0.0016,
+                                      -3.5985e-06, -0.0016, -3.9052]],
+                                    3)
+        features = afs.featurize_dataframe(pd.DataFrame(s_tuples),
+                                           [0, 1])
+        self.assertArrayEqual(list(features.columns.values),
+                              [0, 1, 'bin Gauss b=0 bin Gauss b=0',
+                               'bin Gauss b=0 bin Gauss b=1',
+                               'bin Gauss b=0 bin Gauss b=5',
+                               'bin Gauss b=1 bin Gauss b=0',
+                               'bin Gauss b=1 bin Gauss b=1',
+                               'bin Gauss b=1 bin Gauss b=5',
+                               'bin Gauss b=5 bin Gauss b=0',
+                               'bin Gauss b=5 bin Gauss b=1',
+                               'bin Gauss b=5 bin Gauss b=5'])
+
+        # test preset
+        afs = AngularFourierSeries.from_preset('gaussian')
+        afs.featurize(self.sc, 0)
+        self.assertArrayEqual([bin[0] for bin in afs.bins],
+                              ['Gauss 0.0', 'Gauss 0.5', 'Gauss 1.0',
+                               'Gauss 1.5', 'Gauss 2.0', 'Gauss 2.5',
+                               'Gauss 3.0', 'Gauss 3.5', 'Gauss 4.0',
+                               'Gauss 4.5', 'Gauss 5.0', 'Gauss 5.5',
+                               'Gauss 6.0', 'Gauss 6.5', 'Gauss 7.0',
+                               'Gauss 7.5', 'Gauss 8.0', 'Gauss 8.5',
+                               'Gauss 9.0', 'Gauss 9.5'])
+
+        afs = AngularFourierSeries.from_preset('histogram')
+        afs.featurize(self.sc, 0)
+        self.assertArrayEqual([bin[0] for bin in afs.bins],
+                              ['Hist 0.25', 'Hist 0.75', 'Hist 1.25',
+                               'Hist 1.75', 'Hist 2.25', 'Hist 2.75',
+                               'Hist 3.25', 'Hist 3.75', 'Hist 4.25',
+                               'Hist 4.75', 'Hist 5.25', 'Hist 5.75',
+                               'Hist 6.25', 'Hist 6.75', 'Hist 7.25',
+                               'Hist 7.75', 'Hist 8.25', 'Hist 8.75',
+                               'Hist 9.25', 'Hist 9.75'])
 
     def tearDown(self):
         del self.sc
