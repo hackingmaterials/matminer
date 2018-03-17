@@ -55,17 +55,15 @@ class TestFunctionFeaturizer(unittest.TestCase):
 
         # Test complex functionality
         expressions = ["sqrt(x)"]
-        ff = FunctionFeaturizer(expressions=expressions)
-        new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False,
-                                        postprocess=np.complex)
+        ff = FunctionFeaturizer(expressions=expressions, postprocess=np.complex)
+        new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
         self.assertEqual(new_df['sqrt(a)'][0], 1j)
 
 
     def test_featurize_labels(self):
         # Test latexification
-        ff = FunctionFeaturizer()
-        new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False,
-                                        latexify_labels=True)
+        ff = FunctionFeaturizer(latexify_labels=True)
+        new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
         self.assertTrue("\sqrt{a}" in new_df.columns)
 
 

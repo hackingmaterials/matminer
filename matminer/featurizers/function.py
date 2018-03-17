@@ -30,7 +30,7 @@ default_exps = ["x", "1/x", "sqrt(x)", "1/sqrt(x)", "x**2", "x**-2", "x**3",
 
 # TODO: feature labels might be latexified
 # TODO: parallelization of substitution, think this might be
-# TODO:     unnecessary because featurization already substituted
+# TODO:     unnecessary because featurization already parallelized
 # TODO:     over rows
 class FunctionFeaturizer(BaseFeaturizer):
     """
@@ -40,7 +40,8 @@ class FunctionFeaturizer(BaseFeaturizer):
     """
 
     def __init__(self, expressions=None, multi_feature_depth=1,
-                 combo_function=None):
+                 postprocess=None, combo_function=None,
+                 latexify_labels=False):
 
         """
         Args:
@@ -50,33 +51,37 @@ class FunctionFeaturizer(BaseFeaturizer):
             multi_feature_depth (int): how many features to include if using
                 multiple fields for functionalization, e. g. 2 will
                 include pairwise combined features
+            postprocess (function or type): type to cast functional outputs
+                to, if, for example, you want to include the possibility of
+                complex numbers in your outputs, use postprocess=np.complex,
+                defaults to float
             combo_function (function): function to combine multi-features,
                 defaults to np.prod (i.e. cumulative product of expressions),
                 note that a combo function must cleanly process sympy
                 expressions
+            latexify_labels (bool): whether to render labels in latex,
+                defaults to False
+
         """
         self.expressions = expressions or default_exps
         self.multi_feature_depth = multi_feature_depth
         self.combo_function = combo_function or np.prod
+        self.latexify_labels = latexify_labels
+        self.postprocess = postprocess or float
 
         # Generate lists of sympy expressions keyed by number of features
         self.exp_dict = OrderedDict(
             [(n, generate_expressions_combinations(self.expressions, n))
              for n in range(1, multi_feature_depth+1)])
 
-    def featurize_dataframe(self, df, col_id, latexify_labels=False,
-                            **kwargs):
+    def featurize_dataframe(self, df, col_id, **kwargs):
         """
         Custom featurize class so we can rename columns
 
         Args:
             df (DataFrame): dataframe containing input data
             col_id (str or list of str): column label containing objects to
-                featurize. Can be multiple labels if the featurize function
-                requires multiple inputs
-            latexify_labels (bool): whether or not to latexify feature labels
-            **kwargs (kwargs): kwargs to BaseFeaturizer.featurize_dataframe,
-                including featurizer kwargs
+                featurize.
 
         Returns:
             updated DataFrame
@@ -84,13 +89,13 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         if isinstance(col_id, string_types):
             col_id = [col_id]
-        # Construct label properties
-        label_props = {"col_id": col_id, "latexify_labels": latexify_labels}
+
+        label_properties = {'input_columns': col_id}
         return super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, label_props=label_props, **kwargs)
+            df, col_id, label_properties=label_properties, **kwargs)
 
 
-    def featurize(self, *args, postprocess=float):
+    def featurize(self, *args):
         """
         Main featurizer function, essentially iterates over all
         of the functions in self.function_list to generate
@@ -99,31 +104,20 @@ class FunctionFeaturizer(BaseFeaturizer):
         Args:
             *args: list of numbers to generate functional output
                 features
-            postprocess (function): postprocessing function, primarily
-                used to recast data that's been run through the sympy
-                expression, e. g. float, complex, etc.
 
         Returns:
             list of functional outputs corresponding to input args
         """
-        return list(self._exp_iter(*args, postprocess=postprocess))
+        return list(self._exp_iter(*args, postprocess=self.postprocess))
 
 
-    def feature_labels(self, col_id, latexify_labels=False):
+    def feature_labels(self, input_columns):
         """
-
-        Args:
-            col_id ([str]): column names
-            latexify_labels (bool): whether to latexify labels
-                in output feature labels
-
         Returns:
             Set of feature labels corresponding to expressions
-                substituted with column names
-
         """
-        postprocess = sp.latex if latexify_labels else str
-        return list(self._exp_iter(*col_id, postprocess=postprocess))
+        postprocess = sp.latex if self.latexify_labels else str
+        return list(self._exp_iter(*input_columns, postprocess=postprocess))
 
 
     def _exp_iter(self, *args, postprocess=None):
