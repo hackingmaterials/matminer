@@ -75,8 +75,7 @@ class FunctionFeaturizer(BaseFeaturizer):
              for n in range(1, multi_feature_depth+1)])
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True,
-                            label_properties=None):
+                            return_errors=False, inplace=True):
         """
         Custom featurize class so we can rename columns using fit
 
