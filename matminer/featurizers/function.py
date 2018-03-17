@@ -74,14 +74,23 @@ class FunctionFeaturizer(BaseFeaturizer):
             [(n, generate_expressions_combinations(self.expressions, n))
              for n in range(1, multi_feature_depth+1)])
 
-    def featurize_dataframe(self, df, col_id, **kwargs):
+    def featurize_dataframe(self, df, col_id, ignore_errors=False,
+                            return_errors=False, inplace=True,
+                            label_properties=None):
         """
         Custom featurize class so we can rename columns using fit
 
         Args:
             df (DataFrame): dataframe containing input data
             col_id (str or list of str): column label containing objects
-                to featurize.
+                to featurize, can be single or multiple column names
+            ignore_errors (bool): Returns NaN for dataframe rows where
+                exceptions are thrown if True. If False, exceptions
+                are thrown as normal.
+            return_errors (bool). Returns the errors encountered for each
+                row in a separate `XFeaturizer errors` column if True. Requires
+                ignore_errors to be True.
+            inplace (bool): Whether to add new columns to input dataframe (df)
 
         Returns:
             updated DataFrame
@@ -93,7 +102,8 @@ class FunctionFeaturizer(BaseFeaturizer):
         self.fit(df[col_id], input_feature_names=col_id)
 
         return super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, **kwargs)
+            df, col_id, ignore_errors=ignore_errors,
+            return_errors=return_errors, inplace=inplace)
 
     def fit(self, X, y=None, **fit_kwargs):
         """
