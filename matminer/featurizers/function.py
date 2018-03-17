@@ -90,24 +90,28 @@ class FunctionFeaturizer(BaseFeaturizer):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-        self.fit(col_id)
+        self.fit(df[col_id], input_feature_names=col_id)
 
         return super(FunctionFeaturizer, self).featurize_dataframe(
             df, col_id, **kwargs)
 
-    def fit(self, input_feature_names):
+    def fit(self, X, y=None, **fit_kwargs):
         """
         Sets the current input features for the featurizer, solely
         used for bookkeeping between input column ids and output
         feature labels in featurized dataframes
 
         Args:
-            input_feature_names: list of input features
+            X ([tuple]): training data
+            **fit_kwargs: additional arguments for fitting procedure
 
         Returns:
             self
         """
-        self._current_input_features = input_feature_names
+        self._current_input_features = fit_kwargs.pop('input_feature_names')
+        super(FunctionFeaturizer, self).fit(X, y, **fit_kwargs)
+        return self
+
 
     def featurize(self, *args):
         """
