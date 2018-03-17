@@ -1,17 +1,5 @@
 from __future__ import division
 
-"""
-This module includes code to featurize data based on
-common mathematical expressions used as features.
-
-Note that the approach here has opted for a sympy-based
-parsing of string expressions, rather than explicit
-python functions.  The primary reason this has been
-done is to provide for better support for book-keeping
-(e. g. with feature labels), substitution, and elimination
-of symbolic redundancy, which sympy is well-suited for.
-"""
-
 import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
 import sympy as sp
@@ -28,15 +16,16 @@ default_exps = ["x", "1/x", "sqrt(x)", "1/sqrt(x)", "x**2", "x**-2", "x**3",
                 "x**-3", "log(x)", "1/log(x)", "exp(x)", "exp(-x)"]
 
 
-# TODO: feature labels might be latexified
-# TODO: parallelization of substitution, think this might be
-# TODO:     unnecessary because featurization already parallelized
-# TODO:     over rows
 class FunctionFeaturizer(BaseFeaturizer):
     """
     This class featurizes a dataframe according to a set
     of expressions representing functions to apply to
-    existing features
+    existing features. The approach here has uses a sympy-based
+    parsing of string expressions, rather than explicit
+    python functions.  The primary reason this has been
+    done is to provide for better support for book-keeping
+    (e. g. with feature labels), substitution, and elimination
+    of symbolic redundancy, which sympy is well-suited for.
     """
 
     def __init__(self, expressions=None, multi_feature_depth=1,
@@ -77,7 +66,7 @@ class FunctionFeaturizer(BaseFeaturizer):
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True):
         """
-        Custom featurize class so we can rename columns in postprocessing
+        Compute features for all entries contained in input dataframe.
 
         Args:
             df (DataFrame): dataframe containing input data
