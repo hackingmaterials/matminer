@@ -175,13 +175,15 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         # Create dataframe with the new features
         res = pd.DataFrame(features, index=df.index, columns=labels)
 
-        # Update the existing dataframe
         if inplace:
+            # Update the existing dataframe
             for k in labels:
                 df[k] = res[k]
             return df
         else:
-            return pd.concat([df, res], axis=1)
+            # Create new dataframe and ensure columns are ordered properly
+            new = pd.concat([df, res], axis=1)
+            return new[df.columns.tolist() + res.columns.tolist()]
 
 
     def featurize_many(self, entries, ignore_errors=False, return_errors=False):
