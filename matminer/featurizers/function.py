@@ -9,7 +9,7 @@ parsing of string expressions, rather than explicit
 python functions.  The primary reason this has been
 done is to provide for better support for book-keeping
 (e. g. with feature labels), substitution, and elimination
-of symbolic reduncancy, which sympy is well-suited for.
+of symbolic redundancy, which sympy is well-suited for.
 """
 
 import numpy as np
@@ -94,7 +94,6 @@ class FunctionFeaturizer(BaseFeaturizer):
         return super(FunctionFeaturizer, self).featurize_dataframe(
             df, col_id, label_properties=label_properties, **kwargs)
 
-
     def featurize(self, *args):
         """
         Main featurizer function, essentially iterates over all
@@ -110,7 +109,6 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         return list(self._exp_iter(*args, postprocess=self.postprocess))
 
-
     def feature_labels(self, input_columns):
         """
         Returns:
@@ -118,7 +116,6 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         postprocess = sp.latex if self.latexify_labels else str
         return list(self._exp_iter(*input_columns, postprocess=postprocess))
-
 
     def _exp_iter(self, *args, postprocess=None):
         """
@@ -150,14 +147,15 @@ class FunctionFeaturizer(BaseFeaturizer):
                     except (TypeError, ValueError):
                         yield None
 
-
     def citations(self):
         return ["@article{Ramprasad2017,"
-                "author = {Ramprasad, Rampi and Batra, Rohit and Pilania, Ghanshyam"
-                          "and Mannodi-Kanakkithodi, Arun and Kim, Chiho,"
+                "author = {Ramprasad, Rampi and Batra, Rohit and "
+                           "Pilania, Ghanshyam and Mannodi-Kanakkithodi, Arun "
+                           "and Kim, Chiho},"
                 "doi = {10.1038/s41524-017-0056-5},"
                 "journal = {npj Computational Materials},"
-                "title = {Machine learning in materials informatics: recent applications and prospects},"
+                "title = {Machine learning in materials informatics: recent "
+                          "applications and prospects},"
                 "volume = {3},number={1}, pages={54}, year={2017}}"]
 
     def implementors(self):
@@ -165,8 +163,8 @@ class FunctionFeaturizer(BaseFeaturizer):
 
 
 
-#TODO: Have this filter expressions that evaluate to things without vars,
-#TODO:      # e. g. floats/ints
+# TODO: Have this filter expressions that evaluate to things without vars,
+# TODO:      # e. g. floats/ints
 def generate_expressions_combinations(expressions, combo_depth=2,
                                       combo_function=np.prod):
     """
@@ -181,7 +179,7 @@ def generate_expressions_combinations(expressions, combo_depth=2,
             to be converted to expressions and combined, e. g.
             ["1 / x", "x ** 2"], must be functions of x
         combo_depth (int): the number of independent variables to consider
-        combo_function (function): the function which combines the
+        combo_function (method): the function which combines the
             the respective expressions provided, defaults to np.prod,
             i. e. the cumulative product of the expressions
 
