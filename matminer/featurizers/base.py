@@ -132,8 +132,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         return self.featurize_many(X, ignore_errors=True)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True,
-                            label_properties=None):
+                            return_errors=False, inplace=True):
         """
         Compute features for all entries contained in input dataframe.
 
@@ -159,8 +158,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             col_id = [col_id]
 
         # Generate the feature labels
-        label_properties = label_properties or {}
-        labels = self.feature_labels(**label_properties)
+        labels = self.feature_labels()
 
         # Check names to avoid overwriting the current columns
         for col in df.columns.values:
