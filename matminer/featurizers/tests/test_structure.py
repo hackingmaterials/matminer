@@ -144,38 +144,69 @@ class StructureFeaturesTest(PymatgenTest):
         # Test a few peaks in diamond
         # These expected numbers were derived by performing
         # the calculation in another code
-        prdf = PartialRadialDistributionFunction().featurize(self.diamond)[0]
+        distances, prdf = PartialRadialDistributionFunction().compute_prdf(self.diamond)
         self.assertEqual(len(prdf.values()), 1)
-        self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(1.4 / 0.1))], 0)
-        self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(1.5 / 0.1))], 1.32445167622)
-        self.assertAlmostEqual(max(prdf[('C', 'C')]['distances']), 20.0)
-        self.assertAlmostEqual(
-            prdf[('C', 'C')]['distribution'][int(round(19.9 / 0.1))], 0.07197902)
+        self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.4 / 0.1))], 0)
+        self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.5 / 0.1))], 1.32445167622)
+        self.assertAlmostEqual(max(distances), 20.0)
+        self.assertAlmostEqual(prdf[('C', 'C')][int(round(19.9 / 0.1))], 0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
-        prdf = PartialRadialDistributionFunction(cutoff=10).featurize(
-            self.cscl)[0]
+        distances, prdf = PartialRadialDistributionFunction(cutoff=10).compute_prdf(self.cscl)
         self.assertEqual(len(prdf.values()), 4)
-        self.assertAlmostEqual(max(prdf[('Cs', 'Cl')]['distances']), 10.0)
-        self.assertAlmostEqual(
-            prdf[('Cs', 'Cl')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
-        self.assertAlmostEqual(
-            prdf[('Cl', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0.477823197)
-        self.assertAlmostEqual(
-            prdf[('Cs', 'Cs')]['distribution'][int(round(3.6 / 0.1))], 0)
+        self.assertAlmostEqual(max(distances), 10.0)
+        self.assertAlmostEqual(prdf[('Cs', 'Cl')][int(round(3.6 / 0.1))], 0.477823197)
+        self.assertAlmostEqual(prdf[('Cl', 'Cs')][int(round(3.6 / 0.1))], 0.477823197)
+        self.assertAlmostEqual(prdf[('Cs', 'Cs')][int(round(3.6 / 0.1))], 0)
 
         # Do Ni3Al, make sure it captures the antisymmetry of Ni/Al sites
-        prdf = PartialRadialDistributionFunction(
-            cutoff=10, bin_size=0.5).featurize(self.ni3al)[0]
+        distances, prdf = PartialRadialDistributionFunction(cutoff=10, bin_size=0.5)\
+            .compute_prdf(self.ni3al)
         self.assertEqual(len(prdf.values()), 4)
-        self.assertAlmostEqual(
-            prdf[('Ni', 'Al')]['distribution'][int(round(2 / 0.5))], 0.125236677)
-        self.assertAlmostEqual(
-            prdf[('Al', 'Ni')]['distribution'][int(round(2 / 0.5))], 0.37571003)
-        self.assertAlmostEqual(
-            prdf[('Al', 'Al')]['distribution'][int(round(2 / 0.5))], 0)
+        self.assertAlmostEqual(prdf[('Ni', 'Al')][int(round(2 / 0.5))], 0.125236677)
+        self.assertAlmostEqual(prdf[('Al', 'Ni')][int(round(2 / 0.5))], 0.37571003)
+        self.assertAlmostEqual(prdf[('Al', 'Al')][int(round(2 / 0.5))], 0)
+
+        # Check the fit operation
+        featurizer = PartialRadialDistributionFunction()
+        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        self.assertEqual({'Cs', 'Cl', 'C', 'Ni', 'Al'}, set(featurizer.elements_))
+
+        featurizer.exclude_elems = ['Cs', 'Al']
+        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        self.assertEqual({'Cl', 'C', 'Ni'}, set(featurizer.elements_))
+
+        featurizer.include_elems = ['H']
+        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        self.assertEqual({'H', 'Cl', 'C', 'Ni'}, set(featurizer.elements_))
+
+        # Check the feature labels
+        featurizer.exclude_elems = ()
+        featurizer.include_elems = ()
+        featurizer.elements_ = ['Al', 'Ni']
+        labels = featurizer.feature_labels()
+        n_bins = len(featurizer._make_bins()) - 1
+
+        self.assertEqual(3 * n_bins, len(labels))
+        self.assertIn('Al-Ni PRDF r=0.00-0.10', labels)
+
+        # Check the featurize method
+        featurizer.elements_ = ['C']
+        features = featurizer.featurize(self.diamond)
+        prdf = featurizer.compute_prdf(self.diamond)[1]
+        self.assertArrayAlmostEqual(features, prdf[('C', 'C')])
+
+        # Make sure labels and features are in the same order
+        featurizer.elements_ = ['Al', 'Ni']
+        features = featurizer.featurize(self.ni3al)
+        labels = featurizer.feature_labels()
+        prdf = featurizer.compute_prdf(self.ni3al)[1]
+        self.assertEqual((n_bins * 3,), features.shape)
+        self.assertTrue(labels[0].startswith('Al-Al'))
+        self.assertTrue(labels[n_bins].startswith('Al-Ni'))
+        self.assertTrue(labels[2 * n_bins].startswith('Ni-Ni'))
+        self.assertArrayAlmostEqual(features, np.hstack(
+            [prdf[('Al', 'Al')], prdf[('Al', 'Ni')], prdf[('Ni', 'Ni')]]))
 
     def test_redf(self):
         d = ElectronicRadialDistributionFunction().featurize(
@@ -264,15 +295,12 @@ class StructureFeaturesTest(PymatgenTest):
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
     def test_min_relative_distances(self):
-        self.assertAlmostEqual(int(
-            1000 * MinimumRelativeDistances().featurize(
-                self.diamond_no_oxi)[0][0]), 1105)
-        self.assertAlmostEqual(int(
-            1000 * MinimumRelativeDistances().featurize(
-                self.nacl)[0][0]), 1005)
-        self.assertAlmostEqual(int(
-            1000 * MinimumRelativeDistances().featurize(
-                self.cscl)[0][0]), 1006)
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+                self.diamond_no_oxi)[0][0], 1.1052576)
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+                self.nacl)[0][0], 0.8891443)
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+                self.cscl)[0][0], 0.9875975)
 
     def test_sitestatsfingerprint(self):
         # Test matrix.
@@ -283,11 +311,11 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(opvals[10][0], 0.9995, places=7)
         self.assertAlmostEqual(opvals[10][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.nacl)
-        self.assertAlmostEqual(opvals[16][0], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[16][1], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[18][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[18][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.cscl)
-        self.assertAlmostEqual(opvals[20][0], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[20][1], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[22][0], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[22][1], 0.9995, places=7)
 
         # Test stats.
         op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint")
@@ -297,13 +325,13 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(opvals[2], 0.0005, places=7)
         self.assertAlmostEqual(opvals[3], 0.0005, places=7)
         self.assertAlmostEqual(opvals[4], 0.0005, places=7)
-        self.assertAlmostEqual(opvals[32], 0.03825, places=7)
+        self.assertAlmostEqual(opvals[36], 0.0805, places=7)
         self.assertAlmostEqual(opvals[40], 0.9995, places=7)
         self.assertAlmostEqual(opvals[41], 0, places=7)
         self.assertAlmostEqual(opvals[42], 0.9995, places=7)
         self.assertAlmostEqual(opvals[43], 0.9995, places=7)
         self.assertAlmostEqual(opvals[44], 0.0075, places=7)
-        for i in range(52, len(opvals)):
+        for i in range(56, len(opvals)):
             self.assertAlmostEqual(opvals[i], 0, places=2)
 
         # Test coordination number
@@ -319,7 +347,7 @@ class StructureFeaturesTest(PymatgenTest):
         # Test basic
         ewald = EwaldEnergy(accuracy=2)
         self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
-        self.assertAlmostEquals(ewald.featurize(self.nacl)[0], -8.84173626, 2)
+        self.assertAlmostEqual(ewald.featurize(self.nacl)[0], -8.84173626, 2)
         self.assertLess(ewald.featurize(self.nacl),
                         ewald.featurize(self.cscl))  # Atoms are closer in NaCl
 
@@ -331,35 +359,41 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test individual structures with featurize
         bob_md = BagofBonds.from_preset("MinimumDistanceNN")
+        bob_md.no_oxi = True
+        bob_md.fit([self.diamond_no_oxi])
         self.assertArrayEqual(bob_md.featurize(self.diamond), [1.0])
         self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
 
         bob_voronoi = BagofBonds.from_preset("VoronoiNN")
+        bob_voronoi.bbv = float("nan")
+        bob_voronoi.fit([self.nacl])
         bond_fracs = bob_voronoi.featurize(self.nacl)
         bond_names = bob_voronoi.feature_labels()
-        ref = {'Na+-Na+ bond frac.': 0.25, 'Cl--Na+ bond frac.': 0.5,
-               'Cl--Cl- bond frac.': 0.25}
+        ref = {'Na+ - Na+ bond frac.': 0.25, 'Cl- - Na+ bond frac.': 0.5,
+               'Cl- - Cl- bond frac.': 0.25}
         self.assertDictEqual(dict(zip(bond_names, bond_fracs)), ref)
 
         # Test to make sure dataframe behavior is as intended
         s_list = [self.diamond_no_oxi, self.ni3al]
         df = pd.DataFrame.from_dict({'s': s_list})
+        bob_voronoi.fit(df['s'])
         df = bob_voronoi.featurize_dataframe(df, 's')
 
         # Ensure all data is properly labelled and organized
-        self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, np.nan])
-        self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [np.nan, 0.5])
-        self.assertArrayEqual(df['Al-Al bond frac.'].as_matrix(), [np.nan, 0.0])
-        self.assertArrayEqual(df['Ni-Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+        self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, np.nan])
+        self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+        self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [np.nan, 0.0])
+        self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [np.nan, 0.5])
 
         # Test to make sure bad_bond_values (bbv) are still changed correctly
         # and check inplace behavior of featurize dataframe.
         bob_voronoi.bbv = 0.0
+        df = pd.DataFrame.from_dict({'s': s_list})
         df = bob_voronoi.featurize_dataframe(df, 's')
-        self.assertArrayEqual(df['C-C bond frac.'].as_matrix(), [1.0, 0.0])
-        self.assertArrayEqual(df['Al-Ni bond frac.'].as_matrix(), [0.0, 0.5])
-        self.assertArrayEqual(df['Al-Al bond frac.'].as_matrix(), [0.0, 0.0])
-        self.assertArrayEqual(df['Ni-Ni bond frac.'].as_matrix(), [0.0, 0.5])
+        self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, 0.0])
+        self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [0.0, 0.5])
+        self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [0.0, 0.0])
+        self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [0.0, 0.5])
 
 
 if __name__ == '__main__':

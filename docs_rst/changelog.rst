@@ -5,6 +5,28 @@
 matminer Changelog
 ==================
 
+**v0.2.6**
+
+* modify ChemicalRSO to use fit() method (Q. Wang)
+* more updates to FigRecipes (A. Dunn, A. Faghaninia)
+* misc code cleanups (M. Dylla, A. Faghaninia, A. Jain, K. Bostrom, Q. Wang)
+* fix missing yaml file from package data (A. Jain)
+
+**v0.2.5**
+
+* Major rework of BaseFeaturizer to subclass BaseEstimator/TransformerMixin of sklearn. Allows for support of fit() function needed by many featurizers (L. Ward)
+* BaseFeaturizer can return errors as a new column (A. Dunn)
+* Clean up data getter signatures (J. Montoya)
+* Re-implement PRDF (L. Ward)
+* GaussianSymmFunc featurizer (Q. Wang)
+* misc code clean up (L. Ward, A. Jain)
+
+**v0.2.4**
+
+* updates to PlotlyFig (A. Dunn, A. Faghaninia)
+* adapt to new OP parameters (N. Zimmermann)
+* bugfixes, cleanups, doc updates (A. Faghaninia, A. Dunn, Q. Wang, N. Zimmermann, A. Jain)
+
 **v0.2.3**
 
 * MDF data retrieval (J. Montoya)

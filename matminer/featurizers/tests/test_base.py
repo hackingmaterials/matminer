@@ -62,7 +62,6 @@ class TestBaseClass(PymatgenTest):
         self.multi = MultipleFeatureFeaturizer()
         self.matrix = MatrixFeaturizer()
         self.multiargs = SingleFeaturizerMultiArgs()
-        self.n_jobs = 2
 
     @staticmethod
     def make_test_data():
@@ -120,12 +119,14 @@ class TestBaseClass(PymatgenTest):
 
         # Single argument
         s = self.single
-        mat = s.featurize_many([1, 2, 3], self.n_jobs)
+        s.set_n_jobs(2)
+        mat = s.featurize_many([1, 2, 3])
         self.assertArrayAlmostEqual(mat, [[2], [3], [4]])
 
         # Multi-argument
         s = self.multiargs
-        mat = s.featurize_many([[1, 4], [2, 5], [3, 6]], self.n_jobs)
+        s.set_n_jobs(2)
+        mat = s.featurize_many([[1, 4], [2, 5], [3, 6]])
         self.assertArrayAlmostEqual(mat, [[5], [7], [9]])
 
     def test_multiprocessing_df(self):
@@ -133,13 +134,16 @@ class TestBaseClass(PymatgenTest):
         # Single argument
         s = self.single
         data = self.make_test_data()
-        data = s.featurize_dataframe(data, 'x', n_jobs=self.n_jobs)
+        s.set_n_jobs(2)
+        data = s.featurize_dataframe(data, 'x')
         self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
 
         # Multi-argument
         s = self.multiargs
+        data = self.make_test_data()
+        s.set_n_jobs(2)
         data['x2'] = [4, 5, 6]
-        data = s.featurize_dataframe(data, ['x', 'x2'], n_jobs=self.n_jobs)
+        data = s.featurize_dataframe(data, ['x', 'x2'])
         self.assertArrayAlmostEqual(data['y'], [5, 7, 9])
 
 

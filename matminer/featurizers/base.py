@@ -1,41 +1,156 @@
 from __future__ import division, unicode_literals
 
-import sys
+import sys, traceback
 import warnings
 import pandas as pd
 import numpy as np
 from six import string_types
 from multiprocessing import Pool, cpu_count
-from functools import partial
+
+from sklearn.base import TransformerMixin, BaseEstimator
 
 
-class BaseFeaturizer(object):
-    """Abstract class to calculate attributes for compounds"""
+class BaseFeaturizer(BaseEstimator, TransformerMixin):
+    """
+    Abstract class to calculate features from raw materials input data
+    such a compound formula or a pymatgen crystal structure or
+    bandstructure object.
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            inplace=True, label_props=None, n_jobs=1,
-                            **kwargs):
-        """
-        Compute features for all entries contained in input dataframe
+    ## Using a BaseFeaturizer Class
+
+    There are multiple ways for running the featurize routines:
+
+        `featurize`: Featurize a single entry
+        `featurize_many`: Featurize a list of entries
+        `featurize_dataframe`: Compute features for many entries, store results
+            as columns in a dataframe
+
+    Some featurizers require first calling the `fit` method before the
+    featurization methods can function. Generally, you pass the dataset to
+    fit to determine which features a featurizer should compute. For example,
+    a featurizer that returns the partial radial distribution function
+    may need to know which elements are present in a dataset.
+
+    You can also employ the featurizer as part of a ScikitLearn Pipeline object.
+    For these cases, scikit-learn calls the `transform` function of the
+    `BaseFeaturizer` which is a less-featured wrapper of `featurize_many`. You
+    would then provide your input data as an array to the Pipeline, which would
+    output the featurers as an array.
+
+    Beyond the featurizing capability, BaseFeaturizer also includes methods
+    for retrieving proper references for a featurizer. The `citations` function
+    returns a list of papers that should be cited. The `implementors` function
+    returns a list of people who wrote the featurizer, so that you know
+    who to contact with questions.
+
+    ## Implementing a New BaseFeaturizer Class
+
+    These operations must be implemented for each new featurizer:
+        `featurize` - Takes a single material as input, returns the features of
+            that material.
+        `feature_labels` - Generates a human-meaningful name for each of the
+            features.
+        `citations` - Returns a list of citations in BibTeX format
+        `implementors` - Returns a list of people who contributed writing a paper
+
+    None of these operations should change the state of the featurizer. I.e.,
+    running each method twice should no produce different results, no class
+    attributes should be changed, unning one operation should not affect the
+    output of another.
+
+    All options of the featurizer must be set by the `__init__` function. All
+    options must be listed as keyword arguments with default values, and the
+    value must be saved as a class attribute with the same name (e.g., argument
+    `n` should be stored in `self.n`). These requirements are necessary for
+    compatibility with the `get_params` and `set_params` methods of
+    `BaseEstimator`, which enable easy interoperability with scikit-learn.
+
+    Depending on the complexity of your featurizer, it may be worthwhile to
+    implement a `from_preset` class method. The `from_preset` method takes the
+    name of a preset and returns an instance of the featurizer with some
+    hard-coded set of inputs. The `from_preset` option is particularly useful
+    for defining the settings used by papers in the literature.
+
+    Optionally, you can implement the `fit` operation if there are attributes of
+    your featurizer that must be set for the featurizer to work. Any variables
+    that are set by fitting should be stored as class attributes that end with
+    an underscore. (This follows the pattern used by scikit-learn).
+
+    Another implementation to consider is whether it is worth making any utility
+    operations for your featurizer. `featurize` must return a list of features,
+    but this may not be the most natural representation for your features (e.g.,
+    a `dict` could be better). Making a separate function for computing features
+    in this natural representation and having the `featurize` function call this
+    method and then convert the data into a list is a recommended approach.
+    Users who want to compute the representation in the natural form can use the
+    utility function and users who want the data in a ML-ready format (list) can
+    call `featurize`. See `PartialRadialDistributionFunction` for an example of
+    this concept.
+
+    ## Documenting a BaseFeaturizer
+
+    The class documentation for each featurizer must contain a description of
+    the options and the features that will be computed. The options of the class
+     must all be defined in the `__init__` function of the class, and we
+     recommend documenting them using the
+    [Google style](https://google.github.io/styleguide/pyguide.html).
+
+    We recommend starting the class documentation with a high-level overview of
+    the features. For example, mention what kind of characteristics of the
+    material they describe and refer the reader to a paper that describes these
+    features well (use a hyperlink if possible, so that the readthedocs will
+    like to that paper). Then, describe each of the individual features in a
+    block named "Features". It is necessary here to give the user enough
+    information for user to map a feature name what it means. The objective in
+    this part is to allow people to understand what each column of their
+    dataframe is without having to read the Python code. You do not need to
+    explain all of the math/algorithms behind each feature for them to be able
+    to reproduce the feature, just to get an idea what it is.
+    """
+
+    def set_n_jobs(self, n_jobs):
+        """Set the number of threads for this """
+        self._n_jobs = n_jobs
+
+    @property
+    def n_jobs(self):
+        return self._n_jobs if hasattr(self, '_n_jobs') else cpu_count()
+
+    def fit(self, X, y=None, **fit_kwargs):
+        """Update the parameters of this featurizer based on available data
 
         Args:
-            df (Pandas dataframe): Dataframe containing input data
+            X - [list of tuples], training data
+        Returns:
+            self
+            """
+        return self
+
+    def transform(self, X):
+        """Compute features for a list of inputs"""
+
+        return self.featurize_many(X, ignore_errors=True)
+
+    def featurize_dataframe(self, df, col_id, ignore_errors=False,
+                            return_errors=False, inplace=True):
+        """
+        Compute features for all entries contained in input dataframe.
+
+        Args:
+            df (Pandas dataframe): Dataframe containing input data.
             col_id (str or list of str): column label containing objects to
                 featurize. Can be multiple labels if the featurize function
-                requires multiple inputs
+                requires multiple inputs.
             ignore_errors (bool): Returns NaN for dataframe rows where
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
+            return_errors (bool). Returns the errors encountered for each
+                row in a separate `XFeaturizer errors` column if True. Requires
+                ignore_errors to be True.
             inplace (bool): Whether to add new columns to input dataframe (df)
-            n_jobs (int): Number of parallel processes to execute when
-                featurizing the dataframe. If None, automatically determines the
-                number of processing cores on the system and sets n_procs to
-                this number.
-            label_props (dict): properties to be fed as kwargs to
-                feature_labels, e. g. {"postprocess": sympy.latex}
-            **kwargs (kwargs): kwargs to be passed to featurize()
+
         Returns:
-            updated Dataframe
+            updated dataframe.
         """
 
         # If only one column and user provided a string, put it inside a list
@@ -43,38 +158,57 @@ class BaseFeaturizer(object):
             col_id = [col_id]
 
         # Generate the feature labels
-        label_props = label_props if label_props is not None else {}
-        labels = self.feature_labels(**label_props)
+        labels = self.feature_labels()
+
+        # Check names to avoid overwriting the current columns
+        for col in df.columns.values:
+            if col in labels:
+                raise ValueError('"{}" exists in input dataframe'.format(col))
 
         # Compute the features
-        features = self.featurize_many(df[col_id].values, n_jobs, ignore_errors,
-                                       **kwargs)
+
+        features = self.featurize_many(df[col_id].values,
+                                       ignore_errors=ignore_errors,
+                                       return_errors=return_errors)
+        if return_errors:
+            labels.append(self.__class__.__name__ + " Exceptions")
 
         # Create dataframe with the new features
-
         res = pd.DataFrame(features, index=df.index, columns=labels)
 
         # Update the existing dataframe
         if inplace:
-            for k in self.feature_labels():
+            for k in labels:
                 df[k] = res[k]
             return df
         else:
             return pd.concat([df, res], axis=1)
 
-    def featurize_many(self, entries, n_jobs=1, ignore_errors=False, **kwargs):
+
+    def featurize_many(self, entries, ignore_errors=False, return_errors=False):
         """
         Featurize a list of entries.
-
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
 
         Args:
-           entries (list): A list of entries to be featurized
+            entries (list): A list of entries to be featurized.
+            ignore_errors (bool): Returns NaN for entries where exceptions are
+                thrown if True. If False, exceptions are thrown as normal.
+            return_errors (bool): If True, returns the feature list as
+                determined by ignore_errors with traceback strings added
+                as an extra 'feature'. Entries which featurize without
+                exceptions have this extra feature set to NaN.
+
         Returns:
-           list - features for each entry
+            (list) features for each entry.
         """
 
+        if return_errors and not ignore_errors:
+            raise ValueError("Please set ignore_errors to True to use"
+                             " return_errors.")
+
         self.__ignore_errors = ignore_errors
+        self.__return_errors = return_errors
 
         # Check inputs
         if not hasattr(entries, '__getitem__'):
@@ -88,71 +222,94 @@ class BaseFeaturizer(object):
         if not isinstance(entries[0], (tuple, list, np.ndarray)):
             entries = zip(entries)
 
-        # set the number of processes to the number of cores on the system
-        n_jobs = cpu_count() if n_jobs is None else n_jobs
-
         # Run the actual featurization
-        if n_jobs == 1:
-            return [self.featurize_wrapper(x, **kwargs) for x in entries]
+        if self.n_jobs == 1:
+            return [self.featurize_wrapper(x) for x in entries]
         else:
             if sys.version_info[0] < 3:
-                warnings.warn("Multiprocessing dataframes is not supported in "
+                warnings.warn("Multiprocessing is not supported in "
                               "matminer for Python 2.x. Multiprocessing has "
                               "been disabled. Please upgrade to Python 3.x to "
                               "enable multiprocessing.")
-                return self.featurize_many(entries, n_jobs=1,
-                                           ignore_errors=ignore_errors,
-                                           **kwargs)
-            with Pool(n_jobs) as p:
-                pfunc = partial(self.featurize_wrapper, **kwargs)
-                return p.map(pfunc, entries)
 
-    def featurize_wrapper(self, x, **kwargs):
+                self.set_n_jobs(1)
+                return self.featurize_many(entries,
+                                           ignore_errors=ignore_errors,
+                                           return_errors=return_errors)
+            with Pool(self.n_jobs) as p:
+                return p.map(self.featurize_wrapper, entries)
+
+    def featurize_wrapper(self, x):
+        """
+        An exception wrapper for featurize, used in featurize_many and
+        featurize_dataframe. featurize_wrapper changes the behavior of featurize
+        when ignore_errors is True in featurize_many/dataframe.
+
+        Args:
+             x: input data to featurize (type depends on featurizer).
+
+        Returns:
+            (list) one or more features.
+        """
         try:
-            return self.featurize(*x, **kwargs)
-        except:
+            # Successful featurization returns nan for an error.
+            if self.__return_errors:
+                return self.featurize(*x) + [float("nan")]
+            else:
+                return self.featurize(*x)
+        except BaseException:
             if self.__ignore_errors:
-                return [float("nan")] * len(self.feature_labels())
+                if self.__return_errors:
+                    features = [float("nan")] * len(self.feature_labels())
+                    error = traceback.format_exception(*sys.exc_info())
+                    return features + ["".join(error)]
+                else:
+                    return [float("nan")] * len(self.feature_labels())
             else:
                 raise
 
     def featurize(self, *x):
         """
-        Main featurizer function. Only defined in feature subclasses.
+        Main featurizer function, which has to be implemented
+        in any derived featurizer subclass.
+
         Args:
-            x: input data to featurize (type depends on featurizer)
+            x: input data to featurize (type depends on featurizer).
+
         Returns:
-            list of one or more features
+            (list) one or more features.
         """
 
         raise NotImplementedError("featurize() is not defined!")
 
     def feature_labels(self):
         """
-        Generate attribute names
+        Generate attribute names.
 
         Returns:
-            list of strings for attribute labels
+            ([str]) attribute labels.
         """
 
         raise NotImplementedError("feature_labels() is not defined!")
 
     def citations(self):
         """
-        Citation / reference for feature
+        Citation(s) and reference(s) for this feature.
+
         Returns:
-            array - each element should be str citation, ideally in BibTeX
-                format
+            (list) each element should be a string citation,
+                ideally in BibTeX format.
         """
 
         raise NotImplementedError("citations() is not defined!")
 
     def implementors(self):
         """
-        List of implementors of the feature
+        List of implementors of the feature.
+
         Returns:
-            array - each element should either be str with author name (e.g.,
-                "Anubhav Jain") or dict with required key "name" and other
+            (list) each element should either be a string with author name (e.g.,
+                "Anubhav Jain") or a dictionary  with required key "name" and other
                 keys like "email" or "institution" (e.g., {"name": "Anubhav
                 Jain", "email": "ajain@lbl.gov", "institution": "LBNL"}).
         """
@@ -161,13 +318,17 @@ class BaseFeaturizer(object):
 
 
 class MultipleFeaturizer(BaseFeaturizer):
-    """Class that runs multiple featurizers on the same data
-    All featurizers must take the same kind of data as input to the featurize function."""
+    """
+    Class that runs multiple featurizers on the same data
+    All featurizers must take the same kind of data as input
+    to the featurize function."""
 
     def __init__(self, featurizers):
-        """Create a new instance of this featurizer
+        """
+        Create a new instance of this featurizer.
+
         Args:
-            featurizers - [BaseFeaturizer], list of featurizers to run
+            featurizers ([BaseFeaturizer]): list of featurizers to run.
         """
         self.featurizers = featurizers
 

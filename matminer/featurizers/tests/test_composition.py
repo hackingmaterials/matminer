@@ -139,7 +139,7 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertEqual(df_atomic_orbitals['LUMO_character'][0], 'd')
         self.assertEqual(df_atomic_orbitals['LUMO_element'][0], 'Fe')
         self.assertEqual(df_atomic_orbitals['LUMO_energy'][0], -0.295049)
-        self.assertEqual(df_atomic_orbitals['gap'][0], 0.0)
+        self.assertEqual(df_atomic_orbitals['gap_AO'][0], 0.0)
 
     def test_band_center(self):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
@@ -159,41 +159,47 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 5.15768, 2)
 
     def test_miedema_all(self):
-        miedema_df = pd.DataFrame({"composition": [Composition("TiZr"), Composition("Mg10Cu50Ca40"), Composition("Fe2O3")]})
-        df_miedema = Miedema(struct_types='all').featurize_dataframe(miedema_df, col_id="composition")
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_inter'][0], -0.0034450221522328503)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_amor'][0], 0.070765883630040161)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_min'][0], 0.036635997549833224)
+        df = pd.DataFrame({"composition": [Composition("TiZr"),
+                                           Composition("Mg10Cu50Ca40"),
+                                           Composition("Fe2O3")]})
+        miedema = Miedema(struct_types='all')
+        mfps = miedema.featurize_dataframe(df, col_id="composition")
+        self.assertAlmostEqual(mfps['Miedema_deltaH_inter'][0], -0.003445022152)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_amor'][0], 0.0707658836300)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_min'][0], 0.03663599755)
 
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_inter'][1], -0.23512597842733007)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_amor'][1], -0.16454184827089643)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_min'][1], -0.052808433113994087)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_inter'][1], -0.235125978427)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_amor'][1], -0.164541848271)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_min'][1], -0.05280843311)
 
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_inter'][2]), True)
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_amor'][2]), True)
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_min'][2]), True)
+        self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_inter'][2]), True)
+        self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_amor'][2]), True)
+        self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_min'][2]), True)
 
     def test_miedema_ss(self):
-        miedema_df = pd.DataFrame({"composition": [Composition("TiZr"), Composition("Mg10Cu50Ca40"), Composition("Fe2O3")]})
-        df_miedema = Miedema(struct_types='ss',
-                             ss_types=['min', 'fcc', 'bcc', 'hcp', 'no_latt']).featurize_dataframe(miedema_df, col_id="composition")
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_min'][0], 0.036635997549833224)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_fcc'][0], 0.047000270656721008)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_bcc'][0], 0.083275226530828264)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_hcp'][0], 0.036635997549833224)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_no_latt'][0], 0.036635997549833224)
+        df = pd.DataFrame({"composition": [Composition("TiZr"),
+                                           Composition("Mg10Cu50Ca40"),
+                                           Composition("Fe2O3")]})
+        miedema = Miedema(struct_types='ss', ss_types=['min', 'fcc', 'bcc',
+                                                       'hcp', 'no_latt'])
+        mfps = miedema.featurize_dataframe(df, col_id="composition")
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_min'][0], 0.03663599755)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_fcc'][0], 0.04700027066)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_bcc'][0], 0.08327522653)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_hcp'][0], 0.03663599755)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_no_latt'][0], 0.036635998)
 
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_min'][1], -0.052808433113994087)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_fcc'][1], 0.030105751741108196)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_bcc'][1], -0.052808433113994087)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_hcp'][1], 0.030105751741108196)
-        self.assertAlmostEqual(df_miedema['formation_enthalpy_ss_no_latt'][1], -0.0035781358562771083)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_min'][1], -0.05280843311)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_fcc'][1], 0.03010575174)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_bcc'][1], -0.05280843311)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_hcp'][1], 0.03010575174)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_no_latt'][1], -0.0035781359)
 
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_min'][2]), True)
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_fcc'][2]), True)
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_bcc'][2]), True)
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_hcp'][2]), True)
-        self.assertAlmostEqual(math.isnan(df_miedema['formation_enthalpy_ss_no_latt'][2]), True)
+        self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_min'][2]), True)
+        self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_fcc'][2]), True)
+        self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_bcc'][2]), True)
+        self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_hcp'][2]), True)
+        self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_no_latt'][2]), True)
 
 if __name__ == '__main__':
     unittest.main()
