@@ -162,7 +162,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         # Check names to avoid overwriting the current columns
         for col in df.columns.values:
-            if col in labels:
+            if labels and col in labels:
                 raise ValueError('"{}" exists in input dataframe'.format(col))
 
         # Compute the features
