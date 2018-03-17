@@ -76,12 +76,12 @@ class FunctionFeaturizer(BaseFeaturizer):
 
     def featurize_dataframe(self, df, col_id, **kwargs):
         """
-        Custom featurize class so we can rename columns
+        Custom featurize class so we can rename columns using fit
 
         Args:
             df (DataFrame): dataframe containing input data
-            col_id (str or list of str): column label containing objects to
-                featurize.
+            col_id (str or list of str): column label containing objects
+                to featurize.
 
         Returns:
             updated DataFrame
@@ -90,9 +90,24 @@ class FunctionFeaturizer(BaseFeaturizer):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-        label_properties = {'input_columns': col_id}
+        self.fit(col_id)
+
         return super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, label_properties=label_properties, **kwargs)
+            df, col_id, **kwargs)
+
+    def fit(self, input_feature_names):
+        """
+        Sets the current input features for the featurizer, solely
+        used for bookkeeping between input column ids and output
+        feature labels in featurized dataframes
+
+        Args:
+            input_feature_names: list of input features
+
+        Returns:
+            self
+        """
+        self._current_input_features = input_feature_names
 
     def featurize(self, *args):
         """
@@ -109,13 +124,14 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         return list(self._exp_iter(*args, postprocess=self.postprocess))
 
-    def feature_labels(self, input_columns):
+    def feature_labels(self):
         """
         Returns:
             Set of feature labels corresponding to expressions
         """
         postprocess = sp.latex if self.latexify_labels else str
-        return list(self._exp_iter(*input_columns, postprocess=postprocess))
+        return list(self._exp_iter(*self._current_input_features,
+                                   postprocess=postprocess))
 
     def _exp_iter(self, *args, postprocess=None):
         """
