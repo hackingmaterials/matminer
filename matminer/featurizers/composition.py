@@ -178,7 +178,7 @@ class ElementProperty(BaseFeaturizer):
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
 
-      
+
 class CationProperty(ElementProperty):
     """Features based on the properties of cations in a material
 
@@ -288,7 +288,7 @@ class AtomicOrbitals(BaseFeaturizer):
     orbital energies of neutral ions with LDA-DFT were computed by NIST.
     https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
     """
-        
+
     def featurize(self, comp):
         """
         Args:
