@@ -1,5 +1,7 @@
 from __future__ import division
 
+from matminer.utils.data import MagpieData
+
 """
 Features that describe the local environment of a single atom. Note that
 structural features can be constructed from a combination of site features from
@@ -1677,3 +1679,77 @@ class AngularFourierSeries(BaseFeaturizer):
 
     def implementors(self):
         return ["Maxwell Dylla"]
+
+
+# TODO: Figure out whether to take NN-counting method as an option (see VoronoiFingerprint)
+class LocalPropertyDifference(BaseFeaturizer):
+    """Compute the different in elemental properties between site
+    and its neighboring sites.
+
+    Uses the Voronoi tessellation of the structure to determine the
+    neighbors of the site, and assigns each neighbor (:math:`n`) a
+    weight (:math:`A_n`) that corresponds to the area of the facet
+    on the tessellation corresponding to that neighbor.
+    The local property difference is then computed by
+    :math:`\frac{\sum_n {A_n |p_n - p_0|}}{\sum_n {A_n}}`
+    where :math:`p_n` is the property (e.g., atomic number) of a neighbor
+    and :math:`p_0` is the property of a site.
+
+    Based on the method proposed by
+    [Ward et al. PRB 2017](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.96.024104)
+
+    Features:
+        - "local property difference in [property]" - Weighted average
+            of differences between an elemental property of a site and
+            that of each of its neighbors, weighted by size of face on
+            Voronoi tessellation
+    """
+
+    def __init__(self, data_source=MagpieData(), properties=None):
+        self.data_source = data_source
+        self.properties = properties or ['Electronegativity']
+
+        # Initialize the cached structure and tessellation
+        self.__last_structure = None
+
+    def featurize(self, strc, idx):
+        # Get the targeted site
+        my_site = strc[idx]
+
+        # Get the tessellation of a site
+        nn = VoronoiNN().get_nn_info(strc, idx)
+
+        # Get the element and weight of each site
+        elems = [n['site'].specie for n in nn]
+        weights = [n['weight'] for n in nn]
+
+        # Compute the difference for each property
+        output = np.zeros((len(self.properties),))
+        total_weight = np.sum(weights)
+        for i,p in enumerate(self.properties):
+            my_prop = self.data_source.get_elemental_property(my_site.specie, p)
+            n_props = self.data_source.get_elemental_properties(elems, p)
+            output[i] = np.dot(weights, np.abs(np.subtract(n_props, my_prop))) / total_weight
+
+        return output
+
+    def feature_labels(self):
+        return ['local difference in ' + p for p in self.properties]
+
+    def citations(self):
+        return ["@article{Ward2017,"
+                "author = {Ward, Logan and Liu, Ruoqian "
+                "and Krishna, Amar and Hegde, Vinay I. "
+                "and Agrawal, Ankit and Choudhary, Alok "
+                "and Wolverton, Chris},"
+                "doi = {10.1103/PhysRevB.96.024104},"
+                "journal = {Physical Review B},"
+                "pages = {024104},"
+                "title = {{Including crystal structure attributes "
+                "in machine learning models of formation energies "
+                "via Voronoi tessellations}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "volume = {96},year = {2017}}"]
+
+    def implementors(self):
+        return ['Logan Ward']
