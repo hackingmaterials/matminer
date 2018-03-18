@@ -58,10 +58,20 @@ class FunctionFeaturizer(BaseFeaturizer):
         self.latexify_labels = latexify_labels
         self.postprocess = postprocess or float
 
+    @property
+    def exp_dict(self):
+        """
+        Generates a dictionary of expressions keyed by number of
+        variables in each expression
+
+        Returns:
+            Dictionary of expressions keyed by number of variables
+        """
         # Generate lists of sympy expressions keyed by number of features
-        self.exp_dict = OrderedDict(
-            [(n, generate_expressions_combinations(self.expressions, n))
-             for n in range(1, multi_feature_depth+1)])
+        return OrderedDict(
+            [(n, generate_expressions_combinations(self.expressions, n,
+                                                   self.combo_function))
+             for n in range(1, self.multi_feature_depth+1)])
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True):
