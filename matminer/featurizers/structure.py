@@ -18,8 +18,9 @@ from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
-    CoordinationNumber
+from matminer.featurizers.site import OPSiteFingerprint, \
+    CrystalSiteFingerprint, \
+    CoordinationNumber, LocalPropertyDifference
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
@@ -870,25 +871,35 @@ class MinimumRelativeDistances(BaseFeaturizer):
 
 class SiteStatsFingerprint(BaseFeaturizer):
     """
-    Calculates all order parameters (OPs) for all sites in a crystal
-    structure.
-    Args:
-        site_featurizer (BaseFeaturizer): a site-based featurizer
-        stats ([str]): list of weighted statistics to compute for each feature.
-            If stats is None, for each order parameter, a list is returned that
-            contains the calculated parameter for each site in the structure.
-            *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
-        min_oxi (int): minimum site oxidation state for inclusion (e.g.,
-            zero means metals/cations only)
-        max_oxi (int): maximum site oxidation state for inclusion
+    Computes statistics of properties of the sites in a structure.
+
+    This featurizer first uses a site featurizer class (see site.py for
+    options) to compute features of each site in a structure, and then computes
+    features of the entire structure by measuring statistics of each attribute.
+    Can optionally compute the the statistics of only sites with certain ranges
+    of oxidation states (e.g., only anions).
+
+    Features:
+        - Returns each statistic of each site feature
     """
 
     def __init__(self, site_featurizer, stats=('mean', 'std_dev', 'minimum',
                                                'maximum'), min_oxi=None,
                  max_oxi=None):
+        """
+        Args:
+            site_featurizer (BaseFeaturizer): a site-based featurizer
+            stats ([str]): list of weighted statistics to compute for each feature.
+                If stats is None, for each order parameter, a list is returned
+                that contains the calculated parameter for each site in the
+                structure.
+                *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
+            min_oxi (int): minimum site oxidation state for inclusion (e.g.,
+                zero means metals/cations only)
+            max_oxi (int): maximum site oxidation state for inclusion
+        """
 
         self.site_featurizer = site_featurizer
-        self._labels = self.site_featurizer.feature_labels()
         self.stats = tuple([stats]) if type(stats) == str else stats
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
@@ -900,22 +911,13 @@ class SiteStatsFingerprint(BaseFeaturizer):
         self.min_oxi = min_oxi
         self.max_oxi = max_oxi
 
+    @property
+    def _site_labels(self):
+        return self.site_featurizer.feature_labels()
+
     def featurize(self, s):
-        """
-        Calculate all sites' local structure order parameters (LSOPs).
-
-        Args:
-            s: Pymatgen Structure object.
-
-            Returns:
-                vals: (2D array of floats) LSOP values of all sites'
-                (1st dimension) order parameters (2nd dimension). 46 order
-                parameters are computed per site: q_cn (coordination
-                number), q_lin, 35 x q_bent (starting with a target angle
-                of 5 degrees and, increasing by 5 degrees, until 175 degrees),
-                q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
-        """
-        vals = [[] for t in self._labels]
+        # Get each feature for each site
+        vals = [[] for t in self._site_labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
                     and (
@@ -927,6 +929,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
                     else:
                         vals[j].append(opval)
 
+        # Compute the statistics of all sites
         if self.stats:
             stats = []
             for op in vals:
@@ -945,24 +948,30 @@ class SiteStatsFingerprint(BaseFeaturizer):
     def feature_labels(self):
         if self.stats:
             labels = []
-            for attr in self._labels:
-
+            for attr in self._site_labels:
                 for stat in self.stats:
                     labels.append('%s %s' % (stat, attr))
             return labels
         else:
-            return self._labels
+            return self._site_labels
 
     def citations(self):
-        return ['@article{zimmermann_jain_2017, title={Applications of order'
-                ' parameter feature vectors}, journal={in progress}, author={'
-                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}']
+        return self.site_featurizer.citations()
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain']
+        return ['Nils E. R. Zimmermann', 'Alireza Faghaninia',
+                'Anubhav Jain', 'Logan Ward']
 
+    # TODO: Should we make these classmethods? -LW
     @staticmethod
     def from_preset(preset, **kwargs):
+        """
+        Create a SiteStatsFingerprint class according to a preset
+
+        Args:
+            preset (str) - Name of preset
+            kwargs - Options for SiteStatsFingerprint
+        """
 
         if preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
@@ -986,6 +995,12 @@ class SiteStatsFingerprint(BaseFeaturizer):
             return SiteStatsFingerprint(
                 CrystalSiteFingerprint.from_preset("ops", cation_anion=True),
                 **kwargs)
+
+        elif preset == "LocalPropertyDifference_ward-prb-2017":
+            return SiteStatsFingerprint(
+                LocalPropertyDifference.from_preset("ward-prb-2017"),
+                stats=["minimum", "maximum", "range", "mean", "avg_dev"]
+            )
 
         else:
             # One of the various Coordination Number presets:

@@ -1712,6 +1712,29 @@ class LocalPropertyDifference(BaseFeaturizer):
         # Initialize the cached structure and tessellation
         self.__last_structure = None
 
+    @staticmethod
+    def from_preset(preset):
+        """
+        Create a new LocalPropertyDifference class according to a preset
+
+        Args:
+            preset (str) - Name of preset
+        """
+
+        if preset == "ward-prb-2017":
+            return LocalPropertyDifference(
+                data_source=MagpieData(),
+                properties=["Number", "MendeleevNumber", "AtomicWeight",
+                            "MeltingT", "Column", "Row", "CovalentRadius",
+                            "Electronegativity", "NsValence", "NpValence",
+                            "NdValence", "NfValence", "NValance", "NsUnfilled",
+                            "NpUnfilled", "NdUnfilled", "NfUnfilled",
+                            "NUnfilled", "GSvolume_pa", "GSbandgap",
+                            "GSmagmom", "SpaceGroupNumber"]
+            )
+        else:
+            raise ValueError('Unrecognized preset: ' + preset)
+
     def featurize(self, strc, idx):
         # Get the targeted site
         my_site = strc[idx]

@@ -45,7 +45,7 @@ class StructureFeaturesTest(PymatgenTest):
             site_properties=None)
         self.cscl = Structure(
             Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
-            ["Cl1-", "Cs1+"], [[2.105, 2.105, 2.105], [0, 0, 0]],
+            ["Cl1-", "Cs1+"], [[2.1045, 2.1045, 2.1045], [0, 0, 0]],
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=True, site_properties=None)
         self.ni3al = Structure(
@@ -395,6 +395,29 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [0.0, 0.0])
         self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [0.0, 0.5])
 
+    def test_ward_prb_2017_lpd(self):
+        f = SiteStatsFingerprint.from_preset(
+            "LocalPropertyDifference_ward-prb-2017"
+        )
+
+        # Test diamond
+        features = f.featurize(self.diamond)
+        self.assertArrayAlmostEqual(features, [0] * (22 * 5))
+        features = f.featurize(self.diamond_no_oxi)
+        self.assertArrayAlmostEqual(features, [0] * (22 * 5))
+
+        # Test CsCl
+        big_face_area = 1.2367732837720062  # computed with pmg
+        small_face_area = 0.4453640573638564
+        big_face_diff = 55 - 17
+        features = f.featurize(self.cscl)
+        labels = f.feature_labels()
+        my_label = 'mean local difference in Number'
+        self.assertAlmostEqual((8 * big_face_area * big_face_diff) /
+                               (8 * big_face_area + 6 * small_face_area),
+                               features[labels.index(my_label)], places=3)
+        my_label = 'range local difference in Electronegativity'
+        self.assertAlmostEqual(0, features[labels.index(my_label)], places=3)
 
 if __name__ == '__main__':
     unittest.main()
