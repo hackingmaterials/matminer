@@ -10,8 +10,6 @@ jobs:
       - run:
           name: Setup
           command: |
-            cd /opt/circleci/.pyenv; git pull
-            cd ~/matminer
             pip install tox tox-pyenv
       - run:
           name: Test with tox
