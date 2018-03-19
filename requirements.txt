@@ -7,5 +7,6 @@ six==1.10.0
 citrination-client==3.0.0
 plotly==2.4.1
 future==0.16.0
+sympy==1.1.1
 mdf_forge==0.5.1
 scikit_learn==0.19.0

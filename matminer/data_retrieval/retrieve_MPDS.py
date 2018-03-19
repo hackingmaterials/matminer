@@ -170,7 +170,7 @@ class MPDSDataRetrieval(object):
 
         return output
 
-    def get_data(self, search, phases=[], fields=default_fields):
+    def get_data(self, search, phases=None, fields=default_fields):
         """
         Retrieve data in JSON.
         JSON is expected to be valid against the schema
@@ -189,6 +189,7 @@ class MPDSDataRetrieval(object):
             documented at http://developer.mpds.io/#JSON-schemata
         """
         output = []
+        phases = phases or []
         counter, hits_count = 0, 0
         fields = {
             key: [jmespath.compile(item) if isinstance(item, six.string_types) else item() for item in value]
