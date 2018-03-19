@@ -10,9 +10,7 @@ jobs:
       - run:
           name: Setup
           command: |
-            sudo chmod -R 777 /usr/local/lib/python3.6/site-packages/
-            sudo chmod -R 777 /usr/local/bin/virtualenv
-            pip install tox tox-pyenv
+            sudo pip install tox tox-pyenv
       - run:
           name: Test with tox
           command: tox
