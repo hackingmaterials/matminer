@@ -13,7 +13,7 @@ jobs:
             mkdir ~/tox_env
             python -m venv ~/tox_env
             source ~/tox_env/bin/activate
-            pip install --user tox tox-pyenv
+            pip install tox tox-pyenv
       - run:
           name: run tests
           command: |
