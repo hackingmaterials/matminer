@@ -10,7 +10,7 @@ jobs:
       - run:
           name: Setup
           command: |
-            sudo pip install tox tox-pyenv
+            pip install --user tox tox-pyenv
       - run:
           name: Test with tox
           command: tox
