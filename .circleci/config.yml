@@ -8,9 +8,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Setup
+          name: make tox env and run tests
           command: |
+            mkdir ~/tox_env
+            python -m venv ~/tox_env
+            source ~/tox_env/bin/activate
             pip install --user tox tox-pyenv
       - run:
-          name: Test with tox
+          name: run tests
           command: tox
