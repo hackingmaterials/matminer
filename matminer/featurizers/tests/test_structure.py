@@ -45,7 +45,7 @@ class StructureFeaturesTest(PymatgenTest):
             site_properties=None)
         self.cscl = Structure(
             Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
-            ["Cl1-", "Cs1+"], [[2.1045, 2.1045, 2.1045], [0, 0, 0]],
+            ["Cl1-", "Cs1+"], [[2.105, 2.1045, 2.1045], [0, 0, 0]],
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=True, site_properties=None)
         self.ni3al = Structure(
@@ -300,7 +300,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(MinimumRelativeDistances().featurize(
                 self.nacl)[0][0], 0.8891443)
         self.assertAlmostEqual(MinimumRelativeDistances().featurize(
-                self.cscl)[0][0], 0.9875975)
+                self.cscl)[0][0], 0.9877540)
 
     def test_sitestatsfingerprint(self):
         # Test matrix.
