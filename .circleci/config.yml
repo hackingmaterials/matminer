@@ -16,4 +16,6 @@ jobs:
             pip install --user tox tox-pyenv
       - run:
           name: run tests
-          command: tox
+          command: |
+            source ~/tox_env/bin/activate
+            tox
