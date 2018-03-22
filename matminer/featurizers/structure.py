@@ -1109,14 +1109,15 @@ class EwaldEnergy(BaseFeaturizer):
                 "journal = {Annalen der Physik},"
                 "number = {3},"
                 "pages = {253--287},"
-                "title = {{Die Berechnung optischer und elektrostatischer Gitterpotentiale}},"
+                "title = {{Die Berechnung optischer und elektrostatischer "
+                "Gitterpotentiale}},"
                 "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
                 "volume = {369},"
                 "year = {1921}"
                 "}"]
 
 
-class BagofBonds(BaseFeaturizer):
+class BondFractions(BaseFeaturizer):
     """
     Compute the number of each kind of bond in a structure, as a fraction of
     the total number of bonds, based on NearestNeighbors.
@@ -1128,10 +1129,10 @@ class BagofBonds(BaseFeaturizer):
 
     Features:
 
-    BagofBonds must be fit with iterable of structures before featurization in
+    BondFractions must be fit with iterable of structures before featurization in
     order to define the allowed bond types (features). To do this, pass a list
     of allowed_bonds. Otherwise, fit based on a list of structures. If
-    allowed_bonds is defined and BagofBonds is also fit, the intersection
+    allowed_bonds is defined and BondFractions is also fit, the intersection
     of the two lists of possible bonds is used.
 
     For dataframes containing structures of various compositions, a unified
@@ -1140,6 +1141,10 @@ class BagofBonds(BaseFeaturizer):
     chemical rules (ie, for a structure which you'd like to featurize but has
     bonds not in the allowed set), use approx_bonds = True.
 
+    BondFractions is based on the "sum over bonds" in the Bag of Bonds approach,
+    described first by Hansen et. al "Machine Learning Predictions of Molecular
+    Properties: Accurate Many-Body Potentials and Nonlocality in Chemical Space"
+    (2015).
 
     Args:
         nn (NearestNeighbors): A Pymatgen nearest neighbors derived object. For
@@ -1214,7 +1219,7 @@ class BagofBonds(BaseFeaturizer):
             CoordinationNumber from a preset.
         """
         nn = getattr(pmg_le, preset)
-        return BagofBonds(nn(), **kwargs)
+        return BondFractions(nn(), **kwargs)
 
     def fit(self, X, y=None):
         """
@@ -1222,7 +1227,7 @@ class BagofBonds(BaseFeaturizer):
         Bonds found during featurization which are not allowed will be omitted
         from the returned dataframe or matrix.
 
-        Fit BagofBonds by either passing an iterable of structures to
+        Fit BondFractions by either passing an iterable of structures to
         training_data or by defining the bonds explicitly with allowed_bonds
         in __init__.
 
@@ -1360,7 +1365,7 @@ class BagofBonds(BaseFeaturizer):
         Ensure the Featurizer has been fit to the dataframe
         """
         if self.fitted_bonds_ is None:
-            raise AttributeError('BagofBonds must have a list of allowed bonds.'
+            raise AttributeError('BondFractions must have a list of allowed bonds.'
                                  ' Either pass in a list of bonds to the '
                                  'initializer with allowed_bonds, use "fit" with'
                                  ' a list of structures, or do both to sets the '

@@ -17,7 +17,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BagofBonds
+    EwaldEnergy, BondFractions
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -355,20 +355,20 @@ class StructureFeaturesTest(PymatgenTest):
         #  Using the result from GULP
         self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
 
-    def test_bag_of_bonds(self):
+    def test_bondfractions(self):
 
         # Test individual structures with featurize
-        bob_md = BagofBonds.from_preset("MinimumDistanceNN")
-        bob_md.no_oxi = True
-        bob_md.fit([self.diamond_no_oxi])
-        self.assertArrayEqual(bob_md.featurize(self.diamond), [1.0])
-        self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
+        bf_md = BondFractions.from_preset("MinimumDistanceNN")
+        bf_md.no_oxi = True
+        bf_md.fit([self.diamond_no_oxi])
+        self.assertArrayEqual(bf_md.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bf_md.featurize(self.diamond_no_oxi), [1.0])
 
-        bob_voronoi = BagofBonds.from_preset("VoronoiNN")
-        bob_voronoi.bbv = float("nan")
-        bob_voronoi.fit([self.nacl])
-        bond_fracs = bob_voronoi.featurize(self.nacl)
-        bond_names = bob_voronoi.feature_labels()
+        bf_voronoi = BondFractions.from_preset("VoronoiNN")
+        bf_voronoi.bbv = float("nan")
+        bf_voronoi.fit([self.nacl])
+        bond_fracs = bf_voronoi.featurize(self.nacl)
+        bond_names = bf_voronoi.feature_labels()
         ref = {'Na+ - Na+ bond frac.': 0.25, 'Cl- - Na+ bond frac.': 0.5,
                'Cl- - Cl- bond frac.': 0.25}
         self.assertDictEqual(dict(zip(bond_names, bond_fracs)), ref)
@@ -376,8 +376,8 @@ class StructureFeaturesTest(PymatgenTest):
         # Test to make sure dataframe behavior is as intended
         s_list = [self.diamond_no_oxi, self.ni3al]
         df = pd.DataFrame.from_dict({'s': s_list})
-        bob_voronoi.fit(df['s'])
-        df = bob_voronoi.featurize_dataframe(df, 's')
+        bf_voronoi.fit(df['s'])
+        df = bf_voronoi.featurize_dataframe(df, 's')
 
         # Ensure all data is properly labelled and organized
         self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, np.nan])
@@ -387,9 +387,9 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test to make sure bad_bond_values (bbv) are still changed correctly
         # and check inplace behavior of featurize dataframe.
-        bob_voronoi.bbv = 0.0
+        bf_voronoi.bbv = 0.0
         df = pd.DataFrame.from_dict({'s': s_list})
-        df = bob_voronoi.featurize_dataframe(df, 's')
+        df = bf_voronoi.featurize_dataframe(df, 's')
         self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, 0.0])
         self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [0.0, 0.5])
         self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [0.0, 0.0])
