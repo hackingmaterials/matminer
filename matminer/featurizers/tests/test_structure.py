@@ -396,6 +396,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [0.0, 0.5])
 
     def test_ward_prb_2017_lpd(self):
+        """Test the local property difference attributes from Ward 2017"""
         f = SiteStatsFingerprint.from_preset(
             "LocalPropertyDifference_ward-prb-2017"
         )
@@ -418,6 +419,19 @@ class StructureFeaturesTest(PymatgenTest):
                                features[labels.index(my_label)], places=3)
         my_label = 'range local difference in Electronegativity'
         self.assertAlmostEqual(0, features[labels.index(my_label)], places=3)
+
+    def test_ward_prb_2017_efftcn(self):
+        """Test the effective coordination number attributes of Ward 2017"""
+        f = SiteStatsFingerprint.from_preset(
+            "CoordinationNumber_ward-prb-2017"
+        )
+
+        # Test Ni3Al
+        features = f.featurize(self.ni3al)
+        labels = f.feature_labels()
+        my_label = 'mean CN_VoronoiNN'
+        self.assertAlmostEqual(12, features[labels.index(my_label)])
+        self.assertArrayAlmostEqual([12, 12, 0, 12, 0], features)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1258,21 +1258,29 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
     def implementors(self):
         return ['Nils E. R. Zimmermann']
 
+
 class CoordinationNumber(BaseFeaturizer):
     """
-    Coordination number (CN) computed using one of pymatgen's
-    NearNeighbor classes for determination of near neighbors
-    contributing to the CN.
-    Args:
-        nn (NearNeighbor): instance of one of pymatgen's NearNeighbor
-                           classes.
+    Number of first nearest neighbors of a site.
+
+    Determines the number of nearest neighbors of a site using one of
+    pymatgen's NearNeighbor classes. These nearest neighbor calculators
+    can return weights related to the proximity of each neighbor to this
+    site. It is possible to take these weights into account to prevent
+    the coordination number from changing discontinuously with small
+    perturbations of a structure, either by summing the total weights
+    or using the normalization method presented by
+    [Ward et al.](http://link.aps.org/doi/10.1103/PhysRevB.96.014107)
+
+    Features:
+        CN_[method] - Coordination number computed using a certain method
+            for calculating nearest neighbors.
     """
 
     @staticmethod
     def from_preset(preset, **kwargs):
         """
-        Use one of the standard instances of a given NearNeighbor
-        class.
+        Use one of the standard instances of a given NearNeighbor class.
         Args:
             preset (str): preset type ("VoronoiNN", "JMolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
@@ -1284,8 +1292,18 @@ class CoordinationNumber(BaseFeaturizer):
         nn_ = getattr(pymatgen.analysis.local_env, preset)
         return CoordinationNumber(nn_(**kwargs))
 
-    def __init__(self, nn, use_weights=False):
-        self.nn = nn
+    def __init__(self, nn=None, use_weights='none'):
+        """Initialize the featurizer
+
+        Args:
+            nn (NearestNeighbor) - Method used to determine coordination number
+            use_weights (string) - Method used to account for weights of neighbors:
+                'none' - Do not use weights when computing coordination number
+                'sum' - Use sum of weights as the coordination number
+                'effective' - Compute the 'effective coordination number', which
+                    is computed as :math:`\frac{(\sum_n w_n)^2)}{\sum_n w_n^2}`
+            """
+        self.nn = nn or VoronoiNN()
         self.use_weights = use_weights
 
     def featurize(self, struct, idx):
@@ -1296,11 +1314,22 @@ class CoordinationNumber(BaseFeaturizer):
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure struct.
         Returns:
-            (float): coordination number.
+            [float] - Coordination number
         """
-        return [self.nn.get_cn(struct, idx, use_weights=self.use_weights)]
+        if self.use_weights is None or self.use_weights == 'none':
+            return [self.nn.get_cn(struct, idx, use_weights=False)]
+        elif self.use_weights == 'sum':
+            return [self.nn.get_cn(struct, idx, use_weights=True)]
+        elif self.use_weights == 'effective':
+            # TODO: Should this weighting code go in pymatgen? I'm not sure if it even necessary to distinguish it from the 'sum' method -lw
+            nns = self.nn.get_nn_info(struct, idx)
+            weights = [n['weight'] for n in nns]
+            return [np.sum(weights) ** 2 / np.sum(np.power(weights, 2))]
+        else:
+            raise ValueError('Weighting method not recognized: ' + str(self.use_weights))
 
     def feature_labels(self):
+        # TODO: Should names contain weighting scheme? -lw
         return ['CN_{}'.format(self.nn.__class__.__name__)]
 
     def citations(self):
@@ -1346,7 +1375,7 @@ class CoordinationNumber(BaseFeaturizer):
         return citations
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann']
+        return ['Nils E. R. Zimmermann', 'Logan Ward']
 
 
 class GeneralizedRadialDistributionFunction(BaseFeaturizer):

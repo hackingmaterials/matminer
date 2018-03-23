@@ -14,6 +14,7 @@ from pymatgen import Structure
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
 from pymatgen.analysis.ewald import EwaldSummation
+from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import pymatgen.analysis.local_env as pmg_le
@@ -962,7 +963,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         return ['Nils E. R. Zimmermann', 'Alireza Faghaninia',
                 'Anubhav Jain', 'Logan Ward']
 
-    # TODO: Should we make these classmethods? -LW
+    # TODO: Should we make these classmethods? They call should return an initialized version of the class -LW
     @staticmethod
     def from_preset(preset, **kwargs):
         """
@@ -1002,7 +1003,14 @@ class SiteStatsFingerprint(BaseFeaturizer):
                 stats=["minimum", "maximum", "range", "mean", "avg_dev"]
             )
 
+        elif preset == "CoordinationNumber_ward-prb-2017":
+            return SiteStatsFingerprint(
+                CoordinationNumber(nn=VoronoiNN(), use_weights="effective"),
+                stats=["minimum", "maximum", "range", "mean", "avg_dev"]
+            )
+
         else:
+            # TODO: Why assume coordination number? Should this just raise an error? - lw
             # One of the various Coordination Number presets:
             # MinimumVIRENN, MinimumDistanceNN, JMolNN, VoronoiNN, etc.
             try:
