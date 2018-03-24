@@ -408,8 +408,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertArrayAlmostEqual(features, [0] * (22 * 5))
 
         # Test CsCl
-        big_face_area = 1.2367732837720062  # computed with pmg
-        small_face_area = 0.4453640573638564
+        big_face_area = np.sqrt(3) * 3 / 2 * (2 / 4 / 4)
+        small_face_area = 0.125
         big_face_diff = 55 - 17
         features = f.featurize(self.cscl)
         labels = f.feature_labels()

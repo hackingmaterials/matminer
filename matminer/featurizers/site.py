@@ -1734,12 +1734,20 @@ class LocalPropertyDifference(BaseFeaturizer):
             Voronoi tessellation
     """
 
-    def __init__(self, data_source=MagpieData(), properties=None):
-        self.data_source = data_source
-        self.properties = properties or ['Electronegativity']
+    def __init__(self, data_source=MagpieData(), weight='area',
+                 properties=('Electronegativity')):
+        """ Initialize the featurizer
 
-        # Initialize the cached structure and tessellation
-        self.__last_structure = None
+        Args:
+            data_source (AbstractData) - Class from which to retrieve
+                elemental properties
+            weight (str) - What aspect of each voronoi facet to use to
+                weigh each neighbor (see VoronoiNN)
+            properties ([str]) - List of properties to use (default=
+        """
+        self.data_source = data_source
+        self.properties = properties
+        self.weight = weight
 
     @staticmethod
     def from_preset(preset):
@@ -1769,7 +1777,7 @@ class LocalPropertyDifference(BaseFeaturizer):
         my_site = strc[idx]
 
         # Get the tessellation of a site
-        nn = VoronoiNN().get_nn_info(strc, idx)
+        nn = VoronoiNN(weight=self.weight).get_nn_info(strc, idx)
 
         # Get the element and weight of each site
         elems = [n['site'].specie for n in nn]

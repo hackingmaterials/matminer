@@ -1005,7 +1005,8 @@ class SiteStatsFingerprint(BaseFeaturizer):
 
         elif preset == "CoordinationNumber_ward-prb-2017":
             return SiteStatsFingerprint(
-                CoordinationNumber(nn=VoronoiNN(), use_weights="effective"),
+                CoordinationNumber(nn=VoronoiNN(weight='area'),
+                                   use_weights="effective"),
                 stats=["minimum", "maximum", "range", "mean", "avg_dev"]
             )
 
