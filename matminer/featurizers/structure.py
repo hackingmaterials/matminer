@@ -30,8 +30,16 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 
 
 class DensityFeatures(BaseFeaturizer):
+    """
+    Calculates density and density-like features: density, volume per atom
+    ("vpa"), and packing fraction
+    """
 
     def __init__(self, desired_features=None):
+        """
+
+        :param desired_features: [str] - choose from "density", "vpa", "packing fraction"
+        """
         self.features = ["density", "vpa", "packing fraction"] if not \
             desired_features else desired_features
 
@@ -68,6 +76,11 @@ class DensityFeatures(BaseFeaturizer):
 
 
 class GlobalSymmetryFeatures(BaseFeaturizer):
+    """
+    Determines symmetry features: spacegroup number, crystal system (1 of 7),
+    and whether the material is centrosymmetric (has inversion symmetry)
+    """
+
     crystal_idx = {"triclinic": 7,
                    "monoclinic": 6,
                    "orthorhombic": 5,
