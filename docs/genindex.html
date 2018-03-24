@@ -6,13 +6,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Index &#8212; matminer 0.2.6 documentation</title>
+    <title>Index &#8212; matminer 0.2.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -115,6 +115,8 @@
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital.__init__">(matminer.featurizers.composition.ValenceOrbital method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer.__init__">(matminer.featurizers.dos.DOSFeaturizer method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer.__init__">(matminer.featurizers.function.FunctionFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.__init__">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
@@ -264,6 +266,8 @@
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital.citations">(matminer.featurizers.composition.ValenceOrbital method)</a>
 </li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer.citations">(matminer.featurizers.function.FunctionFeaturizer method)</a>
+</li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.citations">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AngularFourierSeries.citations">(matminer.featurizers.site.AngularFourierSeries method)</a>
@@ -397,6 +401,8 @@
 </li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.site.EwaldSiteEnergy">EwaldSiteEnergy (class in matminer.featurizers.site)</a>
 </li>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer.exp_dict">exp_dict (matminer.featurizers.function.FunctionFeaturizer attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -441,6 +447,8 @@
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital.feature_labels">(matminer.featurizers.composition.ValenceOrbital method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer.feature_labels">(matminer.featurizers.dos.DOSFeaturizer method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer.feature_labels">(matminer.featurizers.function.FunctionFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.feature_labels">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
@@ -530,6 +538,8 @@
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer.featurize">(matminer.featurizers.dos.DOSFeaturizer method)</a>
 </li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer.featurize">(matminer.featurizers.function.FunctionFeaturizer method)</a>
+</li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.featurize">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AngularFourierSeries.featurize">(matminer.featurizers.site.AngularFourierSeries method)</a>
@@ -582,7 +592,11 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer.featurize_dataframe">featurize_dataframe() (matminer.featurizers.base.BaseFeaturizer method)</a>
+
+      <ul>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer.featurize_dataframe">(matminer.featurizers.function.FunctionFeaturizer method)</a>
 </li>
+      </ul></li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer.featurize_many">featurize_many() (matminer.featurizers.base.BaseFeaturizer method)</a>
 </li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer.featurize_wrapper">featurize_wrapper() (matminer.featurizers.base.BaseFeaturizer method)</a>
@@ -629,6 +643,8 @@
         <li><a href="matminer.featurizers.html#matminer.featurizers.structure.SiteStatsFingerprint.from_preset">(matminer.featurizers.structure.SiteStatsFingerprint static method)</a>
 </li>
       </ul></li>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer">FunctionFeaturizer (class in matminer.featurizers.function)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -644,6 +660,10 @@
       <li><a href="matminer.featurizers.html#matminer.featurizers.site.GaussianSymmFunc">GaussianSymmFunc (class in matminer.featurizers.site)</a>
 </li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.site.GeneralizedRadialDistributionFunction">GeneralizedRadialDistributionFunction (class in matminer.featurizers.site)</a>
+</li>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.function.generate_expressions_combinations">generate_expressions_combinations() (in module matminer.featurizers.function)</a>
+</li>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer.generate_string_expressions">generate_string_expressions() (matminer.featurizers.function.FunctionFeaturizer method)</a>
 </li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.stats.PropertyStats.geom_std_dev">geom_std_dev() (matminer.featurizers.stats.PropertyStats static method)</a>
 </li>
@@ -675,10 +695,10 @@
         <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe">(matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval method)</a>
 </li>
       </ul></li>
-      <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_dataframe_by_query">get_dataframe_by_query() (matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_dataframe_by_query">get_dataframe_by_query() (matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval method)</a>
+</li>
       <li><a href="matminer.utils.html#matminer.utils.data.AbstractData.get_elemental_properties">get_elemental_properties() (matminer.utils.data.AbstractData method)</a>
 </li>
       <li><a href="matminer.utils.html#matminer.utils.data.AbstractData.get_elemental_property">get_elemental_property() (matminer.utils.data.AbstractData method)</a>
@@ -781,6 +801,8 @@
         <li><a href="matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital.implementors">(matminer.featurizers.composition.ValenceOrbital method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer.implementors">(matminer.featurizers.dos.DOSFeaturizer method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer.implementors">(matminer.featurizers.function.FunctionFeaturizer method)</a>
 </li>
         <li><a href="matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints.implementors">(matminer.featurizers.site.AGNIFingerprints method)</a>
 </li>
@@ -911,14 +933,16 @@
 </li>
       <li><a href="matminer.featurizers.html#module-matminer.featurizers.dos">matminer.featurizers.dos (module)</a>
 </li>
+      <li><a href="matminer.featurizers.html#module-matminer.featurizers.function">matminer.featurizers.function (module)</a>
+</li>
       <li><a href="matminer.featurizers.html#module-matminer.featurizers.site">matminer.featurizers.site (module)</a>
 </li>
       <li><a href="matminer.featurizers.html#module-matminer.featurizers.stats">matminer.featurizers.stats (module)</a>
 </li>
-      <li><a href="matminer.featurizers.html#module-matminer.featurizers.structure">matminer.featurizers.structure (module)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matminer.featurizers.html#module-matminer.featurizers.structure">matminer.featurizers.structure (module)</a>
+</li>
       <li><a href="matminer.figrecipes.html#module-matminer.figrecipes">matminer.figrecipes (module)</a>
 </li>
       <li><a href="matminer.figrecipes.html#module-matminer.figrecipes.plot">matminer.figrecipes.plot (module)</a>
@@ -1187,7 +1211,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.8 documentation</a> &#187;</li> 
       </ul>
     </div>
 

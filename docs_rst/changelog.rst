@@ -5,6 +5,17 @@
 matminer Changelog
 ==================
 
+**v0.2.8**
+
+* new FunctionFeaturizer to combine features into mini functions (J. Montoya)
+* updates to PlotlyFig (A. Dunn)
+* Update default n_jobs to cpu_count() (A. Dunn)
+* test fixes and updates (A. Dunn, N. Zimmermann, J. Montoya)
+* move Jupyter notebooks to matminer_examples repo, separate from matminer (J. Montoya)
+* add presets for AFS, GRDF featurizes (M. Dylla)
+* update CircleCI testing (A. Dunn)
+* code cleanups (A. Dunn, A. Jain, J. Montoya)
+
 **v0.2.6**
 
 * modify ChemicalRSO to use fit() method (Q. Wang)
