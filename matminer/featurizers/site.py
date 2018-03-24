@@ -1724,14 +1724,14 @@ class LocalPropertyDifference(BaseFeaturizer):
     where :math:`p_n` is the property (e.g., atomic number) of a neighbor
     and :math:`p_0` is the property of a site.
 
-    Based on the method proposed by
-    [Ward et al. PRB 2017](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.96.024104)
-
     Features:
         - "local property difference in [property]" - Weighted average
             of differences between an elemental property of a site and
             that of each of its neighbors, weighted by size of face on
             Voronoi tessellation
+
+    References:
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_
     """
 
     def __init__(self, data_source=MagpieData(), weight='area',
@@ -1813,3 +1813,4 @@ class LocalPropertyDifference(BaseFeaturizer):
 
     def implementors(self):
         return ['Logan Ward']
+

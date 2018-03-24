@@ -1573,8 +1573,38 @@ class StructuralHeterogeneity(BaseFeaturizer):
     """Variance in the bond lengths and atomic volumes in a structure
 
     These attributes are based on several statistics derived from the Voronoi
-    tessellation of a structure. The first set of statistics deal with the
+    tessellation of a structure. The first set of statistics relate to the
+    variance in the average bond length across all atoms in the structure.
+    The second relate to the variance of bond lengths between each neighbor
+    of each atom. The final attribute is the variance in Voronoi cell sizes
+    across the structure.
 
+    We define the 'average bond length' of a site as the weighted average of
+    the bond lengths for all neighbors. By default, the weight is the
+    area of the face between the sites.
+
+    The 'neighbor distance variation' is defined as the weighted mean absolute
+    deviation in both length for all neighbors of a particular site. As before,
+    the weight is according to face area by default. For this statistic, we
+    divide the mean absolute deviation by the mean neighbor distance for that
+    site.
+
+    Features:
+        mean absolute deviation in relative bond length - Mean absolute deviation
+            in the average bond lengths for all sites, divided by the
+            mean average bond length
+        max relative bond length - Maximum average bond length, divided by the
+            mean average bond length
+        min relative bond length - Minimum average bond length, divided by the
+            mean average bond length
+        [stat] neighbor distance variation - Statistic (e.g., mean) of the
+            neighbor distance variation
+        mean absolute deviation in relative cell size - Mean absolute deviation
+            in the Voronoi cell volume across all sites in the structure.
+            Divided by the mean Voronoi cell volume.
+
+    References:
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_
     """
 
     def __init__(self, weight='area',
@@ -1625,6 +1655,52 @@ class StructuralHeterogeneity(BaseFeaturizer):
         fl += [stat + " neighbor distance variation" for stat in self.stats]
         fl.append("mean absolute deviation in relative cell size")
         return fl
+
+    def citations(self):
+        return ["@article{Ward2017,"
+                "author = {Ward, Logan and Liu, Ruoqian "
+                "and Krishna, Amar and Hegde, Vinay I. "
+                "and Agrawal, Ankit and Choudhary, Alok "
+                "and Wolverton, Chris},"
+                "doi = {10.1103/PhysRevB.96.024104},"
+                "journal = {Physical Review B},"
+                "pages = {024104},"
+                "title = {{Including crystal structure attributes "
+                "in machine learning models of formation energies "
+                "via Voronoi tessellations}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "volume = {96},year = {2017}}"]
+
+    def implementors(self):
+        return ['Logan Ward']
+
+
+class MaximumPackingEfficincy(BaseFeaturizer):
+    """Maximum possible packing efficiency of this structure
+
+    Uses Voronoi tessellation to determine the largest radius each atom
+    can have before it touches any one of its neighbors. Given the maximum
+    radius size, we can compute the maximum packing efficiency of the structure
+
+    Features:
+        max packing efficiency - Maximum possible packing efficiency
+    """
+
+    def featurize(self, strc):
+        # Get the Voronoi tessellation of each site
+        voro = VoronoiNN()
+        nns = [voro.get_voronoi_polyhedra(strc, i) for i in range(len(strc))]
+
+        # Compute the radius of largest possible atom for each site
+        #  The largest radius is equal to the distance from the center of the
+        #   cell to the closest Voronoi face
+        max_r = [min(x['face_dist'] for x in nn.values()) for nn in nns]
+
+        # Compute the packing efficiency
+        return 4. / 3. * np.pi * np.power(max_r, 3).sum() / strc.volume
+
+    def feature_labels(self):
+        return ['max packing efficiency']
 
     def citations(self):
         return ["@article{Ward2017,"

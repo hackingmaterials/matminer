@@ -17,7 +17,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BagofBonds, StructuralHeterogeneity
+    EwaldEnergy, BagofBonds, StructuralHeterogeneity, MaximumPackingEfficincy
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -458,6 +458,17 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertArrayAlmostEqual(
             [0, 1, 1, rel_var, rel_var, 0, rel_var, 0, 0],
             features)
+
+    def test_packing_efficiency(self):
+        f = MaximumPackingEfficincy()
+
+        # Test L1_2
+        self.assertArrayAlmostEqual([np.pi / 3 / np.sqrt(2)],
+                                    f.featurize(self.ni3al))
+
+        # Test B1
+        self.assertArrayAlmostEqual([np.pi / 6], f.featurize(self.nacl),
+                                    decimal=3)
 
 if __name__ == '__main__':
     unittest.main()
