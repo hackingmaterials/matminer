@@ -17,7 +17,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BagofBonds
+    EwaldEnergy, BagofBonds, StructuralHeterogeneity
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -432,6 +432,32 @@ class StructureFeaturesTest(PymatgenTest):
         my_label = 'mean CN_VoronoiNN'
         self.assertAlmostEqual(12, features[labels.index(my_label)])
         self.assertArrayAlmostEqual([12, 12, 0, 12, 0], features)
+
+    def test_ward_prb_2017_strhet(self):
+        f = StructuralHeterogeneity()
+
+        # Test Ni3Al, which is uniform
+        features = f.featurize(self.ni3al)
+        self.assertArrayAlmostEqual([0, 1, 1, 0, 0, 0, 0, 0, 0], features)
+
+        # Do CsCl, which has variation in the neighbors
+        big_face_area = np.sqrt(3) * 3 / 2 * (2 / 4 / 4)
+        small_face_area = 0.125
+        average_dist = (8 * np.sqrt(
+            3) / 2 * big_face_area + 6 * small_face_area) \
+                       / (8 * big_face_area + 6 * small_face_area)
+        rel_var = (8 * abs(np.sqrt(3) / 2 - average_dist) * big_face_area +
+                   6 * abs(1 - average_dist) * small_face_area) \
+                  / (8 * big_face_area + 6 * small_face_area) / average_dist
+        cscl = Structure(
+            Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
+            ["Cl1-", "Cs1+"], [[0.5, 0.5, 0.5], [0, 0, 0]],
+            validate_proximity=False, to_unit_cell=False,
+            coords_are_cartesian=False, site_properties=None)
+        features = f.featurize(cscl)
+        self.assertArrayAlmostEqual(
+            [0, 1, 1, rel_var, rel_var, 0, rel_var, 0, 0],
+            features)
 
 if __name__ == '__main__':
     unittest.main()

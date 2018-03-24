@@ -478,7 +478,6 @@ class FingerprintTests(PymatgenTest):
             features = f.featurize(self.b1, i)
             self.assertArrayAlmostEqual(features, [1])
 
-
     def tearDown(self):
         del self.sc
         del self.cscl

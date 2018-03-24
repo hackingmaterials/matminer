@@ -872,7 +872,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
 
 class SiteStatsFingerprint(BaseFeaturizer):
     """
-    Computes statistics of properties of the sites in a structure.
+    Computes statistics of properties across all sites in a structure.
 
     This featurizer first uses a site featurizer class (see site.py for
     options) to compute features of each site in a structure, and then computes
@@ -1566,3 +1566,79 @@ class BagofBonds(BaseFeaturizer):
                 "note ={PMID: 26113956},"
                 "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
                 "}"]
+
+
+class StructuralHeterogeneity(BaseFeaturizer):
+    """Variance in the bond lengths and atomic volumes in a structure
+
+    These attributes are based on several statistics derived from the Voronoi
+    tessellation of a structure. The first set of statistics deal with the
+
+    """
+
+    def __init__(self, weight='area',
+                  stats=("minimum", "maximum", "range", "mean", "avg_dev")):
+        self.weight = weight
+        self.stats = stats
+
+    def featurize(self, strc):
+        # Compute the Voronoi tessellation of each site
+        voro = VoronoiNN()
+        nns = [voro.get_voronoi_polyhedra(strc, n).values() for n in range(len(strc))]
+
+        # Compute the mean bond length of each atom, and the mean
+        #   variation within each cell
+        mean_bond_lengths = np.zeros((len(strc),))
+        bond_length_var = np.zeros_like(mean_bond_lengths)
+        for i,nn in enumerate(nns):
+            weights = [n[self.weight] for n in nn]
+            lengths = [n['face_dist'] * 2 for n in nn]
+            mean_bond_lengths[i] = PropertyStats.mean(lengths, weights)
+
+            # Compute the mean absolute deviation of the bond lengths
+            bond_length_var[i] = PropertyStats.avg_dev(lengths, weights) / \
+                mean_bond_lengths[i]
+
+        # Normalize the bond lengths by the average of the whole structure
+        #   This is done to make the attributes length-scale-invariant
+        mean_bond_lengths /= mean_bond_lengths.mean()
+
+        # Compute statistics related to bond lengths
+        features = [PropertyStats.avg_dev(mean_bond_lengths),
+                    mean_bond_lengths.max(), mean_bond_lengths.min()]
+        features += [PropertyStats.calc_stat(bond_length_var, stat)
+                     for stat in self.stats]
+
+        # Compute the variance in volume
+        cell_volumes = [sum(x['volume'] for x in nn) for nn in nns]
+        features.append(PropertyStats.avg_dev(cell_volumes) / np.mean(cell_volumes))
+
+        return features
+
+    def feature_labels(self):
+        fl = [
+            "mean absolute deviation in relative bond length",
+            "max relative bond length",
+            "min relative bond length"
+        ]
+        fl += [stat + " neighbor distance variation" for stat in self.stats]
+        fl.append("mean absolute deviation in relative cell size")
+        return fl
+
+    def citations(self):
+        return ["@article{Ward2017,"
+                "author = {Ward, Logan and Liu, Ruoqian "
+                "and Krishna, Amar and Hegde, Vinay I. "
+                "and Agrawal, Ankit and Choudhary, Alok "
+                "and Wolverton, Chris},"
+                "doi = {10.1103/PhysRevB.96.024104},"
+                "journal = {Physical Review B},"
+                "pages = {024104},"
+                "title = {{Including crystal structure attributes "
+                "in machine learning models of formation energies "
+                "via Voronoi tessellations}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "volume = {96},year = {2017}}"]
+
+    def implementors(self):
+        return ['Logan Ward']
