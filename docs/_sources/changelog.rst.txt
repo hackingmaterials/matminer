@@ -5,6 +5,10 @@
 matminer Changelog
 ==================
 
+**v0.2.9**
+
+* fix pymatgen dep (A. Jain)
+
 **v0.2.8**
 
 * new FunctionFeaturizer to combine features into mini functions (J. Montoya)
