@@ -12,13 +12,14 @@ import pandas as pd
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
+from matminer.featurizers.composition import ElementProperty
 from matminer.featurizers.structure import DensityFeatures, \
     RadialDistributionFunction, RadialDistributionFunctionPeaks, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
     EwaldEnergy, BagofBonds, StructuralHeterogeneity, MaximumPackingEfficiency, \
-    ChemicalOrdering
+    ChemicalOrdering, StructureComposition
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -488,6 +489,23 @@ class StructureFeaturesTest(PymatgenTest):
         features = f.featurize(self.ni3al)
         self.assertAlmostEqual(1./3., features[0], places=5)
         self.assertAlmostEqual(0.0303, features[1], places=5)
+
+    def test_composition_features(self):
+        comp = ElementProperty.from_preset("magpie")
+        f = StructureComposition(featurizer=comp)
+
+        # Test the fitting (should not crash)
+        f.fit([self.nacl, self.diamond])
+
+        # Test the features
+        features = f.featurize(self.nacl)
+        self.assertArrayAlmostEqual(comp.featurize(self.nacl.composition),
+                                    features)
+
+        # Test the citations/implementors
+        self.assertEquals(comp.citations(), f.citations())
+        self.assertEquals(comp.implementors(), f.implementors())
+
 
 if __name__ == '__main__':
     unittest.main()
