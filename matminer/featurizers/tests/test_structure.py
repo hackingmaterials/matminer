@@ -17,7 +17,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BagofBonds, StructuralHeterogeneity, MaximumPackingEfficincy
+    EwaldEnergy, BagofBonds, StructuralHeterogeneity, MaximumPackingEfficiency, \
+    ChemicalOrdering
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -460,7 +461,7 @@ class StructureFeaturesTest(PymatgenTest):
             features)
 
     def test_packing_efficiency(self):
-        f = MaximumPackingEfficincy()
+        f = MaximumPackingEfficiency()
 
         # Test L1_2
         self.assertArrayAlmostEqual([np.pi / 3 / np.sqrt(2)],
@@ -469,6 +470,24 @@ class StructureFeaturesTest(PymatgenTest):
         # Test B1
         self.assertArrayAlmostEqual([np.pi / 6], f.featurize(self.nacl),
                                     decimal=3)
+
+    def test_ordering_param(self):
+        f = ChemicalOrdering()
+
+        # Check that elemental structures return zero
+        features = f.featurize(self.diamond)
+        self.assertArrayAlmostEqual([0, 0, 0], features)
+
+        # Check result for CsCl
+        #   These were calculated by hand by Logan Ward
+        features = f.featurize(self.cscl)
+        self.assertAlmostEqual(0.551982, features[0], places=5)
+        self.assertAlmostEqual(0.241225, features[1], places=5)
+
+        # Check for L1_2
+        features = f.featurize(self.ni3al)
+        self.assertAlmostEqual(1./3., features[0], places=5)
+        self.assertAlmostEqual(0.0303, features[1], places=5)
 
 if __name__ == '__main__':
     unittest.main()
