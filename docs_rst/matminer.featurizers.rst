@@ -36,6 +36,14 @@ matminer\.featurizers\.dos module
     :undoc-members:
     :show-inheritance:
 
+matminer\.featurizers\.function module
+--------------------------------------
+
+.. automodule:: matminer.featurizers.function
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer\.featurizers\.site module
 ----------------------------------
 

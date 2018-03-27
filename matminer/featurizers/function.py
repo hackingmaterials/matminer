@@ -1,0 +1,239 @@
+from __future__ import division
+
+import numpy as np
+from sympy.parsing.sympy_parser import parse_expr
+import sympy as sp
+import itertools
+from six import string_types
+
+from collections import OrderedDict
+
+from matminer.featurizers.base import BaseFeaturizer
+
+
+# Default expressions to include in function featurizer
+default_exps = ["x", "1/x", "sqrt(x)", "1/sqrt(x)", "x**2", "x**-2", "x**3",
+                "x**-3", "log(x)", "1/log(x)", "exp(x)", "exp(-x)"]
+
+
+class FunctionFeaturizer(BaseFeaturizer):
+    """
+    This class featurizes a dataframe according to a set
+    of expressions representing functions to apply to
+    existing features. The approach here has uses a sympy-based
+    parsing of string expressions, rather than explicit
+    python functions.  The primary reason this has been
+    done is to provide for better support for book-keeping
+    (e. g. with feature labels), substitution, and elimination
+    of symbolic redundancy, which sympy is well-suited for.
+    """
+
+    def __init__(self, expressions=None, multi_feature_depth=1,
+                 postprocess=None, combo_function=None,
+                 latexify_labels=False):
+
+        """
+        Args:
+            expressions ([str]): list of sympy-parseable expressions
+                representing a function of a single variable x, e. g.
+                ["1 / x", "x ** 2"], defaults to the list above
+            multi_feature_depth (int): how many features to include if using
+                multiple fields for functionalization, e. g. 2 will
+                include pairwise combined features
+            postprocess (function or type): type to cast functional outputs
+                to, if, for example, you want to include the possibility of
+                complex numbers in your outputs, use postprocess=np.complex,
+                defaults to float
+            combo_function (function): function to combine multi-features,
+                defaults to np.prod (i.e. cumulative product of expressions),
+                note that a combo function must cleanly process sympy
+                expressions
+            latexify_labels (bool): whether to render labels in latex,
+                defaults to False
+
+        """
+        self.expressions = expressions or default_exps
+        self.multi_feature_depth = multi_feature_depth
+        self.combo_function = combo_function or np.prod
+        self.latexify_labels = latexify_labels
+        self.postprocess = postprocess or float
+
+    @property
+    def exp_dict(self):
+        """
+        Generates a dictionary of expressions keyed by number of
+        variables in each expression
+
+        Returns:
+            Dictionary of expressions keyed by number of variables
+        """
+        # Generate lists of sympy expressions keyed by number of features
+        return OrderedDict(
+            [(n, generate_expressions_combinations(self.expressions, n,
+                                                   self.combo_function))
+             for n in range(1, self.multi_feature_depth+1)])
+
+    def featurize_dataframe(self, df, col_id, ignore_errors=False,
+                            return_errors=False, inplace=True):
+        """
+        Compute features for all entries contained in input dataframe.
+
+        Args:
+            df (DataFrame): dataframe containing input data
+            col_id (str or list of str): column label containing objects
+                to featurize, can be single or multiple column names
+            ignore_errors (bool): Returns NaN for dataframe rows where
+                exceptions are thrown if True. If False, exceptions
+                are thrown as normal.
+            return_errors (bool). Returns the errors encountered for each
+                row in a separate `XFeaturizer errors` column if True. Requires
+                ignore_errors to be True.
+            inplace (bool): Whether to add new columns to input dataframe (df)
+
+        Returns:
+            updated DataFrame
+
+        """
+        # Generate new dataframe out-of-place
+        new_df = super(FunctionFeaturizer, self).featurize_dataframe(
+            df, col_id, ignore_errors=ignore_errors,
+            return_errors=return_errors, inplace=False)
+
+        # Generate and add new columns names
+        new_col_names = self.generate_string_expressions(col_id)
+        new_df.columns = df.columns.tolist() + new_col_names
+
+        if inplace:
+            for k in new_col_names:
+                df[k] = new_df[k]
+            return df
+        else:
+            return new_df
+
+    def featurize(self, *args):
+        """
+        Main featurizer function, essentially iterates over all
+        of the functions in self.function_list to generate
+        features for each argument.
+
+        Args:
+            *args: list of numbers to generate functional output
+                features
+
+        Returns:
+            list of functional outputs corresponding to input args
+        """
+        return list(self._exp_iter(*args, postprocess=self.postprocess))
+
+    def feature_labels(self):
+        """
+        Returns:
+            Set of feature labels corresponding to expressions
+        """
+        return None
+
+    def generate_string_expressions(self, input_variable_names):
+        """
+        Method to generate string expressions for input strings,
+        mainly used to generate columns names for featurize_dataframe
+
+        Args:
+            input_variable_names ([str]): strings corresponding to
+                functional input variable names
+
+        Returns:
+            List of string expressions generated by substitution of
+            variable names into functions
+        """
+        if isinstance(input_variable_names, string_types):
+            input_variable_names = [input_variable_names]
+        postprocess = sp.latex if self.latexify_labels else str
+        return list(self._exp_iter(*input_variable_names,
+                                   postprocess=postprocess))
+
+    def _exp_iter(self, *args, postprocess=None):
+        """
+        Generates an iterator for substitution of a set
+        of args into the set of expression corresponding
+        to the featurizer, intended primarily to remove
+        replicated code in featurize and feature labels
+
+        Args:
+            *args: args to loop over combinations and substitions for
+            postprocess (function): postprocessing function, e. g.
+                to cast to another type, float, str
+
+        Returns:
+            iterator for all substituted expressions
+
+        """
+        postprocess = postprocess or (lambda x: x)
+        for n in range(1, self.multi_feature_depth + 1):
+            for arg_combo in itertools.combinations(args, n):
+                subs_dict = {"x{}".format(m): arg
+                             for m, arg in enumerate(arg_combo)}
+                for exp in self.exp_dict[n]:
+                    # TODO: this is a workaround for the problem
+                    # TODO: postprocessing functional incompatility,
+                    # TODO: e. g. sqrt(-1), 1 / 0
+                    try:
+                        yield postprocess(exp.subs(subs_dict))
+                    except (TypeError, ValueError):
+                        yield None
+
+    def citations(self):
+        return ["@article{Ramprasad2017,"
+                "author = {Ramprasad, Rampi and Batra, Rohit and "
+                           "Pilania, Ghanshyam and Mannodi-Kanakkithodi, Arun "
+                           "and Kim, Chiho},"
+                "doi = {10.1038/s41524-017-0056-5},"
+                "journal = {npj Computational Materials},"
+                "title = {Machine learning in materials informatics: recent "
+                          "applications and prospects},"
+                "volume = {3},number={1}, pages={54}, year={2017}}"]
+
+    def implementors(self):
+        return ['Joseph Montoya']
+
+
+
+# TODO: Have this filter expressions that evaluate to things without vars,
+# TODO:      # e. g. floats/ints
+def generate_expressions_combinations(expressions, combo_depth=2,
+                                      combo_function=np.prod):
+    """
+    This function takes a list of strings representing functions
+    of x, converts them to sympy expressions, and combines
+    them according to the combo_depth parameter.  Also filters
+    resultant expressions for any redundant ones determined
+    by sympy expression equivalence.
+
+    Args:
+        expressions (strings): all of the sympy-parseable strings
+            to be converted to expressions and combined, e. g.
+            ["1 / x", "x ** 2"], must be functions of x
+        combo_depth (int): the number of independent variables to consider
+        combo_function (method): the function which combines the
+            the respective expressions provided, defaults to np.prod,
+            i. e. the cumulative product of the expressions
+
+    Returns:
+        list of unique non-trivial expressions for featurization
+            of inputs
+    """
+    # Convert to array for simpler subsitution
+    exp_array = sp.Array([parse_expr(exp) for exp in expressions])
+
+    # Generate all of the combinations
+    combo_exps = []
+    all_arrays = [exp_array.subs({"x": "x{}".format(n)})
+                  for n in range(combo_depth)]
+    # Get all sets of expressions
+    for exp_set in itertools.product(*all_arrays):
+        # Get all permutations of each set
+        for exp_perm in itertools.permutations(exp_set):
+            combo_exps.append(combo_function(exp_perm))
+
+    # Filter for unique combinations, also remove identity
+    unique_exps = list(set(combo_exps) - {parse_expr('x0')})
+    return unique_exps

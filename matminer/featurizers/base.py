@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from six import string_types
 from multiprocessing import Pool, cpu_count
+
 from sklearn.base import TransformerMixin, BaseEstimator
 
 
@@ -161,7 +162,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         # Check names to avoid overwriting the current columns
         for col in df.columns.values:
-            if col in labels:
+            if labels and col in labels:
                 raise ValueError('"{}" exists in input dataframe'.format(col))
 
         # Compute the features
@@ -174,13 +175,16 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         # Create dataframe with the new features
         res = pd.DataFrame(features, index=df.index, columns=labels)
 
-        # Update the existing dataframe
         if inplace:
+            # Update the existing dataframe
             for k in labels:
                 df[k] = res[k]
             return df
         else:
-            return pd.concat([df, res], axis=1)
+            # Create new dataframe and ensure columns are ordered properly
+            new = pd.concat([df, res], axis=1)
+            return new[df.columns.tolist() + res.columns.tolist()]
+
 
     def featurize_many(self, entries, ignore_errors=False, return_errors=False):
         """
@@ -228,6 +232,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                               "matminer for Python 2.x. Multiprocessing has "
                               "been disabled. Please upgrade to Python 3.x to "
                               "enable multiprocessing.")
+
                 self.set_n_jobs(1)
                 return self.featurize_many(entries,
                                            ignore_errors=ignore_errors,

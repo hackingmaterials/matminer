@@ -1,4 +1,4 @@
-# Originally from http://github.com/ademl/predict_Etot_dHf/blob/master/elemental_properties.py 
+# Originally from http://github.com/ademl/predict_Etot_dHf/blob/master/elemental_properties.py
 
 # data tables of elemental properties used for Etot/dHf model
 # values omitted elements without FERE values (e.g. noble gases, Tc, Ru,...)
@@ -1002,7 +1002,7 @@ bp={
     'Ra': 2010}
 
 # heat capacity of the elements
-# from CRC handbook: 25C and thermo stable standard state, 1 bar 
+# from CRC handbook: 25C and thermo stable standard state, 1 bar
 # units: J/mol.K
 heat_cap={
     'Li': 24.86,
@@ -1052,7 +1052,7 @@ heat_cap={
     'Te': 25.73,
     'I': 54.44,
     'Cs': 32.21,
-    'Ba': 28.07, 
+    'Ba': 28.07,
     'Hf': 25.73,
     'Ta': 25.63,
     'W' : 24.27,
@@ -1382,7 +1382,7 @@ magn_moment={'V': {2:3},
 
 # spin orbit coupling constants for single electrons in TMs
 # From: Inorganic Chemistry, 2nd ed, William Porterfield, 1993, Table 11.11
-# assign only nonzero and NaN values 
+# assign only nonzero and NaN values
 #   assign equal to zero if no (d+s) valence e and for full d valence
 so_coupling={
     'V' :{2:170, 3:210, 4:250, 5:0},
@@ -1391,12 +1391,12 @@ so_coupling={
     'Fe':{2:400, 3:460, 4:520, 5:float('NaN')},
     'Co':{2:515, 3:580, 4:650, 5:float('NaN')},
     'Ni':{2:630, 3:705, 4:790, 5:float('NaN')},
-    
+
     'Nb':{2:610, 3:800, 4:float('NaN'), 5:0},
     'Mo':{2:670, 3:800, 4:850, 5:900, 6:0},
     'Rh':{2:float('NaN'), 3:float('NaN'), 4:1700, 5:1850, 6:float('NaN')},
     'Pd':{1:1300, 2:1600, 3:float('NaN'), 4:float('NaN'), 5:float('NaN'), 6:float('NaN')},
-    
+
     'Ta':{2:float('NaN'), 3:1400, 4:float('NaN'), 5:0},
     'Ir':{3:float('NaN'), 4:5000, 5:5500, 6:float('NaN')},
     'Pt':{1:3400, 2:float('NaN'), 3:float('NaN'), 4:5000, 5:5500, 6:float('NaN')}  }
@@ -1410,12 +1410,12 @@ sat_magn={
     'Fe':{2:4, 3:3, 4:2, 5:1},
     'Co':{2:5, 3:4, 4:3, 5:2, 6:1},
     'Ni':{2:4, 3:5, 4:4, 5:3, 6:2},
-    
+
     'Nb':{2:1},
     'Mo':{2:2, 3:1},
     'Rh':{2:5, 3:4, 4:3, 5:2, 6:1},
     'Pd':{2:4, 3:5, 4:4, 5:3, 6:2},
-    
+
     'Ta':{2:1},
     'W' :{2:2, 3:1},
     'Ir':{2:5, 3:4, 4:3, 5:2, 6:1},
@@ -1648,8 +1648,8 @@ charge_states = {
 
 ##Dictionary of properties
 properties = {"magn_elem":magn_elem, "atom_num":atom_num, "atom_mass":atom_mass, "row_num":row_num,
-    "col_num":col_num, "valence_e":valence_e, "atom_radius":atom_radius, "molar_vol":molar_vol, 
+    "col_num":col_num, "valence_e":valence_e, "atom_radius":atom_radius, "molar_vol":molar_vol,
     "heat_fusion":heat_fusion, "melting_point":mp, "boiling_point":bp, "heat_cap":heat_cap, "ionization_en":ionization_en,
-    "electron_affin":electron_affin, "electronegativity":pauling, "xtal_field_split":xtal_field_split, 
+    "electron_affin":electron_affin, "electronegativity":pauling, "xtal_field_split":xtal_field_split,
     "magn_moment":magn_moment, "so_coupling":so_coupling, "sat_magn":sat_magn, "electric_pol":electric_pol,
     "GGAU_Etot":GGAU_Etot, "mus_fere":mus_fere, "charge_states":charge_states}

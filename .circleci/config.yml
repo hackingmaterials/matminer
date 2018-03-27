@@ -1,0 +1,21 @@
+version: 2
+
+jobs:
+  build:
+    working_directory: ~/matminer
+    docker:
+      - image: circleci/python:3.6.2
+    steps:
+      - checkout
+      - run:
+          name: Make tox env
+          command: |
+            mkdir ~/tox_env
+            python -m venv ~/tox_env
+            source ~/tox_env/bin/activate
+            pip install tox tox-pyenv
+      - run:
+          name: Run matminer tests
+          command: |
+            source ~/tox_env/bin/activate
+            tox
