@@ -612,15 +612,16 @@ class SineCoulombMatrix(BaseFeaturizer):
 
 class OrbitalFieldMatrix(BaseFeaturizer):
     """
-    This function generates an orbital field matrix (OFM) as developed
-    by Pham et al (arXiv, May 2017). Each atom is described by a 32-element
-    vector (or 39-element vector, see period tag for details) uniquely
-    representing the valence subshell. A 32x32 (39x39) matrix is formed
-    by multiplying two atomic vectors. An OFM for an atomic environment is the
-    sum of these matrices for each atom the center atom coordinates with
-    multiplied by a distance function (In this case, 1/r times the weight of
-    the coordinating atom in the Voronoi Polyhedra method). The OFM of a structure
-    or molecule is the average of the OFMs for all the sites in the structure.
+    Representation based on the valence shell electrons of neighboring atoms.
+
+    Each atom is described by a 32-element vector (or 39-element vector, see
+    period tag for details) uniquely representing the valence subshell.
+    A 32x32 (39x39) matrix is formed by multiplying two atomic vectors.
+    An OFM for an atomic environment is the sum of these matrices for each atom
+    the center atom coordinates with multiplied by a distance function
+    (In this case, 1/r times the weight of the coordinating atom in the Voronoi
+     Polyhedra method). The OFM of a structure or molecule is the average of the
+     OFMs for all the sites in the structure.
 
     Args:
         period_tag (bool): In the original OFM, an element is represented
@@ -633,9 +634,23 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
     ...attribute:: size
         Either 32 or 39, the size of the vectors used to describe elements.
+
+    Reference:
+        `Pham et al. _Sci Tech Adv Mat_. 2017 <http://dx.doi.org/10.1080/14686996.2017.1378060>_`
     """
 
     def __init__(self, period_tag=False):
+        """Initialize the featurizer
+
+        Args:
+            period_tag (bool): In the original OFM, an element is represented
+                    by a vector of length 32, where each element is 1 or 0,
+                    which represents the valence subshell of the element.
+                    With period_tag=True, the vector size is increased
+                    to 39, where the 7 extra elements represent the period
+                    of the element. Note lanthanides are treated as period 6,
+                    actinides as period 7. Default False as in the original paper.
+        """
         my_ohvs = {}
         if period_tag:
             self.size = 39
@@ -720,10 +735,10 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         atom_ofm = np.matrix(np.zeros((self.size, self.size)))
         ref_atom = ohvs[site.specie.Z]
         for other_site in site_dict:
-            scale = site_dict[other_site]
-            other_atom = ohvs[other_site.specie.Z]
+            scale = other_site['weight']
+            other_atom = ohvs[other_site['site'].specie.Z]
             atom_ofm += other_atom.T * ref_atom * scale / site.distance(
-                other_site) / ANG_TO_BOHR
+                other_site['site']) / ANG_TO_BOHR
         return atom_ofm
 
     def get_atom_ofms(self, struct, symm=False):
@@ -754,8 +769,8 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         else:
             indices = [i for i in range(len(struct.sites))]
         for index in indices:
-            ofms.append(self.get_single_ofm(struct.sites[index], \
-                                            vnn.get_voronoi_polyhedra(struct, index)))
+            ofms.append(self.get_single_ofm(struct.sites[index],
+                                            vnn.get_nn_info(struct, index)))
         if symm:
             return ofms, counts
         return ofms

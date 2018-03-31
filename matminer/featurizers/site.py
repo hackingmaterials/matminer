@@ -35,7 +35,7 @@ from math import pi
 from scipy.spatial import Voronoi, Delaunay
 from pymatgen import Structure
 from pymatgen.core.periodic_table import Element
-from pymatgen.analysis.local_env import LocalStructOrderParas, \
+from pymatgen.analysis.local_env import LocalStructOrderParams, \
     VoronoiNN
 import pymatgen.analysis
 from pymatgen.analysis.ewald import EwaldSummation
@@ -217,7 +217,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                         ot = cn_motif_op_params[cn][t][0]
                         if len(cn_motif_op_params[cn][t]) > 1:
                             p = cn_motif_op_params[cn][t][1]
-                self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
+                self.ops[cn].append(LocalStructOrderParams([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
         """
