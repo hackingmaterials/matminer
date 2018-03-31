@@ -750,6 +750,8 @@ class ChemicalSRO(BaseFeaturizer):
     """
     Chemical short-range ordering (SRO) features to evaluate the deviation
     of local chemistry with the nominal composition of the structure.
+
+    A local bonding preference is computed using
     f_el = N_el/(sum of N_el) - c_el,
     where N_el is the number of each element type in the neighbors around
     the target site, sum of N_el is the sum of all possible element types
@@ -763,15 +765,22 @@ class ChemicalSRO(BaseFeaturizer):
     Note that ChemicalSRO is only featurized for elements identified by
     "fit" (see following), thus "fit" must be called before "featurize",
     or else an error will be raised.
-    Args:
-        nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
-                              classes.
-        includes (array-like or str): elements included to calculate CSRO.
-        excludes (array-like or str): elements excluded to calculate CSRO.
-        sort (bool): whether to sort elements by mendeleev number.
+
+    Features:
+        CSRO__[nn method]_[element] - The Chemical SRO of a site computed based
+            on neighbors determined with a certain  NN-detection method for
+            a certain element.
     """
 
     def __init__(self, nn, includes=None, excludes=None, sort=True):
+        """Initialize the featurizer
+
+        Args:
+            nn (NearestNeighbor): instance of one of pymatgen's NearestNeighbor
+                                  classes.
+            includes (array-like or str): elements included to calculate CSRO.
+            excludes (array-like or str): elements excluded to calculate CSRO.
+            sort (bool): whether to sort elements by mendeleev number."""
         self.nn = nn
         self.includes = includes
         if self.includes:

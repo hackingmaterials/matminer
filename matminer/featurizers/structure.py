@@ -970,7 +970,6 @@ class SiteStatsFingerprint(BaseFeaturizer):
         return ['Nils E. R. Zimmermann', 'Alireza Faghaninia',
                 'Anubhav Jain', 'Logan Ward']
 
-    # TODO: Should we make these classmethods? They call should return an initialized version of the class -LW
     @staticmethod
     def from_preset(preset, **kwargs):
         """
@@ -1732,13 +1731,13 @@ class MaximumPackingEfficiency(BaseFeaturizer):
 class ChemicalOrdering(BaseFeaturizer):
     """How much the ordering of species in the structure differs from random
 
-    These parameters describe how much the ordering of species in the structure
-    deviates from random using a Warren-Cowley-like ordering parameter. The
-    first step of this calculation is to determine the nearest neighbor shells
-    of each site. Then, for each shell a degree of order for each type is
-    determined by computing:
+    These parameters describe how much the ordering of all species in a
+    structure deviates from random using a Warren-Cowley-like ordering
+    parameter. The first step of this calculation is to determine the nearest
+    neighbor shells of each site. Then, for each shell a degree of order for
+    each type is determined by computing:
 
-    :math:`\alpha (t,s) = 1 - \frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}
+    :math:`\alpha (t,s) = 1 - \frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}`
 
     where :math:`w_n` is the weight associated with a certain neighbor,
     :math:`t_p` is the type of the neighbor, and :math:`x_t` is the fraction
