@@ -71,10 +71,17 @@ def load_dielectric_constant(include_metadata = False):
     return df[new_columns]
 
 def load_flla():
-    # ref: F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
+    # ref1: F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
     # Crystal structure representations for machine learning models
     # of formation energies, Int. J. Quantum Chem. 115 (2015) 1094–1101.
     # doi:10.1002/qua.24917.
+    #
+    # The raw data is from:
+    # ref2: Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,
+    # Dacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. & Persson,
+    # K. A. Commentary: The Materials Project: A materials genome approach to
+    # accelerating materials innovation. APL Mater. 1, 11002 (2013).
+
     df = pandas.read_csv(os.path.join(module_dir, "flla_2015.csv"), comment="#")
     column_headers = ['material_id', 'e_above_hull', 'formula',
                         'nsites', 'structure', 'formation_energy',
