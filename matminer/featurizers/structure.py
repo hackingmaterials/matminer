@@ -25,6 +25,7 @@ from matminer.featurizers.site import OPSiteFingerprint, \
     CrystalSiteFingerprint, \
     CoordinationNumber, LocalPropertyDifference
 from matminer.featurizers.stats import PropertyStats
+from matminer.utils.caching import get_all_nearest_neighbors
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
@@ -2065,7 +2066,7 @@ class ChemicalOrdering(BaseFeaturizer):
 
         # Precompute the list of NNs in the structure
         voro = VoronoiNN(weight=self.weight)
-        all_nn = voro.get_all_nn_info(strc)
+        all_nn = get_all_nearest_neighbors(voro, strc)
 
         # Evaluate each shell
         output = []

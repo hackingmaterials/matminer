@@ -58,7 +58,7 @@ class PropertyStats(object):
         Args:
             data_lst (list of floats): List of values to be assessed
             weights: (ignored)
-        Returns: 
+        Returns:
             minimum value
         """
         return min(data_lst) if not np.any(np.isnan(data_lst)) else float("nan")
@@ -70,7 +70,7 @@ class PropertyStats(object):
         Args:
             data_lst (list of floats): List of values to be assessed
             weights: (ignored)
-        Returns: 
+        Returns:
             maximum value
         """
         return max(data_lst) if not np.any(np.isnan(data_lst)) else float("nan")
@@ -82,7 +82,7 @@ class PropertyStats(object):
         Args:
             data_lst (list of floats): List of values to be assessed
             weights: (ignored)
-        Returns: 
+        Returns:
             range
         """
         return (max(data_lst) - min(data_lst)) if not np.any(np.isnan(data_lst)) \
@@ -95,7 +95,7 @@ class PropertyStats(object):
         Args:
             data_lst (list of floats): List of values to be assessed
             weights (list of floats): Weights for each value
-        Returns: 
+        Returns:
             mean value
         """
         return np.average(data_lst, weights=weights)
@@ -123,7 +123,7 @@ class PropertyStats(object):
         Args:
             data_lst (list of floats): List of values to be assessed
             weights (list of floats): Weights for each value
-        Returns: 
+        Returns:
             mean absolute deviation
         """
         mean = PropertyStats.mean(data_lst, weights)
@@ -184,7 +184,7 @@ class PropertyStats(object):
         Args:
             data_lst (list of floats): List of values to be assessed
             weights (list of floats): Weights for each value
-        Returns: 
+        Returns:
             mode
         """
         if weights is None:
