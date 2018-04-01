@@ -43,7 +43,6 @@ from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_f
     import LocalGeometryFinder
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
    import SimplestChemenvStrategy, MultiWeightsChemenvStrategy
-from pymatgen.analysis.chemenv.coordination_environments.structure_environments import LightStructureEnvironments
 
 from matminer.featurizers.stats import PropertyStats
 from sklearn.utils.validation import check_is_fitted
@@ -56,7 +55,6 @@ cn_target_motif_op = {}
 with open(os.path.join(os.path.dirname(
         __file__), 'cn_target_motif_op.yaml'), 'r') as f:
     cn_target_motif_op = yaml.safe_load(f)
-
 
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -461,7 +459,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                             ot = cn_motif_op_params[cn][t][0]
                             if len(cn_motif_op_params[cn][t]) > 1:
                                 p = cn_motif_op_params[cn][t][1]
-                    self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
+                    self.ops[cn].append(LocalStructOrderParams([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
         """
@@ -489,9 +487,13 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 raise ValueError(
                     "No valid targets for site within cation_anion constraint!")
 
+        # Use a Voronoi tessellation to identify neighbors of this site
         vnn = VoronoiNN(cutoff=self.cutoff_radius,
                         targets=target)
-        n_w = vnn.get_voronoi_polyhedra(struct, idx)
+        n_w = vnn.get_nn_info(struct, idx)
+
+        # Convert nn info to just a dict of neighbor -> weight
+        n_w = dict((x['site'], x['weight']) for x in n_w)
 
         dist_sorted = (sorted(n_w.values(), reverse=True))
 
@@ -574,6 +576,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
 
 
+# TODO: Much of this code is duplicated in the new `get_voronoi_poly`. We should refactor it -lw
 class VoronoiFingerprint(BaseFeaturizer):
     """
     Calculate the following sets of features based on Voronoi tessellation
@@ -663,11 +666,15 @@ class VoronoiFingerprint(BaseFeaturizer):
                 -Voronoi area statistics
                 -Voronoi area statistics
         """
-        n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
+        # Get the nearest neighbors using a Voronoi tessellation
+        n_w = VoronoiNN(cutoff=self.cutoff).get_nn_info(struct, idx)
+
+        # Prepare storage for the Voronoi indicies
         voro_idx_list = np.zeros(8, int)
         voro_idx_weights = np.zeros(8)
 
-        vertices = [struct[idx].coords] + [nn.coords for nn in n_w.keys()]
+        # Get statistics about the Voronoi
+        vertices = [struct[idx].coords] + [nn['site'].coords for nn in n_w]
         voro = Voronoi(vertices)
 
         vol_list = []
@@ -682,10 +689,10 @@ class VoronoiFingerprint(BaseFeaturizer):
                 try:
                     voro_idx_list[len(vind) - 3] += 1
                     if self.use_weights:
-                        for neigh, weight in n_w.items():
-                            if np.array_equal(neigh.coords,
+                        for neigh in n_w:
+                            if np.array_equal(neigh['site'].coords,
                                               vertices[sorted(nn)[1]]):
-                                voro_idx_weights[len(vind) - 3] += weight
+                                voro_idx_weights[len(vind) - 3] += neigh['weight']
                 except IndexError:
                     # If a facet has more than 10 edges, it's skipped here.
                     pass
@@ -1744,7 +1751,7 @@ class LocalPropertyDifference(BaseFeaturizer):
     """
 
     def __init__(self, data_source=MagpieData(), weight='area',
-                 properties=('Electronegativity')):
+                 properties=('Electronegativity',)):
         """ Initialize the featurizer
 
         Args:
