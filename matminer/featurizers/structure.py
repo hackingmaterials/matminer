@@ -1142,7 +1142,7 @@ class BondFractions(BaseFeaturizer):
     bonds not in the allowed set), use approx_bonds = True.
 
     BondFractions is based on the "sum over bonds" in the Bag of Bonds approach,
-    described first by Hansen et. al "Machine Learning Predictions of Molecular
+    based on a method by Hansen et. al "Machine Learning Predictions of Molecular
     Properties: Accurate Many-Body Potentials and Nonlocality in Chemical Space"
     (2015).
 
@@ -1416,7 +1416,6 @@ class BondFractions(BaseFeaturizer):
                 species = [str(s.element) for s in species]
 
             bonds[i] = self.token.join(species)
-
         bonds = list(OrderedDict.fromkeys(bonds))
 
         if single:
@@ -1527,6 +1526,90 @@ class BondFractions(BaseFeaturizer):
                     # Add the bond frac to that/those nearest bond(s)
                     abonds_data[ab] += bond_frac
         return abonds_data
+
+    def implementors(self):
+        return ["Alex Dunn"]
+
+    def citations(self):
+        return ["@article{doi:10.1021/acs.jpclett.5b00831, "
+                "author = {Hansen, Katja and Biegler, "
+                "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor"
+                "and von Lilienfeld, O. Anatole and Muller, Klaus-Robert and"
+                "Tkatchenko, Alexandre},"
+                "title = {Machine Learning Predictions of Molecular Properties: "
+                "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
+                "journal = {The Journal of Physical Chemistry Letters},"
+                "volume = {6},"
+                "number = {12},"
+                "pages = {2326-2331},"
+                "year = {2015},"
+                "doi = {10.1021/acs.jpclett.5b00831}, "
+                "note ={PMID: 26113956},"
+                "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
+                "}"]
+
+
+class BagofBonds(BaseFeaturizer):
+    def __init__(self, coulomb_matrix=SineCoulombMatrix()):
+        self.coulomb_matrix = coulomb_matrix
+
+    def fit(self, X, y):
+        """
+        Define the bond types allowed to be returned during each featurization.
+        Bonds found during featurization which are not allowed will be omitted
+        from the returned dataframe or matrix.
+
+        Fit BondFractions by either passing an iterable of structures to
+        training_data or by defining the bonds explicitly with allowed_bonds
+        in __init__.
+
+        Args:
+            X (Series/list): An iterable of pymatgen Structure
+                objects which will be used to determine the allowed bond
+                types.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+
+        """
+        self.fitted_bags = [self._get_bags(s) for s in X]
+
+        pass
+
+    def featurize(self, s):
+        # for bag in bags:
+        #     pass
+        return self._get_bags(s)
+
+    def _get_bags(self, s):
+        cm = self.coulomb_matrix.featurize(s)[0]
+        sites = s.sites
+        nsites = len(sites)
+        bonds = np.zeros((nsites, nsites), dtype=object)
+        for i, si in enumerate(sites):
+            for j, sj in enumerate(sites):
+                el0, el1 = si.specie, sj.specie
+                if isinstance(el0, Specie):
+                    el0 = el0.element
+                if isinstance(el1, Specie):
+                    el1 = el1.element
+                if i == j:
+                    bonds[i, j] = (el0,)
+                else:
+                    bonds[i, j] = tuple(sorted((el0, el1)))
+        bags = {b: [] for b in np.unique(bonds)}
+        for i in range(nsites):
+            for j in range(nsites):
+                bond = bonds[i, j]
+                cmval = cm[i, j]
+                bags[bond].append(cmval)
+
+        # We must also sort the magnitude of bonds in each bag
+        return {bond: sorted(bags[bond]) for bond in bags}
+
+    def feature_labels(self):
+        pass
 
     def implementors(self):
         return ["Alex Dunn"]
