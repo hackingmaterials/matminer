@@ -1908,16 +1908,16 @@ class StructuralHeterogeneity(BaseFeaturizer):
 
     def featurize(self, strc):
         # Compute the Voronoi tessellation of each site
-        voro = VoronoiNN()
-        nns = [voro.get_voronoi_polyhedra(strc, n).values() for n in range(len(strc))]
+        voro = VoronoiNN(extra_nn_info=True, weight=self.weight)
+        nns = get_all_nearest_neighbors(voro, strc)
 
         # Compute the mean bond length of each atom, and the mean
         #   variation within each cell
         mean_bond_lengths = np.zeros((len(strc),))
         bond_length_var = np.zeros_like(mean_bond_lengths)
         for i,nn in enumerate(nns):
-            weights = [n[self.weight] for n in nn]
-            lengths = [n['face_dist'] * 2 for n in nn]
+            weights = [n['weight'] for n in nn]
+            lengths = [n['poly_info']['face_dist'] * 2 for n in nn]
             mean_bond_lengths[i] = PropertyStats.mean(lengths, weights)
 
             # Compute the mean absolute deviation of the bond lengths
@@ -1935,7 +1935,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
                      for stat in self.stats]
 
         # Compute the variance in volume
-        cell_volumes = [sum(x['volume'] for x in nn) for nn in nns]
+        cell_volumes = [sum(x['poly_info']['volume'] for x in nn) for nn in nns]
         features.append(PropertyStats.avg_dev(cell_volumes) / np.mean(cell_volumes))
 
         return features
