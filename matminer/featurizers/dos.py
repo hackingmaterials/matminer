@@ -1,15 +1,15 @@
 import numpy as np
 from collections import OrderedDict
 from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.composition import BandCenter
 from pymatgen import Spin
-from pymatgen.electronic_structure.dos import CompleteDos
+from pymatgen.electronic_structure.dos import CompleteDos, FermiDos
 
 
 class DOSFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen density of states, CompleteDos, object.
     """
-
     def __init__(self, contributors=1, significance_threshold=0.1,
                  energy_cutoff=0.5, sampling_resolution=100, gaussian_smear=0.1):
         """
@@ -99,6 +99,73 @@ class DOSFeaturizer(BaseFeaturizer):
 
     def implementors(self):
         return ['Maxwell Dylla', 'Alireza Faghaninia', 'Anubhav Jain']
+
+
+class DopingFermi(BaseFeaturizer):
+    """
+    Futurizes a pymatgen density of states (dos) object. structure is needed;
+    it can either be fetched automatically from dos.structure(e.g. CompleteDos)
+    or passed into featurize/featurize_dataframe
+    """
+    def __init__(self, dopings=None, eref="midgap", T=300, return_eref=False):
+        """
+        Args:
+            dopings ([float]): list of doping concentrations. Note that a
+                negative concentration is treated as electron majority carrier
+                (n-type) and positive for holes (p-type)
+            eref (str or int or float): energy alignment reference. Defaults
+                to midgap (equilibrium fermi). A fixed number can also be used.
+                str options: "midgap", "dos_fermi", "band_center"
+            T (float): absolute temperature in Kelvin
+            return_eref: if True, instead of aligning the fermi levels based
+                on eref, it (eref) will be explicitly returned as a feature
+        """
+        self.dopings = dopings or [-1e20, 1e20]
+        self.eref = eref or 0.0
+        self.T = T
+        self.return_eref = return_eref
+        self.BC = BandCenter()
+
+    def featurize(self, dos, structure=None, bandgap=None):
+        if not hasattr(dos, 'structure') or dos.structure is None:
+            dos.structure = structure
+        dos = FermiDos(dos, bandgap=bandgap)
+        feats = []
+        eref = 0.0
+        for c in self.dopings:
+            fermi = dos.get_fermi(c=c, T=self.T, nstep=50)
+            if isinstance(self.eref, str):
+                if self.eref == "dos_fermi":
+                    eref = dos.efermi
+                elif self.eref == "midgap":
+                    ecbm, evbm = dos.get_cbm_vbm()
+                    eref = (evbm + ecbm)/2.0
+                elif self.eref == "band center":
+                    eref = self.BC.featurize(dos.structure.composition)[0]
+                else:
+                    raise ValueError('Unsupported "eref": {}'.format(self.eref))
+            else:
+                eref = self.eref
+            if not self.return_eref:
+                fermi -= eref
+            feats.append(fermi)
+        if self.return_eref:
+            feats.append(eref)
+        return feats
+
+    def feature_labels(self):
+        labels = []
+        for c in self.dopings:
+            labels.append("fermi_c{}T{}".format(c, self.T))
+        if self.return_eref:
+            labels.append("{} eref".format(self.eref))
+        return labels
+
+    def implementors(self):
+        return ["Alireza Faghaninia"]
+
+    def citations(self):
+        return []
 
 
 def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
