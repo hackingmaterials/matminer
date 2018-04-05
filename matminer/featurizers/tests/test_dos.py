@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import unittest
 
-from matminer.featurizers.dos import DOSFeaturizer
+from matminer.featurizers.dos import DOSFeaturizer, DopingFermi
 from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.util.testing import PymatgenTest
 
@@ -37,6 +37,16 @@ class DOSFeaturesTest(PymatgenTest):
         self.assertEqual(df_df['vbm_specie_1'][0], 'Si')
         self.assertEqual(df_df['vbm_character_1'][0], 'p')
         self.assertEqual(df_df['vbm_nsignificant'][0], 2)
+
+    def test_DopingFermi(self):
+        dopings = [-1e18, -1e20, 1e18, 1e20]
+        df = DopingFermi(dopings=dopings, eref="midgap", return_eref=True
+                         ).featurize_dataframe(self.df, col_id=['dos'])
+        self.assertAlmostEqual(df['fermi_c-1e+18T300'][0], 6.138458, places=4)
+        self.assertAlmostEqual(df['fermi_c-1e+20T300'][0], 6.258075, places=4)
+        self.assertAlmostEqual(df['fermi_c1e+18T300'][0], 5.497809, places=4)
+        self.assertAlmostEqual(df['fermi_c1e+20T300'][0], 5.37833, places=4)
+        self.assertAlmostEqual(df['midgap eref'][0], 5.8162, places=4)
 
 if __name__ == '__main__':
     unittest.main()
