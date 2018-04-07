@@ -503,8 +503,8 @@ class StructureFeaturesTest(PymatgenTest):
                                     features)
 
         # Test the citations/implementors
-        self.assertEquals(comp.citations(), f.citations())
-        self.assertEquals(comp.implementors(), f.implementors())
+        self.assertEqual(comp.citations(), f.citations())
+        self.assertEqual(comp.implementors(), f.implementors())
 
 
 if __name__ == '__main__':

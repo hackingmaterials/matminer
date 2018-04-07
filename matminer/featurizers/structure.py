@@ -1801,7 +1801,7 @@ class ChemicalOrdering(BaseFeaturizer):
 
             # Get the ordering of each type of each atom
             for site_idx in range(len(strc)):
-                nns = voro._get_nn_shell_info(all_nn, site_idx, shell)
+                nns = voro._get_nn_shell_info(strc, all_nn, site_idx, shell)
 
                 # Sum up the weights
                 total_weight = sum(x['weight'] for x in nns)
