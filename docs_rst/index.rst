@@ -95,9 +95,9 @@ For now, check out the examples below to see how to use the plotting functionali
 Examples
 --------
 
-Check out some examples of how to use matminer!
+Check out some examples of how to use matminer! These examples and more can be found in the `matminer_examples <https://github.com/hackingmaterials/matminer_examples>`_ repo.
 
-1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/experiment_vs_computed_bandgap.ipynb>`_)
+1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/intro_predicting_bulk_modulus.ipynb>`_)
 
 2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/experiment_vs_computed_bandgap.ipynb>`_)
 
