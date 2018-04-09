@@ -38,7 +38,6 @@ class DOSFeaturesTest(PymatgenTest):
         self.assertEqual(df_df['vbm_character_1'][0], 'p')
         self.assertEqual(df_df['vbm_nsignificant'][0], 2)
 
-    @unittest.expectedFailure
     def test_DopingFermi(self):
         dopings = [-1e18, -1e20, 1e18, 1e20]
         df = DopingFermi(dopings=dopings, eref="midgap", return_eref=True
