@@ -181,21 +181,22 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     """
 
     def __init__(self):
-        self.all_elemental_props = defaultdict(dict)
-        self.available_props = []
+        self.all_elemental_props = dict()
+        available_props = []
         self.data_dir = os.path.join(module_dir, "data_files",
                                      'magpie_elementdata')
 
         # Make a list of available properties
         for datafile in glob(os.path.join(self.data_dir, "*.table")):
-            self.available_props.append(
+            available_props.append(
                 os.path.basename(datafile).replace('.table', ''))
 
         # parse and store elemental properties
-        for descriptor_name in self.available_props:
+        for descriptor_name in available_props:
             with open(os.path.join(self.data_dir,
                                    '{}.table'.format(descriptor_name)),
                       'r') as f:
+                self.all_elemental_props[descriptor_name] = dict()
                 lines = f.readlines()
                 for atomic_no in range(1, len(_pt_data) + 1):  # max Z=103
                     try:
