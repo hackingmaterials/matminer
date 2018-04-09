@@ -1557,10 +1557,27 @@ class BondFractions(BaseFeaturizer):
 
 
 class BagofBonds(BaseFeaturizer):
-    def __init__(self, coulomb_matrix=SineCoulombMatrix()):
+    def __init__(self, coulomb_matrix=SineCoulombMatrix(),
+                 fixed_num_bonds_in_bag=False):
+        self.fnbinb = fixed_num_bonds_in_bag
         self.coulomb_matrix = coulomb_matrix
+        self._pad_bags = True
 
-    def fit(self, X, y):
+    def _retrieve_baglens(self, unpadded_bobs):
+        print(unpadded_bobs)
+        bonds = [np.asarray(list(bob.keys())) for bob in unpadded_bobs]
+        bonds = np.unique(np.concatenate(np.asarray(bonds), axis=0))
+        baglens = np.zeros(len(bonds))
+
+        for i, bond in enumerate(bonds):
+            for j, bob in enumerate(unpadded_bobs):
+                if bond in bob:
+                    baglen = len(bob[bond])
+                    baglens[i] = max((baglens[i], baglen))
+        return dict(zip(bonds, baglens))
+
+
+    def fit(self, X, y=None):
         """
         Define the bond types allowed to be returned during each featurization.
         Bonds found during featurization which are not allowed will be omitted
@@ -1580,16 +1597,14 @@ class BagofBonds(BaseFeaturizer):
             self
 
         """
-        self.fitted_bags = [self._get_bags(s) for s in X]
-
-        pass
+        # changing this attr is bad code, but is necessary for parallel
+        self._pad_bags = False
+        unpadded_bobs = self.featurize_many(X)
+        self._pad_bags = True
+        self.baglens = self._retrieve_baglens(unpadded_bobs)
+        self.fitted_bonds = list(self.baglens.keys())
 
     def featurize(self, s):
-        # for bag in bags:
-        #     pass
-        return self._get_bags(s)
-
-    def _get_bags(self, s):
         cm = self.coulomb_matrix.featurize(s)[0]
         sites = s.sites
         nsites = len(sites)
@@ -1612,8 +1627,40 @@ class BagofBonds(BaseFeaturizer):
                 cmval = cm[i, j]
                 bags[bond].append(cmval)
 
-        # We must also sort the magnitude of bonds in each bag
-        return {bond: sorted(bags[bond]) for bond in bags}
+        # We must sort the magnitude of bonds in each bag
+        unpadded_bob = {bond: sorted(bags[bond]) for bond in bags}
+
+        if self._pad_bags:
+            for bond in unpadded_bob:
+                if bond not in self.fitted_bonds:
+                    raise ValueError("The bond {} is not in the fitted "
+                                     "set!".format(bond))
+                baglen_s = len(unpadded_bob[bond])
+                baglen_fit = self.baglens[bond]
+                padded_bob = {k: None for k in unpadded_bob}
+
+                if baglen_s > baglen_fit:
+                    raise ValueError("The bond {} has more entries than was "
+                                     "fitted for (i.e., there are more {} bonds"
+                                     " in structure {} ({}) than the fitted set"
+                                     " allows ({}).".format(bond, bond, s,
+                                                            baglen_s,
+                                                            baglen_fit))
+                elif baglen_s < baglen_fit:
+                    padded_bob[bond] = np.concatenate(unpadded_bob[bond]), \
+                                [0]*(baglen_fit - baglen_s)
+                else:
+                    padded_bob[bond] = unpadded_bob[bond]
+
+                print("PADDED BOB is {}".format(padded_bob))
+            ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
+                                        key=lambda bl: bl[1])]
+            # Ensure the bonds are printed in correct order
+            bob = [padded_bob[bond] for bond in ordered_bonds]
+        else:
+            bob = unpadded_bob
+
+        return bob
 
     def feature_labels(self):
         pass
