@@ -14,12 +14,14 @@ from pymatgen import Structure
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
 from pymatgen.analysis.ewald import EwaldSummation
+from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, CrystalSiteFingerprint, \
-    CoordinationNumber
+from matminer.featurizers.site import OPSiteFingerprint, \
+    CrystalSiteFingerprint, \
+    CoordinationNumber, LocalPropertyDifference
 from matminer.featurizers.stats import PropertyStats
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
@@ -610,15 +612,16 @@ class SineCoulombMatrix(BaseFeaturizer):
 
 class OrbitalFieldMatrix(BaseFeaturizer):
     """
-    This function generates an orbital field matrix (OFM) as developed
-    by Pham et al (arXiv, May 2017). Each atom is described by a 32-element
-    vector (or 39-element vector, see period tag for details) uniquely
-    representing the valence subshell. A 32x32 (39x39) matrix is formed
-    by multiplying two atomic vectors. An OFM for an atomic environment is the
-    sum of these matrices for each atom the center atom coordinates with
-    multiplied by a distance function (In this case, 1/r times the weight of
-    the coordinating atom in the Voronoi Polyhedra method). The OFM of a structure
-    or molecule is the average of the OFMs for all the sites in the structure.
+    Representation based on the valence shell electrons of neighboring atoms.
+
+    Each atom is described by a 32-element vector (or 39-element vector, see
+    period tag for details) uniquely representing the valence subshell.
+    A 32x32 (39x39) matrix is formed by multiplying two atomic vectors.
+    An OFM for an atomic environment is the sum of these matrices for each atom
+    the center atom coordinates with multiplied by a distance function
+    (In this case, 1/r times the weight of the coordinating atom in the Voronoi
+     Polyhedra method). The OFM of a structure or molecule is the average of the
+     OFMs for all the sites in the structure.
 
     Args:
         period_tag (bool): In the original OFM, an element is represented
@@ -631,9 +634,23 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
     ...attribute:: size
         Either 32 or 39, the size of the vectors used to describe elements.
+
+    Reference:
+        `Pham et al. _Sci Tech Adv Mat_. 2017 <http://dx.doi.org/10.1080/14686996.2017.1378060>_`
     """
 
     def __init__(self, period_tag=False):
+        """Initialize the featurizer
+
+        Args:
+            period_tag (bool): In the original OFM, an element is represented
+                    by a vector of length 32, where each element is 1 or 0,
+                    which represents the valence subshell of the element.
+                    With period_tag=True, the vector size is increased
+                    to 39, where the 7 extra elements represent the period
+                    of the element. Note lanthanides are treated as period 6,
+                    actinides as period 7. Default False as in the original paper.
+        """
         my_ohvs = {}
         if period_tag:
             self.size = 39
@@ -718,10 +735,10 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         atom_ofm = np.matrix(np.zeros((self.size, self.size)))
         ref_atom = ohvs[site.specie.Z]
         for other_site in site_dict:
-            scale = site_dict[other_site]
-            other_atom = ohvs[other_site.specie.Z]
+            scale = other_site['weight']
+            other_atom = ohvs[other_site['site'].specie.Z]
             atom_ofm += other_atom.T * ref_atom * scale / site.distance(
-                other_site) / ANG_TO_BOHR
+                other_site['site']) / ANG_TO_BOHR
         return atom_ofm
 
     def get_atom_ofms(self, struct, symm=False):
@@ -752,8 +769,8 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         else:
             indices = [i for i in range(len(struct.sites))]
         for index in indices:
-            ofms.append(self.get_single_ofm(struct.sites[index], \
-                                            vnn.get_voronoi_polyhedra(struct, index)))
+            ofms.append(self.get_single_ofm(struct.sites[index],
+                                            vnn.get_nn_info(struct, index)))
         if symm:
             return ofms, counts
         return ofms
@@ -877,25 +894,35 @@ class MinimumRelativeDistances(BaseFeaturizer):
 
 class SiteStatsFingerprint(BaseFeaturizer):
     """
-    Calculates all order parameters (OPs) for all sites in a crystal
-    structure.
-    Args:
-        site_featurizer (BaseFeaturizer): a site-based featurizer
-        stats ([str]): list of weighted statistics to compute for each feature.
-            If stats is None, for each order parameter, a list is returned that
-            contains the calculated parameter for each site in the structure.
-            *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
-        min_oxi (int): minimum site oxidation state for inclusion (e.g.,
-            zero means metals/cations only)
-        max_oxi (int): maximum site oxidation state for inclusion
+    Computes statistics of properties across all sites in a structure.
+
+    This featurizer first uses a site featurizer class (see site.py for
+    options) to compute features of each site in a structure, and then computes
+    features of the entire structure by measuring statistics of each attribute.
+    Can optionally compute the the statistics of only sites with certain ranges
+    of oxidation states (e.g., only anions).
+
+    Features:
+        - Returns each statistic of each site feature
     """
 
     def __init__(self, site_featurizer, stats=('mean', 'std_dev', 'minimum',
                                                'maximum'), min_oxi=None,
                  max_oxi=None):
+        """
+        Args:
+            site_featurizer (BaseFeaturizer): a site-based featurizer
+            stats ([str]): list of weighted statistics to compute for each feature.
+                If stats is None, for each order parameter, a list is returned
+                that contains the calculated parameter for each site in the
+                structure.
+                *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
+            min_oxi (int): minimum site oxidation state for inclusion (e.g.,
+                zero means metals/cations only)
+            max_oxi (int): maximum site oxidation state for inclusion
+        """
 
         self.site_featurizer = site_featurizer
-        self._labels = self.site_featurizer.feature_labels()
         self.stats = tuple([stats]) if type(stats) == str else stats
         if self.stats and '_mode' in ''.join(self.stats):
             nmodes = 0
@@ -907,22 +934,13 @@ class SiteStatsFingerprint(BaseFeaturizer):
         self.min_oxi = min_oxi
         self.max_oxi = max_oxi
 
+    @property
+    def _site_labels(self):
+        return self.site_featurizer.feature_labels()
+
     def featurize(self, s):
-        """
-        Calculate all sites' local structure order parameters (LSOPs).
-
-        Args:
-            s: Pymatgen Structure object.
-
-            Returns:
-                vals: (2D array of floats) LSOP values of all sites'
-                (1st dimension) order parameters (2nd dimension). 46 order
-                parameters are computed per site: q_cn (coordination
-                number), q_lin, 35 x q_bent (starting with a target angle
-                of 5 degrees and, increasing by 5 degrees, until 175 degrees),
-                q_tet, q_oct, q_bcc, q_2, q_4, q_6, q_reg_tri, q_sq, q_sq_pyr.
-        """
-        vals = [[] for t in self._labels]
+        # Get each feature for each site
+        vals = [[] for t in self._site_labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
                     and (
@@ -934,6 +952,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
                     else:
                         vals[j].append(opval)
 
+        # Compute the statistics of all sites
         if self.stats:
             stats = []
             for op in vals:
@@ -952,24 +971,29 @@ class SiteStatsFingerprint(BaseFeaturizer):
     def feature_labels(self):
         if self.stats:
             labels = []
-            for attr in self._labels:
-
+            for attr in self._site_labels:
                 for stat in self.stats:
                     labels.append('%s %s' % (stat, attr))
             return labels
         else:
-            return self._labels
+            return self._site_labels
 
     def citations(self):
-        return ['@article{zimmermann_jain_2017, title={Applications of order'
-                ' parameter feature vectors}, journal={in progress}, author={'
-                'Zimmermann, N. E. R. and Jain, A.}, year={2017}}']
+        return self.site_featurizer.citations()
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann', 'Alireza Faghaninia', 'Anubhav Jain']
+        return ['Nils E. R. Zimmermann', 'Alireza Faghaninia',
+                'Anubhav Jain', 'Logan Ward']
 
     @staticmethod
     def from_preset(preset, **kwargs):
+        """
+        Create a SiteStatsFingerprint class according to a preset
+
+        Args:
+            preset (str) - Name of preset
+            kwargs - Options for SiteStatsFingerprint
+        """
 
         if preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
@@ -994,7 +1018,21 @@ class SiteStatsFingerprint(BaseFeaturizer):
                 CrystalSiteFingerprint.from_preset("ops", cation_anion=True),
                 **kwargs)
 
+        elif preset == "LocalPropertyDifference_ward-prb-2017":
+            return SiteStatsFingerprint(
+                LocalPropertyDifference.from_preset("ward-prb-2017"),
+                stats=["minimum", "maximum", "range", "mean", "avg_dev"]
+            )
+
+        elif preset == "CoordinationNumber_ward-prb-2017":
+            return SiteStatsFingerprint(
+                CoordinationNumber(nn=VoronoiNN(weight='area'),
+                                   use_weights="effective"),
+                stats=["minimum", "maximum", "range", "mean", "avg_dev"]
+            )
+
         else:
+            # TODO: Why assume coordination number? Should this just raise an error? - lw
             # One of the various Coordination Number presets:
             # MinimumVIRENN, MinimumDistanceNN, JMolNN, VoronoiNN, etc.
             try:
@@ -1557,7 +1595,7 @@ class BondFractions(BaseFeaturizer):
 
 
 class BagofBonds(BaseFeaturizer):
-    def __init__(self, coulomb_matrix=SineCoulombMatrix(),
+    def __init__(self, coulomb_matrix=CoulombMatrix(),
                  fixed_num_bonds_in_bag=False):
         self.fnbinb = fixed_num_bonds_in_bag
         self.coulomb_matrix = coulomb_matrix
@@ -1565,16 +1603,7 @@ class BagofBonds(BaseFeaturizer):
 
     def _retrieve_baglens(self, unpadded_bobs):
         print(unpadded_bobs)
-        bonds = [np.asarray(list(bob.keys())) for bob in unpadded_bobs]
-        bonds = np.unique(np.concatenate(np.asarray(bonds), axis=0))
-        baglens = np.zeros(len(bonds))
 
-        for i, bond in enumerate(bonds):
-            for j, bob in enumerate(unpadded_bobs):
-                if bond in bob:
-                    baglen = len(bob[bond])
-                    baglens[i] = max((baglens[i], baglen))
-        return dict(zip(bonds, baglens))
 
 
     def fit(self, X, y=None):
@@ -1597,14 +1626,19 @@ class BagofBonds(BaseFeaturizer):
             self
 
         """
-        # changing this attr is bad code, but is necessary for parallel
-        self._pad_bags = False
-        unpadded_bobs = self.featurize_many(X)
-        self._pad_bags = True
-        self.baglens = self._retrieve_baglens(unpadded_bobs)
-        self.fitted_bonds = list(self.baglens.keys())
+        unpadded_bobs = [self.bag(s) for s in X]
+        bonds = [np.asarray(list(bob.keys())) for bob in unpadded_bobs]
+        bonds = np.unique(np.concatenate(np.asarray(bonds), axis=0))
+        baglens = [0]*len(bonds)
 
-    def featurize(self, s):
+        for i, bond in enumerate(bonds):
+            for j, bob in enumerate(unpadded_bobs):
+                if bond in bob:
+                    baglen = len(bob[bond])
+                    baglens[i] = max((baglens[i], baglen))
+        self.baglens = dict(zip(bonds, baglens))
+
+    def bag(self, s):
         cm = self.coulomb_matrix.featurize(s)[0]
         sites = s.sites
         nsites = len(sites)
@@ -1628,39 +1662,41 @@ class BagofBonds(BaseFeaturizer):
                 bags[bond].append(cmval)
 
         # We must sort the magnitude of bonds in each bag
-        unpadded_bob = {bond: sorted(bags[bond]) for bond in bags}
+        return {bond: sorted(bags[bond]) for bond in bags}
 
-        if self._pad_bags:
-            for bond in unpadded_bob:
-                if bond not in self.fitted_bonds:
-                    raise ValueError("The bond {} is not in the fitted "
-                                     "set!".format(bond))
-                baglen_s = len(unpadded_bob[bond])
-                baglen_fit = self.baglens[bond]
-                padded_bob = {k: None for k in unpadded_bob}
 
-                if baglen_s > baglen_fit:
-                    raise ValueError("The bond {} has more entries than was "
-                                     "fitted for (i.e., there are more {} bonds"
-                                     " in structure {} ({}) than the fitted set"
-                                     " allows ({}).".format(bond, bond, s,
-                                                            baglen_s,
-                                                            baglen_fit))
-                elif baglen_s < baglen_fit:
-                    padded_bob[bond] = np.concatenate(unpadded_bob[bond]), \
-                                [0]*(baglen_fit - baglen_s)
-                else:
-                    padded_bob[bond] = unpadded_bob[bond]
+    def featurize(self, s):
 
-                print("PADDED BOB is {}".format(padded_bob))
-            ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
-                                        key=lambda bl: bl[1])]
-            # Ensure the bonds are printed in correct order
-            bob = [padded_bob[bond] for bond in ordered_bonds]
-        else:
-            bob = unpadded_bob
+        unpadded_bob = self.bag(s)
+        for bond in unpadded_bob:
+            if bond not in list(self.baglens.keys()):
+                raise ValueError("The bond {} is not in the fitted "
+                                 "set!".format(bond))
+            baglen_s = len(unpadded_bob[bond])
+            baglen_fit = self.baglens[bond]
+            padded_bob = {bag: [0.0]*int(length) for bag, length in self.baglens.items()}
 
+            if baglen_s > baglen_fit:
+                raise ValueError("The bond {} has more entries than was "
+                                 "fitted for (i.e., there are more {} bonds"
+                                 " in structure {} ({}) than the fitted set"
+                                 " allows ({}).".format(bond, bond, s,
+                                                        baglen_s,
+                                                        baglen_fit))
+            elif baglen_s < baglen_fit:
+                padded_bob[bond] = np.concatenate(unpadded_bob[bond],
+                            [0]*(baglen_fit - baglen_s))
+            else:
+                padded_bob[bond] = unpadded_bob[bond]
+
+            # print("PADDED BOB is {}".format(padded_bob))
+        ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
+                                    key=lambda bl: bl[1])]
+        print("ORDERED BONDS", ordered_bonds)
+        # Ensure the bonds are printed in correct order
+        bob = [padded_bob[bond] for bond in ordered_bonds]
         return bob
+        # return list(sum(bob, []))
 
     def feature_labels(self):
         pass
@@ -1685,3 +1721,297 @@ class BagofBonds(BaseFeaturizer):
                 "note ={PMID: 26113956},"
                 "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
                 "}"]
+
+
+class StructuralHeterogeneity(BaseFeaturizer):
+    """Variance in the bond lengths and atomic volumes in a structure
+
+    These features are based on several statistics derived from the Voronoi
+    tessellation of a structure. The first set of features relate to the
+    variance in the average bond length across all atoms in the structure.
+    The second relate to the variance of bond lengths between each neighbor
+    of each atom. The final feature is the variance in Voronoi cell sizes
+    across the structure.
+
+    We define the 'average bond length' of a site as the weighted average of
+    the bond lengths for all neighbors. By default, the weight is the
+    area of the face between the sites.
+
+    The 'neighbor distance variation' is defined as the weighted mean absolute
+    deviation in both length for all neighbors of a particular site. As before,
+    the weight is according to face area by default. For this statistic, we
+    divide the mean absolute deviation by the mean neighbor distance for that
+    site.
+
+    Features:
+        mean absolute deviation in relative bond length - Mean absolute deviation
+            in the average bond lengths for all sites, divided by the
+            mean average bond length
+        max relative bond length - Maximum average bond length, divided by the
+            mean average bond length
+        min relative bond length - Minimum average bond length, divided by the
+            mean average bond length
+        [stat] neighbor distance variation - Statistic (e.g., mean) of the
+            neighbor distance variation
+        mean absolute deviation in relative cell size - Mean absolute deviation
+            in the Voronoi cell volume across all sites in the structure.
+            Divided by the mean Voronoi cell volume.
+
+    References:
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_
+    """
+
+    def __init__(self, weight='area',
+                  stats=("minimum", "maximum", "range", "mean", "avg_dev")):
+        self.weight = weight
+        self.stats = stats
+
+    def featurize(self, strc):
+        # Compute the Voronoi tessellation of each site
+        voro = VoronoiNN()
+        nns = [voro.get_voronoi_polyhedra(strc, n).values() for n in range(len(strc))]
+
+        # Compute the mean bond length of each atom, and the mean
+        #   variation within each cell
+        mean_bond_lengths = np.zeros((len(strc),))
+        bond_length_var = np.zeros_like(mean_bond_lengths)
+        for i,nn in enumerate(nns):
+            weights = [n[self.weight] for n in nn]
+            lengths = [n['face_dist'] * 2 for n in nn]
+            mean_bond_lengths[i] = PropertyStats.mean(lengths, weights)
+
+            # Compute the mean absolute deviation of the bond lengths
+            bond_length_var[i] = PropertyStats.avg_dev(lengths, weights) / \
+                mean_bond_lengths[i]
+
+        # Normalize the bond lengths by the average of the whole structure
+        #   This is done to make the attributes length-scale-invariant
+        mean_bond_lengths /= mean_bond_lengths.mean()
+
+        # Compute statistics related to bond lengths
+        features = [PropertyStats.avg_dev(mean_bond_lengths),
+                    mean_bond_lengths.max(), mean_bond_lengths.min()]
+        features += [PropertyStats.calc_stat(bond_length_var, stat)
+                     for stat in self.stats]
+
+        # Compute the variance in volume
+        cell_volumes = [sum(x['volume'] for x in nn) for nn in nns]
+        features.append(PropertyStats.avg_dev(cell_volumes) / np.mean(cell_volumes))
+
+        return features
+
+    def feature_labels(self):
+        fl = [
+            "mean absolute deviation in relative bond length",
+            "max relative bond length",
+            "min relative bond length"
+        ]
+        fl += [stat + " neighbor distance variation" for stat in self.stats]
+        fl.append("mean absolute deviation in relative cell size")
+        return fl
+
+    def citations(self):
+        return ["@article{Ward2017,"
+                "author = {Ward, Logan and Liu, Ruoqian "
+                "and Krishna, Amar and Hegde, Vinay I. "
+                "and Agrawal, Ankit and Choudhary, Alok "
+                "and Wolverton, Chris},"
+                "doi = {10.1103/PhysRevB.96.024104},"
+                "journal = {Physical Review B},"
+                "pages = {024104},"
+                "title = {{Including crystal structure attributes "
+                "in machine learning models of formation energies "
+                "via Voronoi tessellations}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "volume = {96},year = {2017}}"]
+
+    def implementors(self):
+        return ['Logan Ward']
+
+
+class MaximumPackingEfficiency(BaseFeaturizer):
+    """Maximum possible packing efficiency of this structure
+
+    Uses a Voronoi tessellation to determine the largest radius each atom
+    can have before any atoms touches any one of their neighbors. Given the
+    maximum radius size, this class computes the maximum packing efficiency
+    of the structure as a feature.
+
+    Features:
+        max packing efficiency - Maximum possible packing efficiency
+    """
+
+    def featurize(self, strc):
+        # Get the Voronoi tessellation of each site
+        voro = VoronoiNN()
+        nns = [voro.get_voronoi_polyhedra(strc, i) for i in range(len(strc))]
+
+        # Compute the radius of largest possible atom for each site
+        #  The largest radius is equal to the distance from the center of the
+        #   cell to the closest Voronoi face
+        max_r = [min(x['face_dist'] for x in nn.values()) for nn in nns]
+
+        # Compute the packing efficiency
+        return 4. / 3. * np.pi * np.power(max_r, 3).sum() / strc.volume
+
+    def feature_labels(self):
+        return ['max packing efficiency']
+
+    def citations(self):
+        return ["@article{Ward2017,"
+                "author = {Ward, Logan and Liu, Ruoqian "
+                "and Krishna, Amar and Hegde, Vinay I. "
+                "and Agrawal, Ankit and Choudhary, Alok "
+                "and Wolverton, Chris},"
+                "doi = {10.1103/PhysRevB.96.024104},"
+                "journal = {Physical Review B},"
+                "pages = {024104},"
+                "title = {{Including crystal structure attributes "
+                "in machine learning models of formation energies "
+                "via Voronoi tessellations}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "volume = {96},year = {2017}}"]
+
+    def implementors(self):
+        return ['Logan Ward']
+
+
+class ChemicalOrdering(BaseFeaturizer):
+    """How much the ordering of species in the structure differs from random
+
+    These parameters describe how much the ordering of all species in a
+    structure deviates from random using a Warren-Cowley-like ordering
+    parameter. The first step of this calculation is to determine the nearest
+    neighbor shells of each site. Then, for each shell a degree of order for
+    each type is determined by computing:
+
+    :math:`\alpha (t,s) = 1 - \frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}`
+
+    where :math:`w_n` is the weight associated with a certain neighbor,
+    :math:`t_p` is the type of the neighbor, and :math:`x_t` is the fraction
+    of type t in the structure. For atoms that are randomly dispersed in a
+    structure, this formula yields 0 for all types. For structures where
+    each site is surrounded only by atoms of another type, this formula
+    yields large values of :math:`alpha`.
+
+    The mean absolute value of this parameter across all sites is used
+    as a feature.
+
+    Features:
+        mean ordering parameter shell [n] - Mean ordering parameter for
+            atoms in the n<sup>th</sup> neighbor shell
+
+    References:
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_"""
+
+    def __init__(self, shells=(1, 2, 3), weight='area'):
+        """Initialize the featurizer
+
+        Args:
+            shells ([int]) - Which neighbor shells to evaluate
+            weight (str) - Attribute used to weigh neighbor contributions
+            """
+        self.shells = shells
+        self.weight = weight
+
+    def featurize(self, strc):
+        # Shortcut: Return 0 if there is only 1 type of atom
+        if len(strc.composition) == 1:
+            return [0]*len(self.shells)
+
+        # Get a list of types
+        elems, fracs = zip(*strc.composition.element_composition.fractional_composition.items())
+
+        # Precompute the list of NNs in the structure
+        voro = VoronoiNN(weight=self.weight)
+        all_nn = voro.get_all_nn_info(strc)
+
+        # Evaluate each shell
+        output = []
+        for shell in self.shells:
+            # Initialize an array to store the ordering parameters
+            ordering = np.zeros((len(strc), len(elems)))
+
+            # Get the ordering of each type of each atom
+            for site_idx in range(len(strc)):
+                nns = voro._get_nn_shell_info(strc, all_nn, site_idx, shell)
+
+                # Sum up the weights
+                total_weight = sum(x['weight'] for x in nns)
+
+                # Get weight by type
+                for nn in nns:
+                    site_elem = nn['site'].specie.element \
+                        if isinstance(nn['site'].specie, Specie) else \
+                        nn['site'].specie
+                    elem_idx = elems.index(site_elem)
+                    ordering[site_idx, elem_idx] += nn['weight']
+
+                # Compute the ordering parameter
+                ordering[site_idx, :] = 1 - ordering[site_idx, :] / \
+                                            total_weight / np.array(fracs)
+
+            # Compute the average ordering for the entire structure
+            output.append(np.abs(ordering).mean())
+
+        return output
+
+    def feature_labels(self):
+        return ["mean ordering parameter shell {}".format(n) for n in self.shells]
+
+    def citations(self):
+        return ["@article{Ward2017,"
+                "author = {Ward, Logan and Liu, Ruoqian "
+                "and Krishna, Amar and Hegde, Vinay I. "
+                "and Agrawal, Ankit and Choudhary, Alok "
+                "and Wolverton, Chris},"
+                "doi = {10.1103/PhysRevB.96.024104},"
+                "journal = {Physical Review B},"
+                "pages = {024104},"
+                "title = {{Including crystal structure attributes "
+                "in machine learning models of formation energies "
+                "via Voronoi tessellations}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "volume = {96},year = {2017}}"]
+
+    def implementors(self):
+        return ['Logan Ward']
+
+
+class StructureComposition(BaseFeaturizer):
+    """Compute features related to the composition of a structure
+
+    This class is just a wrapper that calls a composition-based featurizer
+    on the composition of a Structure
+
+    Features:
+        - Depends on the featurizer
+    """
+
+    def __init__(self, featurizer=None):
+        """Initialize the featurizer
+
+        Args:
+            featurizer (BaseFeaturizer) - Composition-based featurizer
+        """
+        self.featurizer = featurizer
+
+    def fit(self, X, y=None, **fit_kwargs):
+        # Get the compositions of each of the structures
+        comps = [x.composition for x in X]
+
+        return self.featurizer.fit(comps, y, **fit_kwargs)
+
+    def featurize(self, strc):
+        return self.featurizer.featurize(strc.composition)
+
+    def feature_labels(self):
+        return self.featurizer.feature_labels()
+
+    def citations(self):
+        return self.featurizer.citations()
+
+    def implementors(self):
+        # Written by Logan Ward, but let's just pass through the
+        #  composition implementors
+        return self.featurizer.implementors()
