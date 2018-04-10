@@ -508,10 +508,10 @@ class CoulombMatrix(BaseFeaturizer):
         m = [[] for site in s.sites]
         z = []
         for site in s.sites:
-            if isinstance(site, Specie):
-                z.append(Element(site.element.symbol).Z)
+            if isinstance(site.specie, Element):
+                z.append(site.specie.Z)
             else:
-                z.append(Element(site.species_string).Z)
+                z.append(site.specie.element.Z)
         for i in range(s.num_sites):
             for j in range(s.num_sites):
                 if i == j:
