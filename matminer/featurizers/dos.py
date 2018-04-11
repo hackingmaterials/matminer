@@ -119,7 +119,7 @@ class DopingFermi(BaseFeaturizer):
                 (n-type) and positive for holes (p-type)
             eref (str or int or float): energy alignment reference. Defaults
                 to midgap (equilibrium fermi). A fixed number can also be used.
-                str options: "midgap", "dos_fermi", "band_center"
+                str options: "midgap", "vbm", "cbm", "dos_fermi", "band_center"
             T (float): absolute temperature in Kelvin
             return_eref: if True, instead of aligning the fermi levels based
                 on eref, it (eref) will be explicitly returned as a feature
@@ -151,9 +151,14 @@ class DopingFermi(BaseFeaturizer):
             if isinstance(self.eref, str):
                 if self.eref == "dos_fermi":
                     eref = dos.efermi
-                elif self.eref == "midgap":
+                elif self.eref in ["midgap", "vbm", "cbm"]:
                     ecbm, evbm = dos.get_cbm_vbm()
-                    eref = (evbm + ecbm)/2.0
+                    if self.eref == "midgap":
+                        eref = (evbm + ecbm)/2.0
+                    elif self.eref == "vbm":
+                        eref = evbm
+                    elif self.eref == "cbm":
+                        eref = ecbm
                 elif self.eref == "band center":
                     eref = self.BC.featurize(dos.structure.composition)[0]
                 else:
