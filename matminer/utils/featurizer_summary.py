@@ -55,7 +55,8 @@ def generate_tables():
         dftable['codename'] = [":code:`" + n + "`" for n in dftable['name']]
         mod = "\n(" + dftable['module'].iloc[0] + ")\n\n"
         namelen = max([len(n) for n in dftable['codename']])
-        doclen = max([len(d) for d in dftable['doc']])
+        # doclen = max([len(d) for d in dftable['doc']])
+        doclen = 400
         borderstr = "=" * namelen + "   " + "=" * doclen + "\n"
         headerstr = "Name" + " " * (namelen - 1) + "Description\n"
         tablestr = ""
