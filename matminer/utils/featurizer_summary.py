@@ -51,7 +51,7 @@ def generate_tables():
     for ftype in np.unique(df['type']):
         dftable = df[df['type'] == ftype]
         dftable['name'] = [":code:`" + n + "`" for n in dftable['name']]
-        mod = "\n(" + ':code:`' + dftable['module'].iloc[0] + "`)\n\n"
+        mod = "\n(" + dftable['module'].iloc[0] + ")\n\n"
         namelen = max([len(n) for n in dftable['name']])
         doclen = max([len(d) for d in dftable['doc']])
         borderstr = "=" * namelen + "   " + "=" * doclen + "\n"
@@ -66,6 +66,7 @@ def generate_tables():
         tables.append(ftype_border + ftype + ftype_border + mod_summs[ftype] +
                       des_border + mod + borderstr + headerstr + borderstr +
                       tablestr + borderstr + "\n\n")
+
     return tables
 
 if __name__ == "__main__":
