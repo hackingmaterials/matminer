@@ -18,6 +18,8 @@ default_exps = ["x", "1/x", "sqrt(x)", "1/sqrt(x)", "x**2", "x**-2", "x**3",
 
 class FunctionFeaturizer(BaseFeaturizer):
     """
+    Features from functions applied to existing features, e.g. "1/x"
+
     This class featurizes a dataframe according to a set
     of expressions representing functions to apply to
     existing features. The approach here has uses a sympy-based

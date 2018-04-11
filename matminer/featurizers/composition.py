@@ -41,10 +41,11 @@ def has_oxidation_states(comp):
 
 class ElementProperty(BaseFeaturizer):
     """
-    Class to calculate elemental property attributes. To initialize quickly,
-    use the from_preset() method.
+    Class to calculate elemental property attributes.
 
-    Parameters:
+    To initialize quickly, use the from_preset() method.
+
+    Args:
         data_source (AbstractData or str): source from which to retrieve
             element property data (or use str for preset: "pymatgen",
             "magpie", or "deml")
@@ -180,11 +181,13 @@ class ElementProperty(BaseFeaturizer):
 
 
 class CationProperty(ElementProperty):
-    """Features based on the properties of cations in a material
+    """
+    Features based on properties of cations in a material
 
     Requires that oxidation states have already been determined
 
-    Computes composition-weighted statistics of different elemental properties"""
+    Computes composition-weighted statistics of different elemental properties
+    """
 
     @classmethod
     def from_preset(cls, preset_name):
@@ -281,10 +284,13 @@ class OxidationStates(BaseFeaturizer):
     def implementors(self):
         return ['Logan Ward']
 
+
 class AtomicOrbitals(BaseFeaturizer):
     """
+    Determine HOMO/LUMO features based on a composition.
+
     Determine the highest occupied molecular orbital (HOMO) and
-    lowest unocupied molecular orbital (LUMO) in a composition. The atomic
+    lowest unoccupied molecular orbital (LUMO) in a composition. The atomic
     orbital energies of neutral ions with LDA-DFT were computed by NIST.
     https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
     """
@@ -344,6 +350,13 @@ class AtomicOrbitals(BaseFeaturizer):
 
 
 class BandCenter(BaseFeaturizer):
+    """
+    Estimation of absolute position of band center using electronegativity.
+
+    Features
+        - Band center
+    """
+
     def featurize(self, comp):
         """
         (Rough) estimation of absolution position of band center using
@@ -382,8 +395,7 @@ class BandCenter(BaseFeaturizer):
 
 class ElectronegativityDiff(BaseFeaturizer):
     """
-    Features based on the electronegativity difference between the anions and
-    cations in the material.
+    Features from electronegativity differences between anions and cations.
 
     These features are computed by first determining the concentration-weighted
     average electronegativity of the anions. For example, the average
@@ -525,7 +537,7 @@ class ElectronAffinity(BaseFeaturizer):
 
 class Stoichiometry(BaseFeaturizer):
     """
-    Calculate stoichiometric attributes.
+    Calculate norms of stoichiometric attributes.
 
     Parameters:
         p_list (list of ints): list of norms to calculate
@@ -602,9 +614,9 @@ class Stoichiometry(BaseFeaturizer):
 
 class ValenceOrbital(BaseFeaturizer):
     """
-        Class to calculate valence orbital attributes
+        Attributes of valence orbital shells
 
-        Parameters:
+        Args:
             data_source (data object): source from which to retrieve element data
             orbitals (list): orbitals to calculate
             props (list): specifies whether to return average number of electrons in each orbital,
@@ -680,7 +692,7 @@ class ValenceOrbital(BaseFeaturizer):
 
 class IonProperty(BaseFeaturizer):
     """
-    Class to calculate ionic property attributes
+    Ionic property attributes. Similar to ElementProperty.
     """
 
     def __init__(self, data_source=PymatgenData(), fast=False):
@@ -777,6 +789,7 @@ class IonProperty(BaseFeaturizer):
 class ElementFraction(BaseFeaturizer):
     """
     Class to calculate the atomic fraction of each element in a composition.
+
     Generates a vector where each index represents an element in atomic number order.
     """
 
@@ -866,18 +879,20 @@ class TMetalFraction(BaseFeaturizer):
 
 
 class CohesiveEnergy(BaseFeaturizer):
+    """
+    Cohesive energy per atom using elemental cohesive energies and formation energy.
+
+    Get cohesive energy per atom of a compound by adding known
+    elemental cohesive energies from the formation energy of the
+    compound.
+
+    Parameters:
+        mapi_key (str): Materials API key for looking up formation energy
+            by composition alone (if you don't set the formation energy
+            yourself).
+    """
 
     def __init__(self, mapi_key=None):
-        """
-        Get cohesive energy per atom of a compound by adding known
-        elemental cohesive energies from the formation energy of the
-        compound.
-
-        Parameters:
-            mapi_key (str): Materials API key for looking up formation energy
-                by composition alone (if you don't set the formation energy
-                yourself).
-        """
         self.mapi_key = mapi_key
 
     def featurize(self, comp, formation_energy_per_atom=None):
@@ -934,6 +949,8 @@ class CohesiveEnergy(BaseFeaturizer):
 
 class Miedema(BaseFeaturizer):
     """
+    Formation enthalpies of intermetallic compounds, from Miedema et al.
+
     Calculate the formation enthalpies of the intermetallic compound,
     solid solution and amorphous phase of a given composition, based on
     semi-empirical Miedema model (and some extensions), particularly for

@@ -34,8 +34,12 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 
 class DensityFeatures(BaseFeaturizer):
     """
-    Calculates density and density-like features: density, volume per atom
-    ("vpa"), and packing fraction
+    Calculates density and density-like features
+
+    Features:
+        - density
+        - volume per atom
+        - ("vpa"), and packing fraction
     """
 
     def __init__(self, desired_features=None):
@@ -80,8 +84,12 @@ class DensityFeatures(BaseFeaturizer):
 
 class GlobalSymmetryFeatures(BaseFeaturizer):
     """
-    Determines symmetry features: spacegroup number, crystal system (1 of 7),
-    and whether the material is centrosymmetric (has inversion symmetry)
+    Determines symmetry features, e.g. spacegroup number and  crystal system
+
+    Features:
+        - Spacegroup number
+        - Crystal system (1 of 7)
+        - Centrosymmetry (has inversion symmetry)
     """
 
     crystal_idx = {"triclinic": 7,
@@ -132,8 +140,11 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
 
 class RadialDistributionFunction(BaseFeaturizer):
     """
-    Calculate the radial distribution function (RDF) of a crystal
-    structure.
+    Calculate the radial distribution function (RDF) of a crystal structure.
+
+    Features:
+        - Radial distribution function
+
     Args:
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
@@ -147,7 +158,7 @@ class RadialDistributionFunction(BaseFeaturizer):
         """
         Get RDF of the input structure.
         Args:
-            s: Pymatgen Structure object.
+            s (Structure): Pymatgen Structure object.
 
         Returns:
             rdf, dist: (tuple of arrays) the first element is the
@@ -163,7 +174,6 @@ class RadialDistributionFunction(BaseFeaturizer):
             tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
 
         # Compute a histogram
-        rdf_dict = {}
         dist_hist, dist_bins = np.histogram(
             all_distances, bins=np.arange(
                 0, self.cutoff + self.bin_size, self.bin_size), density=False)
@@ -187,10 +197,11 @@ class RadialDistributionFunction(BaseFeaturizer):
 
 class PartialRadialDistributionFunction(BaseFeaturizer):
     """
-    Compute the partial radial distribution function (PRDF) of a crystal
-    structure, which is the radial distibution function
-    broken down for each pair of atom types.  The PRDF was proposed as a
-    structural descriptor by [Schutt *et al.*]
+    Compute the partial radial distribution function (PRDF) of an xtal structure
+
+    The PRDF of a crystal structure is the radial distibution function broken
+    down for each pair of atom types.  The PRDF was proposed as a structural
+    descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
 
     Args:
@@ -360,8 +371,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
     """
-    Determine the location of the highest peaks in the radial distribution
-    function (RDF) of a structure.
+    Determine the location of the highest peaks in a structure's RDF.
+
     Args:
         n_peaks: (int) number of the top peaks to return .
     """
@@ -396,14 +407,17 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
 
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
     """
-    Calculate the crystal structure-inherent
-    electronic radial distribution function (ReDF) according to
-    Willighagen et al., Acta Cryst., 2005, B61, 29-36.
+    Calculate the inherent electronic radial distribution function (ReDF)
+
+    The ReDF is defined according to Willighagen et al., Acta Cryst., 2005, B61,
+    29-36.
+
     The ReDF is a structure-integral RDF (i.e., summed over
     all sites) in which the positions of neighboring sites
     are weighted by electrostatic interactions inferred
     from atomic partial charges. Atomic charges are obtained
     from the ValenceIonicRadiusEvaluator class.
+
     Args:
         cutoff: (float) distance up to which the ReDF is to be
                 calculated (default: longest diagaonal in
@@ -480,6 +494,8 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
 class CoulombMatrix(BaseFeaturizer):
     """
+    Generate the Coulomb matrix, a representation of nuclear coulombic interaction.
+
     Generate the Coulomb matrix, M, of the input
     structure (or molecule).  The Coulomb matrix was put forward by
     Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
@@ -543,6 +559,8 @@ class CoulombMatrix(BaseFeaturizer):
 
 class SineCoulombMatrix(BaseFeaturizer):
     """
+    A variant of the Coulomb matrix developed for periodic crystals.
+
     This function generates a variant of the Coulomb matrix developed
     for periodic crystals by Faber et al. (Inter. J. Quantum Chem.
     115, 16, 2015). It is identical to the Coulomb matrix, except
@@ -835,8 +853,9 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
 class MinimumRelativeDistances(BaseFeaturizer):
     """
-    Determines the relative distance of each site to its closest
-    neighbor. We use the relative distance,
+    Determines the relative distance of each site to its closest neighbor.
+
+    We use the relative distance,
     f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the
     absolute distances, r_ij, to account for the fact that different
     atoms/species have different sizes.  The function uses the
@@ -1115,7 +1134,8 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
 
 
 class EwaldEnergy(BaseFeaturizer):
-    """Compute the energy from Coulombic interactions
+    """
+    Compute the energy from Coulombic interactions.
 
     Note: The energy is computed using _charges already defined for the structure_.
 
@@ -1771,7 +1791,8 @@ class BagofBonds(BaseFeaturizer):
 
 
 class StructuralHeterogeneity(BaseFeaturizer):
-    """Variance in the bond lengths and atomic volumes in a structure
+    """
+    Variance in the bond lengths and atomic volumes in a structure
 
     These features are based on several statistics derived from the Voronoi
     tessellation of a structure. The first set of features relate to the
@@ -1877,7 +1898,8 @@ class StructuralHeterogeneity(BaseFeaturizer):
 
 
 class MaximumPackingEfficiency(BaseFeaturizer):
-    """Maximum possible packing efficiency of this structure
+    """
+    Maximum possible packing efficiency of this structure
 
     Uses a Voronoi tessellation to determine the largest radius each atom
     can have before any atoms touches any one of their neighbors. Given the
@@ -1924,7 +1946,8 @@ class MaximumPackingEfficiency(BaseFeaturizer):
 
 
 class ChemicalOrdering(BaseFeaturizer):
-    """How much the ordering of species in the structure differs from random
+    """
+    How much the ordering of species in the structure differs from random
 
     These parameters describe how much the ordering of all species in a
     structure deviates from random using a Warren-Cowley-like ordering
@@ -2026,7 +2049,8 @@ class ChemicalOrdering(BaseFeaturizer):
 
 
 class StructureComposition(BaseFeaturizer):
-    """Compute features related to the composition of a structure
+    """
+    Features related to the composition of a structure
 
     This class is just a wrapper that calls a composition-based featurizer
     on the composition of a Structure

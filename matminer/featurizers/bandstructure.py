@@ -16,17 +16,19 @@ __author__ = 'Anubhav Jain <ajain@lbl.gov>'
 
 
 class BranchPointEnergy(BaseFeaturizer):
-    def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
-        """
-        Calculates the branch point energy and (optionally) an absolute band
-        edge position assuming the branch point energy is the center of the gap
+    """
+    Branch point energy and absolute band edge position.
 
-        Args:
-            n_vb: (int) number of valence bands to include in BPE calc
-            n_cb: (int) number of conduction bands to include in BPE calc
-            calculate_band_edges: (bool) whether to also return band edge
-                positions
-        """
+    Calculates the branch point energy and (optionally) an absolute band
+    edge position assuming the branch point energy is the center of the gap
+
+    Args:
+        n_vb: (int) number of valence bands to include in BPE calc
+        n_cb: (int) number of conduction bands to include in BPE calc
+        calculate_band_edges: (bool) whether to also return band edge
+            positions
+    """
+    def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
         self.n_vb = n_vb
         self.n_cb = n_cb
         self.calculate_band_edges = calculate_band_edges
@@ -108,6 +110,7 @@ class BranchPointEnergy(BaseFeaturizer):
 class BandFeaturizer(BaseFeaturizer):
     """
     Featurizes a pymatgen band structure object.
+
     Args:
         kpoints ([1x3 numpy array]): list of fractional coordinates of
                 k-points at which energy is extracted.
