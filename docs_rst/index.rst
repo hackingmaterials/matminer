@@ -94,7 +94,7 @@ Plot data from either arrays or dataframes using `Plotly <https://plot.ly/>`_ wi
 _____________________________________________________________________________________________
 
 In the figrecipes module of the matminer library, we have developed utilities that make it easier and faster to plot common figures with Plotly. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly, while at the same time sheilding the complexities involved.
-Check out an example code and figure generated with FigRecipes:
+Check out an example code and figure generated with figrecipes:
 
 .. code-block:: python
 
