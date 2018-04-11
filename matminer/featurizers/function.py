@@ -28,32 +28,30 @@ class FunctionFeaturizer(BaseFeaturizer):
     done is to provide for better support for book-keeping
     (e. g. with feature labels), substitution, and elimination
     of symbolic redundancy, which sympy is well-suited for.
+
+    Args:
+        expressions ([str]): list of sympy-parseable expressions
+            representing a function of a single variable x, e. g.
+            ["1 / x", "x ** 2"], defaults to the list above
+        multi_feature_depth (int): how many features to include if using
+            multiple fields for functionalization, e. g. 2 will
+            include pairwise combined features
+        postprocess (function or type): type to cast functional outputs
+            to, if, for example, you want to include the possibility of
+            complex numbers in your outputs, use postprocess=np.complex,
+            defaults to float
+        combo_function (function): function to combine multi-features,
+            defaults to np.prod (i.e. cumulative product of expressions),
+            note that a combo function must cleanly process sympy
+            expressions
+        latexify_labels (bool): whether to render labels in latex,
+            defaults to False
     """
 
     def __init__(self, expressions=None, multi_feature_depth=1,
                  postprocess=None, combo_function=None,
                  latexify_labels=False):
 
-        """
-        Args:
-            expressions ([str]): list of sympy-parseable expressions
-                representing a function of a single variable x, e. g.
-                ["1 / x", "x ** 2"], defaults to the list above
-            multi_feature_depth (int): how many features to include if using
-                multiple fields for functionalization, e. g. 2 will
-                include pairwise combined features
-            postprocess (function or type): type to cast functional outputs
-                to, if, for example, you want to include the possibility of
-                complex numbers in your outputs, use postprocess=np.complex,
-                defaults to float
-            combo_function (function): function to combine multi-features,
-                defaults to np.prod (i.e. cumulative product of expressions),
-                note that a combo function must cleanly process sympy
-                expressions
-            latexify_labels (bool): whether to render labels in latex,
-                defaults to False
-
-        """
         self.expressions = expressions or default_exps
         self.multi_feature_depth = multi_feature_depth
         self.combo_function = combo_function or np.prod
