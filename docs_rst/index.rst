@@ -82,14 +82,12 @@ For now, check out the examples below to see how to use the descriptor functiona
 Plotting tools
 --------------
 
-Plot data from either arrays or dataframes using either `Plotly <https://plot.ly/>`_ or `matplotlib <http://matplotlib.org/>`_ with figrecipes
-______________________________________________________________________________________________________________________________________________
+Plot data from either arrays or dataframes using `Plotly <https://plot.ly/>`_ with figrecipes
+_____________________________________________________________________________________________
 
-In the figrecipes module of the matminer library, we have developed utilities that make it easier and faster to plot common figures with Plotly and matplotlib. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly and matplotlib, while at the same time sheilding the complexities involved.
+In the figrecipes module of the matminer library, we have developed utilities that make it easier and faster to plot common figures with Plotly. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly, while at the same time sheilding the complexities involved.
 
-The Plotly module contains the :code:`PlotlyFig` class that wraps around Plotly's Python API and follows its JSON schema. The matplotlib module contains plotting wrapper classes for each kind of popular plot, including XY-scatter plots and heat maps.
-
-For now, check out the examples below to see how to use the plotting functionality.
+The Plotly module contains the :code:`PlotlyFig` class that wraps around Plotly's Python API and follows its JSON schema. Check out the examples below to see how to use the plotting functionality!
 
 --------
 Examples
