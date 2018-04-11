@@ -1595,16 +1595,9 @@ class BondFractions(BaseFeaturizer):
 
 
 class BagofBonds(BaseFeaturizer):
-    def __init__(self, coulomb_matrix=CoulombMatrix(),
-                 fixed_num_bonds_in_bag=False):
-        self.fnbinb = fixed_num_bonds_in_bag
+    def __init__(self, coulomb_matrix=CoulombMatrix(), token=' - '):
         self.coulomb_matrix = coulomb_matrix
-        self._pad_bags = True
-
-    def _retrieve_baglens(self, unpadded_bobs):
-        print(unpadded_bobs)
-
-
+        self.token = token
 
     def fit(self, X, y=None):
         """
@@ -1627,8 +1620,8 @@ class BagofBonds(BaseFeaturizer):
 
         """
         unpadded_bobs = [self.bag(s) for s in X]
-        bonds = [np.asarray(list(bob.keys())) for bob in unpadded_bobs]
-        bonds = np.unique(np.concatenate(np.asarray(bonds), axis=0))
+        bonds = [list(bob.keys()) for bob in unpadded_bobs]
+        bonds = np.unique(sum(bonds, []))
         baglens = [0]*len(bonds)
 
         for i, bond in enumerate(bonds):
@@ -1637,6 +1630,9 @@ class BagofBonds(BaseFeaturizer):
                     baglen = len(bob[bond])
                     baglens[i] = max((baglens[i], baglen))
         self.baglens = dict(zip(bonds, baglens))
+        # Sort the bags by bag length, with the shortest coming first.
+        self.ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
+                                    key=lambda bl: bl[1])]
 
     def bag(self, s):
         cm = self.coulomb_matrix.featurize(s)[0]
@@ -1666,22 +1662,20 @@ class BagofBonds(BaseFeaturizer):
 
 
     def featurize(self, s):
-
         unpadded_bob = self.bag(s)
+        padded_bob = {bag: [0.0] * int(length) for bag, length in
+                      self.baglens.items()}
+
         for bond in unpadded_bob:
-            if bond not in list(self.baglens.keys()):
-                raise ValueError("The bond {} is not in the fitted "
-                                 "set!".format(bond))
             baglen_s = len(unpadded_bob[bond])
             baglen_fit = self.baglens[bond]
-            padded_bob = {bag: [0.0]*int(length) for bag, length in self.baglens.items()}
-
+            if bond not in list(self.baglens.keys()):
+                raise ValueError("{} is not in the fitted bonds!".format(bond))
             if baglen_s > baglen_fit:
                 raise ValueError("The bond {} has more entries than was "
                                  "fitted for (i.e., there are more {} bonds"
                                  " in structure {} ({}) than the fitted set"
-                                 " allows ({}).".format(bond, bond, s,
-                                                        baglen_s,
+                                 " allows ({}).".format(bond, bond, s, baglen_s,
                                                         baglen_fit))
             elif baglen_s < baglen_fit:
                 padded_bob[bond] = np.concatenate(unpadded_bob[bond],
@@ -1689,17 +1683,20 @@ class BagofBonds(BaseFeaturizer):
             else:
                 padded_bob[bond] = unpadded_bob[bond]
 
-            # print("PADDED BOB is {}".format(padded_bob))
-        ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
-                                    key=lambda bl: bl[1])]
-        print("ORDERED BONDS", ordered_bonds)
         # Ensure the bonds are printed in correct order
-        bob = [padded_bob[bond] for bond in ordered_bonds]
-        return bob
-        # return list(sum(bob, []))
+        bob = [padded_bob[bond] for bond in self.ordered_bonds]
+        return list(sum(bob, []))
 
     def feature_labels(self):
-        pass
+        labels = []
+        for bag in self.ordered_bonds:
+            if len(bag) == 1:
+                basename = str(bag[0]) + " site #"
+            else:
+                basename = str(bag[0]) + self.token + str(bag[1]) + " bond #"
+            bls = [basename + str(i) for i in range(self.baglens[bag])]
+            labels += bls
+        return labels
 
     def implementors(self):
         return ["Alex Dunn"]
