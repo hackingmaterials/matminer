@@ -76,7 +76,7 @@ ________________________________________________________________________________
 
 We have developed utilities to help describe a material from its composition or structure, and represent them in number format such that they are readily usable as features.
 
-For now, check out the examples below to see how to use the descriptor functionality, or see tour our `Table of Featurizers. </featurizer_summary>`
+For now, check out the examples below to see how to use the descriptor functionality, or see tour our :doc:`Table of Featurizers. </featurizer_summary>`
 
 --------------
 Plotting tools
