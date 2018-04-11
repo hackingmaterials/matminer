@@ -1613,6 +1613,7 @@ class BagofBonds(BaseFeaturizer):
     Args:
         coulomb_matrix (BaseFeaturizer): A featurizer object containing a
             "featurize" method which returns a matrix of size nsites x nsites.
+            Good choices are CoulombMatrix() or SineCoulombMatrix()
         token (str): The string used to separate species in a bond, including
             spaces. The token must contain at least one space and cannot have
             alphabetic characters in it, and should be padded by spaces. For
@@ -1620,7 +1621,7 @@ class BagofBonds(BaseFeaturizer):
             how bonds are represented in the dataframe.
 
     """
-    def __init__(self, coulomb_matrix=SineCoulombMatrix(), token=' - '):
+    def __init__(self, coulomb_matrix=CoulombMatrix(), token=' - '):
         self.coulomb_matrix = coulomb_matrix
         self.token = token
 
@@ -1676,6 +1677,9 @@ class BagofBonds(BaseFeaturizer):
                 Site objects representing bonds or sites, and the values are the
                 Coulomb matrix values for that bag.
         """
+        if not isinstance(s, (Structure)):
+            raise TypeError("BagofBonds must take in a pymatgen Structure "
+                            "object, not {}".format(type(s)))
 
         cm = self.coulomb_matrix.featurize(s)[0]
         sites = s.sites
@@ -1705,7 +1709,6 @@ class BagofBonds(BaseFeaturizer):
 
     def featurize(self, s):
         self._check_fitted()
-
         unpadded_bob = self.bag(s)
         padded_bob = {bag: [0.0] * int(length) for bag, length in
                       self.baglens.items()}
@@ -1716,6 +1719,7 @@ class BagofBonds(BaseFeaturizer):
                                  "bonds/sites!".format(bond))
             baglen_s = len(unpadded_bob[bond])
             baglen_fit = self.baglens[bond]
+
             if baglen_s > baglen_fit:
                 raise ValueError("The bond {} has more entries than was "
                                  "fitted for (i.e., there are more {} bonds"
@@ -1723,8 +1727,8 @@ class BagofBonds(BaseFeaturizer):
                                  " allows ({}).".format(bond, bond, s, baglen_s,
                                                         baglen_fit))
             elif baglen_s < baglen_fit:
-                padded_bob[bond] = np.concatenate(unpadded_bob[bond],
-                            [0]*(baglen_fit - baglen_s))
+                padded_bob[bond] = unpadded_bob[bond] + \
+                                   [0.0]*(baglen_fit - baglen_s)
             else:
                 padded_bob[bond] = unpadded_bob[bond]
 
