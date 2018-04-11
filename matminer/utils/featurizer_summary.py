@@ -14,6 +14,8 @@ from matminer.featurizers.base import BaseFeaturizer
 
 __authors__ = 'Alex Dunn <ardunn@lbl.gov>'
 
+# Update the following dictionary if any new modules are added. Each key is
+# the name of the module and each value is a high level summary of its contents.
 mod_summs = {"structure": "Generating features based on a material's crystal structure.\n",
              "site": "Features from individual sites in a material's crystal structure.\n",
              "dos": "Features based on a material's electronic density of states.\n",
