@@ -1164,8 +1164,7 @@ class EwaldEnergy(BaseFeaturizer):
 
 class BondFractions(BaseFeaturizer):
     """
-    Compute the number of each kind of bond in a structure, as a fraction of
-    the total number of bonds, based on NearestNeighbors.
+    Compute the fraction of each bond in a structure, based on NearestNeighbors.
 
     For example, in a structure with 2 Li-O bonds and 3 Li-P bonds:
 
@@ -1595,24 +1594,46 @@ class BondFractions(BaseFeaturizer):
 
 
 class BagofBonds(BaseFeaturizer):
-    def __init__(self, coulomb_matrix=CoulombMatrix(), token=' - '):
+    """
+    Compute a Bag of Bonds vector, as first described by Hansen et al. (2015).
+
+    The Bag of Bonds approach is based creating an even-length vector from a
+    Coulomb matrix output. Practically, it represents the Coloumbic interactions
+    between each possible set of sites in a structure as a vector.
+
+    BagofBonds must be fit to an iterable of structures using the "fit" method
+    before featurization can occur. This is because the bags and the maximum
+    lengths of each bag must be set prior to featurization.
+
+    BondFractions is based on a method by Hansen et. al
+    "Machine Learning Predictions of Molecular Properties: Accurate Many-Body
+    Potentials and Nonlocality in Chemical Space" (2015).
+
+    Args:
+        coulomb_matrix (BaseFeaturizer): A featurizer object containing a
+            "featurize" method which returns a matrix of size nsites x nsites.
+        token (str): The string used to separate species in a bond, including
+            spaces. The token must contain at least one space and cannot have
+            alphabetic characters in it, and should be padded by spaces. For
+            example, for the bond Cs+ - Cl-, the token is ' - '. This determines
+            how bonds are represented in the dataframe.
+
+    """
+    def __init__(self, coulomb_matrix=SineCoulombMatrix(), token=' - '):
         self.coulomb_matrix = coulomb_matrix
         self.token = token
 
     def fit(self, X, y=None):
         """
-        Define the bond types allowed to be returned during each featurization.
-        Bonds found during featurization which are not allowed will be omitted
-        from the returned dataframe or matrix.
+        Define the bags using a list of structures.
 
-        Fit BondFractions by either passing an iterable of structures to
-        training_data or by defining the bonds explicitly with allowed_bonds
-        in __init__.
+        Both the names of the bags (e.g., Cs-Cl) and the maximum lengths of
+        the bags are set with fit.
 
         Args:
             X (Series/list): An iterable of pymatgen Structure
                 objects which will be used to determine the allowed bond
-                types.
+                types and bag lengths.
             y : unused (added for consistency with overridden method signature)
 
         Returns:
@@ -1635,6 +1656,20 @@ class BagofBonds(BaseFeaturizer):
                                     key=lambda bl: bl[1])]
 
     def bag(self, s):
+        """
+        Convert a structure into a bag of bonds, where each bag has no padded
+        zeros. using this function will give the 'raw' bags, which when
+        concatenated, will have different lengths.
+
+        Args:
+            s (Structure): A pymatgen Structure or IStructure object.
+
+        Returns:
+            (dict) A bag of bonds, where the keys are sorted tuples of pymatgen
+                Site objects representing bonds or sites, and the values are the
+                Coulomb matrix values for that bag.
+        """
+
         cm = self.coulomb_matrix.featurize(s)[0]
         sites = s.sites
         nsites = len(sites)
