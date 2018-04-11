@@ -3,16 +3,24 @@ Functions used for auto-generating featurizer tables.
 """
 import numpy as np
 import pandas as pd
+from matminer.featurizers import base
+from matminer.featurizers import composition
+from matminer.featurizers import site
 from matminer.featurizers import structure
 from matminer.featurizers import dos
 from matminer.featurizers import bandstructure
-from matminer.featurizers import site
-from matminer.featurizers import composition
-from matminer.featurizers import base
 from matminer.featurizers import function
 from matminer.featurizers.base import BaseFeaturizer
 
 __authors__ = 'Alex Dunn <ardunn@lbl.gov>'
+
+mod_summs = {"structure": "Generating features based on a material's crystal structure.\n",
+             "site": "Features from individual sites in a material's crystal structure.\n",
+             "dos": "Features based on a material's electronic density of states.\n",
+             "base": "Parent classes and meta-featurizers.\n",
+             "composition": "Features based on a material's composition.\n",
+             "function": "Classes for expanding sets of features calculated with other featurizers.\n",
+             "bandstructure": "Features derived from a material's electronic bandstructure.\n"}
 
 def generate_tables():
     """
@@ -26,7 +34,7 @@ def generate_tables():
             separate table representing one module.
     """
 
-    mmfeat = "===========\nfeaturizers\n===========\n"
+    mmfeat = "===========\nFeaturizers\n===========\n"
     mmdes = "Below, you will find a description of each featurizer, listed in " \
             "tables grouped by module.\n"
     tables = [mmfeat, mmdes]
@@ -42,6 +50,8 @@ def generate_tables():
 
     for ftype in np.unique(df['type']):
         dftable = df[df['type'] == ftype]
+        dftable['name'] = [":code:`" + n + "`" for n in dftable['name']]
+        mod = "\n(" + dftable['module'].iloc[0] + ")\n"
         namelen = max([len(n) for n in dftable['name']])
         doclen = max([len(d) for d in dftable['doc']])
         borderstr = "=" * namelen + "   " + "=" * doclen + "\n"
@@ -52,8 +62,10 @@ def generate_tables():
                         dftable['doc'].iloc[i] + "\n"
 
         ftype_border = "\n" + "-" * len(ftype) + "\n"
-        tables.append(ftype_border + ftype + ftype_border + borderstr + headerstr + borderstr +
-                      tablestr + borderstr)
+        des_border = "-" * len(mod_summs[ftype]) + "\n"
+        tables.append(ftype_border + ftype + ftype_border + mod_summs[ftype] +
+                      des_border + mod + borderstr + headerstr + borderstr +
+                      tablestr + borderstr + "\n\n")
 
     return tables
 
