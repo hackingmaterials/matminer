@@ -10,7 +10,7 @@ from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, CrystalSiteFingerprint, EwaldSiteEnergy, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
-    GeneralizedRadialDistributionFunction, AngularFourierSeries
+    GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference
 
 
 class FingerprintTests(PymatgenTest):
@@ -24,6 +24,11 @@ class FingerprintTests(PymatgenTest):
         self.cscl = Structure(
             Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
             ["Cl1-", "Cs1+"], [[0.45, 0.5, 0.5], [0, 0, 0]],
+            validate_proximity=False, to_unit_cell=False,
+            coords_are_cartesian=False)
+        self.b1 = Structure(
+            Lattice([[0,1,1],[1,0,1],[1,1,0]]),
+            ["H", "He"], [[0,0,0],[0.5,0.5,0.5]],
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=False)
 
@@ -312,10 +317,15 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(cnv.featurize(self.cscl, 0)[0], 14)
         self.assertAlmostEqual(cnv.featurize(self.cscl, 1)[0], 14)
         self.assertEqual(len(cnv.citations()), 2)
-        cnv = CoordinationNumber(VoronoiNN(), use_weights=True)
+        cnv = CoordinationNumber(VoronoiNN(), use_weights='sum')
         self.assertEqual(cnv.feature_labels()[0], 'CN_VoronoiNN')
         self.assertAlmostEqual(cnv.featurize(self.cscl, 0)[0], 9.2584516)
         self.assertAlmostEqual(cnv.featurize(self.cscl, 1)[0], 9.2584516)
+        self.assertEqual(len(cnv.citations()), 2)
+        cnv = CoordinationNumber(VoronoiNN(), use_weights='effective')
+        self.assertEqual(cnv.feature_labels()[0], 'CN_VoronoiNN')
+        self.assertAlmostEqual(cnv.featurize(self.cscl, 0)[0], 11.648923254)
+        self.assertAlmostEqual(cnv.featurize(self.cscl, 1)[0], 11.648923254)
         self.assertEqual(len(cnv.citations()), 2)
         cnj = CoordinationNumber.from_preset('JMolNN')
         self.assertEqual(cnj.feature_labels()[0], 'CN_JMolNN')
@@ -348,7 +358,7 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(cnmvire.featurize(self.cscl, 0)[0], 8)
         self.assertAlmostEqual(cnmvire.featurize(self.cscl, 1)[0], 14)
         self.assertEqual(len(cnmvire.citations()), 2)
-        self.assertEqual(len(cnmvire.implementors()), 1)
+        self.assertEqual(len(cnmvire.implementors()), 2)
         self.assertEqual(cnmvire.implementors()[0], 'Nils E. R. Zimmermann')
 
     def test_grdf(self):
@@ -454,6 +464,19 @@ class FingerprintTests(PymatgenTest):
                                'Hist 6.25', 'Hist 6.75', 'Hist 7.25',
                                'Hist 7.75', 'Hist 8.25', 'Hist 8.75',
                                'Hist 9.25', 'Hist 9.75'])
+
+    def test_local_prop_diff(self):
+        f = LocalPropertyDifference()
+
+        # Test for Al, all features should be zero
+        features = f.featurize(self.sc, 0)
+        self.assertArrayAlmostEqual(features, [0])
+
+        # Change the property to Number, compute for B1
+        f.set_params(properties=['Number'])
+        for i in range(2):
+            features = f.featurize(self.b1, i)
+            self.assertArrayAlmostEqual(features, [1])
 
     def tearDown(self):
         del self.sc

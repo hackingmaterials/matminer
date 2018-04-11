@@ -1,5 +1,7 @@
 from __future__ import division
 
+from matminer.utils.data import MagpieData
+
 """
 Features that describe the local environment of a single atom. Note that
 structural features can be constructed from a combination of site features from
@@ -33,7 +35,7 @@ from math import pi
 from scipy.spatial import Voronoi, Delaunay
 from pymatgen import Structure
 from pymatgen.core.periodic_table import Element
-from pymatgen.analysis.local_env import LocalStructOrderParas, \
+from pymatgen.analysis.local_env import LocalStructOrderParams, \
     VoronoiNN
 import pymatgen.analysis
 from pymatgen.analysis.ewald import EwaldSummation
@@ -41,7 +43,6 @@ from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_f
     import LocalGeometryFinder
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
    import SimplestChemenvStrategy, MultiWeightsChemenvStrategy
-from pymatgen.analysis.chemenv.coordination_environments.structure_environments import LightStructureEnvironments
 
 from matminer.featurizers.stats import PropertyStats
 from sklearn.utils.validation import check_is_fitted
@@ -54,7 +55,6 @@ cn_target_motif_op = {}
 with open(os.path.join(os.path.dirname(
         __file__), 'cn_target_motif_op.yaml'), 'r') as f:
     cn_target_motif_op = yaml.safe_load(f)
-
 
 
 class AGNIFingerprints(BaseFeaturizer):
@@ -215,7 +215,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                         ot = cn_motif_op_params[cn][t][0]
                         if len(cn_motif_op_params[cn][t]) > 1:
                             p = cn_motif_op_params[cn][t][1]
-                self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
+                self.ops[cn].append(LocalStructOrderParams([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
         """
@@ -459,7 +459,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                             ot = cn_motif_op_params[cn][t][0]
                             if len(cn_motif_op_params[cn][t]) > 1:
                                 p = cn_motif_op_params[cn][t][1]
-                    self.ops[cn].append(LocalStructOrderParas([ot], parameters=[p]))
+                    self.ops[cn].append(LocalStructOrderParams([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
         """
@@ -487,9 +487,13 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 raise ValueError(
                     "No valid targets for site within cation_anion constraint!")
 
+        # Use a Voronoi tessellation to identify neighbors of this site
         vnn = VoronoiNN(cutoff=self.cutoff_radius,
                         targets=target)
-        n_w = vnn.get_voronoi_polyhedra(struct, idx)
+        n_w = vnn.get_nn_info(struct, idx)
+
+        # Convert nn info to just a dict of neighbor -> weight
+        n_w = dict((x['site'], x['weight']) for x in n_w)
 
         dist_sorted = (sorted(n_w.values(), reverse=True))
 
@@ -572,6 +576,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
 
 
+# TODO: Much of this code is duplicated in the new `get_voronoi_poly`. We should refactor it -lw
 class VoronoiFingerprint(BaseFeaturizer):
     """
     Calculate the following sets of features based on Voronoi tessellation
@@ -661,11 +666,15 @@ class VoronoiFingerprint(BaseFeaturizer):
                 -Voronoi area statistics
                 -Voronoi area statistics
         """
-        n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(struct, idx)
+        # Get the nearest neighbors using a Voronoi tessellation
+        n_w = VoronoiNN(cutoff=self.cutoff).get_nn_info(struct, idx)
+
+        # Prepare storage for the Voronoi indicies
         voro_idx_list = np.zeros(8, int)
         voro_idx_weights = np.zeros(8)
 
-        vertices = [struct[idx].coords] + [nn.coords for nn in n_w.keys()]
+        # Get statistics about the Voronoi
+        vertices = [struct[idx].coords] + [nn['site'].coords for nn in n_w]
         voro = Voronoi(vertices)
 
         vol_list = []
@@ -680,10 +689,10 @@ class VoronoiFingerprint(BaseFeaturizer):
                 try:
                     voro_idx_list[len(vind) - 3] += 1
                     if self.use_weights:
-                        for neigh, weight in n_w.items():
-                            if np.array_equal(neigh.coords,
+                        for neigh in n_w:
+                            if np.array_equal(neigh['site'].coords,
                                               vertices[sorted(nn)[1]]):
-                                voro_idx_weights[len(vind) - 3] += weight
+                                voro_idx_weights[len(vind) - 3] += neigh['weight']
                 except IndexError:
                     # If a facet has more than 10 edges, it's skipped here.
                     pass
@@ -748,6 +757,8 @@ class ChemicalSRO(BaseFeaturizer):
     """
     Chemical short-range ordering (SRO) features to evaluate the deviation
     of local chemistry with the nominal composition of the structure.
+
+    A local bonding preference is computed using
     f_el = N_el/(sum of N_el) - c_el,
     where N_el is the number of each element type in the neighbors around
     the target site, sum of N_el is the sum of all possible element types
@@ -761,15 +772,22 @@ class ChemicalSRO(BaseFeaturizer):
     Note that ChemicalSRO is only featurized for elements identified by
     "fit" (see following), thus "fit" must be called before "featurize",
     or else an error will be raised.
-    Args:
-        nn (NearestNeighbor): instance of one of pymatgen's Nearest Neighbor
-                              classes.
-        includes (array-like or str): elements included to calculate CSRO.
-        excludes (array-like or str): elements excluded to calculate CSRO.
-        sort (bool): whether to sort elements by mendeleev number.
+
+    Features:
+        CSRO__[nn method]_[element] - The Chemical SRO of a site computed based
+            on neighbors determined with a certain  NN-detection method for
+            a certain element.
     """
 
     def __init__(self, nn, includes=None, excludes=None, sort=True):
+        """Initialize the featurizer
+
+        Args:
+            nn (NearestNeighbor): instance of one of pymatgen's NearestNeighbor
+                                  classes.
+            includes (array-like or str): elements included to calculate CSRO.
+            excludes (array-like or str): elements excluded to calculate CSRO.
+            sort (bool): whether to sort elements by mendeleev number."""
         self.nn = nn
         self.includes = includes
         if self.includes:
@@ -1256,21 +1274,29 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
     def implementors(self):
         return ['Nils E. R. Zimmermann']
 
+
 class CoordinationNumber(BaseFeaturizer):
     """
-    Coordination number (CN) computed using one of pymatgen's
-    NearNeighbor classes for determination of near neighbors
-    contributing to the CN.
-    Args:
-        nn (NearNeighbor): instance of one of pymatgen's NearNeighbor
-                           classes.
+    Number of first nearest neighbors of a site.
+
+    Determines the number of nearest neighbors of a site using one of
+    pymatgen's NearNeighbor classes. These nearest neighbor calculators
+    can return weights related to the proximity of each neighbor to this
+    site. It is possible to take these weights into account to prevent
+    the coordination number from changing discontinuously with small
+    perturbations of a structure, either by summing the total weights
+    or using the normalization method presented by
+    [Ward et al.](http://link.aps.org/doi/10.1103/PhysRevB.96.014107)
+
+    Features:
+        CN_[method] - Coordination number computed using a certain method
+            for calculating nearest neighbors.
     """
 
     @staticmethod
     def from_preset(preset, **kwargs):
         """
-        Use one of the standard instances of a given NearNeighbor
-        class.
+        Use one of the standard instances of a given NearNeighbor class.
         Args:
             preset (str): preset type ("VoronoiNN", "JMolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
@@ -1282,8 +1308,18 @@ class CoordinationNumber(BaseFeaturizer):
         nn_ = getattr(pymatgen.analysis.local_env, preset)
         return CoordinationNumber(nn_(**kwargs))
 
-    def __init__(self, nn, use_weights=False):
-        self.nn = nn
+    def __init__(self, nn=None, use_weights='none'):
+        """Initialize the featurizer
+
+        Args:
+            nn (NearestNeighbor) - Method used to determine coordination number
+            use_weights (string) - Method used to account for weights of neighbors:
+                'none' - Do not use weights when computing coordination number
+                'sum' - Use sum of weights as the coordination number
+                'effective' - Compute the 'effective coordination number', which
+                    is computed as :math:`\frac{(\sum_n w_n)^2)}{\sum_n w_n^2}`
+            """
+        self.nn = nn or VoronoiNN()
         self.use_weights = use_weights
 
     def featurize(self, struct, idx):
@@ -1294,11 +1330,22 @@ class CoordinationNumber(BaseFeaturizer):
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure struct.
         Returns:
-            (float): coordination number.
+            [float] - Coordination number
         """
-        return [self.nn.get_cn(struct, idx, use_weights=self.use_weights)]
+        if self.use_weights is None or self.use_weights == 'none':
+            return [self.nn.get_cn(struct, idx, use_weights=False)]
+        elif self.use_weights == 'sum':
+            return [self.nn.get_cn(struct, idx, use_weights=True)]
+        elif self.use_weights == 'effective':
+            # TODO: Should this weighting code go in pymatgen? I'm not sure if it even necessary to distinguish it from the 'sum' method -lw
+            nns = self.nn.get_nn_info(struct, idx)
+            weights = [n['weight'] for n in nns]
+            return [np.sum(weights) ** 2 / np.sum(np.power(weights, 2))]
+        else:
+            raise ValueError('Weighting method not recognized: ' + str(self.use_weights))
 
     def feature_labels(self):
+        # TODO: Should names contain weighting scheme? -lw
         return ['CN_{}'.format(self.nn.__class__.__name__)]
 
     def citations(self):
@@ -1344,7 +1391,7 @@ class CoordinationNumber(BaseFeaturizer):
         return citations
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann']
+        return ['Nils E. R. Zimmermann', 'Logan Ward']
 
 
 class GeneralizedRadialDistributionFunction(BaseFeaturizer):
@@ -1677,3 +1724,109 @@ class AngularFourierSeries(BaseFeaturizer):
 
     def implementors(self):
         return ["Maxwell Dylla"]
+
+
+# TODO: Figure out whether to take NN-counting method as an option (see VoronoiFingerprint)
+class LocalPropertyDifference(BaseFeaturizer):
+    """Compute the different in elemental properties between site
+    and its neighboring sites.
+
+    Uses the Voronoi tessellation of the structure to determine the
+    neighbors of the site, and assigns each neighbor (:math:`n`) a
+    weight (:math:`A_n`) that corresponds to the area of the facet
+    on the tessellation corresponding to that neighbor.
+    The local property difference is then computed by
+    :math:`\frac{\sum_n {A_n |p_n - p_0|}}{\sum_n {A_n}}`
+    where :math:`p_n` is the property (e.g., atomic number) of a neighbor
+    and :math:`p_0` is the property of a site.
+
+    Features:
+        - "local property difference in [property]" - Weighted average
+            of differences between an elemental property of a site and
+            that of each of its neighbors, weighted by size of face on
+            Voronoi tessellation
+
+    References:
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_
+    """
+
+    def __init__(self, data_source=MagpieData(), weight='area',
+                 properties=('Electronegativity',)):
+        """ Initialize the featurizer
+
+        Args:
+            data_source (AbstractData) - Class from which to retrieve
+                elemental properties
+            weight (str) - What aspect of each voronoi facet to use to
+                weigh each neighbor (see VoronoiNN)
+            properties ([str]) - List of properties to use (default=
+        """
+        self.data_source = data_source
+        self.properties = properties
+        self.weight = weight
+
+    @staticmethod
+    def from_preset(preset):
+        """
+        Create a new LocalPropertyDifference class according to a preset
+
+        Args:
+            preset (str) - Name of preset
+        """
+
+        if preset == "ward-prb-2017":
+            return LocalPropertyDifference(
+                data_source=MagpieData(),
+                properties=["Number", "MendeleevNumber", "AtomicWeight",
+                            "MeltingT", "Column", "Row", "CovalentRadius",
+                            "Electronegativity", "NsValence", "NpValence",
+                            "NdValence", "NfValence", "NValance", "NsUnfilled",
+                            "NpUnfilled", "NdUnfilled", "NfUnfilled",
+                            "NUnfilled", "GSvolume_pa", "GSbandgap",
+                            "GSmagmom", "SpaceGroupNumber"]
+            )
+        else:
+            raise ValueError('Unrecognized preset: ' + preset)
+
+    def featurize(self, strc, idx):
+        # Get the targeted site
+        my_site = strc[idx]
+
+        # Get the tessellation of a site
+        nn = VoronoiNN(weight=self.weight).get_nn_info(strc, idx)
+
+        # Get the element and weight of each site
+        elems = [n['site'].specie for n in nn]
+        weights = [n['weight'] for n in nn]
+
+        # Compute the difference for each property
+        output = np.zeros((len(self.properties),))
+        total_weight = np.sum(weights)
+        for i,p in enumerate(self.properties):
+            my_prop = self.data_source.get_elemental_property(my_site.specie, p)
+            n_props = self.data_source.get_elemental_properties(elems, p)
+            output[i] = np.dot(weights, np.abs(np.subtract(n_props, my_prop))) / total_weight
+
+        return output
+
+    def feature_labels(self):
+        return ['local difference in ' + p for p in self.properties]
+
+    def citations(self):
+        return ["@article{Ward2017,"
+                "author = {Ward, Logan and Liu, Ruoqian "
+                "and Krishna, Amar and Hegde, Vinay I. "
+                "and Agrawal, Ankit and Choudhary, Alok "
+                "and Wolverton, Chris},"
+                "doi = {10.1103/PhysRevB.96.024104},"
+                "journal = {Physical Review B},"
+                "pages = {024104},"
+                "title = {{Including crystal structure attributes "
+                "in machine learning models of formation energies "
+                "via Voronoi tessellations}},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "volume = {96},year = {2017}}"]
+
+    def implementors(self):
+        return ['Logan Ward']
+

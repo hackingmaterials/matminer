@@ -9,6 +9,7 @@ from collections import OrderedDict
 import numpy as np
 import pandas as pd
 import scipy.constants as const
+from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure
 from pymatgen.analysis.defects.point_defects import \
@@ -1409,7 +1410,7 @@ class BondFractions(BaseFeaturizer):
         Ensure the Featurizer has been fit to the dataframe
         """
         if self.fitted_bonds_ is None:
-            raise AttributeError('BondFractions must have a list of allowed bonds.'
+            raise NotFittedError('BondFractions must have a list of allowed bonds.'
                                  ' Either pass in a list of bonds to the '
                                  'initializer with allowed_bonds, use "fit" with'
                                  ' a list of structures, or do both to sets the '
@@ -1605,9 +1606,9 @@ class BagofBonds(BaseFeaturizer):
     before featurization can occur. This is because the bags and the maximum
     lengths of each bag must be set prior to featurization.
 
-    BondFractions is based on a method by Hansen et. al
-    "Machine Learning Predictions of Molecular Properties: Accurate Many-Body
-    Potentials and Nonlocality in Chemical Space" (2015).
+    BagofBonds is based on a method by Hansen et. al "Machine Learning
+    Predictions of Molecular Properties: Accurate Many-Body Potentials and
+    Nonlocality in Chemical Space" (2015).
 
     Args:
         coulomb_matrix (BaseFeaturizer): A featurizer object containing a
@@ -1622,6 +1623,12 @@ class BagofBonds(BaseFeaturizer):
     def __init__(self, coulomb_matrix=SineCoulombMatrix(), token=' - '):
         self.coulomb_matrix = coulomb_matrix
         self.token = token
+
+    def _check_fitted(self):
+        if not hasattr(self, 'baglens') or not hasattr(self, 'ordered_bonds'):
+            raise NotFittedError("BagofBonds not fitted to any list of "
+                                 "structures! Use the 'fit' method to define "
+                                 "the bags and the maximum length of each bag.")
 
     def fit(self, X, y=None):
         """
@@ -1697,15 +1704,18 @@ class BagofBonds(BaseFeaturizer):
 
 
     def featurize(self, s):
+        self._check_fitted()
+
         unpadded_bob = self.bag(s)
         padded_bob = {bag: [0.0] * int(length) for bag, length in
                       self.baglens.items()}
 
         for bond in unpadded_bob:
+            if bond not in list(self.baglens.keys()):
+                raise ValueError("{} is not in the fitted "
+                                 "bonds/sites!".format(bond))
             baglen_s = len(unpadded_bob[bond])
             baglen_fit = self.baglens[bond]
-            if bond not in list(self.baglens.keys()):
-                raise ValueError("{} is not in the fitted bonds!".format(bond))
             if baglen_s > baglen_fit:
                 raise ValueError("The bond {} has more entries than was "
                                  "fitted for (i.e., there are more {} bonds"
@@ -1723,6 +1733,7 @@ class BagofBonds(BaseFeaturizer):
         return list(sum(bob, []))
 
     def feature_labels(self):
+        self._check_fitted()
         labels = []
         for bag in self.ordered_bonds:
             if len(bag) == 1:
