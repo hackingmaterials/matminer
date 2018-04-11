@@ -1654,7 +1654,7 @@ class BagofBonds(BaseFeaturizer):
         baglens = [0]*len(bonds)
 
         for i, bond in enumerate(bonds):
-            for j, bob in enumerate(unpadded_bobs):
+            for bob in unpadded_bobs:
                 if bond in bob:
                     baglen = len(bob[bond])
                     baglens[i] = max((baglens[i], baglen))
