@@ -76,6 +76,14 @@ ________________________________________________________________________________
 
 We have developed utilities to help describe a material from its composition or structure, and represent them in number format such that they are readily usable as features.
 
+|
+.. image:: _static/featurizer_diagram.png
+   :align: center
+   :width: 1000px
+   :alt: matminer featurizers
+|
+|
+
 For now, check out the examples below to see how to use the descriptor functionality, or see tour our :doc:`Table of Featurizers. </featurizer_summary>`
 
 --------------

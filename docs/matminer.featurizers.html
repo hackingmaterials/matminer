@@ -339,6 +339,9 @@ the options and the features that will be computed. The options of the class</p>
 <div>must all be defined in the <cite>__init__</cite> function of the class, and we
 recommend documenting them using the</div></blockquote>
 <p>[Google style](<a class="reference external" href="https://google.github.io/styleguide/pyguide.html">https://google.github.io/styleguide/pyguide.html</a>).</p>
+<p>For auto-generated documentation purposes, the first line of the featurizer
+doc should come under the class declaration (not under __init__) and should
+be a one line summary of the featurizer.</p>
 <p>We recommend starting the class documentation with a high-level overview of
 the features. For example, mention what kind of characteristics of the
 material they describe and refer the reader to a paper that describes these
@@ -1882,10 +1885,7 @@ python functions.  The primary reason this has been
 done is to provide for better support for book-keeping
 (e. g. with feature labels), substitution, and elimination
 of symbolic redundancy, which sympy is well-suited for.</p>
-<dl class="method">
-<dt id="matminer.featurizers.function.FunctionFeaturizer.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>expressions=None</em>, <em>multi_feature_depth=1</em>, <em>postprocess=None</em>, <em>combo_function=None</em>, <em>latexify_labels=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.function.FunctionFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
+<dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
 <dt>expressions ([str]): list of sympy-parseable expressions</dt>
@@ -1907,6 +1907,10 @@ expressions</dd>
 </dl>
 </dd>
 </dl>
+<dl class="method">
+<dt id="matminer.featurizers.function.FunctionFeaturizer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>expressions=None</em>, <em>multi_feature_depth=1</em>, <em>postprocess=None</em>, <em>combo_function=None</em>, <em>latexify_labels=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.function.FunctionFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
