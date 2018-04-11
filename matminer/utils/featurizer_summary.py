@@ -22,6 +22,8 @@ mod_summs = {"structure": "Generating features based on a material's crystal str
              "function": "Classes for expanding sets of features calculated with other featurizers.\n",
              "bandstructure": "Features derived from a material's electronic bandstructure.\n"}
 
+url_base = " `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#"
+
 def generate_tables():
     """
     Generate nicely formatted tables of all features in RST format.
@@ -50,16 +52,19 @@ def generate_tables():
 
     for ftype in np.unique(df['type']):
         dftable = df[df['type'] == ftype]
-        dftable['name'] = [":code:`" + n + "`" for n in dftable['name']]
+        dftable['codename'] = [":code:`" + n + "`" for n in dftable['name']]
         mod = "\n(" + dftable['module'].iloc[0] + ")\n\n"
-        namelen = max([len(n) for n in dftable['name']])
+        namelen = max([len(n) for n in dftable['codename']])
         doclen = max([len(d) for d in dftable['doc']])
         borderstr = "=" * namelen + "   " + "=" * doclen + "\n"
         headerstr = "Name" + " " * (namelen - 1) + "Description\n"
         tablestr = ""
-        for i, n in enumerate(dftable['name']):
+        for i, n in enumerate(dftable['codename']):
+            url = url_base + dftable["module"].iloc[0] + "." + \
+                  dftable["name"].iloc[i] + ">`_"
             tablestr += n + " " * (namelen - len(n) + 3) + \
-                        dftable['doc'].iloc[i] + "\n"
+                        dftable['doc'].iloc[i] + url + "\n"
+
 
         ftype_border = "\n" + "-" * len(ftype) + "\n"
         des_border = "-" * len(mod_summs[ftype]) + "\n"
