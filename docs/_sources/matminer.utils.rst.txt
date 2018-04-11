@@ -1,5 +1,5 @@
-matminer\.utils package
-=======================
+matminer.utils package
+======================
 
 Subpackages
 -----------
@@ -12,32 +12,40 @@ Subpackages
 Submodules
 ----------
 
-matminer\.utils\.conversions module
------------------------------------
+matminer.utils.conversions module
+---------------------------------
 
 .. automodule:: matminer.utils.conversions
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer\.utils\.data module
-----------------------------
+matminer.utils.data module
+--------------------------
 
 .. automodule:: matminer.utils.data
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer\.utils\.flatten\_dict module
--------------------------------------
+matminer.utils.featurizer\_summary module
+-----------------------------------------
+
+.. automodule:: matminer.utils.featurizer_summary
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matminer.utils.flatten\_dict module
+-----------------------------------
 
 .. automodule:: matminer.utils.flatten_dict
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer\.utils\.kernels module
--------------------------------
+matminer.utils.kernels module
+-----------------------------
 
 .. automodule:: matminer.utils.kernels
     :members:
