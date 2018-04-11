@@ -8,16 +8,19 @@ import unittest
 
 import numpy as np
 import pandas as pd
+from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
+from matminer.featurizers.composition import ElementProperty
 from matminer.featurizers.structure import DensityFeatures, \
     RadialDistributionFunction, RadialDistributionFunctionPeaks, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BondFractions
+    EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
+    MaximumPackingEfficiency, ChemicalOrdering, StructureComposition
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -45,7 +48,7 @@ class StructureFeaturesTest(PymatgenTest):
             site_properties=None)
         self.cscl = Structure(
             Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
-            ["Cl1-", "Cs1+"], [[2.105, 2.105, 2.105], [0, 0, 0]],
+            ["Cl1-", "Cs1+"], [[2.105, 2.1045, 2.1045], [0, 0, 0]],
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=True, site_properties=None)
         self.ni3al = Structure(
@@ -300,7 +303,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(MinimumRelativeDistances().featurize(
                 self.nacl)[0][0], 0.8891443)
         self.assertAlmostEqual(MinimumRelativeDistances().featurize(
-                self.cscl)[0][0], 0.9875975)
+                self.cscl)[0][0], 0.9877540)
 
     def test_sitestatsfingerprint(self):
         # Test matrix.
@@ -394,6 +397,154 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [0.0, 0.5])
         self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [0.0, 0.0])
         self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [0.0, 0.5])
+
+    def test_bob(self):
+
+        # Test a single fit and featurization
+        bob = BagofBonds(coulomb_matrix=SineCoulombMatrix(), token=' - ')
+        bob.fit([self.ni3al])
+        truth1 = [235.74041833262768, 1486.4464890775491, 1486.4464890775491,
+                  1486.4464890775491, 38.69353092306119, 38.69353092306119,
+                  38.69353092306119, 38.69353092306119, 38.69353092306119,
+                  38.69353092306119, 83.33991275736257, 83.33991275736257,
+                  83.33991275736257, 83.33991275736257, 83.33991275736257,
+                  83.33991275736257]
+        truth1_labels = ['Al site #0', 'Ni site #0', 'Ni site #1', 'Ni site #2',
+                         'Al - Ni bond #0', 'Al - Ni bond #1',
+                         'Al - Ni bond #2', 'Al - Ni bond #3',
+                         'Al - Ni bond #4', 'Al - Ni bond #5',
+                         'Ni - Ni bond #0', 'Ni - Ni bond #1',
+                         'Ni - Ni bond #2', 'Ni - Ni bond #3',
+                         'Ni - Ni bond #4', 'Ni - Ni bond #5']
+        self.assertAlmostEqual(bob.featurize(self.ni3al), truth1)
+        self.assertEqual(bob.feature_labels(), truth1_labels)
+
+        # Test padding from fitting and dataframe featurization
+        bob.coulomb_matrix = CoulombMatrix()
+        bob.fit([self.ni3al, self.cscl, self.diamond_no_oxi])
+        df = pd.DataFrame({'structures': [self.cscl]})
+        df = bob.featurize_dataframe(df, 'structures')
+        self.assertEqual(len(df.columns.values), 25)
+        self.assertAlmostEqual(df['Cs site #0'][0], 7513.468312122532)
+        self.assertAlmostEqual(df['Al site #0'][0], 0.0)
+        self.assertAlmostEqual(df['Cs - Cl bond #1'][0], 135.74726437398044)
+        self.assertAlmostEqual(df['Al - Ni bond #0'][0], 0.0)
+
+        # Test error handling for bad fits or null fits
+        bob = BagofBonds()
+        self.assertRaises(NotFittedError, bob.featurize, self.nacl)
+        bob.fit([self.ni3al, self.diamond])
+        self.assertRaises(ValueError, bob.featurize, self.nacl)
+
+
+    def test_ward_prb_2017_lpd(self):
+        """Test the local property difference attributes from Ward 2017"""
+        f = SiteStatsFingerprint.from_preset(
+            "LocalPropertyDifference_ward-prb-2017"
+        )
+
+        # Test diamond
+        features = f.featurize(self.diamond)
+        self.assertArrayAlmostEqual(features, [0] * (22 * 5))
+        features = f.featurize(self.diamond_no_oxi)
+        self.assertArrayAlmostEqual(features, [0] * (22 * 5))
+
+        # Test CsCl
+        big_face_area = np.sqrt(3) * 3 / 2 * (2 / 4 / 4)
+        small_face_area = 0.125
+        big_face_diff = 55 - 17
+        features = f.featurize(self.cscl)
+        labels = f.feature_labels()
+        my_label = 'mean local difference in Number'
+        self.assertAlmostEqual((8 * big_face_area * big_face_diff) /
+                               (8 * big_face_area + 6 * small_face_area),
+                               features[labels.index(my_label)], places=3)
+        my_label = 'range local difference in Electronegativity'
+        self.assertAlmostEqual(0, features[labels.index(my_label)], places=3)
+
+    def test_ward_prb_2017_efftcn(self):
+        """Test the effective coordination number attributes of Ward 2017"""
+        f = SiteStatsFingerprint.from_preset(
+            "CoordinationNumber_ward-prb-2017"
+        )
+
+        # Test Ni3Al
+        features = f.featurize(self.ni3al)
+        labels = f.feature_labels()
+        my_label = 'mean CN_VoronoiNN'
+        self.assertAlmostEqual(12, features[labels.index(my_label)])
+        self.assertArrayAlmostEqual([12, 12, 0, 12, 0], features)
+
+    def test_ward_prb_2017_strhet(self):
+        f = StructuralHeterogeneity()
+
+        # Test Ni3Al, which is uniform
+        features = f.featurize(self.ni3al)
+        self.assertArrayAlmostEqual([0, 1, 1, 0, 0, 0, 0, 0, 0], features)
+
+        # Do CsCl, which has variation in the neighbors
+        big_face_area = np.sqrt(3) * 3 / 2 * (2 / 4 / 4)
+        small_face_area = 0.125
+        average_dist = (8 * np.sqrt(
+            3) / 2 * big_face_area + 6 * small_face_area) \
+                       / (8 * big_face_area + 6 * small_face_area)
+        rel_var = (8 * abs(np.sqrt(3) / 2 - average_dist) * big_face_area +
+                   6 * abs(1 - average_dist) * small_face_area) \
+                  / (8 * big_face_area + 6 * small_face_area) / average_dist
+        cscl = Structure(
+            Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
+            ["Cl1-", "Cs1+"], [[0.5, 0.5, 0.5], [0, 0, 0]],
+            validate_proximity=False, to_unit_cell=False,
+            coords_are_cartesian=False, site_properties=None)
+        features = f.featurize(cscl)
+        self.assertArrayAlmostEqual(
+            [0, 1, 1, rel_var, rel_var, 0, rel_var, 0, 0],
+            features)
+
+    def test_packing_efficiency(self):
+        f = MaximumPackingEfficiency()
+
+        # Test L1_2
+        self.assertArrayAlmostEqual([np.pi / 3 / np.sqrt(2)],
+                                    f.featurize(self.ni3al))
+
+        # Test B1
+        self.assertArrayAlmostEqual([np.pi / 6], f.featurize(self.nacl),
+                                    decimal=3)
+
+    def test_ordering_param(self):
+        f = ChemicalOrdering()
+
+        # Check that elemental structures return zero
+        features = f.featurize(self.diamond)
+        self.assertArrayAlmostEqual([0, 0, 0], features)
+
+        # Check result for CsCl
+        #   These were calculated by hand by Logan Ward
+        features = f.featurize(self.cscl)
+        self.assertAlmostEqual(0.551982, features[0], places=5)
+        self.assertAlmostEqual(0.241225, features[1], places=5)
+
+        # Check for L1_2
+        features = f.featurize(self.ni3al)
+        self.assertAlmostEqual(1./3., features[0], places=5)
+        self.assertAlmostEqual(0.0303, features[1], places=5)
+
+    def test_composition_features(self):
+        comp = ElementProperty.from_preset("magpie")
+        f = StructureComposition(featurizer=comp)
+
+        # Test the fitting (should not crash)
+        f.fit([self.nacl, self.diamond])
+
+        # Test the features
+        features = f.featurize(self.nacl)
+        self.assertArrayAlmostEqual(comp.featurize(self.nacl.composition),
+                                    features)
+
+        # Test the citations/implementors
+        self.assertEqual(comp.citations(), f.citations())
+        self.assertEqual(comp.implementors(), f.implementors())
 
 
 if __name__ == '__main__':
