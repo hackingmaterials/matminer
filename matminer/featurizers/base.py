@@ -103,7 +103,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     the features. For example, mention what kind of characteristics of the
     material they describe and refer the reader to a paper that describes these
     features well (use a hyperlink if possible, so that the readthedocs will
-    like to that paper). Then, describe each of the individual features in a
+    link to that paper). Then, describe each of the individual features in a
     block named "Features". It is necessary here to give the user enough
     information for user to map a feature name what it means. The objective in
     this part is to allow people to understand what each column of their
