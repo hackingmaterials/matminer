@@ -84,7 +84,7 @@ We have developed utilities to help describe a material from its composition or 
 |
 |
 
-For now, check out the examples below to see how to use the descriptor functionality, or see tour our :doc:`Table of Featurizers. </featurizer_summary>`
+For now, check out the examples below to see how to use the descriptor functionality, or tour our :doc:`Table of Featurizers. </featurizer_summary>`
 
 --------------
 Plotting tools
