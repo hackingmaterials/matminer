@@ -1,11 +1,11 @@
-matminer\.figrecipes package
-============================
+matminer.figrecipes package
+===========================
 
 Submodules
 ----------
 
-matminer\.figrecipes\.plot module
----------------------------------
+matminer.figrecipes.plot module
+-------------------------------
 
 .. automodule:: matminer.figrecipes.plot
     :members:

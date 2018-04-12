@@ -38,7 +38,7 @@ def generate_tables():
             separate table representing one module.
     """
 
-    mmfeat = "===========\nFeaturizers\n===========\n"
+    mmfeat = "====================\nTable of Featurizers\n====================\n"
     mmdes = "Below, you will find a description of each featurizer, listed in " \
             "tables grouped by module.\n"
     tables = [mmfeat, mmdes]

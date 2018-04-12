@@ -27,10 +27,10 @@ Overview
 
 Matminer makes it easy to:
 
-* obtain materials data from various sources into the `pandas <https://pandas.pydata.org>`_ data format. Through pandas, matminer enables professional-level data manipulation and analysis capabilities for materials data.
-* transform and featurize complex materials attributes into numerical descriptors for data mining. For example, matminer can turn a composition such as "Fe3O4" into arrays of numbers representing things like average electronegativity or difference in ionic radii of the substituent elements. Matminer also contains sophisticated crystal structure and site featurizers (e.g., obtaining the coordination number or local environment of atoms in the structure) as well as featurizers for complex materials data such as band structures and density of states. All of these various featurizers are available under a consistent interface, making it easy to try different types of materials descriptors for an analysis and to transform materials science objects into physically-relevant numbers for data mining. A full :doc:`Table of Featurizers</featurizer_summary>` is available.
-* perform data mining on materials. Although matminer itself does not contain implementations of machine learning algorithms, it makes it easy to prepare and transform data sets for use with standard data mining packages such as `scikit-learn <http://scikit-learn.org>`_. See our examples for more details.
-* generate interactive plots through an interface to the `plotly <https://plot.ly>`_ visualization package.
+* **obtain materials data from various sources** into the `pandas <https://pandas.pydata.org>`_ data format. Through pandas, matminer enables professional-level data manipulation and analysis capabilities for materials data.
+* **transform and featurize complex materials attributes into numerical descriptors for data mining.** For example, matminer can turn a composition such as "Fe3O4" into arrays of numbers representing things like average electronegativity or difference in ionic radii of the substituent elements. Matminer also contains sophisticated crystal structure and site featurizers (e.g., obtaining the coordination number or local environment of atoms in the structure) as well as featurizers for complex materials data such as band structures and density of states. All of these various featurizers are available under a consistent interface, making it easy to try different types of materials descriptors for an analysis and to transform materials science objects into physically-relevant numbers for data mining. A full :doc:`Table of Featurizers</featurizer_summary>` is available.
+* **perform data mining on materials**. Although matminer itself does not contain implementations of machine learning algorithms, it makes it easy to prepare and transform data sets for use with standard data mining packages such as `scikit-learn <http://scikit-learn.org>`_. See our examples for more details.
+* **generate interactive plots** through an interface to the `plotly <https://plot.ly>`_ visualization package.
 
 
 A general workflow and overview of matminer's capabilities is presented below:
@@ -71,8 +71,8 @@ For example, to compare experimental and computed band gaps of Si, one can emplo
 Data descriptor tools
 ---------------------
 
-Decorate the dataframe with composition, structural, and/or band structure descriptors/features
-_______________________________________________________________________________________________
+Decorate the dataframe with :doc:`composition, structural, and/or band structure descriptors/features </featurizer_summary>`
+____________________________________________________________________________________________________________________________
 
 We have developed utilities to help describe a material from its composition or structure, and represent them in number format such that they are readily usable as features.
 
