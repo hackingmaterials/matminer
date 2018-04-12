@@ -1728,6 +1728,19 @@ class BagofBonds(BaseFeaturizer):
 
 
     def featurize(self, s):
+        """
+        Featurizes a structure according to the bag of bonds method.
+        Specifically, each structure is first bagged by flattening the
+        Coulomb matrix for the structure. Then, it is zero-padded according to
+        the maximum number of bonds in each bag, for the set of bags that
+        BagofBonds was fit with.
+
+        Args:
+            s (Structure): A pymatgen structure object
+
+        Returns:
+            (list): The Bag of Bonds vector for the input structure
+        """
         self._check_fitted()
         unpadded_bob = self.bag(s)
         padded_bob = {bag: [0.0] * int(length) for bag, length in
