@@ -1,6 +1,6 @@
-===========
-Featurizers
-===========
+====================
+Table of Featurizers
+====================
 
 Below, you will find a description of each featurizer, listed in tables grouped by module.
 
