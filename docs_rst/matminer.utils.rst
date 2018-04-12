@@ -28,14 +28,6 @@ matminer.utils.data module
     :undoc-members:
     :show-inheritance:
 
-matminer.utils.featurizer\_summary module
------------------------------------------
-
-.. automodule:: matminer.utils.featurizer_summary
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 matminer.utils.flatten\_dict module
 -----------------------------------
 
