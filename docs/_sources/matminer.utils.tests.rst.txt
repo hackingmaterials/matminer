@@ -1,27 +1,27 @@
-matminer.utils.tests package
-============================
+matminer\.utils\.tests package
+==============================
 
 Submodules
 ----------
 
-matminer.utils.tests.test\_conversions module
----------------------------------------------
+matminer\.utils\.tests\.test\_conversions module
+------------------------------------------------
 
 .. automodule:: matminer.utils.tests.test_conversions
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.utils.tests.test\_data module
---------------------------------------
+matminer\.utils\.tests\.test\_data module
+-----------------------------------------
 
 .. automodule:: matminer.utils.tests.test_data
     :members:
     :undoc-members:
     :show-inheritance:
 
-matminer.utils.tests.test\_flatten\_dict module
------------------------------------------------
+matminer\.utils\.tests\.test\_flatten\_dict module
+--------------------------------------------------
 
 .. automodule:: matminer.utils.tests.test_flatten_dict
     :members:

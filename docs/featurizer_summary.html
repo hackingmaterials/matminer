@@ -4,12 +4,20 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Featurizers &#8212; matminer 0.2.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -18,7 +26,8 @@
  
 <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 
-  </head><body>
+  </head>
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -56,10 +65,10 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">BranchPointEnergy</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">BranchPointEnergy</span></code></td>
 <td>Branch point energy and absolute band edge position. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.bandstructure.BranchPointEnergy">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">BandFeaturizer</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">BandFeaturizer</span></code></td>
 <td>Featurizes a pymatgen band structure object. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.bandstructure.BandFeaturizer">[more]</a></td>
 </tr>
 </tbody>
@@ -82,10 +91,10 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">MultipleFeaturizer</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">MultipleFeaturizer</span></code></td>
 <td>Class that runs multiple featurizers on the same data <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.base.MultipleFeaturizer">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">BaseFeaturizer</span></code></td>
 <td>Abstract class to calculate features from raw materials input data <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer">[more]</a></td>
 </tr>
 </tbody>
@@ -108,43 +117,43 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">ElementProperty</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">ElementProperty</span></code></td>
 <td>Class to calculate elemental property attributes. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.ElementProperty">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">OxidationStates</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">OxidationStates</span></code></td>
 <td>Statistics about the oxidation states for each specie. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.OxidationStates">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">AtomicOrbitals</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">AtomicOrbitals</span></code></td>
 <td>Determine HOMO/LUMO features based on a composition. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.AtomicOrbitals">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">BandCenter</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">BandCenter</span></code></td>
 <td>Estimation of absolute position of band center using electronegativity. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.BandCenter">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">ElectronegativityDiff</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">ElectronegativityDiff</span></code></td>
 <td>Features from electronegativity differences between anions and cations. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.ElectronegativityDiff">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">ElectronAffinity</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">ElectronAffinity</span></code></td>
 <td>Calculate average electron affinity times formal charge of anion elements. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.ElectronAffinity">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">Stoichiometry</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">Stoichiometry</span></code></td>
 <td>Calculate norms of stoichiometric attributes. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.Stoichiometry">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">ValenceOrbital</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">ValenceOrbital</span></code></td>
 <td>Attributes of valence orbital shells <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.ValenceOrbital">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">IonProperty</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">IonProperty</span></code></td>
 <td>Ionic property attributes. Similar to ElementProperty. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.IonProperty">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">ElementFraction</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">ElementFraction</span></code></td>
 <td>Class to calculate the atomic fraction of each element in a composition. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.ElementFraction">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">TMetalFraction</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">TMetalFraction</span></code></td>
 <td>Class to calculate fraction of magnetic transition metals in a composition. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.TMetalFraction">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">CohesiveEnergy</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">CohesiveEnergy</span></code></td>
 <td>Cohesive energy per atom using elemental cohesive energies and formation energy. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.CohesiveEnergy">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">Miedema</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">Miedema</span></code></td>
 <td>Formation enthalpies of intermetallic compounds, from Miedema et al. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.composition.Miedema">[more]</a></td>
 </tr>
 </tbody>
@@ -167,7 +176,7 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">DOSFeaturizer</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">DOSFeaturizer</span></code></td>
 <td>Featurizes a pymatgen density of states, CompleteDos, object. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer">[more]</a></td>
 </tr>
 </tbody>
@@ -190,7 +199,7 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">FunctionFeaturizer</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">FunctionFeaturizer</span></code></td>
 <td>Features from functions applied to existing features, e.g. “1/x” <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.function.FunctionFeaturizer">[more]</a></td>
 </tr>
 </tbody>
@@ -213,40 +222,40 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">AGNIFingerprints</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">AGNIFingerprints</span></code></td>
 <td>Product integral of RDF and Gaussian window function, from Botu et al. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.AGNIFingerprints">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">OPSiteFingerprint</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">OPSiteFingerprint</span></code></td>
 <td>Local structure order parameters computed from a site’s neighbor env. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.OPSiteFingerprint">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">CrystalSiteFingerprint</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">CrystalSiteFingerprint</span></code></td>
 <td>A local order parameter fingerprint for periodic crystals. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.CrystalSiteFingerprint">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">VoronoiFingerprint</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">VoronoiFingerprint</span></code></td>
 <td>Voronoi tessellation-based features around target site. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.VoronoiFingerprint">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">ChemicalSRO</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">ChemicalSRO</span></code></td>
 <td>Chemical short range ordering, deviation of local site and nominal structure compositions <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.ChemicalSRO">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">GaussianSymmFunc</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">GaussianSymmFunc</span></code></td>
 <td>Gaussian symmetry function features suggested by Behler et al. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.GaussianSymmFunc">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">EwaldSiteEnergy</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">EwaldSiteEnergy</span></code></td>
 <td>Compute site energy from Coulombic interactions <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.EwaldSiteEnergy">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">ChemEnvSiteFingerprint</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">ChemEnvSiteFingerprint</span></code></td>
 <td>Resemblance of given sites to ideal environments <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.ChemEnvSiteFingerprint">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">CoordinationNumber</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">CoordinationNumber</span></code></td>
 <td>Number of first nearest neighbors of a site. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.CoordinationNumber">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">GeneralizedRadialDistributionFunction</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">GeneralizedRadialDistributionFunction</span></code></td>
 <td>Compute the general radial distribution function (GRDF) for a site. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.GeneralizedRadialDistributionFunction">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">AngularFourierSeries</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">AngularFourierSeries</span></code></td>
 <td>Compute the angular Fourier series (AFS), including both angular and radial info <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.AngularFourierSeries">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">LocalPropertyDifference</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">LocalPropertyDifference</span></code></td>
 <td>Differences in elemental properties between site and its neighboring sites. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.LocalPropertyDifference">[more]</a></td>
 </tr>
 </tbody>
@@ -269,58 +278,58 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">DensityFeatures</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">DensityFeatures</span></code></td>
 <td>Calculates density and density-like features <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.DensityFeatures">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">GlobalSymmetryFeatures</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">GlobalSymmetryFeatures</span></code></td>
 <td>Determines symmetry features, e.g. spacegroup number and  crystal system <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.GlobalSymmetryFeatures">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">RadialDistributionFunction</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">RadialDistributionFunction</span></code></td>
 <td>Calculate the radial distribution function (RDF) of a crystal structure. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.RadialDistributionFunction">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">PartialRadialDistributionFunction</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">PartialRadialDistributionFunction</span></code></td>
 <td>Compute the partial radial distribution function (PRDF) of an xtal structure <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.PartialRadialDistributionFunction">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">RadialDistributionFunctionPeaks</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">RadialDistributionFunctionPeaks</span></code></td>
 <td>Determine the location of the highest peaks in a structure’s RDF. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.RadialDistributionFunctionPeaks">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">ElectronicRadialDistributionFunction</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">ElectronicRadialDistributionFunction</span></code></td>
 <td>Calculate the inherent electronic radial distribution function (ReDF) <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.ElectronicRadialDistributionFunction">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">CoulombMatrix</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">CoulombMatrix</span></code></td>
 <td>Generate the Coulomb matrix, a representation of nuclear coulombic interaction. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.CoulombMatrix">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">SineCoulombMatrix</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">SineCoulombMatrix</span></code></td>
 <td>A variant of the Coulomb matrix developed for periodic crystals. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.SineCoulombMatrix">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">OrbitalFieldMatrix</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">OrbitalFieldMatrix</span></code></td>
 <td>Representation based on the valence shell electrons of neighboring atoms. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.OrbitalFieldMatrix">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">MinimumRelativeDistances</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">MinimumRelativeDistances</span></code></td>
 <td>Determines the relative distance of each site to its closest neighbor. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.MinimumRelativeDistances">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">SiteStatsFingerprint</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">SiteStatsFingerprint</span></code></td>
 <td>Computes statistics of properties across all sites in a structure. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.SiteStatsFingerprint">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">EwaldEnergy</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">EwaldEnergy</span></code></td>
 <td>Compute the energy from Coulombic interactions. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.EwaldEnergy">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">BondFractions</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">BondFractions</span></code></td>
 <td>Compute the fraction of each bond in a structure, based on NearestNeighbors. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.BondFractions">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">BagofBonds</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">BagofBonds</span></code></td>
 <td>Compute a Bag of Bonds vector, as first described by Hansen et al. (2015). <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.BagofBonds">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">StructuralHeterogeneity</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">StructuralHeterogeneity</span></code></td>
 <td>Variance in the bond lengths and atomic volumes in a structure <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.StructuralHeterogeneity">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">MaximumPackingEfficiency</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">MaximumPackingEfficiency</span></code></td>
 <td>Maximum possible packing efficiency of this structure <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.MaximumPackingEfficiency">[more]</a></td>
 </tr>
-<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">ChemicalOrdering</span></code></td>
+<tr class="row-even"><td><code class="code docutils literal"><span class="pre">ChemicalOrdering</span></code></td>
 <td>How much the ordering of species in the structure differs from random <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.ChemicalOrdering">[more]</a></td>
 </tr>
-<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">StructureComposition</span></code></td>
+<tr class="row-odd"><td><code class="code docutils literal"><span class="pre">StructureComposition</span></code></td>
 <td>Features related to the composition of a structure <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.StructureComposition">[more]</a></td>
 </tr>
 </tbody>
@@ -379,14 +388,12 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -408,7 +415,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
 
   </body>
