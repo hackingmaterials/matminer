@@ -356,8 +356,8 @@ class PlotlyFig:
         else:
             return col
 
-    def xy(self, xy_pairs, colors=None, color_range=None, labels=None,
-           names=None, sizes=None, modes='markers', markers=None,
+    def xy(self, xy_pairs, limits=None, colors=None, color_range=None,
+           labels=None, names=None, sizes=None, modes='markers', markers=None,
            marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
            error_bars=None, normalize_size=True, return_plot=False):
         """
@@ -369,6 +369,10 @@ class PlotlyFig:
                 example: ([1, 2], [3, 4])
                 example: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example: [('x1', 'y1'), ('x2', 'y2')]
+            limits dict: The limits of x and y shown (ranges on plot) as tuples.
+                Should be of the form
+                {'x' :(lower x, higher x), 'y': (lower y, higher y)}
+                If you only want to set one axis, simply omit the other key.
             colors (list or np.ndarray or pd.Series): set the colorscale for
                 the colorbar (list of numbers); overwrites marker['color']
             color_range ([min, max]): the range of numbers included in colorbar.
@@ -494,7 +498,12 @@ class PlotlyFig:
                 raise ValueError(
                     '"size" must not be set in markers, use sizes argument instead')
             if colorbar is not None:
-                markers[im]['color'] = colorbar
+                if colors is None:
+                    markers[im]['color'] = colorbar
+                elif isinstance(colors, (list, tuple)):
+                    markers[im]['color'] = colors[im]
+                else:
+                    markers[im] = colors
                 fontd = {'family': self.font_style['family'],
                          'size': 0.75 * self.font_style['size']}
                 if 'color' in self.font_style.keys():
@@ -513,9 +522,17 @@ class PlotlyFig:
             if markers[im].get('colorscale') is None:
                 markers[im]['colorscale'] = colorscale or self.colorscale
 
-        lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
-        if isinstance(lines, dict):
-            lines = [lines.copy() for _ in data]
+        if not lines:
+            lines = []
+            for i, _ in enumerate(data):
+                linedict = {'dash': 'solid', 'width': 2}
+                if colors:
+                    linedict['color'] = colors[i]
+                lines.append(linedict)
+        else:
+            if isinstance(lines, dict):
+                lines = [lines.copy() for _ in data]
+
 
         for var in [labels, markers, lines]:
             if len(list(var)) != len(data):
@@ -530,12 +547,17 @@ class PlotlyFig:
                                      text=labels[i],
                                      hoverinfo=self.hoverinfo,
                                      hoverlabel=layout['hoverlabel'],
-                                     name=names[i], showlegend=showlegends[i],
-                                     ))
+                                     name=names[i], showlegend=showlegends[i]))
         if layout['xaxis'].get('title') is None and len(data) == 1:
             layout['xaxis']['title'] = pd.Series(data[0][0]).name
         if layout['yaxis'].get('title') is None and len(data) == 1:
             layout['yaxis']['title'] = pd.Series(data[0][1]).name
+
+        if limits:
+            if 'x' in limits:
+                layout['xaxis']['range'] = limits['x']
+            if 'y' in limits:
+                layout['yaxis']['range'] = limits['y']
 
         if error_bars is not None:
             for i, _ in enumerate(traces):
