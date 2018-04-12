@@ -103,7 +103,7 @@ class DOSFeaturizer(BaseFeaturizer):
 
 class DopingFermi(BaseFeaturizer):
     """
-    Futurizes a pymatgen density of states (dos) object. structure is needed;
+    Featurizes a pymatgen density of states (dos) object. structure is needed;
     it can either be fetched automatically from dos.structure(e.g. CompleteDos)
     or passed into featurize/featurize_dataframe. This featurizers return the
     fermi level associated with input carrier concentration and temperature
