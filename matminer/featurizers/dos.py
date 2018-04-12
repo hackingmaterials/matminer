@@ -53,7 +53,6 @@ class DOSFeaturizer(BaseFeaturizer):
             xbm_nsignificant: (int) the number of orbitals with contributions
                 above the significance_threshold
         """
-
         if isinstance(dos, dict):
             dos = CompleteDos.from_dict(dos)
         if dos.structure is None:
@@ -104,15 +103,14 @@ class DOSFeaturizer(BaseFeaturizer):
 class DopingFermi(BaseFeaturizer):
     """
     This featurizers returns the fermi level (w.r.t. selected reference energy) 
-    associated with a specified carrier concentration and temperature. This 
-    feature requires the total density of state and structure; the latter can 
-    either be fetched automatically from dos.structure (e.g. CompleteDos) or 
-    passed into featurize/featurize_dataframe
+    associated with a specified carrier concentration (1/cm3) and temperature.
+    This feature requires the total density of state and structure. Structure
+    as dos.structure (e.g. in CompleteDos) is required by FermiDos class.
     """
     def __init__(self, dopings=None, eref="midgap", T=300, return_eref=False):
         """
         Args:
-            dopings ([float]): list of doping concentrations. Note that a
+            dopings ([float]): list of doping concentrations 1/cm3. Note that a
                 negative concentration is treated as electron majority carrier
                 (n-type) and positive for holes (p-type)
             eref (str or int or float): energy alignment reference. Defaults
@@ -128,19 +126,17 @@ class DopingFermi(BaseFeaturizer):
         self.return_eref = return_eref
         self.BC = BandCenter()
 
-    def featurize(self, dos, structure=None, bandgap=None):
+    def featurize(self, dos, bandgap=None):
         """
         Args:
             dos (pymatgen Dos, CompleteDos or FermiDos):
-            structure (pymatgen Structure):
             bandgap (float): for example the experimentally measured band gap
                 or one that is calculated via more accurate methods than the
                 one used to generate dos. dos will be scissored to have the
                 same electronic band gap as bandgap.
-        Returns ([float]): list of features
+        Returns ([float]): features are fermi levels in eV at the given
+            concentrations and temperature + eref in eV if return_eref
         """
-        if not hasattr(dos, 'structure') or dos.structure is None:
-            dos.structure = structure
         dos = FermiDos(dos, bandgap=bandgap)
         feats = []
         eref = 0.0
