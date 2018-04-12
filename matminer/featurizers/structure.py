@@ -9,6 +9,7 @@ from collections import OrderedDict
 import numpy as np
 import pandas as pd
 import scipy.constants as const
+from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure
 from pymatgen.analysis.defects.point_defects import \
@@ -33,8 +34,12 @@ ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 
 class DensityFeatures(BaseFeaturizer):
     """
-    Calculates density and density-like features: density, volume per atom
-    ("vpa"), and packing fraction
+    Calculates density and density-like features
+
+    Features:
+        - density
+        - volume per atom
+        - ("vpa"), and packing fraction
     """
 
     def __init__(self, desired_features=None):
@@ -79,8 +84,12 @@ class DensityFeatures(BaseFeaturizer):
 
 class GlobalSymmetryFeatures(BaseFeaturizer):
     """
-    Determines symmetry features: spacegroup number, crystal system (1 of 7),
-    and whether the material is centrosymmetric (has inversion symmetry)
+    Determines symmetry features, e.g. spacegroup number and  crystal system
+
+    Features:
+        - Spacegroup number
+        - Crystal system (1 of 7)
+        - Centrosymmetry (has inversion symmetry)
     """
 
     crystal_idx = {"triclinic": 7,
@@ -131,8 +140,11 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
 
 class RadialDistributionFunction(BaseFeaturizer):
     """
-    Calculate the radial distribution function (RDF) of a crystal
-    structure.
+    Calculate the radial distribution function (RDF) of a crystal structure.
+
+    Features:
+        - Radial distribution function
+
     Args:
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
@@ -146,7 +158,7 @@ class RadialDistributionFunction(BaseFeaturizer):
         """
         Get RDF of the input structure.
         Args:
-            s: Pymatgen Structure object.
+            s (Structure): Pymatgen Structure object.
 
         Returns:
             rdf, dist: (tuple of arrays) the first element is the
@@ -162,7 +174,6 @@ class RadialDistributionFunction(BaseFeaturizer):
             tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
 
         # Compute a histogram
-        rdf_dict = {}
         dist_hist, dist_bins = np.histogram(
             all_distances, bins=np.arange(
                 0, self.cutoff + self.bin_size, self.bin_size), density=False)
@@ -186,10 +197,11 @@ class RadialDistributionFunction(BaseFeaturizer):
 
 class PartialRadialDistributionFunction(BaseFeaturizer):
     """
-    Compute the partial radial distribution function (PRDF) of a crystal
-    structure, which is the radial distibution function
-    broken down for each pair of atom types.  The PRDF was proposed as a
-    structural descriptor by [Schutt *et al.*]
+    Compute the partial radial distribution function (PRDF) of an xtal structure
+
+    The PRDF of a crystal structure is the radial distibution function broken
+    down for each pair of atom types.  The PRDF was proposed as a structural
+    descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
 
     Args:
@@ -359,8 +371,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
 class RadialDistributionFunctionPeaks(BaseFeaturizer):
     """
-    Determine the location of the highest peaks in the radial distribution
-    function (RDF) of a structure.
+    Determine the location of the highest peaks in a structure's RDF.
+
     Args:
         n_peaks: (int) number of the top peaks to return .
     """
@@ -395,14 +407,17 @@ class RadialDistributionFunctionPeaks(BaseFeaturizer):
 
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
     """
-    Calculate the crystal structure-inherent
-    electronic radial distribution function (ReDF) according to
-    Willighagen et al., Acta Cryst., 2005, B61, 29-36.
+    Calculate the inherent electronic radial distribution function (ReDF)
+
+    The ReDF is defined according to Willighagen et al., Acta Cryst., 2005, B61,
+    29-36.
+
     The ReDF is a structure-integral RDF (i.e., summed over
     all sites) in which the positions of neighboring sites
     are weighted by electrostatic interactions inferred
     from atomic partial charges. Atomic charges are obtained
     from the ValenceIonicRadiusEvaluator class.
+
     Args:
         cutoff: (float) distance up to which the ReDF is to be
                 calculated (default: longest diagaonal in
@@ -479,6 +494,8 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
 class CoulombMatrix(BaseFeaturizer):
     """
+    Generate the Coulomb matrix, a representation of nuclear coulombic interaction.
+
     Generate the Coulomb matrix, M, of the input
     structure (or molecule).  The Coulomb matrix was put forward by
     Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
@@ -508,10 +525,10 @@ class CoulombMatrix(BaseFeaturizer):
         m = [[] for site in s.sites]
         z = []
         for site in s.sites:
-            if isinstance(site, Specie):
-                z.append(Element(site.element.symbol).Z)
+            if isinstance(site.specie, Element):
+                z.append(site.specie.Z)
             else:
-                z.append(Element(site.species_string).Z)
+                z.append(site.specie.element.Z)
         for i in range(s.num_sites):
             for j in range(s.num_sites):
                 if i == j:
@@ -542,6 +559,8 @@ class CoulombMatrix(BaseFeaturizer):
 
 class SineCoulombMatrix(BaseFeaturizer):
     """
+    A variant of the Coulomb matrix developed for periodic crystals.
+
     This function generates a variant of the Coulomb matrix developed
     for periodic crystals by Faber et al. (Inter. J. Quantum Chem.
     115, 16, 2015). It is identical to the Coulomb matrix, except
@@ -834,8 +853,9 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
 class MinimumRelativeDistances(BaseFeaturizer):
     """
-    Determines the relative distance of each site to its closest
-    neighbor. We use the relative distance,
+    Determines the relative distance of each site to its closest neighbor.
+
+    We use the relative distance,
     f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the
     absolute distances, r_ij, to account for the fact that different
     atoms/species have different sizes.  The function uses the
@@ -1114,7 +1134,8 @@ def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
 
 
 class EwaldEnergy(BaseFeaturizer):
-    """Compute the energy from Coulombic interactions
+    """
+    Compute the energy from Coulombic interactions.
 
     Note: The energy is computed using _charges already defined for the structure_.
 
@@ -1154,17 +1175,17 @@ class EwaldEnergy(BaseFeaturizer):
                 "journal = {Annalen der Physik},"
                 "number = {3},"
                 "pages = {253--287},"
-                "title = {{Die Berechnung optischer und elektrostatischer Gitterpotentiale}},"
+                "title = {{Die Berechnung optischer und elektrostatischer "
+                "Gitterpotentiale}},"
                 "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
                 "volume = {369},"
                 "year = {1921}"
                 "}"]
 
 
-class BagofBonds(BaseFeaturizer):
+class BondFractions(BaseFeaturizer):
     """
-    Compute the number of each kind of bond in a structure, as a fraction of
-    the total number of bonds, based on NearestNeighbors.
+    Compute the fraction of each bond in a structure, based on NearestNeighbors.
 
     For example, in a structure with 2 Li-O bonds and 3 Li-P bonds:
 
@@ -1173,10 +1194,10 @@ class BagofBonds(BaseFeaturizer):
 
     Features:
 
-    BagofBonds must be fit with iterable of structures before featurization in
+    BondFractions must be fit with iterable of structures before featurization in
     order to define the allowed bond types (features). To do this, pass a list
     of allowed_bonds. Otherwise, fit based on a list of structures. If
-    allowed_bonds is defined and BagofBonds is also fit, the intersection
+    allowed_bonds is defined and BondFractions is also fit, the intersection
     of the two lists of possible bonds is used.
 
     For dataframes containing structures of various compositions, a unified
@@ -1185,6 +1206,10 @@ class BagofBonds(BaseFeaturizer):
     chemical rules (ie, for a structure which you'd like to featurize but has
     bonds not in the allowed set), use approx_bonds = True.
 
+    BondFractions is based on the "sum over bonds" in the Bag of Bonds approach,
+    based on a method by Hansen et. al "Machine Learning Predictions of Molecular
+    Properties: Accurate Many-Body Potentials and Nonlocality in Chemical Space"
+    (2015).
 
     Args:
         nn (NearestNeighbors): A Pymatgen nearest neighbors derived object. For
@@ -1259,7 +1284,7 @@ class BagofBonds(BaseFeaturizer):
             CoordinationNumber from a preset.
         """
         nn = getattr(pmg_le, preset)
-        return BagofBonds(nn(), **kwargs)
+        return BondFractions(nn(), **kwargs)
 
     def fit(self, X, y=None):
         """
@@ -1267,7 +1292,7 @@ class BagofBonds(BaseFeaturizer):
         Bonds found during featurization which are not allowed will be omitted
         from the returned dataframe or matrix.
 
-        Fit BagofBonds by either passing an iterable of structures to
+        Fit BondFractions by either passing an iterable of structures to
         training_data or by defining the bonds explicitly with allowed_bonds
         in __init__.
 
@@ -1405,7 +1430,7 @@ class BagofBonds(BaseFeaturizer):
         Ensure the Featurizer has been fit to the dataframe
         """
         if self.fitted_bonds_ is None:
-            raise AttributeError('BagofBonds must have a list of allowed bonds.'
+            raise NotFittedError('BondFractions must have a list of allowed bonds.'
                                  ' Either pass in a list of bonds to the '
                                  'initializer with allowed_bonds, use "fit" with'
                                  ' a list of structures, or do both to sets the '
@@ -1456,7 +1481,6 @@ class BagofBonds(BaseFeaturizer):
                 species = [str(s.element) for s in species]
 
             bonds[i] = self.token.join(species)
-
         bonds = list(OrderedDict.fromkeys(bonds))
 
         if single:
@@ -1590,8 +1614,185 @@ class BagofBonds(BaseFeaturizer):
                 "}"]
 
 
+class BagofBonds(BaseFeaturizer):
+    """
+    Compute a Bag of Bonds vector, as first described by Hansen et al. (2015).
+
+    The Bag of Bonds approach is based creating an even-length vector from a
+    Coulomb matrix output. Practically, it represents the Coloumbic interactions
+    between each possible set of sites in a structure as a vector.
+
+    BagofBonds must be fit to an iterable of structures using the "fit" method
+    before featurization can occur. This is because the bags and the maximum
+    lengths of each bag must be set prior to featurization.
+
+    BagofBonds is based on a method by Hansen et. al "Machine Learning
+    Predictions of Molecular Properties: Accurate Many-Body Potentials and
+    Nonlocality in Chemical Space" (2015).
+
+    Args:
+        coulomb_matrix (BaseFeaturizer): A featurizer object containing a
+            "featurize" method which returns a matrix of size nsites x nsites.
+            Good choices are CoulombMatrix() or SineCoulombMatrix()
+        token (str): The string used to separate species in a bond, including
+            spaces. The token must contain at least one space and cannot have
+            alphabetic characters in it, and should be padded by spaces. For
+            example, for the bond Cs+ - Cl-, the token is ' - '. This determines
+            how bonds are represented in the dataframe.
+
+    """
+    def __init__(self, coulomb_matrix=CoulombMatrix(), token=' - '):
+        self.coulomb_matrix = coulomb_matrix
+        self.token = token
+
+    def _check_fitted(self):
+        if not hasattr(self, 'baglens') or not hasattr(self, 'ordered_bonds'):
+            raise NotFittedError("BagofBonds not fitted to any list of "
+                                 "structures! Use the 'fit' method to define "
+                                 "the bags and the maximum length of each bag.")
+
+    def fit(self, X, y=None):
+        """
+        Define the bags using a list of structures.
+
+        Both the names of the bags (e.g., Cs-Cl) and the maximum lengths of
+        the bags are set with fit.
+
+        Args:
+            X (Series/list): An iterable of pymatgen Structure
+                objects which will be used to determine the allowed bond
+                types and bag lengths.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+
+        """
+        unpadded_bobs = [self.bag(s) for s in X]
+        bonds = [list(bob.keys()) for bob in unpadded_bobs]
+        bonds = np.unique(sum(bonds, []))
+        baglens = [0]*len(bonds)
+
+        for i, bond in enumerate(bonds):
+            for bob in unpadded_bobs:
+                if bond in bob:
+                    baglen = len(bob[bond])
+                    baglens[i] = max((baglens[i], baglen))
+        self.baglens = dict(zip(bonds, baglens))
+        # Sort the bags by bag length, with the shortest coming first.
+        self.ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
+                                    key=lambda bl: bl[1])]
+
+    def bag(self, s):
+        """
+        Convert a structure into a bag of bonds, where each bag has no padded
+        zeros. using this function will give the 'raw' bags, which when
+        concatenated, will have different lengths.
+
+        Args:
+            s (Structure): A pymatgen Structure or IStructure object.
+
+        Returns:
+            (dict) A bag of bonds, where the keys are sorted tuples of pymatgen
+                Site objects representing bonds or sites, and the values are the
+                Coulomb matrix values for that bag.
+        """
+        if not isinstance(s, (Structure)):
+            raise TypeError("BagofBonds must take in a pymatgen Structure "
+                            "object, not {}".format(type(s)))
+
+        cm = self.coulomb_matrix.featurize(s)[0]
+        sites = s.sites
+        nsites = len(sites)
+        bonds = np.zeros((nsites, nsites), dtype=object)
+        for i, si in enumerate(sites):
+            for j, sj in enumerate(sites):
+                el0, el1 = si.specie, sj.specie
+                if isinstance(el0, Specie):
+                    el0 = el0.element
+                if isinstance(el1, Specie):
+                    el1 = el1.element
+                if i == j:
+                    bonds[i, j] = (el0,)
+                else:
+                    bonds[i, j] = tuple(sorted((el0, el1)))
+        bags = {b: [] for b in np.unique(bonds)}
+        for i in range(nsites):
+            for j in range(nsites):
+                bond = bonds[i, j]
+                cmval = cm[i, j]
+                bags[bond].append(cmval)
+
+        # We must sort the magnitude of bonds in each bag
+        return {bond: sorted(bags[bond]) for bond in bags}
+
+
+    def featurize(self, s):
+        self._check_fitted()
+        unpadded_bob = self.bag(s)
+        padded_bob = {bag: [0.0] * int(length) for bag, length in
+                      self.baglens.items()}
+
+        for bond in unpadded_bob:
+            if bond not in list(self.baglens.keys()):
+                raise ValueError("{} is not in the fitted "
+                                 "bonds/sites!".format(bond))
+            baglen_s = len(unpadded_bob[bond])
+            baglen_fit = self.baglens[bond]
+
+            if baglen_s > baglen_fit:
+                raise ValueError("The bond {} has more entries than was "
+                                 "fitted for (i.e., there are more {} bonds"
+                                 " in structure {} ({}) than the fitted set"
+                                 " allows ({}).".format(bond, bond, s, baglen_s,
+                                                        baglen_fit))
+            elif baglen_s < baglen_fit:
+                padded_bob[bond] = unpadded_bob[bond] + \
+                                   [0.0]*(baglen_fit - baglen_s)
+            else:
+                padded_bob[bond] = unpadded_bob[bond]
+
+        # Ensure the bonds are printed in correct order
+        bob = [padded_bob[bond] for bond in self.ordered_bonds]
+        return list(sum(bob, []))
+
+    def feature_labels(self):
+        self._check_fitted()
+        labels = []
+        for bag in self.ordered_bonds:
+            if len(bag) == 1:
+                basename = str(bag[0]) + " site #"
+            else:
+                basename = str(bag[0]) + self.token + str(bag[1]) + " bond #"
+            bls = [basename + str(i) for i in range(self.baglens[bag])]
+            labels += bls
+        return labels
+
+    def implementors(self):
+        return ["Alex Dunn"]
+
+    def citations(self):
+        return ["@article{doi:10.1021/acs.jpclett.5b00831, "
+                "author = {Hansen, Katja and Biegler, "
+                "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor"
+                "and von Lilienfeld, O. Anatole and Muller, Klaus-Robert and"
+                "Tkatchenko, Alexandre},"
+                "title = {Machine Learning Predictions of Molecular Properties: "
+                "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
+                "journal = {The Journal of Physical Chemistry Letters},"
+                "volume = {6},"
+                "number = {12},"
+                "pages = {2326-2331},"
+                "year = {2015},"
+                "doi = {10.1021/acs.jpclett.5b00831}, "
+                "note ={PMID: 26113956},"
+                "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
+                "}"]
+
+
 class StructuralHeterogeneity(BaseFeaturizer):
-    """Variance in the bond lengths and atomic volumes in a structure
+    """
+    Variance in the bond lengths and atomic volumes in a structure
 
     These features are based on several statistics derived from the Voronoi
     tessellation of a structure. The first set of features relate to the
@@ -1697,7 +1898,8 @@ class StructuralHeterogeneity(BaseFeaturizer):
 
 
 class MaximumPackingEfficiency(BaseFeaturizer):
-    """Maximum possible packing efficiency of this structure
+    """
+    Maximum possible packing efficiency of this structure
 
     Uses a Voronoi tessellation to determine the largest radius each atom
     can have before any atoms touches any one of their neighbors. Given the
@@ -1744,7 +1946,8 @@ class MaximumPackingEfficiency(BaseFeaturizer):
 
 
 class ChemicalOrdering(BaseFeaturizer):
-    """How much the ordering of species in the structure differs from random
+    """
+    How much the ordering of species in the structure differs from random
 
     These parameters describe how much the ordering of all species in a
     structure deviates from random using a Warren-Cowley-like ordering
@@ -1846,7 +2049,8 @@ class ChemicalOrdering(BaseFeaturizer):
 
 
 class StructureComposition(BaseFeaturizer):
-    """Compute features related to the composition of a structure
+    """
+    Features related to the composition of a structure
 
     This class is just a wrapper that calls a composition-based featurizer
     on the composition of a Structure

@@ -58,7 +58,10 @@ with open(os.path.join(os.path.dirname(
 
 
 class AGNIFingerprints(BaseFeaturizer):
-    """Integral of the product of the radial distribution function and a
+    """
+    Product integral of RDF and Gaussian window function, from Botu et al.
+
+    Integral of the product of the radial distribution function and a
     Gaussian window function. Originally used by [Botu *et al*]
     (http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908) to fit empiricial
     potentials. These features come in two forms: atomic fingerprints and
@@ -158,8 +161,9 @@ class AGNIFingerprints(BaseFeaturizer):
 
 class OPSiteFingerprint(BaseFeaturizer):
     """
-    Local structure order parameters computed from the neighbor
-    environment of a site. For each order parameter, we determine
+    Local structure order parameters computed from a site's neighbor env.
+
+    For each order parameter, we determine
     the neighbor shell that complies with the expected
     coordination number. For example, we find the 4 nearest
     neighbors for the tetrahedral OP, the 6 nearest for the
@@ -383,6 +387,8 @@ class OPSiteFingerprint(BaseFeaturizer):
 # TODO: unit tests!!
 class CrystalSiteFingerprint(BaseFeaturizer):
     """
+    A local order parameter fingerprint for periodic crystals.
+
     A site fingerprint intended for periodic crystals. The fingerprint represents
     the value of various order parameters for the site; each value is the product
     two quantities: (i) the value of the order parameter itself and (ii) a factor
@@ -579,6 +585,8 @@ class CrystalSiteFingerprint(BaseFeaturizer):
 # TODO: Much of this code is duplicated in the new `get_voronoi_poly`. We should refactor it -lw
 class VoronoiFingerprint(BaseFeaturizer):
     """
+    Voronoi tessellation-based features around target site.
+
     Calculate the following sets of features based on Voronoi tessellation
     analysis around the target site:
     Voronoi indices
@@ -755,7 +763,9 @@ class VoronoiFingerprint(BaseFeaturizer):
 
 class ChemicalSRO(BaseFeaturizer):
     """
-    Chemical short-range ordering (SRO) features to evaluate the deviation
+    Chemical short range ordering, deviation of local site and nominal structure compositions
+
+    Chemical SRO features to evaluate the deviation
     of local chemistry with the nominal composition of the structure.
 
     A local bonding preference is computed using
@@ -938,8 +948,9 @@ class ChemicalSRO(BaseFeaturizer):
 
 class GaussianSymmFunc(BaseFeaturizer):
     """
-    Gaussian symmetry function features suggested by Behler et al.,
-    based on pair distances and angles, to approximate the functional
+    Gaussian symmetry function features suggested by Behler et al.
+
+    The function is based on pair distances and angles, to approximate the functional
     dependence of local energies, originally used in the fitting of
     machine-learning potentials.
     The symmetry functions can be divided to a set of radial functions
@@ -1104,7 +1115,9 @@ class GaussianSymmFunc(BaseFeaturizer):
 
 
 class EwaldSiteEnergy(BaseFeaturizer):
-    """Compute site energy from Coulombic interactions
+    """
+    Compute site energy from Coulombic interactions
+
     User notes:
         - This class uses that `charges that are already-defined for the structure`.
         - Ewald summations can be expensive. If you evaluating every site in many
@@ -1167,6 +1180,8 @@ class EwaldSiteEnergy(BaseFeaturizer):
 
 class ChemEnvSiteFingerprint(BaseFeaturizer):
     """
+    Resemblance of given sites to ideal environments
+
     Site fingerprint computed from pymatgen's ChemEnv package
     that provides resemblance percentages of a given site
     to ideal environments.
@@ -1396,8 +1411,9 @@ class CoordinationNumber(BaseFeaturizer):
 
 class GeneralizedRadialDistributionFunction(BaseFeaturizer):
     """
-    Compute the general radial distribution function (GRDF) for a site. The
-    GRDF is a radial measure of crystal order around a site. There are two
+    Compute the general radial distribution function (GRDF) for a site.
+
+    The GRDF is a radial measure of crystal order around a site. There are two
     featurizing modes:
 
     1. GRDF: (recommended) - n_bins length vector
@@ -1587,11 +1603,12 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
 class AngularFourierSeries(BaseFeaturizer):
     """
-    Compute the angular Fourier series (AFS) for a site. The AFS includes
-    both radial and angular information about site neighbors. The AFS is the
-    product of distance functionals (g_n, g_n') between two pairs of atoms
-    (sharing the common central site) and the cosine of the angle between the
-    two pairs. The AFS is a 2-dimensional feature (the axes are g_n, g_n').
+    Compute the angular Fourier series (AFS), including both angular and radial info
+
+    The AFS is the product of distance functionals (g_n, g_n') between two pairs
+    of atoms (sharing the common central site) and the cosine of the angle
+    between the two pairs. The AFS is a 2-dimensional feature (the axes are g_n,
+    g_n').
 
     Examples of distance functionals are square functions, Gaussian, trig
     functions, and Bessel functions. An example for Gaussian:
@@ -1728,8 +1745,8 @@ class AngularFourierSeries(BaseFeaturizer):
 
 # TODO: Figure out whether to take NN-counting method as an option (see VoronoiFingerprint)
 class LocalPropertyDifference(BaseFeaturizer):
-    """Compute the different in elemental properties between site
-    and its neighboring sites.
+    """
+    Differences in elemental properties between site and its neighboring sites.
 
     Uses the Voronoi tessellation of the structure to determine the
     neighbors of the site, and assigns each neighbor (:math:`n`) a

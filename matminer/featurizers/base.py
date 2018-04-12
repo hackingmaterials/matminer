@@ -95,6 +95,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
      recommend documenting them using the
     [Google style](https://google.github.io/styleguide/pyguide.html).
 
+    For auto-generated documentation purposes, the first line of the featurizer
+    doc should come under the class declaration (not under __init__) and should
+    be a one line summary of the featurizer.
+
     We recommend starting the class documentation with a high-level overview of
     the features. For example, mention what kind of characteristics of the
     material they describe and refer the reader to a paper that describes these

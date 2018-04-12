@@ -8,6 +8,7 @@ import unittest
 
 import numpy as np
 import pandas as pd
+from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
@@ -18,8 +19,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
-    EwaldEnergy, BagofBonds, StructuralHeterogeneity, MaximumPackingEfficiency, \
-    ChemicalOrdering, StructureComposition
+    EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
+    MaximumPackingEfficiency, ChemicalOrdering, StructureComposition
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -357,20 +358,20 @@ class StructureFeaturesTest(PymatgenTest):
         #  Using the result from GULP
         self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
 
-    def test_bag_of_bonds(self):
+    def test_bondfractions(self):
 
         # Test individual structures with featurize
-        bob_md = BagofBonds.from_preset("MinimumDistanceNN")
-        bob_md.no_oxi = True
-        bob_md.fit([self.diamond_no_oxi])
-        self.assertArrayEqual(bob_md.featurize(self.diamond), [1.0])
-        self.assertArrayEqual(bob_md.featurize(self.diamond_no_oxi), [1.0])
+        bf_md = BondFractions.from_preset("MinimumDistanceNN")
+        bf_md.no_oxi = True
+        bf_md.fit([self.diamond_no_oxi])
+        self.assertArrayEqual(bf_md.featurize(self.diamond), [1.0])
+        self.assertArrayEqual(bf_md.featurize(self.diamond_no_oxi), [1.0])
 
-        bob_voronoi = BagofBonds.from_preset("VoronoiNN")
-        bob_voronoi.bbv = float("nan")
-        bob_voronoi.fit([self.nacl])
-        bond_fracs = bob_voronoi.featurize(self.nacl)
-        bond_names = bob_voronoi.feature_labels()
+        bf_voronoi = BondFractions.from_preset("VoronoiNN")
+        bf_voronoi.bbv = float("nan")
+        bf_voronoi.fit([self.nacl])
+        bond_fracs = bf_voronoi.featurize(self.nacl)
+        bond_names = bf_voronoi.feature_labels()
         ref = {'Na+ - Na+ bond frac.': 0.25, 'Cl- - Na+ bond frac.': 0.5,
                'Cl- - Cl- bond frac.': 0.25}
         self.assertDictEqual(dict(zip(bond_names, bond_fracs)), ref)
@@ -378,8 +379,8 @@ class StructureFeaturesTest(PymatgenTest):
         # Test to make sure dataframe behavior is as intended
         s_list = [self.diamond_no_oxi, self.ni3al]
         df = pd.DataFrame.from_dict({'s': s_list})
-        bob_voronoi.fit(df['s'])
-        df = bob_voronoi.featurize_dataframe(df, 's')
+        bf_voronoi.fit(df['s'])
+        df = bf_voronoi.featurize_dataframe(df, 's')
 
         # Ensure all data is properly labelled and organized
         self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, np.nan])
@@ -389,13 +390,52 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test to make sure bad_bond_values (bbv) are still changed correctly
         # and check inplace behavior of featurize dataframe.
-        bob_voronoi.bbv = 0.0
+        bf_voronoi.bbv = 0.0
         df = pd.DataFrame.from_dict({'s': s_list})
-        df = bob_voronoi.featurize_dataframe(df, 's')
+        df = bf_voronoi.featurize_dataframe(df, 's')
         self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, 0.0])
         self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [0.0, 0.5])
         self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [0.0, 0.0])
         self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [0.0, 0.5])
+
+    def test_bob(self):
+
+        # Test a single fit and featurization
+        bob = BagofBonds(coulomb_matrix=SineCoulombMatrix(), token=' - ')
+        bob.fit([self.ni3al])
+        truth1 = [235.74041833262768, 1486.4464890775491, 1486.4464890775491,
+                  1486.4464890775491, 38.69353092306119, 38.69353092306119,
+                  38.69353092306119, 38.69353092306119, 38.69353092306119,
+                  38.69353092306119, 83.33991275736257, 83.33991275736257,
+                  83.33991275736257, 83.33991275736257, 83.33991275736257,
+                  83.33991275736257]
+        truth1_labels = ['Al site #0', 'Ni site #0', 'Ni site #1', 'Ni site #2',
+                         'Al - Ni bond #0', 'Al - Ni bond #1',
+                         'Al - Ni bond #2', 'Al - Ni bond #3',
+                         'Al - Ni bond #4', 'Al - Ni bond #5',
+                         'Ni - Ni bond #0', 'Ni - Ni bond #1',
+                         'Ni - Ni bond #2', 'Ni - Ni bond #3',
+                         'Ni - Ni bond #4', 'Ni - Ni bond #5']
+        self.assertAlmostEqual(bob.featurize(self.ni3al), truth1)
+        self.assertEqual(bob.feature_labels(), truth1_labels)
+
+        # Test padding from fitting and dataframe featurization
+        bob.coulomb_matrix = CoulombMatrix()
+        bob.fit([self.ni3al, self.cscl, self.diamond_no_oxi])
+        df = pd.DataFrame({'structures': [self.cscl]})
+        df = bob.featurize_dataframe(df, 'structures')
+        self.assertEqual(len(df.columns.values), 25)
+        self.assertAlmostEqual(df['Cs site #0'][0], 7513.468312122532)
+        self.assertAlmostEqual(df['Al site #0'][0], 0.0)
+        self.assertAlmostEqual(df['Cs - Cl bond #1'][0], 135.74726437398044)
+        self.assertAlmostEqual(df['Al - Ni bond #0'][0], 0.0)
+
+        # Test error handling for bad fits or null fits
+        bob = BagofBonds()
+        self.assertRaises(NotFittedError, bob.featurize, self.nacl)
+        bob.fit([self.ni3al, self.diamond])
+        self.assertRaises(ValueError, bob.featurize, self.nacl)
+
 
     def test_ward_prb_2017_lpd(self):
         """Test the local property difference attributes from Ward 2017"""
