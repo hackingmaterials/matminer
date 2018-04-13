@@ -1624,7 +1624,11 @@ class BagofBonds(BaseFeaturizer):
 
     BagofBonds must be fit to an iterable of structures using the "fit" method
     before featurization can occur. This is because the bags and the maximum
-    lengths of each bag must be set prior to featurization.
+    lengths of each bag must be set prior to featurization. We recommend
+    fitting and featurizing on the same data to maintain consistency
+    between generated feature sets. This can be done using the fit_transform
+    method (for lists of structures) or the fit_featurize_dataframe method
+    (for dataframes).
 
     BagofBonds is based on a method by Hansen et. al "Machine Learning
     Predictions of Molecular Properties: Accurate Many-Body Potentials and
@@ -1668,7 +1672,7 @@ class BagofBonds(BaseFeaturizer):
             self
 
         """
-        unpadded_bobs = [self.bag(s) for s in X]
+        unpadded_bobs = [self.bag(s, return_baglens=True) for s in X]
         bonds = [list(bob.keys()) for bob in unpadded_bobs]
         bonds = np.unique(sum(bonds, []))
         baglens = [0]*len(bonds)
@@ -1676,7 +1680,7 @@ class BagofBonds(BaseFeaturizer):
         for i, bond in enumerate(bonds):
             for bob in unpadded_bobs:
                 if bond in bob:
-                    baglen = len(bob[bond])
+                    baglen = bob[bond]
                     baglens[i] = max((baglens[i], baglen))
         self.baglens = dict(zip(bonds, baglens))
         # Sort the bags by bag length, with the shortest coming first.
@@ -1684,7 +1688,7 @@ class BagofBonds(BaseFeaturizer):
                                     key=lambda bl: bl[1])]
         return self
 
-    def bag(self, s):
+    def bag(self, s, return_baglens=False):
         """
         Convert a structure into a bag of bonds, where each bag has no padded
         zeros. using this function will give the 'raw' bags, which when
@@ -1702,7 +1706,6 @@ class BagofBonds(BaseFeaturizer):
             raise TypeError("BagofBonds must take in a pymatgen Structure "
                             "object, not {}".format(type(s)))
 
-        cm = self.coulomb_matrix.featurize(s)[0]
         sites = s.sites
         nsites = len(sites)
         bonds = np.zeros((nsites, nsites), dtype=object)
@@ -1717,16 +1720,29 @@ class BagofBonds(BaseFeaturizer):
                     bonds[i, j] = (el0,)
                 else:
                     bonds[i, j] = tuple(sorted((el0, el1)))
-        bags = {b: [] for b in np.unique(bonds)}
+
+        if return_baglens:
+            bags = {b: 0 for b in np.unique(bonds)}
+        else:
+            cm = self.coulomb_matrix.featurize(s)[0]
+            bags = {b: [] for b in np.unique(bonds)}
+
         for i in range(nsites):
             for j in range(nsites):
                 bond = bonds[i, j]
-                cmval = cm[i, j]
-                bags[bond].append(cmval)
+                if return_baglens:
+                    # Only return length of bag
+                    bags[bond] = bags[bond] + 1
+                else:
+                    # Calculate bond "strength"
+                    cmval = cm[i, j]
+                    bags[bond].append(cmval)
 
-        # We must sort the magnitude of bonds in each bag
-        return {bond: sorted(bags[bond]) for bond in bags}
-
+        if return_baglens:
+            return bags
+        else:
+            # We must sort the magnitude of bonds in each bag
+            return {bond: sorted(bags[bond]) for bond in bags}
 
     def featurize(self, s):
         """
