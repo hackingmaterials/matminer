@@ -1682,6 +1682,7 @@ class BagofBonds(BaseFeaturizer):
         # Sort the bags by bag length, with the shortest coming first.
         self.ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
                                     key=lambda bl: bl[1])]
+        return self
 
     def bag(self, s):
         """
