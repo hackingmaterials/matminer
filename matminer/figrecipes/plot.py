@@ -370,7 +370,9 @@ class PlotlyFig:
                 example: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example: [('x1', 'y1'), ('x2', 'y2')]
             colors (list or np.ndarray or pd.Series): set the colorscale for
-                the colorbar (list of numbers); overwrites marker['color']
+                the colorbar (list of numbers); overwrites marker['color'] and
+                will override colorscales if trace colors are specified as
+                strings.
             color_range ([min, max]): the range of numbers included in colorbar.
                 if any number is outside of this range, it will be forced to
                 either one. Note that if colorcol_range is set, the colorbar ticks
@@ -497,7 +499,10 @@ class PlotlyFig:
                 raise ValueError(
                     '"size" must not be set in markers, use sizes argument instead')
             if colorbar is not None:
-                markers[im]['color'] = colorbar
+                if isinstance(colorbar[0], str):
+                    markers[im]['color'] = colorbar[im]
+                else:
+                    markers[im]['color'] = colorbar
                 fontd = {'family': self.font_style['family'],
                          'size': 0.75 * self.font_style['size']}
                 if 'color' in self.font_style.keys():
