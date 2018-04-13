@@ -516,9 +516,10 @@ class PlotlyFig:
             if markers[im].get('colorscale') is None:
                 markers[im]['colorscale'] = colorscale or self.colorscale
 
-        lines = []
-        for i, _ in enumerate(data):
-            lines.append({'dash': 'solid', 'width': 2, 'color': colors[i]})
+        if not lines:
+            lines = []
+            for i, _ in enumerate(data):
+                lines.append({'dash': 'solid', 'width': 2, 'color': colors[i]})
 
         if isinstance(lines, dict):
             lines = [lines.copy() for _ in data]
@@ -542,6 +543,11 @@ class PlotlyFig:
             layout['xaxis']['title'] = pd.Series(data[0][0]).name
         if layout['yaxis'].get('title') is None and len(data) == 1:
             layout['yaxis']['title'] = pd.Series(data[0][1]).name
+
+        if limits and 'x' in limits:
+            layout['xaxis']['range'] = limits['x']
+        if limits and 'y' in limits:
+            layout['yaxis']['range'] = limits['y']
 
         if error_bars is not None:
             for i, _ in enumerate(traces):
