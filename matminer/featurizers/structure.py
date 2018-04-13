@@ -1696,6 +1696,10 @@ class BagofBonds(BaseFeaturizer):
 
         Args:
             s (Structure): A pymatgen Structure or IStructure object.
+            return_baglens (bool): If True, returns the bag of bonds with as
+                a dictionary with the number of bonds as values in place
+                of the vectors of coulomb matrix vals. If False, calculates
+                Coulomb matrix values and returns 'raw' bags.
 
         Returns:
             (dict) A bag of bonds, where the keys are sorted tuples of pymatgen
