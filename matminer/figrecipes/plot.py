@@ -524,7 +524,10 @@ class PlotlyFig:
         if not lines:
             lines = []
             for i, _ in enumerate(data):
-                lines.append({'dash': 'solid', 'width': 2, 'color': colors[i]})
+                linedict = {'dash': 'solid', 'width': 2}
+                if colors:
+                    linedict['color'] = colors[i]
+                lines.append(linedict)
 
         if isinstance(lines, dict):
             lines = [lines.copy() for _ in data]
