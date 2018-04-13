@@ -314,9 +314,14 @@ class PlotlyFig:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.mode == 'static':
-            if 'height' not in self.layout.keys():
+            if 'height' in self.layout.keys():
+                height = self.layout['height']
+            else:
                 height = 1080
-            if 'width' not in self.layout.keys():
+
+            if 'width' in self.layout.keys():
+                width = self.layout['width']
+            else:
                 width = 1920
 
             allowed_extensions = ('.png', '.svg', '.jpeg', '.pdf')
