@@ -466,6 +466,26 @@ when ignore_errors is True in featurize_many/dataframe.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="matminer.featurizers.base.BaseFeaturizer.fit_featurize_dataframe">
+<code class="descname">fit_featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.fit_featurize_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>The dataframe equivalent of fit_transform. Takes a dataframe and
+column id as input, fits the featurizer to that dataframe, and
+returns a featurized dataframe. Accepts the same arguments as
+featurize_dataframe.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">df (Pandas dataframe): Dataframe containing input data.
+col_id (str or list of str): column label containing objects to</p>
+<blockquote class="last">
+<div>featurize. Can be multiple labels if the featurize function
+requires multiple inputs.</div></blockquote>
+</dd>
+<dt>Returns:</dt>
+<dd>updated dataframe based on featurizer fitted to that dataframe.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
@@ -3793,7 +3813,11 @@ Coulomb matrix output. Practically, it represents the Coloumbic interactions
 between each possible set of sites in a structure as a vector.</p>
 <p>BagofBonds must be fit to an iterable of structures using the “fit” method
 before featurization can occur. This is because the bags and the maximum
-lengths of each bag must be set prior to featurization.</p>
+lengths of each bag must be set prior to featurization. We recommend
+fitting and featurizing on the same data to maintain consistency
+between generated feature sets. This can be done using the fit_transform
+method (for lists of structures) or the fit_featurize_dataframe method
+(for dataframes).</p>
 <p>BagofBonds is based on a method by Hansen et. al “Machine Learning
 Predictions of Molecular Properties: Accurate Many-Body Potentials and
 Nonlocality in Chemical Space” (2015).</p>
@@ -3819,7 +3843,7 @@ how bonds are represented in the dataframe.</dd>
 
 <dl class="method">
 <dt id="matminer.featurizers.structure.BagofBonds.bag">
-<code class="descname">bag</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.bag" title="Permalink to this definition">¶</a></dt>
+<code class="descname">bag</code><span class="sig-paren">(</span><em>s</em>, <em>return_baglens=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BagofBonds.bag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a structure into a bag of bonds, where each bag has no padded
 zeros. using this function will give the ‘raw’ bags, which when
 concatenated, will have different lengths.</p>

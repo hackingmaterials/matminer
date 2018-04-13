@@ -79,7 +79,7 @@ We have developed utilities to help describe a material from its composition or 
 |
 .. image:: _static/featurizer_diagram.png
    :align: center
-   :width: 1000px
+   :width: 1200px
    :alt: matminer featurizers
 |
 |
@@ -102,7 +102,7 @@ Check out an example code and figure generated with figrecipes:
    from matminer.datasets.dataframe_loader import load_elastic_tensor
    df = load_elastic_tensor()
    pf = PlotlyFig(df, y_title='Bulk Modulus (GPa)', x_title='Shear Modulus (GPa)', filename='bulk_shear_moduli')
-   pf.xy(('G_VRH', 'K_VRH'), labels='material_id', colors='poisson_ratio', colorscale='Picnic')
+   pf.xy(('G_VRH', 'K_VRH'), labels='material_id', colors='poisson_ratio', colorscale='Picnic', limits={'x': (0, 300)})
 
 This code generates the following figure from the matminer elastic dataset dataframe.
 
@@ -112,7 +112,7 @@ This code generates the following figure from the matminer elastic dataset dataf
     <iframe src="_static/bulk_shear_moduli.html" height="1000px" width=90%" align="center" frameBorder="0">Browser not compatible.</iframe>
 
 The Plotly module contains the :code:`PlotlyFig` class that wraps around Plotly's Python API and follows its JSON schema. Check out the examples below to see how to use the plotting functionality!
-
+ino
 --------
 Examples
 --------

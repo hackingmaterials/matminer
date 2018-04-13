@@ -491,7 +491,7 @@ with mode in __init__).</dd>
 
 <dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.xy">
-<code class="descname">xy</code><span class="sig-paren">(</span><em>xy_pairs</em>, <em>colors=None</em>, <em>color_range=None</em>, <em>labels=None</em>, <em>names=None</em>, <em>sizes=None</em>, <em>modes='markers'</em>, <em>markers=None</em>, <em>marker_scale=1.0</em>, <em>lines=None</em>, <em>colorscale=None</em>, <em>showlegends=None</em>, <em>error_bars=None</em>, <em>normalize_size=True</em>, <em>return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.xy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">xy</code><span class="sig-paren">(</span><em>xy_pairs</em>, <em>colors=None</em>, <em>color_range=None</em>, <em>labels=None</em>, <em>limits=None</em>, <em>names=None</em>, <em>sizes=None</em>, <em>modes='markers'</em>, <em>markers=None</em>, <em>marker_scale=1.0</em>, <em>lines=None</em>, <em>colorscale=None</em>, <em>showlegends=None</em>, <em>error_bars=None</em>, <em>normalize_size=True</em>, <em>return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.xy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make an XY scatter plot, either using arrays of values, or a dataframe.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -502,13 +502,19 @@ example: ([1, 2], [3, 4])
 example: [(df[‘x1’], df[‘y1’]), (df[‘x2’], df[‘y2’])]
 example: [(‘x1’, ‘y1’), (‘x2’, ‘y2’)]</dd>
 <dt>colors (list or np.ndarray or pd.Series): set the colorscale for</dt>
-<dd>the colorbar (list of numbers); overwrites marker[‘color’]</dd>
+<dd>the colorbar (list of numbers); overwrites marker[‘color’] and
+will override colorscales if trace colors are specified as
+strings.</dd>
 <dt>color_range ([min, max]): the range of numbers included in colorbar.</dt>
 <dd>if any number is outside of this range, it will be forced to
 either one. Note that if colorcol_range is set, the colorbar ticks
 will be updated to reflext -min or max+ at the two ends.</dd>
 <dt>labels (list or [list]): to individually set annotation for scatter</dt>
 <dd>point either the same for all traces or can be set for each</dd>
+<dt>limits (dict): The x and y limits defining the ranges the plot will</dt>
+<dd>show. Should be in the form {‘x’: (lower, higher), ‘y’: (lower,
+higher)}. Omit either key to prevent limits from being imposed
+on that axis.</dd>
 <dt>names (str or [str]): list of trace names used for legend. By</dt>
 <dd>default column name (or trace if NA) used if pd.Series passed</dd>
 <dt>sizes (str, float, [float], [list]). Options:</dt>
@@ -523,7 +529,6 @@ float: a single size used for all traces in xy_pairs
 that the key “size” is forbidden in markers. Use sizes arg instead.</dd>
 </dl>
 <p>lines (dict or [dict]: similar to markers though only if mode==’lines’
-colorscale (str):  see the colorscale doc in __init__
 showlegends (bool or [bool]): indicating whether to show legend</p>
 <blockquote>
 <div>for each trace (or simply turn it on/off for all if not list)</div></blockquote>
