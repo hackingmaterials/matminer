@@ -314,9 +314,14 @@ class PlotlyFig:
                 plotly.plotly.plot(fig, sharing='public')
 
         elif self.mode == 'static':
-            if 'height' not in self.layout.keys():
+            if 'height' in self.layout.keys():
+                height = self.layout['height']
+            else:
                 height = 1080
-            if 'width' not in self.layout.keys():
+
+            if 'width' in self.layout.keys():
+                width = self.layout['width']
+            else:
                 width = 1920
 
             allowed_extensions = ('.png', '.svg', '.jpeg', '.pdf')
@@ -357,7 +362,7 @@ class PlotlyFig:
             return col
 
     def xy(self, xy_pairs, colors=None, color_range=None, labels=None,
-           names=None, sizes=None, modes='markers', markers=None,
+           limits=None, names=None, sizes=None, modes='markers', markers=None,
            marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
            error_bars=None, normalize_size=True, return_plot=False):
         """
@@ -370,13 +375,19 @@ class PlotlyFig:
                 example: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
                 example: [('x1', 'y1'), ('x2', 'y2')]
             colors (list or np.ndarray or pd.Series): set the colorscale for
-                the colorbar (list of numbers); overwrites marker['color']
+                the colorbar (list of numbers); overwrites marker['color'] and
+                will override colorscales if trace colors are specified as
+                strings.
             color_range ([min, max]): the range of numbers included in colorbar.
                 if any number is outside of this range, it will be forced to
                 either one. Note that if colorcol_range is set, the colorbar ticks
                 will be updated to reflext -min or max+ at the two ends.
             labels (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
+            limits (dict): The x and y limits defining the ranges the plot will
+                show. Should be in the form {'x': (lower, higher), 'y': (lower,
+                higher)}. Omit either key to prevent limits from being imposed
+                on that axis.
             names (str or [str]): list of trace names used for legend. By
                 default column name (or trace if NA) used if pd.Series passed
             sizes (str, float, [float], [list]). Options:
@@ -390,7 +401,6 @@ class PlotlyFig:
                 of each scatter plot individually if list of dicts passed. Note
                 that the key "size" is forbidden in markers. Use sizes arg instead.
             lines (dict or [dict]: similar to markers though only if mode=='lines'
-            colorscale (str):  see the colorscale doc in __init__
             showlegends (bool or [bool]): indicating whether to show legend
                 for each trace (or simply turn it on/off for all if not list)
             error_bars ([str or list]): numbers used for error bars in the y
@@ -494,7 +504,10 @@ class PlotlyFig:
                 raise ValueError(
                     '"size" must not be set in markers, use sizes argument instead')
             if colorbar is not None:
-                markers[im]['color'] = colorbar
+                if isinstance(colorbar[0], str):
+                    markers[im]['color'] = colorbar[im]
+                else:
+                    markers[im]['color'] = colorbar
                 fontd = {'family': self.font_style['family'],
                          'size': 0.75 * self.font_style['size']}
                 if 'color' in self.font_style.keys():
@@ -513,7 +526,14 @@ class PlotlyFig:
             if markers[im].get('colorscale') is None:
                 markers[im]['colorscale'] = colorscale or self.colorscale
 
-        lines = lines or [{'dash': 'solid', 'width': 2}] * len(data)
+        if not lines:
+            lines = []
+            for i, _ in enumerate(data):
+                linedict = {'dash': 'solid', 'width': 2}
+                if colors:
+                    linedict['color'] = colors[i]
+                lines.append(linedict)
+
         if isinstance(lines, dict):
             lines = [lines.copy() for _ in data]
 
@@ -536,6 +556,11 @@ class PlotlyFig:
             layout['xaxis']['title'] = pd.Series(data[0][0]).name
         if layout['yaxis'].get('title') is None and len(data) == 1:
             layout['yaxis']['title'] = pd.Series(data[0][1]).name
+
+        if limits and 'x' in limits:
+            layout['xaxis']['range'] = limits['x']
+        if limits and 'y' in limits:
+            layout['yaxis']['range'] = limits['y']
 
         if error_bars is not None:
             for i, _ in enumerate(traces):

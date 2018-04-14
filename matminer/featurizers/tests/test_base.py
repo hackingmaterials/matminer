@@ -56,12 +56,34 @@ class MatrixFeaturizer(BaseFeaturizer):
         return ["Everyone"]
 
 
+class FittableFeaturizer(BaseFeaturizer):
+    """
+    This test featurizer tests fitting qualities of BaseFeaturizer, including
+    refittability and different results based on different fits.
+    """
+    def fit(self, X, y=None, **fit_kwargs):
+        self._features = ['a', 'b', 'c'][:len(X)]
+        return self
+
+    def featurize(self, x):
+        return [x + 3, x + 4, 2 * x][:len(self._features)]
+
+    def feature_labels(self):
+        return self._features
+
+    def citations(self):
+        return ["Q"]
+
+    def implementors(self):
+        return ["A competing research group"]
+
 class TestBaseClass(PymatgenTest):
     def setUp(self):
         self.single = SingleFeaturizer()
         self.multi = MultipleFeatureFeaturizer()
         self.matrix = MatrixFeaturizer()
         self.multiargs = SingleFeaturizerMultiArgs()
+        self.fittable = FittableFeaturizer()
 
     @staticmethod
     def make_test_data():
@@ -145,6 +167,26 @@ class TestBaseClass(PymatgenTest):
         data['x2'] = [4, 5, 6]
         data = s.featurize_dataframe(data, ['x', 'x2'])
         self.assertArrayAlmostEqual(data['y'], [5, 7, 9])
+
+    def test_fittable(self):
+        data = self.make_test_data()
+        ft = self.fittable
+
+        # Test fit and featurize separately
+        ft.fit(data['x'][:2])
+        ft.featurize_dataframe(data, 'x')
+        self.assertArrayAlmostEqual(data['a'], [4, 5, 6])
+        self.assertRaises(Exception, data.__getattr__, 'c')
+
+        # Test fit + featurize methods on new fits
+        data = self.make_test_data()
+        transformed = ft.fit_transform([data['x'][1]])
+        self.assertArrayAlmostEqual(transformed[0], [5])
+        data = self.make_test_data()
+        ft.fit_featurize_dataframe(data, 'x')
+        self.assertArrayAlmostEqual(data['a'], [4, 5, 6])
+        self.assertArrayAlmostEqual(data['b'], [5, 6, 7])
+        self.assertArrayAlmostEqual(data['c'], [2, 4, 6])
 
 
 if __name__ == '__main__':

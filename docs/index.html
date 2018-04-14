@@ -91,7 +91,7 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/featurizer_diagram.png"><img alt="matminer featurizers" class="align-center" src="_images/featurizer_diagram.png" style="width: 1000px;" /></a>
+<a class="reference internal image-reference" href="_images/featurizer_diagram.png"><img alt="matminer featurizers" class="align-center" src="_images/featurizer_diagram.png" style="width: 1200px;" /></a>
 <div class="line-block">
 <div class="line"><br /></div>
 <div class="line"><br /></div>
@@ -109,15 +109,15 @@ Check out an example code and figure generated with figrecipes:</p>
 <span class="kn">from</span> <span class="nn">matminer.datasets.dataframe_loader</span> <span class="kn">import</span> <span class="n">load_elastic_tensor</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">load_elastic_tensor</span><span class="p">()</span>
 <span class="n">pf</span> <span class="o">=</span> <span class="n">PlotlyFig</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">y_title</span><span class="o">=</span><span class="s1">&#39;Bulk Modulus (GPa)&#39;</span><span class="p">,</span> <span class="n">x_title</span><span class="o">=</span><span class="s1">&#39;Shear Modulus (GPa)&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;bulk_shear_moduli&#39;</span><span class="p">)</span>
-<span class="n">pf</span><span class="o">.</span><span class="n">xy</span><span class="p">((</span><span class="s1">&#39;G_VRH&#39;</span><span class="p">,</span> <span class="s1">&#39;K_VRH&#39;</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="s1">&#39;material_id&#39;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;poisson_ratio&#39;</span><span class="p">,</span> <span class="n">colorscale</span><span class="o">=</span><span class="s1">&#39;Picnic&#39;</span><span class="p">)</span>
+<span class="n">pf</span><span class="o">.</span><span class="n">xy</span><span class="p">((</span><span class="s1">&#39;G_VRH&#39;</span><span class="p">,</span> <span class="s1">&#39;K_VRH&#39;</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="s1">&#39;material_id&#39;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;poisson_ratio&#39;</span><span class="p">,</span> <span class="n">colorscale</span><span class="o">=</span><span class="s1">&#39;Picnic&#39;</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">)})</span>
 </pre></div>
 </div>
 <p>This code generates the following figure from the matminer elastic dataset dataframe.</p>
-<iframe src="_static/bulk_shear_moduli.html" height="1000px" width=90%" align="center" frameBorder="0">Browser not compatible.</iframe><p>The Plotly module contains the <code class="code docutils literal notranslate"><span class="pre">PlotlyFig</span></code> class that wraps around Plotly’s Python API and follows its JSON schema. Check out the examples below to see how to use the plotting functionality!</p>
-</div>
-</div>
-<div class="section" id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<iframe src="_static/bulk_shear_moduli.html" height="1000px" width=90%" align="center" frameBorder="0">Browser not compatible.</iframe><p>The Plotly module contains the <code class="code docutils literal notranslate"><span class="pre">PlotlyFig</span></code> class that wraps around Plotly’s Python API and follows its JSON schema. Check out the examples below to see how to use the plotting functionality!
+ino
+——–
+Examples
+——–</p>
 <p>Check out some examples of how to use matminer! These examples and more can be found in the <a class="reference external" href="https://github.com/hackingmaterials/matminer_examples">matminer_examples</a> repo.</p>
 <ol class="arabic simple">
 <li>Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/intro_predicting_bulk_modulus.ipynb">Jupyter Notebook</a>)</li>
@@ -128,6 +128,7 @@ Check out an example code and figure generated with figrecipes:</p>
 <li>Advanced Visualization (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/advanced_visualization.ipynb">Jupyter Notebook</a>)</li>
 <li>Running a kernel ridge regression model on vector descriptors (<a class="reference external" href="https://github.com/hackingmaterials/matminer_examples/blob/master/scripts/kernel_ridge_SCM_OFM.py">Python script</a>)</li>
 </ol>
+</div>
 </div>
 <div class="section" id="citing-matminer">
 <h2>Citing matminer<a class="headerlink" href="#citing-matminer" title="Permalink to this headline">¶</a></h2>
@@ -182,7 +183,6 @@ Check out an example code and figure generated with figrecipes:</p>
 <li><a class="reference internal" href="#plot-data-from-either-arrays-or-dataframes-using-plotly-with-figrecipes">Plot data from either arrays or dataframes using Plotly with figrecipes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#examples">Examples</a></li>
 <li><a class="reference internal" href="#citing-matminer">Citing matminer</a></li>
 <li><a class="reference internal" href="#changelog">Changelog</a></li>
 <li><a class="reference internal" href="#contributions-and-bug-reports">Contributions and Bug Reports</a></li>
