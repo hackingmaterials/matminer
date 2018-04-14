@@ -82,6 +82,7 @@ Features based on a material's electronic density of states.
 Name                    Description
 =====================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 :code:`DOSFeaturizer`   Featurizes a pymatgen density of states, CompleteDos, object. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer>`_
+:code:`DopingFermi`     This featurizers returns the fermi level (w.r.t. selected reference energy)  `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DopingFermi>`_
 =====================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 
 

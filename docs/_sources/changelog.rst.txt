@@ -5,6 +5,19 @@
 matminer Changelog
 ==================
 
+**v0.3.0**
+
+* add structural heterogeneity features (L. Ward)
+* add maximum packing efficiency feature (L. Ward)
+* add chemical ordering features (L. Ward)
+* New BagofBonds based on original paper, old featurizer now BondFractions (A. Dunn)
+* add DopingFermi featurizer (A. Faghaninia, A. Jain)
+* shortcut for getting composition features from structure (L. Ward)
+* fix static mode output in PlotlyFig (A. Dunn)
+* some misc Figrecipes updates (A. Dunn)
+* add fit_featurize method to base (A. Dunn)
+* minor cleanups, doc updates and new docs (A. Jain, L. Ward, A. Dunn)
+
 **v0.2.9**
 
 * fix pymatgen dep (A. Jain)
