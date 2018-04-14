@@ -112,7 +112,7 @@ This code generates the following figure from the matminer elastic dataset dataf
     <iframe src="_static/bulk_shear_moduli.html" height="1000px" width=90%" align="center" frameBorder="0">Browser not compatible.</iframe>
 
 The Plotly module contains the :code:`PlotlyFig` class that wraps around Plotly's Python API and follows its JSON schema. Check out the examples below to see how to use the plotting functionality!
-ino
+
 --------
 Examples
 --------
