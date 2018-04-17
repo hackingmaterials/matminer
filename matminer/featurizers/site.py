@@ -1262,6 +1262,7 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         cevals = []
         self.lgf.setup_structure(structure=struct)
         se = self.lgf.compute_structure_environments(
+                only_indices=[idx],
                 maximum_distance_factor=self.max_dist_fac)
         for ce in self.cetypes:
             try:
