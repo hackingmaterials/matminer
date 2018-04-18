@@ -478,9 +478,6 @@ class PlotlyFig:
         showscale = [False] * len(data)
         colors_list = []
         colorbar = None
-        # for developers: if colorbar gets set in the following, it is a list
-        # of numbers that is used for marker colors for those traces where an
-        # explicit string color is not specified
         if colors is not None:
             if isinstance(colors, str):
                 colors = self._data_from_str(colors, is_color=True)
@@ -490,15 +487,17 @@ class PlotlyFig:
             if len(list(colors)) == len(data) and any([isinstance(c, str) for c in colors]):
                 for itrace, color in enumerate(colors):
                     trace_color = self._data_from_str(color, is_color=True)
-
-                    if not isinstance(trace_color, str) and \
-                            len(trace_color) == len(data[0][0]) and \
+                    if not isinstance(trace_color, (str, int, float)) and \
+                            len(trace_color) == len(data[itrace][0]) and \
                             not any([isinstance(c, str) for c in trace_color]):
                         colorbar = trace_color
                         showscale[itrace] = True
-                        colors_list.append(None)
+                        colors_list.append(trace_color)
                     else:
                         colors_list.append(trace_color)
+            elif not any([isinstance(c, str) for c in colorbar]):
+                showscale[0] = True # in this case all traces use one colorbar
+
             if not isinstance(colorbar, (list, np.ndarray, pd.Series)):
                 raise ValueError('"colors" must be a dataframe column name, '
                                  'list, np.ndarray or pd.Series')
@@ -506,14 +505,15 @@ class PlotlyFig:
                 colorbar = pd.Series(colorbar)
                 colorbar[colorbar < color_range[0]] = color_range[0]
                 colorbar[colorbar > color_range[1]] = color_range[1]
+
         if not isinstance(labels, list):
             labels = self._data_from_str(labels)
             labels = [labels] * len(data)
         else:
             labels = [self._data_from_str(l) for l in labels]
-        markers = markers or [{'symbol': 'circle', 'line': {'width': 1,
-                                                            'color': 'black'}}
-                              for _ in data]
+        markers = markers or [{'symbol': 'circle',
+                               'line': {'width': 1,'color': 'black'}
+                               } for _ in data]
         if isinstance(markers, dict):
             markers = [markers.copy() for _ in data]
 
@@ -592,11 +592,12 @@ class PlotlyFig:
                                      'visible': True}
 
         fig = {'data': traces, 'layout': layout}
-        if showscale:
+        if any([show for show in showscale]):
             fig['layout']['legend']['x'] = 0.1
             fig['layout']['legend']['y'] = 1.1
             fig['layout']['legend']['orientation'] = 'h'
         return self.create_plot(fig, return_plot)
+
 
     def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
                        labels=None, marker_scale=1.0, return_plot=False,
