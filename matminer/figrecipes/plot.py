@@ -339,7 +339,7 @@ class PlotlyFig:
 
         self.plot_counter += 1
 
-    def data_from_col(self, col, data=None):
+    def _data_from_str(self, col, data=None, is_color=False):
         """
         Try to get data based on column name in dataframe and return
         informative error if failed.
@@ -347,15 +347,17 @@ class PlotlyFig:
         Args:
             col (str): column name to look for
             data (pandas.DataFrame): if dataframe try to get col column from it
-
+            is_color (bool): whether col could be used as a color in plotly
         Returns (pd.Series or col itself):
         """
         if isinstance(col, str):
             try:
                 return data[col]
             except (KeyError, TypeError):
-                if col in self.df:
+                if self.df is not None and col in self.df:
                     return self.df[col]
+                elif is_color:
+                    return col
                 else:
                     raise ValueError('"{}" not in the data!'.format(col))
         else:
@@ -654,9 +656,9 @@ class PlotlyFig:
             data = pd.DataFrame(data, columns=cols)
 
         data = data.select_dtypes(include=['float', 'int', 'bool'])
-        labels = self.data_from_col(labels, data)
+        labels = self._data_from_str(labels, data)
         if self.colorbar_title == 'auto':
-            colors_ = self.data_from_col(colors, data)
+            colors_ = self._data_from_str(colors, data)
             colorbar_title = pd.Series(colors_).name
         else:
             colorbar_title = self.colorbar_title
@@ -1139,7 +1141,7 @@ class PlotlyFig:
         if colors is None:
             colors = 'blue'
         else:
-            colors = self.data_from_col(colors, data)
+            colors = self._data_from_str(colors, data)
         if self.colorbar_title == 'auto':
             colorbar_title = pd.Series(colors).name
         else:
