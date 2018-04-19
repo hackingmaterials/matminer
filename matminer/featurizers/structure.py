@@ -16,6 +16,7 @@ from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import VoronoiNN
+from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import pymatgen.analysis.local_env as pmg_le
@@ -44,8 +45,9 @@ class DensityFeatures(BaseFeaturizer):
 
     def __init__(self, desired_features=None):
         """
-
-        :param desired_features: [str] - choose from "density", "vpa", "packing fraction"
+        Args:
+            desired_features: [str] - choose from "density", "vpa",
+                "packing fraction"
         """
         self.features = ["density", "vpa", "packing fraction"] if not \
             desired_features else desired_features
@@ -133,6 +135,41 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
 
     def citations(self):
         return []
+
+    def implementors(self):
+        return ["Anubhav Jain"]
+
+
+class Dimensionality(BaseFeaturizer):
+    """
+    Returns dimensionality of structure: 1 means linear chains of atoms OR
+    isolated atoms/no bonds, 2 means layered, 3 means 3D connected
+    structure. This feature is sensitive to bond length tables that you use.
+    """
+
+    def __init__(self, **kwargs):
+        """
+
+        Args:
+            **kwargs: keyword args to pass to get_dimensionality() method of
+                pymatgen.
+        """
+        self.kwargs = kwargs
+
+    def featurize(self, s):
+        return [get_dimensionality(s, **self.kwargs)]
+
+    def feature_labels(self):
+        return ["dimensionality"]
+
+    def citations(self):
+        return ["@article{Gorai2016a, "
+                "author = {Gorai, Prashun and Toberer, Eric and Stevanovic, "
+                "Vladan}, doi = {10.1039/C6TA04121C}, issn = {2050-7488}, "
+                "journal = {J. Mater. Chem. A}, number = {12},pages = {4136}, "
+                "title = {{Computational Identification of Promising "
+                "Thermoelectric Materials Among Known Quasi-2D Binary "
+                "Compounds}}, volume = {2}, year = {2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain"]

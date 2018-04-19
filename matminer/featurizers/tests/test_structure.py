@@ -11,6 +11,7 @@ import pandas as pd
 from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure, Lattice, Molecule
+from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import ElementProperty
@@ -20,7 +21,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
-    MaximumPackingEfficiency, ChemicalOrdering, StructureComposition
+    MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
+    Dimensionality
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -74,6 +76,15 @@ class StructureFeaturesTest(PymatgenTest):
     def test_global_symmetry(self):
         gsf = GlobalSymmetryFeatures()
         self.assertEqual(gsf.featurize(self.diamond), [227, "cubic", 1, True])
+
+    def test_dimensionality(self):
+        cscl = PymatgenTest.get_structure("CsCl")
+
+        df = Dimensionality(bonds={("Cs", "Cl"): 3.5})
+        self.assertEqual(df.featurize(cscl)[0], 1)
+
+        df = Dimensionality(bonds={("Cs", "Cl"): 3.7})
+        self.assertEqual(df.featurize(cscl)[0], 3)
 
     def test_rdf_and_peaks(self):
         ## Test diamond
