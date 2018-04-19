@@ -121,7 +121,7 @@ class DopingFermi(BaseFeaturizer):
                 on eref, it (eref) will be explicitly returned as a feature
         """
         self.dopings = dopings or [-1e20, 1e20]
-        self.eref = eref or 0.0
+        self.eref = eref
         self.T = T
         self.return_eref = return_eref
         self.BC = BandCenter()
