@@ -396,7 +396,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
     parameter. Note that we can include only factor (ii) using the "wt" order
     parameter which is always set to 1. Also note that the cation-anion flag
     works only if the structures are oxidation-state decorated (e.g., use
-    pymatgen's BVAnalyzer).
+    pymatgen's BVAnalyzer or matminer's structure_to_oxidstructure()).
     """
 
     @staticmethod
