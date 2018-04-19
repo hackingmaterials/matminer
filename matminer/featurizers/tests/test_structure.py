@@ -11,7 +11,6 @@ import pandas as pd
 from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure, Lattice, Molecule
-from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import ElementProperty
