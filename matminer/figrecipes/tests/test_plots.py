@@ -42,6 +42,9 @@ def refresh_json(open_plots=False):
     pf = PlotlyFig(**pfkwargs)
     xys = pf.xy([(a, b)], return_plot=True)
     xym = pf.xy([(a, b), (b, a)], return_plot=True)
+    xy_colors = pf.xy([(a, b), (a, c), (c, c)],
+                    modes=['markers', 'markers+lines', 'lines'],
+                    colors=[c, 'red', 'blue'], return_plot=True)
     hmb = pf.heatmap_basic([a, b, c], xlabels, ylabels, return_plot=True)
     his = pf.histogram(a + b + c, n_bins=5, return_plot=True)
     bar = pf.bar(x=a, y=b, labels=xlabels, return_plot=True)
@@ -52,7 +55,8 @@ def refresh_json(open_plots=False):
     vio = pf.violin([a, b, c, b, a, c, b], cols=xlabels, return_plot=True)
     scm = pf.scatter_matrix([a, b, c], return_plot=True)
 
-    fnamedict = {"xys": xys, "xym": xym, "hmb": hmb, "his": his, "bar": bar,
+    fnamedict = {"xys": xys, "xym": xym, "xy_colors":xy_colors,
+                 "hmb": hmb, "his": his, "bar": bar,
                  "pcp": pcp, "vio": vio, "scm": scm}
 
     for fname, obj in fnamedict.items():
@@ -88,7 +92,12 @@ class PlotlyFigTest(PymatgenTest):
         xym_true = self.fopen("template_xym.json")
         self.assertTrue(xym_test == xym_true)
 
-    #
+        xy_colors_test = self.pf.xy([(a, b), (a, c), (c, c)],
+                      modes=['markers', 'markers+lines', 'lines'],
+                      colors=[c, 'red', 'blue'], return_plot=True)
+        xy_colors_true = self.fopen("template_xy_colors.json")
+        self.assertTrue(xy_colors_test == xy_colors_true)
+
     def test_heatmap_basic(self):
         hmb_test = self.pf.heatmap_basic([a, b, c], xlabels, ylabels,
                                          return_plot=True)

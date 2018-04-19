@@ -339,7 +339,7 @@ class PlotlyFig:
 
         self.plot_counter += 1
 
-    def data_from_col(self, col, data=None):
+    def _data_from_str(self, col, data=None, is_color=False):
         """
         Try to get data based on column name in dataframe and return
         informative error if failed.
@@ -347,15 +347,17 @@ class PlotlyFig:
         Args:
             col (str): column name to look for
             data (pandas.DataFrame): if dataframe try to get col column from it
-
+            is_color (bool): whether col could be used as a color in plotly
         Returns (pd.Series or col itself):
         """
         if isinstance(col, str):
             try:
                 return data[col]
             except (KeyError, TypeError):
-                if col in self.df:
+                if self.df is not None and col in self.df:
                     return self.df[col]
+                elif is_color:
+                    return col
                 else:
                     raise ValueError('"{}" not in the data!'.format(col))
         else:
@@ -369,19 +371,27 @@ class PlotlyFig:
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
         Args:
-            xy_pairs (tuple or [tuple]): x & y columns of scatter plots
-                with possibly different lengths are extracted from this arg
-                example: ([1, 2], [3, 4])
+            xy_pairs (tuple or [tuple]): each tuple in the list of tuples
+                is a trace on xy scatter plot. Each tuple contains a pair of
+                x & y lists with the same length.
+                example: ([1, 2], [2, 4]) # one trace, one tuple
+                example: [([1,2,3], [2,4,6]), ([1,3], [2.5,5.5])] # 2 traces
                 example: [(df['x1'], df['y1']), (df['x2'], df['y2'])]
-                example: [('x1', 'y1'), ('x2', 'y2')]
-            colors (list or np.ndarray or pd.Series): set the colorscale for
+                example: [('x1', 'y1'), ('x2', 'y2'), ('x1', 'y2')] # 3 traces
+            colors (list or np.ndarray or pd.Series): set the colors for traces
+                It can also be used to set the colors of the markers shown in
                 the colorbar (list of numbers); overwrites marker['color'] and
                 will override colorscales if trace colors are specified as
                 strings.
+                example: "red" # all traces and lines will be red
+                example: 'GDP' or df['GDP'] # colorscale based on GDP (if
+                    available in self.df or df respectively)
+                example: ["green", "GDP"] # trace 1 is green and the markers of
+                    trace 2 are colored based on GDP
             color_range ([min, max]): the range of numbers included in colorbar.
                 if any number is outside of this range, it will be forced to
-                either one. Note that if colorcol_range is set, the colorbar ticks
-                will be updated to reflext -min or max+ at the two ends.
+                either one. Note that if colorcol_range is set, the colorbar
+                ticks will be updated to reflect -min or max+ at the two ends.
             labels (list or [list]): to individually set annotation for scatter
                 point either the same for all traces or can be set for each
             limits (dict): The x and y limits defining the ranges the plot will
@@ -427,18 +437,18 @@ class PlotlyFig:
         if sizes is None:
             sizes = [10 * marker_scale] * len(xy_pairs)
         elif isinstance(sizes, str):
-            sizes = [self.data_from_col(sizes)] * len(xy_pairs)
+            sizes = [self._data_from_str(sizes)] * len(xy_pairs)
         else:
             if len(sizes) != len(xy_pairs):
                 raise ValueError(
                     '"sizes" must be the same length as "xy_pairs"')
             for i, _ in enumerate(sizes):
-                sizes[i] = self.data_from_col(sizes[i])
+                sizes[i] = self._data_from_str(sizes[i])
 
         if error_bars is not None:
             if isinstance(error_bars, str):
                 error_bars = [error_bars] * len(xy_pairs)
-            error_bars = [self.data_from_col(ebar) for ebar in error_bars]
+            error_bars = [self._data_from_str(ebar) for ebar in error_bars]
             if len(error_bars) != len(xy_pairs):
                 raise ValueError(
                     '"error_bars" must be the same length as "xy_pairs"')
@@ -455,23 +465,10 @@ class PlotlyFig:
         if len(modes) != len(xy_pairs):
             raise ValueError('"modes" and "xy_pairs" have different lengths!')
 
-        if colors is None:
-            showscale = False
-            colorbar = None
-        else:
-            showscale = True
-            colorbar = self.data_from_col(colors)
-            if not isinstance(colorbar, (list, np.ndarray, pd.Series)):
-                raise ValueError('"colorbar" must be a dataframe column name, '
-                                 'list, np.ndarray or pd.Series')
-            if color_range:
-                colorbar = pd.Series(colorbar)
-                colorbar[colorbar < color_range[0]] = color_range[0]
-                colorbar[colorbar > color_range[1]] = color_range[1]
         data = []
         for pair in xy_pairs:
-            data.append((self.data_from_col(pair[0]),
-                         self.data_from_col(pair[1])))
+            data.append((self._data_from_str(pair[0]),
+                         self._data_from_str(pair[1])))
             if isinstance(pair[1], str):
                 names.append(pair[1])
             else:
@@ -480,14 +477,45 @@ class PlotlyFig:
                 except AttributeError:
                     names.append(None)
 
+        showscale = [False] * len(data)
+        colors_list = []
+        colorbar = None
+        if colors is not None:
+            if isinstance(colors, str):
+                colors = self._data_from_str(colors, is_color=True)
+            if isinstance(colors, str):
+                colors = [colors] * len(data)
+            colorbar = colors
+            if len(list(colors)) == len(data) and any([isinstance(c, str) for c in colors]):
+                for itrace, color in enumerate(colors):
+                    trace_color = self._data_from_str(color, is_color=True)
+                    if not isinstance(trace_color, (str, int, float)) and \
+                            len(trace_color) == len(data[itrace][0]) and \
+                            not any([isinstance(c, str) for c in trace_color]):
+                        colorbar = trace_color
+                        showscale[itrace] = True
+                        colors_list.append(trace_color)
+                    else:
+                        colors_list.append(trace_color)
+            elif not any([isinstance(c, str) for c in colorbar]):
+                showscale[0] = True # in this case all traces use one colorbar
+
+            if not isinstance(colorbar, (list, np.ndarray, pd.Series)):
+                raise ValueError('"colors" must be a dataframe column name, '
+                                 'list, np.ndarray or pd.Series')
+            if color_range:
+                colorbar = pd.Series(colorbar)
+                colorbar[colorbar < color_range[0]] = color_range[0]
+                colorbar[colorbar > color_range[1]] = color_range[1]
+
         if not isinstance(labels, list):
-            labels = self.data_from_col(labels)
+            labels = self._data_from_str(labels)
             labels = [labels] * len(data)
         else:
-            labels = [self.data_from_col(l) for l in labels]
-        markers = markers or [{'symbol': 'circle', 'line': {'width': 1,
-                                                            'color': 'black'}}
-                              for _ in data]
+            labels = [self._data_from_str(l) for l in labels]
+        markers = markers or [{'symbol': 'circle',
+                               'line': {'width': 1,'color': 'black'}
+                               } for _ in data]
         if isinstance(markers, dict):
             markers = [markers.copy() for _ in data]
 
@@ -497,15 +525,15 @@ class PlotlyFig:
             colorbar_title = self.colorbar_title
 
         for im, _ in enumerate(markers):
-            markers[im]['showscale'] = showscale
+            markers[im]['showscale'] = showscale[im]
             if markers[im].get('size', None) is None:
                 markers[im]['size'] = sizes[im]
             else:
-                raise ValueError(
-                    '"size" must not be set in markers, use sizes argument instead')
+                raise ValueError('"size" must not be set in markers, '
+                                 'use sizes argument instead')
             if colorbar is not None:
-                if isinstance(colorbar[0], str):
-                    markers[im]['color'] = colorbar[im]
+                if len(colors_list) > 0 and isinstance(colors_list[im], str):
+                    markers[im]['color'] = colors_list[im]
                 else:
                     markers[im]['color'] = colorbar
                 fontd = {'family': self.font_style['family'],
@@ -530,8 +558,6 @@ class PlotlyFig:
             lines = []
             for i, _ in enumerate(data):
                 linedict = {'dash': 'solid', 'width': 2}
-                if colors:
-                    linedict['color'] = colors[i]
                 lines.append(linedict)
 
         if isinstance(lines, dict):
@@ -568,9 +594,12 @@ class PlotlyFig:
                                      'visible': True}
 
         fig = {'data': traces, 'layout': layout}
-        if showscale:
-            fig['layout']['legend']['x'] = 0.9
+        if any([show for show in showscale]):
+            fig['layout']['legend']['x'] = 0.1
+            fig['layout']['legend']['y'] = 1.1
+            fig['layout']['legend']['orientation'] = 'h'
         return self.create_plot(fig, return_plot)
+
 
     def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
                        labels=None, marker_scale=1.0, return_plot=False,
@@ -627,9 +656,9 @@ class PlotlyFig:
             data = pd.DataFrame(data, columns=cols)
 
         data = data.select_dtypes(include=['float', 'int', 'bool'])
-        labels = self.data_from_col(labels, data)
+        labels = self._data_from_str(labels, data)
         if self.colorbar_title == 'auto':
-            colors_ = self.data_from_col(colors, data)
+            colors_ = self._data_from_str(colors, data)
             colorbar_title = pd.Series(colors_).name
         else:
             colorbar_title = self.colorbar_title
@@ -1112,7 +1141,7 @@ class PlotlyFig:
         if colors is None:
             colors = 'blue'
         else:
-            colors = self.data_from_col(colors, data)
+            colors = self._data_from_str(colors, data)
         if self.colorbar_title == 'auto':
             colorbar_title = pd.Series(colors).name
         else:
