@@ -507,7 +507,9 @@ class CrystalSiteFingerprint(BaseFeaturizer):
     two quantities: (i) the value of the order parameter itself and (ii) a factor
     that describes how consistent the number of neighbors is with that order
     parameter. Note that we can include only factor (ii) using the "wt" order
-    parameter which is always set to 1.
+    parameter which is always set to 1. Also note that the cation-anion flag
+    works only if the structures are oxidation-state decorated (e.g., use
+    pymatgen's BVAnalyzer or matminer's structure_to_oxidstructure()).
     """
 
     @staticmethod
