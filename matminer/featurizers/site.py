@@ -36,7 +36,7 @@ from scipy.spatial import Voronoi, Delaunay
 from pymatgen import Structure
 from pymatgen.core.periodic_table import Element
 from pymatgen.analysis.local_env import LocalStructOrderParams, \
-    VoronoiNN, CrystalNN
+    VoronoiNN
 import pymatgen.analysis
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
