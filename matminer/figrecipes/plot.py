@@ -1281,7 +1281,7 @@ class PlotlyFig:
 
     def heatmap_df(self, data=None, cols=None, x_labels=None, x_nqs=6,
                    y_labels=None, y_nqs=4, precision=1, annotation='count',
-                   annotation_color='black', colorscale=None,
+                   annotation_color='black', colorscale=None, color_range=None,
                    return_plot=False):
         """
         A heatmap which can accept a dataframe as input directly.
@@ -1305,13 +1305,16 @@ class PlotlyFig:
                 "value": the actual value of the cell in addition to colorbar
             annotation_color (str): the color of annotation (text inside cells)
             colorscale: see the __init__ doc for colorscale
+            color_range ([min, max]): the range of numbers included in colorbar.
+                if any number is outside of this range, it will be forced to
+                either one. Note that if colorcol_range is set, the colorbar
+                ticks will be updated to reflect -min or max+ at the two ends.
             return_plot (bool): Returns the dictionary representation of the
                 figure if True. If False, prints according to self.mode (set
                 with mode in __init__).
 
         Returns: A Plotly heatmap plot Figure object.
         """
-
         if data is None:
             if self.df is None:
                 raise ValueError("heatmap_df requires dataframe input.")
@@ -1322,7 +1325,6 @@ class PlotlyFig:
         elif not isinstance(data, pd.DataFrame):
             raise ValueError('"heatmap_df" only supports dataframes with '
                              'numerical columns. Please use heatmap instead.')
-
         cols = data.columns.values
         x_prop = cols[0]
         y_prop = cols[1]
@@ -1401,7 +1403,13 @@ class PlotlyFig:
             colorbar_title = col_prop
         else:
             colorbar_title = self.colorbar_title
-        trace = go.Heatmap(z=data_, x=x_labels, y=y_labels,
+
+        zmin = None
+        zmax = None
+        if color_range is not None:
+            zmin = color_range[0]
+            zmax = color_range[1]
+        trace = go.Heatmap(z=data_, x=x_labels, y=y_labels, zmin=zmin, zmax=zmax,
                            colorscale=colorscale or self.colorscale, colorbar={
                 'title': colorbar_title, 'titleside': 'right',
                 'tickfont': {'size': 0.75 * self.ticksize,
