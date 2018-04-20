@@ -1421,7 +1421,7 @@ class PlotlyFig:
         if not layout['xaxis'].get('title'):
             warnings.warn('xaxis title was automatically set to x_prop value')
             layout['xaxis']['title'] = x_prop
-        if not layout['yaxis'].get('xaxis'):
+        if not layout['yaxis'].get('title'):
             warnings.warn('yaxis title was automatically set to y_prop value')
             layout['yaxis']['title'] = y_prop
         layout['annotations'] = annotations
