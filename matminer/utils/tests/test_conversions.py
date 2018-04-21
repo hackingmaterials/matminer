@@ -5,10 +5,12 @@ from pandas import DataFrame
 
 import json
 
+from pymatgen.core.structure import IStructure
+
 from matminer.utils.conversions import dict_to_object, \
     structure_to_oxidstructure, \
     str_to_composition, json_to_object, structure_to_composition, \
-    composition_to_oxidcomposition
+    composition_to_oxidcomposition, structure_to_istructure
 from pymatgen import Composition, Lattice, Structure, Element
 
 
@@ -94,3 +96,16 @@ class TestConversions(TestCase):
         df = DataFrame(data={"composition": [Composition("Fe2O3")]})
         df["composition_oxid"] = composition_to_oxidcomposition(df["composition"])
         self.assertEqual(df["composition_oxid"].tolist()[0], Composition({"Fe3+": 2, "O2-":3}))
+
+    def test_to_istructure(self):
+        cscl = Structure(Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
+            ["Cl", "Cs"], [[0.45, 0.5, 0.5], [0, 0, 0]])
+        df = DataFrame({"structure": [cscl]})
+
+        # Run the conversion
+        df["istructure"] = structure_to_istructure(df["structure"])
+
+        # Make sure the new structure is an IStructure, and equal
+        #  to the original structure
+        self.assertIsInstance(df["istructure"][0], IStructure)
+        self.assertEqual(df["istructure"][0], df["structure"][0])

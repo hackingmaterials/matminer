@@ -1,9 +1,9 @@
-"""Provides utlity functions for caching the results of expensive operations,
+"""Provides utility functions for caching the results of expensive operations,
 such as determining the nearest neighbors of atoms in a structure"""
 
 from functools import lru_cache
 
-from pymatgen.core.structure import IStructure
+from pymatgen.core.structure import IStructure, Structure
 
 
 def get_nearest_neighbors(method, structure, site_idx):
@@ -28,8 +28,12 @@ def get_all_nearest_neighbors(method, structure):
     Returns:
         Output of `method.get_all_nn_info(structure)`
     """
-    # pymatgen does not hash Structure objects, so I have to convert to IStructure
-    return _get_all_nearest_neighbors(method, IStructure.from_sites(structure))
+
+    # pymatgen does not hash Structure objects, so we need
+    #  to convert from Structure to the immutatble IStructure method
+    if isinstance(structure, Structure):
+        structure = IStructure.from_sites(structure)
+    return _get_all_nearest_neighbors(method, structure)
 
 
 @lru_cache(maxsize=1)
