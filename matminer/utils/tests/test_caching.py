@@ -1,10 +1,10 @@
-from pymatgen.analysis.local_env import VoronoiNN
-
 from matminer.utils.caching import get_nearest_neighbors, _get_all_nearest_neighbors
 
+from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.core.lattice import Lattice
 from pymatgen.util.testing import PymatgenTest
 from pymatgen.core import Structure
+
 
 class TestCaching(PymatgenTest):
 
@@ -14,6 +14,9 @@ class TestCaching(PymatgenTest):
                                                        [0.365, 0.258, 0.632]],
             validate_proximity=False,
             to_unit_cell=False, coords_are_cartesian=True)
+
+        # Reset the cache
+        _get_all_nearest_neighbors.cache_clear()
 
         # Compute the nearest neighbors
         method = VoronoiNN()

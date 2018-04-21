@@ -52,7 +52,7 @@ def structure_to_istructure(series):
         a pd.Series with the structures converted to IStructure
     """
 
-    return series.map(lambda x: IStructure.from_sites(x))
+    return series.map(IStructure.from_sites)
 
 
 def dict_to_object(series):
