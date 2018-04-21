@@ -41,9 +41,10 @@ class TestCaching(PymatgenTest):
         self.assertEquals(2, _get_all_nearest_neighbors.cache_info().misses)
         self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
 
-        # Perturb the structure, make sure it induces a miss
+        # Perturb the structure, make sure it induces a miss and
+        #  a change in the NN weights
         x.perturb(0.1)
-        get_nearest_neighbors(method, x, 0)
+        nn_2 = get_nearest_neighbors(method, x, 0)
+        self.assertNotAlmostEqual(nn_1[0]['weight'], nn_2[0]['weight'])
         self.assertEquals(3, _get_all_nearest_neighbors.cache_info().misses)
         self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
-
