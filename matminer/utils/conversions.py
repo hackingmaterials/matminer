@@ -4,6 +4,7 @@ from monty.json import MontyDecoder
 from pandas import Series
 
 from pymatgen import Composition
+from pymatgen.core.structure import IStructure
 
 
 def str_to_composition(series, reduce=False):
@@ -38,6 +39,20 @@ def structure_to_composition(series, reduce=False):
         return series.map(lambda x: x.composition.reduced_composition)
 
     return series.map(lambda x: x.composition)
+
+
+def structure_to_istructure(series):
+    """Convert a pymatgen Structure to an immutable IStructure object
+
+    Useful if you are using features that employ caching
+
+    Args:
+        series (pd.Series): Series with pymatgen.Structure objects
+    Returns:
+        a pd.Series with the structures converted to IStructure
+    """
+
+    return series.map(IStructure.from_sites)
 
 
 def dict_to_object(series):
