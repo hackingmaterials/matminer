@@ -2,6 +2,8 @@ from __future__ import division
 
 from matminer.utils.data import MagpieData
 
+from matminer.utils.caching import get_nearest_neighbors
+
 """
 Features that describe the local environment of a single atom. Note that
 structural features can be constructed from a combination of site features from
@@ -610,7 +612,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         # Use a Voronoi tessellation to identify neighbors of this site
         vnn = VoronoiNN(cutoff=self.cutoff_radius,
                         targets=target)
-        n_w = vnn.get_nn_info(struct, idx)
+        n_w = get_nearest_neighbors(vnn, struct, idx)
 
         # Convert nn info to just a dict of neighbor -> weight
         n_w = dict((x['site'], x['weight']) for x in n_w)
@@ -789,7 +791,7 @@ class VoronoiFingerprint(BaseFeaturizer):
                 -Voronoi area statistics
         """
         # Get the nearest neighbors using a Voronoi tessellation
-        n_w = VoronoiNN(cutoff=self.cutoff).get_nn_info(struct, idx)
+        n_w = get_nearest_neighbors(VoronoiNN(cutoff=self.cutoff), struct, idx)
 
         # Prepare storage for the Voronoi indicies
         voro_idx_list = np.zeros(8, int)
@@ -1468,7 +1470,7 @@ class CoordinationNumber(BaseFeaturizer):
             return [self.nn.get_cn(struct, idx, use_weights=True)]
         elif self.use_weights == 'effective':
             # TODO: Should this weighting code go in pymatgen? I'm not sure if it even necessary to distinguish it from the 'sum' method -lw
-            nns = self.nn.get_nn_info(struct, idx)
+            nns = get_nearest_neighbors(self.nn, struct, idx)
             weights = [n['weight'] for n in nns]
             return [np.sum(weights) ** 2 / np.sum(np.power(weights, 2))]
         else:
@@ -1925,7 +1927,7 @@ class LocalPropertyDifference(BaseFeaturizer):
         my_site = strc[idx]
 
         # Get the tessellation of a site
-        nn = VoronoiNN(weight=self.weight).get_nn_info(strc, idx)
+        nn = get_nearest_neighbors(VoronoiNN(weight=self.weight), strc, idx)
 
         # Get the element and weight of each site
         elems = [n['site'].specie for n in nn]
@@ -1961,4 +1963,3 @@ class LocalPropertyDifference(BaseFeaturizer):
 
     def implementors(self):
         return ['Logan Ward']
-
