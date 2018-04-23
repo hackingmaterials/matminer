@@ -338,7 +338,7 @@ class MultipleFeaturizer(BaseFeaturizer):
         self.featurizers = featurizers
 
     def featurize(self, *x):
-        return np.hstack(f.featurize(*x) for f in self.featurizers)
+        return np.hstack(np.squeeze(f.featurize(*x)) for f in self.featurizers)
 
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])

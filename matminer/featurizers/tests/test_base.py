@@ -115,6 +115,37 @@ class TestBaseClass(PymatgenTest):
         self.assertArrayAlmostEqual(data['w'], [0, 1, 2])
         self.assertArrayAlmostEqual(data['z'], [3, 4, 5])
 
+    def test_multifeatures(self):
+        # Make a test dataset with two input variables
+        data = self.make_test_data()
+        data['x2'] = [4, 5, 6]
+
+        # Create a second featurizer
+        class MultiArgs2(SingleFeaturizerMultiArgs):
+            def featurize(self, *x):
+                # Making a 2D array to test whether MutliFeaturizer
+                #  can handle featurizers that have both 1D vectors with
+                #  singleton dimensions (e.g., shape==(4,1)) and those
+                #  without (e.g., shape==(4,))
+                return [super(MultiArgs2, self).featurize(*x)]
+
+            def feature_labels(self):
+                return ['y2']
+        multiargs2 = MultiArgs2()
+
+        # Create featurizer
+        multi_f = MultipleFeaturizer([self.multiargs, multiargs2])
+        multi_f.set_n_jobs(1)
+
+        # Test featurize with multiple arguments
+        features = multi_f.featurize(0, 2)
+        self.assertArrayAlmostEqual([2, 2], features)
+
+        # Test dataframe
+        data = multi_f.featurize_dataframe(data, ['x', 'x2'])
+        self.assertEquals(['y', 'y2'], multi_f.feature_labels())
+        self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]], data[['y', 'y2']])
+
     def test_featurize_many(self):
 
         # Single argument
