@@ -1816,7 +1816,7 @@ class AngularFourierSeries(BaseFeaturizer):
 
     @staticmethod
     def from_preset(preset, width=0.5, spacing=0.5, cutoff=10):
-        '''
+        """
         Preset bin functionals for this featurizer. Example use:
             >>> AFS = AngularFourierSeries.from_preset('gaussian')
             >>> AFS.featurize(struct, idx)
@@ -1826,7 +1826,7 @@ class AngularFourierSeries(BaseFeaturizer):
             width (float): bin width. std dev for gaussian, width for histogram
             spacing (float): the spacing between bin centers
             cutoff (float): maximum distance to look for neighbors
-        '''
+        """
 
         if preset == "gaussian":
             bins = []
