@@ -98,9 +98,8 @@ class OxidationStateDependentData(AbstractData):
 
 
 class CohesiveEnergyData(AbstractData):
-    """Get the cohesive energy of an element.
-
-    TODO: Where is this data from? -wardlt
+    """
+    Get the cohesive energy of an element.
     """
 
     def __init__(self):

@@ -938,9 +938,7 @@ class CohesiveEnergy(BaseFeaturizer):
         return ["Saurabh Bajaj", "Anubhav Jain"]
 
     def citations(self):
-        # TODO: @sbajaj unclear whether cohesive energies are taken from first ref, second ref, or combination of both
-        return [
-            "@misc{ url = {http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html}}"]
+        return ["@misc{ url = {http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html}}"]
 
 
 class Miedema(BaseFeaturizer):
