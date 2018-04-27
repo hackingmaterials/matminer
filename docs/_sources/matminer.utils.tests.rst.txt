@@ -4,6 +4,14 @@ matminer.utils.tests package
 Submodules
 ----------
 
+matminer.utils.tests.test\_caching module
+-----------------------------------------
+
+.. automodule:: matminer.utils.tests.test_caching
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer.utils.tests.test\_conversions module
 ---------------------------------------------
 

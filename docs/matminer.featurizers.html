@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.3.0 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.3.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -2641,9 +2641,9 @@ idx (int): index of target site in structure.</div></blockquote>
 <dd><p>Identify elements to be included in the following featurization,
 by intersecting the elements present in the passed structures with
 those explicitly included (or excluded) in __init__. Only elements
-in the <a href="#id27"><span class="problematic" id="id28">self.el_list_</span></a> will be featurized.
+in the <a href="#id33"><span class="problematic" id="id34">self.el_list_</span></a> will be featurized.
 Besides, compositions of the passed structures will also be “stored”
-in a dict of <a href="#id29"><span class="problematic" id="id30">self.el_amt_dict_</span></a>, avoiding repeated calculation of
+in a dict of <a href="#id35"><span class="problematic" id="id36">self.el_amt_dict_</span></a>, avoiding repeated calculation of
 composition when featurizing multiple sites in the same structure.
 Args:</p>
 <blockquote>
@@ -2828,6 +2828,94 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dd></dl>
 
 <dl class="class">
+<dt id="matminer.featurizers.site.CrystalNNFingerprint">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">CrystalNNFingerprint</code><span class="sig-paren">(</span><em>op_types</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>This is intended to be a successor to CrystalSiteFingerprint, currently
+undergoing testing.</p>
+<dl class="method">
+<dt id="matminer.featurizers.site.CrystalNNFingerprint.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>op_types</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the CrystalSiteFingerprint. Use the from_preset() function to
+use default params.
+Args:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>op_types (dict): a dict of coordination number (int) to a list of str</dt>
+<dd>representing the order parameter types</dd>
+</dl>
+<p><a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CrystalNNFingerprint.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CrystalNNFingerprint.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CrystalNNFingerprint.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>struct</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get crystal fingerprint of site with given index in input
+structure.
+Args:</p>
+<blockquote>
+<div>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>list of weighted order parameters of target site.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.featurizers.site.CrystalNNFingerprint.from_preset">
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use preset parameters to get the fingerprint
+Args:</p>
+<blockquote>
+<div>preset (str): name of preset (“cn” or “ops”)
+<a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs: other settings to be passed into CrystalNN class</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.CrystalNNFingerprint.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="matminer.featurizers.site.CrystalSiteFingerprint">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">CrystalSiteFingerprint</code><span class="sig-paren">(</span><em>optypes</em>, <em>override_cn1=True</em>, <em>cutoff_radius=8</em>, <em>tol=0.01</em>, <em>cation_anion=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalSiteFingerprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
@@ -2837,7 +2925,9 @@ the value of various order parameters for the site; each value is the product
 two quantities: (i) the value of the order parameter itself and (ii) a factor
 that describes how consistent the number of neighbors is with that order
 parameter. Note that we can include only factor (ii) using the “wt” order
-parameter which is always set to 1.</p>
+parameter which is always set to 1. Also note that the cation-anion flag
+works only if the structures are oxidation-state decorated (e.g., use
+pymatgen’s BVAnalyzer or matminer’s structure_to_oxidstructure()).</p>
 <dl class="method">
 <dt id="matminer.featurizers.site.CrystalSiteFingerprint.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>optypes</em>, <em>override_cn1=True</em>, <em>cutoff_radius=8</em>, <em>tol=0.01</em>, <em>cation_anion=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
@@ -3325,10 +3415,10 @@ neighbors of the site, and assigns each neighbor (<img class="math" src="_images
 weight (<img class="math" src="_images/math/59dc9a44d175aae008c18691b9f662270e36ef5d.png" alt="A_n"/>) that corresponds to the area of the facet
 on the tessellation corresponding to that neighbor.
 The local property difference is then computed by
-:math:<a href="#id15"><span class="problematic" id="id16">`</span></a></p>
+:math:<a href="#id19"><span class="problematic" id="id20">`</span></a></p>
 </div></blockquote>
 <dl class="docutils">
-<dt>rac{sum_n {A_n <a href="#id23"><span class="problematic" id="id24">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
+<dt>rac{sum_n {A_n <a href="#id29"><span class="problematic" id="id30">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
 <dd><p class="first">where <img class="math" src="_images/math/99caa835285abdbc99536106ff1d075a870c2650.png" alt="p_n"/> is the property (e.g., atomic number) of a neighbor
 and <img class="math" src="_images/math/2aa528e29c4df6e3a7e44783f02f45e46012b948.png" alt="p_0"/> is the property of a site.</p>
 <dl class="last docutils">
@@ -3720,7 +3810,7 @@ and the mean.</p>
 <dt>Args:</dt>
 <dd>data_lst (list of floats): List of values to be assessed
 weights (list of floats): Weights for each value</dd>
-<dt>Returns: </dt>
+<dt>Returns:</dt>
 <dd>mean absolute deviation</dd>
 </dl>
 </dd></dl>
@@ -3807,7 +3897,7 @@ weights (list of floats): Weights for each value</dd>
 <dt>Args:</dt>
 <dd>data_lst (list of floats): List of values to be assessed
 weights: (ignored)</dd>
-<dt>Returns: </dt>
+<dt>Returns:</dt>
 <dd>maximum value</dd>
 </dl>
 </dd></dl>
@@ -3820,7 +3910,7 @@ weights: (ignored)</dd>
 <dt>Args:</dt>
 <dd>data_lst (list of floats): List of values to be assessed
 weights (list of floats): Weights for each value</dd>
-<dt>Returns: </dt>
+<dt>Returns:</dt>
 <dd>mean value</dd>
 </dl>
 </dd></dl>
@@ -3833,7 +3923,7 @@ weights (list of floats): Weights for each value</dd>
 <dt>Args:</dt>
 <dd>data_lst (list of floats): List of values to be assessed
 weights: (ignored)</dd>
-<dt>Returns: </dt>
+<dt>Returns:</dt>
 <dd>minimum value</dd>
 </dl>
 </dd></dl>
@@ -3849,7 +3939,7 @@ values.</p>
 <dt>Args:</dt>
 <dd>data_lst (list of floats): List of values to be assessed
 weights (list of floats): Weights for each value</dd>
-<dt>Returns: </dt>
+<dt>Returns:</dt>
 <dd>mode</dd>
 </dl>
 </dd></dl>
@@ -3862,7 +3952,7 @@ weights (list of floats): Weights for each value</dd>
 <dt>Args:</dt>
 <dd>data_lst (list of floats): List of values to be assessed
 weights: (ignored)</dd>
-<dt>Returns: </dt>
+<dt>Returns:</dt>
 <dd>range</dd>
 </dl>
 </dd></dl>
@@ -4226,7 +4316,7 @@ structure deviates from random using a Warren-Cowley-like ordering
 parameter. The first step of this calculation is to determine the nearest
 neighbor shells of each site. Then, for each shell a degree of order for
 each type is determined by computing:</p>
-<p>:math:<a href="#id17"><span class="problematic" id="id18">`</span></a>lpha (t,s) = 1 -</p>
+<p>:math:<a href="#id21"><span class="problematic" id="id22">`</span></a>lpha (t,s) = 1 -</p>
 </div></blockquote>
 <p>rac{sum_n w_n delta (t - t_n)}{x_t sum_n w_n}`</p>
 <blockquote>
@@ -4323,7 +4413,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>Generate the Coulomb matrix, M, of the input
 structure (or molecule).  The Coulomb matrix was put forward by
 Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-off-diagonal elements M_ij = Z_i*Z_j/<a href="#id25"><span class="problematic" id="id26">|R_i-R_j|</span></a>
+off-diagonal elements M_ij = Z_i*Z_j/<a href="#id31"><span class="problematic" id="id32">|R_i-R_j|</span></a>
 and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
 the nuclear charge and the position of atom i, respectively.</p>
 <dl class="docutils">
@@ -4412,14 +4502,14 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dl class="method">
 <dt id="matminer.featurizers.structure.DensityFeatures.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>desired_features=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>desired_features</strong> – [str] - choose from “density”, “vpa”, “packing fraction”</td>
-</tr>
-</tbody>
-</table>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>desired_features: [str] - choose from “density”, “vpa”,</dt>
+<dd>“packing fraction”</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4462,6 +4552,81 @@ in any derived featurizer subclass.</p>
 <dl class="method">
 <dt id="matminer.featurizers.structure.DensityFeatures.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.structure.Dimensionality">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">Dimensionality</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Returns dimensionality of structure: 1 means linear chains of atoms OR
+isolated atoms/no bonds, 2 means layered, 3 means 3D connected
+structure. This feature is sensitive to bond length tables that you use.</p>
+<dl class="method">
+<dt id="matminer.featurizers.structure.Dimensionality.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><a href="#id24"><span class="problematic" id="id25">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
+<dd>pymatgen.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.Dimensionality.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.Dimensionality.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.Dimensionality.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.Dimensionality.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -4567,7 +4732,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">EwaldEnergy</code><span class="sig-paren">(</span><em>accuracy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Compute the energy from Coulombic interactions.</p>
-<p>Note: The energy is computed using _charges already defined for the <a href="#id31"><span class="problematic" id="id32">structure_</span></a>.</p>
+<p>Note: The energy is computed using _charges already defined for the <a href="#id37"><span class="problematic" id="id38">structure_</span></a>.</p>
 <dl class="docutils">
 <dt>Features:</dt>
 <dd>ewald_energy - Coulomb interaction energy of the structure</dd>
@@ -5438,7 +5603,7 @@ stats ([str]): list of weighted statistics to compute for each feature.</p>
 <div>If stats is None, for each order parameter, a list is returned
 that contains the calculated parameter for each site in the
 structure.
-<a href="#id20"><span class="problematic" id="id21">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
+<a href="#id26"><span class="problematic" id="id27">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
 <dl class="docutils">
 <dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
 <dd>zero means metals/cations only)</dd>
@@ -5800,7 +5965,7 @@ two input structures (s1 - s2).</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 

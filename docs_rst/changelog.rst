@@ -5,6 +5,14 @@
 matminer Changelog
 ==================
 
+**v0.3.1**
+
+* add caching for featurizers (L. Ward)
+* add CrystalNNFingerprint (A. Jain)
+* some x-y plot updates (A. Faghaninia)
+* speedup to chemenv featurizer (D. Waroquiers)
+* minor code cleanups, bugfixes (A. Dunn, L. Ward, N. Zimmermann, A. Jain)
+
 **v0.3.0**
 
 * add structural heterogeneity features (L. Ward)

@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+matminer.utils.caching module
+-----------------------------
+
+.. automodule:: matminer.utils.caching
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer.utils.conversions module
 ---------------------------------
 
