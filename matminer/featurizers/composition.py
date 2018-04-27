@@ -880,7 +880,8 @@ class TMetalFraction(BaseFeaturizer):
 
 class CohesiveEnergy(BaseFeaturizer):
     """
-    Cohesive energy per atom using elemental cohesive energies and formation energy.
+    Cohesive energy per atom using elemental cohesive energies and
+    formation energy.
 
     Get cohesive energy per atom of a compound by adding known
     elemental cohesive energies from the formation energy of the
@@ -938,7 +939,9 @@ class CohesiveEnergy(BaseFeaturizer):
         return ["Saurabh Bajaj", "Anubhav Jain"]
 
     def citations(self):
-        # TODO: @sbajaj unclear whether cohesive energies are taken from first ref, second ref, or combination of both
+        # Cohesive energy values for the elements are taken from the
+        # Knowledgedoor web site, which obtained those values from Kittel.
+        # We include both citations.
         return [
             "@misc{, title = {{Knowledgedoor Cohesive energy handbook}}, "
             "url = {http://www.knowledgedoor.com/2/elements{\_}handbook/cohesive{\_}energy.html}}",
