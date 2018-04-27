@@ -941,7 +941,7 @@ class CohesiveEnergy(BaseFeaturizer):
         # TODO: @sbajaj unclear whether cohesive energies are taken from first ref, second ref, or combination of both
         return [
             "@misc{, title = {{Knowledgedoor Cohesive energy handbook}}, "
-            "url = {http://www.knowledgedoor.com/2/elements{\_}handbook/cohesive{\_}energy.html}}",
+            "url = {http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html}}",
             "@book{Kittel, author = {Kittel, C}, isbn = {978-0-471-41526-8}, "
             "publisher = {Wiley}, title = {{Introduction to Solid State "
             "Physics, 8th Edition}}, year = {2005}}"]
