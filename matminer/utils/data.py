@@ -100,6 +100,7 @@ class OxidationStateDependentData(AbstractData):
 class CohesiveEnergyData(AbstractData):
     """
     Get the cohesive energy of an element.
+     Ref: KnowledgeDoor at http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html
     """
 
     def __init__(self):
