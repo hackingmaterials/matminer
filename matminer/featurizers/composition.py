@@ -20,6 +20,7 @@ __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.join(module_dir, "..", "utils", "data_files")
 
 
 # Utility operations
@@ -447,8 +448,8 @@ class ElectronegativityDiff(BaseFeaturizer):
         cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
 
         # If there are no cations, raise an Exception
-        #  It is possible to construct a non-charge-balanced Composition, so we have
-        #   to check for both the presence of anions and cations
+        #  It is possible to construct a non-charge-balanced Composition,
+        #    so we have to check for both the presence of anions and cations
         if len(cations) == 0:
             raise Exception('Features not applicable: Compound contains no cations')
 
@@ -1010,8 +1011,6 @@ class Miedema(BaseFeaturizer):
             -formation_enthalpy_amor: for amorphous phase
     """
 
-    data_dir = os.path.join(module_dir, "..", "utils", "data_files")
-
     def __init__(self, struct_types='inter', ss_types='min',
                  data_source='Miedema'):
         if isinstance(struct_types, list):
@@ -1033,7 +1032,7 @@ class Miedema(BaseFeaturizer):
         self.data_source = data_source
         if self.data_source == 'Miedema':
             self.df_dataset = pd.read_csv(
-                os.path.join(self.data_dir, 'Miedema.csv'), index_col='element')
+                os.path.join(data_dir, 'Miedema.csv'), index_col='element')
         else:
             raise NotImplementedError('data_source {} not implemented yet'.
                                       format(self, data_source))
@@ -1320,3 +1319,123 @@ class Miedema(BaseFeaturizer):
 
     def implementors(self):
         return ['Qi Wang', 'Alireza Faghaninia']
+
+
+class YangSolidSolution(BaseFeaturizer):
+    """
+    Mixing thermochemistry and size mismatch terms of Yang and Zhang (2012)
+
+    This featurizer returns two different features developed by
+    .. Yang and Zhang `https://linkinghub.elsevier.com/retrieve/pii/S0254058411009357`.
+    The first, Omega, is related to the balance between the mixing entropy and
+    mixing enthalpy of the liquid phase. The second, delta, is related to the
+    atomic size mismatch betweens the
+
+    Features
+        yang Omega - Mixing thermochemistry feature, Omega
+        yang delta - Atomic size mismatch term
+
+    References:
+        .. Yang and Zhang (2012) `https://linkinghub.elsevier.com/retrieve/pii/S0254058411009357`.
+    """
+
+    def __init__(self):
+        # Load in the mixing enthalpy data
+        #  Creates a lookup table of the liquid mixing enthalpies
+        mixing_dataset = pd.read_csv(os.path.join(data_dir,
+                                                  'MiedemaLiquidDeltaHf.tsv'),
+                                     delim_whitespace=True)
+        self.mixing_data = {}
+        for a, b, dHf in mixing_dataset.itertuples(index=False):
+            key = tuple(sorted((a, b)))
+            self.mixing_data[key] = dHf
+
+        # Load in a table of elemental properties
+        self.elem_data = MagpieData()
+
+    def featurize(self, comp):
+        return [self.compute_omega(comp), self.compute_delta(comp)]
+
+    def compute_omega(self, comp):
+        """Compute Yang's mixing thermodynamics descriptor
+
+        :math:`\frac{T_m \Delta S_{mix}}{ |  \Delta H_{mix} | }`
+
+        Where :math:`T_m` is average melting temperature,
+        :math:`\Delta S_{mix}` is the ideal mixing entropy,
+        and :math:`\Delta H_{mix}` is the average mixing enthalpies
+        of all pairs of elements in the alloy
+
+        Args:
+            comp (Composition) - Composition to featurizer
+        Returns:
+            (float) Omega
+        """
+
+        # Get the element names and fractions
+        elements, fractions = zip(*comp.element_composition.\
+                                  fractional_composition.items())
+
+        # Get the mean melting temperature
+        mean_Tm = PropertyStats.mean(
+            self.elem_data.get_elemental_properties(elements, "MeltingT"),
+            fractions
+        )
+
+        # Get the mixing entropy
+        entropy = np.dot(fractions, np.log(fractions)) * 8.314 / 1000
+
+        # Get the mixing enthalpy
+        enthalpy = 0
+        for i, (e1, f1) in enumerate(zip(elements, fractions)):
+            for e2, f2 in zip(elements[:i], fractions):
+                key = tuple(sorted((e1.symbol, e2.symbol)))
+                enthalpy += f1 * f2 * self.mixing_data[key]
+        enthalpy *= 4
+
+        return abs(mean_Tm * entropy / enthalpy)
+
+    def compute_delta(self, comp):
+        """Compute Yang's delta parameter
+
+        :math:`\sqrt{\sum^n_{i=1} c_i \left( 1 - \frac{r_i}{\bar{r}} \right)^2 }`
+
+        where :math:`c_i` and :math:`r_i` are the fraction and radius of
+        element :math:`i`, and :math:`\bar{r}` is the fraction-weighted
+        average of the radii. We use the radii compiled by
+        .. Miracle et al. `https://www.tandfonline.com/doi/ref/10.1179/095066010X12646898728200?scroll=top`.
+
+        Args:
+            comp (Composition) - Composition to assess
+        Returns:
+            (float) delta
+
+        """
+
+        elements, fractions = zip(*comp.element_composition.items())
+
+        # Get the radii of elements
+        radii = self.elem_data.get_elemental_properties(elements,
+                                                        "MiracleRadius")
+        mean_r = PropertyStats.mean(radii, fractions)
+
+        # Compute the mean (1 - r/\bar{r})^2
+        r_dev = np.power(1.0 - np.divide(radii, mean_r), 2)
+        return np.sqrt(PropertyStats.mean(r_dev, fractions))
+
+    def feature_labels(self):
+        return ['Yang Omega', 'Yang delta']
+
+    def citations(self):
+        return ["@article{Yang2012,"
+                "author = {Yang, X. and Zhang, Y.},"
+                "doi = {10.1016/j.matchemphys.2011.11.021},"
+                "journal = {Materials Chemistry and Physics},"
+                "number = {2-3},"
+                "pages = {233--238},"
+                "title = {{Prediction of high-entropy stabilized solid-solution in multi-component alloys}},"
+                "url = {http://dx.doi.org/10.1016/j.matchemphys.2011.11.021},"
+                "volume = {132},year = {2012}}"]
+
+    def implementors(self):
+        return ['Logan Ward']
