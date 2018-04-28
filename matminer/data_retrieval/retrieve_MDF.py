@@ -18,9 +18,9 @@ class MDFDataRetrieval:
 
     Examples:
         >>>mdf_dr = MDFDataRetrieval(anonymous=True)
-        >>>results = mdf_dr.get_dataframe(elements=["Ag", "Be"], sources=["oqmd"])
+        >>>results = mdf_dr.get_dataframe(elements=["Ag", "Be"], source_names=["oqmd"])
 
-        >>>results = mdf_dr.get_dataframe(sources=['oqmd'],
+        >>>results = mdf_dr.get_dataframe(source_names=['oqmd'],
         >>>              match_ranges={"oqmd.band_gap.value": [4.0, "*"]})
     """
 
@@ -35,8 +35,7 @@ class MDFDataRetrieval:
 
         self.forge = Forge(anonymous=anonymous, **kwargs)
 
-
-    def get_dataframe(self, sources=None, elements=None, titles=None,
+    def get_dataframe(self, source_names=None, elements=None, titles=None,
                       tags=None, resource_types=None, match_fields=None,
                       exclude_fields=None, match_ranges=None,
                       exclude_ranges=None, unwind_arrays=True):
@@ -45,7 +44,7 @@ class MDFDataRetrieval:
         a Pandas Dataframe
 
         Args:
-            sources ([str]): source names to include, e. g. ["oqmd"]
+            source_names ([str]): source names to include, e. g. ["oqmd"]
             elements ([str]): elements to include, e. g. ["Ag", "Si"]
             titles ([str]): titles to include, e. g. ["Coarsening of a semisolid
                 Al-Cu alloy"]
@@ -75,7 +74,7 @@ class MDFDataRetrieval:
         search_args = locals()
 
         # Each of these fields has a "match_X" method in forge, do these first
-        for query_field in ["sources", "elements", "titles", "tags",
+        for query_field in ["source_names", "elements", "titles", "tags",
                             "resource_types"]:
             if search_args.get(query_field):
                 fn = getattr(self.forge, "match_{}".format(query_field))
