@@ -181,7 +181,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             col_id = [col_id]
 
         # Generate the feature labels
-        labels = self.feature_labels()
+        labels = self.generate_feature_columns(col_id)
 
         # Check names to avoid overwriting the current columns
         for col in df.columns.values:
@@ -340,6 +340,21 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         raise NotImplementedError("implementors() is not defined!")
 
+    def generate_feature_columns(self, col_id):
+        """
+        Function that returns new feature columns ids, exists primarily
+        so any method which needs to modify new column names based on
+        input column identity can do so without altering feature_labels,
+        by default this will simply return feature_labels()
+
+        Args:
+            col_id ([str]): input column ids
+
+        Returns:
+            list of column labels
+        """
+        return self.feature_labels()
+
 
 class MultipleFeaturizer(BaseFeaturizer):
     """
@@ -361,6 +376,9 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
+
+    def generate_feature_columns(self, col_id):
+        return sum([f.generate_feature_columns(col_id) for f in self.featurizers], [])
 
     def citations(self):
         return list(set(sum([f.citations() for f in self.featurizers], [])))
