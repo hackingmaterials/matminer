@@ -43,7 +43,8 @@ class FunctionFeaturizer(BaseFeaturizer):
         combo_function (function): function to combine multi-features,
             defaults to np.prod (i.e. cumulative product of expressions),
             note that a combo function must cleanly process sympy
-            expressions
+            expressions and **takes a list of arbitrary length as input**,
+            other options include np.sum
         latexify_labels (bool): whether to render labels in latex,
             defaults to False
     """
