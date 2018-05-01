@@ -62,7 +62,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
 
         ff = FunctionFeaturizer(expressions=expressions, multi_feature_depth=2,
                                 combo_function=np.sum)
-        new_df = ff.featurize_dataframe(self.test_df, ['a', 'b'], inplace=False)
+        new_df = ff.fit_featurize_dataframe(self.test_df, ['a', 'b'], inplace=False)
         self.assertAlmostEqual(new_df['sqrt(a) + sqrt(b)'][2], 2.41421356)
 
     def test_featurize_labels(self):
@@ -98,7 +98,10 @@ class TestFunctionFeaturizer(unittest.TestCase):
         ff1 = FunctionFeaturizer(expressions=["x ** 2"])
         ff2 = FunctionFeaturizer(expressions=["exp(x)", "1 / x"])
         mf = MultipleFeaturizer([ff1, ff2])
-        new_df = mf.featurize_dataframe(self.test_df, ['a', 'b', 'c'],
+        col_id = ['a', 'b', 'c']
+        ff1.fit(self.test_df[col_id], col_id=col_id)
+        ff2.fit(self.test_df[col_id], col_id=col_id)
+        new_df = mf.fit_featurize_dataframe(self.test_df, ['a', 'b', 'c'],
                                         inplace=False)
         self.assertEqual(len(new_df), 11)
 
