@@ -74,43 +74,6 @@ class FunctionFeaturizer(BaseFeaturizer):
                                                    self.combo_function))
              for n in range(1, self.multi_feature_depth+1)])
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
-        """
-        Compute features for all entries contained in input dataframe.
-
-        Args:
-            df (DataFrame): dataframe containing input data
-            col_id (str or list of str): column label containing objects
-                to featurize, can be single or multiple column names
-            ignore_errors (bool): Returns NaN for dataframe rows where
-                exceptions are thrown if True. If False, exceptions
-                are thrown as normal.
-            return_errors (bool). Returns the errors encountered for each
-                row in a separate `XFeaturizer errors` column if True. Requires
-                ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
-
-        Returns:
-            updated DataFrame
-
-        """
-        # Generate new dataframe out-of-place
-        new_df = super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, ignore_errors=ignore_errors,
-            return_errors=return_errors, inplace=False)
-
-        # Generate and add new columns names
-        new_col_names = self.generate_string_expressions(col_id)
-        new_df.columns = df.columns.tolist() + new_col_names
-
-        if inplace:
-            for k in new_col_names:
-                df[k] = new_df[k]
-            return df
-        else:
-            return new_df
-
     def featurize(self, *args):
         """
         Main featurizer function, essentially iterates over all
@@ -132,6 +95,13 @@ class FunctionFeaturizer(BaseFeaturizer):
             Set of feature labels corresponding to expressions
         """
         return None
+
+    def generate_feature_columns(self, col_id):
+        """
+        Returns:
+            Set of feature labels corresponding to expressions
+        """
+        return self.generate_string_expressions(col_id)
 
     def generate_string_expressions(self, input_variable_names):
         """
