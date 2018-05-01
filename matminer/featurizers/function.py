@@ -74,7 +74,8 @@ class FunctionFeaturizer(BaseFeaturizer):
         Returns:
             None
         """
-        self._input_columns = fit_kwargs.get("col_id")
+        col_id = fit_kwargs.get("input_column_names")
+        self._input_columns = fit_kwargs.get("input_column_names")
         return self
 
     @property
@@ -91,43 +92,6 @@ class FunctionFeaturizer(BaseFeaturizer):
             [(n, generate_expressions_combinations(self.expressions, n,
                                                    self.combo_function))
              for n in range(1, self.multi_feature_depth+1)])
-
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
-        """
-        Compute features for all entries contained in input dataframe.
-
-        Args:
-            df (DataFrame): dataframe containing input data
-            col_id (str or list of str): column label containing objects
-                to featurize, can be single or multiple column names
-            ignore_errors (bool): Returns NaN for dataframe rows where
-                exceptions are thrown if True. If False, exceptions
-                are thrown as normal.
-            return_errors (bool). Returns the errors encountered for each
-                row in a separate `XFeaturizer errors` column if True. Requires
-                ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
-
-        Returns:
-            updated DataFrame
-
-        """
-        # Generate new dataframe out-of-place
-        new_df = super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, ignore_errors=ignore_errors,
-            return_errors=return_errors, inplace=False)
-
-        # Generate and add new columns names
-        new_col_names = self.generate_string_expressions(col_id)
-        new_df.columns = df.columns.tolist() + new_col_names
-
-        if inplace:
-            for k in new_col_names:
-                df[k] = new_df[k]
-            return df
-        else:
-            return new_df
 
     def featurize(self, *args):
         """
@@ -157,7 +121,7 @@ class FunctionFeaturizer(BaseFeaturizer):
         Returns:
             Featurized dataframe
         """
-        return self.fit(df[col_id], col_id=col_id).featurize_dataframe(
+        return self.fit(df[col_id], input_column_names=col_id).featurize_dataframe(
             df, col_id, *args, **kwargs)
 
     def feature_labels(self):

@@ -99,10 +99,9 @@ class TestFunctionFeaturizer(unittest.TestCase):
         ff2 = FunctionFeaturizer(expressions=["exp(x)", "1 / x"])
         mf = MultipleFeaturizer([ff1, ff2])
         col_id = ['a', 'b', 'c']
-        ff1.fit(self.test_df[col_id], col_id=col_id)
-        ff2.fit(self.test_df[col_id], col_id=col_id)
-        new_df = mf.fit_featurize_dataframe(self.test_df, ['a', 'b', 'c'],
-                                        inplace=False)
+        new_df = mf.fit_featurize_dataframe(
+            self.test_df, col_id, fit_kwargs={"input_column_names": col_id},
+            inplace=False)
         self.assertEqual(len(new_df), 11)
 
 
