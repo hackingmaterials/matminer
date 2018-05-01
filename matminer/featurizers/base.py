@@ -148,6 +148,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             col_id (str or list of str): column label containing objects to
                 featurize. Can be multiple labels if the featurize function
                 requires multiple inputs.
+            fit_kwargs (dict): params for the fit function in dict form
+            *args: args to featurize_dataframe
+            **kwargs: kwargs to featurize_dataframe
 
         Returns:
             updated dataframe based on featurizer fitted to that dataframe.
