@@ -135,7 +135,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         return self.featurize_many(X, ignore_errors=True)
 
-    def fit_featurize_dataframe(self, df, col_id, *args, **kwargs):
+    def fit_featurize_dataframe(self, df, col_id, fit_kwargs=None,
+                                *args, **kwargs):
         """
         The dataframe equivalent of fit_transform. Takes a dataframe and
         column id as input, fits the featurizer to that dataframe, and
@@ -147,12 +148,17 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             col_id (str or list of str): column label containing objects to
                 featurize. Can be multiple labels if the featurize function
                 requires multiple inputs.
+            fit_kwargs (dict): params for the fit function in dict form
+            *args: args to featurize_dataframe
+            **kwargs: kwargs to featurize_dataframe
 
         Returns:
             updated dataframe based on featurizer fitted to that dataframe.
         """
-        return self.fit(df[col_id]).featurize_dataframe(df, col_id, *args,
-                                                        **kwargs)
+        if fit_kwargs is None:
+            fit_kwargs = {}
+        return self.fit(df[col_id], **fit_kwargs).featurize_dataframe(
+            df, col_id, *args, **kwargs)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True):
@@ -361,6 +367,11 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
+
+    def fit(self, X, y=None, **fit_kwargs):
+        for f in self.featurizers:
+            f.fit(X, y, **fit_kwargs)
+        return self
 
     def citations(self):
         return list(set(sum([f.citations() for f in self.featurizers], [])))

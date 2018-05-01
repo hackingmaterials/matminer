@@ -46,17 +46,36 @@ class FunctionFeaturizer(BaseFeaturizer):
             expressions
         latexify_labels (bool): whether to render labels in latex,
             defaults to False
+        input_column_names ([str]): input columns names to be used
+            with this featurizer, defaults to None and should be set
+            with fit
     """
 
     def __init__(self, expressions=None, multi_feature_depth=1,
                  postprocess=None, combo_function=None,
-                 latexify_labels=False):
+                 latexify_labels=False, input_column_names=None):
 
         self.expressions = expressions or default_exps
         self.multi_feature_depth = multi_feature_depth
         self.combo_function = combo_function or np.prod
         self.latexify_labels = latexify_labels
         self.postprocess = postprocess or float
+        self._input_columns = input_column_names
+
+    def fit(self, X, y=None, **fit_kwargs):
+        """
+        Serves as a workaround for setting the input column identities
+
+        Args:
+            X (list of tuples): training data
+            y (?): tell me y (ain't nothing but a None thing)
+            **fit_kwargs: kwargs to fit.  In this case, must have col_id
+
+        Returns:
+            None
+        """
+        self._input_columns = fit_kwargs.get("input_column_names")
+        return self
 
     @property
     def exp_dict(self):
@@ -73,43 +92,6 @@ class FunctionFeaturizer(BaseFeaturizer):
                                                    self.combo_function))
              for n in range(1, self.multi_feature_depth+1)])
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
-        """
-        Compute features for all entries contained in input dataframe.
-
-        Args:
-            df (DataFrame): dataframe containing input data
-            col_id (str or list of str): column label containing objects
-                to featurize, can be single or multiple column names
-            ignore_errors (bool): Returns NaN for dataframe rows where
-                exceptions are thrown if True. If False, exceptions
-                are thrown as normal.
-            return_errors (bool). Returns the errors encountered for each
-                row in a separate `XFeaturizer errors` column if True. Requires
-                ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
-
-        Returns:
-            updated DataFrame
-
-        """
-        # Generate new dataframe out-of-place
-        new_df = super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, ignore_errors=ignore_errors,
-            return_errors=return_errors, inplace=False)
-
-        # Generate and add new columns names
-        new_col_names = self.generate_string_expressions(col_id)
-        new_df.columns = df.columns.tolist() + new_col_names
-
-        if inplace:
-            for k in new_col_names:
-                df[k] = new_df[k]
-            return df
-        else:
-            return new_df
-
     def featurize(self, *args):
         """
         Main featurizer function, essentially iterates over all
@@ -125,12 +107,32 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         return list(self._exp_iter(*args, postprocess=self.postprocess))
 
+    def fit_featurize_dataframe(self, df, col_id, fit_kwargs=None, *args, **kwargs):
+        """
+        Fits and featurizes the dataframe
+
+        Args:
+            df (DataFrame): Dataframe to use for fitting and to be featurized
+            col_id ([str]): columns to be used when fitting
+            fit_kwargs (dict): kwargs to fit in dict form
+            *args: *args to featurize_dataframe
+            **kwargs: **kwargs to featurize_dataframe
+
+        Returns:
+            Featurized dataframe
+        """
+        return self.fit(df[col_id], input_column_names=col_id).featurize_dataframe(
+            df, col_id, *args, **kwargs)
+
     def feature_labels(self):
         """
         Returns:
             Set of feature labels corresponding to expressions
         """
-        return None
+        if self._input_columns:
+            return self.generate_string_expressions(self._input_columns)
+        else:
+            raise ValueError("Input columns names must be set with fit()")
 
     def generate_string_expressions(self, input_variable_names):
         """
