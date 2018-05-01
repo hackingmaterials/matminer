@@ -74,7 +74,6 @@ class FunctionFeaturizer(BaseFeaturizer):
         Returns:
             None
         """
-        col_id = fit_kwargs.get("input_column_names")
         self._input_columns = fit_kwargs.get("input_column_names")
         return self
 
@@ -108,13 +107,14 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         return list(self._exp_iter(*args, postprocess=self.postprocess))
 
-    def fit_featurize_dataframe(self, df, col_id, *args, **kwargs):
+    def fit_featurize_dataframe(self, df, col_id, fit_kwargs=None, *args, **kwargs):
         """
         Fits and featurizes the dataframe
 
         Args:
             df (DataFrame): Dataframe to use for fitting and to be featurized
             col_id ([str]): columns to be used when fitting
+            fit_kwargs (dict): kwargs to fit in dict form
             *args: *args to featurize_dataframe
             **kwargs: **kwargs to featurize_dataframe
 
