@@ -157,7 +157,7 @@ class TestBaseClass(PymatgenTest):
 
         # Create featurizer
         multi_f = MultipleFeaturizer([self.multiargs, multiargs2])
-        multi_f.set_n_jobs(1)
+        multi_f.set_n_jobs(2)
 
         # Test featurize with multiple arguments
         features = multi_f.featurize(0, 2)

@@ -365,8 +365,10 @@ class MultipleFeaturizer(BaseFeaturizer):
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True):
         for f in self.featurizers:
+            f.set_n_jobs(1)
             df = f.featurize_dataframe(df, col_id, ignore_errors,
                                        return_errors, inplace)
+            df[f.feature_labels()] = df[f.feature_labels()].applymap(np.squeeze)
         return df
 
     def citations(self):
