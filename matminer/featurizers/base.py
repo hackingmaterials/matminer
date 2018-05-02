@@ -362,9 +362,6 @@ class MultipleFeaturizer(BaseFeaturizer):
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
 
-    def generate_feature_columns(self, col_id):
-        return sum([f.generate_feature_columns(col_id) for f in self.featurizers], [])
-
     def citations(self):
         return list(set(sum([f.citations() for f in self.featurizers], [])))
 
