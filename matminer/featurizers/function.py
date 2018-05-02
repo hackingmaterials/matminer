@@ -136,7 +136,7 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         self.fit(col_id)
         return super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, ignore_errors=False, return_errors=False, inplace=True)
+            df, col_id, ignore_errors, return_errors, inplace)
 
     def fit_featurize_dataframe(self, df, col_id, *args, **kwargs):
         """

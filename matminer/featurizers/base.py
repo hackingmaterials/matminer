@@ -185,7 +185,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         # Check names to avoid overwriting the current columns
         for col in df.columns.values:
-            if labels and col in labels:
+            if col in labels:
                 raise ValueError('"{}" exists in input dataframe'.format(col))
 
         # Compute the features
@@ -361,6 +361,13 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
+
+    def featurize_dataframe(self, df, col_id, ignore_errors=False,
+                            return_errors=False, inplace=True):
+        for f in self.featurizers:
+            df = f.featurize_dataframe(df, col_id, ignore_errors,
+                                       return_errors, inplace)
+        return df
 
     def citations(self):
         return list(set(sum([f.citations() for f in self.featurizers], [])))
