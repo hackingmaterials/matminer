@@ -56,6 +56,17 @@ class MatrixFeaturizer(BaseFeaturizer):
         return ["Everyone"]
 
 
+class MultiArgs2(SingleFeaturizerMultiArgs):
+    def featurize(self, *x):
+        # Making a 2D array to test whether MutliFeaturizer
+        #  can handle featurizers that have both 1D vectors with
+        #  singleton dimensions (e.g., shape==(4,1)) and those
+        #  without (e.g., shape==(4,))
+        return [super(MultiArgs2, self).featurize(*x)]
+
+    def feature_labels(self):
+        return ['y2']
+
 class FittableFeaturizer(BaseFeaturizer):
     """
     This test featurizer tests fitting qualities of BaseFeaturizer, including
@@ -142,22 +153,10 @@ class TestBaseClass(PymatgenTest):
         data = self.make_test_data()
         data['x2'] = [4, 5, 6]
 
-        # Create a second featurizer
-        class MultiArgs2(SingleFeaturizerMultiArgs):
-            def featurize(self, *x):
-                # Making a 2D array to test whether MutliFeaturizer
-                #  can handle featurizers that have both 1D vectors with
-                #  singleton dimensions (e.g., shape==(4,1)) and those
-                #  without (e.g., shape==(4,))
-                return [super(MultiArgs2, self).featurize(*x)]
-
-            def feature_labels(self):
-                return ['y2']
         multiargs2 = MultiArgs2()
 
         # Create featurizer
         multi_f = MultipleFeaturizer([self.multiargs, multiargs2])
-        multi_f.set_n_jobs(2)
 
         # Test featurize with multiple arguments
         features = multi_f.featurize(0, 2)

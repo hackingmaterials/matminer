@@ -359,13 +359,16 @@ class MultipleFeaturizer(BaseFeaturizer):
     def featurize(self, *x):
         return np.hstack(np.squeeze(f.featurize(*x)) for f in self.featurizers)
 
+    def set_n_jobs(self, n_jobs):
+        for f in self.featurizers:
+            f.set_n_jobs(n_jobs)
+
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True):
         for f in self.featurizers:
-            f.set_n_jobs(1)
             df = f.featurize_dataframe(df, col_id, ignore_errors,
                                        return_errors, inplace)
             df[f.feature_labels()] = df[f.feature_labels()].applymap(np.squeeze)
