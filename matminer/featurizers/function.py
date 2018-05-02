@@ -119,10 +119,9 @@ class FunctionFeaturizer(BaseFeaturizer):
         as the base class
 
         Args:
-            df (Pandas dataframe): Dataframe containing input data.
+            df (pandas.DataFrame): Dataframe containing input data.
             col_id (str or list of str): column label containing objects to
-                featurize. Can be multiple labels if the featurize function
-                requires multiple inputs.
+                featurize.
             ignore_errors (bool): Returns NaN for dataframe rows where
                 exceptions are thrown if True. If False, exceptions
                 are thrown as normal.
@@ -132,7 +131,7 @@ class FunctionFeaturizer(BaseFeaturizer):
             inplace (bool): Whether to add new columns to input dataframe (df)
 
         Returns:
-            updated dataframe.
+            updated DataFrame.
         """
         self.fit(col_id)
         return super(FunctionFeaturizer, self).featurize_dataframe(
