@@ -8,6 +8,7 @@ from matminer.featurizers.function import FunctionFeaturizer, \
 from matminer.featurizers.base import MultipleFeaturizer
 import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
+from sklearn.exceptions import NotFittedError
 
 
 class TestFunctionFeaturizer(unittest.TestCase):
@@ -70,7 +71,9 @@ class TestFunctionFeaturizer(unittest.TestCase):
         ff = FunctionFeaturizer(latexify_labels=True)
         new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
         self.assertTrue("\sqrt{a}" in new_df.columns)
-
+        # Ensure error is thrown with no labels
+        ff = FunctionFeaturizer(latexify_labels=False)
+        self.assertRaises(NotFittedError, ff.feature_labels)
 
     def test_helper_functions(self):
         test_combo_1 = generate_expressions_combinations(["1 / x", "x ** 2"], 1)
