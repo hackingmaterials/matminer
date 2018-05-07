@@ -141,29 +141,9 @@ class FunctionFeaturizer(BaseFeaturizer):
         Returns:
             updated DataFrame.
         """
-        self.fit(col_id)
+        self.fit(df[col_id])
         return super(FunctionFeaturizer, self).featurize_dataframe(
             df, col_id, ignore_errors, return_errors, inplace)
-
-    def fit_featurize_dataframe(self, df, col_id, *args, **kwargs):
-        """
-        The dataframe equivalent of fit_transform. Takes a dataframe and
-        column id as input, fits the featurizer to that dataframe, and
-        returns a featurized dataframe. Accepts the same arguments as
-        featurize_dataframe.  Note that it's overridden in FunctionFeaturizer
-        because the fit method doesn't take dataframe data, but dataframe
-        labels instead.
-
-        Args:
-            df (Pandas dataframe): Dataframe containing input data.
-            col_id (str or list of str): column label containing objects to
-                featurize. Can be multiple labels if the featurize function
-                requires multiple inputs.
-
-        Returns:
-            updated dataframe based on featurizer fitted to that dataframe.
-        """
-        return self.featurize_dataframe(df, col_id, *args, **kwargs)
 
     def generate_string_expressions(self, input_variable_names):
         """
