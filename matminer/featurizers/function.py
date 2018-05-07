@@ -5,10 +5,12 @@ from sympy.parsing.sympy_parser import parse_expr
 import sympy as sp
 import itertools
 from six import string_types
+from pandas import DataFrame, Series
 
 from collections import OrderedDict
 
 from matminer.featurizers.base import BaseFeaturizer
+from sklearn.exceptions import NotFittedError
 
 
 # Default expressions to include in function featurizer
@@ -95,6 +97,9 @@ class FunctionFeaturizer(BaseFeaturizer):
         Returns:
             Set of feature labels corresponding to expressions
         """
+        if not self._feature_labels:
+            raise NotFittedError("Feature labels is only set if data is fitted"
+                                 " to a dataframe")
         return self._feature_labels
 
     def fit(self, X, y=None, **fit_kwargs):
