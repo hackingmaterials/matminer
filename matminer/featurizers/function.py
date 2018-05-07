@@ -108,12 +108,15 @@ class FunctionFeaturizer(BaseFeaturizer):
         only intended to be invoked as part of featurize_dataframe
 
         Args:
-            X ([str]): list of feature labels
+            X (DataFrame or array-like): data to fit to
 
         Returns:
             Set of feature labels corresponding to expressions
         """
-        self._feature_labels = self.generate_string_expressions(X)
+        if isinstance(X, DataFrame):
+            self._feature_labels = self.generate_string_expressions(X.columns)
+        elif isinstance(X, Series):
+            self._feature_labels = self.generate_string_expressions(X.name)
         return self
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
