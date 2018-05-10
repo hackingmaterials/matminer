@@ -225,10 +225,10 @@ class CitrineDataRetrieval:
                                                     size=per_page)
 
             # Check if any results found
-            if "hits" not in self.client.search(pif_query).as_dictionary():
+            if "hits" not in self.client.search.pif_search(pif_query).as_dictionary():
                 raise KeyError("No results found!")
 
-            data = self.client.search(pif_query).as_dictionary()["hits"]
+            data = self.client.search.pif_search(pif_query).as_dictionary()["hits"]
             size = len(data)
             start += size
             json_data.extend(data)
