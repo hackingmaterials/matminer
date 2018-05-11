@@ -3,10 +3,12 @@ from __future__ import unicode_literals, division, print_function
 import unittest
 import pandas as pd
 import numpy as np
+import warnings
 
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.base import BaseFeaturizer, MultipleFeaturizer
+from matminer.featurizers.function import FunctionFeaturizer
 
 
 class SingleFeaturizer(BaseFeaturizer):
@@ -143,10 +145,21 @@ class TestBaseClass(PymatgenTest):
         self.assertIn('Them', implementors)
         self.assertEquals(2, len(implementors))
 
-        multi_f.featurize_dataframe(data, 'x')
+        # Ensure BaseFeaturizer operation without overriden featurize_dataframe
+        with warnings.catch_warnings(record=True) as w:
+            multi_f.featurize_dataframe(data, 'x')
+            self.assertEqual(len(w), 0)
         self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
         self.assertArrayAlmostEqual(data['w'], [0, 1, 2])
         self.assertArrayAlmostEqual(data['z'], [3, 4, 5])
+
+        # Test handling of Featurizers with overloaded featurize_dataframe
+        f = FunctionFeaturizer()
+        multi_f = MultipleFeaturizer([self.single, self.multi, f])
+        data = self.make_test_data()
+        with warnings.catch_warnings(record=True) as w:
+            multi_f.featurize_dataframe(data, 'x')
+            self.assertEqual(len(w), 1)
 
     def test_multifeatures(self):
         # Make a test dataset with two input variables
