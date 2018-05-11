@@ -8,13 +8,13 @@ import collections
 import numpy as np
 import pandas as pd
 from pymatgen import Element, MPRester
-from pymatgen.core.periodic_table import get_el_sp, Specie
+from pymatgen.core.periodic_table import get_el_sp
 from pymatgen.core.molecular_orbitals import MolecularOrbitals
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    CohesiveEnergyData
+    CohesiveEnergyData, MixingEnthalpy
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
@@ -1326,14 +1326,16 @@ class YangSolidSolution(BaseFeaturizer):
     Mixing thermochemistry and size mismatch terms of Yang and Zhang (2012)
 
     This featurizer returns two different features developed by
-    .. Yang and Zhang `https://linkinghub.elsevier.com/retrieve/pii/S0254058411009357`.
+    .. Yang and Zhang `https://linkinghub.elsevier.com/retrieve/pii/S0254058411009357`
+    to predict whether metal alloys will form metallic glasses,
+    crystalline solid solutions, or intermetallics.
     The first, Omega, is related to the balance between the mixing entropy and
     mixing enthalpy of the liquid phase. The second, delta, is related to the
-    atomic size mismatch betweens the
+    atomic size mismatch between the different elements of the material.
 
     Features
-        yang Omega - Mixing thermochemistry feature, Omega
-        yang delta - Atomic size mismatch term
+        Yang omega - Mixing thermochemistry feature, Omega
+        Yang delta - Atomic size mismatch term
 
     References:
         .. Yang and Zhang (2012) `https://linkinghub.elsevier.com/retrieve/pii/S0254058411009357`.
@@ -1342,13 +1344,7 @@ class YangSolidSolution(BaseFeaturizer):
     def __init__(self):
         # Load in the mixing enthalpy data
         #  Creates a lookup table of the liquid mixing enthalpies
-        mixing_dataset = pd.read_csv(os.path.join(data_dir,
-                                                  'MiedemaLiquidDeltaHf.tsv'),
-                                     delim_whitespace=True)
-        self.mixing_data = {}
-        for a, b, dHf in mixing_dataset.itertuples(index=False):
-            key = tuple(sorted((a, b)))
-            self.mixing_data[key] = dHf
+        self.dhf_mix = MixingEnthalpy()
 
         # Load in a table of elemental properties
         self.elem_data = MagpieData()
@@ -1389,8 +1385,7 @@ class YangSolidSolution(BaseFeaturizer):
         enthalpy = 0
         for i, (e1, f1) in enumerate(zip(elements, fractions)):
             for e2, f2 in zip(elements[:i], fractions):
-                key = tuple(sorted((e1.symbol, e2.symbol)))
-                enthalpy += f1 * f2 * self.mixing_data[key]
+                enthalpy += f1 * f2 * self.dhf_mix.get_mixing_enthalpy(e1, e2)
         enthalpy *= 4
 
         return abs(mean_Tm * entropy / enthalpy)
@@ -1424,7 +1419,7 @@ class YangSolidSolution(BaseFeaturizer):
         return np.sqrt(PropertyStats.mean(r_dev, fractions))
 
     def feature_labels(self):
-        return ['Yang Omega', 'Yang delta']
+        return ['Yang omega', 'Yang delta']
 
     def citations(self):
         return ["@article{Yang2012,"
