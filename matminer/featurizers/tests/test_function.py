@@ -5,8 +5,10 @@ import pandas as pd
 
 from matminer.featurizers.function import FunctionFeaturizer, \
     generate_expressions_combinations
+from matminer.featurizers.base import MultipleFeaturizer
 import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
+from sklearn.exceptions import NotFittedError
 
 
 class TestFunctionFeaturizer(unittest.TestCase):
@@ -59,13 +61,19 @@ class TestFunctionFeaturizer(unittest.TestCase):
         new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
         self.assertEqual(new_df['sqrt(a)'][0], 1j)
 
+        ff = FunctionFeaturizer(expressions=expressions, multi_feature_depth=2,
+                                combo_function=np.sum)
+        new_df = ff.featurize_dataframe(self.test_df, ['a', 'b'], inplace=False)
+        self.assertAlmostEqual(new_df['sqrt(a) + sqrt(b)'][2], 2.41421356)
 
     def test_featurize_labels(self):
         # Test latexification
         ff = FunctionFeaturizer(latexify_labels=True)
         new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
         self.assertTrue("\sqrt{a}" in new_df.columns)
-
+        # Ensure error is thrown with no labels
+        ff = FunctionFeaturizer(latexify_labels=False)
+        self.assertRaises(NotFittedError, ff.feature_labels)
 
     def test_helper_functions(self):
         test_combo_1 = generate_expressions_combinations(["1 / x", "x ** 2"], 1)
@@ -81,6 +89,21 @@ class TestFunctionFeaturizer(unittest.TestCase):
                                                          combo_depth=3)
         self.assertTrue(parse_expr("x0 ** 2 / (x1 * x2)") in test_combo_3)
         self.assertEqual(len(test_combo_3), 8)
+
+        test_combo_4 = generate_expressions_combinations(["1 / x", "x ** 2", "exp(x)"],
+                                                         combo_function=np.sum)
+        self.assertEqual(len(test_combo_4), 9)
+        test_combo_4 = generate_expressions_combinations(["1 / x", "x ** 2", "exp(x)"],
+                                                         combo_function=lambda x: x[1]-x[0])
+        self.assertEqual(len(test_combo_4), 18)
+
+    def test_multi_featurizer(self):
+        ff1 = FunctionFeaturizer(expressions=["x ** 2"])
+        ff2 = FunctionFeaturizer(expressions=["exp(x)", "1 / x"])
+        mf = MultipleFeaturizer([ff1, ff2])
+        new_df = mf.featurize_dataframe(self.test_df, ['a', 'b', 'c'],
+                                        inplace=False)
+        self.assertEqual(len(new_df), 11)
 
 
 if __name__ == "__main__":
