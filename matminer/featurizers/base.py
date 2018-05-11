@@ -384,7 +384,7 @@ class MultipleFeaturizer(BaseFeaturizer):
                                            return_errors, inplace)
                 df[f.feature_labels()] = df[f.feature_labels()].applymap(np.squeeze)
         else:
-            df = super(self, MultipleFeaturizer).featurize_dataframe(
+            df = super(MultipleFeaturizer, self).featurize_dataframe(
                 df, col_id, ignore_errors, return_errors, inplace)
         return df
 
