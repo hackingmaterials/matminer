@@ -1,9 +1,11 @@
 import unittest
 from unittest import TestCase
 
+from math import isnan
 from pymatgen.core.periodic_table import Specie
 
-from matminer.utils.data import DemlData, MagpieData, PymatgenData
+from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
+    MixingEnthalpy
 from pymatgen import Element
 
 
@@ -52,6 +54,20 @@ class TestPymatgenData(TestCase):
         self.assertEquals((3,), self.data_source.get_oxidation_states(Element("Nd")))
         self.data_source.use_common_oxi_states = False
         self.assertEquals((2, 3), self.data_source.get_oxidation_states(Element("Nd")))
+
+
+class TestMixingEnthalpy(TestCase):
+
+    def setUp(self):
+        self.data = MixingEnthalpy()
+
+    def test_get_data(self):
+        self.assertEquals(-27, self.data.get_mixing_enthalpy(Element('H'),
+                                                             Element('Pd')))
+        self.assertEquals(-27, self.data.get_mixing_enthalpy(Element('Pd'),
+                                                             Element('H')))
+        self.assertTrue(isnan(self.data.get_mixing_enthalpy(Element('He'),
+                                                            Element('H'))))
 
 if __name__ == "__main__":
     unittest.main()
