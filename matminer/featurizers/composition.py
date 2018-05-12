@@ -138,12 +138,10 @@ class ElementProperty(BaseFeaturizer):
         elements, fractions = zip(*comp.element_composition.items())
 
         for attr in self.features:
-            elem_data = [self.data_source.get_elemental_property(e, attr) for e
-                         in elements]
+            elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
 
             for stat in self.stats:
-                all_attributes.append(
-                    pstats.calc_stat(elem_data, stat, fractions))
+                all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
 
         return all_attributes
 
@@ -199,18 +197,17 @@ class CationProperty(ElementProperty):
     def from_preset(cls, preset_name):
         if preset_name == "deml":
             data_source = "deml"
-            features = ["total_ioniz", "xtal_field_split", "magn_moment",
-                        "so_coupling", "sat_magn", ]
+            features = ["total_ioniz", "xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
-            raise ValueError('Preset "%s" not found' % preset_name)
+            raise ValueError('Preset "%s" not found'%preset_name)
         return cls(data_source, features, stats)
 
     def feature_labels(self):
         labels = []
         for attr in self.features:
             for stat in self.stats:
-                labels.append("%s %s of cations" % (stat, attr))
+                labels.append("%s %s of cations"%(stat, attr))
 
         return labels
 
@@ -226,18 +223,14 @@ class CationProperty(ElementProperty):
         pstats = PropertyStats()
 
         # Get the cation species and fractions
-        cations, fractions = zip(
-            *[(s, f) for s, f in comp.items() if s.oxi_state > 0])
+        cations, fractions = zip(*[(s, f) for s, f in comp.items() if s.oxi_state > 0])
 
         for attr in self.features:
-            elem_data = [
-                self.data_source.get_charge_dependent_property_from_specie(c,
-                                                                           attr)
-                for c in cations]
+            elem_data = [self.data_source.get_charge_dependent_property_from_specie(c, attr)
+                         for c in cations]
 
             for stat in self.stats:
-                all_attributes.append(
-                    pstats.calc_stat(elem_data, stat, fractions))
+                all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
 
         return all_attributes
 
@@ -278,19 +271,16 @@ class OxidationStates(BaseFeaturizer):
             raise ValueError('Oxidation states have not been determined')
 
         # Get the oxidation states and their proportions
-        oxid_states, fractions = zip(
-            *[(s.oxi_state, f) for s, f in comp.items()])
+        oxid_states, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
 
         # Compute statistics
-        return [PropertyStats.calc_stat(oxid_states, s, fractions) for s in
-                self.stats]
+        return [PropertyStats.calc_stat(oxid_states, s, fractions) for s in self.stats]
 
     def feature_labels(self):
-        return ["%s oxidation state" % s for s in self.stats]
+        return ["%s oxidation state"%s for s in self.stats]
 
     def citations(self):
-        return [
-            "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        return ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
@@ -449,47 +439,39 @@ class ElectronegativityDiff(BaseFeaturizer):
             raise ValueError('Oxidation states have not yet been determined')
 
         # Determine the average anion EN
-        anions, anion_fractions = zip(
-            *[(s, x) for s, x in comp.items() if s.oxi_state < 0])
+        anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
 
         # If there are no anions, raise an Exception
         if len(anions) == 0:
-            raise Exception(
-                'Features not applicable: Compound contains no anions')
+            raise Exception('Features not applicable: Compound contains no anions')
 
         anion_en = [s.element.X for s in anions]
         mean_anion_en = PropertyStats.mean(anion_en, anion_fractions)
 
         # Determine the EN difference for each cation
-        cations, cation_fractions = zip(
-            *[(s, x) for s, x in comp.items() if s.oxi_state > 0])
+        cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
 
         # If there are no cations, raise an Exception
         #  It is possible to construct a non-charge-balanced Composition,
         #    so we have to check for both the presence of anions and cations
         if len(cations) == 0:
-            raise Exception(
-                'Features not applicable: Compound contains no cations')
+            raise Exception('Features not applicable: Compound contains no cations')
 
         en_difference = [mean_anion_en - s.element.X for s in cations]
 
         # Compute the statistics
         return [
-            PropertyStats.calc_stat(en_difference, stat, cation_fractions) for
-            stat in self.stats
+            PropertyStats.calc_stat(en_difference, stat, cation_fractions) for stat in self.stats
         ]
 
     def feature_labels(self):
-
         labels = []
         for stat in self.stats:
             labels.append("%s EN difference" % stat)
-
         return labels
 
     def citations(self):
-        citation = [
-            "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        citation = ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
@@ -527,13 +509,11 @@ class ElectronAffinity(BaseFeaturizer):
         species, fractions = zip(*comp.items())
 
         # Determine which species are anions
-        anions, fractions = zip(
-            *[(s, f) for s, f in zip(species, fractions) if s.oxi_state < 0])
+        anions, fractions = zip(*[(s, f) for s, f in zip(species, fractions) if s.oxi_state < 0])
 
         # Compute the electron_affinity*formal_charge for each anion
         electron_affin = [
-            self.data_source.get_elemental_property(s.element,
-                                                    "electron_affin") * s.oxi_state
+            self.data_source.get_elemental_property(s.element, "electron_affin") * s.oxi_state
             for s in anions
         ]
 
@@ -589,9 +569,8 @@ class Stoichiometry(BaseFeaturizer):
         n_atoms_per_unit = comp.num_atoms / \
                            comp.get_integer_formula_and_factor()[1]
 
-        if self.p_list == None:
-            stoich_attr = [
-                n_atoms_per_unit]  # return num atoms if no norms specified
+        if self.p_list is None:
+            stoich_attr = [n_atoms_per_unit]  # return num atoms if no norms specified
         else:
             p_norms = [0] * len(self.p_list)
             n_atoms = sum(el_amt.values())
@@ -669,8 +648,7 @@ class ValenceOrbital(BaseFeaturizer):
         # Get the mean number of electrons in each shell
         avg = [
             PropertyStats.mean(
-                self.data_source.get_elemental_properties(elements,
-                                                          "N%sValence" % orb),
+                self.data_source.get_elemental_properties(elements, "N%sValence" % orb),
                 weights=fractions)
             for orb in self.orbitals
         ]
@@ -678,8 +656,7 @@ class ValenceOrbital(BaseFeaturizer):
         # If needed, get fraction of electrons in each shell
         if "frac" in self.props:
             avg_total_valence = PropertyStats.mean(
-                self.data_source.get_elemental_properties(elements,
-                                                          "NValance"),
+                self.data_source.get_elemental_properties(elements, "NValance"),
                 weights=fractions)
             frac = [a / avg_total_valence for a in avg]
 
@@ -761,12 +738,10 @@ class IonProperty(BaseFeaturizer):
 
             # Determine if neutral compound is possible
             if has_oxidation_states(comp):
-                charges, fractions = zip(
-                    *[(s.oxi_state, f) for s, f in comp.items()])
+                charges, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
                 cpd_possible = np.isclose(np.dot(charges, fractions), 0)
             else:
-                oxidation_states = [self.data_source.get_oxidation_states(e)
-                                    for e in elements]
+                oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
                 if self.fast:
                     # Assume each element can have only 1 oxidation state
                     cpd_possible = False
@@ -779,8 +754,7 @@ class IonProperty(BaseFeaturizer):
                     #   can detect whether an takes >1 oxidation state (as in Fe3O4)
                     oxi_state_dict = dict(zip([e.symbol for e in elements],
                                               oxidation_states))
-                    cpd_possible = len(comp.oxi_state_guesses(
-                        oxi_states_override=oxi_state_dict)) > 0
+                    cpd_possible = len(comp.oxi_state_guesses(oxi_states_override=oxi_state_dict)) > 0
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
@@ -945,14 +919,11 @@ class CohesiveEnergy(BaseFeaturizer):
             struct_lst = MPRester(self.mapi_key).get_data(
                 comp.formula.replace(" ", ""))
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(struct_lst,
-                                           key=lambda e:
-                                           e['energy_per_atom'])[0]
+                most_stable_entry = sorted(struct_lst, key=lambda e: e['energy_per_atom'])[0]
                 formation_energy_per_atom = most_stable_entry[
                     'formation_energy_per_atom']
             else:
-                raise ValueError(
-                    'No structure found in MP for {}'.format(comp))
+                raise ValueError('No structure found in MP for {}'.format(comp))
 
         # Subtract elemental cohesive energies from formation energy
         cohesive_energy = -formation_energy_per_atom * comp.num_atoms
@@ -1096,14 +1067,10 @@ class Miedema(BaseFeaturizer):
         else:
             gamma = 0
 
-        c_sf = (fracs * np.power(v_molar, 2 / 3) /
-                np.dot(fracs, np.power(v_molar, 2 / 3)))
-        f = (c_sf * (1 + gamma * np.power(np.multiply.reduce(c_sf, 0), 2)))[
-            ::-1]
-        v_a = np.array([np.power(v_molar[0], 2 / 3) *
-                        (1 + a[0] * f[0] * (elec[0] - elec[1])),
-                        np.power(v_molar[1], 2 / 3) *
-                        (1 + a[1] * f[1] * (elec[1] - elec[0]))])
+        c_sf = (fracs * np.power(v_molar, 2 / 3) / np.dot(fracs, np.power(v_molar, 2 / 3)))
+        f = (c_sf * (1 + gamma * np.power(np.multiply.reduce(c_sf, 0), 2)))[::-1]
+        v_a = np.array([np.power(v_molar[0], 2 / 3) * (1 + a[0] * f[0] * (elec[0] - elec[1])),
+                        np.power(v_molar[1], 2 / 3) * (1 + a[1] * f[1] * (elec[1] - elec[0]))])
         c_sf_a = fracs * v_a / np.dot(fracs, v_a)
         f_a = (c_sf_a * (1 + gamma * np.power(np.multiply.reduce
                                               (c_sf_a, 0), 2)))[::-1]
@@ -1284,11 +1251,8 @@ class Miedema(BaseFeaturizer):
                 deltaH_chem_ss = 0
                 deltaH_elast_ss = 0
                 for sub_bin, el_bin in enumerate(el_bins):
-                    deltaH_chem_ss += self.deltaH_chem(el_bin,
-                                                       frac_bins[sub_bin],
-                                                       'ss')
-                    deltaH_elast_ss += self.deltaH_elast(el_bin,
-                                                         frac_bins[sub_bin])
+                    deltaH_chem_ss += self.deltaH_chem(el_bin, frac_bins[sub_bin], 'ss')
+                    deltaH_elast_ss += self.deltaH_elast(el_bin, frac_bins[sub_bin])
 
                 for ss_type in self.ss_types:
                     if ss_type == 'min':
@@ -1403,8 +1367,7 @@ class YangSolidSolution(BaseFeaturizer):
         """
 
         # Get the element names and fractions
-        elements, fractions = zip(*comp.element_composition. \
-                                  fractional_composition.items())
+        elements, fractions = zip(*comp.element_composition.fractional_composition.items())
 
         # Get the mean melting temperature
         mean_Tm = PropertyStats.mean(
