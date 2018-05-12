@@ -1504,7 +1504,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         for bulk metallic glasses, Nat. Commun. 6 (2015) 8123. doi:10.1038/ncomms9123.
     """
 
-    def __init__(self, threshold=0.01, n_nearest={1, 3, 5}, max_types=6):
+    def __init__(self, threshold=0.01, n_nearest=(1, 3, 5), max_types=6):
         """
         Initialize the featurizer
 
@@ -1620,7 +1620,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         """
 
         # Get the most common elements
-        elems, fracs = zip(*sorted(comp.element_composition.items(),
+        elems, _ = zip(*sorted(comp.element_composition.items(),
                                    key=lambda x: x[1], reverse=True))
 
         # Get the cluster lookup tool using the most common elements
@@ -1636,7 +1636,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         for k in self.n_nearest:
             # Get the nearest clusters
             to_lookup = min(cluster_lookup._fit_X.shape[0], k)
-            dists, inds = cluster_lookup.kneighbors([comp_vec], to_lookup)
+            dists, _ = cluster_lookup.kneighbors([comp_vec], to_lookup)
 
             # Pad the list with 1's
             dists = dists[0].tolist() + [1]*(k - to_lookup)

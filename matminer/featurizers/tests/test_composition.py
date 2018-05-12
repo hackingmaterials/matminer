@@ -247,7 +247,7 @@ class CompositionFeaturesTest(PymatgenTest):
                            Composition('Cu8Zr5'), Composition('Cu13Zr1'),
                            Composition('Cu3Zr12'), Composition('Cu8Zr8'),
                            Composition('Cu12Zr5'), Composition('Cu17Zr')]
-        ds, ins = nn_lookup.kneighbors(
+        ds, _ = nn_lookup.kneighbors(
             ef.featurize_many(stable_clusters),
             n_neighbors=1)
         self.assertArrayAlmostEqual([[0]]*8, ds)
@@ -268,7 +268,7 @@ class CompositionFeaturesTest(PymatgenTest):
         nn_lookup = f.create_cluster_lookup_tool([Element('Cu'),
                                                   Element('Zr')])
         self.assertEquals(2, nn_lookup._fit_X.shape[0])
-        ds, ins = nn_lookup.kneighbors(
+        ds, _ = nn_lookup.kneighbors(
             ef.featurize_many([Composition('CuZr10'), Composition('Cu3Zr12')]),
             n_neighbors=1)
         self.assertArrayAlmostEqual([[0]]*2, ds)
