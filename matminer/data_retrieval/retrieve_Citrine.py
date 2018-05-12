@@ -44,7 +44,6 @@ class CitrineDataRetrieval:
         api_key = api_key if api_key else os.environ["CITRINE_KEY"]
         self.client = CitrinationClient(api_key, "https://citrination.com")
 
-
     def get_dataframe(self, formula=None, prop=None, data_type=None,
                       reference=None, min_measurement=None, max_measurement=None,
                       from_record=None, data_set_id=None, max_results=None,
@@ -165,7 +164,6 @@ class CitrineDataRetrieval:
 
         return df
 
-
     def get_api_data(self, formula=None, prop=None, data_type=None,
                      reference=None, min_measurement=None, max_measurement=None,
                      from_record=None, data_set_id=None, max_results=None):
@@ -225,10 +223,10 @@ class CitrineDataRetrieval:
                                                     size=per_page)
 
             # Check if any results found
-            if "hits" not in self.client.search(pif_query).as_dictionary():
+            if "hits" not in self.client.search.pif_search(pif_query).as_dictionary():
                 raise KeyError("No results found!")
 
-            data = self.client.search(pif_query).as_dictionary()["hits"]
+            data = self.client.search.pif_search(pif_query).as_dictionary()["hits"]
             size = len(data)
             start += size
             json_data.extend(data)

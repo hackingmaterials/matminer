@@ -11,8 +11,8 @@ import json
 import six
 import abc
 import numpy as np
+import pandas as pd
 from glob import glob
-from collections import defaultdict
 
 from pymatgen import Element
 from pymatgen.core.periodic_table import _pt_data
@@ -254,3 +254,38 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
 
     def get_charge_dependent_property(self, element, charge, property_name):
         return getattr(element, property_name)[charge]
+
+
+class MixingEnthalpy:
+    """
+    Values of :math:`\Delta H^{max}_{AB}` for different pairs of elements.
+
+    Based on the Miedema model. Tabulated by:
+        A. Takeuchi, A. Inoue, Classification of Bulk Metallic Glasses by Atomic
+        Size Difference, Heat of Mixing and Period of Constituent Elements and
+        Its Application to Characterization of the Main Alloying Element.
+        Mater. Trans. 46, 2817–2829 (2005).
+    """
+
+    def __init__(self):
+        mixing_dataset = pd.read_csv(os.path.join(module_dir, 'data_files',
+                                                  'MiedemaLiquidDeltaHf.tsv'),
+                                     delim_whitespace=True)
+        self.mixing_data = {}
+        for a, b, dHf in mixing_dataset.itertuples(index=False):
+            key = tuple(sorted((a, b)))
+            self.mixing_data[key] = dHf
+
+    def get_mixing_enthalpy(self, elemA, elemB):
+        """
+        Get the mixing enthalpy between different elements
+
+        Args:
+            elemA (Element): An element
+            elemB (Element): Second element
+        Returns:
+            (float) mixing enthalpy, nan if pair is not in a table
+        """
+
+        key = tuple(sorted((elemA.symbol, elemB.symbol)))
+        return self.mixing_data.get(key, np.nan)

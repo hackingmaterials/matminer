@@ -5,6 +5,7 @@ import unittest
 from unittest import SkipTest
 
 import pandas as pd
+import numpy as np
 from pymatgen import Composition, MPRester
 from pymatgen.core.periodic_table import Specie
 from pymatgen.util.testing import PymatgenTest
@@ -13,7 +14,8 @@ from matminer.featurizers.composition import Stoichiometry, ElementProperty, \
     ValenceOrbital, IonProperty, \
     ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, \
     CohesiveEnergy, \
-    BandCenter, Miedema, CationProperty, OxidationStates, AtomicOrbitals
+    BandCenter, Miedema, CationProperty, OxidationStates, AtomicOrbitals, \
+    YangSolidSolution
 
 
 class CompositionFeaturesTest(PymatgenTest):
@@ -200,6 +202,29 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_bcc'][2]), True)
         self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_hcp'][2]), True)
         self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_no_latt'][2]), True)
+
+    def test_yang(self):
+        comps = list(map(Composition, ["ZrHfTiCuNi", "CuNi",
+                                       "CoCrFeNiCuAl0.3", "CoCrFeNiCuAl"]))
+
+        # Run the featurization
+        feat = YangSolidSolution()
+        feat.set_n_jobs(1)
+        features = feat.featurize_many(comps)
+
+        # Check the results
+        #  These are compared to results from the original paper,
+        #   except for CoCrFeNiCuAl0.3, where the paper reports a value
+        #   exactly 1/10th of what I compute using Excel and matminer
+        # I use a high tolerance because matminer uses a different source
+        #   of radii than the original paper (do not have Kittel's atomic
+        #   radii available)
+        self.assertEqual((4, 2), np.array(features).shape)
+        self.assertArrayAlmostEqual([0.95, 0.1021], features[0], decimal=2)
+        self.assertArrayAlmostEqual([2.22, 0.0], features[1], decimal=2)
+        self.assertArrayAlmostEqual([158.5, 0.0315], features[2], decimal=1)
+        self.assertArrayAlmostEqual([5.06, 0.0482], features[3], decimal=1)
+
 
 if __name__ == '__main__':
     unittest.main()
