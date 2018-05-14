@@ -23,20 +23,27 @@ class BranchPointEnergy(BaseFeaturizer):
     edge position assuming the branch point energy is the center of the gap
 
     Args:
-        n_vb: (int) number of valence bands to include in BPE calc
-        n_cb: (int) number of conduction bands to include in BPE calc
+        n_vb (int): number of valence bands to include in BPE calc
+        n_cb (int): number of conduction bands to include in BPE calc
         calculate_band_edges: (bool) whether to also return band edge
             positions
+        atol (float): absolute tolerance when finding equivalent fractional
+            k-points in irreducible brillouin zone (IBZ) when weights is None
     """
-    def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
+    def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True, atol=1e-5):
         self.n_vb = n_vb
         self.n_cb = n_cb
         self.calculate_band_edges = calculate_band_edges
+        self.atol = atol
 
-    def featurize(self, bs, target_gap=None):
+    def featurize(self, bs, target_gap=None, weights=None):
         """
         Args:
-            bs: (BandStructure) Uniform (not symm line) band structure
+            bs (BandStructure): Uniform (not symm line) band structure
+            target_gap (float): if set the band gap is scissored to match this
+                number
+            weights ([float]): if set, its length has to be equal to bs.kpoints
+                to explicitly determine the k-point weights when averaging
 
         Returns:
             (int) branch point energy on same energy scale as BS eigenvalues
@@ -50,9 +57,11 @@ class BranchPointEnergy(BaseFeaturizer):
 
         total_sum_energies = 0
         num_points = 0
-
-        kpt_wts = SpacegroupAnalyzer(bs.structure).get_kpoint_weights(
-            [k.frac_coords for k in bs.kpoints])
+        if weights is not None:
+            kpt_wts = weights
+        else:
+            kpt_wts = SpacegroupAnalyzer(bs.structure).get_kpoint_weights(
+                [k.frac_coords for k in bs.kpoints], atol=self.atol)
 
         for spin in bs.bands:
             for kpt_idx in range(len(bs.kpoints)):
