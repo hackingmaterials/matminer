@@ -28,12 +28,13 @@ class BranchPointEnergy(BaseFeaturizer):
         calculate_band_edges: (bool) whether to also return band edge
             positions
     """
-    def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True):
+    def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True, atol=1e-5):
         self.n_vb = n_vb
         self.n_cb = n_cb
         self.calculate_band_edges = calculate_band_edges
+        self.atol = atol
 
-    def featurize(self, bs, target_gap=None):
+    def featurize(self, bs, target_gap=None, weights=None):
         """
         Args:
             bs: (BandStructure) Uniform (not symm line) band structure
@@ -50,9 +51,11 @@ class BranchPointEnergy(BaseFeaturizer):
 
         total_sum_energies = 0
         num_points = 0
-
-        kpt_wts = SpacegroupAnalyzer(bs.structure).get_kpoint_weights(
-            [k.frac_coords for k in bs.kpoints])
+        if weights is not None:
+            kpt_wts = weights
+        else:
+            kpt_wts = SpacegroupAnalyzer(bs.structure).get_kpoint_weights(
+                [k.frac_coords for k in bs.kpoints], atol=self.atol)
 
         for spin in bs.bands:
             for kpt_idx in range(len(bs.kpoints)):
