@@ -23,10 +23,12 @@ class BranchPointEnergy(BaseFeaturizer):
     edge position assuming the branch point energy is the center of the gap
 
     Args:
-        n_vb: (int) number of valence bands to include in BPE calc
-        n_cb: (int) number of conduction bands to include in BPE calc
+        n_vb (int): number of valence bands to include in BPE calc
+        n_cb (int): number of conduction bands to include in BPE calc
         calculate_band_edges: (bool) whether to also return band edge
             positions
+        atol (float): absolute tolerance when finding equivalent fractional
+            k-points in irreducible brillouin zone (IBZ) when weights is None
     """
     def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True, atol=1e-5):
         self.n_vb = n_vb
@@ -37,7 +39,11 @@ class BranchPointEnergy(BaseFeaturizer):
     def featurize(self, bs, target_gap=None, weights=None):
         """
         Args:
-            bs: (BandStructure) Uniform (not symm line) band structure
+            bs (BandStructure): Uniform (not symm line) band structure
+            target_gap (float): if set the band gap is scissored to match this
+                number
+            weights ([float]): if set, its length has to be equal to bs.kpoints
+                to explicitly determine the k-point weights when averaging
 
         Returns:
             (int) branch point energy on same energy scale as BS eigenvalues
