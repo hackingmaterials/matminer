@@ -9,7 +9,7 @@ class BaseDataRetrieval:
     If you have an API which you'd like to incorporate into matminer's data
     retrieval tools, using BaseDataRetrieval is the preferred way of doing so.
     All DataRetrieval classes should subclass BaseDataRetrieval and implement
-    both get_dataframe and api_link.
+    both get_dataframe() and api_link().
 
     Retrieving data should be done by the user with get_dataframe. Criteria
     should be a dictionary which will be used to form a query to the database.
@@ -34,10 +34,9 @@ class BaseDataRetrieval:
     The implemented DataRetrieval class should handle the conversion from a
     'sensible' query to a query fit for the individual API and database.
 
-    There may be cases where a 'sensible' query is not sufficient for a query;
-    in this case, use the get_dataframe kwargs sparingly to augment the criteria
-    or properties.
-
+    There may be cases where a 'sensible' query is not sufficient to define a
+    query to the API; in this case, use the get_dataframe kwargs sparingly to
+    augment the criteria, properties, or form of the underlying API query.
 
     ## Documenting a DataRetrieval class
 
@@ -58,7 +57,7 @@ class BaseDataRetrieval:
         Args:
             criteria (dict): The name of each criterion is the key; the value
                 or range of the criterion is the value.
-            prpoerties (list): Properties to return from the query matching
+            properties (list): Properties to return from the query matching
                 the criteria. For example, ['structure', 'formula']
 
         Returns:
