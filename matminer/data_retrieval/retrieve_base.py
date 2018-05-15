@@ -70,7 +70,7 @@ class BaseDataRetrieval:
 
     def api_link(self):
         """
-        The link to comprehensive API documentation.
+        The link to comprehensive API documentation or data source.
 
         Returns:
             (str): A link to the API documentation for this DataRetrieval class.
