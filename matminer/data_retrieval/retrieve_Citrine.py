@@ -94,11 +94,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                         p_df = pd.DataFrame()
 
                         # Rename duplicate property names in a record with progressive numbering
-                        # all_prop_names = [x["name"] for x in system_value["properties"]]
-                        all_prop_names = []
-                        for x in system_value["properties"]:
-                            if "name" in x.keys():
-                                all_prop_names.append(x["name"])
+                        all_prop_names = [x["name"] for x in system_value["properties"]]
 
                         counts = {k: v for k, v in Counter(all_prop_names).items() if v > 1}
 
