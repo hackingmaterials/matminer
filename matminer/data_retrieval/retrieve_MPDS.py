@@ -19,7 +19,7 @@ from pymatgen.core.lattice import Lattice
 try:
     import jmespath
 except ImportError as ex:
-    warnings.warn(ex)
+    warnings.warn(str(ex))
 
 use_ase = False
 try:
@@ -28,7 +28,8 @@ try:
 
     use_ase = True
 except ImportError as ex:
-    warnings.warn(ex)
+    warnings.warn(str(ex))
+
 
 __author__ = 'Evgeny Blokhin <eb@tilde.pro>'
 __copyright__ = 'Copyright (c) 2017, Evgeny Blokhin, Tilde Materials Informatics'
