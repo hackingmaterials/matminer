@@ -82,11 +82,12 @@ class BaseDataRetrieval:
         provide data albeit in a data-source-specific format.
 
         Args:
-            *args: Required args for raw query construction.
-            **kwargs: Kwargs for raw query construction.
+            *args: Required positional arguments for raw query construction.
+            **kwargs: keyword arguments for raw query construction.
 
         Returns:
-            Data from the raw query in native format.
+            Data from the raw query in native format. This could be a list of
+            jsons or a pandas DataFrame, etc.
         """
         raise NotImplementedError("get_data")
 
