@@ -9,7 +9,10 @@ class BaseDataRetrieval:
     If you have an API which you'd like to incorporate into matminer's data
     retrieval tools, using BaseDataRetrieval is the preferred way of doing so.
     All DataRetrieval classes should subclass BaseDataRetrieval and implement
-    both get_dataframe() and api_link().
+    the following:
+        * get_dataframe()
+        * get_data()
+        * api_link()
 
     Retrieving data should be done by the user with get_dataframe. Criteria
     should be a dictionary which will be used to form a query to the database.
@@ -37,6 +40,10 @@ class BaseDataRetrieval:
     There may be cases where a 'sensible' query is not sufficient to define a
     query to the API; in this case, use the get_dataframe kwargs sparingly to
     augment the criteria, properties, or form of the underlying API query.
+
+    A method for accessing raw DB data with an API-native query should be
+    provided by overriding get_data. The link to the original API documentation
+    should be provided by overriding api_link().
 
     ## Documenting a DataRetrieval class
 
@@ -66,6 +73,22 @@ class BaseDataRetrieval:
 
         """
         raise NotImplementedError("get_dataframe() is not defined!")
+
+
+    def get_data(self, *args, **kwargs):
+        """
+        Retrieve raw database data using a raw query to the database API. This
+        method ensures that even if get_dataframe breaks, get_data will still
+        provide data albeit in a data-source-specific format.
+
+        Args:
+            *args: Required args for raw query construction.
+            **kwargs: Kwargs for raw query construction.
+
+        Returns:
+            Data from the raw query in native format.
+        """
+        raise NotImplementedError("get_data")
 
     def api_link(self):
         """
