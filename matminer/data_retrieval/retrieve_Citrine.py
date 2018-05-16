@@ -53,33 +53,40 @@ class CitrineDataRetrieval(BaseDataRetrieval):
         the Citrine API.
 
         Args:
-            criteria (dict): see get_api_data method for supported keys
-            properties: ([str]) name of the property to search for
-
+            criteria (dict): see get_api_data method for supported keys except
+                prop; prop should be included in properties.
+            properties ([str]): requested properties/fields/columns.
+                For example, ["Seebeck coefficient", "Band gap"]. If unsure
+                about the exact words, capitalization, etc try something like
+                ["gap"] and "max_results": 3 and print_properties_options=True
+                to see the exact options for this field
+            common_fields ([str]): fields that are common to all the requested
+                properties. Common example can be "chemicalFormula". Look for
+                suggested common fields after a quick query for more info
+            secondary_fields (bool): if True, fields not included in properties
+                may be added to the output (e.g. references). Recommended only
+                if len(properties)==1
+            print_properties_options (bool): whether to print available options
+                for "properties" and "common_fields" arguments.
         Returns: (object) Pandas dataframe object containing the results
 
         """
-        # Get all of the jsons from client
         common_fields = common_fields or []
         properties = properties or [None]
+        if criteria.get("prop"):
+            properties.append(criteria.pop("prop"))
+            properties = list(set(properties))
         all_fields = []
         for prop_counter, requested_prop in enumerate(properties):
             jsons = self.get_api_data(**criteria, prop=requested_prop)
-
             non_prop_df = pd.DataFrame()  # df w/o measurement column
             prop_df = pd.DataFrame()  # df containing only measurement column
-
             counter = 0  # variable to keep count of sample hit and set indexes
-
             for hit in tqdm(jsons):
-
-                counter += 1  # Keep a count to appropriately index the rows
-
+                counter += 1
                 if "system" in hit.keys():  # Check if 'system' key exists, else skip
                     system_value = hit["system"]
                     system_normdf = json_normalize(system_value)
-
-                    # Make a DF of all non-'properties' fields
                     non_prop_cols = [cols for cols in system_normdf.columns
                                      if "properties" not in cols]
                     non_prop_row = pd.DataFrame()
@@ -87,17 +94,11 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                         non_prop_row[col] = system_normdf[col]
                     non_prop_row.index = [counter] * len(system_normdf)
                     non_prop_df = non_prop_df.append(non_prop_row)
-
-                    # Make a DF of the 'properties' array
                     if "properties" in system_value:
-
                         p_df = pd.DataFrame()
-
                         # Rename duplicate property names in a record with progressive numbering
                         all_prop_names = [x["name"] for x in system_value["properties"]]
-
                         counts = {k: v for k, v in Counter(all_prop_names).items() if v > 1}
-
                         for i in reversed(range(len(all_prop_names))):
                             item = all_prop_names[i]
                             if item in counts and counts[item]:
@@ -106,35 +107,25 @@ class CitrineDataRetrieval(BaseDataRetrieval):
 
                         # add each property, and its associated fields, as a new column
                         for p_idx, prop in enumerate(system_value["properties"]):
-
                             # Rename property name according to above duplicate numbering
                             prop["name"] = all_prop_names[p_idx]
-
                             if "scalars" in prop:
                                 p_df.set_value(counter, prop["name"], parse_scalars(prop["scalars"]))
                             elif "vectors" in prop:
                                 p_df[prop["name"]] = prop["vectors"]
                             elif "matrices" in prop:
                                 p_df[prop["name"]] = prop["matrices"]
-
                             # parse all keys in the Property object except 'name', 'scalars', 'vectors', and 'matrices'
                             for prop_key in prop:
-
                                 if prop_key not in ["name", "scalars", "vectors", "matrices"]:
-
                                     # If value is a list of multiple items, set the cell to the entire list by first
-                                    # converting to object type, else results in a ValueError/IndexError
-                                    if type(prop[prop_key]) == list and len(prop[prop_key]) > 1:
+                                    if isinstance(prop[prop_key], list) and len(prop[prop_key])>1:
                                         p_df[prop["name"] + "-" + prop_key] = np.nan
                                         p_df[prop["name"] + "-" + prop_key] = \
                                             p_df[prop["name"] + "-" + prop_key].astype(object)
-
                                     p_df.set_value(counter, prop["name"] + "-" + prop_key, prop[prop_key])
-
                         p_df.index = [counter]
                         prop_df = prop_df.append(p_df)
-
-            # Concatenate 'properties' and 'non-properties' dataframes
             df_prop = pd.concat([non_prop_df, prop_df], axis=1)
             if prop_counter==0:
                 optcomcols = df_prop.columns.values
@@ -155,7 +146,6 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                 except TypeError or KeyError:
                     raise TypeError('Use scalar/string fields for common_fields'
                                     'common_fields among: {}'.format(optcomcols))
-        # df.index.name = "system"
         uninformative_columns = ["category", "uid"]
         optcomcols = [c for c in optcomcols if c not in uninformative_columns]
         for col in uninformative_columns:
@@ -164,7 +154,6 @@ class CitrineDataRetrieval(BaseDataRetrieval):
         if print_properties_options:
             print("all available fields:\n{}".format(list(set(all_fields))))
             print("\nsuggested common fields:\n{}".format(optcomcols))
-        # df = df.set_index('uid')
         return df
 
     def get_api_data(self, formula=None, prop=None, data_type=None,
