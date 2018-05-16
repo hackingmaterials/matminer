@@ -55,6 +55,15 @@ class BaseDataRetrieval:
     function of the class, and we recommend documenting them using the
     [Google style](https://google.github.io/styleguide/pyguide.html).
     """
+    def api_link(self):
+        """
+        The link to comprehensive API documentation or data source.
+
+        Returns:
+            (str): A link to the API documentation for this DataRetrieval class.
+
+        """
+        raise NotImplementedError("api_link() is not defined!")
 
     def get_dataframe(self, criteria, properties, **kwargs):
         """
@@ -74,7 +83,6 @@ class BaseDataRetrieval:
         """
         raise NotImplementedError("get_dataframe() is not defined!")
 
-
     def get_data(self, *args, **kwargs):
         """
         Retrieve raw database data using a raw query to the database API. This
@@ -90,13 +98,3 @@ class BaseDataRetrieval:
             jsons or a pandas DataFrame, etc.
         """
         raise NotImplementedError("get_data")
-
-    def api_link(self):
-        """
-        The link to comprehensive API documentation or data source.
-
-        Returns:
-            (str): A link to the API documentation for this DataRetrieval class.
-
-        """
-        raise NotImplementedError("api_link() is not defined!")
