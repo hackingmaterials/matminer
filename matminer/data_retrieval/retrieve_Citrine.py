@@ -12,8 +12,8 @@ import numpy as np
 from collections import Counter
 
 
-__author__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, ' \
-             'Alireza Faghaninia <alireza.faghaninia@gmail.com>'
+__author__ = ['Saurabh Bajaj <sbajaj@lbl.gov>',
+             'Alireza Faghaninia <alireza.faghaninia@gmail.com>']
 
 
 def parse_scalars(scalars):
