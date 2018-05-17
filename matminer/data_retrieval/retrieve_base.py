@@ -11,7 +11,6 @@ class BaseDataRetrieval:
     All DataRetrieval classes should subclass BaseDataRetrieval and implement
     the following:
         * get_dataframe()
-        * get_data()
         * api_link()
 
     Retrieving data should be done by the user with get_dataframe. Criteria
@@ -41,9 +40,9 @@ class BaseDataRetrieval:
     query to the API; in this case, use the get_dataframe kwargs sparingly to
     augment the criteria, properties, or form of the underlying API query.
 
-    A method for accessing raw DB data with an API-native query should be
+    A method for accessing raw DB data with an API-native query *may* be
     provided by overriding get_data. The link to the original API documentation
-    should be provided by overriding api_link().
+    *must* be provided by overriding api_link().
 
     ## Documenting a DataRetrieval class
 
