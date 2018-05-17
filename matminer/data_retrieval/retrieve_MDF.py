@@ -35,7 +35,7 @@ class MDFDataRetrieval(BaseDataRetrieval):
         self.forge = Forge(anonymous=anonymous, **kwargs)
 
     def api_link(self):
-        return "https://materialsdatafacility.org/"
+        return "https://github.com/materials-data-facility/forge"
 
     def get_dataframe(self, criteria, properties=None, unwind_arrays=True):
         """
@@ -50,14 +50,14 @@ class MDFDataRetrieval(BaseDataRetrieval):
                 tags ([str]): tags to include, e. g. ["outcar"]
                 resource_types ([str]): resources to include, e. g. ["record"]
                 match_fields ({}): field-value mappings to include, e. g.
-                    {"oqdm.converged": True}
+                    {"oqmd.converged": True}
                 exclude_fields ({}): field-value mappings to exclude, e. g.
-                    {"oqdm.converged": False}
+                    {"oqmd.converged": False}
                 match_ranges ({}): field-range mappings to include, e. g.
-                    {"oqdm.band_gap.value": [1, 5]}, use "*" for no lower
+                    {"oqmd.band_gap.value": [1, 5]}, use "*" for no lower
                     or upper bound, e. g. {"oqdm.band_gap.value": [1, "*"]},
                 exclude_ranges ({}): field-range mapping to exclude,
-                    {"oqdm.band_gap.value": [3, "*"]} to exclude all
+                    {"oqmd.band_gap.value": [3, "*"]} to exclude all
                     results with band gap higher than 3.
                 raw (bool): whether or not to return raw (non-dataframe)
                     output, defaults to False
