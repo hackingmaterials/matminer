@@ -141,8 +141,15 @@ class CitrineDataRetrieval(BaseDataRetrieval):
             if prop_counter == 0:
                 df = df_prop
             else:
+                if "uid" in df and "uid" in df_prop:
+                    uid = ["uid"]
+                else:
+                    uid = []
                 try:
-                    df = df.merge(df_prop, on=["uid"]+common_fields, how="outer")
+                    if len(uid+common_fields) > 0:
+                        df = df.merge(df_prop, on=uid+common_fields, how="outer")
+                    else:
+                        df = df.join(df_prop, how="outer")
                 except TypeError or KeyError:
                     raise TypeError('Use scalar/string fields for common_fields'
                                     'common_fields among: {}'.format(optcomcols))
