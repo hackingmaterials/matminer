@@ -1,3 +1,7 @@
+
+__author__ = ["Alexander Dunn <ardunn@lbl.gov>",
+             "Alireza Faghaninia <alireza.faghaninia@gmail.com>"]
+
 class BaseDataRetrieval:
     """
     Abstract class to retrieve data from various material APIs while adhering to
