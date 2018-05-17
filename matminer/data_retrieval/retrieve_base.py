@@ -82,19 +82,3 @@ class BaseDataRetrieval:
 
         """
         raise NotImplementedError("get_dataframe() is not defined!")
-
-    def get_data(self, *args, **kwargs):
-        """
-        Retrieve raw database data using a raw query to the database API. This
-        method ensures that even if get_dataframe breaks, get_data will still
-        provide data albeit in a data-source-specific format.
-
-        Args:
-            *args: Required positional arguments for raw query construction.
-            **kwargs: keyword arguments for raw query construction.
-
-        Returns:
-            Data from the raw query in native format. This could be a list of
-            jsons or a pandas DataFrame, etc.
-        """
-        raise NotImplementedError("get_data")
