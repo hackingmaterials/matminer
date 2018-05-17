@@ -53,7 +53,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
         the Citrine API.
 
         Args:
-            criteria (dict): see get_api_data method for supported keys except
+            criteria (dict): see get_data method for supported keys except
                 prop; prop should be included in properties.
             properties ([str]): requested properties/fields/columns.
                 For example, ["Seebeck coefficient", "Band gap"]. If unsure
@@ -78,7 +78,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
             properties = list(set(properties))
         all_fields = []
         for prop_counter, requested_prop in enumerate(properties):
-            jsons = self.get_api_data(**criteria, prop=requested_prop)
+            jsons = self.get_data(**criteria, prop=requested_prop)
             non_prop_df = pd.DataFrame()  # df w/o measurement column
             prop_df = pd.DataFrame()  # df containing only measurement column
             counter = 0  # variable to keep count of sample hit and set indexes
