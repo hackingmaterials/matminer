@@ -150,7 +150,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                         df = df.merge(df_prop, on=uid+common_fields, how="outer")
                     else:
                         df = df.join(df_prop, how="outer")
-                except TypeError or KeyError:
+                except (TypeError, KeyError):
                     raise TypeError('Use scalar/string fields for common_fields'
                                     'common_fields among: {}'.format(optcomcols))
         uninformative_columns = ["category", "uid"]

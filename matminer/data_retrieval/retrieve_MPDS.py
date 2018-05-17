@@ -71,36 +71,8 @@ class MPDSDataRetrieval(BaseDataRetrieval):
     *or*
     jsonobj = client.get_data({"formula":"SrTiO3"}, fields=[])
     """
-    default_fields = {
-        'S': [
-            'phase_id',
-            'chemical_formula',
-            'sg_n',
-            'entry',
-            lambda: 'crystal structure',
-            lambda: 'A'
-        ],
-        'P': [
-            'sample.material.phase_id',
-            'sample.material.chemical_formula',
-            'sample.material.condition[0].scalar[0].value',
-            'sample.material.entry',
-            'sample.measurement[0].property.name',
-            'sample.measurement[0].property.units',
-            'sample.measurement[0].property.scalar'
-        ],
-        'C': [
-            lambda: None,
-            'title',
-            lambda: None,
-            'entry',
-            lambda: 'phase diagram',
-            'naxes',
-            'arity'
-        ]
-    }
-    default_properties = ['Phase', 'Formula', 'SG',
-                          'Entry', 'Property', 'Units', 'Value']
+    default_properties = ('Phase', 'Formula', 'SG',
+                          'Entry', 'Property', 'Units', 'Value')
 
     endpoint = "https://api.mpds.io/v0/download/facet"
 
@@ -172,7 +144,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
             output.append(filtered)
         return output
 
-    def get_data(self, criteria, phases=None, fields=default_fields):
+    def get_data(self, criteria, phases=None, fields=None):
         """
         Retrieve data in JSON.
         JSON is expected to be valid against the schema
@@ -192,6 +164,38 @@ class MPDSDataRetrieval(BaseDataRetrieval):
             List of dicts: C-, S-, and P-entries, the format is
             documented at http://developer.mpds.io/#JSON-schemata
         """
+
+        default_fields = {
+            'S': [
+                'phase_id',
+                'chemical_formula',
+                'sg_n',
+                'entry',
+                lambda: 'crystal structure',
+                lambda: 'A'
+            ],
+            'P': [
+                'sample.material.phase_id',
+                'sample.material.chemical_formula',
+                'sample.material.condition[0].scalar[0].value',
+                'sample.material.entry',
+                'sample.measurement[0].property.name',
+                'sample.measurement[0].property.units',
+                'sample.measurement[0].property.scalar'
+            ],
+            'C': [
+                lambda: None,
+                'title',
+                lambda: None,
+                'entry',
+                lambda: 'phase diagram',
+                'naxes',
+                'arity'
+            ]
+        }
+
+        fields = default_fields if fields is None else fields
+
         output = []
         phases = phases or []
         counter, hits_count = 0, 0
