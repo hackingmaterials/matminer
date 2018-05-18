@@ -5,6 +5,17 @@
 matminer Changelog
 ==================
 
+**v0.3.2**
+
+* Major overhaul / redesign of data retrieval classes for consistency (A. Faghaninia, A. Dunn)
+* Updates / redesign of function featurizer (J. Montoya)
+* Add Yang's solid solution features (L. Ward)
+* Add cluster packing efficiency features (L. Ward)
+* update to MDF data retrieval (L. Ward)
+* update to Citrine data retrieval for new pycc (S. Bajaj)
+* Branch point energy takes into account symmetry (A. Faghaninia)
+* minor code and doc updates (A. Jain, A. Faghaninia)
+
 **v0.3.1**
 
 * add caching for featurizers (L. Ward)

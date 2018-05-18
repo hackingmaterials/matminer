@@ -44,6 +44,14 @@ matminer.data\_retrieval.retrieve\_MongoDB module
     :undoc-members:
     :show-inheritance:
 
+matminer.data\_retrieval.retrieve\_base module
+----------------------------------------------
+
+.. automodule:: matminer.data_retrieval.retrieve_base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

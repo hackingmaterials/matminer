@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.utils package &#8212; matminer 0.3.1 documentation</title>
+    <title>matminer.utils package &#8212; matminer 0.3.2 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -232,7 +232,10 @@ property_name - (str) property to be retreived</dd>
 <em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">CohesiveEnergyData</code><a class="headerlink" href="#matminer.utils.data.CohesiveEnergyData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.utils.data.AbstractData" title="matminer.utils.data.AbstractData"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.utils.data.AbstractData</span></code></a></p>
 <p>Get the cohesive energy of an element.</p>
-<p>TODO: Where is this data from? -wardlt</p>
+<p>Data is extracted from KnowledgeDoor Cohesive Energy Handbook online
+(<a class="reference external" href="http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html">http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html</a>),
+which in turn got the data from Introduction to Solid State Physics,
+8th Edition, by Charles Kittel (ISBN 978-0-471-41526-8), 2005.</p>
 <dl class="method">
 <dt id="matminer.utils.data.CohesiveEnergyData.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.CohesiveEnergyData.__init__" title="Permalink to this definition">¶</a></dt>
@@ -345,6 +348,39 @@ property_name - (str) property to be retreived</dd>
 <dd>elem - (Element), Target element</dd>
 <dt>Returns:</dt>
 <dd>[int] - oxidation states</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.utils.data.MixingEnthalpy">
+<em class="property">class </em><code class="descclassname">matminer.utils.data.</code><code class="descname">MixingEnthalpy</code><a class="headerlink" href="#matminer.utils.data.MixingEnthalpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Values of <img class="math" src="_images/math/717a514d7c39628ccc8ab9dc5b3b822017d413fc.png" alt="\Delta H^{max}_{AB}"/> for different pairs of elements.</p>
+<dl class="docutils">
+<dt>Based on the Miedema model. Tabulated by:</dt>
+<dd>A. Takeuchi, A. Inoue, Classification of Bulk Metallic Glasses by Atomic
+Size Difference, Heat of Mixing and Period of Constituent Elements and
+Its Application to Characterization of the Main Alloying Element.
+Mater. Trans. 46, 2817–2829 (2005).</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.utils.data.MixingEnthalpy.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.MixingEnthalpy.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.utils.data.MixingEnthalpy.get_mixing_enthalpy">
+<code class="descname">get_mixing_enthalpy</code><span class="sig-paren">(</span><em>elemA</em>, <em>elemB</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.MixingEnthalpy.get_mixing_enthalpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the mixing enthalpy between different elements</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elemA (Element): An element
+elemB (Element): Second element</dd>
+<dt>Returns:</dt>
+<dd>(float) mixing enthalpy, nan if pair is not in a table</dd>
 </dl>
 </dd></dl>
 
@@ -597,7 +633,7 @@ For a more advanced concept, see the classmethod builtin.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.2 documentation</a> &#187;</li> 
       </ul>
     </div>
 

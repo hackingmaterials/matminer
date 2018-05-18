@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.3.1 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.3.2 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -183,23 +183,27 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.bandstructure.BranchPointEnergy">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">BranchPointEnergy</code><span class="sig-paren">(</span><em>n_vb=1</em>, <em>n_cb=1</em>, <em>calculate_band_edges=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.bandstructure.</code><code class="descname">BranchPointEnergy</code><span class="sig-paren">(</span><em>n_vb=1</em>, <em>n_cb=1</em>, <em>calculate_band_edges=True</em>, <em>atol=1e-05</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Branch point energy and absolute band edge position.</p>
 <p>Calculates the branch point energy and (optionally) an absolute band
 edge position assuming the branch point energy is the center of the gap</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">n_vb: (int) number of valence bands to include in BPE calc
-n_cb: (int) number of conduction bands to include in BPE calc
+<dd><p class="first">n_vb (int): number of valence bands to include in BPE calc
+n_cb (int): number of conduction bands to include in BPE calc
 calculate_band_edges: (bool) whether to also return band edge</p>
-<blockquote class="last">
+<blockquote>
 <div>positions</div></blockquote>
+<dl class="last docutils">
+<dt>atol (float): absolute tolerance when finding equivalent fractional</dt>
+<dd>k-points in irreducible brillouin zone (IBZ) when weights is None</dd>
+</dl>
 </dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.bandstructure.BranchPointEnergy.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>n_vb=1</em>, <em>n_cb=1</em>, <em>calculate_band_edges=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>n_vb=1</em>, <em>n_cb=1</em>, <em>calculate_band_edges=True</em>, <em>atol=1e-05</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -229,10 +233,18 @@ calculate_band_edges: (bool) whether to also return band edge</p>
 
 <dl class="method">
 <dt id="matminer.featurizers.bandstructure.BranchPointEnergy.featurize">
-<code class="descname">featurize</code><span class="sig-paren">(</span><em>bs</em>, <em>target_gap=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.featurize" title="Permalink to this definition">¶</a></dt>
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>bs</em>, <em>target_gap=None</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BranchPointEnergy.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
-<dd>bs: (BandStructure) Uniform (not symm line) band structure</dd>
+<dd><p class="first">bs (BandStructure): Uniform (not symm line) band structure
+target_gap (float): if set the band gap is scissored to match this</p>
+<blockquote>
+<div>number</div></blockquote>
+<dl class="last docutils">
+<dt>weights ([float]): if set, its length has to be equal to bs.kpoints</dt>
+<dd>to explicitly determine the k-point weights when averaging</dd>
+</dl>
+</dd>
 <dt>Returns:</dt>
 <dd>(int) branch point energy on same energy scale as BS eigenvalues</dd>
 </dl>
@@ -575,6 +587,13 @@ in any derived featurizer subclass.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="matminer.featurizers.base.MultipleFeaturizer.featurize_dataframe">
+<code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>ignore_errors=False</em>, <em>return_errors=False</em>, <em>inplace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Featurize dataframe is overloaded in order to allow
+compatibility with Featurizers that overload featurize_dataframe</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="matminer.featurizers.base.MultipleFeaturizer.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
@@ -588,6 +607,12 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dl>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.base.MultipleFeaturizer.set_n_jobs">
+<code class="descname">set_n_jobs</code><span class="sig-paren">(</span><em>n_jobs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.set_n_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the number of threads for this</p>
 </dd></dl>
 
 </dd></dl>
@@ -655,6 +680,195 @@ gap_AO: (float in eV)</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.AtomicOrbitals.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicOrbitals.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">AtomicPackingEfficiency</code><span class="sig-paren">(</span><em>threshold=0.01</em>, <em>n_nearest=(1</em>, <em>3</em>, <em>5)</em>, <em>max_types=6</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Packing efficiency based on a geometric theory of the amorphous packing
+of hard spheres.</p>
+<p>This featurizer computes two different kinds of the features. The first
+relate to the distance between a composition and the composition of
+the clusters of atoms expected to be efficiently packed based on a
+theory from
+<a href="#id39"><span class="problematic" id="id40">`Laws et al.&lt;http://www.nature.com/doifinder/10.1038/ncomms9123&gt;`_</span></a>.
+The second corresponds to the packing efficiency of a system if all atoms
+in the alloy are simultaneously as efficiently-packed as possible.</p>
+<p>The packing efficiency in these models is based on the Atomic Packing
+Efficiency (APE), which measures the difference between the ratio of
+the radii of the central atom to its neighbors and the ideal ratio
+of a cluster with the same number of atoms that has optimal packing
+efficiency. If the difference between the ratios is too large, the APE is
+positive. If the difference is too small, the APE is negative.</p>
+<dl class="docutils">
+<dt>Features:</dt>
+<dd><dl class="first last docutils">
+<dt>dist from {k} clusters <a href="#id33"><span class="problematic" id="id34">|APE|</span></a> &lt; {thr} - The distance between an</dt>
+<dd>alloy composition and the k clusters that have a packing efficiency
+below thr from ideal</dd>
+<dt>mean simul. packing efficiency - Mean packing efficiency of all atoms.</dt>
+<dd>The packing efficiency is measured with respect to ideal (0)</dd>
+<dt>mean abs simul. packing efficiency - Mean absolute value of the</dt>
+<dd>packing efficiencies. Closer to zero is more efficiently packed</dd>
+</dl>
+</dd>
+<dt>References:</dt>
+<dd>[1] K.J. Laws, D.B. Miracle, M. Ferry, A predictive structural model
+for bulk metallic glasses, Nat. Commun. 6 (2015) 8123. doi:10.1038/ncomms9123.</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>threshold=0.01</em>, <em>n_nearest=(1</em>, <em>3</em>, <em>5)</em>, <em>max_types=6</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the featurizer</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>threshold (float):Threshold to use for determining whether</dt>
+<dd>a cluster is efficiently packed.</dd>
+</dl>
+<p>n_nearest ({int}): Number of nearest clusters to use when considering features
+max_types (int): Maximum number of atom types to consider when</p>
+<blockquote class="last">
+<div>looking for efficient clusters. The process for finding
+efficient clusters very expensive for large numbers of types</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.compute_nearest_cluster_distance">
+<code class="descname">compute_nearest_cluster_distance</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.compute_nearest_cluster_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the distance between a composition and that the nearest
+efficiently-packed clusters.</p>
+<p>Measures the mean <img class="math" src="_images/math/0467e0003559a763cbcd16dcd0bf3c33f9c65901.png" alt="L_2"/> distance between the alloy composition
+and the <img class="math" src="_images/math/e9203da50e1059455123460d4e716c9c7f440cc3.png" alt="k"/>-nearest clusters with Atomic Packing Efficiencies
+within the user-specified tolerance of 1. <img class="math" src="_images/math/e9203da50e1059455123460d4e716c9c7f440cc3.png" alt="k"/> is any of the
+numbers defined in the “n_nearest” parameter of this class.</p>
+<p>If there are less than <cite>k</cite> efficient clusters in the system, we use
+the maximum distance betweeen any two compositions (1) for the
+unmatched neighbors.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>comp (Composition): Composition of material to evaluate</dd>
+<dt>Return:</dt>
+<dd>[float] Average distances</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.compute_simultaneous_packing_efficiency">
+<code class="descname">compute_simultaneous_packing_efficiency</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.compute_simultaneous_packing_efficiency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the packing efficiency of the system when the neighbor
+shell of each atom has the same composition as the alloy. When this
+criterion is satisfied, it is possible for every atom in this system
+to be simultaneously as efficiently-packed as possible.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>comp (Composition): Composition to be assessed</dd>
+<dt>Returns</dt>
+<dd>(float) Average APE of all atoms
+(float) Average deviation of the APE of each atom from ideal (0)</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.create_cluster_lookup_tool">
+<code class="descname">create_cluster_lookup_tool</code><span class="sig-paren">(</span><em>elements</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.create_cluster_lookup_tool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the compositions of efficiently-packed clusters in a certain system
+of elements</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elements ([Element]): Elements in system</dd>
+<dt>Return:</dt>
+<dd>(NearNeighbors): Tool to find nearby clusters in this system</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.find_ideal_cluster_size">
+<code class="descname">find_ideal_cluster_size</code><span class="sig-paren">(</span><em>radius_ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.find_ideal_cluster_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the optimal cluster size for a certain radius ratio</p>
+<p>Finds the number of nearest neighbors <img class="math" src="_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> that minimizes
+<img class="math" src="_images/math/31880c4812286affe8e1e36fce7bdc56e8e28458.png" alt="|1 - rp(n)/r|"/>, where <img class="math" src="_images/math/8ec4bad22a4dd149e5658ab17c4358b3dbc8dc1e.png" alt="rp(n)"/> is the ideal radius
+ratio for a certain <img class="math" src="_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> and <img class="math" src="_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/> is the actual ratio.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>radius_ratio (float): math:<cite>r / r_{neighbor}</cite></dd>
+<dt>Returns:</dt>
+<dd>(int) number of neighboring atoms for that will be the most
+efficiently packed.
+(float) Optimal APE</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.get_ideal_radius_ratio">
+<code class="descname">get_ideal_radius_ratio</code><span class="sig-paren">(</span><em>n_neighbors</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.get_ideal_radius_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the idea ratio between the central atom and neighboring
+atoms for a neighbor with a certain number of nearest neighbors.</p>
+<p>Based on work by <a class="reference external" href="https://www.jstage.jst.go.jp/article/matertrans/47/7/47_7_1737/_article/-char/en">Miracle, Lord, and Ranganathan</a>.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>n_neighbors (int): Number of atoms in 1st NN shell</dd>
+<dt>Return:</dt>
+<dd>(float) ideal radius ratio <img class="math" src="_images/math/a25e560325b732d03aa5e9a69521f2bfa67e5f4e.png" alt="r / r_{neighbor}"/></dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.AtomicPackingEfficiency.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -796,7 +1010,8 @@ Args:</p>
 <dt id="matminer.featurizers.composition.CohesiveEnergy">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">CohesiveEnergy</code><span class="sig-paren">(</span><em>mapi_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Cohesive energy per atom using elemental cohesive energies and formation energy.</p>
+<p>Cohesive energy per atom using elemental cohesive energies and
+formation energy.</p>
 <p>Get cohesive energy per atom of a compound by adding known
 elemental cohesive energies from the formation energy of the
 compound.</p>
@@ -1347,11 +1562,6 @@ containing parameters for 73 types of elements:</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="matminer.featurizers.composition.Miedema.data_dir">
-<code class="descname">data_dir</code><em class="property"> = '/Users/ajain/Documents/code_matgen/matminer/matminer/featurizers/../utils/data_files'</em><a class="headerlink" href="#matminer.featurizers.composition.Miedema.data_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.deltaH_chem">
 <code class="descname">deltaH_chem</code><span class="sig-paren">(</span><em>elements</em>, <em>fracs</em>, <em>struct</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.deltaH_chem" title="Permalink to this definition">¶</a></dt>
@@ -1751,6 +1961,174 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 </dd></dl>
 
+<dl class="class">
+<dt id="matminer.featurizers.composition.YangSolidSolution">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">YangSolidSolution</code><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Mixing thermochemistry and size mismatch terms of Yang and Zhang (2012)</p>
+<p>This featurizer returns two different features developed by
+.. Yang and Zhang <cite>https://linkinghub.elsevier.com/retrieve/pii/S0254058411009357</cite>
+to predict whether metal alloys will form metallic glasses,
+crystalline solid solutions, or intermetallics.
+The first, Omega, is related to the balance between the mixing entropy and
+mixing enthalpy of the liquid phase. The second, delta, is related to the
+atomic size mismatch between the different elements of the material.</p>
+<dl class="docutils">
+<dt>Features</dt>
+<dd>Yang omega - Mixing thermochemistry feature, Omega
+Yang delta - Atomic size mismatch term</dd>
+<dt>References:</dt>
+<dd></dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.composition.YangSolidSolution.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.YangSolidSolution.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.YangSolidSolution.compute_delta">
+<code class="descname">compute_delta</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.compute_delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Yang’s delta parameter</p>
+<blockquote>
+<div>:math:<a href="#id1"><span class="problematic" id="id2">`</span></a>sqrt{sum^n_{i=1} c_i left( 1 -</div></blockquote>
+<p>rac{r_i}{ar{r}} 
+ight)^2 }`</p>
+<blockquote>
+<div><p>where <img class="math" src="_images/math/496867ca68c428fa123f26f0f73997632e61e116.png" alt="c_i"/> and <img class="math" src="_images/math/ee29958a93bd815ef9f3e2508e54fa1871d0d111.png" alt="r_i"/> are the fraction and radius of
+element <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/>, and <div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">ar{r}</tt>)</p>
+latex exited with error
+[stdout]
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=latex)
+ restricted \write18 enabled.
+entering extended mode
+(./math.tex
+LaTeX2e &lt;2015/01/01&gt;
+Babel &lt;3.9l&gt; and hyphenation patterns for 79 languages loaded.
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/size12.clo))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/utf8x.def))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucs.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/data/uni-global.def))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucsencs.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd)
+
+! Package inputenc Error: Keyboard character used is undefined
+(inputenc)                in inputencoding `utf8x'.
+
+See the inputenc package documentation for explanation.
+Type  H &lt;return&gt;  for immediate help.
+ ...                                              
+                                                  
+l.12 $^^H
+         ar{r}$
+[1] (./math.aux) )
+(see the transcript file for additional information)
+Output written on math.dvi (1 page, 208 bytes).
+Transcript written on math.log.
+</div>
+ is the fraction-weighted
+average of the radii. We use the radii compiled by
+.. Miracle et al. <cite>https://www.tandfonline.com/doi/ref/10.1179/095066010X12646898728200?scroll=top</cite>.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>comp (Composition) - Composition to assess</dd>
+<dt>Returns:</dt>
+<dd>(float) delta</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.YangSolidSolution.compute_omega">
+<code class="descname">compute_omega</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.compute_omega" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Yang’s mixing thermodynamics descriptor</p>
+<blockquote>
+<div>:math:<a href="#id3"><span class="problematic" id="id4">`</span></a></div></blockquote>
+<p>rac{T_m Delta S_{mix}}{ |  Delta H_{mix} | }`</p>
+<blockquote>
+<div><p>Where <img class="math" src="_images/math/f761880e192d4bc7f9a3b7c5b0c495177b219bba.png" alt="T_m"/> is average melting temperature,
+<img class="math" src="_images/math/9d2e3563d506091cb1a66a8405841ef4728fbd43.png" alt="\Delta S_{mix}"/> is the ideal mixing entropy,
+and <img class="math" src="_images/math/c9c2aeea32459ab854f099f25fd5310801d90ab2.png" alt="\Delta H_{mix}"/> is the average mixing enthalpies
+of all pairs of elements in the alloy</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>comp (Composition) - Composition to featurizer</dd>
+<dt>Returns:</dt>
+<dd>(float) Omega</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.YangSolidSolution.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.YangSolidSolution.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.YangSolidSolution.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="matminer.featurizers.composition.has_oxidation_states">
 <code class="descclassname">matminer.featurizers.composition.</code><code class="descname">has_oxidation_states</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.has_oxidation_states" title="Permalink to this definition">¶</a></dt>
@@ -2009,7 +2387,8 @@ defaults to float</dd>
 <dt>combo_function (function): function to combine multi-features,</dt>
 <dd>defaults to np.prod (i.e. cumulative product of expressions),
 note that a combo function must cleanly process sympy
-expressions</dd>
+expressions and <strong>takes a list of arbitrary length as input</strong>,
+other options include np.sum</dd>
 <dt>latexify_labels (bool): whether to render labels in latex,</dt>
 <dd>defaults to False</dd>
 </dl>
@@ -2064,7 +2443,7 @@ features for each argument.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>args: list of numbers to generate functional output</dt>
+<dt><a href="#id5"><span class="problematic" id="id6">*</span></a>args: list of numbers to generate functional output</dt>
 <dd>features</dd>
 </dl>
 </dd>
@@ -2076,13 +2455,15 @@ features for each argument.</p>
 <dl class="method">
 <dt id="matminer.featurizers.function.FunctionFeaturizer.featurize_dataframe">
 <code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>ignore_errors=False</em>, <em>return_errors=False</em>, <em>inplace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.function.FunctionFeaturizer.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute features for all entries contained in input dataframe.</p>
+<dd><p>Custom featurize dataframe method that sets the column labels
+using the fit method and then featurizes the dataframe similarly
+as the base class</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">df (DataFrame): dataframe containing input data
-col_id (str or list of str): column label containing objects</p>
+<dd><p class="first">df (pandas.DataFrame): Dataframe containing input data.
+col_id (str or list of str): column label containing objects to</p>
 <blockquote>
-<div>to featurize, can be single or multiple column names</div></blockquote>
+<div>featurize.</div></blockquote>
 <dl class="docutils">
 <dt>ignore_errors (bool): Returns NaN for dataframe rows where</dt>
 <dd>exceptions are thrown if True. If False, exceptions
@@ -2094,7 +2475,20 @@ ignore_errors to be True.</dd>
 <p class="last">inplace (bool): Whether to add new columns to input dataframe (df)</p>
 </dd>
 <dt>Returns:</dt>
-<dd>updated DataFrame</dd>
+<dd>updated DataFrame.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.function.FunctionFeaturizer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**fit_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.function.FunctionFeaturizer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the feature labels.  Not intended to be used by a user,
+only intended to be invoked as part of featurize_dataframe</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>X (DataFrame or array-like): data to fit to</dd>
+<dt>Returns:</dt>
+<dd>Set of feature labels corresponding to expressions</dd>
 </dl>
 </dd></dl>
 
@@ -2180,18 +2574,18 @@ potentials. These features come in two forms: atomic fingerprints and
 direction-resolved fingerprints.
 Atomic fingerprints describe the local environment of an atom and are
 computed using the function:
-:math:<a href="#id3"><span class="problematic" id="id4">`</span></a>A_i(eta) = sumlimits_{i</p>
+:math:<a href="#id7"><span class="problematic" id="id8">`</span></a>A_i(eta) = sumlimits_{i</p>
 </div></blockquote>
 <p>e j} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <blockquote>
 <div>where <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/9172efc523d7488d4c3ed299d0be813de01503b8.png" alt="\eta"/> is a scaling function,
 <img class="math" src="_images/math/35bab58b40a77a2e24ecb9f58898f1813de64459.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> and <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/>, and <img class="math" src="_images/math/074903764bb5a464b7c346e84f43cba2174f3ab0.png" alt="f(r)"/> is a cutoff function where
-:math:<a href="#id5"><span class="problematic" id="id6">`</span></a>f(r) = 0.5[cos(</div></blockquote>
+:math:<a href="#id9"><span class="problematic" id="id10">`</span></a>f(r) = 0.5[cos(</div></blockquote>
 <dl class="docutils">
 <dt>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/b851d3a5fb872ad82d61f964772ca1cc2520a590.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</dt>
 <dd>The direction-resolved fingerprints are computed using
-:math:<a href="#id7"><span class="problematic" id="id8">`</span></a>V_i^k(eta) = sumlimits_{i</dd>
+:math:<a href="#id11"><span class="problematic" id="id12">`</span></a>V_i^k(eta) = sumlimits_{i</dd>
 </dl>
 <p>e j} 
 rac{r_{ij}^k}{r_{ij}} e^{-(
@@ -2641,9 +3035,9 @@ idx (int): index of target site in structure.</div></blockquote>
 <dd><p>Identify elements to be included in the following featurization,
 by intersecting the elements present in the passed structures with
 those explicitly included (or excluded) in __init__. Only elements
-in the <a href="#id33"><span class="problematic" id="id34">self.el_list_</span></a> will be featurized.
+in the <a href="#id41"><span class="problematic" id="id42">self.el_list_</span></a> will be featurized.
 Besides, compositions of the passed structures will also be “stored”
-in a dict of <a href="#id35"><span class="problematic" id="id36">self.el_amt_dict_</span></a>, avoiding repeated calculation of
+in a dict of <a href="#id43"><span class="problematic" id="id44">self.el_amt_dict_</span></a>, avoiding repeated calculation of
 composition when featurizing multiple sites in the same structure.
 Args:</p>
 <blockquote>
@@ -2682,7 +3076,7 @@ Args:</p>
 <dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
 or “MinimumVIRENN”).</dd>
 </dl>
-<p><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
+<p><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -2743,7 +3137,7 @@ use_weights (string) - Method used to account for weights of neighbors:</p>
 ‘sum’ - Use sum of weights as the coordination number
 ‘effective’ - Compute the ‘effective coordination number’, which</p>
 <blockquote>
-<div>is computed as :math:<a href="#id11"><span class="problematic" id="id12">`</span></a></div></blockquote>
+<div>is computed as :math:<a href="#id15"><span class="problematic" id="id16">`</span></a></div></blockquote>
 </div></blockquote>
 </dd>
 </dl>
@@ -2801,7 +3195,7 @@ Args:</p>
 <dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
 or “MinimumVIRENN”).</dd>
 </dl>
-<p><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
+<p><a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -2844,7 +3238,7 @@ Args:</p>
 <dt>op_types (dict): a dict of coordination number (int) to a list of str</dt>
 <dd>representing the order parameter types</dd>
 </dl>
-<p><a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
+<p><a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
 </div></blockquote>
 </dd></dl>
 
@@ -2894,7 +3288,7 @@ idx (int): index of target site in structure.</div></blockquote>
 Args:</p>
 <blockquote>
 <div>preset (str): name of preset (“cn” or “ops”)
-<a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs: other settings to be passed into CrystalNN class</div></blockquote>
+<a href="#id21"><span class="problematic" id="id22">**</span></a>kwargs: other settings to be passed into CrystalNN class</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -3415,10 +3809,10 @@ neighbors of the site, and assigns each neighbor (<img class="math" src="_images
 weight (<img class="math" src="_images/math/59dc9a44d175aae008c18691b9f662270e36ef5d.png" alt="A_n"/>) that corresponds to the area of the facet
 on the tessellation corresponding to that neighbor.
 The local property difference is then computed by
-:math:<a href="#id19"><span class="problematic" id="id20">`</span></a></p>
+:math:<a href="#id23"><span class="problematic" id="id24">`</span></a></p>
 </div></blockquote>
 <dl class="docutils">
-<dt>rac{sum_n {A_n <a href="#id29"><span class="problematic" id="id30">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
+<dt>rac{sum_n {A_n <a href="#id35"><span class="problematic" id="id36">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
 <dd><p class="first">where <img class="math" src="_images/math/99caa835285abdbc99536106ff1d075a870c2650.png" alt="p_n"/> is the property (e.g., atomic number) of a neighbor
 and <img class="math" src="_images/math/2aa528e29c4df6e3a7e44783f02f45e46012b948.png" alt="p_0"/> is the property of a site.</p>
 <dl class="last docutils">
@@ -4316,7 +4710,7 @@ structure deviates from random using a Warren-Cowley-like ordering
 parameter. The first step of this calculation is to determine the nearest
 neighbor shells of each site. Then, for each shell a degree of order for
 each type is determined by computing:</p>
-<p>:math:<a href="#id21"><span class="problematic" id="id22">`</span></a>lpha (t,s) = 1 -</p>
+<p>:math:<a href="#id25"><span class="problematic" id="id26">`</span></a>lpha (t,s) = 1 -</p>
 </div></blockquote>
 <p>rac{sum_n w_n delta (t - t_n)}{x_t sum_n w_n}`</p>
 <blockquote>
@@ -4413,7 +4807,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>Generate the Coulomb matrix, M, of the input
 structure (or molecule).  The Coulomb matrix was put forward by
 Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-off-diagonal elements M_ij = Z_i*Z_j/<a href="#id31"><span class="problematic" id="id32">|R_i-R_j|</span></a>
+off-diagonal elements M_ij = Z_i*Z_j/<a href="#id37"><span class="problematic" id="id38">|R_i-R_j|</span></a>
 and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
 the nuclear charge and the position of atom i, respectively.</p>
 <dl class="docutils">
@@ -4580,7 +4974,7 @@ structure. This feature is sensitive to bond length tables that you use.</p>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id24"><span class="problematic" id="id25">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
+<dt><a href="#id28"><span class="problematic" id="id29">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
 <dd>pymatgen.</dd>
 </dl>
 </dd>
@@ -4732,7 +5126,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">EwaldEnergy</code><span class="sig-paren">(</span><em>accuracy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Compute the energy from Coulombic interactions.</p>
-<p>Note: The energy is computed using _charges already defined for the <a href="#id37"><span class="problematic" id="id38">structure_</span></a>.</p>
+<p>Note: The energy is computed using _charges already defined for the <a href="#id45"><span class="problematic" id="id46">structure_</span></a>.</p>
 <dl class="docutils">
 <dt>Features:</dt>
 <dd>ewald_energy - Coulomb interaction energy of the structure</dd>
@@ -5603,7 +5997,7 @@ stats ([str]): list of weighted statistics to compute for each feature.</p>
 <div>If stats is None, for each order parameter, a list is returned
 that contains the calculated parameter for each site in the
 structure.
-<a href="#id26"><span class="problematic" id="id27">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
+<a href="#id30"><span class="problematic" id="id31">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
 <dl class="docutils">
 <dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
 <dd>zero means metals/cations only)</dd>
@@ -5965,7 +6359,7 @@ two input structures (s1 - s2).</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.2 documentation</a> &#187;</li> 
       </ul>
     </div>
 
