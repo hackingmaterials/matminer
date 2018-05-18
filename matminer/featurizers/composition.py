@@ -2,14 +2,16 @@ from __future__ import division
 
 import itertools
 import os
-from functools import reduce
+from functools import reduce, lru_cache
 import collections
 
 import numpy as np
 import pandas as pd
 from pymatgen import Element, MPRester
+from pymatgen.core.composition import Composition
 from pymatgen.core.periodic_table import get_el_sp
 from pymatgen.core.molecular_orbitals import MolecularOrbitals
+from sklearn.neighbors.unsupervised import NearestNeighbors
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.stats import PropertyStats
@@ -81,7 +83,8 @@ class ElementProperty(BaseFeaturizer):
         """
         if preset_name == "magpie":
             data_source = "magpie"
-            features = ["Number", "MendeleevNumber", "AtomicWeight", "MeltingT",
+            features = ["Number", "MendeleevNumber", "AtomicWeight",
+                        "MeltingT",
                         "Column", "Row", "CovalentRadius",
                         "Electronegativity", "NsValence", "NpValence",
                         "NdValence", "NfValence", "NValence",
@@ -194,8 +197,7 @@ class CationProperty(ElementProperty):
     def from_preset(cls, preset_name):
         if preset_name == "deml":
             data_source = "deml"
-            features=["total_ioniz", "xtal_field_split", "magn_moment",
-                      "so_coupling", "sat_magn",]
+            features = ["total_ioniz", "xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
             raise ValueError('Preset "%s" not found'%preset_name)
@@ -205,7 +207,7 @@ class CationProperty(ElementProperty):
         labels = []
         for attr in self.features:
             for stat in self.stats:
-                labels.append("%s %s of cations" % (stat, attr))
+                labels.append("%s %s of cations"%(stat, attr))
 
         return labels
 
@@ -224,7 +226,8 @@ class CationProperty(ElementProperty):
         cations, fractions = zip(*[(s, f) for s, f in comp.items() if s.oxi_state > 0])
 
         for attr in self.features:
-            elem_data = [self.data_source.get_charge_dependent_property_from_specie(c, attr) for c in cations]
+            elem_data = [self.data_source.get_charge_dependent_property_from_specie(c, attr)
+                         for c in cations]
 
             for stat in self.stats:
                 all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
@@ -232,11 +235,12 @@ class CationProperty(ElementProperty):
         return all_attributes
 
     def citations(self):
-        return ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
-                "functional theory total energies and enthalpies of formation of metal-nonmetal "
-                "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
-                "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+        return [
+            "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+            "functional theory total energies and enthalpies of formation of metal-nonmetal "
+            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
 
 
 class OxidationStates(BaseFeaturizer):
@@ -267,7 +271,7 @@ class OxidationStates(BaseFeaturizer):
             raise ValueError('Oxidation states have not been determined')
 
         # Get the oxidation states and their proportions
-        oxid_states, fractions = zip(*[(s.oxi_state, f) for s,f in comp.items()])
+        oxid_states, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
 
         # Compute statistics
         return [PropertyStats.calc_stat(oxid_states, s, fractions) for s in self.stats]
@@ -277,10 +281,10 @@ class OxidationStates(BaseFeaturizer):
 
     def citations(self):
         return ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
-                "functional theory total energies and enthalpies of formation of metal-nonmetal "
-                "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
-                "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+            "functional theory total energies and enthalpies of formation of metal-nonmetal "
+            "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
+            "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
 
     def implementors(self):
         return ['Logan Ward']
@@ -461,16 +465,13 @@ class ElectronegativityDiff(BaseFeaturizer):
         ]
 
     def feature_labels(self):
-
         labels = []
         for stat in self.stats:
             labels.append("%s EN difference" % stat)
-
         return labels
 
     def citations(self):
-        citation = [
-            "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        citation = ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
@@ -508,11 +509,12 @@ class ElectronAffinity(BaseFeaturizer):
         species, fractions = zip(*comp.items())
 
         # Determine which species are anions
-        anions, fractions = zip(*[(s, f) for s,f in zip(species, fractions) if s.oxi_state < 0])
+        anions, fractions = zip(*[(s, f) for s, f in zip(species, fractions) if s.oxi_state < 0])
 
         # Compute the electron_affinity*formal_charge for each anion
         electron_affin = [
-            self.data_source.get_elemental_property(s.element, "electron_affin") * s.oxi_state for s in anions
+            self.data_source.get_elemental_property(s.element, "electron_affin") * s.oxi_state
+            for s in anions
         ]
 
         # Compute the average affinity
@@ -564,9 +566,10 @@ class Stoichiometry(BaseFeaturizer):
         el_amt = comp.get_el_amt_dict()
 
         # Compute the number of atoms per formula unit
-        n_atoms_per_unit = comp.num_atoms / comp.get_integer_formula_and_factor()[1]
+        n_atoms_per_unit = comp.num_atoms / \
+                           comp.get_integer_formula_and_factor()[1]
 
-        if self.p_list == None:
+        if self.p_list is None:
             stoich_attr = [n_atoms_per_unit]  # return num atoms if no norms specified
         else:
             p_norms = [0] * len(self.p_list)
@@ -644,8 +647,9 @@ class ValenceOrbital(BaseFeaturizer):
 
         # Get the mean number of electrons in each shell
         avg = [
-            PropertyStats.mean(self.data_source.get_elemental_properties(elements, "N%sValence" % orb),
-                               weights=fractions)
+            PropertyStats.mean(
+                self.data_source.get_elemental_properties(elements, "N%sValence" % orb),
+                weights=fractions)
             for orb in self.orbitals
         ]
 
@@ -734,7 +738,7 @@ class IonProperty(BaseFeaturizer):
 
             # Determine if neutral compound is possible
             if has_oxidation_states(comp):
-                charges, fractions = zip(*[(s.oxi_state, f) for s,f in comp.items()])
+                charges, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
                 cpd_possible = np.isclose(np.dot(charges, fractions), 0)
             else:
                 oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
@@ -821,7 +825,7 @@ class ElementFraction(BaseFeaturizer):
         return labels
 
     def implementors(self):
-        return ["Ashwin Aggarwal, Logan Ward"]
+        return ["Ashwin Aggarwal", "Logan Ward"]
 
     def citations(self):
         return []
@@ -915,9 +919,7 @@ class CohesiveEnergy(BaseFeaturizer):
             struct_lst = MPRester(self.mapi_key).get_data(
                 comp.formula.replace(" ", ""))
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(struct_lst,
-                                           key=lambda e:
-                                           e['energy_per_atom'])[0]
+                most_stable_entry = sorted(struct_lst, key=lambda e: e['energy_per_atom'])[0]
                 formation_energy_per_atom = most_stable_entry[
                     'formation_energy_per_atom']
             else:
@@ -1065,13 +1067,10 @@ class Miedema(BaseFeaturizer):
         else:
             gamma = 0
 
-        c_sf = (fracs * np.power(v_molar, 2/3) /
-                np.dot(fracs, np.power(v_molar, 2/3)))
+        c_sf = (fracs * np.power(v_molar, 2 / 3) / np.dot(fracs, np.power(v_molar, 2 / 3)))
         f = (c_sf * (1 + gamma * np.power(np.multiply.reduce(c_sf, 0), 2)))[::-1]
-        v_a = np.array([np.power(v_molar[0], 2/3) *
-                        (1 + a[0] * f[0] * (elec[0] - elec[1])),
-                        np.power(v_molar[1], 2/3) *
-                        (1 + a[1] * f[1] * (elec[1] - elec[0]))])
+        v_a = np.array([np.power(v_molar[0], 2 / 3) * (1 + a[0] * f[0] * (elec[0] - elec[1])),
+                        np.power(v_molar[1], 2 / 3) * (1 + a[1] * f[1] * (elec[1] - elec[0]))])
         c_sf_a = fracs * v_a / np.dot(fracs, v_a)
         f_a = (c_sf_a * (1 + gamma * np.power(np.multiply.reduce
                                               (c_sf_a, 0), 2)))[::-1]
@@ -1089,9 +1088,9 @@ class Miedema(BaseFeaturizer):
         q = p * 9.4
 
         eta_ab = (2 * (-p * np.power(elec[0] - elec[1], 2) - r +
-                       q * np.power(np.power(n_ws[0], 1/3) -
-                                    np.power(n_ws[1], 1/3), 2)) /
-                  reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
+                       q * np.power(np.power(n_ws[0], 1 / 3) -
+                                    np.power(n_ws[1], 1 / 3), 2)) /
+                  reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)))
 
         deltaH_chem = (f_a[0] * fracs[0] * v_a[0] * eta_ab +
                        np.dot(fracs, h_trans))
@@ -1115,12 +1114,12 @@ class Miedema(BaseFeaturizer):
         compr = np.array(df_el['compressibility'])
         shear_mod = np.array(df_el['shear_modulus'])
 
-        alp = (np.multiply(1.5, np.power(v_molar, 2/3)) /
-               reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
+        alp = (np.multiply(1.5, np.power(v_molar, 2 / 3)) /
+               reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)))
         v_a = (v_molar + np.array([alp[0] * (elec[0] - elec[1]) / n_ws[0],
                                    alp[1] * (elec[1] - elec[0]) / n_ws[1]]))
-        alp_a = (np.multiply(1.5, np.power(v_a, 2/3)) /
-                 reduce(lambda x, y: 1/x + 1/y, np.power(n_ws, 1/3)))
+        alp_a = (np.multiply(1.5, np.power(v_a, 2 / 3)) /
+                 reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)))
 
         # effective volume in alloy
         vab_a = (v_molar[0] +
@@ -1233,7 +1232,7 @@ class Miedema(BaseFeaturizer):
         el_bins = []
         frac_bins = []
         for i in range(el_num - 1):
-            for j in range(i+1, el_num):
+            for j in range(i + 1, el_num):
                 el_bins.append([elements[i], elements[j]])
                 frac_bins.append([fracs[i], fracs[j]])
 
@@ -1252,10 +1251,8 @@ class Miedema(BaseFeaturizer):
                 deltaH_chem_ss = 0
                 deltaH_elast_ss = 0
                 for sub_bin, el_bin in enumerate(el_bins):
-                    deltaH_chem_ss += self.deltaH_chem(el_bin,
-                                                       frac_bins[sub_bin], 'ss')
-                    deltaH_elast_ss += self.deltaH_elast(el_bin,
-                                                         frac_bins[sub_bin])
+                    deltaH_chem_ss += self.deltaH_chem(el_bin, frac_bins[sub_bin], 'ss')
+                    deltaH_elast_ss += self.deltaH_elast(el_bin, frac_bins[sub_bin])
 
                 for ss_type in self.ss_types:
                     if ss_type == 'min':
@@ -1277,7 +1274,8 @@ class Miedema(BaseFeaturizer):
                 deltaH_topo_amor = self.deltaH_topo(elements, fracs)
                 for sub_bin, el_bin in enumerate(el_bins):
                     deltaH_chem_amor += self.deltaH_chem(el_bin,
-                                                         frac_bins[sub_bin], 'amor')
+                                                         frac_bins[sub_bin],
+                                                         'amor')
                 miedema.append(deltaH_chem_amor + deltaH_topo_amor)
 
         # convert kJ/mol to eV/atom. The original Miedema model is in kJ/mol.
@@ -1289,9 +1287,9 @@ class Miedema(BaseFeaturizer):
         for struct_type in self.struct_types:
             if struct_type == 'ss':
                 for ss_type in self.ss_types:
-                    labels.append('Miedema_deltaH_ss_'+ss_type)
+                    labels.append('Miedema_deltaH_ss_' + ss_type)
             else:
-                labels.append('Miedema_deltaH_'+struct_type)
+                labels.append('Miedema_deltaH_' + struct_type)
         return labels
 
     def citations(self):
@@ -1369,8 +1367,7 @@ class YangSolidSolution(BaseFeaturizer):
         """
 
         # Get the element names and fractions
-        elements, fractions = zip(*comp.element_composition.\
-                                  fractional_composition.items())
+        elements, fractions = zip(*comp.element_composition.fractional_composition.items())
 
         # Get the mean melting temperature
         mean_Tm = PropertyStats.mean(
@@ -1434,3 +1431,303 @@ class YangSolidSolution(BaseFeaturizer):
 
     def implementors(self):
         return ['Logan Ward']
+
+
+class AtomicPackingEfficiency(BaseFeaturizer):
+    """
+    Packing efficiency based on a geometric theory of the amorphous packing
+    of hard spheres.
+
+    This featurizer computes two different kinds of the features. The first
+    relate to the distance between a composition and the composition of
+    the clusters of atoms expected to be efficiently packed based on a
+    theory from
+    `Laws et al.<http://www.nature.com/doifinder/10.1038/ncomms9123>`_.
+    The second corresponds to the packing efficiency of a system if all atoms
+    in the alloy are simultaneously as efficiently-packed as possible.
+
+    The packing efficiency in these models is based on the Atomic Packing
+    Efficiency (APE), which measures the difference between the ratio of
+    the radii of the central atom to its neighbors and the ideal ratio
+    of a cluster with the same number of atoms that has optimal packing
+    efficiency. If the difference between the ratios is too large, the APE is
+    positive. If the difference is too small, the APE is negative.
+
+    Features:
+        dist from {k} clusters |APE| < {thr} - The distance between an
+            alloy composition and the k clusters that have a packing efficiency
+            below thr from ideal
+        mean simul. packing efficiency - Mean packing efficiency of all atoms.
+            The packing efficiency is measured with respect to ideal (0)
+        mean abs simul. packing efficiency - Mean absolute value of the
+            packing efficiencies. Closer to zero is more efficiently packed
+
+    References:
+        [1] K.J. Laws, D.B. Miracle, M. Ferry, A predictive structural model
+        for bulk metallic glasses, Nat. Commun. 6 (2015) 8123. doi:10.1038/ncomms9123.
+    """
+
+    def __init__(self, threshold=0.01, n_nearest=(1, 3, 5), max_types=6):
+        """
+        Initialize the featurizer
+
+        Args:
+            threshold (float):Threshold to use for determining whether
+                a cluster is efficiently packed.
+            n_nearest ({int}): Number of nearest clusters to use when considering features
+            max_types (int): Maximum number of atom types to consider when
+                looking for efficient clusters. The process for finding
+                efficient clusters very expensive for large numbers of types
+        """
+
+        # Store the options
+        self.threshold = threshold
+        self.n_nearest = n_nearest
+        self.max_types = max_types
+
+        # Tool to convert composition objects to fractions as a vector
+        self._el_frac = ElementFraction()
+
+        # Get the number of elements in the output of `_el_frac`
+        self._n_elems = len(self._el_frac.featurize(Composition('H')))
+
+        # Tool for looking up radii
+        self._data_source = MagpieData()
+
+        # Lookup table of ideal radius ratios
+        self.ideal_ratio = dict(
+            [(3, 0.154701), (4, 0.224745), (5, 0.361654), (6, 0.414214),
+             (7, 0.518145), (8, 0.616517), (9, 0.709914), (10, 0.798907),
+             (11, 0.884003), (12, 0.902113), (13, 0.976006), (14, 1.04733),
+             (15, 1.11632), (16, 1.18318), (17, 1.2481), (18, 1.31123),
+             (19, 1.37271), (20, 1.43267), (21, 1.49119), (22, 1.5484),
+             (23, 1.60436), (24, 1.65915)])
+
+    def __hash__(self):
+        return hash(self.threshold)
+
+    def __eq__(self, other):
+        if isinstance(other, AtomicPackingEfficiency):
+            return self.get_params() == other.get_params()
+
+    def featurize(self, comp):
+        return list(self.compute_simultaneous_packing_efficiency(comp)) + \
+               self.compute_nearest_cluster_distance(comp)
+
+    def feature_labels(self):
+        return ['mean simul. packing efficiency',
+                'mean abs simul. packing efficiency'] + [
+                   'dist from {} clusters |APE| < {:.3f}'.format(k,
+                                                                 self.threshold)
+                   for k in self.n_nearest]
+
+    def citations(self):
+        return ["@article{Laws2015,"
+                "author = {Laws, K. J. and Miracle, D. B. and Ferry, M.},"
+                "doi = {10.1038/ncomms9123},"
+                "journal = {Nature Communications},"
+                "pages = {8123},"
+                "title = {{A predictive structural model for bulk metallic glasses}},"
+                "url = {http://www.nature.com/doifinder/10.1038/ncomms9123},"
+                "volume = {6},"
+                "year = {2015}"]
+
+    def implementors(self):
+        return ['Logan Ward']
+
+    def compute_simultaneous_packing_efficiency(self, comp):
+        """Compute the packing efficiency of the system when the neighbor
+        shell of each atom has the same composition as the alloy. When this
+        criterion is satisfied, it is possible for every atom in this system
+        to be simultaneously as efficiently-packed as possible.
+
+        Args:
+            comp (Composition): Composition to be assessed
+        Returns
+            (float) Average APE of all atoms
+            (float) Average deviation of the APE of each atom from ideal (0)
+        """
+
+        # Compute the average atomic radius of the system
+        elements, fractions = zip(*comp.element_composition.items())
+        radii = self._data_source.get_elemental_properties(elements,
+                                                           'MiracleRadius')
+        mean_radius = PropertyStats.mean(radii, fractions)
+
+        # Compute the APE for each cluster
+        best_ape = [
+            self.find_ideal_cluster_size(r / mean_radius)[1] for r in radii
+        ]
+
+        # Return the averages
+        return PropertyStats.mean(best_ape, fractions), \
+               PropertyStats.mean(np.abs(best_ape), fractions)
+
+    def compute_nearest_cluster_distance(self, comp):
+        """Compute the distance between a composition and that the nearest
+        efficiently-packed clusters.
+
+        Measures the mean :math:`L_2` distance between the alloy composition
+        and the :math:`k`-nearest clusters with Atomic Packing Efficiencies
+        within the user-specified tolerance of 1. :math:`k` is any of the
+        numbers defined in the "n_nearest" parameter of this class.
+
+        If there are less than `k` efficient clusters in the system, we use
+        the maximum distance betweeen any two compositions (1) for the
+        unmatched neighbors.
+
+        Args:
+            comp (Composition): Composition of material to evaluate
+        Return:
+            [float] Average distances
+        """
+
+        # Get the most common elements
+        elems, _ = zip(*sorted(comp.element_composition.items(),
+                                   key=lambda x: x[1], reverse=True))
+
+        # Get the cluster lookup tool using the most common elements
+        cluster_lookup = self.create_cluster_lookup_tool(
+            elems[:self.max_types]
+        )
+
+        # Compute the composition vector
+        comp_vec = self._el_frac.featurize(comp)
+
+        # Compute the distances
+        means = []
+        for k in self.n_nearest:
+            # Get the nearest clusters
+            to_lookup = min(cluster_lookup._fit_X.shape[0], k)
+            dists, _ = cluster_lookup.kneighbors([comp_vec], to_lookup)
+
+            # Pad the list with 1's
+            dists = dists[0].tolist() + [1]*(k - to_lookup)
+
+            # Compute the average
+            means.append(np.mean(dists))
+
+        return means
+
+    def create_cluster_lookup_tool(self, elements):
+        """
+        Get the compositions of efficiently-packed clusters in a certain system
+        of elements
+
+        Args:
+            elements ([Element]): Elements in system
+        Return:
+            (NearNeighbors): Tool to find nearby clusters in this system
+        """
+        elements = list(set(elements))
+        return self._create_cluster_lookup_tool(tuple(sorted(elements)))
+
+    @lru_cache()
+    def _create_cluster_lookup_tool(self, elements):
+        """
+        Cached version of `create_cluster_lookup_tool`. Assumes that the
+        elements are passed as sorted tuple with no duplicates
+
+        Args:
+            elements ([Element]): Elements in system
+        Return:
+            (NearNeighbors): Tool to find nearby clusters in this system
+        """
+
+        # Get the radii
+        radii = self._data_source.get_elemental_properties(elements,
+                                                           "MiracleRadius")
+
+        # Get the maximum and minimum cluster sizes
+        max_size = self.find_ideal_cluster_size(max(radii) / min(radii))[0]
+        min_size = self.find_ideal_cluster_size(min(radii) / max(radii))[0]
+
+        # Prepare a list to hold all possible clusters
+        eff_clusters = []
+
+        # Loop through all possible neighbor shells
+        for size in range(min_size, max_size + 1):
+            # Get the ideal radius ratio for a cluster of this size
+            ideal_ratio = self.get_ideal_radius_ratio(size)
+
+            # Get the mean radii and compositions of all possible
+            #  combinations of elements in the neighbor shell
+            s_radii = itertools.combinations_with_replacement(radii, size)
+            s_elems = itertools.combinations_with_replacement(elements, size)
+
+            #  Put the results in arrays for fast indexing
+            mean_radii = np.array(list(s_radii)).mean(axis=1)
+            s_elems = np.array(list(s_elems))
+
+            # For each type of central atom, determine which have an APE
+            #  within `self.threshold` of 1
+            for center_radius, center_elem in zip(radii, elements):
+                # Compute the APE of each cluster
+                ape = 1 - np.divide(ideal_ratio, np.divide(center_radius,
+                                                           mean_radii))
+
+                # Get those which are within the threshold of 0
+                #  and add their composition to the list of OK elements
+                for hit in s_elems[np.abs(ape) < self.threshold]:
+                    eff_clusters.append([center_elem] + hit.tolist())
+
+        # Compute the composition vectors for all of the efficient clusters
+        comps = np.zeros((len(eff_clusters), self._n_elems))
+        for i, elems in enumerate(eff_clusters):
+            for elem in elems:
+                comps[i, elem.Z - 1] += 1
+        comps = np.divide(comps, comps.sum(axis=1)[:, None])
+
+        # Return tool to quickly determine distance from efficient clusters
+        return NearestNeighbors().fit(comps)
+
+    def find_ideal_cluster_size(self, radius_ratio):
+        """
+        Get the optimal cluster size for a certain radius ratio
+
+        Finds the number of nearest neighbors :math:`n` that minimizes
+        :math:`|1 - rp(n)/r|`, where :math:`rp(n)` is the ideal radius
+        ratio for a certain :math:`n` and :math:`r` is the actual ratio.
+
+        Args:
+            radius_ratio (float): math:`r / r_{neighbor}`
+        Returns:
+            (int) number of neighboring atoms for that will be the most
+            efficiently packed.
+            (float) Optimal APE
+        """
+
+        # Loop through cluster sizes from 3 to 24
+        best_ape = np.inf
+        best_n = None
+        for n in range(3, 25):
+            # Compute APE, check if it is the best
+            ape = 1 - self.get_ideal_radius_ratio(n) / radius_ratio
+            if abs(ape) < abs(best_ape):
+                best_ape = ape
+                best_n = n
+
+            # If the APE is negative, this is either the best APE or
+            #  We have already passed it
+            if ape < 0:
+                return best_n, best_ape
+
+        return best_n, best_ape
+
+    def get_ideal_radius_ratio(self, n_neighbors):
+        """Compute the idea ratio between the central atom and neighboring
+        atoms for a neighbor with a certain number of nearest neighbors.
+
+        Based on work by `Miracle, Lord, and Ranganathan
+        <https://www.jstage.jst.go.jp/article/matertrans/47/7/47_7_1737/_article/-char/en>`_.
+
+        Args:
+            n_neighbors (int): Number of atoms in 1st NN shell
+        Return:
+            (float) ideal radius ratio :math:`r / r_{neighbor}`
+        """
+
+        # NN must be in [3, 24]
+        n = max(3, min(n_neighbors, 24))
+
+        return self.ideal_ratio[n]
