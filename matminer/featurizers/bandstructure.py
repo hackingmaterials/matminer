@@ -54,7 +54,12 @@ class BranchPointEnergy(BaseFeaturizer):
         if isinstance(bs, BandStructureSymmLine):
             raise ValueError("BranchPointEnergy works only with uniform (not "
                              "line mode) band structures!")
-
+        vbm = bs.get_vbm()["energy"]
+        cbm = bs.get_cbm()["energy"]
+        shift = 0.0
+        if target_gap:
+            # for now, equal shift to VBM / CBM
+            shift = (target_gap - (cbm - vbm)) / 2.0
         total_sum_energies = 0
         num_points = 0
         if weights is not None:
@@ -70,15 +75,15 @@ class BranchPointEnergy(BaseFeaturizer):
                 for band_idx in range(bs.nb_bands):
                     e = bs.bands[spin][band_idx][kpt_idx]
                     if e > bs.efermi:
-                        cb_energies.append(e)
+                        cb_energies.append(e + shift)
                     else:
-                        vb_energies.append(e)
+                        vb_energies.append(e - shift)
                 vb_energies.sort(reverse=True)
                 cb_energies.sort()
                 total_sum_energies += (sum(
                     vb_energies[0:self.n_vb]) / self.n_vb + sum(
                     cb_energies[0:self.n_cb]) / self.n_cb) * kpt_wts[
-                                          kpt_idx] / 2
+                                          kpt_idx] / 2.0
 
                 num_points += kpt_wts[kpt_idx]
 
@@ -86,21 +91,13 @@ class BranchPointEnergy(BaseFeaturizer):
 
         if not self.calculate_band_edges:
             return [bpe]
-
-        vbm = bs.get_vbm()["energy"]
-        cbm = bs.get_cbm()["energy"]
-        shift = 0
-        if target_gap:
-            # for now, equal shift to VBM / CBM
-            shift = (target_gap - (cbm - vbm)) / 2
-
-        return [bpe, (vbm - bpe - shift), (cbm - bpe + shift)]
+        return [bpe, vbm-shift, cbm+shift]
 
     def feature_labels(self):
 
         return ["branch_point_energy", "vbm_absolute",
                 "cbm_absolute"] if self.calculate_band_edges else [
-            "branch point energy"]
+            "branch_point_energy"]
 
     def citations(self):
         return ["@article{Schleife2009, author = {Schleife, A. and Fuchs, F. "
