@@ -20,7 +20,7 @@ class MongoDataRetrieval(BaseDataRetrieval):
     def api_link(self):
         return "data from\n{}".format(self.coll)
 
-    def get_dataframe(self, criteria, properties=None, limit=None,
+    def get_dataframe(self, criteria, properties=None, limit=0,
                       sort=None, idx_field=None, strict=False):
         """
         Args:
@@ -28,7 +28,7 @@ class MongoDataRetrieval(BaseDataRetrieval):
             properties: ([str] or None) - a list of str fields to retrieve;
                 dot-notation is allowed (e.g. "structure.lattice.a").
                 Set to "None" to try to auto-detect the fields.
-            limit: (int) - max number of entries
+            limit: (int) - max number of entries. 0 means no limit
             sort: (tuple) - pymongo-style sort option
             idx_field: (str) - name of field to use as index (must have unique
                 entries)
@@ -45,14 +45,10 @@ class MongoDataRetrieval(BaseDataRetrieval):
 
         query_proj = [remove_ints(p) for p in clean_projection(properties)]
 
-        r = self.coll.find(criteria, query_proj, sort=sort)
-        if limit:
-            r.limit(limit)
-
-        total = min(limit, r.count())
+        r = self.coll.find(criteria, query_proj, sort=sort).limit(limit)
 
         all_data = []  # matrix of row, column data
-        for d in tqdm(r, total=total):
+        for d in tqdm(r):
             row_data = []
 
             # split up dot-notation keys
@@ -122,8 +118,7 @@ def remove_ints(projection):
     Args:
         projection: (str) the projection to remove ints from
 
-    Returns:
-
+    Returns (str)
     """
     proj = [p for p in projection.split(".") if not is_int(p)]
     return ".".join(proj)
