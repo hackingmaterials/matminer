@@ -48,8 +48,8 @@ class BandstructureFeaturesTest(PymatgenTest):
         df_bpe = BranchPointEnergy().featurize_dataframe(self.df,
                                                          col_id=['bs_uniform'])
         self.assertAlmostEqual(df_bpe['branch_point_energy'][0], 5.728, 3)
-        self.assertAlmostEqual(df_bpe['cbm_absolute'][0], 0.497, 3)
-        self.assertAlmostEqual(df_bpe['vbm_absolute'][0], -0.114, 3)
+        self.assertAlmostEqual(df_bpe['cbm_absolute'][0], 6.224, 3)
+        self.assertAlmostEqual(df_bpe['vbm_absolute'][0], 5.614, 3)
 
     def test_BandFeaturizer(self):
         # silicon:
