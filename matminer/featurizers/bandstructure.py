@@ -94,7 +94,11 @@ class BranchPointEnergy(BaseFeaturizer):
         return [bpe, vbm-shift, cbm+shift]
 
     def feature_labels(self):
-
+        """
+        Returns ([str]): absolute energy levels as provided in the input
+            BandStructure. "absolute" means no reference energy is subtracted
+            from branch_point_energy, vbm or cbm.
+        """
         return ["branch_point_energy", "vbm_absolute",
                 "cbm_absolute"] if self.calculate_band_edges else [
             "branch_point_energy"]
