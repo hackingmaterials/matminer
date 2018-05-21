@@ -71,6 +71,7 @@ class MongoDataRetrieval(BaseDataRetrieval):
             df = df.set_index([idx_field])
         return df
 
+
 def clean_projection(projection):
     """
     Projecting on e.g. 'a.b.' and 'a' is disallowed in MongoDb, so project
@@ -117,8 +118,7 @@ def remove_ints(projection):
     Args:
         projection: (str) the projection to remove ints from
 
-    Returns:
-
+    Returns (str)
     """
     proj = [p for p in projection.split(".") if not is_int(p)]
     return ".".join(proj)
