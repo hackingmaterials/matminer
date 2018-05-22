@@ -410,15 +410,22 @@ class StackedFeaturizer(BaseFeaturizer):
             featurizer (BaseFeaturizer): Featurizer used to generate inputs to the model
             model (BaseEstimator): Fitted machine learning model to be evaluated
             name (str): [Optional] name of model, used when creating feature names
-            class_names (str): Required for classification models, used when creating
+                class_names ([str]): Required for classification models, used when creating
                 feature names (scikit-learn does not specify the number of classes for
-                a classifier)
+                a classifier). Class names must be in the same order as the classes in the model
+                (e.g., class_names[0] must be the name of the class 0)
         """
 
+        # Store settings
         self.name = name
         self.class_names = class_names
         self.featurizer = featurizer
         self.model = model
+
+        # Present warning about class_names
+        if self.class_names is None and self._is_classifier():
+            print('WARNING: Class names are required for featurize_dataframe and feature_labels',
+                  file=sys.stderr)
 
     def _is_classifier(self):
         """Whether the underlying model is a classifier
@@ -438,7 +445,7 @@ class StackedFeaturizer(BaseFeaturizer):
             output = self.model.predict_proba(features)[0]
             return output[:-1]
         else:
-            return self.model.predict(features)
+            return [self.model.predict(features)]
 
     def feature_labels(self):
         name = self.name or ''

@@ -243,7 +243,7 @@ class TestBaseClass(PymatgenTest):
 
         #  Test the predictions
         f = StackedFeaturizer(self.single, model)
-        self.assertEquals(2, f.featurize(data['x'][0]))
+        self.assertEquals([2], f.featurize(data['x'][0]))
 
         #  Test the feature names
         self.assertEquals(['prediction'], f.feature_labels())
