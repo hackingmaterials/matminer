@@ -5,10 +5,12 @@ from sympy.parsing.sympy_parser import parse_expr
 import sympy as sp
 import itertools
 from six import string_types
+from pandas import DataFrame, Series
 
 from collections import OrderedDict
 
 from matminer.featurizers.base import BaseFeaturizer
+from sklearn.exceptions import NotFittedError
 
 
 # Default expressions to include in function featurizer
@@ -43,7 +45,8 @@ class FunctionFeaturizer(BaseFeaturizer):
         combo_function (function): function to combine multi-features,
             defaults to np.prod (i.e. cumulative product of expressions),
             note that a combo function must cleanly process sympy
-            expressions
+            expressions and **takes a list of arbitrary length as input**,
+            other options include np.sum
         latexify_labels (bool): whether to render labels in latex,
             defaults to False
     """
@@ -57,6 +60,7 @@ class FunctionFeaturizer(BaseFeaturizer):
         self.combo_function = combo_function or np.prod
         self.latexify_labels = latexify_labels
         self.postprocess = postprocess or float
+        self._feature_labels = None
 
     @property
     def exp_dict(self):
@@ -72,43 +76,6 @@ class FunctionFeaturizer(BaseFeaturizer):
             [(n, generate_expressions_combinations(self.expressions, n,
                                                    self.combo_function))
              for n in range(1, self.multi_feature_depth+1)])
-
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
-        """
-        Compute features for all entries contained in input dataframe.
-
-        Args:
-            df (DataFrame): dataframe containing input data
-            col_id (str or list of str): column label containing objects
-                to featurize, can be single or multiple column names
-            ignore_errors (bool): Returns NaN for dataframe rows where
-                exceptions are thrown if True. If False, exceptions
-                are thrown as normal.
-            return_errors (bool). Returns the errors encountered for each
-                row in a separate `XFeaturizer errors` column if True. Requires
-                ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
-
-        Returns:
-            updated DataFrame
-
-        """
-        # Generate new dataframe out-of-place
-        new_df = super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, ignore_errors=ignore_errors,
-            return_errors=return_errors, inplace=False)
-
-        # Generate and add new columns names
-        new_col_names = self.generate_string_expressions(col_id)
-        new_df.columns = df.columns.tolist() + new_col_names
-
-        if inplace:
-            for k in new_col_names:
-                df[k] = new_df[k]
-            return df
-        else:
-            return new_df
 
     def featurize(self, *args):
         """
@@ -130,7 +97,53 @@ class FunctionFeaturizer(BaseFeaturizer):
         Returns:
             Set of feature labels corresponding to expressions
         """
-        return None
+        if not self._feature_labels:
+            raise NotFittedError("Feature labels is only set if data is fitted"
+                                 " to a dataframe")
+        return self._feature_labels
+
+    def fit(self, X, y=None, **fit_kwargs):
+        """
+        Sets the feature labels.  Not intended to be used by a user,
+        only intended to be invoked as part of featurize_dataframe
+
+        Args:
+            X (DataFrame or array-like): data to fit to
+
+        Returns:
+            Set of feature labels corresponding to expressions
+        """
+        if isinstance(X, DataFrame):
+            self._feature_labels = self.generate_string_expressions(X.columns)
+        elif isinstance(X, Series):
+            self._feature_labels = self.generate_string_expressions(X.name)
+        return self
+
+    def featurize_dataframe(self, df, col_id, ignore_errors=False,
+                            return_errors=False, inplace=True):
+        """
+        Custom featurize dataframe method that sets the column labels
+        using the fit method and then featurizes the dataframe similarly
+        as the base class
+
+        Args:
+            df (pandas.DataFrame): Dataframe containing input data.
+            col_id (str or list of str): column label containing objects to
+                featurize.
+            ignore_errors (bool): Returns NaN for dataframe rows where
+                exceptions are thrown if True. If False, exceptions
+                are thrown as normal.
+            return_errors (bool). Returns the errors encountered for each
+                row in a separate `XFeaturizer errors` column if True. Requires
+                ignore_errors to be True.
+            inplace (bool): Whether to add new columns to input dataframe (df)
+
+        Returns:
+            updated DataFrame.
+        """
+        self.fit(df[col_id])
+        return super(FunctionFeaturizer, self).featurize_dataframe(
+            df, col_id, ignore_errors, return_errors, inplace)
 
     def generate_string_expressions(self, input_variable_names):
         """

@@ -724,8 +724,9 @@ class PlotlyFig:
         Plotly defaults.
 
         Args:
-            data (DataFrame or list): A dataframe containing at least
-                one numerical column. Also accepts lists of numerical values.
+            data (DataFrame or list or [list]): A dataframe containing at least
+                one numerical column. Also accepts lists of numerical values or
+                list of lists of numerical values.
                 If None, uses the dataframe passed into the constructor.
             cols ([str]): A list of strings specifying the columns of the
                 dataframe to use. Each column will be represented with its own
@@ -769,18 +770,22 @@ class PlotlyFig:
         if isinstance(cols, str):
             cols = [cols]
 
+        dtypes = (list, np.ndarray, tuple)
         if cols is None:
             if isinstance(data, pd.Series):
                 cols = [data.name]
                 data = pd.DataFrame({cols[0]: data.tolist()})
             elif isinstance(data, pd.DataFrame):
                 cols = data.columns.values
+            elif isinstance(data[0], dtypes):
+                data=pd.DataFrame({'trace{}'.format(i): pd.Series(data[i])
+                                   for i, _ in enumerate(data)})
+                cols = list(data.keys())
             else:
                 data = {'trace1': data}
                 cols = ['trace1']
 
         # Transform all entries to listlike, if given as single entries
-        dtypes = (list, np.ndarray, tuple)
         attrdict = {'colors': colors, 'n_bins': n_bins, 'bins': bins}
         for k, v in attrdict.items():
             if v is None:

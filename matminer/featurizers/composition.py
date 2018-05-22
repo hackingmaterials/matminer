@@ -87,7 +87,7 @@ class ElementProperty(BaseFeaturizer):
                         "MeltingT",
                         "Column", "Row", "CovalentRadius",
                         "Electronegativity", "NsValence", "NpValence",
-                        "NdValence", "NfValence", "NValance",
+                        "NdValence", "NfValence", "NValence",
                         "NsUnfilled", "NpUnfilled", "NdUnfilled", "NfUnfilled",
                         "NUnfilled", "GSvolume_pa",
                         "GSbandgap", "GSmagmom", "SpaceGroupNumber"]
@@ -656,7 +656,7 @@ class ValenceOrbital(BaseFeaturizer):
         # If needed, get fraction of electrons in each shell
         if "frac" in self.props:
             avg_total_valence = PropertyStats.mean(
-                self.data_source.get_elemental_properties(elements, "NValance"),
+                self.data_source.get_elemental_properties(elements, "NValence"),
                 weights=fractions)
             frac = [a / avg_total_valence for a in avg]
 

@@ -143,7 +143,7 @@ NUnfilled.table
     Property: Number of unfilled valence orbitals
     Source: http://periodictable.com/Properties/A/ElectronConfigurationString.v.html
     Notes: Number of unoccupied orbitals = 0 if shell unoccupied, Maximum-Filled if occupied
-NValance.table
+NValence.table
     Property: Number of valence electrons
     Source: http://periodictable.com/Properties/A/ElectronConfigurationString.v.html
 OxidationStates.table

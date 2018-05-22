@@ -1,10 +1,8 @@
-import unittest
-
 import httplib2
 import ujson as json
+import unittest
 from jsonschema import validate, Draft4Validator
 from jsonschema.exceptions import ValidationError
-
 from matminer.data_retrieval.retrieve_MPDS import MPDSDataRetrieval
 
 
@@ -27,7 +25,7 @@ class MPDSDataRetrievalTest(unittest.TestCase):
 
     def test_valid_answer(self):
         client = MPDSDataRetrieval()
-        answer = client.get_data(self.test_request, fields=[])
+        answer = client.get_data(self.test_request, fields={})
 
         try:
             validate(answer, self.schema)
@@ -39,4 +37,5 @@ class MPDSDataRetrievalTest(unittest.TestCase):
             )
 
 
-if __name__ == "__main__": unittest.main()
+if __name__ == "__main__":
+    unittest.main()

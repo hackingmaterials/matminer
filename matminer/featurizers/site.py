@@ -1914,7 +1914,7 @@ class LocalPropertyDifference(BaseFeaturizer):
                 properties=["Number", "MendeleevNumber", "AtomicWeight",
                             "MeltingT", "Column", "Row", "CovalentRadius",
                             "Electronegativity", "NsValence", "NpValence",
-                            "NdValence", "NfValence", "NValance", "NsUnfilled",
+                            "NdValence", "NfValence", "NValence", "NsUnfilled",
                             "NpUnfilled", "NdUnfilled", "NfUnfilled",
                             "NUnfilled", "GSvolume_pa", "GSbandgap",
                             "GSmagmom", "SpaceGroupNumber"]

@@ -3,11 +3,13 @@ from __future__ import unicode_literals, division, print_function
 import unittest
 import pandas as pd
 import numpy as np
+import warnings
 
 from pymatgen.util.testing import PymatgenTest
 from sklearn.dummy import DummyRegressor, DummyClassifier
 
 from matminer.featurizers.base import BaseFeaturizer, MultipleFeaturizer, StackedFeaturizer
+from matminer.featurizers.function import FunctionFeaturizer
 
 
 class SingleFeaturizer(BaseFeaturizer):
@@ -56,6 +58,17 @@ class MatrixFeaturizer(BaseFeaturizer):
     def implementors(self):
         return ["Everyone"]
 
+
+class MultiArgs2(SingleFeaturizerMultiArgs):
+    def featurize(self, *x):
+        # Making a 2D array to test whether MutliFeaturizer
+        #  can handle featurizers that have both 1D vectors with
+        #  singleton dimensions (e.g., shape==(4,1)) and those
+        #  without (e.g., shape==(4,))
+        return [super(MultiArgs2, self).featurize(*x)]
+
+    def feature_labels(self):
+        return ['y2']
 
 class FittableFeaturizer(BaseFeaturizer):
     """
@@ -134,32 +147,31 @@ class TestBaseClass(PymatgenTest):
         self.assertIn('Them', implementors)
         self.assertEquals(2, len(implementors))
 
-        multi_f.featurize_dataframe(data, 'x')
+        # Ensure BaseFeaturizer operation without overriden featurize_dataframe
+        with warnings.catch_warnings(record=True) as w:
+            multi_f.featurize_dataframe(data, 'x')
+            self.assertEqual(len(w), 0)
         self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
         self.assertArrayAlmostEqual(data['w'], [0, 1, 2])
         self.assertArrayAlmostEqual(data['z'], [3, 4, 5])
+
+        # Test handling of Featurizers with overloaded featurize_dataframe
+        f = FunctionFeaturizer()
+        multi_f = MultipleFeaturizer([self.single, self.multi, f])
+        data = self.make_test_data()
+        with warnings.catch_warnings(record=True) as w:
+            multi_f.featurize_dataframe(data, 'x')
+            self.assertEqual(len(w), 1)
 
     def test_multifeatures(self):
         # Make a test dataset with two input variables
         data = self.make_test_data()
         data['x2'] = [4, 5, 6]
 
-        # Create a second featurizer
-        class MultiArgs2(SingleFeaturizerMultiArgs):
-            def featurize(self, *x):
-                # Making a 2D array to test whether MutliFeaturizer
-                #  can handle featurizers that have both 1D vectors with
-                #  singleton dimensions (e.g., shape==(4,1)) and those
-                #  without (e.g., shape==(4,))
-                return [super(MultiArgs2, self).featurize(*x)]
-
-            def feature_labels(self):
-                return ['y2']
         multiargs2 = MultiArgs2()
 
         # Create featurizer
         multi_f = MultipleFeaturizer([self.multiargs, multiargs2])
-        multi_f.set_n_jobs(1)
 
         # Test featurize with multiple arguments
         features = multi_f.featurize(0, 2)
