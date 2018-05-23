@@ -36,19 +36,19 @@ class CompositionGenerator(BaseGenerator):
                                           stoichs):
                 yield Composition(zip(e, s))
 
-    def _generate_stoichiometries(self, count, sum):
+    def _generate_stoichiometries(self, count, total):
         """Generate lists of N counting numbers that add up to a certain sum
 
         Args:
             count (int): Number of integers
-            sum (int): Target sum
+            total (int): Target sum
         Returns:
             Generator of [int] where all entries are >0 and the sum is target
         """
 
         if count == 1:
-            yield (sum,)
+            yield (total,)
         else:
-            for start in range(1, sum):
-                for end in self._generate_stoichiometries(count-1, sum-start):
+            for start in range(1, total):
+                for end in self._generate_stoichiometries(count-1, total-start):
                     yield (start,) + end
