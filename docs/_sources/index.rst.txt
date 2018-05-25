@@ -138,7 +138,9 @@ Citing matminer
 ---------------
 
 
-If you find matminer useful, please encourage its development by citing the following paper in your research::
+If you find matminer useful, please encourage its development by citing the following paper in your research
+
+.. code-block:: text
 
    Ward, L., Dunn, A., Faghaninia, A., Zimmermann, N. E. R., Bajaj, S., Wang, Q.,
    Montoya, J. H., Chen, J., Bystrom, K., Dylla, M., Chard, K., Asta, M., Persson,
