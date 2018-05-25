@@ -366,7 +366,7 @@ same as in get_data</dd>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=None</em>, <em>limit=None</em>, <em>sort=None</em>, <em>idx_field=None</em>, <em>strict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=None</em>, <em>limit=0</em>, <em>sort=None</em>, <em>idx_field=None</em>, <em>strict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">criteria: (dict) - a pymongo-style query to filter data records
@@ -374,7 +374,7 @@ properties: ([str] or None) - a list of str fields to retrieve;</p>
 <blockquote>
 <div>dot-notation is allowed (e.g. “structure.lattice.a”).
 Set to “None” to try to auto-detect the fields.</div></blockquote>
-<p>limit: (int) - max number of entries
+<p>limit: (int) - max number of entries. 0 means no limit
 sort: (tuple) - pymongo-style sort option
 idx_field: (str) - name of field to use as index (must have unique</p>
 <blockquote>
@@ -411,7 +411,7 @@ inclusively. See unit tests for examples of what this is doing.</p>
 <dt>Args:</dt>
 <dd>projection: (str) the projection to remove ints from</dd>
 </dl>
-<p>Returns:</p>
+<p>Returns (str)</p>
 </dd></dl>
 
 </div>
