@@ -137,7 +137,15 @@ Check out some examples of how to use matminer! These examples and more can be f
 Citing matminer
 ---------------
 
-We are currently in the process of writing a paper on matminer - we will update the citation information once it is submitted.
+
+If you find matminer useful, please encourage its development by citing the following paper in your research::
+
+   Ward, L., Dunn, A., Faghaninia, A., Zimmermann, N. E. R., Bajaj, S., Wang, Q.,
+   Montoya, J. H., Chen, J., Bystrom, K., Dylla, M., Chard, K., Asta, M., Persson,
+   K., Snyder, G. J., Foster, I., Jain, A., Matminer: An open source toolkit for
+   materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
+
+
 
 
 ---------
