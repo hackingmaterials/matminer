@@ -26,6 +26,11 @@ div.documentwrapper {
     width: 100%;
 }
 
+div.body {
+    min-width: 450px;
+    max-width: 1000px;
+}
+
 div.bodywrapper {
     margin: 0 0 0 230px;
 }
