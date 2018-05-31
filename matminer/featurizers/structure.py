@@ -1279,8 +1279,8 @@ class BondFractions(BaseFeaturizer):
             token specified.
     """
 
-    def __init__(self, nn, bbv=0, no_oxi=False, approx_bonds=False, token=' - ',
-                 allowed_bonds=None):
+    def __init__(self, nn=pmg_le.CrystalNN(), bbv=0, no_oxi=False,
+                 approx_bonds=False, token=' - ', allowed_bonds=None):
         self.nn = nn
         self.bbv = bbv
         self.no_oxi = no_oxi
@@ -1315,7 +1315,7 @@ class BondFractions(BaseFeaturizer):
         Pass args to __init__, such as allowed_bonds, using this method as well.
 
         Args:
-            preset (str): preset type ("VoronoiNN", "JMolNN",
+            preset (str): preset type ("CrystalNN", "VoronoiNN", "JMolNN",
             "MiniumDistanceNN", "MinimumOKeeffeNN", or "MinimumVIRENN").
 
         Returns:
@@ -1347,6 +1347,10 @@ class BondFractions(BaseFeaturizer):
         listlike = (tuple, list, np.ndarray, pd.Series)
         if not isinstance(X, listlike):
             raise ValueError("X must be a list of pymatgen Structures")
+
+        if isinstance(X, pd.Series):
+            X = X.values
+
         if not isinstance(X[0], (Structure, dict)):
             raise ValueError("Each structure must be a pymatgen Structure "
                              "object.")
