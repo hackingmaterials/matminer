@@ -1344,14 +1344,12 @@ class BondFractions(BaseFeaturizer):
             self
 
         """
-        listlike = (tuple, list, np.ndarray, pd.Series)
-        if not isinstance(X, listlike):
-            raise ValueError("X must be a list of pymatgen Structures")
+        if not hasattr(X, "__getitem__"):
+            raise ValueError("X must be an iterable of pymatgen Structures")
 
-        if isinstance(X, pd.Series):
-            X = X.values
+        X = X.values if isinstance(X, pd.Series) else X
 
-        if not isinstance(X[0], (Structure, dict)):
+        if not all([isinstance(x, Structure) for x in X]):
             raise ValueError("Each structure must be a pymatgen Structure "
                              "object.")
 
