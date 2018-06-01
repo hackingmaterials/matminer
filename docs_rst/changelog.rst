@@ -5,6 +5,12 @@
 matminer Changelog
 ==================
 
+**v0.3.3**
+
+* add StackedFeaturizer (L. Ward)
+* changes to reference energies in BranchPointEnergy featurizer (A. Faghaninia)
+* doc improvements (A. Dunn)
+
 **v0.3.2**
 
 * Major overhaul / redesign of data retrieval classes for consistency (A. Faghaninia, A. Dunn)

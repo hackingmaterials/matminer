@@ -7,7 +7,7 @@ import numpy as np
 from six import string_types
 from multiprocessing import Pool, cpu_count
 
-from sklearn.base import TransformerMixin, BaseEstimator
+from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
 
 
 class BaseFeaturizer(BaseEstimator, TransformerMixin):
@@ -208,7 +208,6 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             new = pd.concat([df, res], axis=1)
             return new[df.columns.tolist() + res.columns.tolist()]
 
-
     def featurize_many(self, entries, ignore_errors=False, return_errors=False):
         """
         Featurize a list of entries.
@@ -393,3 +392,72 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def implementors(self):
         return list(set(sum([f.implementors() for f in self.featurizers], [])))
+
+
+class StackedFeaturizer(BaseFeaturizer):
+    """Use the output of a machine learning model as features
+
+    For regression models, we use the single output class.
+
+    For classification models, we use the probability for the first N-1 classes where N is the
+    number of classes.
+    """
+
+    def __init__(self, featurizer=None, model=None, name=None, class_names=None):
+        """Initialize featurizer
+
+        Args:
+            featurizer (BaseFeaturizer): Featurizer used to generate inputs to the model
+            model (BaseEstimator): Fitted machine learning model to be evaluated
+            name (str): [Optional] name of model, used when creating feature names
+                class_names ([str]): Required for classification models, used when creating
+                feature names (scikit-learn does not specify the number of classes for
+                a classifier). Class names must be in the same order as the classes in the model
+                (e.g., class_names[0] must be the name of the class 0)
+        """
+
+        # Store settings
+        self.name = name
+        self.class_names = class_names
+        self.featurizer = featurizer
+        self.model = model
+
+        # Present warning about class_names
+        if self.class_names is None and self._is_classifier():
+            print('WARNING: Class names are required for featurize_dataframe and feature_labels',
+                  file=sys.stderr)
+
+    def _is_classifier(self):
+        """Whether the underlying model is a classifier
+
+        Return:
+            (boolean) whether `self.model` is a classifier
+        """
+        return is_classifier(self.model) or hasattr(self.model, 'predict_proba')
+
+    def featurize(self, *x):
+        # Generate the features
+        # TODO: Explore checking whether features have already been computed. Feature for MultiFeaturizer? -lw
+        features = [self.featurizer.featurize(*x)]
+
+        # Run the model
+        if self._is_classifier():
+            output = self.model.predict_proba(features)[0]
+            return output[:-1]
+        else:
+            return [self.model.predict(features)]
+
+    def feature_labels(self):
+        name = self.name or ''
+        if self._is_classifier():
+            if self.class_names is None:
+                raise ValueError('Class names are required for classification models')
+            return ['{} P({})'.format(name, cn).lstrip() for cn in self.class_names[:-1]]
+        else:
+            return ['{} prediction'.format(name).lstrip()]
+
+    def implementors(self):
+        return ['Logan Ward']
+
+    def citations(self):
+        return []

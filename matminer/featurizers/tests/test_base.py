@@ -6,8 +6,9 @@ import numpy as np
 import warnings
 
 from pymatgen.util.testing import PymatgenTest
+from sklearn.dummy import DummyRegressor, DummyClassifier
 
-from matminer.featurizers.base import BaseFeaturizer, MultipleFeaturizer
+from matminer.featurizers.base import BaseFeaturizer, MultipleFeaturizer, StackedFeaturizer
 from matminer.featurizers.function import FunctionFeaturizer
 
 
@@ -89,6 +90,7 @@ class FittableFeaturizer(BaseFeaturizer):
 
     def implementors(self):
         return ["A competing research group"]
+
 
 class TestBaseClass(PymatgenTest):
     def setUp(self):
@@ -230,6 +232,45 @@ class TestBaseClass(PymatgenTest):
         self.assertArrayAlmostEqual(data['a'], [4, 5, 6])
         self.assertArrayAlmostEqual(data['b'], [5, 6, 7])
         self.assertArrayAlmostEqual(data['c'], [2, 4, 6])
+
+    def test_stacked_featurizer(self):
+        data = self.make_test_data()
+        data['y'] = [1, 2, 3]
+
+        # Test for a regressor
+        model = DummyRegressor()
+        model.fit(self.multi.featurize_many(data['x']), data['y'])
+
+        #  Test the predictions
+        f = StackedFeaturizer(self.single, model)
+        self.assertEquals([2], f.featurize(data['x'][0]))
+
+        #  Test the feature names
+        self.assertEquals(['prediction'], f.feature_labels())
+        f.name = 'ML'
+        self.assertEquals(['ML prediction'], f.feature_labels())
+
+        # Test classifier
+        model = DummyClassifier("prior")
+        data['y'] = [0, 0, 1]
+        model.fit(self.multi.featurize_many(data['x']), data['y'])
+
+        #  Test the prediction
+        f.model = model
+        self.assertEquals([2./3], f.featurize(data['x'][0]))
+
+        #  Test the feature labels
+        self.assertRaises(ValueError, f.feature_labels)
+        f.class_names = ['A', 'B']
+        self.assertEquals(['ML P(A)'], f.feature_labels())
+
+        # Test with three classes
+        data['y'] = [0, 2, 1]
+        model.fit(self.multi.featurize_many(data['x']), data['y'])
+
+        self.assertArrayAlmostEqual([1./3]*2, f.featurize(data['x'][0]))
+        f.class_names = ['A', 'B', 'C']
+        self.assertEquals(['ML P(A)', 'ML P(B)'], f.feature_labels())
 
 
 if __name__ == '__main__':
