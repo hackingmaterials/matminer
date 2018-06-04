@@ -1,4 +1,5 @@
 from __future__ import division
+import copy
 
 from matminer.utils.data import MagpieData
 
@@ -202,7 +203,7 @@ class OPSiteFingerprint(BaseFeaturizer):
 
     def __init__(self, target_motifs=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
                  dist_exp=2, zero_ops=True):
-        self.cn_target_motif_op = cn_target_motif_op.copy() \
+        self.cn_target_motif_op = copy.deepcopy(cn_target_motif_op) \
             if target_motifs is None else target_motifs.copy()
         self.dr = dr
         self.ddr = ddr
@@ -406,7 +407,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
             return CrystalNNFingerprint(op_types, **kwargs)
 
         elif preset == "ops":
-            op_types = cn_target_motif_op.copy()
+            op_types = copy.deepcopy(cn_target_motif_op)
             for k in range(24):
                 if k + 1 in op_types:
                     op_types[k + 1].insert(0, "wt")
