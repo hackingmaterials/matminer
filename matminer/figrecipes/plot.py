@@ -517,7 +517,7 @@ class PlotlyFig:
                                'line': {'width': 1,'color': 'black'}
                                } for _ in data]
         if isinstance(markers, dict):
-            markers = [markers.copy() for _ in data]
+            markers = [deepcopy(markers) for _ in data]
 
         if self.colorbar_title == 'auto':
             colorbar_title = pd.Series(colorbar).name
@@ -561,7 +561,7 @@ class PlotlyFig:
                 lines.append(linedict)
 
         if isinstance(lines, dict):
-            lines = [lines.copy() for _ in data]
+            lines = [deepcopy(lines) for _ in data]
 
         for var in [labels, markers, lines]:
             if len(list(var)) != len(data):
@@ -1080,7 +1080,7 @@ class PlotlyFig:
                                colors=colorscale, use_colorscale=use_colorscale,
                                group_stats=group_stats, rugplot=rugplot)
         layout = deepcopy(self.layout)
-        font_style = self.font_style.copy()
+        font_style = deepcopy(self.font_style)
         font_style['size'] = 0.65 * font_style['size']
 
         violin_layout = {k: v for (k, v) in layout.items() if k != 'xaxis'}
@@ -1165,7 +1165,7 @@ class PlotlyFig:
                 values = data[col]
             dimensions.append({'label': col, 'values': values.tolist()})
 
-        font_style = self.font_style.copy()
+        font_style = deepcopy(self.font_style)
         font_style['size'] = 0.7 * font_style['size']
         line = line or {'color': colors,
                         'colorscale': self.colorscale,
@@ -1387,7 +1387,7 @@ class PlotlyFig:
                     count = 0
                     val = 'N/A'
                 x_data.append(val)
-                a_d = annotation_template.copy()
+                a_d = deepcopy(annotation_template)
                 a_d['x'] = x
                 a_d['y'] = y
                 if annotation is None:
