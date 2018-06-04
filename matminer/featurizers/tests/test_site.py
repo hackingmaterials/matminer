@@ -7,7 +7,8 @@ from pymatgen.util.testing import PymatgenTest
 from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, CrystalSiteFingerprint, EwaldSiteEnergy, \
+    OPSiteFingerprint, CrystalNNFingerprint, \
+    CrystalSiteFingerprint, EwaldSiteEnergy, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
     GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference
@@ -120,6 +121,11 @@ class FingerprintTests(PymatgenTest):
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEqual(ops[opsf.feature_labels().index(
             'body-centered cubic CN_8')], 0.9555, places=7)
+
+        # The following test aims at ensuring the copying of the OP dictionaries work.
+        opsfp = OPSiteFingerprint()
+        cnnfp = CrystalNNFingerprint.from_preset('ops')
+        self.assertEqual(len([1 for l in opsfp.feature_labels() if l.split()[0] == 'wt']), 0)
 
     def test_crystal_site_fingerprint(self):
         csf = CrystalSiteFingerprint.from_preset('ops')
