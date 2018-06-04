@@ -204,7 +204,7 @@ class OPSiteFingerprint(BaseFeaturizer):
     def __init__(self, target_motifs=None, dr=0.1, ddr=0.01, ndr=1, dop=0.001,
                  dist_exp=2, zero_ops=True):
         self.cn_target_motif_op = copy.deepcopy(cn_target_motif_op) \
-            if target_motifs is None else target_motifs.copy()
+            if target_motifs is None else copy.deepcopy(target_motifs)
         self.dr = dr
         self.ddr = ddr
         self.ndr = ndr
@@ -430,7 +430,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
             **kwargs: other settings to be passed into CrystalNN class
         """
 
-        self.op_types = op_types.copy()
+        self.op_types = copy.deepcopy(op_types)
         self.cnn = CrystalNN(**kwargs)
 
         self.ops = {}  # load order parameter objects & paramaters
@@ -557,7 +557,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 (bonds with zero charge are also allowed)
         """
 
-        self.optypes = optypes.copy()
+        self.optypes = copy.deepcopy(optypes)
         self.override_cn1 = override_cn1
         self.cutoff_radius = cutoff_radius
         self.tol = tol
@@ -751,11 +751,11 @@ class VoronoiFingerprint(BaseFeaturizer):
         self.cutoff = cutoff
         self.use_weights = use_weights
         self.stats_vol = ['mean', 'std_dev', 'minimum', 'maximum'] \
-            if stats_vol is None else stats_vol.copy()
+            if stats_vol is None else copy.deepcopy(stats_vol)
         self.stats_area = ['mean', 'std_dev', 'minimum', 'maximum'] \
-            if stats_area is None else stats_area.copy()
+            if stats_area is None else copy.deepcopy(stats_area)
         self.stats_dist = ['mean', 'std_dev', 'minimum', 'maximum'] \
-            if stats_dist is None else stats_dist.copy()
+            if stats_dist is None else copy.deepcopy(stats_dist)
 
     @staticmethod
     def vol_tetra(vt1, vt2, vt3, vt4):
