@@ -562,7 +562,7 @@ class VoronoiFingerprint(BaseFeaturizer):
 
     def featurize(self, struct, idx):
         """
-        Get Voronoi site fingerprints with the given index in input structure.
+        Get Voronoi fingerprints of site with given index in input structure.
         Args:
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
