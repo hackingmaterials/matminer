@@ -186,6 +186,90 @@ class DopingFermi(BaseFeaturizer):
         return []
 
 
+class BandEdge(BaseFeaturizer):
+    """
+    Orbital character of the band edges (CBM/VBM) based on a density of
+    states CompleteDos object.
+    """
+    def __init__(self, energy_cutoff=0.1, sampling_resolution=100,
+                 gaussian_smear=0.1, species=None):
+        self.energy_cutoff = energy_cutoff
+        self.sampling_resolution = sampling_resolution
+        self.gaussian_smear = gaussian_smear
+        self.species = species or []
+
+    def featurize(self, dos, energy_cutoff=None):
+        """
+        takes in the density of state and return the orbitals contributions
+        and hybridizations.
+
+        Args:
+            dos (pymatgen CompleteDos): note that dos.structure is required
+            energy_cutoff (float):
+
+        Returns:
+
+        """
+        if isinstance(dos, dict):
+            dos = CompleteDos.from_dict(dos)
+        if dos.structure is None:
+            raise ValueError('The input dos must contain the structure.')
+
+        orbscores = get_cbm_vbm_scores(dos,
+                                       self.energy_cutoff,
+                                       self.sampling_resolution,
+                                       self.gaussian_smear)
+        feat = OrderedDict()
+        for ex in ['cbm', 'vbm']:
+            for orbital in ['s', 'p', 'd', 'f']:
+                feat['{}_{}'.format(ex, orbital)] = 0.0
+                for specie in self.species:
+                    feat['{}_{}_{}'.format(ex, specie, orbital)] = 0.0
+            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
+                feat['{}_{}'.format(ex, hybrid)] = 0.0
+
+        for contrib in orbscores:
+            character = contrib['character']
+            feat['cbm_{}'.format(character)] += contrib['cbm_score']
+            feat['vbm_{}'.format(character)] += contrib['vbm_score']
+            for specie in self.species:
+                if contrib['specie'] == specie:
+                    feat['cbm_{}_{}'.format(specie, character)] += contrib[
+                        'cbm_score']
+                    feat['vbm_{}_{}'.format(specie, character)] += contrib[
+                        'vbm_score']
+
+        for ex in ['cbm', 'vbm']:
+            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
+                orb1 = feat['{}_{}'.format(ex, hybrid[0])]
+                orb2 = feat['{}_{}'.format(ex, hybrid[1])]
+                feat['{}_{}'.format(ex, hybrid)] = (orb1 * orb2) * 4.0  # 4x so max=1.0
+        return list(feat.values())
+
+    def feature_labels(self):
+        """
+        Returns ([str]): feature names starting with the extremun (cbm or vbm)
+        followed by either s,p,d,f orbital to show their normalized contribution
+        or a pair showing their hybridization or contribution of an element:
+            example 1: "cbm_d": orbital-d contribution to the CBM
+            example 2: "vbm_sp": s-p hybridization at the valence band edge/VBM
+                ranging from 0 to 1 (50%-50% hybridization)
+            example 3: "vbm_Pb": Pb contribution coming from any of Pb orbitals
+        """
+        labels = []
+        for ex in ['cbm', 'vbm']:
+            for orbital in ['s', 'p', 'd', 'f']:
+                labels.append('{}_{}'.format(ex, orbital))
+                for specie in self.species:
+                    labels.append('{}_{}_{}'.format(ex, specie, orbital))
+            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
+                labels.append('{}_{}'.format(ex, hybrid))
+        return labels
+
+    def implementors(self):
+        return ['Alireza Faghaninia', 'Anubhav Jain']
+
+
 def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
     """
     Quantifies the strength of the contribution of all orbitals of various
@@ -213,7 +297,6 @@ def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
             .. character: (str) is the orbital character s, p, d, or f
             .. location: [(float)] fractional coordinates of the orbital
     """
-
     cbm, vbm = dos.get_cbm_vbm(tol=0.01)
     structure = dos.structure
     sites = structure.sites
@@ -256,7 +339,7 @@ def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
     total_vbm = sum([orbital_scores[i]['vbm_score'] for i in
                      range(0, len(orbital_scores))])
     for orbital in orbital_scores:
-        orbital['cbm_score'] = orbital['cbm_score'] / total_cbm
-        orbital['vbm_score'] = orbital['vbm_score'] / total_vbm
+        orbital['cbm_score'] /= total_cbm
+        orbital['vbm_score'] /= total_vbm
 
     return orbital_scores
