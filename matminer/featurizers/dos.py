@@ -11,27 +11,35 @@ class DOSFeaturizer(BaseFeaturizer):
     Significant character and contribution of the density of state from a
     CompleteDos, object. Contributors are the sites within the structure. This
     underline the importance of the presence of dos.structure.
+
+    Args:
+        contributors (int):
+            Sets the number of top contributors to the DOS that are
+            returned as features. (i.e. contributors=1 will only return the
+            main cb and main vb orbital)
+        significance_threshold (float):
+            Sets the significance threshold for orbitals in the DOS.
+            Does not impact the number of contributors returned. Only
+            determines the feature value xbm_significant_contributors.
+            The threshold is a fractional value between 0 and 1.
+        energy_cutoff (float in eV):
+            The extent (into the bands) to sample the DOS
+        sampling_resolution (int):
+            Number of points to sample DOS
+        gaussian_smear (float in eV):
+            Gaussian smearing (sigma) around each sampled point in the DOS
+
+    Returns (featurize returns [float] and featurize_labels returns [str]):
+        xbm_score_i (float): fractions of ith contributor orbital
+        xbm_location_i (str): fractional coordinate of ith contributor/site
+            For example, '0.0;0.0;0.0' if Gamma
+        xbm_specie_i (str): elemental specie of ith contributor (ex: 'Ti')
+        xbm_character_i (str): character of ith contributor (s, p, d, f)
+        xbm_nsignificant (int): the number of orbitals with contributions
+            above the significance_threshold
     """
     def __init__(self, contributors=1, significance_threshold=0.1,
                  energy_cutoff=0.5, sampling_resolution=100, gaussian_smear=0.1):
-        """
-        Args:
-            contributors (int):
-                Sets the number of top contributors to the DOS that are
-                returned as features. (i.e. contributors=1 will only return the
-                main cb and main vb orbital)
-            significance_threshold (float):
-                Sets the significance threshold for orbitals in the DOS.
-                Does not impact the number of contributors returned. Only
-                determines the feature value xbm_significant_contributors.
-                The threshold is a fractional value between 0 and 1.
-            energy_cutoff (float in eV):
-                The extent (into the bands) to sample the DOS
-            sampling_resolution (int):
-                Number of points to sample DOS
-            gaussian_smear (float in eV):
-                Gaussian smearing (sigma) around each sampled point in the DOS
-        """
         self.contributors = contributors
         self.significance_threshold = significance_threshold
         self.energy_cutoff = energy_cutoff
@@ -45,15 +53,6 @@ class DOSFeaturizer(BaseFeaturizer):
                 The density of states to featurize. Must be a complete DOS,
                 (i.e. contains PDOS and structure, in addition to total DOS)
                 and must contain the structure.
-
-        Returns:
-            xbm_score_i (float): fractions of ith contributor orbital
-            xbm_location_i (str): fractional coordinate of ith contributor/site
-                For example, '0.0;0.0;0.0' if Gamma
-            xbm_specie_i (str): elemental specie of ith contributor (ex: 'Ti')
-            xbm_character_i (str): character of ith contributor (s, p, d, f)
-            xbm_nsignificant (int): the number of orbitals with contributions
-                above the significance_threshold
         """
         if isinstance(dos, dict):
             dos = CompleteDos.from_dict(dos)
