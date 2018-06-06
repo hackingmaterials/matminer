@@ -2,6 +2,7 @@ import copy
 import math
 
 from collections.__init__ import defaultdict
+from monty.dev import deprecated
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import cn_target_motif_op, cn_motif_op_params
@@ -49,6 +50,8 @@ class CrystalSiteFingerprint(BaseFeaturizer):
             raise RuntimeError('preset "{}" is not supported in '
                                'CrystalSiteFingerprint'.format(preset))
 
+    @deprecated(message="CrystalSiteFingerprint is deprecated in favor of "
+                        "CrystalNNFingerprint")
     def __init__(self, optypes, override_cn1=True, cutoff_radius=8, tol=1E-2,
                  cation_anion=False):
         """
