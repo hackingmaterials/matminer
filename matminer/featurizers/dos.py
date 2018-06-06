@@ -108,9 +108,9 @@ class DOSFeaturizer(BaseFeaturizer):
 
 class DopingFermi(BaseFeaturizer):
     """
-    This featurizers returns the fermi level (w.r.t. selected reference energy) 
-    associated with a specified carrier concentration (1/cm3) and temperature.
-    This feature requires the total density of state and structure. Structure
+    The fermi level (w.r.t. selected reference energy) associated with a
+    specified carrier concentration (1/cm3) and temperature. This featurizar
+    requires the total density of states and structure. The Structure
     as dos.structure (e.g. in CompleteDos) is required by FermiDos class.
 
     Args:
@@ -124,12 +124,17 @@ class DopingFermi(BaseFeaturizer):
         return_eref: if True, instead of aligning the fermi levels based
             on eref, it (eref) will be explicitly returned as a feature
 
-    Returns
+    Returns (featurize returns [float] and featurize_labels returns [str]):
+        examples:
+            fermi_c-1e+20T300 (float): the fermi level for the electron
+                concentration of 1e20 and the temperature of 300K.
+            fermi_c1e+18T600 (float): the fermi level for the hole concentration
+                of 1e18 and the temperature of 600K.
+            midgap eref (float): if return_eref==True then eref (midgap here)
+                energy is returned. In this case other fermi levels returned are
+                absolute as opposed to relative to eref (i.e. if not return_eref)
     """
     def __init__(self, dopings=None, eref="midgap", T=300, return_eref=False):
-        """
-
-        """
         self.dopings = dopings or [-1e20, 1e20]
         self.eref = eref
         self.T = T
@@ -144,6 +149,7 @@ class DopingFermi(BaseFeaturizer):
                 or one that is calculated via more accurate methods than the
                 one used to generate dos. dos will be scissored to have the
                 same electronic band gap as bandgap.
+
         Returns ([float]): features are fermi levels in eV at the given
             concentrations and temperature + eref in eV if return_eref
         """
@@ -279,7 +285,7 @@ class BandEdge(BaseFeaturizer):
 
     def feature_labels(self):
         """
-        Returns ([str]): feature names starting with the extremun (cbm or vbm)
+        Returns ([str]): feature names starting with the extremum (cbm or vbm)
         followed by either s,p,d,f orbital to show their normalized contribution
         or a pair showing their hybridization or contribution of an element.
         See the class docs for examples.
@@ -371,5 +377,4 @@ def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
     for orbital in orbital_scores:
         orbital['cbm_score'] /= total_cbm
         orbital['vbm_score'] /= total_vbm
-
     return orbital_scores
