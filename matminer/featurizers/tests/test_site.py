@@ -182,7 +182,7 @@ class FingerprintTests(PymatgenTest):
 
     def test_voronoifingerprint(self):
         df_sc= pd.DataFrame({'struct': [self.sc], 'site': [0]})
-        vorofp = VoronoiFingerprint(use_weights=True)
+        vorofp = VoronoiFingerprint(use_symm_weights=True)
         vorofps = vorofp.featurize_dataframe(df_sc, ['struct', 'site'])
         self.assertAlmostEqual(vorofps['Voro_index_3'][0], 0.0)
         self.assertAlmostEqual(vorofps['Voro_index_4'][0], 6.0)
