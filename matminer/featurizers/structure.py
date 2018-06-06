@@ -1012,13 +1012,8 @@ class SiteStatsFingerprint(BaseFeaturizer):
         if self.stats:
             stats = []
             for op in vals:
-                if '_mode' in ''.join(self.stats):
-                    modes = self.n_numerical_modes(op, self.nmodes, 0.01)
                 for stat in self.stats:
-                    if '_mode' in stat:
-                        stats.append(modes[int(stat[0]) - 1])
-                    else:
-                        stats.append(PropertyStats().calc_stat(op, stat))
+                    stats.append(PropertyStats().calc_stat(op, stat))
 
             return stats
         else:
@@ -1101,75 +1096,6 @@ class SiteStatsFingerprint(BaseFeaturizer):
                 pass
 
         raise ValueError("Unrecognized preset!")
-
-    # TODO: @nisse3000, move this function elsewhere. Probably the PropertyStats
-    # packages which is responsible for turning higher-dimensional data into
-    # lower dimensional data
-    @staticmethod
-    def n_numerical_modes(data_lst, n=2, dl=0.1):
-        """
-        Returns the n first modes of a data set that are obtained with
-            a finite bin size for the underlying frequency distribution.
-        Args:
-            data_lst ([float]): data values.
-            n (integer): number of most frequent elements to be determined.
-            dl (float): bin size of underlying (coarsened) distribution.
-        Returns:
-            ([float]): first n most frequent entries (or nan if not found).
-        """
-        if len(set(data_lst)) == 1:
-            return [data_lst[0]] + [float('NaN') for _ in range(n - 1)]
-        hist, bins = np.histogram(data_lst, bins=np.arange(
-            min(data_lst), max(data_lst), dl), density=False)
-        modes = list(bins[np.argsort(hist)[-n:]][::-1])
-        return modes + [float('NaN') for _ in range(n - len(modes))]
-
-
-# TODO: @nisse3000, move this function elsewhere
-def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
-    """
-    Determine the difference vector between two order parameter-statistics
-    feature vector resulting from two input structures.
-
-    Args:
-        s1 (Structure): first input structure.
-        s2 (Structure): second input structure.
-        max_dr (float): maximum neighbor-finding parameter to be tested.
-        ddr (float): step size for increasing neighbor-finding parameter.
-        ddist (float): bin size for histogramming distances of varying dr.
-
-    Returns: (float, [float]) optimal neighbor-finding parameter
-        and difference vector between order
-        parameter-statistics feature vectors obtained from the
-        two input structures (s1 - s2).
-    """
-    # Compute OP stats vector distances for varying neigh-find paras.
-    dr = []
-    dist = []
-    delta = []
-    nbins = int(max_dr / ddr) + 1
-    for i in range(nbins):
-        dr.append(float(i + 1) * ddr)
-        opsf = SiteStatsFingerprint(site_featurizer=OPSiteFingerprint(dr=dr[i]))
-        delta.append(np.array(
-            opsf.featurize(s1)) - np.array(opsf.featurize(s2)))
-        dist.append(np.linalg.norm(delta[i]))
-
-    # Compute distance histogram, determine peak, and location
-    # of smallest dr with peak value.
-    nbins = int(max(dist) / ddist) + 1
-    hist, bin_edges = np.histogram(
-        dist, bins=[float(i) * ddist for i in range(nbins)],
-        normed=False, weights=None, density=False)
-    idx = list(hist).index(max(hist))
-    dist_peak = 0.5 * (bin_edges[idx] + bin_edges[idx + 1])
-    idx = -1
-    for i, d in enumerate(dist):
-        if fabs(d - dist_peak) <= ddist:
-            idx = i
-            break
-
-    return dr[idx], delta[idx]
 
 
 class EwaldEnergy(BaseFeaturizer):
