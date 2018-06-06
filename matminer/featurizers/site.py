@@ -497,7 +497,6 @@ class CrystalNNFingerprint(BaseFeaturizer):
         return ['Anubhav Jain', 'Nils E.R. Zimmermann']
 
 
-# TODO: Much of this code is duplicated in the new `get_voronoi_poly`. We should refactor it -lw
 class VoronoiFingerprint(BaseFeaturizer):
     """
     Voronoi tessellation-based features around target site.
@@ -548,8 +547,8 @@ class VoronoiFingerprint(BaseFeaturizer):
         stats_dist (list of str): neighboring distance statistics types.
     """
 
-    def __init__(self, cutoff=6.5, use_symm_weights=False,
-                 symm_weights='solid_angle',
+    def __init__(self, cutoff=6.5,
+                 use_symm_weights=False, symm_weights='solid_angle',
                  stats_vol=None, stats_area=None, stats_dist=None):
         self.cutoff = cutoff
         self.use_symm_weights = use_symm_weights
