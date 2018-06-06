@@ -525,13 +525,13 @@ class VoronoiFingerprint(BaseFeaturizer):
     Voronoi volume
         total volume of the Voronoi polyhedron around the target site
     Voronoi volume statistics of sub_polyhedra formed by each facet + center
-        e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
+        stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
     Voronoi area
         total area of the Voronoi polyhedron around the target site
     Voronoi area statistics of the facets
-        e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
+        stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
     Voronoi nearest-neighboring distance statistics
-        e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
+        stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
 
     Args:
         cutoff (float): cutoff distance in determining the potential
@@ -541,14 +541,15 @@ class VoronoiFingerprint(BaseFeaturizer):
                                 i-fold symmetry indices.
         symm_weights(str): weights to be used in weighted i-fold symmetry
                            indices.
-                           Supported: solid_angle, area, volume and face_dist.
+                           Supported options: 'solid_angle', 'area', 'volume',
+                           'face_dist'. (default: 'solid_angle')
         stats_vol (list of str): volume statistics types.
         stats_area (list of str): area statistics types.
         stats_dist (list of str): neighboring distance statistics types.
     """
 
     def __init__(self, cutoff=6.5, use_symm_weights=False,
-                 symm_weights="solid_angle",
+                 symm_weights='solid_angle',
                  stats_vol=None, stats_area=None, stats_dist=None):
         self.cutoff = cutoff
         self.use_symm_weights = use_symm_weights
@@ -560,23 +561,6 @@ class VoronoiFingerprint(BaseFeaturizer):
         self.stats_dist = ['mean', 'std_dev', 'minimum', 'maximum'] \
             if stats_dist is None else copy.deepcopy(stats_dist)
 
-    @staticmethod
-    def vol_tetra(vt1, vt2, vt3, vt4):
-        """
-        Calculate the volume of a tetrahedron, given the four vertices of vt1,
-        vt2, vt3 and vt4.
-        Args:
-            vt1 (array-like): coordinates of vertex 1.
-            vt2 (array-like): coordinates of vertex 2.
-            vt3 (array-like): coordinates of vertex 3.
-            vt4 (array-like): coordinates of vertex 4.
-        Returns:
-            (float): volume of the tetrahedron.
-        """
-        vol_tetra = np.abs(np.dot((vt1 - vt4),
-                                  np.cross((vt2 - vt4), (vt3 - vt4))))/6
-        return vol_tetra
-
     def featurize(self, struct, idx):
         """
         Get Voronoi fingerprints of site with given index in input structure.
@@ -587,7 +571,7 @@ class VoronoiFingerprint(BaseFeaturizer):
             (list of floats): Voronoi fingerprints.
                 -Voronoi indices
                 -i-fold symmetry indices
-                -weighted i-fold symmetry indices (if use_weights = True)
+                -weighted i-fold symmetry indices (if use_symm_weights = True)
                 -Voronoi volume
                 -Voronoi volume statistics
                 -Voronoi area
@@ -603,17 +587,18 @@ class VoronoiFingerprint(BaseFeaturizer):
         vol_list = []
         area_list = []
         dist_list = []
+
         # Get statistics about the Voronoi
         for nn in n_w:
-            if nn["poly_info"]["n_verts"] <= 10:
+            if nn['poly_info']['n_verts'] <= 10:
                 # If a facet has more than 10 edges, it's skipped here.
-                voro_idx_list[nn["poly_info"]["n_verts"] - 3] += 1
-                vol_list.append(nn["poly_info"]["volume"])
-                area_list.append(nn["poly_info"]["area"])
-                dist_list.append(nn["poly_info"]["face_dist"] * 2)
+                voro_idx_list[nn['poly_info']['n_verts'] - 3] += 1
+                vol_list.append(nn['poly_info']['volume'])
+                area_list.append(nn['poly_info']['area'])
+                dist_list.append(nn['poly_info']['face_dist'] * 2)
                 if self.use_symm_weights:
-                    voro_idx_weights[nn["poly_info"]["n_verts"] - 3] += \
-                        nn["poly_info"][self.symm_weights]
+                    voro_idx_weights[nn['poly_info']['n_verts'] - 3] += \
+                        nn['poly_info'][self.symm_weights]
 
         symm_idx_list = voro_idx_list / sum(voro_idx_list)
         if self.use_symm_weights:
