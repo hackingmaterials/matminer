@@ -13,11 +13,19 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def load_elastic_tensor(include_metadata = False):
-    # ref: Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,
-    # A., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,
-    # C., Curtarolo, S., Ceder, G., Persson, K. a & Asta, M. Charting the
-    # complete elastic properties of inorganic crystalline compounds. Sci.
-    # Data 2, 150009 (2015).
+    """
+    References:
+        Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,
+        A., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,
+        C., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., "Charting the
+        complete elastic properties of inorganic crystalline compounds",
+        Scientific Data volume 2, Article number: 150009 (2015)
+
+    Args:
+        include_metadata (bool): whether to return cif, kpoint_density, poscar
+
+    Returns (pd.DataFrame)
+    """
     df = pandas.read_csv(os.path.join(module_dir, "elastic_tensor.csv"),
         comment="#")
     for i in list(df.index):
@@ -34,10 +42,19 @@ def load_elastic_tensor(include_metadata = False):
         new_columns += ['cif', 'kpoint_density', 'poscar']
     return df[new_columns]
 
+
 def load_piezoelectric_tensor(include_metadata = False):
-    # ref: de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.
-    # A database to enable discovery and design of piezoelectric materials.
-    # Sci. Data 2, 150053 (2015).
+    """
+    References:
+        de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.
+        A database to enable discovery and design of piezoelectric materials.
+        Sci. Data 2, 150053 (2015)
+
+    Args:
+        include_metadata (bool): whether to return cif, meta, poscar
+
+    Returns (pd.DataFrame)
+    """
     df = pandas.read_csv(os.path.join(module_dir, "piezoelectric_tensor.csv"),
         comment="#")
     for i in list(df.index):
@@ -52,11 +69,20 @@ def load_piezoelectric_tensor(include_metadata = False):
         new_columns += ['cif', 'meta', 'poscar']
     return df[new_columns]
 
+
 def load_dielectric_constant(include_metadata = False):
-    # ref: Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,
-    # Chen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.
-    # High-throughput screening of inorganic compounds for the discovery of
-    # novel dielectric and optical materials. Sci. Data 4, 160134 (2017).
+    """
+    References:
+        Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,
+        Chen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.
+        High-throughput screening of inorganic compounds for the discovery of
+        novel dielectric and optical materials. Sci. Data 4, 160134 (2017).
+
+    Args:
+        include_metadata (bool): whether to return cif, meta, poscar
+
+    Returns (pd.DataFrame)
+    """
     df = pandas.read_csv(os.path.join(module_dir, "dielectric_constant.csv"),
         comment="#")
     df['cif'] = df['structure']
@@ -70,18 +96,22 @@ def load_dielectric_constant(include_metadata = False):
         new_columns += ['cif', 'meta', 'poscar']
     return df[new_columns]
 
-def load_flla():
-    # ref1: F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
-    # Crystal structure representations for machine learning models
-    # of formation energies, Int. J. Quantum Chem. 115 (2015) 1094–1101.
-    # doi:10.1002/qua.24917.
-    #
-    # The raw data is from:
-    # ref2: Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,
-    # Dacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. & Persson,
-    # K. A. Commentary: The Materials Project: A materials genome approach to
-    # accelerating materials innovation. APL Mater. 1, 11002 (2013).
 
+def load_flla():
+    """
+    References:
+        1) F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
+        "Crystal structure representations for machine learning models of
+        formation energies", Int. J. Quantum Chem. 115 (2015) 1094–1101.
+        doi:10.1002/qua.24917.
+
+        2) (raw data) Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,
+        Dacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. & Persson,
+        K. A. Commentary: The Materials Project: A materials genome approach to
+        accelerating materials innovation. APL Mater. 1, 11002 (2013).
+
+    Returns (pd.DataFrame)
+    """
     df = pandas.read_csv(os.path.join(module_dir, "flla_2015.csv"), comment="#")
     column_headers = ['material_id', 'e_above_hull', 'formula',
                         'nsites', 'structure', 'formation_energy',
