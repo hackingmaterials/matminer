@@ -224,7 +224,7 @@ class BandEdge(BaseFeaturizer):
             vbm_sp (float): sp-hybridization at the vbm edge. Minimum is 0
                 or no hybridization (e.g. all s or vbm_s==1) and 1.0 is
                 maximum hybridization (i.e. vbm_s==0.5, vbm_p==0.5)
-            cbm_Si_f (float): f-orbital character of Si
+            cbm_Si_p (float): p-orbital character of Si
     """
     def __init__(self, energy_cutoff=0.1, sampling_resolution=100,
                  gaussian_smear=0.1, species=None):
