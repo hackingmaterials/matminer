@@ -58,8 +58,9 @@ class DOSFeaturesTest(PymatgenTest):
 
     def test_BandEdge(self):
         be = BandEdge(energy_cutoff=0.1, species=['Si'])
-        df = be.featurize_dataframe(self.df, col_id='dos')
+        df = be.featurize_dataframe(self.df, col_id='dos', inplace=False)
         df = df.drop('dos', axis=1)
+        
         # ensure features are in [0., 1.]
         self.assertEqual((df<0).sum().sum(), 0.0)
         self.assertEqual((df>1).sum().sum(), 0.0)
@@ -75,6 +76,14 @@ class DOSFeaturesTest(PymatgenTest):
         self.assertEqual(df['vbm_s'][0], df['vbm_Si_s'][0])
         self.assertAlmostEqual(df['vbm_p'][0], 0.984, 3)
         self.assertAlmostEqual(df['vbm_sp'][0], 0.061, 3)
+
+        df = self.df
+        df['cutoff'] = [1.0] # digging deeper inside the band
+        df = be.featurize_dataframe(df, col_id=['dos', 'cutoff'])
+        self.assertAlmostEqual(df['cbm_s'][0], 0.46, 2)
+        self.assertAlmostEqual(df['vbm_p'][0], 0.96, 2)
+
+
 
 if __name__ == '__main__':
     unittest.main()
