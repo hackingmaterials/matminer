@@ -562,7 +562,7 @@ class VoronoiFingerprint(BaseFeaturizer):
 
     def featurize(self, struct, idx):
         """
-        Get Voronoi fingerprints of site with given index in input structure.
+        Get Voronoi site fingerprints with the given index in input structure.
         Args:
             struct (Structure): Pymatgen Structure object.
             idx (int): index of target site in structure.
@@ -575,19 +575,19 @@ class VoronoiFingerprint(BaseFeaturizer):
                 -Voronoi volume statistics
                 -Voronoi area
                 -Voronoi area statistics
-                -Voronoi area statistics
+                -Voronoi dist statistics
         """
         # Get the nearest neighbors using a Voronoi tessellation
         n_w = get_nearest_neighbors(VoronoiNN(cutoff=self.cutoff), struct, idx)
 
-        # Prepare storage for the Voronoi indicies
+        # Prepare storage for the Voronoi indices
         voro_idx_list = np.zeros(8, int)
         voro_idx_weights = np.zeros(8)
         vol_list = []
         area_list = []
         dist_list = []
 
-        # Get statistics about the Voronoi
+        # Get statistics
         for nn in n_w:
             if nn['poly_info']['n_verts'] <= 10:
                 # If a facet has more than 10 edges, it's skipped here.
