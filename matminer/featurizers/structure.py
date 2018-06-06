@@ -22,7 +22,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
-    CoordinationNumber, LocalPropertyDifference
+    CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint
 from matminer.featurizers.stats import PropertyStats
 from matminer.utils.caching import get_all_nearest_neighbors
 
@@ -963,8 +963,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         - Returns each statistic of each site feature
     """
 
-    def __init__(self, site_featurizer, stats=('mean', 'std_dev', 'minimum',
-                                               'maximum'), min_oxi=None,
+    def __init__(self, site_featurizer, stats=('mean', 'std_dev'), min_oxi=None,
                  max_oxi=None):
         """
         Args:
@@ -1052,7 +1051,30 @@ class SiteStatsFingerprint(BaseFeaturizer):
             kwargs - Options for SiteStatsFingerprint
         """
 
-        if preset == "OPSiteFingerprint":
+        if preset == "CrystalNNFingerprint_cn":
+            return SiteStatsFingerprint(
+                CrystalNNFingerprint.from_preset("cn", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalNNFingerprint_cn_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalNNFingerprint.from_preset("cn", cation_anion=True),
+                **kwargs)
+
+        elif preset == "CrystalNNFingerprint_ops":
+            return SiteStatsFingerprint(
+                CrystalNNFingerprint.from_preset("ops", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalNNFingerprint_ops_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalNNFingerprint.from_preset("ops", cation_anion=True),
+                **kwargs)
+
+        elif preset == "OPSiteFingerprint":
+            return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
+
+        elif preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
 
         elif preset == "LocalPropertyDifference_ward-prb-2017":
