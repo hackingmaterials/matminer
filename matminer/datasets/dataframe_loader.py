@@ -12,7 +12,7 @@ __author__ = "Kyle Bystrom <kylebystrom@berkeley.edu>, " \
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def load_elastic_tensor(include_metadata = False):
+def load_elastic_tensor(include_metadata=False):
     """
     References:
         Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,
@@ -43,7 +43,7 @@ def load_elastic_tensor(include_metadata = False):
     return df[new_columns]
 
 
-def load_piezoelectric_tensor(include_metadata = False):
+def load_piezoelectric_tensor(include_metadata=False):
     """
     References:
         de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.
@@ -70,7 +70,7 @@ def load_piezoelectric_tensor(include_metadata = False):
     return df[new_columns]
 
 
-def load_dielectric_constant(include_metadata = False):
+def load_dielectric_constant(include_metadata=False):
     """
     References:
         Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,
