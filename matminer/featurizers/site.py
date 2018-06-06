@@ -605,13 +605,15 @@ class VoronoiFingerprint(BaseFeaturizer):
         dist_list = []
         # Get statistics about the Voronoi
         for nn in n_w:
-            voro_idx_list[nn["poly_info"]["n_verts"]] += 1
-            vol_list += nn["poly_info"]["volume"]
-            area_list += nn["poly_info"]["area"]
-            dist_list += nn["poly_info"]["face_dist"] * 2
-            if self.use_symm_weights:
-                voro_idx_weights[nn["poly_info"]["n_verts"]] += \
-                    nn["poly_info"][self.symm_weights]
+            if nn["poly_info"]["n_verts"] <= 10:
+                # If a facet has more than 10 edges, it's skipped here.
+                voro_idx_list[nn["poly_info"]["n_verts"] - 3] += 1
+                vol_list.append(nn["poly_info"]["volume"])
+                area_list.append(nn["poly_info"]["area"])
+                dist_list.append(nn["poly_info"]["face_dist"] * 2)
+                if self.use_symm_weights:
+                    voro_idx_weights[nn["poly_info"]["n_verts"] - 3] += \
+                        nn["poly_info"][self.symm_weights]
 
         symm_idx_list = voro_idx_list / sum(voro_idx_list)
         if self.use_symm_weights:
