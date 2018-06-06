@@ -438,6 +438,8 @@ class PlotlyFig:
             sizes = [10 * marker_scale] * len(xy_pairs)
         elif isinstance(sizes, str):
             sizes = [self._data_from_str(sizes)] * len(xy_pairs)
+        elif isinstance(sizes, (int, float)):
+            sizes = [sizes]*len(xy_pairs)
         else:
             if len(sizes) != len(xy_pairs):
                 raise ValueError(
