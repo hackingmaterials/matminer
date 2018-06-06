@@ -218,10 +218,10 @@ class BandEdge(BaseFeaturizer):
             possibly contributions from given species. Some examples for each
             type of features:
                 cbm_s (float): s-orbital character of the cbm up to energy_cutoff
-                vbm_sp (float): sp-hybridization at the vbm edge. 0 is no
-                    hybridization (e.g. all s or vbm_s==1) and 1.0 is maximum
-                    hybridization (i.e. vbm_s==0.5, vbm_p==0.5)
-
+                vbm_sp (float): sp-hybridization at the vbm edge. Minimum is 0
+                    or no hybridization (e.g. all s or vbm_s==1) and 1.0 is
+                    maximum hybridization (i.e. vbm_s==0.5, vbm_p==0.5)
+                cbm_Si_f (float): f-orbital character of Si
         """
         energy_cutoff = energy_cutoff or self.energy_cutoff
         if isinstance(dos, dict):
@@ -264,11 +264,8 @@ class BandEdge(BaseFeaturizer):
         """
         Returns ([str]): feature names starting with the extremun (cbm or vbm)
         followed by either s,p,d,f orbital to show their normalized contribution
-        or a pair showing their hybridization or contribution of an element:
-            example 1: "cbm_d": orbital-d contribution to the CBM
-            example 2: "vbm_sp": s-p hybridization at the valence band edge/VBM
-                ranging from 0 to 1 (50%-50% hybridization)
-            example 3: "vbm_Pb": Pb contribution coming from any of Pb orbitals
+        or a pair showing their hybridization or contribution of an element.
+        See the docs for the featurize method for examples.
         """
         labels = []
         for ex in ['cbm', 'vbm']:
