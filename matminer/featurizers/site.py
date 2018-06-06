@@ -537,17 +537,22 @@ class VoronoiFingerprint(BaseFeaturizer):
         cutoff (float): cutoff distance in determining the potential
                         neighbors for Voronoi tessellation analysis.
                         (default: 6.5)
-        use_weights(bool): whether to use weights to derive weighted
-                           i-fold symmetry indices.
+        use_symm_weights(bool): whether to use weights to derive weighted
+                                i-fold symmetry indices.
+        symm_weights(str): weights to be used in weighted i-fold symmetry
+                           indices.
+                           Supported: solid_angle, area, volume and face_dist.
         stats_vol (list of str): volume statistics types.
         stats_area (list of str): area statistics types.
         stats_dist (list of str): neighboring distance statistics types.
     """
 
-    def __init__(self, cutoff=6.5, use_weights=False, stats_vol=None,
-                 stats_area=None, stats_dist=None):
+    def __init__(self, cutoff=6.5, use_symm_weights=False,
+                 symm_weights="solid_angle",
+                 stats_vol=None, stats_area=None, stats_dist=None):
         self.cutoff = cutoff
-        self.use_weights = use_weights
+        self.use_symm_weights = use_symm_weights
+        self.symm_weights = symm_weights
         self.stats_vol = ['mean', 'std_dev', 'minimum', 'maximum'] \
             if stats_vol is None else copy.deepcopy(stats_vol)
         self.stats_area = ['mean', 'std_dev', 'minimum', 'maximum'] \
@@ -595,46 +600,21 @@ class VoronoiFingerprint(BaseFeaturizer):
         # Prepare storage for the Voronoi indicies
         voro_idx_list = np.zeros(8, int)
         voro_idx_weights = np.zeros(8)
-
-        # Get statistics about the Voronoi
-        vertices = [struct[idx].coords] + [nn['site'].coords for nn in n_w]
-        voro = Voronoi(vertices)
-
         vol_list = []
         area_list = []
-        dist_list = [np.linalg.norm(vertices[0] - vertices[i])
-                     for i in range(1, len(vertices))]
-
-        for nn, vind in voro.ridge_dict.items():
-            if 0 in nn:
-                if -1 in vind:
-                    continue
-                try:
-                    voro_idx_list[len(vind) - 3] += 1
-                    if self.use_weights:
-                        for neigh in n_w:
-                            if np.array_equal(neigh['site'].coords,
-                                              vertices[sorted(nn)[1]]):
-                                voro_idx_weights[len(vind) - 3] += neigh['weight']
-                except IndexError:
-                    # If a facet has more than 10 edges, it's skipped here.
-                    pass
-
-                polysub = [vertices[0]]
-                vol = 0
-                for v in vind:
-                    polysub.append(list(voro.vertices[v]))
-                tetra = Delaunay(np.array(polysub))
-                for simplex in tetra.simplices:
-                    vol += self.vol_tetra(np.array(polysub[simplex[0]]),
-                                          np.array(polysub[simplex[1]]),
-                                          np.array(polysub[simplex[2]]),
-                                          np.array(polysub[simplex[3]]))
-                vol_list.append(vol)
-                area_list.append(vol * 6 / dist_list[sorted(nn)[1] - 1])
+        dist_list = []
+        # Get statistics about the Voronoi
+        for nn in n_w:
+            voro_idx_list[nn["poly_info"]["n_verts"]] += 1
+            vol_list += nn["poly_info"]["volume"]
+            area_list += nn["poly_info"]["area"]
+            dist_list += nn["poly_info"]["face_dist"] * 2
+            if self.use_symm_weights:
+                voro_idx_weights[nn["poly_info"]["n_verts"]] += \
+                    nn["poly_info"][self.symm_weights]
 
         symm_idx_list = voro_idx_list / sum(voro_idx_list)
-        if self.use_weights:
+        if self.use_symm_weights:
             symm_wt_list = voro_idx_weights / sum(voro_idx_weights)
             voro_fps = list(np.concatenate((voro_idx_list, symm_idx_list,
                                            symm_wt_list), axis=0))
@@ -655,7 +635,7 @@ class VoronoiFingerprint(BaseFeaturizer):
     def feature_labels(self):
         labels = ['Voro_index_%d' % i for i in range(3, 11)]
         labels += ['Symmetry_index_%d' % i for i in range(3, 11)]
-        if self.use_weights:
+        if self.use_symm_weights:
             labels += ['Symmetry_weighted_index_%d' % i for i in range(3, 11)]
         labels.append('Voro_vol_sum')
         labels.append('Voro_area_sum')
