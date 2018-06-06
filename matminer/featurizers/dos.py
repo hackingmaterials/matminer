@@ -8,7 +8,9 @@ from pymatgen.electronic_structure.dos import CompleteDos, FermiDos
 
 class DOSFeaturizer(BaseFeaturizer):
     """
-    Featurizes a pymatgen density of states, CompleteDos, object.
+    Significant character and contribution of the density of state from a
+    CompleteDos, object. Contributors are the sites within the structure. This
+    underline the importance of the presence of dos.structure.
     """
     def __init__(self, contributors=1, significance_threshold=0.1,
                  energy_cutoff=0.5, sampling_resolution=100, gaussian_smear=0.1):
@@ -46,11 +48,11 @@ class DOSFeaturizer(BaseFeaturizer):
 
         Returns:
             xbm_score_i (float): fractions of ith contributor orbital
-            xbm_location_i (str): fractional coordinate of ith contributor.
+            xbm_location_i (str): fractional coordinate of ith contributor/site
                 For example, '0.0;0.0;0.0' if Gamma
-            xbm_specie_i: (str) elemental specie of ith contributor (ex: 'Ti')
-            xbm_character_i: (str) orbital character of ith contributor (s p d or f)
-            xbm_nsignificant: (int) the number of orbitals with contributions
+            xbm_specie_i (str): elemental specie of ith contributor (ex: 'Ti')
+            xbm_character_i (str): character of ith contributor (s, p, d, f)
+            xbm_nsignificant (int): the number of orbitals with contributions
                 above the significance_threshold
         """
         if isinstance(dos, dict):
@@ -85,6 +87,10 @@ class DOSFeaturizer(BaseFeaturizer):
         return list(feat.values())
 
     def feature_labels(self):
+        """
+        Returns ([str]): list of names of the features. See the docs for the
+            featurize method for more information.
+        """
         labels = []
         for ex in ['cbm', 'vbm']:
             labels.append('{}_nsignificant'.format(ex))
@@ -205,18 +211,26 @@ class BandEdge(BaseFeaturizer):
 
         Args:
             dos (pymatgen CompleteDos): note that dos.structure is required
-            energy_cutoff (float):
+            energy_cutoff (float or None): if set, it overrides the instance
+                variable self.energy_cutoff.
 
-        Returns:
+        Returns ([float]): set of orbitals contributions and hybridizations and
+            possibly contributions from given species. Some examples for each
+            type of features:
+                cbm_s (float): s-orbital character of the cbm up to energy_cutoff
+                vbm_sp (float): sp-hybridization at the vbm edge. 0 is no
+                    hybridization (e.g. all s or vbm_s==1) and 1.0 is maximum
+                    hybridization (i.e. vbm_s==0.5, vbm_p==0.5)
 
         """
+        energy_cutoff = energy_cutoff or self.energy_cutoff
         if isinstance(dos, dict):
             dos = CompleteDos.from_dict(dos)
         if dos.structure is None:
             raise ValueError('The input dos must contain the structure.')
 
         orbscores = get_cbm_vbm_scores(dos,
-                                       self.energy_cutoff,
+                                       energy_cutoff,
                                        self.sampling_resolution,
                                        self.gaussian_smear)
         feat = OrderedDict()
