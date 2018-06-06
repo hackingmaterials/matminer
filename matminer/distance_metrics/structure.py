@@ -6,8 +6,7 @@ It will soon be refactored / changed based on some discussions.
 - Anubhav (12/7/17)
 """
 
-
-from matminer.featurizers.site import CrystalSiteFingerprint
+from matminer.featurizers.deprecated import CrystalSiteFingerprint
 from matminer.featurizers.structure import SiteStatsFingerprint
 import numpy as np
 

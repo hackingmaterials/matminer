@@ -8,10 +8,11 @@ from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, CrystalNNFingerprint, \
-    CrystalSiteFingerprint, EwaldSiteEnergy, \
+    EwaldSiteEnergy, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
     GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference
+from matminer.featurizers.deprecated import CrystalSiteFingerprint
 
 
 class FingerprintTests(PymatgenTest):

@@ -22,7 +22,6 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
-    CrystalSiteFingerprint, \
     CoordinationNumber, LocalPropertyDifference
 from matminer.featurizers.stats import PropertyStats
 from matminer.utils.caching import get_all_nearest_neighbors
@@ -1055,26 +1054,6 @@ class SiteStatsFingerprint(BaseFeaturizer):
 
         if preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
-
-        elif preset == "CrystalSiteFingerprint_cn":
-            return SiteStatsFingerprint(
-                CrystalSiteFingerprint.from_preset("cn", cation_anion=False),
-                **kwargs)
-
-        elif preset == "CrystalSiteFingerprint_cn_cation_anion":
-            return SiteStatsFingerprint(
-                CrystalSiteFingerprint.from_preset("cn", cation_anion=True),
-                **kwargs)
-
-        elif preset == "CrystalSiteFingerprint_ops":
-            return SiteStatsFingerprint(
-                CrystalSiteFingerprint.from_preset("ops", cation_anion=False),
-                **kwargs)
-
-        elif preset == "CrystalSiteFingerprint_ops_cation_anion":
-            return SiteStatsFingerprint(
-                CrystalSiteFingerprint.from_preset("ops", cation_anion=True),
-                **kwargs)
 
         elif preset == "LocalPropertyDifference_ward-prb-2017":
             return SiteStatsFingerprint(
