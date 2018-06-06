@@ -8,28 +8,38 @@ from pymatgen.electronic_structure.dos import CompleteDos, FermiDos
 
 class DOSFeaturizer(BaseFeaturizer):
     """
-    Featurizes a pymatgen density of states, CompleteDos, object.
+    Significant character and contribution of the density of state from a
+    CompleteDos, object. Contributors are the sites within the structure. This
+    underline the importance of the presence of dos.structure.
+
+    Args:
+        contributors (int):
+            Sets the number of top contributors to the DOS that are
+            returned as features. (i.e. contributors=1 will only return the
+            main cb and main vb orbital)
+        significance_threshold (float):
+            Sets the significance threshold for orbitals in the DOS.
+            Does not impact the number of contributors returned. Only
+            determines the feature value xbm_significant_contributors.
+            The threshold is a fractional value between 0 and 1.
+        energy_cutoff (float in eV):
+            The extent (into the bands) to sample the DOS
+        sampling_resolution (int):
+            Number of points to sample DOS
+        gaussian_smear (float in eV):
+            Gaussian smearing (sigma) around each sampled point in the DOS
+
+    Returns (featurize returns [float] and featurize_labels returns [str]):
+        xbm_score_i (float): fractions of ith contributor orbital
+        xbm_location_i (str): fractional coordinate of ith contributor/site
+            For example, '0.0;0.0;0.0' if Gamma
+        xbm_specie_i (str): elemental specie of ith contributor (ex: 'Ti')
+        xbm_character_i (str): character of ith contributor (s, p, d, f)
+        xbm_nsignificant (int): the number of orbitals with contributions
+            above the significance_threshold
     """
     def __init__(self, contributors=1, significance_threshold=0.1,
                  energy_cutoff=0.5, sampling_resolution=100, gaussian_smear=0.1):
-        """
-        Args:
-            contributors (int):
-                Sets the number of top contributors to the DOS that are
-                returned as features. (i.e. contributors=1 will only return the
-                main cb and main vb orbital)
-            significance_threshold (float):
-                Sets the significance threshold for orbitals in the DOS.
-                Does not impact the number of contributors returned. Only
-                determines the feature value xbm_significant_contributors.
-                The threshold is a fractional value between 0 and 1.
-            energy_cutoff (float in eV):
-                The extent (into the bands) to sample the DOS
-            sampling_resolution (int):
-                Number of points to sample DOS
-            gaussian_smear (float in eV):
-                Gaussian smearing (sigma) around each sampled point in the DOS
-        """
         self.contributors = contributors
         self.significance_threshold = significance_threshold
         self.energy_cutoff = energy_cutoff
@@ -43,15 +53,6 @@ class DOSFeaturizer(BaseFeaturizer):
                 The density of states to featurize. Must be a complete DOS,
                 (i.e. contains PDOS and structure, in addition to total DOS)
                 and must contain the structure.
-
-        Returns:
-            xbm_score_i (float): fractions of ith contributor orbital
-            xbm_location_i (str): fractional coordinate of ith contributor.
-                For example, '0.0;0.0;0.0' if Gamma
-            xbm_specie_i: (str) elemental specie of ith contributor (ex: 'Ti')
-            xbm_character_i: (str) orbital character of ith contributor (s p d or f)
-            xbm_nsignificant: (int) the number of orbitals with contributions
-                above the significance_threshold
         """
         if isinstance(dos, dict):
             dos = CompleteDos.from_dict(dos)
@@ -85,6 +86,10 @@ class DOSFeaturizer(BaseFeaturizer):
         return list(feat.values())
 
     def feature_labels(self):
+        """
+        Returns ([str]): list of names of the features. See the docs for the
+            featurize method for more information.
+        """
         labels = []
         for ex in ['cbm', 'vbm']:
             labels.append('{}_nsignificant'.format(ex))
@@ -102,24 +107,33 @@ class DOSFeaturizer(BaseFeaturizer):
 
 class DopingFermi(BaseFeaturizer):
     """
-    This featurizers returns the fermi level (w.r.t. selected reference energy) 
-    associated with a specified carrier concentration (1/cm3) and temperature.
-    This feature requires the total density of state and structure. Structure
+    The fermi level (w.r.t. selected reference energy) associated with a
+    specified carrier concentration (1/cm3) and temperature. This featurizar
+    requires the total density of states and structure. The Structure
     as dos.structure (e.g. in CompleteDos) is required by FermiDos class.
+
+    Args:
+        dopings ([float]): list of doping concentrations 1/cm3. Note that a
+            negative concentration is treated as electron majority carrier
+            (n-type) and positive for holes (p-type)
+        eref (str or int or float): energy alignment reference. Defaults
+            to midgap (equilibrium fermi). A fixed number can also be used.
+            str options: "midgap", "vbm", "cbm", "dos_fermi", "band_center"
+        T (float): absolute temperature in Kelvin
+        return_eref: if True, instead of aligning the fermi levels based
+            on eref, it (eref) will be explicitly returned as a feature
+
+    Returns (featurize returns [float] and featurize_labels returns [str]):
+        examples:
+            fermi_c-1e+20T300 (float): the fermi level for the electron
+                concentration of 1e20 and the temperature of 300K.
+            fermi_c1e+18T600 (float): the fermi level for the hole concentration
+                of 1e18 and the temperature of 600K.
+            midgap eref (float): if return_eref==True then eref (midgap here)
+                energy is returned. In this case other fermi levels returned are
+                absolute as opposed to relative to eref (i.e. if not return_eref)
     """
     def __init__(self, dopings=None, eref="midgap", T=300, return_eref=False):
-        """
-        Args:
-            dopings ([float]): list of doping concentrations 1/cm3. Note that a
-                negative concentration is treated as electron majority carrier
-                (n-type) and positive for holes (p-type)
-            eref (str or int or float): energy alignment reference. Defaults
-                to midgap (equilibrium fermi). A fixed number can also be used.
-                str options: "midgap", "vbm", "cbm", "dos_fermi", "band_center"
-            T (float): absolute temperature in Kelvin
-            return_eref: if True, instead of aligning the fermi levels based
-                on eref, it (eref) will be explicitly returned as a feature
-        """
         self.dopings = dopings or [-1e20, 1e20]
         self.eref = eref
         self.T = T
@@ -134,6 +148,7 @@ class DopingFermi(BaseFeaturizer):
                 or one that is calculated via more accurate methods than the
                 one used to generate dos. dos will be scissored to have the
                 same electronic band gap as bandgap.
+
         Returns ([float]): features are fermi levels in eV at the given
             concentrations and temperature + eref in eV if return_eref
         """
@@ -170,7 +185,7 @@ class DopingFermi(BaseFeaturizer):
         """
         Returns ([str]): list of names of the features generated by featurize
             example: "fermi_c-1e+20T300" that is the fermi level for the
-            electron concentration of 1e20 (c-1e+20) and temperature of 300K
+            electron concentration of 1e20 (c-1e+20) and temperature of 300K.
         """
         labels = []
         for c in self.dopings:
@@ -186,6 +201,108 @@ class DopingFermi(BaseFeaturizer):
         return []
 
 
+class BandEdge(BaseFeaturizer):
+    """
+    Orbital character of the band edges (CBM/VBM) based on a density of
+    states CompleteDos object.
+
+    Args:
+        energy_cutoff (float in eV):
+            The extent (into the bands) to sample the DOS
+        sampling_resolution (int):
+            Number of points to sample DOS
+        gaussian_smear (float in eV):
+            Gaussian smearing (sigma) around each sampled point in the DOS
+        species ([str]): the species for which orbital contributions are
+            separately returned.
+
+    Returns (featurize returns [float] and featurize_labels returns [str]):
+        set of orbitals contributions and hybridizations and
+        possibly contributions from given species. Some examples for each
+        type of features:
+            cbm_s (float): s-orbital character of the cbm up to energy_cutoff
+            vbm_sp (float): sp-hybridization at the vbm edge. Minimum is 0
+                or no hybridization (e.g. all s or vbm_s==1) and 1.0 is
+                maximum hybridization (i.e. vbm_s==0.5, vbm_p==0.5)
+            cbm_Si_f (float): f-orbital character of Si
+    """
+    def __init__(self, energy_cutoff=0.1, sampling_resolution=100,
+                 gaussian_smear=0.1, species=None):
+        self.energy_cutoff = energy_cutoff
+        self.sampling_resolution = sampling_resolution
+        self.gaussian_smear = gaussian_smear
+        self.species = species or []
+
+    def featurize(self, dos, energy_cutoff=None):
+        """
+        takes in the density of state and return the orbitals contributions
+        and hybridizations.
+
+        Args:
+            dos (pymatgen CompleteDos): note that dos.structure is required
+            energy_cutoff (float or None): if set, it overrides the instance
+                variable self.energy_cutoff.
+
+        Returns ([float]): features, see class doc for more info
+        """
+        energy_cutoff = energy_cutoff or self.energy_cutoff
+        if isinstance(dos, dict):
+            dos = CompleteDos.from_dict(dos)
+        if dos.structure is None:
+            raise ValueError('The input dos must contain the structure.')
+
+        orbscores = get_cbm_vbm_scores(dos,
+                                       energy_cutoff,
+                                       self.sampling_resolution,
+                                       self.gaussian_smear)
+        feat = OrderedDict()
+        for ex in ['cbm', 'vbm']:
+            for orbital in ['s', 'p', 'd', 'f']:
+                feat['{}_{}'.format(ex, orbital)] = 0.0
+                for specie in self.species:
+                    feat['{}_{}_{}'.format(ex, specie, orbital)] = 0.0
+            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
+                feat['{}_{}'.format(ex, hybrid)] = 0.0
+
+        for contrib in orbscores:
+            character = contrib['character']
+            feat['cbm_{}'.format(character)] += contrib['cbm_score']
+            feat['vbm_{}'.format(character)] += contrib['vbm_score']
+            for specie in self.species:
+                if contrib['specie'] == specie:
+                    feat['cbm_{}_{}'.format(specie, character)] += contrib[
+                        'cbm_score']
+                    feat['vbm_{}_{}'.format(specie, character)] += contrib[
+                        'vbm_score']
+
+        for ex in ['cbm', 'vbm']:
+            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
+                orb1 = feat['{}_{}'.format(ex, hybrid[0])]
+                orb2 = feat['{}_{}'.format(ex, hybrid[1])]
+                feat['{}_{}'.format(ex, hybrid)] = (orb1 * orb2) * 4.0  # 4x so max=1.0
+        return list(feat.values())
+
+    def feature_labels(self):
+        """
+        Returns ([str]): feature names starting with the extremum (cbm or vbm)
+        followed by either s,p,d,f orbital to show their normalized contribution
+        or a pair showing their hybridization or contribution of an element.
+        See the class docs for examples.
+        """
+        labels = []
+        for ex in ['cbm', 'vbm']:
+            for orbital in ['s', 'p', 'd', 'f']:
+                labels.append('{}_{}'.format(ex, orbital))
+                for specie in self.species:
+                    labels.append('{}_{}_{}'.format(ex, specie, orbital))
+            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
+                labels.append('{}_{}'.format(ex, hybrid))
+        return labels
+
+    def implementors(self):
+        return ['Alireza Faghaninia', 'Anubhav Jain']
+
+
 def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
     """
     Quantifies the strength of the contribution of all orbitals of various
@@ -193,6 +310,7 @@ def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
         maximum (VBM) up to energy_cutoff inside the bands from the CBM/VBM.
         An example use of the output may be sorting it based on cbm_score
         or vbm_score.
+
     Args:
         dos (pymatgen CompleteDos or their dict):
             The density of states to featurize. Must be a complete DOS,
@@ -203,6 +321,7 @@ def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
             Number of points to sample DOS
         gaussian_smear (float in eV):
             Gaussian smearing (sigma) around each sampled point in the DOS
+
     Returns:
         orbital_scores [(dict)]:
             A list of how much each orbital contributes to the partial
@@ -213,7 +332,6 @@ def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
             .. character: (str) is the orbital character s, p, d, or f
             .. location: [(float)] fractional coordinates of the orbital
     """
-
     cbm, vbm = dos.get_cbm_vbm(tol=0.01)
     structure = dos.structure
     sites = structure.sites
@@ -256,7 +374,6 @@ def get_cbm_vbm_scores(dos, energy_cutoff, sampling_resolution, gaussian_smear):
     total_vbm = sum([orbital_scores[i]['vbm_score'] for i in
                      range(0, len(orbital_scores))])
     for orbital in orbital_scores:
-        orbital['cbm_score'] = orbital['cbm_score'] / total_cbm
-        orbital['vbm_score'] = orbital['vbm_score'] / total_vbm
-
+        orbital['cbm_score'] /= total_cbm
+        orbital['vbm_score'] /= total_vbm
     return orbital_scores
