@@ -469,8 +469,14 @@ class PlotlyFig:
 
         data = []
         for pair in xy_pairs:
+            if len(pair) != 2:
+                raise ValueError('each xy within xy_pairs must have only 2 axes'
+                                 ' : x and y (hence the "pair"); e.g. (x, y)')
             data.append((self._data_from_str(pair[0]),
                          self._data_from_str(pair[1])))
+            if len(list(pair[0])) != len(list(pair[1])):
+                warnings.warn('inequal number of points in x and y: part of the'
+                              ' data not plotted!')
             if isinstance(pair[1], str):
                 names.append(pair[1])
             else:
