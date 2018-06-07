@@ -192,9 +192,9 @@ class FingerprintTests(PymatgenTest):
             'octahedral CN_6')], 1, places=7)
         ops = cnnfp.featurize(self.cscl, 0)
         self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
-            'wt CN_8')], 0.50, places=2)
+            'wt CN_8')], 0.5, places=1)
         self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
-            'body-centered cubic CN_8')], 0.48, places=2)
+            'body-centered cubic CN_8')], 0.5, places=1)
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
