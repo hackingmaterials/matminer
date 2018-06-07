@@ -516,11 +516,16 @@ class PlotlyFig:
                 colorbar[colorbar < color_range[0]] = color_range[0]
                 colorbar[colorbar > color_range[1]] = color_range[1]
 
-        if not isinstance(labels, list):
-            labels = self._data_from_str(labels)
-            labels = [labels] * len(data)
+        if labels is None:
+            pass
+        elif not isinstance(labels, (list, np.ndarray, pd.Series)):
+            labels = [self._data_from_str(labels)]
+            if not isinstance(labels[0], (list, np.ndarray, pd.Series)):
+                labels = [[label]*len(data) for label in labels]
+            # labels = [labels] * len(data)
         else:
             labels = [self._data_from_str(l) for l in labels]
+
         markers = markers or [{'symbol': 'circle',
                                'line': {'width': 1,'color': 'black'}
                                } for _ in data]
@@ -571,17 +576,26 @@ class PlotlyFig:
         if isinstance(lines, dict):
             lines = [deepcopy(lines) for _ in data]
 
-        for var in [labels, markers, lines]:
+        # for var in [labels, markers, lines]:
+        for var in [markers, lines]:
             if len(list(var)) != len(data):
                 raise ValueError('"labels", "markers" or "lines" length does'
                                  ' not match with that of xy_pairs')
         layout = deepcopy(self.layout)
 
         traces = []
+        # here, labels is expected to be a list of lists each with length of data
+        if labels is not None:
+            for label in labels:
+                if len(list(label)) != len(data[0][0]):
+                    raise ValueError('the length of this label not equal to the'
+                                     'length of the x (or y):\n{}'.format(label))
+            labels = ['</br>'.join([str(t) for t in l]) for l in zip(*labels)]
+
         for i, xy_pair in enumerate(data):
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
                                      marker=markers[i], line=lines[i],
-                                     text=labels[i],
+                                     text=labels,
                                      hoverinfo=self.hoverinfo,
                                      hoverlabel=layout['hoverlabel'],
                                      name=names[i], showlegend=showlegends[i],
