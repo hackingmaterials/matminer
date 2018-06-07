@@ -393,7 +393,18 @@ class PlotlyFig:
                 either one. Note that if colorcol_range is set, the colorbar
                 ticks will be updated to reflect -min or max+ at the two ends.
             labels (list or [list]): to individually set annotation for scatter
-                point either the same for all traces or can be set for each
+                point either the same for all traces. Note that, several column
+                names can be simultaneously used as labels but it is important
+                to understand that when labels is set, it is assumed that all
+                traces have the same length as the same labels are assigned to
+                all traces.
+                    Examples:
+                        labels = 'formula'
+                        ['material_id', 'formula'] these 2 columns must be available
+                        [['red', 'green', 'blue'], ['warm', 'mild', 'cold']] the
+                        latter example assumes all xy traces have 3 points then
+                        point one has ('red', 'warm') label, 2 has ('green', 'mild')
+                        and finally point 3 ('blue', 'cold')
             limits (dict): The x and y limits defining the ranges the plot will
                 show. Should be in the form {'x': (lower, higher), 'y': (lower,
                 higher)}. Omit either key to prevent limits from being imposed
