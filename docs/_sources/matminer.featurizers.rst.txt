@@ -28,6 +28,14 @@ matminer.featurizers.composition module
     :undoc-members:
     :show-inheritance:
 
+matminer.featurizers.deprecated module
+--------------------------------------
+
+.. automodule:: matminer.featurizers.deprecated
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer.featurizers.dos module
 -------------------------------
 

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.figrecipes package &#8212; matminer 0.3.3 documentation</title>
+    <title>matminer.figrecipes package &#8212; matminer 0.3.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -515,8 +515,24 @@ example: ‘GDP’ or df[‘GDP’] # colorscale based on GDP (if</p>
 <dd>if any number is outside of this range, it will be forced to
 either one. Note that if colorcol_range is set, the colorbar
 ticks will be updated to reflect -min or max+ at the two ends.</dd>
-<dt>labels (list or [list]): to individually set annotation for scatter</dt>
-<dd>point either the same for all traces or can be set for each</dd>
+<dt>labels (str or [str] or [list]): to set annotation for scatter</dt>
+<dd><p class="first">points the same for all traces. Note that, several column
+names can be simultaneously used as labels but it is important
+to understand that when labels is set, it is assumed that all
+traces have the same length as the same labels are assigned to
+all traces.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>Examples:</dt>
+<dd>labels = ‘formula’
+[‘material_id’, ‘formula’] these 2 columns must be available
+[[‘red’, ‘green’, ‘blue’], [‘warm’, ‘mild’, ‘cold’]] the
+latter example assumes all xy traces have 3 points then
+point one has (‘red’, ‘warm’) label, 2 has (‘green’, ‘mild’)
+and finally point 3 (‘blue’, ‘cold’)</dd>
+</dl>
+</div></blockquote>
+</dd>
 <dt>limits (dict): The x and y limits defining the ranges the plot will</dt>
 <dd>show. Should be in the form {‘x’: (lower, higher), ‘y’: (lower,
 higher)}. Omit either key to prevent limits from being imposed
@@ -608,7 +624,7 @@ with mode in __init__).</div></blockquote>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.4 documentation</a> &#187;</li> 
       </ul>
     </div>
 
