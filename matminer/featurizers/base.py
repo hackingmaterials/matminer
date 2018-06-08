@@ -8,6 +8,7 @@ from six import string_types
 from multiprocessing import Pool, cpu_count
 
 from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
+from matminer.utils.conversions import homogenize_multiindex
 
 
 class BaseFeaturizer(BaseEstimator, TransformerMixin):
@@ -155,7 +156,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                                         **kwargs)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
+                            return_errors=False, inplace=True,
+                            multiindex=False):
         """
         Compute features for all entries contained in input dataframe.
 
@@ -194,6 +196,15 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                        return_errors=return_errors)
         if return_errors:
             labels.append(self.__class__.__name__ + " Exceptions")
+
+        if multiindex:
+            indices = ([self.__class__.__name__], labels)
+            labels = pd.MultiIndex.from_product(indices)
+            df = homogenize_multiindex(df)
+        elif isinstance(df.columns, pd.MultiIndex):
+            # If input df is multi, but multi not enabled...
+            raise ValueError("Please enable multiindexing to featurize an input"
+                             " dataframe containing a column multiindex.")
 
         # Create dataframe with the new features
         res = pd.DataFrame(features, index=df.index, columns=labels)
@@ -366,7 +377,8 @@ class MultipleFeaturizer(BaseFeaturizer):
         return sum([f.feature_labels() for f in self.featurizers], [])
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
+                            return_errors=False, inplace=True,
+                            multiindex=False):
         """
         Featurize dataframe is overloaded in order to allow
         compatibility with Featurizers that overload featurize_dataframe

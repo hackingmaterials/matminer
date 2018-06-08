@@ -1,11 +1,42 @@
 import json
-
+import warnings
 from monty.json import MontyDecoder
-from pandas import Series
-
+import pandas as pd
 from pymatgen import Composition
 from pymatgen.core.structure import IStructure
 
+
+def homogenize_multiindex(df, coerce=False):
+    """
+    Homogenizes a dataframe column index to a 2-layer multiindex.
+
+    Args:
+        df (pandas DataFrame): A dataframe
+        coerce (bool): If True, try to force a 2+ level multiindex to a 2-layer
+            multiindex.
+
+    Returns:
+        df (pandas DataFrame): A dataframe with a 2-layer multiindex.
+    """
+    nlevels = df.columns.nlevels
+    if not isinstance(df.columns, pd.MultiIndex):
+        cols = pd.MultiIndex.from_product((["Input Data"], df.columns.values))
+        df.columns = cols
+        return df
+    elif nlevels == 2:
+        return df
+    elif coerce:
+        # Drop levels lower than the base column indices
+        warnings.warn("Multiindex has nlevels more than 2! Coercing...")
+        l1 = df.columns.get_level_values(nlevels - 1)
+        l2 = df.columns.get_level_values(nlevels - 2)
+        cols = pd.MultiIndex.from_arrays((l2, l1))
+        df.columns = cols
+        return df
+    else:
+        raise IndexError("An input dataframe of 2+ levels cannot be used for"
+                         "multiindexed Matminer featurization without coercion "
+                         "to 2 levels.")
 
 def str_to_composition(series, reduce=False):
     """
@@ -98,8 +129,8 @@ def structure_to_oxidstructure(series, inplace=False, **kwargs):
     if inplace:
         series.map(lambda s: s.add_oxidation_state_by_guess(**kwargs))
     else:
-        copy = Series(data=[x.copy() for x in series.tolist()],
-                      index=series.index, dtype=series.dtype)
+        copy = pd.Series(data=[x.copy() for x in series.tolist()],
+                         index=series.index, dtype=series.dtype)
         copy.map(lambda s: s.add_oxidation_state_by_guess(**kwargs))
         return copy
 
@@ -115,5 +146,5 @@ def composition_to_oxidcomposition(series, **kwargs):
     Returns:
         a pd.Series with oxidation state Composition object components
     """
-    
+
     return series.map(lambda c: c.add_charges_from_oxi_state_guesses(**kwargs))
