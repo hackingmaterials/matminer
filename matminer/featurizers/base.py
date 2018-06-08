@@ -200,7 +200,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if multiindex:
             indices = ([self.__class__.__name__], labels)
             labels = pd.MultiIndex.from_product(indices)
-            df = homogenize_multiindex(df)
+            df = homogenize_multiindex(df, "Input Data")
         elif isinstance(df.columns, pd.MultiIndex):
             # If input df is multi, but multi not enabled...
             raise ValueError("Please enable multiindexing to featurize an input"
@@ -383,6 +383,12 @@ class MultipleFeaturizer(BaseFeaturizer):
         Featurize dataframe is overloaded in order to allow
         compatibility with Featurizers that overload featurize_dataframe
         """
+
+        if multiindex:
+            if not isinstance(df.columns, pd.MultiIndex):
+                col_id = ("Input Data", col_id)
+            df = homogenize_multiindex(df, "Input Data")
+
         # Detect if any featurizers override featurize_dataframe
         override = ["featurize_dataframe" in f.__class__.__dict__.keys()
                     for f in self.featurizers]
@@ -390,13 +396,15 @@ class MultipleFeaturizer(BaseFeaturizer):
             warnings.warn(
                 "One or more featurizers overrides featurize_dataframe, "
                 "featurization will be sequential and may diminish performance")
-            for f in self.featurizers:
-                df = f.featurize_dataframe(df, col_id, ignore_errors,
-                                           return_errors, inplace)
-                df[f.feature_labels()] = df[f.feature_labels()].applymap(np.squeeze)
-        else:
-            df = super(MultipleFeaturizer, self).featurize_dataframe(
-                df, col_id, ignore_errors, return_errors, inplace)
+        for f in self.featurizers:
+            df = f.featurize_dataframe(df, col_id, ignore_errors,
+                                       return_errors, inplace, multiindex)
+
+            if multiindex:
+                feature_labels = [(f.__class__.__name__, flabel) for flabel in f.feature_labels()]
+            else:
+                feature_labels = f.feature_labels
+                df[feature_labels] = df[feature_labels].applymap(np.squeeze)
         return df
 
     def citations(self):
