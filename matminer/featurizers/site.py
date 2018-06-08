@@ -413,28 +413,29 @@ class CrystalNNFingerprint(BaseFeaturizer):
                 else:
                     op_types[k + 1] = ["wt"]
 
-            return CrystalNNFingerprint(op_types, comp_info=None, **kwargs)
+            return CrystalNNFingerprint(op_types, chem_info=None, **kwargs)
 
         else:
             raise RuntimeError('preset "{}" is not supported in '
                                'CrystalNNFingerprint'.format(preset))
 
-    def __init__(self, op_types, comp_info=None, **kwargs):
+    def __init__(self, op_types, chem_info=None, **kwargs):
         """
         Initialize the CrystalSiteFingerprint. Use the from_preset() function to
         use default params.
         Args:
             op_types (dict): a dict of coordination number (int) to a list of str
                 representing the order parameter types
-            comp_info (dict): a dict of compositional properties (e.g., atomic mass)
+            chem_info (dict): a dict of chemical properties (e.g., atomic mass)
                 to dictionaries that map an element to a value
+                (e.g., chem_info["Pauling scale"]["O"] = 3.44)
             **kwargs: other settings to be passed into CrystalNN class
         """
 
         self.op_types = copy.deepcopy(op_types)
         self.cnn = CrystalNN(**kwargs)
-        self.comp_info = copy.deepcopy(comp_info) \
-            if comp_info is not None else None
+        self.chem_info = copy.deepcopy(chem_info) \
+            if chem_info is not None else None
 
         self.ops = {}  # load order parameter objects & paramaters
         for cn, t_list in self.op_types.items():
@@ -468,6 +469,14 @@ class CrystalNNFingerprint(BaseFeaturizer):
 
         cn_fingerprint = []
 
+        if self.chem_info is not None:
+            absdeltas = {}
+            for prop in self.chem_info.keys():
+                absdeltas[prop] = 0
+            Nwt = 0
+            elem_cent = struct.sites[idx].species_string
+        # self.chem_info['mass']['O'] = value
+
         for k in range(max_cn):
             cn = k + 1
             wt = nndata.cn_weights.get(cn, 0)
@@ -477,8 +486,15 @@ class CrystalNNFingerprint(BaseFeaturizer):
                 for op in self.ops[cn]:
                     if op == "wt":
                         cn_fingerprint.append(wt)
-                        if self.comp_info is not None:
-                            pass # xxx go on here
+                        # Compute additional chemistry-related features
+                        if self.chem_info is not None and wt != 0:
+                            Nwt += wt
+                            for prop, delem in self.chem_info.items():
+                                tmp = 0
+                                for d in nndata.cn_nninfo[cn]:
+                                    tmp += abs(delem[d["site"].species_string] - \
+                                        delem[elem_cent])
+                                absdeltas[prop] += wt * tmp / cn
                     elif wt == 0:
                         cn_fingerprint.append(wt)
                     else:
@@ -489,17 +505,20 @@ class CrystalNNFingerprint(BaseFeaturizer):
                                             range(1, len(neigh_sites) + 1)])[0]
                         opval = opval or 0  # handles None
                         cn_fingerprint.append(wt * opval)
-
-        return cn_fingerprint
+        chem_fingerprint = []
+        if self.chem_info is not None:
+            for val in absdeltas.values():
+                chem_fingerprint.append(val / Nwt)
+        return cn_fingerprint+chem_fingerprint
 
     def feature_labels(self):
         labels = []
         for cn in sorted(self.op_types):
             for op in self.op_types[cn]:
                 labels.append("{} CN_{}".format(op, cn))
-        if self.comp_info is not None:
-            for k, v in self.comp_info:
-                labels.append("abs diff {}".format(k))
+        if self.chem_info is not None:
+            for k, v in self.chem_info:
+                labels.append("cn-wt-weighted av. abs. diff {}".format(k))
         return labels
 
     def citations(self):
