@@ -408,42 +408,6 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         return ["Logan Ward", "Saurabh Bajaj"]
 
 
-class RadialDistributionFunctionPeaks(BaseFeaturizer):
-    """
-    Determine the location of the highest peaks in a structure's RDF.
-
-    Args:
-        n_peaks: (int) number of the top peaks to return .
-    """
-
-    def __init__(self, n_peaks=2):
-        self.n_peaks = n_peaks
-
-    def featurize(self, rdf):
-        """
-        Get location of highest peaks in RDF.
-
-        Args:
-            rdf: (ndarray) RDF as obtained from the
-                    RadialDistributionFunction class.
-
-        Returns: (ndarray) distances of highest peaks in descending order
-                of the peak height
-        """
-
-        return [[rdf[0]['distances'][i] for i in np.argsort(
-            rdf[0]['distribution'])[-self.n_peaks:]][::-1]]
-
-    def feature_labels(self):
-        return ["radial distribution function peaks"]
-
-    def citations(self):
-        return []
-
-    def implementors(self):
-        return ["Saurabh Bajaj"]
-
-
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
     """
     Calculate the inherent electronic radial distribution function (ReDF)
