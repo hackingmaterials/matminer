@@ -392,8 +392,8 @@ class PlotlyFig:
                 if any number is outside of this range, it will be forced to
                 either one. Note that if colorcol_range is set, the colorbar
                 ticks will be updated to reflect -min or max+ at the two ends.
-            labels (list or [list]): to individually set annotation for scatter
-                point either the same for all traces. Note that, several column
+            labels (str or [str] or [list]): to set annotation for scatter
+                points the same for all traces. Note that, several column
                 names can be simultaneously used as labels but it is important
                 to understand that when labels is set, it is assumed that all
                 traces have the same length as the same labels are assigned to
@@ -529,13 +529,13 @@ class PlotlyFig:
 
         if labels is None:
             pass
-        elif not isinstance(labels, (list, np.ndarray, pd.Series)):
+        elif not isinstance(labels, (list, np.ndarray, pd.Series, pd.Index)):
             labels = [self._data_from_str(labels)]
-            if not isinstance(labels[0], (list, np.ndarray, pd.Series)):
-                labels = [[label]*len(data) for label in labels]
-            # labels = [labels] * len(data)
         else:
-            labels = [self._data_from_str(l) for l in labels]
+            if len(list(labels)) == len(data[0][0]) and isinstance(labels[0], str):
+                labels = [labels]
+            else:
+                labels = [self._data_from_str(l) for l in labels]
 
         markers = markers or [{'symbol': 'circle',
                                'line': {'width': 1,'color': 'black'}
@@ -599,8 +599,8 @@ class PlotlyFig:
         if labels is not None:
             for label in labels:
                 if len(list(label)) != len(data[0][0]):
-                    raise ValueError('the length of this label not equal to the'
-                                     'length of the x (or y):\n{}'.format(label))
+                    raise ValueError('the length of this label is not equal to '
+                                     'the length of the x (or y):\n{}'.format(label))
             labels = ['</br>'.join([str(t) for t in l]) for l in zip(*labels)]
 
         for i, xy_pair in enumerate(data):
