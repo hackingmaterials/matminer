@@ -21,7 +21,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
-    Dimensionality
+    Dimensionality, XRDPowderPattern
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -554,6 +554,21 @@ class StructureFeaturesTest(PymatgenTest):
         # Test the citations/implementors
         self.assertEqual(comp.citations(), f.citations())
         self.assertEqual(comp.implementors(), f.implementors())
+
+    def test_xrd_powderPattern(self):
+
+        # default settings test
+        xpp = XRDPowderPattern()
+        pattern = xpp.featurize(self.diamond)
+        self.assertAlmostEqual(pattern[44], 0.19378, places=3)
+        self.assertEqual(len(pattern), 128)
+
+        # reduced range
+        xpp = XRDPowderPattern(two_theta_range=(0, 90))
+        pattern = xpp.featurize(self.diamond)
+        self.assertAlmostEqual(pattern[44], 0.4083, places=3)
+        self.assertEqual(len(pattern), 91)
+        self.assertEqual(len(xpp.feature_labels()), 91)
 
 
 if __name__ == '__main__':
