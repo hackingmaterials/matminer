@@ -200,13 +200,12 @@ class FingerprintTests(PymatgenTest):
         cnnfp = CrystalNNFingerprint(
             op_types, distance_cutoffs=None, \
             x_diff_weight=None)
-        labels = ['None CN_1', 'None CN_2', 'None CN_3', 'None CN_4', \
-                  'None CN_5', 'wt CN_6', 'oct_max CN_6', 'None CN_7', \
+        labels = ['wt CN_6', 'oct_max CN_6', \
                   'wt CN_8', 'bcc CN_8']
         for l1, l2 in zip(cnnfp.feature_labels(), labels):
             self.assertEqual(l1, l2)
         feats = cnnfp.featurize(self.sc, 0)
-        self.assertEqual(len(feats), 10)
+        self.assertEqual(len(feats), 4)
 
         chem_info = {"mass": {"Al": 26.9, "Cs+": 132.9,"Cl-": 35.4}, \
             "Pauling scale": {"Al": 1.61, "Cs+": 0.79, "Cl-": 3.16}}
@@ -219,7 +218,7 @@ class FingerprintTests(PymatgenTest):
             self.assertEqual(l1, l2)
 
         feats = cnnchemfp.featurize(self.sc, 0)
-        self.assertEqual(len(feats), 12)
+        self.assertEqual(len(feats), 6)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
             'wt CN_6')], 1, places=7)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(

@@ -478,14 +478,11 @@ class CrystalNNFingerprint(BaseFeaturizer):
                 absdeltas[prop] = 0
             Nwt = 0
             elem_cent = struct.sites[idx].species_string
-        # self.chem_info['mass']['O'] = value
 
         for k in range(max_cn):
             cn = k + 1
             wt = nndata.cn_weights.get(cn, 0)
-            if cn not in self.ops:
-                cn_fingerprint.append(0)
-            else:
+            if cn in self.ops:
                 for op in self.ops[cn]:
                     if op == "wt":
                         cn_fingerprint.append(wt)
@@ -520,9 +517,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
         max_cn = sorted(self.op_types)[-1]
         for k in range(max_cn):
             cn = k + 1
-            if cn not in list(self.ops.keys()):
-                labels.append("None CN_{}".format(cn))
-            else:
+            if cn in list(self.ops.keys()):
                 for op in self.op_types[cn]:
                     labels.append("{} CN_{}".format(op, cn))
         if self.chem_info is not None:
