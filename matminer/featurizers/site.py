@@ -434,15 +434,20 @@ class CrystalNNFingerprint(BaseFeaturizer):
 
         self.op_types = copy.deepcopy(op_types)
         self.cnn = CrystalNN(**kwargs)
-        self.chem_info = copy.deepcopy(chem_info) \
-            if chem_info is not None else None
+        if chem_info is not None:
+            self.chem_info = copy.deepcopy(chem_info)
+            self.chem_props = list(chem_info.keys())
+        else:
+            self.chem_info = None
 
+        #print(self.op_types)
         self.ops = {}  # load order parameter objects & paramaters
         for cn, t_list in self.op_types.items():
             self.ops[cn] = []
             for t in t_list:
                 if t == "wt":
                     self.ops[cn].append(t)
+                    #print('{} {}'.format(cn, t))
                 else:
                     ot = t
                     p = None
@@ -451,6 +456,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
                             ot = cn_motif_op_params[cn][t][0]
                             if len(cn_motif_op_params[cn][t]) > 1:
                                 p = cn_motif_op_params[cn][t][1]
+                    #print('{} {}'.format(cn, ot))
                     self.ops[cn].append(LocalStructOrderParams([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
@@ -471,7 +477,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
 
         if self.chem_info is not None:
             absdeltas = {}
-            for prop in self.chem_info.keys():
+            for prop in self.chem_props:
                 absdeltas[prop] = 0
             Nwt = 0
             elem_cent = struct.sites[idx].species_string
@@ -489,7 +495,9 @@ class CrystalNNFingerprint(BaseFeaturizer):
                         # Compute additional chemistry-related features
                         if self.chem_info is not None and wt != 0:
                             Nwt += wt
-                            for prop, delem in self.chem_info.items():
+                            #for prop, delem in self.chem_info.items():
+                            for prop in self.chem_props:
+                                delem = self.chem_info[prop]
                                 tmp = 0
                                 for d in nndata.cn_nninfo[cn]:
                                     tmp += abs(delem[d["site"].species_string] - \
@@ -509,16 +517,26 @@ class CrystalNNFingerprint(BaseFeaturizer):
         if self.chem_info is not None:
             for val in absdeltas.values():
                 chem_fingerprint.append(val / Nwt)
+        #print('cn chem fp')
+        #print(cn_fingerprint)
+        #print(chem_fingerprint)
         return cn_fingerprint+chem_fingerprint
 
     def feature_labels(self):
         labels = []
-        for cn in sorted(self.op_types):
-            for op in self.op_types[cn]:
-                labels.append("{} CN_{}".format(op, cn))
+        max_cn = sorted(self.op_types)[-1]
+        for k in range(max_cn):
+            cn = k + 1
+        #for cn in sorted(self.op_types):
+            if cn not in list(self.ops.keys()):
+                labels.append("None CN_{}".format(cn))
+            else:
+                #for op in self.ops[cn]:
+                for op in self.op_types[cn]:
+                    labels.append("{} CN_{}".format(op, cn))
         if self.chem_info is not None:
-            for k, v in self.chem_info:
-                labels.append("cn-wt-weighted av. abs. diff {}".format(k))
+            for prop in self.chem_props:
+                labels.append("cn-wt-weighted av. abs. diff {}".format(prop))
         return labels
 
     def citations(self):
