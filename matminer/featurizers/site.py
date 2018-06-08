@@ -440,14 +440,12 @@ class CrystalNNFingerprint(BaseFeaturizer):
         else:
             self.chem_info = None
 
-        #print(self.op_types)
         self.ops = {}  # load order parameter objects & paramaters
         for cn, t_list in self.op_types.items():
             self.ops[cn] = []
             for t in t_list:
                 if t == "wt":
                     self.ops[cn].append(t)
-                    #print('{} {}'.format(cn, t))
                 else:
                     ot = t
                     p = None
@@ -456,7 +454,6 @@ class CrystalNNFingerprint(BaseFeaturizer):
                             ot = cn_motif_op_params[cn][t][0]
                             if len(cn_motif_op_params[cn][t]) > 1:
                                 p = cn_motif_op_params[cn][t][1]
-                    #print('{} {}'.format(cn, ot))
                     self.ops[cn].append(LocalStructOrderParams([ot], parameters=[p]))
 
     def featurize(self, struct, idx):
@@ -517,9 +514,6 @@ class CrystalNNFingerprint(BaseFeaturizer):
         if self.chem_info is not None:
             for val in absdeltas.values():
                 chem_fingerprint.append(val / Nwt)
-        #print('cn chem fp')
-        #print(cn_fingerprint)
-        #print(chem_fingerprint)
         return cn_fingerprint+chem_fingerprint
 
     def feature_labels(self):
@@ -527,11 +521,9 @@ class CrystalNNFingerprint(BaseFeaturizer):
         max_cn = sorted(self.op_types)[-1]
         for k in range(max_cn):
             cn = k + 1
-        #for cn in sorted(self.op_types):
             if cn not in list(self.ops.keys()):
                 labels.append("None CN_{}".format(cn))
             else:
-                #for op in self.ops[cn]:
                 for op in self.op_types[cn]:
                     labels.append("{} CN_{}".format(op, cn))
         if self.chem_info is not None:
