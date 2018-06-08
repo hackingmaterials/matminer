@@ -376,6 +376,11 @@ class MultipleFeaturizer(BaseFeaturizer):
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
 
+    def fit_featurize_dataframe(self, df, col_id, *args, **kwargs):
+        for f in self.featurizers:
+            f.fit(df[col_id])
+        return self.featurize_dataframe(df, col_id, *args, **kwargs)
+
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True,
                             multiindex=False):
