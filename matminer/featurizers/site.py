@@ -413,24 +413,28 @@ class CrystalNNFingerprint(BaseFeaturizer):
                 else:
                     op_types[k + 1] = ["wt"]
 
-            return CrystalNNFingerprint(op_types, **kwargs)
+            return CrystalNNFingerprint(op_types, comp_info=None, **kwargs)
 
         else:
             raise RuntimeError('preset "{}" is not supported in '
                                'CrystalNNFingerprint'.format(preset))
 
-    def __init__(self, op_types, **kwargs):
+    def __init__(self, op_types, comp_info=None, **kwargs):
         """
         Initialize the CrystalSiteFingerprint. Use the from_preset() function to
         use default params.
         Args:
             op_types (dict): a dict of coordination number (int) to a list of str
                 representing the order parameter types
+            comp_info (dict): a dict of compositional properties (e.g., atomic mass)
+                to dictionaries that map an element to a value
             **kwargs: other settings to be passed into CrystalNN class
         """
 
         self.op_types = copy.deepcopy(op_types)
         self.cnn = CrystalNN(**kwargs)
+        self.comp_info = copy.deepcopy(comp_info) \
+            if comp_info is not None else None
 
         self.ops = {}  # load order parameter objects & paramaters
         for cn, t_list in self.op_types.items():
@@ -471,7 +475,11 @@ class CrystalNNFingerprint(BaseFeaturizer):
                 cn_fingerprint.append(0)
             else:
                 for op in self.ops[cn]:
-                    if op == "wt" or wt == 0:
+                    if op == "wt":
+                        cn_fingerprint.append(wt)
+                        if self.comp_info is not None:
+                            pass # xxx go on here
+                    elif wt == 0:
                         cn_fingerprint.append(wt)
                     else:
                         neigh_sites = [d["site"] for d in nndata.cn_nninfo[cn]]
@@ -489,7 +497,9 @@ class CrystalNNFingerprint(BaseFeaturizer):
         for cn in sorted(self.op_types):
             for op in self.op_types[cn]:
                 labels.append("{} CN_{}".format(op, cn))
-
+        if self.comp_info is not None:
+            for k, v in self.comp_info:
+                labels.append("abs diff {}".format(k))
         return labels
 
     def citations(self):
