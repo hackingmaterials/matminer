@@ -160,6 +160,43 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(ops[csf.feature_labels().index(
             'body-centered cubic CN_8')], 0.5329344, places=7)
 
+    def test_crystal_nn_fingerprint(self):
+        cnnfp = CrystalNNFingerprint.from_preset(
+                'ops', distance_cutoffs=None, x_diff_weight=None)
+        l = cnnfp.feature_labels()
+        t = ['wt CN_1', 'sgl_bd CN_1', 'wt CN_2', 'L-shaped CN_2',
+             'water-like CN_2', 'bent 120 degrees CN_2',
+             'bent 150 degrees CN_2', 'linear CN_2', 'wt CN_3',
+             'trigonal planar CN_3', 'trigonal non-coplanar CN_3',
+             'T-shaped CN_3', 'wt CN_4', 'square co-planar CN_4',
+             'tetrahedral CN_4', 'rectangular see-saw-like CN_4',
+             'see-saw-like CN_4', 'trigonal pyramidal CN_4', 'wt CN_5',
+             'pentagonal planar CN_5', 'square pyramidal CN_5',
+             'trigonal bipyramidal CN_5', 'wt CN_6', 'hexagonal planar CN_6',
+             'octahedral CN_6', 'pentagonal pyramidal CN_6', 'wt CN_7',
+             'hexagonal pyramidal CN_7', 'pentagonal bipyramidal CN_7',
+             'wt CN_8', 'body-centered cubic CN_8',
+             'hexagonal bipyramidal CN_8', 'wt CN_9', 'q2 CN_9', 'q4 CN_9',
+             'q6 CN_9', 'wt CN_10', 'q2 CN_10', 'q4 CN_10', 'q6 CN_10',
+             'wt CN_11', 'q2 CN_11', 'q4 CN_11', 'q6 CN_11', 'wt CN_12',
+             'cuboctahedral CN_12', 'q2 CN_12', 'q4 CN_12', 'q6 CN_12',
+             'wt CN_13', 'wt CN_14', 'wt CN_15', 'wt CN_16', 'wt CN_17',
+             'wt CN_18', 'wt CN_19', 'wt CN_20', 'wt CN_21', 'wt CN_22',
+             'wt CN_23', 'wt CN_24']
+        for i in range(len(l)):
+            self.assertEqual(l[i], t[i])
+        ops = cnnfp.featurize(self.sc, 0)
+        self.assertEqual(len(ops), 61)
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
+            'wt CN_6')], 1, places=7)
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
+            'octahedral CN_6')], 1, places=7)
+        ops = cnnfp.featurize(self.cscl, 0)
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
+            'wt CN_8')], 0.5, places=1)
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
+            'body-centered cubic CN_8')], 0.5, places=1)
+
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
         l = cefp.feature_labels()

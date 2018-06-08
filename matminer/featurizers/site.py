@@ -384,7 +384,6 @@ class OPSiteFingerprint(BaseFeaturizer):
         return ['Nils E. R. Zimmermann']
 
 
-# TODO: unit tests!!
 class CrystalNNFingerprint(BaseFeaturizer):
     """
     This is intended to be a successor to CrystalSiteFingerprint, currently
