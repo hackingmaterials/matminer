@@ -492,13 +492,12 @@ class CrystalNNFingerprint(BaseFeaturizer):
                         # Compute additional chemistry-related features
                         if self.chem_info is not None and wt != 0:
                             Nwt += wt
-                            #for prop, delem in self.chem_info.items():
                             for prop in self.chem_props:
                                 delem = self.chem_info[prop]
                                 tmp = 0
                                 for d in nndata.cn_nninfo[cn]:
-                                    tmp += abs(delem[d["site"].species_string] - \
-                                        delem[elem_cent])
+                                    tmp += delem[d["site"].species_string] - \
+                                        delem[elem_cent]
                                 absdeltas[prop] += wt * tmp / cn
                     elif wt == 0:
                         cn_fingerprint.append(wt)

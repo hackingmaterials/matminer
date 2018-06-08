@@ -235,7 +235,7 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
             'cn-wt-weighted av. abs. diff mass')], 97.5, places=1)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
-            'cn-wt-weighted av. abs. diff Pauling scale')], 2.37, places=2)
+            'cn-wt-weighted av. abs. diff Pauling scale')], -2.37, places=2)
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
