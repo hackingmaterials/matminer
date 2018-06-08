@@ -396,6 +396,7 @@ class MultipleFeaturizer(BaseFeaturizer):
             warnings.warn(
                 "One or more featurizers overrides featurize_dataframe, "
                 "featurization will be sequential and may diminish performance")
+
         for f in self.featurizers:
             df = f.featurize_dataframe(df, col_id, ignore_errors,
                                        return_errors, inplace, multiindex)
@@ -403,8 +404,8 @@ class MultipleFeaturizer(BaseFeaturizer):
             if multiindex:
                 feature_labels = [(f.__class__.__name__, flabel) for flabel in f.feature_labels()]
             else:
-                feature_labels = f.feature_labels
-                df[feature_labels] = df[feature_labels].applymap(np.squeeze)
+                feature_labels = f.feature_labels()
+            df[feature_labels] = df[feature_labels].applymap(np.squeeze)
         return df
 
     def citations(self):

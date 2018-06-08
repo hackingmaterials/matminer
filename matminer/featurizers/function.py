@@ -120,7 +120,7 @@ class FunctionFeaturizer(BaseFeaturizer):
         return self
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
+                            return_errors=False, inplace=True, multiindex=False):
         """
         Custom featurize dataframe method that sets the column labels
         using the fit method and then featurizes the dataframe similarly
