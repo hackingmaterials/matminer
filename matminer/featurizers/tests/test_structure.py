@@ -560,13 +560,13 @@ class StructureFeaturesTest(PymatgenTest):
         # default settings test
         xpp = XRDPowderPattern()
         pattern = xpp.featurize(self.diamond)
-        self.assertAlmostEqual(pattern[44], 0.19378, places=3)
+        self.assertAlmostEqual(pattern[44], 0.19378, places=2)
         self.assertEqual(len(pattern), 128)
 
         # reduced range
         xpp = XRDPowderPattern(two_theta_range=(0, 90))
         pattern = xpp.featurize(self.diamond)
-        self.assertAlmostEqual(pattern[44], 0.4083, places=3)
+        self.assertAlmostEqual(pattern[44], 0.4083, places=2)
         self.assertEqual(len(pattern), 91)
         self.assertEqual(len(xpp.feature_labels()), 91)
 
