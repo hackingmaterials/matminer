@@ -4,7 +4,7 @@ tqdm==4.23.0
 pymongo==3.6.1
 pint==0.8.1
 six==1.11.0
-citrination-client==4.0.0
+citrination-client==4.0.1
 plotly==2.4.1
 future==0.16.0
 sympy==1.1.1
