@@ -45,6 +45,7 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
    import SimplestChemenvStrategy, MultiWeightsChemenvStrategy
 
 from matminer.featurizers.stats import PropertyStats
+from matminer.utils.conversions import convert_species_to_element
 from sklearn.utils.validation import check_is_fitted
 
 cn_motif_op_params = {}
@@ -474,7 +475,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
             for prop in self.chem_props:
                 prop_absdelta[prop] = 0
             sum_wt = 0
-            elem_central = struct.sites[idx].species_string
+            elem_central = self._get_species_or_element(struct.sites[idx])
 
         for k in range(max_cn):
             cn = k + 1
@@ -486,10 +487,12 @@ class CrystalNNFingerprint(BaseFeaturizer):
                         # Compute additional chemistry-related features
                         if self.chem_info is not None and wt != 0:
                             sum_wt += wt
+                            elem_neighs = [self._get_species_or_element(d["site"]) \
+                                for d in nndata.cn_nninfo[cn]]
                             for prop in self.chem_props:
                                 elem_propval = self.chem_info[prop]
-                                tmp = sum([elem_propval[d["site"].species_string] - \
-                                    elem_propval[elem_central] for d in nndata.cn_nninfo[cn]])
+                                tmp = sum([elem_propval[elem_neigh[prop]] - \
+                                    elem_propval[elem_central[prop]] for elem_neigh in elem_neighs])
                                 prop_absdelta[prop] += wt * tmp / cn
                     elif wt == 0:
                         cn_fingerprint.append(wt)
@@ -506,6 +509,20 @@ class CrystalNNFingerprint(BaseFeaturizer):
             for val in prop_absdelta.values():
                 chem_fingerprint.append(val / sum_wt)
         return cn_fingerprint + chem_fingerprint
+
+    def _get_species_or_element(self, site):
+        elems = {}
+        for prop in self.chem_info.keys():
+            if site.species_string in self.chem_info[prop].keys():
+                elems[prop] = site.species_string
+            else:
+                elem_str = convert_species_to_element(site.species_string)
+                if elem_str in self.chem_info[prop].keys():
+                    elems[prop] = elem_str
+                else:
+                    raise KeyError("no {} key in chem_info dictionary".format(
+                        site.species_string))
+        return elems
 
     def feature_labels(self):
         labels = []
