@@ -212,8 +212,8 @@ class FingerprintTests(PymatgenTest):
         cnnchemfp = CrystalNNFingerprint(
             op_types, chem_info=chem_info, distance_cutoffs=None, \
             x_diff_weight=None)
-        labels = labels + ['cn-wt-weighted av. abs. diff mass', \
-            'cn-wt-weighted av. abs. diff Pauling scale']
+        labels = labels + ['mass local abs. diff', \
+            'Pauling scale local abs. diff']
         for l1, l2 in zip(cnnchemfp.feature_labels(), labels):
             self.assertEqual(l1, l2)
 
@@ -224,17 +224,17 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
             'oct_max CN_6')], 1, places=7)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
-            'cn-wt-weighted av. abs. diff mass')], 0, places=7)
+            'mass local abs. diff')], 0, places=7)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
-            'cn-wt-weighted av. abs. diff Pauling scale')], 0, places=7)
+            'Pauling scale local abs. diff')], 0, places=7)
 
         feats = cnnchemfp.featurize(self.cscl, 0)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
             'bcc CN_8')]+0.005, 0.48, places=1)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
-            'cn-wt-weighted av. abs. diff mass')], 97.5, places=1)
+            'mass local abs. diff')], 97.5, places=1)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
-            'cn-wt-weighted av. abs. diff Pauling scale')], -2.37, places=2)
+            'Pauling scale local abs. diff')], -2.37, places=2)
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
