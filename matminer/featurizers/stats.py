@@ -1,5 +1,7 @@
 from __future__ import division
 
+import scipy
+
 """
 General methods for computing property statistics from a list of values
 """
@@ -213,7 +215,9 @@ class PropertyStats(object):
             power = float(power)
 
         if weights is None:
-            if power == 0:
+            if power == -1:
+                return scipy.stats.hmean(data_lst)
+            elif power == 0:
                 return stats.mstats.gmean(data_lst)
             else:
                 return np.power(np.mean(np.power(data_lst, power)), 1.0 / power)
@@ -221,8 +225,10 @@ class PropertyStats(object):
             # Compute the normalization factor
             alpha = sum(weights)
 
+            if power == -1:
+                raise ValueError("Harmonic mean not implemented for weighted list!")
             # If power=0, return geometric mean
-            if power == 0:
+            elif power == 0:
                 return np.product(np.power(data_lst, np.true_divide(weights, np.sum(weights))))
             else:
                 return np.power(np.sum(np.multiply(weights, np.power(data_lst, power))) / alpha, 1.0/power)
