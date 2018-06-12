@@ -28,10 +28,7 @@ import warnings
 import ruamel.yaml as yaml
 import itertools
 import numpy as np
-import math
 import scipy.integrate as integrate
-
-from collections import defaultdict
 
 from matminer.featurizers.base import BaseFeaturizer
 from math import pi
@@ -530,206 +527,6 @@ class CrystalNNFingerprint(BaseFeaturizer):
         return ['Anubhav Jain', 'Nils E.R. Zimmermann']
 
 
-class CrystalSiteFingerprint(BaseFeaturizer):
-    """
-    A local order parameter fingerprint for periodic crystals.
-
-    A site fingerprint intended for periodic crystals. The fingerprint represents
-    the value of various order parameters for the site; each value is the product
-    two quantities: (i) the value of the order parameter itself and (ii) a factor
-    that describes how consistent the number of neighbors is with that order
-    parameter. Note that we can include only factor (ii) using the "wt" order
-    parameter which is always set to 1. Also note that the cation-anion flag
-    works only if the structures are oxidation-state decorated (e.g., use
-    pymatgen's BVAnalyzer or matminer's structure_to_oxidstructure()).
-    """
-
-    @staticmethod
-    def from_preset(preset, cation_anion=False):
-        """
-        Use preset parameters to get the fingerprint
-        Args:
-            preset (str): name of preset ("cn" or "ops")
-            cation_anion (bool): whether to only consider cation<->anion bonds
-                (bonds with zero charge are also allowed)
-        """
-        if preset == "cn":
-            optypes = dict([(k + 1, ["wt"]) for k in range(16)])
-            return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
-
-        elif preset == "ops":
-            optypes = {}
-            for cn, li in cn_target_motif_op.items():
-                optypes[cn] = li[:]
-            optypes[1] = []
-            for cn in optypes.keys():
-                optypes[cn].insert(0, "wt")
-            return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
-
-        else:
-            raise RuntimeError('preset "{}" is not supported in '
-                               'CrystalSiteFingerprint'.format(preset))
-
-    def __init__(self, optypes, override_cn1=True, cutoff_radius=8, tol=1E-2,
-                 cation_anion=False):
-        """
-        Initialize the CrystalSiteFingerprint. Use the from_preset() function to
-        use default params.
-        Args:
-            optypes (dict): a dict of coordination number (int) to a list of str
-                representing the order parameter types
-            override_cn1 (bool): whether to use a special function for the single
-                neighbor case. Suggest to keep True.
-            cutoff_radius (int): radius in Angstroms for neighbor finding
-            tol (float): numerical tolerance (in case your site distances are
-                not perfect or to correct for float tolerances)
-            cation_anion (bool): whether to only consider cation<->anion bonds
-                (bonds with zero charge are also allowed)
-        """
-
-        self.optypes = copy.deepcopy(optypes)
-        self.override_cn1 = override_cn1
-        self.cutoff_radius = cutoff_radius
-        self.tol = tol
-        self.cation_anion = cation_anion
-
-        if self.override_cn1 and self.optypes.get(1) != ["wt"]:
-            raise ValueError(
-                "If override_cn1 is True, optypes[1] must be ['wt']!")
-
-        self.ops = {}
-        for cn, t_list in self.optypes.items():
-            self.ops[cn] = []
-            for t in t_list:
-                if t == "wt":
-                    self.ops[cn].append(t)
-
-                else:
-                    ot = t
-                    p = None
-                    if cn in cn_motif_op_params.keys():
-                        if t in cn_motif_op_params[cn].keys():
-                            ot = cn_motif_op_params[cn][t][0]
-                            if len(cn_motif_op_params[cn][t]) > 1:
-                                p = cn_motif_op_params[cn][t][1]
-                    self.ops[cn].append(LocalStructOrderParams([ot], parameters=[p]))
-
-    def featurize(self, struct, idx):
-        """
-        Get crystal fingerprint of site with given index in input
-        structure.
-        Args:
-            struct (Structure): Pymatgen Structure object.
-            idx (int): index of target site in structure.
-        Returns:
-            list of weighted order parameters of target site.
-        """
-
-        cn_fingerprint_array = defaultdict(
-            list)  # dict where key = CN, val is array that contains each OP for that CN
-        total_weight = math.pi / 4  # 1/4 unit circle area
-
-        target = None
-        if self.cation_anion:
-            target = []
-            m_oxi = struct[idx].specie.oxi_state
-            for site in struct:
-                if site.specie.oxi_state * m_oxi <= 0:  # opposite charge
-                    target.append(site.specie)
-            if not target:
-                raise ValueError(
-                    "No valid targets for site within cation_anion constraint!")
-
-        # Use a Voronoi tessellation to identify neighbors of this site
-        vnn = VoronoiNN(cutoff=self.cutoff_radius,
-                        targets=target)
-        n_w = get_nearest_neighbors(vnn, struct, idx)
-
-        # Convert nn info to just a dict of neighbor -> weight
-        n_w = dict((x['site'], x['weight']) for x in n_w)
-
-        dist_sorted = (sorted(n_w.values(), reverse=True))
-
-        if self.override_cn1:
-            cn1 = 1
-            for d in dist_sorted[1:]:
-                cn1 = cn1 * (dist_sorted[0] ** 2 - d ** 2) / dist_sorted[0] ** 2
-            cn_fingerprint_array[1] = [round(cn1, 6)]
-            dist_sorted[0] = dist_sorted[1]
-
-        dist_norm = [d / dist_sorted[0] for d in dist_sorted if d > 0]
-
-        dist_bins = []  # bin numerical tolerances (~error bar of measurement)
-        for d in dist_norm:
-            if not dist_bins or (
-                    d > self.tol and dist_bins[-1] / (1 + self.tol) > d):
-                dist_bins.append(d)
-
-        for dist_idx, dist in enumerate(dist_bins):
-            neigh_sites = [n for n, w in n_w.items() if
-                           w > 0 and w / dist_sorted[0] >= dist / (
-                                   1 + self.tol)]
-            cn = len(neigh_sites)
-            if cn in self.ops:
-                for opidx, op in enumerate(self.ops[cn]):
-                    if self.optypes[cn][opidx] == "wt":
-                        opval = 1
-                    else:
-                        opval = \
-                        op.get_order_parameters([struct[idx]] + neigh_sites, 0,
-                                                indices_neighs=[i for i in
-                                                                range(1, len(
-                                                                    neigh_sites) + 1)])[
-                            0]
-
-                    opval = opval or 0  # handles None
-
-                    # figure out the weight for this opval based on semicircle integration method
-                    x1 = 1 - dist
-                    x2 = 1 if dist_idx == len(dist_bins) - 1 else \
-                        1 - dist_bins[dist_idx + 1]
-                    weight = self._semicircle_integral(x2) - \
-                             self._semicircle_integral(x1)
-
-                    opval = opval * weight / total_weight
-
-                    cn_fingerprint_array[cn].append(opval)
-
-        # convert dict to list
-        cn_fingerprint = []
-        for cn in sorted(self.optypes):
-            for op_idx, _ in enumerate(self.optypes[cn]):
-                try:
-                    cn_fingerprint.append(cn_fingerprint_array[cn][op_idx])
-                except IndexError:  # no OP value computed
-                    cn_fingerprint.append(0)
-
-        return cn_fingerprint
-
-    def feature_labels(self):
-        labels = []
-        for cn in sorted(self.optypes):
-            for op in self.optypes[cn]:
-                labels.append("{} CN_{}".format(op, cn))
-
-        return labels
-
-    def citations(self):
-        return []
-
-    def implementors(self):
-        return ['Anubhav Jain', 'Nils E.R. Zimmermann']
-
-    @staticmethod
-    def _semicircle_integral(x, r=1):
-        if r == x:
-            return 0.25 * math.pi * r ** 2
-
-        return 0.5 * ((x * math.sqrt(r ** 2 - x ** 2)) + (
-                r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))
-
-
-# TODO: Much of this code is duplicated in the new `get_voronoi_poly`. We should refactor it -lw
 class VoronoiFingerprint(BaseFeaturizer):
     """
     Voronoi tessellation-based features around target site.
@@ -757,52 +554,41 @@ class VoronoiFingerprint(BaseFeaturizer):
     Voronoi volume
         total volume of the Voronoi polyhedron around the target site
     Voronoi volume statistics of sub_polyhedra formed by each facet + center
-        e.g. stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
+        stats_vol = ['mean', 'std_dev', 'minimum', 'maximum']
     Voronoi area
         total area of the Voronoi polyhedron around the target site
     Voronoi area statistics of the facets
-        e.g. stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
+        stats_area = ['mean', 'std_dev', 'minimum', 'maximum']
     Voronoi nearest-neighboring distance statistics
-        e.g. stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
+        stats_dist = ['mean', 'std_dev', 'minimum', 'maximum']
 
     Args:
         cutoff (float): cutoff distance in determining the potential
                         neighbors for Voronoi tessellation analysis.
                         (default: 6.5)
-        use_weights(bool): whether to use weights to derive weighted
-                           i-fold symmetry indices.
+        use_symm_weights(bool): whether to use weights to derive weighted
+                                i-fold symmetry indices.
+        symm_weights(str): weights to be used in weighted i-fold symmetry
+                           indices.
+                           Supported options: 'solid_angle', 'area', 'volume',
+                           'face_dist'. (default: 'solid_angle')
         stats_vol (list of str): volume statistics types.
         stats_area (list of str): area statistics types.
         stats_dist (list of str): neighboring distance statistics types.
     """
 
-    def __init__(self, cutoff=6.5, use_weights=False, stats_vol=None,
-                 stats_area=None, stats_dist=None):
+    def __init__(self, cutoff=6.5,
+                 use_symm_weights=False, symm_weights='solid_angle',
+                 stats_vol=None, stats_area=None, stats_dist=None):
         self.cutoff = cutoff
-        self.use_weights = use_weights
+        self.use_symm_weights = use_symm_weights
+        self.symm_weights = symm_weights
         self.stats_vol = ['mean', 'std_dev', 'minimum', 'maximum'] \
             if stats_vol is None else copy.deepcopy(stats_vol)
         self.stats_area = ['mean', 'std_dev', 'minimum', 'maximum'] \
             if stats_area is None else copy.deepcopy(stats_area)
         self.stats_dist = ['mean', 'std_dev', 'minimum', 'maximum'] \
             if stats_dist is None else copy.deepcopy(stats_dist)
-
-    @staticmethod
-    def vol_tetra(vt1, vt2, vt3, vt4):
-        """
-        Calculate the volume of a tetrahedron, given the four vertices of vt1,
-        vt2, vt3 and vt4.
-        Args:
-            vt1 (array-like): coordinates of vertex 1.
-            vt2 (array-like): coordinates of vertex 2.
-            vt3 (array-like): coordinates of vertex 3.
-            vt4 (array-like): coordinates of vertex 4.
-        Returns:
-            (float): volume of the tetrahedron.
-        """
-        vol_tetra = np.abs(np.dot((vt1 - vt4),
-                                  np.cross((vt2 - vt4), (vt3 - vt4))))/6
-        return vol_tetra
 
     def featurize(self, struct, idx):
         """
@@ -814,59 +600,37 @@ class VoronoiFingerprint(BaseFeaturizer):
             (list of floats): Voronoi fingerprints.
                 -Voronoi indices
                 -i-fold symmetry indices
-                -weighted i-fold symmetry indices (if use_weights = True)
+                -weighted i-fold symmetry indices (if use_symm_weights = True)
                 -Voronoi volume
                 -Voronoi volume statistics
                 -Voronoi area
                 -Voronoi area statistics
-                -Voronoi area statistics
+                -Voronoi dist statistics
         """
         # Get the nearest neighbors using a Voronoi tessellation
         n_w = get_nearest_neighbors(VoronoiNN(cutoff=self.cutoff), struct, idx)
 
-        # Prepare storage for the Voronoi indicies
+        # Prepare storage for the Voronoi indices
         voro_idx_list = np.zeros(8, int)
         voro_idx_weights = np.zeros(8)
-
-        # Get statistics about the Voronoi
-        vertices = [struct[idx].coords] + [nn['site'].coords for nn in n_w]
-        voro = Voronoi(vertices)
-
         vol_list = []
         area_list = []
-        dist_list = [np.linalg.norm(vertices[0] - vertices[i])
-                     for i in range(1, len(vertices))]
+        dist_list = []
 
-        for nn, vind in voro.ridge_dict.items():
-            if 0 in nn:
-                if -1 in vind:
-                    continue
-                try:
-                    voro_idx_list[len(vind) - 3] += 1
-                    if self.use_weights:
-                        for neigh in n_w:
-                            if np.array_equal(neigh['site'].coords,
-                                              vertices[sorted(nn)[1]]):
-                                voro_idx_weights[len(vind) - 3] += neigh['weight']
-                except IndexError:
-                    # If a facet has more than 10 edges, it's skipped here.
-                    pass
-
-                polysub = [vertices[0]]
-                vol = 0
-                for v in vind:
-                    polysub.append(list(voro.vertices[v]))
-                tetra = Delaunay(np.array(polysub))
-                for simplex in tetra.simplices:
-                    vol += self.vol_tetra(np.array(polysub[simplex[0]]),
-                                          np.array(polysub[simplex[1]]),
-                                          np.array(polysub[simplex[2]]),
-                                          np.array(polysub[simplex[3]]))
-                vol_list.append(vol)
-                area_list.append(vol * 6 / dist_list[sorted(nn)[1] - 1])
+        # Get statistics
+        for nn in n_w:
+            if nn['poly_info']['n_verts'] <= 10:
+                # If a facet has more than 10 edges, it's skipped here.
+                voro_idx_list[nn['poly_info']['n_verts'] - 3] += 1
+                vol_list.append(nn['poly_info']['volume'])
+                area_list.append(nn['poly_info']['area'])
+                dist_list.append(nn['poly_info']['face_dist'] * 2)
+                if self.use_symm_weights:
+                    voro_idx_weights[nn['poly_info']['n_verts'] - 3] += \
+                        nn['poly_info'][self.symm_weights]
 
         symm_idx_list = voro_idx_list / sum(voro_idx_list)
-        if self.use_weights:
+        if self.use_symm_weights:
             symm_wt_list = voro_idx_weights / sum(voro_idx_weights)
             voro_fps = list(np.concatenate((voro_idx_list, symm_idx_list,
                                            symm_wt_list), axis=0))
@@ -887,7 +651,7 @@ class VoronoiFingerprint(BaseFeaturizer):
     def feature_labels(self):
         labels = ['Voro_index_%d' % i for i in range(3, 11)]
         labels += ['Symmetry_index_%d' % i for i in range(3, 11)]
-        if self.use_weights:
+        if self.use_symm_weights:
             labels += ['Symmetry_weighted_index_%d' % i for i in range(3, 11)]
         labels.append('Voro_vol_sum')
         labels.append('Voro_area_sum')

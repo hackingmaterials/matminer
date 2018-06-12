@@ -5,6 +5,17 @@
 matminer Changelog
 ==================
 
+**v0.3.4**
+
+* add XRDPowderPattern featurizer
+* add multi-index support for featurizers (A. Dunn)
+* add BandEdge featurizer (A. Faghaninia)
+* better labels support in xy plots + debugs and cleanups (A. Faghaninia)
+* deprecate CrystalSiteFingerprint
+* remove  a few old and unused site OP functions/methods (A. Jain)
+* doc improvements (A. Faghaninia)
+* bug fixes, minor code improvements, etc. (N. Zimmermann, A. Dunn, Q. Wang, A. Faghaninia)
+
 **v0.3.3**
 
 * add StackedFeaturizer (L. Ward)

@@ -392,8 +392,19 @@ class PlotlyFig:
                 if any number is outside of this range, it will be forced to
                 either one. Note that if colorcol_range is set, the colorbar
                 ticks will be updated to reflect -min or max+ at the two ends.
-            labels (list or [list]): to individually set annotation for scatter
-                point either the same for all traces or can be set for each
+            labels (str or [str] or [list]): to set annotation for scatter
+                points the same for all traces. Note that, several column
+                names can be simultaneously used as labels but it is important
+                to understand that when labels is set, it is assumed that all
+                traces have the same length as the same labels are assigned to
+                all traces.
+                    Examples:
+                        labels = 'formula'
+                        ['material_id', 'formula'] these 2 columns must be available
+                        [['red', 'green', 'blue'], ['warm', 'mild', 'cold']] the
+                        latter example assumes all xy traces have 3 points then
+                        point one has ('red', 'warm') label, 2 has ('green', 'mild')
+                        and finally point 3 ('blue', 'cold')
             limits (dict): The x and y limits defining the ranges the plot will
                 show. Should be in the form {'x': (lower, higher), 'y': (lower,
                 higher)}. Omit either key to prevent limits from being imposed
@@ -438,6 +449,8 @@ class PlotlyFig:
             sizes = [10 * marker_scale] * len(xy_pairs)
         elif isinstance(sizes, str):
             sizes = [self._data_from_str(sizes)] * len(xy_pairs)
+        elif isinstance(sizes, (int, float)):
+            sizes = [sizes]*len(xy_pairs)
         else:
             if len(sizes) != len(xy_pairs):
                 raise ValueError(
@@ -467,8 +480,14 @@ class PlotlyFig:
 
         data = []
         for pair in xy_pairs:
+            if len(pair) != 2:
+                raise ValueError('each xy within xy_pairs must have only 2 axes'
+                                 ' : x and y (hence the "pair"); e.g. (x, y)')
             data.append((self._data_from_str(pair[0]),
                          self._data_from_str(pair[1])))
+            if len(list(pair[0])) != len(list(pair[1])):
+                warnings.warn('inequal number of points in x and y: part of the'
+                              ' data not plotted!')
             if isinstance(pair[1], str):
                 names.append(pair[1])
             else:
@@ -508,11 +527,16 @@ class PlotlyFig:
                 colorbar[colorbar < color_range[0]] = color_range[0]
                 colorbar[colorbar > color_range[1]] = color_range[1]
 
-        if not isinstance(labels, list):
-            labels = self._data_from_str(labels)
-            labels = [labels] * len(data)
+        if labels is None:
+            pass
+        elif not isinstance(labels, (list, np.ndarray, pd.Series, pd.Index)):
+            labels = [self._data_from_str(labels)]
         else:
-            labels = [self._data_from_str(l) for l in labels]
+            if len(list(labels)) == len(data[0][0]) and isinstance(labels[0], str):
+                labels = [labels]
+            else:
+                labels = [self._data_from_str(l) for l in labels]
+
         markers = markers or [{'symbol': 'circle',
                                'line': {'width': 1,'color': 'black'}
                                } for _ in data]
@@ -563,17 +587,26 @@ class PlotlyFig:
         if isinstance(lines, dict):
             lines = [deepcopy(lines) for _ in data]
 
-        for var in [labels, markers, lines]:
+        # for var in [labels, markers, lines]:
+        for var in [markers, lines]:
             if len(list(var)) != len(data):
                 raise ValueError('"labels", "markers" or "lines" length does'
                                  ' not match with that of xy_pairs')
         layout = deepcopy(self.layout)
 
         traces = []
+        # here, labels is expected to be a list of lists each with length of data
+        if labels is not None:
+            for label in labels:
+                if len(list(label)) != len(data[0][0]):
+                    raise ValueError('the length of this label is not equal to '
+                                     'the length of the x (or y):\n{}'.format(label))
+            labels = ['</br>'.join([str(t) for t in l]) for l in zip(*labels)]
+
         for i, xy_pair in enumerate(data):
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
                                      marker=markers[i], line=lines[i],
-                                     text=labels[i],
+                                     text=labels,
                                      hoverinfo=self.hoverinfo,
                                      hoverlabel=layout['hoverlabel'],
                                      name=names[i], showlegend=showlegends[i],

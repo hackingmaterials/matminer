@@ -9,11 +9,13 @@ from collections import OrderedDict
 import numpy as np
 import pandas as pd
 import scipy.constants as const
+from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure
 from pymatgen.analysis.defects.point_defects import \
     ValenceIonicRadiusEvaluator
+from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.analysis.structure_analyzer import get_dimensionality
@@ -22,8 +24,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
-    CrystalSiteFingerprint, \
-    CoordinationNumber, LocalPropertyDifference
+    CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint
 from matminer.featurizers.stats import PropertyStats
 from matminer.utils.caching import get_all_nearest_neighbors
 
@@ -405,42 +406,6 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
     def implementors(self):
         return ["Logan Ward", "Saurabh Bajaj"]
-
-
-class RadialDistributionFunctionPeaks(BaseFeaturizer):
-    """
-    Determine the location of the highest peaks in a structure's RDF.
-
-    Args:
-        n_peaks: (int) number of the top peaks to return .
-    """
-
-    def __init__(self, n_peaks=2):
-        self.n_peaks = n_peaks
-
-    def featurize(self, rdf):
-        """
-        Get location of highest peaks in RDF.
-
-        Args:
-            rdf: (ndarray) RDF as obtained from the
-                    RadialDistributionFunction class.
-
-        Returns: (ndarray) distances of highest peaks in descending order
-                of the peak height
-        """
-
-        return [[rdf[0]['distances'][i] for i in np.argsort(
-            rdf[0]['distribution'])[-self.n_peaks:]][::-1]]
-
-    def feature_labels(self):
-        return ["radial distribution function peaks"]
-
-    def citations(self):
-        return []
-
-    def implementors(self):
-        return ["Saurabh Bajaj"]
 
 
 class ElectronicRadialDistributionFunction(BaseFeaturizer):
@@ -964,8 +929,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         - Returns each statistic of each site feature
     """
 
-    def __init__(self, site_featurizer, stats=('mean', 'std_dev', 'minimum',
-                                               'maximum'), min_oxi=None,
+    def __init__(self, site_featurizer, stats=('mean', 'std_dev'), min_oxi=None,
                  max_oxi=None):
         """
         Args:
@@ -1014,13 +978,8 @@ class SiteStatsFingerprint(BaseFeaturizer):
         if self.stats:
             stats = []
             for op in vals:
-                if '_mode' in ''.join(self.stats):
-                    modes = self.n_numerical_modes(op, self.nmodes, 0.01)
                 for stat in self.stats:
-                    if '_mode' in stat:
-                        stats.append(modes[int(stat[0]) - 1])
-                    else:
-                        stats.append(PropertyStats().calc_stat(op, stat))
+                    stats.append(PropertyStats().calc_stat(op, stat))
 
             return stats
         else:
@@ -1053,28 +1012,31 @@ class SiteStatsFingerprint(BaseFeaturizer):
             kwargs - Options for SiteStatsFingerprint
         """
 
-        if preset == "OPSiteFingerprint":
+        if preset == "CrystalNNFingerprint_cn":
+            return SiteStatsFingerprint(
+                CrystalNNFingerprint.from_preset("cn", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalNNFingerprint_cn_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalNNFingerprint.from_preset("cn", cation_anion=True),
+                **kwargs)
+
+        elif preset == "CrystalNNFingerprint_ops":
+            return SiteStatsFingerprint(
+                CrystalNNFingerprint.from_preset("ops", cation_anion=False),
+                **kwargs)
+
+        elif preset == "CrystalNNFingerprint_ops_cation_anion":
+            return SiteStatsFingerprint(
+                CrystalNNFingerprint.from_preset("ops", cation_anion=True),
+                **kwargs)
+
+        elif preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
 
-        elif preset == "CrystalSiteFingerprint_cn":
-            return SiteStatsFingerprint(
-                CrystalSiteFingerprint.from_preset("cn", cation_anion=False),
-                **kwargs)
-
-        elif preset == "CrystalSiteFingerprint_cn_cation_anion":
-            return SiteStatsFingerprint(
-                CrystalSiteFingerprint.from_preset("cn", cation_anion=True),
-                **kwargs)
-
-        elif preset == "CrystalSiteFingerprint_ops":
-            return SiteStatsFingerprint(
-                CrystalSiteFingerprint.from_preset("ops", cation_anion=False),
-                **kwargs)
-
-        elif preset == "CrystalSiteFingerprint_ops_cation_anion":
-            return SiteStatsFingerprint(
-                CrystalSiteFingerprint.from_preset("ops", cation_anion=True),
-                **kwargs)
+        elif preset == "OPSiteFingerprint":
+            return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
 
         elif preset == "LocalPropertyDifference_ward-prb-2017":
             return SiteStatsFingerprint(
@@ -1100,75 +1062,6 @@ class SiteStatsFingerprint(BaseFeaturizer):
                 pass
 
         raise ValueError("Unrecognized preset!")
-
-    # TODO: @nisse3000, move this function elsewhere. Probably the PropertyStats
-    # packages which is responsible for turning higher-dimensional data into
-    # lower dimensional data
-    @staticmethod
-    def n_numerical_modes(data_lst, n=2, dl=0.1):
-        """
-        Returns the n first modes of a data set that are obtained with
-            a finite bin size for the underlying frequency distribution.
-        Args:
-            data_lst ([float]): data values.
-            n (integer): number of most frequent elements to be determined.
-            dl (float): bin size of underlying (coarsened) distribution.
-        Returns:
-            ([float]): first n most frequent entries (or nan if not found).
-        """
-        if len(set(data_lst)) == 1:
-            return [data_lst[0]] + [float('NaN') for _ in range(n - 1)]
-        hist, bins = np.histogram(data_lst, bins=np.arange(
-            min(data_lst), max(data_lst), dl), density=False)
-        modes = list(bins[np.argsort(hist)[-n:]][::-1])
-        return modes + [float('NaN') for _ in range(n - len(modes))]
-
-
-# TODO: @nisse3000, move this function elsewhere
-def get_op_stats_vector_diff(s1, s2, max_dr=0.2, ddr=0.01, ddist=0.01):
-    """
-    Determine the difference vector between two order parameter-statistics
-    feature vector resulting from two input structures.
-
-    Args:
-        s1 (Structure): first input structure.
-        s2 (Structure): second input structure.
-        max_dr (float): maximum neighbor-finding parameter to be tested.
-        ddr (float): step size for increasing neighbor-finding parameter.
-        ddist (float): bin size for histogramming distances of varying dr.
-
-    Returns: (float, [float]) optimal neighbor-finding parameter
-        and difference vector between order
-        parameter-statistics feature vectors obtained from the
-        two input structures (s1 - s2).
-    """
-    # Compute OP stats vector distances for varying neigh-find paras.
-    dr = []
-    dist = []
-    delta = []
-    nbins = int(max_dr / ddr) + 1
-    for i in range(nbins):
-        dr.append(float(i + 1) * ddr)
-        opsf = SiteStatsFingerprint(site_featurizer=OPSiteFingerprint(dr=dr[i]))
-        delta.append(np.array(
-            opsf.featurize(s1)) - np.array(opsf.featurize(s2)))
-        dist.append(np.linalg.norm(delta[i]))
-
-    # Compute distance histogram, determine peak, and location
-    # of smallest dr with peak value.
-    nbins = int(max(dist) / ddist) + 1
-    hist, bin_edges = np.histogram(
-        dist, bins=[float(i) * ddist for i in range(nbins)],
-        normed=False, weights=None, density=False)
-    idx = list(hist).index(max(hist))
-    dist_peak = 0.5 * (bin_edges[idx] + bin_edges[idx + 1])
-    idx = -1
-    for i, d in enumerate(dist):
-        if fabs(d - dist_peak) <= ddist:
-            idx = i
-            break
-
-    return dr[idx], delta[idx]
 
 
 class EwaldEnergy(BaseFeaturizer):
@@ -2160,3 +2053,69 @@ class StructureComposition(BaseFeaturizer):
         # Written by Logan Ward, but let's just pass through the
         #  composition implementors
         return self.featurizer.implementors()
+
+
+class XRDPowderPattern(BaseFeaturizer):
+    """
+    1D array representing powder diffraction of a structure as calculated by
+    pymatgen. The powder is smeared / normalized according to gaussian_kde.
+    """
+
+    def __init__(self, two_theta_range=(0, 127), bw_method=0.05,
+                 pattern_length=None, **kwargs):
+        """
+        Initialize the featurizer.
+
+        Args:
+            two_theta_range ([float of length 2]): Tuple for range of
+                two_thetas to calculate in degrees. Defaults to (0, 90). Set to
+                None if you want all diffracted beams within the limiting
+                sphere of radius 2 / wavelength.
+            bw_method (float): how much to smear the XRD pattern
+            pattern_length (float): length of final array; defaults to one value
+             per degree (i.e. two_theta_range + 1)
+            **kwargs: any other arguments to pass into pymatgen's XRDCalculator,
+                such as the type of radiation.
+        """
+        self.two_theta_range = two_theta_range
+        self.bw_method = bw_method
+        self.pattern_length = pattern_length or two_theta_range[1] - \
+                              two_theta_range[0] + 1
+        self.xrd_calc = XRDCalculator(**kwargs)
+
+    def featurize(self, strc):
+        pattern = self.xrd_calc.get_pattern(
+            strc, two_theta_range=self.two_theta_range)
+        x, y = pattern.x, pattern.y
+        hist = []
+        for x1, y1 in zip(x, y):
+            num = int(y1)
+            hist += [x1] * num
+
+        kernel = gaussian_kde(hist, bw_method=self.bw_method)
+        x = np.linspace(self.two_theta_range[0], self.two_theta_range[1],
+                        self.pattern_length)
+        y = kernel(x)
+
+        return y
+
+    def feature_labels(self):
+        return ['xrd_{}'.format(x) for x in range(self.pattern_length)]
+
+    def citations(self):
+        return ["@article{Ong2013, author = {Ong, Shyue Ping and Richards, "
+                "William Davidson and Jain, Anubhav and Hautier, "
+                "Geoffroy and Kocher, Michael and Cholia, Shreyas and Gunter, "
+                "Dan and Chevrier, Vincent L. and Persson, "
+                "Kristin A. and Ceder, Gerbrand}, "
+                "doi = {10.1016/j.commatsci.2012.10.028}, issn = {09270256}, "
+                "journal = {Computational Materials Science}, month = {feb}, "
+                "pages = {314--319}, "
+                "publisher = {Elsevier B.V.}, title = {{Python Materials "
+                "Genomics (pymatgen): A robust, open-source python "
+                "library for materials analysis}}, url = "
+                "{http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
+                "volume = {68}, year = {2013} } "]
+
+    def implementors(self):
+        return ['Anubhav Jain', 'Matthew Horton']
