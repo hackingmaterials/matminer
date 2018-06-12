@@ -1546,7 +1546,8 @@ class PlotlyFig:
                 data = self.df[cols]
         elif not isinstance(data, pd.DataFrame):
             data = pd.DataFrame(data)
-        cols = data.columns.values
+        if cols is None:
+            cols = data.columns.values[:3]
         if len(list(cols)) != 3:
             raise ValueError('triangle plot requires 3 and only 3 columns!')
 
