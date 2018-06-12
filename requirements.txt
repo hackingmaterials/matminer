@@ -1,6 +1,6 @@
-pymatgen==2018.5.3
+pymatgen==2018.6.11
 pandas==0.22.0
-tqdm==4.23.0
+tqdm==4.23.1
 pymongo==3.6.1
 pint==0.8.1
 six==1.11.0
