@@ -2,7 +2,6 @@ from __future__ import division, unicode_literals, print_function
 import numpy as np
 import os.path
 import pandas as pd
-from matplotlib.colors import to_hex
 import plotly
 import plotly.graph_objs as go
 import plotly.figure_factory as FF
@@ -398,7 +397,7 @@ class PlotlyFig:
                 names can be simultaneously used as labels but it is important
                 to understand that when labels is set, it is assumed that all
                 traces have the same length as the same labels are assigned to
-                all traces.
+                all traces (if there are more than one trace of course).
                     Examples:
                         labels = 'formula'
                         ['material_id', 'formula'] these 2 columns must be available
@@ -528,15 +527,9 @@ class PlotlyFig:
                 colorbar[colorbar < color_range[0]] = color_range[0]
                 colorbar[colorbar > color_range[1]] = color_range[1]
 
-        if labels is None:
-            pass
-        elif not isinstance(labels, (list, np.ndarray, pd.Series, pd.Index)):
-            labels = [self._data_from_str(labels)]
-        else:
-            if len(list(labels)) == len(data[0][0]) and isinstance(labels[0], str):
-                labels = [labels]
-            else:
-                labels = [self._data_from_str(l) for l in labels]
+        labels = self.setup_labels(labels=labels,
+                                   data=None,
+                                   expected_length=len(data[0][0]))
 
         markers = markers or [{'symbol': 'circle',
                                'line': {'width': 1,'color': 'black'}
@@ -596,13 +589,6 @@ class PlotlyFig:
         layout = deepcopy(self.layout)
 
         traces = []
-        # here, labels is expected to be a list of lists each with length of data
-        if labels is not None:
-            for label in labels:
-                if len(list(label)) != len(data[0][0]):
-                    raise ValueError('the length of this label is not equal to '
-                                     'the length of the x (or y):\n{}'.format(label))
-            labels = ['</br>'.join([str(t) for t in l]) for l in zip(*labels)]
 
         for i, xy_pair in enumerate(data):
             traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
@@ -1318,6 +1304,7 @@ class PlotlyFig:
 
         return self.create_plot(fig, return_plot)
 
+
     def heatmap_df(self, data=None, cols=None, x_labels=None, x_nqs=6,
                    y_labels=None, y_nqs=4, precision=1, annotation='count',
                    annotation_color='black', colorscale=None, color_range=None,
@@ -1478,19 +1465,153 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
 
-def get_colors(pcmap, n):
-    n_cmap = len(pcmap.colors)
-    if n_cmap > n:
-        # just pass the first n colors
-        return pcmap.hex_colors[:n]
-    elif n_cmap < n:
-        interp_vals = np.linspace(0, 255, n).tolist()
-        for p in interp_vals:
-            print(p, "generates", pcmap.mpl_colormap(int(p)))
+    def setup_labels(self, labels, data, expected_length=None):
+        """
+        Set the input labels to the appropriate format to support labeling of
+            each data point with one or multiple labels that shows upon hovering
+            over the point (Plotly default behavior).
+        Args:
+            labels (str or [str] or [list]): see the docs for labels in xy
+            data (DataFrame or list): A dataframe containing at least
+                one numerical column. Also accepts lists of numerical values.
+                If None, uses the dataframe passed into the constructor.
+            expected_length (int): the expected length of the rows/labels. This
+                is len(data) if data is dataframe and length of axes
 
-        rbga_map = [pcmap.mpl_colormap(int(i)) for i in interp_vals]
-        print(np.asarray(rbga_map))
-        return [to_hex(r, keep_alpha=True) for r in rbga_map]
-    else:
-        # an exactly matched set of colors
-        return pcmap.hex_colors
+        Returns ([list]): list of labels each with the expected length
+
+        """
+        expected_length = expected_length or len(data)
+        if labels is None:
+            pass
+        elif not isinstance(labels, (list, np.ndarray, pd.Series, pd.Index)):
+            labels = [self._data_from_str(labels, data)]
+        else:
+            if len(list(labels)) ==expected_length and isinstance(labels[0], str):
+                labels = [labels]
+            else:
+                labels = [self._data_from_str(l) for l in labels]
+
+        # here, labels is expected to be a [list] each list w/ expected_length
+        if labels is not None:
+            for label in labels:
+                if len(list(label)) != expected_length:
+                    raise ValueError('the length of this label is not equal to '
+                                     'the expected length:\n{}'.format(label))
+            labels = ['</br>'.join([str(t) for t in l]) for l in zip(*labels)]
+        return labels
+
+
+    def triangle(self, data=None, cols=None, sum_of_3=1.0, axes_titles=None,
+                 labels=None, markers=None, return_plot=False):
+        """
+        Phase diagram type plot for 3 (and only 3) variables that always add
+        to a certain number (e.g. 1 or 100%); regardless the rows are separately
+        normalized inside plotly so that they add to 1 as otherwise, triangle
+        plot does not make sense.
+
+        Args:
+            data: (dataframe): if not set, self.df is used
+            cols ([str]): A list of strings specifying the 3 columns of the
+                dataframe (either data or self.df) to plot the triangle plot
+                for. Note that the order of 3 axes is decided based on the
+                order of cols.
+            sum_of_3 (int/float): scale the sum of cols to this number.
+            axes_titles ([str]): titles of the 3 axes, this overrides the
+                dataframe column names. Note that if set, axes_titles must be
+                of the length 3. Examples:
+                    ['A', 'B', 'X']
+                    ['title 1', '', 'title 2] (i.e. no title for the 2nd axis)
+            labels (str or [str] or [list]): to set annotation for scatter
+                points the same for all traces. Note that, several column
+                names can be simultaneously used as labels but it is important
+                to understand that when labels is set, it is assumed that all
+                traces have the same length as the same labels are assigned to
+            markers (None or dict): plotly marker dict with keys such as size,
+                symbol, color, line, etc
+            return_plot (bool): Returns the dictionary representation of the
+                figure if True.
+
+        Returns: A Plotly triangle plot Figure object.
+        """
+        #TODO: on a big monitor, if the window size is expanded, the ticks fly to the corner of the screen, see why?! and fix
+        #TODO: add sizes and colors to follow the same logic in xy (add a setup_sizes similar to setup_labels)
+        #TODO: add sizes and colors to follow the same logic in xy (add a setup_colors similar to setup_labels)
+        if data is None:
+            if self.df is None:
+                raise ValueError("triangle requires dataframe input.")
+            elif cols is None:
+                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+            else:
+                data = self.df[cols]
+        elif not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame(data)
+        if cols is None:
+            cols = data.columns.values[:3]
+        if len(list(cols)) != 3:
+            raise ValueError('triangle plot requires 3 and only 3 columns!')
+
+        labels = self.setup_labels(labels, data)
+
+        data = {
+            'type': 'scatterternary',
+            'mode': 'markers',
+            'a': list(data[cols[0]]), # list() to ensure JSON serializable
+            'b': list(data[cols[1]]),
+            'c': list(data[cols[2]]),
+            'text': labels,
+            'marker': markers or {
+                'symbol': 'circle-open',
+                'color': '#DB7365',
+                'size': 14,
+                'line': {'width': 2}
+            }
+        }
+
+        axes_titles = axes_titles or cols
+
+        axes = []
+        angles = [0, 45, -45]
+        for iax in range(3):
+            ax = deepcopy(self.layout['xaxis'])
+            ax.pop('type', None)
+            ax['title'] = axes_titles[iax]
+            if iax > 0:
+                ax['title'] = '<br>'+ax['title'] # not to overlap w/ axis ticks
+            ax['showline'] = True
+            ax['showgrid'] = True
+            ax['tickangle'] = angles[iax]
+            axes.append(ax)
+
+        layout = deepcopy(self.layout)
+        layout['ternary'] = {'sum': sum_of_3,
+                             'aaxis': axes[0],
+                             'baxis': axes[1],
+                             'caxis': axes[2]
+                             }
+        fig = {'data': [data], 'layout': layout}
+
+        return self.create_plot(fig, return_plot)
+
+    # TODO: implement pyramid after finishing triangle (i.e. after labels, sizes and colors are all supported in triangle)
+    # def pyramid(self, data=None, cols=None, sizes=None, labels=None,
+    #              colors=None, lines=True, normalize=True):
+    #     if data is None:
+    #         if self.df is None:
+    #             raise ValueError("pyramid requires dataframe input.")
+    #         elif cols is None:
+    #             data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+    #         else:
+    #             data = self.df[cols]
+    #     elif not isinstance(data, pd.DataFrame):
+    #         data = pd.DataFrame(data)
+    #     cols = data.columns.values
+    #
+    #     scaler = MinMaxScaler()
+    #     for col in cols:
+    #         data[col] = scaler.fit_transform(data[col])
+    #
+    #     if normalize: # TODO: maybe enforce this? because if not normalized, this plot doesn't make much sense
+    #         sums = data[cols].as_matrix().sum(axis=1)
+    #         for col in data:
+    #             data[col] /= sums

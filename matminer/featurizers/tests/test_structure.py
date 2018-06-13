@@ -15,8 +15,8 @@ from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import ElementProperty
 from matminer.featurizers.structure import DensityFeatures, \
-    RadialDistributionFunction, RadialDistributionFunctionPeaks, \
-    PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
+    RadialDistributionFunction, PartialRadialDistributionFunction, \
+    ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
@@ -108,12 +108,6 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             rdf['distribution'][int(round(19.9 / 0.1))], 0.822126129)
 
-        # Make sure it finds the locations of non-zero peaks correctly
-        peaks = RadialDistributionFunctionPeaks().featurize(rdforig)[0]
-        self.assertEqual(len(peaks), 2)
-        self.assertAlmostEqual(2.5, peaks[0])
-        self.assertAlmostEqual(1.5, peaks[1])
-
         # Repeat test with NaCl (omitting comments). Altering cutoff distance
         rdforig = RadialDistributionFunction(cutoff=10).featurize(self.nacl)
         rdf = rdforig[0]
@@ -126,11 +120,6 @@ class StructureFeaturesTest(PymatgenTest):
             rdf['distribution'][int(round(4.0 / 0.1))], 26.83338723)
         self.assertAlmostEqual(
             rdf['distribution'][int(round(9.8 / 0.1))], 3.024406467)
-
-        peaks = RadialDistributionFunctionPeaks().featurize(rdforig)[0]
-        self.assertEqual(len(peaks), 2)
-        self.assertAlmostEqual(2.8, peaks[0])
-        self.assertAlmostEqual(4.0, peaks[1])
 
         # Repeat test with CsCl. Altering cutoff distance and bin_size
         rdforig = RadialDistributionFunction(
@@ -145,13 +134,6 @@ class StructureFeaturesTest(PymatgenTest):
             rdf['distribution'][int(round(4.0 / 0.5))], 3.937582548)
         self.assertAlmostEqual(
             rdf['distribution'][int(round(7.0 / 0.5))], 1.805505363)
-
-        peaks = RadialDistributionFunctionPeaks(n_peaks=3).featurize(
-            rdforig)[0]
-        self.assertEqual(len(peaks), 3)
-        self.assertAlmostEqual(3.5, peaks[0])
-        self.assertAlmostEqual(6.5, peaks[1])
-        self.assertAlmostEqual(5, 5, peaks[2])
 
     def test_prdf(self):
         # Test a few peaks in diamond

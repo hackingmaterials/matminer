@@ -3,6 +3,7 @@ PlotlyFig testing. Most tests are run by comparing generated Plotly figures
 with pre-generated json files. Some are just ensuring Plotly does not throw
 errors.
 """
+from monty.json import MontyEncoder
 
 __author__ = "Alex Dunn <ardunn@lbl.gov>"
 
@@ -17,6 +18,10 @@ from matminer.figrecipes.plot import PlotlyFig
 a = [1.6, 2.1, 3]
 b = [1, 4.2, 9]
 c = [14, 15, 17]
+ah = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+bh = [2, 4, 6, 8, 10, 2, 4, 6, 8, 10]
+ch = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+np.random.seed(23)
 xlabels = ['low', 'med', 'high']
 ylabels = ['worst', 'mediocre', 'best']
 pfkwargs = {'mode': 'offline', 'colorbar_title': 'auto', 'y_scale': 'linear',
@@ -55,16 +60,29 @@ def refresh_json(open_plots=False):
     vio = pf.violin([a, b, c, b, a, c, b], cols=xlabels, return_plot=True)
     scm = pf.scatter_matrix([a, b, c], return_plot=True)
 
+    df = pd.DataFrame(data=np.asarray([ah, bh, ch]).T,
+                      columns=['ah', 'bh', 'ch'])
+    x_labels = ['low', 'high']
+    y_labels = ['small', 'large']
+    # TODO: this plot was not JSON serializable, use a different serialization method for all plots
+    hmdf = pf.heatmap_df(df, x_labels=x_labels, y_labels=y_labels, return_plot=True)
+
+    df = pd.DataFrame(np.random.rand(50, 3), columns=list('qwe'))
+    triangle = pf.triangle(df[['q', 'w', 'e']], return_plot=True)
+
     fnamedict = {"xys": xys, "xym": xym, "xy_colors":xy_colors,
                  "hmb": hmb, "his": his, "bar": bar,
-                 "pcp": pcp, "vio": vio, "scm": scm}
+                 "pcp": pcp, "vio": vio, "scm": scm,
+                 'triangle': triangle,
+                 'hmdf': hmdf
+                 }
 
     for fname, obj in fnamedict.items():
         if obj in [vio, scm]:
             obj = obj['layout']
 
         with open("template_{}.json".format(fname), "w") as f:
-            json.dump(obj, f)
+            json.dump(obj, f, cls=MontyEncoder)
 
     if open_plots:
         for obj in fnamedict.values():
@@ -133,14 +151,23 @@ class PlotlyFigTest(PymatgenTest):
         self.assertTrue(scm_test == scm_true)
 
     def test_heatmap_df(self):
-        a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        b = [2, 4, 6, 8, 10, 2, 4, 6, 8, 10]
-        c = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-        df = pd.DataFrame(data=np.asarray([a, b, c]).T, columns=['a', 'b', 'c'])
+
+        df = pd.DataFrame(data=np.asarray([ah, bh, ch]).T,
+                          columns=['ah', 'bh', 'ch'])
         x_labels = ['low', 'high']
         y_labels = ['small', 'large']
-        self.pf.heatmap_df(df, x_labels=x_labels, y_labels=y_labels,
-                           return_plot=True)
+        hmdf_test = self.pf.heatmap_df(df, x_labels=x_labels,
+                                       y_labels=y_labels,
+                                       return_plot=True)
+        hmdf_true = self.fopen("template_hmdf.json")
+        self.assertTrue(hmdf_test, hmdf_true)
+
+    def test_trianlge(self):
+        df = pd.DataFrame(np.random.rand(50, 3), columns=list('qwe'))
+        triangle_test = self.pf.triangle(df[['q', 'w', 'e']], return_plot=True)
+        triangle_true = self.fopen("template_triangle.json")
+        self.assertTrue(triangle_test, triangle_true)
+
 
 if __name__ == "__main__":
     # refresh_json(open_plots=True)
