@@ -2,6 +2,7 @@ from __future__ import division, unicode_literals, print_function
 import numpy as np
 import os.path
 import pandas as pd
+from matplotlib.colors import to_hex
 import plotly
 import plotly.graph_objs as go
 import plotly.figure_factory as FF
@@ -1475,3 +1476,21 @@ class PlotlyFig:
             layout['hoverlabel']['bgcolor'] = 'white'
         fig = {'data': [trace], 'layout': layout}
         return self.create_plot(fig, return_plot)
+
+
+def get_colors(pcmap, n):
+    n_cmap = len(pcmap.colors)
+    if n_cmap > n:
+        # just pass the first n colors
+        return pcmap.hex_colors[:n]
+    elif n_cmap < n:
+        interp_vals = np.linspace(0, 255, n).tolist()
+        for p in interp_vals:
+            print(p, "generates", pcmap.mpl_colormap(int(p)))
+
+        rbga_map = [pcmap.mpl_colormap(int(i)) for i in interp_vals]
+        print(np.asarray(rbga_map))
+        return [to_hex(r, keep_alpha=True) for r in rbga_map]
+    else:
+        # an exactly matched set of colors
+        return pcmap.hex_colors
