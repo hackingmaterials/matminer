@@ -237,14 +237,6 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
             'Pauling scale local abs. diff')], -2.37, places=2)
 
-        chem_info = {"mass": {"Cs": 132.9,"Cl": 35.4}}
-        cnnchemfp = CrystalNNFingerprint(
-            op_types, chem_info=chem_info, distance_cutoffs=None, \
-            x_diff_weight=None)
-        self.assertEqual(cnnchemfp._get_species_or_element(
-            self.cscl.sites[0])["mass"], "Cl")
-        self.assertEqual(cnnchemfp._get_species_or_element(
-            self.cscl.sites[1])["mass"], "Cs")
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')

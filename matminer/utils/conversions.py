@@ -5,7 +5,6 @@ import pandas as pd
 from pymatgen import Composition
 from pymatgen.core.structure import IStructure
 
-remove_from_species = [str(i) for i in range(10)] + ["+", "-"]
 
 def homogenize_multiindex(df, default_key, coerce=False):
     """
@@ -152,17 +151,3 @@ def composition_to_oxidcomposition(series, **kwargs):
 
     return series.map(lambda c: c.add_charges_from_oxi_state_guesses(**kwargs))
 
-def convert_species_to_element(species):
-    """
-    Convert a species string (e.g., O2-) to an element string/symbol (e.g., O).
-
-    Args:
-        species (str): species string
-
-    Returns:
-        (str) element symbol
-    """
-    element = species
-    for c in remove_from_species:
-        element = element.replace(c, "")
-    return element

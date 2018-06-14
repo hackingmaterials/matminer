@@ -45,7 +45,6 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
    import SimplestChemenvStrategy, MultiWeightsChemenvStrategy
 
 from matminer.featurizers.stats import PropertyStats
-from matminer.utils.conversions import convert_species_to_element
 from sklearn.utils.validation import check_is_fitted
 
 cn_motif_op_params = {}
@@ -387,8 +386,16 @@ class OPSiteFingerprint(BaseFeaturizer):
 
 class CrystalNNFingerprint(BaseFeaturizer):
     """
-    This is intended to be a successor to CrystalNNFingerprint, currently
-    undergoing testing.
+    A local order parameter fingerprint for periodic crystals.
+
+    The fingerprint represents the value of various order parameters for the
+    site. The "wt" order parameter describes how consistent a site is with a
+    certain coordination number. The remaining order parameters are computed
+    by multiplying the "wt" for that coordination number with the OP value.
+
+    The chem_info parameter can be used to also get chemical descriptors that
+    describe differences in some chemical parameter (e.g., electronegativity)
+    between the central site and the site neighbors.
     """
 
     @staticmethod
@@ -471,11 +478,12 @@ class CrystalNNFingerprint(BaseFeaturizer):
         cn_fingerprint = []
 
         if self.chem_info is not None:
-            prop_absdelta = {}
+            prop_delta = {}  # dictionary of chemical property to final value
             for prop in self.chem_props:
-                prop_absdelta[prop] = 0
+                prop_delta[prop] = 0
             sum_wt = 0
-            elem_central = self._get_species_or_element(struct.sites[idx])
+            elem_central = struct.sites[idx].specie.symbol
+            specie_central = str(struct.sites[idx].specie)
 
         for k in range(max_cn):
             cn = k + 1
@@ -484,16 +492,32 @@ class CrystalNNFingerprint(BaseFeaturizer):
                 for op in self.ops[cn]:
                     if op == "wt":
                         cn_fingerprint.append(wt)
-                        # Compute additional chemistry-related features
+
                         if self.chem_info is not None and wt != 0:
+                            # Compute additional chemistry-related features
                             sum_wt += wt
-                            elem_neighs = [self._get_species_or_element(d["site"]) \
-                                for d in nndata.cn_nninfo[cn]]
+                            neigh_sites = [d["site"] for d in
+                                           nndata.cn_nninfo[cn]]
+
                             for prop in self.chem_props:
-                                elem_propval = self.chem_info[prop]
-                                tmp = sum([elem_propval[elem_neigh[prop]] - \
-                                    elem_propval[elem_central[prop]] for elem_neigh in elem_neighs])
-                                prop_absdelta[prop] += wt * tmp / cn
+                                # get the value for specie, if not fall back to
+                                # value defined for element
+                                prop_central = self.chem_info[prop].get(
+                                    specie_central, self.chem_info[prop].get(
+                                        elem_central))
+
+                                for neigh in neigh_sites:
+                                    elem_neigh = neigh.specie.symbol
+                                    specie_neigh = str(neigh.specie)
+                                    prop_neigh = self.chem_info[prop].get(
+                                        specie_neigh,
+                                        self.chem_info[prop].get(
+                                            elem_neigh))
+
+                                    prop_delta[prop] += wt * \
+                                                           (prop_neigh -
+                                                            prop_central) / cn
+
                     elif wt == 0:
                         cn_fingerprint.append(wt)
                     else:
@@ -505,24 +529,12 @@ class CrystalNNFingerprint(BaseFeaturizer):
                         opval = opval or 0  # handles None
                         cn_fingerprint.append(wt * opval)
         chem_fingerprint = []
-        if self.chem_info is not None:
-            for val in prop_absdelta.values():
-                chem_fingerprint.append(val / sum_wt)
-        return cn_fingerprint + chem_fingerprint
 
-    def _get_species_or_element(self, site):
-        elems = {}
-        for prop in self.chem_info.keys():
-            if site.species_string in self.chem_info[prop].keys():
-                elems[prop] = site.species_string
-            else:
-                elem_str = convert_species_to_element(site.species_string)
-                if elem_str in self.chem_info[prop].keys():
-                    elems[prop] = elem_str
-                else:
-                    raise KeyError("no {} key in chem_info dictionary".format(
-                        site.species_string))
-        return elems
+        if self.chem_info is not None:
+            for val in prop_delta.values():
+                chem_fingerprint.append(val / sum_wt)
+
+        return cn_fingerprint + chem_fingerprint
 
     def feature_labels(self):
         labels = []
@@ -534,7 +546,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
                     labels.append("{} CN_{}".format(op, cn))
         if self.chem_info is not None:
             for prop in self.chem_props:
-                labels.append("{} local abs. diff".format(prop))
+                labels.append("{} local diff".format(prop))
         return labels
 
     def citations(self):
