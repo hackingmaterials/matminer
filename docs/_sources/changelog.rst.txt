@@ -5,9 +5,16 @@
 matminer Changelog
 ==================
 
+**v0.3.5**
+
+* some tools for sklearn Pipeline integration (J. Brenneck)
+* ability to add a chemical descriptor to CNFingerprint (N. Zimmermann, hat tip to S. Dwaraknath and A. Jain)
+* add phase diagram-like "triangle" plot (A. Faghaninia)
+* add harmonic mean (holder_mean::-1) to PropertyStats (A. Jain)
+
 **v0.3.4**
 
-* add XRDPowderPattern featurizer
+* add XRDPowderPattern featurizer (A. Jain)
 * add multi-index support for featurizers (A. Dunn)
 * add BandEdge featurizer (A. Faghaninia)
 * better labels support in xy plots + debugs and cleanups (A. Faghaninia)

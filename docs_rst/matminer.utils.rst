@@ -52,6 +52,14 @@ matminer.utils.kernels module
     :undoc-members:
     :show-inheritance:
 
+matminer.utils.pipeline module
+------------------------------
+
+.. automodule:: matminer.utils.pipeline
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

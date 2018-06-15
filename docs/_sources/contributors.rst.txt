@@ -21,6 +21,7 @@ Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the Hacking
 * Sayan Rowchowdhury
 * Alex Dunn
 * Jason Frost
+* Julien Brenneck
 
 
 University of Chicago

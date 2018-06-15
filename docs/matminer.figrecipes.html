@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.figrecipes package &#8212; matminer 0.3.4 documentation</title>
+    <title>matminer.figrecipes package &#8212; matminer 0.3.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -445,6 +445,68 @@ mode, api_key, username, show_offline_plot</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="matminer.figrecipes.plot.PlotlyFig.setup_labels">
+<code class="descname">setup_labels</code><span class="sig-paren">(</span><em>labels</em>, <em>data</em>, <em>expected_length=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.setup_labels" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Set the input labels to the appropriate format to support labeling of</dt>
+<dd>each data point with one or multiple labels that shows upon hovering
+over the point (Plotly default behavior).</dd>
+<dt>Args:</dt>
+<dd><p class="first">labels (str or [str] or [list]): see the docs for labels in xy
+data (DataFrame or list): A dataframe containing at least</p>
+<blockquote>
+<div>one numerical column. Also accepts lists of numerical values.
+If None, uses the dataframe passed into the constructor.</div></blockquote>
+<dl class="last docutils">
+<dt>expected_length (int): the expected length of the rows/labels. This</dt>
+<dd>is len(data) if data is dataframe and length of axes</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns ([list]): list of labels each with the expected length</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.figrecipes.plot.PlotlyFig.triangle">
+<code class="descname">triangle</code><span class="sig-paren">(</span><em>data=None</em>, <em>cols=None</em>, <em>sum_of_3=1.0</em>, <em>axes_titles=None</em>, <em>labels=None</em>, <em>markers=None</em>, <em>return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.triangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phase diagram type plot for 3 (and only 3) variables that always add
+to a certain number (e.g. 1 or 100%); regardless the rows are separately
+normalized inside plotly so that they add to 1 as otherwise, triangle
+plot does not make sense.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">data: (dataframe): if not set, self.df is used
+cols ([str]): A list of strings specifying the 3 columns of the</p>
+<blockquote>
+<div>dataframe (either data or self.df) to plot the triangle plot
+for. Note that the order of 3 axes is decided based on the
+order of cols.</div></blockquote>
+<p>sum_of_3 (int/float): scale the sum of cols to this number.
+axes_titles ([str]): titles of the 3 axes, this overrides the</p>
+<blockquote>
+<div><p>dataframe column names. Note that if set, axes_titles must be
+of the length 3. Examples:</p>
+<blockquote>
+<div>[‘A’, ‘B’, ‘X’]
+[‘title 1’, ‘’, ‘title 2] (i.e. no title for the 2nd axis)</div></blockquote>
+</div></blockquote>
+<dl class="last docutils">
+<dt>labels (str or [str] or [list]): to set annotation for scatter</dt>
+<dd>points the same for all traces. Note that, several column
+names can be simultaneously used as labels but it is important
+to understand that when labels is set, it is assumed that all
+traces have the same length as the same labels are assigned to</dd>
+<dt>markers (None or dict): plotly marker dict with keys such as size,</dt>
+<dd>symbol, color, line, etc</dd>
+<dt>return_plot (bool): Returns the dictionary representation of the</dt>
+<dd>figure if True.</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns: A Plotly triangle plot Figure object.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.violin">
 <code class="descname">violin</code><span class="sig-paren">(</span><em>data=None</em>, <em>cols=None</em>, <em>use_colorscale=False</em>, <em>rugplot=False</em>, <em>group_col=None</em>, <em>groups=None</em>, <em>colorscale=None</em>, <em>return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.violin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a violin plot using Plotly.</p>
@@ -520,7 +582,7 @@ ticks will be updated to reflect -min or max+ at the two ends.</dd>
 names can be simultaneously used as labels but it is important
 to understand that when labels is set, it is assumed that all
 traces have the same length as the same labels are assigned to
-all traces.</p>
+all traces (if there are more than one trace of course).</p>
 <blockquote class="last">
 <div><dl class="docutils">
 <dt>Examples:</dt>
@@ -624,7 +686,7 @@ with mode in __init__).</div></blockquote>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 
