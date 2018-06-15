@@ -193,9 +193,10 @@ class FingerprintTests(PymatgenTest):
             'octahedral CN_6')], 1, places=7)
         ops = cnnfp.featurize(self.cscl, 0)
         self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
-            'wt CN_8')], 0.5, places=1)
+            'wt CN_8')], 0.498099, places=3)
+
         self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
-            'body-centered cubic CN_8')], 0.5, places=1)
+            'body-centered cubic CN_8')], 0.47611, places=3)
 
         op_types = {6: ["wt", "oct_max"], 8: ["wt", "bcc"]}
         cnnfp = CrystalNNFingerprint(
