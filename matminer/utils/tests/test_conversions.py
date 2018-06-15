@@ -10,8 +10,7 @@ from pymatgen.core.structure import IStructure
 from matminer.utils.conversions import dict_to_object, \
     structure_to_oxidstructure, \
     str_to_composition, json_to_object, structure_to_composition, \
-    composition_to_oxidcomposition, structure_to_istructure, \
-    convert_species_to_element
+    composition_to_oxidcomposition, structure_to_istructure
 from pymatgen import Composition, Lattice, Structure, Element
 
 
@@ -110,9 +109,3 @@ class TestConversions(TestCase):
         #  to the original structure
         self.assertIsInstance(df["istructure"][0], IStructure)
         self.assertEqual(df["istructure"][0], df["structure"][0])
-
-    def test_convert_species_to_element(self):
-        self.assertEqual("O", convert_species_to_element("O"))
-        self.assertEqual("O", convert_species_to_element("O2-"))
-        self.assertEqual("Al", convert_species_to_element("Al+3"))
-
