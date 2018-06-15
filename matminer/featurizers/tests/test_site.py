@@ -232,11 +232,11 @@ class FingerprintTests(PymatgenTest):
 
         feats = cnnchemfp.featurize(self.cscl, 0)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
-            'bcc CN_8')]+0.005, 0.48, places=1)
+            'bcc CN_8')], 0.4761107, places=3)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
-            'mass local diff')], 97.5, places=1)
+            'mass local diff')], 97.5, places=3)
         self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
-            'Pauling scale local diff')], -2.37, places=2)
+            'Pauling scale local diff')], -2.37, places=3)
 
 
     def test_chemenv_site_fingerprint(self):
