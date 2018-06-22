@@ -8,7 +8,7 @@ from six import string_types
 from multiprocessing import Pool, cpu_count
 
 from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
-from matminer.utils.conversions import homogenize_multiindex
+from matminer.utils.utils import homogenize_multiindex
 
 
 class BaseFeaturizer(BaseEstimator, TransformerMixin):
