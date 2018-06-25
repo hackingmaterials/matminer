@@ -1494,7 +1494,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
                                      'determine the correct feature labels.')
 
     @staticmethod
-    def from_preset(preset, width=0.5, spacing=0.5, cutoff=10, mode='GRDF'):
+    def from_preset(preset, width=1.0, spacing=1.0, cutoff=10, mode='GRDF'):
         '''
         Preset bin functionals for this featurizer. Example use:
             >>> GRDF = GeneralizedRadialDistributionFunction.from_preset('gaussian')
@@ -1512,7 +1512,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
             bins = []
             for center in np.arange(0., cutoff, spacing):
                 bins.append(('Gauss {}'.format(center),
-                             lambda d: np.exp(-width * (d - center)**2.)))
+                             lambda d, center=center: np.exp(-width * (d - center)**2.)))
             return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
                                                          mode=mode)
 
@@ -1520,7 +1520,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
             bins = []
             for center in np.arange(0. + (width / 2.), cutoff, spacing):
                 bins.append(('Hist {}'.format(center),
-                             lambda d: np.where(center - (width / 2.) <= d,
+                             lambda d, center=center: np.where(center - (width / 2.) <= d,
                                                 1., 0.) *
                              np.where(d < center + (width / 2.), 1., 0.)))
             return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
@@ -1539,7 +1539,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
                 'al Society}, doi = {10.1103/PhysRevB.95.144110}}']
 
     def implementors(self):
-        return ["Maxwell Dylla", "Saurabh Bajaj"]
+        return ["Maxwell Dylla", "Saurabh Bajaj", "Logan Williams"]
 
 
 class AngularFourierSeries(BaseFeaturizer):
@@ -1656,14 +1656,14 @@ class AngularFourierSeries(BaseFeaturizer):
             bins = []
             for center in np.arange(0., cutoff, spacing):
                 bins.append(('Gauss {}'.format(center),
-                             lambda d: np.exp(-width * (d - center)**2.)))
+                             lambda d, center=center: np.exp(-width * (d - center)**2.)))
             return AngularFourierSeries(bins, cutoff=cutoff)
 
         elif preset == "histogram":
             bins = []
             for center in np.arange(0. + (width / 2.), cutoff, spacing):
                 bins.append(('Hist {}'.format(center),
-                             lambda d: np.where(center - (width / 2.) <= d,
+                             lambda d, center=center: np.where(center - (width / 2.) <= d,
                                                 1., 0.) *
                              np.where(d < center + (width / 2.), 1., 0.)))
             return AngularFourierSeries(bins, cutoff=cutoff)
@@ -1681,7 +1681,7 @@ class AngularFourierSeries(BaseFeaturizer):
                 'al Society}, doi = {10.1103/PhysRevB.95.144110}}']
 
     def implementors(self):
-        return ["Maxwell Dylla"]
+        return ["Maxwell Dylla", "Logan Williams"]
 
 
 # TODO: Figure out whether to take NN-counting method as an option (see VoronoiFingerprint)
