@@ -1073,7 +1073,7 @@ class EwaldEnergy(BaseFeaturizer):
     Features:
         ewald_energy - Coulomb interaction energy of the structure"""
 
-    def __init__(self, accuracy=12):
+    def __init__(self, accuracy=4):
         """
         Args:
             accuracy (int): Accuracy of Ewald summation, number of decimal places
