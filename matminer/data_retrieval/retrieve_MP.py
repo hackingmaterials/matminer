@@ -2,6 +2,7 @@ import pandas as pd
 from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 
 from pymatgen import MPRester
+from pymatgen.ext.matproj import MPRestError
 
 __author__ = ['Saurabh Bajaj <sbajaj@lbl.gov>',
              'Alireza Faghaninia <alireza.faghaninia@gmail.com>',
@@ -29,14 +30,36 @@ class MPDataRetrieval(BaseDataRetrieval):
         Gets data from MP in a dataframe format. See api_link for more details.
 
         Args:
-            all arguments including criteria, properties and index_mpid are the
-            same as in get_data
+            criteria (dict): the same as in get_data
+            properties ([str]): the same properties supported as in get_data
+                plus: "structure", "initial_structure", "final_structure",
+                "bandstructure" (line mode), "bandstructure_uniform",
+                "phonon_bandstructure", "phonon_ddb", "phonon_bandstructure",
+                "phonon_dos". Note that for a long list of compounds, it may
+                take a long time to retrieve some of these objects.
+            index_mpid (bool): the same as in get_data
+            kwargs (dict): the same keyword arguments as in get_data
 
         Returns (pandas.Dataframe):
         """
         data = self.get_data(criteria=criteria, properties=properties,
                              index_mpid=index_mpid, **kwargs)
         df = pd.DataFrame(data, columns=properties)
+        for prop in ["dos", "phonon_dos",
+                     "phonon_bandstructure", "phonon_ddb"]:
+            if prop in properties:
+                df[prop] = self.try_get_prop_by_material_id(
+                    prop=prop, material_id_list=df["material_id"].values)
+        if "bandstructure" in properties:
+            df["bandstructure"] = self.try_get_prop_by_material_id(
+                prop="bandstructure",
+                material_id_list=df["material_id"].values,
+                line_mode=True)
+        if "bandstructure_uniform" in properties:
+            df["bandstructure_uniform"] = self.try_get_prop_by_material_id(
+                prop="bandstructure",
+                material_id_list=df["material_id"].values,
+                line_mode=False)
         if index_mpid:
             df = df.set_index("material_id")
         return df
@@ -65,3 +88,31 @@ class MPDataRetrieval(BaseDataRetrieval):
             properties.append("material_id")
         data = self.mprester.query(criteria, properties, mp_decode)
         return data
+
+    def try_get_prop_by_material_id(self, prop, material_id_list, **kwargs):
+        """
+        Call the relevant get_prop_by_material_id. "prop" is a property such
+        as bandstructure that is not readily available in supported properties
+        of the get_data function but via the get_bandstructure_by_material_id
+        method for example.
+
+        Args:
+            prop (str): the name of the property. Options are:
+                "bandstructure", "dos", "phonon_dos", "phonon_bandstructure",
+                "phonon_ddb"
+            material_id_list ([str]): list of material_id of compounds
+            kwargs (dict): other keyword arguments that get_*_by_material_id
+                may have; e.g. line_mode in get_bandstructure_by_material_id
+
+        Returns ([target prop object or NaN]):
+            If the target property is not available for a certain material_id,
+            NaN is returned.
+        """
+        method = getattr(self.mprester, "get_{}_by_material_id".format(prop))
+        props = []
+        for material_id in material_id_list:
+            try:
+                props.append(method(material_id=material_id, **kwargs))
+            except MPRestError:
+                props.append(float('NaN'))
+        return props
