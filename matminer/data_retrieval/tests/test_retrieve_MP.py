@@ -20,17 +20,15 @@ class MPDataRetrievalTest(unittest.TestCase):
             df = self.mpdr.get_dataframe(criteria={"material_id": "mp-23"},
                                          properties=["structure",
                                                      "bandstructure",
+                                                     "bandstructure_uniform",
                                                      "dos"])
             self.assertEqual(len(df["structure"]), 1)
             self.assertEqual(df["bandstructure"][0].get_band_gap()["energy"],0)
-            self.assertTrue(isinstance(df["bandstructure"][0], BandStructureSymmLine))
+            self.assertTrue(isinstance(df["bandstructure"][0],
+                                       BandStructureSymmLine))
+            self.assertTrue(isinstance(df["bandstructure_uniform"][0],
+                                       BandStructure))
             self.assertTrue(isinstance(df["dos"][0], CompleteDos))
-
-            df = self.mpdr.get_dataframe(criteria={"material_id": "mp-23"},
-                                         properties=["bandstructure"],
-                                         line_mode=False)
-            self.assertTrue(isinstance(df["bandstructure"][0], BandStructure))
-
         else:
             raise SkipTest("Skipped MPDataRetrieval test; no MAPI_KEY detected")
 
