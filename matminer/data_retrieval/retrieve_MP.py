@@ -25,8 +25,7 @@ class MPDataRetrieval(BaseDataRetrieval):
     def api_link(self):
         return "https://materialsproject.org/wiki/index.php/The_Materials_API"
 
-    def get_dataframe(self, criteria, properties, index_mpid=True,
-                      line_mode=True, **kwargs):
+    def get_dataframe(self, criteria, properties, index_mpid=True, **kwargs):
         """
         Gets data from MP in a dataframe format. See api_link for more details.
 
@@ -34,13 +33,11 @@ class MPDataRetrieval(BaseDataRetrieval):
             criteria (dict): the same as in get_data
             properties ([str]): the same properties supported as in get_data
                 plus: "structure", "initial_structure", "final_structure",
-                "bandstructure", "phonon_bandstructure", "phonon_ddb",
-                "phonon_bandstructure", "phonon_dos". Note that for a long list
-                of compounds, it make take a long time to retain some of these
-                objects.
+                "bandstructure" (line mode), "bandstructure_uniform",
+                "phonon_bandstructure", "phonon_ddb", "phonon_bandstructure",
+                "phonon_dos". Note that for a long list of compounds, it may
+                take a long time to retrieve some of these objects.
             index_mpid (bool): the same as in get_data
-            line_mode (bool): the bandstructure returned in line mode (True) or
-                uiform (False). Ignored if "bandstructure" not in properties
             kwargs (dict): the same keyword arguments as in get_data
 
         Returns (pandas.Dataframe):
@@ -57,7 +54,12 @@ class MPDataRetrieval(BaseDataRetrieval):
             df["bandstructure"] = self.try_get_prop_by_material_id(
                 prop="bandstructure",
                 material_id_list=df["material_id"].values,
-                line_mode=line_mode)
+                line_mode=True)
+        if "bandstructure_uniform" in properties:
+            df["bandstructure_uniform"] = self.try_get_prop_by_material_id(
+                prop="bandstructure",
+                material_id_list=df["material_id"].values,
+                line_mode=False)
         if index_mpid:
             df = df.set_index("material_id")
         return df
