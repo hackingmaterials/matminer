@@ -282,7 +282,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         elements = set([Element(e) for e in self.include_elems])
 
         # Get all of elements that appaer
-        for strc, in X:
+        for strc in X:
             elements.update([e.element if isinstance(e, Specie) else e for e in strc.composition.keys()])
 
         # Remove the elements excluded by the user
