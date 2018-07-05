@@ -4,7 +4,7 @@ import sys, traceback
 import warnings
 import pandas as pd
 import numpy as np
-from six import string_types
+from six import string_types, reraise
 from multiprocessing import Pool, cpu_count
 
 from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
@@ -291,7 +291,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 return self.featurize(*x) + [float("nan")]
             else:
                 return self.featurize(*x)
-        except BaseException:
+        except BaseException as e:
             if self.__ignore_errors:
                 if self.__return_errors:
                     features = [float("nan")] * len(self.feature_labels())
@@ -300,7 +300,12 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 else:
                     return [float("nan")] * len(self.feature_labels())
             else:
-                raise
+                msg = str(e)
+                msg += "\nTo skip errors when featurizing specific compounds," \
+                       " consider running the batch featurize() operation " \
+                       "(e.g., featurize_many(), featurize_dataframe(), etc.)" \
+                       " with ignore_errors=True"
+                reraise(type(e), type(e)(msg), sys.exc_info()[2])
 
     def featurize(self, *x):
         """
