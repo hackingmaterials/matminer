@@ -5,6 +5,14 @@
 matminer Changelog
 ==================
 
+
+**v0.3.6**
+
+* Improve MPDataRetrieval to serialize objects (A. Faghaninia)
+* Some fixes to GDRF and AFS (L. Williams, M. Dylla)
+* Some fixes for Ewald (A. Faghaninia)
+* improve error messages (A. Jain)
+
 **v0.3.5**
 
 * some tools for sklearn Pipeline integration (J. Brenneck)

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.data_retrieval package &#8212; matminer 0.3.5 documentation</title>
+    <title>matminer.data_retrieval package &#8212; matminer 0.3.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -326,10 +326,44 @@ possible.</dd>
 <dd><p>Gets data from MP in a dataframe format. See api_link for more details.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>all arguments including criteria, properties and index_mpid are the
-same as in get_data</dd>
+<dd><p class="first">criteria (dict): the same as in get_data
+properties ([str]): the same properties supported as in get_data</p>
+<blockquote>
+<div>plus: “structure”, “initial_structure”, “final_structure”,
+“bandstructure” (line mode), “bandstructure_uniform”,
+“phonon_bandstructure”, “phonon_ddb”, “phonon_bandstructure”,
+“phonon_dos”. Note that for a long list of compounds, it may
+take a long time to retrieve some of these objects.</div></blockquote>
+<p class="last">index_mpid (bool): the same as in get_data
+kwargs (dict): the same keyword arguments as in get_data</p>
+</dd>
 </dl>
 <p>Returns (pandas.Dataframe):</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.try_get_prop_by_material_id">
+<code class="descname">try_get_prop_by_material_id</code><span class="sig-paren">(</span><em>prop</em>, <em>material_id_list</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.try_get_prop_by_material_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the relevant get_prop_by_material_id. “prop” is a property such
+as bandstructure that is not readily available in supported properties
+of the get_data function but via the get_bandstructure_by_material_id
+method for example.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>prop (str): the name of the property. Options are:</dt>
+<dd>“bandstructure”, “dos”, “phonon_dos”, “phonon_bandstructure”,
+“phonon_ddb”</dd>
+</dl>
+<p>material_id_list ([str]): list of material_id of compounds
+kwargs (dict): other keyword arguments that get_*_by_material_id</p>
+<blockquote class="last">
+<div>may have; e.g. line_mode in get_bandstructure_by_material_id</div></blockquote>
+</dd>
+<dt>Returns ([target prop object or NaN]):</dt>
+<dd>If the target property is not available for a certain material_id,
+NaN is returned.</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -420,7 +454,7 @@ inclusively. See unit tests for examples of what this is doing.</p>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_base.BaseDataRetrieval">
 <em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_base.</code><code class="descname">BaseDataRetrieval</code><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract class to retrieve data from various material APIs while adhering to
 a quasi-standard format for querying.</p>
 <p>## Implementing a new DataRetrieval class</p>
@@ -564,7 +598,7 @@ criteria.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.6 documentation</a> &#187;</li> 
       </ul>
     </div>
 

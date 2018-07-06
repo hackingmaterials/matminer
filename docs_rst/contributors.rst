@@ -48,3 +48,4 @@ Other
 * Evgeny Blokhin (Tilde Lab)
 * Max Dylla (Snyder Research Group, Northwestern University)
 * David Waroquiers (UC Louvain, Belgium)
+* Logan Williams (U Michigan Ann Arbor)
