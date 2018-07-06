@@ -490,13 +490,10 @@ class FingerprintTests(PymatgenTest):
         grdf = GeneralizedRadialDistributionFunction.from_preset('gaussian')
         grdf.featurize(self.sc, 0)
         self.assertArrayEqual([bin[0] for bin in grdf.bins],
-                              ['Gauss 0.0', 'Gauss 0.5', 'Gauss 1.0',
-                               'Gauss 1.5', 'Gauss 2.0', 'Gauss 2.5',
-                               'Gauss 3.0', 'Gauss 3.5', 'Gauss 4.0',
-                               'Gauss 4.5', 'Gauss 5.0', 'Gauss 5.5',
-                               'Gauss 6.0', 'Gauss 6.5', 'Gauss 7.0',
-                               'Gauss 7.5', 'Gauss 8.0', 'Gauss 8.5',
-                               'Gauss 9.0', 'Gauss 9.5'])
+                              ['Gauss 0.0', 'Gauss 1.0', 'Gauss 2.0',
+                               'Gauss 3.0', 'Gauss 4.0', 'Gauss 5.0',
+                               'Gauss 6.0', 'Gauss 7.0', 'Gauss 8.0',
+                               'Gauss 9.0'])
 
     def test_afs(self):
         f1 = ('Gauss b=0', lambda x: np.exp(-(x**2.)))
