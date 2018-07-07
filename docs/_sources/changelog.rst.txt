@@ -5,6 +5,38 @@
 matminer Changelog
 ==================
 
+
+**v0.3.6**
+
+* Improve MPDataRetrieval to serialize objects (A. Faghaninia)
+* Some fixes to GDRF and AFS (L. Williams, M. Dylla)
+* Some fixes for Ewald (A. Faghaninia)
+* improve error messages (A. Jain)
+
+**v0.3.5**
+
+* some tools for sklearn Pipeline integration (J. Brenneck)
+* ability to add a chemical descriptor to CNFingerprint (N. Zimmermann, hat tip to S. Dwaraknath and A. Jain)
+* add phase diagram-like "triangle" plot (A. Faghaninia)
+* add harmonic mean (holder_mean::-1) to PropertyStats (A. Jain)
+
+**v0.3.4**
+
+* add XRDPowderPattern featurizer (A. Jain)
+* add multi-index support for featurizers (A. Dunn)
+* add BandEdge featurizer (A. Faghaninia)
+* better labels support in xy plots + debugs and cleanups (A. Faghaninia)
+* deprecate CrystalSiteFingerprint
+* remove  a few old and unused site OP functions/methods (A. Jain)
+* doc improvements (A. Faghaninia)
+* bug fixes, minor code improvements, etc. (N. Zimmermann, A. Dunn, Q. Wang, A. Faghaninia)
+
+**v0.3.3**
+
+* add StackedFeaturizer (L. Ward)
+* changes to reference energies in BranchPointEnergy featurizer (A. Faghaninia)
+* doc improvements (A. Dunn)
+
 **v0.3.2**
 
 * Major overhaul / redesign of data retrieval classes for consistency (A. Faghaninia, A. Dunn)

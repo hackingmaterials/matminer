@@ -1,8 +1,6 @@
 import json
-
 from monty.json import MontyDecoder
-from pandas import Series
-
+import pandas as pd
 from pymatgen import Composition
 from pymatgen.core.structure import IStructure
 
@@ -98,8 +96,8 @@ def structure_to_oxidstructure(series, inplace=False, **kwargs):
     if inplace:
         series.map(lambda s: s.add_oxidation_state_by_guess(**kwargs))
     else:
-        copy = Series(data=[x.copy() for x in series.tolist()],
-                      index=series.index, dtype=series.dtype)
+        copy = pd.Series(data=[x.copy() for x in series.tolist()],
+                         index=series.index, dtype=series.dtype)
         copy.map(lambda s: s.add_oxidation_state_by_guess(**kwargs))
         return copy
 
@@ -115,5 +113,6 @@ def composition_to_oxidcomposition(series, **kwargs):
     Returns:
         a pd.Series with oxidation state Composition object components
     """
-    
+
     return series.map(lambda c: c.add_charges_from_oxi_state_guesses(**kwargs))
+

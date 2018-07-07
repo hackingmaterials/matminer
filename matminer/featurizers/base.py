@@ -4,10 +4,11 @@ import sys, traceback
 import warnings
 import pandas as pd
 import numpy as np
-from six import string_types
+from six import string_types, reraise
 from multiprocessing import Pool, cpu_count
 
-from sklearn.base import TransformerMixin, BaseEstimator
+from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
+from matminer.utils.utils import homogenize_multiindex
 
 
 class BaseFeaturizer(BaseEstimator, TransformerMixin):
@@ -155,7 +156,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                                         **kwargs)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
+                            return_errors=False, inplace=True,
+                            multiindex=False):
         """
         Compute features for all entries contained in input dataframe.
 
@@ -195,6 +197,15 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if return_errors:
             labels.append(self.__class__.__name__ + " Exceptions")
 
+        if multiindex:
+            indices = ([self.__class__.__name__], labels)
+            labels = pd.MultiIndex.from_product(indices)
+            df = homogenize_multiindex(df, "Input Data")
+        elif isinstance(df.columns, pd.MultiIndex):
+            # If input df is multi, but multi not enabled...
+            raise ValueError("Please enable multiindexing to featurize an input"
+                             " dataframe containing a column multiindex.")
+
         # Create dataframe with the new features
         res = pd.DataFrame(features, index=df.index, columns=labels)
 
@@ -207,7 +218,6 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             # Create new dataframe and ensure columns are ordered properly
             new = pd.concat([df, res], axis=1)
             return new[df.columns.tolist() + res.columns.tolist()]
-
 
     def featurize_many(self, entries, ignore_errors=False, return_errors=False):
         """
@@ -281,7 +291,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 return self.featurize(*x) + [float("nan")]
             else:
                 return self.featurize(*x)
-        except BaseException:
+        except BaseException as e:
             if self.__ignore_errors:
                 if self.__return_errors:
                     features = [float("nan")] * len(self.feature_labels())
@@ -290,7 +300,12 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 else:
                     return [float("nan")] * len(self.feature_labels())
             else:
-                raise
+                msg = str(e)
+                msg += "\nTo skip errors when featurizing specific compounds," \
+                       " consider running the batch featurize() operation " \
+                       "(e.g., featurize_many(), featurize_dataframe(), etc.)" \
+                       " with ignore_errors=True"
+                reraise(type(e), type(e)(msg), sys.exc_info()[2])
 
     def featurize(self, *x):
         """
@@ -366,12 +381,24 @@ class MultipleFeaturizer(BaseFeaturizer):
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
 
+    def fit_featurize_dataframe(self, df, col_id, *args, **kwargs):
+        for f in self.featurizers:
+            f.fit(df[col_id])
+        return self.featurize_dataframe(df, col_id, *args, **kwargs)
+
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True):
+                            return_errors=False, inplace=True,
+                            multiindex=False):
         """
         Featurize dataframe is overloaded in order to allow
         compatibility with Featurizers that overload featurize_dataframe
         """
+
+        if multiindex:
+            if not isinstance(df.columns, pd.MultiIndex):
+                col_id = ("Input Data", col_id)
+            df = homogenize_multiindex(df, "Input Data")
+
         # Detect if any featurizers override featurize_dataframe
         override = ["featurize_dataframe" in f.__class__.__dict__.keys()
                     for f in self.featurizers]
@@ -379,13 +406,16 @@ class MultipleFeaturizer(BaseFeaturizer):
             warnings.warn(
                 "One or more featurizers overrides featurize_dataframe, "
                 "featurization will be sequential and may diminish performance")
-            for f in self.featurizers:
-                df = f.featurize_dataframe(df, col_id, ignore_errors,
-                                           return_errors, inplace)
-                df[f.feature_labels()] = df[f.feature_labels()].applymap(np.squeeze)
-        else:
-            df = super(MultipleFeaturizer, self).featurize_dataframe(
-                df, col_id, ignore_errors, return_errors, inplace)
+
+        for f in self.featurizers:
+            df = f.featurize_dataframe(df, col_id, ignore_errors,
+                                       return_errors, inplace, multiindex)
+
+            if multiindex:
+                feature_labels = [(f.__class__.__name__, flabel) for flabel in f.feature_labels()]
+            else:
+                feature_labels = f.feature_labels()
+            df[feature_labels] = df[feature_labels].applymap(np.squeeze)
         return df
 
     def citations(self):
@@ -393,3 +423,72 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def implementors(self):
         return list(set(sum([f.implementors() for f in self.featurizers], [])))
+
+
+class StackedFeaturizer(BaseFeaturizer):
+    """Use the output of a machine learning model as features
+
+    For regression models, we use the single output class.
+
+    For classification models, we use the probability for the first N-1 classes where N is the
+    number of classes.
+    """
+
+    def __init__(self, featurizer=None, model=None, name=None, class_names=None):
+        """Initialize featurizer
+
+        Args:
+            featurizer (BaseFeaturizer): Featurizer used to generate inputs to the model
+            model (BaseEstimator): Fitted machine learning model to be evaluated
+            name (str): [Optional] name of model, used when creating feature names
+                class_names ([str]): Required for classification models, used when creating
+                feature names (scikit-learn does not specify the number of classes for
+                a classifier). Class names must be in the same order as the classes in the model
+                (e.g., class_names[0] must be the name of the class 0)
+        """
+
+        # Store settings
+        self.name = name
+        self.class_names = class_names
+        self.featurizer = featurizer
+        self.model = model
+
+        # Present warning about class_names
+        if self.class_names is None and self._is_classifier():
+            print('WARNING: Class names are required for featurize_dataframe and feature_labels',
+                  file=sys.stderr)
+
+    def _is_classifier(self):
+        """Whether the underlying model is a classifier
+
+        Return:
+            (boolean) whether `self.model` is a classifier
+        """
+        return is_classifier(self.model) or hasattr(self.model, 'predict_proba')
+
+    def featurize(self, *x):
+        # Generate the features
+        # TODO: Explore checking whether features have already been computed. Feature for MultiFeaturizer? -lw
+        features = [self.featurizer.featurize(*x)]
+
+        # Run the model
+        if self._is_classifier():
+            output = self.model.predict_proba(features)[0]
+            return output[:-1]
+        else:
+            return [self.model.predict(features)]
+
+    def feature_labels(self):
+        name = self.name or ''
+        if self._is_classifier():
+            if self.class_names is None:
+                raise ValueError('Class names are required for classification models')
+            return ['{} P({})'.format(name, cn).lstrip() for cn in self.class_names[:-1]]
+        else:
+            return ['{} prediction'.format(name).lstrip()]
+
+    def implementors(self):
+        return ['Logan Ward']
+
+    def citations(self):
+        return []

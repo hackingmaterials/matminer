@@ -7,10 +7,12 @@ from pymatgen.util.testing import PymatgenTest
 from pymatgen.analysis.local_env import VoronoiNN, JMolNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
-    OPSiteFingerprint, CrystalSiteFingerprint, EwaldSiteEnergy, \
+    OPSiteFingerprint, CrystalNNFingerprint, \
+    EwaldSiteEnergy, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
     GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference
+from matminer.featurizers.deprecated import CrystalSiteFingerprint
 
 
 class FingerprintTests(PymatgenTest):
@@ -121,6 +123,11 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(ops[opsf.feature_labels().index(
             'body-centered cubic CN_8')], 0.9555, places=7)
 
+        # The following test aims at ensuring the copying of the OP dictionaries work.
+        opsfp = OPSiteFingerprint()
+        cnnfp = CrystalNNFingerprint.from_preset('ops')
+        self.assertEqual(len([1 for l in opsfp.feature_labels() if l.split()[0] == 'wt']), 0)
+
     def test_crystal_site_fingerprint(self):
         csf = CrystalSiteFingerprint.from_preset('ops')
         l = csf.feature_labels()
@@ -153,6 +160,85 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(ops[csf.feature_labels().index(
             'body-centered cubic CN_8')], 0.5329344, places=7)
 
+    def test_crystal_nn_fingerprint(self):
+        cnnfp = CrystalNNFingerprint.from_preset(
+                'ops', distance_cutoffs=None, x_diff_weight=None)
+        l = cnnfp.feature_labels()
+        t = ['wt CN_1', 'sgl_bd CN_1', 'wt CN_2', 'L-shaped CN_2',
+             'water-like CN_2', 'bent 120 degrees CN_2',
+             'bent 150 degrees CN_2', 'linear CN_2', 'wt CN_3',
+             'trigonal planar CN_3', 'trigonal non-coplanar CN_3',
+             'T-shaped CN_3', 'wt CN_4', 'square co-planar CN_4',
+             'tetrahedral CN_4', 'rectangular see-saw-like CN_4',
+             'see-saw-like CN_4', 'trigonal pyramidal CN_4', 'wt CN_5',
+             'pentagonal planar CN_5', 'square pyramidal CN_5',
+             'trigonal bipyramidal CN_5', 'wt CN_6', 'hexagonal planar CN_6',
+             'octahedral CN_6', 'pentagonal pyramidal CN_6', 'wt CN_7',
+             'hexagonal pyramidal CN_7', 'pentagonal bipyramidal CN_7',
+             'wt CN_8', 'body-centered cubic CN_8',
+             'hexagonal bipyramidal CN_8', 'wt CN_9', 'q2 CN_9', 'q4 CN_9',
+             'q6 CN_9', 'wt CN_10', 'q2 CN_10', 'q4 CN_10', 'q6 CN_10',
+             'wt CN_11', 'q2 CN_11', 'q4 CN_11', 'q6 CN_11', 'wt CN_12',
+             'cuboctahedral CN_12', 'q2 CN_12', 'q4 CN_12', 'q6 CN_12',
+             'wt CN_13', 'wt CN_14', 'wt CN_15', 'wt CN_16', 'wt CN_17',
+             'wt CN_18', 'wt CN_19', 'wt CN_20', 'wt CN_21', 'wt CN_22',
+             'wt CN_23', 'wt CN_24']
+        for i in range(len(l)):
+            self.assertEqual(l[i], t[i])
+        ops = cnnfp.featurize(self.sc, 0)
+        self.assertEqual(len(ops), 61)
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
+            'wt CN_6')], 1, places=7)
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
+            'octahedral CN_6')], 1, places=7)
+        ops = cnnfp.featurize(self.cscl, 0)
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
+            'wt CN_8')], 0.498099, places=3)
+
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index(
+            'body-centered cubic CN_8')], 0.47611, places=3)
+
+        op_types = {6: ["wt", "oct_max"], 8: ["wt", "bcc"]}
+        cnnfp = CrystalNNFingerprint(
+            op_types, distance_cutoffs=None, \
+            x_diff_weight=None)
+        labels = ['wt CN_6', 'oct_max CN_6', \
+                  'wt CN_8', 'bcc CN_8']
+        for l1, l2 in zip(cnnfp.feature_labels(), labels):
+            self.assertEqual(l1, l2)
+        feats = cnnfp.featurize(self.sc, 0)
+        self.assertEqual(len(feats), 4)
+
+        chem_info = {"mass": {"Al": 26.9, "Cs+": 132.9,"Cl-": 35.4}, \
+            "Pauling scale": {"Al": 1.61, "Cs+": 0.79, "Cl-": 3.16}}
+        cnnchemfp = CrystalNNFingerprint(
+            op_types, chem_info=chem_info, distance_cutoffs=None, \
+            x_diff_weight=None)
+        labels = labels + ['mass local diff', \
+            'Pauling scale local diff']
+        for l1, l2 in zip(cnnchemfp.feature_labels(), labels):
+            self.assertEqual(l1, l2)
+
+        feats = cnnchemfp.featurize(self.sc, 0)
+        self.assertEqual(len(feats), 6)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
+            'wt CN_6')], 1, places=7)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
+            'oct_max CN_6')], 1, places=7)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
+            'mass local diff')], 0, places=7)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
+            'Pauling scale local diff')], 0, places=7)
+
+        feats = cnnchemfp.featurize(self.cscl, 0)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
+            'bcc CN_8')], 0.4761107, places=3)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
+            'mass local diff')], 97.5, places=3)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index(
+            'Pauling scale local diff')], -2.37, places=3)
+
+
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset('multi_weights')
         l = cefp.feature_labels()
@@ -175,7 +261,7 @@ class FingerprintTests(PymatgenTest):
 
     def test_voronoifingerprint(self):
         df_sc= pd.DataFrame({'struct': [self.sc], 'site': [0]})
-        vorofp = VoronoiFingerprint(use_weights=True)
+        vorofp = VoronoiFingerprint(use_symm_weights=True)
         vorofps = vorofp.featurize_dataframe(df_sc, ['struct', 'site'])
         self.assertAlmostEqual(vorofps['Voro_index_3'][0], 0.0)
         self.assertAlmostEqual(vorofps['Voro_index_4'][0], 6.0)
@@ -404,13 +490,10 @@ class FingerprintTests(PymatgenTest):
         grdf = GeneralizedRadialDistributionFunction.from_preset('gaussian')
         grdf.featurize(self.sc, 0)
         self.assertArrayEqual([bin[0] for bin in grdf.bins],
-                              ['Gauss 0.0', 'Gauss 0.5', 'Gauss 1.0',
-                               'Gauss 1.5', 'Gauss 2.0', 'Gauss 2.5',
-                               'Gauss 3.0', 'Gauss 3.5', 'Gauss 4.0',
-                               'Gauss 4.5', 'Gauss 5.0', 'Gauss 5.5',
-                               'Gauss 6.0', 'Gauss 6.5', 'Gauss 7.0',
-                               'Gauss 7.5', 'Gauss 8.0', 'Gauss 8.5',
-                               'Gauss 9.0', 'Gauss 9.5'])
+                              ['Gauss 0.0', 'Gauss 1.0', 'Gauss 2.0',
+                               'Gauss 3.0', 'Gauss 4.0', 'Gauss 5.0',
+                               'Gauss 6.0', 'Gauss 7.0', 'Gauss 8.0',
+                               'Gauss 9.0'])
 
     def test_afs(self):
         f1 = ('Gauss b=0', lambda x: np.exp(-(x**2.)))

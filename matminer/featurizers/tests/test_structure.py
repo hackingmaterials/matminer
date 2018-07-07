@@ -15,13 +15,13 @@ from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import ElementProperty
 from matminer.featurizers.structure import DensityFeatures, \
-    RadialDistributionFunction, RadialDistributionFunctionPeaks, \
-    PartialRadialDistributionFunction, ElectronicRadialDistributionFunction, \
+    RadialDistributionFunction, PartialRadialDistributionFunction, \
+    ElectronicRadialDistributionFunction, \
     MinimumRelativeDistances, SiteStatsFingerprint, CoulombMatrix, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
-    Dimensionality
+    Dimensionality, XRDPowderPattern
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -108,12 +108,6 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             rdf['distribution'][int(round(19.9 / 0.1))], 0.822126129)
 
-        # Make sure it finds the locations of non-zero peaks correctly
-        peaks = RadialDistributionFunctionPeaks().featurize(rdforig)[0]
-        self.assertEqual(len(peaks), 2)
-        self.assertAlmostEqual(2.5, peaks[0])
-        self.assertAlmostEqual(1.5, peaks[1])
-
         # Repeat test with NaCl (omitting comments). Altering cutoff distance
         rdforig = RadialDistributionFunction(cutoff=10).featurize(self.nacl)
         rdf = rdforig[0]
@@ -126,11 +120,6 @@ class StructureFeaturesTest(PymatgenTest):
             rdf['distribution'][int(round(4.0 / 0.1))], 26.83338723)
         self.assertAlmostEqual(
             rdf['distribution'][int(round(9.8 / 0.1))], 3.024406467)
-
-        peaks = RadialDistributionFunctionPeaks().featurize(rdforig)[0]
-        self.assertEqual(len(peaks), 2)
-        self.assertAlmostEqual(2.8, peaks[0])
-        self.assertAlmostEqual(4.0, peaks[1])
 
         # Repeat test with CsCl. Altering cutoff distance and bin_size
         rdforig = RadialDistributionFunction(
@@ -145,13 +134,6 @@ class StructureFeaturesTest(PymatgenTest):
             rdf['distribution'][int(round(4.0 / 0.5))], 3.937582548)
         self.assertAlmostEqual(
             rdf['distribution'][int(round(7.0 / 0.5))], 1.805505363)
-
-        peaks = RadialDistributionFunctionPeaks(n_peaks=3).featurize(
-            rdforig)[0]
-        self.assertEqual(len(peaks), 3)
-        self.assertAlmostEqual(3.5, peaks[0])
-        self.assertAlmostEqual(6.5, peaks[1])
-        self.assertAlmostEqual(5, 5, peaks[2])
 
     def test_prdf(self):
         # Test a few peaks in diamond
@@ -182,15 +164,15 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Check the fit operation
         featurizer = PartialRadialDistributionFunction()
-        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        featurizer.fit([self.diamond, self.cscl, self.ni3al])
         self.assertEqual({'Cs', 'Cl', 'C', 'Ni', 'Al'}, set(featurizer.elements_))
 
         featurizer.exclude_elems = ['Cs', 'Al']
-        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        featurizer.fit([self.diamond, self.cscl, self.ni3al])
         self.assertEqual({'Cl', 'C', 'Ni'}, set(featurizer.elements_))
 
         featurizer.include_elems = ['H']
-        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        featurizer.fit([self.diamond, self.cscl, self.ni3al])
         self.assertEqual({'H', 'Cl', 'C', 'Ni'}, set(featurizer.elements_))
 
         # Check the feature labels
@@ -333,19 +315,18 @@ class StructureFeaturesTest(PymatgenTest):
         # Test stats.
         op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint")
         opvals = op_struct_fp.featurize(self.diamond)
+        print(opvals, '**')
         self.assertAlmostEqual(opvals[0], 0.0005, places=7)
         self.assertAlmostEqual(opvals[1], 0, places=7)
         self.assertAlmostEqual(opvals[2], 0.0005, places=7)
-        self.assertAlmostEqual(opvals[3], 0.0005, places=7)
+        self.assertAlmostEqual(opvals[3], 0.0, places=7)
         self.assertAlmostEqual(opvals[4], 0.0005, places=7)
-        self.assertAlmostEqual(opvals[36], 0.0805, places=7)
-        self.assertAlmostEqual(opvals[40], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[41], 0, places=7)
-        self.assertAlmostEqual(opvals[42], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[43], 0.9995, places=7)
-        self.assertAlmostEqual(opvals[44], 0.0075, places=7)
-        for i in range(56, len(opvals)):
-            self.assertAlmostEqual(opvals[i], 0, places=2)
+        self.assertAlmostEqual(opvals[18], 0.0805, places=7)
+        self.assertAlmostEqual(opvals[20], 0.9995, places=7)
+        self.assertAlmostEqual(opvals[21], 0, places=7)
+        self.assertAlmostEqual(opvals[22], 0.0075, places=7)
+        self.assertAlmostEqual(opvals[24], 0.2355, places=7)
+        self.assertAlmostEqual(opvals[-1], 0.0, places=7)
 
         # Test coordination number
         cn_fp = SiteStatsFingerprint.from_preset("JMolNN", stats=("mean",))
@@ -555,6 +536,21 @@ class StructureFeaturesTest(PymatgenTest):
         # Test the citations/implementors
         self.assertEqual(comp.citations(), f.citations())
         self.assertEqual(comp.implementors(), f.implementors())
+
+    def test_xrd_powderPattern(self):
+
+        # default settings test
+        xpp = XRDPowderPattern()
+        pattern = xpp.featurize(self.diamond)
+        self.assertAlmostEqual(pattern[44], 0.19378, places=2)
+        self.assertEqual(len(pattern), 128)
+
+        # reduced range
+        xpp = XRDPowderPattern(two_theta_range=(0, 90))
+        pattern = xpp.featurize(self.diamond)
+        self.assertAlmostEqual(pattern[44], 0.4083, places=2)
+        self.assertEqual(len(pattern), 91)
+        self.assertEqual(len(xpp.feature_labels()), 91)
 
 
 if __name__ == '__main__':

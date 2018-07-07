@@ -6,8 +6,10 @@ import numpy as np
 import warnings
 
 from pymatgen.util.testing import PymatgenTest
+from sklearn.dummy import DummyRegressor, DummyClassifier
 
-from matminer.featurizers.base import BaseFeaturizer, MultipleFeaturizer
+from matminer.featurizers.base import BaseFeaturizer, MultipleFeaturizer, \
+    StackedFeaturizer
 from matminer.featurizers.function import FunctionFeaturizer
 
 
@@ -69,11 +71,13 @@ class MultiArgs2(SingleFeaturizerMultiArgs):
     def feature_labels(self):
         return ['y2']
 
+
 class FittableFeaturizer(BaseFeaturizer):
     """
     This test featurizer tests fitting qualities of BaseFeaturizer, including
     refittability and different results based on different fits.
     """
+
     def fit(self, X, y=None, **fit_kwargs):
         self._features = ['a', 'b', 'c'][:len(X)]
         return self
@@ -89,6 +93,7 @@ class FittableFeaturizer(BaseFeaturizer):
 
     def implementors(self):
         return ["A competing research group"]
+
 
 class TestBaseClass(PymatgenTest):
     def setUp(self):
@@ -181,7 +186,6 @@ class TestBaseClass(PymatgenTest):
         self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]], data[['y', 'y2']])
 
     def test_featurize_many(self):
-
         # Single argument
         s = self.single
         s.set_n_jobs(2)
@@ -195,7 +199,6 @@ class TestBaseClass(PymatgenTest):
         self.assertArrayAlmostEqual(mat, [[5], [7], [9]])
 
     def test_multiprocessing_df(self):
-
         # Single argument
         s = self.single
         data = self.make_test_data()
@@ -230,6 +233,137 @@ class TestBaseClass(PymatgenTest):
         self.assertArrayAlmostEqual(data['a'], [4, 5, 6])
         self.assertArrayAlmostEqual(data['b'], [5, 6, 7])
         self.assertArrayAlmostEqual(data['c'], [2, 4, 6])
+
+    def test_stacked_featurizer(self):
+        data = self.make_test_data()
+        data['y'] = [1, 2, 3]
+
+        # Test for a regressor
+        model = DummyRegressor()
+        model.fit(self.multi.featurize_many(data['x']), data['y'])
+
+        #  Test the predictions
+        f = StackedFeaturizer(self.single, model)
+        self.assertEquals([2], f.featurize(data['x'][0]))
+
+        #  Test the feature names
+        self.assertEquals(['prediction'], f.feature_labels())
+        f.name = 'ML'
+        self.assertEquals(['ML prediction'], f.feature_labels())
+
+        # Test classifier
+        model = DummyClassifier("prior")
+        data['y'] = [0, 0, 1]
+        model.fit(self.multi.featurize_many(data['x']), data['y'])
+
+        #  Test the prediction
+        f.model = model
+        self.assertEquals([2. / 3], f.featurize(data['x'][0]))
+
+        #  Test the feature labels
+        self.assertRaises(ValueError, f.feature_labels)
+        f.class_names = ['A', 'B']
+        self.assertEquals(['ML P(A)'], f.feature_labels())
+
+        # Test with three classes
+        data['y'] = [0, 2, 1]
+        model.fit(self.multi.featurize_many(data['x']), data['y'])
+
+        self.assertArrayAlmostEqual([1. / 3] * 2, f.featurize(data['x'][0]))
+        f.class_names = ['A', 'B', 'C']
+        self.assertEquals(['ML P(A)', 'ML P(B)'], f.feature_labels())
+
+    def test_multiindex_inplace(self):
+        df_1lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_2lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_2lvl.columns = pd.MultiIndex.from_product((["Custom"],
+                                                      df_2lvl.columns.values))
+        df_3lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_3lvl.columns = pd.MultiIndex.from_product((["Custom"],
+                                                      ["Custom2"],
+                                                      df_3lvl.columns.values))
+
+        # If input dataframe has flat column index
+        self.multi.featurize_dataframe(df_1lvl, 'x', multiindex=True)
+        self.assertEqual(df_1lvl[("Input Data", "x")].iloc[0], 1)
+        self.assertEqual(df_1lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
+
+        # If input dataframe has 2-lvl column index
+        self.multi.featurize_dataframe(df_2lvl, ("Custom", 'x'),
+                                       multiindex=True)
+        self.assertEqual(df_2lvl[("Custom", "x")].iloc[0], 1)
+        self.assertEqual(df_2lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
+
+        # If input dataframe has 2+ lvl column index
+        with self.assertRaises(IndexError):
+            self.multi.featurize_dataframe(df_3lvl, ("Custom", "Custom2", 'x'),
+                                           multiindex=True)
+
+        # Make sure error is thrown when input df  is multiindexed, but multiindex not enabled
+        df_compoundkey = pd.DataFrame({'x': [1, 2, 3]})
+        df_compoundkey.columns = pd.MultiIndex.from_product((["CK"],
+                                                             df_compoundkey.columns.values))
+        with self.assertRaises(ValueError):
+            self.multi.featurize_dataframe(df_compoundkey, ("CK", "x"))
+
+    def test_multiindex_return(self):
+        # For inplace=False, where the method of assigning keys is different
+        df_1lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_2lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_2lvl.columns = pd.MultiIndex.from_product((["Custom"],
+                                                      df_2lvl.columns.values))
+        df_3lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_3lvl.columns = pd.MultiIndex.from_product((["Custom"],
+                                                      ["Custom2"],
+                                                      df_3lvl.columns.values))
+        # If input dataframe has flat column index
+        df_1lvl = self.multi.featurize_dataframe(df_1lvl, 'x', inplace=False,
+                                                 multiindex=True)
+        self.assertEqual(df_1lvl[("Input Data", "x")].iloc[0], 1)
+        self.assertEqual(df_1lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
+
+        # If input dataframe has 2-lvl column index
+        df_2lvl = self.multi.featurize_dataframe(df_2lvl, ("Custom", 'x'),
+                                                 inplace=False, multiindex=True)
+        self.assertEqual(df_2lvl[("Custom", "x")].iloc[0], 1)
+        self.assertEqual(df_2lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
+
+        # If input dataframe has 2+ lvl column index
+        with self.assertRaises(IndexError):
+            _ = self.multi.featurize_dataframe(df_3lvl,
+                                               ("Custom", "Custom2", 'x'),
+                                               inplace=False, multiindex=True)
+
+    def test_multiindex_in_multifeaturizer(self):
+        # Make sure multiplefeaturizer returns the correct sub-featurizer multiindex keys
+        mf = MultipleFeaturizer([self.multi, self.single])
+
+        df_1lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_2lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_2lvl.columns = pd.MultiIndex.from_product((["Custom"],
+                                                      df_2lvl.columns.values))
+        df_3lvl = pd.DataFrame({'x': [1, 2, 3]})
+        df_3lvl.columns = pd.MultiIndex.from_product((["Custom"],
+                                                      ["Custom2"],
+                                                      df_3lvl.columns.values))
+
+        # If input dataframe has flat column index
+        mf.featurize_dataframe(df_1lvl, 'x', multiindex=True)
+        self.assertEqual(df_1lvl[("Input Data", "x")].iloc[0], 1)
+        self.assertEqual(df_1lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
+        self.assertEqual(df_1lvl[("SingleFeaturizer", "y")].iloc[0], 2)
+
+        # If input dataframe has 2-lvl column index
+        mf.featurize_dataframe(df_2lvl, ("Custom", 'x'), multiindex=True)
+        self.assertEqual(df_2lvl[("Custom", "x")].iloc[0], 1)
+        self.assertEqual(df_2lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
+        self.assertEqual(df_2lvl[("SingleFeaturizer", "y")].iloc[0], 2)
+
+        # If input dataframe has 2+ lvl column index
+        with self.assertRaises(IndexError):
+            _ = self.multi.featurize_dataframe(df_3lvl,
+                                               ("Custom", "Custom2", 'x'),
+                                               multiindex=True)
 
 
 if __name__ == '__main__':
