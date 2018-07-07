@@ -1102,75 +1102,83 @@ class GaussianSymmFunc(BaseFeaturizer):
         self.cutoff = cutoff
 
     @staticmethod
-    def cosine_cutoff(r, cutoff):
+    def cosine_cutoff(rs, cutoff):
         """
         Polynomial cutoff function to give a smoothed truncation of the Gaussian
         symmetry functions.
         Args:
-            r (float): distance.
+            rs (ndarray): distances to elements
             cutoff (float): cutoff distance.
         Returns:
-            (float) cutoff function.
+            (ndarray) cutoff function.
         """
-        return 0 if r > cutoff else 0.5 * (np.cos(np.pi * r / cutoff) + 1.)
+        cutoff_fun = 0.5 * (np.cos(np.pi * rs / cutoff) + 1.)
+        cutoff_fun[rs > cutoff] = 0
+        return cutoff_fun
 
     @staticmethod
-    def g2(eta, center_coord, neigh_coords, cutoff):
+    def g2(eta, rs, cutoff):
         """
         Gaussian radial symmetry function of the center atom,
         given an eta parameter.
         Args:
             eta: radial function parameter.
-            center_coord (list of floats): coordinates of center atom.
-            neigh_coords (list of [floats]): coordinates of neighboring atoms.
+            rs: distances from the central atom to each neighbor
             cutoff (float): cutoff distance.
         Returns:
             (float) Gaussian radial symmetry function.
         """
-        ridge = 0.
-        for neigh_coord in neigh_coords:
-            if np.array_equal(neigh_coord, center_coord):
-                continue
-            r = np.linalg.norm(neigh_coord - center_coord)
-            ridge += (np.exp(-eta * (r ** 2.) / (cutoff ** 2.)) *
-                      GaussianSymmFunc.cosine_cutoff(r, cutoff))
-        return ridge
+        ridge = (np.exp(-eta * (rs ** 2.) / (cutoff ** 2.)) *
+                 GaussianSymmFunc.cosine_cutoff(rs, cutoff))
+        return ridge.sum()
 
     @staticmethod
-    def g4(eta, zeta, gamma, center_coord, neigh_coords, cutoff):
+    def g4(etas, zetas, gammas, neigh_dist, neigh_coords, cutoff):
         """
         Gaussian angular symmetry function of the center atom,
         given a set of eta, zeta and gamma parameters.
         Args:
-            eta (float): angular function parameter.
-            zeta (float): angular function parameter.
-            gamma (float): angular function parameter.
-            center_coord (list of floats): coordinates of center atom.
-            neigh_coords (list of [floats]): coordinates of neighboring atoms.
+            eta ([float]): angular function parameters.
+            zeta ([float]): angular function parameters.
+            gamma ([float]): angular function parameters.
+            neigh_coords (list of [floats]): coordinates of neighboring atoms, with respect
+                to the central atom
             cutoff (float): cutoff parameter.
         Returns:
-            (float) Gaussian angular symmetry function.
+            (float) Gaussian angular symmetry function for all combinations of eta, zeta, gamma
         """
-        ridge = 0.
+
+        output = np.zeros((len(etas)*len(zetas)*len(gammas),))
+
+        # Loop over each neighbor j
         for j, neigh_j in enumerate(neigh_coords):
-            for neigh_k in neigh_coords[j+1:]:
-                if np.array_equal(neigh_j, center_coord) or \
-                   np.array_equal(neigh_k, center_coord):
-                    continue
-                r_ij = np.linalg.norm(neigh_j - center_coord)
-                r_ik = np.linalg.norm(neigh_k - center_coord)
-                r_jk = np.linalg.norm(neigh_k - neigh_j)
-                cos_theta = np.dot((neigh_j - center_coord),
-                                   (neigh_k - center_coord)) / r_ij / r_ik
-                term = (1. + gamma * cos_theta) ** zeta * \
-                       np.exp(-eta * (r_ij ** 2. + r_ik ** 2. + r_jk ** 2.) /
-                              (cutoff ** 2.)) * \
-                       GaussianSymmFunc.cosine_cutoff(r_ij, cutoff) * \
-                       GaussianSymmFunc.cosine_cutoff(r_ik, cutoff) * \
-                       GaussianSymmFunc.cosine_cutoff(r_jk, cutoff)
-                ridge += term
-        ridge *= 2. ** (1. - zeta)
-        return ridge
+
+            # Compute the distance of each neighbor (k) to r
+            r_ij = neigh_dist[j]
+            d_jk = neigh_coords[(j+1):] - neigh_coords[j]
+            r_jk = np.linalg.norm(d_jk, 2, axis=1)
+            r_ik = neigh_dist[(j+1):]
+
+            # Compute the cosine term
+            cos_theta = np.dot(neigh_coords[(j + 1):], neigh_coords[j]) / r_ij / r_ik
+
+            # Compute the cutoff function (independent of eta/zeta/gamma)
+            cutoff_fun = GaussianSymmFunc.cosine_cutoff(np.array([r_ij]), cutoff) * \
+                         GaussianSymmFunc.cosine_cutoff(r_ik, cutoff) * \
+                         GaussianSymmFunc.cosine_cutoff(r_jk, cutoff)
+
+            # Compute the g4 for each combination of eta/gamma/zeta
+            ind = 0
+            for eta in etas:
+                # Compute the eta term
+                eta_term = np.exp(-eta * (r_ij ** 2. + r_ik ** 2. + r_jk ** 2.) /
+                                  (cutoff ** 2.)) * cutoff_fun
+                for zeta in zetas:
+                    for gamma in gammas:
+                        term = (1. + gamma * cos_theta) ** zeta * eta_term
+                        output[ind] += term.sum() * 2. ** (1. - zeta)
+                        ind += 1
+        return output
 
     def featurize(self, struct, idx):
         """
@@ -1183,22 +1191,23 @@ class GaussianSymmFunc(BaseFeaturizer):
             (list of floats): Gaussian symmetry function features.
         """
         gaussian_funcs = []
-        neighbors = struct.get_sites_in_sphere(
-            struct[idx].coords, self.cutoff)
-        neigh_coords = [neigh[0].coords for neigh in neighbors]
-        for eta_g2 in self.etas_g2:
-            gaussian_funcs.append(self.g2(eta_g2,
-                                          struct[idx].coords,
-                                          neigh_coords,
-                                          self.cutoff))
 
-        for eta_g4 in self.etas_g4:
-            for zeta_g4 in self.zetas_g4:
-                for gamma_g4 in self.gammas_g4:
-                    gaussian_funcs.append(self.g4(eta_g4, zeta_g4, gamma_g4,
-                                                  struct[idx].coords,
-                                                  neigh_coords,
-                                                  self.cutoff))
+        # Get the neighbors within the cutoff
+        neighbors = struct.get_neighbors(struct[idx], self.cutoff)
+
+        # Get coordinates of the neighbors, relative to the central atom
+        neigh_coords = np.subtract([neigh[0].coords for neigh in neighbors], struct[idx].coords)
+
+        # Get the distances for later use
+        neigh_dists = np.array([neigh[1] for neigh in neighbors])
+
+        # Compute all G2
+        for eta_g2 in self.etas_g2:
+            gaussian_funcs.append(self.g2(eta_g2, neigh_dists, self.cutoff))
+
+        # Compute all G4s
+        gaussian_funcs.extend(GaussianSymmFunc.g4(self.etas_g4, self.zetas_g4, self.gammas_g4,
+                                                  neigh_dists, neigh_coords, self.cutoff))
         return gaussian_funcs
 
     def feature_labels(self):
