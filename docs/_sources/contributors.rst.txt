@@ -21,6 +21,7 @@ Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the Hacking
 * Sayan Rowchowdhury
 * Alex Dunn
 * Jason Frost
+* Julien Brenneck
 
 
 University of Chicago
@@ -47,3 +48,4 @@ Other
 * Evgeny Blokhin (Tilde Lab)
 * Max Dylla (Snyder Research Group, Northwestern University)
 * David Waroquiers (UC Louvain, Belgium)
+* Logan Williams (U Michigan Ann Arbor)

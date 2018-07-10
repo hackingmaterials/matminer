@@ -226,7 +226,12 @@ class PropertyStats(object):
             alpha = sum(weights)
 
             if power == -1:
-                raise ValueError("Harmonic mean not implemented for weighted list!")
+                denom = 0
+                for idx, x in enumerate(data_lst):
+                    denom += weights[idx]/x
+
+                return sum(weights) / denom
+
             # If power=0, return geometric mean
             elif power == 0:
                 return np.product(np.power(data_lst, np.true_divide(weights, np.sum(weights))))

@@ -1366,6 +1366,10 @@ class YangSolidSolution(BaseFeaturizer):
             (float) Omega
         """
 
+        # Special case: Elemental compound (entropy == 0 -> Omega == 1)
+        if len(comp) == 1:
+            return 0
+
         # Get the element names and fractions
         elements, fractions = zip(*comp.element_composition.fractional_composition.items())
 
@@ -1598,8 +1602,11 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         means = []
         for k in self.n_nearest:
             # Get the nearest clusters
-            to_lookup = min(cluster_lookup._fit_X.shape[0], k)
-            dists, _ = cluster_lookup.kneighbors([comp_vec], to_lookup)
+            if cluster_lookup is None:
+                dists = (np.array([]),)
+            else:
+                to_lookup = min(cluster_lookup._fit_X.shape[0], k)
+                dists, _ = cluster_lookup.kneighbors([comp_vec], to_lookup)
 
             # Pad the list with 1's
             dists = dists[0].tolist() + [1]*(k - to_lookup)
@@ -1617,7 +1624,8 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         Args:
             elements ([Element]): Elements in system
         Return:
-            (NearNeighbors): Tool to find nearby clusters in this system
+            (NearNeighbors): Tool to find nearby clusters in this system. None
+                if there are no efficiently-packed clusters for this combination of elements
         """
         elements = list(set(elements))
         return self._create_cluster_lookup_tool(tuple(sorted(elements)))
@@ -1631,7 +1639,8 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         Args:
             elements ([Element]): Elements in system
         Return:
-            (NearNeighbors): Tool to find nearby clusters in this system
+            (NearNeighbors): Tool to find nearby clusters in this system. If
+            there are no clusters, this class returns None
         """
 
         # Get the radii
@@ -1679,7 +1688,9 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         comps = np.divide(comps, comps.sum(axis=1)[:, None])
 
         # Return tool to quickly determine distance from efficient clusters
-        return NearestNeighbors().fit(comps)
+        #  NearNeighbors requires at least 1 entry, so we return None if
+        #   there are no nearby clusters
+        return NearestNeighbors().fit(comps) if len(comps) > 0 else None
 
     def find_ideal_cluster_size(self, radius_ratio):
         """

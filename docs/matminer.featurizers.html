@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.3.4 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.3.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -3515,20 +3515,29 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.site.CrystalNNFingerprint">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">CrystalNNFingerprint</code><span class="sig-paren">(</span><em>op_types</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">CrystalNNFingerprint</code><span class="sig-paren">(</span><em>op_types</em>, <em>chem_info=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>This is intended to be a successor to CrystalSiteFingerprint, currently
-undergoing testing.</p>
+<p>A local order parameter fingerprint for periodic crystals.</p>
+<p>The fingerprint represents the value of various order parameters for the
+site. The “wt” order parameter describes how consistent a site is with a
+certain coordination number. The remaining order parameters are computed
+by multiplying the “wt” for that coordination number with the OP value.</p>
+<p>The chem_info parameter can be used to also get chemical descriptors that
+describe differences in some chemical parameter (e.g., electronegativity)
+between the central site and the site neighbors.</p>
 <dl class="method">
 <dt id="matminer.featurizers.site.CrystalNNFingerprint.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>op_types</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize the CrystalSiteFingerprint. Use the from_preset() function to
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>op_types</em>, <em>chem_info=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the CrystalNNFingerprint. Use the from_preset() function to
 use default params.
 Args:</p>
 <blockquote>
 <div><dl class="docutils">
 <dt>op_types (dict): a dict of coordination number (int) to a list of str</dt>
 <dd>representing the order parameter types</dd>
+<dt>chem_info (dict): a dict of chemical properties (e.g., atomic mass)</dt>
+<dd>to dictionaries that map an element to a value
+(e.g., chem_info[“Pauling scale”][“O”] = 3.44)</dd>
 </dl>
 <p><a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
 </div></blockquote>
@@ -3948,7 +3957,7 @@ labels</p>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.GeneralizedRadialDistributionFunction.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>width=0.5</em>, <em>spacing=0.5</em>, <em>cutoff=10</em>, <em>mode='GRDF'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GeneralizedRadialDistributionFunction.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>width=1.0</em>, <em>spacing=1.0</em>, <em>cutoff=10</em>, <em>mode='GRDF'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GeneralizedRadialDistributionFunction.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Preset bin functionals for this featurizer. Example use:</dt>
 <dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GRDF</span> <span class="o">=</span> <span class="n">GeneralizedRadialDistributionFunction</span><span class="o">.</span><span class="n">from_preset</span><span class="p">(</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
@@ -4344,7 +4353,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dl class="class">
 <dt id="matminer.featurizers.stats.PropertyStats">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.stats.</code><code class="descname">PropertyStats</code><a class="headerlink" href="#matminer.featurizers.stats.PropertyStats" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>This class contains statistical operations that are commonly employed
 when computing features.</p>
 <p>The primary way for interacting with this class is to call the
@@ -5295,7 +5304,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.structure.EwaldEnergy">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">EwaldEnergy</code><span class="sig-paren">(</span><em>accuracy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">EwaldEnergy</code><span class="sig-paren">(</span><em>accuracy=4</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Compute the energy from Coulombic interactions.</p>
 <p>Note: The energy is computed using _charges already defined for the <a href="#id47"><span class="problematic" id="id48">structure_</span></a>.</p>
@@ -5305,7 +5314,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.structure.EwaldEnergy.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>accuracy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>accuracy=4</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd>accuracy (int): Accuracy of Ewald summation, number of decimal places</dd>
@@ -6510,7 +6519,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.6 documentation</a> &#187;</li> 
       </ul>
     </div>
 

@@ -386,8 +386,16 @@ class OPSiteFingerprint(BaseFeaturizer):
 
 class CrystalNNFingerprint(BaseFeaturizer):
     """
-    This is intended to be a successor to CrystalSiteFingerprint, currently
-    undergoing testing.
+    A local order parameter fingerprint for periodic crystals.
+
+    The fingerprint represents the value of various order parameters for the
+    site. The "wt" order parameter describes how consistent a site is with a
+    certain coordination number. The remaining order parameters are computed
+    by multiplying the "wt" for that coordination number with the OP value.
+
+    The chem_info parameter can be used to also get chemical descriptors that
+    describe differences in some chemical parameter (e.g., electronegativity)
+    between the central site and the site neighbors.
     """
 
     @staticmethod
@@ -410,24 +418,32 @@ class CrystalNNFingerprint(BaseFeaturizer):
                 else:
                     op_types[k + 1] = ["wt"]
 
-            return CrystalNNFingerprint(op_types, **kwargs)
+            return CrystalNNFingerprint(op_types, chem_info=None, **kwargs)
 
         else:
             raise RuntimeError('preset "{}" is not supported in '
                                'CrystalNNFingerprint'.format(preset))
 
-    def __init__(self, op_types, **kwargs):
+    def __init__(self, op_types, chem_info=None, **kwargs):
         """
-        Initialize the CrystalSiteFingerprint. Use the from_preset() function to
+        Initialize the CrystalNNFingerprint. Use the from_preset() function to
         use default params.
         Args:
             op_types (dict): a dict of coordination number (int) to a list of str
                 representing the order parameter types
+            chem_info (dict): a dict of chemical properties (e.g., atomic mass)
+                to dictionaries that map an element to a value
+                (e.g., chem_info["Pauling scale"]["O"] = 3.44)
             **kwargs: other settings to be passed into CrystalNN class
         """
 
         self.op_types = copy.deepcopy(op_types)
         self.cnn = CrystalNN(**kwargs)
+        if chem_info is not None:
+            self.chem_info = copy.deepcopy(chem_info)
+            self.chem_props = list(chem_info.keys())
+        else:
+            self.chem_info = None
 
         self.ops = {}  # load order parameter objects & paramaters
         for cn, t_list in self.op_types.items():
@@ -461,14 +477,48 @@ class CrystalNNFingerprint(BaseFeaturizer):
 
         cn_fingerprint = []
 
+        if self.chem_info is not None:
+            prop_delta = {}  # dictionary of chemical property to final value
+            for prop in self.chem_props:
+                prop_delta[prop] = 0
+            sum_wt = 0
+            elem_central = struct.sites[idx].specie.symbol
+            specie_central = str(struct.sites[idx].specie)
+
         for k in range(max_cn):
             cn = k + 1
             wt = nndata.cn_weights.get(cn, 0)
-            if cn not in self.ops:
-                cn_fingerprint.append(0)
-            else:
+            if cn in self.ops:
                 for op in self.ops[cn]:
-                    if op == "wt" or wt == 0:
+                    if op == "wt":
+                        cn_fingerprint.append(wt)
+
+                        if self.chem_info is not None and wt != 0:
+                            # Compute additional chemistry-related features
+                            sum_wt += wt
+                            neigh_sites = [d["site"] for d in
+                                           nndata.cn_nninfo[cn]]
+
+                            for prop in self.chem_props:
+                                # get the value for specie, if not fall back to
+                                # value defined for element
+                                prop_central = self.chem_info[prop].get(
+                                    specie_central, self.chem_info[prop].get(
+                                        elem_central))
+
+                                for neigh in neigh_sites:
+                                    elem_neigh = neigh.specie.symbol
+                                    specie_neigh = str(neigh.specie)
+                                    prop_neigh = self.chem_info[prop].get(
+                                        specie_neigh,
+                                        self.chem_info[prop].get(
+                                            elem_neigh))
+
+                                    prop_delta[prop] += wt * \
+                                                           (prop_neigh -
+                                                            prop_central) / cn
+
+                    elif wt == 0:
                         cn_fingerprint.append(wt)
                     else:
                         neigh_sites = [d["site"] for d in nndata.cn_nninfo[cn]]
@@ -478,15 +528,25 @@ class CrystalNNFingerprint(BaseFeaturizer):
                                             range(1, len(neigh_sites) + 1)])[0]
                         opval = opval or 0  # handles None
                         cn_fingerprint.append(wt * opval)
+        chem_fingerprint = []
 
-        return cn_fingerprint
+        if self.chem_info is not None:
+            for val in prop_delta.values():
+                chem_fingerprint.append(val / sum_wt)
+
+        return cn_fingerprint + chem_fingerprint
 
     def feature_labels(self):
         labels = []
-        for cn in sorted(self.op_types):
-            for op in self.op_types[cn]:
-                labels.append("{} CN_{}".format(op, cn))
-
+        max_cn = sorted(self.op_types)[-1]
+        for k in range(max_cn):
+            cn = k + 1
+            if cn in list(self.ops.keys()):
+                for op in self.op_types[cn]:
+                    labels.append("{} CN_{}".format(op, cn))
+        if self.chem_info is not None:
+            for prop in self.chem_props:
+                labels.append("{} local diff".format(prop))
         return labels
 
     def citations(self):
@@ -866,75 +926,83 @@ class GaussianSymmFunc(BaseFeaturizer):
         self.cutoff = cutoff
 
     @staticmethod
-    def cosine_cutoff(r, cutoff):
+    def cosine_cutoff(rs, cutoff):
         """
         Polynomial cutoff function to give a smoothed truncation of the Gaussian
         symmetry functions.
         Args:
-            r (float): distance.
+            rs (ndarray): distances to elements
             cutoff (float): cutoff distance.
         Returns:
-            (float) cutoff function.
+            (ndarray) cutoff function.
         """
-        return 0 if r > cutoff else 0.5 * (np.cos(np.pi * r / cutoff) + 1.)
+        cutoff_fun = 0.5 * (np.cos(np.pi * rs / cutoff) + 1.)
+        cutoff_fun[rs > cutoff] = 0
+        return cutoff_fun
 
     @staticmethod
-    def g2(eta, center_coord, neigh_coords, cutoff):
+    def g2(eta, rs, cutoff):
         """
         Gaussian radial symmetry function of the center atom,
         given an eta parameter.
         Args:
             eta: radial function parameter.
-            center_coord (list of floats): coordinates of center atom.
-            neigh_coords (list of [floats]): coordinates of neighboring atoms.
+            rs: distances from the central atom to each neighbor
             cutoff (float): cutoff distance.
         Returns:
             (float) Gaussian radial symmetry function.
         """
-        ridge = 0.
-        for neigh_coord in neigh_coords:
-            if np.array_equal(neigh_coord, center_coord):
-                continue
-            r = np.linalg.norm(neigh_coord - center_coord)
-            ridge += (np.exp(-eta * (r ** 2.) / (cutoff ** 2.)) *
-                      GaussianSymmFunc.cosine_cutoff(r, cutoff))
-        return ridge
+        ridge = (np.exp(-eta * (rs ** 2.) / (cutoff ** 2.)) *
+                 GaussianSymmFunc.cosine_cutoff(rs, cutoff))
+        return ridge.sum()
 
     @staticmethod
-    def g4(eta, zeta, gamma, center_coord, neigh_coords, cutoff):
+    def g4(etas, zetas, gammas, neigh_dist, neigh_coords, cutoff):
         """
         Gaussian angular symmetry function of the center atom,
         given a set of eta, zeta and gamma parameters.
         Args:
-            eta (float): angular function parameter.
-            zeta (float): angular function parameter.
-            gamma (float): angular function parameter.
-            center_coord (list of floats): coordinates of center atom.
-            neigh_coords (list of [floats]): coordinates of neighboring atoms.
+            eta ([float]): angular function parameters.
+            zeta ([float]): angular function parameters.
+            gamma ([float]): angular function parameters.
+            neigh_coords (list of [floats]): coordinates of neighboring atoms, with respect
+                to the central atom
             cutoff (float): cutoff parameter.
         Returns:
-            (float) Gaussian angular symmetry function.
+            (float) Gaussian angular symmetry function for all combinations of eta, zeta, gamma
         """
-        ridge = 0.
+
+        output = np.zeros((len(etas)*len(zetas)*len(gammas),))
+
+        # Loop over each neighbor j
         for j, neigh_j in enumerate(neigh_coords):
-            for neigh_k in neigh_coords[j+1:]:
-                if np.array_equal(neigh_j, center_coord) or \
-                   np.array_equal(neigh_k, center_coord):
-                    continue
-                r_ij = np.linalg.norm(neigh_j - center_coord)
-                r_ik = np.linalg.norm(neigh_k - center_coord)
-                r_jk = np.linalg.norm(neigh_k - neigh_j)
-                cos_theta = np.dot((neigh_j - center_coord),
-                                   (neigh_k - center_coord)) / r_ij / r_ik
-                term = (1. + gamma * cos_theta) ** zeta * \
-                       np.exp(-eta * (r_ij ** 2. + r_ik ** 2. + r_jk ** 2.) /
-                              (cutoff ** 2.)) * \
-                       GaussianSymmFunc.cosine_cutoff(r_ij, cutoff) * \
-                       GaussianSymmFunc.cosine_cutoff(r_ik, cutoff) * \
-                       GaussianSymmFunc.cosine_cutoff(r_jk, cutoff)
-                ridge += term
-        ridge *= 2. ** (1. - zeta)
-        return ridge
+
+            # Compute the distance of each neighbor (k) to r
+            r_ij = neigh_dist[j]
+            d_jk = neigh_coords[(j+1):] - neigh_coords[j]
+            r_jk = np.linalg.norm(d_jk, 2, axis=1)
+            r_ik = neigh_dist[(j+1):]
+
+            # Compute the cosine term
+            cos_theta = np.dot(neigh_coords[(j + 1):], neigh_coords[j]) / r_ij / r_ik
+
+            # Compute the cutoff function (independent of eta/zeta/gamma)
+            cutoff_fun = GaussianSymmFunc.cosine_cutoff(np.array([r_ij]), cutoff) * \
+                         GaussianSymmFunc.cosine_cutoff(r_ik, cutoff) * \
+                         GaussianSymmFunc.cosine_cutoff(r_jk, cutoff)
+
+            # Compute the g4 for each combination of eta/gamma/zeta
+            ind = 0
+            for eta in etas:
+                # Compute the eta term
+                eta_term = np.exp(-eta * (r_ij ** 2. + r_ik ** 2. + r_jk ** 2.) /
+                                  (cutoff ** 2.)) * cutoff_fun
+                for zeta in zetas:
+                    for gamma in gammas:
+                        term = (1. + gamma * cos_theta) ** zeta * eta_term
+                        output[ind] += term.sum() * 2. ** (1. - zeta)
+                        ind += 1
+        return output
 
     def featurize(self, struct, idx):
         """
@@ -947,22 +1015,23 @@ class GaussianSymmFunc(BaseFeaturizer):
             (list of floats): Gaussian symmetry function features.
         """
         gaussian_funcs = []
-        neighbors = struct.get_sites_in_sphere(
-            struct[idx].coords, self.cutoff)
-        neigh_coords = [neigh[0].coords for neigh in neighbors]
-        for eta_g2 in self.etas_g2:
-            gaussian_funcs.append(self.g2(eta_g2,
-                                          struct[idx].coords,
-                                          neigh_coords,
-                                          self.cutoff))
 
-        for eta_g4 in self.etas_g4:
-            for zeta_g4 in self.zetas_g4:
-                for gamma_g4 in self.gammas_g4:
-                    gaussian_funcs.append(self.g4(eta_g4, zeta_g4, gamma_g4,
-                                                  struct[idx].coords,
-                                                  neigh_coords,
-                                                  self.cutoff))
+        # Get the neighbors within the cutoff
+        neighbors = struct.get_neighbors(struct[idx], self.cutoff)
+
+        # Get coordinates of the neighbors, relative to the central atom
+        neigh_coords = np.subtract([neigh[0].coords for neigh in neighbors], struct[idx].coords)
+
+        # Get the distances for later use
+        neigh_dists = np.array([neigh[1] for neigh in neighbors])
+
+        # Compute all G2
+        for eta_g2 in self.etas_g2:
+            gaussian_funcs.append(self.g2(eta_g2, neigh_dists, self.cutoff))
+
+        # Compute all G4s
+        gaussian_funcs.extend(GaussianSymmFunc.g4(self.etas_g4, self.zetas_g4, self.gammas_g4,
+                                                  neigh_dists, neigh_coords, self.cutoff))
         return gaussian_funcs
 
     def feature_labels(self):
@@ -1434,7 +1503,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
                                      'determine the correct feature labels.')
 
     @staticmethod
-    def from_preset(preset, width=0.5, spacing=0.5, cutoff=10, mode='GRDF'):
+    def from_preset(preset, width=1.0, spacing=1.0, cutoff=10, mode='GRDF'):
         '''
         Preset bin functionals for this featurizer. Example use:
             >>> GRDF = GeneralizedRadialDistributionFunction.from_preset('gaussian')
@@ -1452,7 +1521,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
             bins = []
             for center in np.arange(0., cutoff, spacing):
                 bins.append(('Gauss {}'.format(center),
-                             lambda d: np.exp(-width * (d - center)**2.)))
+                             lambda d, center=center: np.exp(-width * (d - center)**2.)))
             return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
                                                          mode=mode)
 
@@ -1460,7 +1529,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
             bins = []
             for center in np.arange(0. + (width / 2.), cutoff, spacing):
                 bins.append(('Hist {}'.format(center),
-                             lambda d: np.where(center - (width / 2.) <= d,
+                             lambda d, center=center: np.where(center - (width / 2.) <= d,
                                                 1., 0.) *
                              np.where(d < center + (width / 2.), 1., 0.)))
             return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
@@ -1479,7 +1548,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
                 'al Society}, doi = {10.1103/PhysRevB.95.144110}}']
 
     def implementors(self):
-        return ["Maxwell Dylla", "Saurabh Bajaj"]
+        return ["Maxwell Dylla", "Saurabh Bajaj", "Logan Williams"]
 
 
 class AngularFourierSeries(BaseFeaturizer):
@@ -1596,14 +1665,14 @@ class AngularFourierSeries(BaseFeaturizer):
             bins = []
             for center in np.arange(0., cutoff, spacing):
                 bins.append(('Gauss {}'.format(center),
-                             lambda d: np.exp(-width * (d - center)**2.)))
+                             lambda d, center=center: np.exp(-width * (d - center)**2.)))
             return AngularFourierSeries(bins, cutoff=cutoff)
 
         elif preset == "histogram":
             bins = []
             for center in np.arange(0. + (width / 2.), cutoff, spacing):
                 bins.append(('Hist {}'.format(center),
-                             lambda d: np.where(center - (width / 2.) <= d,
+                             lambda d, center=center: np.where(center - (width / 2.) <= d,
                                                 1., 0.) *
                              np.where(d < center + (width / 2.), 1., 0.)))
             return AngularFourierSeries(bins, cutoff=cutoff)
@@ -1621,7 +1690,7 @@ class AngularFourierSeries(BaseFeaturizer):
                 'al Society}, doi = {10.1103/PhysRevB.95.144110}}']
 
     def implementors(self):
-        return ["Maxwell Dylla"]
+        return ["Maxwell Dylla", "Logan Williams"]
 
 
 # TODO: Figure out whether to take NN-counting method as an option (see VoronoiFingerprint)

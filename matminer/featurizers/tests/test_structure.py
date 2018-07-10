@@ -164,15 +164,15 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Check the fit operation
         featurizer = PartialRadialDistributionFunction()
-        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        featurizer.fit([self.diamond, self.cscl, self.ni3al])
         self.assertEqual({'Cs', 'Cl', 'C', 'Ni', 'Al'}, set(featurizer.elements_))
 
         featurizer.exclude_elems = ['Cs', 'Al']
-        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        featurizer.fit([self.diamond, self.cscl, self.ni3al])
         self.assertEqual({'Cl', 'C', 'Ni'}, set(featurizer.elements_))
 
         featurizer.include_elems = ['H']
-        featurizer.fit(zip([self.diamond, self.cscl, self.ni3al]))
+        featurizer.fit([self.diamond, self.cscl, self.ni3al])
         self.assertEqual({'H', 'Cl', 'C', 'Ni'}, set(featurizer.elements_))
 
         # Check the feature labels
