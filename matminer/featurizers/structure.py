@@ -370,7 +370,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
             prdf[key] = rdf
 
-        return dist_bins, prdf
+        return dist_bins[:-1], prdf
 
     def _make_bins(self):
         """Generate the edges of the bins for the PRDF
