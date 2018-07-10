@@ -143,13 +143,13 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(prdf.values()), 1)
         self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.4 / 0.1))], 0)
         self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.5 / 0.1))], 1.32445167622)
-        self.assertAlmostEqual(max(distances), 20.0)
+        self.assertAlmostEqual(max(distances), 19.9)
         self.assertAlmostEqual(prdf[('C', 'C')][int(round(19.9 / 0.1))], 0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
         distances, prdf = PartialRadialDistributionFunction(cutoff=10).compute_prdf(self.cscl)
         self.assertEqual(len(prdf.values()), 4)
-        self.assertAlmostEqual(max(distances), 10.0)
+        self.assertAlmostEqual(max(distances), 9.9)
         self.assertAlmostEqual(prdf[('Cs', 'Cl')][int(round(3.6 / 0.1))], 0.477823197)
         self.assertAlmostEqual(prdf[('Cl', 'Cs')][int(round(3.6 / 0.1))], 0.477823197)
         self.assertAlmostEqual(prdf[('Cs', 'Cs')][int(round(3.6 / 0.1))], 0)
