@@ -191,6 +191,12 @@ class StructureFeaturesTest(PymatgenTest):
         prdf = featurizer.compute_prdf(self.diamond)[1]
         self.assertArrayAlmostEqual(features, prdf[('C', 'C')])
 
+        # Check the featurize_dataframe
+        df = pd.DataFrame.from_dict({"structure": [self.diamond, self.cscl]})
+        featurizer.fit(df["structure"])
+        df = featurizer.featurize_dataframe(df, col_id="structure")
+
+
         # Make sure labels and features are in the same order
         featurizer.elements_ = ['Al', 'Ni']
         features = featurizer.featurize(self.ni3al)
