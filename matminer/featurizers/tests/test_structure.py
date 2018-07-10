@@ -195,7 +195,9 @@ class StructureFeaturesTest(PymatgenTest):
         df = pd.DataFrame.from_dict({"structure": [self.diamond, self.cscl]})
         featurizer.fit(df["structure"])
         df = featurizer.featurize_dataframe(df, col_id="structure")
-
+        self.assertEqual(df["Cs-Cl PRDF r=0.00-0.10"][0], 0.0)
+        self.assertAlmostEqual(df["Cl-Cl PRDF r=19.70-19.80"][1], 0.049, 3)
+        self.assertEqual(df["Cl-Cl PRDF r=19.90-20.00"][0], 0.0)
 
         # Make sure labels and features are in the same order
         featurizer.elements_ = ['Al', 'Ni']
