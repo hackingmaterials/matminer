@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.3.6 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.3.7 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.7 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -909,7 +909,11 @@ of elements</p>
 <dt>Args:</dt>
 <dd>elements ([Element]): Elements in system</dd>
 <dt>Return:</dt>
-<dd>(NearNeighbors): Tool to find nearby clusters in this system</dd>
+<dd><dl class="first last docutils">
+<dt>(NearNeighbors): Tool to find nearby clusters in this system. None</dt>
+<dd>if there are no efficiently-packed clusters for this combination of elements</dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
@@ -3752,11 +3756,11 @@ Args:</p>
 symmetry functions.
 Args:</p>
 <blockquote>
-<div>r (float): distance.
+<div>rs (ndarray): distances to elements
 cutoff (float): cutoff distance.</div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
-<dd>(float) cutoff function.</dd>
+<dd>(ndarray) cutoff function.</dd>
 </dl>
 </dd></dl>
 
@@ -3787,14 +3791,13 @@ idx (int): index of target site in structure.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.GaussianSymmFunc.g2">
-<em class="property">static </em><code class="descname">g2</code><span class="sig-paren">(</span><em>center_coord</em>, <em>neigh_coords</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.g2" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">g2</code><span class="sig-paren">(</span><em>rs</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.g2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gaussian radial symmetry function of the center atom,
 given an eta parameter.
 Args:</p>
 <blockquote>
 <div>eta: radial function parameter.
-center_coord (list of floats): coordinates of center atom.
-neigh_coords (list of [floats]): coordinates of neighboring atoms.
+rs: distances from the central atom to each neighbor
 cutoff (float): cutoff distance.</div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -3804,20 +3807,22 @@ cutoff (float): cutoff distance.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.GaussianSymmFunc.g4">
-<em class="property">static </em><code class="descname">g4</code><span class="sig-paren">(</span><em>zeta</em>, <em>gamma</em>, <em>center_coord</em>, <em>neigh_coords</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.g4" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">g4</code><span class="sig-paren">(</span><em>zetas</em>, <em>gammas</em>, <em>neigh_dist</em>, <em>neigh_coords</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.g4" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gaussian angular symmetry function of the center atom,
 given a set of eta, zeta and gamma parameters.
 Args:</p>
 <blockquote>
-<div>eta (float): angular function parameter.
-zeta (float): angular function parameter.
-gamma (float): angular function parameter.
-center_coord (list of floats): coordinates of center atom.
-neigh_coords (list of [floats]): coordinates of neighboring atoms.
-cutoff (float): cutoff parameter.</div></blockquote>
+<div><p>eta ([float]): angular function parameters.
+zeta ([float]): angular function parameters.
+gamma ([float]): angular function parameters.
+neigh_coords (list of [floats]): coordinates of neighboring atoms, with respect</p>
+<blockquote>
+<div>to the central atom</div></blockquote>
+<p>cutoff (float): cutoff parameter.</p>
+</div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
-<dd>(float) Gaussian angular symmetry function.</dd>
+<dd>(float) Gaussian angular symmetry function for all combinations of eta, zeta, gamma</dd>
 </dl>
 </dd></dl>
 
@@ -6519,7 +6524,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.7 documentation</a> &#187;</li> 
       </ul>
     </div>
 
