@@ -13,8 +13,7 @@ from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure
-from pymatgen.analysis.defects.point_defects import \
-    ValenceIonicRadiusEvaluator
+from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import VoronoiNN

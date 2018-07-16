@@ -151,14 +151,14 @@ class FingerprintTests(PymatgenTest):
         ops = csf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 48)
         self.assertAlmostEqual(ops[csf.feature_labels().index(
-            'wt CN_6')], 1, places=7)
+            'wt CN_6')], 1, places=4)
         self.assertAlmostEqual(ops[csf.feature_labels().index(
-            'octahedral CN_6')], 1, places=7)
+            'octahedral CN_6')], 1, places=4)
         ops = csf.featurize(self.cscl, 0)
         self.assertAlmostEqual(ops[csf.feature_labels().index(
-            'wt CN_8')], 0.5575257, places=7)
+            'wt CN_8')], 0.5575257, places=4)
         self.assertAlmostEqual(ops[csf.feature_labels().index(
-            'body-centered cubic CN_8')], 0.5329344, places=7)
+            'body-centered cubic CN_8')], 0.5329344, places=4)
 
     def test_crystal_nn_fingerprint(self):
         cnnfp = CrystalNNFingerprint.from_preset(
