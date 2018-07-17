@@ -9,7 +9,6 @@ from matminer.featurizers.base import BaseFeaturizer
 from pymatgen import Spin
 from pymatgen.electronic_structure.bandstructure import BandStructure, \
     BandStructureSymmLine
-from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 __author__ = 'Anubhav Jain <ajain@lbl.gov>'

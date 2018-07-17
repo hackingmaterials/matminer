@@ -6,6 +6,13 @@ matminer Changelog
 ==================
 
 
+**v0.3.7**
+
+* faster implementation of GaussianSymmFunc (L. Ward)
+* more resilient Yang and AtomicPackingEfficiency (L. Ward)
+* some fixes for PRDF featurizer (A. Faghaninia)
+* add *.tsv files to package_data, should fix Miedema PyPI install (A. Faghaninia)
+
 **v0.3.6**
 
 * Improve MPDataRetrieval to serialize objects (A. Faghaninia)

@@ -143,13 +143,13 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(prdf.values()), 1)
         self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.4 / 0.1))], 0)
         self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.5 / 0.1))], 1.32445167622)
-        self.assertAlmostEqual(max(distances), 20.0)
+        self.assertAlmostEqual(max(distances), 19.9)
         self.assertAlmostEqual(prdf[('C', 'C')][int(round(19.9 / 0.1))], 0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
         distances, prdf = PartialRadialDistributionFunction(cutoff=10).compute_prdf(self.cscl)
         self.assertEqual(len(prdf.values()), 4)
-        self.assertAlmostEqual(max(distances), 10.0)
+        self.assertAlmostEqual(max(distances), 9.9)
         self.assertAlmostEqual(prdf[('Cs', 'Cl')][int(round(3.6 / 0.1))], 0.477823197)
         self.assertAlmostEqual(prdf[('Cl', 'Cs')][int(round(3.6 / 0.1))], 0.477823197)
         self.assertAlmostEqual(prdf[('Cs', 'Cs')][int(round(3.6 / 0.1))], 0)
@@ -190,6 +190,14 @@ class StructureFeaturesTest(PymatgenTest):
         features = featurizer.featurize(self.diamond)
         prdf = featurizer.compute_prdf(self.diamond)[1]
         self.assertArrayAlmostEqual(features, prdf[('C', 'C')])
+
+        # Check the featurize_dataframe
+        df = pd.DataFrame.from_dict({"structure": [self.diamond, self.cscl]})
+        featurizer.fit(df["structure"])
+        df = featurizer.featurize_dataframe(df, col_id="structure")
+        self.assertEqual(df["Cs-Cl PRDF r=0.00-0.10"][0], 0.0)
+        self.assertAlmostEqual(df["Cl-Cl PRDF r=19.70-19.80"][1], 0.049, 3)
+        self.assertEqual(df["Cl-Cl PRDF r=19.90-20.00"][0], 0.0)
 
         # Make sure labels and features are in the same order
         featurizer.elements_ = ['Al', 'Ni']

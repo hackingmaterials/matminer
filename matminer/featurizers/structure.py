@@ -13,8 +13,7 @@ from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure
-from pymatgen.analysis.defects.point_defects import \
-    ValenceIonicRadiusEvaluator
+from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import VoronoiNN
@@ -370,7 +369,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
             prdf[key] = rdf
 
-        return dist_bins, prdf
+        return dist_bins[:-1], prdf
 
     def _make_bins(self):
         """Generate the edges of the bins for the PRDF
