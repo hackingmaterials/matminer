@@ -404,24 +404,17 @@ class MultipleFeaturizer(BaseFeaturizer):
             f.fit(df[col_id])
         return self.featurize_dataframe(df, col_id, *args, **kwargs)
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True,
-                            multiindex=False, pbar=False):
+    def featurize_dataframe(self, df, col_id, **kwargs):
         """
         Featurize dataframe is overloaded in order to allow
         compatibility with Featurizers that overload featurize_dataframe
         """
+        multiindex = kwargs.get('multiindex', False)
 
         if multiindex:
             if not isinstance(df.columns, pd.MultiIndex):
                 col_id = ("Input Data", col_id)
             df = homogenize_multiindex(df, "Input Data")
-
-            # todo: Make pbar work with multiindexing
-            if pbar:
-                warnings.warn("Use of the progress bar with multiindexing "
-                              "is not yet supported. Setting pbar=False...")
-                pbar = False
 
         # Detect if any featurizers override featurize_dataframe
         override = ["featurize_dataframe" in f.__class__.__dict__.keys()
@@ -432,10 +425,7 @@ class MultipleFeaturizer(BaseFeaturizer):
                 "featurization will be sequential and may diminish performance")
 
         for f in self.featurizers:
-            df = f.featurize_dataframe(df, col_id, ignore_errors=ignore_errors,
-                                       return_errors=return_errors,
-                                       inplace=inplace, multiindex=multiindex,
-                                       pbar=pbar)
+            df = f.featurize_dataframe(df, col_id, **kwargs)
 
             if multiindex:
                 feature_labels = [(f.__class__.__name__, flabel) for flabel
