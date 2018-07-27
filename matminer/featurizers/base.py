@@ -480,8 +480,7 @@ class StackedFeaturizer(BaseFeaturizer):
 
         # Present warning about class_names
         if self.class_names is None and self._is_classifier():
-            print('WARNING: Class names are required for featurize_dataframe and feature_labels',
-                  file=sys.stderr)
+            warnings.warn('Class names are required for featurize_dataframe and feature_labels')
 
     def _is_classifier(self):
         """Whether the underlying model is a classifier
