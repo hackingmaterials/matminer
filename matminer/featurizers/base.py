@@ -158,7 +158,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True,
-                            multiindex=False, pbar=True):
+                            multiindex=False, pbar=False):
         """
         Compute features for all entries contained in input dataframe.
 
@@ -209,7 +209,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             labels = pd.MultiIndex.from_product(indices)
             df = homogenize_multiindex(df, "Input Data")
             if inplace:
-                warnings.warn("Multiindexing enabled with inplace=True! The"
+                warnings.warn("Multiindexing enabled with inplace=True! The "
                               "original dataframe index has changed.")
         elif isinstance(df.columns, pd.MultiIndex):
             # If input df is multi, but multi not enabled...
@@ -231,7 +231,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             return new[df.columns.tolist() + res.columns.tolist()]
 
     def featurize_many(self, entries, ignore_errors=False, return_errors=False,
-                       pbar=True):
+                       pbar=False):
         """
         Featurize a list of entries.
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
@@ -406,7 +406,7 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True,
-                            multiindex=False, pbar=True):
+                            multiindex=False, pbar=False):
         """
         Featurize dataframe is overloaded in order to allow
         compatibility with Featurizers that overload featurize_dataframe
@@ -432,8 +432,10 @@ class MultipleFeaturizer(BaseFeaturizer):
                 "featurization will be sequential and may diminish performance")
 
         for f in self.featurizers:
-            df = f.featurize_dataframe(df, col_id, ignore_errors, return_errors,
-                                       inplace, multiindex, pbar)
+            df = f.featurize_dataframe(df, col_id, ignore_errors=ignore_errors,
+                                       return_errors=return_errors,
+                                       inplace=inplace, multiindex=multiindex,
+                                       pbar=pbar)
 
             if multiindex:
                 feature_labels = [(f.__class__.__name__, flabel) for flabel
@@ -459,7 +461,8 @@ class StackedFeaturizer(BaseFeaturizer):
     number of classes.
     """
 
-    def __init__(self, featurizer=None, model=None, name=None, class_names=None):
+    def __init__(self, featurizer=None, model=None, name=None,
+                 class_names=None):
         """Initialize featurizer
 
         Args:
@@ -480,7 +483,8 @@ class StackedFeaturizer(BaseFeaturizer):
 
         # Present warning about class_names
         if self.class_names is None and self._is_classifier():
-            warnings.warn('Class names are required for featurize_dataframe and feature_labels')
+            warnings.warn(
+                'Class names are required for featurize_dataframe and feature_labels')
 
     def _is_classifier(self):
         """Whether the underlying model is a classifier
@@ -506,8 +510,10 @@ class StackedFeaturizer(BaseFeaturizer):
         name = self.name or ''
         if self._is_classifier():
             if self.class_names is None:
-                raise ValueError('Class names are required for classification models')
-            return ['{} P({})'.format(name, cn).lstrip() for cn in self.class_names[:-1]]
+                raise ValueError(
+                    'Class names are required for classification models')
+            return ['{} P({})'.format(name, cn).lstrip() for cn in
+                    self.class_names[:-1]]
         else:
             return ['{} prediction'.format(name).lstrip()]
 
