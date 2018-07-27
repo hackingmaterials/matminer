@@ -4,6 +4,7 @@ import sys, traceback
 import warnings
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 from six import string_types, reraise
 from multiprocessing import Pool, cpu_count
 
@@ -157,7 +158,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True,
-                            multiindex=False):
+                            multiindex=False, pbar=True):
         """
         Compute features for all entries contained in input dataframe.
 
@@ -173,6 +174,11 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 row in a separate `XFeaturizer errors` column if True. Requires
                 ignore_errors to be True.
             inplace (bool): Whether to add new columns to input dataframe (df)
+            multiindex (bool): If True, use a Featurizer - Feature 2-level
+                index using the MultiIndex capabilities of pandas. If done
+                inplace, multiindex featurization will overwrite the original
+                dataframe's column index.
+            pbar (bool): Shows a progress bar if True.
 
         Returns:
             updated dataframe.
@@ -193,7 +199,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         # Compute the features
         features = self.featurize_many(df[col_id].values,
                                        ignore_errors=ignore_errors,
-                                       return_errors=return_errors)
+                                       return_errors=return_errors,
+                                       pbar=pbar)
         if return_errors:
             labels.append(self.__class__.__name__ + " Exceptions")
 
@@ -201,12 +208,16 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             indices = ([self.__class__.__name__], labels)
             labels = pd.MultiIndex.from_product(indices)
             df = homogenize_multiindex(df, "Input Data")
+            if inplace:
+                warnings.warn("Multiindexing enabled with inplace=True! The"
+                              "original dataframe index has changed.")
         elif isinstance(df.columns, pd.MultiIndex):
             # If input df is multi, but multi not enabled...
             raise ValueError("Please enable multiindexing to featurize an input"
                              " dataframe containing a column multiindex.")
 
         # Create dataframe with the new features
+        # todo: fix columns passed error
         res = pd.DataFrame(features, index=df.index, columns=labels)
 
         if inplace:
@@ -219,7 +230,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             new = pd.concat([df, res], axis=1)
             return new[df.columns.tolist() + res.columns.tolist()]
 
-    def featurize_many(self, entries, ignore_errors=False, return_errors=False):
+    def featurize_many(self, entries, ignore_errors=False, return_errors=False,
+                       pbar=True):
         """
         Featurize a list of entries.
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
@@ -232,6 +244,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 determined by ignore_errors with traceback strings added
                 as an extra 'feature'. Entries which featurize without
                 exceptions have this extra feature set to NaN.
+            pbar (bool): Show a progress bar for featurization if True.
 
         Returns:
             (list) features for each entry.
@@ -256,6 +269,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if not isinstance(entries[0], (tuple, list, np.ndarray)):
             entries = zip(entries)
 
+        # Add a progress bar
+        if pbar:
+            entries = tqdm(entries, desc=self.__class__.__name__)
+
         # Run the actual featurization
         if self.n_jobs == 1:
             return [self.featurize_wrapper(x) for x in entries]
@@ -269,7 +286,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 self.set_n_jobs(1)
                 return self.featurize_many(entries,
                                            ignore_errors=ignore_errors,
-                                           return_errors=return_errors)
+                                           return_errors=return_errors,
+                                           pbar=pbar)
             with Pool(self.n_jobs) as p:
                 return p.map(self.featurize_wrapper, entries)
 
@@ -388,7 +406,7 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True,
-                            multiindex=False):
+                            multiindex=False, pbar=True):
         """
         Featurize dataframe is overloaded in order to allow
         compatibility with Featurizers that overload featurize_dataframe
@@ -399,6 +417,12 @@ class MultipleFeaturizer(BaseFeaturizer):
                 col_id = ("Input Data", col_id)
             df = homogenize_multiindex(df, "Input Data")
 
+            # todo: Make pbar work with multiindexing
+            if pbar:
+                warnings.warn("Use of the progress bar with multiindexing "
+                              "is not yet supported. Setting pbar=False...")
+                pbar = False
+
         # Detect if any featurizers override featurize_dataframe
         override = ["featurize_dataframe" in f.__class__.__dict__.keys()
                     for f in self.featurizers]
@@ -408,11 +432,12 @@ class MultipleFeaturizer(BaseFeaturizer):
                 "featurization will be sequential and may diminish performance")
 
         for f in self.featurizers:
-            df = f.featurize_dataframe(df, col_id, ignore_errors,
-                                       return_errors, inplace, multiindex)
+            df = f.featurize_dataframe(df, col_id, ignore_errors, return_errors,
+                                       inplace, multiindex, pbar)
 
             if multiindex:
-                feature_labels = [(f.__class__.__name__, flabel) for flabel in f.feature_labels()]
+                feature_labels = [(f.__class__.__name__, flabel) for flabel
+                                  in f.feature_labels()]
             else:
                 feature_labels = f.feature_labels()
             df[feature_labels] = df[feature_labels].applymap(np.squeeze)
