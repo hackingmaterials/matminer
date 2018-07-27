@@ -196,6 +196,20 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             if col in labels:
                 raise ValueError('"{}" exists in input dataframe'.format(col))
 
+        # Multiindexing doesn't play nice with other options!
+        if multiindex:
+            if inplace:
+                warnings.warn("Multiindexing enabled with inplace=True! The "
+                              "original dataframe index has changed.")
+            if pbar:
+                warnings.warn("Progress bars with multiindexing are not"
+                              "currently supported. Progress bar is being "
+                              "disabled.")
+        elif isinstance(df.columns, pd.MultiIndex):
+            # If input df is multi, but multi not enabled...
+            raise ValueError("Please enable multiindexing to featurize an input"
+                             " dataframe containing a column multiindex.")
+
         # Compute the features
         features = self.featurize_many(df[col_id].values,
                                        ignore_errors=ignore_errors,
@@ -208,13 +222,6 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             indices = ([self.__class__.__name__], labels)
             labels = pd.MultiIndex.from_product(indices)
             df = homogenize_multiindex(df, "Input Data")
-            if inplace:
-                warnings.warn("Multiindexing enabled with inplace=True! The "
-                              "original dataframe index has changed.")
-        elif isinstance(df.columns, pd.MultiIndex):
-            # If input df is multi, but multi not enabled...
-            raise ValueError("Please enable multiindexing to featurize an input"
-                             " dataframe containing a column multiindex.")
 
         # Create dataframe with the new features
         # todo: fix columns passed error
