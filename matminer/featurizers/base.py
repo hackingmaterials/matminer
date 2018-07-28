@@ -201,10 +201,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             if inplace:
                 warnings.warn("Multiindexing enabled with inplace=True! The "
                               "original dataframe index has changed.")
-            if pbar:
-                warnings.warn("Progress bars with multiindexing are not"
-                              "currently supported. Progress bar is being "
-                              "disabled.")
+
         elif isinstance(df.columns, pd.MultiIndex):
             # If input df is multi, but multi not enabled...
             raise ValueError("Please enable multiindexing to featurize an input"
@@ -224,7 +221,6 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             df = homogenize_multiindex(df, "Input Data")
 
         # Create dataframe with the new features
-        # todo: fix columns passed error
         res = pd.DataFrame(features, index=df.index, columns=labels)
 
         if inplace:
@@ -313,7 +309,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         try:
             # Successful featurization returns nan for an error.
             if self.__return_errors:
-                return self.featurize(*x) + [float("nan")]
+                # Append operation must be agnostic to both ndarrays and lists
+                return list(self.featurize(*x)) + [float("nan")]
             else:
                 return self.featurize(*x)
         except BaseException as e:
@@ -411,17 +408,24 @@ class MultipleFeaturizer(BaseFeaturizer):
             f.fit(df[col_id])
         return self.featurize_dataframe(df, col_id, *args, **kwargs)
 
-    def featurize_dataframe(self, df, col_id, **kwargs):
+    def featurize_dataframe(self, df, col_id, *args, **kwargs):
         """
         Featurize dataframe is overloaded in order to allow
         compatibility with Featurizers that overload featurize_dataframe
         """
         multiindex = kwargs.get('multiindex', False)
+        pbar = kwargs.get('pbar', False)
 
         if multiindex:
             if not isinstance(df.columns, pd.MultiIndex):
                 col_id = ("Input Data", col_id)
             df = homogenize_multiindex(df, "Input Data")
+
+            if pbar:
+                warnings.warn("Progress bars with multiindexing are not"
+                              "currently supported. Progress bar is being "
+                              "disabled.")
+                kwargs['pbar'] = False
 
         # Detect if any featurizers override featurize_dataframe
         override = ["featurize_dataframe" in f.__class__.__dict__.keys()
@@ -432,7 +436,7 @@ class MultipleFeaturizer(BaseFeaturizer):
                 "featurization will be sequential and may diminish performance")
 
         for f in self.featurizers:
-            df = f.featurize_dataframe(df, col_id, **kwargs)
+            df = f.featurize_dataframe(df, col_id, *args, **kwargs)
 
             if multiindex:
                 feature_labels = [(f.__class__.__name__, flabel) for flabel
