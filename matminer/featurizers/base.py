@@ -158,7 +158,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
                             return_errors=False, inplace=True,
-                            multiindex=False, pbar=False):
+                            multiindex=False, pbar=True):
         """
         Compute features for all entries contained in input dataframe.
 
@@ -234,7 +234,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             return new[df.columns.tolist() + res.columns.tolist()]
 
     def featurize_many(self, entries, ignore_errors=False, return_errors=False,
-                       pbar=False):
+                       pbar=True):
         """
         Featurize a list of entries.
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
@@ -274,7 +274,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         # Add a progress bar
         if pbar:
-            entries = tqdm(entries, desc=self.__class__.__name__)
+            # list() required, tqdm has issues with memory if generator given
+            entries = tqdm(list(entries), desc=self.__class__.__name__)
 
         # Run the actual featurization
         if self.n_jobs == 1:
@@ -414,18 +415,11 @@ class MultipleFeaturizer(BaseFeaturizer):
         compatibility with Featurizers that overload featurize_dataframe
         """
         multiindex = kwargs.get('multiindex', False)
-        pbar = kwargs.get('pbar', False)
 
         if multiindex:
             if not isinstance(df.columns, pd.MultiIndex):
                 col_id = ("Input Data", col_id)
             df = homogenize_multiindex(df, "Input Data")
-
-            if pbar:
-                warnings.warn("Progress bars with multiindexing are not"
-                              "currently supported. Progress bar is being "
-                              "disabled.")
-                kwargs['pbar'] = False
 
         # Detect if any featurizers override featurize_dataframe
         override = ["featurize_dataframe" in f.__class__.__dict__.keys()
