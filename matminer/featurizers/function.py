@@ -119,9 +119,7 @@ class FunctionFeaturizer(BaseFeaturizer):
             self._feature_labels = self.generate_string_expressions(X.name)
         return self
 
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True, multiindex=False,
-                            pbar=False):
+    def featurize_dataframe(self, df, col_id, *args, **kwargs):
         """
         Custom featurize dataframe method that sets the column labels
         using the fit method and then featurizes the dataframe similarly
@@ -138,13 +136,16 @@ class FunctionFeaturizer(BaseFeaturizer):
                 row in a separate `XFeaturizer errors` column if True. Requires
                 ignore_errors to be True.
             inplace (bool): Whether to add new columns to input dataframe (df)
+            multiindex (bool):  Use a 2-level pandas index for columns in the
+                returned dataframe.
+            pbar (bool): Whether to use a progress bar for each featurizer.
 
         Returns:
             updated DataFrame.
         """
         self.fit(df[col_id])
         return super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, ignore_errors, return_errors, inplace)
+            df, col_id, *args, **kwargs)
 
     def generate_string_expressions(self, input_variable_names):
         """
