@@ -975,7 +975,8 @@ class PlotlyFig:
         barplots = []
         for i, _ in enumerate(x):
             barplot = go.Bar(x=x[i], y=y[i], name=labels[i],
-                             marker=dict(color=colors[i]))
+                             marker=dict(color=colors[i]),
+                             hoverinfo=self.hoverinfo)
             barplots.append(barplot)
 
         layout = deepcopy(self.layout)
@@ -1194,7 +1195,8 @@ class PlotlyFig:
                                      'tickfont': font_style,
                                      'titlefont': font_style,
                                      }}
-        par_coords = go.Parcoords(line=line, dimensions=dimensions)
+        par_coords = go.Parcoords(line=line, dimensions=dimensions,
+                                  hoverinfo=self.hoverinfo)
 
         par_coords.tickfont = font_style
         par_coords.labelfont = font_style
@@ -1283,6 +1285,7 @@ class PlotlyFig:
             zmin=colorscale_min,
             zmax=colorscale_max,
             colorscale=colorscale or self.colorscale,
+            hoverinfo=self.hoverinfo,
             colorbar={
                 'title': colorbar_title, 'titleside': 'right',
                 'tickfont': {'size': 0.75 * self.ticksize,
@@ -1436,7 +1439,8 @@ class PlotlyFig:
             zmin = color_range[0]
             zmax = color_range[1]
         trace = go.Heatmap(z=data_, x=x_labels, y=y_labels, zmin=zmin, zmax=zmax,
-                           colorscale=colorscale or self.colorscale, colorbar={
+                           colorscale=colorscale or self.colorscale,
+                           hoverinfo=self.hoverinfo, colorbar={
                 'title': colorbar_title, 'titleside': 'right',
                 'tickfont': {'size': 0.75 * self.ticksize,
                              'family': self.font_style['family']},
