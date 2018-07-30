@@ -65,7 +65,6 @@ class DOSFeaturizer(BaseFeaturizer):
             orbscores.sort(key=lambda x: x['{}_score'.format(ex)],
                            reverse=True)
             scores = np.array([s['{}_score'.format(ex)] for s in orbscores])
-            print(scores)
             feat['{}_hybridization'.format(ex)] = - np.sum(
                 scores * np.log(scores + 1e-10))  # avoid log(0)
 
