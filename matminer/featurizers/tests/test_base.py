@@ -163,7 +163,7 @@ class TestBaseClass(PymatgenTest):
         multi_f = MultipleFeaturizer([self.single, self.multi, f])
         data = self.make_test_data()
         with warnings.catch_warnings(record=True) as w:
-            multi_f.featurize_dataframe(data, 'x')
+            multi_f.fit_featurize_dataframe(data, 'x')
             self.assertEqual(len(w), 1)
 
     def test_multifeatures(self):
