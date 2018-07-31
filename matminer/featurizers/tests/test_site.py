@@ -11,7 +11,8 @@ from matminer.featurizers.site import AGNIFingerprints, \
     EwaldSiteEnergy, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
-    GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference
+    GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference, \
+    BondOrientationalParameter
 from matminer.featurizers.deprecated import CrystalSiteFingerprint
 
 
@@ -560,6 +561,24 @@ class FingerprintTests(PymatgenTest):
         for i in range(2):
             features = f.featurize(self.b1, i)
             self.assertArrayAlmostEqual(features, [1])
+
+    def test_bop(self):
+        f = BondOrientationalParameter(max_l=10, compute_w=True)
+
+        # Check the feature count
+        X_cols = f.feature_labels()
+        self.assertEqual(20, len(X_cols))
+
+        # Compute it for SC and B1
+        sc_features = f.featurize(self.sc, 0)
+        b1_features = f.featurize(self.b1, 0)
+
+        # They should be equal
+        self.assertArrayAlmostEqual(sc_features, b1_features)
+
+        # Comparing Q's to results from https://aip.scitation.org/doi/10.1063/1.4774084
+        self.assertArrayAlmostEqual([0, 0, 0, 0.764, 0, 0.354, 0, 0.718, 0, 0.411],
+                                    sc_features[:10], decimal=3)
 
     def tearDown(self):
         del self.sc
