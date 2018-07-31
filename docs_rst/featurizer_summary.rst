@@ -86,7 +86,7 @@ Name                    Description
 =====================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 :code:`DOSFeaturizer`   Significant character and contribution of the density of state from a `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer>`_
 :code:`DopingFermi`     The fermi level (w.r.t. selected reference energy) associated with a `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DopingFermi>`_
-:code:`BandEdge`        Orbital character of the band edges (CBM/VBM) based on a density of `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.BandEdge>`_
+:code:`Hybridization`   quantify s/p/d/f orbital character and their hybridizations at band edges `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.Hybridization>`_
 =====================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 
 

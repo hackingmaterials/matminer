@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.3.7 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.3.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -2342,94 +2342,12 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <div class="section" id="module-matminer.featurizers.dos">
 <span id="matminer-featurizers-dos-module"></span><h2>matminer.featurizers.dos module<a class="headerlink" href="#module-matminer.featurizers.dos" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="matminer.featurizers.dos.BandEdge">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.dos.</code><code class="descname">BandEdge</code><span class="sig-paren">(</span><em>energy_cutoff=0.1</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em>, <em>species=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.BandEdge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Orbital character of the band edges (CBM/VBM) based on a density of
-states CompleteDos object.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>energy_cutoff (float in eV):</dt>
-<dd>The extent (into the bands) to sample the DOS</dd>
-<dt>sampling_resolution (int):</dt>
-<dd>Number of points to sample DOS</dd>
-<dt>gaussian_smear (float in eV):</dt>
-<dd>Gaussian smearing (sigma) around each sampled point in the DOS</dd>
-<dt>species ([str]): the species for which orbital contributions are</dt>
-<dd>separately returned.</dd>
-</dl>
-</dd>
-<dt>Returns (featurize returns [float] and featurize_labels returns [str]):</dt>
-<dd><p class="first">set of orbitals contributions and hybridizations and
-possibly contributions from given species. Some examples for each
-type of features:</p>
-<blockquote class="last">
-<div><p>cbm_s (float): s-orbital character of the cbm up to energy_cutoff
-vbm_sp (float): sp-hybridization at the vbm edge. Minimum is 0</p>
-<blockquote>
-<div>or no hybridization (e.g. all s or vbm_s==1) and 1.0 is
-maximum hybridization (i.e. vbm_s==0.5, vbm_p==0.5)</div></blockquote>
-<p>cbm_Si_p (float): p-orbital character of Si</p>
-</div></blockquote>
-</dd>
-</dl>
-<dl class="method">
-<dt id="matminer.featurizers.dos.BandEdge.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>energy_cutoff=0.1</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em>, <em>species=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.BandEdge.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.dos.BandEdge.feature_labels">
-<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.BandEdge.feature_labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns ([str]): feature names starting with the extremum (cbm or vbm)
-followed by either s,p,d,f orbital to show their normalized contribution
-or a pair showing their hybridization or contribution of an element.
-See the class docs for examples.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.dos.BandEdge.featurize">
-<code class="descname">featurize</code><span class="sig-paren">(</span><em>dos</em>, <em>energy_cutoff=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.BandEdge.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>takes in the density of state and return the orbitals contributions
-and hybridizations.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">dos (pymatgen CompleteDos): note that dos.structure is required
-energy_cutoff (float or None): if set, it overrides the instance</p>
-<blockquote class="last">
-<div>variable self.energy_cutoff.</div></blockquote>
-</dd>
-</dl>
-<p>Returns ([float]): features, see class doc for more info</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="matminer.featurizers.dos.BandEdge.implementors">
-<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.BandEdge.implementors" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of implementors of the feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should either be a string with author name (e.g.,</dt>
-<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
-keys like “email” or “institution” (e.g., {“name”: “Anubhav
-Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="matminer.featurizers.dos.DOSFeaturizer">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.dos.</code><code class="descname">DOSFeaturizer</code><span class="sig-paren">(</span><em>contributors=1</em>, <em>significance_threshold=0.1</em>, <em>energy_cutoff=0.5</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.dos.</code><code class="descname">DOSFeaturizer</code><span class="sig-paren">(</span><em>contributors=1</em>, <em>decay_length=0.1</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.05</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Significant character and contribution of the density of state from a
-CompleteDos, object. Contributors are the sites within the structure. This
-underline the importance of the presence of dos.structure.</p>
+CompleteDos, object. Contributors are the atomic orbitals from each site
+within the structure. This underlines the importance of dos.structure.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
@@ -2437,13 +2355,11 @@ underline the importance of the presence of dos.structure.</p>
 <dd>Sets the number of top contributors to the DOS that are
 returned as features. (i.e. contributors=1 will only return the
 main cb and main vb orbital)</dd>
-<dt>significance_threshold (float):</dt>
-<dd>Sets the significance threshold for orbitals in the DOS.
-Does not impact the number of contributors returned. Only
-determines the feature value xbm_significant_contributors.
-The threshold is a fractional value between 0 and 1.</dd>
-<dt>energy_cutoff (float in eV):</dt>
-<dd>The extent (into the bands) to sample the DOS</dd>
+<dt>decay_length (float in eV):</dt>
+<dd>The dos is sampled by an exponential decay function. this parameter
+sets the decay length of the exponential. Three times the decay
+length corresponds to 10% sampling strength. There is a hard cutoff
+at five times the decay length (1% sampling strength)</dd>
 <dt>sampling_resolution (int):</dt>
 <dd>Number of points to sample DOS</dd>
 <dt>gaussian_smear (float in eV):</dt>
@@ -2452,19 +2368,18 @@ The threshold is a fractional value between 0 and 1.</dd>
 </dd>
 <dt>Returns (featurize returns [float] and featurize_labels returns [str]):</dt>
 <dd><p class="first">xbm_score_i (float): fractions of ith contributor orbital
-xbm_location_i (str): fractional coordinate of ith contributor/site</p>
-<blockquote>
-<div>For example, ‘0.0;0.0;0.0’ if Gamma</div></blockquote>
-<p>xbm_specie_i (str): elemental specie of ith contributor (ex: ‘Ti’)
+xbm_location_i (str): fractional coordinate of ith contributor/site
 xbm_character_i (str): character of ith contributor (s, p, d, f)
-xbm_nsignificant (int): the number of orbitals with contributions</p>
+xbm_specie_i (str): elemental specie of ith contributor (ex: ‘Ti’)
+xbm_hybridization (int): the ammount of hybridization at the band edge</p>
 <blockquote class="last">
-<div>above the significance_threshold</div></blockquote>
+<div>characterized by an entropy score (x ln x). the hybridization score
+is larger for a greater number of significant contributors</div></blockquote>
 </dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.dos.DOSFeaturizer.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>contributors=1</em>, <em>significance_threshold=0.1</em>, <em>energy_cutoff=0.5</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>contributors=1</em>, <em>decay_length=0.1</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.05</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.DOSFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -2539,11 +2454,11 @@ return_eref: if True, instead of aligning the fermi levels based</p>
 <dd><dl class="first last docutils">
 <dt>fermi_c-1e+20T300 (float): the fermi level for the electron</dt>
 <dd>concentration of 1e20 and the temperature of 300K.</dd>
-<dt>fermi_c1e+18T600 (float): the fermi level for the hole concentration</dt>
+<dt>fermi_c1e+18T600 (float): fermi level for the hole concentration</dt>
 <dd>of 1e18 and the temperature of 600K.</dd>
 <dt>midgap eref (float): if return_eref==True then eref (midgap here)</dt>
-<dd>energy is returned. In this case other fermi levels returned are
-absolute as opposed to relative to eref (i.e. if not return_eref)</dd>
+<dd>energy is returned. In this case, fermi levels are absolute as
+opposed to relative to eref (i.e. if not return_eref)</dd>
 </dl>
 </dd>
 </dl>
@@ -2614,22 +2529,107 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 </dd></dl>
 
+<dl class="class">
+<dt id="matminer.featurizers.dos.Hybridization">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.dos.</code><code class="descname">Hybridization</code><span class="sig-paren">(</span><em>decay_length=0.1</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.05</em>, <em>species=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.Hybridization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>quantify s/p/d/f orbital character and their hybridizations at band edges</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>decay_length (float in eV):</dt>
+<dd>The dos is sampled by an exponential decay function. this parameter
+sets the decay length of the exponential. Three times the decay
+length corresponds to 10% sampling strength. There is a hard cutoff
+at five times the decay length (1% sampling strength)</dd>
+<dt>sampling_resolution (int):</dt>
+<dd>Number of points to sample DOS</dd>
+<dt>gaussian_smear (float in eV):</dt>
+<dd>Gaussian smearing (sigma) around each sampled point in the DOS</dd>
+<dt>species ([str]): the species for which orbital contributions are</dt>
+<dd>separately returned.</dd>
+</dl>
+</dd>
+<dt>Returns (featurize returns [float] and featurize_labels returns [str]):</dt>
+<dd><p class="first">set of orbitals contributions and hybridizations. If species, then also
+individual contributions from given species. Examples:</p>
+<blockquote class="last">
+<div><p>cbm_s (float): s-orbital character of the cbm up to energy_cutoff
+vbm_sp (float): sp-hybridization at the vbm edge. Minimum is 0</p>
+<blockquote>
+<div>or no hybridization (e.g. all s or vbm_s==1) and 1.0 is
+maximum hybridization (i.e. vbm_s==0.5, vbm_p==0.5)</div></blockquote>
+<p>cbm_Si_p (float): p-orbital character of Si</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.dos.Hybridization.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>decay_length=0.1</em>, <em>sampling_resolution=100</em>, <em>gaussian_smear=0.05</em>, <em>species=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.Hybridization.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.dos.Hybridization.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.Hybridization.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns ([str]): feature names starting with the extremum (cbm or vbm)
+followed by either s,p,d,f orbital to show normalized contribution
+or a pair showing their hybridization or contribution of an element.
+See the class docs for examples.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.dos.Hybridization.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>dos</em>, <em>decay_length=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.Hybridization.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>takes in the density of state and return the orbitals contributions
+and hybridizations.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">dos (pymatgen CompleteDos): note that dos.structure is required
+decay_length (float or None): if set, it overrides the instance</p>
+<blockquote class="last">
+<div>variable self.decay_length.</div></blockquote>
+</dd>
+</dl>
+<p>Returns ([float]): features, see class doc for more info</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.dos.Hybridization.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.Hybridization.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="matminer.featurizers.dos.get_cbm_vbm_scores">
-<code class="descclassname">matminer.featurizers.dos.</code><code class="descname">get_cbm_vbm_scores</code><span class="sig-paren">(</span><em>dos</em>, <em>energy_cutoff</em>, <em>sampling_resolution</em>, <em>gaussian_smear</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.get_cbm_vbm_scores" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Quantifies the strength of the contribution of all orbitals of various</dt>
-<dd>species/sites to the conduction band minimum (CBM) and the valence band
-maximum (VBM) up to energy_cutoff inside the bands from the CBM/VBM.
-An example use of the output may be sorting it based on cbm_score
-or vbm_score.</dd>
+<code class="descclassname">matminer.featurizers.dos.</code><code class="descname">get_cbm_vbm_scores</code><span class="sig-paren">(</span><em>dos</em>, <em>decay_length</em>, <em>sampling_resolution</em>, <em>gaussian_smear</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.dos.get_cbm_vbm_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quantifies the contribution of all atomic orbitals (s/p/d/f) from all
+crystal sites to the conduction band minimum (CBM) and the valence band
+maximum (VBM). An exponential decay function is used to sample the DOS.
+An example use may be sorting the output based on cbm_score or vbm_score.</p>
+<dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
 <dt>dos (pymatgen CompleteDos or their dict):</dt>
 <dd>The density of states to featurize. Must be a complete DOS,
 (i.e. contains PDOS and structure, in addition to total DOS)</dd>
-<dt>energy_cutoff (float in eV):</dt>
-<dd>The extent (into the bands) to sample the DOS</dd>
+<dt>decay_length (float in eV):</dt>
+<dd>The dos is sampled by an exponential decay function. this parameter
+sets the decay length of the exponential. Three times the decay
+length corresponds to 10% sampling strength. There is a hard cutoff
+at five times the decay length (1% sampling strength)</dd>
 <dt>sampling_resolution (int):</dt>
 <dd>Number of points to sample DOS</dd>
 <dt>gaussian_smear (float in eV):</dt>
@@ -2640,7 +2640,7 @@ or vbm_score.</dd>
 <dd><dl class="first last docutils">
 <dt>orbital_scores [(dict)]:</dt>
 <dd>A list of how much each orbital contributes to the partial
-density of states up to energy_cutoff. Dictionary items are:
+density of states near the band edge. Dictionary items are:
 .. cbm_score: (float) fractional contribution to conduction band
 .. vbm_score: (float) fractional contribution to valence band
 .. species: (pymatgen Specie) the Specie of the orbital
@@ -6524,7 +6524,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.3.9 documentation</a> &#187;</li> 
       </ul>
     </div>
 
