@@ -26,6 +26,10 @@ Density.table
     Property: Density of element at STP
     Units: g/L
     Source: Mathematica
+ElectronAffinity.table
+	Property: Electron affinitiy
+	Units: kJ/mol
+	Source: Mathematica
 Electronegativity.table
     Property: Pauling electronegativity (right?)
     Source: Mathematica
@@ -143,7 +147,7 @@ NUnfilled.table
     Property: Number of unfilled valence orbitals
     Source: http://periodictable.com/Properties/A/ElectronConfigurationString.v.html
     Notes: Number of unoccupied orbitals = 0 if shell unoccupied, Maximum-Filled if occupied
-NValence.table
+NValance.table
     Property: Number of valence electrons
     Source: http://periodictable.com/Properties/A/ElectronConfigurationString.v.html
 OxidationStates.table
@@ -168,3 +172,23 @@ SpaceGroupNumber.table
     Property: Space group of T=0K ground state structure
     Source: Only structures from the ICSD were evaluated 
         Pm used OQMD groundstate in Spacegroup 194, which is only 4 meV/atom below 166. No ICSD structure
+ZungerPP-r_s.table
+	Property: Psuedopotential radius of s orbital
+	Units: a.u.
+	Source: http://link.aps.org/doi/10.1103/PhysRevB.22.5839
+ZungerPP-r_p.table
+	Property: Psuedopotential radius of p orbital
+	Units: a.u.
+	Source: http://link.aps.org/doi/10.1103/PhysRevB.22.5839
+ZungerPP-r_d.table
+	Property: Psuedopotential radius of d orbital
+	Units: a.u.
+	Source: http://link.aps.org/doi/10.1103/PhysRevB.22.5839
+ZungerPP-r_sigma.table
+	Property: Sum of the radii of s and p orbitals
+	Units: a.u.
+	Source(s): http://link.aps.org/doi/10.1103/PhysRevB.22.5839; http://linkinghub.elsevier.com/retrieve/pii/0022508885901109
+ZungerPP-r_pi.table
+	Property: Absolute value of the different between the radii of s and p orbitals
+	Units: a.u.
+	Source: http://link.aps.org/doi/10.1103/PhysRevB.22.5839
