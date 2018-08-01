@@ -1,5 +1,9 @@
 Information about elemental property lookup tables. Most of this data was taken from Mathematica's elemental property data (sources described at http://reference.wolfram.com/mathematica/note/ElementDataSourceInformation.html). Modifications and, when not from Mathematica, original sources are listed.
 
+AtomicRadius.table
+    Property: Atomic radius
+    Units: Angstrom
+    Source: pymatgen, which used http://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page).
 AtomicVolume.table
     Property: Volume of an atom of each element
     Units: A^3 / atom
@@ -110,6 +114,10 @@ MiracleRadius.table
     Property: Assessed radii of elements in metallic glass structures
     Units: pm
     Source: Miracle et al., 2010. doi:10.1179/095066010X12646898728200
+MolarVolume.table
+    Property: Molar Volume
+    Units: cm^3
+    Source: pymatgen
 n_ws^third.table
     Property: Electron density at surface of Wigner-Sietz cell. Used in Miedema's model
     Source: Cohesion in metals: transition metal alloys, (North-Holland, Amsterdam, 1988)
@@ -172,6 +180,14 @@ SpaceGroupNumber.table
     Property: Space group of T=0K ground state structure
     Source: Only structures from the ICSD were evaluated 
         Pm used OQMD groundstate in Spacegroup 194, which is only 4 meV/atom below 166. No ICSD structure
+ThermalConductivity.table
+    Property: Thermal conductivity
+    Units: W/m-K
+    Source: Pymatgen
+VdWRadius.table
+    Property: Van der Waals radius
+    Units: Angstrom
+    Source: pymatgen, which took from http://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)
 ZungerPP-r_s.table
 	Property: Psuedopotential radius of s orbital
 	Units: a.u.
