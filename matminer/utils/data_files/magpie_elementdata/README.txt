@@ -66,6 +66,10 @@ HeatFusion.table
     Units: kJ/mol
     Source: CRC Handbook
     Notes: Heat of fusion are listed per diatomic molecule for appropriate elements, we computed per mole of atoms (i.e., divided listed value by 2)
+HeatVaporization.table
+    Property: Enthalpy of vaporization for elements at their boiling temperatures
+    Units: kJ/mol
+    Source: Mathematica
 GSestFCClatcnt.table
     Property: Estimated FCC lattice parameter based on the DFT volume of the
 OQMD ground state for each element
@@ -171,6 +175,10 @@ phi.table
     Source: Cohesion in metals: transition metal alloys, (North-Holland, Amsterdam, 1988)
 Row.table
     Property: Row on periodic table
+FirstIonizationEnergy.table
+    Property: Energy to remove the second electron from an element
+    Units: eV
+    Source: CRC Handbook
 ShearModulus.table
     Property: Shear modulus
     Units: GPa
