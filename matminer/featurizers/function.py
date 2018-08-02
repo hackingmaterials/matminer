@@ -22,6 +22,9 @@ class FunctionFeaturizer(BaseFeaturizer):
     """
     Features from functions applied to existing features, e.g. "1/x"
 
+    This featurizer must be fit either by calling .fit_featurize_dataframe
+    or by calling .fit followed by featurize_dataframe.
+
     This class featurizes a dataframe according to a set
     of expressions representing functions to apply to
     existing features. The approach here has uses a sympy-based
@@ -118,32 +121,6 @@ class FunctionFeaturizer(BaseFeaturizer):
         elif isinstance(X, Series):
             self._feature_labels = self.generate_string_expressions(X.name)
         return self
-
-    def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True, multiindex=False):
-        """
-        Custom featurize dataframe method that sets the column labels
-        using the fit method and then featurizes the dataframe similarly
-        as the base class
-
-        Args:
-            df (pandas.DataFrame): Dataframe containing input data.
-            col_id (str or list of str): column label containing objects to
-                featurize.
-            ignore_errors (bool): Returns NaN for dataframe rows where
-                exceptions are thrown if True. If False, exceptions
-                are thrown as normal.
-            return_errors (bool). Returns the errors encountered for each
-                row in a separate `XFeaturizer errors` column if True. Requires
-                ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
-
-        Returns:
-            updated DataFrame.
-        """
-        self.fit(df[col_id])
-        return super(FunctionFeaturizer, self).featurize_dataframe(
-            df, col_id, ignore_errors, return_errors, inplace)
 
     def generate_string_expressions(self, input_variable_names):
         """
