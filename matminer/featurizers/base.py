@@ -405,14 +405,16 @@ class MultipleFeaturizer(BaseFeaturizer):
         return sum([f.feature_labels() for f in self.featurizers], [])
 
     def fit_featurize_dataframe(self, df, col_id, *args, **kwargs):
+        """
+        Accepts the same arguments as BaseFeaturizer.fit_featurize_dataframe.
+        """
         for f in self.featurizers:
             f.fit(df[col_id])
         return self.featurize_dataframe(df, col_id, *args, **kwargs)
 
     def featurize_dataframe(self, df, col_id, *args, **kwargs):
         """
-        Featurize dataframe is overloaded in order to allow
-        compatibility with Featurizers that overload featurize_dataframe
+        Accepts the same arguments as BaseFeaturizer.featurize_dataframe.
         """
         multiindex = kwargs.get('multiindex', False)
 
@@ -420,14 +422,6 @@ class MultipleFeaturizer(BaseFeaturizer):
             if not isinstance(df.columns, pd.MultiIndex):
                 col_id = ("Input Data", col_id)
             df = homogenize_multiindex(df, "Input Data")
-
-        # Detect if any featurizers override featurize_dataframe
-        override = ["featurize_dataframe" in f.__class__.__dict__.keys()
-                    for f in self.featurizers]
-        if any(override):
-            warnings.warn(
-                "One or more featurizers overrides featurize_dataframe, "
-                "featurization will be sequential and may diminish performance")
 
         for f in self.featurizers:
             df = f.featurize_dataframe(df, col_id, *args, **kwargs)
