@@ -21,7 +21,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
     def test_featurize(self):
         ff = FunctionFeaturizer()
         # Test basic default functionality
-        new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
+        new_df = ff.fit_featurize_dataframe(self.test_df, 'a', inplace=False)
         # ensure NaN for undefined values
         self.assertTrue(pd.isnull(new_df['1/a'][1]))
         self.assertTrue(pd.isnull(new_df['sqrt(a)'][0]))
@@ -34,7 +34,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
         # Test custom expression functionality
         expressions = ["1 / x"]
         ff = FunctionFeaturizer(expressions=expressions)
-        new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
+        new_df = ff.fit_featurize_dataframe(self.test_df, 'a', inplace=False)
         new_df = new_df.dropna()
         self.assertTrue("1/a" in new_df.columns)
         self.assertFalse("a**2" in new_df.columns)
@@ -43,13 +43,13 @@ class TestFunctionFeaturizer(unittest.TestCase):
 
         # Test multi-functionality
         ff = FunctionFeaturizer(expressions=expressions, multi_feature_depth=2)
-        new_df = ff.featurize_dataframe(self.test_df, ['a', 'b'], inplace=False)
+        new_df = ff.fit_featurize_dataframe(self.test_df, ['a', 'b'], inplace=False)
         new_df = new_df.dropna()
         self.assertTrue(np.allclose(new_df['1/a'] * new_df['1/b'],
                                     new_df['1/(a*b)']))
 
         ff = FunctionFeaturizer(expressions=expressions, multi_feature_depth=3)
-        new_df = ff.featurize_dataframe(self.test_df, ['a', 'b', 'c'],
+        new_df = ff.fit_featurize_dataframe(self.test_df, ['a', 'b', 'c'],
                                         inplace=False)
         new_df = new_df.dropna()
         self.assertTrue(np.allclose(new_df['1/a']*new_df['1/b']*new_df['1/c'],
@@ -58,18 +58,18 @@ class TestFunctionFeaturizer(unittest.TestCase):
         # Test complex functionality
         expressions = ["sqrt(x)"]
         ff = FunctionFeaturizer(expressions=expressions, postprocess=np.complex)
-        new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
+        new_df = ff.fit_featurize_dataframe(self.test_df, 'a', inplace=False)
         self.assertEqual(new_df['sqrt(a)'][0], 1j)
 
         ff = FunctionFeaturizer(expressions=expressions, multi_feature_depth=2,
                                 combo_function=np.sum)
-        new_df = ff.featurize_dataframe(self.test_df, ['a', 'b'], inplace=False)
+        new_df = ff.fit_featurize_dataframe(self.test_df, ['a', 'b'], inplace=False)
         self.assertAlmostEqual(new_df['sqrt(a) + sqrt(b)'][2], 2.41421356)
 
     def test_featurize_labels(self):
         # Test latexification
         ff = FunctionFeaturizer(latexify_labels=True)
-        new_df = ff.featurize_dataframe(self.test_df, 'a', inplace=False)
+        new_df = ff.fit_featurize_dataframe(self.test_df, 'a', inplace=False)
         self.assertTrue("\sqrt{a}" in new_df.columns)
         # Ensure error is thrown with no labels
         ff = FunctionFeaturizer(latexify_labels=False)
@@ -101,7 +101,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
         ff1 = FunctionFeaturizer(expressions=["x ** 2"])
         ff2 = FunctionFeaturizer(expressions=["exp(x)", "1 / x"])
         mf = MultipleFeaturizer([ff1, ff2])
-        new_df = mf.featurize_dataframe(self.test_df, ['a', 'b', 'c'],
+        new_df = mf.fit_featurize_dataframe(self.test_df, ['a', 'b', 'c'],
                                         inplace=False)
         self.assertEqual(len(new_df), 11)
 

@@ -5,6 +5,16 @@
 matminer Changelog
 ==================
 
+**v0.3.9**
+
+* BandEdge renamed to Hybridization, gives smoother featurizations (M. Dylla, A. Faghaninia)
+* Add hoverinfo option for many plots (A. Dunn)
+* minor fixes (A. Faghaninia)
+
+**v0.3.8**
+
+.. warning:: This is an unsupported / aborted release
+
 
 **v0.3.7**
 

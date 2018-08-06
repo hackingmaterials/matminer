@@ -1491,7 +1491,8 @@ class PlotlyFig:
         elif not isinstance(labels, (list, np.ndarray, pd.Series, pd.Index)):
             labels = [self._data_from_str(labels, data)]
         else:
-            if len(list(labels)) ==expected_length and isinstance(labels[0], str):
+            if len(list(labels)) ==expected_length and \
+                    isinstance(labels[0], (str, tuple)):
                 labels = [labels]
             else:
                 labels = [self._data_from_str(l) for l in labels]

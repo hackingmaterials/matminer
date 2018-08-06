@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import unittest
 
-from matminer.featurizers.dos import DOSFeaturizer, DopingFermi, BandEdge
+from matminer.featurizers.dos import DOSFeaturizer, DopingFermi, Hybridization
 from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.util.testing import PymatgenTest
 
@@ -20,23 +20,24 @@ class DOSFeaturesTest(PymatgenTest):
         self.df = pd.DataFrame({'dos': [si_dos]})
 
     def test_DOSFeaturizer(self):
-        df_df = DOSFeaturizer(contributors=2).featurize_dataframe(self.df, col_id=['dos'])
+        dos_feats = DOSFeaturizer(contributors=2).featurize_dataframe(
+            self.df, col_id=['dos'])
         # CBM:
-        self.assertAlmostEqual(df_df['cbm_score_1'][0], 0.258, 3)
-        self.assertAlmostEqual(df_df['cbm_score_2'][0], 0.258, 3)
-        self.assertEqual(df_df['cbm_location_1'][0], '0.0;0.0;0.0')
-        self.assertEqual(df_df['cbm_location_2'][0], '0.25;0.25;0.25')
-        self.assertEqual(df_df['cbm_specie_1'][0], 'Si')
-        self.assertEqual(df_df['cbm_character_1'][0], 's')
-        self.assertEqual(df_df['cbm_nsignificant'][0], 4)
+        self.assertAlmostEqual(dos_feats['cbm_score_1'][0], 0.2586, 3)
+        self.assertAlmostEqual(dos_feats['cbm_score_2'][0], 0.2586, 3)
+        self.assertEqual(dos_feats['cbm_location_1'][0], '0.0;0.0;0.0')
+        self.assertEqual(dos_feats['cbm_location_2'][0], '0.25;0.25;0.25')
+        self.assertEqual(dos_feats['cbm_specie_1'][0], 'Si')
+        self.assertEqual(dos_feats['cbm_character_1'][0], 's')
+        self.assertAlmostEqual(dos_feats['cbm_hybridization'][0], 1.3857, 3)
         # VBM:
-        self.assertAlmostEqual(df_df['vbm_score_1'][0], 0.490, 3)
-        self.assertAlmostEqual(df_df['vbm_score_2'][0], 0.490, 3)
-        self.assertEqual(df_df['vbm_location_1'][0], '0.0;0.0;0.0')
-        self.assertEqual(df_df['vbm_location_2'][0], '0.25;0.25;0.25')
-        self.assertEqual(df_df['vbm_specie_1'][0], 'Si')
-        self.assertEqual(df_df['vbm_character_1'][0], 'p')
-        self.assertEqual(df_df['vbm_nsignificant'][0], 2)
+        self.assertAlmostEqual(dos_feats['vbm_score_1'][0], 0.4918, 3)
+        self.assertAlmostEqual(dos_feats['vbm_score_2'][0], 0.4918, 3)
+        self.assertEqual(dos_feats['vbm_location_1'][0], '0.0;0.0;0.0')
+        self.assertEqual(dos_feats['vbm_location_2'][0], '0.25;0.25;0.25')
+        self.assertEqual(dos_feats['vbm_specie_1'][0], 'Si')
+        self.assertEqual(dos_feats['vbm_character_1'][0], 'p')
+        self.assertAlmostEqual(dos_feats['vbm_hybridization'][0], 0.7765, 3)
 
     def test_DopingFermi(self):
         dopings = [-1e18, -1e20, 1e18, 1e20]
@@ -54,32 +55,31 @@ class DOSFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(feats[1], 6.337074, places=4)
         self.assertAlmostEqual(feats[2], 5.4188086, places=4)
         self.assertAlmostEqual(feats[3], 5.2993298, places=4)
-        self.assertAlmostEqual(feats[4], 5.8162, places=4) # same reference
+        self.assertAlmostEqual(feats[4], 5.8162, places=4)  # same reference
 
-    def test_BandEdge(self):
-        be = BandEdge(energy_cutoff=0.1, species=['Si'])
-        df = be.featurize_dataframe(self.df, col_id='dos', inplace=False)
+    def test_Hybridization(self):
+        hy = Hybridization(decay_length=0.1, species=['Si'])
+        df = hy.featurize_dataframe(self.df, col_id='dos', inplace=False)
         df = df.drop('dos', axis=1)
         # ensure features are in [0., 1.]
-        self.assertEqual((df<0).sum().sum(), 0.0)
-        self.assertEqual((df>1).sum().sum(), 0.0)
+        self.assertEqual((df < 0).sum().sum(), 0.0)
+        self.assertEqual((df > 1).sum().sum(), 0.0)
         # cbm orbitals
-        self.assertAlmostEqual(df['cbm_s'][0], 0.51, 2)
+        self.assertAlmostEqual(df['cbm_s'][0], 0.517, 2)
         self.assertEqual(df['cbm_s'][0], df['cbm_Si_s'][0])
-        self.assertAlmostEqual(df['cbm_p'][0], 0.49, 2)
+        self.assertAlmostEqual(df['cbm_p'][0], 0.482, 2)
         self.assertGreater(df['cbm_sp'][0], 0.98)
         # vbm orbitals
         self.assertAlmostEqual(df['vbm_s'][0], 0.016, 3)
         self.assertEqual(df['vbm_s'][0], df['vbm_Si_s'][0])
         self.assertAlmostEqual(df['vbm_p'][0], 0.984, 3)
-        self.assertAlmostEqual(df['vbm_sp'][0], 0.061, 3)
+        self.assertAlmostEqual(df['vbm_sp'][0], 0.0642, 3)
         df = self.df
-        df['cutoff'] = [1.0] # digging deeper inside the band
-        df = be.featurize_dataframe(df, col_id=['dos', 'cutoff'])
-        self.assertAlmostEqual(df['cbm_s'][0], 0.46, 2)
-        self.assertAlmostEqual(df['vbm_p'][0], 0.96, 2)
+        df['decay_length'] = [1.0]  # digging deeper inside the band
+        df = hy.featurize_dataframe(df, col_id=['dos', 'decay_length'])
+        self.assertAlmostEqual(df['cbm_s'][0], 0.409, 2)
+        self.assertAlmostEqual(df['vbm_p'][0], 0.943, 2)
 
 
 if __name__ == '__main__':
     unittest.main()
-
