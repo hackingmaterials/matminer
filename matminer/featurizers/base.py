@@ -428,6 +428,7 @@ class MultipleFeaturizer(BaseFeaturizer):
     def fit(self, X, y=None, **fit_kwargs):
         for f in self.featurizers:
             f.fit(X, y, **fit_kwargs)
+        return self
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         return np.hstack(np.squeeze(f.featurize_wrapper(x)) for f in self.featurizers)
