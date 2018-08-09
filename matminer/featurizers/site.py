@@ -1918,6 +1918,7 @@ class SiteElementalProperty(BaseFeaturizer):
 
         Args:
             data_source (AbstractData): Tool used to look up elemental properties
+            properties ([string]): List of properties to use for features
         """
         self.data_source = data_source or MagpieData()
         self.properties = properties
@@ -1956,7 +1957,7 @@ class SiteElementalProperty(BaseFeaturizer):
                                          properties=["Number", "AtomicWeight", "Row", "Column",
                                                      "MeltingT", "Column", "Row",
                                                      "FirstIonizationEnergy", "SecondIonizationEnergy",
-                                                     "Electronegativity", # Need Allen Elcnegtvty
+                                                     "Electronegativity", "AllenElectronegativity",
                                                      "VdWRadius", "CovalentRadius", "AtomicRadius",
                                                      "ZungerPP-r_s", "ZungerPP-r_p",
                                                      "MeltingT", "BoilingT", "Density",
