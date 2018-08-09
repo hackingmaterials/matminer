@@ -191,14 +191,6 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if isinstance(col_id, string_types):
             col_id = [col_id]
 
-        # Generate the feature labels
-        labels = self.feature_labels()
-
-        # Check names to avoid overwriting the current columns
-        for col in df.columns.values:
-            if col in labels:
-                raise ValueError('"{}" exists in input dataframe'.format(col))
-
         # Multiindexing doesn't play nice with other options!
         if multiindex:
             if inplace:
@@ -210,17 +202,22 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             raise ValueError("Please enable multiindexing to featurize an input"
                              " dataframe containing a column multiindex.")
 
+        # Generate the labels for the columns
+        labels = self._generate_column_labels(multiindex, return_errors)
+
+        # Check names to avoid overwriting the current columns
+        for col in df.columns.values:
+            if col in labels:
+                raise ValueError('"{}" exists in input dataframe'.format(col))
+
         # Compute the features
         features = self.featurize_many(df[col_id].values,
                                        ignore_errors=ignore_errors,
                                        return_errors=return_errors,
                                        pbar=pbar)
-        if return_errors:
-            labels.append(self.__class__.__name__ + " Exceptions")
 
+        # Make sure the dataframe can handle multiindices
         if multiindex:
-            indices = ([self.__class__.__name__], labels)
-            labels = pd.MultiIndex.from_product(indices)
             df = homogenize_multiindex(df, "Input Data")
 
         # Create dataframe with the new features
@@ -235,6 +232,26 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             # Create new dataframe and ensure columns are ordered properly
             new = pd.concat([df, res], axis=1)
             return new[df.columns.tolist() + res.columns.tolist()]
+
+    def _generate_column_labels(self, multiindex, return_errors):
+        """Create a list of column names for a dataframe
+
+        Args:
+            multiindex (bool): Whether the dataframe has a multiindex
+            return_errors (bool): Whether the dataframe will include columns
+        Returns:
+            list of column names for the dataframe
+        """
+        # Get the names of the features
+        labels = self.feature_labels()
+
+        # Add columns for the errors from the featurizer
+        if return_errors:
+            labels.append(self.__class__.__name__ + " Exceptions")
+        if multiindex:
+            indices = ([self.__class__.__name__], labels)
+            labels = pd.MultiIndex.from_product(indices)
+        return labels
 
     def featurize_many(self, entries, ignore_errors=False, return_errors=False,
                        pbar=True):
@@ -405,42 +422,19 @@ class MultipleFeaturizer(BaseFeaturizer):
     def featurize(self, *x):
         return np.hstack(np.squeeze(f.featurize(*x)) for f in self.featurizers)
 
-    def set_n_jobs(self, n_jobs):
-        for f in self.featurizers:
-            f.set_n_jobs(n_jobs)
-
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
 
-    def fit_featurize_dataframe(self, df, col_id, *args, **kwargs):
-        """
-        Accepts the same arguments as BaseFeaturizer.fit_featurize_dataframe.
-        """
+    def fit(self, X, y=None, **fit_kwargs):
         for f in self.featurizers:
-            f.fit(df[col_id])
-        return self.featurize_dataframe(df, col_id, *args, **kwargs)
+            f.fit(X, y, **fit_kwargs)
 
-    def featurize_dataframe(self, df, col_id, *args, **kwargs):
-        """
-        Accepts the same arguments as BaseFeaturizer.featurize_dataframe.
-        """
-        multiindex = kwargs.get('multiindex', False)
+    def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
+        return np.hstack(np.squeeze(f.featurize_wrapper(x)) for f in self.featurizers)
 
-        if multiindex:
-            if not isinstance(df.columns, pd.MultiIndex):
-                col_id = ("Input Data", col_id)
-            df = homogenize_multiindex(df, "Input Data")
-
-        for f in self.featurizers:
-            df = f.featurize_dataframe(df, col_id, *args, **kwargs)
-
-            if multiindex:
-                feature_labels = [(f.__class__.__name__, flabel) for flabel
-                                  in f.feature_labels()]
-            else:
-                feature_labels = f.feature_labels()
-            df[feature_labels] = df[feature_labels].applymap(np.squeeze)
-        return df
+    def _generate_column_labels(self, multiindex, return_errors):
+        return np.hstack([f._generate_column_labels(multiindex, return_errors)
+                          for f in self.featurizers])
 
     def citations(self):
         return list(set(sum([f.citations() for f in self.featurizers], [])))
