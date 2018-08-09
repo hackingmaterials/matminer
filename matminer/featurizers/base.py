@@ -1,14 +1,17 @@
 from __future__ import division, unicode_literals
 
-import sys, traceback
+import sys
+import traceback
 import warnings
-import pandas as pd
-import numpy as np
-from tqdm import tqdm
-from six import string_types, reraise
 from multiprocessing import Pool, cpu_count
+from functools import partial
 
+import numpy as np
+import pandas as pd
+from six import string_types, reraise
 from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
+from tqdm import tqdm
+
 from matminer.utils.utils import homogenize_multiindex
 
 
@@ -257,9 +260,6 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             raise ValueError("Please set ignore_errors to True to use"
                              " return_errors.")
 
-        self.__ignore_errors = ignore_errors
-        self.__return_errors = return_errors
-
         # Check inputs
         if not hasattr(entries, '__getitem__'):
             raise Exception("'entries' must be a list-like object")
@@ -293,9 +293,11 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                            return_errors=return_errors,
                                            pbar=pbar)
             with Pool(self.n_jobs) as p:
-                return p.map(self.featurize_wrapper, entries)
+                func = partial(self.featurize_wrapper, return_errors=return_errors,
+                               ignore_errors=ignore_errors)
+                return p.map(func, entries)
 
-    def featurize_wrapper(self, x):
+    def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         """
         An exception wrapper for featurize, used in featurize_many and
         featurize_dataframe. featurize_wrapper changes the behavior of featurize
@@ -303,20 +305,26 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         Args:
              x: input data to featurize (type depends on featurizer).
+             ignore_errors (bool): Returns NaN for entries where exceptions are
+                thrown if True. If False, exceptions are thrown as normal.
+             return_errors (bool): If True, returns the feature list as
+                determined by ignore_errors with traceback strings added
+                as an extra 'feature'. Entries which featurize without
+                exceptions have this extra feature set to NaN.
 
         Returns:
             (list) one or more features.
         """
         try:
             # Successful featurization returns nan for an error.
-            if self.__return_errors:
+            if return_errors:
                 # Append operation must be agnostic to both ndarrays and lists
                 return list(self.featurize(*x)) + [float("nan")]
             else:
                 return self.featurize(*x)
         except BaseException as e:
-            if self.__ignore_errors:
-                if self.__return_errors:
+            if ignore_errors:
+                if return_errors:
                     features = [float("nan")] * len(self.feature_labels())
                     error = traceback.format_exception(*sys.exc_info())
                     return features + ["".join(error)]
