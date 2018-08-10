@@ -1,20 +1,20 @@
 from __future__ import division
 
+import collections
 import itertools
 import os
 from functools import reduce, lru_cache
-import collections
 
 import numpy as np
 import pandas as pd
 from pymatgen import Element, MPRester
 from pymatgen.core.composition import Composition
-from pymatgen.core.periodic_table import get_el_sp
 from pymatgen.core.molecular_orbitals import MolecularOrbitals
+from pymatgen.core.periodic_table import get_el_sp
 from sklearn.neighbors.unsupervised import NearestNeighbors
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.stats import PropertyStats
+from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     CohesiveEnergyData, MixingEnthalpy
 

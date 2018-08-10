@@ -1,9 +1,9 @@
 from __future__ import division
+
 import copy
 
-from matminer.utils.data import MagpieData
-
 from matminer.utils.caching import get_nearest_neighbors
+from matminer.utils.data import MagpieData
 
 """
 Features that describe the local environment of a single atom. Note that
@@ -45,7 +45,7 @@ from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_f
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
    import SimplestChemenvStrategy, MultiWeightsChemenvStrategy
 
-from matminer.featurizers.stats import PropertyStats
+from matminer.featurizers.utils.stats import PropertyStats
 from sklearn.utils.validation import check_is_fitted
 
 cn_motif_op_params = {}
@@ -1962,8 +1962,7 @@ class SiteElementalProperty(BaseFeaturizer):
                                                      "ZungerPP-r_s", "ZungerPP-r_p",
                                                      "MeltingT", "BoilingT", "Density",
                                                      "MolarVolume", "HeatFusion", "HeatVaporization",
-                                                     "ThermalConductivity", "HeatCapacityMass"
-                                                     ])
+                                                     "ThermalConductivity", "HeatCapacityMass"])
         else:
             raise ValueError('Unrecognized preset: {}'.format(preset))
 

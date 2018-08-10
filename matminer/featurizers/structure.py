@@ -1,30 +1,30 @@
 from __future__ import division, unicode_literals, print_function
 
 import itertools
-from math import pi, fabs
-from operator import itemgetter
 import warnings
 from collections import OrderedDict
+from math import pi
+from operator import itemgetter
 
 import numpy as np
 import pandas as pd
+import pymatgen.analysis.local_env as pmg_le
 import scipy.constants as const
-from scipy.stats import gaussian_kde
-from sklearn.exceptions import NotFittedError
-
 from pymatgen import Structure
-from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
+from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-import pymatgen.analysis.local_env as pmg_le
+from scipy.stats import gaussian_kde
+from sklearn.exceptions import NotFittedError
+
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
     CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint
-from matminer.featurizers.stats import PropertyStats
+from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_all_nearest_neighbors
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
