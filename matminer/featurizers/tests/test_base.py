@@ -396,6 +396,22 @@ class TestBaseClass(PymatgenTest):
         self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
         self.assertEquals(2, _get_all_nearest_neighbors.cache_info().misses)
 
+    def test_ignore_errors(self):
+        # Make sure multiplefeaturizer returns the correct sub-featurizer multiindex keys
+        mf = MultipleFeaturizer([self.multi, self.single])
+
+        # Run with both serialize
+        for n in [1, 2]:
+            mf.set_n_jobs(n)
+
+            # Make sure it completes successfully
+            mf.featurize_many([['a'], [1], [2]], ignore_errors=True)
+
+            # Make sure it throws an error
+            with self.assertRaises(TypeError):
+                mf.featurize_many([['a'], [1], [2]])
+
+
 
 if __name__ == '__main__':
     unittest.main()

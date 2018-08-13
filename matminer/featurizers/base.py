@@ -296,7 +296,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         # Run the actual featurization
         if self.n_jobs == 1:
-            return [self.featurize_wrapper(x) for x in entries]
+            return [self.featurize_wrapper(x, ignore_errors=ignore_errors,
+                                           return_errors=return_errors) for x in entries]
         else:
             if sys.version_info[0] < 3:
                 warnings.warn("Multiprocessing is not supported in "
@@ -431,7 +432,9 @@ class MultipleFeaturizer(BaseFeaturizer):
         return self
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
-        return np.hstack(np.squeeze(f.featurize_wrapper(x)) for f in self.featurizers)
+        return np.hstack(np.squeeze(f.featurize_wrapper(x, return_errors=return_errors,
+                                                        ignore_errors=ignore_errors))
+                         for f in self.featurizers)
 
     def _generate_column_labels(self, multiindex, return_errors):
         return np.hstack([f._generate_column_labels(multiindex, return_errors)
