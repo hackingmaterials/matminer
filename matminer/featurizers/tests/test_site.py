@@ -12,7 +12,7 @@ from matminer.featurizers.site import AGNIFingerprints, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
     GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference, \
-    BondOrientationalParameter
+    BondOrientationalParameter, SiteElementalProperty
 from matminer.featurizers.deprecated import CrystalSiteFingerprint
 
 
@@ -579,6 +579,22 @@ class FingerprintTests(PymatgenTest):
         # Comparing Q's to results from https://aip.scitation.org/doi/10.1063/1.4774084
         self.assertArrayAlmostEqual([0, 0, 0, 0.764, 0, 0.354, 0, 0.718, 0, 0.411],
                                     sc_features[:10], decimal=3)
+
+    def test_site_elem_prop(self):
+        f = SiteElementalProperty.from_preset("seko-prb-2017")
+
+        # Make sure it does the B1 structure correctly
+        feat_labels = f.feature_labels()
+        feats = f.featurize(self.b1, 0)
+        self.assertAlmostEqual(1, feats[feat_labels.index("site Number")])
+
+        feats = f.featurize(self.b1, 1)
+        self.assertAlmostEqual(2, feats[feat_labels.index("site Number")])
+
+        # Test the citations
+        citations = f.citations()
+        self.assertEqual(1, len(citations))
+        self.assertIn("Seko2017", citations[0])
 
     def tearDown(self):
         del self.sc

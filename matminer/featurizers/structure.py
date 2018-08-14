@@ -929,18 +929,19 @@ class SiteStatsFingerprint(BaseFeaturizer):
     """
 
     def __init__(self, site_featurizer, stats=('mean', 'std_dev'), min_oxi=None,
-                 max_oxi=None):
+                 max_oxi=None, covariance=False):
         """
         Args:
             site_featurizer (BaseFeaturizer): a site-based featurizer
             stats ([str]): list of weighted statistics to compute for each feature.
-                If stats is None, for each order parameter, a list is returned
-                that contains the calculated parameter for each site in the
+                If stats is None, a list is returned for each features
+                that contains the calculated feature for each site in the
                 structure.
                 *Note for nth mode, stat must be 'n*_mode'; e.g. stat='2nd_mode'
             min_oxi (int): minimum site oxidation state for inclusion (e.g.,
                 zero means metals/cations only)
             max_oxi (int): maximum site oxidation state for inclusion
+            covariance (bool): Whether to compute the covariance of site features
         """
 
         self.site_featurizer = site_featurizer
@@ -954,6 +955,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
 
         self.min_oxi = min_oxi
         self.max_oxi = max_oxi
+        self.covariance = covariance
 
     @property
     def _site_labels(self):
@@ -964,8 +966,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         vals = [[] for t in self._site_labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
-                    and (
-                    self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
+                    and (self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
                 opvalstmp = self.site_featurizer.featurize(s, i)
                 for j, opval in enumerate(opvalstmp):
                     if opval is None:
@@ -973,23 +974,41 @@ class SiteStatsFingerprint(BaseFeaturizer):
                     else:
                         vals[j].append(opval)
 
-        # Compute the statistics of all sites
-        if self.stats:
-            stats = []
-            for op in vals:
-                for stat in self.stats:
-                    stats.append(PropertyStats().calc_stat(op, stat))
-
-            return stats
-        else:
+        # If the user does not request statistics, return the site features now
+        if self.stats is None:
             return vals
+
+        # Compute the requested statistics
+        stats = []
+        for op in vals:
+            for stat in self.stats:
+                stats.append(PropertyStats().calc_stat(op, stat))
+
+        # If desired, compute covariances
+        if self.covariance:
+            if len(s) == 1:
+                stats.extend([0] * int(len(vals) * (len(vals) - 1) / 2))
+            else:
+                covar = np.cov(vals)
+                tri_ind = np.triu_indices(len(vals), 1)
+                stats.extend(covar[tri_ind].tolist())
+
+        return stats
 
     def feature_labels(self):
         if self.stats:
             labels = []
+            # Make labels associated with the statistics
             for attr in self._site_labels:
                 for stat in self.stats:
                     labels.append('%s %s' % (stat, attr))
+
+            # Make labels associated with the site labels
+            if self.covariance:
+                sl = self._site_labels
+                for i, sa in enumerate(sl):
+                    for sb in sl[(i+1):]:
+                        labels.append('covariance %s-%s'%(sa, sb))
             return labels
         else:
             return self._site_labels

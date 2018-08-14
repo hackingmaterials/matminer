@@ -1902,6 +1902,87 @@ class BondOrientationalParameter(BaseFeaturizer):
         return ['Logan Ward']
 
 
+class SiteElementalProperty(BaseFeaturizer):
+    """Elemental properties of atom on a certain site
+
+    Features:
+        site [property] - Elemental property for this site
+
+    References:
+        `Seko et al., _PRB_ (2017) <http://link.aps.org/doi/10.1103/PhysRevB.95.144110>`_
+        `Schmidt et al., _Chem Mater_. (2017) <http://dx.doi.org/10.1021/acs.chemmater.7b00156>`_
+    """
+
+    def __init__(self, data_source=None, properties=('Number',)):
+        """Initialize the featurizer
+
+        Args:
+            data_source (AbstractData): Tool used to look up elemental properties
+            properties ([string]): List of properties to use for features
+        """
+        self.data_source = data_source or MagpieData()
+        self.properties = properties
+        self._preset_citations = []
+
+    def featurize(self, strc, idx):
+        # Get the site
+        site = strc[idx]
+
+        # Get the properties
+        elem = site.specie if isinstance(site.specie, Element) else site.specie.element
+        props = [self.data_source.get_elemental_property(elem, p) for p in self.properties]
+
+        return props
+
+    def feature_labels(self):
+        return ['site {}'.format(p) for p in self.properties]
+
+    def citations(self):
+        return self._preset_citations
+
+    def implementors(self):
+        return ['Logan Ward']
+
+    @staticmethod
+    def from_preset(preset):
+        """Create the class with pre-defined settings
+
+        Args:
+            preset (string): Desired preset
+        Returns:
+            SiteElementalProperty initialized with desired settings
+        """
+
+        if preset == "seko-prb-2017":
+            output = SiteElementalProperty(data_source=MagpieData(),
+                                           properties=["Number", "AtomicWeight", "Row", "Column",
+                                                       "MeltingT", "Column", "Row",
+                                                       "FirstIonizationEnergy",
+                                                       "SecondIonizationEnergy",
+                                                       "Electronegativity",
+                                                       "AllenElectronegativity",
+                                                       "VdWRadius", "CovalentRadius",
+                                                       "AtomicRadius",
+                                                       "ZungerPP-r_s", "ZungerPP-r_p",
+                                                       "MeltingT", "BoilingT", "Density",
+                                                       "MolarVolume", "HeatFusion",
+                                                       "HeatVaporization",
+                                                       "ThermalConductivity", "HeatCapacityMass"
+                                                       ])
+            output._preset_citations.append("@article{Seko2017,"
+                                            "author = {Seko, Atsuto and Hayashi, Hiroyuki and "
+                                            "Nakayama, Keita and Takahashi, Akira and Tanaka, Isao},"
+                                            "doi = {10.1103/PhysRevB.95.144110},"
+                                            "journal = {Physical Review B}, number = {14},"
+                                            "pages = {144110},"
+                                            "title = {{Representation of compounds for machine-learning prediction of physical properties}},"
+                                            "url = {http://link.aps.org/doi/10.1103/PhysRevB.95.144110},"
+                                            "volume = {95}, year = {2017}}")
+            return output
+        else:
+            raise ValueError('Unrecognized preset: {}'.format(preset))
+
+
 def _iterate_wigner_3j(l):
     """Iterator over all non-zero Wigner 3j triplets
 

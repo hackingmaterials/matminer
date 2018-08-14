@@ -14,6 +14,7 @@ from pymatgen import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import ElementProperty
+from matminer.featurizers.site import SiteElementalProperty
 from matminer.featurizers.structure import DensityFeatures, \
     RadialDistributionFunction, PartialRadialDistributionFunction, \
     ElectronicRadialDistributionFunction, \
@@ -58,6 +59,9 @@ class StructureFeaturesTest(PymatgenTest):
             [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0.5], [0, 0.5, 0.5]],
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=False, site_properties=None)
+        self.sc = Structure(Lattice([[3.52, 0, 0], [0, 3.52, 0], [0, 0, 3.52]]),
+            ["Al"], [[0, 0, 0]], validate_proximity=False, to_unit_cell=False,
+            coords_are_cartesian=False)
         self.bond_angles = range(5, 180, 5)
 
     def test_density_features(self):
@@ -340,6 +344,26 @@ class StructureFeaturesTest(PymatgenTest):
         cn_fp = SiteStatsFingerprint.from_preset("JMolNN", stats=("mean",))
         cn_vals = cn_fp.featurize(self.diamond)
         self.assertEqual(cn_vals[0], 4.0)
+
+        # Test the covariance
+        prop_fp = SiteStatsFingerprint(SiteElementalProperty(properties=["Number", "AtomicWeight"]),
+                                       stats=["mean"], covariance=True)
+
+        # Test the feature labels
+        labels = prop_fp.feature_labels()
+        self.assertEquals(3, len(labels))
+
+        #  Test a structure with all the same type (cov should be zero)
+        features = prop_fp.featurize(self.diamond)
+        self.assertArrayAlmostEqual(features, [6, 12.0107, 0])
+
+        #  Test a structure with only one atom (cov should be zero too)
+        features = prop_fp.featurize(self.sc)
+        self.assertArrayAlmostEqual([13, 26.9815386, 0], features)
+
+        #  Test a structure with nonzero covariance
+        features = prop_fp.featurize(self.nacl)
+        self.assertArrayAlmostEqual([14, 29.22138464, 37.38969216], features)
 
     def test_ewald(self):
         # Add oxidation states to all of the structures

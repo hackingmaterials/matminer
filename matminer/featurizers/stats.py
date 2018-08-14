@@ -154,6 +154,66 @@ class PropertyStats(object):
             return np.sqrt(beta * np.dot(dev, weights))
 
     @staticmethod
+    def skewness(data_lst, weights=None):
+        """Skewness of a list of data
+
+        Args:
+            data_lst (list of floats): List of values to be assessed
+            weights (list of floats): Weights for each value
+        Returns:
+            shewness
+        """
+        # Special case: Only one entry
+        if len(data_lst) == 1:
+            # This prevents numerical issues in the weighted std_dev
+            return 0
+
+        if weights is None:
+            return stats.skew(data_lst)
+        else:
+            # Compute the mean
+            mean = PropertyStats.mean(data_lst, weights)
+
+            # Compute the second and 3rd moments of the difference from the mean
+            total_weight = np.sum(weights)
+            diff = np.subtract(data_lst, mean)
+            u3 = np.dot(weights, np.power(diff, 3)) / total_weight
+            u2 = np.dot(weights, np.power(diff, 2)) / total_weight
+            if np.isclose(u3, 0):
+                return 0
+            return u3 / u2 ** 1.5
+
+    @staticmethod
+    def kurtosis(data_lst, weights=None):
+        """Kurtosis of a list of data
+
+        Args:
+            data_lst (list of floats): List of values to be assessed
+            weights (list of floats): Weights for each value
+        Returns:
+            kurtosis
+        """
+        # Special case: Only one entry
+        if len(data_lst) == 1:
+            # This prevents numerical issues in the weighted std_dev
+            return 0
+
+        if weights is None:
+            return stats.kurtosis(data_lst, fisher=False)
+        else:
+            # Compute the mean
+            mean = PropertyStats.mean(data_lst, weights)
+
+            # Compute the second and 4th moments of the difference from the mean
+            total_weight = np.sum(weights)
+            diff_sq = np.power(np.subtract(data_lst, mean), 2)
+            u4 = np.dot(weights, np.power(diff_sq, 2))
+            u2 = np.dot(weights, diff_sq)
+            if np.isclose(u4, 0):
+                return 0
+            return u4 / u2 ** 2 * total_weight
+
+    @staticmethod
     def geom_std_dev(data_lst, weights=None):
         """
         Geometric standard deviation

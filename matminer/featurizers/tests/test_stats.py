@@ -50,6 +50,12 @@ class TestPropertyStats(TestCase):
     def test_std_dev(self):
         self._run_test("std_dev", 0, 0, 0.623609564, 0.694365075)
 
+    def test_skewness(self):
+        self._run_test("skewness", 0, 0, 0.38180177, 0.559451361)
+
+    def test_kurtosis(self):
+        self._run_test("kurtosis", 0, 0, 1.5, 1.9403292181)
+
     def test_mode(self):
         self._run_test("mode", 1, 1, 0, 0.5)
 
