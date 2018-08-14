@@ -591,6 +591,11 @@ class FingerprintTests(PymatgenTest):
         feats = f.featurize(self.b1, 1)
         self.assertAlmostEqual(2, feats[feat_labels.index("site Number")])
 
+        # Test the citations
+        citations = f.citations()
+        self.assertEqual(1, len(citations))
+        self.assertIn("Seko2017", citations[0])
+
     def tearDown(self):
         del self.sc
         del self.cscl

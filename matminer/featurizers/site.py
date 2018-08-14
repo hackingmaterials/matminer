@@ -1922,6 +1922,7 @@ class SiteElementalProperty(BaseFeaturizer):
         """
         self.data_source = data_source or MagpieData()
         self.properties = properties
+        self._preset_citations = []
 
     def featurize(self, strc, idx):
         # Get the site
@@ -1937,7 +1938,7 @@ class SiteElementalProperty(BaseFeaturizer):
         return ['site {}'.format(p) for p in self.properties]
 
     def citations(self):
-        return []  # This is a very widely-used technique
+        return self._preset_citations
 
     def implementors(self):
         return ['Logan Ward']
@@ -1953,16 +1954,31 @@ class SiteElementalProperty(BaseFeaturizer):
         """
 
         if preset == "seko-prb-2017":
-            return SiteElementalProperty(data_source=MagpieData(),
-                                         properties=["Number", "AtomicWeight", "Row", "Column",
-                                                     "MeltingT", "Column", "Row",
-                                                     "FirstIonizationEnergy", "SecondIonizationEnergy",
-                                                     "Electronegativity", "AllenElectronegativity",
-                                                     "VdWRadius", "CovalentRadius", "AtomicRadius",
-                                                     "ZungerPP-r_s", "ZungerPP-r_p",
-                                                     "MeltingT", "BoilingT", "Density",
-                                                     "MolarVolume", "HeatFusion", "HeatVaporization",
-                                                     "ThermalConductivity", "HeatCapacityMass"])
+            output = SiteElementalProperty(data_source=MagpieData(),
+                                           properties=["Number", "AtomicWeight", "Row", "Column",
+                                                       "MeltingT", "Column", "Row",
+                                                       "FirstIonizationEnergy",
+                                                       "SecondIonizationEnergy",
+                                                       "Electronegativity",
+                                                       "AllenElectronegativity",
+                                                       "VdWRadius", "CovalentRadius",
+                                                       "AtomicRadius",
+                                                       "ZungerPP-r_s", "ZungerPP-r_p",
+                                                       "MeltingT", "BoilingT", "Density",
+                                                       "MolarVolume", "HeatFusion",
+                                                       "HeatVaporization",
+                                                       "ThermalConductivity", "HeatCapacityMass"
+                                                       ])
+            output._preset_citations.append("@article{Seko2017,"
+                                            "author = {Seko, Atsuto and Hayashi, Hiroyuki and "
+                                            "Nakayama, Keita and Takahashi, Akira and Tanaka, Isao},"
+                                            "doi = {10.1103/PhysRevB.95.144110},"
+                                            "journal = {Physical Review B}, number = {14},"
+                                            "pages = {144110},"
+                                            "title = {{Representation of compounds for machine-learning prediction of physical properties}},"
+                                            "url = {http://link.aps.org/doi/10.1103/PhysRevB.95.144110},"
+                                            "volume = {95}, year = {2017}}")
+            return output
         else:
             raise ValueError('Unrecognized preset: {}'.format(preset))
 
