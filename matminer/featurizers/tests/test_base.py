@@ -400,17 +400,32 @@ class TestBaseClass(PymatgenTest):
         # Make sure multiplefeaturizer returns the correct sub-featurizer multiindex keys
         mf = MultipleFeaturizer([self.multi, self.single])
 
-        # Run with both serialize
-        for n in [1, 2]:
-            mf.set_n_jobs(n)
+        # Iterate through many tests: single/parallel, returning errors or not, multiindex or not
+        for mi in [True, False]:
+            for re in [True, False]:
+                for n in [1, 2]:
+                    # Make some test data that will cause errors
+                    data = pd.DataFrame({'x': ['a', 2, 3]})
 
-            # Make sure it completes successfully
-            mf.featurize_many([['a'], [1], [2]], ignore_errors=True)
+                    # Set the number of threads
+                    mf.set_n_jobs(n)
 
-            # Make sure it throws an error
-            with self.assertRaises(TypeError):
-                mf.featurize_many([['a'], [1], [2]])
+                    # Make sure it completes successfully
+                    results = mf.featurize_many(data['x'], ignore_errors=True, return_errors=re)
+                    self.assertEquals(5 if re else 3, len(results[0]))
 
+                    # Make sure it works with featurize dataframe
+                    results = mf.featurize_dataframe(data, 'x', ignore_errors=True,
+                                                     return_errors=re, multiindex=mi)
+                    self.assertEquals(6 if re else 4, len(results.columns))
+
+                    #  Special test for returning errors (only should work undeer
+                    if re and not mi:
+                        self.assertIn('TypeError', results.iloc[0]['SingleFeaturizer Exceptions'])
+
+                    # Make sure it throws an error
+                    with self.assertRaises(TypeError):
+                        mf.featurize_many([['a'], [1], [2]])
 
 
 if __name__ == '__main__':
