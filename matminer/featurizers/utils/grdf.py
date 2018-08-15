@@ -1,5 +1,6 @@
 """Functions designed to work with General Radial Distribution Function"""
 
+from functools import lru_cache
 from scipy.special import erf, jv
 from scipy import integrate
 from math import pi
@@ -55,6 +56,7 @@ class AbstractPairwise(object):
 
         raise NotImplementedError()
 
+    @lru_cache(maxsize=128)
     def volume(self, cutoff):
         """Compute the volume of this pairwise function
 
