@@ -1,6 +1,7 @@
 from __future__ import division
 
 import copy
+from functools import lru_cache
 
 from matminer.featurizers.utils.grdf import Gaussian, Histogram
 from matminer.utils.caching import get_nearest_neighbors
@@ -1836,9 +1837,9 @@ class BondOrientationalParameter(BaseFeaturizer):
             # Compute the W, if desired
             if self.compute_W:
                 w = 0
-                # Consider caching the Wigner coefficients, as they are expensive -lw
-                for m1, m2, m3 in _iterate_wigner_3j(l):
-                    w += qlm[m1] * qlm[m2] * qlm[m3] * float(wigner_3j(l, l, l, m1, m2, m3))
+                # Loop over all non-zero Wigner 3j coefficients
+                for (m1, m2, m3), w in get_wigner_coeffs(l):
+                    w += qlm[m1] * qlm[m2] * qlm[m3] * w
                 Ws.append(w.real)
 
         # Return the result
@@ -1951,6 +1952,22 @@ class SiteElementalProperty(BaseFeaturizer):
             return output
         else:
             raise ValueError('Unrecognized preset: {}'.format(preset))
+
+
+@lru_cache(maxsize=32)
+def get_wigner_coeffs(l):
+    """Get the list of non-zero Wigner 3j triplets
+
+    Args:
+        l (int): Desired l
+    Returns:
+        List of tuples that contain:
+            - ((int)) m coordinates of the triplet
+            - (float) Wigner coefficient
+    """
+
+    return [((m1, m2, m3), float(wigner_3j(l, l, l, m1, m2, m3)))
+            for m1, m2, m3 in _iterate_wigner_3j(l)]
 
 
 def _iterate_wigner_3j(l):
