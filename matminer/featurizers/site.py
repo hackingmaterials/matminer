@@ -1938,7 +1938,7 @@ class SiteElementalProperty(BaseFeaturizer):
                                                        "MeltingT", "BoilingT", "Density",
                                                        "MolarVolume", "HeatFusion",
                                                        "HeatVaporization",
-                                                       "ThermalConductivity", "HeatCapacityMass"
+                                                       "LogThermalConductivity", "HeatCapacityMass"
                                                        ])
             output._preset_citations.append("@article{Seko2017,"
                                             "author = {Seko, Atsuto and Hayashi, Hiroyuki and "
