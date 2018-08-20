@@ -396,6 +396,38 @@ class TestBaseClass(PymatgenTest):
         self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
         self.assertEquals(2, _get_all_nearest_neighbors.cache_info().misses)
 
+    def test_ignore_errors(self):
+        # Make sure multiplefeaturizer returns the correct sub-featurizer multiindex keys
+        mf = MultipleFeaturizer([self.multi, self.single])
+
+        # Iterate through many tests: single/parallel, returning errors or not, multiindex or not
+        for mi in [True, False]:
+            for re in [True, False]:
+                for n in [1, 2]:
+                    # Make some test data that will cause errors
+                    data = pd.DataFrame({'x': ['a', 2, 3]})
+
+                    # Set the number of threads
+                    mf.set_n_jobs(n)
+
+                    # Make sure it completes successfully
+                    results = mf.featurize_many(data['x'], ignore_errors=True, return_errors=re)
+                    self.assertEquals(5 if re else 3, len(results[0]))
+
+                    # Make sure it works with featurize dataframe
+                    results = mf.featurize_dataframe(data, 'x', ignore_errors=True,
+                                                     return_errors=re, multiindex=mi)
+                    self.assertEquals(6 if re else 4, len(results.columns))
+
+                    #  Special test for returning errors (only should work when returning errors)
+                    #   I only am going to test the single index case for simplicity
+                    if re and not mi:
+                        self.assertIn('TypeError', results.iloc[0]['SingleFeaturizer Exceptions'])
+
+                    # Make sure it throws an error
+                    with self.assertRaises(TypeError):
+                        mf.featurize_many([['a'], [1], [2]])
+
 
 if __name__ == '__main__':
     unittest.main()
