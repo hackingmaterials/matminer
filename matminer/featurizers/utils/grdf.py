@@ -137,6 +137,25 @@ class Cosine(AbstractPairwise):
                          + 2 * self.a * cutoff * np.cos(self.a * cutoff)) / self.a ** 3
 
 
+class Sine(AbstractPairwise):
+    """Sine pairwise function: :math:`sin(ar)`"""
+
+    def __init__(self, a):
+        """Initialize the function
+
+        Args:
+            a (float): Frequency factor for sine function
+            """
+        self.a = a
+
+    def __call__(self, r_ij):
+        return np.sin(np.multiply(r_ij, self.a))
+
+    def volume(self, cutoff):
+        return 4 * pi * ((2 - (self.a * cutoff) ** 2) * np.cos(self.a * cutoff)
+                         + 2 * self.a * cutoff * np.sin(self.a * cutoff) - 2) / self.a ** 3
+
+
 class Bessel(AbstractPairwise):
     """Bessel pairwise function"""
 
