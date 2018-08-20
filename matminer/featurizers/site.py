@@ -1928,8 +1928,9 @@ class SiteElementalProperty(BaseFeaturizer):
         if preset == "seko-prb-2017":
             output = SiteElementalProperty(data_source=MagpieData(),
                                            properties=["Number", "AtomicWeight", "Row", "Column",
-                                                       "MeltingT", "FirstIonizationEnergy",
+                                                       "FirstIonizationEnergy",
                                                        "SecondIonizationEnergy",
+                                                       "ElectronAffinity",
                                                        "Electronegativity",
                                                        "AllenElectronegativity",
                                                        "VdWRadius", "CovalentRadius",
