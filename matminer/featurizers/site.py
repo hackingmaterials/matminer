@@ -1,9 +1,10 @@
 from __future__ import division
+
 import copy
 
-from matminer.utils.data import MagpieData
-
+from matminer.featurizers.utils.grdf import Gaussian, Histogram
 from matminer.utils.caching import get_nearest_neighbors
+from matminer.utils.data import MagpieData
 
 """
 Features that describe the local environment of a single atom. Note that
@@ -45,7 +46,7 @@ from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_f
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies \
    import SimplestChemenvStrategy, MultiWeightsChemenvStrategy
 
-from matminer.featurizers.stats import PropertyStats
+from matminer.featurizers.utils.stats import PropertyStats
 from sklearn.utils.validation import check_is_fitted
 
 cn_motif_op_params = {}
@@ -1385,16 +1386,15 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
     the GRDF when the bins are rectangular functions. Examples of other
     functions to use with the GRDF are Gaussian, trig, and Bessel functions.
 
+    See :func:`~matminer.featurizers.utils.grdf` for a full list of available binning functions.
+
     There are two preset conditions:
-        gaussian: bin functionals are gaussians
-        histogram: bin functionals are rectangular functions
+        gaussian: bin functions are gaussians
+        histogram: bin functions are rectangular functions
 
     Args:
-        bins:   (list of tuples) a list of (str, functions). The str is a text
-                    label for each bin functional. The functions should accept
-                    scalar numpy arrays (each scalar value corresponds to a
-                    distance) and return arrays of floats.
-                    (e.g. lambda d: exp( a_0 * (d - b_0)**2 ))
+        bins:   ([AbstractPairwise]) List of pairwise binning functions. Each of these functions
+            must implement the AbstractPairwise class.
         cutoff: (float) maximum distance to look for neighbors
         mode:   (str) the featurizing mode. supported options are:
                     'GRDF' and 'pairwise_GRDF'
@@ -1412,10 +1412,6 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
         self.fit_labels = None
 
-        if self.n_jobs != 1:
-            warnings.warn("This featurizer does not support n_jobs > 1.")
-            self.set_n_jobs(1)
-
     def fit(self, X, y=None, **fit_kwargs):
         """
         Determine the maximum number of sites in X to assign correct feature
@@ -1429,7 +1425,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         """
 
         max_sites = max([len(X[i][0]._sites) for i in range(len(X))])
-        self.fit_labels = ['site2 {} {}'.format(i, bin[0]) for bin in self.bins
+        self.fit_labels = ['site2 {} {}'.format(i, bin.name()) for bin in self.bins
                            for i in range(max_sites)]
         return self
 
@@ -1445,7 +1441,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
                 GRDF:          bin#
                 pairwise GRDF: site2# bin#
             The site2# corresponds to a pymatgen site index and bin#
-            corresponds to one of the bin functionals
+            corresponds to one of the bin functions
         """
 
         if not struct.is_ordered:
@@ -1462,8 +1458,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         # Generate lists of pairwise distances according to run mode
         if self.mode == 'GRDF':
             # Make a single distance collection
-            distance_collection = [
-                [neighbor[1] for neighbor in neighbors_lst]]
+            distance_collection = [[neighbor[1] for neighbor in neighbors_lst]]
         else:
             # Make pairwise distance collections for pairwise GRDF
             distance_collection = [
@@ -1473,18 +1468,10 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         # compute bin counts for each list of pairwise distances
         bin_counts = []
         for values in distance_collection:
-            values = np.array(values)  # use scalar array function calling
-            bin_counts.append([sum(bin[1](values)) for bin in self.bins])
+            bin_counts.append([sum(bin(values)) for bin in self.bins])
 
         # Compute "volume" of each bin to normalize GRDFs
-        integrations = [integrate.quad(lambda x: 4. * pi * bin[1](x) * x**2.,
-                                       0, self.cutoff) for bin in self.bins]
-
-        volumes = [item[0] for item in integrations]
-        errors = [item[1] for item in integrations]
-        if max(errors) > 1e-5:
-            raise ValueError('Numerical integration does not play well with '
-                             'the chosen bin functionals, choose new ones.')
+        volumes = [bin.volume(self.cutoff) for bin in self.bins]
 
         # normalize the bin counts by the bin volume to compute features
         features = []
@@ -1495,7 +1482,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
     def feature_labels(self):
         if self.mode == 'GRDF':
-            return [bin[0] for bin in self.bins]
+            return [bin.name() for bin in self.bins]
         else:
             if self.fit_labels:
                 return self.fit_labels
@@ -1505,8 +1492,8 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
     @staticmethod
     def from_preset(preset, width=1.0, spacing=1.0, cutoff=10, mode='GRDF'):
-        '''
-        Preset bin functionals for this featurizer. Example use:
+        """
+        Preset bin functions for this featurizer. Example use:
             >>> GRDF = GeneralizedRadialDistributionFunction.from_preset('gaussian')
             >>> GRDF.featurize(struct, idx)
 
@@ -1516,28 +1503,20 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
             spacing (float): the spacing between bin centers
             cutoff (float): maximum distance to look for neighbors
             mode (str): featurizing mode. either 'GRDF' or 'pairwise_GRDF'
-        '''
+        """
 
+        # Generate bin functions
         if preset == "gaussian":
             bins = []
             for center in np.arange(0., cutoff, spacing):
-                bins.append(('Gauss {}'.format(center),
-                             lambda d, center=center: np.exp(-width * (d - center)**2.)))
-            return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
-                                                         mode=mode)
-
+                bins.append(Gaussian(width, center))
         elif preset == "histogram":
             bins = []
-            for center in np.arange(0. + (width / 2.), cutoff, spacing):
-                bins.append(('Hist {}'.format(center),
-                             lambda d, center=center: np.where(center - (width / 2.) <= d,
-                                                1., 0.) *
-                             np.where(d < center + (width / 2.), 1., 0.)))
-            return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff,
-                                                         mode=mode)
-
+            for start in np.arange(0, cutoff, spacing):
+                bins.append(Histogram(start, width))
         else:
             raise ValueError('Not a valid preset condition.')
+        return GeneralizedRadialDistributionFunction(bins, cutoff=cutoff, mode=mode)
 
     def citations(self):
         return ['@article{PhysRevB.95.144110, title = {Representation of compo'
@@ -1556,7 +1535,7 @@ class AngularFourierSeries(BaseFeaturizer):
     """
     Compute the angular Fourier series (AFS), including both angular and radial info
 
-    The AFS is the product of distance functionals (g_n, g_n') between two pairs
+    The AFS is the product of pairwise distance function (g_n, g_n') between two pairs
     of atoms (sharing the common central site) and the cosine of the angle
     between the two pairs. The AFS is a 2-dimensional feature (the axes are g_n,
     g_n').
@@ -1565,16 +1544,18 @@ class AngularFourierSeries(BaseFeaturizer):
     functions, and Bessel functions. An example for Gaussian:
         lambda d: exp( -(d - d_n)**2 ), where d_n is the coefficient for g_n
 
+    See :func:`~matminer.featurizers.utils.grdf` for a full list of available binning functions.
+
     There are two preset conditions:
-        gaussian: bin functionals are gaussians
-        histogram: bin functionals are rectangular functions
+        gaussian: bin functions are gaussians
+        histogram: bin functions are rectangular functions
+
+    Features:
+        AFS ([gn], [gn']) - Angular Fourier Series between binning functions (g1 and g2)
 
     Args:
-        bins:   (list of tuples) a list of (str, functions). The str is a text
-                 label for each bin functional. The functions should accept
-                 scalar numpy arrays (each scalar value corresponds to a
-                 distance) and return arrays of floats.
-                  (e.g. lambda d: exp( - a_0 * (d - b_0)**2 ))
+        bins:   ([AbstractPairwise]) a list of binning functions that
+                implement the AbstractPairwise base class
         cutoff: (float) maximum distance to look for neighbors. The
                  featurizer will run slowly for large distance cutoffs
                  because of the number of neighbor pairs scales as
@@ -1584,10 +1565,6 @@ class AngularFourierSeries(BaseFeaturizer):
     def __init__(self, bins, cutoff=10.0):
         self.bins = bins
         self.cutoff = cutoff
-
-        if self.n_jobs != 1:
-            warnings.warn("This featurizer does not support n_jobs > 1.")
-            self.set_n_jobs(1)
 
     def featurize(self, struct, idx):
         """
@@ -1638,20 +1615,20 @@ class AngularFourierSeries(BaseFeaturizer):
         cos_angles, dist1, dist2 = neighbor_pairs[:, 0].astype(float),\
             neighbor_pairs[:, 1].astype(float),\
             neighbor_pairs[:, 2].astype(float)
-        features = [sum(combo[0][1](dist1) * combo[1][1](dist2) *
+        features = [sum(combo[0](dist1) * combo[1](dist2) *
                         cos_angles) for combo in bin_combos]
 
         return features
 
     def feature_labels(self):
         bin_combos = list(itertools.product(self.bins, repeat=2))
-        return ['bin {} bin {}'.format(combo[0][0], combo[1][0])
+        return ['AFS ({}, {})'.format(combo[0].name(), combo[1].name())
                 for combo in bin_combos]
 
     @staticmethod
     def from_preset(preset, width=0.5, spacing=0.5, cutoff=10):
         """
-        Preset bin functionals for this featurizer. Example use:
+        Preset bin functions for this featurizer. Example use:
             >>> AFS = AngularFourierSeries.from_preset('gaussian')
             >>> AFS.featurize(struct, idx)
 
@@ -1662,24 +1639,18 @@ class AngularFourierSeries(BaseFeaturizer):
             cutoff (float): maximum distance to look for neighbors
         """
 
+        # Generate bin functions
         if preset == "gaussian":
             bins = []
             for center in np.arange(0., cutoff, spacing):
-                bins.append(('Gauss {}'.format(center),
-                             lambda d, center=center: np.exp(-width * (d - center)**2.)))
-            return AngularFourierSeries(bins, cutoff=cutoff)
-
+                bins.append(Gaussian(width, center))
         elif preset == "histogram":
             bins = []
-            for center in np.arange(0. + (width / 2.), cutoff, spacing):
-                bins.append(('Hist {}'.format(center),
-                             lambda d, center=center: np.where(center - (width / 2.) <= d,
-                                                1., 0.) *
-                             np.where(d < center + (width / 2.), 1., 0.)))
-            return AngularFourierSeries(bins, cutoff=cutoff)
-
+            for start in np.arange(0, cutoff, spacing):
+                bins.append(Histogram(start, width))
         else:
             raise ValueError('Not a valid preset condition.')
+        return AngularFourierSeries(bins, cutoff=cutoff)
 
     def citations(self):
         return ['@article{PhysRevB.95.144110, title = {Representation of compo'

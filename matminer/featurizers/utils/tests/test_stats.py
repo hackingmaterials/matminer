@@ -1,10 +1,11 @@
 from __future__ import unicode_literals, division, print_function
 
+from math import sqrt
 from unittest import TestCase
 
-from matminer.featurizers.stats import PropertyStats
 import numpy as np
-from math import sqrt
+
+from matminer.featurizers.utils.stats import PropertyStats
 
 
 class TestPropertyStats(TestCase):
