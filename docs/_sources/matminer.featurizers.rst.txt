@@ -1,6 +1,13 @@
 matminer.featurizers package
 ============================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    matminer.featurizers.utils
+
 Submodules
 ----------
 
@@ -56,14 +63,6 @@ matminer.featurizers.site module
 --------------------------------
 
 .. automodule:: matminer.featurizers.site
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matminer.featurizers.stats module
----------------------------------
-
-.. automodule:: matminer.featurizers.stats
     :members:
     :undoc-members:
     :show-inheritance:

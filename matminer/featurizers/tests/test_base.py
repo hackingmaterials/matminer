@@ -419,7 +419,8 @@ class TestBaseClass(PymatgenTest):
                                                      return_errors=re, multiindex=mi)
                     self.assertEquals(6 if re else 4, len(results.columns))
 
-                    #  Special test for returning errors (only should work undeer
+                    #  Special test for returning errors (only should work when returning errors)
+                    #   I only am going to test the single index case for simplicity
                     if re and not mi:
                         self.assertIn('TypeError', results.iloc[0]['SingleFeaturizer Exceptions'])
 

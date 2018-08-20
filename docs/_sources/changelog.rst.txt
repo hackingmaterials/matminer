@@ -5,6 +5,14 @@
 matminer Changelog
 ==================
 
+**v0.4.0**
+
+* Progressbar for featurizers (A. Dunn)
+* Add BOOP features (L. Ward)
+* Add Seko features, including more lookuip tables for MagpieData and elemental property site features + covariance, skew, kurtosis (L. Ward)
+* New scheme for GRDF/AFS bin functions (L. Ward)
+* misc fixes (A. Dunn., L. Ward)
+
 **v0.3.9**
 
 * BandEdge renamed to Hybridization, gives smoother featurizations (M. Dylla, A. Faghaninia)
