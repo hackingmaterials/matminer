@@ -588,10 +588,10 @@ class FingerprintTests(PymatgenTest):
         ft = AverageBondLength()
         self.assertAlmostEqual(ft.featurize(self.sc, 0)[0], 3.52)
 
-        for i, site in enumerate(self.cscl.sites):
+        for i in range(len(self.cscl.sites)):
             self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 3.768151439488726)
 
-        for i, site in enumerate(self.b1.sites):
+        for i in range(len(self.b1.sites)):
             self.assertAlmostEqual(ft.featurize(self.b1, i)[0], 1.0)
 
     def test_AverageBondAngle(self):
@@ -599,10 +599,10 @@ class FingerprintTests(PymatgenTest):
 
         self.assertAlmostEqual(ft.featurize(self.sc, 0)[0], np.pi / 2)
 
-        for i, site in enumerate(self.cscl.sites):
+        for i in range(len(self.cscl.sites)):
             self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 1.5374012718125276)
 
-        for i, site in enumerate(self.b1.sites):
+        for i in range(len(self.b1.sites)):
             self.assertAlmostEqual(ft.featurize(self.b1, i)[0], np.pi / 2)
 
     def tearDown(self):
