@@ -12,7 +12,7 @@ from matminer.featurizers.site import AGNIFingerprints, \
     VoronoiFingerprint, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
     GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference, \
-    BondOrientationalParameter, SiteElementalProperty
+    BondOrientationalParameter, SiteElementalProperty, AverageBondLength, AverageBondAngle
 from matminer.featurizers.deprecated import CrystalSiteFingerprint
 from matminer.featurizers.utils.grdf import Gaussian
 
@@ -583,6 +583,27 @@ class FingerprintTests(PymatgenTest):
         citations = f.citations()
         self.assertEqual(1, len(citations))
         self.assertIn("Seko2017", citations[0])
+
+    def test_AverageBondLength(self):
+        ft = AverageBondLength()
+        self.assertAlmostEqual(ft.featurize(self.sc, 0)[0], 3.52)
+
+        for i, site in enumerate(self.cscl.sites):
+            self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 3.768151439488726)
+
+        for i, site in enumerate(self.b1.sites):
+            self.assertAlmostEqual(ft.featurize(self.b1, i)[0], 1.0)
+
+    def test_AverageBondAngle(self):
+        ft = AverageBondAngle()
+
+        self.assertAlmostEqual(ft.featurize(self.sc, 0)[0], np.pi / 2)
+
+        for i, site in enumerate(self.cscl.sites):
+            self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 1.5374012718125276)
+
+        for i, site in enumerate(self.b1.sites):
+            self.assertAlmostEqual(ft.featurize(self.b1, i)[0], np.pi / 2)
 
     def tearDown(self):
         del self.sc
