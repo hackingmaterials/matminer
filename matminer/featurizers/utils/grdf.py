@@ -1,6 +1,7 @@
 """Functions designed to work with General Radial Distribution Function"""
 
-from scipy.special import erf
+from functools import lru_cache
+from scipy.special import erf, jv
 from scipy import integrate
 from math import pi
 
@@ -55,6 +56,7 @@ class AbstractPairwise(object):
 
         raise NotImplementedError()
 
+    @lru_cache(maxsize=128)
     def volume(self, cutoff):
         """Compute the volume of this pairwise function
 
@@ -114,3 +116,56 @@ class Gaussian(AbstractPairwise):
                 erf((cutoff - self.center) / self.width) + erf(self.center / self.width)
             ) + 2 * self.width * (self.center * self(0) - (self.center + cutoff) * self(cutoff))
         )
+
+
+class Cosine(AbstractPairwise):
+    """Cosine pairwise function: :math:`cos(ar)`"""
+
+    def __init__(self, a):
+        """Initialize the function
+
+        Args:
+            a (float): Frequency factor for cosine function
+            """
+        self.a = a
+
+    def __call__(self, r_ij):
+        return np.cos(np.multiply(r_ij, self.a))
+
+    def volume(self, cutoff):
+        return 4 * pi * (((self.a * cutoff) ** 2 - 2) * np.sin(self.a * cutoff)
+                         + 2 * self.a * cutoff * np.cos(self.a * cutoff)) / self.a ** 3
+
+
+class Sine(AbstractPairwise):
+    """Sine pairwise function: :math:`sin(ar)`"""
+
+    def __init__(self, a):
+        """Initialize the function
+
+        Args:
+            a (float): Frequency factor for sine function
+            """
+        self.a = a
+
+    def __call__(self, r_ij):
+        return np.sin(np.multiply(r_ij, self.a))
+
+    def volume(self, cutoff):
+        return 4 * pi * ((2 - (self.a * cutoff) ** 2) * np.cos(self.a * cutoff)
+                         + 2 * self.a * cutoff * np.sin(self.a * cutoff) - 2) / self.a ** 3
+
+
+class Bessel(AbstractPairwise):
+    """Bessel pairwise function"""
+
+    def __init__(self, n):
+        """Initialize the function
+
+        Args:
+            n (int): Degree of Bessel function
+        """
+        self.n = n
+
+    def __call__(self, r_ij):
+        return jv(self.n, r_ij)

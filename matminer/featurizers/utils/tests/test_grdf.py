@@ -1,8 +1,11 @@
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.utils.grdf import initialize_pairwise_function, Gaussian, Histogram
+from matminer.featurizers.utils.grdf import initialize_pairwise_function, Gaussian, Histogram, \
+    Cosine, Bessel, Sine
 
 import numpy as np
+import unittest
+from scipy.special import jv
 
 
 class GRDFTests(PymatgenTest):
@@ -28,3 +31,21 @@ class GRDFTests(PymatgenTest):
         h = Histogram(1, 4)
         self.assertArrayAlmostEqual([0, 1, 0], h([0.5, 2, 5]))
         self.assertAlmostEqual(h.volume(10), 4 / 3.0 * np.pi * (5 ** 3 - 1 ** 3))
+
+    def test_cosine(self):
+        c = Cosine(2)
+        self.assertArrayAlmostEqual([1, np.cos(2)], c([0, 1]))
+        self.assertAlmostEqual(596.39, c.volume(10), 2)
+
+    def test_sin(self):
+        c = Sine(4)
+        self.assertArrayAlmostEqual([0, np.sin(4)], c([0, 1]))
+        self.assertAlmostEqual(274.47, c.volume(12), 2)
+
+    def test_bessel(self):
+        b = Bessel(2)
+        self.assertArrayAlmostEqual([jv(2,1)], [b(1)])
+        self.assertAlmostEqual(163.355, b.volume(5), 2)
+
+if __name__ == "__main__":
+        unittest.main()
