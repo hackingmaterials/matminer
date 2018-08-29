@@ -255,12 +255,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
     def featurize_many(self, entries, ignore_errors=False, return_errors=False,
                        pbar=True):
-        """
-        Featurize a list of entries.
+        """Featurize a list of entries.
+
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
 
+        Featurize_many supports entries as a list, tuple, numpy array, Pandas Series, or Pandas DataFrame.
+
         Args:
-            entries (list): A list of entries to be featurized.
+            entries (list-like object): A list of entries to be featurized.
             ignore_errors (bool): Returns NaN for entries where exceptions are
                 thrown if True. If False, exceptions are thrown as normal.
             return_errors (bool): If True, returns the feature list as
@@ -278,7 +280,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                              " return_errors.")
 
         # Check inputs
-        if not hasattr(entries, '__getitem__'):
+        if not isinstance(entries, (tuple, list, np.ndarray, pd.Series, pd.DataFrame)):
             raise Exception("'entries' must be a list-like object")
 
         # Special case: Empty list
