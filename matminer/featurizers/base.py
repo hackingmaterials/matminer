@@ -286,7 +286,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             return []
 
         # If the featurize function only has a single arg, zip the inputs
-        if not isinstance(entries[0], (tuple, list, np.ndarray)):
+        if isinstance(entries, pd.DataFrame):
+            entries = entries.values
+        elif isinstance(entries, pd.Series) or not isinstance(entries[0], (tuple, list, np.ndarray)):
             entries = zip(entries)
 
         # Add a progress bar
