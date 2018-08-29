@@ -98,6 +98,16 @@ class FittableFeaturizer(BaseFeaturizer):
         return ["A competing research group"]
 
 
+class StringFeaturizer(BaseFeaturizer):
+    """A featurizer that returns string types"""
+
+    def featurize(self, *x):
+        return ['a']
+
+    def feature_labels(self):
+        return ['label']
+
+
 class TestBaseClass(PymatgenTest):
     def setUp(self):
         self.single = SingleFeaturizer()
@@ -427,6 +437,23 @@ class TestBaseClass(PymatgenTest):
                     # Make sure it throws an error
                     with self.assertRaises(TypeError):
                         mf.featurize_many([['a'], [1], [2]])
+
+    def test_multitype_multifeat(self):
+        """Test Multifeaturizer when a featurizer returns a non-numeric type"""
+
+        # Make the featurizer
+        f = MultipleFeaturizer([SingleFeaturizer(), StringFeaturizer()])
+
+        # Make the test data
+        data = self.make_test_data()
+
+        # Add the columns
+        data = f.featurize_dataframe(data, 'x')
+
+        # Make sure the types are as expected
+        labels = f.feature_labels()
+        self.assertArrayEqual(['float64', 'object'], data[labels].dtypes.astype(str).tolist())
+        self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
 
 
 if __name__ == '__main__':
