@@ -1906,7 +1906,7 @@ class MaximumPackingEfficiency(BaseFeaturizer):
         max_r = [min(x['face_dist'] for x in nn.values()) for nn in nns]
 
         # Compute the packing efficiency
-        return 4. / 3. * np.pi * np.power(max_r, 3).sum() / strc.volume
+        return [4. / 3. * np.pi * np.power(max_r, 3).sum() / strc.volume]
 
     def feature_labels(self):
         return ['max packing efficiency']
