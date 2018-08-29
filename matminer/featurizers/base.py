@@ -421,7 +421,8 @@ class MultipleFeaturizer(BaseFeaturizer):
         self.featurizers = featurizers
 
     def featurize(self, *x):
-        return np.hstack(np.squeeze(f.featurize(*x)) for f in self.featurizers)
+        return np.hstack(np.squeeze([np.array(f.featurize(*x), dtype=object)
+                                     for f in self.featurizers]))
 
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
@@ -432,9 +433,9 @@ class MultipleFeaturizer(BaseFeaturizer):
         return self
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
-        return np.hstack(np.squeeze(f.featurize_wrapper(x, return_errors=return_errors,
-                                                        ignore_errors=ignore_errors))
-                         for f in self.featurizers)
+        return np.hstack([np.squeeze(np.array(f.featurize_wrapper(x, return_errors=return_errors,
+                                             ignore_errors=ignore_errors), dtype=object))
+                    for f in self.featurizers])
 
     def _generate_column_labels(self, multiindex, return_errors):
         return np.hstack([f._generate_column_labels(multiindex, return_errors)
