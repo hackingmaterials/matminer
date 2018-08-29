@@ -457,6 +457,18 @@ class TestBaseClass(PymatgenTest):
                               data[labels].dtypes.astype(str).tolist())
         self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
 
+    def test_multifeature_no_zero_index(self):
+        """Test whether multifeaturizer can handle series that lack a entry with index==0"""
+
+        # Make a dataset without a index == 0
+        data = pd.DataFrame({'x': [1], 'y': [2]})
+        data.index = [1]
+
+        # Multifeaturize
+        self.multiargs.set_n_jobs(1)
+        self.single.featurize_many(data['x'])
+        self.multiargs.featurize_many(data[['x', 'y']])
+
 
 if __name__ == '__main__':
     unittest.main()
