@@ -443,6 +443,7 @@ class TestBaseClass(PymatgenTest):
 
         # Make the featurizer
         f = MultipleFeaturizer([SingleFeaturizer(), StringFeaturizer()])
+        f.set_n_jobs(1)
 
         # Make the test data
         data = self.make_test_data()
@@ -452,7 +453,7 @@ class TestBaseClass(PymatgenTest):
 
         # Make sure the types are as expected
         labels = f.feature_labels()
-        self.assertArrayEqual(['float64', 'object'], data[labels].dtypes.astype(str).tolist())
+        self.assertArrayEqual(['int64', 'object'], data[labels].dtypes.astype(str).tolist())
         self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
 
 
