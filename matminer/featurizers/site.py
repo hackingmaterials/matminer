@@ -1838,8 +1838,8 @@ class BondOrientationalParameter(BaseFeaturizer):
             if self.compute_W:
                 w = 0
                 # Loop over all non-zero Wigner 3j coefficients
-                for (m1, m2, m3), w in get_wigner_coeffs(l):
-                    w += qlm[m1] * qlm[m2] * qlm[m3] * w
+                for (m1, m2, m3), wcoeff in get_wigner_coeffs(l):
+                    w += qlm[m1] * qlm[m2] * qlm[m3] * wcoeff
                 Ws.append(w.real)
 
         # Return the result
@@ -1983,5 +1983,5 @@ def _iterate_wigner_3j(l):
     for m1 in range(-l, l+1):
         for m2 in range(-l, l+1):
             m3 = -1 * (m1 + m2)
-            if -l <= m3 <= 1:
+            if -l <= m3 <= l:
                 yield m1, m2, m3
