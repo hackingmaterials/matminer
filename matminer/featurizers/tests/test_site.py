@@ -569,8 +569,8 @@ class FingerprintTests(PymatgenTest):
                                     sc_features[:10], decimal=3)
 
         # Comparing W's to results from https://link.aps.org/doi/10.1103/PhysRevB.28.784
-        self.assertArrayAlmostEqual([0, 0, 0, 0.04, 0, 0.0, 0, 0.03, 0, 0.01], sc_features[10:],
-                                    decimal=2)
+        self.assertArrayAlmostEqual([0, 0, 0, 0.043022, 0, 0.000612, 0, 0.034055, 0, 0.013560],
+                                    sc_features[10:], decimal = 2)
 
     def test_site_elem_prop(self):
         f = SiteElementalProperty.from_preset("seko-prb-2017")
