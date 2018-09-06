@@ -1785,29 +1785,32 @@ class BondOrientationalParameter(BaseFeaturizer):
     discussion). The weighing scheme makes these descriptors vary smoothly with small distortions
     of a crystal structure.
 
-    In addition to the average spherical harmonics, this class can also compute the :math:`W`
-    parameters proposed by `Steinhardt et al. <https://link.aps.org/doi/10.1103/PhysRevB.28.784>`_.
+    In addition to the average spherical harmonics, this class can also compute the :math:`W` and
+    :math:`\hat{W}` parameters proposed by `Steinhardt et al. <https://link.aps.org/doi/10.1103/PhysRevB.28.784>`_.
 
     Attributes:
         BOOP Q l=<n> - Average spherical harmonic for a certain degree, n.
         BOOP W l=<n> - W parameter for a certain degree of spherical harmonic, n.
+        BOOP What l=<n> - :math:`\hat{W}` parameter for a certain degree of spherical harmonic, n.
 
     References:
         `Steinhardt et al., _PRB_ (1983) <https://link.aps.org/doi/10.1103/PhysRevB.28.784>`_
         `Seko et al., _PRB_ (2017) <http://link.aps.org/doi/10.1103/PhysRevB.95.144110>`_
     """
 
-    def __init__(self, max_l=10, compute_w=False):
+    def __init__(self, max_l=10, compute_w=False, compute_w_hat=False):
         """
         Initialize the featurizer
 
         Args:
             max_l (int) - Maximum spherical harmonic to consider
-            compute_w (boolean) - Whether to compute Ws as well
+            compute_w (bool) - Whether to compute Ws as well
+            compute_w_hat (bool) - Whether to compute What
         """
         self._nn = VoronoiNN(weight='solid_angle')
         self.max_l = max_l
         self.compute_W = compute_w
+        self.compute_What = compute_w_hat
 
     def featurize(self, strc, idx):
         # Get the nearest neighbors of the atom
@@ -1835,22 +1838,31 @@ class BondOrientationalParameter(BaseFeaturizer):
                               np.sum(np.abs(list(qlm.values())) ** 2)))
 
             # Compute the W, if desired
-            if self.compute_W:
+            if self.compute_W or self.compute_What:
                 w = 0
                 # Loop over all non-zero Wigner 3j coefficients
                 for (m1, m2, m3), wcoeff in get_wigner_coeffs(l):
                     w += qlm[m1] * qlm[m2] * qlm[m3] * wcoeff
                 Ws.append(w.real)
 
-        # Return the result
+        # Compute Whats, if desired
+        if self.compute_What:
+            Whats = [w / (q / np.sqrt(np.pi * 4 / (2 * l + 1))) ** 3 if abs(q) > 1.0e-6 else 0.0
+                     for l, q, w in zip(range(1, self.max_l + 1), Qs, Ws)]
+
+        # Compile the results. Always returns Qs, and optionally the W/What
         if self.compute_W:
-            return Qs + Ws
+            Qs += Ws
+        if self.compute_What:
+            Qs += Whats
         return Qs
 
     def feature_labels(self):
         q_labels = ['BOOP Q l={}'.format(l) for l in range(1, self.max_l+1)]
         if self.compute_W:
-            return q_labels + ['BOOP W l={}'.format(l) for l in range(1, self.max_l+1)]
+            q_labels += ['BOOP W l={}'.format(l) for l in range(1, self.max_l+1)]
+        if self.compute_What:
+            q_labels += ['BOOP What l={}'.format(l) for l in range(1, self.max_l + 1)]
         return q_labels
 
     def citations(self):
@@ -1871,7 +1883,7 @@ class BondOrientationalParameter(BaseFeaturizer):
                 "volume = {28}, year = {1983}}"]
 
     def implementors(self):
-        return ['Logan Ward']
+        return ['Logan Ward', 'Aidan Thompson']
 
 
 class SiteElementalProperty(BaseFeaturizer):

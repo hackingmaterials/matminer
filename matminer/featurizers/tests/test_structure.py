@@ -457,8 +457,7 @@ class StructureFeaturesTest(PymatgenTest):
         bob = BagofBonds()
         self.assertRaises(NotFittedError, bob.featurize, self.nacl)
         bob.fit([self.ni3al, self.diamond])
-        self.assertRaises(ValueError, bob.featurize, self.nacl)
-
+        self.assertRaises(ValueError, bob.featurize, self.nacl)\
 
     def test_ward_prb_2017_lpd(self):
         """Test the local property difference attributes from Ward 2017"""
