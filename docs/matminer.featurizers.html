@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.4.0 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.4.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -451,11 +451,12 @@ dataframe’s column index.</div></blockquote>
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.featurize_many">
 <code class="descname">featurize_many</code><span class="sig-paren">(</span><em>entries</em>, <em>ignore_errors=False</em>, <em>return_errors=False</em>, <em>pbar=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.featurize_many" title="Permalink to this definition">¶</a></dt>
-<dd><p>Featurize a list of entries.
-If <cite>featurize</cite> takes multiple inputs, supply inputs as a list of tuples.</p>
+<dd><p>Featurize a list of entries.</p>
+<p>If <cite>featurize</cite> takes multiple inputs, supply inputs as a list of tuples.</p>
+<p>Featurize_many supports entries as a list, tuple, numpy array, Pandas Series, or Pandas DataFrame.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">entries (list): A list of entries to be featurized.
+<dd><p class="first">entries (list-like object): A list of entries to be featurized.
 ignore_errors (bool): Returns NaN for entries where exceptions are</p>
 <blockquote>
 <div>thrown if True. If False, exceptions are thrown as normal.</div></blockquote>
@@ -3141,7 +3142,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.site.BondOrientationalParameter">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">BondOrientationalParameter</code><span class="sig-paren">(</span><em>max_l=10</em>, <em>compute_w=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.BondOrientationalParameter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">BondOrientationalParameter</code><span class="sig-paren">(</span><em>max_l=10</em>, <em>compute_w=False</em>, <em>compute_w_hat=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.BondOrientationalParameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Averages of spherical harmonics of local neighbors</p>
 <p>Bond Orientational Parameters (BOPs) describe the local environment around an atom by
@@ -3153,24 +3154,26 @@ We weigh the contributions of each neighbor with the solid angle of the Voronoi 
 (see <cite>Mickel et al. &lt;https://aip.scitation.org/doi/abs/10.1063/1.4774084&gt;_</cite> for further
 discussion). The weighing scheme makes these descriptors vary smoothly with small distortions
 of a crystal structure.</p>
-<p>In addition to the average spherical harmonics, this class can also compute the <img class="math" src="_images/math/fa34489cf430b7630b30f28b2eb050e2489e3523.png" alt="W"/>
-parameters proposed by <a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al.</a>.</p>
+<p>In addition to the average spherical harmonics, this class can also compute the <img class="math" src="_images/math/fa34489cf430b7630b30f28b2eb050e2489e3523.png" alt="W"/> and
+<img class="math" src="_images/math/5faf686e0e8426c21ae030d783d5624321d18476.png" alt="\hat{W}"/> parameters proposed by <a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al.</a>.</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd>BOOP Q l=&lt;n&gt; - Average spherical harmonic for a certain degree, n.
-BOOP W l=&lt;n&gt; - W parameter for a certain degree of spherical harmonic, n.</dd>
+BOOP W l=&lt;n&gt; - W parameter for a certain degree of spherical harmonic, n.
+BOOP What l=&lt;n&gt; - <img class="math" src="_images/math/5faf686e0e8426c21ae030d783d5624321d18476.png" alt="\hat{W}"/> parameter for a certain degree of spherical harmonic, n.</dd>
 <dt>References:</dt>
 <dd><a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al., _PRB_ (1983)</a>
 <a class="reference external" href="http://link.aps.org/doi/10.1103/PhysRevB.95.144110">Seko et al., _PRB_ (2017)</a></dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.site.BondOrientationalParameter.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>max_l=10</em>, <em>compute_w=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.BondOrientationalParameter.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>max_l=10</em>, <em>compute_w=False</em>, <em>compute_w_hat=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.BondOrientationalParameter.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the featurizer</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>max_l (int) - Maximum spherical harmonic to consider
-compute_w (boolean) - Whether to compute Ws as well</dd>
+compute_w (bool) - Whether to compute Ws as well
+compute_w_hat (bool) - Whether to compute What</dd>
 </dl>
 </dd></dl>
 
@@ -4535,6 +4538,26 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.featurizers.site.get_wigner_coeffs">
+<code class="descclassname">matminer.featurizers.site.</code><code class="descname">get_wigner_coeffs</code><a class="headerlink" href="#matminer.featurizers.site.get_wigner_coeffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of non-zero Wigner 3j triplets</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>l (int): Desired l</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>List of tuples that contain:</dt>
+<dd><ul class="first last simple">
+<li>((int)) m coordinates of the triplet</li>
+<li>(float) Wigner coefficient</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -6504,7 +6527,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 

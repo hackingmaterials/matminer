@@ -5,6 +5,13 @@
 matminer Changelog
 ==================
 
+**v0.4.1**
+
+* Better elemental properties for Magpie features (L. Ward)
+* Improvements to Seko representation (L. Ward)
+* Some bugfixes for multiplefeaturizer and compatibility with progress bars (L. Ward, A. Dunn)
+* More intuitive input arguments for featurize_many (L. Ward)
+* Bugfixes for BOOP features (L. Ward, A. Thompson)
 **v0.4.0**
 
 * Progressbar for featurizers (A. Dunn)

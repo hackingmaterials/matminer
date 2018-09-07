@@ -9,7 +9,7 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.4.0',
+        version='0.4.1',
         description='matminer is a library that contains tools for data mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
         url='https://github.com/hackingmaterials/matminer',

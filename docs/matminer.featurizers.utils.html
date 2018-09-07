@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers.utils package &#8212; matminer 0.4.0 documentation</title>
+    <title>matminer.featurizers.utils package &#8212; matminer 0.4.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -60,9 +60,55 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="attribute">
 <dt id="matminer.featurizers.utils.grdf.AbstractPairwise.volume">
-<code class="descname">volume</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise.volume" title="Permalink to this definition">¶</a></dt>
+<code class="descname">volume</code><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise.volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the volume of this pairwise function</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>cutoff (float): Cutoff distance for radial distribution function</dd>
+<dt>Returns:</dt>
+<dd>(float): Volume of bin</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.utils.grdf.Bessel">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">Bessel</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Bessel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="matminer.featurizers.utils.grdf.AbstractPairwise"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.utils.grdf.AbstractPairwise</span></code></a></p>
+<p>Bessel pairwise function</p>
+<dl class="method">
+<dt id="matminer.featurizers.utils.grdf.Bessel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Bessel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the function</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>n (int): Degree of Bessel function</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.utils.grdf.Cosine">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">Cosine</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="matminer.featurizers.utils.grdf.AbstractPairwise"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.utils.grdf.AbstractPairwise</span></code></a></p>
+<p>Cosine pairwise function: <img class="math" src="_images/math/d0081e53ec3772333006e7b8b488993ff712fe36.png" alt="cos(ar)"/></p>
+<dl class="method">
+<dt id="matminer.featurizers.utils.grdf.Cosine.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the function</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>a (float): Frequency factor for cosine function</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.utils.grdf.Cosine.volume">
+<code class="descname">volume</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine.volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the volume of this pairwise function</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -123,6 +169,35 @@ width (float): Size of window</dd>
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Histogram.volume">
 <code class="descname">volume</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Histogram.volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the volume of this pairwise function</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>cutoff (float): Cutoff distance for radial distribution function</dd>
+<dt>Returns:</dt>
+<dd>(float): Volume of bin</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.utils.grdf.Sine">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">Sine</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="matminer.featurizers.utils.grdf.AbstractPairwise"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.utils.grdf.AbstractPairwise</span></code></a></p>
+<p>Sine pairwise function: <img class="math" src="_images/math/ba1dc665bd30a53d02b5a623c6c1b7f3a52a3bff.png" alt="sin(ar)"/></p>
+<dl class="method">
+<dt id="matminer.featurizers.utils.grdf.Sine.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the function</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>a (float): Frequency factor for sine function</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.utils.grdf.Sine.volume">
+<code class="descname">volume</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine.volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the volume of this pairwise function</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -433,7 +508,7 @@ weights (list of floats): Weights for each value</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 
