@@ -186,7 +186,6 @@ class FunctionFeaturizer(BaseFeaturizer):
         return ['Joseph Montoya']
 
 
-
 # TODO: Have this filter expressions that evaluate to things without vars,
 # TODO:      # e. g. floats/ints
 def generate_expressions_combinations(expressions, combo_depth=2,
@@ -226,4 +225,6 @@ def generate_expressions_combinations(expressions, combo_depth=2,
 
     # Filter for unique combinations, also remove identity
     unique_exps = list(set(combo_exps) - {parse_expr('x0')})
+    # Sort to keep ordering
+    unique_exps = sorted(unique_exps, key=lambda x: combo_exps.index(x))
     return unique_exps
