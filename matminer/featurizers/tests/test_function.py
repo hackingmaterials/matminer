@@ -18,21 +18,6 @@ class TestFunctionFeaturizer(unittest.TestCase):
             [{"a": n, "b": n+1, "c": n+2} for n in range(-1, 10)])
 
     def test_featurize(self):
-
-        ff = FunctionFeaturizer()
-        d = pd.DataFrame({'t2': [1, 2, 3]})
-
-        ff.fit(d)
-
-        print(ff)
-
-        ff.set_n_jobs(1)
-        print(ff.featurize_dataframe(d, ['t2']))
-
-        ff.set_n_jobs(2)
-        d.drop(ff.feature_labels(), 'columns', inplace=True)
-        print(ff.featurize_dataframe(d, ['t2']))
-
         ff = FunctionFeaturizer()
         # Test basic default functionality
         new_df = ff.fit_featurize_dataframe(self.test_df, 'a', inplace=False)
