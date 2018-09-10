@@ -18,16 +18,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
             [{"a": n, "b": n+1, "c": n+2} for n in range(-1, 10)])
 
     def test_featurize(self):
-        # ff = FunctionFeaturizer()
-        # df = pd.DataFrame({'t2': [2, 3, 4]})
 
-        # ff.fit(df)
-        # ff.set_n_jobs(1)
-        # serial = ff.featurize_dataframe(df, ['t2'], inplace=False)
-        # ff.set_n_jobs(2)
-        # df.drop(ff.feature_labels(), 'columns', inplace=True)
-        # parallel = ff.featurize_dataframe(df, ['t2'], inplace=False)
-        # self.assertTrue(np.allclose(serial, parallel))
         ff = FunctionFeaturizer()
         d = pd.DataFrame({'t2': [1, 2, 3]})
 
@@ -88,6 +79,16 @@ class TestFunctionFeaturizer(unittest.TestCase):
                                 combo_function=np.sum)
         new_df = ff.fit_featurize_dataframe(self.test_df, ['a', 'b'], inplace=False)
         self.assertAlmostEqual(new_df['sqrt(a) + sqrt(b)'][2], 2.41421356)
+
+        # Test parallel vs. serial
+        ff = FunctionFeaturizer()
+        df = pd.DataFrame({'t2': [1, 2, 3]})
+
+        ff.set_n_jobs(1)
+        serial = ff.fit_featurize_dataframe(df, ['t2'], inplace=False)
+        ff.set_n_jobs(2)
+        parallel = ff.fit_featurize_dataframe(df, ['t2'], inplace=False)
+        self.assertTrue(np.allclose(serial, parallel, equal_nan=True))
 
     def test_featurize_labels(self):
         # Test latexification
