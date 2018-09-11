@@ -15,7 +15,10 @@ __author__ = "Kyle Bystrom <kylebystrom@berkeley.edu>, " \
              "Daniel Dopp <dbdopp@lbl.gov>, " \
              "Anubhav Jain <ajain@lbl.gov>"
 
-module_dir = os.path.dirname(os.path.abspath(__file__))
+# directory to look for data and store datasets can be set by user using
+# MATMINER_DATA environment variable, otherwise defaults to module directory
+dataset_dir = os.environ.get("MATMINER_DATA",
+                             os.path.dirname(os.path.abspath(__file__)))
 
 RemoteFileMetadata = namedtuple("RemoteFileMetadata", ["url", "hash"])
 
@@ -70,7 +73,7 @@ def load_elastic_tensor(include_metadata=False, download_if_missing=True):
     Returns (pd.DataFrame)
     """
 
-    data_path = os.path.join(module_dir, "elastic_tensor.csv")
+    data_path = os.path.join(dataset_dir, "elastic_tensor.csv")
     dataset_metadata = RemoteFileMetadata(
         url="https://ndownloader.figshare.com/files/12998804",
         hash="f1e16f8cbe01eea97ec891fd361e7add"
@@ -116,7 +119,7 @@ def load_piezoelectric_tensor(include_metadata=False, download_if_missing=True):
 
     Returns (pd.DataFrame)
     """
-    data_path = os.path.join(module_dir, "piezoelectric_tensor.csv")
+    data_path = os.path.join(dataset_dir, "piezoelectric_tensor.csv")
     dataset_metadata = RemoteFileMetadata(
         url="https://ndownloader.figshare.com/files/12998954",
         hash="9ca3a5e9f91dbb0302d0a60fb6d675d7"
@@ -162,7 +165,7 @@ def load_dielectric_constant(include_metadata=False, download_if_missing=True):
     Returns (pd.DataFrame)
     """
 
-    data_path = os.path.join(module_dir, "dielectric_constant.csv")
+    data_path = os.path.join(dataset_dir, "dielectric_constant.csv")
     dataset_metadata = RemoteFileMetadata(
         url="https://ndownloader.figshare.com/files/12998735",
         hash="9ab2afa0e17ecbe6b8862c7cae88634f"
@@ -208,7 +211,7 @@ def load_flla(download_if_missing=True):
 
     Returns (pd.DataFrame)
     """
-    data_path = os.path.join(module_dir, "flla_2015.csv")
+    data_path = os.path.join(dataset_dir, "flla_2015.csv")
     dataset_metadata = RemoteFileMetadata(
         url="https://ndownloader.figshare.com/files/12998942",
         hash="96430434ab143fad685eece5a2340c6f"
