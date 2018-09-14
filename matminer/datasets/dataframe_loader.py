@@ -47,15 +47,15 @@ def fetch_external_dataset(file_metadata, file_path):
         page_data = response.read()
         file_out.write(page_data)
 
-    md5hash = hashlib.md5()
+    sha256hash = hashlib.sha256()
     chunk_size = 8192
     with open(file_path, "rb") as f:
         while True:
             buffer = f.read(chunk_size)
             if not buffer:
                 break
-            md5hash.update(buffer)
-    file_hash = md5hash.hexdigest()
+            sha256hash.update(buffer)
+    file_hash = sha256hash.hexdigest()
 
     if file_hash != file_metadata.hash:
         raise IOError(
@@ -85,7 +85,7 @@ def load_elastic_tensor(include_metadata=False, download_if_missing=True):
     data_path = os.path.join(dataset_dir, "elastic_tensor.csv")
     dataset_metadata = RemoteFileMetadata(
         url="https://ndownloader.figshare.com/files/12998804",
-        hash="f1e16f8cbe01eea97ec891fd361e7add"
+        hash="f7a18c91fe5dcd51012e5b7e3a37f73aaee9087a036d61bdf9d6464b6fca51a6"
     )
 
     if not os.path.exists(data_path):
@@ -131,7 +131,7 @@ def load_piezoelectric_tensor(include_metadata=False, download_if_missing=True):
     data_path = os.path.join(dataset_dir, "piezoelectric_tensor.csv")
     dataset_metadata = RemoteFileMetadata(
         url="https://ndownloader.figshare.com/files/12998954",
-        hash="9ca3a5e9f91dbb0302d0a60fb6d675d7"
+        hash="4be45c8df76a9600f789255ddcb05a92fc3807e0b96fd01e85713a58c34a2ae1"
     )
 
     if not os.path.exists(data_path):
@@ -177,7 +177,7 @@ def load_dielectric_constant(include_metadata=False, download_if_missing=True):
     data_path = os.path.join(dataset_dir, "dielectric_constant.csv")
     dataset_metadata = RemoteFileMetadata(
         url="https://ndownloader.figshare.com/files/12998735",
-        hash="9ab2afa0e17ecbe6b8862c7cae88634f"
+        hash="ecbd410d33c95d5b05822cff6c7c0ba809a024b4ede3855ec5efc48d5e29ea77"
     )
 
     if not os.path.exists(data_path):
@@ -223,7 +223,7 @@ def load_flla(download_if_missing=True):
     data_path = os.path.join(dataset_dir, "flla_2015.csv")
     dataset_metadata = RemoteFileMetadata(
         url="https://ndownloader.figshare.com/files/12998942",
-        hash="96430434ab143fad685eece5a2340c6f"
+        hash="35b8dbc0b92f4dc7e219fd6606c3a27bee18a9618f376cfee1ff731e306210bb"
     )
 
     if not os.path.exists(data_path):
