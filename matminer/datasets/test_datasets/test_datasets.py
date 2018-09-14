@@ -9,20 +9,38 @@ from matminer.datasets.dataframe_loader import load_elastic_tensor, \
 
 
 class DataSetTest(unittest.TestCase):
+    # current directory, for storing and discarding test_dataset
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # directory where in-use datasets should be stored,
+    # either at MATMINER_DATA env var or under matminer/datasets/
+    dataset_dir = os.environ.get(
+        "MATMINER_DATA",
+        os.path.abspath(os.path.join(current_dir, os.pardir))
+    )
+
     def test_fetch_external_dataset(self):
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        data_path = os.path.join(current_dir, "elastic_tensor.csv")
+        data_path = os.path.join(self.current_dir, "test_dataset.csv")
         if os.path.exists(data_path):
             os.remove(data_path)
         dataset_metadata = RemoteFileMetadata(
-            url="https://ndownloader.figshare.com/files/12998804",
-            hash="f1e16f8cbe01eea97ec891fd361e7add"
+            url="https://ndownloader.figshare.com/files/13039562",
+            hash="1d27da646a7d353c81db33c64bd72c87"
         )
         fetch_external_dataset(dataset_metadata, data_path)
         self.assertTrue(os.path.exists(data_path))
         os.remove(data_path)
 
     def test_elastic_tensor(self):
+        # Test that the dataset is downloadable, also get integrity check
+        # from internal check against file hash
+        data_path = os.path.join(self.dataset_dir, "elastic_tensor.csv")
+        if os.path.exists(data_path):
+            os.remove(data_path)
+
+        load_elastic_tensor()
+        self.assertTrue(os.path.exists(data_path))
+
+        # Test that data is now available and properly formatted
         df = load_elastic_tensor(download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
         for c in ['compliance_tensor', 'elastic_tensor', 'elastic_tensor_original']:
@@ -36,11 +54,24 @@ class DataSetTest(unittest.TestCase):
                           'compliance_tensor', 'elastic_tensor',
                           'elastic_tensor_original']
         self.assertEqual(list(df), column_headers)
-        df = load_elastic_tensor(include_metadata=True, download_if_missing=False)
+        df = load_elastic_tensor(include_metadata=True,
+                                 download_if_missing=False)
         column_headers += ['cif', 'kpoint_density', 'poscar']
         self.assertEqual(list(df), column_headers)
 
+        os.remove(data_path)
+
     def test_piezoelectric_tensor(self):
+        # Test that the dataset is downloadable, also get integrity check
+        # from internal check against file hash
+        data_path = os.path.join(self.dataset_dir, "piezoelectric_tensor.csv")
+        if os.path.exists(data_path):
+            os.remove(data_path)
+
+        load_piezoelectric_tensor()
+        self.assertTrue(os.path.exists(data_path))
+
+        # Test that data is now available and properly formatted
         df = load_piezoelectric_tensor(download_if_missing=False)
         self.assertEqual(len(df), 941)
         self.assertEqual(type(df['piezoelectric_tensor'][0]), np.ndarray)
@@ -49,11 +80,24 @@ class DataSetTest(unittest.TestCase):
                           'nsites', 'point_group', 'space_group', 'volume',
                           'structure', 'eij_max', 'v_max', 'piezoelectric_tensor']
         self.assertEqual(list(df), column_headers)
-        df = load_piezoelectric_tensor(include_metadata=True, download_if_missing=False)
+        df = load_piezoelectric_tensor(include_metadata=True,
+                                       download_if_missing=False)
         column_headers += ['cif', 'meta', 'poscar']
         self.assertEqual(list(df), column_headers)
 
+        os.remove(data_path)
+
     def test_dielectric_tensor(self):
+        # Test that the dataset is downloadable, also get integrity check
+        # from internal check against file hash
+        data_path = os.path.join(self.dataset_dir, "dielectric_constant.csv")
+        if os.path.exists(data_path):
+            os.remove(data_path)
+
+        load_elastic_tensor()
+        self.assertTrue(os.path.exists(data_path))
+
+        # Test that data is now available and properly formatted
         df = load_dielectric_constant(download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(len(df), 1056)
@@ -64,11 +108,24 @@ class DataSetTest(unittest.TestCase):
                           'n', 'poly_electronic',
                           'poly_total', 'pot_ferroelectric']
         self.assertEqual(list(df), column_headers)
-        df = load_dielectric_constant(include_metadata=True, download_if_missing=False)
+        df = load_dielectric_constant(include_metadata=True,
+                                      download_if_missing=False)
         column_headers += ['cif', 'meta', 'poscar']
         self.assertEqual(list(df), column_headers)
 
+        os.remove(data_path)
+
     def test_flla(self):
+        # Test that the dataset is downloadable, also get integrity check
+        # from internal check against file hash
+        data_path = os.path.join(self.dataset_dir, "flla_2015.csv")
+        if os.path.exists(data_path):
+            os.remove(data_path)
+
+        load_elastic_tensor()
+        self.assertTrue(os.path.exists(data_path))
+
+        # Test that data is now available and properly formatted
         df = load_flla(download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(len(df), 3938)
@@ -76,6 +133,8 @@ class DataSetTest(unittest.TestCase):
                           'nsites', 'structure', 'formation_energy',
                           'formation_energy_per_atom']
         self.assertEqual(list(df), column_headers)
+
+        os.remove(data_path)
 
 
 if __name__ == "__main__":
