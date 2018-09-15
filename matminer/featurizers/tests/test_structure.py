@@ -301,6 +301,15 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
+        ofm_flat = OrbitalFieldMatrix(period_tag=False, flatten=True)
+        self.assertEqual(len(ofm_flat.feature_labels()), 1024)
+
+        ofm_flat = OrbitalFieldMatrix(period_tag=True, flatten=True)
+        self.assertEqual(len(ofm_flat.feature_labels()), 1521)
+        ofm_vector = ofm_flat.featurize(self.diamond)
+        for ix in [40, 42, 72, 118, 120, 150, 1288, 1320]:
+            self.assertEqual(ofm_vector[ix], 1.4789015345821415)
+
     def test_min_relative_distances(self):
         self.assertAlmostEqual(MinimumRelativeDistances().featurize(
                 self.diamond_no_oxi)[0][0], 1.1052576)
