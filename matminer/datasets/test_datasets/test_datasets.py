@@ -24,7 +24,7 @@ class DataSetTest(unittest.TestCase):
             os.remove(data_path)
         dataset_metadata = RemoteFileMetadata(
             url="https://ndownloader.figshare.com/files/13039562",
-            hash="1d27da646a7d353c81db33c64bd72c87"
+            hash="c487f59ce0d48505c36633b4b202027d0c915474b081e8fb0bde8d5474ee59a1"
         )
         fetch_external_dataset(dataset_metadata, data_path)
         self.assertTrue(os.path.exists(data_path))
