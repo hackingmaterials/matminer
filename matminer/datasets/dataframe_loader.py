@@ -21,8 +21,11 @@ dataset_dir = os.environ.get("MATMINER_DATA",
                              os.path.dirname(os.path.abspath(__file__)))
 
 
-def _get_dataframe_from_file(data_path, dataset_metadata=None,
-                             download_if_missing=True, **kwargs):
+RemoteFileMetadata = namedtuple("RemoteFileMetadata", ["url", "hash"])
+
+
+def _validate_dataset(data_path, dataset_metadata=None,
+                      download_if_missing=True):
     """
     Args:
         data_path (str): the full path to the file you would like to load,
@@ -34,10 +37,7 @@ def _get_dataframe_from_file(data_path, dataset_metadata=None,
         download_if_missing (bool): whether or not to try downloading the
         dataset if it is not on local disk
 
-        **kwargs: keyword arguments to pandas.read_* functions
-
-    Returns:
-        pandas.DataFrame object
+    Returns (None)
     """
     if not os.path.exists(data_path):
         if not download_if_missing:
@@ -46,19 +46,6 @@ def _get_dataframe_from_file(data_path, dataset_metadata=None,
             raise ValueError("To download an external dataset, the dataset "
                              "metadata must be provided")
         fetch_external_dataset(dataset_metadata, data_path)
-
-    file_type = data_path.split(".")[-1]
-
-    if file_type == "csv":
-        df = pandas.read_csv(**kwargs)
-    else:
-        raise ValueError("Error, currently only loading datasets from "
-                         ".csv files is supported")
-
-    return df
-
-
-RemoteFileMetadata = namedtuple("RemoteFileMetadata", ["url", "hash"])
 
 
 def fetch_external_dataset(file_metadata, file_path):
@@ -127,10 +114,10 @@ def load_elastic_tensor(include_metadata=False, download_if_missing=True):
         hash="f7a18c91fe5dcd51012e5b7e3a37f73aaee9087a036d61bdf9d6464b6fca51a6",
     )
 
-    df = _get_dataframe_from_file(data_path, dataset_metadata=dataset_metadata,
-                                  download_if_missing=download_if_missing,
-                                  comment="#")
+    _validate_dataset(data_path, dataset_metadata=dataset_metadata,
+                      download_if_missing=download_if_missing)
 
+    df = pandas.read_csv(data_path, comment="#")
     for i in list(df.index):
         for c in ['compliance_tensor', 'elastic_tensor', 'elastic_tensor_original']:
             df.at[(i, c)] = np.array(ast.literal_eval(df.at[(i, c)]))
@@ -169,10 +156,10 @@ def load_piezoelectric_tensor(include_metadata=False, download_if_missing=True):
         hash="4be45c8df76a9600f789255ddcb05a92fc3807e0b96fd01e85713a58c34a2ae1"
     )
 
-    df = _get_dataframe_from_file(data_path, dataset_metadata=dataset_metadata,
-                                  download_if_missing=download_if_missing,
-                                  comment="#")
+    _validate_dataset(data_path, dataset_metadata=dataset_metadata,
+                      download_if_missing=download_if_missing)
 
+    df = pandas.read_csv(data_path, comment="#")
     for i in list(df.index):
         c = 'piezoelectric_tensor'
         df.at[(i, c)] = np.array(ast.literal_eval(df.at[(i, c)]))
@@ -210,10 +197,10 @@ def load_dielectric_constant(include_metadata=False, download_if_missing=True):
         hash="ecbd410d33c95d5b05822cff6c7c0ba809a024b4ede3855ec5efc48d5e29ea77",
     )
 
-    df = _get_dataframe_from_file(data_path, dataset_metadata=dataset_metadata,
-                                  download_if_missing=download_if_missing,
-                                  comment="#")
+    _validate_dataset(data_path, dataset_metadata=dataset_metadata,
+                      download_if_missing=download_if_missing)
 
+    df = pandas.read_csv(data_path, comment="#")
     df['cif'] = df['structure']
     df['structure'] = pandas.Series([Poscar.from_string(s).structure
                                      for s in df['poscar']])
@@ -252,10 +239,10 @@ def load_flla(download_if_missing=True):
         hash="35b8dbc0b92f4dc7e219fd6606c3a27bee18a9618f376cfee1ff731e306210bb",
     )
 
-    df = _get_dataframe_from_file(data_path, dataset_metadata=dataset_metadata,
-                                  download_if_missing=download_if_missing,
-                                  comment="#")
+    _validate_dataset(data_path, dataset_metadata=dataset_metadata,
+                      download_if_missing=download_if_missing)
 
+    df = pandas.read_csv(data_path, comment="#")
     column_headers = ['material_id', 'e_above_hull', 'formula',
                       'nsites', 'structure', 'formation_energy',
                       'formation_energy_per_atom']
