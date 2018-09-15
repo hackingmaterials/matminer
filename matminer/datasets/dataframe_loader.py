@@ -5,7 +5,7 @@ from collections import namedtuple
 
 import numpy as np
 import pandas
-import six.moves.urllib.request as request
+import requests
 
 from pymatgen.io.vasp.inputs import Poscar
 from pymatgen.core.structure import Structure
@@ -37,15 +37,13 @@ def fetch_external_dataset(file_metadata, file_path):
     Returns (None)
     """
 
-    req = request.Request(file_metadata.url)
+    r = requests.get(file_metadata.url, stream=True)
 
-    if req.type not in {"https", "http", "ftp", "ftps"}:
-        raise IOError("Error, for security purposes file retrieval scheme must"
-                      "be over http(s) or ftp(s) connection")
+    with open(file_path, "wb") as file_out:
+        for chunk in r.iter_content(chunk_size=2048):
+            file_out.write(chunk)
 
-    with request.urlopen(req) as response, open(file_path, "wb") as file_out:
-        page_data = response.read()
-        file_out.write(page_data)
+    r.close()
 
     sha256hash = hashlib.sha256()
     chunk_size = 8192
