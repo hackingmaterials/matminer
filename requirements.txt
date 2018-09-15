@@ -10,3 +10,4 @@ future==0.16.0
 sympy==1.1.1
 scikit_learn==0.19.1
 numpy
+requests
