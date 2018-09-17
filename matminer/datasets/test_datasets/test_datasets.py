@@ -1,7 +1,6 @@
 import unittest
 import os
 import numpy as np
-import copy
 from pymatgen.core.structure import Structure
 
 from matminer.datasets.dataframe_loader import load_elastic_tensor, \
@@ -42,8 +41,10 @@ class DataSetTest(unittest.TestCase):
             validate_dataset(self.data_path, dataset_metadata=None,
                              download_if_missing=True)
 
-        invalid_hash_metadata = copy.deepcopy(self.dataset_metadata)
-        invalid_hash_metadata.url = "!@#$%^&*()"
+        invalid_hash_metadata = RemoteFileMetadata(
+            url=self.dataset_metadata.url,
+            hash="!@#$%^&*()"
+        )
         with self.assertRaises(IOError):
             validate_dataset(self.data_path, invalid_hash_metadata,
                              download_if_missing=True)
@@ -57,7 +58,7 @@ class DataSetTest(unittest.TestCase):
         if os.path.exists(self.data_path):
             os.remove(self.data_path)
 
-        fetch_external_dataset(self.dataset_metadata, self.data_path)
+        fetch_external_dataset(self.dataset_metadata.url, self.data_path)
         self.assertTrue(os.path.exists(self.data_path))
 
     def test_elastic_tensor(self):
