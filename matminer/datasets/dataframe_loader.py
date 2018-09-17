@@ -33,7 +33,7 @@ def validate_dataset(data_path, dataset_metadata=None,
 
     Args:
         data_path (str): the full path to the file you would like to load,
-        if nonexistant will try to download from external source by default
+        if nonexistent will try to download from external source by default
 
         dataset_metadata (RemoteFileMetadata): a named tuple containing the
         url and hash of the dataset if it is to be downloaded from online
