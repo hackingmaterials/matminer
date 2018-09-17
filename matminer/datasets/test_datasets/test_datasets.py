@@ -9,21 +9,23 @@ from matminer.datasets.dataframe_loader import load_elastic_tensor, \
 
 
 class DataSetTest(unittest.TestCase):
-    # current directory, for storing and discarding test_dataset
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    # directory where in-use datasets should be stored,
-    # either at MATMINER_DATA env var or under matminer/datasets/
-    dataset_dir = os.environ.get(
-        "MATMINER_DATA",
-        os.path.abspath(os.path.join(current_dir, os.pardir))
-    )
+    def setUp(self):
+        # current directory, for storing and discarding test_dataset
+        self.current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Shared set up for test_validate_dataset and test_fetch_external_dataset
-    data_path = os.path.join(current_dir, "test_dataset.csv")
-    dataset_metadata = RemoteFileMetadata(
-        url="https://ndownloader.figshare.com/files/13039562",
-        hash="c487f59ce0d48505c36633b4b202027d0c915474b081e8fb0bde8d5474ee59a1"
-    )
+        # directory where in-use datasets should be stored,
+        # either at MATMINER_DATA env var or under matminer/datasets/
+        self.dataset_dir = os.environ.get(
+            "MATMINER_DATA",
+            os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        )
+
+        # Shared set up for test_validate_dataset & test_fetch_external_dataset
+        self.data_path = os.path.join(self.current_dir, "test_dataset.csv")
+        self.dataset_metadata = RemoteFileMetadata(
+            url="https://ndownloader.figshare.com/files/13039562",
+            hash="c487f59ce0d48505c36633b4b202027d0c915474b081e8fb0bde8d5474ee59a1"
+        )
 
     def test_validate_dataset(self):
         if os.path.exists(self.data_path):
@@ -125,7 +127,7 @@ class DataSetTest(unittest.TestCase):
         if os.path.exists(data_path):
             os.remove(data_path)
 
-        load_elastic_tensor()
+        load_dielectric_constant()
         self.assertTrue(os.path.exists(data_path))
 
         # Test that data is now available and properly formatted
@@ -153,7 +155,7 @@ class DataSetTest(unittest.TestCase):
         if os.path.exists(data_path):
             os.remove(data_path)
 
-        load_elastic_tensor()
+        load_flla()
         self.assertTrue(os.path.exists(data_path))
 
         # Test that data is now available and properly formatted
