@@ -51,6 +51,7 @@ def validate_dataset(data_path, dataset_metadata=None,
         elif dataset_metadata is None:
             raise ValueError("To download an external dataset, the dataset "
                              "metadata must be provided")
+
         fetch_external_dataset(dataset_metadata.url, data_path)
 
     # Check to see if downloaded file hash matches the expected value
@@ -83,6 +84,14 @@ def fetch_external_dataset(url, file_path):
     Returns (None)
     """
 
+    # If the specified storage dir doesn't exist, make it and tell user
+    if not os.path.exists(os.path.dirname(file_path)):
+        print("Making dataset storage folder at {}".format(
+            os.path.dirname(file_path)
+        ))
+        os.makedirs(os.path.dirname(file_path))
+
+    # Fetch data from given url
     print("Fetching {} from {} to {}".format(
         os.path.basename(file_path), url, file_path))
 
