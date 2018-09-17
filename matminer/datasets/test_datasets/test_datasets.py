@@ -1,11 +1,12 @@
 import unittest
 import os
 import numpy as np
+import copy
 from pymatgen.core.structure import Structure
 
 from matminer.datasets.dataframe_loader import load_elastic_tensor, \
     load_piezoelectric_tensor, load_dielectric_constant, load_flla, \
-    RemoteFileMetadata, fetch_external_dataset
+    RemoteFileMetadata, fetch_external_dataset, validate_dataset
 
 
 class DataSetTest(unittest.TestCase):
@@ -18,17 +19,46 @@ class DataSetTest(unittest.TestCase):
         os.path.abspath(os.path.join(current_dir, os.pardir))
     )
 
+    # Shared set up for test_validate_dataset and test_fetch_external_dataset
+    data_path = os.path.join(current_dir, "test_dataset.csv")
+    dataset_metadata = RemoteFileMetadata(
+        url="https://ndownloader.figshare.com/files/13039562",
+        hash="c487f59ce0d48505c36633b4b202027d0c915474b081e8fb0bde8d5474ee59a1"
+    )
+
+    def test_validate_dataset(self):
+        if os.path.exists(self.data_path):
+            os.remove(self.data_path)
+
+        with self.assertRaises(IOError):
+            validate_dataset(self.data_path, self.dataset_metadata,
+                             download_if_missing=False)
+
+        with self.assertRaises(IOError):
+            validate_dataset(self.data_path, dataset_metadata=None,
+                             download_if_missing=False)
+
+        with self.assertRaises(ValueError):
+            validate_dataset(self.data_path, dataset_metadata=None,
+                             download_if_missing=True)
+
+        invalid_hash_metadata = copy.deepcopy(self.dataset_metadata)
+        invalid_hash_metadata.url = "!@#$%^&*()"
+        with self.assertRaises(IOError):
+            validate_dataset(self.data_path, invalid_hash_metadata,
+                             download_if_missing=True)
+        os.remove(self.data_path)
+
+        validate_dataset(self.data_path, self.dataset_metadata,
+                         download_if_missing=True)
+        self.assertTrue(os.path.exists(self.data_path))
+
     def test_fetch_external_dataset(self):
-        data_path = os.path.join(self.current_dir, "test_dataset.csv")
-        if os.path.exists(data_path):
-            os.remove(data_path)
-        dataset_metadata = RemoteFileMetadata(
-            url="https://ndownloader.figshare.com/files/13039562",
-            hash="c487f59ce0d48505c36633b4b202027d0c915474b081e8fb0bde8d5474ee59a1"
-        )
-        fetch_external_dataset(dataset_metadata, data_path)
-        self.assertTrue(os.path.exists(data_path))
-        os.remove(data_path)
+        if os.path.exists(self.data_path):
+            os.remove(self.data_path)
+
+        fetch_external_dataset(self.dataset_metadata, self.data_path)
+        self.assertTrue(os.path.exists(self.data_path))
 
     def test_elastic_tensor(self):
         # Test that the dataset is downloadable, also get integrity check
