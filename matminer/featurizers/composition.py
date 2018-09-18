@@ -317,9 +317,9 @@ class AtomicOrbitals(BaseFeaturizer):
                 the estimated bandgap from HOMO and LUMO energeis
         """
 
-        string_comp = comp.reduced_formula
+        integer_comp, factor = comp.get_integer_formula_and_factor()
 
-        homo_lumo = MolecularOrbitals(string_comp).band_edges
+        homo_lumo = MolecularOrbitals(integer_comp).band_edges
 
         feat = collections.OrderedDict()
         for edge in ['HOMO', 'LUMO']:

@@ -143,6 +143,11 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertEqual(df_atomic_orbitals['LUMO_energy'][0], -0.295049)
         self.assertEqual(df_atomic_orbitals['gap_AO'][0], 0.0)
 
+        # test that fractional compositions return the same features
+        self.assertEqual(AtomicOrbitals().featurize(Composition('Na0.5Cl0.5')),
+                         AtomicOrbitals().featurize(Composition('NaCl')))
+
+
     def test_band_center(self):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_band_center["band center"][0], -2.672486385)
