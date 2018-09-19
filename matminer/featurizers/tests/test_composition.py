@@ -2,6 +2,7 @@ from __future__ import unicode_literals, division, print_function
 
 import math
 import unittest
+import warnings
 from unittest import SkipTest
 
 import pandas as pd
@@ -146,6 +147,10 @@ class CompositionFeaturesTest(PymatgenTest):
         # test that fractional compositions return the same features
         self.assertEqual(AtomicOrbitals().featurize(Composition('Na0.5Cl0.5')),
                          AtomicOrbitals().featurize(Composition('NaCl')))
+
+        # test if warning is raised upon composition truncation in dilute cases
+        self.assertWarns(UserWarning, AtomicOrbitals().featurize,
+                         Composition('Fe1C0.00000001'))
 
 
     def test_band_center(self):
