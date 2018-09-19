@@ -12,6 +12,7 @@ from six import string_types, reraise
 from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
 from tqdm import tqdm
 
+#from matminer.featurizers.conversions import ConversionFeaturizer
 from matminer.utils.utils import homogenize_multiindex
 
 
@@ -207,9 +208,13 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         labels = self._generate_column_labels(multiindex, return_errors)
 
         # Check names to avoid overwriting the current columns
-        for col in df.columns.values:
-            if col in labels:
-                raise ValueError('"{}" exists in input dataframe'.format(col))
+        # ConversionFeaturizer have attribute called _overwrite_data which
+        # determines whether an Error is thrown
+        if not getattr(self, '_overwrite_data', False):
+            for col in df.columns.values:
+                if col in labels:
+                    raise ValueError(
+                        '"{}" exists in input dataframe'.format(col))
 
         # Compute the features
         features = self.featurize_many(df[col_id].values,
