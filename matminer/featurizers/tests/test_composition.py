@@ -298,5 +298,9 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(0.003508794,
                                df['mean abs simul. packing efficiency'][0])
 
+        # Make sure it works with composition that do not match any efficient clusters
+        feat = f.compute_nearest_cluster_distance(Composition('Al'))
+        self.assertArrayAlmostEqual([1]*3, feat)
+
 if __name__ == '__main__':
     unittest.main()
