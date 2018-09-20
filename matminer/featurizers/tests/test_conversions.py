@@ -83,7 +83,7 @@ class TestConversions(TestCase):
         d = {'structure': [cscl]}
         df = DataFrame(data=d)
 
-        sto = StructureToOxidStructure(target_col_id='struct_oxid')
+        sto = StructureToOxidStructure()
         df = sto.featurize_dataframe(df, 'structure')
         self.assertEqual(df["struct_oxid"].tolist()[0][0].specie.oxi_state, -1)
         self.assertEqual(df["struct_oxid"].tolist()[0][1].specie.oxi_state, +1)
@@ -105,7 +105,7 @@ class TestConversions(TestCase):
 
     def test_composition_to_oxidcomposition(self):
         df = DataFrame(data={"composition": [Composition("Fe2O3")]})
-        cto = CompositionToOxidComposition(target_col_id='composition_oxid')
+        cto = CompositionToOxidComposition()
         df = cto.featurize_dataframe(df, 'composition')
         self.assertEqual(df["composition_oxid"].tolist()[0],
                          Composition({"Fe3+": 2, "O2-": 3}))

@@ -387,7 +387,7 @@ class StructureToOxidStructure(ConversionFeaturizer):
             exists.
     """
 
-    def __init__(self, target_col_id='oxid_structure', overwrite_data=False,
+    def __init__(self, target_col_id='structure_oxid', overwrite_data=False,
                  **kwargs):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
@@ -442,7 +442,7 @@ class CompositionToOxidComposition(ConversionFeaturizer):
             exists.
     """
 
-    def __init__(self, target_col_id='oxid_composition', overwrite_data=False,
+    def __init__(self, target_col_id='composition_oxid', overwrite_data=False,
                  **kwargs):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
