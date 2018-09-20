@@ -37,8 +37,6 @@ class ConversionFeaturizer(BaseFeaturizer):
     be achieved by setting `target_col_id=None` and `overwrite_data=True`. See
     the docstring below for more details.
 
-    ConversionFeaturizers do not currently support multi-indexing.
-
     Args:
         target_col_id (str or None): The column in which the converted data will
             be written. If the column already exists then an error will be
