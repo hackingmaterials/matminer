@@ -10,7 +10,7 @@ from pymatgen.core.structure import IStructure
 
 @deprecated(message="matminer.utils.conversions.str_to_composition is "
                     "deprecated and will be removed in December 2018. Please use"
-                    "the matminer.featurizers.conversions.str_to_composition" 
+                    " the matminer.featurizers.conversions.StrToComposition " 
                     "Featurizer instead")
 def str_to_composition(series, reduce=False):
     """
@@ -31,8 +31,8 @@ def str_to_composition(series, reduce=False):
 
 @deprecated(message="matminer.utils.conversions.structure_to_composition is "
                     "deprecated and will be removed in December 2018. Please use"
-                    "the matminer.featurizers.conversions.structure_to_composition"
-                    "Featurizer instead")
+                    " the matminer.featurizers.conversions.StructureToComposition"
+                    " Featurizer instead")
 def structure_to_composition(series, reduce=False):
     """
     Converts a Structure series to a Composition series
@@ -52,8 +52,8 @@ def structure_to_composition(series, reduce=False):
 
 @deprecated(message="matminer.utils.conversions.structure_to_istructure is "
                     "deprecated and will be removed in December 2018. Please use"
-                    "the matminer.featurizers.conversions.structure_to_istructure"
-                    "Featurizer instead")
+                    " the matminer.featurizers.conversions.StructureToIStructure"
+                    " Featurizer instead")
 def structure_to_istructure(series):
     """Convert a pymatgen Structure to an immutable IStructure object
 
@@ -70,8 +70,8 @@ def structure_to_istructure(series):
 
 @deprecated(message="matminer.utils.conversions.dict_to_object is "
                     "deprecated and will be removed in December 2018. Please use"
-                    "the matminer.featurizers.conversions.dict_to_object"
-                    "Featurizer instead")
+                    " the matminer.featurizers.conversions.DictToObject"
+                    " Featurizer instead")
 def dict_to_object(series):
     """
         Decodes a dict Series to Python object series via MSON
@@ -89,7 +89,7 @@ def dict_to_object(series):
 
 @deprecated(message="matminer.utils.conversions.json_to_object is "
                     "deprecated and will be removed in December 2018. Please use"
-                    "the matminer.featurizers.conversions.json_to_object"
+                    " the matminer.featurizers.conversions.JsonToObject "
                     "Featurizer instead")
 def json_to_object(series):
     """
@@ -106,8 +106,8 @@ def json_to_object(series):
 
 @deprecated(message="matminer.utils.conversions.structure_to_oxidstructure is "
                     "deprecated and will be removed in December 2018. Please use"
-                    "the matminer.featurizers.conversions.structure_to_oxidstructure"
-                    "Featurizer instead")
+                    " the matminer.featurizers.conversions.StructureToOxidstructure"
+                    " Featurizer instead")
 def structure_to_oxidstructure(series, inplace=False, **kwargs):
     """
     Adds oxidation states to a Structure using pymatgen's guessing routines
@@ -131,8 +131,8 @@ def structure_to_oxidstructure(series, inplace=False, **kwargs):
 
 @deprecated(message="matminer.utils.conversions.composition_to_oxidcomposition is "
                     "deprecated and will be removed in December 2018. Please use"
-                    "the matminer.featurizers.conversions.composition_to_oxidcomposition"
-                    "Featurizer instead")
+                    " the matminer.featurizers.conversions.CompositionToOxidcomposition"
+                    " Featurizer instead")
 def composition_to_oxidcomposition(series, **kwargs):
     """
     Adds oxidation states to a Composition using pymatgen's guessing routines
