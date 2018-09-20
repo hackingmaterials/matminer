@@ -1619,6 +1619,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
             # Get the nearest clusters
             if cluster_lookup is None:
                 dists = (np.array([]),)
+                to_lookup = 0
             else:
                 to_lookup = min(cluster_lookup._fit_X.shape[0], k)
                 dists, _ = cluster_lookup.kneighbors([comp_vec], to_lookup)
