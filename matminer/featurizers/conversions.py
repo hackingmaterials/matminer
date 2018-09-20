@@ -2,8 +2,8 @@
 This module defines featurizers that can convert between different data formats
 
 
-Note that these featurizers do not produce machine learning ready features.
-Instead, the should be used to pre-process data, either through a standalone
+Note that these featurizers do not produce machine learning-ready features.
+Instead, they should be used to pre-process data, either through a standalone
 transformation or as part of a Pipeline.
 """
 
@@ -20,22 +20,22 @@ from matminer.featurizers.base import BaseFeaturizer
 class ConversionFeaturizer(BaseFeaturizer):
     """Abstract class to perform data conversions.
 
-    Featurizers subclassing this class do not produce machine learning ready
+    Featurizers subclassing this class do not produce machine learning-ready
     features but instead are used to pre-process data. As Featurizers,
-    these conversions can take advantage of the parallelisation implemented
+    the conversion process can take advantage of the parallelisation implemented
     in ScikitLearn.
 
     Note that `feature_labels` are set dynamically and may depend on the column
-    id of the data being featurized. Accordingly, `feature_labels` may differ
+    id of the data being featurized. As such, `feature_labels` may differ
     before and after featurization.
 
-    ConversionFeaturizers differ from other Featurizers in that they can
-    specify which column to write the converted data. This is set through
-    `target_col_id`. Furthermore, they have the ability to overwrite data in
-    existing columns (as set by `overwrite_data`). Together these effectively
-    allow for "in place" conversion of data. To achieve this, set
-    `target_col_id=None` and `overwrite_data=True`. See the docstring below
-    for more details.
+    ConversionFeaturizers differ from other Featurizers in that the user can
+    can specify the column in which to write the converted data. The output
+    column is controlled through `target_col_id`. ConversionFeaturizers also
+    have the ability to overwrite data in existing columns. This is
+    controlled by the `overwrite_data` option. "in place" conversion of data can
+    be achieved by setting `target_col_id=None` and `overwrite_data=True`. See
+    the docstring below for more details.
 
     ConversionFeaturizers do not currently support multi-indexing.
 
@@ -59,10 +59,10 @@ class ConversionFeaturizer(BaseFeaturizer):
     def featurize_dataframe(self, df, col_id, **kwargs):
         """Perform the data conversion and set the target column dynamically.
 
-        As `target_col_id` and accordingly `feature_labels` may depend on the
-        column id of the data being featurized, we first dynamically set
-        `target_col_id` and then call the `BaseFeaturizer.featurize_dataframe()`
-        super method.
+        `target_col_id`, and accordingly `feature_labels`, may depend on the
+        column id of the data being featurized. As such, `target_col_id` is
+        first set dynamically before the `BaseFeaturizer.featurize_dataframe()`
+        super method is called.
 
         Args:
             df (Pandas.DataFrame): Dataframe containing input data.
@@ -108,7 +108,7 @@ class StrToComposition(ConversionFeaturizer):
 
     The expected input is a composition in string form (e.g. "Fe2O3").
 
-    Note that this Featurizer does not produce machine learning ready features
+    Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:
@@ -165,7 +165,7 @@ class StructureToComposition(ConversionFeaturizer):
 
     The expected input is a `pymatgen.core.structure.Structure` object.
 
-    Note that this Featurizer does not produce machine learning ready features
+    Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:
@@ -223,7 +223,7 @@ class StructureToIStructure(ConversionFeaturizer):
 
     The expected input is a `pymatgen.core.structure.Structure` object.
 
-    Note that this Featurizer does not produce machine learning ready features
+    Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:
@@ -271,7 +271,7 @@ class StructureToIStructure(ConversionFeaturizer):
 class DictToObject(ConversionFeaturizer):
     """Utility featurizer to decode a dict to Python object via MSON.
 
-    Note that this Featurizer does not produce machine learning ready features
+    Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:
@@ -319,7 +319,7 @@ class DictToObject(ConversionFeaturizer):
 class JsonToObject(ConversionFeaturizer):
     """Utility featurizer to decode json data to a Python object via MSON.
 
-    Note that this Featurizer does not produce machine learning ready features
+    Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:
@@ -369,7 +369,7 @@ class StructureToOxidStructure(ConversionFeaturizer):
     Oxidation states are determined using pymatgen's guessing routines.
     The expected input is a `pymatgen.core.structure.Structure` object.
 
-    Note that this Featurizer does not produce machine learning ready features
+    Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:
@@ -424,7 +424,7 @@ class CompositionToOxidComposition(ConversionFeaturizer):
     Oxidation states are determined using pymatgen's guessing routines.
     The expected input is a `pymatgen.core.composition.Composition` object.
 
-    Note that this Featurizer does not produce machine learning ready features
+    Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:

@@ -12,7 +12,6 @@ from six import string_types, reraise
 from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
 from tqdm import tqdm
 
-#from matminer.featurizers.conversions import ConversionFeaturizer
 from matminer.utils.utils import homogenize_multiindex
 
 
