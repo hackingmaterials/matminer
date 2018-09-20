@@ -82,9 +82,13 @@ class ConversionFeaturizer(BaseFeaturizer):
                              "multiindexing")
 
         # now the col_id is known, we check if we need to update target_col_id
+        # for multiindexes it is the last index that is updated
         target = self._target_col_id
         if isinstance(target, str) and target[0] == '_':
-            self._target_col_id = "{}_{}".format(col_id, target[1:])
+            if 'multiindex' in kwargs and kwargs['multiindex']:
+                self._target_col_id = "{}_{}".format(col_id[-1], target[1:])
+            else:
+                self._target_col_id = "{}_{}".format(col_id, target[1:])
         elif target is None:
             self._target_col_id = col_id
 
@@ -457,7 +461,8 @@ class CompositionToOxidComposition(ConversionFeaturizer):
             (`pymatgen.core.composition.Composition`): A Composition object
                 decorated with oxidation states.
         """
-        return [comp.add_charges_from_oxi_state_guesses(**self.oxi_guess_params)]
+        return [comp.add_charges_from_oxi_state_guesses(
+            **self.oxi_guess_params)]
 
     def citations(self):
         return [(

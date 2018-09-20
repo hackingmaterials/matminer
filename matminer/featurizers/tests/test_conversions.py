@@ -2,7 +2,7 @@ import json
 
 from monty.json import MontyEncoder
 from unittest import TestCase
-from pandas import DataFrame
+from pandas import DataFrame, MultiIndex
 
 
 from pymatgen.core.structure import IStructure
@@ -62,6 +62,13 @@ class TestConversions(TestCase):
         self.assertEqual(df["structure"].tolist()[0], struct)
         self.assertEqual(df["structure"].tolist()[1], struct)
 
+        # test dynamic target_col_id setting
+        df = DataFrame(data=d)
+        dto = DictToObject()
+        df = dto.featurize_dataframe(df, 'structure_dict')
+        self.assertEqual(df["structure_dict_object"].tolist()[0], struct)
+        self.assertEqual(df["structure_dict_object"].tolist()[1], struct)
+
     def test_json_to_object(self):
         coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
         lattice = Lattice([[3.8401979337, 0.00, 0.00],
@@ -76,6 +83,12 @@ class TestConversions(TestCase):
         jto = JsonToObject(target_col_id='structure')
         df = jto.featurize_dataframe(df, 'structure_json')
         self.assertEqual(df["structure"].tolist()[0], struct)
+
+        # test dynamic target_col_id setting
+        df = DataFrame(data=d)
+        jto = JsonToObject()
+        df = jto.featurize_dataframe(df, 'structure_json')
+        self.assertEqual(df["structure_json_object"].tolist()[0], struct)
 
     def test_structure_to_oxidstructure(self):
         cscl = Structure(Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
@@ -120,6 +133,56 @@ class TestConversions(TestCase):
         df = sti.featurize_dataframe(df, 'structure')
 
         # Make sure the new structure is an IStructure, and equal
-        #  to the original structure
+        # to the original structure
         self.assertIsInstance(df["istructure"][0], IStructure)
         self.assertEqual(df["istructure"][0], df["structure"][0])
+
+    def test_conversion_multiindex(self):
+        d = {'comp_str': ["Fe2", "MnO2"]}
+
+        df_1lvl = DataFrame(data=d)
+
+        df_1lvl = StrToComposition().featurize_dataframe(
+            df_1lvl, 'comp_str', multiindex=True)
+        self.assertEqual(df_1lvl[("StrToComposition", "composition")].tolist(),
+                         [Composition("Fe2"), Composition("MnO2")])
+
+        df_2lvl = DataFrame(data=d)
+        df_2lvl.columns = MultiIndex.from_product((["custom"],
+                                                   df_2lvl.columns.values))
+
+        df_2lvl = StrToComposition().featurize_dataframe(
+            df_2lvl, ("custom", "comp_str"), multiindex=True)
+        self.assertEqual(df_2lvl[("StrToComposition", "composition")].tolist(),
+                         [Composition("Fe2"), Composition("MnO2")])
+
+        df_2lvl = DataFrame(data=d)
+        df_2lvl.columns = MultiIndex.from_product((["custom"],
+                                                   df_2lvl.columns.values))
+
+        sto = StrToComposition(target_col_id='test')
+        df_2lvl = sto.featurize_dataframe(
+            df_2lvl, ("custom", "comp_str"), multiindex=True)
+        self.assertEqual(df_2lvl[("StrToComposition", "test")].tolist(),
+                         [Composition("Fe2"), Composition("MnO2")])
+
+    def test_conversion_multiindex_dynamic(self):
+        # test dynamic target_col_id setting with multiindex
+
+        coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
+        lattice = Lattice([[3.8401979337, 0.00, 0.00],
+                           [1.9200989668, 3.3257101909, 0.00],
+                           [0.00, -2.2171384943, 3.1355090603]])
+        struct = Structure(lattice, ["Si"] * 2, coords)
+        d = {'structure_dict': [struct.as_dict(), struct.as_dict()]}
+        df_2lvl = DataFrame(data=d)
+        df_2lvl.columns = MultiIndex.from_product((["custom"],
+                                                   df_2lvl.columns.values))
+
+        dto = DictToObject()
+        df_2lvl = dto.featurize_dataframe(df_2lvl, ('custom', 'structure_dict'),
+                                          multiindex=True)
+        new_col_id = ('DictToObject', 'structure_dict_object')
+        self.assertEqual(df_2lvl[new_col_id].tolist()[0], struct)
+        self.assertEqual(df_2lvl[new_col_id].tolist()[1], struct)
+

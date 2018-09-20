@@ -10,7 +10,7 @@ from pymatgen.core.structure import IStructure
 
 @deprecated(message="matminer.utils.conversions.str_to_composition is "
                     "deprecated and will be removed in December 2018. Please use"
-                    " the matminer.featurizers.conversions.StrToComposition " 
+                    " the matminer.featurizers.conversions.StrToComposition "
                     "Featurizer instead")
 def str_to_composition(series, reduce=False):
     """
