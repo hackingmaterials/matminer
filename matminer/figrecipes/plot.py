@@ -734,7 +734,7 @@ class PlotlyFig:
         return self.create_plot(fig, return_plot)
 
     def histogram(self, data=None, cols=None, orientation="vertical",
-                  histnorm="count", n_bins=None, bins=None, colors=None,
+                  histnorm="", n_bins=None, bins=None, colors=None,
                   bargap=0, return_plot=False):
         """
         Creates a Plotly histogram. If multiple series of data are available,
