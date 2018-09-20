@@ -91,16 +91,16 @@ class ConversionFeaturizer(BaseFeaturizer):
         return super().featurize_dataframe(df, col_id, **kwargs)
 
     def featurize(self, *x):
-        pass
+        raise NotImplementedError("citations() is not defined!")
 
     def feature_labels(self):
         return [self._target_col_id]
 
     def citations(self):
-        pass
+        raise NotImplementedError("citations() is not defined!")
 
     def implementors(self):
-        pass
+        raise NotImplementedError("citations() is not defined!")
 
 
 class StrToComposition(ConversionFeaturizer):
