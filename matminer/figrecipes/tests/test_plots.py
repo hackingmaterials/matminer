@@ -149,7 +149,7 @@ class PlotlyFigTest(PymatgenTest):
     def test_bar(self):
         bar_test = self.pf.bar(x=a, y=b, labels=xlabels, return_plot=True)
         bar_test['data'] = [p.to_plotly_json() for p in bar_test['data']]
-        bar_true = self.fopen("template_bar2.json")
+        bar_true = self.fopen("template_bar.json")
         self.assertTrue(bar_test == bar_true)
 
     def test_parallel_coordinates(self):
