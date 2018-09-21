@@ -5,7 +5,6 @@ import unittest
 import json
 
 import pandas as pd
-from pandas.util.testing import assert_frame_equal
 
 from monty.io import zopen
 
@@ -75,15 +74,15 @@ class IOTest(PymatgenTest):
 
     def test_load_dataframe_from_json(self):
 
-        df = load_dataframe_from_json('dataframe.json')
+        df = load_dataframe_from_json(os.path.join(test_dir, 'dataframe.json'))
         self.assertTrue(self.diamond == df['structure'][0],
                         "Dataframe contents do not match")
 
-        df = load_dataframe_from_json('dataframe.json.gz')
+        df = load_dataframe_from_json(os.path.join(test_dir, 'dataframe.json.gz'))
         self.assertTrue(self.diamond == df['structure'][0],
                         "Dataframe contents do not match")
 
-        df = load_dataframe_from_json('dataframe.json.bz2')
+        df = load_dataframe_from_json(os.path.join(test_dir, 'dataframe.json.bz2'))
         self.assertTrue(self.diamond == df['structure'][0],
                         "Dataframe contents do not match")
 
