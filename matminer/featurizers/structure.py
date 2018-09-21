@@ -646,12 +646,14 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
     Args:
         period_tag (bool): In the original OFM, an element is represented
-                by a vector of length 32, where each element is 1 or 0,
-                which represents the valence subshell of the element.
-                With period_tag=True, the vector size is increased
-                to 39, where the 7 extra elements represent the period
-                of the element. Note lanthanides are treated as period 6,
-                actinides as period 7. Default False as in the original paper.
+            by a vector of length 32, where each element is 1 or 0,
+            which represents the valence subshell of the element.
+            With period_tag=True, the vector size is increased
+            to 39, where the 7 extra elements represent the period
+            of the element. Note lanthanides are treated as period 6,
+            actinides as period 7. Default False as in the original paper.
+        flatten (bool): Flatten the avg OFM to a 1024-vector (if period_tag
+            False) or a 1521-vector (if period_tag=True).
 
     ...attribute:: size
         Either 32 or 39, the size of the vectors used to describe elements.
@@ -660,7 +662,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         `Pham et al. _Sci Tech Adv Mat_. 2017 <http://dx.doi.org/10.1080/14686996.2017.1378060>_`
     """
 
-    def __init__(self, period_tag=False):
+    def __init__(self, period_tag=False, flatten=False):
         """Initialize the featurizer
 
         Args:
@@ -682,6 +684,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             my_ohvs[Z] = self.get_ohv(el, period_tag)
             my_ohvs[Z] = np.matrix(my_ohvs[Z])
         self.ohvs = my_ohvs
+        self.flatten = flatten
 
     def get_ohv(self, sp, period_tag):
         """
@@ -828,10 +831,31 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         s *= [3, 3, 3]
         ofms, counts = self.get_atom_ofms(s, True)
         mean_ofm = self.get_mean_ofm(ofms, counts)
-        return [mean_ofm.A]
+        if self.flatten:
+            return mean_ofm.A.flatten()
+        else:
+            return [mean_ofm.A]
 
     def feature_labels(self):
-        return ["orbital field matrix"]
+        if self.flatten:
+            slabels = ["s^{}".format(i) for i in range(1, 3)]
+            plabels = ["p^{}".format(i) for i in range(1, 7)]
+            dlabels = ["d^{}".format(i) for i in range(1, 11)]
+            flabels = ["f^{}".format(i) for i in range(1, 15)]
+            labelset_1D = slabels + plabels + dlabels + flabels
+
+            # account for period tags
+            if self.size==39:
+                period_labels = ["period {}".format(i) for i in range(1, 8)]
+                labelset_1D += period_labels
+
+            labelset_2D = []
+            for l1 in labelset_1D:
+                for l2 in labelset_1D:
+                    labelset_2D.append('OFM: ' + l1 + ' - ' + l2)
+            return labelset_2D
+        else:
+            return ["orbital field matrix"]
 
     def citations(self):
         return ["@article{LamPham2017,"
@@ -850,7 +874,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                 "}"]
 
     def implementors(self):
-        return ["Kyle Bystrom"]
+        return ["Kyle Bystrom", "Alex Dunn"]
 
 
 class MinimumRelativeDistances(BaseFeaturizer):
