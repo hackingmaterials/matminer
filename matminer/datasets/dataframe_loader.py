@@ -124,7 +124,7 @@ def load_elastic_tensor(include_metadata=False, download_if_missing=True):
 
     data_path = os.path.join(dataset_dir, "elastic_tensor.csv")
     dataset_metadata = RemoteFileMetadata(
-        url="https://ndownloader.figshare.com/files/12998804?private_link=d1d110b9ff32460b4f6e",
+        url="https://ndownloader.figshare.com/files/13082813",
         hash="f7a18c91fe5dcd51012e5b7e3a37f73aaee9087a036d61bdf9d6464b6fca51a6",
     )
 
@@ -166,7 +166,7 @@ def load_piezoelectric_tensor(include_metadata=False, download_if_missing=True):
 
     data_path = os.path.join(dataset_dir, "piezoelectric_tensor.csv")
     dataset_metadata = RemoteFileMetadata(
-        url="https://ndownloader.figshare.com/files/12998954?private_link=1266d4fd5e0eafaa7226",
+        url="https://ndownloader.figshare.com/files/13082804",
         hash="4be45c8df76a9600f789255ddcb05a92fc3807e0b96fd01e85713a58c34a2ae1"
     )
 
@@ -207,7 +207,7 @@ def load_dielectric_constant(include_metadata=False, download_if_missing=True):
 
     data_path = os.path.join(dataset_dir, "dielectric_constant.csv")
     dataset_metadata = RemoteFileMetadata(
-        url="https://ndownloader.figshare.com/files/12998735?private_link=a96ce29908cfa82f3f4f",
+        url="https://ndownloader.figshare.com/files/13082816",
         hash="ecbd410d33c95d5b05822cff6c7c0ba809a024b4ede3855ec5efc48d5e29ea77",
     )
 
@@ -249,7 +249,7 @@ def load_flla(download_if_missing=True):
 
     data_path = os.path.join(dataset_dir, "flla_2015.csv")
     dataset_metadata = RemoteFileMetadata(
-        url="https://ndownloader.figshare.com/files/12998942?private_link=56c924d0d1dda777bef9",
+        url="https://ndownloader.figshare.com/files/13082810",
         hash="35b8dbc0b92f4dc7e219fd6606c3a27bee18a9618f376cfee1ff731e306210bb",
     )
 
