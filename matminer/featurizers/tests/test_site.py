@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
-from pymatgen.analysis.local_env import VoronoiNN, JMolNN
+from pymatgen.analysis.local_env import VoronoiNN, JMolNN, CrystalNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, CrystalNNFingerprint, \
@@ -585,23 +585,31 @@ class FingerprintTests(PymatgenTest):
         self.assertIn("Seko2017", citations[0])
 
     def test_AverageBondLength(self):
-        ft = AverageBondLength()
+        ft = AverageBondLength(VoronoiNN())
         self.assertAlmostEqual(ft.featurize(self.sc, 0)[0], 3.52)
 
         for i in range(len(self.cscl.sites)):
-            self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 3.768151439488726)
+            self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 3.758562645051973)
 
         for i in range(len(self.b1.sites)):
             self.assertAlmostEqual(ft.featurize(self.b1, i)[0], 1.0)
 
+        ft = AverageBondLength(CrystalNN())
+        for i in range(len(self.cscl.sites)):
+            self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 3.649153279231275)
+
     def test_AverageBondAngle(self):
-        ft = AverageBondAngle()
+        ft = AverageBondAngle(VoronoiNN())
 
         self.assertAlmostEqual(ft.featurize(self.sc, 0)[0], np.pi / 2)
 
         for i in range(len(self.cscl.sites)):
-            self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 1.5374012718125276)
+            self.assertAlmostEqual(ft.featurize(self.cscl, i)[0], 0.9289637531152273)
 
+        for i in range(len(self.b1.sites)):
+            self.assertAlmostEqual(ft.featurize(self.b1, i)[0], np.pi / 2)
+
+        ft = AverageBondAngle(CrystalNN())
         for i in range(len(self.b1.sites)):
             self.assertAlmostEqual(ft.featurize(self.b1, i)[0], np.pi / 2)
 

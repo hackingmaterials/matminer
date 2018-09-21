@@ -1087,12 +1087,12 @@ class SiteStatsFingerprint(BaseFeaturizer):
             )
 
         elif preset == "BondLength-dejong2016":
-            return SiteStatsFingerprint(AverageBondLength(),
+            return SiteStatsFingerprint(AverageBondLength(VoronoiNN()),
                                         stats=['holder_mean::%d' % d for d in range(-4, 4 + 1)]
                                               + ['std_dev', 'geom_std_dev'])
 
-        elif preset == 'BondAngle-dejong2016':
-            return SiteStatsFingerprint(AverageBondAngle(),
+        elif preset == "BondAngle-dejong2016":
+            return SiteStatsFingerprint(AverageBondAngle(VoronoiNN()),
                                         stats=['holder_mean::%d' % d for d in range(-4, 4 + 1)]
                                               + ['std_dev', 'geom_std_dev'])
 

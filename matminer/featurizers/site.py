@@ -1991,8 +1991,6 @@ def _iterate_wigner_3j(l):
 
 class AverageBondLength(BaseFeaturizer):
     '''
-    Voronoi based average bond length.
-
     Determines the average bond length between one specific site
     and all its nearest neighbors using one of pymatgen's NearNeighbor
     classes. These nearest neighbor calculators return weights related
@@ -2001,16 +1999,14 @@ class AverageBondLength(BaseFeaturizer):
     site and all its nearest neighbors.
     '''
 
-    def __init__(self, weight='area'):
+    def __init__(self, method):
         '''
         Initialize featurizer
 
         Args:
-            weight (string) - Voronoi Polyhedra weights of corresponding
-                              coordinating sites. By default, the weight is
-                              area of the face between the sites.
+            method (NearNeighbor) - subclass under NearNeighbor used to compute nearest neighbors
         '''
-        self.weight = weight
+        self.method = method
 
     def featurize(self, strc, idx):
         '''
@@ -2024,18 +2020,20 @@ class AverageBondLength(BaseFeaturizer):
         Returns:
             average bond length (list)
         '''
-        # Compute the Voronoi tessellation of each site
-        voronoi = VoronoiNN(extra_nn_info=True, weight=self.weight)
-        nns = get_nearest_neighbors(voronoi, strc, idx)
+        # Compute nearest neighbors of the indexed site
+        nns = self.method.get_nn_info(strc, idx)
+        if len(nns) == 0:
+            raise IndexError("Input structure has no bonds.")
 
-        weights = [n['weight'] for n in nns]
-        lengths = [n['poly_info']['face_dist'] * 2 for n in nns]
-        mean_bond_length = PropertyStats.mean(lengths, weights)
+        weights = [info['weight'] for info in nns]
+        center_coord = strc[idx].coords
 
-        return [mean_bond_length]
+        dists = np.linalg.norm(np.subtract([site['site'].coords for site in nns], center_coord), axis=1)
+
+        return [PropertyStats.mean(dists, weights)]
 
     def feature_labels(self):
-        return ['VBS mean bond length']
+        return ['Average bond length']
 
     def citations(self):
         return ['@article{jong_chen_notestine_persson_ceder_jain_asta_gamst_2016,'
@@ -2048,13 +2046,11 @@ class AverageBondLength(BaseFeaturizer):
                 ]
 
     def implementors(self):
-        return ['Aik Rui Tan']
+        return ['Logan Ward', 'Aik Rui Tan']
 
 
 class AverageBondAngle(BaseFeaturizer):
     '''
-    Voronoi based average bond angle.
-
     Determines the average bond angles of a specific site with
     its nearest neighbors using one of pymatgen's NearNeighbor
     classes. Neighbors that are adjacent to each other are stored
@@ -2062,58 +2058,56 @@ class AverageBondAngle(BaseFeaturizer):
     a site is the mean bond angle between all its nearest neighbors.
     '''
 
-    def __init__(self, weight='area'):
+    def __init__(self, method):
         '''
         Initialize featurizer
 
         Args:
-            weight (string) - Voronoi Polyhedra weights of corresponding
-                              coordinating sites. By default, the weight is
-                              area of the face between the sites.
+            method (NearNeighbor) - subclass under NearNeighbor used to compute nearest
+                                    neighbors
         '''
-        self.weight = weight
+        self.method = method
 
     def featurize(self, strc, idx):
         '''
-        Get average bond angle of a site.
+        Get average bond length of a site and all its nearest
+        neighbors.
 
         Args:
             strc (Structure): Pymatgen Structure object
             idx (int): index of target site in structure object
 
         Returns:
-            average bond angle (list)
-                '''
-        # Compute Voronoi polyhedra around a site
-        voronoi = VoronoiNN(extra_nn_info=True, weight='area')
-        nns = get_nearest_neighbors(voronoi, strc, idx)
+            average bond length (list)
+        '''
+        # Compute nearest neighbors of the indexed site
+        nns = self.method.get_nn_info(strc, idx)
+        if len(nns) == 0:
+            raise IndexError("Input structure has no bonds.")
+        center = strc[idx].coords
 
-        # Determine adjacent neighbors of the neighbors around the atom
-        # by determining if the neighbors share two vertices
-        adj_neighbors = dict((i, []) for i in range(len(nns)))
-        for a_idx, a_info in enumerate(nns):
-            a_verts = set(a_info['poly_info']['verts'])
-            for b_idx, b_info in enumerate(nns):
-                if b_idx < a_idx:
+        sites = [i['site'].coords for i in nns]
+
+        # Calculate bond angles for each neighbor
+        bond_angles = np.empty((len(sites), len(sites)))
+        bond_angles.fill(np.nan)
+        for a, a_site in enumerate(sites):
+            for b, b_site in enumerate(sites):
+                if (b == a):
                     continue
-                if len(a_verts.intersection(b_info['poly_info']['verts'])) == 2:
-                    adj_neighbors[a_idx].append(b_idx)
+                dot = np.dot(a_site - center, b_site - center) / (
+                            np.linalg.norm(a_site - center) * np.linalg.norm(b_site - center))
+                if np.isnan(np.arccos(dot)):
+                    bond_angles[a, b] = bond_angles[b, a] = np.arccos(round(dot, 5))
+                else:
+                    bond_angles[a, b] = bond_angles[b, a] = np.arccos(dot)
+        # Take the minimum bond angle of each neighbor
+        minimum_bond_angles = np.nanmin(bond_angles, axis=1)
 
-        # Compute bond angles between the adjacent atoms
-        bond_angles = []
-        for a_idx, a_neighbors in adj_neighbors.items():
-            for a_neighbor in a_neighbors:
-                dot_product = np.dot(nns[a_idx]['poly_info']['normal'], nns[a_neighbor][
-                    'poly_info']['normal']) / np.multiply(nns[a_idx]['poly_info']['face_dist'] *
-                                                          2, nns[a_neighbor]['poly_info']['face_dist'] * 2)
-                bond_angles.append(np.arccos(dot_product))
-
-        mean_bond_angle = PropertyStats.mean(bond_angles)
-
-        return [mean_bond_angle]
+        return [PropertyStats.mean(minimum_bond_angles)]
 
     def feature_labels(self):
-        return ['VBS mean bond angle']
+        return ['Average bond angle']
 
     def citations(self):
         return ['@article{jong_chen_notestine_persson_ceder_jain_asta_gamst_2016,'
@@ -2126,4 +2120,4 @@ class AverageBondAngle(BaseFeaturizer):
                 ]
 
     def implementors(self):
-        return ['Aik Rui Tan']
+        return ['Logan Ward', 'Aik Rui Tan']
