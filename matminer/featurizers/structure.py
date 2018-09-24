@@ -23,7 +23,8 @@ from sklearn.exceptions import NotFittedError
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
-    CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint
+    CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint, \
+    AverageBondAngle, AverageBondLength
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_all_nearest_neighbors
 
@@ -1092,6 +1093,32 @@ class SiteStatsFingerprint(BaseFeaturizer):
                                    use_weights="effective"),
                 stats=["minimum", "maximum", "range", "mean", "avg_dev"]
             )
+
+        elif preset == "Composition-dejong2016_AD":
+            return SiteStatsFingerprint(LocalPropertyDifference(
+                properties=["Number", "AtomicWeight",
+                            "Column", "Row", "CovalentRadius",
+                            "Electronegativity"], signed=False),
+                stats=['holder_mean::%d' % d for d in range(0, 4 + 1)] + ['std_dev'],
+            )
+
+        elif preset == "Composition-dejong2016_SD":
+            return SiteStatsFingerprint(LocalPropertyDifference(
+                properties=["Number", "AtomicWeight",
+                            "Column", "Row", "CovalentRadius",
+                            "Electronegativity"], signed=True),
+                stats=['holder_mean::%d' % d for d in [1, 2, 4]] + ['std_dev'],
+            )
+
+        elif preset == "BondLength-dejong2016":
+            return SiteStatsFingerprint(AverageBondLength(VoronoiNN()),
+                                        stats=['holder_mean::%d' % d for d in range(-4, 4 + 1)]
+                                              + ['std_dev', 'geom_std_dev'])
+
+        elif preset == "BondAngle-dejong2016":
+            return SiteStatsFingerprint(AverageBondAngle(VoronoiNN()),
+                                        stats=['holder_mean::%d' % d for d in range(-4, 4 + 1)]
+                                              + ['std_dev', 'geom_std_dev'])
 
         else:
             # TODO: Why assume coordination number? Should this just raise an error? - lw
