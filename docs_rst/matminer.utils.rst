@@ -44,6 +44,14 @@ matminer.utils.flatten\_dict module
     :undoc-members:
     :show-inheritance:
 
+matminer.utils.io module
+------------------------
+
+.. automodule:: matminer.utils.io
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer.utils.kernels module
 -----------------------------
 

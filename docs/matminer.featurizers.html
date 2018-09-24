@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.4.1 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.4.2 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -307,10 +307,10 @@ fit to determine which features a featurizer should compute. For example,
 a featurizer that returns the partial radial distribution function
 may need to know which elements are present in a dataset.</p>
 <p>You can also employ the featurizer as part of a ScikitLearn Pipeline object.
-For these cases, scikit-learn calls the <cite>transform</cite> function of the
+For these cases, ScikitLearn calls the <cite>transform</cite> function of the
 <cite>BaseFeaturizer</cite> which is a less-featured wrapper of <cite>featurize_many</cite>. You
 would then provide your input data as an array to the Pipeline, which would
-output the featurers as an array.</p>
+output the features as an array.</p>
 <p>Beyond the featurizing capability, BaseFeaturizer also includes methods
 for retrieving proper references for a featurizer. The <cite>citations</cite> function
 returns a list of papers that should be cited. The <cite>implementors</cite> function
@@ -325,20 +325,22 @@ who to contact with questions.</p>
 <dt><cite>feature_labels</cite> - Generates a human-meaningful name for each of the</dt>
 <dd>features.</dd>
 </dl>
-<p class="last"><cite>citations</cite> - Returns a list of citations in BibTeX format
-<cite>implementors</cite> - Returns a list of people who contributed writing a paper</p>
+<p><cite>citations</cite> - Returns a list of citations in BibTeX format
+<cite>implementors</cite> - Returns a list of people who contributed to writing a</p>
+<blockquote class="last">
+<div>paper.</div></blockquote>
 </dd>
 </dl>
 <p>None of these operations should change the state of the featurizer. I.e.,
-running each method twice should no produce different results, no class
-attributes should be changed, unning one operation should not affect the
-output of another.</p>
+running each method twice should not produce different results, no class
+attributes should be changed, and running one operation should not affect
+the output of another.</p>
 <p>All options of the featurizer must be set by the <cite>__init__</cite> function. All
 options must be listed as keyword arguments with default values, and the
 value must be saved as a class attribute with the same name (e.g., argument
 <cite>n</cite> should be stored in <cite>self.n</cite>). These requirements are necessary for
 compatibility with the <cite>get_params</cite> and <cite>set_params</cite> methods of
-<cite>BaseEstimator</cite>, which enable easy interoperability with scikit-learn.</p>
+<cite>BaseEstimator</cite>, which enable easy interoperability with ScikitLearn</p>
 <p>Depending on the complexity of your featurizer, it may be worthwhile to
 implement a <cite>from_preset</cite> class method. The <cite>from_preset</cite> method takes the
 name of a preset and returns an instance of the featurizer with some
@@ -347,7 +349,7 @@ for defining the settings used by papers in the literature.</p>
 <p>Optionally, you can implement the <cite>fit</cite> operation if there are attributes of
 your featurizer that must be set for the featurizer to work. Any variables
 that are set by fitting should be stored as class attributes that end with
-an underscore. (This follows the pattern used by scikit-learn).</p>
+an underscore. (This follows the pattern used by ScikitLearn).</p>
 <p>Another implementation to consider is whether it is worth making any utility
 operations for your featurizer. <cite>featurize</cite> must return a list of features,
 but this may not be the most natural representation for your features (e.g.,
@@ -453,7 +455,8 @@ dataframe’s column index.</div></blockquote>
 <code class="descname">featurize_many</code><span class="sig-paren">(</span><em>entries</em>, <em>ignore_errors=False</em>, <em>return_errors=False</em>, <em>pbar=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.featurize_many" title="Permalink to this definition">¶</a></dt>
 <dd><p>Featurize a list of entries.</p>
 <p>If <cite>featurize</cite> takes multiple inputs, supply inputs as a list of tuples.</p>
-<p>Featurize_many supports entries as a list, tuple, numpy array, Pandas Series, or Pandas DataFrame.</p>
+<p>Featurize_many supports entries as a list, tuple, numpy array,
+Pandas Series, or Pandas DataFrame.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">entries (list-like object): A list of entries to be featurized.
@@ -761,10 +764,17 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">AtomicOrbitals</code><a class="headerlink" href="#matminer.featurizers.composition.AtomicOrbitals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Determine HOMO/LUMO features based on a composition.</p>
-<p>Determine the highest occupied molecular orbital (HOMO) and
-lowest unoccupied molecular orbital (LUMO) in a composition. The atomic
-orbital energies of neutral ions with LDA-DFT were computed by NIST.
+<p>The highest occupied molecular orbital (HOMO) and lowest unoccupied
+molecular orbital (LUMO) are estiated from the atomic orbital energies
+of the composition. The atomic orbital energies are from NIST:
 <a class="reference external" href="https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations">https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations</a></p>
+<p>Warning:
+For compositions with inter-species fractions greater than 10,000 (e.g.
+dilute alloys such as FeC0.00001) the composition will be truncated (to Fe
+in this example). In such extreme cases, the truncation likely reflects the
+true physics of the situation (i.e. that the dilute element does not
+significantly contribute orbital character to the band structure), but the
+user should be aware of this behavior.</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.AtomicOrbitals.citations">
 <code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicOrbitals.citations" title="Permalink to this definition">¶</a></dt>
@@ -841,7 +851,7 @@ of hard spheres.</p>
 relate to the distance between a composition and the composition of
 the clusters of atoms expected to be efficiently packed based on a
 theory from
-<a href="#id43"><span class="problematic" id="id44">`Laws et al.&lt;http://www.nature.com/doifinder/10.1038/ncomms9123&gt;`_</span></a>.
+<a href="#id49"><span class="problematic" id="id50">`Laws et al.&lt;http://www.nature.com/doifinder/10.1038/ncomms9123&gt;`_</span></a>.
 The second corresponds to the packing efficiency of a system if all atoms
 in the alloy are simultaneously as efficiently-packed as possible.</p>
 <p>The packing efficiency in these models is based on the Atomic Packing
@@ -853,7 +863,7 @@ positive. If the difference is too small, the APE is negative.</p>
 <dl class="docutils">
 <dt>Features:</dt>
 <dd><dl class="first last docutils">
-<dt>dist from {k} clusters <a href="#id37"><span class="problematic" id="id38">|APE|</span></a> &lt; {thr} - The distance between an</dt>
+<dt>dist from {k} clusters <a href="#id43"><span class="problematic" id="id44">|APE|</span></a> &lt; {thr} - The distance between an</dt>
 <dd>alloy composition and the k clusters that have a packing efficiency
 below thr from ideal</dd>
 <dt>mean simul. packing efficiency - Mean packing efficiency of all atoms.</dt>
@@ -2283,6 +2293,685 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dd></dl>
 
 </div>
+<div class="section" id="module-matminer.featurizers.conversions">
+<span id="matminer-featurizers-conversions-module"></span><h2>matminer.featurizers.conversions module<a class="headerlink" href="#module-matminer.featurizers.conversions" title="Permalink to this headline">¶</a></h2>
+<p>This module defines featurizers that can convert between different data formats</p>
+<p>Note that these featurizers do not produce machine learning-ready features.
+Instead, they should be used to pre-process data, either through a standalone
+transformation or as part of a Pipeline.</p>
+<dl class="class">
+<dt id="matminer.featurizers.conversions.CompositionToOxidComposition">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">CompositionToOxidComposition</code><span class="sig-paren">(</span><em>target_col_id='composition_oxid'</em>, <em>overwrite_data=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
+<p>Utility featurizer to add oxidation states to a pymatgen Composition.</p>
+<p>Oxidation states are determined using pymatgen’s guessing routines.
+The expected input is a <cite>pymatgen.core.composition.Composition</cite> object.</p>
+<p>Note that this Featurizer does not produce machine learning-ready features
+but instead can be applied to pre-process data or as part of a Pipeline.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Parameters to control the settings for</dt>
+<dd><cite>pymatgen.io.structure.Structure.add_oxidation_state_by_guess()</cite>.</dd>
+<dt>target_col_id (str or None): The column in which the converted data will</dt>
+<dd>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</dd>
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.CompositionToOxidComposition.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='composition_oxid'</em>, <em>overwrite_data=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.CompositionToOxidComposition.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.CompositionToOxidComposition.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add oxidation states to a Structure using pymatgen’s guessing routines.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>comp (<cite>pymatgen.core.composition.Composition</cite>): A composition.</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(<cite>pymatgen.core.composition.Composition</cite>): A Composition object</dt>
+<dd>decorated with oxidation states.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.CompositionToOxidComposition.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.conversions.ConversionFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">ConversionFeaturizer</code><span class="sig-paren">(</span><em>target_col_id</em>, <em>overwrite_data</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Abstract class to perform data conversions.</p>
+<p>Featurizers subclassing this class do not produce machine learning-ready
+features but instead are used to pre-process data. As Featurizers,
+the conversion process can take advantage of the parallelisation implemented
+in ScikitLearn.</p>
+<p>Note that <cite>feature_labels</cite> are set dynamically and may depend on the column
+id of the data being featurized. As such, <cite>feature_labels</cite> may differ
+before and after featurization.</p>
+<p>ConversionFeaturizers differ from other Featurizers in that the user can
+can specify the column in which to write the converted data. The output
+column is controlled through <cite>target_col_id</cite>. ConversionFeaturizers also
+have the ability to overwrite data in existing columns. This is
+controlled by the <cite>overwrite_data</cite> option. “in place” conversion of data can
+be achieved by setting <cite>target_col_id=None</cite> and <cite>overwrite_data=True</cite>. See
+the docstring below for more details.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>target_col_id (str or None): The column in which the converted data will</dt>
+<dd>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</dd>
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_col_id</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.ConversionFeaturizer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id</em>, <em>overwrite_data</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.ConversionFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.ConversionFeaturizer.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.ConversionFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.ConversionFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.ConversionFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.ConversionFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.ConversionFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.ConversionFeaturizer.featurize_dataframe">
+<code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.ConversionFeaturizer.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the data conversion and set the target column dynamically.</p>
+<p><cite>target_col_id</cite>, and accordingly <cite>feature_labels</cite>, may depend on the
+column id of the data being featurized. As such, <cite>target_col_id</cite> is
+first set dynamically before the <cite>BaseFeaturizer.featurize_dataframe()</cite>
+super method is called.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">df (Pandas.DataFrame): Dataframe containing input data.
+col_id (str or list of str): column label containing objects to</p>
+<blockquote>
+<div>featurize. Can be multiple labels if the featurize function
+requires multiple inputs.</div></blockquote>
+<dl class="last docutils">
+<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs: Additional keyword arguments that will be passed through</dt>
+<dd>to <cite>BseFeaturizer.featurize_dataframe()</cite>.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>(Pandas.Dataframe): The updated dataframe.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.ConversionFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.ConversionFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.conversions.DictToObject">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">DictToObject</code><span class="sig-paren">(</span><em>target_col_id='_object'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.DictToObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
+<p>Utility featurizer to decode a dict to Python object via MSON.</p>
+<p>Note that this Featurizer does not produce machine learning-ready features
+but instead can be applied to pre-process data or as part of a Pipeline.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>target_col_id (str or None): The column in which the converted data will</dt>
+<dd>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</dd>
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.DictToObject.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='_object'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.DictToObject.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.DictToObject.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.DictToObject.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.DictToObject.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>dict_data</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.DictToObject.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a string to a pymatgen Composition.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>dict_data (dict): A MSONable dictionary. E.g. Produced from</dt>
+<dd><cite>pymatgen.core.structure.Structure.as_dict()</cite>.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>(object): An object with the type specified by <cite>dict_data</cite>.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.DictToObject.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.DictToObject.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.conversions.JsonToObject">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">JsonToObject</code><span class="sig-paren">(</span><em>target_col_id='_object'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.JsonToObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
+<p>Utility featurizer to decode json data to a Python object via MSON.</p>
+<p>Note that this Featurizer does not produce machine learning-ready features
+but instead can be applied to pre-process data or as part of a Pipeline.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>target_col_id (str or None): The column in which the converted data will</dt>
+<dd>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</dd>
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.JsonToObject.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='_object'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.JsonToObject.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.JsonToObject.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.JsonToObject.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.JsonToObject.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>json_data</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.JsonToObject.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a string to a pymatgen Composition.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>json_data (dict): MSONable json data. E.g. Produced from</dt>
+<dd><cite>pymatgen.core.structure.Structure.to_json()</cite>.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>(object): An object with the type specified by <cite>json_data</cite>.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.JsonToObject.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.JsonToObject.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.conversions.StrToComposition">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">StrToComposition</code><span class="sig-paren">(</span><em>reduce=False</em>, <em>target_col_id='composition'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StrToComposition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
+<p>Utility featurizer to convert a string to a Composition</p>
+<p>The expected input is a composition in string form (e.g. “Fe2O3”).</p>
+<p>Note that this Featurizer does not produce machine learning-ready features
+but instead can be applied to pre-process data or as part of a Pipeline.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>reduce (bool): Whether to return a reduced</dt>
+<dd><cite>pymatgen.core.composition.Composition</cite> object.</dd>
+<dt>target_col_id (str or None): The column in which the converted data will</dt>
+<dd>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</dd>
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StrToComposition.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>reduce=False</em>, <em>target_col_id='composition'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StrToComposition.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StrToComposition.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StrToComposition.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StrToComposition.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>string_composition</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StrToComposition.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a string to a pymatgen Composition.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>string_composition (str): A chemical formula as a string (e.g.</dt>
+<dd>“Fe2O3”).</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>(<cite>pymatgen.core.composition.Composition</cite>): A composition object.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StrToComposition.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StrToComposition.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.conversions.StructureToComposition">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">StructureToComposition</code><span class="sig-paren">(</span><em>reduce=False</em>, <em>target_col_id='composition'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToComposition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
+<p>Utility featurizer to convert a Structure to a Composition.</p>
+<p>The expected input is a <cite>pymatgen.core.structure.Structure</cite> object.</p>
+<p>Note that this Featurizer does not produce machine learning-ready features
+but instead can be applied to pre-process data or as part of a Pipeline.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">reduce (bool): Whether to return a reduced Composition object.
+target_col_id (str or None): The column in which the converted data will</p>
+<blockquote>
+<div>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</div></blockquote>
+<dl class="last docutils">
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToComposition.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>reduce=False</em>, <em>target_col_id='composition'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToComposition.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToComposition.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToComposition.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToComposition.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>structure</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToComposition.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a string to a pymatgen Composition.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structure (<cite>pymatgen.core.structure.Structure</cite>): A structure.</dd>
+<dt>Returns:</dt>
+<dd>(<cite>pymatgen.core.composition.Composition</cite>): A Composition object.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToComposition.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToComposition.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.conversions.StructureToIStructure">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">StructureToIStructure</code><span class="sig-paren">(</span><em>target_col_id='istructure'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToIStructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
+<p>Utility featurizer to convert a Structure to an immutable IStructure.</p>
+<p>This is useful if you are using features that employ caching.</p>
+<p>The expected input is a <cite>pymatgen.core.structure.Structure</cite> object.</p>
+<p>Note that this Featurizer does not produce machine learning-ready features
+but instead can be applied to pre-process data or as part of a Pipeline.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>target_col_id (str or None): The column in which the converted data will</dt>
+<dd>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</dd>
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToIStructure.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='istructure'</em>, <em>overwrite_data=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToIStructure.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToIStructure.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToIStructure.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToIStructure.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>structure</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToIStructure.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a pymatgen Structure to an immutable IStructure,</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structure (<cite>pymatgen.core.structure.Structure</cite>): A structure.</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(<cite>pymatgen.core.structure.IStructure</cite>): An immutable IStructure</dt>
+<dd>object.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToIStructure.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToIStructure.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.conversions.StructureToOxidStructure">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">StructureToOxidStructure</code><span class="sig-paren">(</span><em>target_col_id='structure_oxid'</em>, <em>overwrite_data=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
+<p>Utility featurizer to add oxidation states to a pymatgen Structure.</p>
+<p>Oxidation states are determined using pymatgen’s guessing routines.
+The expected input is a <cite>pymatgen.core.structure.Structure</cite> object.</p>
+<p>Note that this Featurizer does not produce machine learning-ready features
+but instead can be applied to pre-process data or as part of a Pipeline.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs: Parameters to control the settings for</dt>
+<dd><cite>pymatgen.io.structure.Structure.add_oxidation_state_by_guess()</cite>.</dd>
+<dt>target_col_id (str or None): The column in which the converted data will</dt>
+<dd>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</dd>
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToOxidStructure.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='structure_oxid'</em>, <em>overwrite_data=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToOxidStructure.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToOxidStructure.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>structure</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add oxidation states to a Structure using pymatgen’s guessing routines.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structure (<cite>pymatgen.core.structure.Structure</cite>): A structure.</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(<cite>pymatgen.core.structure.Structure</cite>): A Structure object decorated</dt>
+<dd>with oxidation states.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.StructureToOxidStructure.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-matminer.featurizers.deprecated">
 <span id="matminer-featurizers-deprecated-module"></span><h2>matminer.featurizers.deprecated module<a class="headerlink" href="#module-matminer.featurizers.deprecated" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -2776,7 +3465,7 @@ features for each argument.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id5"><span class="problematic" id="id6">*</span></a>args: list of numbers to generate functional output</dt>
+<dt><a href="#id11"><span class="problematic" id="id12">*</span></a>args: list of numbers to generate functional output</dt>
 <dd>features</dd>
 </dl>
 </dd>
@@ -2880,18 +3569,18 @@ potentials. These features come in two forms: atomic fingerprints and
 direction-resolved fingerprints.
 Atomic fingerprints describe the local environment of an atom and are
 computed using the function:
-:math:<a href="#id7"><span class="problematic" id="id8">`</span></a>A_i(eta) = sumlimits_{i</p>
+:math:<a href="#id13"><span class="problematic" id="id14">`</span></a>A_i(eta) = sumlimits_{i</p>
 </div></blockquote>
 <p>e j} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <blockquote>
 <div>where <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/9172efc523d7488d4c3ed299d0be813de01503b8.png" alt="\eta"/> is a scaling function,
 <img class="math" src="_images/math/35bab58b40a77a2e24ecb9f58898f1813de64459.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> and <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/>, and <img class="math" src="_images/math/074903764bb5a464b7c346e84f43cba2174f3ab0.png" alt="f(r)"/> is a cutoff function where
-:math:<a href="#id9"><span class="problematic" id="id10">`</span></a>f(r) = 0.5[cos(</div></blockquote>
+:math:<a href="#id15"><span class="problematic" id="id16">`</span></a>f(r) = 0.5[cos(</div></blockquote>
 <dl class="docutils">
 <dt>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/b851d3a5fb872ad82d61f964772ca1cc2520a590.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</dt>
 <dd>The direction-resolved fingerprints are computed using
-:math:<a href="#id11"><span class="problematic" id="id12">`</span></a>V_i^k(eta) = sumlimits_{i</dd>
+:math:<a href="#id17"><span class="problematic" id="id18">`</span></a>V_i^k(eta) = sumlimits_{i</dd>
 </dl>
 <p>e j} 
 rac{r_{ij}^k}{r_{ij}} e^{-(
@@ -3125,6 +3814,161 @@ cutoff (float): maximum distance to look for neighbors</dd>
 <dl class="method">
 <dt id="matminer.featurizers.site.AngularFourierSeries.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AngularFourierSeries.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.site.AverageBondAngle">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">AverageBondAngle</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondAngle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Determines the average bond angles of a specific site with
+its nearest neighbors using one of pymatgen’s NearNeighbor
+classes. Neighbors that are adjacent to each other are stored
+and angle between them are computed. ‘Average bond angle’ of
+a site is the mean bond angle between all its nearest neighbors.</p>
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondAngle.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondAngle.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize featurizer</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>method (NearNeighbor) - subclass under NearNeighbor used to compute nearest</dt>
+<dd>neighbors</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondAngle.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondAngle.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondAngle.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondAngle.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondAngle.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>strc</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondAngle.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get average bond length of a site and all its nearest
+neighbors.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>strc (Structure): Pymatgen Structure object
+idx (int): index of target site in structure object</dd>
+<dt>Returns:</dt>
+<dd>average bond length (list)</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondAngle.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondAngle.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.site.AverageBondLength">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">AverageBondLength</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondLength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Determines the average bond length between one specific site
+and all its nearest neighbors using one of pymatgen’s NearNeighbor
+classes. These nearest neighbor calculators return weights related
+to the proximity of each neighbor to this site. ‘Average bond
+length’ of a site is the weighted average of the distance between
+site and all its nearest neighbors.</p>
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondLength.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondLength.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize featurizer</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>method (NearNeighbor) - subclass under NearNeighbor used to compute nearest neighbors</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondLength.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondLength.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondLength.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondLength.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondLength.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>strc</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondLength.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get weighted average bond length of a site and all its nearest
+neighbors.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>strc (Structure): Pymatgen Structure object
+idx (int): index of target site in structure object</dd>
+<dt>Returns:</dt>
+<dd>average bond length (list)</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.AverageBondLength.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AverageBondLength.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -3431,9 +4275,9 @@ idx (int): index of target site in structure.</div></blockquote>
 <dd><p>Identify elements to be included in the following featurization,
 by intersecting the elements present in the passed structures with
 those explicitly included (or excluded) in __init__. Only elements
-in the <a href="#id45"><span class="problematic" id="id46">self.el_list_</span></a> will be featurized.
+in the <a href="#id51"><span class="problematic" id="id52">self.el_list_</span></a> will be featurized.
 Besides, compositions of the passed structures will also be “stored”
-in a dict of <a href="#id47"><span class="problematic" id="id48">self.el_amt_dict_</span></a>, avoiding repeated calculation of
+in a dict of <a href="#id53"><span class="problematic" id="id54">self.el_amt_dict_</span></a>, avoiding repeated calculation of
 composition when featurizing multiple sites in the same structure.
 Args:</p>
 <blockquote>
@@ -3472,7 +4316,7 @@ Args:</p>
 <dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
 or “MinimumVIRENN”).</dd>
 </dl>
-<p><a href="#id14"><span class="problematic" id="id15">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
+<p><a href="#id20"><span class="problematic" id="id21">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -3533,7 +4377,7 @@ use_weights (string) - Method used to account for weights of neighbors:</p>
 ‘sum’ - Use sum of weights as the coordination number
 ‘effective’ - Compute the ‘effective coordination number’, which</p>
 <blockquote>
-<div>is computed as :math:<a href="#id16"><span class="problematic" id="id17">`</span></a></div></blockquote>
+<div>is computed as :math:<a href="#id22"><span class="problematic" id="id23">`</span></a></div></blockquote>
 </div></blockquote>
 </dd>
 </dl>
@@ -3591,7 +4435,7 @@ Args:</p>
 <dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
 or “MinimumVIRENN”).</dd>
 </dl>
-<p><a href="#id18"><span class="problematic" id="id19">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
+<p><a href="#id24"><span class="problematic" id="id25">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -3643,7 +4487,7 @@ Args:</p>
 <dd>to dictionaries that map an element to a value
 (e.g., chem_info[“Pauling scale”][“O”] = 3.44)</dd>
 </dl>
-<p><a href="#id20"><span class="problematic" id="id21">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
+<p><a href="#id26"><span class="problematic" id="id27">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
 </div></blockquote>
 </dd></dl>
 
@@ -3693,7 +4537,7 @@ idx (int): index of target site in structure.</div></blockquote>
 Args:</p>
 <blockquote>
 <div>preset (str): name of preset (“cn” or “ops”)
-<a href="#id22"><span class="problematic" id="id23">**</span></a>kwargs: other settings to be passed into CrystalNN class</div></blockquote>
+<a href="#id28"><span class="problematic" id="id29">**</span></a>kwargs: other settings to be passed into CrystalNN class</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -4097,7 +4941,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.site.LocalPropertyDifference">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">LocalPropertyDifference</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.utils.data.MagpieData object&gt;</em>, <em>weight='area'</em>, <em>properties=('Electronegativity'</em>, <em>)</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.LocalPropertyDifference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.site.</code><code class="descname">LocalPropertyDifference</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.utils.data.MagpieData object&gt;</em>, <em>weight='area'</em>, <em>properties=('Electronegativity'</em>, <em>)</em>, <em>signed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.LocalPropertyDifference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <blockquote>
 <div><p>Differences in elemental properties between site and its neighboring sites.</p>
@@ -4106,12 +4950,14 @@ neighbors of the site, and assigns each neighbor (<img class="math" src="_images
 weight (<img class="math" src="_images/math/59dc9a44d175aae008c18691b9f662270e36ef5d.png" alt="A_n"/>) that corresponds to the area of the facet
 on the tessellation corresponding to that neighbor.
 The local property difference is then computed by
-:math:<a href="#id24"><span class="problematic" id="id25">`</span></a></p>
+:math:<a href="#id30"><span class="problematic" id="id31">`</span></a></p>
 </div></blockquote>
 <dl class="docutils">
-<dt>rac{sum_n {A_n <a href="#id39"><span class="problematic" id="id40">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
+<dt>rac{sum_n {A_n <a href="#id45"><span class="problematic" id="id46">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
 <dd><p class="first">where <img class="math" src="_images/math/99caa835285abdbc99536106ff1d075a870c2650.png" alt="p_n"/> is the property (e.g., atomic number) of a neighbor
-and <img class="math" src="_images/math/2aa528e29c4df6e3a7e44783f02f45e46012b948.png" alt="p_0"/> is the property of a site.</p>
+and <img class="math" src="_images/math/2aa528e29c4df6e3a7e44783f02f45e46012b948.png" alt="p_0"/> is the property of a site. If signed parameter is assigned
+True, signed difference of the properties is returned instead of absolute
+difference.</p>
 <dl class="last docutils">
 <dt>Features:</dt>
 <dd><ul class="first last simple">
@@ -4131,7 +4977,7 @@ Voronoi tessellation</dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.site.LocalPropertyDifference.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.utils.data.MagpieData object&gt;</em>, <em>weight='area'</em>, <em>properties=('Electronegativity'</em>, <em>)</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.LocalPropertyDifference.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.utils.data.MagpieData object&gt;</em>, <em>weight='area'</em>, <em>properties=('Electronegativity'</em>, <em>)</em>, <em>signed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.LocalPropertyDifference.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the featurizer</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -4141,7 +4987,10 @@ Voronoi tessellation</dd>
 <dt>weight (str) - What aspect of each voronoi facet to use to</dt>
 <dd>weigh each neighbor (see VoronoiNN)</dd>
 </dl>
-<p class="last">properties ([str]) - List of properties to use (default=</p>
+<p>properties ([str]) - List of properties to use (default=[‘Electronegativity’])
+signed (bool) - whether to return absolute difference or signed difference of</p>
+<blockquote class="last">
+<div>properties(default=False (absolute difference))</div></blockquote>
 </dd>
 </dl>
 </dd></dl>
@@ -4898,7 +5747,7 @@ structure deviates from random using a Warren-Cowley-like ordering
 parameter. The first step of this calculation is to determine the nearest
 neighbor shells of each site. Then, for each shell a degree of order for
 each type is determined by computing:</p>
-<p>:math:<a href="#id27"><span class="problematic" id="id28">`</span></a>lpha (t,s) = 1 -</p>
+<p>:math:<a href="#id33"><span class="problematic" id="id34">`</span></a>lpha (t,s) = 1 -</p>
 </div></blockquote>
 <p>rac{sum_n w_n delta (t - t_n)}{x_t sum_n w_n}`</p>
 <blockquote>
@@ -4995,7 +5844,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>Generate the Coulomb matrix, M, of the input
 structure (or molecule).  The Coulomb matrix was put forward by
 Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-off-diagonal elements M_ij = Z_i*Z_j/<a href="#id41"><span class="problematic" id="id42">|R_i-R_j|</span></a>
+off-diagonal elements M_ij = Z_i*Z_j/<a href="#id47"><span class="problematic" id="id48">|R_i-R_j|</span></a>
 and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
 the nuclear charge and the position of atom i, respectively.</p>
 <dl class="docutils">
@@ -5162,7 +6011,7 @@ structure. This feature is sensitive to bond length tables that you use.</p>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id30"><span class="problematic" id="id31">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
+<dt><a href="#id36"><span class="problematic" id="id37">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
 <dd>pymatgen.</dd>
 </dl>
 </dd>
@@ -5314,7 +6163,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">EwaldEnergy</code><span class="sig-paren">(</span><em>accuracy=4</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Compute the energy from Coulombic interactions.</p>
-<p>Note: The energy is computed using _charges already defined for the <a href="#id49"><span class="problematic" id="id50">structure_</span></a>.</p>
+<p>Note: The energy is computed using _charges already defined for the <a href="#id55"><span class="problematic" id="id56">structure_</span></a>.</p>
 <dl class="docutils">
 <dt>Features:</dt>
 <dd>ewald_energy - Coulomb interaction energy of the structure</dd>
@@ -5613,7 +6462,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.structure.OrbitalFieldMatrix">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OrbitalFieldMatrix</code><span class="sig-paren">(</span><em>period_tag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">OrbitalFieldMatrix</code><span class="sig-paren">(</span><em>period_tag=False</em>, <em>flatten=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Representation based on the valence shell electrons of neighboring atoms.</p>
 <p>Each atom is described by a 32-element vector (or 39-element vector, see
@@ -5635,6 +6484,8 @@ With period_tag=True, the vector size is increased
 to 39, where the 7 extra elements represent the period
 of the element. Note lanthanides are treated as period 6,
 actinides as period 7. Default False as in the original paper.</dd>
+<dt>flatten (bool): Flatten the avg OFM to a 1024-vector (if period_tag</dt>
+<dd>False) or a 1521-vector (if period_tag=True).</dd>
 </dl>
 </dd>
 <dt>…attribute:: size</dt>
@@ -5644,7 +6495,7 @@ actinides as period 7. Default False as in the original paper.</dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.structure.OrbitalFieldMatrix.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>period_tag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>period_tag=False</em>, <em>flatten=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.OrbitalFieldMatrix.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the featurizer</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -6112,7 +6963,7 @@ stats ([str]): list of weighted statistics to compute for each feature.</p>
 <div>If stats is None, a list is returned for each features
 that contains the calculated feature for each site in the
 structure.
-<a href="#id32"><span class="problematic" id="id33">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
+<a href="#id38"><span class="problematic" id="id39">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
 <dl class="docutils">
 <dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
 <dd>zero means metals/cations only)</dd>
@@ -6403,7 +7254,7 @@ pattern_length (float): length of final array; defaults to one value</p>
 <blockquote>
 <div>per degree (i.e. two_theta_range + 1)</div></blockquote>
 <dl class="last docutils">
-<dt><a href="#id35"><span class="problematic" id="id36">**</span></a>kwargs: any other arguments to pass into pymatgen’s XRDCalculator,</dt>
+<dt><a href="#id41"><span class="problematic" id="id42">**</span></a>kwargs: any other arguments to pass into pymatgen’s XRDCalculator,</dt>
 <dd>such as the type of radiation.</dd>
 </dl>
 </dd>
@@ -6485,6 +7336,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <li><a class="reference internal" href="#module-matminer.featurizers.bandstructure">matminer.featurizers.bandstructure module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.base">matminer.featurizers.base module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.composition">matminer.featurizers.composition module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.conversions">matminer.featurizers.conversions module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.deprecated">matminer.featurizers.deprecated module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.dos">matminer.featurizers.dos module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.function">matminer.featurizers.function module</a></li>
@@ -6527,7 +7379,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.2 documentation</a> &#187;</li> 
       </ul>
     </div>
 
