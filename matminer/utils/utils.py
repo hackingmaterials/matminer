@@ -36,3 +36,18 @@ def homogenize_multiindex(df, default_key, coerce=False):
         raise IndexError("An input dataframe of 2+ levels cannot be used for"
                          "multiindexed Matminer featurization without coercion "
                          "to 2 levels.")
+
+
+def is_notebook():
+    """Check if python is running in an interactive notebook.
+
+    Adapted from: https://stackoverflow.com/questions/47211324/check-if-module-is-running-in-jupyter-or-not
+    """
+    try:
+        ipy_str = str(type(get_ipython()))
+        if 'zmqshell' in ipy_str:
+            return True
+        if 'terminal' in ipy_str:
+            return False
+    except NameError:
+        return False
