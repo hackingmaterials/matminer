@@ -35,6 +35,14 @@ matminer.featurizers.composition module
     :undoc-members:
     :show-inheritance:
 
+matminer.featurizers.conversions module
+---------------------------------------
+
+.. automodule:: matminer.featurizers.conversions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matminer.featurizers.deprecated module
 --------------------------------------
 

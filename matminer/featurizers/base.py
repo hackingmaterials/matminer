@@ -37,10 +37,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     may need to know which elements are present in a dataset.
 
     You can also employ the featurizer as part of a ScikitLearn Pipeline object.
-    For these cases, scikit-learn calls the `transform` function of the
+    For these cases, ScikitLearn calls the `transform` function of the
     `BaseFeaturizer` which is a less-featured wrapper of `featurize_many`. You
     would then provide your input data as an array to the Pipeline, which would
-    output the featurers as an array.
+    output the features as an array.
 
     Beyond the featurizing capability, BaseFeaturizer also includes methods
     for retrieving proper references for a featurizer. The `citations` function
@@ -56,19 +56,20 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         `feature_labels` - Generates a human-meaningful name for each of the
             features.
         `citations` - Returns a list of citations in BibTeX format
-        `implementors` - Returns a list of people who contributed writing a paper
+        `implementors` - Returns a list of people who contributed to writing a
+            paper.
 
     None of these operations should change the state of the featurizer. I.e.,
-    running each method twice should no produce different results, no class
-    attributes should be changed, unning one operation should not affect the
-    output of another.
+    running each method twice should not produce different results, no class
+    attributes should be changed, and running one operation should not affect
+    the output of another.
 
     All options of the featurizer must be set by the `__init__` function. All
     options must be listed as keyword arguments with default values, and the
     value must be saved as a class attribute with the same name (e.g., argument
     `n` should be stored in `self.n`). These requirements are necessary for
     compatibility with the `get_params` and `set_params` methods of
-    `BaseEstimator`, which enable easy interoperability with scikit-learn.
+    `BaseEstimator`, which enable easy interoperability with ScikitLearn
 
     Depending on the complexity of your featurizer, it may be worthwhile to
     implement a `from_preset` class method. The `from_preset` method takes the
@@ -79,7 +80,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     Optionally, you can implement the `fit` operation if there are attributes of
     your featurizer that must be set for the featurizer to work. Any variables
     that are set by fitting should be stored as class attributes that end with
-    an underscore. (This follows the pattern used by scikit-learn).
+    an underscore. (This follows the pattern used by ScikitLearn).
 
     Another implementation to consider is whether it is worth making any utility
     operations for your featurizer. `featurize` must return a list of features,
@@ -206,9 +207,13 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         labels = self._generate_column_labels(multiindex, return_errors)
 
         # Check names to avoid overwriting the current columns
-        for col in df.columns.values:
-            if col in labels:
-                raise ValueError('"{}" exists in input dataframe'.format(col))
+        # ConversionFeaturizer have attribute called _overwrite_data which
+        # determines whether an Error is thrown
+        if not getattr(self, '_overwrite_data', False):
+            for col in df.columns.values:
+                if col in labels:
+                    raise ValueError(
+                        '"{}" exists in input dataframe'.format(col))
 
         # Compute the features
         features = self.featurize_many(df[col_id].values,
@@ -259,7 +264,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
 
-        Featurize_many supports entries as a list, tuple, numpy array, Pandas Series, or Pandas DataFrame.
+        Featurize_many supports entries as a list, tuple, numpy array,
+        Pandas Series, or Pandas DataFrame.
 
         Args:
             entries (list-like object): A list of entries to be featurized.

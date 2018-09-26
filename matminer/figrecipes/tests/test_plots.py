@@ -55,10 +55,23 @@ def refresh_json(open_plots=False):
     bar = pf.bar(x=a, y=b, labels=xlabels, return_plot=True)
     pcp = pf.parallel_coordinates([a, b], cols=xlabels, return_plot=True)
 
+    # plotly figures need to be converted jsonable data
+    xys['data'] = [p.to_plotly_json() for p in xys['data']]
+    xym['data'] = [p.to_plotly_json() for p in xym['data']]
+    xy_colors['data'] = [p.to_plotly_json() for p in xy_colors['data']]
+    hmb['data'] = [p.to_plotly_json() for p in hmb['data']]
+    his['data'] = [p.to_plotly_json() for p in his['data']]
+    bar['data'] = [p.to_plotly_json() for p in bar['data']]
+    pcp['data'] = [p.to_plotly_json() for p in pcp['data']]
+
     # Layout is compared for the plots which always convert to dataframes,
     # as dataframes are not easily encoded by json.dump
     vio = pf.violin([a, b, c, b, a, c, b], cols=xlabels, return_plot=True)
     scm = pf.scatter_matrix([a, b, c], return_plot=True)
+
+    # plotly layout needs to be converted jsonable data
+    vio = {'layout': vio['layout'].to_plotly_json()}
+    scm = {'layout': scm['layout'].to_plotly_json()}
 
     df = pd.DataFrame(data=np.asarray([ah, bh, ch]).T,
                       columns=['ah', 'bh', 'ch'])
@@ -66,6 +79,7 @@ def refresh_json(open_plots=False):
     y_labels = ['small', 'large']
     # TODO: this plot was not JSON serializable, use a different serialization method for all plots
     hmdf = pf.heatmap_df(df, x_labels=x_labels, y_labels=y_labels, return_plot=True)
+    hmdf['data'] = [p.to_plotly_json() for p in hmdf['data']]
 
     df = pd.DataFrame(np.random.rand(50, 3), columns=list('qwe'))
     triangle = pf.triangle(df[['q', 'w', 'e']], return_plot=True)
@@ -78,7 +92,7 @@ def refresh_json(open_plots=False):
                  }
 
     for fname, obj in fnamedict.items():
-        if obj in [vio, scm]:
+        if fname in ["vio", "scm"]:
             obj = obj['layout']
 
         with open("template_{}.json".format(fname), "w") as f:
@@ -102,51 +116,59 @@ class PlotlyFigTest(PymatgenTest):
     def test_xy(self):
         # Single trace
         xys_test = self.pf.xy([(a, b)], return_plot=True)
+        xys_test['data'] = [p.to_plotly_json() for p in xys_test['data']]
         xys_true = self.fopen("template_xys.json")
         self.assertTrue(xys_test == xys_true)
 
         # Multi trace
         xym_test = self.pf.xy([(a, b), (b, a)], return_plot=True)
+        xym_test['data'] = [p.to_plotly_json() for p in xym_test['data']]
         xym_true = self.fopen("template_xym.json")
         self.assertTrue(xym_test == xym_true)
 
         xy_colors_test = self.pf.xy([(a, b), (a, c), (c, c)],
                       modes=['markers', 'markers+lines', 'lines'],
                       colors=[c, 'red', 'blue'], return_plot=True)
+        xy_colors_test['data'] = [p.to_plotly_json() for p in xy_colors_test['data']]
         xy_colors_true = self.fopen("template_xy_colors.json")
         self.assertTrue(xy_colors_test == xy_colors_true)
 
     def test_heatmap_basic(self):
         hmb_test = self.pf.heatmap_basic([a, b, c], xlabels, ylabels,
                                          return_plot=True)
+        hmb_test['data'] = [p.to_plotly_json() for p in hmb_test['data']]
         hmb_true = self.fopen("template_hmb.json")
         self.assertTrue(hmb_test == hmb_true)
 
     def test_histogram(self):
         his_test = self.pf.histogram(a + b + c, n_bins=5, return_plot=True)
+        his_test['data'] = [p.to_plotly_json() for p in his_test['data']]
         his_true = self.fopen("template_his.json")
         self.assertTrue(his_test == his_true)
 
     def test_bar(self):
         bar_test = self.pf.bar(x=a, y=b, labels=xlabels, return_plot=True)
+        bar_test['data'] = [p.to_plotly_json() for p in bar_test['data']]
         bar_true = self.fopen("template_bar.json")
         self.assertTrue(bar_test == bar_true)
 
     def test_parallel_coordinates(self):
         pcp_test = self.pf.parallel_coordinates([a, b], cols=xlabels,
                                                 return_plot=True)
+        pcp_test['data'] = [p.to_plotly_json() for p in pcp_test['data']]
         pcp_true = self.fopen("template_pcp.json")
         self.assertTrue(pcp_test == pcp_true)
 
     def test_violin(self):
-        vio_test = \
-        self.pf.violin([a, b, c, b, a, c, b], cols=xlabels, return_plot=True)[
-            'layout']
+        vio_test = self.pf.violin(
+            [a, b, c, b, a, c, b], cols=xlabels, return_plot=True)['layout']
+        vio_test = vio_test.to_plotly_json()
         vio_true = self.fopen("template_vio.json")
         self.assertTrue(vio_test == vio_true)
 
     def test_scatter_matrix(self):
         scm_test = self.pf.scatter_matrix([a, b, c], return_plot=True)['layout']
+        scm_test = scm_test.to_plotly_json()
         scm_true = self.fopen("template_scm.json")
         self.assertTrue(scm_test == scm_true)
 
@@ -170,5 +192,5 @@ class PlotlyFigTest(PymatgenTest):
 
 
 if __name__ == "__main__":
-    # refresh_json(open_plots=True)
+    #refresh_json(open_plots=True)
     unittest.main()

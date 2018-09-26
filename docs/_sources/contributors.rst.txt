@@ -22,7 +22,7 @@ Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the Hacking
 * Alex Dunn
 * Jason Frost
 * Julien Brenneck
-
+* Alex Ganose
 
 University of Chicago
 ----------------------
@@ -30,6 +30,7 @@ University of Chicago
 * Logan Ward
 * Jiming Chen
 * Ashwin Aggarwal
+* Aik Rui
 
 
 `LBNL - Persson Group <http://perssongroup.lbl.gov/>`_

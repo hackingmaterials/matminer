@@ -134,6 +134,8 @@ Name                                            Description
 :code:`LocalPropertyDifference`                 Differences in elemental properties between site and its neighboring sites. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.LocalPropertyDifference>`_
 :code:`BondOrientationalParameter`              Averages of spherical harmonics of local neighbors `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.BondOrientationalParameter>`_
 :code:`SiteElementalProperty`                    `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.SiteElementalProperty>`_
+:code:`AverageBondLength`                       Determines the average bond length between one specific site `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.AverageBondLength>`_
+:code:`AverageBondAngle`                        Determines the average bond angles of a specific site with `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.site.AverageBondAngle>`_
 =============================================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 
 

@@ -1678,7 +1678,9 @@ class LocalPropertyDifference(BaseFeaturizer):
     The local property difference is then computed by
     :math:`\frac{\sum_n {A_n |p_n - p_0|}}{\sum_n {A_n}}`
     where :math:`p_n` is the property (e.g., atomic number) of a neighbor
-    and :math:`p_0` is the property of a site.
+    and :math:`p_0` is the property of a site. If signed parameter is assigned
+    True, signed difference of the properties is returned instead of absolute
+    difference.
 
     Features:
         - "local property difference in [property]" - Weighted average
@@ -1691,7 +1693,7 @@ class LocalPropertyDifference(BaseFeaturizer):
     """
 
     def __init__(self, data_source=MagpieData(), weight='area',
-                 properties=('Electronegativity',)):
+                 properties=('Electronegativity',), signed=False):
         """ Initialize the featurizer
 
         Args:
@@ -1699,11 +1701,14 @@ class LocalPropertyDifference(BaseFeaturizer):
                 elemental properties
             weight (str) - What aspect of each voronoi facet to use to
                 weigh each neighbor (see VoronoiNN)
-            properties ([str]) - List of properties to use (default=
+            properties ([str]) - List of properties to use (default=['Electronegativity'])
+            signed (bool) - whether to return absolute difference or signed difference of
+                            properties(default=False (absolute difference))
         """
         self.data_source = data_source
         self.properties = properties
         self.weight = weight
+        self.signed = signed
 
     @staticmethod
     def from_preset(preset):
@@ -1742,15 +1747,21 @@ class LocalPropertyDifference(BaseFeaturizer):
         # Compute the difference for each property
         output = np.zeros((len(self.properties),))
         total_weight = np.sum(weights)
-        for i,p in enumerate(self.properties):
+        for i, p in enumerate(self.properties):
             my_prop = self.data_source.get_elemental_property(my_site.specie, p)
             n_props = self.data_source.get_elemental_properties(elems, p)
-            output[i] = np.dot(weights, np.abs(np.subtract(n_props, my_prop))) / total_weight
+            if self.signed == False:
+                output[i] = np.dot(weights, np.abs(np.subtract(n_props, my_prop))) / total_weight
+            else:
+                output[i] = np.dot(weights, np.subtract(n_props, my_prop)) / total_weight
 
         return output
 
     def feature_labels(self):
-        return ['local difference in ' + p for p in self.properties]
+        if self.signed == False:
+            return ['local difference in ' + p for p in self.properties]
+        else:
+            return ['local signed difference in ' + p for p in self.properties]
 
     def citations(self):
         return ["@article{Ward2017,"
@@ -1765,10 +1776,19 @@ class LocalPropertyDifference(BaseFeaturizer):
                 "in machine learning models of formation energies "
                 "via Voronoi tessellations}},"
                 "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
-                "volume = {96},year = {2017}}"]
+                "volume = {96},year = {2017}}",
+
+                '@article{jong_chen_notestine_persson_ceder_jain_asta_gamst_2016,'
+                'title={A Statistical Learning Framework for Materials Science: '
+                'Application to Elastic Moduli of k-nary Inorganic Polycrystalline Compounds}, '
+                'volume={6}, DOI={10.1038/srep34256}, number={1}, journal={Scientific Reports}, '
+                'author={Jong, Maarten De and Chen, Wei and Notestine, Randy and Persson, '
+                'Kristin and Ceder, Gerbrand and Jain, Anubhav and Asta, Mark and Gamst, Anthony}, '
+                'year={2016}, month={Mar}}'
+                ]
 
     def implementors(self):
-        return ['Logan Ward']
+        return ['Logan Ward', 'Aik Rui Tan']
 
 
 class BondOrientationalParameter(BaseFeaturizer):
@@ -1997,3 +2017,136 @@ def _iterate_wigner_3j(l):
             m3 = -1 * (m1 + m2)
             if -l <= m3 <= l:
                 yield m1, m2, m3
+
+class AverageBondLength(BaseFeaturizer):
+    '''
+    Determines the average bond length between one specific site
+    and all its nearest neighbors using one of pymatgen's NearNeighbor
+    classes. These nearest neighbor calculators return weights related
+    to the proximity of each neighbor to this site. 'Average bond
+    length' of a site is the weighted average of the distance between
+    site and all its nearest neighbors.
+    '''
+
+    def __init__(self, method):
+        '''
+        Initialize featurizer
+
+        Args:
+            method (NearNeighbor) - subclass under NearNeighbor used to compute nearest neighbors
+        '''
+        self.method = method
+
+    def featurize(self, strc, idx):
+        '''
+        Get weighted average bond length of a site and all its nearest
+        neighbors.
+
+        Args:
+            strc (Structure): Pymatgen Structure object
+            idx (int): index of target site in structure object
+
+        Returns:
+            average bond length (list)
+        '''
+        # Compute nearest neighbors of the indexed site
+        nns = self.method.get_nn_info(strc, idx)
+        if len(nns) == 0:
+            raise IndexError("Input structure has no bonds.")
+
+        weights = [info['weight'] for info in nns]
+        center_coord = strc[idx].coords
+
+        dists = np.linalg.norm(np.subtract([site['site'].coords for site in nns], center_coord), axis=1)
+
+        return [PropertyStats.mean(dists, weights)]
+
+    def feature_labels(self):
+        return ['Average bond length']
+
+    def citations(self):
+        return ['@article{jong_chen_notestine_persson_ceder_jain_asta_gamst_2016,'
+                'title={A Statistical Learning Framework for Materials Science: '
+                'Application to Elastic Moduli of k-nary Inorganic Polycrystalline Compounds}, '
+                'volume={6}, DOI={10.1038/srep34256}, number={1}, journal={Scientific Reports}, '
+                'author={Jong, Maarten De and Chen, Wei and Notestine, Randy and Persson, '
+                'Kristin and Ceder, Gerbrand and Jain, Anubhav and Asta, Mark and Gamst, Anthony}, '
+                'year={2016}, month={Mar}}'
+                ]
+
+    def implementors(self):
+        return ['Logan Ward', 'Aik Rui Tan']
+
+
+class AverageBondAngle(BaseFeaturizer):
+    '''
+    Determines the average bond angles of a specific site with
+    its nearest neighbors using one of pymatgen's NearNeighbor
+    classes. Neighbors that are adjacent to each other are stored
+    and angle between them are computed. 'Average bond angle' of
+    a site is the mean bond angle between all its nearest neighbors.
+    '''
+
+    def __init__(self, method):
+        '''
+        Initialize featurizer
+
+        Args:
+            method (NearNeighbor) - subclass under NearNeighbor used to compute nearest
+                                    neighbors
+        '''
+        self.method = method
+
+    def featurize(self, strc, idx):
+        '''
+        Get average bond length of a site and all its nearest
+        neighbors.
+
+        Args:
+            strc (Structure): Pymatgen Structure object
+            idx (int): index of target site in structure object
+
+        Returns:
+            average bond length (list)
+        '''
+        # Compute nearest neighbors of the indexed site
+        nns = self.method.get_nn_info(strc, idx)
+        if len(nns) == 0:
+            raise IndexError("Input structure has no bonds.")
+        center = strc[idx].coords
+
+        sites = [i['site'].coords for i in nns]
+
+        # Calculate bond angles for each neighbor
+        bond_angles = np.empty((len(sites), len(sites)))
+        bond_angles.fill(np.nan)
+        for a, a_site in enumerate(sites):
+            for b, b_site in enumerate(sites):
+                if (b == a):
+                    continue
+                dot = np.dot(a_site - center, b_site - center) / (
+                            np.linalg.norm(a_site - center) * np.linalg.norm(b_site - center))
+                if np.isnan(np.arccos(dot)):
+                    bond_angles[a, b] = bond_angles[b, a] = np.arccos(round(dot, 5))
+                else:
+                    bond_angles[a, b] = bond_angles[b, a] = np.arccos(dot)
+        # Take the minimum bond angle of each neighbor
+        minimum_bond_angles = np.nanmin(bond_angles, axis=1)
+
+        return [PropertyStats.mean(minimum_bond_angles)]
+
+    def feature_labels(self):
+        return ['Average bond angle']
+
+    def citations(self):
+        return ['@article{jong_chen_notestine_persson_ceder_jain_asta_gamst_2016,'
+                'title={A Statistical Learning Framework for Materials Science: '
+                'Application to Elastic Moduli of k-nary Inorganic Polycrystalline Compounds}, '
+                'volume={6}, DOI={10.1038/srep34256}, number={1}, journal={Scientific Reports}, '
+                'author={Jong, Maarten De and Chen, Wei and Notestine, Randy and Persson, '
+                'Kristin and Ceder, Gerbrand and Jain, Anubhav and Asta, Mark and Gamst, Anthony}, '
+                'year={2016}, month={Mar}}'
+                ]
+
+    def implementors(self):
+        return ['Logan Ward', 'Aik Rui Tan']

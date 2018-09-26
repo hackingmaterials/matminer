@@ -4,6 +4,7 @@ import collections
 import itertools
 import os
 from functools import reduce, lru_cache
+from warnings import warn
 
 import numpy as np
 import pandas as pd
@@ -294,10 +295,18 @@ class AtomicOrbitals(BaseFeaturizer):
     """
     Determine HOMO/LUMO features based on a composition.
 
-    Determine the highest occupied molecular orbital (HOMO) and
-    lowest unoccupied molecular orbital (LUMO) in a composition. The atomic
-    orbital energies of neutral ions with LDA-DFT were computed by NIST.
+    The highest occupied molecular orbital (HOMO) and lowest unoccupied
+    molecular orbital (LUMO) are estiated from the atomic orbital energies
+    of the composition. The atomic orbital energies are from NIST:
     https://www.nist.gov/pml/data/atomic-reference-data-electronic-structure-calculations
+
+    Warning:
+    For compositions with inter-species fractions greater than 10,000 (e.g.
+    dilute alloys such as FeC0.00001) the composition will be truncated (to Fe
+    in this example). In such extreme cases, the truncation likely reflects the
+    true physics of the situation (i.e. that the dilute element does not
+    significantly contribute orbital character to the band structure), but the
+    user should be aware of this behavior.
     """
 
     def featurize(self, comp):
@@ -317,9 +326,15 @@ class AtomicOrbitals(BaseFeaturizer):
                 the estimated bandgap from HOMO and LUMO energeis
         """
 
-        string_comp = comp.reduced_formula
+        integer_comp, factor = comp.get_integer_formula_and_factor()
 
-        homo_lumo = MolecularOrbitals(string_comp).band_edges
+        # warning message if composition is dilute and truncated
+        if not (len(Composition(comp).elements) ==
+                len(Composition(integer_comp).elements)):
+            warn('AtomicOrbitals: {} truncated to {}'.format(comp,
+                                                             integer_comp))
+
+        homo_lumo = MolecularOrbitals(integer_comp).band_edges
 
         feat = collections.OrderedDict()
         for edge in ['HOMO', 'LUMO']:
@@ -1604,6 +1619,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
             # Get the nearest clusters
             if cluster_lookup is None:
                 dists = (np.array([]),)
+                to_lookup = 0
             else:
                 to_lookup = min(cluster_lookup._fit_X.shape[0], k)
                 dists, _ = cluster_lookup.kneighbors([comp_vec], to_lookup)

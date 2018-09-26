@@ -36,6 +36,14 @@ matminer.utils.tests.test\_flatten\_dict module
     :undoc-members:
     :show-inheritance:
 
+matminer.utils.tests.test\_io module
+------------------------------------
+
+.. automodule:: matminer.utils.tests.test_io
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

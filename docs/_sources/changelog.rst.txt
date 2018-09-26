@@ -5,6 +5,16 @@
 matminer Changelog
 ==================
 
+**v0.4.2**
+
+* Refactor conversion utils to be featurizers for consistency and parallelism (A. Ganose)
+* Average Bond Length and Bond Angle implementations (A. Rui, L. Ward)
+* Add ability to serialize dataframes as JSON with MontyEncoder (A. Ganose)
+* support added for fractional compositions in AtomicOrbitals (M. Dylla)
+* Add ability to flatten OFM (A. Dunn)
+* updates to FunctionFeaturizer (J. Montoya)
+* Various bugfixes (L. Ward, A. Ganose)
+
 **v0.4.1**
 
 * Better elemental properties for Magpie features (L. Ward)
@@ -12,6 +22,7 @@ matminer Changelog
 * Some bugfixes for multiplefeaturizer and compatibility with progress bars (L. Ward, A. Dunn)
 * More intuitive input arguments for featurize_many (L. Ward)
 * Bugfixes for BOOP features (L. Ward, A. Thompson)
+
 **v0.4.0**
 
 * Progressbar for featurizers (A. Dunn)
