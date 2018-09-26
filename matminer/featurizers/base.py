@@ -93,6 +93,19 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     call `featurize`. See `PartialRadialDistributionFunction` for an example of
     this concept.
 
+    An additional factor to consider is the chunksize for data parallelisation.
+    For lightweight computational tasks, the overhead associated with passing
+    data from `multiprocessing.Pool.map()` to the function being parallelised
+    can increase the time taken for all tasks to be completed. By setting
+    the `self._chunksize` argument, the overhead associated with passing data
+    to the tasks can be reduced. Note that there is only an advantage to using
+    chunksize when the time taken to pass the data from `map` to the function
+    call is within several orders of magnitude to that of the function call
+    itself. For computationally expensive featurizers, the default
+    chunksize of 1 will be the most efficient. However, for more lightweight
+    featurizers, it is recommended that the implementor trial a range of
+    chunksize values to find the optimum.
+
     ## Documenting a BaseFeaturizer
 
     The class documentation for each featurizer must contain a description of
@@ -125,6 +138,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     @property
     def n_jobs(self):
         return self._n_jobs if hasattr(self, '_n_jobs') else cpu_count()
+
+    def set_chunksize(self, chunksize):
+        """Set the chunksize used for Pool.map parallelisation."""
+        self._chunksize = chunksize
 
     @property
     def chunksize(self):
