@@ -126,6 +126,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     def n_jobs(self):
         return self._n_jobs if hasattr(self, '_n_jobs') else cpu_count()
 
+    @property
+    def chunksize(self):
+        return self._chunksize if hasattr(self, '_chunksize') else 1
+
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
 
@@ -321,9 +325,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                            return_errors=return_errors,
                                            pbar=pbar)
             with Pool(self.n_jobs) as p:
-                func = partial(self.featurize_wrapper, return_errors=return_errors,
+                func = partial(self.featurize_wrapper,
+                               return_errors=return_errors,
                                ignore_errors=ignore_errors)
-                return p.map(func, entries)
+                return p.map(func, entries, chunksize=self.chunksize)
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         """
