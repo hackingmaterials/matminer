@@ -9,14 +9,11 @@ from monty.io import zopen
 from monty.json import MontyEncoder, MontyDecoder
 
 
-def store_dataframe_as_json(dataframe, filename, compression=None):
+def store_dataframe_as_json(dataframe, filename, compression=None,
+                            orient='split'):
     """Store pandas dataframe as a json file.
 
     Automatically encodes pymatgen objects as dictionaries.
-
-    One downside is that JSON does not support integer dictionary keys.
-    Accordingly, if the index of the dataframe is of integer type, it will
-    be converted into strings.
 
     Args:
         dataframe (Pandas.Dataframe): A pandas dataframe.
@@ -24,6 +21,11 @@ def store_dataframe_as_json(dataframe, filename, compression=None):
         compression (str or None): A compression mode. Valid options are "gz",
             "bz2", and None. Defaults to None. If the filename does not end
             in with the correct suffix it will be added automatically.
+        orient (str): Determines the format in which the dictionary data is
+            stored. This takes the same set of arguments as the `orient` option
+            in `pandas.DataFrame.to_dict()` function. 'split' is recommended
+            as it is relatively space efficient and preserves the dtype
+            of the index.
     """
     if compression not in ["gz", "bz2", None]:
         raise ValueError("Supported compression formats are 'gz' and 'bz2'.")
@@ -34,7 +36,7 @@ def store_dataframe_as_json(dataframe, filename, compression=None):
     write_type = "wb" if compression else "w"
 
     with zopen(filename, write_type) as f:
-        data = json.dumps(dataframe.to_dict(), cls=MontyEncoder)
+        data = json.dumps(dataframe.to_dict(orient=orient), cls=MontyEncoder)
         if compression:
             data = data.encode()
         f.write(data)
@@ -54,4 +56,9 @@ def load_dataframe_from_json(filename):
     """
     with zopen(filename, 'rb') as f:
         dataframe_dict = json.load(f, cls=MontyDecoder)
-    return pandas.DataFrame.from_dict(dataframe_dict)
+
+    # if only keys are data, columns, index then orient=split
+    if set(dataframe_dict.keys()) == {'data', 'columns', 'index'}:
+        return pandas.DataFrame(**dataframe_dict)
+    else:
+        return pandas.DataFrame.from_dict(dataframe_dict)
