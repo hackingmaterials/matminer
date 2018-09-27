@@ -263,4 +263,3 @@ def load_flla(download_if_missing=True):
     df['structure'] = pandas.Series([Structure.from_dict(ast.literal_eval(s))
                                      for s in df['structure']], df.index)
     return df[column_headers]
-
