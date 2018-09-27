@@ -16,6 +16,26 @@ from matminer.utils.io import load_dataframe_from_json, store_dataframe_as_json
 test_dir = os.path.dirname(__file__)
 
 
+def generate_json_files():
+    diamond = Structure(
+        Lattice([[2.189, 0, 1.264], [0.73, 2.064, 1.264], [0, 0, 2.528]]),
+        ["C0+", "C0+"], [[2.554, 1.806, 4.423], [0.365, 0.258, 0.632]],
+        validate_proximity=False,
+        to_unit_cell=False, coords_are_cartesian=True,
+        site_properties=None
+    )
+    df = pd.DataFrame(data={'structure': [diamond]})
+
+    plain_file = os.path.join(test_dir, "dataframe.json")
+    store_dataframe_as_json(df, plain_file)
+
+    gz_file = os.path.join(test_dir, "dataframe.json.gz")
+    store_dataframe_as_json(df, gz_file, compression='gz')
+
+    bz2_file = os.path.join(test_dir, "dataframe.json.bz2")
+    store_dataframe_as_json(df, bz2_file, compression='bz2')
+
+
 class IOTest(PymatgenTest):
 
     def setUp(self):
@@ -91,4 +111,6 @@ class IOTest(PymatgenTest):
 
 
 if __name__ == '__main__':
+    #generate_json_files()
     unittest.main()
+
