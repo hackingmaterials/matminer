@@ -421,7 +421,7 @@ def load_dataset(name, data_home=None, download_if_missing=True,
 
     df = pandas.read_csv(data_path, comment="#", **kws)
 
-    if name == "elastic_tensor":
+    if name == "elastic_tensor_2015":
         for i in list(df.index):
             for c in ['compliance_tensor', 'elastic_tensor',
                       'elastic_tensor_original']:
