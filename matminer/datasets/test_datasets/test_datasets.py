@@ -53,11 +53,15 @@ class DataSetTest(unittest.TestCase):
             # and string type keys
             self.assertEqual(set(value.keys()), set(self.dataset_attributes))
             # Make sure string attributes have string values
-            for item in ['file_name', 'url', 'hash', 'reference', 'description',
-                         'bibtex_refs']:
+            for item in ['file_name', 'url', 'hash', 'reference',
+                         'description']:
                 self.assertIsInstance(value[item], str)
             # Make sure int attributes have int values
             self.assertIsInstance(value['num_entries'], int)
+            # Make sure refs are in a list and are strings
+            self.assertIsInstance(value['bibtex_refs'], list)
+            for ref in value['bibtex_refs']:
+                self.assertIsInstance(ref, str)
             # Make sure columns is a dict and it has string valued entries
             self.assertIsInstance(value['columns'], dict)
             for column_name, column_description in value['columns'].items():

@@ -503,9 +503,9 @@ def available_datasets(print_datasets=True,
     """
     dataset_dict = _load_dataset_dict()
 
-    if sort_method not in {"alphabetic", "num_entries"}:
-        raise ValueError("Error, unsupported sorting metric,"
-                         " see docs for options")
+    if sort_method not in {"alphabetical", "num_entries"}:
+        raise ValueError("Error, unsupported sorting metric, {}"
+                         " see docs for options".format(sort_method))
 
     if sort_method == 'num_entries':
         dataset_names = sorted(dataset_dict.keys(),
