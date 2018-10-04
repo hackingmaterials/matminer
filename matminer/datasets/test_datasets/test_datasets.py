@@ -108,7 +108,8 @@ class DataSetTest(unittest.TestCase):
                 self.assertEqual(
                     datasets,
                     sorted(self.dataset_names,
-                           key=lambda x: dataset_dict[x]['num_entries'])
+                           key=lambda x: dataset_dict[x]['num_entries'],
+                           reverse=True)
                 )
 
     def test_get_data_home(self):
