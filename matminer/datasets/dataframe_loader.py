@@ -1,14 +1,13 @@
 import os
 import ast
 import hashlib
-import warnings
 
 import numpy as np
 import pandas
 import requests
 from pymatgen.io.vasp.inputs import Poscar
 from pymatgen.core.structure import Structure
-
+from monty.dev import deprecated
 
 __author__ = "Kyle Bystrom <kylebystrom@berkeley.edu>, " \
              "Anubhav Jain <ajain@lbl.gov>" \
@@ -642,12 +641,9 @@ def _fetch_external_dataset(url, file_path):
     r.close()
 
 
-# Turns on Deprecation Warning printing for the four load_x functions below
-warnings.filterwarnings('always',
-                        message="This function has been deprecated, .*",
-                        category=DeprecationWarning)
-
-
+@deprecated(replacement=load_dataset,
+            message="This function has been deprecated, please use "
+                    "load_dataset('elastic_tensor_2015') instead")
 def load_elastic_tensor(include_metadata=False, download_if_missing=True):
     """
     References:
@@ -665,15 +661,15 @@ def load_elastic_tensor(include_metadata=False, download_if_missing=True):
 
     Returns (pd.DataFrame)
     """
-    warnings.warn("This function has been deprecated, "
-                  "please use load_dataset('elastic_tensor_2015') instead",
-                  DeprecationWarning)
 
     return load_dataset('elastic_tensor_2015',
                         include_metadata=include_metadata,
                         download_if_missing=download_if_missing)
 
 
+@deprecated(replacement=load_dataset,
+            message="This function has been deprecated, please use "
+                    "load_dataset('piezoelectric_tensor') instead")
 def load_piezoelectric_tensor(include_metadata=False, download_if_missing=True):
     """
     References:
@@ -690,15 +686,14 @@ def load_piezoelectric_tensor(include_metadata=False, download_if_missing=True):
     Returns (pd.DataFrame)
     """
 
-    warnings.warn("This function has been deprecated, "
-                  "please use load_dataset('piezoelectric_tensor') instead",
-                  DeprecationWarning)
-
     return load_dataset('piezoelectric_tensor',
                         include_metadata=include_metadata,
                         download_if_missing=download_if_missing)
 
 
+@deprecated(replacement=load_dataset,
+            message="This function has been deprecated, please use "
+                    "load_dataset('dielectric_constant') instead")
 def load_dielectric_constant(include_metadata=False, download_if_missing=True):
     """
     References:
@@ -716,15 +711,14 @@ def load_dielectric_constant(include_metadata=False, download_if_missing=True):
     Returns (pd.DataFrame)
     """
 
-    warnings.warn("This function has been deprecated, "
-                  "please use load_dataset('dielectric_constant') instead",
-                  DeprecationWarning)
-
     return load_dataset('dielectric_constant',
                         include_metadata=include_metadata,
                         download_if_missing=download_if_missing)
 
 
+@deprecated(replacement=load_dataset,
+            message="This function has been deprecated, please use "
+                    "load_dataset('flla') instead")
 def load_flla(download_if_missing=True):
     """
     References:
@@ -745,9 +739,5 @@ def load_flla(download_if_missing=True):
 
     Returns (pd.DataFrame)
     """
-
-    warnings.warn("This function has been deprecated, "
-                  "please use load_dataset('flla') instead",
-                  DeprecationWarning)
 
     return load_dataset('flla', download_if_missing=download_if_missing)
