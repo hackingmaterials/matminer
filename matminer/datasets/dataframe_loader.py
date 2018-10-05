@@ -429,12 +429,10 @@ def load_dataset(name, data_home=None, download_if_missing=True,
         df['structure'] = pandas.Series([Poscar.from_string(s).structure
                                          for s in df['poscar']])
         new_columns = ['material_id', 'formula', 'nsites', 'space_group',
-                       'volume',
-                       'structure', 'elastic_anisotropy', 'G_Reuss', 'G_VRH',
-                       'G_Voigt', 'K_Reuss', 'K_VRH', 'K_Voigt',
-                       'poisson_ratio',
-                       'compliance_tensor', 'elastic_tensor',
-                       'elastic_tensor_original']
+                       'volume', 'structure', 'elastic_anisotropy',
+                       'G_Reuss', 'G_VRH', 'G_Voigt', 'K_Reuss', 'K_VRH',
+                       'K_Voigt', 'poisson_ratio', 'compliance_tensor',
+                       'elastic_tensor', 'elastic_tensor_original']
         if include_metadata:
             new_columns += ['cif', 'kpoint_density', 'poscar']
         return df[new_columns]
@@ -458,9 +456,9 @@ def load_dataset(name, data_home=None, download_if_missing=True,
         df['structure'] = pandas.Series([Poscar.from_string(s).structure
                                          for s in df['poscar']])
         new_columns = ['material_id', 'formula', 'nsites', 'space_group',
-                       'volume',
-                       'structure', 'band_gap', 'e_electronic', 'e_total', 'n',
-                       'poly_electronic', 'poly_total', 'pot_ferroelectric']
+                       'volume', 'structure', 'band_gap', 'e_electronic',
+                       'e_total', 'n', 'poly_electronic', 'poly_total',
+                       'pot_ferroelectric']
         if include_metadata:
             new_columns += ['cif', 'meta', 'poscar']
         return df[new_columns]
