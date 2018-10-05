@@ -31,7 +31,7 @@ _dataset_dict = {
             (raw data)
             2) Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,
             Dacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. & Persson,
-            K. A. Commentary: The Materials Project: A materials genome approach 
+            K. A. Commentary: The Materials Project: A materials genome approach
             to accelerating materials innovation. APL Mater. 1, 11002 (2013).
             """,
         'description':
@@ -59,49 +59,49 @@ _dataset_dict = {
         },
         'bibtex_refs': [
             """@article{doi:10.1002/qua.24917,
-            author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, 
+            author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld,
             O. Anatole and Armiento, Rickard},
-            title = {Crystal structure representations for machine learning 
+            title = {Crystal structure representations for machine learning
             models of formation energies},
             journal = {International Journal of Quantum Chemistry},
             volume = {115},
             number = {16},
             pages = {1094-1101},
-            keywords = {machine learning, formation energies, representations, 
+            keywords = {machine learning, formation energies, representations,
             crystal structure, periodic systems},
             doi = {10.1002/qua.24917},
             url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/qua.24917},
             eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/qua.24917},
-            abstract = {We introduce and evaluate a set of feature vector 
-            representations of crystal structures for machine learning (ML) 
-            models of formation energies of solids. ML models of atomization 
+            abstract = {We introduce and evaluate a set of feature vector
+            representations of crystal structures for machine learning (ML)
+            models of formation energies of solids. ML models of atomization
             energies of organic molecules have been successful using a Coulomb
-            matrix representation of the molecule. We consider three ways to 
-            generalize such representations to periodic systems: (i) a matrix 
-            where each element is related to the Ewald sum of the electrostatic 
-            interaction between two different atoms in the unit cell repeated 
-            over the lattice; (ii) an extended Coulomb-like matrix that takes 
-            into account a number of neighboring unit cells; and (iii) an 
-            ansatz that mimics the periodicity and the basic features of the 
-            elements in the Ewald sum matrix using a sine function of the 
-            crystal coordinates of the atoms. The representations are compared 
-            for a Laplacian kernel with Manhattan norm, trained to reproduce 
-            formation energies using a dataset of 3938 crystal structures 
-            obtained from the Materials Project. For training sets consisting 
-            of 3000 crystals, the generalization error in predicting formation 
-            energies of new structures corresponds to (i) 0.49, (ii) 0.64, and 
-            (iii) for the respective representations. © 2015 Wiley Periodicals, 
+            matrix representation of the molecule. We consider three ways to
+            generalize such representations to periodic systems: (i) a matrix
+            where each element is related to the Ewald sum of the electrostatic
+            interaction between two different atoms in the unit cell repeated
+            over the lattice; (ii) an extended Coulomb-like matrix that takes
+            into account a number of neighboring unit cells; and (iii) an
+            ansatz that mimics the periodicity and the basic features of the
+            elements in the Ewald sum matrix using a sine function of the
+            crystal coordinates of the atoms. The representations are compared
+            for a Laplacian kernel with Manhattan norm, trained to reproduce
+            formation energies using a dataset of 3938 crystal structures
+            obtained from the Materials Project. For training sets consisting
+            of 3000 crystals, the generalization error in predicting formation
+            energies of new structures corresponds to (i) 0.49, (ii) 0.64, and
+            (iii) for the respective representations. © 2015 Wiley Periodicals,
             Inc.}
             }
             """,
 
             """
             @article{doi:10.1063/1.4812323,
-            author = {Jain,Anubhav  and Ong,Shyue Ping  and Hautier,Geoffroy  
-            and Chen,Wei  and Richards,William Davidson  and Dacek,Stephen  
-            and Cholia,Shreyas  and Gunter,Dan  and Skinner,David  
+            author = {Jain,Anubhav  and Ong,Shyue Ping  and Hautier,Geoffroy
+            and Chen,Wei  and Richards,William Davidson  and Dacek,Stephen
+            and Cholia,Shreyas  and Gunter,Dan  and Skinner,David
             and Ceder,Gerbrand  and Persson,Kristin A. },
-            title = {Commentary: The Materials Project: A materials genome 
+            title = {Commentary: The Materials Project: A materials genome
             approach to accelerating materials innovation},
             journal = {APL Materials},
             volume = {1},
@@ -128,7 +128,7 @@ _dataset_dict = {
             """
             Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,
             A., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,
-            C., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., "Charting 
+            C., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., "Charting
             the complete elastic properties of inorganic crystalline compounds",
             Scientific Data volume 2, Article number: 150009 (2015)
             """,
@@ -190,13 +190,13 @@ _dataset_dict = {
         'bibtex_refs': [
             """
             @Article{deJong2015,
-            author={de Jong, Maarten and Chen, Wei and Angsten, Thomas 
+            author={de Jong, Maarten and Chen, Wei and Angsten, Thomas
             and Jain, Anubhav and Notestine, Randy and Gamst, Anthony
-            and Sluiter, Marcel and Krishna Ande, Chaitanya 
+            and Sluiter, Marcel and Krishna Ande, Chaitanya
             and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac
             and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.
             and Asta, Mark},
-            title={Charting the complete elastic properties 
+            title={Charting the complete elastic properties
             of inorganic crystalline compounds},
             journal={Scientific Data},
             year={2015},
@@ -266,7 +266,7 @@ _dataset_dict = {
             @Article{deJong2015,
             author={de Jong, Maarten and Chen, Wei and Geerlings, Henry
             and Asta, Mark and Persson, Kristin Aslaug},
-            title={A database to enable discovery and design of piezoelectric 
+            title={A database to enable discovery and design of piezoelectric
             materials},
             journal={Scientific Data},
             year={2015},
@@ -294,7 +294,7 @@ _dataset_dict = {
             """
             Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,
             Chen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.
-            High-throughput screening of inorganic compounds for the discovery 
+            High-throughput screening of inorganic compounds for the discovery
             of novel dielectric and optical materials. Sci. Data 4, 160134 (2017).
             """,
         'description':
@@ -348,7 +348,7 @@ _dataset_dict = {
             author={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric
             and Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja
             and Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},
-            title={High-throughput screening of inorganic compounds for the 
+            title={High-throughput screening of inorganic compounds for the
             discovery of novel dielectric and optical materials},
             journal={Scientific Data},
             year={2017},
