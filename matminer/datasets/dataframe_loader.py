@@ -377,8 +377,8 @@ def load_dataset(name, data_home=None, download_if_missing=True,
     by default.
 
     Args:
-        name (str): keyword specifying what dataset to load, use
-            available_datasets() for options
+        name (str): keyword specifying what dataset to load, run
+            matminer.datasets.available_datasets() for options
 
         data_home (str): path to folder to look for dataset file
 
