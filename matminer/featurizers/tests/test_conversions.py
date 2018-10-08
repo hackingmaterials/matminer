@@ -166,6 +166,31 @@ class TestConversions(TestCase):
         self.assertEqual(df_2lvl[("StrToComposition", "test")].tolist(),
                          [Composition("Fe2"), Composition("MnO2")])
 
+        # if two level multiindex provided as target, it should be written there
+        # here we test converting multiindex in place
+        df_2lvl = DataFrame(data=d)
+        df_2lvl.columns = MultiIndex.from_product((["custom"],
+                                                   df_2lvl.columns.values))
+
+        sto = StrToComposition(target_col_id=None, overwrite_data=True)
+        df_2lvl = sto.featurize_dataframe(
+            df_2lvl, ("custom", "comp_str"), multiindex=True)
+        self.assertEqual(df_2lvl[("custom", "comp_str")].tolist(),
+                         [Composition("Fe2"), Composition("MnO2")])
+
+        # Try inplace multiindex conversion with return errors
+        df_2lvl = DataFrame(data=d)
+        df_2lvl.columns = MultiIndex.from_product((["custom"],
+                                                   df_2lvl.columns.values))
+
+        sto = StrToComposition(target_col_id=None, overwrite_data=True)
+        df_2lvl = sto.featurize_dataframe(
+            df_2lvl, ("custom", "comp_str"), multiindex=True,
+            return_errors=True, ignore_errors=True
+        )
+        self.assertTrue(
+            all(df_2lvl[("custom", "StrToComposition Exceptions")].isnull()))
+
     def test_conversion_multiindex_dynamic(self):
         # test dynamic target_col_id setting with multiindex
 
