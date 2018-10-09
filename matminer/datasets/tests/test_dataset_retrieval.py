@@ -3,11 +3,12 @@ import os
 from itertools import product
 
 import numpy as np
+from pandas.api.types import is_numeric_dtype, is_object_dtype, is_bool_dtype
 from pymatgen.core.structure import Structure
 
-from matminer.datasets.dataframe_loader import _load_dataset_dict, \
-    _get_data_home, _fetch_external_dataset, _validate_dataset, \
-    load_dataset, available_datasets
+from matminer.datasets.dataset_retrieval import load_dataset, available_datasets
+from matminer.datasets.utils import _load_dataset_dict, _get_data_home, \
+    _validate_dataset, _fetch_external_dataset, _get_file_sha256_hash
 
 
 class DataSetTest(unittest.TestCase):
@@ -41,7 +42,8 @@ class DataSetTest(unittest.TestCase):
         # Shared set up for test_validate_dataset & test_fetch_external_dataset
         self._path = os.path.join(current_dir, "test_dataset.csv")
         self._url = "https://ndownloader.figshare.com/files/13039562"
-        self._hash = "c487f59ce0d48505c36633b4b202027d0c915474b081e8fb0bde8d5474ee59a1"
+        self._hash = "c487f59ce0d48505c36633b4b202027" \
+                     "d0c915474b081e8fb0bde8d5474ee59a1"
 
     def test_load_dataset_dict(self):
         dataset_dict = _load_dataset_dict()
@@ -171,19 +173,33 @@ class DataSetTest(unittest.TestCase):
         # Test that data is now available and properly formatted
         df = load_dataset('elastic_tensor_2015', download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
-        for c in ['compliance_tensor', 'elastic_tensor', 'elastic_tensor_original']:
+        tensor_headers = ['compliance_tensor', 'elastic_tensor',
+                          'elastic_tensor_original']
+        for c in tensor_headers:
             self.assertEqual(type(df[c][0]), np.ndarray)
         self.assertEqual(len(df), 1181)
-        column_headers = ['material_id', 'formula', 'nsites', 'space_group',
-                          'volume', 'structure', 'elastic_anisotropy',
-                          'G_Reuss', 'G_VRH', 'G_Voigt', 'K_Reuss', 'K_VRH',
-                          'K_Voigt', 'poisson_ratio', 'compliance_tensor',
-                          'elastic_tensor', 'elastic_tensor_original']
-        self.assertEqual(list(df), column_headers)
+
+        object_headers = ['material_id', 'formula', 'structure',
+                          'compliance_tensor', 'elastic_tensor',
+                          'elastic_tensor_original', 'cif', 'poscar']
+
+        numeric_headers = ['nsites', 'space_group', 'volume',
+                           'elastic_anisotropy', 'G_Reuss', 'G_VRH', 'G_Voigt',
+                           'K_Reuss', 'K_VRH', 'K_Voigt', 'poisson_ratio',
+                           'kpoint_density']
+
+        metadata_headers = {'cif', 'kpoint_density', 'poscar'}
+        column_headers = object_headers + numeric_headers
+
+        self.assertEqual(sorted(list(df)), sorted(
+            [header for header in column_headers
+             if header not in metadata_headers]))
         df = load_dataset('elastic_tensor_2015', include_metadata=True,
                           download_if_missing=False)
-        column_headers += ['cif', 'kpoint_density', 'poscar']
-        self.assertEqual(list(df), column_headers)
+        self.assertEqual(sorted(list(df)), sorted(column_headers))
+        # Test that each column is the right type
+        self.assertTrue(is_object_dtype(df[object_headers]))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers]))
 
         os.remove(data_path)
 
@@ -199,21 +215,33 @@ class DataSetTest(unittest.TestCase):
 
         # Test that data is now available and properly formatted
         df = load_dataset("piezoelectric_tensor", download_if_missing=False)
-        self.assertEqual(len(df), 941)
         self.assertEqual(type(df['piezoelectric_tensor'][0]), np.ndarray)
         self.assertEqual(type(df['structure'][0]), Structure)
-        column_headers = ['material_id', 'formula', 'nsites', 'point_group',
-                          'space_group', 'volume', 'structure', 'eij_max',
-                          'v_max', 'piezoelectric_tensor']
-        self.assertEqual(list(df), column_headers)
-        df = load_dataset("piezoelectric_tensor", include_metadata=True,
+        self.assertEqual(len(df), 941)
+
+        object_headers = ['material_id', 'formula', 'structure', 'point_group',
+                          'v_max', 'piezoelectric_tensor', 'cif', 'meta',
+                          'poscar']
+
+        numeric_headers = ['nsites', 'space_group', 'volume', 'eij_max']
+
+        metadata_headers = {'cif', 'meta', 'poscar'}
+        column_headers = object_headers + numeric_headers
+
+        self.assertEqual(sorted(list(df)), sorted(
+            [header for header in column_headers
+             if header not in metadata_headers]
+        ))
+        df = load_dataset('piezoelectric_tensor', include_metadata=True,
                           download_if_missing=False)
-        column_headers += ['cif', 'meta', 'poscar']
-        self.assertEqual(list(df), column_headers)
+        self.assertEqual(sorted(list(df)), sorted(column_headers))
+        # Test that each column is the right type
+        self.assertTrue(is_object_dtype(df[object_headers]))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers]))
 
         os.remove(data_path)
 
-    def test_dielectric_tensor(self):
+    def test_dielectric_constant(self):
         # Test that the dataset is downloadable, also get integrity check
         # from internal check against file hash
         data_path = os.path.join(self.dataset_dir, "dielectric_constant.csv")
@@ -227,15 +255,30 @@ class DataSetTest(unittest.TestCase):
         df = load_dataset("dielectric_constant", download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(len(df), 1056)
-        column_headers = ['material_id', 'formula', 'nsites', 'space_group',
-                          'volume', 'structure', 'band_gap', 'e_electronic',
-                          'e_total', 'n', 'poly_electronic', 'poly_total',
-                          'pot_ferroelectric']
-        self.assertEqual(list(df), column_headers)
+
+        object_headers = ['material_id', 'formula', 'structure',
+                          'e_electronic', 'e_total', 'cif', 'meta',
+                          'poscar']
+
+        numeric_headers = ['nsites', 'space_group', 'volume', 'band_gap',
+                           'n', 'poly_electronic', 'poly_total']
+
+        bool_headers = ['pot_ferroelectric']
+
+        metadata_headers = {'cif', 'meta', 'poscar'}
+
+        column_headers = object_headers + numeric_headers + bool_headers
+        self.assertEqual(sorted(list(df)), sorted(
+            [header for header in column_headers
+             if header not in metadata_headers]
+        ))
         df = load_dataset("dielectric_constant", include_metadata=True,
                           download_if_missing=False)
-        column_headers += ['cif', 'meta', 'poscar']
-        self.assertEqual(list(df), column_headers)
+        self.assertEqual(sorted(list(df)), sorted(column_headers))
+        # Test that each column is the right type
+        self.assertTrue(is_object_dtype(df[object_headers]))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers]))
+        self.assertTrue(is_bool_dtype(df[bool_headers]))
 
         os.remove(data_path)
 
@@ -253,10 +296,21 @@ class DataSetTest(unittest.TestCase):
         df = load_dataset("flla", download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(len(df), 3938)
-        column_headers = ['material_id', 'e_above_hull', 'formula',
-                          'nsites', 'structure', 'formation_energy',
-                          'formation_energy_per_atom']
-        self.assertEqual(list(df), column_headers)
+
+        object_headers = ['material_id', 'formula', 'structure']
+
+        numeric_headers = ['e_above_hull', 'nsites', 'formation_energy',
+                           'formation_energy_per_atom']
+
+        column_headers = object_headers + numeric_headers
+
+        self.assertEqual(sorted(list(df)), sorted(column_headers))
+        df = load_dataset('flla', include_metadata=True,
+                          download_if_missing=False)
+        self.assertEqual(sorted(list(df)), sorted(column_headers))
+        # Test that each column is the right type
+        self.assertTrue(is_object_dtype(df[object_headers]))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers]))
 
         os.remove(data_path)
 

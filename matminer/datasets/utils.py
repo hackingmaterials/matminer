@@ -1,26 +1,18 @@
 import os
-import ast
 import hashlib
 
-import numpy as np
-import pandas
 import requests
-from pymatgen.io.vasp.inputs import Poscar
-from pymatgen.core.structure import Structure
-from monty.dev import deprecated
 
-__author__ = "Kyle Bystrom <kylebystrom@berkeley.edu>, " \
-             "Anubhav Jain <ajain@lbl.gov>" \
-             "Daniel Dopp <dbdopp@lbl.gov>"
+__author__ = "Daniel Dopp <dbdopp@lbl.gov>"
 
 _dataset_dict = {
     'flla': {
-        'file_name':
-            'flla_2015.csv',
+        'file_type':
+            'json.gz',
         'url':
-            'https://ndownloader.figshare.com/files/13082810',
+            'https://ndownloader.figshare.com/files/13220597',
         'hash':
-            '35b8dbc0b92f4dc7e219fd6606c3a27bee18a9618f376cfee1ff731e306210bb',
+            'a7f1649c3b9f5186e8440b163e0421cbfdf61973ec7e45101f6dab641f1e2170',
         'reference':
             """
             1) F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
@@ -118,12 +110,12 @@ _dataset_dict = {
     },
 
     'elastic_tensor_2015': {
-        'file_name':
-            'elastic_tensor.csv',
+        'file_type':
+            'json.gz',
         'url':
-            'https://ndownloader.figshare.com/files/13082813',
+            'https://ndownloader.figshare.com/files/13220603',
         'hash':
-            'f7a18c91fe5dcd51012e5b7e3a37f73aaee9087a036d61bdf9d6464b6fca51a6',
+            '8c3b342f75da7e7baa1b769b59554485fd647f4cb1da9318d0d1ba3b3b838183',
         'reference':
             """
             Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,
@@ -214,12 +206,12 @@ _dataset_dict = {
     },
 
     'piezoelectric_tensor': {
-        'file_name':
-            'piezoelectric_tensor.csv',
+        'file_type':
+            'json.gz',
         'url':
-            'https://ndownloader.figshare.com/files/13082804',
+            'https://ndownloader.figshare.com/files/13220621',
         'hash':
-            '4be45c8df76a9600f789255ddcb05a92fc3807e0b96fd01e85713a58c34a2ae1',
+            'dc9d04836f7f91ecb4ef6dc23e42468571be857f0fccafdfb51a5a40f19db898',
         'reference':
             """
             de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.
@@ -284,12 +276,12 @@ _dataset_dict = {
     },
 
     'dielectric_constant': {
-        'file_name':
-            'dielectric_constant.csv',
+        'file_type':
+            'json.gz',
         'url':
-            'https://ndownloader.figshare.com/files/13082816',
+            'https://ndownloader.figshare.com/files/13213475',
         'hash':
-            'ecbd410d33c95d5b05822cff6c7c0ba809a024b4ede3855ec5efc48d5e29ea77',
+            '8eb24812148732786cd7c657eccfc6b5ee66533429c2cfbcc4f0059c0295e8b6',
         'reference':
             """
             Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,
@@ -367,161 +359,6 @@ _dataset_dict = {
 }
 
 
-def load_dataset(name, data_home=None, download_if_missing=True,
-                 include_metadata=False, **kws):
-    """
-    Loads a dataframe containing the dataset specified with the 'name' field.
-
-    Dataset file is stored/loaded from data_home if specified, otherwise at
-    the MATMINER_DATA environment variable if set or at matminer/datasets
-    by default.
-
-    Args:
-        name (str): keyword specifying what dataset to load, run
-            matminer.datasets.available_datasets() for options
-
-        data_home (str): path to folder to look for dataset file
-
-        download_if_missing (bool): whether to download the dataset if is not
-            found on disk
-
-        include_metadata (bool): optional argument for some datasets with
-            metadata fields
-
-        **kws: additional arguments to be passed to the dataset file reader
-
-    Returns: (pd.DataFrame)
-    """
-    dataset_dict = _load_dataset_dict()
-
-    if name not in dataset_dict:
-        error_string = "Unrecognized dataset name: {}. \n" \
-                       "Use matminer.datasets.available_datasets() " \
-                       "to see a list of currently available " \
-                       "datasets".format(name)
-
-        # Very simple attempt to match unrecognized keyword to existing
-        # dataset names in an attempt to give the user immediate feedback
-        possible_matches = [
-            x for x in dataset_dict.keys() if name.lower() in x.lower()
-        ]
-
-        if possible_matches:
-            error_string += "\nCould you have been looking for these similar " \
-                            "matches?:\n{}".format(possible_matches)
-
-        raise ValueError(error_string)
-
-    dataset_metadata = dataset_dict[name]
-    data_path = os.path.join(_get_data_home(data_home),
-                             dataset_metadata['file_name'])
-    _validate_dataset(data_path, dataset_metadata['url'],
-                      dataset_metadata['hash'], download_if_missing)
-
-    df = pandas.read_csv(data_path, comment="#", **kws)
-
-    if name == "elastic_tensor_2015":
-        for i in list(df.index):
-            for c in ['compliance_tensor', 'elastic_tensor',
-                      'elastic_tensor_original']:
-                df.at[(i, c)] = np.array(ast.literal_eval(df.at[(i, c)]))
-        df['cif'] = df['structure']
-        df['structure'] = pandas.Series([Poscar.from_string(s).structure
-                                         for s in df['poscar']])
-        new_columns = ['material_id', 'formula', 'nsites', 'space_group',
-                       'volume', 'structure', 'elastic_anisotropy',
-                       'G_Reuss', 'G_VRH', 'G_Voigt', 'K_Reuss', 'K_VRH',
-                       'K_Voigt', 'poisson_ratio', 'compliance_tensor',
-                       'elastic_tensor', 'elastic_tensor_original']
-        if include_metadata:
-            new_columns += ['cif', 'kpoint_density', 'poscar']
-        return df[new_columns]
-
-    elif name == "piezoelectric_tensor":
-        for i in list(df.index):
-            c = 'piezoelectric_tensor'
-            df.at[(i, c)] = np.array(ast.literal_eval(df.at[(i, c)]))
-        df['cif'] = df['structure']
-        df['structure'] = pandas.Series([Poscar.from_string(s).structure
-                                         for s in df['poscar']])
-        new_columns = ['material_id', 'formula', 'nsites', 'point_group',
-                       'space_group', 'volume', 'structure', 'eij_max', 'v_max',
-                       'piezoelectric_tensor']
-        if include_metadata:
-            new_columns += ['cif', 'meta', 'poscar']
-        return df[new_columns]
-
-    elif name == "dielectric_constant":
-        df['cif'] = df['structure']
-        df['structure'] = pandas.Series([Poscar.from_string(s).structure
-                                         for s in df['poscar']])
-        new_columns = ['material_id', 'formula', 'nsites', 'space_group',
-                       'volume', 'structure', 'band_gap', 'e_electronic',
-                       'e_total', 'n', 'poly_electronic', 'poly_total',
-                       'pot_ferroelectric']
-        if include_metadata:
-            new_columns += ['cif', 'meta', 'poscar']
-        return df[new_columns]
-
-    elif name == "flla":
-        df = pandas.read_csv(data_path, comment="#")
-        column_headers = ['material_id', 'e_above_hull', 'formula',
-                          'nsites', 'structure', 'formation_energy',
-                          'formation_energy_per_atom']
-        df['structure'] = pandas.Series(
-            [Structure.from_dict(ast.literal_eval(s))
-             for s in df['structure']], df.index)
-        return df[column_headers]
-
-    else:
-        return df
-
-
-def available_datasets(print_datasets=True,
-                       print_descriptions=True,
-                       sort_method='alphabetical'):
-    """
-    Function for retrieving the datasets available within matminer.
-
-    Args:
-        print_datasets (bool): Whether to, along with returning a
-            list of dataset names, also print info on each dataset
-
-        print_descriptions (bool): Whether to print the description of the
-            dataset along with the name. Ignored if print_datasets is False
-
-        sort_method (str): By what metric to sort the datasets when retrieving
-            their information.
-
-            alphabetical: sorts by dataset name,
-            num_entries: sorts by number of dataset entries
-
-    Returns: (list)
-    """
-    dataset_dict = _load_dataset_dict()
-
-    if sort_method not in {"alphabetical", "num_entries"}:
-        raise ValueError("Error, unsupported sorting metric, {}"
-                         " see docs for options".format(sort_method))
-
-    if sort_method == 'num_entries':
-        dataset_names = sorted(dataset_dict.keys(),
-                               key=lambda x: dataset_dict[x]["num_entries"],
-                               reverse=True)
-    else:
-        dataset_names = sorted(dataset_dict.keys())
-
-    # If checks done before for loop to avoid unnecessary repetitive evaluation
-    if print_datasets and print_descriptions:
-        for name in dataset_names:
-            print(name, dataset_dict[name]["description"], "", sep="\n")
-    elif print_datasets:
-        for name in dataset_names:
-            print(name)
-
-    return list(dataset_names)
-
-
 def _load_dataset_dict():
     """
     Loads the dataset dictionary, currently just returns dict,
@@ -565,10 +402,10 @@ def _validate_dataset(data_path, url=None, file_hash=None,
         data_path (str): the full path to the file you would like to load,
         if nonexistent will try to download from external source by default
 
-        url (str): a string specifying the url to fetch the dataset from if it
-        is not available
+        url (str, None): a string specifying the url to fetch the dataset from
+        if it is not available
 
-        file_hash (str): hash of file used to check for file integrity
+        file_hash (str, None): hash of file used to check for file integrity
 
         download_if_missing (bool): whether or not to try downloading the
         dataset if it is not on local disk
@@ -590,24 +427,15 @@ def _validate_dataset(data_path, url=None, file_hash=None,
         data_home = os.path.dirname(data_path)
 
         if not os.path.exists(data_home):
-            print("Making dataset storage folder at {}".format(data_home))
+            print("Making dataset storage folder at {}".format(data_home),
+                  flush=True)
             os.makedirs(data_home)
 
         _fetch_external_dataset(url, data_path)
 
     # Check to see if file hash matches the expected value, if hash is provided
     if file_hash is not None:
-        sha256hash = hashlib.sha256()
-        chunk_size = 8192
-        with open(data_path, "rb") as f:
-            while True:
-                buffer = f.read(chunk_size)
-                if not buffer:
-                    break
-                sha256hash.update(buffer)
-        computed_hash = sha256hash.hexdigest()
-
-        if file_hash != computed_hash:
+        if file_hash != _get_file_sha256_hash(data_path):
             raise UserWarning(
                 "Error, hash of downloaded file does not match that "
                 "included in metadata, the data may be corrupt or altered"
@@ -627,8 +455,8 @@ def _fetch_external_dataset(url, file_path):
     """
 
     # Fetch data from given url
-    print("Fetching {} from {} to {}".format(
-        os.path.basename(file_path), url, file_path))
+    print("Fetching {} from {} to {}".format(os.path.basename(file_path),
+                                             url, file_path), flush=True)
 
     r = requests.get(url, stream=True)
 
@@ -639,103 +467,22 @@ def _fetch_external_dataset(url, file_path):
     r.close()
 
 
-@deprecated(replacement=load_dataset,
-            message="This function has been deprecated, please use "
-                    "load_dataset('elastic_tensor_2015') instead")
-def load_elastic_tensor(include_metadata=False, download_if_missing=True):
+def _get_file_sha256_hash(file_path):
     """
-    References:
-        Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,
-        A., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,
-        C., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., "Charting the
-        complete elastic properties of inorganic crystalline compounds",
-        Scientific Data volume 2, Article number: 150009 (2015)
+    Takes a file and returns the SHA 256 hash of its data
 
     Args:
-        include_metadata (bool): whether to return cif, kpoint_density, poscar
-        download_if_missing (bool): whether to attempt to download the dataset
-                                    from an external source if it is not
-                                    on the local machine
+        file_path (str): path of file to hash
 
-    Returns (pd.DataFrame)
+    Returns: (str)
+
     """
-
-    return load_dataset('elastic_tensor_2015',
-                        include_metadata=include_metadata,
-                        download_if_missing=download_if_missing)
-
-
-@deprecated(replacement=load_dataset,
-            message="This function has been deprecated, please use "
-                    "load_dataset('piezoelectric_tensor') instead")
-def load_piezoelectric_tensor(include_metadata=False, download_if_missing=True):
-    """
-    References:
-        de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.
-        A database to enable discovery and design of piezoelectric materials.
-        Sci. Data 2, 150053 (2015)
-
-    Args:
-        include_metadata (bool): whether to return cif, meta, poscar
-        download_if_missing (bool): whether to attempt to download the dataset
-                                    from an external source if it is not
-                                    on the local machine
-
-    Returns (pd.DataFrame)
-    """
-
-    return load_dataset('piezoelectric_tensor',
-                        include_metadata=include_metadata,
-                        download_if_missing=download_if_missing)
-
-
-@deprecated(replacement=load_dataset,
-            message="This function has been deprecated, please use "
-                    "load_dataset('dielectric_constant') instead")
-def load_dielectric_constant(include_metadata=False, download_if_missing=True):
-    """
-    References:
-        Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,
-        Chen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.
-        High-throughput screening of inorganic compounds for the discovery of
-        novel dielectric and optical materials. Sci. Data 4, 160134 (2017).
-
-    Args:
-        include_metadata (bool): whether to return cif, meta, poscar
-        download_if_missing (bool): whether to attempt to download the dataset
-                                    from an external source if it is not
-                                    on the local machine
-
-    Returns (pd.DataFrame)
-    """
-
-    return load_dataset('dielectric_constant',
-                        include_metadata=include_metadata,
-                        download_if_missing=download_if_missing)
-
-
-@deprecated(replacement=load_dataset,
-            message="This function has been deprecated, please use "
-                    "load_dataset('flla') instead")
-def load_flla(download_if_missing=True):
-    """
-    References:
-        1) F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
-        "Crystal structure representations for machine learning models of
-        formation energies", Int. J. Quantum Chem. 115 (2015) 1094–1101.
-        doi:10.1002/qua.24917.
-
-        2) (raw data) Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,
-        Dacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. & Persson,
-        K. A. Commentary: The Materials Project: A materials genome approach to
-        accelerating materials innovation. APL Mater. 1, 11002 (2013).
-
-     Args:
-        download_if_missing (bool): whether to attempt to download the dataset
-                                    from an external source if it is not
-                                    on the local machine
-
-    Returns (pd.DataFrame)
-    """
-
-    return load_dataset('flla', download_if_missing=download_if_missing)
+    sha256hash = hashlib.sha256()
+    chunk_size = 8192
+    with open(file_path, "rb") as f:
+        while True:
+            buffer = f.read(chunk_size)
+            if not buffer:
+                break
+            sha256hash.update(buffer)
+    return sha256hash.hexdigest()
