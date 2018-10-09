@@ -14,7 +14,7 @@ class DataSetsTest(DataSetTest):
         # Test that the dataset is downloadable, also get integrity check
         # from internal check against file hash
         data_path = os.path.join(self.dataset_dir,
-                                 "elastic_tensor.json.gz")
+                                 "elastic_tensor_2015.json.gz")
         if os.path.exists(data_path):
             os.remove(data_path)
 
@@ -49,8 +49,8 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(sorted(list(df)), sorted(column_headers))
         # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers]))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers]))
+        self.assertTrue(is_object_dtype(df[object_headers].dtypes))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].dtypes))
 
         os.remove(data_path)
 
@@ -88,8 +88,8 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(sorted(list(df)), sorted(column_headers))
         # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers]))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers]))
+        self.assertTrue(is_object_dtype(df[object_headers].dtypes))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].dtypes))
 
         os.remove(data_path)
 
@@ -129,17 +129,16 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(sorted(list(df)), sorted(column_headers))
         # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers]))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers]))
-        self.assertTrue(is_bool_dtype(df[bool_headers]))
+        self.assertTrue(is_object_dtype(df[object_headers].dtypes))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].dtypes))
+        self.assertTrue(is_bool_dtype(df[bool_headers].dtypes))
 
         os.remove(data_path)
 
     def test_flla(self):
         # Test that the dataset is downloadable, also get integrity check
         # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir,
-                                 "flla_2015.json.gz")
+        data_path = os.path.join(self.dataset_dir, "flla.json.gz")
         if os.path.exists(data_path):
             os.remove(data_path)
 
@@ -163,8 +162,8 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(sorted(list(df)), sorted(column_headers))
         # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers]))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers]))
+        self.assertTrue(is_object_dtype(df[object_headers].dtypes))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].dtypes))
 
         os.remove(data_path)
 

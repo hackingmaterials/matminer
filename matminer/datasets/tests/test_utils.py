@@ -17,7 +17,7 @@ class UtilsTest(DataSetTest):
             # and string type keys
             self.assertEqual(set(value.keys()), set(self.dataset_attributes))
             # Make sure string attributes have string values
-            for item in ['file_name', 'url', 'hash', 'reference',
+            for item in ['file_type', 'url', 'hash', 'reference',
                          'description']:
                 self.assertIsInstance(value[item], str)
             # Make sure int attributes have int values
