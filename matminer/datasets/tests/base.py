@@ -11,7 +11,7 @@ class DataSetTest(unittest.TestCase):
             'dielectric_constant'
         ]
         self.dataset_attributes = [
-            'file_name',
+            'file_type',
             'url',
             'hash',
             'reference',

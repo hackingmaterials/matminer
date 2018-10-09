@@ -13,7 +13,8 @@ class DataSetsTest(DataSetTest):
     def test_elastic_tensor_2015(self):
         # Test that the dataset is downloadable, also get integrity check
         # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir, "elastic_tensor.csv")
+        data_path = os.path.join(self.dataset_dir,
+                                 "elastic_tensor.json.gz")
         if os.path.exists(data_path):
             os.remove(data_path)
 
@@ -56,7 +57,8 @@ class DataSetsTest(DataSetTest):
     def test_piezoelectric_tensor(self):
         # Test that the dataset is downloadable, also get integrity check
         # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir, "piezoelectric_tensor.csv")
+        data_path = os.path.join(self.dataset_dir,
+                                 "piezoelectric_tensor.json.gz")
         if os.path.exists(data_path):
             os.remove(data_path)
 
@@ -94,7 +96,8 @@ class DataSetsTest(DataSetTest):
     def test_dielectric_constant(self):
         # Test that the dataset is downloadable, also get integrity check
         # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir, "dielectric_constant.csv")
+        data_path = os.path.join(self.dataset_dir,
+                                 "dielectric_constant.json.gz")
         if os.path.exists(data_path):
             os.remove(data_path)
 
@@ -135,7 +138,8 @@ class DataSetsTest(DataSetTest):
     def test_flla(self):
         # Test that the dataset is downloadable, also get integrity check
         # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir, "flla_2015.csv")
+        data_path = os.path.join(self.dataset_dir,
+                                 "flla_2015.json.gz")
         if os.path.exists(data_path):
             os.remove(data_path)
 
