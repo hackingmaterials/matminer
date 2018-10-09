@@ -49,8 +49,8 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(sorted(list(df)), sorted(column_headers))
         # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers].dtypes))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].dtypes))
+        self.assertTrue(is_object_dtype(df[object_headers].values))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
 
         os.remove(data_path)
 
@@ -88,8 +88,8 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(sorted(list(df)), sorted(column_headers))
         # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers].dtypes))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].dtypes))
+        self.assertTrue(is_object_dtype(df[object_headers].values))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
 
         os.remove(data_path)
 
@@ -129,9 +129,9 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(sorted(list(df)), sorted(column_headers))
         # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers].dtypes))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].dtypes))
-        self.assertTrue(is_bool_dtype(df[bool_headers].dtypes))
+        self.assertTrue(is_object_dtype(df[object_headers].values))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
+        self.assertTrue(is_bool_dtype(df[bool_headers].values))
 
         os.remove(data_path)
 
@@ -162,8 +162,8 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(sorted(list(df)), sorted(column_headers))
         # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers].dtypes))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].dtypes))
+        self.assertTrue(is_object_dtype(df[object_headers].values))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
 
         os.remove(data_path)
 
