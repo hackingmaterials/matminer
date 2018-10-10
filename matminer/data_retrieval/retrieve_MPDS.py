@@ -10,7 +10,11 @@ from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from six.moves.urllib_parse import urlencode
 
 import httplib2
-import ujson as json
+
+try:
+    import ujson as json
+except ImportError:
+    import json
 
 import pandas as pd
 
