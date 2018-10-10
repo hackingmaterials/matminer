@@ -171,6 +171,13 @@ class TestBaseClass(PymatgenTest):
         self.assertArrayAlmostEqual(data['w'], [0, 1, 2])
         self.assertArrayAlmostEqual(data['z'], [3, 4, 5])
 
+        f = MatrixFeaturizer()
+        multi_f = MultipleFeaturizer([self.single, self.multi, f])
+        data = self.make_test_data()
+        with warnings.catch_warnings(record=True) as w:
+            multi_f.featurize_dataframe(data, 'x')
+            self.assertEqual(len(w), 0)
+
         # # Test handling of Featurizers with overloaded featurize_dataframe
         # f = FunctionFeaturizer()
         # multi_f = MultipleFeaturizer([self.single, self.multi, f])
