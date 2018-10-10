@@ -178,13 +178,16 @@ class TestBaseClass(PymatgenTest):
             multi_f.featurize_dataframe(data, 'x')
             self.assertEqual(len(w), 0)
 
-        # # Test handling of Featurizers with overloaded featurize_dataframe
-        # f = FunctionFeaturizer()
-        # multi_f = MultipleFeaturizer([self.single, self.multi, f])
-        # data = self.make_test_data()
-        # with warnings.catch_warnings(record=True) as w:
-        #     multi_f.fit_featurize_dataframe(data, 'x')
-        #     self.assertEqual(len(w), 1)
+        self.assertArrayAlmostEqual(data['representation'][0],
+                                    [[1.0, 0.0], [0.0, 1.0]])
+
+        # Test handling of Featurizers with overloaded featurize_dataframe
+        f = FunctionFeaturizer()
+        multi_f = MultipleFeaturizer([self.single, self.multi, f])
+        data = self.make_test_data()
+        with warnings.catch_warnings(record=True) as w:
+            multi_f.fit_featurize_dataframe(data, 'x')
+            self.assertEqual(len(w), 0)
 
     def test_multifeatures(self):
         # Make a test dataset with two input variables
