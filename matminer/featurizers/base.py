@@ -420,45 +420,44 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
 
 class MultipleFeaturizer(BaseFeaturizer):
-    """
-    Class that runs multiple featurizers on the same data
+    """Class to run multiple featurizers on the same input data.
+
     All featurizers must take the same kind of data as input
-    to the featurize function."""
+    to the featurize function.
+
+    Args:
+        featurizers (list of BaseFeaturizer): A list of featurizers to run.
+    """
 
     def __init__(self, featurizers):
-        """
-        Create a new instance of this featurizer.
-
-        Args:
-            featurizers ([BaseFeaturizer]): list of featurizers to run.
-        """
         self.featurizers = featurizers
 
     def featurize(self, *x):
-        return np.hstack(np.squeeze([np.array(f.featurize(*x), dtype=object)
-                                     for f in self.featurizers]))
+        """See base class."""
+        return np.hstack([f.featurize(*x) for f in self.featurizers])
 
     def feature_labels(self):
+        """See base class."""
         return sum([f.feature_labels() for f in self.featurizers], [])
 
     def fit(self, X, y=None, **fit_kwargs):
+        """See base class."""
         for f in self.featurizers:
             f.fit(X, y, **fit_kwargs)
         return self
 
-    def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
-        return np.hstack([np.squeeze(np.array(f.featurize_wrapper(x, return_errors=return_errors,
-                                             ignore_errors=ignore_errors), dtype=object))
-                    for f in self.featurizers])
-
-    def _generate_column_labels(self, multiindex, return_errors):
-        return np.hstack([f._generate_column_labels(multiindex, return_errors)
-                          for f in self.featurizers])
+    def featurize_dataframe(self, df, col_id, **kwargs):
+        """See base class."""
+        for featurizer in self.featurizers:
+            df = featurizer.featurize_dataframe(df, col_id, **kwargs)
+        return df
 
     def citations(self):
+        """See base class."""
         return list(set(sum([f.citations() for f in self.featurizers], [])))
 
     def implementors(self):
+        """See base class."""
         return list(set(sum([f.implementors() for f in self.featurizers], [])))
 
 
