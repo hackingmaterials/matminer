@@ -434,7 +434,8 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def featurize(self, *x):
         """See base class."""
-        return np.hstack([f.featurize(*x) for f in self.featurizers])
+        return [feature for f in self.featurizers
+                for feature in f.featurize(*x)]
 
     def feature_labels(self):
         """See base class."""
@@ -446,11 +447,11 @@ class MultipleFeaturizer(BaseFeaturizer):
             f.fit(X, y, **fit_kwargs)
         return self
 
-    def featurize_dataframe(self, df, col_id, **kwargs):
+    def featurize_many(self, entries, **kwargs):
         """See base class."""
-        for featurizer in self.featurizers:
-            df = featurizer.featurize_dataframe(df, col_id, **kwargs)
-        return df
+        features = [f.featurize_many(entries, **kwargs)
+                    for f in self.featurizers]
+        return [sum(x, []) for x in zip(*features)]
 
     def citations(self):
         """See base class."""
@@ -459,6 +460,15 @@ class MultipleFeaturizer(BaseFeaturizer):
     def implementors(self):
         """See base class."""
         return list(set(sum([f.implementors() for f in self.featurizers], [])))
+
+    def _generate_column_labels(self, multiindex, return_errors):
+        return np.hstack([f._generate_column_labels(multiindex, return_errors)
+                          for f in self.featurizers])
+
+    def set_n_jobs(self, n_jobs):
+        """See base class."""
+        for featurizer in self.featurizers:
+            featurizer.set_n_jobs(n_jobs)
 
 
 class StackedFeaturizer(BaseFeaturizer):
