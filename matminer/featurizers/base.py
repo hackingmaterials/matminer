@@ -430,8 +430,8 @@ class MultipleFeaturizer(BaseFeaturizer):
         iterate_over_entries (bool): Whether to iterate over the entries or
             featurizers. Iterating over entries will enable increased caching
             but will only display a single progress bar for all featurizers.
-            If set to False, iteration will be performed over the featurizers,
-            resulting in reducing caching but individual progress bars for each
+            If set to False, iteration will be performed over featurizers,
+            resulting in reduced caching but individual progress bars for each
             featurizer.
     """
 
@@ -440,22 +440,18 @@ class MultipleFeaturizer(BaseFeaturizer):
         self.iterate_over_entries = iterate_over_entries
 
     def featurize(self, *x):
-        """See base class."""
         return [feature for f in self.featurizers
                 for feature in f.featurize(*x)]
 
     def feature_labels(self):
-        """See base class."""
         return sum([f.feature_labels() for f in self.featurizers], [])
 
     def fit(self, X, y=None, **fit_kwargs):
-        """See base class."""
         for f in self.featurizers:
             f.fit(X, y, **fit_kwargs)
         return self
 
     def featurize_many(self, entries, **kwargs):
-        """See base class."""
         if self.iterate_over_entries:
             return super(MultipleFeaturizer,
                          self).featurize_many(entries, **kwargs)
@@ -469,14 +465,13 @@ class MultipleFeaturizer(BaseFeaturizer):
             return [feature for f in self.featurizers
                     for feature in f.featurize_wrapper(x, **kwargs)]
         else:
-            return super(MultipleFeaturizer, self).featurize_many(x, **kwargs)
+            return super(MultipleFeaturizer, self).featurize_wrapper(
+                x, **kwargs)
 
     def citations(self):
-        """See base class."""
         return list(set(sum([f.citations() for f in self.featurizers], [])))
 
     def implementors(self):
-        """See base class."""
         return list(set(sum([f.implementors() for f in self.featurizers], [])))
 
     def _generate_column_labels(self, multiindex, return_errors):
@@ -484,7 +479,6 @@ class MultipleFeaturizer(BaseFeaturizer):
                           for f in self.featurizers])
 
     def set_n_jobs(self, n_jobs):
-        """See base class."""
         super(MultipleFeaturizer, self).set_n_jobs(n_jobs)
         for featurizer in self.featurizers:
             featurizer.set_n_jobs(n_jobs)
