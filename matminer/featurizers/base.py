@@ -451,22 +451,26 @@ class MultipleFeaturizer(BaseFeaturizer):
             f.fit(X, y, **fit_kwargs)
         return self
 
-    def featurize_many(self, entries, **kwargs):
+    def featurize_many(self, entries, ignore_errors=False, return_errors=False,
+                       pbar=True):
         if self.iterate_over_entries:
-            return super(MultipleFeaturizer,
-                         self).featurize_many(entries, **kwargs)
+            return super(MultipleFeaturizer, self).featurize_many(
+                entries, ignore_errors=ignore_errors,
+                return_errors=return_errors, pbar=pbar)
         else:
-            features = [f.featurize_many(entries, **kwargs)
+            features = [f.featurize_many(entries, ignore_errors=ignore_errors,
+                                         return_errors=return_errors, pbar=pbar)
                         for f in self.featurizers]
             return [sum(x, []) for x in zip(*features)]
 
-    def featurize_wrapper(self, x, **kwargs):
+    def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         if self.iterate_over_entries:
-            return [feature for f in self.featurizers
-                    for feature in f.featurize_wrapper(x, **kwargs)]
+            return [feature for f in self.featurizers for feature in
+                    f.featurize_wrapper(x, return_errors=return_errors,
+                                        ignore_errors=ignore_errors)]
         else:
             return super(MultipleFeaturizer, self).featurize_wrapper(
-                x, **kwargs)
+                x, return_errors=return_errors, ignore_errors=ignore_errors)
 
     def citations(self):
         return list(set(sum([f.citations() for f in self.featurizers], [])))
