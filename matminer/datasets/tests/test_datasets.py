@@ -10,10 +10,9 @@ from matminer.datasets.dataset_retrieval import load_dataset
 
 
 class DataSetsTest(DataSetTest):
-    @unittest.skip
-    def universal_dataset_test(self, dataset_name, object_headers=None,
-                               numeric_headers=None, bool_headers=None,
-                               metadata_headers=None):
+    def universal_dataset_check(self, dataset_name, object_headers=None,
+                                numeric_headers=None, bool_headers=None,
+                                metadata_headers=None):
         # Runs tests common to all datasets,
         # makes it quicker to write tests for new datasets
 
@@ -45,7 +44,7 @@ class DataSetsTest(DataSetTest):
              if header not in metadata_headers]
         ))
 
-        # Test each column for appropriate type and
+        # Test each column for appropriate type
         if object_headers is None:
             object_headers = []
         if numeric_headers is None:
@@ -79,7 +78,7 @@ class DataSetsTest(DataSetTest):
 
         metadata_headers = {'cif', 'kpoint_density', 'poscar'}
 
-        self.universal_dataset_test(
+        self.universal_dataset_check(
             "elastic_tensor_2015", object_headers, numeric_headers,
             metadata_headers=metadata_headers
         )
@@ -103,7 +102,7 @@ class DataSetsTest(DataSetTest):
 
         metadata_headers = {'cif', 'meta', 'poscar'}
 
-        self.universal_dataset_test(
+        self.universal_dataset_check(
             "piezoelectric_tensor", object_headers, numeric_headers,
             metadata_headers=metadata_headers
         )
@@ -127,7 +126,7 @@ class DataSetsTest(DataSetTest):
 
         metadata_headers = {'cif', 'meta', 'poscar'}
 
-        self.universal_dataset_test(
+        self.universal_dataset_check(
             "dielectric_constant", object_headers, numeric_headers,
             bool_headers=bool_headers, metadata_headers=metadata_headers
         )
@@ -144,7 +143,7 @@ class DataSetsTest(DataSetTest):
         numeric_headers = ['e_above_hull', 'nsites', 'formation_energy',
                            'formation_energy_per_atom']
 
-        self.universal_dataset_test("flla", object_headers, numeric_headers)
+        self.universal_dataset_check("flla", object_headers, numeric_headers)
 
         # Unique tests
         df = load_dataset('flla', include_metadata=True,
