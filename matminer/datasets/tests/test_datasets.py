@@ -10,26 +10,60 @@ from matminer.datasets.dataset_retrieval import load_dataset
 
 
 class DataSetsTest(DataSetTest):
-    def test_elastic_tensor_2015(self):
-        # Test that the dataset is downloadable, also get integrity check
-        # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir,
-                                 "elastic_tensor_2015.json.gz")
+    def universal_dataset_test(self, dataset_name, object_headers=None,
+                               numeric_headers=None, bool_headers=None,
+                               metadata_headers=None):
+        # Runs tests common to all datasets,
+        # makes it quicker to write tests for new datasets
+
+        # Get rid of dataset if it's on the disk already
+        data_path = os.path.join(
+            self.dataset_dir,
+            dataset_name + "." + self.dataset_dict[dataset_name]['file_type']
+        )
         if os.path.exists(data_path):
             os.remove(data_path)
 
-        load_dataset('elastic_tensor_2015')
+        # Test that dataset can be downloaded
+        load_dataset(dataset_name)
         self.assertTrue(os.path.exists(data_path))
 
-        # Test that data is now available and properly formatted
-        df = load_dataset('elastic_tensor_2015', download_if_missing=False)
-        self.assertEqual(type(df['structure'][0]), Structure)
-        tensor_headers = ['compliance_tensor', 'elastic_tensor',
-                          'elastic_tensor_original']
-        for c in tensor_headers:
-            self.assertEqual(type(df[c][0]), np.ndarray)
-        self.assertEqual(len(df), 1181)
+        # Test that data is now available and has all its elements
+        df = load_dataset(dataset_name, download_if_missing=False)
+        self.assertEqual(
+            len(df), self.dataset_dict[dataset_name]["num_entries"]
+        )
 
+        # Tes all the non-metadata columns are there
+        if metadata_headers is None:
+            metadata_headers = set()
+
+        self.assertEqual(sorted(list(df)), sorted(
+            [header for header in
+             self.dataset_dict[dataset_name]['columns'].keys()
+             if header not in metadata_headers]
+        ))
+
+        # Test each column for appropriate type and
+        if object_headers is None:
+            object_headers = []
+        if numeric_headers is None:
+            numeric_headers = []
+        if bool_headers is None:
+            bool_headers = []
+
+        df = load_dataset(dataset_name, include_metadata=True,
+                          download_if_missing=False)
+        self.assertTrue(is_object_dtype(df[object_headers].values))
+        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
+        self.assertTrue(is_bool_dtype(df[bool_headers].values))
+
+        # Make sure all columns are accounted for
+        column_headers = object_headers + numeric_headers + bool_headers
+        self.assertEqual(sorted(list(df)), sorted(column_headers))
+
+    def test_elastic_tensor_2015(self):
+        # Run set of universal dataset tests
         object_headers = ['material_id', 'formula', 'structure',
                           'compliance_tensor', 'elastic_tensor',
                           'elastic_tensor_original', 'cif', 'poscar']
@@ -40,37 +74,23 @@ class DataSetsTest(DataSetTest):
                            'kpoint_density']
 
         metadata_headers = {'cif', 'kpoint_density', 'poscar'}
-        column_headers = object_headers + numeric_headers
 
-        self.assertEqual(sorted(list(df)), sorted(
-            [header for header in column_headers
-             if header not in metadata_headers]))
+        self.universal_dataset_test(
+            "elastic_tensor_2015", object_headers, numeric_headers,
+            metadata_headers=metadata_headers
+        )
+
+        # Tests unique to this dataset
         df = load_dataset('elastic_tensor_2015', include_metadata=True,
                           download_if_missing=False)
-        self.assertEqual(sorted(list(df)), sorted(column_headers))
-        # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers].values))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
-
-        os.remove(data_path)
+        self.assertEqual(type(df['structure'][0]), Structure)
+        tensor_headers = ['compliance_tensor', 'elastic_tensor',
+                          'elastic_tensor_original']
+        for c in tensor_headers:
+            self.assertEqual(type(df[c][0]), np.ndarray)
 
     def test_piezoelectric_tensor(self):
-        # Test that the dataset is downloadable, also get integrity check
-        # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir,
-                                 "piezoelectric_tensor.json.gz")
-        if os.path.exists(data_path):
-            os.remove(data_path)
-
-        load_dataset('piezoelectric_tensor')
-        self.assertTrue(os.path.exists(data_path))
-
-        # Test that data is now available and properly formatted
-        df = load_dataset("piezoelectric_tensor", download_if_missing=False)
-        self.assertEqual(type(df['piezoelectric_tensor'][0]), np.ndarray)
-        self.assertEqual(type(df['structure'][0]), Structure)
-        self.assertEqual(len(df), 941)
-
+        # Run universal tests
         object_headers = ['material_id', 'formula', 'structure', 'point_group',
                           'v_max', 'piezoelectric_tensor', 'cif', 'meta',
                           'poscar']
@@ -78,37 +98,20 @@ class DataSetsTest(DataSetTest):
         numeric_headers = ['nsites', 'space_group', 'volume', 'eij_max']
 
         metadata_headers = {'cif', 'meta', 'poscar'}
-        column_headers = object_headers + numeric_headers
 
-        self.assertEqual(sorted(list(df)), sorted(
-            [header for header in column_headers
-             if header not in metadata_headers]
-        ))
+        self.universal_dataset_test(
+            "piezoelectric_tensor", object_headers, numeric_headers,
+            metadata_headers=metadata_headers
+        )
+
+        # Dataset specific checks
         df = load_dataset('piezoelectric_tensor', include_metadata=True,
                           download_if_missing=False)
-        self.assertEqual(sorted(list(df)), sorted(column_headers))
-        # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers].values))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
-
-        os.remove(data_path)
+        self.assertEqual(type(df['structure'][0]), Structure)
+        self.assertEqual(type(df['piezoelectric_tensor'][0]), np.ndarray)
 
     def test_dielectric_constant(self):
-        # Test that the dataset is downloadable, also get integrity check
-        # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir,
-                                 "dielectric_constant.json.gz")
-        if os.path.exists(data_path):
-            os.remove(data_path)
-
-        load_dataset('dielectric_constant')
-        self.assertTrue(os.path.exists(data_path))
-
-        # Test that data is now available and properly formatted
-        df = load_dataset("dielectric_constant", download_if_missing=False)
-        self.assertEqual(type(df['structure'][0]), Structure)
-        self.assertEqual(len(df), 1056)
-
+        # Universal Tests
         object_headers = ['material_id', 'formula', 'structure',
                           'e_electronic', 'e_total', 'cif', 'meta',
                           'poscar']
@@ -120,52 +123,29 @@ class DataSetsTest(DataSetTest):
 
         metadata_headers = {'cif', 'meta', 'poscar'}
 
-        column_headers = object_headers + numeric_headers + bool_headers
-        self.assertEqual(sorted(list(df)), sorted(
-            [header for header in column_headers
-             if header not in metadata_headers]
-        ))
+        self.universal_dataset_test(
+            "piezoelectric_tensor", object_headers, numeric_headers,
+            bool_headers=bool_headers, metadata_headers=metadata_headers
+        )
+
+        # Unique tests
         df = load_dataset("dielectric_constant", include_metadata=True,
                           download_if_missing=False)
-        self.assertEqual(sorted(list(df)), sorted(column_headers))
-        # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers].values))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
-        self.assertTrue(is_bool_dtype(df[bool_headers].values))
-
-        os.remove(data_path)
+        self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_flla(self):
-        # Test that the dataset is downloadable, also get integrity check
-        # from internal check against file hash
-        data_path = os.path.join(self.dataset_dir, "flla.json.gz")
-        if os.path.exists(data_path):
-            os.remove(data_path)
-
-        load_dataset("flla")
-        self.assertTrue(os.path.exists(data_path))
-
-        # Test that data is now available and properly formatted
-        df = load_dataset("flla", download_if_missing=False)
-        self.assertEqual(type(df['structure'][0]), Structure)
-        self.assertEqual(len(df), 3938)
-
+        # Universal tests
         object_headers = ['material_id', 'formula', 'structure']
 
         numeric_headers = ['e_above_hull', 'nsites', 'formation_energy',
                            'formation_energy_per_atom']
 
-        column_headers = object_headers + numeric_headers
+        self.universal_dataset_test("flla", object_headers, numeric_headers)
 
-        self.assertEqual(sorted(list(df)), sorted(column_headers))
+        # Unique tests
         df = load_dataset('flla', include_metadata=True,
                           download_if_missing=False)
-        self.assertEqual(sorted(list(df)), sorted(column_headers))
-        # Test that each column is the right type
-        self.assertTrue(is_object_dtype(df[object_headers].values))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
-
-        os.remove(data_path)
+        self.assertEqual(type(df['structure'][0]), Structure)
 
 
 if __name__ == "__main__":

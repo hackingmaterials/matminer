@@ -1,6 +1,8 @@
 import unittest
 import os
 
+from matminer.datasets.utils import _load_dataset_dict
+
 
 class DataSetTest(unittest.TestCase):
     def setUp(self):
@@ -20,6 +22,9 @@ class DataSetTest(unittest.TestCase):
             'bibtex_refs',
             'num_entries'
         ]
+
+        self.dataset_dict = _load_dataset_dict()
+
         # current directory, for storing and discarding test_dataset
         current_dir = os.path.dirname(os.path.abspath(__file__))
 

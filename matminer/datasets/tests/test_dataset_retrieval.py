@@ -4,7 +4,6 @@ from itertools import product
 
 from matminer.datasets.tests import DataSetTest
 from matminer.datasets.dataset_retrieval import load_dataset, available_datasets
-from matminer.datasets.utils import _load_dataset_dict
 
 
 class DataRetrievalTest(DataSetTest):
@@ -19,20 +18,21 @@ class DataRetrievalTest(DataSetTest):
         with self.assertRaises(ValueError):
             load_dataset("tensor")
         # Actual dataset is subset of passed dataset name
+        dataset_name = sorted(self.dataset_dict.keys())[0]
         with self.assertRaises(ValueError):
-            load_dataset('ffllaa')
+            load_dataset("a" + dataset_name + "a")
 
+        dataset_filename = (dataset_name + "."
+                            + self.dataset_dict[dataset_name]["file_type"])
         data_home = os.path.expanduser("~")
-        dataset_path = os.path.join(data_home, 'flla.json.gz')
+        dataset_path = os.path.join(data_home, dataset_filename)
         if os.path.exists(dataset_path):
             os.remove(dataset_path)
 
-        load_dataset('flla', data_home)
+        load_dataset(dataset_name, data_home)
         self.assertTrue(os.path.exists(data_home))
 
     def test_available_datasets(self):
-        # Get dataset info for checking sorting works properly
-        dataset_dict = _load_dataset_dict()
         # Go over all parameter combinations,
         # for each check that returned dataset is correct
         for parameter_combo in product([True, False], [True, False],
@@ -44,7 +44,7 @@ class DataRetrievalTest(DataSetTest):
                 self.assertEqual(
                     datasets,
                     sorted(self.dataset_names,
-                           key=lambda x: dataset_dict[x]['num_entries'],
+                           key=lambda x: self.dataset_dict[x]['num_entries'],
                            reverse=True)
                 )
 
