@@ -826,16 +826,16 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             s (Structure): structure to characterize
 
         Returns:
-            mean_ofm (size X size array): orbital field matrix
+            mean_ofm (size X size matrix): orbital field matrix
                     characterizing s
         """
         s *= [3, 3, 3]
         ofms, counts = self.get_atom_ofms(s, True)
         mean_ofm = self.get_mean_ofm(ofms, counts)
         if self.flatten:
-            return mean_ofm.flatten()
+            return mean_ofm.A.flatten()
         else:
-            return [mean_ofm]
+            return [mean_ofm.A]
 
     def feature_labels(self):
         if self.flatten:
