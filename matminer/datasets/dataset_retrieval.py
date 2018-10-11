@@ -93,7 +93,7 @@ def available_datasets(print_datasets=True, print_descriptions=True,
     dataset_dict = _load_dataset_dict()
 
     if sort_method not in {"alphabetical", "num_entries"}:
-        raise ValueError("Error, unsupported sorting metric, {}"
+        raise ValueError("Error, unsupported sorting metric {}"
                          " see docs for options".format(sort_method))
 
     if sort_method == 'num_entries':
@@ -106,6 +106,7 @@ def available_datasets(print_datasets=True, print_descriptions=True,
     # If checks done before for loop to avoid unnecessary repetitive evaluation
     if print_datasets and print_descriptions:
         for name in dataset_names:
+            # Printing blank line with sep=\n to give extra line break
             print(name, dataset_dict[name]["description"], "", sep="\n")
     elif print_datasets:
         for name in dataset_names:
