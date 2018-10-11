@@ -393,7 +393,7 @@ class BandCenter(BaseFeaturizer):
         sumamt = sum(comp.get_el_amt_dict().values())
         for el, amt in comp.get_el_amt_dict().items():
             gmean *= Element(el).X**(amt/sumamt)
-        return -gmean
+        return [-gmean]
 
     def feature_labels(self):
         return ["band center"]
