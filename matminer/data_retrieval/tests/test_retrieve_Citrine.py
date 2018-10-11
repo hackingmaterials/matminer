@@ -19,8 +19,8 @@ class CitrineDataRetrievalTest(unittest.TestCase):
         self.cdr = CitrineDataRetrieval(citrine_key)
 
     def test_get_data(self):
-        pifs_lst = self.cdr.get_api_data(formula="W", data_type='EXPERIMENTAL',
-                                         max_results=10)
+        pifs_lst = self.cdr.get_data(formula="W", data_type='EXPERIMENTAL',
+                                     max_results=10)
         self.assertEqual(len(pifs_lst), 10)
         df = self.cdr.get_dataframe(criteria={'formula':'W',
                                               'data_type':'EXPERIMENTAL',

@@ -1,5 +1,8 @@
 import httplib2
-import ujson as json
+try:
+    import ujson as json
+except ImportError:
+    import json
 import unittest
 from jsonschema import validate, Draft4Validator
 from jsonschema.exceptions import ValidationError

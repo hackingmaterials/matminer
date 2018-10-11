@@ -279,9 +279,8 @@ class StructureFeaturesTest(PymatgenTest):
         mtarget[3][3] = 1.4789015  # 1.3675444 if for a coord# of exactly 4
         for i in range(32):
             for j in range(32):
-                if not i in [1, 3] and not j in [1, 3]:
+                if i not in [1, 3] and j not in [1, 3]:
                     self.assertEqual(ofm[i, j], 0.0)
-        mtarget = np.matrix(mtarget)
         self.assertAlmostEqual(
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
@@ -297,7 +296,6 @@ class StructureFeaturesTest(PymatgenTest):
         mtarget[33][1] = 1.4789015
         mtarget[33][3] = 1.4789015
         mtarget[33][33] = 1.4789015
-        mtarget = np.matrix(mtarget)
         self.assertAlmostEqual(
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
@@ -360,7 +358,7 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test the feature labels
         labels = prop_fp.feature_labels()
-        self.assertEquals(3, len(labels))
+        self.assertEqual(3, len(labels))
 
         #  Test a structure with all the same type (cov should be zero)
         features = prop_fp.featurize(self.diamond)
