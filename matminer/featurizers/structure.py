@@ -604,8 +604,7 @@ class SineCoulombMatrix(BaseFeaturizer):
                     vec = coords[i] - coords[j]
                     coord_vec = np.sin(pi * vec) ** 2
                     trig_dist = np.linalg.norm(
-                        np.dot(coord_vec, lattice).flatten()
-                    ) * ANG_TO_BOHR
+                        (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
                     sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
@@ -684,6 +683,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         for Z in range(1, 95):
             el = Element.from_Z(Z)
             my_ohvs[Z] = self.get_ohv(el, period_tag)
+            my_ohvs[Z] = np.matrix(my_ohvs[Z])
         self.ohvs = my_ohvs
         self.flatten = flatten
 
@@ -754,10 +754,10 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             site_dict (dict of Site:float): chemical environment
 
         Returns:
-            atom_ofm (size X size numpy array): ofm for site
+            atom_ofm (size X size numpy matrix): ofm for site
         """
         ohvs = self.ohvs
-        atom_ofm = np.zeros((self.size, self.size))
+        atom_ofm = np.matrix(np.zeros((self.size, self.size)))
         ref_atom = ohvs[site.specie.Z]
         for other_site in site_dict:
             scale = other_site['weight']
