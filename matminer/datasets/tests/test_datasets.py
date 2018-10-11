@@ -54,9 +54,12 @@ class DataSetsTest(DataSetTest):
 
         df = load_dataset(dataset_name, include_metadata=True,
                           download_if_missing=False)
-        self.assertTrue(is_object_dtype(df[object_headers].values))
-        self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
-        self.assertTrue(is_bool_dtype(df[bool_headers].values))
+        if object_headers:
+            self.assertTrue(is_object_dtype(df[object_headers].values))
+        if numeric_headers:
+            self.assertTrue(is_numeric_dtype(df[numeric_headers].values))
+        if bool_headers:
+            self.assertTrue(is_bool_dtype(df[bool_headers].values))
 
         # Make sure all columns are accounted for
         column_headers = object_headers + numeric_headers + bool_headers
@@ -124,7 +127,7 @@ class DataSetsTest(DataSetTest):
         metadata_headers = {'cif', 'meta', 'poscar'}
 
         self.universal_dataset_test(
-            "piezoelectric_tensor", object_headers, numeric_headers,
+            "dielectric_constant", object_headers, numeric_headers,
             bool_headers=bool_headers, metadata_headers=metadata_headers
         )
 

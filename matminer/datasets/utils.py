@@ -125,7 +125,7 @@ _dataset_dict = {
             Scientific Data volume 2, Article number: 150009 (2015)
             """,
         'description':
-            "1,180 structures with elastic properties calculated with DFT-PBE.",
+            "1,181 structures with elastic properties calculated with DFT-PBE.",
         'columns': {
             'material_id': "Materials Project ID of the material",
 
@@ -202,7 +202,7 @@ _dataset_dict = {
             }
             """,
         ],
-        'num_entries': 1180,
+        'num_entries': 1181,
     },
 
     'piezoelectric_tensor': {
