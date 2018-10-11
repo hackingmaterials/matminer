@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import warnings
 
+from itertools import product
+
 from pymatgen.core.structure import Structure
 from pymatgen.util.testing import PymatgenTest
 from sklearn.dummy import DummyRegressor, DummyClassifier
@@ -151,62 +153,61 @@ class TestBaseClass(PymatgenTest):
         self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
 
     def test_multiple(self):
-        multi_f = MultipleFeaturizer([self.single, self.multi])
-        data = self.make_test_data()
+        # test iterating over both entries and featurizers
+        for iter_entries in [True, False]:
+            multi_f = MultipleFeaturizer([self.single, self.multi],
+                                         iterate_over_entries=iter_entries)
+            data = self.make_test_data()
 
-        self.assertArrayAlmostEqual([2, 0, 3], multi_f.featurize(1))
+            self.assertArrayAlmostEqual([2, 0, 3], multi_f.featurize(1))
 
-        self.assertArrayEqual(['A'], multi_f.citations())
+            self.assertArrayEqual(['A'], multi_f.citations())
 
-        implementors = multi_f.implementors()
-        self.assertIn('Us', implementors)
-        self.assertIn('Them', implementors)
-        self.assertEquals(2, len(implementors))
+            implementors = multi_f.implementors()
+            self.assertIn('Us', implementors)
+            self.assertIn('Them', implementors)
+            self.assertEquals(2, len(implementors))
 
-        # Ensure BaseFeaturizer operation without overriden featurize_dataframe
-        with warnings.catch_warnings(record=True) as w:
-            multi_f.featurize_dataframe(data, 'x')
-            self.assertEqual(len(w), 0)
-        self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
-        self.assertArrayAlmostEqual(data['w'], [0, 1, 2])
-        self.assertArrayAlmostEqual(data['z'], [3, 4, 5])
+            # Ensure BaseFeaturizer operation without overriden featurize_dataframe
+            with warnings.catch_warnings(record=True) as w:
+                multi_f.featurize_dataframe(data, 'x')
+                self.assertEqual(len(w), 0)
+            self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
+            self.assertArrayAlmostEqual(data['w'], [0, 1, 2])
+            self.assertArrayAlmostEqual(data['z'], [3, 4, 5])
 
-        f = MatrixFeaturizer()
-        multi_f = MultipleFeaturizer([self.single, self.multi, f])
-        data = self.make_test_data()
-        with warnings.catch_warnings(record=True) as w:
-            multi_f.featurize_dataframe(data, 'x')
-            self.assertEqual(len(w), 0)
+            f = MatrixFeaturizer()
+            multi_f = MultipleFeaturizer([self.single, self.multi, f])
+            data = self.make_test_data()
+            with warnings.catch_warnings(record=True) as w:
+                multi_f.featurize_dataframe(data, 'x')
+                self.assertEqual(len(w), 0)
 
-        self.assertArrayAlmostEqual(data['representation'][0],
-                                    [[1.0, 0.0], [0.0, 1.0]])
-
-        # # Test handling of Featurizers with overloaded featurize_dataframe
-        # f = FunctionFeaturizer()
-        # multi_f = MultipleFeaturizer([self.single, self.multi, f])
-        # data = self.make_test_data()
-        # with warnings.catch_warnings(record=True) as w:
-        #     multi_f.fit_featurize_dataframe(data, 'x')
-        #     self.assertEqual(len(w), 0)
+            self.assertArrayAlmostEqual(data['representation'][0],
+                                        [[1.0, 0.0], [0.0, 1.0]])
 
     def test_multifeatures(self):
+
         # Make a test dataset with two input variables
         data = self.make_test_data()
         data['x2'] = [4, 5, 6]
 
         multiargs2 = MultiArgs2()
 
-        # Create featurizer
-        multi_f = MultipleFeaturizer([self.multiargs, multiargs2])
+        # test iterating over both entries and featurizers
+        for iter_entries in [True, False]:
+            # Create featurizer
+            multi_f = MultipleFeaturizer([self.multiargs, multiargs2],
+                                         iterate_over_entries=iter_entries)
 
-        # Test featurize with multiple arguments
-        features = multi_f.featurize(0, 2)
-        self.assertArrayAlmostEqual([2, 2], features)
+            # Test featurize with multiple arguments
+            features = multi_f.featurize(0, 2)
+            self.assertArrayAlmostEqual([2, 2], features)
 
-        # Test dataframe
-        data = multi_f.featurize_dataframe(data, ['x', 'x2'])
-        self.assertEquals(['y', 'y2'], multi_f.feature_labels())
-        self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]], data[['y', 'y2']])
+            # Test dataframe
+            data = multi_f.featurize_dataframe(data, ['x', 'x2'])
+            self.assertEquals(['y', 'y2'], multi_f.feature_labels())
+            self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]], data[['y', 'y2']])
 
     def test_featurize_many(self):
         # Single argument
@@ -359,41 +360,48 @@ class TestBaseClass(PymatgenTest):
 
     def test_multiindex_in_multifeaturizer(self):
         # Make sure multiplefeaturizer returns the correct sub-featurizer multiindex keys
-        mf = MultipleFeaturizer([self.multi, self.single])
+        # test both iteration over entries and featurizers
 
-        df_1lvl = pd.DataFrame({'x': [1, 2, 3]})
-        df_2lvl = pd.DataFrame({'x': [1, 2, 3]})
-        df_2lvl.columns = pd.MultiIndex.from_product((["Custom"],
-                                                      df_2lvl.columns.values))
-        df_3lvl = pd.DataFrame({'x': [1, 2, 3]})
-        df_3lvl.columns = pd.MultiIndex.from_product((["Custom"],
-                                                      ["Custom2"],
-                                                      df_3lvl.columns.values))
+        for iter_entries in [True, False]:
 
-        # If input dataframe has flat column index
-        mf.featurize_dataframe(df_1lvl, 'x', multiindex=True)
-        self.assertEqual(df_1lvl[("Input Data", "x")].iloc[0], 1)
-        self.assertEqual(df_1lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
-        self.assertEqual(df_1lvl[("SingleFeaturizer", "y")].iloc[0], 2)
+            mf = MultipleFeaturizer([self.multi, self.single],
+                                    iterate_over_entries=iter_entries)
 
-        # If input dataframe has 2-lvl column index
-        mf.featurize_dataframe(df_2lvl, ("Custom", 'x'), multiindex=True)
-        self.assertEqual(df_2lvl[("Custom", "x")].iloc[0], 1)
-        self.assertEqual(df_2lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
-        self.assertEqual(df_2lvl[("SingleFeaturizer", "y")].iloc[0], 2)
+            df_1lvl = pd.DataFrame({'x': [1, 2, 3]})
+            df_2lvl = pd.DataFrame({'x': [1, 2, 3]})
+            df_2lvl.columns = pd.MultiIndex.from_product((["Custom"],
+                                                          df_2lvl.columns.values))
+            df_3lvl = pd.DataFrame({'x': [1, 2, 3]})
+            df_3lvl.columns = pd.MultiIndex.from_product((["Custom"],
+                                                          ["Custom2"],
+                                                          df_3lvl.columns.values))
 
-        # If input dataframe has 2+ lvl column index
-        with self.assertRaises(IndexError):
-            _ = self.multi.featurize_dataframe(df_3lvl,
-                                               ("Custom", "Custom2", 'x'),
-                                               multiindex=True)
+            # If input dataframe has flat column index
+            mf.featurize_dataframe(df_1lvl, 'x', multiindex=True)
+            self.assertEqual(df_1lvl[("Input Data", "x")].iloc[0], 1)
+            self.assertEqual(df_1lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
+            self.assertEqual(df_1lvl[("SingleFeaturizer", "y")].iloc[0], 2)
+
+            # If input dataframe has 2-lvl column index
+            mf.featurize_dataframe(df_2lvl, ("Custom", 'x'), multiindex=True)
+            self.assertEqual(df_2lvl[("Custom", "x")].iloc[0], 1)
+            self.assertEqual(df_2lvl[("MultipleFeatureFeaturizer", "w")].iloc[0], 0)
+            self.assertEqual(df_2lvl[("SingleFeaturizer", "y")].iloc[0], 2)
+
+            # If input dataframe has 2+ lvl column index
+            with self.assertRaises(IndexError):
+                _ = self.multi.featurize_dataframe(df_3lvl,
+                                                   ("Custom", "Custom2", 'x'),
+                                                   multiindex=True)
 
     def test_caching(self):
         """Test whether MultiFeaturizer properly caches """
+
+        # have to iterate over entries to enable caching
         feat = MultipleFeaturizer([
             SiteStatsFingerprint.from_preset("LocalPropertyDifference_ward-prb-2017"),
             SiteStatsFingerprint.from_preset("CoordinationNumber_ward-prb-2017")
-        ])
+        ], iterate_over_entries=True)
 
         # Create a dataframe with two SC structures in it
         data = pd.DataFrame({'strcs': [
@@ -417,54 +425,60 @@ class TestBaseClass(PymatgenTest):
 
     def test_ignore_errors(self):
         # Make sure multiplefeaturizer returns the correct sub-featurizer multiindex keys
-        mf = MultipleFeaturizer([self.multi, self.single])
 
-        # Iterate through many tests: single/parallel, returning errors or not, multiindex or not
-        for mi in [True, False]:
-            for re in [True, False]:
-                for n in [1, 2]:
-                    # Make some test data that will cause errors
-                    data = pd.DataFrame({'x': ['a', 2, 3]})
+        # Iterate through many tests: single/parallel, returning errors or not,
+        # multiindex or not, and interation over entires/featurizers
 
-                    # Set the number of threads
-                    mf.set_n_jobs(n)
+        for mi, re, n, iter_entries in product(
+                [True, False], [True, False], [1, 2], [True, False]):
 
-                    # Make sure it completes successfully
-                    results = mf.featurize_many(data['x'], ignore_errors=True, return_errors=re)
-                    self.assertEquals(5 if re else 3, len(results[0]))
+            mf = MultipleFeaturizer([self.multi, self.single],
+                                    iterate_over_entries=iter_entries)
+            # Make some test data that will cause errors
+            data = pd.DataFrame({'x': ['a', 2, 3]})
 
-                    # Make sure it works with featurize dataframe
-                    results = mf.featurize_dataframe(data, 'x', ignore_errors=True,
-                                                     return_errors=re, multiindex=mi)
-                    self.assertEquals(6 if re else 4, len(results.columns))
+            # Set the number of threads
+            mf.set_n_jobs(n)
 
-                    #  Special test for returning errors (only should work when returning errors)
-                    #   I only am going to test the single index case for simplicity
-                    if re and not mi:
-                        self.assertIn('TypeError', results.iloc[0]['SingleFeaturizer Exceptions'])
+            # Make sure it completes successfully
+            results = mf.featurize_many(data['x'], ignore_errors=True, return_errors=re)
+            self.assertEquals(5 if re else 3, len(results[0]))
 
-                    # Make sure it throws an error
-                    with self.assertRaises(TypeError):
-                        mf.featurize_many([['a'], [1], [2]])
+            # Make sure it works with featurize dataframe
+            results = mf.featurize_dataframe(data, 'x', ignore_errors=True,
+                                             return_errors=re, multiindex=mi)
+            self.assertEquals(6 if re else 4, len(results.columns))
+
+            #  Special test for returning errors (only should work when returning errors)
+            #   I only am going to test the single index case for simplicity
+            if re and not mi:
+                self.assertIn('TypeError', results.iloc[0]['SingleFeaturizer Exceptions'])
+
+            # Make sure it throws an error
+            with self.assertRaises(TypeError):
+                mf.featurize_many([['a'], [1], [2]])
 
     def test_multitype_multifeat(self):
         """Test Multifeaturizer when a featurizer returns a non-numeric type"""
 
-        # Make the featurizer
-        f = MultipleFeaturizer([SingleFeaturizer(), MultiTypeFeaturizer()])
-        f.set_n_jobs(1)
+        # test both iteration over entries and featurizers
+        for iter_entries in [True, False]:
+            # Make the featurizer
+            f = MultipleFeaturizer([SingleFeaturizer(), MultiTypeFeaturizer()],
+                                   iterate_over_entries=iter_entries)
+            f.set_n_jobs(1)
 
-        # Make the test data
-        data = self.make_test_data()
+            # Make the test data
+            data = self.make_test_data()
 
-        # Add the columns
-        data = f.featurize_dataframe(data, 'x')
+            # Add the columns
+            data = f.featurize_dataframe(data, 'x')
 
-        # Make sure the types are as expected
-        labels = f.feature_labels()
-        self.assertArrayEqual(['int64', 'object', 'int64'],
-                              data[labels].dtypes.astype(str).tolist())
-        self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
+            # Make sure the types are as expected
+            labels = f.feature_labels()
+            self.assertArrayEqual(['int64', 'object', 'int64'],
+                                  data[labels].dtypes.astype(str).tolist())
+            self.assertArrayAlmostEqual(data['y'], [2, 3, 4])
 
     def test_multifeature_no_zero_index(self):
         """Test whether multifeaturizer can handle series that lack a entry with index==0"""

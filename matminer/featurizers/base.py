@@ -427,10 +427,17 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     Args:
         featurizers (list of BaseFeaturizer): A list of featurizers to run.
+        iterate_over_entries (bool): Whether to iterate over the entries or
+            featurizers. Iterating over entries will enable increased caching
+            but will only display a single progress bar for all featurizers.
+            If set to False, iteration will be performed over the featurizers,
+            resulting in reducing caching but individual progress bars for each
+            featurizer.
     """
 
-    def __init__(self, featurizers):
+    def __init__(self, featurizers, iterate_over_entries=True):
         self.featurizers = featurizers
+        self.iterate_over_entries = iterate_over_entries
 
     def featurize(self, *x):
         """See base class."""
@@ -449,9 +456,20 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def featurize_many(self, entries, **kwargs):
         """See base class."""
-        features = [f.featurize_many(entries, **kwargs)
-                    for f in self.featurizers]
-        return [sum(x, []) for x in zip(*features)]
+        if self.iterate_over_entries:
+            return super(MultipleFeaturizer,
+                         self).featurize_many(entries, **kwargs)
+        else:
+            features = [f.featurize_many(entries, **kwargs)
+                        for f in self.featurizers]
+            return [sum(x, []) for x in zip(*features)]
+
+    def featurize_wrapper(self, x, **kwargs):
+        if self.iterate_over_entries:
+            return [feature for f in self.featurizers
+                    for feature in f.featurize_wrapper(x, **kwargs)]
+        else:
+            return super(MultipleFeaturizer, self).featurize_many(x, **kwargs)
 
     def citations(self):
         """See base class."""
@@ -467,6 +485,7 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def set_n_jobs(self, n_jobs):
         """See base class."""
+        super(MultipleFeaturizer, self).set_n_jobs(n_jobs)
         for featurizer in self.featurizers:
             featurizer.set_n_jobs(n_jobs)
 
