@@ -187,15 +187,14 @@ class TestBaseClass(PymatgenTest):
                                         [[1.0, 0.0], [0.0, 1.0]])
 
     def test_multifeatures(self):
-
-        # Make a test dataset with two input variables
-        data = self.make_test_data()
-        data['x2'] = [4, 5, 6]
-
         multiargs2 = MultiArgs2()
 
         # test iterating over both entries and featurizers
         for iter_entries in [True, False]:
+            # Make a test dataset with two input variables
+            data = self.make_test_data()
+            data['x2'] = [4, 5, 6]
+
             # Create featurizer
             multi_f = MultipleFeaturizer([self.multiargs, multiargs2],
                                          iterate_over_entries=iter_entries)
