@@ -10,6 +10,7 @@ from matminer.datasets.dataset_retrieval import load_dataset
 
 
 class DataSetsTest(DataSetTest):
+    @unittest.skip
     def universal_dataset_test(self, dataset_name, object_headers=None,
                                numeric_headers=None, bool_headers=None,
                                metadata_headers=None):
