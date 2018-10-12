@@ -342,7 +342,7 @@ class OPSiteFingerprint(BaseFeaturizer):
             # print('{} {} {}'.format(minval, maxval, nbins))
             hist, bin_edges = np.histogram(
                 op_tmp, bins=nbins, range=(minval, maxval),
-                normed=False, weights=None, density=False)
+                weights=None, density=False)
             max_hist = max(hist)
             op_peaks = []
             for i, h in enumerate(hist):

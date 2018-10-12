@@ -1307,7 +1307,6 @@ class PlotlyFig:
 
         return self.create_plot(fig, return_plot)
 
-
     def heatmap_df(self, data=None, cols=None, x_labels=None, x_nqs=6,
                    y_labels=None, y_nqs=4, precision=1, annotation='count',
                    annotation_color='black', colorscale=None, color_range=None,

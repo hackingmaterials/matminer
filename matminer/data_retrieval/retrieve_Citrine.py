@@ -78,7 +78,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
             properties = list(set(properties))
         all_fields = []
         for prop_counter, requested_prop in enumerate(properties):
-            jsons = self.get_data(**criteria, prop=requested_prop)
+            jsons = self.get_data(prop=requested_prop, **criteria)
             non_prop_df = pd.DataFrame()  # df w/o measurement column
             prop_df = pd.DataFrame()  # df containing only measurement column
             counter = 0  # variable to keep count of sample hit and set indexes
@@ -110,7 +110,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                             # Rename property name according to above duplicate numbering
                             prop["name"] = all_prop_names[p_idx]
                             if "scalars" in prop:
-                                p_df.set_value(counter, prop["name"], parse_scalars(prop["scalars"]))
+                                p_df.at[counter, prop["name"]] = parse_scalars(prop["scalars"])
                             elif "vectors" in prop:
                                 p_df[prop["name"]] = prop["vectors"]
                             elif "matrices" in prop:
@@ -123,11 +123,11 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                                         p_df[prop["name"] + "-" + prop_key] = np.nan
                                         p_df[prop["name"] + "-" + prop_key] = \
                                             p_df[prop["name"] + "-" + prop_key].astype(object)
-                                    p_df.set_value(counter, prop["name"] + "-" + prop_key, prop[prop_key])
+                                    p_df.at[counter, prop["name"] + "-" + prop_key] = prop[prop_key]
                         p_df.index = [counter]
                         prop_df = prop_df.append(p_df)
             df_prop = pd.concat([non_prop_df, prop_df], axis=1)
-            if prop_counter==0:
+            if prop_counter == 0:
                 optcomcols = df_prop.columns.values
             else:
                 optcomcols = list(set(optcomcols) & set(df_prop.columns))

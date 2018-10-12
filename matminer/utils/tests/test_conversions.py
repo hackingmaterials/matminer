@@ -56,7 +56,6 @@ class TestConversions(TestCase):
         self.assertEqual(df["structure"].tolist()[0], struct)
         self.assertEqual(df["structure"].tolist()[1], struct)
 
-
     def test_json_to_object(self):
         coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
         lattice = Lattice([[3.8401979337, 0.00, 0.00],

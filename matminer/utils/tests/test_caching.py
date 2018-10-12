@@ -24,27 +24,27 @@ class TestCaching(PymatgenTest):
 
         # Compute it again and make sure the cache hits
         nn_2 = get_nearest_neighbors(method, x, 0)
-        self.assertAlmostEquals(nn_1[0]['weight'], nn_2[0]['weight'])
-        self.assertEquals(1, _get_all_nearest_neighbors.cache_info().misses)
-        self.assertEquals(1, _get_all_nearest_neighbors.cache_info().hits)
+        self.assertAlmostEqual(nn_1[0]['weight'], nn_2[0]['weight'])
+        self.assertEqual(1, _get_all_nearest_neighbors.cache_info().misses)
+        self.assertEqual(1, _get_all_nearest_neighbors.cache_info().hits)
 
         # Reinstantiate the VoronoiNN class, should not cause a miss
         method = VoronoiNN()
         nn_2 = get_nearest_neighbors(method, x, 0)
-        self.assertAlmostEquals(nn_1[0]['weight'], nn_2[0]['weight'])
-        self.assertEquals(1, _get_all_nearest_neighbors.cache_info().misses)
-        self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
+        self.assertAlmostEqual(nn_1[0]['weight'], nn_2[0]['weight'])
+        self.assertEqual(1, _get_all_nearest_neighbors.cache_info().misses)
+        self.assertEqual(2, _get_all_nearest_neighbors.cache_info().hits)
 
         # Change the NN method, should induce a miss
         method = VoronoiNN(weight='volume')
         get_nearest_neighbors(method, x, 0)
-        self.assertEquals(2, _get_all_nearest_neighbors.cache_info().misses)
-        self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
+        self.assertEqual(2, _get_all_nearest_neighbors.cache_info().misses)
+        self.assertEqual(2, _get_all_nearest_neighbors.cache_info().hits)
 
         # Perturb the structure, make sure it induces a miss and
         #  a change in the NN weights
         x.perturb(0.1)
         nn_2 = get_nearest_neighbors(method, x, 0)
         self.assertNotAlmostEqual(nn_1[0]['weight'], nn_2[0]['weight'])
-        self.assertEquals(3, _get_all_nearest_neighbors.cache_info().misses)
-        self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
+        self.assertEqual(3, _get_all_nearest_neighbors.cache_info().misses)
+        self.assertEqual(2, _get_all_nearest_neighbors.cache_info().hits)

@@ -178,13 +178,14 @@ class PlotlyFigTest(PymatgenTest):
                           columns=['ah', 'bh', 'ch'])
         x_labels = ['low', 'high']
         y_labels = ['small', 'large']
-        hmdf_test = self.pf.heatmap_df(df, x_labels=x_labels,
-                                       y_labels=y_labels,
-                                       return_plot=True)
+        with self.assertWarns(UserWarning):
+            hmdf_test = self.pf.heatmap_df(df, x_labels=x_labels,
+                                           y_labels=y_labels,
+                                           return_plot=True)
         hmdf_true = self.fopen("template_hmdf.json")
         self.assertTrue(hmdf_test, hmdf_true)
 
-    def test_trianlge(self):
+    def test_triangle(self):
         df = pd.DataFrame(np.random.rand(50, 3), columns=list('qwe'))
         triangle_test = self.pf.triangle(df[['q', 'w', 'e']], return_plot=True)
         triangle_true = self.fopen("template_triangle.json")
@@ -192,5 +193,5 @@ class PlotlyFigTest(PymatgenTest):
 
 
 if __name__ == "__main__":
-    #refresh_json(open_plots=True)
+    # refresh_json(open_plots=True)
     unittest.main()

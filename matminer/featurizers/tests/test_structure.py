@@ -360,7 +360,7 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test the feature labels
         labels = prop_fp.feature_labels()
-        self.assertEquals(3, len(labels))
+        self.assertEqual(3, len(labels))
 
         #  Test a structure with all the same type (cov should be zero)
         features = prop_fp.featurize(self.diamond)

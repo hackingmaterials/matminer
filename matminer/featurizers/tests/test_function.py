@@ -111,7 +111,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
         ff2 = FunctionFeaturizer(expressions=["exp(x)", "1 / x"])
         mf = MultipleFeaturizer([ff1, ff2])
         new_df = mf.fit_featurize_dataframe(self.test_df, ['a', 'b', 'c'],
-                                        inplace=False)
+                                            inplace=False)
         self.assertEqual(len(new_df), 11)
 
 
