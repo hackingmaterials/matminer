@@ -93,12 +93,27 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     call `featurize`. See `PartialRadialDistributionFunction` for an example of
     this concept.
 
+    An additional factor to consider is the chunksize for data parallelisation.
+    For lightweight computational tasks, the overhead associated with passing
+    data from `multiprocessing.Pool.map()` to the function being parallelised
+    can increase the time taken for all tasks to be completed. By setting
+    the `self._chunksize` argument, the overhead associated with passing data
+    to the tasks can be reduced. Note that there is only an advantage to using
+    chunksize when the time taken to pass the data from `map` to the function
+    call is within several orders of magnitude to that of the function call
+    itself. For computationally expensive featurizers, the default
+    chunksize of 1 will be the most efficient. However, for more lightweight
+    featurizers, it is recommended that the implementor trial a range of
+    chunksize values to find the optimum. As a general rule of thumb, if the
+    featurize function takes 0.1 seconds or less, a chunksize of around 30 will
+    perform best. For longer featurize times, a chunksize of 1 should be used.
+
     ## Documenting a BaseFeaturizer
 
     The class documentation for each featurizer must contain a description of
     the options and the features that will be computed. The options of the class
-     must all be defined in the `__init__` function of the class, and we
-     recommend documenting them using the
+    must all be defined in the `__init__` function of the class, and we
+    recommend documenting them using the
     [Google style](https://google.github.io/styleguide/pyguide.html).
 
     For auto-generated documentation purposes, the first line of the featurizer
@@ -125,6 +140,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     @property
     def n_jobs(self):
         return self._n_jobs if hasattr(self, '_n_jobs') else cpu_count()
+
+    def set_chunksize(self, chunksize):
+        """Set the chunksize used for Pool.map parallelisation."""
+        self._chunksize = chunksize
+
+    @property
+    def chunksize(self):
+        return self._chunksize if hasattr(self, '_chunksize') else 1
 
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
@@ -325,9 +348,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                            return_errors=return_errors,
                                            pbar=pbar)
             with Pool(self.n_jobs) as p:
-                func = partial(self.featurize_wrapper, return_errors=return_errors,
+                func = partial(self.featurize_wrapper,
+                               return_errors=return_errors,
                                ignore_errors=ignore_errors)
-                return p.map(func, entries)
+                return p.map(func, entries, chunksize=self.chunksize)
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         """
