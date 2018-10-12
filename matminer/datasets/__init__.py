@@ -1,1 +1,1 @@
-from .dataframe_loader import load_dataset, available_datasets
+from .dataset_retrieval import load_dataset, available_datasets
