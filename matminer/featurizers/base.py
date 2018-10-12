@@ -458,23 +458,28 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
 
 class MultipleFeaturizer(BaseFeaturizer):
-    """
-    Class that runs multiple featurizers on the same data
+    """Class to run multiple featurizers on the same input data.
+
     All featurizers must take the same kind of data as input
-    to the featurize function."""
+    to the featurize function.
 
-    def __init__(self, featurizers):
-        """
-        Create a new instance of this featurizer.
+    Args:
+        featurizers (list of BaseFeaturizer): A list of featurizers to run.
+        iterate_over_entries (bool): Whether to iterate over the entries or
+            featurizers. Iterating over entries will enable increased caching
+            but will only display a single progress bar for all featurizers.
+            If set to False, iteration will be performed over featurizers,
+            resulting in reduced caching but individual progress bars for each
+            featurizer.
+    """
 
-        Args:
-            featurizers ([BaseFeaturizer]): list of featurizers to run.
-        """
+    def __init__(self, featurizers, iterate_over_entries=True):
         self.featurizers = featurizers
+        self.iterate_over_entries = iterate_over_entries
 
     def featurize(self, *x):
-        return np.hstack(np.squeeze([np.array(f.featurize(*x), dtype=object)
-                                     for f in self.featurizers]))
+        return [feature for f in self.featurizers
+                for feature in f.featurize(*x)]
 
     def feature_labels(self):
         return sum([f.feature_labels() for f in self.featurizers], [])
@@ -484,20 +489,41 @@ class MultipleFeaturizer(BaseFeaturizer):
             f.fit(X, y, **fit_kwargs)
         return self
 
-    def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
-        return np.hstack([np.squeeze(np.array(f.featurize_wrapper(x, return_errors=return_errors,
-                                             ignore_errors=ignore_errors), dtype=object))
-                    for f in self.featurizers])
+    def featurize_many(self, entries, ignore_errors=False, return_errors=False,
+                       pbar=True):
+        if self.iterate_over_entries:
+            return super(MultipleFeaturizer, self).featurize_many(
+                entries, ignore_errors=ignore_errors,
+                return_errors=return_errors, pbar=pbar)
+        else:
+            features = [f.featurize_many(entries, ignore_errors=ignore_errors,
+                                         return_errors=return_errors, pbar=pbar)
+                        for f in self.featurizers]
+            return [sum(x, []) for x in zip(*features)]
 
-    def _generate_column_labels(self, multiindex, return_errors):
-        return np.hstack([f._generate_column_labels(multiindex, return_errors)
-                          for f in self.featurizers])
+    def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
+        if self.iterate_over_entries:
+            return [feature for f in self.featurizers for feature in
+                    f.featurize_wrapper(x, return_errors=return_errors,
+                                        ignore_errors=ignore_errors)]
+        else:
+            return super(MultipleFeaturizer, self).featurize_wrapper(
+                x, return_errors=return_errors, ignore_errors=ignore_errors)
 
     def citations(self):
         return list(set(sum([f.citations() for f in self.featurizers], [])))
 
     def implementors(self):
         return list(set(sum([f.implementors() for f in self.featurizers], [])))
+
+    def _generate_column_labels(self, multiindex, return_errors):
+        return np.hstack([f._generate_column_labels(multiindex, return_errors)
+                          for f in self.featurizers])
+
+    def set_n_jobs(self, n_jobs):
+        super(MultipleFeaturizer, self).set_n_jobs(n_jobs)
+        for featurizer in self.featurizers:
+            featurizer.set_n_jobs(n_jobs)
 
 
 class StackedFeaturizer(BaseFeaturizer):
