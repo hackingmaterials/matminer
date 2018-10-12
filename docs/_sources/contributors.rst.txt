@@ -23,6 +23,7 @@ Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the Hacking
 * Jason Frost
 * Julien Brenneck
 * Alex Ganose
+* Daniel Dopp
 
 University of Chicago
 ----------------------

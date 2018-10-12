@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.4.2 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.4.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -360,13 +360,26 @@ Users who want to compute the representation in the natural form can use the
 utility function and users who want the data in a ML-ready format (list) can
 call <cite>featurize</cite>. See <cite>PartialRadialDistributionFunction</cite> for an example of
 this concept.</p>
+<p>An additional factor to consider is the chunksize for data parallelisation.
+For lightweight computational tasks, the overhead associated with passing
+data from <cite>multiprocessing.Pool.map()</cite> to the function being parallelised
+can increase the time taken for all tasks to be completed. By setting
+the <cite>self._chunksize</cite> argument, the overhead associated with passing data
+to the tasks can be reduced. Note that there is only an advantage to using
+chunksize when the time taken to pass the data from <cite>map</cite> to the function
+call is within several orders of magnitude to that of the function call
+itself. For computationally expensive featurizers, the default
+chunksize of 1 will be the most efficient. However, for more lightweight
+featurizers, it is recommended that the implementor trial a range of
+chunksize values to find the optimum. As a general rule of thumb, if the
+featurize function takes 0.1 seconds or less, a chunksize of around 30 will
+perform best. For longer featurize times, a chunksize of 1 should be used.</p>
 <p>## Documenting a BaseFeaturizer</p>
 <p>The class documentation for each featurizer must contain a description of
-the options and the features that will be computed. The options of the class</p>
-<blockquote>
-<div>must all be defined in the <cite>__init__</cite> function of the class, and we
-recommend documenting them using the</div></blockquote>
-<p>[Google style](<a class="reference external" href="https://google.github.io/styleguide/pyguide.html">https://google.github.io/styleguide/pyguide.html</a>).</p>
+the options and the features that will be computed. The options of the class
+must all be defined in the <cite>__init__</cite> function of the class, and we
+recommend documenting them using the
+[Google style](<a class="reference external" href="https://google.github.io/styleguide/pyguide.html">https://google.github.io/styleguide/pyguide.html</a>).</p>
 <p>For auto-generated documentation purposes, the first line of the featurizer
 doc should come under the class declaration (not under __init__) and should
 be a one line summary of the featurizer.</p>
@@ -381,6 +394,11 @@ this part is to allow people to understand what each column of their
 dataframe is without having to read the Python code. You do not need to
 explain all of the math/algorithms behind each feature for them to be able
 to reproduce the feature, just to get an idea what it is.</p>
+<dl class="attribute">
+<dt id="matminer.featurizers.base.BaseFeaturizer.chunksize">
+<code class="descname">chunksize</code><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.chunksize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.citations">
 <code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
@@ -554,6 +572,12 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="matminer.featurizers.base.BaseFeaturizer.set_chunksize">
+<code class="descname">set_chunksize</code><span class="sig-paren">(</span><em>chunksize</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.set_chunksize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the chunksize used for Pool.map parallelisation.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.set_n_jobs">
 <code class="descname">set_n_jobs</code><span class="sig-paren">(</span><em>n_jobs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.set_n_jobs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the number of threads for this</p>
@@ -569,19 +593,27 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.base.MultipleFeaturizer">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.base.</code><code class="descname">MultipleFeaturizer</code><span class="sig-paren">(</span><em>featurizers</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.base.</code><code class="descname">MultipleFeaturizer</code><span class="sig-paren">(</span><em>featurizers</em>, <em>iterate_over_entries=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
-<p>Class that runs multiple featurizers on the same data
-All featurizers must take the same kind of data as input
+<p>Class to run multiple featurizers on the same input data.</p>
+<p>All featurizers must take the same kind of data as input
 to the featurize function.</p>
-<dl class="method">
-<dt id="matminer.featurizers.base.MultipleFeaturizer.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>featurizers</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new instance of this featurizer.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>featurizers ([BaseFeaturizer]): list of featurizers to run.</dd>
+<dd><p class="first">featurizers (list of BaseFeaturizer): A list of featurizers to run.
+iterate_over_entries (bool): Whether to iterate over the entries or</p>
+<blockquote class="last">
+<div>featurizers. Iterating over entries will enable increased caching
+but will only display a single progress bar for all featurizers.
+If set to False, iteration will be performed over featurizers,
+resulting in reduced caching but individual progress bars for each
+featurizer.</div></blockquote>
+</dd>
 </dl>
+<dl class="method">
+<dt id="matminer.featurizers.base.MultipleFeaturizer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>featurizers</em>, <em>iterate_over_entries=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="method">
@@ -618,6 +650,32 @@ in any derived featurizer subclass.</p>
 <dd>x: input data to featurize (type depends on featurizer).</dd>
 <dt>Returns:</dt>
 <dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.base.MultipleFeaturizer.featurize_many">
+<code class="descname">featurize_many</code><span class="sig-paren">(</span><em>entries</em>, <em>ignore_errors=False</em>, <em>return_errors=False</em>, <em>pbar=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.featurize_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Featurize a list of entries.</p>
+<p>If <cite>featurize</cite> takes multiple inputs, supply inputs as a list of tuples.</p>
+<p>Featurize_many supports entries as a list, tuple, numpy array,
+Pandas Series, or Pandas DataFrame.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">entries (list-like object): A list of entries to be featurized.
+ignore_errors (bool): Returns NaN for entries where exceptions are</p>
+<blockquote>
+<div>thrown if True. If False, exceptions are thrown as normal.</div></blockquote>
+<dl class="docutils">
+<dt>return_errors (bool): If True, returns the feature list as</dt>
+<dd>determined by ignore_errors with traceback strings added
+as an extra ‘feature’. Entries which featurize without
+exceptions have this extra feature set to NaN.</dd>
+</dl>
+<p class="last">pbar (bool): Show a progress bar for featurization if True.</p>
+</dd>
+<dt>Returns:</dt>
+<dd>(list) features for each entry.</dd>
 </dl>
 </dd></dl>
 
@@ -671,6 +729,12 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dl>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.base.MultipleFeaturizer.set_n_jobs">
+<code class="descname">set_n_jobs</code><span class="sig-paren">(</span><em>n_jobs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.set_n_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the number of threads for this</p>
 </dd></dl>
 
 </dd></dl>
@@ -7379,7 +7443,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 

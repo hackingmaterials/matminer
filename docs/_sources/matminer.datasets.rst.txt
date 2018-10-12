@@ -6,15 +6,23 @@ Subpackages
 
 .. toctree::
 
-    matminer.datasets.test_datasets
+    matminer.datasets.tests
 
 Submodules
 ----------
 
-matminer.datasets.dataframe\_loader module
-------------------------------------------
+matminer.datasets.dataset\_retrieval module
+-------------------------------------------
 
-.. automodule:: matminer.datasets.dataframe_loader
+.. automodule:: matminer.datasets.dataset_retrieval
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matminer.datasets.utils module
+------------------------------
+
+.. automodule:: matminer.datasets.utils
     :members:
     :undoc-members:
     :show-inheritance:

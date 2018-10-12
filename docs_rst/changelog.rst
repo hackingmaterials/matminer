@@ -5,6 +5,16 @@
 matminer Changelog
 ==================
 
+**v0.4.3**
+
+* Revamped test / example data loader classes (D. Dopp, A. Ganose, A. Dunn)
+* Add chunksize support to improve performance of dataframe featurization (A. Ganose)
+* Improve performance of BandCenter with large coefficients (A. Faghaninia)
+* Revamp of MultiFeaturizer (A. Ganose)
+* Custom progress bar for running in notebook (A. Ganose)
+* Improved multi-index for conversion featurizerse (A. Ganose)
+* Minor fixes / improvements (D. Dopp, A. Ganose, A. Faghaninia)
+
 **v0.4.2**
 
 * Refactor conversion utils to be featurizers for consistency and parallelism (A. Ganose)
