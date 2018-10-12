@@ -276,7 +276,21 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         # Add columns for the errors from the featurizer
         if return_errors:
             labels.append(self.__class__.__name__ + " Exceptions")
-        if multiindex:
+
+        if multiindex and len(labels[0]) == 2:
+            # conversion featurizer, aiming to featurize in place.
+            # conversion featurizers only have one feature label.
+            # If return_errors=False, the transformation is:
+            # [('l1', 'l2')] -> [('l1', 'l2')] (i.e. unaltered).
+            # But if return_errors=True, the transformation is:
+            # [('l1', 'l2'), 'feat Exceptions'] ->
+            # [('l1', 'l2'), ('l1', 'feat Exceptions')]
+            tmp_labels = [label if isinstance(label, str) else label[1]
+                          for label in labels]
+            indices = ([labels[0][0]], tmp_labels)
+            labels = pd.MultiIndex.from_product(indices)
+
+        elif multiindex:
             indices = ([self.__class__.__name__], labels)
             labels = pd.MultiIndex.from_product(indices)
         return labels

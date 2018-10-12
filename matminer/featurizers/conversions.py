@@ -73,12 +73,6 @@ class ConversionFeaturizer(BaseFeaturizer):
         Returns:
             (Pandas.Dataframe): The updated dataframe.
         """
-
-        # TODO: Figure out if this is possible/desired
-        if 'multiiindex' in kwargs and kwargs['multiindex']:
-            raise ValueError("ConversionFeaturizer does not support "
-                             "multiindexing")
-
         # now the col_id is known, we check if we need to update target_col_id
         # for multiindexes it is the last index that is updated
         target = self._target_col_id
