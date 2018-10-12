@@ -104,14 +104,16 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     itself. For computationally expensive featurizers, the default
     chunksize of 1 will be the most efficient. However, for more lightweight
     featurizers, it is recommended that the implementor trial a range of
-    chunksize values to find the optimum.
+    chunksize values to find the optimum. As a general rule of thumb, if the
+    featurize function takes 0.1 seconds or less, a chunksize of around 30 will
+    perform best. For longer featurize times, a chunksize of 1 should be used.
 
     ## Documenting a BaseFeaturizer
 
     The class documentation for each featurizer must contain a description of
     the options and the features that will be computed. The options of the class
-     must all be defined in the `__init__` function of the class, and we
-     recommend documenting them using the
+    must all be defined in the `__init__` function of the class, and we
+    recommend documenting them using the
     [Google style](https://google.github.io/styleguide/pyguide.html).
 
     For auto-generated documentation purposes, the first line of the featurizer
