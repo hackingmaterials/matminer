@@ -132,7 +132,7 @@ class StrToComposition(ConversionFeaturizer):
                  overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
         self.reduce = reduce
-        self._chunksize = 20
+        self._chunksize = 30
 
     def featurize(self, string_composition):
         """Convert a string to a pymatgen Composition.
@@ -190,7 +190,7 @@ class StructureToComposition(ConversionFeaturizer):
         super().__init__(target_col_id, overwrite_data)
         self.reduce = reduce
         self._overwrite = overwrite_data
-        self._chunksize = 20
+        self._chunksize = 30
 
     def featurize(self, structure):
         """Convert a string to a pymatgen Composition.
@@ -246,7 +246,7 @@ class StructureToIStructure(ConversionFeaturizer):
     def __init__(self, target_col_id='istructure', overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
         self._overwrite = overwrite_data
-        self._chunksize = 20
+        self._chunksize = 30
 
     def featurize(self, structure):
         """Convert a pymatgen Structure to an immutable IStructure,
@@ -294,7 +294,7 @@ class DictToObject(ConversionFeaturizer):
 
     def __init__(self, target_col_id='_object', overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
-        self._chunksize = 20
+        self._chunksize = 30
 
     def featurize(self, dict_data):
         """Convert a string to a pymatgen Composition.
@@ -343,7 +343,7 @@ class JsonToObject(ConversionFeaturizer):
 
     def __init__(self, target_col_id='_object', overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
-        self._chunksize = 20
+        self._chunksize = 30
 
     def featurize(self, json_data):
         """Convert a string to a pymatgen Composition.
