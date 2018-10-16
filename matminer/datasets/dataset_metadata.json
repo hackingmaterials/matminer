@@ -1,0 +1,111 @@
+{
+    "dielectric_constant": {
+        "bibtex_refs": [
+            "@Article{Petousis2017,\nauthor={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric\nand Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja\nand Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},\ntitle={High-throughput screening of inorganic compounds for the\ndiscovery of novel dielectric and optical materials},\njournal={Scientific Data},\nyear={2017},\nmonth={Jan},\nday={31},\npublisher={The Author(s)},\nvolume={4},\npages={160134},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2016.134}\n}"
+        ],
+        "columns": {
+            "band_gap": "Measure of the conductivity of a material",
+            "cif": "optional: Description string for structure",
+            "e_electronic": "electronic contribution to dielectric tensor",
+            "e_total": "Total dielectric tensor incorporating both electronic and ionic contributions",
+            "formula": "Chemical formula of the material",
+            "material_id": "Materials Project ID of the material",
+            "meta": "optional, metadata descriptor of the datapoint",
+            "n": "Refractive Index",
+            "nsites": "The \\# of atoms in the unit cell of the calculation.",
+            "poly_electronic": "the average of the eigenvalues of the electronic contribution to the dielectric tensor",
+            "poly_total": "the average of the eigenvalues of the total (electronic and ionic) contributions to the dielectric tensor",
+            "poscar": "optional: Poscar metadata",
+            "pot_ferroelectric": "Whether the material is potentially ferroelectric",
+            "space_group": "Integer specifying the crystallographic structure of the material",
+            "structure": "pandas Series defining the structure of the material",
+            "volume": "Volume of the unit cell in cubic angstroms, For supercell calculations, this quantity refers to the volume of the full supercell. "
+        },
+        "description": "1,056 structures with dielectric properties, calculated with DFPT-PBE.",
+        "file_type": "json.gz",
+        "hash": "8eb24812148732786cd7c657eccfc6b5ee66533429c2cfbcc4f0059c0295e8b6",
+        "num_entries": 1056,
+        "reference": "Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,\nChen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.\nHigh-throughput screening of inorganic compounds for the discovery\nof novel dielectric and optical materials. Sci. Data 4, 160134 (2017).",
+        "url": "https://ndownloader.figshare.com/files/13213475"
+    },
+    "elastic_tensor_2015": {
+        "bibtex_refs": [
+            "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Angsten, Thomas\nand Jain, Anubhav and Notestine, Randy and Gamst, Anthony\nand Sluiter, Marcel and Krishna Ande, Chaitanya\nand van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac\nand Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.\nand Asta, Mark},\ntitle={Charting the complete elastic properties\nof inorganic crystalline compounds},\njournal={Scientific Data},\nyear={2015},\nmonth={Mar},\nday={17},\npublisher={The Author(s)},\nvolume={2},\npages={150009},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.9}\n}"
+        ],
+        "columns": {
+            "G_Reuss": "Lower bound on shear modulus for polycrystalline material",
+            "G_VRH": "Average of G_Reuss and G_Voigt",
+            "G_Voigt": "Upper bound on shear modulus for polycrystalline material",
+            "K_Reuss": "Lower bound on bulk modulus for polycrystalline material",
+            "K_VRH": "Average of K_Reuss and K_Voigt",
+            "K_Voigt": "Upper bound on bulk modulus for polycrystalline material",
+            "cif": "optional: Description string for structure",
+            "compliance_tensor": "Tensor describing elastic behavior",
+            "elastic_anisotropy": "measure of directional dependence of the materials elasticity, metric is always >= 0",
+            "elastic_tensor": "Tensor describing elastic behavior corresponding to IEEE orientation, symmetrized to crystal structure ",
+            "elastic_tensor_original": "Tensor describing elastic behavior, unsymmetrized, corresponding to POSCAR conventional standard cell orientation",
+            "formula": "Chemical formula of the material",
+            "kpoint_density": "optional: Sampling parameter from calculation",
+            "material_id": "Materials Project ID of the material",
+            "nsites": "The \\# of atoms in the unit cell of the calculation.",
+            "poisson_ratio": "Describes lateral response to loading",
+            "poscar": "optional: Poscar metadata",
+            "space_group": "Integer specifying the crystallographic structure of the material",
+            "structure": "pandas Series defining the structure of the material",
+            "volume": "Volume of the unit cell in cubic angstroms, For supercell calculations, this quantity refers to the volume of the full supercell. "
+        },
+        "description": "1,181 structures with elastic properties calculated with DFT-PBE.",
+        "file_type": "json.gz",
+        "hash": "8c3b342f75da7e7baa1b769b59554485fd647f4cb1da9318d0d1ba3b3b838183",
+        "num_entries": 1181,
+        "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
+        "url": "https://ndownloader.figshare.com/files/13220603"
+    },
+    "flla": {
+        "bibtex_refs": [
+            "@article{doi:10.1002/qua.24917,\nauthor = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},\ntitle = {Crystal structure representations for machine learning models of formation energies},\njournal = {International Journal of Quantum Chemistry},\nvolume = {115},\nnumber = {16},\npages = {1094-1101},\nkeywords = {machine learning, formation energies, representations,\ncrystal structure, periodic systems},\ndoi = {10.1002/qua.24917},\nurl = {https://onlinelibrary.wiley.com/doi/abs/10.1002/qua.24917},\neprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/qua.24917},\nabstract = {We introduce and evaluate a set of feature vector\nrepresentations of crystal structures for machine learning (ML)\nmodels of formation energies of solids. ML models of atomization\nenergies of organic molecules have been successful using a Coulomb\nmatrix representation of the molecule. We consider three ways to\ngeneralize such representations to periodic systems: (i) a matrix\nwhere each element is related to the Ewald sum of the electrostatic\ninteraction between two different atoms in the unit cell repeated\nover the lattice; (ii) an extended Coulomb-like matrix that takes\ninto account a number of neighboring unit cells; and (iii) an\nansatz that mimics the periodicity and the basic features of the\nelements in the Ewald sum matrix using a sine function of the\ncrystal coordinates of the atoms. The representations are compared\nfor a Laplacian kernel with Manhattan norm, trained to reproduce\nformation energies using a dataset of 3938 crystal structures\nobtained from the Materials Project. For training sets consisting\nof 3000 crystals, the generalization error in predicting formation\nenergies of new structures corresponds to (i) 0.49, (ii) 0.64, and\n(iii) for the respective representations. \u00a9 2015 Wiley Periodicals,\nInc.}\n}",
+            "@article{doi:10.1063/1.4812323,\nauthor = {Jain,Anubhav  and Ong,Shyue Ping  and Hautier,Geoffroy\nand Chen,Wei  and Richards,William Davidson  and Dacek,Stephen\nand Cholia,Shreyas  and Gunter,Dan  and Skinner,David\nand Ceder,Gerbrand  and Persson,Kristin A. },\ntitle = {Commentary: The Materials Project: A materials genome\napproach to accelerating materials innovation},\njournal = {APL Materials},\nvolume = {1},\nnumber = {1},\npages = {011002},\nyear = {2013},\ndoi = {10.1063/1.4812323},\nURL = {https://doi.org/10.1063/1.4812323},\neprint = {https://doi.org/10.1063/1.4812323}\n}"
+        ],
+        "columns": {
+            "e_above_hull": "The energy of decomposition of this material into the set of most stable materials at this chemical composition, in eV/atom.",
+            "formation_energy": "Computed formation energy at 0K, 0atm using a reference state of zero for the pure elements.",
+            "formation_energy_per_atom": "See formation_energy",
+            "formula": "Chemical formula of the material",
+            "material_id": "Materials Project ID of the material",
+            "nsites": "The \\# of atoms in the unit cell of the calculation.",
+            "structure": "pandas Series defining the structure of the material"
+        },
+        "description": "3938 structures and computed formation energies from \"Crystal Structure Representations for Machine Learning Models of Formation Energies.\"",
+        "file_type": "json.gz",
+        "hash": "a7f1649c3b9f5186e8440b163e0421cbfdf61973ec7e45101f6dab641f1e2170",
+        "num_entries": 3938,
+        "reference": "1) F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,\n\"Crystal structure representations for machine learning models of\nformation energies\", Int. J. Quantum Chem. 115 (2015) 1094\u20131101.\ndoi:10.1002/qua.24917.\n\n(raw data)\n2) Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,\nDacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. & Persson,\nK. A. Commentary: The Materials Project: A materials genome approach\nto accelerating materials innovation. APL Mater. 1, 11002 (2013).",
+        "url": "https://ndownloader.figshare.com/files/13220597"
+    },
+    "piezoelectric_tensor": {
+        "bibtex_refs": [
+            "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Geerlings, Henry\nand Asta, Mark and Persson, Kristin Aslaug},\ntitle={A database to enable discovery and design of piezoelectric\nmaterials},\njournal={Scientific Data},\nyear={2015},\nmonth={Sep},\nday={29},\npublisher={The Author(s)},\nvolume={2},\npages={150053},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.53}\n}"
+        ],
+        "columns": {
+            "cif": "optional: Description string for structure",
+            "eij_max": "Piezoelectric modulus",
+            "formula": "Chemical formula of the material",
+            "material_id": "Materials Project ID of the material",
+            "meta": "optional, metadata descriptor of the datapoint",
+            "nsites": "The \\# of atoms in the unit cell of the calculation.",
+            "piezoelectric_tensor": "Tensor describing the piezoelectric properties of the material",
+            "point_group": "Descriptor of crystallographic structure of the material",
+            "poscar": "optional: Poscar metadata",
+            "space_group": "Integer specifying the crystallographic structure of the material",
+            "structure": "pandas Series defining the structure of the material",
+            "v_max": "Crystallographic direction",
+            "volume": "Volume of the unit cell in cubic angstroms, For supercell calculations, this quantity refers to the volume of the full supercell. "
+        },
+        "description": "941 structures with piezoelectric properties, calculated with DFT-PBE.",
+        "file_type": "json.gz",
+        "hash": "dc9d04836f7f91ecb4ef6dc23e42468571be857f0fccafdfb51a5a40f19db898",
+        "num_entries": 941,
+        "reference": "de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.\nA database to enable discovery and design of piezoelectric materials.\nSci. Data 2, 150053 (2015)",
+        "url": "https://ndownloader.figshare.com/files/13220621"
+    }
+}
