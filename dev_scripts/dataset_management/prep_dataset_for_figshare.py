@@ -14,6 +14,26 @@ from matminer.utils.io import store_dataframe_as_json
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
 
 
+def _preprocess_castelli_perovskites(df):
+    df["formula"] = df["A"] + df["B"] + df["anion"]
+    df['vbm'] = np.where(df['is_direct'], df['VB_dir'], df['VB_ind'])
+    df['cbm'] = np.where(df['is_direct'], df['CB_dir'], df['CB_ind'])
+    df['gap gllbsc'] = np.where(df['is_direct'], df['gllbsc_dir-gap'],
+                                df['gllbsc_ind-gap'])
+    df['structure'] = df['structure'].map(ast.literal_eval)
+    dropcols = ["filename", "XCFunctional", "anion_idx", "Unnamed: 0", "A", "B",
+                "anion", "gllbsc_ind-gap", "gllbsc_dir-gap", "CB_dir", "CB_ind",
+                "VB_dir", "VB_ind"]
+    df = df.drop(dropcols, axis=1)
+    colmap = {"sum_magnetic_moments": "mu_b",
+              "is_direct": "gap is direct",
+              "heat_of_formation_all": "e_form",
+              "FermiLevel": "fermi level",
+              "FermiWidth": "fermi width"}
+    df = df.rename(columns=colmap)
+    df.reindex(sorted(df.columns), axis=1)
+    return df
+
 def _preprocess_elastic_tensor_2015(df):
     """
     Preprocessor used to convert the elastic_tensor_2015 dataset to the
@@ -105,7 +125,8 @@ _datasets_to_preprocessing_routines = {
     "elastic_tensor_2015": _preprocess_elastic_tensor_2015,
     "piezoelectric_tensor": _preprocess_piezoelectric_tensor,
     "dielectric_constant": _preprocess_dielectric_constant,
-    "flla": _preprocess_flla
+    "flla": _preprocess_flla,
+    "castelli_perovskites": _preprocess_castelli_perovskites,
 }
 
 

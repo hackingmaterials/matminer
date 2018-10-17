@@ -150,6 +150,27 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
 
+    def test_castelli_perovskites(self):
+        # Universal Tests
+        object_headers = ['structure', 'formula']
+
+        numeric_headers = ['fermi level', 'fermi width', 'e_form', 'mu_b',
+                           'vbm', 'cbm', 'gap gllbsc']
+
+        bool_headers = ['gap is direct']
+
+        metadata_headers = set()
+
+        self.universal_dataset_check(
+            "castelli_perovskites", object_headers, numeric_headers,
+            bool_headers=bool_headers, metadata_headers=metadata_headers
+        )
+
+        # Unique tests
+        df = load_dataset("castelli_perovskites", include_metadata=True,
+                          download_if_missing=False)
+        self.assertEqual(type(df['structure'][0]), Structure)
+
 
 if __name__ == "__main__":
     unittest.main()

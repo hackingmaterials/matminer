@@ -10,7 +10,8 @@ class DataSetTest(unittest.TestCase):
             'flla',
             'elastic_tensor_2015',
             'piezoelectric_tensor',
-            'dielectric_constant'
+            'dielectric_constant',
+            'castelli_perovskites',
         ]
         self.dataset_attributes = [
             'file_type',

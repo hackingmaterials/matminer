@@ -1,4 +1,27 @@
 {
+    "castelli_perovskites": {
+        "bibtex_refs": [
+            "@Article{C2EE22341D,\nauthor =\"Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, S\u00f8ren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.\",\ntitle  =\"New cubic perovskites for one- and two-photon water splitting using the computational materials repository\",\njournal  =\"Energy Environ. Sci.\",\nyear  =\"2012\",\nvolume  =\"5\",\nissue  =\"10\",\npages  =\"9034-9043\",\npublisher  =\"The Royal Society of Chemistry\",\ndoi  =\"10.1039/C2EE22341D\",\nurl  =\"http://dx.doi.org/10.1039/C2EE22341D\",\nabstract  =\"A new efficient photoelectrochemical cell (PEC) is one of the possible solutions to the energy and climate problems of our time. Such a device requires development of new semiconducting materials with tailored properties with respect to stability and light absorption. Here we perform computational screening of around 19\u2009000 oxides{,} oxynitrides{,} oxysulfides{,} oxyfluorides{,} and oxyfluoronitrides in the cubic perovskite structure with PEC applications in mind. We address three main applications: light absorbers for one- and two-photon water splitting and high-stability transparent shields to protect against corrosion. We end up with 20{,} 12{,} and 15 different combinations of oxides{,} oxynitrides and oxyfluorides{,} respectively{,} inviting further experimental investigation.\"}"
+        ],
+        "columns": {
+            "cbm": "similar to vbm but for conduction band",
+            "e_form": "heat of formation in eV",
+            "fermi level": "the thermodynamic work required to add one electron to the body in eV",
+            "fermi width": "fermi bandwidth",
+            "formula": "Chemical formula of the material",
+            "gap gllbsc": "electronic band gap in eV calculated via gllbsc functional",
+            "gap is direct": "boolean indicator for direct gap",
+            "mu_b": "magnetic moment in terms of Bohr magneton",
+            "structure": "crystal structure represented by pymatgen Structure object",
+            "vbm": "absolute value of valence band edge calculated via gllbsc"
+        },
+        "description": "18,928 perovskites generated with ABX combinatorics, calculating gbllsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.",
+        "file_type": "json.gz",
+        "hash": "fc8b44d7213515f9bc2ef3a5a5d3e4b946b321c1311f14c8be31f857b61b10d7",
+        "num_entries": 18928,
+        "reference": "Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, S\u00f8ren Dahl, Ib Chorkendorff, Thomas F. Jaramillo and Karsten W. Jacobsen (2012) New cubic perovskites for one- and two-photon water splitting using the computational materials repository. Energy Environ. Sci., 2012,5, 9034-9043 https://doi.org/10.1039/C2EE22341D",
+        "url": "https://ndownloader.figshare.com/files/13284197"
+    },
     "dielectric_constant": {
         "bibtex_refs": [
             "@Article{Petousis2017,\nauthor={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric\nand Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja\nand Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},\ntitle={High-throughput screening of inorganic compounds for the\ndiscovery of novel dielectric and optical materials},\njournal={Scientific Data},\nyear={2017},\nmonth={Jan},\nday={31},\npublisher={The Author(s)},\nvolume={4},\npages={160134},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2016.134}\n}"

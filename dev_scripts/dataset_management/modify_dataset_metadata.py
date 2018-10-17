@@ -111,16 +111,16 @@ def generate_new_dataset(dataset):
                     finished_adding_entries = True
 
         elif attrib_name == "description":
-            description = input("Add a dataset description: ")
+            description = input("Add a dataset description: ").strip()
 
         elif attrib_name == "file_type":
-            file_type = input("Add a dataset filetype: ")
+            file_type = input("Add a dataset filetype: ").strip()
 
         elif attrib_name == "hash":
-            file_hash = input("Add a file hash: ")
+            file_hash = input("Add a file hash: ").strip()
 
         elif attrib_name == "num_entries":
-            num_entries = int(input("Add the number of entries: "))
+            num_entries = int(input("Add the number of entries: ").strip())
 
         elif attrib_name == "reference":
             reference_lines = []
@@ -137,7 +137,7 @@ def generate_new_dataset(dataset):
                 reference = new_reference
 
         elif attrib_name == "url":
-            url = input("Add a file download url: ")
+            url = input("Add a file download url: ").strip()
 
         else:
             print("Invalid option")
