@@ -12,7 +12,7 @@ _dataset_dict = None
 
 
 def load_dataset(name, data_home=None, download_if_missing=True,
-                 include_metadata=False):
+                 include_metadata=False, system="all"):
     """
     Loads a dataframe containing the dataset specified with the 'name' field.
 
@@ -31,6 +31,11 @@ def load_dataset(name, data_home=None, download_if_missing=True,
 
         include_metadata (bool): optional argument for some datasets with
             metadata fields
+
+        system (list, str): argument for glass_ternary_hipt dataset,
+            determines which subset of the dataset to load: "CoFeZr",
+            "CoTiZr", "CoVZr","FeTiNb" or a list of these systems e.g.
+            ["CoFeZr", "CoVZr"] or "all"
 
     Returns: (pd.DataFrame)
     """
@@ -64,6 +69,17 @@ def load_dataset(name, data_home=None, download_if_missing=True,
                       dataset_metadata['hash'], download_if_missing)
 
     df = load_dataframe_from_json(data_path)
+
+    # Dataset specific modifiers that couldn't be removed with preprocessing
+    if name == "glass_ternary_hipt" and system != "all":
+        if isinstance(system, str):
+            system = [system]
+
+        for item in system:
+            if item not in {"CoFeZr", "CoTiZr", "CoVZr", "FeTiNb"}:
+                raise AttributeError("some of the system list {} are not "
+                                     "in this dataset". format(system))
+        df = df[df["system"].isin(system)]
 
     if not include_metadata:
         if name == "elastic_tensor_2015":

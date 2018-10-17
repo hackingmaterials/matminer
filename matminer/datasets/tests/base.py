@@ -14,6 +14,7 @@ class DataSetTest(unittest.TestCase):
             'castelli_perovskites',
             'boltztrap_mp',
             'phonon_dielectric_mp',
+            'glass_ternary_hipt',
         ]
         self.dataset_attributes = [
             'file_type',

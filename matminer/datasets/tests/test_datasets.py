@@ -212,6 +212,25 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
 
+    def test_glass_ternary_hipt(self):
+        # Universal Tests
+        object_headers = ['formula', 'system', 'processing', 'phase']
+
+        numeric_headers = ['gfa']
+
+        bool_headers = []
+
+        metadata_headers = set()
+
+        self.universal_dataset_check(
+            "glass_ternary_hipt", object_headers, numeric_headers,
+            bool_headers=bool_headers, metadata_headers=metadata_headers
+        )
+
+        # Unique tests
+        df = load_dataset("glass_ternary_hipt", include_metadata=True,
+                          download_if_missing=False)
+
 
 if __name__ == "__main__":
     unittest.main()

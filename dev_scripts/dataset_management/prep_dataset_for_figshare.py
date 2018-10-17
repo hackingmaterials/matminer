@@ -152,7 +152,7 @@ functions. Defaults to an identity function and no arguments
 """
 
 
-_datasets_to_preprocessing_routines = defaultdict(lambda x: x, {
+_datasets_to_preprocessing_routines = {
     "elastic_tensor_2015": _preprocess_elastic_tensor_2015,
     "piezoelectric_tensor": _preprocess_piezoelectric_tensor,
     "dielectric_constant": _preprocess_dielectric_constant,
@@ -160,7 +160,7 @@ _datasets_to_preprocessing_routines = defaultdict(lambda x: x, {
     "castelli_perovskites": _preprocess_castelli_perovskites,
     "boltztrap_mp": _preprocess_boltztrap_mp,
     "phonon_dielectric_mp": _preprocess_phonon_dielectric_mp,
-})
+}
 
 _datasets_to_kwargs = defaultdict(dict, {
     "elastic_tensor_2015": {'comment': "#"},
@@ -210,12 +210,13 @@ def _file_to_dataframe(file_path, _dataset_name=None, preprocessing_func=None):
     # If dictionary lookup doesn't find a preprocessor none will be applied
     if preprocessing_func is None:
         if _dataset_name not in _datasets_to_preprocessing_routines.keys():
-            raise UserWarning(
-                "The dataset {} has no predefined preprocessor and will be "
-                "loaded using only the default pandas.read_csv "
-                "function.".format(_dataset_name)
+            print(
+                "Warning: The dataset {} has no predefined preprocessor "
+                "and will be loaded using only the default pandas.read_* "
+                "function.".format(_dataset_name), flush=True
             )
-        df = _datasets_to_preprocessing_routines[_dataset_name](df)
+        else:
+            df = _datasets_to_preprocessing_routines[_dataset_name](df)
 
     else:
         df = preprocessing_func(df)
