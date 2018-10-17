@@ -14,9 +14,11 @@ from matminer.utils.io import store_dataframe_as_json
 
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
 
-"""Each _preprocess_* function acts as a preprocessor for a dataset with a 
+"""
+Each _preprocess_* function acts as a preprocessor for a dataset with a
 given name. One should be written whenever a new dataset is being added to
-matminer"""
+matminer
+"""
 
 
 def _preprocess_phonon_dielectric_mp(df):
@@ -143,9 +145,11 @@ def _preprocess_flla(df):
     return df[column_headers]
 
 
-"""These dictionaries map the names of datasets to their preprocessors and to 
-any special arguments that may be needed for their file to dataframe loader 
-functions. Defaults to an identity function and no arguments"""
+"""
+These dictionaries map the names of datasets to their preprocessors and to
+any special arguments that may be needed for their file to dataframe loader
+functions. Defaults to an identity function and no arguments
+"""
 
 
 _datasets_to_preprocessing_routines = defaultdict(lambda x: x, {
