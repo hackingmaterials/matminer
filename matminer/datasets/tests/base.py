@@ -12,6 +12,7 @@ class DataSetTest(unittest.TestCase):
             'piezoelectric_tensor',
             'dielectric_constant',
             'castelli_perovskites',
+            'boltztrap_mp',
         ]
         self.dataset_attributes = [
             'file_type',

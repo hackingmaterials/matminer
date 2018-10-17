@@ -1,4 +1,27 @@
 {
+    "boltztrap_mp": {
+        "bibtex_refs": [
+            "@Article{Ricci2017,\nauthor={Ricci, Francesco\nand Chen, Wei\nand Aydemir, Umut\nand Snyder, G. Jeffrey\nand Rignanese, Gian-Marco\nand Jain, Anubhav\nand Hautier, Geoffroy},\ntitle={An ab initio electronic transport database for inorganic materials},\njournal={Scientific Data},\nyear={2017},\nmonth={Jul},\nday={04},\npublisher={The Author(s)},\nvolume={4},\npages={170085},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2017.85}\n}",
+            "@misc{dryad_gn001,\ntitle = {Data from: An ab initio electronic transport database for inorganic materials},\nauthor = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G},\nyear = {2017},\njournal = {Scientific Data},\nURL = {https://doi.org/10.5061/dryad.gn001},\ndoi = {doi:10.5061/dryad.gn001},\npublisher = {Dryad Digital Repository}\n}"
+        ],
+        "columns": {
+            "formula": "Chemical formula of the entry",
+            "m_n": "n-type/conduction band effective mass. Units: m_e where m_e is the mass of an electron; i.e. m_n is a unitless ratio",
+            "m_p": "p-type/valence band effective mass.",
+            "mpid": "Materials Project identifier",
+            "pf_n": "n-type thermoelectric power factor in uW/cm2.K where uW is microwatts and a constant relaxation time of 1e-14 assumed.",
+            "pf_p": "p-type power factor in uW/cm2.K",
+            "s_n": "n-type Seebeck coefficient in micro Volts per Kelvin",
+            "s_p": "p-type Seebeck coefficient in micro Volts per Kelvin",
+            "structure": "pymatgen Sttructure object describing the crystal structure of the material"
+        },
+        "description": "Effective mass and thermoelectric properties of 8924 compounds in The  Materials Project database that are calculated by the BoltzTraP software package run on the GGA-PBE or GGA+U density functional theory calculation results. The properties are reported at the temperature of 300 Kelvin and the carrier concentration of 1e18 1/cm3.",
+        "file_type": "json.gz",
+        "hash": "02c8ea59a3805cdd50aef6f6f55c3d0148eda9e5cab871ff37d2fa46fb5941d7",
+        "num_entries": 8924,
+        "reference": "Ricci, F. et al. An ab initio electronic transport database for inorganic materials. Sci. Data 4:170085 doi: 10.1038/sdata.2017.85 (2017).\nRicci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data from: An ab initio electronic transport database for inorganic materials. Dryad Digital Repository. https://doi.org/10.5061/dryad.gn001",
+        "url": "https://ndownloader.figshare.com/files/13297511"
+    },
     "castelli_perovskites": {
         "bibtex_refs": [
             "@Article{C2EE22341D,\nauthor =\"Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, S\u00f8ren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.\",\ntitle  =\"New cubic perovskites for one- and two-photon water splitting using the computational materials repository\",\njournal  =\"Energy Environ. Sci.\",\nyear  =\"2012\",\nvolume  =\"5\",\nissue  =\"10\",\npages  =\"9034-9043\",\npublisher  =\"The Royal Society of Chemistry\",\ndoi  =\"10.1039/C2EE22341D\",\nurl  =\"http://dx.doi.org/10.1039/C2EE22341D\",\nabstract  =\"A new efficient photoelectrochemical cell (PEC) is one of the possible solutions to the energy and climate problems of our time. Such a device requires development of new semiconducting materials with tailored properties with respect to stability and light absorption. Here we perform computational screening of around 19\u2009000 oxides{,} oxynitrides{,} oxysulfides{,} oxyfluorides{,} and oxyfluoronitrides in the cubic perovskite structure with PEC applications in mind. We address three main applications: light absorbers for one- and two-photon water splitting and high-stability transparent shields to protect against corrosion. We end up with 20{,} 12{,} and 15 different combinations of oxides{,} oxynitrides and oxyfluorides{,} respectively{,} inviting further experimental investigation.\"}"

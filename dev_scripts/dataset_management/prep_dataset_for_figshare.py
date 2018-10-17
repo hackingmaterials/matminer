@@ -267,7 +267,7 @@ if __name__ == "__main__":
         # get a list of storage ready dataframes
         dataset_name, dataframe_list = _file_to_dataframe(f_path)
         # Store each dataframe and compute metadata if desired
-        for dataframe, num in enumerate(dataframe_list):
+        for num, dataframe in enumerate(dataframe_list):
             # Construct the file path to store dataframe at and store it
             df_num = ("_" + str(num) + "_") if len(dataframe_list) > 1 else ""
             json_destination = join(destination,

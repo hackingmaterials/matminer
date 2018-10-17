@@ -171,6 +171,27 @@ class DataSetsTest(DataSetTest):
                           download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
 
+    def test_boltztrap_mp(self):
+        # Universal Tests
+        object_headers = ['structure', 'formula', 'mpid']
+
+        numeric_headers = ['pf_n', 'pf_p', 's_n', 's_p',
+                           'm_n', 'm_p']
+
+        bool_headers = []
+
+        metadata_headers = set()
+
+        self.universal_dataset_check(
+            "boltztrap_mp", object_headers, numeric_headers,
+            bool_headers=bool_headers, metadata_headers=metadata_headers
+        )
+
+        # Unique tests
+        df = load_dataset("boltztrap_mp", include_metadata=True,
+                          download_if_missing=False)
+        self.assertEqual(type(df['structure'][0]), Structure)
+
 
 if __name__ == "__main__":
     unittest.main()
