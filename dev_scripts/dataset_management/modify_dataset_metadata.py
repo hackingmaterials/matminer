@@ -2,6 +2,7 @@ from pprint import pprint
 from copy import deepcopy
 import json
 from itertools import compress
+import os
 
 
 from matminer.datasets.utils import _load_dataset_dict
@@ -183,7 +184,9 @@ if __name__ == '__main__':
             if not unsaved_changes:
                 print("No changes to save")
             else:
-                with open("dataset_metadata.json", "w") as outfile:
+                with open(os.path.abspath(os.path.join(
+                        os.pardir, os.pardir, "matminer", "datasets",
+                        "dataset_metadata.json")), "w") as outfile:
                     json.dump(_temp_dataset, outfile, indent=4, sort_keys=True)
                 unsaved_changes = False
         # Quit
