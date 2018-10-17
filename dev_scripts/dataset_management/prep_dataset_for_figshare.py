@@ -1,7 +1,8 @@
 import ast
 import argparse
-from os import listdir, makedirs, sep
+from os import listdir, makedirs
 from os.path import isdir, join, expanduser, basename
+from collections import defaultdict
 
 import numpy as np
 import pandas
@@ -12,6 +13,18 @@ from matminer.datasets.utils import _get_file_sha256_hash
 from matminer.utils.io import store_dataframe_as_json
 
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
+
+"""Each _preprocess_* function acts as a preprocessor for a dataset with a 
+given name. One should be written whenever a new dataset is being added to
+matminer"""
+
+
+def _preprocess_boltztrap_mp(df):
+    df = df.rename(columns={'S_n': 's_n', 'S_p': 's_p',
+                            'PF_n': 'pf_n', 'PF_p': 'pf_p'})
+    df = df.dropna()
+    df['structure'] = df['structure'].map(ast.literal_eval)
+    return df
 
 
 def _preprocess_castelli_perovskites(df):
@@ -33,6 +46,7 @@ def _preprocess_castelli_perovskites(df):
     df = df.rename(columns=colmap)
     df.reindex(sorted(df.columns), axis=1)
     return df
+
 
 def _preprocess_elastic_tensor_2015(df):
     """
@@ -121,48 +135,84 @@ def _preprocess_flla(df):
     return df[column_headers]
 
 
-_datasets_to_preprocessing_routines = {
+"""These dictionaries map the names of datasets to their preprocessors and to 
+any special arguments that may be needed for their file to dataframe loader 
+functions. Defaults to an identity function and no arguments"""
+
+
+_datasets_to_preprocessing_routines = defaultdict(lambda x: x, {
     "elastic_tensor_2015": _preprocess_elastic_tensor_2015,
     "piezoelectric_tensor": _preprocess_piezoelectric_tensor,
     "dielectric_constant": _preprocess_dielectric_constant,
     "flla": _preprocess_flla,
     "castelli_perovskites": _preprocess_castelli_perovskites,
-}
+    "boltztrap_mp": _preprocess_boltztrap_mp,
+})
+
+_datasets_to_kwargs = defaultdict(dict, {
+    "elastic_tensor_2015": {'comment': "#"},
+    "piezoelectric_tensor": {'comment': "#"},
+    "dielectric_constant": {'comment': "#"},
+    "flla": {'comment': "#"},
+    "boltztrap_mp": {'index_col': False},
+})
 
 
-def _csv_to_dataframe(csv_path, _dataset_name=None, preprocessing_func=None):
+def _file_to_dataframe(file_path, _dataset_name=None, preprocessing_func=None):
     """
-    Converts CSV files to a dataframe using dataset specific  predefined
-    preprocessors or a preprocessing function passed as an argument
+    Converts dataset files to a dataframe using dataset specific predefined
+    preprocessors or a preprocessing function passed as an argument.
+    Returns the name of the dataset and a list of dataframes produced by the
+    file preprocessing
 
     Args:
-          csv_path (str): file path to the csv being processed to a dataframe
+          file_path (str): file path to the dataset being processed to a
+            dataframe
 
           _dataset_name (str): optional name of dataset, defaults to file name
 
           preprocessing_func (function): optional preprocessor
 
-    Returns: (pandas.DataFrame)
+    Returns: (str, list of pandas.DataFrame)
     """
 
-    df = pandas.read_csv(csv_path, comment="#")
+    # Default the dataset name to the file name if none provided
+    if _dataset_name is None:
+        _dataset_name = basename(file_path).split(".")[0]
 
+    # Get keyword arguments for file reading functions
+    loader_args = _datasets_to_kwargs[_dataset_name]
+
+    # Read in the dataset from file
+    if file_path.endswith(".csv"):
+        df = pandas.read_csv(file_path, **loader_args)
+    elif file_path.endswith(".xlsx") or file_path.endswith(".xls"):
+        df = pandas.read_excel(file_path, **loader_args)
+    elif file_path.endswith(".json"):
+        df = pandas.read_json(file_path, **loader_args)
+    else:
+        raise ValueError("File type {} unsupported".format(file_path))
+
+    # Apply a custom preprocessor if supplied, else do dictionary lookup
+    # If dictionary lookup doesn't find a preprocessor none will be applied
     if preprocessing_func is None:
-        if _dataset_name is None:
-            _dataset_name = csv_path.split(sep)[-1].split(".")[0]
-
         if _dataset_name not in _datasets_to_preprocessing_routines.keys():
             raise UserWarning(
-                "The dataset you are trying to load has no "
-                "predefined preprocessor and will be loaded "
-                "using only the default pandas.read_csv function."
+                "The dataset {} has no predefined preprocessor and will be "
+                "loaded using only the default pandas.read_csv "
+                "function.".format(_dataset_name)
             )
-        else:
-            df = _datasets_to_preprocessing_routines[_dataset_name](df)
+        df = _datasets_to_preprocessing_routines[_dataset_name](df)
+
     else:
         df = preprocessing_func(df)
 
-    return df
+    # Some preprocessors can return a list of dataframes, so make all returned
+    # values be a list of dataframes
+    if not isinstance(df, list):
+        df = [df]
+
+    return _dataset_name, df
 
 
 if __name__ == "__main__":
@@ -171,64 +221,66 @@ if __name__ == "__main__":
                     "formatted and encoded JSON files for storing dataframes "
                     "containing pymatgen based objects. It also creates a file "
                     "containing cryptographic hashes for the destination files."
-                    " Currently only supports csv datasets."
+                    " Currently supports csv, excel, and json file conversion."
     )
     parser.add_argument("-fp", "--file_paths", nargs="+", required=True,
                         help="File path to csv or file path to a directory "
                              "containing csv files, can list multiple sources")
     parser.add_argument("-d", "--destination",
                         help="Destination to place created JSON files")
-    parser.add_argument("-hf", "--hash_file",
-                        help="Optional path for hash file")
-    parser.add_argument("-nh", "--no_hashes", action="store_true",
-                        default=False)
+    parser.add_argument("-mf", "--meta_file",
+                        help="Optional path for metadata file")
+    parser.add_argument("-nm", "--no_meta", action="store_true",
+                        default=False, help="Flag to indicate no metadata")
     parser.add_argument("-ct", "--compression_type", choices=("gz", "bz2"))
     args = parser.parse_args()
 
-    csv_file_paths = []
+    # Script supports multiple concurrent targets, so make a list of file paths
+    # of each target file
+    file_paths = []
 
+    # Crawl directories for all files and add single files to path list
     for path in args.file_paths:
         if isdir(path):
-            csv_file_paths += [
-                join(path, f) for f in listdir(path) if f.endswith(".csv")
+            file_paths += [
+                join(path, f) for f in listdir(path) if not isdir(path)
             ]
         else:
-            csv_file_paths.append(path)
+            file_paths.append(path)
 
+    # Determine the destination to store results and ensure exists
     if args.destination is None:
-        destination = expanduser(join("~", "csv_to_json"))
+        destination = expanduser(join("~", "dataset_to_json"))
     else:
         destination = args.destination
 
     makedirs(destination, exist_ok=True)
 
-    if args.hash_file is None:
-        hash_file = join(destination, "file_hashes.txt")
+    # Set up the destination to store file metadata
+    if args.meta_file is None and not args.no_meta:
+        meta_file = join(destination, "file_meta.txt")
     else:
-        hash_file = args.hash_file
+        meta_file = args.meta_file
 
-    if args.no_hashes:
-        for file_path in csv_file_paths:
-            dataframe = _csv_to_dataframe(file_path)
-            store_dataframe_as_json(
-                dataframe,
-                join(destination, basename(file_path)[:-4] + ".json"),
-                compression=args.compression_type
-            )
-    else:
-        with open(hash_file, "w") as out:
-            for file_path in csv_file_paths:
-                dataset_name = basename(file_path)[:-4]
-                json_destination = join(destination, dataset_name + ".json")
+    for f_path in file_paths:
+        # Figure out the name of the dataset and
+        # get a list of storage ready dataframes
+        dataset_name, dataframe_list = _file_to_dataframe(f_path)
+        # Store each dataframe and compute metadata if desired
+        for dataframe, num in enumerate(dataframe_list):
+            # Construct the file path to store dataframe at and store it
+            df_num = ("_" + str(num) + "_") if len(dataframe_list) > 1 else ""
+            json_destination = join(destination,
+                                    dataset_name + df_num + ".json")
+            store_dataframe_as_json(dataframe, json_destination,
+                                    compression=args.compression_type)
+            # Compute and store file metadata
+            if not args.no_meta:
+                with open(meta_file, "a") as out:
+                    if args.compression_type is not None:
+                        json_destination += ("." + args.compression_type)
 
-                dataframe = _csv_to_dataframe(file_path)
+                    file_hash = _get_file_sha256_hash(json_destination)
 
-                store_dataframe_as_json(dataframe, json_destination,
-                                        compression=args.compression_type)
-
-                if args.compression_type is not None:
-                    json_destination += ("." + args.compression_type)
-
-                file_hash = _get_file_sha256_hash(json_destination)
-
-                out.write(dataset_name + "\n" + file_hash + "\n\n")
+                    out.write(dataset_name + "\n" + file_hash + "\n")
+                    out.write("\n")
