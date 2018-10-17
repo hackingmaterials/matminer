@@ -19,6 +19,14 @@ given name. One should be written whenever a new dataset is being added to
 matminer"""
 
 
+def _preprocess_phonon_dielectric_mp(df):
+    df = df[df['asr_breaking'] < 30].drop('asr_breaking', axis=1)
+    # remove entries not having structure, formula, or a target
+    df = df.dropna()
+    df['structure'] = df['structure'].map(ast.literal_eval)
+    return df.reset_index(drop=True)
+
+
 def _preprocess_boltztrap_mp(df):
     df = df.rename(columns={'S_n': 's_n', 'S_p': 's_p',
                             'PF_n': 'pf_n', 'PF_p': 'pf_p'})
@@ -147,6 +155,7 @@ _datasets_to_preprocessing_routines = defaultdict(lambda x: x, {
     "flla": _preprocess_flla,
     "castelli_perovskites": _preprocess_castelli_perovskites,
     "boltztrap_mp": _preprocess_boltztrap_mp,
+    "phonon_dielectric_mp": _preprocess_phonon_dielectric_mp,
 })
 
 _datasets_to_kwargs = defaultdict(dict, {

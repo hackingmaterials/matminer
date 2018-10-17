@@ -13,6 +13,7 @@ class DataSetTest(unittest.TestCase):
             'dielectric_constant',
             'castelli_perovskites',
             'boltztrap_mp',
+            'phonon_dielectric_mp',
         ]
         self.dataset_attributes = [
             'file_type',

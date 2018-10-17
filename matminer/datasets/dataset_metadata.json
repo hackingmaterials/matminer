@@ -128,6 +128,26 @@
         "reference": "1) F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,\n\"Crystal structure representations for machine learning models of\nformation energies\", Int. J. Quantum Chem. 115 (2015) 1094\u20131101.\ndoi:10.1002/qua.24917.\n\n(raw data)\n2) Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,\nDacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. & Persson,\nK. A. Commentary: The Materials Project: A materials genome approach\nto accelerating materials innovation. APL Mater. 1, 11002 (2013).",
         "url": "https://ndownloader.figshare.com/files/13220597"
     },
+    "phonon_dielectric_mp": {
+        "bibtex_refs": [
+            "@Article{Petretto2018,\nauthor={Petretto, Guido\nand Dwaraknath, Shyam\nand P.C. Miranda, Henrique\nand Winston, Donald\nand Giantomassi, Matteo\nand van Setten, Michiel J.\nand Gonze, Xavier\nand Persson, Kristin A.\nand Hautier, Geoffroy\nand Rignanese, Gian-Marco},\ntitle={High-throughput density-functional perturbation theory phonons for inorganic materials},\njournal={Scientific Data},\nyear={2018},\nmonth={May},\nday={01},\npublisher={The Author(s)},\nvolume={5},\npages={180065},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2018.65}\n}",
+            "@misc{petretto_dwaraknath_miranda_winston_giantomassi_rignanese_van setten_gonze_persson_hautier_2018, title={High-throughput Density-Functional Perturbation Theory phonons for inorganic materials}, url={https://figshare.com/collections/High-throughput_Density-Functional_Perturbation_Theory_phonons_for_inorganic_materials/3938023/1}, DOI={10.6084/m9.figshare.c.3938023.v1}, abstractNote={The knowledge of the vibrational properties of a material is of key importance to understand physical phenomena such as thermal conductivity, superconductivity, and ferroelectricity among others. However, detailed experimental phonon spectra are available only for a limited number of materials which hinders the large-scale analysis of vibrational properties and their derived quantities. In this work, we perform ab initio calculations of the full phonon dispersion and vibrational density of states for 1521 semiconductor compounds in the harmonic approximation based on density functional perturbation theory. The data is collected along with derived dielectric and thermodynamic properties. We present the procedure used to obtain the results, the details of the provided database and a validation based on the comparison with experimental data.}, publisher={figshare}, author={Petretto, Guido and Dwaraknath, Shyam and Miranda, Henrique P. C. and Winston, Donald and Giantomassi, Matteo and Rignanese, Gian-Marco and Van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A and Hautier, Geoffroy}, year={2018}, month={Apr}}"
+        ],
+        "columns": {
+            "eps_electronic": "A target variable of the dataset, electronic contribution to the calculated dielectric constant; unitless.",
+            "eps_total": "A target variable of the dataset, total calculated dielectric constant. Unitless: it is a ratio over the dielectric constant at vacuum.",
+            "formula": "The chemical formula of the material",
+            "last phdos peak": "A target variable of the dataset, the frequency of the last calculated phonon density of states in 1/cm; may be used as an estimation of dominant longitudinal optical phonon frequency, a descriptor.",
+            "mpid": "The Materials Project identifier for the material",
+            "structure": "A pymatgen Structure object describing the chemical strucutre of the material"
+        },
+        "description": "Phonon (lattice/atoms vibrations) and dielectric properties of 1296 compounds computed via ABINIT software package in the harmonic approximation based on density functional perturbation theory.",
+        "file_type": "json.gz",
+        "hash": "53044ba423c06b5c08e8d3991c6c2140a2391160f90af03377d4e1734ce475f9",
+        "num_entries": 1296,
+        "reference": "Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. Sci. Data 5:180065 doi: 10.1038/sdata.2018.65 (2018).\nPetretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. (2018). figshare. Collection.",
+        "url": "https://ndownloader.figshare.com/files/13297571"
+    },
     "piezoelectric_tensor": {
         "bibtex_refs": [
             "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Geerlings, Henry\nand Asta, Mark and Persson, Kristin Aslaug},\ntitle={A database to enable discovery and design of piezoelectric\nmaterials},\njournal={Scientific Data},\nyear={2015},\nmonth={Sep},\nday={29},\npublisher={The Author(s)},\nvolume={2},\npages={150053},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.53}\n}"
