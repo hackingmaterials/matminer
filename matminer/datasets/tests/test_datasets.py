@@ -231,6 +231,22 @@ class DataSetsTest(DataSetTest):
         df = load_dataset("glass_ternary_hipt", include_metadata=True,
                           download_if_missing=False)
 
+        with self.assertRaises(AttributeError):
+            df = load_dataset("glass_ternary_hipt", include_metadata=True,
+                              download_if_missing=False,
+                              system="Nonexistent system")
+
+        df = load_dataset("glass_ternary_hipt", include_metadata=True,
+                          download_if_missing=False, system="CoFeZr")
+
+        self.assertEqual(len(df.index), 1295)
+
+        df = load_dataset("glass_ternary_hipt", include_metadata=True,
+                          download_if_missing=False, system=["CoFeZr",
+                                                             "CoTiZr"])
+
+        self.assertEqual(len(df.index), 2576)
+
 
 if __name__ == "__main__":
     unittest.main()
