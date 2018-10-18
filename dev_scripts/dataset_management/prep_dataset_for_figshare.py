@@ -298,3 +298,5 @@ if __name__ == "__main__":
 
                     out.write(dataset_name + "\n" + file_hash + "\n")
                     out.write("\n")
+
+                    out.write(dataframe.dtypes.to_string())
