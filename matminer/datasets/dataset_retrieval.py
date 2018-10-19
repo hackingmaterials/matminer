@@ -12,7 +12,9 @@ _dataset_dict = None
 
 
 def load_dataset(name, data_home=None, download_if_missing=True,
-                 include_metadata=False, system="all"):
+                 include_metadata=False, system="all", return_lumo=False,
+                 room_temperature=True, processing="all",
+                 unique_composition=True):
     """
     Loads a dataframe containing the dataset specified with the 'name' field.
 
@@ -37,7 +39,24 @@ def load_dataset(name, data_home=None, download_if_missing=True,
             "CoTiZr", "CoVZr","FeTiNb" or a list of these systems e.g.
             ["CoFeZr", "CoVZr"] or "all"
 
-    Returns: (pd.DataFrame)
+        return_lumo (bool): argument for double_perovskites_gap dataset,
+            if True will return a second dataframe of the lowest unoccupied
+            molecular orbital (LUMO) energy levels in eV.
+
+        room_temperature (bool): argument for citrine_thermal_conductivity
+            dataset, if selected only returns dataset items processed at room
+            temperature.
+
+        processing (str): argument for glass_ternary_landolt dataset, what type
+            of processing to filter the dataset by, valid arguments are
+            sputtering and meltspin. Default returns both methods
+
+        unique_composition (bool): argument for glass_ternary_landolt dataset,
+            Whether or not to combine items with different sources but the same
+            composition, True by default
+
+    Returns: (pd.DataFrame,
+              tuple -> (pd.DataFrame, pd.DataFrame) if return_lumo = True)
     """
     global _dataset_dict
 
@@ -71,7 +90,13 @@ def load_dataset(name, data_home=None, download_if_missing=True,
     df = load_dataframe_from_json(data_path)
 
     # Dataset specific modifiers that couldn't be removed with preprocessing
-    if name == "glass_ternary_hipt" and system != "all":
+    if name == "double_perovskites_gap" and return_lumo:
+        lumo = load_dataset("double_perovskites_gap_lumo", data_home,
+                            download_if_missing, include_metadata, system,
+                            return_lumo)
+        df = df, lumo
+
+    elif name == "glass_ternary_hipt" and system != "all":
         if isinstance(system, str):
             system = [system]
 
@@ -81,12 +106,28 @@ def load_dataset(name, data_home=None, download_if_missing=True,
                                      "in this dataset". format(system))
         df = df[df["system"].isin(system)]
 
-    if not include_metadata:
+    elif name in {"elastic_tensor_2015", "piezoelectric_tensor",
+                  "dielectric_constant"} and not include_metadata:
         if name == "elastic_tensor_2015":
             df = df.drop(['cif', 'kpoint_density', 'poscar'], axis=1)
 
         elif name in {"piezoelectric_tensor", "dielectric_constant"}:
             df = df.drop(['cif', 'meta', 'poscar'], axis=1)
+
+    elif name == "citrine_thermal_conductivity":
+        if room_temperature:
+            df = df[df['k_condition'].isin(['room temperature',
+                                            'Room temperature',
+                                            'Standard',
+                                            '298', '300'])]
+        df = df.drop(['k-units', 'k_condition', 'k_condition_units'], axis=1)
+
+    elif name == "glass_ternary_landolt":
+        if processing in {"meltspin", "sputtering"}:
+            df = df[df["processing"] == processing]
+
+        if unique_composition:
+            df = df.groupby("formula").max().reset_index()
 
     return df
 

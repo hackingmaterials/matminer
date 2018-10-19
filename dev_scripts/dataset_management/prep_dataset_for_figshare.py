@@ -2,14 +2,14 @@ import ast
 import argparse
 from os import listdir, makedirs
 from os.path import isdir, join, expanduser, basename
-from collections import defaultdict
 
 import numpy as np
-import pandas
+import pandas as pd
 from pymatgen.io.vasp.inputs import Poscar
 from pymatgen.core.structure import Structure
 
-from matminer.datasets.utils import _get_file_sha256_hash
+from matminer.datasets.utils import _get_file_sha256_hash, \
+    _read_dataframe_from_file
 from matminer.utils.io import store_dataframe_as_json
 
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
@@ -17,27 +17,92 @@ __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
 """
 Each _preprocess_* function acts as a preprocessor for a dataset with a
 given name. One should be written whenever a new dataset is being added to
-matminer
+matminer. These functions take the path of a given dataset and do the necessary
+processing to make it a usable dataframe. If one dataframe is to be made from a 
+dataset, it should just return a name / dataframe pair, if more than one 
+dataframe is to be created a list of pairs should be returned. 
 """
 
 
-def _preprocess_phonon_dielectric_mp(df):
+def _preprocess_mp(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    dropcols = ['energy', 'energy_per_atom']
+    df = df.drop(dropcols, axis=1)
+    for alias in ['structure', 'initial_structure']:
+        if alias in df.columns.values:
+            df[alias] = df[alias].map(ast.literal_eval)
+    colmap = {'material_id': 'mpid',
+              'pretty_formula': 'formula',
+              'band_gap': 'gap pbe',
+              'e_above_hull': 'e_hull',
+              'elasticity.K_VRH': 'bulk modulus',
+              'elasticity.G_VRH': 'shear modulus',
+              'elasticity.elastic_anisotropy': 'elastic anisotropy',
+              'total_magnetization': 'mu_b',
+              'initial_structure': 'initial structure',
+              'formation_energy_per_atom': 'e_form'}
+    if 'structure' in df.columns or 'initial_structure' in df.columns:
+        dataname = "mp_all"
+    else:
+        dataname = "mp_nostruct"
+
+    return dataname, df.rename(columns=colmap)
+
+
+def _preprocess_glass_ternary_landolt(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    df.drop_duplicates()
+    df["gfa"] = df["phase"].apply(lambda x: 1 if x == "AM" else 0)
+
+    return "glass_ternary_landolt", df
+
+
+def _preprocess_citrine_thermal_conductivity(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    df = df[df['k-units'].isin(
+        ['W/m.K', 'W/m$\\cdot$K', 'W/mK', 'W\\m K', 'Wm$^{-1}$K$^{-1}$'])]
+
+    return "citrine_thermal_conductivity", df
+
+
+def _preprocess_double_perovskites_gap(file_path):
+    df = pd.read_excel(file_path, sheet_name='bandgap')
+
+    df = df.rename(columns={'A1_atom': 'a_1', 'B1_atom': 'b_1',
+                            'A2_atom': 'a_2', 'B2_atom': 'b_2'})
+    lumo = pd.read_excel(file_path, sheet_name='lumo')
+
+    return ["double_perovskites_gap", "double_perovskites_gap_lumo"], [df, lumo]
+
+
+def _preprocess_phonon_dielectric_mp(file_path):
+    df = _read_dataframe_from_file(file_path)
+
     df = df[df['asr_breaking'] < 30].drop('asr_breaking', axis=1)
     # remove entries not having structure, formula, or a target
     df = df.dropna()
     df['structure'] = df['structure'].map(ast.literal_eval)
-    return df.reset_index(drop=True)
+
+    return 'phonon_dielectric_mp', df.reset_index(drop=True)
 
 
-def _preprocess_boltztrap_mp(df):
+def _preprocess_boltztrap_mp(file_path):
+    df = _read_dataframe_from_file(file_path, index_col=False)
+
     df = df.rename(columns={'S_n': 's_n', 'S_p': 's_p',
                             'PF_n': 'pf_n', 'PF_p': 'pf_p'})
     df = df.dropna()
     df['structure'] = df['structure'].map(ast.literal_eval)
-    return df
+
+    return 'boltztrap_mp', df
 
 
-def _preprocess_castelli_perovskites(df):
+def _preprocess_castelli_perovskites(file_path):
+    df = _read_dataframe_from_file(file_path)
+
     df["formula"] = df["A"] + df["B"] + df["anion"]
     df['vbm'] = np.where(df['is_direct'], df['VB_dir'], df['VB_ind'])
     df['cbm'] = np.where(df['is_direct'], df['CB_dir'], df['CB_ind'])
@@ -55,25 +120,28 @@ def _preprocess_castelli_perovskites(df):
               "FermiWidth": "fermi width"}
     df = df.rename(columns=colmap)
     df.reindex(sorted(df.columns), axis=1)
-    return df
+
+    return 'castelli_perovskites', df
 
 
-def _preprocess_elastic_tensor_2015(df):
+def _preprocess_elastic_tensor_2015(file_path):
     """
     Preprocessor used to convert the elastic_tensor_2015 dataset to the
     dataframe desired for JSON conversion
 
     Args:
-        df (pandas.DataFrame)
+        file_path (str)
 
-    Returns: (pandas.DataFrame)
+    Returns: (pd.DataFrame)
     """
+    df = _read_dataframe_from_file(file_path, comment="#")
+
     for i in list(df.index):
         for c in ['compliance_tensor', 'elastic_tensor',
                   'elastic_tensor_original']:
             df.at[(i, c)] = np.array(ast.literal_eval(df.at[(i, c)]))
     df['cif'] = df['structure']
-    df['structure'] = pandas.Series([Poscar.from_string(s).structure
+    df['structure'] = pd.Series([Poscar.from_string(s).structure
                                      for s in df['poscar']])
     new_columns = ['material_id', 'formula', 'nsites', 'space_group',
                    'volume', 'structure', 'elastic_anisotropy',
@@ -81,74 +149,84 @@ def _preprocess_elastic_tensor_2015(df):
                    'K_Voigt', 'poisson_ratio', 'compliance_tensor',
                    'elastic_tensor', 'elastic_tensor_original',
                    'cif', 'kpoint_density', 'poscar']
-    return df[new_columns]
+
+    return 'elastic_tensor_2015', df[new_columns]
 
 
-def _preprocess_piezoelectric_tensor(df):
+def _preprocess_piezoelectric_tensor(file_path):
     """
     Preprocessor used to convert the piezoelectric_constant dataset to the
     dataframe desired for JSON conversion
 
     Args:
-        df (pandas.DataFrame)
+        file_path (str)
 
-    Returns: (pandas.DataFrame)
+    Returns: (pd.DataFrame)
     """
+    df = _read_dataframe_from_file(file_path, comment="#")
+
     for i in list(df.index):
         c = 'piezoelectric_tensor'
         df.at[(i, c)] = np.array(ast.literal_eval(df.at[(i, c)]))
     df['cif'] = df['structure']
-    df['structure'] = pandas.Series([Poscar.from_string(s).structure
+    df['structure'] = pd.Series([Poscar.from_string(s).structure
                                      for s in df['poscar']])
     new_columns = ['material_id', 'formula', 'nsites', 'point_group',
                    'space_group', 'volume', 'structure', 'eij_max', 'v_max',
                    'piezoelectric_tensor', 'cif', 'meta', 'poscar']
-    return df[new_columns]
+
+    return 'piezoelectric_tensor', df[new_columns]
 
 
-def _preprocess_dielectric_constant(df):
+def _preprocess_dielectric_constant(file_path):
     """
     Preprocessor used to convert the dielectric_constant dataset to the
     dataframe desired for JSON conversion
 
     Args:
-        df (pandas.DataFrame)
+        file_path (str)
 
-    Returns: (pandas.DataFrame)
+    Returns: (pd.DataFrame)
     """
+    df = _read_dataframe_from_file(file_path, comment="#")
+
     df['cif'] = df['structure']
-    df['structure'] = pandas.Series([Poscar.from_string(s).structure
+    df['structure'] = pd.Series([Poscar.from_string(s).structure
                                      for s in df['poscar']])
     new_columns = ['material_id', 'formula', 'nsites', 'space_group',
                    'volume', 'structure', 'band_gap', 'e_electronic',
                    'e_total', 'n', 'poly_electronic', 'poly_total',
                    'pot_ferroelectric', 'cif', 'meta', 'poscar']
-    return df[new_columns]
+
+    return 'dielectric_constant', df[new_columns]
 
 
-def _preprocess_flla(df):
+def _preprocess_flla(file_path):
     """
     Preprocessor used to convert the flla dataset to the
     dataframe desired for JSON conversion
 
     Args:
-        df (pandas.DataFrame)
+        file_path (str)
 
-    Returns: (pandas.DataFrame)
+    Returns: (pd.DataFrame)
     """
+    df = _read_dataframe_from_file(file_path, comment="#")
+
     column_headers = ['material_id', 'e_above_hull', 'formula',
                       'nsites', 'structure', 'formation_energy',
                       'formation_energy_per_atom']
-    df['structure'] = pandas.Series(
+    df['structure'] = pd.Series(
         [Structure.from_dict(ast.literal_eval(s))
          for s in df['structure']], df.index)
-    return df[column_headers]
+
+    return 'flla', df[column_headers]
 
 
 """
-These dictionaries map the names of datasets to their preprocessors and to
-any special arguments that may be needed for their file to dataframe loader
-functions. Defaults to an identity function and no arguments
+These dictionaries map the filename of datasets to their preprocessors. 
+Defaults to just loading in the file with default pd load function for a 
+given file type
 """
 
 
@@ -160,73 +238,52 @@ _datasets_to_preprocessing_routines = {
     "castelli_perovskites": _preprocess_castelli_perovskites,
     "boltztrap_mp": _preprocess_boltztrap_mp,
     "phonon_dielectric_mp": _preprocess_phonon_dielectric_mp,
+    "double_perovskites_gap": _preprocess_double_perovskites_gap,
+    "citrine_thermal_conductivity": _preprocess_citrine_thermal_conductivity,
+    "glass_ternary_landolt": _preprocess_glass_ternary_landolt,
+    "mp_all": _preprocess_mp,
+    "mp_nostruct": _preprocess_mp,
 }
 
-_datasets_to_kwargs = defaultdict(dict, {
-    "elastic_tensor_2015": {'comment': "#"},
-    "piezoelectric_tensor": {'comment': "#"},
-    "dielectric_constant": {'comment': "#"},
-    "flla": {'comment': "#"},
-    "boltztrap_mp": {'index_col': False},
-})
 
-
-def _file_to_dataframe(file_path, _dataset_name=None, preprocessing_func=None):
+def _file_to_dataframe(file_path):
     """
-    Converts dataset files to a dataframe using dataset specific predefined
-    preprocessors or a preprocessing function passed as an argument.
-    Returns the name of the dataset and a list of dataframes produced by the
-    file preprocessing
+    Converts dataset files to a dataframe(s) using dataset specific predefined
+    preprocessors or just the standard pandas load* function if unrecognized.
+    Returns the names of the datasets produced and a list of dataframes
+    produced by the file preprocessing
 
     Args:
           file_path (str): file path to the dataset being processed to a
             dataframe
 
-          _dataset_name (str): optional name of dataset, defaults to file name
-
-          preprocessing_func (function): optional preprocessor
-
-    Returns: (str, list of pandas.DataFrame)
+    Returns: (list of str, list of pd.DataFrame)
     """
 
-    # Default the dataset name to the file name if none provided
-    if _dataset_name is None:
-        _dataset_name = basename(file_path).split(".")[0]
-
-    # Get keyword arguments for file reading functions
-    loader_args = _datasets_to_kwargs[_dataset_name]
-
-    # Read in the dataset from file
-    if file_path.endswith(".csv"):
-        df = pandas.read_csv(file_path, **loader_args)
-    elif file_path.endswith(".xlsx") or file_path.endswith(".xls"):
-        df = pandas.read_excel(file_path, **loader_args)
-    elif file_path.endswith(".json"):
-        df = pandas.read_json(file_path, **loader_args)
-    else:
-        raise ValueError("File type {} unsupported".format(file_path))
+    file_name = basename(file_path).split(".")[0]
 
     # Apply a custom preprocessor if supplied, else do dictionary lookup
     # If dictionary lookup doesn't find a preprocessor none will be applied
-    if preprocessing_func is None:
-        if _dataset_name not in _datasets_to_preprocessing_routines.keys():
-            print(
-                "Warning: The dataset {} has no predefined preprocessor "
-                "and will be loaded using only the default pandas.read_* "
-                "function.".format(_dataset_name), flush=True
-            )
-        else:
-            df = _datasets_to_preprocessing_routines[_dataset_name](df)
+    if file_name not in _datasets_to_preprocessing_routines.keys():
+        print(
+            "Warning: The dataset {} has no predefined preprocessor "
+            "and will be loaded using only the default pd.read_* "
+            "function.".format(file_name), flush=True
+        )
+        df = _read_dataframe_from_file(file_path)
 
     else:
-        df = preprocessing_func(df)
+        file_name, df = _datasets_to_preprocessing_routines[
+            file_name](file_path)
 
-    # Some preprocessors can return a list of dataframes, so make all returned
-    # values be a list of dataframes
+    # Some preprocessors can return a list of dataframes,
+    # so make all returned values be lists for consistency
     if not isinstance(df, list):
         df = [df]
+    if not isinstance(file_name, list):
+        file_name = [file_name]
 
-    return _dataset_name, df
+    return file_name, df
 
 
 if __name__ == "__main__":
@@ -279,14 +336,14 @@ if __name__ == "__main__":
     for f_path in file_paths:
         # Figure out the name of the dataset and
         # get a list of storage ready dataframes
-        dataset_name, dataframe_list = _file_to_dataframe(f_path)
+        dataset_names, dataframe_list = _file_to_dataframe(f_path)
         # Store each dataframe and compute metadata if desired
-        for num, dataframe in enumerate(dataframe_list):
+        for i in range(len(dataframe_list)):
             # Construct the file path to store dataframe at and store it
-            df_num = ("_" + str(num) + "_") if len(dataframe_list) > 1 else ""
+            # Str conversion purely to get rid of an annoying type warning
             json_destination = join(destination,
-                                    dataset_name + df_num + ".json")
-            store_dataframe_as_json(dataframe, json_destination,
+                                    str(dataset_names[i]) + ".json")
+            store_dataframe_as_json(dataframe_list[i], json_destination,
                                     compression=args.compression_type)
             # Compute and store file metadata
             if not args.no_meta:
@@ -296,7 +353,10 @@ if __name__ == "__main__":
 
                     file_hash = _get_file_sha256_hash(json_destination)
 
-                    out.write(dataset_name + "\n" + file_hash + "\n")
-                    out.write("\n")
-
-                    out.write(dataframe.dtypes.to_string())
+                    out.write(str(dataset_names[i])
+                              + "\nhash: "
+                              + file_hash
+                              + "\n")
+                    out.write("column types:\n")
+                    out.write(dataframe_list[i].dtypes.to_string())
+                    out.write("\n\n")

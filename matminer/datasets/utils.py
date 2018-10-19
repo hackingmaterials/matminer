@@ -1,6 +1,7 @@
 import os
 import hashlib
 import json
+import pandas as pd
 
 import requests
 
@@ -137,3 +138,26 @@ def _get_file_sha256_hash(file_path):
                 break
             sha256hash.update(buffer)
     return sha256hash.hexdigest()
+
+
+def _read_dataframe_from_file(file_path, **kwargs):
+    """
+    Reads a dataset from a generic file type into a pandas dataframe
+
+    Args:
+        file_path (str): path to dataset
+
+        kwargs: arbitrary keywords for any given read_ function in pandas
+
+    Returns: (pd.DataFrame)
+    """
+    if file_path.endswith(".csv"):
+        df = pd.read_csv(file_path, **kwargs)
+    elif file_path.endswith(".xlsx") or file_path.endswith(".xls"):
+        df = pd.read_excel(file_path, **kwargs)
+    elif file_path.endswith(".json"):
+        df = pd.read_json(file_path, **kwargs)
+    else:
+        raise ValueError("File type {} unsupported".format(file_path))
+
+    return df
