@@ -11,10 +11,7 @@ __author__ = "Kyle Bystrom <kylebystrom@berkeley.edu>, " \
 _dataset_dict = None
 
 
-def load_dataset(name, data_home=None, download_if_missing=True,
-                 include_metadata=False, system="all", return_lumo=False,
-                 room_temperature=True, processing="all",
-                 unique_composition=True):
+def load_dataset(name, data_home=None, download_if_missing=True):
     """
     Loads a dataframe containing the dataset specified with the 'name' field.
 
@@ -89,14 +86,70 @@ def load_dataset(name, data_home=None, download_if_missing=True,
 
     df = load_dataframe_from_json(data_path)
 
-    # Dataset specific modifiers that couldn't be removed with preprocessing
-    if name == "double_perovskites_gap" and return_lumo:
-        lumo = load_dataset("double_perovskites_gap_lumo", data_home,
-                            download_if_missing, include_metadata, system,
-                            return_lumo)
-        df = df, lumo
+    return df
 
-    elif name == "glass_ternary_hipt" and system != "all":
+
+def load_elastic_tensor(version="2015", include_metadata=False, data_home=None,
+                        download_if_missing=True):
+    df = load_dataset("elastic_tensor" + "_" + version, data_home,
+                      download_if_missing)
+
+    if not include_metadata:
+        df = df.drop(['cif', 'kpoint_density', 'poscar'], axis=1)
+
+    return df
+
+
+def load_piezoelectric_tensor(include_metadata=False, data_home=None,
+                              download_if_missing=True):
+    df = load_dataset("piezoelectric_tensor", data_home, download_if_missing)
+
+    if not include_metadata:
+        df = df.drop(['cif', 'meta', 'poscar'], axis=1)
+
+    return df
+
+
+def load_dielectric_constant(include_metadata=False, data_home=None,
+                             download_if_missing=True):
+    df = load_dataset("dielectric_constant", data_home, download_if_missing)
+
+    if not include_metadata:
+        df = df.drop(['cif', 'meta', 'poscar'], axis=1)
+
+    return df
+
+
+def load_glass_ternary_landolt(processing="all", unique_composition=True,
+                               data_home=None, download_if_missing=True):
+    df = load_dataset("glass_ternary_landolt", data_home, download_if_missing)
+
+    if processing in {"meltspin", "sputtering"}:
+        df = df[df["processing"] == processing]
+
+    if unique_composition:
+        df = df.groupby("formula").max().reset_index()
+
+    return df
+
+
+def load_double_perovskites_gap(return_lumo=False, data_home=None,
+                                download_if_missing=True):
+    df = load_dataset("double_perovskites_gap")
+
+    if return_lumo:
+        lumo = load_dataset("double_perovskites_gap_lumo", data_home,
+                            download_if_missing)
+        return df, lumo
+
+    return df
+
+
+def load_glass_ternary_hipt(system="all", data_home=None,
+                            download_if_missing=True):
+    df = load_dataset("glass_ternary_hipt", data_home, download_if_missing)
+
+    if system != "all":
         if isinstance(system, str):
             system = [system]
 
@@ -106,30 +159,20 @@ def load_dataset(name, data_home=None, download_if_missing=True,
                                      "in this dataset". format(system))
         df = df[df["system"].isin(system)]
 
-    elif name in {"elastic_tensor_2015", "piezoelectric_tensor",
-                  "dielectric_constant"} and not include_metadata:
-        if name == "elastic_tensor_2015":
-            df = df.drop(['cif', 'kpoint_density', 'poscar'], axis=1)
-
-        elif name in {"piezoelectric_tensor", "dielectric_constant"}:
-            df = df.drop(['cif', 'meta', 'poscar'], axis=1)
-
-    elif name == "citrine_thermal_conductivity":
-        if room_temperature:
-            df = df[df['k_condition'].isin(['room temperature',
-                                            'Room temperature',
-                                            'Standard',
-                                            '298', '300'])]
-        df = df.drop(['k-units', 'k_condition', 'k_condition_units'], axis=1)
-
-    elif name == "glass_ternary_landolt":
-        if processing in {"meltspin", "sputtering"}:
-            df = df[df["processing"] == processing]
-
-        if unique_composition:
-            df = df.groupby("formula").max().reset_index()
-
     return df
+
+
+def load_citrine_thermal_conductivity(room_temperature=True, data_home=None,
+                                      download_if_missing=True):
+    df = load_dataset("citrine_thermal_conductivity", data_home,
+                      download_if_missing)
+
+    if room_temperature:
+        df = df[df['k_condition'].isin(['room temperature',
+                                        'Room temperature',
+                                        'Standard',
+                                        '298', '300'])]
+    return df.drop(['k-units', 'k_condition', 'k_condition_units'], axis=1)
 
 
 def get_available_datasets(print_datasets=True, print_descriptions=True,
