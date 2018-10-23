@@ -359,4 +359,9 @@ if __name__ == "__main__":
                               + "\n")
                     out.write("column types:\n")
                     out.write(dataframe_list[i].dtypes.to_string())
+                    out.write("\n")
+
+                    out.write("num_entries:\n")
+                    out.write(str(len(dataframe_list[i])))
+
                     out.write("\n\n")

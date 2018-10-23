@@ -28,30 +28,6 @@ def load_dataset(name, data_home=None, download_if_missing=True):
         download_if_missing (bool): whether to download the dataset if is not
             found on disk
 
-        include_metadata (bool): optional argument for some datasets with
-            metadata fields
-
-        system (list, str): argument for glass_ternary_hipt dataset,
-            determines which subset of the dataset to load: "CoFeZr",
-            "CoTiZr", "CoVZr","FeTiNb" or a list of these systems e.g.
-            ["CoFeZr", "CoVZr"] or "all"
-
-        return_lumo (bool): argument for double_perovskites_gap dataset,
-            if True will return a second dataframe of the lowest unoccupied
-            molecular orbital (LUMO) energy levels in eV.
-
-        room_temperature (bool): argument for citrine_thermal_conductivity
-            dataset, if selected only returns dataset items processed at room
-            temperature.
-
-        processing (str): argument for glass_ternary_landolt dataset, what type
-            of processing to filter the dataset by, valid arguments are
-            sputtering and meltspin. Default returns both methods
-
-        unique_composition (bool): argument for glass_ternary_landolt dataset,
-            Whether or not to combine items with different sources but the same
-            composition, True by default
-
     Returns: (pd.DataFrame,
               tuple -> (pd.DataFrame, pd.DataFrame) if return_lumo = True)
     """
@@ -87,92 +63,6 @@ def load_dataset(name, data_home=None, download_if_missing=True):
     df = load_dataframe_from_json(data_path)
 
     return df
-
-
-def load_elastic_tensor(version="2015", include_metadata=False, data_home=None,
-                        download_if_missing=True):
-    df = load_dataset("elastic_tensor" + "_" + version, data_home,
-                      download_if_missing)
-
-    if not include_metadata:
-        df = df.drop(['cif', 'kpoint_density', 'poscar'], axis=1)
-
-    return df
-
-
-def load_piezoelectric_tensor(include_metadata=False, data_home=None,
-                              download_if_missing=True):
-    df = load_dataset("piezoelectric_tensor", data_home, download_if_missing)
-
-    if not include_metadata:
-        df = df.drop(['cif', 'meta', 'poscar'], axis=1)
-
-    return df
-
-
-def load_dielectric_constant(include_metadata=False, data_home=None,
-                             download_if_missing=True):
-    df = load_dataset("dielectric_constant", data_home, download_if_missing)
-
-    if not include_metadata:
-        df = df.drop(['cif', 'meta', 'poscar'], axis=1)
-
-    return df
-
-
-def load_glass_ternary_landolt(processing="all", unique_composition=True,
-                               data_home=None, download_if_missing=True):
-    df = load_dataset("glass_ternary_landolt", data_home, download_if_missing)
-
-    if processing in {"meltspin", "sputtering"}:
-        df = df[df["processing"] == processing]
-
-    if unique_composition:
-        df = df.groupby("formula").max().reset_index()
-
-    return df
-
-
-def load_double_perovskites_gap(return_lumo=False, data_home=None,
-                                download_if_missing=True):
-    df = load_dataset("double_perovskites_gap")
-
-    if return_lumo:
-        lumo = load_dataset("double_perovskites_gap_lumo", data_home,
-                            download_if_missing)
-        return df, lumo
-
-    return df
-
-
-def load_glass_ternary_hipt(system="all", data_home=None,
-                            download_if_missing=True):
-    df = load_dataset("glass_ternary_hipt", data_home, download_if_missing)
-
-    if system != "all":
-        if isinstance(system, str):
-            system = [system]
-
-        for item in system:
-            if item not in {"CoFeZr", "CoTiZr", "CoVZr", "FeTiNb"}:
-                raise AttributeError("some of the system list {} are not "
-                                     "in this dataset". format(system))
-        df = df[df["system"].isin(system)]
-
-    return df
-
-
-def load_citrine_thermal_conductivity(room_temperature=True, data_home=None,
-                                      download_if_missing=True):
-    df = load_dataset("citrine_thermal_conductivity", data_home,
-                      download_if_missing)
-
-    if room_temperature:
-        df = df[df['k_condition'].isin(['room temperature',
-                                        'Room temperature',
-                                        'Standard',
-                                        '298', '300'])]
-    return df.drop(['k-units', 'k_condition', 'k_condition_units'], axis=1)
 
 
 def get_available_datasets(print_datasets=True, print_descriptions=True,

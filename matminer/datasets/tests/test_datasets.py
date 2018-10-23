@@ -52,8 +52,7 @@ class DataSetsTest(DataSetTest):
         if bool_headers is None:
             bool_headers = []
 
-        df = load_dataset(dataset_name, include_metadata=True,
-                          download_if_missing=False)
+        df = load_dataset(dataset_name, download_if_missing=False)
         if object_headers:
             self.assertTrue(is_object_dtype(df[object_headers].values))
         if numeric_headers:
@@ -84,8 +83,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Tests unique to this dataset
-        df = load_dataset('elastic_tensor_2015', include_metadata=True,
-                          download_if_missing=False)
+        df = load_dataset('elastic_tensor_2015', download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
         tensor_headers = ['compliance_tensor', 'elastic_tensor',
                           'elastic_tensor_original']
@@ -108,8 +106,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Dataset specific checks
-        df = load_dataset('piezoelectric_tensor', include_metadata=True,
-                          download_if_missing=False)
+        df = load_dataset('piezoelectric_tensor', download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(type(df['piezoelectric_tensor'][0]), np.ndarray)
 
@@ -132,8 +129,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Unique tests
-        df = load_dataset("dielectric_constant", include_metadata=True,
-                          download_if_missing=False)
+        df = load_dataset("dielectric_constant", download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_flla(self):
@@ -146,8 +142,7 @@ class DataSetsTest(DataSetTest):
         self.universal_dataset_check("flla", object_headers, numeric_headers)
 
         # Unique tests
-        df = load_dataset('flla', include_metadata=True,
-                          download_if_missing=False)
+        df = load_dataset('flla', download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_castelli_perovskites(self):
@@ -167,8 +162,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Unique tests
-        df = load_dataset("castelli_perovskites", include_metadata=True,
-                          download_if_missing=False)
+        df = load_dataset("castelli_perovskites", download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_boltztrap_mp(self):
@@ -188,8 +182,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Unique tests
-        df = load_dataset("boltztrap_mp", include_metadata=True,
-                          download_if_missing=False)
+        df = load_dataset("boltztrap_mp", download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_phonon_dielectric_mp(self):
@@ -208,8 +201,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Unique tests
-        df = load_dataset("phonon_dielectric_mp", include_metadata=True,
-                          download_if_missing=False)
+        df = load_dataset("phonon_dielectric_mp", download_if_missing=False)
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_glass_ternary_hipt(self):
@@ -227,25 +219,35 @@ class DataSetsTest(DataSetTest):
             bool_headers=bool_headers, metadata_headers=metadata_headers
         )
 
-        # Unique tests
-        df = load_dataset("glass_ternary_hipt", include_metadata=True,
-                          download_if_missing=False)
+    def test_double_perovskites_gap(self):
+        # Universal Tests
+        object_headers = ['formula', 'a_1', 'b_1', 'a_2', 'b_2']
 
-        with self.assertRaises(AttributeError):
-            df = load_dataset("glass_ternary_hipt", include_metadata=True,
-                              download_if_missing=False,
-                              system="Nonexistent system")
+        numeric_headers = ['gap gllbsc']
 
-        df = load_dataset("glass_ternary_hipt", include_metadata=True,
-                          download_if_missing=False, system="CoFeZr")
+        bool_headers = []
 
-        self.assertEqual(len(df.index), 1295)
+        metadata_headers = set()
 
-        df = load_dataset("glass_ternary_hipt", include_metadata=True,
-                          download_if_missing=False, system=["CoFeZr",
-                                                             "CoTiZr"])
+        self.universal_dataset_check(
+            "double_perovskites_gap", object_headers, numeric_headers,
+            bool_headers=bool_headers, metadata_headers=metadata_headers
+        )
 
-        self.assertEqual(len(df.index), 2576)
+    def test_double_perovskites_gap_lumo(self):
+        # Universal Tests
+        object_headers = ['atom']
+
+        numeric_headers = ['lumo']
+
+        bool_headers = []
+
+        metadata_headers = set()
+
+        self.universal_dataset_check(
+            "double_perovskites_gap_lumo", object_headers, numeric_headers,
+            bool_headers=bool_headers, metadata_headers=metadata_headers
+        )
 
 
 if __name__ == "__main__":

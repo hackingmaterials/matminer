@@ -15,6 +15,8 @@ class DataSetTest(unittest.TestCase):
             'boltztrap_mp',
             'phonon_dielectric_mp',
             'glass_ternary_hipt',
+            'double_perovskites_gap',
+            'double_perovskites_gap_lumo',
         ]
         self.dataset_attributes = [
             'file_type',

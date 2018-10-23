@@ -74,6 +74,42 @@
         "reference": "Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,\nChen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.\nHigh-throughput screening of inorganic compounds for the discovery\nof novel dielectric and optical materials. Sci. Data 4, 160134 (2017).",
         "url": "https://ndownloader.figshare.com/files/13213475"
     },
+    "double_perovskites_gap": {
+        "bibtex_refs": [
+            "@Article{Pilania2016,\nauthor={Pilania, G.\nand Mannodi-Kanakkithodi, A.\nand Uberuaga, B. P.\nand Ramprasad, R.\nand Gubernatis, J. E.\nand Lookman, T.},\ntitle={Machine learning bandgaps of double perovskites},\njournal={Scientific Reports},\nyear={2016},\nmonth={Jan},\nday={19},\npublisher={The Author(s)},\nvolume={6},\npages={19375},\nnote={Article},\nurl={http://dx.doi.org/10.1038/srep19375}\n}",
+            "@misc{Computational Materials Repository,\ntitle = {Computational Materials Repository},\nhowpublished = {\\url{https://cmr.fysik.dtu.dk/}},\n}"
+        ],
+        "columns": {
+            "a_1": "Species occupying the a1 perovskite site",
+            "a_2": "Species occupying the a2 site",
+            "b_1": "Species occupying the b1 site",
+            "b_2": "Species occupying the b2 site",
+            "gap gllbsc": "electronic band gap (in eV) calculated via gllbsc",
+            "formula": "Chemical formula of the entry"
+        },
+        "description": "Band gap of 1306 double perovskites (a_1-b_1-a_2-b_2-O6) calculated using \ufeffGritsenko, van Leeuwen, van Lenthe and Baerends potential (gllbsc) in GPAW.",
+        "file_type": "json.gz",
+        "hash": "746072db995ec46f44b67c3f55fccdc24a7ec6233be1b96cc52dab8db4bf0ba4",
+        "num_entries": 1306,
+        "reference": "Dataset discussed in:\nPilania, G. et al. Machine learning bandgaps of double perovskites. Sci. Rep. 6, 19375; doi: 10.1038/srep19375 (2016).\nDataset sourced from:\nhttps://cmr.fysik.dtu.dk/",
+        "url": "https://ndownloader.figshare.com/files/13309157"
+    },
+    "double_perovskites_gap_lumo": {
+        "bibtex_refs": [
+            "@Article{Pilania2016,\nauthor={Pilania, G.\nand Mannodi-Kanakkithodi, A.\nand Uberuaga, B. P.\nand Ramprasad, R.\nand Gubernatis, J. E.\nand Lookman, T.},\ntitle={Machine learning bandgaps of double perovskites},\njournal={Scientific Reports},\nyear={2016},\nmonth={Jan},\nday={19},\npublisher={The Author(s)},\nvolume={6},\npages={19375},\nnote={Article},\nurl={http://dx.doi.org/10.1038/srep19375}\n}",
+            "@misc{Computational Materials Repository,\ntitle = {Computational Materials Repository},\nhowpublished = {\\url{https://cmr.fysik.dtu.dk/}},\n}"
+        ],
+        "columns": {
+            "atom": "Name of the atom whos lumo is listed",
+            "lumo": "Lowest unoccupied molecular obital energy level (in eV)"
+        },
+        "description": "Supplementary lumo data of 55 atoms for the double_perovskites_gap dataset.",
+        "file_type": "json.gz",
+        "hash": "6d57bcec55a748ab9da2224195d4c5fb78edfabbbfe606d11cb04ae63b385808",
+        "num_entries": 55,
+        "reference": "Dataset discussed in:\nPilania, G. et al. Machine learning bandgaps of double perovskites. Sci. Rep. 6, 19375; doi: 10.1038/srep19375 (2016).\nDataset sourced from:\nhttps://cmr.fysik.dtu.dk/",
+        "url": "https://ndownloader.figshare.com/files/13309154"
+    },
     "elastic_tensor_2015": {
         "bibtex_refs": [
             "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Angsten, Thomas\nand Jain, Anubhav and Notestine, Randy and Gamst, Anthony\nand Sluiter, Marcel and Krishna Ande, Chaitanya\nand van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac\nand Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.\nand Asta, Mark},\ntitle={Charting the complete elastic properties\nof inorganic crystalline compounds},\njournal={Scientific Data},\nyear={2015},\nmonth={Mar},\nday={17},\npublisher={The Author(s)},\nvolume={2},\npages={150009},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.9}\n}"
@@ -133,8 +169,8 @@
             "@article {Reneaaq1566,\nauthor = {Ren, Fang and Ward, Logan and Williams, Travis and Laws, Kevin J. and Wolverton, Christopher and Hattrick-Simpers, Jason and Mehta, Apurva},\ntitle = {Accelerated discovery of metallic glasses through iteration of machine learning and high-throughput experiments},\nvolume = {4},\nnumber = {4},\nyear = {2018},\ndoi = {10.1126/sciadv.aaq1566},\npublisher = {American Association for the Advancement of Science},\nabstract = {With more than a hundred elements in the periodic table, a large number of potential new materials exist to address the technological and societal challenges we face today; however, without some guidance, searching through this vast combinatorial space is frustratingly slow and expensive, especially for materials strongly influenced by processing. We train a machine learning (ML) model on previously reported observations, parameters from physiochemical theories, and make it synthesis method{\\textendash}dependent to guide high-throughput (HiTp) experiments to find a new system of metallic glasses in the Co-V-Zr ternary. Experimental observations are in good agreement with the predictions of the model, but there are quantitative discrepancies in the precise compositions predicted. We use these discrepancies to retrain the ML model. The refined model has significantly improved accuracy not only for the Co-V-Zr system but also across all other available validation data. We then use the refined model to guide the discovery of metallic glasses in two additional previously unreported ternaries. Although our approach of iterative use of ML and HiTp experiments has guided us to rapid discovery of three new glass-forming systems, it has also provided us with a quantitatively accurate, synthesis method{\\textendash}sensitive predictor for metallic glasses that improves performance with use and thus promises to greatly accelerate discovery of many new metallic glasses. We believe that this discovery paradigm is applicable to a wider range of materials and should prove equally powerful for other materials and properties that are synthesis path{\\textendash}dependent and that current physiochemical theories find challenging to predict.},\nURL = {http://advances.sciencemag.org/content/4/4/eaaq1566},\neprint = {http://advances.sciencemag.org/content/4/4/eaaq1566.full.pdf},\njournal = {Science Advances}\n}"
         ],
         "columns": {
-            "gfa": "Glass forming ability: 1 means glass forming and coresponds to AM, 0 means non glass forming and corresponds to CR",
             "formula": "Chemical formula of the entry",
+            "gfa": "Glass forming ability: 1 means glass forming and coresponds to AM, 0 means non glass forming and corresponds to CR",
             "phase": "AM: amorphous phase or CR: crystalline phase",
             "processing": "How the point was processed, always sputtering for this dataset",
             "system": "System of dataset experiment, one of: CoFeZr, CoTiZr, CoVZr, or FeTiNb"
