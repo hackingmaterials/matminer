@@ -8,9 +8,10 @@ import pandas as pd
 from pymatgen.io.vasp.inputs import Poscar
 from pymatgen.core.structure import Structure
 
+from matminer.utils.io import store_dataframe_as_json, load_dataframe_from_json
+from matminer.featurizers.conversions import StructureToComposition
 from matminer.datasets.utils import _get_file_sha256_hash, \
     _read_dataframe_from_file
-from matminer.utils.io import store_dataframe_as_json
 
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
 
@@ -22,6 +23,153 @@ processing to make it a usable dataframe. If one dataframe is to be made from a
 dataset, it should just return a name / dataframe pair, if more than one 
 dataframe is to be created a list of pairs should be returned. 
 """
+
+
+def _preprocess_wolverton_oxides(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    dropcols = ['In literature', 'Valence A', 'Valence B', 'Radius A [ang]',
+                'Radius B [ang]']
+    df = df.drop(dropcols, axis=1)
+    colmap = {"Chemical formula": "formula",
+              "A": "atom a",
+              "B": "atom b",
+              "Formation energy [eV/atom]": "e_form",
+              "Band gap [eV]": "gap pbe",
+              "Magnetic moment [mu_B]": "mu_b",
+              "Vacancy energy [eV/O atom]": "e_form oxygen",
+              "Stability [eV/atom]": "e_hull",
+              "Volume per atom [A^3/atom]": 'vpa',
+              "a [ang]": "a",
+              "b [ang]": "b",
+              "c [ang]": "c",
+              "alpha [deg]": "alpha",
+              "beta [deg]": "beta",
+              "gamma [deg]": "gamma",
+              "Lowest distortion": "lowest distortion"}
+    df = df.rename(columns=colmap)
+    for k in ['e_form', 'gap pbe', 'e_hull', 'vpa', 'e_form oxygen']:
+        df[k] = pd.to_numeric(df[k], errors='coerce')
+
+    return "wolverton_oxides", df.dropna()
+
+
+def _preprocess_m2ax(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    colmap = {"M2AXphase": "formula",
+              "B": "bulk modulus",
+              "G": "shear modulus",
+              "E": "elastic modulus",
+              "C11": "c11",
+              "C12": "c12",
+              "C13": "c13",
+              "C33": "c33",
+              "C44": "c44",
+              "dMX": "d_mx",
+              "dMA": "d_ma"}
+
+    return "m2ax", df.rename(columns=colmap)
+
+
+def _preprocess_glass_binary(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    return "glass_binary", df
+
+
+def _preprocess_expt_formation_enthalpy(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    return "expt_formation_enthalpy", df
+
+
+def _preprocess_expt_gap(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    df = df.rename(columns={'composition': 'formula', 'Eg (eV)': 'gap expt'})
+    # The numbers in 323 formulas such as 'AgCNO,65' or 'Sr2MgReO6,225' are
+    # space group numbers confirmed by Jakoah Brgoch the corresponding author
+    df['formula'] = df['formula'].apply(lambda x: x.split(',')[0])
+
+    return "expt_gap", df
+
+
+def _preprocess_jdft2d(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    colmap = {'exfoliation_en': 'e_exfol',
+              'final_str': 'structure',
+              'initial_str': 'structure initial',
+              'form_enp': 'e_form',
+              'magmom': 'mu_b',
+              'op_gap': 'gap optb88',
+              }
+    dropcols = ['epsx', 'epsy', 'epsz', 'mepsx', 'mepsy', 'mepsz', 'kv', 'gv',
+                'jid', 'kpoints', 'incar', 'icsd', 'mbj_gap', 'fin_en']
+    df = df.drop(dropcols, axis=1)
+    df = df.replace('na', np.nan)
+    df = df.rename(columns=colmap)
+    df['structure'] = df['structure']
+    df['structure initial'] = df['structure initial']
+    df['formula'] = [Structure.from_dict(s).composition.reduced_formula for s
+                     in df['structure']]
+
+    return "jdft2d", df
+
+
+def _preprocess_heusler_magnetic(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    dropcols = ['gap width', 'stability']
+    df = df.drop(dropcols, axis=1)
+
+    return "heusler_magnetic", df
+
+
+def _preprocess_steel_strength(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    return "steel_strength", df
+
+
+def _preprocess_glass_ternary_hipt(file_path):
+    df = _read_dataframe_from_file(file_path)
+
+    return "glass_ternary_hipt", df
+
+
+def _preprocess_jarvis_dft(file_path):
+    df = load_dataframe_from_json(file_path)
+
+    colmap = {
+        "el_mass_x": "e mass_x",
+        "el_mass_y": "e mass_y",
+        "el_mass_z": "e mass_z",
+        "epsx": "epsilon_x opt",
+        "epsy": "epsilon_y opt",
+        "epsz": "epsilon_z opt",
+        "exfoliation_en": "e_exfol",
+        "form_enp": "e_form",
+        "gv": "shear modulus",
+        "hl_mass_x": "hole mass_x",
+        "hl_mass_y": "hole mass_y",
+        "hl_mass_z": "hole mass_z",
+        "kv": "bulk modulus",
+        "magmom": "mu_b",
+        "mbj_gap": "gap tbmbj",
+        "mepsx": "epsilon_x tbmbj",
+        "mepsy": "epsilon_y tbmbj",
+        "mepsz": "epsilon_z tbmbj",
+        "op_gap": "gap tbmbj",
+        "strt": "structure",
+    }
+
+    df = df.rename(columns=colmap)
+    df = df.drop(["multi_elastic", "fin_enp"], axis=1)
+    s = StructureToComposition()
+    df = s.featurize_dataframe(df, "structure")
+    return "jarvis_dft", df
 
 
 def _preprocess_mp(file_path):
@@ -142,7 +290,7 @@ def _preprocess_elastic_tensor_2015(file_path):
             df.at[(i, c)] = np.array(ast.literal_eval(df.at[(i, c)]))
     df['cif'] = df['structure']
     df['structure'] = pd.Series([Poscar.from_string(s).structure
-                                     for s in df['poscar']])
+                                 for s in df['poscar']])
     new_columns = ['material_id', 'formula', 'nsites', 'space_group',
                    'volume', 'structure', 'elastic_anisotropy',
                    'G_Reuss', 'G_VRH', 'G_Voigt', 'K_Reuss', 'K_VRH',
@@ -170,7 +318,7 @@ def _preprocess_piezoelectric_tensor(file_path):
         df.at[(i, c)] = np.array(ast.literal_eval(df.at[(i, c)]))
     df['cif'] = df['structure']
     df['structure'] = pd.Series([Poscar.from_string(s).structure
-                                     for s in df['poscar']])
+                                 for s in df['poscar']])
     new_columns = ['material_id', 'formula', 'nsites', 'point_group',
                    'space_group', 'volume', 'structure', 'eij_max', 'v_max',
                    'piezoelectric_tensor', 'cif', 'meta', 'poscar']
@@ -192,7 +340,7 @@ def _preprocess_dielectric_constant(file_path):
 
     df['cif'] = df['structure']
     df['structure'] = pd.Series([Poscar.from_string(s).structure
-                                     for s in df['poscar']])
+                                 for s in df['poscar']])
     new_columns = ['material_id', 'formula', 'nsites', 'space_group',
                    'volume', 'structure', 'band_gap', 'e_electronic',
                    'e_total', 'n', 'poly_electronic', 'poly_total',
@@ -243,6 +391,16 @@ _datasets_to_preprocessing_routines = {
     "glass_ternary_landolt": _preprocess_glass_ternary_landolt,
     "mp_all": _preprocess_mp,
     "mp_nostruct": _preprocess_mp,
+    "wolverton_oxides": _preprocess_wolverton_oxides,
+    "m2ax_elastic": _preprocess_m2ax,
+    "glass_binary": _preprocess_glass_binary,
+    "formation_enthalpy_expt": _preprocess_expt_formation_enthalpy,
+    "zhuo_gap_expt": _preprocess_expt_gap,
+    "jdft_2d": _preprocess_jdft2d,
+    "heusler_magnetic": _preprocess_heusler_magnetic,
+    "steel_strength": _preprocess_steel_strength,
+    "jdft_3d": _preprocess_jarvis_dft,
+    "glass_ternary_hipt": _preprocess_glass_ternary_hipt,
 }
 
 
@@ -314,7 +472,7 @@ if __name__ == "__main__":
     for path in args.file_paths:
         if isdir(path):
             file_paths += [
-                join(path, f) for f in listdir(path) if not isdir(path)
+                join(path, f) for f in listdir(path) if not isdir(f)
             ]
         else:
             file_paths.append(path)
@@ -338,12 +496,12 @@ if __name__ == "__main__":
         # get a list of storage ready dataframes
         dataset_names, dataframe_list = _file_to_dataframe(f_path)
         # Store each dataframe and compute metadata if desired
-        for i in range(len(dataframe_list)):
+        for index in range(len(dataframe_list)):
             # Construct the file path to store dataframe at and store it
             # Str conversion purely to get rid of an annoying type warning
             json_destination = join(destination,
-                                    str(dataset_names[i]) + ".json")
-            store_dataframe_as_json(dataframe_list[i], json_destination,
+                                    str(dataset_names[index]) + ".json")
+            store_dataframe_as_json(dataframe_list[index], json_destination,
                                     compression=args.compression_type)
             # Compute and store file metadata
             if not args.no_meta:
@@ -353,15 +511,15 @@ if __name__ == "__main__":
 
                     file_hash = _get_file_sha256_hash(json_destination)
 
-                    out.write(str(dataset_names[i])
+                    out.write(str(dataset_names[index])
                               + "\nhash: "
                               + file_hash
                               + "\n")
                     out.write("column types:\n")
-                    out.write(dataframe_list[i].dtypes.to_string())
+                    out.write(dataframe_list[index].dtypes.to_string())
                     out.write("\n")
 
                     out.write("num_entries:\n")
-                    out.write(str(len(dataframe_list[i])))
+                    out.write(str(len(dataframe_list[index])))
 
                     out.write("\n\n")
