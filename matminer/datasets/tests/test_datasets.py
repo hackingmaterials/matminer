@@ -252,6 +252,19 @@ class DataSetsTest(DataSetTest):
             bool_headers=bool_headers
         )
 
+    def test_glass_ternary_landolt(self):
+        # Universal Tests
+        object_headers = ['phase', 'formula', 'processing']
+
+        numeric_headers = ['gfa']
+
+        bool_headers = []
+
+        self.universal_dataset_check(
+            "glass_ternary_landolt", object_headers, numeric_headers,
+            bool_headers=bool_headers
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
