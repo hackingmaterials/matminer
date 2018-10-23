@@ -6,10 +6,10 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_citrine_thermal_conductivity, load_dielectric_constant, \
     load_double_perovskites_gap, load_double_perovskites_gap_lumo, \
     load_elastic_tensor, load_glass_ternary_landolt, \
-    load_phonon_dielectric_mp, load_piezoelectric_tensor
+    load_phonon_dielectric_mp, load_piezoelectric_tensor, load_mp
 
 
-class DataRetrievalTest(DataSetTest):
+class ConvenienceLoadersTest(DataSetTest):
     def test_load_glass_ternary_hipt(self):
         df = load_glass_ternary_hipt()
         self. assertTrue(isinstance(df, pd.DataFrame))
@@ -105,3 +105,12 @@ class DataRetrievalTest(DataSetTest):
     def test_load_phonon_dielectric_mp(self):
         df = load_phonon_dielectric_mp()
         self.assertTrue(isinstance(df, pd.DataFrame))
+
+    def test_mp(self):
+        df = load_mp()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+        self.assertEqual(len(df.index), 9)
+
+        df = load_mp(include_structures=True)
+        self.assertTrue(isinstance(df, pd.DataFrame))
+        self.assertEqual(len(df.index), 11)

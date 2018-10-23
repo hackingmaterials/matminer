@@ -239,7 +239,7 @@ def load_glass_ternary_hipt(system="all", data_home=None,
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
 
-    Returns: (pd.DataFrame, tuple)
+    Returns: (pd.DataFrame)
     """
     df = load_dataset("glass_ternary_hipt", data_home, download_if_missing)
 
@@ -259,19 +259,19 @@ def load_glass_ternary_hipt(system="all", data_home=None,
 def load_citrine_thermal_conductivity(room_temperature=True, data_home=None,
                                       download_if_missing=True):
     """
-   Convenience function for loading the double_perovskites_gap dataset.
+    Convenience function for loading the citrine thermal conductivity dataset.
 
-   Args:
-       room_temperature (bool) Whether or not to only return items with room
-        temperature k_condition. True by default.
+    Args:
+        room_temperature (bool) Whether or not to only return items with room
+            temperature k_condition. True by default.
 
-       data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to loom for and store the loaded dataset
 
-       download_if_missing (bool): Whether or not to download the dataset if
+        download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
 
-   Returns: (pd.DataFrame, tuple)
-   """
+    Returns: (pd.DataFrame)
+    """
     df = load_dataset("citrine_thermal_conductivity", data_home,
                       download_if_missing)
 
@@ -282,3 +282,25 @@ def load_citrine_thermal_conductivity(room_temperature=True, data_home=None,
                                         '298', '300'])]
     return df.drop(['k-units', 'k_condition', 'k_condition_units'], axis=1)
 
+
+def load_mp(include_structures=False, data_home=None, download_if_missing=True):
+    """
+    Convenience function for loading the double_perovskites_gap dataset.
+
+    Args:
+        include_structures (bool) Whether or not to load the full mp
+            structure data. False by default.
+
+        data_home (str, None): Where to loom for and store the loaded dataset
+
+        download_if_missing (bool): Whether or not to download the dataset if
+           it isn't on disk
+
+    Returns: (pd.DataFrame)
+    """
+    if include_structures:
+        df = load_dataset('mp_all', data_home, download_if_missing)
+    else:
+        df = load_dataset('mp_nostruct', data_home, download_if_missing)
+
+    return df

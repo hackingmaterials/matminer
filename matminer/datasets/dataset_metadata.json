@@ -84,8 +84,8 @@
             "a_2": "Species occupying the a2 site",
             "b_1": "Species occupying the b1 site",
             "b_2": "Species occupying the b2 site",
-            "gap gllbsc": "electronic band gap (in eV) calculated via gllbsc",
-            "formula": "Chemical formula of the entry"
+            "formula": "Chemical formula of the entry",
+            "gap gllbsc": "electronic band gap (in eV) calculated via gllbsc"
         },
         "description": "Band gap of 1306 double perovskites (a_1-b_1-a_2-b_2-O6) calculated using \ufeffGritsenko, van Leeuwen, van Lenthe and Baerends potential (gllbsc) in GPAW.",
         "file_type": "json.gz",
@@ -181,6 +181,52 @@
         "num_entries": 5170,
         "reference": "Accelerated discovery of metallic glasses through iteration of machine learning and high-throughput experiments\nBy Fang Ren, Logan Ward, Travis Williams, Kevin J. Laws, Christopher Wolverton, Jason Hattrick-Simpers, Apurva Mehta\nScience Advances 13 Apr 2018 : eaaq1566",
         "url": "https://ndownloader.figshare.com/files/13298018"
+    },
+    "mp_all": {
+        "bibtex_refs": [
+            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
+        ],
+        "columns": {
+            "bulk modulus": "in GPa, average of Voight, Reuss, and Hill",
+            "e_form": "Formation energy per atom (eV)",
+            "e_hull": "The calculated energy above the convex hull, in eV per atom",
+            "elastic anisotropy": "The ratio of elastic anisotropy.",
+            "formula": "The chemical formula of the MP entry",
+            "gap pbe": "The band gap in eV calculated with PBE-DFT functional",
+            "initial structure": "A Pymatgen Structure object describing the material crystal structure prior to relaxation",
+            "mpid": "(input): The Materials Project mpid, as a string.",
+            "mu_b": "The total magnetization of the unit cell.",
+            "shear modulus": "in GPa, average of Voight, Reuss, and Hill",
+            "structure": "A Pymatgen Structure object describing the material crystal structure"
+        },
+        "description": "A complete copy of the Materials Project database as of 10/18/2018. Mp_all files contain structure data for each material while mp_nostruct does not.",
+        "file_type": "json.gz",
+        "hash": "1f3de2dc7c68959647240921b841293fce918ea1708e6f3760ba35a9cdfe0500",
+        "num_entries": 83989,
+        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
+        "url": "https://ndownloader.figshare.com/files/13309250"
+    },
+    "mp_nostruct": {
+        "bibtex_refs": [
+            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
+        ],
+        "columns": {
+            "bulk modulus": "in GPa, average of Voight, Reuss, and Hill",
+            "e_form": "Formation energy per atom (eV)",
+            "e_hull": "The calculated energy above the convex hull, in eV per atom",
+            "elastic anisotropy": "The ratio of elastic anisotropy.",
+            "formula": "The chemical formula of the MP entry",
+            "gap pbe": "The band gap in eV calculated with PBE-DFT functional",
+            "mpid": "(input): The Materials Project mpid, as a string.",
+            "mu_b": "The total magnetization of the unit cell.",
+            "shear modulus": "in GPa, average of Voight, Reuss, and Hill"
+        },
+        "description": "A complete copy of the Materials Project database as of 10/18/2018. Mp_all files contain structure data for each material while mp_nostruct does not.",
+        "file_type": "json.gz",
+        "hash": "48481abc390e0772defbbfa68d7db3b9bdef2519d407b82a581f2298f7df080f",
+        "num_entries": 83989,
+        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
+        "url": "https://ndownloader.figshare.com/files/13309253"
     },
     "phonon_dielectric_mp": {
         "bibtex_refs": [

@@ -11,8 +11,7 @@ from matminer.datasets.dataset_retrieval import load_dataset
 
 class DataSetsTest(DataSetTest):
     def universal_dataset_check(self, dataset_name, object_headers=None,
-                                numeric_headers=None, bool_headers=None,
-                                metadata_headers=None):
+                                numeric_headers=None, bool_headers=None):
         # Runs tests common to all datasets,
         # makes it quicker to write tests for new datasets
 
@@ -34,14 +33,10 @@ class DataSetsTest(DataSetTest):
             len(df), self.dataset_dict[dataset_name]["num_entries"]
         )
 
-        # Tes all the non-metadata columns are there
-        if metadata_headers is None:
-            metadata_headers = set()
-
+        # Tes all columns are there
         self.assertEqual(sorted(list(df)), sorted(
             [header for header in
-             self.dataset_dict[dataset_name]['columns'].keys()
-             if header not in metadata_headers]
+             self.dataset_dict[dataset_name]['columns'].keys()]
         ))
 
         # Test each column for appropriate type
@@ -75,11 +70,8 @@ class DataSetsTest(DataSetTest):
                            'K_Reuss', 'K_VRH', 'K_Voigt', 'poisson_ratio',
                            'kpoint_density']
 
-        metadata_headers = {'cif', 'kpoint_density', 'poscar'}
-
         self.universal_dataset_check(
             "elastic_tensor_2015", object_headers, numeric_headers,
-            metadata_headers=metadata_headers
         )
 
         # Tests unique to this dataset
@@ -98,11 +90,8 @@ class DataSetsTest(DataSetTest):
 
         numeric_headers = ['nsites', 'space_group', 'volume', 'eij_max']
 
-        metadata_headers = {'cif', 'meta', 'poscar'}
-
         self.universal_dataset_check(
             "piezoelectric_tensor", object_headers, numeric_headers,
-            metadata_headers=metadata_headers
         )
 
         # Dataset specific checks
@@ -121,11 +110,9 @@ class DataSetsTest(DataSetTest):
 
         bool_headers = ['pot_ferroelectric']
 
-        metadata_headers = {'cif', 'meta', 'poscar'}
-
         self.universal_dataset_check(
             "dielectric_constant", object_headers, numeric_headers,
-            bool_headers=bool_headers, metadata_headers=metadata_headers
+            bool_headers=bool_headers,
         )
 
         # Unique tests
@@ -154,11 +141,9 @@ class DataSetsTest(DataSetTest):
 
         bool_headers = ['gap is direct']
 
-        metadata_headers = set()
-
         self.universal_dataset_check(
             "castelli_perovskites", object_headers, numeric_headers,
-            bool_headers=bool_headers, metadata_headers=metadata_headers
+            bool_headers=bool_headers
         )
 
         # Unique tests
@@ -174,11 +159,9 @@ class DataSetsTest(DataSetTest):
 
         bool_headers = []
 
-        metadata_headers = set()
-
         self.universal_dataset_check(
             "boltztrap_mp", object_headers, numeric_headers,
-            bool_headers=bool_headers, metadata_headers=metadata_headers
+            bool_headers=bool_headers
         )
 
         # Unique tests
@@ -193,11 +176,9 @@ class DataSetsTest(DataSetTest):
 
         bool_headers = []
 
-        metadata_headers = set()
-
         self.universal_dataset_check(
             "phonon_dielectric_mp", object_headers, numeric_headers,
-            bool_headers=bool_headers, metadata_headers=metadata_headers
+            bool_headers=bool_headers
         )
 
         # Unique tests
@@ -212,11 +193,9 @@ class DataSetsTest(DataSetTest):
 
         bool_headers = []
 
-        metadata_headers = set()
-
         self.universal_dataset_check(
             "glass_ternary_hipt", object_headers, numeric_headers,
-            bool_headers=bool_headers, metadata_headers=metadata_headers
+            bool_headers=bool_headers
         )
 
     def test_double_perovskites_gap(self):
@@ -227,11 +206,9 @@ class DataSetsTest(DataSetTest):
 
         bool_headers = []
 
-        metadata_headers = set()
-
         self.universal_dataset_check(
             "double_perovskites_gap", object_headers, numeric_headers,
-            bool_headers=bool_headers, metadata_headers=metadata_headers
+            bool_headers=bool_headers
         )
 
     def test_double_perovskites_gap_lumo(self):
@@ -242,11 +219,37 @@ class DataSetsTest(DataSetTest):
 
         bool_headers = []
 
-        metadata_headers = set()
-
         self.universal_dataset_check(
             "double_perovskites_gap_lumo", object_headers, numeric_headers,
-            bool_headers=bool_headers, metadata_headers=metadata_headers
+            bool_headers=bool_headers
+        )
+
+    def test_mp_all(self):
+        # Universal Tests
+        object_headers = ['mpid', 'formula', 'structure', 'initial structure']
+
+        numeric_headers = ['e_hull', 'gap pbe', 'mu_b', 'elastic anisotropy',
+                           'bulk modulus', 'shear modulus', 'e_form']
+
+        bool_headers = []
+
+        self.universal_dataset_check(
+            "mp_all", object_headers, numeric_headers,
+            bool_headers=bool_headers
+        )
+
+    def test_mp_nostruct(self):
+        # Universal Tests
+        object_headers = ['mpid', 'formula']
+
+        numeric_headers = ['e_hull', 'gap pbe', 'mu_b', 'elastic anisotropy',
+                           'bulk modulus', 'shear modulus', 'e_form']
+
+        bool_headers = []
+
+        self.universal_dataset_check(
+            "mp_nostruct", object_headers, numeric_headers,
+            bool_headers=bool_headers
         )
 
 
