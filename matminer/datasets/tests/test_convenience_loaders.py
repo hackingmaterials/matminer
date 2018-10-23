@@ -1,4 +1,5 @@
 import pandas as pd
+import unittest
 
 from matminer.datasets.tests import DataSetTest
 from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
@@ -58,46 +59,46 @@ class ConvenienceLoadersTest(DataSetTest):
     def test_load_dielectric_constant(self):
         df = load_dielectric_constant()
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df.index), 0)
+        self.assertEqual(len(df.columns), 13)
 
         df = load_dielectric_constant(include_metadata=True)
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df.index), 0)
+        self.assertEqual(len(df.columns), 16)
 
     def test_load_piezoelectric_tensor(self):
         df = load_piezoelectric_tensor()
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df.index), 0)
+        self.assertEqual(len(df.columns), 10)
 
-        df = load_dielectric_constant(include_metadata=True)
+        df = load_piezoelectric_tensor(include_metadata=True)
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df.index), 0)
+        self.assertEqual(len(df.columns), 13)
 
     def test_load_elastic_tensor(self):
         df = load_elastic_tensor()
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df.index), 0)
+        self.assertEqual(len(df.columns), 17)
 
-        df = load_dielectric_constant(include_metadata=True)
+        df = load_elastic_tensor(include_metadata=True)
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df.index), 0)
+        self.assertEqual(len(df.columns), 20)
 
     def test_load_glass_ternary_landolt(self):
         df = load_glass_ternary_landolt()
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df), 0)
+        self.assertEqual(len(df), 6118)
 
         df = load_glass_ternary_landolt(unique_composition=False)
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df), 0)
+        self.assertEqual(len(df), 7191)
 
         df = load_glass_ternary_landolt(processing="meltspin")
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df), 0)
+        self.assertEqual(len(df), 5736)
 
         df = load_glass_ternary_landolt(processing="sputtering")
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df), 0)
+        self.assertEqual(len(df), 403)
 
         with self.assertRaises(ValueError):
             df = load_glass_ternary_landolt(processing="spittering")
@@ -106,11 +107,13 @@ class ConvenienceLoadersTest(DataSetTest):
         df = load_phonon_dielectric_mp()
         self.assertTrue(isinstance(df, pd.DataFrame))
 
+    # Skip due to memory usage
+    @unittest.skip
     def test_mp(self):
         df = load_mp()
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df.index), 9)
+        self.assertEqual(len(df.columns), 9)
 
         df = load_mp(include_structures=True)
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df.index), 11)
+        self.assertEqual(len(df.columns), 11)

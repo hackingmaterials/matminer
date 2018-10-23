@@ -169,11 +169,12 @@ def load_glass_ternary_landolt(processing="all", unique_composition=True,
     """
     df = load_dataset("glass_ternary_landolt", data_home, download_if_missing)
 
-    if processing in {"meltspin", "sputtering"}:
-        df = df[df["processing"] == processing]
+    if processing != "all":
+        if processing in {"meltspin", "sputtering"}:
+            df = df[df["processing"] == processing]
 
-    else:
-        raise ValueError("Error, processing method unrecognized")
+        else:
+            raise ValueError("Error, processing method unrecognized")
 
     if unique_composition:
         df = df.groupby("formula").max().reset_index()

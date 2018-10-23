@@ -209,6 +209,8 @@ class DataSetsTest(DataSetTest):
             "double_perovskites_gap_lumo", object_headers, numeric_headers,
         )
 
+    # Skip due to memory usage
+    @unittest.skip
     def test_mp_all(self):
         # Universal Tests
         object_headers = ['mpid', 'formula', 'structure', 'initial structure']
