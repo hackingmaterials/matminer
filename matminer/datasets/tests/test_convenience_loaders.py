@@ -38,11 +38,11 @@ class ConvenienceLoadersTest(DataSetTest):
     def test_load_citrine_thermal_conductivity(self):
         df = load_citrine_thermal_conductivity(room_temperature=False)
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df), 5)
+        self.assertEqual(len(df), 872)
 
         df = load_citrine_thermal_conductivity(room_temperature=True)
         self.assertTrue(isinstance(df, pd.DataFrame))
-        self.assertEqual(len(df), 5)
+        self.assertEqual(len(df), 295)
 
     def test_load_double_perovskites_gap(self):
         df = load_double_perovskites_gap()

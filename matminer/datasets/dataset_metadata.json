@@ -45,6 +45,24 @@
         "reference": "Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, S\u00f8ren Dahl, Ib Chorkendorff, Thomas F. Jaramillo and Karsten W. Jacobsen (2012) New cubic perovskites for one- and two-photon water splitting using the computational materials repository. Energy Environ. Sci., 2012,5, 9034-9043 https://doi.org/10.1039/C2EE22341D",
         "url": "https://ndownloader.figshare.com/files/13284197"
     },
+    "citrine_thermal_conductivity": {
+        "bibtex_refs": [
+            "@misc{Citrine Informatics,\ntitle = {Citrination},\nhowpublished = {\\url{https://www.citrination.com/}},\n}"
+        ],
+        "columns": {
+            "formula": "Chemical formula of the dataset entry",
+            "k-units": "units of thermal conductivity",
+            "k_condition": "Temperature description of testing conditions",
+            "k_condition_units": "units of testing condition temperature representation",
+            "k_expt": "the experimentally measured thermal conductivity in SI units of W/m.K"
+        },
+        "description": "Thermal conductivity of 872 compounds measured experimentally and retrieved from Citrine database from various references. The reported values are measured at various temperatures of which 295 are at room temperature.",
+        "file_type": "json.gz",
+        "hash": "8490997195d6ec912705a5b2322726e53a72c26143a7e63fe0f962ccc6232b2c",
+        "num_entries": 872,
+        "reference": "https://www.citrination.com",
+        "url": "https://ndownloader.figshare.com/files/13314470"
+    },
     "dielectric_constant": {
         "bibtex_refs": [
             "@Article{Petousis2017,\nauthor={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric\nand Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja\nand Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},\ntitle={High-throughput screening of inorganic compounds for the\ndiscovery of novel dielectric and optical materials},\njournal={Scientific Data},\nyear={2017},\nmonth={Jan},\nday={31},\npublisher={The Author(s)},\nvolume={4},\npages={160134},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2016.134}\n}"

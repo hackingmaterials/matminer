@@ -75,7 +75,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Tests unique to this dataset
-        df = load_dataset('elastic_tensor_2015', download_if_missing=False)
+        df = load_dataset('elastic_tensor_2015')
         self.assertEqual(type(df['structure'][0]), Structure)
         tensor_headers = ['compliance_tensor', 'elastic_tensor',
                           'elastic_tensor_original']
@@ -95,7 +95,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Dataset specific checks
-        df = load_dataset('piezoelectric_tensor', download_if_missing=False)
+        df = load_dataset('piezoelectric_tensor')
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(type(df['piezoelectric_tensor'][0]), np.ndarray)
 
@@ -116,7 +116,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Unique tests
-        df = load_dataset("dielectric_constant", download_if_missing=False)
+        df = load_dataset("dielectric_constant")
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_flla(self):
@@ -129,7 +129,7 @@ class DataSetsTest(DataSetTest):
         self.universal_dataset_check("flla", object_headers, numeric_headers)
 
         # Unique tests
-        df = load_dataset('flla', download_if_missing=False)
+        df = load_dataset('flla')
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_castelli_perovskites(self):
@@ -147,7 +147,7 @@ class DataSetsTest(DataSetTest):
         )
 
         # Unique tests
-        df = load_dataset("castelli_perovskites", download_if_missing=False)
+        df = load_dataset("castelli_perovskites")
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_boltztrap_mp(self):
@@ -157,15 +157,12 @@ class DataSetsTest(DataSetTest):
         numeric_headers = ['pf_n', 'pf_p', 's_n', 's_p',
                            'm_n', 'm_p']
 
-        bool_headers = []
-
         self.universal_dataset_check(
             "boltztrap_mp", object_headers, numeric_headers,
-            bool_headers=bool_headers
         )
 
         # Unique tests
-        df = load_dataset("boltztrap_mp", download_if_missing=False)
+        df = load_dataset("boltztrap_mp")
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_phonon_dielectric_mp(self):
@@ -174,15 +171,12 @@ class DataSetsTest(DataSetTest):
 
         numeric_headers = ['eps_electronic', 'eps_total', 'last phdos peak']
 
-        bool_headers = []
-
         self.universal_dataset_check(
             "phonon_dielectric_mp", object_headers, numeric_headers,
-            bool_headers=bool_headers
         )
 
         # Unique tests
-        df = load_dataset("phonon_dielectric_mp", download_if_missing=False)
+        df = load_dataset("phonon_dielectric_mp")
         self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_glass_ternary_hipt(self):
@@ -191,11 +185,8 @@ class DataSetsTest(DataSetTest):
 
         numeric_headers = ['gfa']
 
-        bool_headers = []
-
         self.universal_dataset_check(
             "glass_ternary_hipt", object_headers, numeric_headers,
-            bool_headers=bool_headers
         )
 
     def test_double_perovskites_gap(self):
@@ -204,11 +195,8 @@ class DataSetsTest(DataSetTest):
 
         numeric_headers = ['gap gllbsc']
 
-        bool_headers = []
-
         self.universal_dataset_check(
             "double_perovskites_gap", object_headers, numeric_headers,
-            bool_headers=bool_headers
         )
 
     def test_double_perovskites_gap_lumo(self):
@@ -217,11 +205,8 @@ class DataSetsTest(DataSetTest):
 
         numeric_headers = ['lumo']
 
-        bool_headers = []
-
         self.universal_dataset_check(
             "double_perovskites_gap_lumo", object_headers, numeric_headers,
-            bool_headers=bool_headers
         )
 
     def test_mp_all(self):
@@ -231,12 +216,13 @@ class DataSetsTest(DataSetTest):
         numeric_headers = ['e_hull', 'gap pbe', 'mu_b', 'elastic anisotropy',
                            'bulk modulus', 'shear modulus', 'e_form']
 
-        bool_headers = []
-
         self.universal_dataset_check(
             "mp_all", object_headers, numeric_headers,
-            bool_headers=bool_headers
         )
+
+        # Unique tests
+        df = load_dataset("mp_all")
+        self.assertEqual(type(df['structure'][0]), Structure)
 
     def test_mp_nostruct(self):
         # Universal Tests
@@ -245,11 +231,8 @@ class DataSetsTest(DataSetTest):
         numeric_headers = ['e_hull', 'gap pbe', 'mu_b', 'elastic anisotropy',
                            'bulk modulus', 'shear modulus', 'e_form']
 
-        bool_headers = []
-
         self.universal_dataset_check(
             "mp_nostruct", object_headers, numeric_headers,
-            bool_headers=bool_headers
         )
 
     def test_glass_ternary_landolt(self):
@@ -258,11 +241,19 @@ class DataSetsTest(DataSetTest):
 
         numeric_headers = ['gfa']
 
-        bool_headers = []
-
         self.universal_dataset_check(
             "glass_ternary_landolt", object_headers, numeric_headers,
-            bool_headers=bool_headers
+        )
+
+    def test_citrine_thermal_conductivity(self):
+        # Universal Tests
+        object_headers = ['k-units', 'formula', 'k_condition',
+                          'k_condition_units']
+
+        numeric_headers = ['k_expt']
+
+        self.universal_dataset_check(
+            "citrine_thermal_conductivity", object_headers, numeric_headers
         )
 
 

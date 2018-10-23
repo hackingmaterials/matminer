@@ -19,7 +19,8 @@ class DataSetTest(unittest.TestCase):
             'double_perovskites_gap_lumo',
             'mp_all',
             'mp_nostruct',
-            'glass_ternary_landolt'
+            'glass_ternary_landolt',
+            'citrine_thermal_conductivity'
         ]
         self.dataset_attributes = [
             'file_type',
