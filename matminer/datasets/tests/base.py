@@ -20,7 +20,8 @@ class DataSetTest(unittest.TestCase):
             'mp_all',
             'mp_nostruct',
             'glass_ternary_landolt',
-            'citrine_thermal_conductivity'
+            'citrine_thermal_conductivity',
+            'wolverton_oxides'
         ]
         self.dataset_attributes = [
             'file_type',

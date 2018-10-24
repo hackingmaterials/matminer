@@ -258,6 +258,18 @@ class DataSetsTest(DataSetTest):
             "citrine_thermal_conductivity", object_headers, numeric_headers
         )
 
+    def test_wolverton_oxides(self):
+        # Universal Tests
+        object_headers = ['atom a', 'formula', 'atom b', 'lowest distortion',
+                          'mu_b', 'a', 'b', 'c', 'alpha', 'beta', 'gamma']
+
+        numeric_headers = ['e_form', 'e_hull', 'vpa', 'gap pbe',
+                           'e_form oxygen']
+
+        self.universal_dataset_check(
+            "wolverton_oxides", object_headers, numeric_headers
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,7 +7,8 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_citrine_thermal_conductivity, load_dielectric_constant, \
     load_double_perovskites_gap, load_double_perovskites_gap_lumo, \
     load_elastic_tensor, load_glass_ternary_landolt, \
-    load_phonon_dielectric_mp, load_piezoelectric_tensor, load_mp
+    load_phonon_dielectric_mp, load_piezoelectric_tensor, load_mp, \
+    load_wolverton_oxides
 
 
 class ConvenienceLoadersTest(DataSetTest):
@@ -117,3 +118,7 @@ class ConvenienceLoadersTest(DataSetTest):
         df = load_mp(include_structures=True)
         self.assertTrue(isinstance(df, pd.DataFrame))
         self.assertEqual(len(df.columns), 11)
+
+    def test_wolverton_oxides(self):
+        df = load_wolverton_oxides()
+        self.assertTrue(isinstance(df, pd.DataFrame))

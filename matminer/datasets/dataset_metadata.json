@@ -309,5 +309,35 @@
         "num_entries": 941,
         "reference": "de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.\nA database to enable discovery and design of piezoelectric materials.\nSci. Data 2, 150053 (2015)",
         "url": "https://ndownloader.figshare.com/files/13220621"
+    },
+    "wolverton_oxides": {
+        "bibtex_refs": [
+            "@Article{Emery2017,\nauthor={Emery, Antoine A.\nand Wolverton, Chris},\ntitle={High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites},\njournal={Scientific Data},\nyear={2017},\nmonth={Oct},\nday={17},\npublisher={The Author(s)},\nvolume={4},\npages={170153},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2017.153}\n}",
+            "@misc{emery_2017, title={High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites}, url={https://figshare.com/articles/High-throughput_DFT_calculations_of_formation_energy_stability_and_oxygen_vacancy_formation_energy_of_ABO3_perovskites/5334142/1}, DOI={10.6084/m9.figshare.5334142.v1}, abstractNote={ABO3 perovskites are oxide materials that are used for a variety of applications such as solid oxide fuel cells, piezo-, ferro-electricity and water splitting. Due to their remarkable stability with respect to cation substitution, new compounds for such applications potentially await discovery. In this work, we present an exhaustive dataset of formation energies of 5,329 cubic and distorted perovskites that were calculated using first-principles density functional theory. In addition to formation energies, several additional properties such as oxidation states, band gap, oxygen vacancy formation energy, and thermodynamic stability with respect to all phases in the Open Quantum Materials Database are also made publicly available. This large dataset for this ubiquitous crystal structure type contains 395 perovskites that are predicted to be thermodynamically stable, of which many have not yet been experimentally reported, and therefore represent theoretical predictions. The dataset thus opens avenues for future use, including materials discovery in many research-active areas.}, publisher={figshare}, author={Emery, Antoine}, year={2017}, month={Aug}}"
+        ],
+        "columns": {
+            "a": "Lattice parameter a, in A (angstrom)",
+            "alpha": "Lattice angle alpha, in degrees",
+            "atom a": "The atom in the 'A' site of the pervoskite.",
+            "atom b": "The atom in the 'B' site of the perovskite.",
+            "b": "Lattice parameter b, in A (angstrom)",
+            "beta": "Lattice angle beta, in degrees",
+            "c": "Lattice parameter c, in A (angstrom)",
+            "e_form": "Formation energy in eV",
+            "e_form oxygen": "Formation energy of oxygen vacancy (eV)",
+            "e_hull": "Energy above convex hull, wrt. OQMD db (eV)",
+            "formula": "Chemical formula of the entry",
+            "gamma": "Lattice angle gamma, in degrees",
+            "gap pbe": "Bandgap in eV from PBE calculations",
+            "lowest distortion": "Local distortion crystal structure with lowest energy among all considered distortions.",
+            "mu_b": "Magnetic moment",
+            "vpa": "Volume per atom (A^3/atom)"
+        },
+        "description": "4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies. All perovskites are of the form ABO3. Adapted from a dataset presented by Emery and Wolverton.",
+        "file_type": "json.gz",
+        "hash": "3e66c2a5bd23dac335f045210258ca14babf730824bf989b0127640c24bcb78b",
+        "num_entries": 4914,
+        "reference": "Emery, A. A. & Wolverton, C. High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites. Sci. Data 4:170153 doi: 10.1038/sdata.2017.153 (2017).\nEmery, A. A., & Wolverton, C. Figshare http://dx.doi.org/10.6084/m9.figshare.5334142 (2017)",
+        "url": "https://ndownloader.figshare.com/files/13354616"
     }
 }

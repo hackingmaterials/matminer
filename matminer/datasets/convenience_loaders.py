@@ -305,3 +305,20 @@ def load_mp(include_structures=False, data_home=None, download_if_missing=True):
         df = load_dataset('mp_nostruct', data_home, download_if_missing)
 
     return df
+
+
+def load_wolverton_oxides(data_home=None, download_if_missing=True):
+    """
+    Convenience function for loading the double_perovskites_gap dataset.
+
+    Args:
+        data_home (str, None): Where to loom for and store the loaded dataset
+
+        download_if_missing (bool): Whether or not to download the dataset if
+           it isn't on disk
+
+    Returns: (pd.DataFrame)
+    """
+    df = load_dataset("wolverton_oxides", data_home, download_if_missing)
+
+    return df
