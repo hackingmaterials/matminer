@@ -158,6 +158,6 @@ def _read_dataframe_from_file(file_path, **kwargs):
     elif file_path.endswith(".json"):
         df = pd.read_json(file_path, **kwargs)
     else:
-        raise ValueError("File type {} unsupported".format(file_path))
+        raise ValueError("File type of {} unsupported".format(file_path))
 
     return df
