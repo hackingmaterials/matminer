@@ -1,4 +1,4 @@
-##**Guide to adding datasets to matminer:**
+## Guide to adding datasets to matminer:
 
 _All information current as of 10/24/2018_
 
@@ -20,7 +20,7 @@ comparing model performance against.
 To add a dataset to the collection currently supported by matminer there are 
 five primary steps:
 
-1.	####Prepare the dataset for long term hosting
+1.	#### Prepare the dataset for long term hosting
       To work properly with matminer's loading functions it is assumed that 
       all datasets are pandas DataFrame objects stored as JSON files using the 
       MontyEncoder encoding scheme available in the monty Python package. Any 
@@ -43,7 +43,7 @@ five primary steps:
       running it on their selected datasets.
       
       To update the script to preprocess your dataset:
-      - #####Write a preprocessor for the dataset in prep_dataset_for_figshare.py
+      - ##### Write a preprocessor for the dataset in prep_dataset_for_figshare.py
         
         The preprocessor should take the dataset path, do any necessary 
         preprocessing to turn it into a usable dataframe, and return a tuple 
@@ -79,7 +79,7 @@ five primary steps:
             return ["double_perovskites_gap", "double_perovskites_gap_lumo"], [df, lumo]
         ```
         
-      - #####Add the preprocessor function to a dictionary which maps file names to preprocessors in prep_dataset_for_figshare.py
+      - ##### Add the preprocessor function to a dictionary which maps file names to preprocessors in prep_dataset_for_figshare.py
         The prep script identifies datasets by their file name, a dictionary 
         called `_datasets_to_preprocessing_routines` maps these dataset names
         to their preprocessor and should be updated like so:
@@ -96,7 +96,7 @@ five primary steps:
         ```
         Once this is done the preprocessor is ready to use.
 
-2.	####Upload the dataset to long term hosting
+2.	#### Upload the dataset to long term hosting
       Once the dataset file is ready, it should be hosted on Figshare
       or a comparable open access academic data hosting service. For the Hacking
       Materials group:
@@ -109,7 +109,7 @@ five primary steps:
       originally came from a source outside the group they should be 
       thoroughly cited.
 
-3.	####Update the matminer dataset metadata file
+3.	#### Update the matminer dataset metadata file
       Matminer stores a file called `dataset_metadata.json` which contains 
       information on all datasets available in the package. This file is 
       automatically checked by CircleCI for propper formatting and the 
@@ -128,7 +128,7 @@ five primary steps:
       - Look over the modified `dataset_metadata.json` file and 
       fix mistakes if necessary.
 
-4.	####Update the dataset tests and loading code
+4.	#### Update the dataset tests and loading code
       Dataset testing uses unit tests to ensure dataset metadata and dataset content
       is formatted properly and available. When adding a new datasets these tests 
       need updated. In addition matminer provides a set of convenience functions that
@@ -220,6 +220,6 @@ five primary steps:
         These tests can be simple and will depend on the options provided in the
         convenience function. See existing tests for examples.
 
-5.	####Update GitHub repository
+5.	#### Update GitHub repository
       - Make a commit describing the added dataset
       - Make a pull request from your fork to the primary repository
