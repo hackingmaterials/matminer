@@ -15,14 +15,12 @@ from matminer.datasets.utils import _get_file_sha256_hash, \
 
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
 
-"""
-Each _preprocess_* function acts as a preprocessor for a dataset with a
+"""Each _preprocess_* function acts as a preprocessor for a dataset with a
 given name. One should be written whenever a new dataset is being added to
 matminer. These functions take the path of a given dataset and do the necessary
-processing to make it a usable dataframe. If one dataframe is to be made from a 
-dataset, it should just return a name / dataframe pair, if more than one 
-dataframe is to be created a list of pairs should be returned. 
-"""
+processing to make it a usable dataframe. If one dataframe is to be made from a
+dataset, it should just return a name / dataframe pair, if more than one
+dataframe is to be created a list of pairs should be returned."""
 
 
 def _preprocess_wolverton_oxides(file_path):
@@ -371,11 +369,9 @@ def _preprocess_flla(file_path):
     return 'flla', df[column_headers]
 
 
-"""
-These dictionaries map the filename of datasets to their preprocessors. 
+"""These dictionaries map the filename of datasets to their preprocessors. 
 Defaults to just loading in the file with default pd load function for a 
-given file type
-"""
+given file type"""
 
 
 _datasets_to_preprocessing_routines = {

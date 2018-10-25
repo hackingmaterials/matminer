@@ -1,7 +1,7 @@
 from matminer.datasets import load_dataset
 
 
-"Convenience functions provided to make accessing datasets simpler"
+"""Convenience functions provided to make accessing datasets simpler"""
 
 
 def load_elastic_tensor(version="2015", include_metadata=False, data_home=None,
