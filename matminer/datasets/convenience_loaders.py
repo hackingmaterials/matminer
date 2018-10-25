@@ -286,7 +286,7 @@ def load_citrine_thermal_conductivity(room_temperature=True, data_home=None,
 
 def load_mp(include_structures=False, data_home=None, download_if_missing=True):
     """
-    Convenience function for loading the double_perovskites_gap dataset.
+    Convenience function for loading the materials project dataset.
 
     Args:
         include_structures (bool) Whether or not to load the full mp
@@ -309,7 +309,7 @@ def load_mp(include_structures=False, data_home=None, download_if_missing=True):
 
 def load_wolverton_oxides(data_home=None, download_if_missing=True):
     """
-    Convenience function for loading the double_perovskites_gap dataset.
+    Convenience function for loading the wolverton oxides dataset.
 
     Args:
         data_home (str, None): Where to loom for and store the loaded dataset
@@ -322,3 +322,21 @@ def load_wolverton_oxides(data_home=None, download_if_missing=True):
     df = load_dataset("wolverton_oxides", data_home, download_if_missing)
 
     return df
+
+
+def load_heusler_magnetic(data_home=None, download_if_missing=True):
+    """
+    Convenience function for loading the heusler magnetic dataset.
+
+    Args:
+        data_home (str, None): Where to loom for and store the loaded dataset
+
+        download_if_missing (bool): Whether or not to download the dataset if
+           it isn't on disk
+
+    Returns: (pd.DataFrame)
+    """
+    df = load_dataset("heusler_magnetic", data_home, download_if_missing)
+
+    return df
+

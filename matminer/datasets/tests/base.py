@@ -21,7 +21,8 @@ class DataSetTest(unittest.TestCase):
             'mp_nostruct',
             'glass_ternary_landolt',
             'citrine_thermal_conductivity',
-            'wolverton_oxides'
+            'wolverton_oxides',
+            'heusler_magnetic'
         ]
         self.dataset_attributes = [
             'file_type',

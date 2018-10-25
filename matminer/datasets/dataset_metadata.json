@@ -218,6 +218,29 @@
         "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2\n10.1007/10510374_2 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 20-10-2018",
         "url": "https://ndownloader.figshare.com/files/13314428"
     },
+    "heusler_magnetic": {
+        "bibtex_refs": [
+            "@misc{Citrine Informatics,\ntitle = {University of Alabama Heusler database},\nhowpublished = {\\url{https://citrination.com/datasets/150561/}},\n}"
+        ],
+        "columns": {
+            "mu_b saturation": "Saturation magnetization in emu/cc",
+            "e_form": "Formation energy in eV/atom",
+            "formula": "Chemical formula of the entry",
+            "heusler type": "Full, Half, or Inverse Heusler",
+            "latt const": "Lattice constant",
+            "mu_b": "Magnetic moment",
+            "num_electron": "Number of electrons per formula unit",
+            "pol fermi": "Polarization at Fermi level in %",
+            "struct type": "Structure type",
+            "tetragonality": "Tetragonality, i.e. c/a"
+        },
+        "description": "1153 Heusler alloys with DFT-calculated magnetic and electronic properties. The 1153 alloys include 576 full, 449 half and 128 inverse Heusler alloys. The data are extracted and cleaned (including de-duplicating) from Citrine.",
+        "file_type": "json.gz",
+        "hash": "0ae0b837201979afb6004451c8a79b30c0045f0daf4ec11355c3db5953ff9520",
+        "num_entries": 1153,
+        "reference": "https://citrination.com/datasets/150561/",
+        "url": "https://ndownloader.figshare.com/files/13354670"
+    },
     "mp_all": {
         "bibtex_refs": [
             "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"

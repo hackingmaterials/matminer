@@ -270,6 +270,17 @@ class DataSetsTest(DataSetTest):
             "wolverton_oxides", object_headers, numeric_headers
         )
 
+    def test_heusler_magnetic(self):
+        # Universal Tests
+        object_headers = ['formula', 'heusler type', 'struct type']
+
+        numeric_headers = ['num_electron', 'latt const', 'tetragonality',
+                           'e_form', 'pol fermi', 'mu_b', 'mu_b saturation']
+
+        self.universal_dataset_check(
+            "heusler_magnetic", object_headers, numeric_headers
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
