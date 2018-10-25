@@ -22,7 +22,8 @@ class DataSetTest(unittest.TestCase):
             'glass_ternary_landolt',
             'citrine_thermal_conductivity',
             'wolverton_oxides',
-            'heusler_magnetic'
+            'heusler_magnetic',
+            'steel_strength'
         ]
         self.dataset_attributes = [
             'file_type',

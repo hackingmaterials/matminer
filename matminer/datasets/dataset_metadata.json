@@ -223,12 +223,12 @@
             "@misc{Citrine Informatics,\ntitle = {University of Alabama Heusler database},\nhowpublished = {\\url{https://citrination.com/datasets/150561/}},\n}"
         ],
         "columns": {
-            "mu_b saturation": "Saturation magnetization in emu/cc",
             "e_form": "Formation energy in eV/atom",
             "formula": "Chemical formula of the entry",
             "heusler type": "Full, Half, or Inverse Heusler",
             "latt const": "Lattice constant",
             "mu_b": "Magnetic moment",
+            "mu_b saturation": "Saturation magnetization in emu/cc",
             "num_electron": "Number of electrons per formula unit",
             "pol fermi": "Polarization at Fermi level in %",
             "struct type": "Structure type",
@@ -332,6 +332,36 @@
         "num_entries": 941,
         "reference": "de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.\nA database to enable discovery and design of piezoelectric materials.\nSci. Data 2, 150053 (2015)",
         "url": "https://ndownloader.figshare.com/files/13220621"
+    },
+    "steel_strength": {
+        "bibtex_refs": [
+            "@misc{Citrine Informatics,\ntitle = {Mechanical properties of some steels},\nhowpublished = {\\url{https://citrination.com/datasets/153092/},\n}"
+        ],
+        "columns": {
+            "al": "weight percent of Al",
+            "c": "weight percent of C",
+            "co": "weight percent of Co",
+            "cr": "weight percent of Cr",
+            "elongation": "elongation in %",
+            "formula": "Chemical formula of the entry",
+            "mn": "weight percent of Mn",
+            "mo": "weight percent of Mo",
+            "n": "weight percent of N",
+            "nb": "weight percent of Nb",
+            "ni": "weight percent of Ni",
+            "si": "weight percent of Si",
+            "tensile strength": "ultimate tensile strength in GPa",
+            "ti": "weight percent of Ti",
+            "v": "weight percent of V",
+            "w": "weight percent of W",
+            "yield strength": "yield strength in GPa"
+        },
+        "description": "312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.",
+        "file_type": "json.gz",
+        "hash": "e36501d7057cd833223bb8ed9948668b5ac90fd585d29a749f45af51c1d7f6ad",
+        "num_entries": 312,
+        "reference": "https://citrination.com/datasets/153092/",
+        "url": "https://ndownloader.figshare.com/files/13354691"
     },
     "wolverton_oxides": {
         "bibtex_refs": [

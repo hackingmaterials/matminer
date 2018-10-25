@@ -340,3 +340,19 @@ def load_heusler_magnetic(data_home=None, download_if_missing=True):
 
     return df
 
+
+def load_steel_strength(data_home=None, download_if_missing=True):
+    """
+    Convenience function for loading the steel strength dataset.
+
+    Args:
+        data_home (str, None): Where to loom for and store the loaded dataset
+
+        download_if_missing (bool): Whether or not to download the dataset if
+           it isn't on disk
+
+    Returns: (pd.DataFrame)
+    """
+    df = load_dataset("steel_strength", data_home, download_if_missing)
+
+    return df

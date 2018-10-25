@@ -281,6 +281,18 @@ class DataSetsTest(DataSetTest):
             "heusler_magnetic", object_headers, numeric_headers
         )
 
+    def test_steel_strength(self):
+        # Universal Tests
+        object_headers = ['formula']
+
+        numeric_headers = ['c', 'mn', 'si', 'cr', 'ni', 'mo', 'v', 'n', 'nb',
+                           'co', 'w', 'al', 'ti', 'yield strength',
+                           'tensile strength', 'elongation']
+
+        self.universal_dataset_check(
+            "steel_strength", object_headers, numeric_headers
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
