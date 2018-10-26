@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 from pandas.api.types import is_numeric_dtype, is_object_dtype, is_bool_dtype
-from pymatgen.core.structure import Structure
+from pymatgen.core.structure import Structure, Composition
 
 from matminer.datasets.tests import DataSetTest
 from matminer.datasets.dataset_retrieval import load_dataset
@@ -292,6 +292,26 @@ class DataSetsTest(DataSetTest):
         self.universal_dataset_check(
             "steel_strength", object_headers, numeric_headers
         )
+
+    def test_jarvis_ml_dft_training(self):
+        # Universal Tests
+        object_headers = ['jid', 'mpid', 'structure', 'composition']
+
+        numeric_headers = ['e mass_x', 'e mass_y', 'e mass_z',
+                           'epsilon_x opt', 'epsilon_y opt', 'epsilon_z opt',
+                           'e_exfol', 'e_form', 'shear modulus', 'hole mass_x',
+                           'hole mass_y', 'hole mass_z', 'bulk modulus',
+                           'mu_b', 'gap tbmbj', 'epsilon_x tbmbj',
+                           'epsilon_y tbmbj', 'epsilon_z tbmbj', 'gap opt']
+
+        self.universal_dataset_check(
+            "jarvis_ml_dft_training", object_headers, numeric_headers,
+        )
+
+        # Unique tests
+        df = load_dataset("jarvis_ml_dft_training")
+        self.assertEqual(type(df['structure'][0]), Structure)
+        self.assertEqual(type(df['composition'][0]), Composition)
 
 
 if __name__ == "__main__":

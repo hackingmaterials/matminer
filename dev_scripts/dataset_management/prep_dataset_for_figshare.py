@@ -29,6 +29,7 @@ def _preprocess_wolverton_oxides(file_path):
     dropcols = ['In literature', 'Valence A', 'Valence B', 'Radius A [ang]',
                 'Radius B [ang]']
     df = df.drop(dropcols, axis=1)
+
     colmap = {"Chemical formula": "formula",
               "A": "atom a",
               "B": "atom b",
@@ -46,6 +47,7 @@ def _preprocess_wolverton_oxides(file_path):
               "gamma [deg]": "gamma",
               "Lowest distortion": "lowest distortion"}
     df = df.rename(columns=colmap)
+
     for k in ['e_form', 'gap pbe', 'e_hull', 'vpa', 'e_form oxygen']:
         df[k] = pd.to_numeric(df[k], errors='coerce')
 
@@ -115,6 +117,9 @@ def _preprocess_jdft2d(file_path):
 
     return "jdft2d", df
 
+def _preprocess_jarvis_dft_3d(file_path):
+    pass
+
 
 def _preprocess_heusler_magnetic(file_path):
     df = _read_dataframe_from_file(file_path)
@@ -137,7 +142,7 @@ def _preprocess_glass_ternary_hipt(file_path):
     return "glass_ternary_hipt", df
 
 
-def _preprocess_jarvis_dft(file_path):
+def _preprocess_jarvis_ml_dft_training(file_path):
     df = load_dataframe_from_json(file_path)
 
     colmap = {
@@ -159,15 +164,25 @@ def _preprocess_jarvis_dft(file_path):
         "mepsx": "epsilon_x tbmbj",
         "mepsy": "epsilon_y tbmbj",
         "mepsz": "epsilon_z tbmbj",
-        "op_gap": "gap tbmbj",
+        "op_gap": "gap opt",
         "strt": "structure",
     }
 
     df = df.rename(columns=colmap)
-    df = df.drop(["multi_elastic", "fin_enp"], axis=1)
+    # Remove redundant or unneeded for our purposes columns
+    df = df.drop(["desc", "el_mass", "encut", "fin_enp", "hl_mass",
+                  "kp_leng", "multi_elastic", "type"], axis=1)
     s = StructureToComposition()
     df = s.featurize_dataframe(df, "structure")
-    return "jarvis_dft", df
+
+    for k in ["e mass_x", "e mass_y", "e mass_z", "e_exfol", "e_form", "mu_b",
+              "epsilon_x opt", "epsilon_y opt", "epsilon_z opt",
+              "shear modulus", "hole mass_x", "hole mass_y", "hole mass_z",
+              "bulk modulus", "gap tbmbj", "epsilon_x tbmbj", "epsilon_y tbmbj",
+              "epsilon_z tbmbj", "gap opt"]:
+        df[k] = pd.to_numeric(df[k], errors='coerce')
+
+    return "jarvis_ml_dft_training", df
 
 
 def _preprocess_mp(file_path):
@@ -395,7 +410,7 @@ _datasets_to_preprocessing_routines = {
     "jdft_2d": _preprocess_jdft2d,
     "heusler_magnetic": _preprocess_heusler_magnetic,
     "steel_strength": _preprocess_steel_strength,
-    "jdft_3d": _preprocess_jarvis_dft,
+    "jarvisml_cfid": _preprocess_jarvis_ml_dft_training,
     "glass_ternary_hipt": _preprocess_glass_ternary_hipt,
 }
 

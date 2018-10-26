@@ -241,6 +241,43 @@
         "reference": "https://citrination.com/datasets/150561/",
         "url": "https://ndownloader.figshare.com/files/13354670"
     },
+    "jarvis_ml_dft_training": {
+        "bibtex_refs": [
+            "@article{PhysRevMaterials.2.083801,\ntitle = {Machine learning with force-field-inspired descriptors for materials: Fast screening and mapping energy landscape},\nauthor = {Choudhary, Kamal and DeCost, Brian and Tavazza, Francesca},\njournal = {Phys. Rev. Materials},\nvolume = {2},\nissue = {8},\npages = {083801},\nnumpages = {8},\nyear = {2018},\nmonth = {Aug},\npublisher = {American Physical Society},\ndoi = {10.1103/PhysRevMaterials.2.083801},\nurl = {https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}\n}",
+            "@misc{choudhary_2018, title={JARVIS-ML-CFID-descriptors and material properties}, url={https://figshare.com/articles/JARVIS-ML-CFID-descriptors_and_material_properties/6870101/1}, DOI={10.6084/m9.figshare.6870101.v1}, abstractNote={Classical force-field inspired descriptors (CFID) for more than 25000 materials and their material properties such as bandgap, formation energies, modulus of elasticity etc. See JARVIS-ML: https://jarvis.nist.gov/}, publisher={figshare}, author={choudhary, kamal}, year={2018}, month={Jul}}"
+        ],
+        "columns": {
+            "bulk modulus": "VRH average calculation of bulk modulus",
+            "composition": "A descriptor of the composition of the material",
+            "e mass_x": "Effective electron mass in x direction (BoltzTraP)",
+            "e mass_y": "Effective electron mass in y direction (BoltzTraP)",
+            "e mass_z": "Effective electron mass in z direction (BoltzTraP)",
+            "e_exfol": "exfoliation energy per atom in eV/atom",
+            "e_form": "formation energy per atom, in eV/atom",
+            "epsilon_x opt": "Static dielectric function in x direction calculated with OptB88vDW functional.",
+            "epsilon_x tbmbj": "Static dielectric function in x direction calculated with TBMBJ functional.",
+            "epsilon_y opt": "Static dielectric function in y direction calculated with OptB88vDW functional.",
+            "epsilon_y tbmbj": "Static dielectric function in y direction calculated with TBMBJ functional.",
+            "epsilon_z opt": "Static dielectric function in z direction calculated with OptB88vDW functional.",
+            "epsilon_z tbmbj": "Static dielectric function in z direction calculated with TBMBJ functional.",
+            "gap opt": "Band gap calculated with OptB88vDW functional, in eV",
+            "gap tbmbj": "Band gap calculated with TBMBJ functional, in eV",
+            "hole mass_x": "Effective hole mass in x direction (BoltzTraP)",
+            "hole mass_y": "Effective hole mass in y direction (BoltzTraP)",
+            "hole mass_z": "Effective hole mass in z direction (BoltzTraP)",
+            "jid": "JARVIS ID",
+            "mpid": "Materials Project ID",
+            "mu_b": "Magnetic moment, in Bohr Magneton",
+            "shear modulus": "VRH average calculation of shear modulus",
+            "structure": "A Pymatgen Structure object describing the crystal structure of the material"
+        },
+        "description": "Various properties of 24,759 bulk and 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.",
+        "file_type": "json.gz",
+        "hash": "e7b147bb2135018e38050acc479230adb5dceb5ce3ae1eacb323e1ca1d44770b",
+        "num_entries": 24759,
+        "reference": "Dataset discussed in:\nMachine learning with force-field-inspired descriptors for materials: Fast screening and mapping energy landscape Kamal Choudhary, Brian DeCost, and Francesca Tavazza Phys. Rev. Materials 2, 083801\n\nOriginal Data file sourced from:\nchoudhary, kamal (2018): JARVIS-ML-CFID-descriptors and material properties. figshare. Dataset.",
+        "url": "https://ndownloader.figshare.com/files/13376159"
+    },
     "mp_all": {
         "bibtex_refs": [
             "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"

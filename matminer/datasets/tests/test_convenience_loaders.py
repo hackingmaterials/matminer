@@ -8,7 +8,8 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_double_perovskites_gap, load_double_perovskites_gap_lumo, \
     load_elastic_tensor, load_glass_ternary_landolt, \
     load_phonon_dielectric_mp, load_piezoelectric_tensor, load_mp, \
-    load_wolverton_oxides, load_heusler_magnetic, load_steel_strength
+    load_wolverton_oxides, load_heusler_magnetic, load_steel_strength, \
+    load_jarvis_ml_dft_training
 
 
 class ConvenienceLoadersTest(DataSetTest):
@@ -130,3 +131,10 @@ class ConvenienceLoadersTest(DataSetTest):
     def test_load_steel_strength(self):
         df = load_steel_strength()
         self.assertTrue(isinstance(df, pd.DataFrame))
+
+    def test_load_jarvis_ml_dft_training(self):
+        df = load_jarvis_ml_dft_training()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+        self.assertEqual(len(df), 24759)
+        df = load_jarvis_ml_dft_training(drop_nan_columns='e mass_x')
+        self.assertEqual(len(df), 19978)
