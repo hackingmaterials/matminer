@@ -24,7 +24,9 @@ class DataSetTest(unittest.TestCase):
             'wolverton_oxides',
             'heusler_magnetic',
             'steel_strength',
-            'jarvis_ml_dft_training'
+            'jarvis_ml_dft_training',
+            'jarvis_dft_2d',
+            'jarvis_dft_3d',
         ]
         self.dataset_attributes = [
             'file_type',

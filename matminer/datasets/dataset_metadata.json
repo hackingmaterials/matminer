@@ -241,6 +241,65 @@
         "reference": "https://citrination.com/datasets/150561/",
         "url": "https://ndownloader.figshare.com/files/13354670"
     },
+    "jarvis_dft_2d": {
+        "bibtex_refs": [
+            "@Article{Choudhary2017,\nauthor={Choudhary, Kamal\nand Kalish, Irina\nand Beams, Ryan\nand Tavazza, Francesca},\ntitle={High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory},\njournal={Scientific Reports},\nyear={2017},\nvolume={7},\nnumber={1},\npages={5179},\nabstract={We introduce a simple criterion to identify two-dimensional (2D) materials based on the comparison between experimental lattice constants and lattice constants mainly obtained from Materials-Project (MP) density functional theory (DFT) calculation repository. Specifically, if the relative difference between the two lattice constants for a specific material is greater than or equal to 5%, we predict them to be good candidates for 2D materials. We have predicted at least 1356 such 2D materials. For all the systems satisfying our criterion, we manually create single layer systems and calculate their energetics, structural, electronic, and elastic properties for both the bulk and the single layer cases. Currently the database consists of 1012 bulk and 430 single layer materials, of which 371 systems are common to bulk and single layer. The rest of calculations are underway. To validate our criterion, we calculated the exfoliation energy of the suggested layered materials, and we found that in 88.9% of the cases the currently accepted criterion for exfoliation was satisfied. Also, using molybdenum telluride as a test case, we performed X-ray diffraction and Raman scattering experiments to benchmark our calculations and understand their applicability and limitations. The data is publicly available at the website http://www.ctcms.nist.gov/{\textasciitilde}knc6/JVASP.html.},\nissn={2045-2322},\ndoi={10.1038/s41598-017-05402-0},\nurl={https://doi.org/10.1038/s41598-017-05402-0}\n}",
+            "@misc{choudhary__2018, title={jdft_2d-7-7-2018.json}, url={https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1}, DOI={10.6084/m9.figshare.6815705.v1}, abstractNote={2D materials}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}"
+        ],
+        "columns": {
+            "jid": "JARVIS ID",
+            "composition": "A Pymatgen Composition descriptor of the composition of the material",
+            "e_form": "formation energy per atom, in eV/atom",
+            "epsilon_x opt": "Static dielectric function in x direction calculated with OptB88vDW functional.",
+            "epsilon_x tbmbj": "Static dielectric function in x direction calculuated with TBMBJ functional.",
+            "epsilon_y opt": "Static dielectric function in y direction calculated with OptB88vDW functional.",
+            "epsilon_y tbmbj": "Static dielectric function in y direction calculuated with TBMBJ functional.",
+            "epsilon_z opt": "Static dielectric function in z direction calculated with OptB88vDW functional.",
+            "epsilon_z tbmbj": "Static dielectric function in z direction calculuated with TBMBJ functional.",
+            "exfoliation_en": "Exfoliation energy (monolayer formation E) in eV",
+            "gap opt": "Band gap calculated with OptB88vDW functional, in eV",
+            "gap tbmbj": "Band gap calculated with TBMBJ functional, in eV",
+            "mpid": "Materials Project ID",
+            "structure": "A description of the crystal structure of the material",
+            "structure initial": "Initial structure description of the crystal structure of the material"
+        },
+        "description": "Various properties of 636 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.",
+        "file_type": "json.gz",
+        "hash": "6994355a15ae960e3e204a1208db68eb490b5be363b15b97b36d2e0cd09b6d99",
+        "num_entries": 636,
+        "reference": "2D Dataset discussed in:\nHigh-throughput Identification and Characterization of Two dimensional Materials using Density functional theory Kamal Choudhary, Irina Kalish, Ryan Beams & Francesca Tavazza Scientific Reports volume 7, Article number: 5179 (2017)\nOriginal 2D Data file sourced from:\nchoudhary, kamal; https://orcid.org/0000-0001-9737-8074 (2018): jdft_2d-7-7-2018.json. figshare. Dataset.",
+        "url": "https://ndownloader.figshare.com/files/13376504"
+    },
+    "jarvis_dft_3d": {
+        "bibtex_refs": [
+            "@article{PhysRevB.98.014107,\ntitle = {Elastic properties of bulk and low-dimensional materials using van der Waals density functional},\nauthor = {Choudhary, Kamal and Cheon, Gowoon and Reed, Evan and Tavazza, Francesca},\njournal = {Phys. Rev. B},\nvolume = {98},\nissue = {1},\npages = {014107},\nnumpages = {12},\nyear = {2018},\nmonth = {Jul},\npublisher = {American Physical Society},\ndoi = {10.1103/PhysRevB.98.014107},\nurl = {https://link.aps.org/doi/10.1103/PhysRevB.98.014107}\n}",
+            "@misc{choudhary__2018, title={jdft_3d.json}, url={https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699/2}, DOI={10.6084/m9.figshare.6815699.v2}, abstractNote={https://jarvis.nist.gov/\nThe Density functional theory section of JARVIS (JARVIS-DFT) consists of thousands of VASP based calculations for 3D-bulk, single layer (2D), nanowire (1D) and molecular (0D) systems. Most of the calculations are carried out with optB88vDW functional. JARVIS-DFT includes materials data such as: energetics, diffraction pattern, radial distribution function, band-structure, density of states, carrier effective mass, temperature and carrier concentration dependent thermoelectric properties, elastic constants and gamma-point phonons.}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}"
+        ],
+        "columns": {
+            "jid": "JARVIS ID",
+            "bulk modulus": "VRH average calculation of bulk modulus",
+            "composition": "A Pymatgen Composition descriptor of the composition of the material",
+            "e_form": "formation energy per atom, in eV/atom",
+            "epsilon_x opt": "Static dielectric function in x direction calculated with OptB88vDW functional.",
+            "epsilon_x tbmbj": "Static dielectric function in x direction calculuated with TBMBJ functional.",
+            "epsilon_y opt": "Static dielectric function in y direction calculated with OptB88vDW functional.",
+            "epsilon_y tbmbj": "Static dielectric function in y direction calculuated with TBMBJ functional.",
+            "epsilon_z opt": "Static dielectric function in z direction calculated with OptB88vDW functional.",
+            "epsilon_z tbmbj": "Static dielectric function in z direction calculuated with TBMBJ functional.",
+            "gap opt": "Band gap calculated with OptB88vDW functional, in eV",
+            "gap tbmbj": "Band gap calculated with TBMBJ functional, in eV",
+            "mpid": "Materials Project ID",
+            "shear modulus": "VRH average calculation of shear modulus",
+            "structure": "A description of the crystal structure of the material",
+            "structure initial": "Initial structure description of the crystal structure of the material"
+        },
+        "description": "Various properties of 25,923 bulk materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.",
+        "file_type": "json.gz",
+        "hash": "3d0fc1315b74cf84071f16aa25bb93434dafbc83867beb75872064ac245bd747",
+        "num_entries": 25923,
+        "reference": "3D Dataset discussed in:\nElastic properties of bulk and low-dimensional materials using van der Waals density functional Kamal Choudhary, Gowoon Cheon, Evan Reed, and Francesca Tavazza Phys. Rev. B 98, 014107\nOriginal 3D Data file sourced from:\nchoudhary, kamal; https://orcid.org/0000-0001-9737-8074 (2018): jdft_3d.json. figshare. Dataset.",
+        "url": "https://ndownloader.figshare.com/files/13376507"
+    },
     "jarvis_ml_dft_training": {
         "bibtex_refs": [
             "@article{PhysRevMaterials.2.083801,\ntitle = {Machine learning with force-field-inspired descriptors for materials: Fast screening and mapping energy landscape},\nauthor = {Choudhary, Kamal and DeCost, Brian and Tavazza, Francesca},\njournal = {Phys. Rev. Materials},\nvolume = {2},\nissue = {8},\npages = {083801},\nnumpages = {8},\nyear = {2018},\nmonth = {Aug},\npublisher = {American Physical Society},\ndoi = {10.1103/PhysRevMaterials.2.083801},\nurl = {https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}\n}",

@@ -95,30 +95,71 @@ def _preprocess_expt_gap(file_path):
     return "expt_gap", df
 
 
-def _preprocess_jdft2d(file_path):
-    df = _read_dataframe_from_file(file_path)
+def _preprocess_jarvis_dft_2d(file_path):
+    df = load_dataframe_from_json(file_path)
 
-    colmap = {'exfoliation_en': 'e_exfol',
-              'final_str': 'structure',
-              'initial_str': 'structure initial',
-              'form_enp': 'e_form',
-              'magmom': 'mu_b',
-              'op_gap': 'gap optb88',
-              }
-    dropcols = ['epsx', 'epsy', 'epsz', 'mepsx', 'mepsy', 'mepsz', 'kv', 'gv',
-                'jid', 'kpoints', 'incar', 'icsd', 'mbj_gap', 'fin_en']
-    df = df.drop(dropcols, axis=1)
-    df = df.replace('na', np.nan)
+    colmap = {
+        "epsx": "epsilon_x opt",
+        "epsy": "epsilon_y opt",
+        "epsz": "epsilon_z opt",
+        'final_str': 'structure',
+        'initial_str': 'structure initial',
+        'form_enp': 'e_form',
+        "mbj_gap": "gap tbmbj",
+        "mepsx": "epsilon_x tbmbj",
+        "mepsy": "epsilon_y tbmbj",
+        "mepsz": "epsilon_z tbmbj",
+        "op_gap": "gap opt",
+    }
     df = df.rename(columns=colmap)
-    df['structure'] = df['structure']
-    df['structure initial'] = df['structure initial']
-    df['formula'] = [Structure.from_dict(s).composition.reduced_formula for s
-                     in df['structure']]
 
-    return "jdft2d", df
+    dropcols = ['elastic', 'fin_en', 'magmom', 'kpoints', 'incar', 'phi']
+    df = df.drop(dropcols, axis=1)
+
+    s = StructureToComposition()
+    df = s.featurize_dataframe(df, "structure")
+
+    for k in ["e_form", "epsilon_x opt", "epsilon_y opt", "epsilon_z opt",
+              "gap tbmbj", "epsilon_x tbmbj", "epsilon_y tbmbj",
+              "epsilon_z tbmbj", "gap opt"]:
+        df[k] = pd.to_numeric(df[k], errors='coerce')
+
+    return "jarvis_dft_2d", df
+
 
 def _preprocess_jarvis_dft_3d(file_path):
-    pass
+    df = load_dataframe_from_json(file_path)
+
+    colmap = {
+        "epsx": "epsilon_x opt",
+        "epsy": "epsilon_y opt",
+        "epsz": "epsilon_z opt",
+        "final_str": "structure",
+        "form_enp": "e_form",
+        "gv": "shear modulus",
+        'initial_str': 'structure initial',
+        "kv": "bulk modulus",
+        "mbj_gap": "gap tbmbj",
+        "mepsx": "epsilon_x tbmbj",
+        "mepsy": "epsilon_y tbmbj",
+        "mepsz": "epsilon_z tbmbj",
+        "op_gap": "gap opt",
+    }
+
+    df = df.rename(columns=colmap)
+    # Remove redundant or unneeded for our purposes columns
+    df = df.drop(["eff_mass", "elastic", "encut", "fin_en", "icsd", "incar",
+                  "kp_leng", "kpoints", "magmom", ], axis=1)
+
+    s = StructureToComposition()
+    df = s.featurize_dataframe(df, "structure")
+
+    for k in ["e_form", "epsilon_x opt", "epsilon_y opt", "epsilon_z opt",
+              "shear modulus", "bulk modulus", "gap tbmbj", "epsilon_x tbmbj",
+              "epsilon_y tbmbj", "epsilon_z tbmbj", "gap opt"]:
+        df[k] = pd.to_numeric(df[k], errors='coerce')
+
+    return "jarvis_dft_3d", df
 
 
 def _preprocess_heusler_magnetic(file_path):
@@ -407,11 +448,12 @@ _datasets_to_preprocessing_routines = {
     "glass_binary": _preprocess_glass_binary,
     "formation_enthalpy_expt": _preprocess_expt_formation_enthalpy,
     "zhuo_gap_expt": _preprocess_expt_gap,
-    "jdft_2d": _preprocess_jdft2d,
+    "jdft_2d-7-7-2018": _preprocess_jarvis_dft_2d,
     "heusler_magnetic": _preprocess_heusler_magnetic,
     "steel_strength": _preprocess_steel_strength,
     "jarvisml_cfid": _preprocess_jarvis_ml_dft_training,
     "glass_ternary_hipt": _preprocess_glass_ternary_hipt,
+    "jdft_3d-7-7-2018": _preprocess_jarvis_dft_3d,
 }
 
 

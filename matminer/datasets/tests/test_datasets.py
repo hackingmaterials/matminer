@@ -313,6 +313,44 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(type(df['composition'][0]), Composition)
 
+    def test_jarvis_dft_3d(self):
+        # Universal Tests
+        object_headers = ['jid', 'mpid', 'structure', 'composition',
+                          'structure initial']
+
+        numeric_headers = ['epsilon_x opt', 'epsilon_y opt', 'epsilon_z opt',
+                           'e_form', 'shear modulus', 'bulk modulus',
+                           'gap tbmbj', 'epsilon_x tbmbj',
+                           'epsilon_y tbmbj', 'epsilon_z tbmbj', 'gap opt']
+
+        self.universal_dataset_check(
+            "jarvis_dft_3d", object_headers, numeric_headers,
+        )
+
+        # Unique tests
+        df = load_dataset("jarvis_dft_3d")
+        self.assertEqual(type(df['structure'][0]), Structure)
+        self.assertEqual(type(df['composition'][0]), Composition)
+
+    def test_jarvis_dft_2d(self):
+        # Universal Tests
+        object_headers = ['jid', 'mpid', 'structure', 'composition',
+                          'structure initial']
+
+        numeric_headers = ['epsilon_x opt', 'epsilon_y opt', 'epsilon_z opt',
+                           'exfoliation_en', 'e_form', 'gap tbmbj',
+                           'epsilon_x tbmbj', 'epsilon_y tbmbj',
+                           'epsilon_z tbmbj', 'gap opt']
+
+        self.universal_dataset_check(
+            "jarvis_dft_2d", object_headers, numeric_headers,
+        )
+
+        # Unique tests
+        df = load_dataset("jarvis_dft_2d")
+        self.assertEqual(type(df['structure'][0]), Structure)
+        self.assertEqual(type(df['composition'][0]), Composition)
+
 
 if __name__ == "__main__":
     unittest.main()

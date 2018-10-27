@@ -9,7 +9,7 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_elastic_tensor, load_glass_ternary_landolt, \
     load_phonon_dielectric_mp, load_piezoelectric_tensor, load_mp, \
     load_wolverton_oxides, load_heusler_magnetic, load_steel_strength, \
-    load_jarvis_ml_dft_training
+    load_jarvis_ml_dft_training, load_jarvis_dft_2d, load_jarvis_dft_3d
 
 
 class ConvenienceLoadersTest(DataSetTest):
@@ -138,3 +138,17 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertEqual(len(df), 24759)
         df = load_jarvis_ml_dft_training(drop_nan_columns='e mass_x')
         self.assertEqual(len(df), 19978)
+
+    def test_load_jarvis_dft_2d(self):
+        df = load_jarvis_dft_2d()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+        self.assertEqual(len(df), 636)
+        df = load_jarvis_dft_2d(drop_nan_columns='epsilon_x opt')
+        self.assertEqual(len(df), 522)
+
+    def test_load_jarvis_dft_3d(self):
+        df = load_jarvis_dft_3d()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+        self.assertEqual(len(df), 25923)
+        df = load_jarvis_dft_3d(drop_nan_columns='epsilon_x opt')
+        self.assertEqual(len(df), 19027)

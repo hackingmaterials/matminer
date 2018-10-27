@@ -361,20 +361,72 @@ def load_steel_strength(data_home=None, download_if_missing=True):
 def load_jarvis_ml_dft_training(drop_nan_columns=None, data_home=None,
                                 download_if_missing=True):
     """
-        Convenience function for loading the steel strength dataset.
+    Convenience function for loading the jarvis ml dft training dataset.
 
-        Args:
-            drop_nan_columns (list, str): Column or columns to drop rows
-            containing NaN values from
+    Args:
+        drop_nan_columns (list, str): Column or columns to drop rows
+        containing NaN values from
 
-            data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to loom for and store the loaded dataset
 
-            download_if_missing (bool): Whether or not to download the dataset if
-               it isn't on disk
+        download_if_missing (bool): Whether or not to download the dataset if
+           it isn't on disk
 
-        Returns: (pd.DataFrame)
-        """
+    Returns: (pd.DataFrame)
+    """
     df = load_dataset("jarvis_ml_dft_training", data_home, download_if_missing)
+
+    if drop_nan_columns is None:
+        drop_nan_columns = []
+    elif isinstance(drop_nan_columns, str):
+        drop_nan_columns = [drop_nan_columns]
+
+    return df.dropna(subset=drop_nan_columns)
+
+
+def load_jarvis_dft_3d(drop_nan_columns=None, data_home=None,
+                       download_if_missing=True):
+    """
+    Convenience function for loading the jarvis dft 3d dataset.
+
+    Args:
+        drop_nan_columns (list, str): Column or columns to drop rows
+        containing NaN values from
+
+        data_home (str, None): Where to loom for and store the loaded dataset
+
+        download_if_missing (bool): Whether or not to download the dataset if
+           it isn't on disk
+
+    Returns: (pd.DataFrame)
+    """
+    df = load_dataset("jarvis_dft_3d", data_home, download_if_missing)
+
+    if drop_nan_columns is None:
+        drop_nan_columns = []
+    elif isinstance(drop_nan_columns, str):
+        drop_nan_columns = [drop_nan_columns]
+
+    return df.dropna(subset=drop_nan_columns)
+
+
+def load_jarvis_dft_2d(drop_nan_columns=None, data_home=None,
+                       download_if_missing=True):
+    """
+    Convenience function for loading the jarvis dft 2d dataset.
+
+    Args:
+        drop_nan_columns (list, str): Column or columns to drop rows
+        containing NaN values from
+
+        data_home (str, None): Where to loom for and store the loaded dataset
+
+        download_if_missing (bool): Whether or not to download the dataset if
+           it isn't on disk
+
+    Returns: (pd.DataFrame)
+    """
+    df = load_dataset("jarvis_dft_2d", data_home, download_if_missing)
 
     if drop_nan_columns is None:
         drop_nan_columns = []
