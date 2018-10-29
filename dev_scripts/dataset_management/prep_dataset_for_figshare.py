@@ -425,9 +425,11 @@ def _preprocess_flla(file_path):
     return 'flla', df[column_headers]
 
 
-"""These dictionaries map the filename of datasets to their preprocessors. 
-Defaults to just loading in the file with default pd load function for a 
-given file type"""
+"""
+These dictionaries map the filename of datasets to their preprocessors.
+Defaults to just loading in the file with default pd load function for a
+given file type
+"""
 
 
 _datasets_to_preprocessing_routines = {
@@ -549,12 +551,12 @@ if __name__ == "__main__":
         # get a list of storage ready dataframes
         dataset_names, dataframe_list = _file_to_dataframe(f_path)
         # Store each dataframe and compute metadata if desired
-        for index in range(len(dataframe_list)):
+        for index, dataframe in enumerate(dataframe_list):
             # Construct the file path to store dataframe at and store it
             # Str conversion purely to get rid of an annoying type warning
             json_destination = join(destination,
                                     str(dataset_names[index]) + ".json")
-            store_dataframe_as_json(dataframe_list[index], json_destination,
+            store_dataframe_as_json(dataframe, json_destination,
                                     compression=args.compression_type)
             # Compute and store file metadata
             if not args.no_meta:
@@ -569,10 +571,10 @@ if __name__ == "__main__":
                               + file_hash
                               + "\n")
                     out.write("column types:\n")
-                    out.write(dataframe_list[index].dtypes.to_string())
+                    out.write(dataframe.dtypes.to_string())
                     out.write("\n")
 
                     out.write("num_entries:\n")
-                    out.write(str(len(dataframe_list[index])))
+                    out.write(str(len(dataframe)))
 
                     out.write("\n\n")
