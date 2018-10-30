@@ -472,7 +472,7 @@ class CompositionToOxidComposition(ConversionFeaturizer):
             else:
                 raise ValueError("Composition {} has a mix of species with "
                                  "and without oxidation states. Please enable "
-                                 "coersion to all oxidation states with "
+                                 "coercion to all oxidation states with "
                                  "coerce_mixed.".format(comp))
         return [comp.add_charges_from_oxi_state_guesses(
             **self.oxi_guess_params)]
