@@ -1,5 +1,8 @@
 import ast
 import argparse
+from time import sleep
+from itertools import product
+from math import inf
 from os import listdir, makedirs
 from os.path import isdir, join, expanduser, basename
 
@@ -7,9 +10,11 @@ import numpy as np
 import pandas as pd
 from pymatgen.io.vasp.inputs import Poscar
 from pymatgen.core.structure import Structure
+from pymatgen.core.composition import Composition
 
 from matminer.utils.io import store_dataframe_as_json, load_dataframe_from_json
 from matminer.featurizers.conversions import StructureToComposition
+from matminer.data_retrieval.retrieve_MP import MPDataRetrieval, MPRestError
 from matminer.datasets.utils import _get_file_sha256_hash, \
     _read_dataframe_from_file
 
@@ -21,6 +26,195 @@ matminer. These functions take the path of a given dataset and do the necessary
 processing to make it a usable dataframe. If one dataframe is to be made from a
 dataset, it should just return a name / dataframe pair, if more than one
 dataframe is to be created a list of pairs should be returned."""
+
+
+def _preprocess_tehrani_superhard_mat(file_path):
+    df = _read_dataframe_from_file(file_path, header=None)
+
+    # Strip space group from formula and also add compositions and update
+    # formula to MP query compatible representation
+    formula_list = []
+    composition_list = []
+    for formula, _ in [item.split(",") for item in df[0]]:
+        comp = Composition(formula)
+
+        formula_list.append(comp.get_reduced_formula_and_factor()[0])
+        composition_list.append(comp)
+
+    df[0] = formula_list
+    df["composition"] = composition_list
+
+    # Give columns descriptive names
+    column_map = {0: "formula", 1: "bulk_modulus", 2: "shear_modulus"}
+
+    composition_features = ["atomic_number", "atomic_weight", "period_number",
+                            "group_number", "family_number", "Mendeleev_number",
+                            "atomic_radius", "covalent_radius",
+                            "Zungar_radius", "ionic_radius", "crystal_radius",
+                            "Pauling_EN", "Martynov_EN", "Gordy_EN",
+                            "Mulliken_EN", "Allred-Rochow_EN",
+                            "metallic_valence", "number_VE",
+                            "Gillman_number_VE", "number_s_electrons",
+                            "number_p_electrons", "number_d_electrons",
+                            "number_outer_shell_electrons",
+                            "first_ionization_energy", "polarizability",
+                            "melting_point", "boiling_point", "density",
+                            "specific_heat", "heat_of_fusion",
+                            "heat_of_vaporization", "thermal_conductivity",
+                            "heat_of_atomization", "cohesive_energy"]
+
+    for feature_with_variant in product(composition_features,
+                                        ["feat_1", "feat_2",
+                                         "feat_3", "feat_4"]):
+        column_map[len(column_map)] = "_".join(feature_with_variant)
+
+    structure_features = ["space_group_number", "crystal_system", "Laue_class",
+                          "crystal_class", "inversion_centre", "polar_axis",
+                          "reduced_volume", "density", "anisotropy",
+                          "electron_density", "volume_per_atom",
+                          "valence_electron_density", "Gilman_electron_density",
+                          "outer_shell_electron_density"]
+
+    for feature in structure_features:
+        column_map[len(column_map)] = feature
+
+    df.rename(columns=column_map, inplace=True)
+
+    # Add columns for data we don't have yet
+    props_to_save = ['material_id', 'initial_structure', 'structure']
+    df = df.reindex(index=df.index, columns=df.columns.tolist() + props_to_save)
+
+    # Query Materials Project to get structure and mpid data for each entry
+    num_mismatching_entries = 0
+    num_missing_entries = 0
+    num_malformed_entries = 0
+    mp_retriever = MPDataRetrieval()
+    props_to_query = props_to_save + ["elasticity.K_VRH", "elasticity.G_VRH"]
+
+    for material_index, material in df.iterrows():
+        if material_index % 10 == 0:
+            print("Processing material {}".format(material_index))
+
+        retriever_criteria = {
+            'pretty_formula': material['formula'],
+            'spacegroup.number': material['space_group_number']
+        }
+
+        # While loop with try except block to handle server response errors
+        while True:
+            try:
+                mp_query = mp_retriever.get_dataframe(
+                    criteria=retriever_criteria,
+                    properties=props_to_query,
+                    index_mpid=False
+                )
+
+                # Query was successful, exit loop
+                break
+
+            except MPRestError:
+                print("Server returned error, waiting 10 seconds then retrying")
+                sleep(10)
+
+        # Throw out entry if no hits on MP
+        if len(mp_query) == 0:
+            print(
+                "No materials found for entry with formula {} and "
+                "space group {}".format(material['formula'],
+                                        material['space_group_number'])
+            )
+            print("Data point will be thrown out\n")
+            df.drop(material_index, inplace=True)
+            num_missing_entries += 1
+
+        else:
+            closest_mat_index = 0
+            # If more than one material id is found, select the closest one
+            if len(mp_query) > 1:
+                closest_mat_distance = inf
+                # For each mat calculate euclidean distance from db entry
+                for i, entry in mp_query.iterrows():
+                    bulk_dif = (entry["elasticity.K_VRH"]
+                                - material["bulk_modulus"])
+                    shear_dif = (entry["elasticity.G_VRH"]
+                                 - material["shear_modulus"])
+                    mat_dist = (bulk_dif ** 2 + shear_dif ** 2) ** .5
+
+                    # Select the material that is closest in space to db entry
+                    if mat_dist < closest_mat_distance:
+                        closest_mat_index = i
+                        closest_mat_distance = mat_dist
+
+            mat_data = mp_query.loc[closest_mat_index]
+
+            # Check to ensure selected entry doesn't lack any data
+            if np.any(mat_data.isna()):
+                print(
+                    "Malformed data encountered for entry with formula {} and "
+                    "space group {}".format(material['formula'],
+                                            material['space_group_number'])
+                )
+                print("Data point will be thrown out\n")
+                df.drop(material_index, inplace=True)
+                num_malformed_entries += 1
+
+            else:
+                # Check similarity of  dataset entry to the selected MP entry
+                bulk_abs_dif = abs(
+                    mat_data["elasticity.K_VRH"] - material["bulk_modulus"]
+                )
+                shear_abs_dif = abs(
+                    mat_data["elasticity.G_VRH"] - material["shear_modulus"]
+                )
+
+                bulk_relative_dif = bulk_abs_dif / material["bulk_modulus"]
+                shear_relative_dif = shear_abs_dif / material["shear_modulus"]
+
+                # Discard entry if MP entry is too different from dataset entry
+                if ((bulk_relative_dif > .05 or shear_relative_dif > .05)
+                        and (bulk_abs_dif > 1 or shear_abs_dif > 1)):
+                    print("Warning: MP entry selected for {} with space group "
+                          "{} has a difference in elastic data greater than "
+                          "5 percent/1GPa!".format(material["formula"],
+                                                   material[
+                                                       "space_group_number"
+                                                   ]))
+                    print("Bulk moduli dataset vs. MP:",
+                          material["bulk_modulus"],
+                          mat_data["elasticity.K_VRH"])
+                    print("Shear moduli dataset vs. MP:",
+                          material["shear_modulus"],
+                          mat_data["elasticity.G_VRH"])
+                    print("Data point will be thrown out\n")
+                    df.drop(material_index, inplace=True)
+                    num_mismatching_entries += 1
+
+                else:
+                    df.loc[material_index, props_to_save] = mat_data[
+                        props_to_save]
+
+    # Report on discarded entries
+    if num_mismatching_entries:
+        print("{} entries discarded for value mismatch".format(
+            num_mismatching_entries
+        ))
+
+    if num_missing_entries:
+        print("{} entries discarded for no hit on MP".format(
+            num_missing_entries
+        ))
+
+    if num_malformed_entries:
+        print("{} entries discarded for malformed data".format(
+            num_malformed_entries
+        ))
+
+    # Turn structure strings into Structure objects
+    for alias in ['structure', 'initial_structure']:
+        df[alias] = pd.Series([Structure.from_dict(s)
+                               for s in df[alias]], df.index)
+
+    return "tehrani_superhard_mat", df
 
 
 def _preprocess_wolverton_oxides(file_path):
@@ -456,6 +650,7 @@ _datasets_to_preprocessing_routines = {
     "jarvisml_cfid": _preprocess_jarvis_ml_dft_training,
     "glass_ternary_hipt": _preprocess_glass_ternary_hipt,
     "jdft_3d-7-7-2018": _preprocess_jarvis_dft_3d,
+    "tehrani_superhard_mat": _preprocess_tehrani_superhard_mat,
 }
 
 
