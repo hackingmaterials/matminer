@@ -1,372 +1,24 @@
 import os
 import hashlib
+import json
+import pandas as pd
 
 import requests
 
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
 
-_dataset_dict = {
-    'flla': {
-        'file_type':
-            'json.gz',
-        'url':
-            'https://ndownloader.figshare.com/files/13220597',
-        'hash':
-            'a7f1649c3b9f5186e8440b163e0421cbfdf61973ec7e45101f6dab641f1e2170',
-        'reference':
-            """
-            1) F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
-            "Crystal structure representations for machine learning models of
-            formation energies", Int. J. Quantum Chem. 115 (2015) 1094–1101.
-            doi:10.1002/qua.24917.
-
-            (raw data)
-            2) Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,
-            Dacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. & Persson,
-            K. A. Commentary: The Materials Project: A materials genome approach
-            to accelerating materials innovation. APL Mater. 1, 11002 (2013).
-            """,
-        'description':
-            "3938 structures and computed formation energies from "
-            "\"Crystal Structure Representations for Machine Learning Models "
-            "of Formation Energies.\"",
-        'columns': {
-            'material_id': "Materials Project ID of the material",
-
-            'formula': "Chemical formula of the material",
-
-            'e_above_hull': "The energy of decomposition of this material "
-                            "into the set of most stable materials at this "
-                            "chemical composition, in eV/atom.",
-
-            'nsites': "The \# of atoms in the unit cell of the calculation.",
-
-            'structure': "pandas Series defining the structure of the material",
-
-            'formation_energy_per_atom': "See formation_energy",
-
-            'formation_energy': "Computed formation energy at 0K, "
-                                "0atm using a reference state of zero "
-                                "for the pure elements.",
-        },
-        'bibtex_refs': [
-            """@article{doi:10.1002/qua.24917,
-            author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld,
-            O. Anatole and Armiento, Rickard},
-            title = {Crystal structure representations for machine learning
-            models of formation energies},
-            journal = {International Journal of Quantum Chemistry},
-            volume = {115},
-            number = {16},
-            pages = {1094-1101},
-            keywords = {machine learning, formation energies, representations,
-            crystal structure, periodic systems},
-            doi = {10.1002/qua.24917},
-            url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/qua.24917},
-            eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/qua.24917},
-            abstract = {We introduce and evaluate a set of feature vector
-            representations of crystal structures for machine learning (ML)
-            models of formation energies of solids. ML models of atomization
-            energies of organic molecules have been successful using a Coulomb
-            matrix representation of the molecule. We consider three ways to
-            generalize such representations to periodic systems: (i) a matrix
-            where each element is related to the Ewald sum of the electrostatic
-            interaction between two different atoms in the unit cell repeated
-            over the lattice; (ii) an extended Coulomb-like matrix that takes
-            into account a number of neighboring unit cells; and (iii) an
-            ansatz that mimics the periodicity and the basic features of the
-            elements in the Ewald sum matrix using a sine function of the
-            crystal coordinates of the atoms. The representations are compared
-            for a Laplacian kernel with Manhattan norm, trained to reproduce
-            formation energies using a dataset of 3938 crystal structures
-            obtained from the Materials Project. For training sets consisting
-            of 3000 crystals, the generalization error in predicting formation
-            energies of new structures corresponds to (i) 0.49, (ii) 0.64, and
-            (iii) for the respective representations. © 2015 Wiley Periodicals,
-            Inc.}
-            }
-            """,
-
-            """
-            @article{doi:10.1063/1.4812323,
-            author = {Jain,Anubhav  and Ong,Shyue Ping  and Hautier,Geoffroy
-            and Chen,Wei  and Richards,William Davidson  and Dacek,Stephen
-            and Cholia,Shreyas  and Gunter,Dan  and Skinner,David
-            and Ceder,Gerbrand  and Persson,Kristin A. },
-            title = {Commentary: The Materials Project: A materials genome
-            approach to accelerating materials innovation},
-            journal = {APL Materials},
-            volume = {1},
-            number = {1},
-            pages = {011002},
-            year = {2013},
-            doi = {10.1063/1.4812323},
-            URL = {https://doi.org/10.1063/1.4812323},
-            eprint = {https://doi.org/10.1063/1.4812323}
-            }
-            """,
-        ],
-        'num_entries': 3938,
-    },
-
-    'elastic_tensor_2015': {
-        'file_type':
-            'json.gz',
-        'url':
-            'https://ndownloader.figshare.com/files/13220603',
-        'hash':
-            '8c3b342f75da7e7baa1b769b59554485fd647f4cb1da9318d0d1ba3b3b838183',
-        'reference':
-            """
-            Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,
-            A., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,
-            C., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., "Charting
-            the complete elastic properties of inorganic crystalline compounds",
-            Scientific Data volume 2, Article number: 150009 (2015)
-            """,
-        'description':
-            "1,181 structures with elastic properties calculated with DFT-PBE.",
-        'columns': {
-            'material_id': "Materials Project ID of the material",
-
-            'formula': "Chemical formula of the material",
-
-            'nsites': "The \# of atoms in the unit cell of the calculation.",
-
-            'space_group': "Integer specifying the crystallographic structure "
-                           "of the material",
-
-            'volume': "Volume of the unit cell in cubic angstroms, "
-                      "For supercell calculations, this quantity refers "
-                      "to the volume of the full supercell. ",
-
-            'structure': "pandas Series defining the structure of the material",
-
-            'elastic_anisotropy': "measure of directional dependence of the "
-                                  "materials elasticity, metric is always >= 0",
-
-            'G_Reuss': "Lower bound on shear modulus for "
-                       "polycrystalline material",
-
-            'G_VRH': "Average of G_Reuss and G_Voigt",
-
-            'G_Voigt': "Upper bound on shear modulus for "
-                       "polycrystalline material",
-
-            'K_Reuss': "Lower bound on bulk modulus for "
-                       "polycrystalline material",
-
-            'K_VRH': "Average of K_Reuss and K_Voigt",
-
-            'K_Voigt': "Upper bound on bulk modulus for "
-                       "polycrystalline material",
-
-            'poisson_ratio': "Describes lateral response to loading",
-
-            'compliance_tensor': "Tensor describing elastic behavior",
-
-            'elastic_tensor': "Tensor describing elastic behavior "
-                              "corresponding to IEEE orientation, "
-                              "symmetrized to crystal structure ",
-
-            'elastic_tensor_original': "Tensor describing elastic behavior, "
-                                       "unsymmetrized, corresponding to POSCAR "
-                                       "conventional standard cell orientation",
-
-            'cif': "optional: Description string for structure",
-
-            'kpoint_density': "optional: Sampling parameter from calculation",
-
-            'poscar': "optional: Poscar metadata",
-        },
-        'bibtex_refs': [
-            """
-            @Article{deJong2015,
-            author={de Jong, Maarten and Chen, Wei and Angsten, Thomas
-            and Jain, Anubhav and Notestine, Randy and Gamst, Anthony
-            and Sluiter, Marcel and Krishna Ande, Chaitanya
-            and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac
-            and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.
-            and Asta, Mark},
-            title={Charting the complete elastic properties
-            of inorganic crystalline compounds},
-            journal={Scientific Data},
-            year={2015},
-            month={Mar},
-            day={17},
-            publisher={The Author(s)},
-            volume={2},
-            pages={150009},
-            note={Data Descriptor},
-            url={http://dx.doi.org/10.1038/sdata.2015.9}
-            }
-            """,
-        ],
-        'num_entries': 1181,
-    },
-
-    'piezoelectric_tensor': {
-        'file_type':
-            'json.gz',
-        'url':
-            'https://ndownloader.figshare.com/files/13220621',
-        'hash':
-            'dc9d04836f7f91ecb4ef6dc23e42468571be857f0fccafdfb51a5a40f19db898',
-        'reference':
-            """
-            de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.
-            A database to enable discovery and design of piezoelectric materials.
-            Sci. Data 2, 150053 (2015)
-            """,
-        'description':
-            "941 structures with piezoelectric properties,"
-            " calculated with DFT-PBE.",
-        "columns": {
-            'material_id': "Materials Project ID of the material",
-
-            'formula': "Chemical formula of the material",
-
-            'nsites': "The \# of atoms in the unit cell of the calculation.",
-
-            'point_group': "Descriptor of crystallographic structure of the "
-                           "material",
-
-            'space_group': "Integer specifying the crystallographic structure "
-                           "of the material",
-
-            'volume': "Volume of the unit cell in cubic angstroms, "
-                      "For supercell calculations, this quantity refers "
-                      "to the volume of the full supercell. ",
-
-            'structure': "pandas Series defining the structure of the material",
-
-            'eij_max': "Piezoelectric modulus",
-
-            'v_max': "Crystallographic direction",
-
-            'piezoelectric_tensor': "Tensor describing the piezoelectric"
-                                    " properties of the material",
-
-            'cif': "optional: Description string for structure",
-
-            'meta': "optional, metadata descriptor of the datapoint",
-
-            'poscar': "optional: Poscar metadata",
-        },
-        'bibtex_refs': [
-            """
-            @Article{deJong2015,
-            author={de Jong, Maarten and Chen, Wei and Geerlings, Henry
-            and Asta, Mark and Persson, Kristin Aslaug},
-            title={A database to enable discovery and design of piezoelectric
-            materials},
-            journal={Scientific Data},
-            year={2015},
-            month={Sep},
-            day={29},
-            publisher={The Author(s)},
-            volume={2},
-            pages={150053},
-            note={Data Descriptor},
-            url={http://dx.doi.org/10.1038/sdata.2015.53}
-            }
-            """,
-        ],
-        'num_entries': 941
-    },
-
-    'dielectric_constant': {
-        'file_type':
-            'json.gz',
-        'url':
-            'https://ndownloader.figshare.com/files/13213475',
-        'hash':
-            '8eb24812148732786cd7c657eccfc6b5ee66533429c2cfbcc4f0059c0295e8b6',
-        'reference':
-            """
-            Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,
-            Chen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.
-            High-throughput screening of inorganic compounds for the discovery
-            of novel dielectric and optical materials. Sci. Data 4, 160134 (2017).
-            """,
-        'description':
-            "1,056 structures with dielectric properties,"
-            " calculated with DFPT-PBE.",
-        'columns': {
-            'material_id': "Materials Project ID of the material",
-
-            'formula': "Chemical formula of the material",
-
-            'nsites': "The \# of atoms in the unit cell of the calculation.",
-
-            'space_group': "Integer specifying the crystallographic structure "
-                           "of the material",
-
-            'volume': "Volume of the unit cell in cubic angstroms, "
-                      "For supercell calculations, this quantity refers "
-                      "to the volume of the full supercell. ",
-
-            'structure': "pandas Series defining the structure of the material",
-
-            'band_gap': "Measure of the conductivity of a material",
-
-            'e_electronic': "electronic contribution to dielectric tensor",
-
-            'e_total': "Total dielectric tensor incorporating "
-                       "both electronic and ionic contributions",
-
-            'n': "Refractive Index",
-
-            'poly_electronic': "the average of the eigenvalues of the "
-                               "electronic contribution to the "
-                               "dielectric tensor",
-
-            'poly_total': "the average of the eigenvalues of the total "
-                          "(electronic and ionic) contributions to the "
-                          "dielectric tensor",
-
-            'pot_ferroelectric': "Whether the material is "
-                                 "potentially ferroelectric",
-
-            'cif': "optional: Description string for structure",
-
-            'meta': "optional, metadata descriptor of the datapoint",
-
-            'poscar': "optional: Poscar metadata",
-        },
-        'bibtex_refs': [
-            """
-            @Article{Petousis2017,
-            author={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric
-            and Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja
-            and Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},
-            title={High-throughput screening of inorganic compounds for the
-            discovery of novel dielectric and optical materials},
-            journal={Scientific Data},
-            year={2017},
-            month={Jan},
-            day={31},
-            publisher={The Author(s)},
-            volume={4},
-            pages={160134},
-            note={Data Descriptor},
-            url={http://dx.doi.org/10.1038/sdata.2016.134}
-            }
-            """,
-        ],
-        'num_entries': 1056,
-    },
-}
-
 
 def _load_dataset_dict():
     """
-    Loads the dataset dictionary, currently just returns dict,
-    will in the future load a file.
+    Loads the dataset dictionary from a storage file
 
     Returns: (dict)
     """
-    return _dataset_dict
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           'dataset_metadata.json')) as infile:
+        dataset_dict = json.load(infile)
+
+    return dataset_dict
 
 
 def _get_data_home(data_home=None):
@@ -486,3 +138,26 @@ def _get_file_sha256_hash(file_path):
                 break
             sha256hash.update(buffer)
     return sha256hash.hexdigest()
+
+
+def _read_dataframe_from_file(file_path, **kwargs):
+    """
+    Reads a dataset from a generic file type into a pandas dataframe
+
+    Args:
+        file_path (str): path to dataset
+
+        kwargs: arbitrary keywords for any given read_ function in pandas
+
+    Returns: (pd.DataFrame)
+    """
+    if file_path.endswith(".csv"):
+        df = pd.read_csv(file_path, **kwargs)
+    elif file_path.endswith(".xlsx") or file_path.endswith(".xls"):
+        df = pd.read_excel(file_path, **kwargs)
+    elif file_path.endswith(".json"):
+        df = pd.read_json(file_path, **kwargs)
+    else:
+        raise ValueError("File type of {} unsupported".format(file_path))
+
+    return df

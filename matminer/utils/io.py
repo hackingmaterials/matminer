@@ -55,10 +55,11 @@ def load_dataframe_from_json(filename):
         (Pandas.DataFrame): A pandas dataframe.
     """
     with zopen(filename, 'rb') as f:
-        dataframe_dict = json.load(f, cls=MontyDecoder)
+        dataframe_data = json.load(f, cls=MontyDecoder)
 
     # if only keys are data, columns, index then orient=split
-    if set(dataframe_dict.keys()) == {'data', 'columns', 'index'}:
-        return pandas.DataFrame(**dataframe_dict)
+    if isinstance(dataframe_data, dict):
+        if set(dataframe_data.keys()) == {'data', 'columns', 'index'}:
+            return pandas.DataFrame(**dataframe_data)
     else:
-        return pandas.DataFrame.from_dict(dataframe_dict)
+        return pandas.DataFrame(dataframe_data)
