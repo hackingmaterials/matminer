@@ -25,7 +25,7 @@ if __name__ == "__main__":
                           'pymongo>=3.4.0', 'pint>=0.8.1', 'six>=1.10.0',
                           'citrination-client>=4.0.0', 'plotly>=3.2.1',
                           'mdf_forge>=0.6.1', 'scikit-learn>=0.19.0',
-                          'sympy>=1.1.1'],
+                          'sympy>=1.1.1', 'requests>=2.20.0'],
         extras_require={'mpds': ['jmespath>=0.9.3', 'ujson>=1.35', 'httplib2>=0.10.3', 'ase>=3.14.1'],
                         'plot': ['matplotlib>=2.0.0']},
         classifiers=['Programming Language :: Python :: 2.7',
