@@ -439,7 +439,7 @@ def load_jarvis_dft_2d(drop_nan_columns=None, data_home=None,
 
 def load_glass_binary(data_home=None, download_if_missing=True):
     """
-    Convenience function for loading the boltztrap_mp dataset.
+    Convenience function for loading the glass_binary dataset.
 
     Args:
         data_home (str, None): Where to loom for and store the loaded dataset
@@ -455,7 +455,7 @@ def load_glass_binary(data_home=None, download_if_missing=True):
 
 def load_m2ax(data_home=None, download_if_missing=True):
     """
-    Convenience function for loading the boltztrap_mp dataset.
+    Convenience function for loading the m2ax dataset.
 
     Args:
         data_home (str, None): Where to loom for and store the loaded dataset
@@ -471,7 +471,7 @@ def load_m2ax(data_home=None, download_if_missing=True):
 
 def load_expt_gap(data_home=None, download_if_missing=True):
     """
-    Convenience function for loading the boltztrap_mp dataset.me
+    Convenience function for loading the expt_gap dataset.me
 
     Args:
         data_home (str, None): Where to loom for and store the loaded dataset
@@ -487,7 +487,7 @@ def load_expt_gap(data_home=None, download_if_missing=True):
 
 def load_expt_formation_enthalpy(data_home=None, download_if_missing=True):
     """
-    Convenience function for loading the boltztrap_mp dataset.
+    Convenience function for loading the expt_formation_enthalpy dataset.
 
     Args:
         data_home (str, None): Where to loom for and store the loaded dataset
