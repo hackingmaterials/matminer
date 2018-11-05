@@ -4,6 +4,9 @@ from matminer.datasets import load_dataset
 Convenience functions provided to make accessing datasets simpler
 """
 
+__author__ = "Daniel Dopp <dbdopp@lbl.gov>" \
+             "Abhinav Ashar <abhinav_ashar@berkeley.edu>"
+
 
 def load_elastic_tensor(version="2015", include_metadata=False, data_home=None,
                         download_if_missing=True):
