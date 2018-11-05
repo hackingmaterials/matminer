@@ -1,6 +1,5 @@
 from matminer.datasets import load_dataset
 
-
 """
 Convenience functions provided to make accessing datasets simpler
 """
@@ -437,6 +436,7 @@ def load_jarvis_dft_2d(drop_nan_columns=None, data_home=None,
 
     return df.dropna(subset=drop_nan_columns)
 
+
 def load_glass_binary(data_home=None, download_if_missing=True):
     """
     Convenience function for loading the glass_binary dataset.
@@ -452,6 +452,7 @@ def load_glass_binary(data_home=None, download_if_missing=True):
     df = load_dataset("glass_binary", data_home, download_if_missing)
 
     return df
+
 
 def load_m2ax(data_home=None, download_if_missing=True):
     """
@@ -469,6 +470,7 @@ def load_m2ax(data_home=None, download_if_missing=True):
 
     return df
 
+
 def load_expt_gap(data_home=None, download_if_missing=True):
     """
     Convenience function for loading the expt_gap dataset.me
@@ -484,6 +486,7 @@ def load_expt_gap(data_home=None, download_if_missing=True):
     df = load_dataset("expt_gap", data_home, download_if_missing)
 
     return df
+
 
 def load_expt_formation_enthalpy(data_home=None, download_if_missing=True):
     """

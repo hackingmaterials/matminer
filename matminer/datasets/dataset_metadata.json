@@ -163,7 +163,8 @@
     },
     "expt_formation_enthalpy": {
         "bibtex_refs": [
-            "TBD"
+            "@Article{Kim2017,\nauthor={Kim, George\nand Meschel, S. V.\nand Nash, Philip\nand Chen, Wei},\ntitle={Experimental formation enthalpies for intermetallic phases and other inorganic compounds},\njournal={Scientific Data},\nyear={2017},\nmonth={Oct},\nday={24},\npublisher={The Author(s)},\nvolume={4},\npages={170162},\nnote={Data Descriptor},\nurl={https://doi.org/10.1038/sdata.2017.162}}",
+            " @misc{kim_meschel_nash_chen_2017, title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds}, url={https://figshare.com/collections/Experimental_formation_enthalpies_for_intermetallic_phases_and_other_inorganic_compounds/3822835/1}, DOI={10.6084/m9.figshare.c.3822835.v1}, abstractNote={The standard enthalpy of formation of a compound is the energy associated with the reaction to form the compound from its component elements. The standard enthalpy of formation is a fundamental thermodynamic property that determines its phase stability, which can be coupled with other thermodynamic data to calculate phase diagrams. Calorimetry provides the only direct method by which the standard enthalpy of formation is experimentally measured. However, the measurement is often a time and energy intensive process. We present a dataset of enthalpies of formation measured by high-temperature calorimetry. The phases measured in this dataset include intermetallic compounds with transition metal and rare-earth elements, metal borides, metal carbides, and metallic silicides. These measurements were collected from over 50 years of calorimetric experiments. The dataset contains 1,276 entries on experimental enthalpy of formation values and structural information. Most of the entries are for binary compounds but ternary and quaternary compounds are being added as they become available. The dataset also contains predictions of enthalpy of formation from first-principles calculations for comparison.}, publisher={figshare}, author={Kim, George and Meschel, Susan and Nash, Philip and Chen, Wei}, year={2017}, month={Oct}}"
         ],
         "columns": {
             "e_form expt": "experimental formation enthalpy (in eV/atom)",
@@ -184,9 +185,7 @@
     },
     "expt_gap": {
         "bibtex_refs": [
-            "@article{doi:10.1021/acs.jpclett.8b00124,\nauthor = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},\ntitle = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},\njournal = {The Journal of Physical Chemistry Letters},\nvolume = {9},\nnumber = {7},\npages = {1668-1673},\nyear = {2018},\ndoi = {10.1021/acs.jpclett.8b00124},\nnote ={PMID: 29532658},",
-            "https://doi.org/10.1021/acs.jpclett.8b00124\n\n},\neprint = {\nhttps://doi.org/10.1021/acs.jpclett.8b00124\n\n}",
-            "."
+            "@article{doi:10.1021/acs.jpclett.8b00124,\nauthor = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},\ntitle = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},\njournal = {The Journal of Physical Chemistry Letters},\nvolume = {9},\nnumber = {7},\npages = {1668-1673},\nyear = {2018},\ndoi = {10.1021/acs.jpclett.8b00124},\nnote ={PMID: 29532658},\neprint = {\nhttps://doi.org/10.1021/acs.jpclett.8b00124\n\n}}"
         ],
         "columns": {
             "formula": "chemical formula",
@@ -222,8 +221,7 @@
     },
     "glass_binary": {
         "bibtex_refs": [
-            "@article{doi:10.1021/acs.jpclett.7b01046,\nauthor = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},\ntitle = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},\njournal = {The Journal of Physical Chemistry Letters},\nvolume = {8},\nnumber = {14},\npages = {3434-3439},\nyear = {2017},\ndoi = {10.1021/acs.jpclett.7b01046},\nnote ={PMID: 28697303},",
-            "https://doi.org/10.1021/acs.jpclett.7b01046\n\n},\neprint = {\nhttps://doi.org/10.1021/acs.jpclett.7b01046\n\n}"
+            "@article{doi:10.1021/acs.jpclett.7b01046,\nauthor = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},\ntitle = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},\njournal = {The Journal of Physical Chemistry Letters},\nvolume = {8},\nnumber = {14},\npages = {3434-3439},\nyear = {2017},\ndoi = {10.1021/acs.jpclett.7b01046},\nnote ={PMID: 28697303},\neprint = {\nhttps://doi.org/10.1021/acs.jpclett.7b01046\n\n}}"
         ],
         "columns": {
             "formula": "chemical formula",
@@ -393,11 +391,12 @@
     },
     "m2ax": {
         "bibtex_refs": [
-            "author={M F Cover and O Warschkow and M M M Bilek and D R McKenzie},\ntitle={A comprehensive survey of M 2 AX phase elastic properties},\njournal={Journal of Physics: Condensed Matter},\nvolume={21},\nnumber={30},\npages={305403},\nurl={http://stacks.iop.org/0953-8984/21/i=30/a=305403},\nyear={2009},\nabstract={M 2 AX phases are a family of nanolaminate, ternary alloys that are composed of slabs of transition metal carbide or nitride (M 2 X) separated by single atomic layers of a main group element. In this combination, they manifest many of the beneficial properties of both ceramic and metallic compounds, making them attractive for many technological applications. We report here the results of a large scale computational survey of the elastic properties of all 240 elemental combinations using first-principles density functional theory calculations. We found correlations revealing the governing role of the A element and its interaction with the M element on the c axis compressibility and shearability of the material. The role of the X element is relatively minor, with the strongest effect seen in the in-plane constants C 11 and C 12 . We identify several elemental compositions with extremal properties such as W 2 SnC, which has by far the lowest value of C 44 , suggesting potential applications as a...}"
+            "@article{M F Cover,\nauthor={M F Cover and O Warschkow and M M M Bilek and D R McKenzie},\ntitle={A comprehensive survey of M 2 AX phase elastic properties},\njournal={Journal of Physics: Condensed Matter},\nvolume={21},\nnumber={30},\npages={305403},\nurl={http://stacks.iop.org/0953-8984/21/i=30/a=305403},\nyear={2009},\nabstract={M 2 AX phases are a family of nanolaminate, ternary alloys that are composed of slabs of transition metal carbide or nitride (M 2 X) separated by single atomic layers of a main group element. In this combination, they manifest many of the beneficial properties of both ceramic and metallic compounds, making them attractive for many technological applications. We report here the results of a large scale computational survey of the elastic properties of all 240 elemental combinations using first-principles density functional theory calculations. We found correlations revealing the governing role of the A element and its interaction with the M element on the c axis compressibility and shearability of the material. The role of the X element is relatively minor, with the strongest effect seen in the in-plane constants C 11 and C 12 . We identify several elemental compositions with extremal properties such as W 2 SnC, which has by far the lowest value of C 44 , suggesting potential applications as a...}}"
         ],
         "columns": {
+            "a": "Lattice parameter a, in A (angstrom)",
             "bulk modulus": "In GPa",
-            "c": "lattice parameter a, in A (angstrom)",
+            "c": "lattice parameter c, in A (angstrom)",
             "c11": "Elastic constants of the M2AX material. These are specific to hexagonal materials.",
             "c12": "Elastic constants of the M2AX material. These are specific to hexagonal materials.",
             "c13": "Elastic constants of the M2AX material. These are specific to hexagonal materials.",
@@ -409,7 +408,7 @@
             "formula": "chemical formula",
             "shear modulus": "In GPa"
         },
-        "description": "Elastic properties of 224 stable M2AX compounds from \"A comprehensive survey of M2AX phase elastic properties\" by Cover et al. Calculations are PAW PW91.",
+        "description": "Elastic properties of 223 stable M2AX compounds from \"A comprehensive survey of M2AX phase elastic properties\" by Cover et al. Calculations are PAW PW91.",
         "file_type": "json.gz",
         "hash": "b8dff06867b04805ef7c3f2fcbf21cb11c6bc3d0a78f5efab2472e9d269f49c0",
         "num_entries": 223,

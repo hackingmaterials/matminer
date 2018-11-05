@@ -59,6 +59,8 @@ class DataSetsTest(DataSetTest):
         column_headers = object_headers + numeric_headers + bool_headers
         self.assertEqual(sorted(list(df)), sorted(column_headers))
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_elastic_tensor_2015(self):
         # Run set of universal dataset tests
         object_headers = ['material_id', 'formula', 'structure',
@@ -119,6 +121,8 @@ class DataSetsTest(DataSetTest):
         df = load_dataset("dielectric_constant")
         self.assertEqual(type(df['structure'][0]), Structure)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_flla(self):
         # Universal tests
         object_headers = ['material_id', 'formula', 'structure']
@@ -132,6 +136,8 @@ class DataSetsTest(DataSetTest):
         df = load_dataset('flla')
         self.assertEqual(type(df['structure'][0]), Structure)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_castelli_perovskites(self):
         # Universal Tests
         object_headers = ['structure', 'formula']
@@ -150,6 +156,8 @@ class DataSetsTest(DataSetTest):
         df = load_dataset("castelli_perovskites")
         self.assertEqual(type(df['structure'][0]), Structure)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_boltztrap_mp(self):
         # Universal Tests
         object_headers = ['structure', 'formula', 'mpid']
@@ -165,6 +173,8 @@ class DataSetsTest(DataSetTest):
         df = load_dataset("boltztrap_mp")
         self.assertEqual(type(df['structure'][0]), Structure)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_phonon_dielectric_mp(self):
         # Universal Tests
         object_headers = ['structure', 'formula', 'mpid']
@@ -226,6 +236,8 @@ class DataSetsTest(DataSetTest):
         df = load_dataset("mp_all")
         self.assertEqual(type(df['structure'][0]), Structure)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_mp_nostruct(self):
         # Universal Tests
         object_headers = ['mpid', 'formula']
@@ -293,6 +305,8 @@ class DataSetsTest(DataSetTest):
             "steel_strength", object_headers, numeric_headers
         )
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_jarvis_ml_dft_training(self):
         # Universal Tests
         object_headers = ['jid', 'mpid', 'structure', 'composition']
@@ -313,6 +327,8 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(type(df['composition'][0]), Composition)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_jarvis_dft_3d(self):
         # Universal Tests
         object_headers = ['jid', 'mpid', 'structure', 'composition',
@@ -332,6 +348,8 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(type(df['composition'][0]), Composition)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_jarvis_dft_2d(self):
         # Universal Tests
         object_headers = ['jid', 'mpid', 'structure', 'composition',
@@ -365,8 +383,8 @@ class DataSetsTest(DataSetTest):
         # Universal Tests
         object_headers = ['formula']
 
-        numeric_headers = ['a', 'c', 'd_mx', 'd_ma', 'c11', 'c12', 'c13', 
-                           'c33', 'c44', 'bulk modulus', 'shear modulus', 
+        numeric_headers = ['a', 'c', 'd_mx', 'd_ma', 'c11', 'c12', 'c13',
+                           'c33', 'c44', 'bulk modulus', 'shear modulus',
                            'elastic modulus']
 
         self.universal_dataset_check(

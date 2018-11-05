@@ -9,7 +9,8 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_elastic_tensor, load_glass_ternary_landolt, \
     load_phonon_dielectric_mp, load_piezoelectric_tensor, load_mp, \
     load_wolverton_oxides, load_heusler_magnetic, load_steel_strength, \
-    load_jarvis_ml_dft_training, load_jarvis_dft_2d, load_jarvis_dft_3d
+    load_jarvis_ml_dft_training, load_jarvis_dft_2d, load_jarvis_dft_3d, \
+    load_expt_formation_enthalpy, load_expt_gap, load_glass_binary, load_m2ax
 
 
 class ConvenienceLoadersTest(DataSetTest):
@@ -26,6 +27,8 @@ class ConvenienceLoadersTest(DataSetTest):
         df = load_glass_ternary_hipt(system=["CoFeZr", "CoTiZr"])
         self.assertEqual(len(df.index), 2576)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_load_castelli_peroskites(self):
         df = load_castelli_perovskites()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -34,6 +37,8 @@ class ConvenienceLoadersTest(DataSetTest):
         df = load_flla()
         self.assertTrue(isinstance(df, pd.DataFrame))
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_load_boltztrap_mp(self):
         df = load_boltztrap_mp()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -85,6 +90,8 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertTrue(isinstance(df, pd.DataFrame))
         self.assertEqual(len(df.columns), 20)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_load_glass_ternary_landolt(self):
         df = load_glass_ternary_landolt()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -148,6 +155,8 @@ class ConvenienceLoadersTest(DataSetTest):
         df = load_steel_strength()
         self.assertTrue(isinstance(df, pd.DataFrame))
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_load_jarvis_ml_dft_training(self):
         df = load_jarvis_ml_dft_training()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -162,6 +171,8 @@ class ConvenienceLoadersTest(DataSetTest):
         df = load_jarvis_dft_2d(drop_nan_columns='epsilon_x opt')
         self.assertEqual(len(df), 522)
 
+    # Skip for circleCI efficiency
+    @unittest.skip
     def test_load_jarvis_dft_3d(self):
         df = load_jarvis_dft_3d()
         self.assertTrue(isinstance(df, pd.DataFrame))
