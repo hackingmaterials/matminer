@@ -33,7 +33,7 @@ class DataSetsTest(DataSetTest):
             len(df), self.dataset_dict[dataset_name]["num_entries"]
         )
 
-        # Tes all columns are there
+        # Test all columns are there
         self.assertEqual(sorted(list(df)), sorted(
             [header for header in
              self.dataset_dict[dataset_name]['columns'].keys()]
