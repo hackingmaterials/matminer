@@ -619,11 +619,9 @@ def _preprocess_flla(file_path):
     return 'flla', df[column_headers]
 
 
-"""
-These dictionaries map the filename of datasets to their preprocessors.
+"""These dictionaries map the filename of datasets to their preprocessors.
 Defaults to just loading in the file with default pd load function for a
-given file type
-"""
+given file type"""
 
 
 _datasets_to_preprocessing_routines = {
