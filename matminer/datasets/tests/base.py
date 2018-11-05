@@ -10,7 +10,27 @@ class DataSetTest(unittest.TestCase):
             'flla',
             'elastic_tensor_2015',
             'piezoelectric_tensor',
-            'dielectric_constant'
+            'dielectric_constant',
+            'castelli_perovskites',
+            'boltztrap_mp',
+            'phonon_dielectric_mp',
+            'glass_ternary_hipt',
+            'double_perovskites_gap',
+            'double_perovskites_gap_lumo',
+            'mp_all',
+            'mp_nostruct',
+            'glass_ternary_landolt',
+            'citrine_thermal_conductivity',
+            'wolverton_oxides',
+            'heusler_magnetic',
+            'steel_strength',
+            'jarvis_ml_dft_training',
+            'jarvis_dft_2d',
+            'jarvis_dft_3d',
+            'glass_binary',
+            'm2ax',
+            'expt_gap',
+            'expt_formation_enthalpy'
         ]
         self.dataset_attributes = [
             'file_type',
