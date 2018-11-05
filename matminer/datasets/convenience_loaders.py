@@ -1,6 +1,6 @@
 from matminer.datasets import load_dataset
 
-"""Convenience functions provided to make accessing datasets simpler."""
+# Convenience functions provided to make accessing datasets simpler.
 
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>" \
              "Abhinav Ashar <abhinav_ashar@berkeley.edu>"
