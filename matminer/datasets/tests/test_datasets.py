@@ -351,6 +351,48 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
         self.assertEqual(type(df['composition'][0]), Composition)
 
+    def test_glass_binary(self):
+        # Universal Tests
+        object_headers = ['formula']
+
+        numeric_headers = ['gfa']
+
+        self.universal_dataset_check(
+            "glass_binary", object_headers, numeric_headers
+        )
+
+    def test_m2ax(self):
+        # Universal Tests
+        object_headers = ['formula']
+
+        numeric_headers = ['a', 'c', 'd_mx', 'd_ma', 'c11', 'c12', 'c13', 
+                           'c33', 'c44', 'bulk modulus', 'shear modulus', 
+                           'elastic modulus']
+
+        self.universal_dataset_check(
+            "m2ax", object_headers, numeric_headers
+        )
+
+    def test_expt_gap(self):
+        # Universal Tests
+        object_headers = ['formula']
+
+        numeric_headers = ['gap expt']
+
+        self.universal_dataset_check(
+            "expt_gap", object_headers, numeric_headers
+        )
+
+    def test_expt_formation_enthalpy(self):
+        # Universal Tests
+        object_headers = ['formula', 'pearson symbol', 'space group', 'mpid']
+
+        numeric_headers = ['oqmdid', 'e_form expt', 'e_form mp', 'e_form oqmd']
+
+        self.universal_dataset_check(
+            "expt_formation_enthalpy", object_headers, numeric_headers
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

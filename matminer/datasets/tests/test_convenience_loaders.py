@@ -109,6 +109,22 @@ class ConvenienceLoadersTest(DataSetTest):
         df = load_phonon_dielectric_mp()
         self.assertTrue(isinstance(df, pd.DataFrame))
 
+    def test_load_glass_binary(self):
+        df = load_glass_binary()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+
+    def test_load_m2ax(self):
+        df = load_m2ax()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+
+    def test_load_expt_gap(self):
+        df = load_expt_gap()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+
+    def test_load_expt_formation_enthalpy(self):
+        df = load_expt_formation_enthalpy()
+        self.assertTrue(isinstance(df, pd.DataFrame))
+
     # Skip due to memory usage
     @unittest.skip
     def test_load_mp(self):
