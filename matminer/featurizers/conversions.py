@@ -441,12 +441,17 @@ class CompositionToOxidComposition(ConversionFeaturizer):
             will only work if `overwrite_data=True`).
         overwrite_data (bool): Overwrite any data in `target_column` if it
             exists.
+        coerce_mixed (bool): If a composition has both species containing
+            oxid states and not containing oxid states, strips all of the
+            oxid states and guesses the entire composition's oxid states.
+
     """
 
     def __init__(self, target_col_id='composition_oxid', overwrite_data=False,
-                 **kwargs):
+                 coerce_mixed=True, **kwargs):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
+        self.coerce_mixed = coerce_mixed
 
     def featurize(self, comp):
         """Add oxidation states to a Structure using pymatgen's guessing routines.
@@ -458,6 +463,17 @@ class CompositionToOxidComposition(ConversionFeaturizer):
             (`pymatgen.core.composition.Composition`): A Composition object
                 decorated with oxidation states.
         """
+        els_have_oxi_states = [hasattr(s, "oxi_state") for s in comp.elements]
+        if all(els_have_oxi_states):
+            return [comp]
+        elif any(els_have_oxi_states):
+            if self.coerce_mixed:
+                comp = comp.element_composition
+            else:
+                raise ValueError("Composition {} has a mix of species with "
+                                 "and without oxidation states. Please enable "
+                                 "coercion to all oxidation states with "
+                                 "coerce_mixed.".format(comp))
         return [comp.add_charges_from_oxi_state_guesses(
             **self.oxi_guess_params)]
 
@@ -471,4 +487,5 @@ class CompositionToOxidComposition(ConversionFeaturizer):
             "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
 
     def implementors(self):
-        return ["Anubhav Jain", "Alex Ganose"]
+        return ["Anubhav Jain", "Alex Ganose", "Alex Dunn"]
+

@@ -10,5 +10,5 @@ future==0.16.0
 sympy==1.1.1
 scikit_learn==0.20.0
 numpy==1.15.2
-requests==2.19.1
+requests==2.20.0
 monty==1.0.3
