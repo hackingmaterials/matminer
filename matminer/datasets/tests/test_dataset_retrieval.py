@@ -2,7 +2,7 @@ import unittest
 import os
 from itertools import product
 
-from matminer.datasets.tests import DataSetTest
+from matminer.datasets.tests.base import DataSetTest
 from matminer.datasets.dataset_retrieval import load_dataset, \
     get_available_datasets, get_dataset_attribute, get_dataset_description, \
     get_dataset_num_entries, get_dataset_columns, get_dataset_reference, \

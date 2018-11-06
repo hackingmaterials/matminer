@@ -1,7 +1,7 @@
 import pandas as pd
 import unittest
 
-from matminer.datasets.tests import DataSetTest
+from matminer.datasets.tests.base import DataSetTest
 from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_castelli_perovskites, load_flla, load_boltztrap_mp, \
     load_citrine_thermal_conductivity, load_dielectric_constant, \

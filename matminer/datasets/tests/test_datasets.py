@@ -5,7 +5,7 @@ import numpy as np
 from pandas.api.types import is_numeric_dtype, is_object_dtype, is_bool_dtype
 from pymatgen.core.structure import Structure, Composition
 
-from matminer.datasets.tests import DataSetTest
+from matminer.datasets.tests.base import DataSetTest
 from matminer.datasets.dataset_retrieval import load_dataset
 
 
