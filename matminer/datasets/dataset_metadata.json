@@ -13,7 +13,7 @@
             "pf_p": "p-type power factor in uW/cm2.K",
             "s_n": "n-type Seebeck coefficient in micro Volts per Kelvin",
             "s_p": "p-type Seebeck coefficient in micro Volts per Kelvin",
-            "structure": "pymatgen Sttructure object describing the crystal structure of the material"
+            "structure": "pymatgen Structure object describing the crystal structure of the material"
         },
         "description": "Effective mass and thermoelectric properties of 8924 compounds in The  Materials Project database that are calculated by the BoltzTraP software package run on the GGA-PBE or GGA+U density functional theory calculation results. The properties are reported at the temperature of 300 Kelvin and the carrier concentration of 1e18 1/cm3.",
         "file_type": "json.gz",
@@ -38,7 +38,7 @@
             "structure": "crystal structure represented by pymatgen Structure object",
             "vbm": "absolute value of valence band edge calculated via gllbsc"
         },
-        "description": "18,928 perovskites generated with ABX combinatorics, calculating gbllsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.",
+        "description": "18,928 perovskites generated with ABX combinatorics, calculating gllbsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.",
         "file_type": "json.gz",
         "hash": "fc8b44d7213515f9bc2ef3a5a5d3e4b946b321c1311f14c8be31f857b61b10d7",
         "num_entries": 18928,
