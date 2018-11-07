@@ -13,7 +13,7 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_jarvis_ml_dft_training, load_jarvis_dft_2d, load_jarvis_dft_3d, \
     load_expt_formation_enthalpy, load_expt_gap, load_glass_binary, load_m2ax
 
-if "CI" not in os.environ.keys():
+if "CIRCLECI" not in os.environ.keys():
 
     class ConvenienceLoadersTest(DataSetTest):
         def test_load_glass_ternary_hipt(self):
