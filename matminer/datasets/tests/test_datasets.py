@@ -20,7 +20,7 @@ class DataSetsTest(DataSetTest):
 
         # "Hard" integrity checks that take a long time
         # these tests only run if on a local machine, skipped on CircleCI
-        if "CI" not in os.environ.keys():
+        if False:
             # Get rid of dataset if it's on the disk already
             data_path = os.path.join(
                 self.dataset_dir,

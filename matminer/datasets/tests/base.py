@@ -60,7 +60,3 @@ class DataSetTest(unittest.TestCase):
         self._url = "https://ndownloader.figshare.com/files/13039562"
         self._hash = "c487f59ce0d48505c36633b4b202027" \
                      "d0c915474b081e8fb0bde8d5474ee59a1"
-
-
-if __name__ == "__main__":
-    unittest.main()
