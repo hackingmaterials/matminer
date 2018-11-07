@@ -1,5 +1,4 @@
 import unittest
-import os
 from itertools import product
 
 from matminer.datasets.tests.base import DataSetTest
@@ -10,8 +9,8 @@ from matminer.datasets.dataset_retrieval import load_dataset, \
 
 
 class DataRetrievalTest(DataSetTest):
-    # This test case only checks the dataset loaders exceptions and a simple
-    # case, for more extensive tests of individual datasets see the
+    # This test case only checks the dataset loaders exceptions
+    # For more extensive tests of individual datasets see the
     # test_load_"dataset name" functions in test_datasets.py
     def test_load_dataset(self):
         # Can't find dataset or similar
@@ -24,16 +23,6 @@ class DataRetrievalTest(DataSetTest):
         dataset_name = sorted(self.dataset_dict.keys())[0]
         with self.assertRaises(ValueError):
             load_dataset("a" + dataset_name + "a")
-
-        dataset_filename = (dataset_name + "."
-                            + self.dataset_dict[dataset_name]["file_type"])
-        data_home = os.path.expanduser("~")
-        dataset_path = os.path.join(data_home, dataset_filename)
-        if os.path.exists(dataset_path):
-            os.remove(dataset_path)
-
-        load_dataset(dataset_name, data_home)
-        self.assertTrue(os.path.exists(data_home))
 
     def test_get_available_datasets(self):
         # Go over all parameter combinations,

@@ -187,7 +187,7 @@ convenience function should be added alongside dataset tests.
   is described in the file metadata. See prior datasets for examples and
   the .txt file from step 2 for column type info. A typical test consists of
   a call to a universal test function that only needs specifiers of what
-  dataframe columns should be of what type, followed by dataset specific type tests
+  dataframe columns should be of what type and dataset specific type tests
   if necessary.
 
   Example:
@@ -195,7 +195,6 @@ convenience function should be added alongside dataset tests.
   .. code-block:: python
 
     def test_dielectric_constant(self):
-        # Universal Tests
         object_headers = ['material_id', 'formula', 'structure',
                           'e_electronic', 'e_total', 'cif', 'meta',
                           'poscar']
@@ -205,14 +204,16 @@ convenience function should be added alongside dataset tests.
 
         bool_headers = ['pot_ferroelectric']
 
+        # Unique Tests
+        def _unique_tests(df):
+         self.assertEqual(type(df['structure'][0]), Structure)
+
+        # Universal Tests
         self.universal_dataset_check(
             "dielectric_constant", object_headers, numeric_headers,
-            bool_headers=bool_headers,
+            bool_headers=bool_headers, test_func=_unique_tests
         )
 
-        # Unique tests
-        df = load_dataset("dielectric_constant")
-        self.assertEqual(type(df['structure'][0]), Structure)
 
 - Write a convenience function for the dataset in `convenience_loaders.py`
 
