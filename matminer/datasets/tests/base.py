@@ -5,6 +5,8 @@ from matminer.datasets.utils import _load_dataset_dict
 
 
 class DataSetTest(unittest.TestCase):
+    running_on_ci = "CI" in os.environ.keys()
+
     def setUp(self):
         self.dataset_names = [
             'flla',

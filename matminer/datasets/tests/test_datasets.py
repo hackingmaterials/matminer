@@ -60,7 +60,7 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(sorted(list(df)), sorted(column_headers))
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_elastic_tensor_2015(self):
         # Run set of universal dataset tests
@@ -123,7 +123,7 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_flla(self):
         # Universal tests
@@ -139,7 +139,7 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_castelli_perovskites(self):
         # Universal Tests
@@ -160,7 +160,7 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_boltztrap_mp(self):
         # Universal Tests
@@ -178,7 +178,7 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_phonon_dielectric_mp(self):
         # Universal Tests
@@ -225,7 +225,7 @@ class DataSetsTest(DataSetTest):
         )
 
     # Skip due to memory usage
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_mp_all(self):
         # Universal Tests
@@ -243,7 +243,7 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['structure'][0]), Structure)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_mp_nostruct(self):
         # Universal Tests
@@ -313,7 +313,7 @@ class DataSetsTest(DataSetTest):
         )
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_jarvis_ml_dft_training(self):
         # Universal Tests
@@ -336,7 +336,7 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['composition'][0]), Composition)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_jarvis_dft_3d(self):
         # Universal Tests
@@ -358,7 +358,7 @@ class DataSetsTest(DataSetTest):
         self.assertEqual(type(df['composition'][0]), Composition)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf("CI" in os.environ.keys(),
+    @unittest.skipIf(DataSetTest.running_on_ci,
                      "Skipping larger dataset for efficiency")
     def test_jarvis_dft_2d(self):
         # Universal Tests
