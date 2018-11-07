@@ -1,5 +1,6 @@
 import pandas as pd
 import unittest
+import os
 
 from matminer.datasets.tests.base import DataSetTest
 from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
@@ -28,7 +29,7 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertEqual(len(df.index), 2576)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf(DataSetTest.running_on_ci,
+    @unittest.skipIf("CI" in os.environ.keys(),
                      "Skipping larger dataset for efficiency")
     def test_load_castelli_peroskites(self):
         df = load_castelli_perovskites()
@@ -39,7 +40,7 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertTrue(isinstance(df, pd.DataFrame))
 
     # Skip for circleCI efficiency
-    @unittest.skipIf(DataSetTest.running_on_ci,
+    @unittest.skipIf("CI" in os.environ.keys(),
                      "Skipping larger dataset for efficiency")
     def test_load_boltztrap_mp(self):
         df = load_boltztrap_mp()
@@ -93,7 +94,7 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertEqual(len(df.columns), 20)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf(DataSetTest.running_on_ci,
+    @unittest.skipIf("CI" in os.environ.keys(),
                      "Skipping larger dataset for efficiency")
     def test_load_glass_ternary_landolt(self):
         df = load_glass_ternary_landolt()
@@ -136,7 +137,7 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertTrue(isinstance(df, pd.DataFrame))
 
     # Skip due to memory usage
-    @unittest.skipIf(DataSetTest.running_on_ci,
+    @unittest.skipIf("CI" in os.environ.keys(),
                      "Skipping larger dataset for efficiency")
     def test_load_mp(self):
         df = load_mp()
@@ -160,7 +161,7 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertTrue(isinstance(df, pd.DataFrame))
 
     # Skip for circleCI efficiency
-    @unittest.skipIf(DataSetTest.running_on_ci,
+    @unittest.skipIf("CI" in os.environ.keys(),
                      "Skipping larger dataset for efficiency")
     def test_load_jarvis_ml_dft_training(self):
         df = load_jarvis_ml_dft_training()
@@ -177,7 +178,7 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertEqual(len(df), 522)
 
     # Skip for circleCI efficiency
-    @unittest.skipIf(DataSetTest.running_on_ci,
+    @unittest.skipIf("CI" in os.environ.keys(),
                      "Skipping larger dataset for efficiency")
     def test_load_jarvis_dft_3d(self):
         df = load_jarvis_dft_3d()
