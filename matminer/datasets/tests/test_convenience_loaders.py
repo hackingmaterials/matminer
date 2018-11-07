@@ -28,7 +28,8 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertEqual(len(df.index), 2576)
 
     # Skip for circleCI efficiency
-    @unittest.skip
+    @unittest.skipIf(DataSetTest.running_on_ci,
+                     "Skipping larger dataset for efficiency")
     def test_load_castelli_peroskites(self):
         df = load_castelli_perovskites()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -38,7 +39,8 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertTrue(isinstance(df, pd.DataFrame))
 
     # Skip for circleCI efficiency
-    @unittest.skip
+    @unittest.skipIf(DataSetTest.running_on_ci,
+                     "Skipping larger dataset for efficiency")
     def test_load_boltztrap_mp(self):
         df = load_boltztrap_mp()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -91,7 +93,8 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertEqual(len(df.columns), 20)
 
     # Skip for circleCI efficiency
-    @unittest.skip
+    @unittest.skipIf(DataSetTest.running_on_ci,
+                     "Skipping larger dataset for efficiency")
     def test_load_glass_ternary_landolt(self):
         df = load_glass_ternary_landolt()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -133,7 +136,8 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertTrue(isinstance(df, pd.DataFrame))
 
     # Skip due to memory usage
-    @unittest.skip
+    @unittest.skipIf(DataSetTest.running_on_ci,
+                     "Skipping larger dataset for efficiency")
     def test_load_mp(self):
         df = load_mp()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -156,7 +160,8 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertTrue(isinstance(df, pd.DataFrame))
 
     # Skip for circleCI efficiency
-    @unittest.skip
+    @unittest.skipIf(DataSetTest.running_on_ci,
+                     "Skipping larger dataset for efficiency")
     def test_load_jarvis_ml_dft_training(self):
         df = load_jarvis_ml_dft_training()
         self.assertTrue(isinstance(df, pd.DataFrame))
@@ -172,7 +177,8 @@ class ConvenienceLoadersTest(DataSetTest):
         self.assertEqual(len(df), 522)
 
     # Skip for circleCI efficiency
-    @unittest.skip
+    @unittest.skipIf(DataSetTest.running_on_ci,
+                     "Skipping larger dataset for efficiency")
     def test_load_jarvis_dft_3d(self):
         df = load_jarvis_dft_3d()
         self.assertTrue(isinstance(df, pd.DataFrame))

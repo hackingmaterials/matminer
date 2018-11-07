@@ -18,7 +18,37 @@ How would you like to interact with the dataset metadata?
 
 
 def generate_new_dataset(dataset):
+    """
+    This function collects user input to build a dictionary of dataset metadata
+    as well as ensures that metadata is complete and properly formatted. It
+    displays the needed metadata fields that have not yet been filled and gives
+    the user the option of which ones to fill.
 
+    The current metadata fields are:
+    bibtex_refs - a list of strings, each being a bibtex reference
+                  to the source(s) of the dataset
+
+    columns - a dictionary mapping string column names to string descriptions
+              of each dataset column
+
+    description - string describing the dataset at a high level
+
+    file_type - file type of the dataset being downloaded from cloud storage
+
+    file_hash - SHA 256 cryptographic hash of the dataset file
+
+    num_entries - int listing number of entries in the dataset
+
+    reference - human readable string referencing dataset source
+
+    url - url where dataset is stored in cloud storage
+
+    Args:
+        dataset (str): The name of the dataset, more specifically the keyword
+        used for lookup, to be placed in the metadata dictionary
+
+    Returns: dict
+    """
     bibtex = []
     columns = {}
     description = ""
