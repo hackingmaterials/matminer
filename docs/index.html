@@ -82,6 +82,25 @@
 </div>
 <p><a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MongoDB.py">MongoDataRetrieval</a> is another data retrieval tool developed that allows for the parsing of any <a class="reference external" href="https://www.mongodb.com/">MongoDB</a> collection (which follows a flexible JSON schema), into a Pandas dataframe that has a format similar to the output dataframe from the above data retrieval tools. The arguments of the <code class="code docutils literal notranslate"><span class="pre">get_dataframe</span></code> method allow to utilize MongoDB’s rich and powerful query/aggregation syntax structure. More information on customization of queries can be found in the <a class="reference external" href="https://docs.mongodb.com/manual/">MongoDB documentation</a>.</p>
 </div>
+<div class="section" id="access-ready-made-datasets-for-exploratory-analysis-benchmarking-and-testing-without-ever-leaving-the-python-interpreter">
+<h3>Access ready-made datasets for exploratory analysis, benchmarking, and testing without ever leaving the Python interpreter<a class="headerlink" href="#access-ready-made-datasets-for-exploratory-analysis-benchmarking-and-testing-without-ever-leaving-the-python-interpreter" title="Permalink to this headline">¶</a></h3>
+<p>The datasets module provides an ever growing collection of materials science datasets that have been collected, formatted as pandas dataframes, and made available through a unified interface.</p>
+<p>Loading a dataset as a pandas dataframe is as simple as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;jarvis_dft_3d&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or use the dataset specific convenience loader to access operations common to that dataset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.datasets.convenience_loaders</span> <span class="kn">import</span> <span class="n">load_jarvis_dft_3d</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_jarvis_dft_3d</span><span class="p">(</span><span class="n">drop_nan_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bulk modulus&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="dataset_summary.html"><span class="doc">the dataset summary page</span></a> for a comprehensive summary of
+datasets available within matminer. If you would like to contribute a dataset to matminer’s
+repository see <a class="reference internal" href="dataset_addition_guide.html"><span class="doc">the dataset addition guide</span></a>.</p>
+</div>
 </div>
 <div class="section" id="data-descriptor-tools">
 <h2>Data descriptor tools<a class="headerlink" href="#data-descriptor-tools" title="Permalink to this headline">¶</a></h2>
@@ -106,8 +125,8 @@
 <p>In the figrecipes module of the matminer library, we have developed utilities that make it easier and faster to plot common figures with Plotly. The figrecipes module is aimed at making it easy for the user to create plots from their data using just a few lines of code, utilizing the wide and flexible functionality of Plotly, while at the same time sheilding the complexities involved.
 Check out an example code and figure generated with figrecipes:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer</span> <span class="kn">import</span> <span class="n">PlotlyFig</span>
-<span class="kn">from</span> <span class="nn">matminer.datasets.dataframe_loader</span> <span class="kn">import</span> <span class="n">load_elastic_tensor</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_elastic_tensor</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">matminer.datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;elastic_tensor_2015&quot;</span><span class="p">)</span>
 <span class="n">pf</span> <span class="o">=</span> <span class="n">PlotlyFig</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">y_title</span><span class="o">=</span><span class="s1">&#39;Bulk Modulus (GPa)&#39;</span><span class="p">,</span> <span class="n">x_title</span><span class="o">=</span><span class="s1">&#39;Shear Modulus (GPa)&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;bulk_shear_moduli&#39;</span><span class="p">)</span>
 <span class="n">pf</span><span class="o">.</span><span class="n">xy</span><span class="p">((</span><span class="s1">&#39;G_VRH&#39;</span><span class="p">,</span> <span class="s1">&#39;K_VRH&#39;</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="s1">&#39;material_id&#39;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;poisson_ratio&#39;</span><span class="p">,</span> <span class="n">colorscale</span><span class="o">=</span><span class="s1">&#39;Picnic&#39;</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">)})</span>
 </pre></div>
@@ -178,6 +197,7 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#data-retrieval-tools">Data retrieval tools</a><ul>
 <li><a class="reference internal" href="#retrieve-data-from-the-biggest-materials-databases-such-as-the-materials-project-and-citrine-s-databases-in-a-pandas-dataframe-format">Retrieve data from the biggest materials databases, such as the Materials Project and Citrine’s databases, in a Pandas dataframe format</a></li>
+<li><a class="reference internal" href="#access-ready-made-datasets-for-exploratory-analysis-benchmarking-and-testing-without-ever-leaving-the-python-interpreter">Access ready-made datasets for exploratory analysis, benchmarking, and testing without ever leaving the Python interpreter</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#data-descriptor-tools">Data descriptor tools</a><ul>

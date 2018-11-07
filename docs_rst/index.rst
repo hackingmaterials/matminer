@@ -67,6 +67,33 @@ For example, to compare experimental and computed band gaps of Si, one can emplo
 `MongoDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MongoDB.py>`_ is another data retrieval tool developed that allows for the parsing of any `MongoDB <https://www.mongodb.com/>`_ collection (which follows a flexible JSON schema), into a Pandas dataframe that has a format similar to the output dataframe from the above data retrieval tools. The arguments of the :code:`get_dataframe` method allow to utilize MongoDB's rich and powerful query/aggregation syntax structure. More information on customization of queries can be found in the `MongoDB documentation <https://docs.mongodb.com/manual/>`_.
 
 
+Access ready-made datasets for exploratory analysis, benchmarking, and testing without ever leaving the Python interpreter
+____________________________________________________________________________________________________________________________
+
+The datasets module provides an ever growing collection of materials science datasets that have been collected, formatted as pandas dataframes, and made available through a unified interface.
+
+Loading a dataset as a pandas dataframe is as simple as:
+
+.. code-block:: python
+
+    from matminer.datasets import load_dataset
+
+    df = load_dataset("jarvis_dft_3d")
+
+Or use the dataset specific convenience loader to access operations common to that dataset:
+
+.. code-block:: python
+
+    from matminer.datasets.convenience_loaders import load_jarvis_dft_3d
+
+    df = load_jarvis_dft_3d(drop_nan_columns=["bulk modulus"])
+
+See :doc:`the dataset summary page </dataset_summary>` for a comprehensive summary of
+datasets available within matminer. If you would like to contribute a dataset to matminer's
+repository see :doc:`the dataset addition guide </dataset_addition_guide>`.
+
+
+
 ---------------------
 Data descriptor tools
 ---------------------
@@ -99,8 +126,8 @@ Check out an example code and figure generated with figrecipes:
 .. code-block:: python
 
    from matminer import PlotlyFig
-   from matminer.datasets.dataframe_loader import load_elastic_tensor
-   df = load_elastic_tensor()
+   from matminer.datasets import load_dataset
+   df = load_dataset("elastic_tensor_2015")
    pf = PlotlyFig(df, y_title='Bulk Modulus (GPa)', x_title='Shear Modulus (GPa)', filename='bulk_shear_moduli')
    pf.xy(('G_VRH', 'K_VRH'), labels='material_id', colors='poisson_ratio', colorscale='Picnic', limits={'x': (0, 300)})
 

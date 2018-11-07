@@ -1,6 +1,6 @@
 from matminer.datasets import get_available_datasets, get_dataset_columns, \
     get_dataset_column_description, get_dataset_reference, \
-    get_dataset_num_entries, get_dataset_description
+    get_dataset_num_entries, get_dataset_description, get_dataset_citations
 
 """
 Functions used for auto-generating dataset description pages.
@@ -67,4 +67,11 @@ if __name__ == "__main__":
         # Give dataset reference
         print("**Reference**\n")
         print(get_dataset_reference(dataset))
+        print("\n\n")
+
+        # Give bibtex citations
+        print("**Bibtex Formatted Citations**\n")
+        for citation in get_dataset_citations(dataset):
+            print(citation)
+            print()
         print("\n\n")
