@@ -11,7 +11,6 @@ from matminer.datasets.dataset_retrieval import load_dataset
 
 
 class DataSetsTest(DataSetTest):
-
     # Runs tests common to all datasets,
     # makes it quicker to write tests for new datasets
     def universal_dataset_check(self, dataset_name, object_headers=None,
