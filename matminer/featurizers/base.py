@@ -105,9 +105,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     the chunk size automatically based on the size of the list being featurized.
     You may want to specify a small chunk size for computationally-expensive
     featurizers, which will enable better distribution of taks across threads.
-    In contrast, for more lightweight featurizers, it is recommended that 
-    the implementor trial a range of chunksize values to find the optimum. 
-    As a general rule of thumb, if the featurize function takes 0.1 seconds or 
+    In contrast, for more lightweight featurizers, it is recommended that
+    the implementor trial a range of chunksize values to find the optimum.
+    As a general rule of thumb, if the featurize function takes 0.1 seconds or
     less, a chunksize of around 30 will perform best.
 
     ## Documenting a BaseFeaturizer
