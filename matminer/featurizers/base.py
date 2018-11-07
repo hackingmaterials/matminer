@@ -147,7 +147,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
     @property
     def chunksize(self):
-        return self._chunksize if hasattr(self, '_chunksize') else 1
+        return self._chunksize if hasattr(self, '_chunksize') else None
 
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
