@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
 
     matminer.utils.data_files
-    matminer.utils.tests
 
 Submodules
 ----------
