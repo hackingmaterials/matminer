@@ -3,6 +3,11 @@ import os
 
 from matminer.datasets.utils import _load_dataset_dict
 
+# Set global flag based on environment variable
+# specifying whether or not to run full test or partial test
+_dataset_test_env_var = os.environ.get("MATMINER_DATASET_FULL_TEST", "False")
+do_complete_test = (_dataset_test_env_var.upper() == "TRUE")
+
 
 class DataSetTest(unittest.TestCase):
     def setUp(self):

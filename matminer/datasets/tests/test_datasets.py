@@ -6,7 +6,7 @@ import numpy as np
 from pandas.api.types import is_numeric_dtype, is_object_dtype, is_bool_dtype
 from pymatgen.core.structure import Structure, Composition
 
-from matminer.datasets.tests.base import DataSetTest
+from matminer.datasets.tests.base import DataSetTest, do_complete_test
 from matminer.datasets.dataset_retrieval import load_dataset
 
 
@@ -17,9 +17,10 @@ class DataSetsTest(DataSetTest):
                                 numeric_headers=None, bool_headers=None,
                                 test_func=None):
 
-        # "Hard" integrity checks that take a long time
-        # these tests only run if on a local machine, skipped on CircleCI
-        if "CIRCLECI" not in os.environ.keys():
+        # "Hard" integrity checks that take a long time.
+        # These tests only run if the MATMINER_DATASET_FULL_TEST
+        # environment variable is set to True
+        if do_complete_test:
             # Get rid of dataset if it's on the disk already
             data_path = os.path.join(
                 self.dataset_dir,

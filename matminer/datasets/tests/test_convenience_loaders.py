@@ -1,8 +1,7 @@
 import pandas as pd
 import unittest
-import os
 
-from matminer.datasets.tests.base import DataSetTest
+from matminer.datasets.tests.base import DataSetTest, do_complete_test
 from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_castelli_perovskites, load_flla, load_boltztrap_mp, \
     load_citrine_thermal_conductivity, load_dielectric_constant, \
@@ -13,7 +12,7 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_jarvis_ml_dft_training, load_jarvis_dft_2d, load_jarvis_dft_3d, \
     load_expt_formation_enthalpy, load_expt_gap, load_glass_binary, load_m2ax
 
-if "CIRCLECI" not in os.environ.keys():
+if do_complete_test:
 
     class ConvenienceLoadersTest(DataSetTest):
         def test_load_glass_ternary_hipt(self):
