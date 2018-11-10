@@ -82,7 +82,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     that are set by fitting should be stored as class attributes that end with
     an underscore. (This follows the pattern used by ScikitLearn).
 
-    Another implementation to consider is whether it is worth making any utility
+    Another option to consider is whether it is worth making any utility
     operations for your featurizer. `featurize` must return a list of features,
     but this may not be the most natural representation for your features (e.g.,
     a `dict` could be better). Making a separate function for computing features
@@ -101,12 +101,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     to the tasks can be reduced. Note that there is only an advantage to using
     chunksize when the time taken to pass the data from `map` to the function
     call is within several orders of magnitude to that of the function call
-    itself. For computationally expensive featurizers, the default
-    chunksize of 1 will be the most efficient. However, for more lightweight
-    featurizers, it is recommended that the implementor trial a range of
-    chunksize values to find the optimum. As a general rule of thumb, if the
-    featurize function takes 0.1 seconds or less, a chunksize of around 30 will
-    perform best. For longer featurize times, a chunksize of 1 should be used.
+    itself. By default, we allow the Python multiprocessing library to determine
+    the chunk size automatically based on the size of the list being featurized.
+    You may want to specify a small chunk size for computationally-expensive
+    featurizers, which will enable better distribution of taks across threads.
+    In contrast, for more lightweight featurizers, it is recommended that
+    the implementor trial a range of chunksize values to find the optimum.
+    As a general rule of thumb, if the featurize function takes 0.1 seconds or
+    less, a chunksize of around 30 will perform best.
 
     ## Documenting a BaseFeaturizer
 
@@ -147,7 +149,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
     @property
     def chunksize(self):
-        return self._chunksize if hasattr(self, '_chunksize') else 1
+        return self._chunksize if hasattr(self, '_chunksize') else None
 
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
