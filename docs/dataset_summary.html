@@ -1,0 +1,1813 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Datasets Available in Matminer &#8212; matminer 0.4.3 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+ 
+<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="datasets-available-in-matminer">
+<h1>Datasets Available in Matminer<a class="headerlink" href="#datasets-available-in-matminer" title="Permalink to this headline">¶</a></h1>
+<p>Below you will find descriptions and reference data on each available dataset, ordered by load_dataset() keyword argument</p>
+<div class="section" id="boltztrap-mp">
+<h2>boltztrap_mp<a class="headerlink" href="#boltztrap-mp" title="Permalink to this headline">¶</a></h2>
+<p>Effective mass and thermoelectric properties of 8924 compounds in The  Materials Project database that are calculated by the BoltzTraP software package run on the GGA-PBE or GGA+U density functional theory calculation results. The properties are reported at the temperature of 300 Kelvin and the carrier concentration of 1e18 1/cm3.</p>
+<p><strong>Number of entries:</strong> 8924</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="93%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the entry</td>
+</tr>
+<tr class="row-odd"><td>m_n</td>
+<td>n-type/conduction band effective mass. Units: m_e where m_e is the mass of an electron; i.e. m_n is a unitless ratio</td>
+</tr>
+<tr class="row-even"><td>m_p</td>
+<td>p-type/valence band effective mass.</td>
+</tr>
+<tr class="row-odd"><td>mpid</td>
+<td>Materials Project identifier</td>
+</tr>
+<tr class="row-even"><td>pf_n</td>
+<td>n-type thermoelectric power factor in uW/cm2.K where uW is microwatts and a constant relaxation time of 1e-14 assumed.</td>
+</tr>
+<tr class="row-odd"><td>pf_p</td>
+<td>p-type power factor in uW/cm2.K</td>
+</tr>
+<tr class="row-even"><td>s_n</td>
+<td>n-type Seebeck coefficient in micro Volts per Kelvin</td>
+</tr>
+<tr class="row-odd"><td>s_p</td>
+<td>p-type Seebeck coefficient in micro Volts per Kelvin</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>pymatgen Sttructure object describing the crystal structure of the material</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Ricci, F. et al. An ab initio electronic transport database for inorganic materials. Sci. Data 4:170085 doi: 10.1038/sdata.2017.85 (2017).
+Ricci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data from: An ab initio electronic transport database for inorganic materials. Dryad Digital Repository. <a class="reference external" href="https://doi.org/10.5061/dryad.gn001">https://doi.org/10.5061/dryad.gn001</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Ricci2017,
+author={Ricci, Francesco
+and Chen, Wei
+and Aydemir, Umut
+and Snyder, G. Jeffrey
+and Rignanese, Gian-Marco
+and Jain, Anubhav
+and Hautier, Geoffroy},
+title={An ab initio electronic transport database for inorganic materials},
+journal={Scientific Data},
+year={2017},
+month={Jul},
+day={04},
+publisher={The Author(s)},
+volume={4},
+pages={170085},
+note={Data Descriptor},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.85">http://dx.doi.org/10.1038/sdata.2017.85</a>}
+}</p>
+<p>&#64;misc{dryad_gn001,
+title = {Data from: An ab initio electronic transport database for inorganic materials},
+author = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G},
+year = {2017},
+journal = {Scientific Data},
+URL = {<a class="reference external" href="https://doi.org/10.5061/dryad.gn001">https://doi.org/10.5061/dryad.gn001</a>},
+doi = {doi:10.5061/dryad.gn001},
+publisher = {Dryad Digital Repository}
+}</p>
+</div>
+<div class="section" id="castelli-perovskites">
+<h2>castelli_perovskites<a class="headerlink" href="#castelli-perovskites" title="Permalink to this headline">¶</a></h2>
+<p>18,928 perovskites generated with ABX combinatorics, calculating gbllsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.</p>
+<p><strong>Number of entries:</strong> 18928</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>cbm</td>
+<td>similar to vbm but for conduction band</td>
+</tr>
+<tr class="row-odd"><td>e_form</td>
+<td>heat of formation in eV</td>
+</tr>
+<tr class="row-even"><td>fermi level</td>
+<td>the thermodynamic work required to add one electron to the body in eV</td>
+</tr>
+<tr class="row-odd"><td>fermi width</td>
+<td>fermi bandwidth</td>
+</tr>
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the material</td>
+</tr>
+<tr class="row-odd"><td>gap gllbsc</td>
+<td>electronic band gap in eV calculated via gllbsc functional</td>
+</tr>
+<tr class="row-even"><td>gap is direct</td>
+<td>boolean indicator for direct gap</td>
+</tr>
+<tr class="row-odd"><td>mu_b</td>
+<td>magnetic moment in terms of Bohr magneton</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>crystal structure represented by pymatgen Structure object</td>
+</tr>
+<tr class="row-odd"><td>vbm</td>
+<td>absolute value of valence band edge calculated via gllbsc</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, Søren Dahl, Ib Chorkendorff, Thomas F. Jaramillo and Karsten W. Jacobsen (2012) New cubic perovskites for one- and two-photon water splitting using the computational materials repository. Energy Environ. Sci., 2012,5, 9034-9043 <a class="reference external" href="https://doi.org/10.1039/C2EE22341D">https://doi.org/10.1039/C2EE22341D</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{C2EE22341D,
+author =”Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, Søren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.”,
+title  =”New cubic perovskites for one- and two-photon water splitting using the computational materials repository”,
+journal  =”Energy Environ. Sci.”,
+year  =”2012”,
+volume  =”5”,
+issue  =”10”,
+pages  =”9034-9043”,
+publisher  =”The Royal Society of Chemistry”,
+doi  =”10.1039/C2EE22341D”,
+url  =”<a class="reference external" href="http://dx.doi.org/10.1039/C2EE22341D">http://dx.doi.org/10.1039/C2EE22341D</a>”,
+abstract  =”A new efficient photoelectrochemical cell (PEC) is one of the possible solutions to the energy and climate problems of our time. Such a device requires development of new semiconducting materials with tailored properties with respect to stability and light absorption. Here we perform computational screening of around 19 000 oxides{,} oxynitrides{,} oxysulfides{,} oxyfluorides{,} and oxyfluoronitrides in the cubic perovskite structure with PEC applications in mind. We address three main applications: light absorbers for one- and two-photon water splitting and high-stability transparent shields to protect against corrosion. We end up with 20{,} 12{,} and 15 different combinations of oxides{,} oxynitrides and oxyfluorides{,} respectively{,} inviting further experimental investigation.”}</p>
+</div>
+<div class="section" id="citrine-thermal-conductivity">
+<h2>citrine_thermal_conductivity<a class="headerlink" href="#citrine-thermal-conductivity" title="Permalink to this headline">¶</a></h2>
+<p>Thermal conductivity of 872 compounds measured experimentally and retrieved from Citrine database from various references. The reported values are measured at various temperatures of which 295 are at room temperature.</p>
+<p><strong>Number of entries:</strong> 872</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the dataset entry</td>
+</tr>
+<tr class="row-odd"><td>k-units</td>
+<td>units of thermal conductivity</td>
+</tr>
+<tr class="row-even"><td>k_condition</td>
+<td>Temperature description of testing conditions</td>
+</tr>
+<tr class="row-odd"><td>k_condition_units</td>
+<td>units of testing condition temperature representation</td>
+</tr>
+<tr class="row-even"><td>k_expt</td>
+<td>the experimentally measured thermal conductivity in SI units of W/m.K</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://www.citrination.com">https://www.citrination.com</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;misc{Citrine Informatics,
+title = {Citrination},
+howpublished = {url{<a class="reference external" href="https://www.citrination.com/">https://www.citrination.com/</a>}},
+}</p>
+</div>
+<div class="section" id="dielectric-constant">
+<h2>dielectric_constant<a class="headerlink" href="#dielectric-constant" title="Permalink to this headline">¶</a></h2>
+<p>1,056 structures with dielectric properties, calculated with DFPT-PBE.</p>
+<p><strong>Number of entries:</strong> 1056</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>band_gap</td>
+<td>Measure of the conductivity of a material</td>
+</tr>
+<tr class="row-odd"><td>cif</td>
+<td>optional: Description string for structure</td>
+</tr>
+<tr class="row-even"><td>e_electronic</td>
+<td>electronic contribution to dielectric tensor</td>
+</tr>
+<tr class="row-odd"><td>e_total</td>
+<td>Total dielectric tensor incorporating both electronic and ionic contributions</td>
+</tr>
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the material</td>
+</tr>
+<tr class="row-odd"><td>material_id</td>
+<td>Materials Project ID of the material</td>
+</tr>
+<tr class="row-even"><td>meta</td>
+<td>optional, metadata descriptor of the datapoint</td>
+</tr>
+<tr class="row-odd"><td>n</td>
+<td>Refractive Index</td>
+</tr>
+<tr class="row-even"><td>nsites</td>
+<td>The # of atoms in the unit cell of the calculation.</td>
+</tr>
+<tr class="row-odd"><td>poly_electronic</td>
+<td>the average of the eigenvalues of the electronic contribution to the dielectric tensor</td>
+</tr>
+<tr class="row-even"><td>poly_total</td>
+<td>the average of the eigenvalues of the total (electronic and ionic) contributions to the dielectric tensor</td>
+</tr>
+<tr class="row-odd"><td>poscar</td>
+<td>optional: Poscar metadata</td>
+</tr>
+<tr class="row-even"><td>pot_ferroelectric</td>
+<td>Whether the material is potentially ferroelectric</td>
+</tr>
+<tr class="row-odd"><td>space_group</td>
+<td>Integer specifying the crystallographic structure of the material</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>pandas Series defining the structure of the material</td>
+</tr>
+<tr class="row-odd"><td>volume</td>
+<td>Volume of the unit cell in cubic angstroms, For supercell calculations, this quantity refers to the volume of the full supercell.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,
+Chen, W., Graf, T., Schladt, T. D., Persson, K. A. &amp; Prinz, F. B.
+High-throughput screening of inorganic compounds for the discovery
+of novel dielectric and optical materials. Sci. Data 4, 160134 (2017).</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Petousis2017,
+author={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric
+and Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja
+and Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},
+title={High-throughput screening of inorganic compounds for the
+discovery of novel dielectric and optical materials},
+journal={Scientific Data},
+year={2017},
+month={Jan},
+day={31},
+publisher={The Author(s)},
+volume={4},
+pages={160134},
+note={Data Descriptor},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2016.134">http://dx.doi.org/10.1038/sdata.2016.134</a>}
+}</p>
+</div>
+<div class="section" id="double-perovskites-gap">
+<h2>double_perovskites_gap<a class="headerlink" href="#double-perovskites-gap" title="Permalink to this headline">¶</a></h2>
+<p>Band gap of 1306 double perovskites (a_1-b_1-a_2-b_2-O6) calculated using ﻿Gritsenko, van Leeuwen, van Lenthe and Baerends potential (gllbsc) in GPAW.</p>
+<p><strong>Number of entries:</strong> 1306</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>a_1</td>
+<td>Species occupying the a1 perovskite site</td>
+</tr>
+<tr class="row-odd"><td>a_2</td>
+<td>Species occupying the a2 site</td>
+</tr>
+<tr class="row-even"><td>b_1</td>
+<td>Species occupying the b1 site</td>
+</tr>
+<tr class="row-odd"><td>b_2</td>
+<td>Species occupying the b2 site</td>
+</tr>
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the entry</td>
+</tr>
+<tr class="row-odd"><td>gap gllbsc</td>
+<td>electronic band gap (in eV) calculated via gllbsc</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Dataset discussed in:
+Pilania, G. et al. Machine learning bandgaps of double perovskites. Sci. Rep. 6, 19375; doi: 10.1038/srep19375 (2016).
+Dataset sourced from:
+<a class="reference external" href="https://cmr.fysik.dtu.dk/">https://cmr.fysik.dtu.dk/</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Pilania2016,
+author={Pilania, G.
+and Mannodi-Kanakkithodi, A.
+and Uberuaga, B. P.
+and Ramprasad, R.
+and Gubernatis, J. E.
+and Lookman, T.},
+title={Machine learning bandgaps of double perovskites},
+journal={Scientific Reports},
+year={2016},
+month={Jan},
+day={19},
+publisher={The Author(s)},
+volume={6},
+pages={19375},
+note={Article},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/srep19375">http://dx.doi.org/10.1038/srep19375</a>}
+}</p>
+<p>&#64;misc{Computational Materials Repository,
+title = {Computational Materials Repository},
+howpublished = {url{<a class="reference external" href="https://cmr.fysik.dtu.dk/">https://cmr.fysik.dtu.dk/</a>}},
+}</p>
+</div>
+<div class="section" id="double-perovskites-gap-lumo">
+<h2>double_perovskites_gap_lumo<a class="headerlink" href="#double-perovskites-gap-lumo" title="Permalink to this headline">¶</a></h2>
+<p>Supplementary lumo data of 55 atoms for the double_perovskites_gap dataset.</p>
+<p><strong>Number of entries:</strong> 55</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>atom</td>
+<td>Name of the atom whos lumo is listed</td>
+</tr>
+<tr class="row-odd"><td>lumo</td>
+<td>Lowest unoccupied molecular obital energy level (in eV)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Dataset discussed in:
+Pilania, G. et al. Machine learning bandgaps of double perovskites. Sci. Rep. 6, 19375; doi: 10.1038/srep19375 (2016).
+Dataset sourced from:
+<a class="reference external" href="https://cmr.fysik.dtu.dk/">https://cmr.fysik.dtu.dk/</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Pilania2016,
+author={Pilania, G.
+and Mannodi-Kanakkithodi, A.
+and Uberuaga, B. P.
+and Ramprasad, R.
+and Gubernatis, J. E.
+and Lookman, T.},
+title={Machine learning bandgaps of double perovskites},
+journal={Scientific Reports},
+year={2016},
+month={Jan},
+day={19},
+publisher={The Author(s)},
+volume={6},
+pages={19375},
+note={Article},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/srep19375">http://dx.doi.org/10.1038/srep19375</a>}
+}</p>
+<p>&#64;misc{Computational Materials Repository,
+title = {Computational Materials Repository},
+howpublished = {url{<a class="reference external" href="https://cmr.fysik.dtu.dk/">https://cmr.fysik.dtu.dk/</a>}},
+}</p>
+</div>
+<div class="section" id="elastic-tensor-2015">
+<h2>elastic_tensor_2015<a class="headerlink" href="#elastic-tensor-2015" title="Permalink to this headline">¶</a></h2>
+<p>1,181 structures with elastic properties calculated with DFT-PBE.</p>
+<p><strong>Number of entries:</strong> 1181</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>G_Reuss</td>
+<td>Lower bound on shear modulus for polycrystalline material</td>
+</tr>
+<tr class="row-odd"><td>G_VRH</td>
+<td>Average of G_Reuss and G_Voigt</td>
+</tr>
+<tr class="row-even"><td>G_Voigt</td>
+<td>Upper bound on shear modulus for polycrystalline material</td>
+</tr>
+<tr class="row-odd"><td>K_Reuss</td>
+<td>Lower bound on bulk modulus for polycrystalline material</td>
+</tr>
+<tr class="row-even"><td>K_VRH</td>
+<td>Average of K_Reuss and K_Voigt</td>
+</tr>
+<tr class="row-odd"><td>K_Voigt</td>
+<td>Upper bound on bulk modulus for polycrystalline material</td>
+</tr>
+<tr class="row-even"><td>cif</td>
+<td>optional: Description string for structure</td>
+</tr>
+<tr class="row-odd"><td>compliance_tensor</td>
+<td>Tensor describing elastic behavior</td>
+</tr>
+<tr class="row-even"><td>elastic_anisotropy</td>
+<td>measure of directional dependence of the materials elasticity, metric is always &gt;= 0</td>
+</tr>
+<tr class="row-odd"><td>elastic_tensor</td>
+<td>Tensor describing elastic behavior corresponding to IEEE orientation, symmetrized to crystal structure</td>
+</tr>
+<tr class="row-even"><td>elastic_tensor_original</td>
+<td>Tensor describing elastic behavior, unsymmetrized, corresponding to POSCAR conventional standard cell orientation</td>
+</tr>
+<tr class="row-odd"><td>formula</td>
+<td>Chemical formula of the material</td>
+</tr>
+<tr class="row-even"><td>kpoint_density</td>
+<td>optional: Sampling parameter from calculation</td>
+</tr>
+<tr class="row-odd"><td>material_id</td>
+<td>Materials Project ID of the material</td>
+</tr>
+<tr class="row-even"><td>nsites</td>
+<td>The # of atoms in the unit cell of the calculation.</td>
+</tr>
+<tr class="row-odd"><td>poisson_ratio</td>
+<td>Describes lateral response to loading</td>
+</tr>
+<tr class="row-even"><td>poscar</td>
+<td>optional: Poscar metadata</td>
+</tr>
+<tr class="row-odd"><td>space_group</td>
+<td>Integer specifying the crystallographic structure of the material</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>pandas Series defining the structure of the material</td>
+</tr>
+<tr class="row-odd"><td>volume</td>
+<td>Volume of the unit cell in cubic angstroms, For supercell calculations, this quantity refers to the volume of the full supercell.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,
+A., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,
+C., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., “Charting
+the complete elastic properties of inorganic crystalline compounds”,
+Scientific Data volume 2, Article number: 150009 (2015)</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{deJong2015,
+author={de Jong, Maarten and Chen, Wei and Angsten, Thomas
+and Jain, Anubhav and Notestine, Randy and Gamst, Anthony
+and Sluiter, Marcel and Krishna Ande, Chaitanya
+and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac
+and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.
+and Asta, Mark},
+title={Charting the complete elastic properties
+of inorganic crystalline compounds},
+journal={Scientific Data},
+year={2015},
+month={Mar},
+day={17},
+publisher={The Author(s)},
+volume={2},
+pages={150009},
+note={Data Descriptor},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2015.9">http://dx.doi.org/10.1038/sdata.2015.9</a>}
+}</p>
+</div>
+<div class="section" id="expt-formation-enthalpy">
+<h2>expt_formation_enthalpy<a class="headerlink" href="#expt-formation-enthalpy" title="Permalink to this headline">¶</a></h2>
+<p>Experimental formation enthalpies for inorganic compounds, collected from years of calorimetric experiments. There are 1,276 entries in this dataset, mostly binary compounds. Matching mpids or oqmdids as well as the DFT-computed formation energies are also added (if any).</p>
+<p><strong>Number of entries:</strong> 1276</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>e_form expt</td>
+<td>experimental formation enthalpy (in eV/atom)</td>
+</tr>
+<tr class="row-odd"><td>e_form mp</td>
+<td>formation enthalpy from Materials Project (in eV/atom)</td>
+</tr>
+<tr class="row-even"><td>e_form oqmd</td>
+<td>formation enthalpy from OQMD (in eV/atom)</td>
+</tr>
+<tr class="row-odd"><td>formula</td>
+<td>chemical formula</td>
+</tr>
+<tr class="row-even"><td>mpid</td>
+<td>materials project id</td>
+</tr>
+<tr class="row-odd"><td>oqmdid</td>
+<td>OQMD id</td>
+</tr>
+<tr class="row-even"><td>pearson symbol</td>
+<td>pearson symbol of the structure</td>
+</tr>
+<tr class="row-odd"><td>space group</td>
+<td>space group of the structure</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://www.nature.com/articles/sdata2017162">https://www.nature.com/articles/sdata2017162</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Kim2017,
+author={Kim, George
+and Meschel, S. V.
+and Nash, Philip
+and Chen, Wei},
+title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds},
+journal={Scientific Data},
+year={2017},
+month={Oct},
+day={24},
+publisher={The Author(s)},
+volume={4},
+pages={170162},
+note={Data Descriptor},
+url={<a class="reference external" href="https://doi.org/10.1038/sdata.2017.162">https://doi.org/10.1038/sdata.2017.162</a>}}</p>
+<blockquote>
+<div>&#64;misc{kim_meschel_nash_chen_2017, title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds}, url={<a class="reference external" href="https://figshare.com/collections/Experimental_formation_enthalpies_for_intermetallic_phases_and_other_inorganic_compounds/3822835/1">https://figshare.com/collections/Experimental_formation_enthalpies_for_intermetallic_phases_and_other_inorganic_compounds/3822835/1</a>}, DOI={10.6084/m9.figshare.c.3822835.v1}, abstractNote={The standard enthalpy of formation of a compound is the energy associated with the reaction to form the compound from its component elements. The standard enthalpy of formation is a fundamental thermodynamic property that determines its phase stability, which can be coupled with other thermodynamic data to calculate phase diagrams. Calorimetry provides the only direct method by which the standard enthalpy of formation is experimentally measured. However, the measurement is often a time and energy intensive process. We present a dataset of enthalpies of formation measured by high-temperature calorimetry. The phases measured in this dataset include intermetallic compounds with transition metal and rare-earth elements, metal borides, metal carbides, and metallic silicides. These measurements were collected from over 50 years of calorimetric experiments. The dataset contains 1,276 entries on experimental enthalpy of formation values and structural information. Most of the entries are for binary compounds but ternary and quaternary compounds are being added as they become available. The dataset also contains predictions of enthalpy of formation from first-principles calculations for comparison.}, publisher={figshare}, author={Kim, George and Meschel, Susan and Nash, Philip and Chen, Wei}, year={2017}, month={Oct}}</div></blockquote>
+</div>
+<div class="section" id="expt-gap">
+<h2>expt_gap<a class="headerlink" href="#expt-gap" title="Permalink to this headline">¶</a></h2>
+<p>Experimental band gap of 6354 inorganic semiconductors.</p>
+<p><strong>Number of entries:</strong> 6354</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>formula</td>
+<td>chemical formula</td>
+</tr>
+<tr class="row-odd"><td>gap expt</td>
+<td>band gap (in eV) measured experimentally</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://pubs.acs.org/doi/suppl/10.1021/acs.jpclett.8b00124">https://pubs.acs.org/doi/suppl/10.1021/acs.jpclett.8b00124</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{doi:10.1021/acs.jpclett.8b00124,
+author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
+title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
+journal = {The Journal of Physical Chemistry Letters},
+volume = {9},
+number = {7},
+pages = {1668-1673},
+year = {2018},
+doi = {10.1021/acs.jpclett.8b00124},
+note ={PMID: 29532658},
+eprint = {
+https://doi.org/10.1021/acs.jpclett.8b00124</p>
+<p>}}</p>
+</div>
+<div class="section" id="flla">
+<h2>flla<a class="headerlink" href="#flla" title="Permalink to this headline">¶</a></h2>
+<p>3938 structures and computed formation energies from “Crystal Structure Representations for Machine Learning Models of Formation Energies.”</p>
+<p><strong>Number of entries:</strong> 3938</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>e_above_hull</td>
+<td>The energy of decomposition of this material into the set of most stable materials at this chemical composition, in eV/atom.</td>
+</tr>
+<tr class="row-odd"><td>formation_energy</td>
+<td>Computed formation energy at 0K, 0atm using a reference state of zero for the pure elements.</td>
+</tr>
+<tr class="row-even"><td>formation_energy_per_atom</td>
+<td>See formation_energy</td>
+</tr>
+<tr class="row-odd"><td>formula</td>
+<td>Chemical formula of the material</td>
+</tr>
+<tr class="row-even"><td>material_id</td>
+<td>Materials Project ID of the material</td>
+</tr>
+<tr class="row-odd"><td>nsites</td>
+<td>The # of atoms in the unit cell of the calculation.</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>pandas Series defining the structure of the material</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>1) F. Faber, A. Lindmaa, O.A. von Lilienfeld, R. Armiento,
+“Crystal structure representations for machine learning models of
+formation energies”, Int. J. Quantum Chem. 115 (2015) 1094–1101.
+doi:10.1002/qua.24917.</p>
+<p>(raw data)
+2) Jain, A., Ong, S. P., Hautier, G., Chen, W., Richards, W. D.,
+Dacek, S., Cholia, S., Gunter, D., Skinner, D., Ceder, G. &amp; Persson,
+K. A. Commentary: The Materials Project: A materials genome approach
+to accelerating materials innovation. APL Mater. 1, 11002 (2013).</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{doi:10.1002/qua.24917,
+author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},
+title = {Crystal structure representations for machine learning models of formation energies},
+journal = {International Journal of Quantum Chemistry},
+volume = {115},
+number = {16},
+pages = {1094-1101},
+keywords = {machine learning, formation energies, representations,
+crystal structure, periodic systems},
+doi = {10.1002/qua.24917},
+url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/qua.24917},
+eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/qua.24917},
+abstract = {We introduce and evaluate a set of feature vector
+representations of crystal structures for machine learning (ML)
+models of formation energies of solids. ML models of atomization
+energies of organic molecules have been successful using a Coulomb
+matrix representation of the molecule. We consider three ways to
+generalize such representations to periodic systems: (i) a matrix
+where each element is related to the Ewald sum of the electrostatic
+interaction between two different atoms in the unit cell repeated
+over the lattice; (ii) an extended Coulomb-like matrix that takes
+into account a number of neighboring unit cells; and (iii) an
+ansatz that mimics the periodicity and the basic features of the
+elements in the Ewald sum matrix using a sine function of the
+crystal coordinates of the atoms. The representations are compared
+for a Laplacian kernel with Manhattan norm, trained to reproduce
+formation energies using a dataset of 3938 crystal structures
+obtained from the Materials Project. For training sets consisting
+of 3000 crystals, the generalization error in predicting formation
+energies of new structures corresponds to (i) 0.49, (ii) 0.64, and
+(iii) for the respective representations. © 2015 Wiley Periodicals,
+Inc.}
+}</p>
+<p>&#64;article{doi:10.1063/1.4812323,
+author = {Jain,Anubhav  and Ong,Shyue Ping  and Hautier,Geoffroy
+and Chen,Wei  and Richards,William Davidson  and Dacek,Stephen
+and Cholia,Shreyas  and Gunter,Dan  and Skinner,David
+and Ceder,Gerbrand  and Persson,Kristin A. },
+title = {Commentary: The Materials Project: A materials genome
+approach to accelerating materials innovation},
+journal = {APL Materials},
+volume = {1},
+number = {1},
+pages = {011002},
+year = {2013},
+doi = {10.1063/1.4812323},
+URL = {https://doi.org/10.1063/1.4812323},
+eprint = {https://doi.org/10.1063/1.4812323}
+}</p>
+</div>
+<div class="section" id="glass-binary">
+<h2>glass_binary<a class="headerlink" href="#glass-binary" title="Permalink to this headline">¶</a></h2>
+<p>Metallic glass formation data for binary alloys, collected from various experimental techniques such as melt-spinning or mechanical alloying. This dataset covers all compositions with an interval of 5 at. % in 59 binary systems, containing a total of 5959 alloys in the dataset. The target property of this dataset is the glass forming ability (GFA), i.e. whether the composition can form monolithic glass or not, which is either 1 for glass forming or 0 for non-full glass forming.</p>
+<p><strong>Number of entries:</strong> 5959</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="96%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>formula</td>
+<td>chemical formula</td>
+</tr>
+<tr class="row-odd"><td>gfa</td>
+<td>glass forming ability, correlated with the phase column, designating whether the composition can form monolithic glass or not, 1: glass forming (“AM”), 0: non-full-forming(“CR”)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046">https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{doi:10.1021/acs.jpclett.7b01046,
+author = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},
+title = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},
+journal = {The Journal of Physical Chemistry Letters},
+volume = {8},
+number = {14},
+pages = {3434-3439},
+year = {2017},
+doi = {10.1021/acs.jpclett.7b01046},
+note ={PMID: 28697303},
+eprint = {
+https://doi.org/10.1021/acs.jpclett.7b01046</p>
+<p>}}</p>
+</div>
+<div class="section" id="glass-ternary-hipt">
+<h2>glass_ternary_hipt<a class="headerlink" href="#glass-ternary-hipt" title="Permalink to this headline">¶</a></h2>
+<p>Metallic glass formation dataset for ternary alloys, collected from the high-throughput sputtering experiments measuring whether it is possible to form a glass using sputtering. The hipt experimental data are of the Co-Fe-Zr, Co-Ti-Zr, Co-V-Zr and Fe-Ti-Nb ternary systems.</p>
+<p><strong>Number of entries:</strong> 5170</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the entry</td>
+</tr>
+<tr class="row-odd"><td>gfa</td>
+<td>Glass forming ability: 1 means glass forming and coresponds to AM, 0 means non glass forming and corresponds to CR</td>
+</tr>
+<tr class="row-even"><td>phase</td>
+<td>AM: amorphous phase or CR: crystalline phase</td>
+</tr>
+<tr class="row-odd"><td>processing</td>
+<td>How the point was processed, always sputtering for this dataset</td>
+</tr>
+<tr class="row-even"><td>system</td>
+<td>System of dataset experiment, one of: CoFeZr, CoTiZr, CoVZr, or FeTiNb</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Accelerated discovery of metallic glasses through iteration of machine learning and high-throughput experiments
+By Fang Ren, Logan Ward, Travis Williams, Kevin J. Laws, Christopher Wolverton, Jason Hattrick-Simpers, Apurva Mehta
+Science Advances 13 Apr 2018 : eaaq1566</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article {Reneaaq1566,
+author = {Ren, Fang and Ward, Logan and Williams, Travis and Laws, Kevin J. and Wolverton, Christopher and Hattrick-Simpers, Jason and Mehta, Apurva},
+title = {Accelerated discovery of metallic glasses through iteration of machine learning and high-throughput experiments},
+volume = {4},
+number = {4},
+year = {2018},
+doi = {10.1126/sciadv.aaq1566},
+publisher = {American Association for the Advancement of Science},
+abstract = {With more than a hundred elements in the periodic table, a large number of potential new materials exist to address the technological and societal challenges we face today; however, without some guidance, searching through this vast combinatorial space is frustratingly slow and expensive, especially for materials strongly influenced by processing. We train a machine learning (ML) model on previously reported observations, parameters from physiochemical theories, and make it synthesis method{textendash}dependent to guide high-throughput (HiTp) experiments to find a new system of metallic glasses in the Co-V-Zr ternary. Experimental observations are in good agreement with the predictions of the model, but there are quantitative discrepancies in the precise compositions predicted. We use these discrepancies to retrain the ML model. The refined model has significantly improved accuracy not only for the Co-V-Zr system but also across all other available validation data. We then use the refined model to guide the discovery of metallic glasses in two additional previously unreported ternaries. Although our approach of iterative use of ML and HiTp experiments has guided us to rapid discovery of three new glass-forming systems, it has also provided us with a quantitatively accurate, synthesis method{textendash}sensitive predictor for metallic glasses that improves performance with use and thus promises to greatly accelerate discovery of many new metallic glasses. We believe that this discovery paradigm is applicable to a wider range of materials and should prove equally powerful for other materials and properties that are synthesis path{textendash}dependent and that current physiochemical theories find challenging to predict.},
+URL = {<a class="reference external" href="http://advances.sciencemag.org/content/4/4/eaaq1566">http://advances.sciencemag.org/content/4/4/eaaq1566</a>},
+eprint = {<a class="reference external" href="http://advances.sciencemag.org/content/4/4/eaaq1566.full.pdf">http://advances.sciencemag.org/content/4/4/eaaq1566.full.pdf</a>},
+journal = {Science Advances}
+}</p>
+</div>
+<div class="section" id="glass-ternary-landolt">
+<h2>glass_ternary_landolt<a class="headerlink" href="#glass-ternary-landolt" title="Permalink to this headline">¶</a></h2>
+<p>Metallic glass formation dataset for ternary alloys, collected from the “Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,’ a volume of the Landolt– Börnstein collection. This dataset contains experimental measurements of whether it is possible to form a glass using a variety of processing techniques at thousands of compositions from hundreds of ternary systems. The processing techniques are designated in the “processing” column. There are originally 7191 experiments in this dataset, will be reduced to 6203 after deduplicated, and will be further reduced to 6118 if combining multiple data for one composition. There are originally 6780 melt-spinning experiments in this dataset, will be reduced to 5800 if deduplicated, and will be further reduced to 5736 if combining multiple experimental data for one composition.</p>
+<p><strong>Number of entries:</strong> 7191</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the entry</td>
+</tr>
+<tr class="row-odd"><td>gfa</td>
+<td>Glass forming ability: 1 means glass forming and corresponds to AM, 0 means non full glass forming and corresponds to CR AC or QC</td>
+</tr>
+<tr class="row-even"><td>phase</td>
+<td>“AM”: amorphous phase. “CR”: crystalline phase. “AC”: amorphous-crystalline composite phase. “QC”: quasi-crystalline phase. Phases obtained from glass producing experiments</td>
+</tr>
+<tr class="row-odd"><td>processing</td>
+<td>processing method, meltspin or sputtering</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials
+Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys · 1 Introduction Landolt-Börnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) <a class="reference external" href="https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2">https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2</a>
+10.1007/10510374_2 (Springer-Verlag Berlin Heidelberg © 1997) Accessed: 20-10-2018</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Misc{LandoltBornstein1997:sm_lbs_978-3-540-47679-5_2,
+author=”Kawazoe, Y.
+and Masumoto, T.
+and Tsai, A.-P.
+and Yu, J.-Z.
+and Aihara Jr., T.”,
+editor=”Kawazoe, Y.
+and Yu, J.-Z.
+and Tsai, A.-P.
+and Masumoto, T.”,
+title=”Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {textperiodcentered} 1 Introduction: Datasheet from Landolt-B{“o}rnstein - Group III Condensed Matter {textperiodcentered} Volume 37A: <a href="#id1"><span class="problematic" id="id2">``</span></a>Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys’’ in SpringerMaterials (<a class="reference external" href="https://dx.doi.org/10.1007">https://dx.doi.org/10.1007</a>/10510374{_}2)”,
+publisher=”Springer-Verlag Berlin Heidelberg”,
+note=”Copyright 1997 Springer-Verlag Berlin Heidelberg”,
+note=”Part of SpringerMaterials”,
+note=”accessed 2018-10-23”,
+doi=”10.1007/10510374_2”,
+url=”<a class="reference external" href="https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2">https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2</a>”
+}</p>
+<p>&#64;Article{Ward2016,
+author={Ward, Logan
+and Agrawal, Ankit
+and Choudhary, Alok
+and Wolverton, Christopher},
+title={A general-purpose machine learning framework for predicting properties of inorganic materials},
+journal={Npj Computational Materials},
+year={2016},
+month={Aug},
+day={26},
+publisher={The Author(s)},
+volume={2},
+pages={16028},
+note={Article},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/npjcompumats.2016.28">http://dx.doi.org/10.1038/npjcompumats.2016.28</a>}
+}</p>
+</div>
+<div class="section" id="heusler-magnetic">
+<h2>heusler_magnetic<a class="headerlink" href="#heusler-magnetic" title="Permalink to this headline">¶</a></h2>
+<p>1153 Heusler alloys with DFT-calculated magnetic and electronic properties. The 1153 alloys include 576 full, 449 half and 128 inverse Heusler alloys. The data are extracted and cleaned (including de-duplicating) from Citrine.</p>
+<p><strong>Number of entries:</strong> 1153</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>e_form</td>
+<td>Formation energy in eV/atom</td>
+</tr>
+<tr class="row-odd"><td>formula</td>
+<td>Chemical formula of the entry</td>
+</tr>
+<tr class="row-even"><td>heusler type</td>
+<td>Full, Half, or Inverse Heusler</td>
+</tr>
+<tr class="row-odd"><td>latt const</td>
+<td>Lattice constant</td>
+</tr>
+<tr class="row-even"><td>mu_b</td>
+<td>Magnetic moment</td>
+</tr>
+<tr class="row-odd"><td>mu_b saturation</td>
+<td>Saturation magnetization in emu/cc</td>
+</tr>
+<tr class="row-even"><td>num_electron</td>
+<td>Number of electrons per formula unit</td>
+</tr>
+<tr class="row-odd"><td>pol fermi</td>
+<td>Polarization at Fermi level in %</td>
+</tr>
+<tr class="row-even"><td>struct type</td>
+<td>Structure type</td>
+</tr>
+<tr class="row-odd"><td>tetragonality</td>
+<td>Tetragonality, i.e. c/a</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://citrination.com/datasets/150561/">https://citrination.com/datasets/150561/</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;misc{Citrine Informatics,
+title = {University of Alabama Heusler database},
+howpublished = {url{<a class="reference external" href="https://citrination.com/datasets/150561/">https://citrination.com/datasets/150561/</a>}},
+}</p>
+</div>
+<div class="section" id="jarvis-dft-2d">
+<h2>jarvis_dft_2d<a class="headerlink" href="#jarvis-dft-2d" title="Permalink to this headline">¶</a></h2>
+<p>Various properties of 636 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.</p>
+<p><strong>Number of entries:</strong> 636</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>composition</td>
+<td>A Pymatgen Composition descriptor of the composition of the material</td>
+</tr>
+<tr class="row-odd"><td>e_form</td>
+<td>formation energy per atom, in eV/atom</td>
+</tr>
+<tr class="row-even"><td>epsilon_x opt</td>
+<td>Static dielectric function in x direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-odd"><td>epsilon_x tbmbj</td>
+<td>Static dielectric function in x direction calculuated with TBMBJ functional.</td>
+</tr>
+<tr class="row-even"><td>epsilon_y opt</td>
+<td>Static dielectric function in y direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-odd"><td>epsilon_y tbmbj</td>
+<td>Static dielectric function in y direction calculuated with TBMBJ functional.</td>
+</tr>
+<tr class="row-even"><td>epsilon_z opt</td>
+<td>Static dielectric function in z direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-odd"><td>epsilon_z tbmbj</td>
+<td>Static dielectric function in z direction calculuated with TBMBJ functional.</td>
+</tr>
+<tr class="row-even"><td>exfoliation_en</td>
+<td>Exfoliation energy (monolayer formation E) in eV</td>
+</tr>
+<tr class="row-odd"><td>gap opt</td>
+<td>Band gap calculated with OptB88vDW functional, in eV</td>
+</tr>
+<tr class="row-even"><td>gap tbmbj</td>
+<td>Band gap calculated with TBMBJ functional, in eV</td>
+</tr>
+<tr class="row-odd"><td>jid</td>
+<td>JARVIS ID</td>
+</tr>
+<tr class="row-even"><td>mpid</td>
+<td>Materials Project ID</td>
+</tr>
+<tr class="row-odd"><td>structure</td>
+<td>A description of the crystal structure of the material</td>
+</tr>
+<tr class="row-even"><td>structure initial</td>
+<td>Initial structure description of the crystal structure of the material</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>2D Dataset discussed in:
+High-throughput Identification and Characterization of Two dimensional Materials using Density functional theory Kamal Choudhary, Irina Kalish, Ryan Beams &amp; Francesca Tavazza Scientific Reports volume 7, Article number: 5179 (2017)
+Original 2D Data file sourced from:
+choudhary, kamal; <a class="reference external" href="https://orcid.org/0000-0001-9737-8074">https://orcid.org/0000-0001-9737-8074</a> (2018): jdft_2d-7-7-2018.json. figshare. Dataset.</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Choudhary2017,
+author={Choudhary, Kamal
+and Kalish, Irina
+and Beams, Ryan
+and Tavazza, Francesca},
+title={High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory},
+journal={Scientific Reports},
+year={2017},
+volume={7},
+number={1},
+pages={5179},
+abstract={We introduce a simple criterion to identify two-dimensional (2D) materials based on the comparison between experimental lattice constants and lattice constants mainly obtained from Materials-Project (MP) density functional theory (DFT) calculation repository. Specifically, if the relative difference between the two lattice constants for a specific material is greater than or equal to 5%, we predict them to be good candidates for 2D materials. We have predicted at least 1356 such 2D materials. For all the systems satisfying our criterion, we manually create single layer systems and calculate their energetics, structural, electronic, and elastic properties for both the bulk and the single layer cases. Currently the database consists of 1012 bulk and 430 single layer materials, of which 371 systems are common to bulk and single layer. The rest of calculations are underway. To validate our criterion, we calculated the exfoliation energy of the suggested layered materials, and we found that in 88.9% of the cases the currently accepted criterion for exfoliation was satisfied. Also, using molybdenum telluride as a test case, we performed X-ray diffraction and Raman scattering experiments to benchmark our calculations and understand their applicability and limitations. The data is publicly available at the website <a class="reference external" href="http://www.ctcms.nist.gov">http://www.ctcms.nist.gov</a>/{   extasciitilde}knc6/JVASP.html.},
+issn={2045-2322},
+doi={10.1038/s41598-017-05402-0},
+url={<a class="reference external" href="https://doi.org/10.1038/s41598-017-05402-0">https://doi.org/10.1038/s41598-017-05402-0</a>}
+}</p>
+<p>&#64;misc{choudhary__2018, title={jdft_2d-7-7-2018.json}, url={<a class="reference external" href="https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1">https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1</a>}, DOI={10.6084/m9.figshare.6815705.v1}, abstractNote={2D materials}, publisher={figshare}, author={choudhary, kamal and <a class="reference external" href="https://orcid.org/0000-0001-9737-8074">https://orcid.org/0000-0001-9737-8074</a>}, year={2018}, month={Jul}}</p>
+</div>
+<div class="section" id="jarvis-dft-3d">
+<h2>jarvis_dft_3d<a class="headerlink" href="#jarvis-dft-3d" title="Permalink to this headline">¶</a></h2>
+<p>Various properties of 25,923 bulk materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.</p>
+<p><strong>Number of entries:</strong> 25923</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>bulk modulus</td>
+<td>VRH average calculation of bulk modulus</td>
+</tr>
+<tr class="row-odd"><td>composition</td>
+<td>A Pymatgen Composition descriptor of the composition of the material</td>
+</tr>
+<tr class="row-even"><td>e_form</td>
+<td>formation energy per atom, in eV/atom</td>
+</tr>
+<tr class="row-odd"><td>epsilon_x opt</td>
+<td>Static dielectric function in x direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-even"><td>epsilon_x tbmbj</td>
+<td>Static dielectric function in x direction calculuated with TBMBJ functional.</td>
+</tr>
+<tr class="row-odd"><td>epsilon_y opt</td>
+<td>Static dielectric function in y direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-even"><td>epsilon_y tbmbj</td>
+<td>Static dielectric function in y direction calculuated with TBMBJ functional.</td>
+</tr>
+<tr class="row-odd"><td>epsilon_z opt</td>
+<td>Static dielectric function in z direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-even"><td>epsilon_z tbmbj</td>
+<td>Static dielectric function in z direction calculuated with TBMBJ functional.</td>
+</tr>
+<tr class="row-odd"><td>gap opt</td>
+<td>Band gap calculated with OptB88vDW functional, in eV</td>
+</tr>
+<tr class="row-even"><td>gap tbmbj</td>
+<td>Band gap calculated with TBMBJ functional, in eV</td>
+</tr>
+<tr class="row-odd"><td>jid</td>
+<td>JARVIS ID</td>
+</tr>
+<tr class="row-even"><td>mpid</td>
+<td>Materials Project ID</td>
+</tr>
+<tr class="row-odd"><td>shear modulus</td>
+<td>VRH average calculation of shear modulus</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>A description of the crystal structure of the material</td>
+</tr>
+<tr class="row-odd"><td>structure initial</td>
+<td>Initial structure description of the crystal structure of the material</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>3D Dataset discussed in:
+Elastic properties of bulk and low-dimensional materials using van der Waals density functional Kamal Choudhary, Gowoon Cheon, Evan Reed, and Francesca Tavazza Phys. Rev. B 98, 014107
+Original 3D Data file sourced from:
+choudhary, kamal; <a class="reference external" href="https://orcid.org/0000-0001-9737-8074">https://orcid.org/0000-0001-9737-8074</a> (2018): jdft_3d.json. figshare. Dataset.</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{PhysRevB.98.014107,
+title = {Elastic properties of bulk and low-dimensional materials using van der Waals density functional},
+author = {Choudhary, Kamal and Cheon, Gowoon and Reed, Evan and Tavazza, Francesca},
+journal = {Phys. Rev. B},
+volume = {98},
+issue = {1},
+pages = {014107},
+numpages = {12},
+year = {2018},
+month = {Jul},
+publisher = {American Physical Society},
+doi = {10.1103/PhysRevB.98.014107},
+url = {<a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.98.014107">https://link.aps.org/doi/10.1103/PhysRevB.98.014107</a>}
+}</p>
+<p>&#64;misc{choudhary__2018, title={jdft_3d.json}, url={<a class="reference external" href="https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699/2">https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699/2</a>}, DOI={10.6084/m9.figshare.6815699.v2}, abstractNote={<a class="reference external" href="https://jarvis.nist.gov/">https://jarvis.nist.gov/</a>
+The Density functional theory section of JARVIS (JARVIS-DFT) consists of thousands of VASP based calculations for 3D-bulk, single layer (2D), nanowire (1D) and molecular (0D) systems. Most of the calculations are carried out with optB88vDW functional. JARVIS-DFT includes materials data such as: energetics, diffraction pattern, radial distribution function, band-structure, density of states, carrier effective mass, temperature and carrier concentration dependent thermoelectric properties, elastic constants and gamma-point phonons.}, publisher={figshare}, author={choudhary, kamal and <a class="reference external" href="https://orcid.org/0000-0001-9737-8074">https://orcid.org/0000-0001-9737-8074</a>}, year={2018}, month={Jul}}</p>
+</div>
+<div class="section" id="jarvis-ml-dft-training">
+<h2>jarvis_ml_dft_training<a class="headerlink" href="#jarvis-ml-dft-training" title="Permalink to this headline">¶</a></h2>
+<p>Various properties of 24,759 bulk and 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.</p>
+<p><strong>Number of entries:</strong> 24759</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>bulk modulus</td>
+<td>VRH average calculation of bulk modulus</td>
+</tr>
+<tr class="row-odd"><td>composition</td>
+<td>A descriptor of the composition of the material</td>
+</tr>
+<tr class="row-even"><td>e mass_x</td>
+<td>Effective electron mass in x direction (BoltzTraP)</td>
+</tr>
+<tr class="row-odd"><td>e mass_y</td>
+<td>Effective electron mass in y direction (BoltzTraP)</td>
+</tr>
+<tr class="row-even"><td>e mass_z</td>
+<td>Effective electron mass in z direction (BoltzTraP)</td>
+</tr>
+<tr class="row-odd"><td>e_exfol</td>
+<td>exfoliation energy per atom in eV/atom</td>
+</tr>
+<tr class="row-even"><td>e_form</td>
+<td>formation energy per atom, in eV/atom</td>
+</tr>
+<tr class="row-odd"><td>epsilon_x opt</td>
+<td>Static dielectric function in x direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-even"><td>epsilon_x tbmbj</td>
+<td>Static dielectric function in x direction calculated with TBMBJ functional.</td>
+</tr>
+<tr class="row-odd"><td>epsilon_y opt</td>
+<td>Static dielectric function in y direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-even"><td>epsilon_y tbmbj</td>
+<td>Static dielectric function in y direction calculated with TBMBJ functional.</td>
+</tr>
+<tr class="row-odd"><td>epsilon_z opt</td>
+<td>Static dielectric function in z direction calculated with OptB88vDW functional.</td>
+</tr>
+<tr class="row-even"><td>epsilon_z tbmbj</td>
+<td>Static dielectric function in z direction calculated with TBMBJ functional.</td>
+</tr>
+<tr class="row-odd"><td>gap opt</td>
+<td>Band gap calculated with OptB88vDW functional, in eV</td>
+</tr>
+<tr class="row-even"><td>gap tbmbj</td>
+<td>Band gap calculated with TBMBJ functional, in eV</td>
+</tr>
+<tr class="row-odd"><td>hole mass_x</td>
+<td>Effective hole mass in x direction (BoltzTraP)</td>
+</tr>
+<tr class="row-even"><td>hole mass_y</td>
+<td>Effective hole mass in y direction (BoltzTraP)</td>
+</tr>
+<tr class="row-odd"><td>hole mass_z</td>
+<td>Effective hole mass in z direction (BoltzTraP)</td>
+</tr>
+<tr class="row-even"><td>jid</td>
+<td>JARVIS ID</td>
+</tr>
+<tr class="row-odd"><td>mpid</td>
+<td>Materials Project ID</td>
+</tr>
+<tr class="row-even"><td>mu_b</td>
+<td>Magnetic moment, in Bohr Magneton</td>
+</tr>
+<tr class="row-odd"><td>shear modulus</td>
+<td>VRH average calculation of shear modulus</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>A Pymatgen Structure object describing the crystal structure of the material</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Dataset discussed in:
+Machine learning with force-field-inspired descriptors for materials: Fast screening and mapping energy landscape Kamal Choudhary, Brian DeCost, and Francesca Tavazza Phys. Rev. Materials 2, 083801</p>
+<p>Original Data file sourced from:
+choudhary, kamal (2018): JARVIS-ML-CFID-descriptors and material properties. figshare. Dataset.</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{PhysRevMaterials.2.083801,
+title = {Machine learning with force-field-inspired descriptors for materials: Fast screening and mapping energy landscape},
+author = {Choudhary, Kamal and DeCost, Brian and Tavazza, Francesca},
+journal = {Phys. Rev. Materials},
+volume = {2},
+issue = {8},
+pages = {083801},
+numpages = {8},
+year = {2018},
+month = {Aug},
+publisher = {American Physical Society},
+doi = {10.1103/PhysRevMaterials.2.083801},
+url = {<a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801">https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801</a>}
+}</p>
+<p>&#64;misc{choudhary_2018, title={JARVIS-ML-CFID-descriptors and material properties}, url={<a class="reference external" href="https://figshare.com/articles/JARVIS-ML-CFID-descriptors_and_material_properties/6870101/1">https://figshare.com/articles/JARVIS-ML-CFID-descriptors_and_material_properties/6870101/1</a>}, DOI={10.6084/m9.figshare.6870101.v1}, abstractNote={Classical force-field inspired descriptors (CFID) for more than 25000 materials and their material properties such as bandgap, formation energies, modulus of elasticity etc. See JARVIS-ML: <a class="reference external" href="https://jarvis.nist.gov/">https://jarvis.nist.gov/</a>}, publisher={figshare}, author={choudhary, kamal}, year={2018}, month={Jul}}</p>
+</div>
+<div class="section" id="m2ax">
+<h2>m2ax<a class="headerlink" href="#m2ax" title="Permalink to this headline">¶</a></h2>
+<p>Elastic properties of 223 stable M2AX compounds from “A comprehensive survey of M2AX phase elastic properties” by Cover et al. Calculations are PAW PW91.</p>
+<p><strong>Number of entries:</strong> 223</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>a</td>
+<td>Lattice parameter a, in A (angstrom)</td>
+</tr>
+<tr class="row-odd"><td>bulk modulus</td>
+<td>In GPa</td>
+</tr>
+<tr class="row-even"><td>c</td>
+<td>lattice parameter c, in A (angstrom)</td>
+</tr>
+<tr class="row-odd"><td>c11</td>
+<td>Elastic constants of the M2AX material. These are specific to hexagonal materials.</td>
+</tr>
+<tr class="row-even"><td>c12</td>
+<td>Elastic constants of the M2AX material. These are specific to hexagonal materials.</td>
+</tr>
+<tr class="row-odd"><td>c13</td>
+<td>Elastic constants of the M2AX material. These are specific to hexagonal materials.</td>
+</tr>
+<tr class="row-even"><td>c33</td>
+<td>Elastic constants of the M2AX material. These are specific to hexagonal materials.</td>
+</tr>
+<tr class="row-odd"><td>c44</td>
+<td>Elastic constants of the M2AX material. These are specific to hexagonal materials.</td>
+</tr>
+<tr class="row-even"><td>d_ma</td>
+<td>distance from the M atom to the A atom</td>
+</tr>
+<tr class="row-odd"><td>d_mx</td>
+<td>distance from the M atom to the X atom</td>
+</tr>
+<tr class="row-even"><td>elastic modulus</td>
+<td>In GPa</td>
+</tr>
+<tr class="row-odd"><td>formula</td>
+<td>chemical formula</td>
+</tr>
+<tr class="row-even"><td>shear modulus</td>
+<td>In GPa</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/0953-8984/21/30/305403/meta">http://iopscience.iop.org/article/10.1088/0953-8984/21/30/305403/meta</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{M F Cover,
+author={M F Cover and O Warschkow and M M M Bilek and D R McKenzie},
+title={A comprehensive survey of M 2 AX phase elastic properties},
+journal={Journal of Physics: Condensed Matter},
+volume={21},
+number={30},
+pages={305403},
+url={<a class="reference external" href="http://stacks.iop.org/0953-8984/21/i=30/a=305403">http://stacks.iop.org/0953-8984/21/i=30/a=305403</a>},
+year={2009},
+abstract={M 2 AX phases are a family of nanolaminate, ternary alloys that are composed of slabs of transition metal carbide or nitride (M 2 X) separated by single atomic layers of a main group element. In this combination, they manifest many of the beneficial properties of both ceramic and metallic compounds, making them attractive for many technological applications. We report here the results of a large scale computational survey of the elastic properties of all 240 elemental combinations using first-principles density functional theory calculations. We found correlations revealing the governing role of the A element and its interaction with the M element on the c axis compressibility and shearability of the material. The role of the X element is relatively minor, with the strongest effect seen in the in-plane constants C 11 and C 12 . We identify several elemental compositions with extremal properties such as W 2 SnC, which has by far the lowest value of C 44 , suggesting potential applications as a…}}</p>
+</div>
+<div class="section" id="mp-all">
+<h2>mp_all<a class="headerlink" href="#mp-all" title="Permalink to this headline">¶</a></h2>
+<p>A complete copy of the Materials Project database as of 10/18/2018. Mp_all files contain structure data for each material while mp_nostruct does not.</p>
+<p><strong>Number of entries:</strong> 83989</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>bulk modulus</td>
+<td>in GPa, average of Voight, Reuss, and Hill</td>
+</tr>
+<tr class="row-odd"><td>e_form</td>
+<td>Formation energy per atom (eV)</td>
+</tr>
+<tr class="row-even"><td>e_hull</td>
+<td>The calculated energy above the convex hull, in eV per atom</td>
+</tr>
+<tr class="row-odd"><td>elastic anisotropy</td>
+<td>The ratio of elastic anisotropy.</td>
+</tr>
+<tr class="row-even"><td>formula</td>
+<td>The chemical formula of the MP entry</td>
+</tr>
+<tr class="row-odd"><td>gap pbe</td>
+<td>The band gap in eV calculated with PBE-DFT functional</td>
+</tr>
+<tr class="row-even"><td>initial structure</td>
+<td>A Pymatgen Structure object describing the material crystal structure prior to relaxation</td>
+</tr>
+<tr class="row-odd"><td>mpid</td>
+<td>(input): The Materials Project mpid, as a string.</td>
+</tr>
+<tr class="row-even"><td>mu_b</td>
+<td>The total magnetization of the unit cell.</td>
+</tr>
+<tr class="row-odd"><td>shear modulus</td>
+<td>in GPa, average of Voight, Reuss, and Hill</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>A Pymatgen Structure object describing the material crystal structure</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (<a href="#id3"><span class="problematic" id="id4">*</span></a>=equal contributions)
+The Materials Project: A materials genome approach to accelerating materials innovation
+APL Materials, 2013, 1(1), 011002.
+doi:10.1063/1.4812323</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{Jain2013,
+author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
+doi = {10.1063/1.4812323},
+issn = {2166532X},
+journal = {APL Materials},
+number = {1},
+pages = {011002},
+title = {{The Materials Project: A materials genome approach to accelerating materials innovation}},
+url = {<a class="reference external" href="http://link.aip.org/link/AMPADS/v1/i1/p011002/s1&amp;Agg=doi">http://link.aip.org/link/AMPADS/v1/i1/p011002/s1&amp;Agg=doi</a>},
+volume = {1},
+year = {2013}
+}</p>
+</div>
+<div class="section" id="mp-nostruct">
+<h2>mp_nostruct<a class="headerlink" href="#mp-nostruct" title="Permalink to this headline">¶</a></h2>
+<p>A complete copy of the Materials Project database as of 10/18/2018. Mp_all files contain structure data for each material while mp_nostruct does not.</p>
+<p><strong>Number of entries:</strong> 83989</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>bulk modulus</td>
+<td>in GPa, average of Voight, Reuss, and Hill</td>
+</tr>
+<tr class="row-odd"><td>e_form</td>
+<td>Formation energy per atom (eV)</td>
+</tr>
+<tr class="row-even"><td>e_hull</td>
+<td>The calculated energy above the convex hull, in eV per atom</td>
+</tr>
+<tr class="row-odd"><td>elastic anisotropy</td>
+<td>The ratio of elastic anisotropy.</td>
+</tr>
+<tr class="row-even"><td>formula</td>
+<td>The chemical formula of the MP entry</td>
+</tr>
+<tr class="row-odd"><td>gap pbe</td>
+<td>The band gap in eV calculated with PBE-DFT functional</td>
+</tr>
+<tr class="row-even"><td>mpid</td>
+<td>(input): The Materials Project mpid, as a string.</td>
+</tr>
+<tr class="row-odd"><td>mu_b</td>
+<td>The total magnetization of the unit cell.</td>
+</tr>
+<tr class="row-even"><td>shear modulus</td>
+<td>in GPa, average of Voight, Reuss, and Hill</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (<a href="#id5"><span class="problematic" id="id6">*</span></a>=equal contributions)
+The Materials Project: A materials genome approach to accelerating materials innovation
+APL Materials, 2013, 1(1), 011002.
+doi:10.1063/1.4812323</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{Jain2013,
+author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
+doi = {10.1063/1.4812323},
+issn = {2166532X},
+journal = {APL Materials},
+number = {1},
+pages = {011002},
+title = {{The Materials Project: A materials genome approach to accelerating materials innovation}},
+url = {<a class="reference external" href="http://link.aip.org/link/AMPADS/v1/i1/p011002/s1&amp;Agg=doi">http://link.aip.org/link/AMPADS/v1/i1/p011002/s1&amp;Agg=doi</a>},
+volume = {1},
+year = {2013}
+}</p>
+</div>
+<div class="section" id="phonon-dielectric-mp">
+<h2>phonon_dielectric_mp<a class="headerlink" href="#phonon-dielectric-mp" title="Permalink to this headline">¶</a></h2>
+<p>Phonon (lattice/atoms vibrations) and dielectric properties of 1296 compounds computed via ABINIT software package in the harmonic approximation based on density functional perturbation theory.</p>
+<p><strong>Number of entries:</strong> 1296</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="93%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>eps_electronic</td>
+<td>A target variable of the dataset, electronic contribution to the calculated dielectric constant; unitless.</td>
+</tr>
+<tr class="row-odd"><td>eps_total</td>
+<td>A target variable of the dataset, total calculated dielectric constant. Unitless: it is a ratio over the dielectric constant at vacuum.</td>
+</tr>
+<tr class="row-even"><td>formula</td>
+<td>The chemical formula of the material</td>
+</tr>
+<tr class="row-odd"><td>last phdos peak</td>
+<td>A target variable of the dataset, the frequency of the last calculated phonon density of states in 1/cm; may be used as an estimation of dominant longitudinal optical phonon frequency, a descriptor.</td>
+</tr>
+<tr class="row-even"><td>mpid</td>
+<td>The Materials Project identifier for the material</td>
+</tr>
+<tr class="row-odd"><td>structure</td>
+<td>A pymatgen Structure object describing the chemical strucutre of the material</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. Sci. Data 5:180065 doi: 10.1038/sdata.2018.65 (2018).
+Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. (2018). figshare. Collection.</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Petretto2018,
+author={Petretto, Guido
+and Dwaraknath, Shyam
+and P.C. Miranda, Henrique
+and Winston, Donald
+and Giantomassi, Matteo
+and van Setten, Michiel J.
+and Gonze, Xavier
+and Persson, Kristin A.
+and Hautier, Geoffroy
+and Rignanese, Gian-Marco},
+title={High-throughput density-functional perturbation theory phonons for inorganic materials},
+journal={Scientific Data},
+year={2018},
+month={May},
+day={01},
+publisher={The Author(s)},
+volume={5},
+pages={180065},
+note={Data Descriptor},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2018.65">http://dx.doi.org/10.1038/sdata.2018.65</a>}
+}</p>
+<p>&#64;misc{petretto_dwaraknath_miranda_winston_giantomassi_rignanese_van setten_gonze_persson_hautier_2018, title={High-throughput Density-Functional Perturbation Theory phonons for inorganic materials}, url={<a class="reference external" href="https://figshare.com/collections/High-throughput_Density-Functional_Perturbation_Theory_phonons_for_inorganic_materials/3938023/1">https://figshare.com/collections/High-throughput_Density-Functional_Perturbation_Theory_phonons_for_inorganic_materials/3938023/1</a>}, DOI={10.6084/m9.figshare.c.3938023.v1}, abstractNote={The knowledge of the vibrational properties of a material is of key importance to understand physical phenomena such as thermal conductivity, superconductivity, and ferroelectricity among others. However, detailed experimental phonon spectra are available only for a limited number of materials which hinders the large-scale analysis of vibrational properties and their derived quantities. In this work, we perform ab initio calculations of the full phonon dispersion and vibrational density of states for 1521 semiconductor compounds in the harmonic approximation based on density functional perturbation theory. The data is collected along with derived dielectric and thermodynamic properties. We present the procedure used to obtain the results, the details of the provided database and a validation based on the comparison with experimental data.}, publisher={figshare}, author={Petretto, Guido and Dwaraknath, Shyam and Miranda, Henrique P. C. and Winston, Donald and Giantomassi, Matteo and Rignanese, Gian-Marco and Van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A and Hautier, Geoffroy}, year={2018}, month={Apr}}</p>
+</div>
+<div class="section" id="piezoelectric-tensor">
+<h2>piezoelectric_tensor<a class="headerlink" href="#piezoelectric-tensor" title="Permalink to this headline">¶</a></h2>
+<p>941 structures with piezoelectric properties, calculated with DFT-PBE.</p>
+<p><strong>Number of entries:</strong> 941</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>cif</td>
+<td>optional: Description string for structure</td>
+</tr>
+<tr class="row-odd"><td>eij_max</td>
+<td>Piezoelectric modulus</td>
+</tr>
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the material</td>
+</tr>
+<tr class="row-odd"><td>material_id</td>
+<td>Materials Project ID of the material</td>
+</tr>
+<tr class="row-even"><td>meta</td>
+<td>optional, metadata descriptor of the datapoint</td>
+</tr>
+<tr class="row-odd"><td>nsites</td>
+<td>The # of atoms in the unit cell of the calculation.</td>
+</tr>
+<tr class="row-even"><td>piezoelectric_tensor</td>
+<td>Tensor describing the piezoelectric properties of the material</td>
+</tr>
+<tr class="row-odd"><td>point_group</td>
+<td>Descriptor of crystallographic structure of the material</td>
+</tr>
+<tr class="row-even"><td>poscar</td>
+<td>optional: Poscar metadata</td>
+</tr>
+<tr class="row-odd"><td>space_group</td>
+<td>Integer specifying the crystallographic structure of the material</td>
+</tr>
+<tr class="row-even"><td>structure</td>
+<td>pandas Series defining the structure of the material</td>
+</tr>
+<tr class="row-odd"><td>v_max</td>
+<td>Crystallographic direction</td>
+</tr>
+<tr class="row-even"><td>volume</td>
+<td>Volume of the unit cell in cubic angstroms, For supercell calculations, this quantity refers to the volume of the full supercell.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>de Jong, M., Chen, W., Geerlings, H., Asta, M. &amp; Persson, K. A.
+A database to enable discovery and design of piezoelectric materials.
+Sci. Data 2, 150053 (2015)</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{deJong2015,
+author={de Jong, Maarten and Chen, Wei and Geerlings, Henry
+and Asta, Mark and Persson, Kristin Aslaug},
+title={A database to enable discovery and design of piezoelectric
+materials},
+journal={Scientific Data},
+year={2015},
+month={Sep},
+day={29},
+publisher={The Author(s)},
+volume={2},
+pages={150053},
+note={Data Descriptor},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2015.53">http://dx.doi.org/10.1038/sdata.2015.53</a>}
+}</p>
+</div>
+<div class="section" id="steel-strength">
+<h2>steel_strength<a class="headerlink" href="#steel-strength" title="Permalink to this headline">¶</a></h2>
+<p>312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.</p>
+<p><strong>Number of entries:</strong> 312</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>al</td>
+<td>weight percent of Al</td>
+</tr>
+<tr class="row-odd"><td>c</td>
+<td>weight percent of C</td>
+</tr>
+<tr class="row-even"><td>co</td>
+<td>weight percent of Co</td>
+</tr>
+<tr class="row-odd"><td>cr</td>
+<td>weight percent of Cr</td>
+</tr>
+<tr class="row-even"><td>elongation</td>
+<td>elongation in %</td>
+</tr>
+<tr class="row-odd"><td>formula</td>
+<td>Chemical formula of the entry</td>
+</tr>
+<tr class="row-even"><td>mn</td>
+<td>weight percent of Mn</td>
+</tr>
+<tr class="row-odd"><td>mo</td>
+<td>weight percent of Mo</td>
+</tr>
+<tr class="row-even"><td>n</td>
+<td>weight percent of N</td>
+</tr>
+<tr class="row-odd"><td>nb</td>
+<td>weight percent of Nb</td>
+</tr>
+<tr class="row-even"><td>ni</td>
+<td>weight percent of Ni</td>
+</tr>
+<tr class="row-odd"><td>si</td>
+<td>weight percent of Si</td>
+</tr>
+<tr class="row-even"><td>tensile strength</td>
+<td>ultimate tensile strength in GPa</td>
+</tr>
+<tr class="row-odd"><td>ti</td>
+<td>weight percent of Ti</td>
+</tr>
+<tr class="row-even"><td>v</td>
+<td>weight percent of V</td>
+</tr>
+<tr class="row-odd"><td>w</td>
+<td>weight percent of W</td>
+</tr>
+<tr class="row-even"><td>yield strength</td>
+<td>yield strength in GPa</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://citrination.com/datasets/153092/">https://citrination.com/datasets/153092/</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;misc{Citrine Informatics,
+title = {Mechanical properties of some steels},
+howpublished = {url{<a class="reference external" href="https://citrination.com/datasets/153092/">https://citrination.com/datasets/153092/</a>},
+}</p>
+</div>
+<div class="section" id="wolverton-oxides">
+<h2>wolverton_oxides<a class="headerlink" href="#wolverton-oxides" title="Permalink to this headline">¶</a></h2>
+<p>4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies. All perovskites are of the form ABO3. Adapted from a dataset presented by Emery and Wolverton.</p>
+<p><strong>Number of entries:</strong> 4914</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>a</td>
+<td>Lattice parameter a, in A (angstrom)</td>
+</tr>
+<tr class="row-odd"><td>alpha</td>
+<td>Lattice angle alpha, in degrees</td>
+</tr>
+<tr class="row-even"><td>atom a</td>
+<td>The atom in the ‘A’ site of the pervoskite.</td>
+</tr>
+<tr class="row-odd"><td>atom b</td>
+<td>The atom in the ‘B’ site of the perovskite.</td>
+</tr>
+<tr class="row-even"><td>b</td>
+<td>Lattice parameter b, in A (angstrom)</td>
+</tr>
+<tr class="row-odd"><td>beta</td>
+<td>Lattice angle beta, in degrees</td>
+</tr>
+<tr class="row-even"><td>c</td>
+<td>Lattice parameter c, in A (angstrom)</td>
+</tr>
+<tr class="row-odd"><td>e_form</td>
+<td>Formation energy in eV</td>
+</tr>
+<tr class="row-even"><td>e_form oxygen</td>
+<td>Formation energy of oxygen vacancy (eV)</td>
+</tr>
+<tr class="row-odd"><td>e_hull</td>
+<td>Energy above convex hull, wrt. OQMD db (eV)</td>
+</tr>
+<tr class="row-even"><td>formula</td>
+<td>Chemical formula of the entry</td>
+</tr>
+<tr class="row-odd"><td>gamma</td>
+<td>Lattice angle gamma, in degrees</td>
+</tr>
+<tr class="row-even"><td>gap pbe</td>
+<td>Bandgap in eV from PBE calculations</td>
+</tr>
+<tr class="row-odd"><td>lowest distortion</td>
+<td>Local distortion crystal structure with lowest energy among all considered distortions.</td>
+</tr>
+<tr class="row-even"><td>mu_b</td>
+<td>Magnetic moment</td>
+</tr>
+<tr class="row-odd"><td>vpa</td>
+<td>Volume per atom (A^3/atom)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Emery, A. A. &amp; Wolverton, C. High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites. Sci. Data 4:170153 doi: 10.1038/sdata.2017.153 (2017).
+Emery, A. A., &amp; Wolverton, C. Figshare <a class="reference external" href="http://dx.doi.org/10.6084/m9.figshare.5334142">http://dx.doi.org/10.6084/m9.figshare.5334142</a> (2017)</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Emery2017,
+author={Emery, Antoine A.
+and Wolverton, Chris},
+title={High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites},
+journal={Scientific Data},
+year={2017},
+month={Oct},
+day={17},
+publisher={The Author(s)},
+volume={4},
+pages={170153},
+note={Data Descriptor},
+url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.153">http://dx.doi.org/10.1038/sdata.2017.153</a>}
+}</p>
+<p>&#64;misc{emery_2017, title={High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites}, url={<a class="reference external" href="https://figshare.com/articles/High-throughput_DFT_calculations_of_formation_energy_stability_and_oxygen_vacancy_formation_energy_of_ABO3_perovskites/5334142/1">https://figshare.com/articles/High-throughput_DFT_calculations_of_formation_energy_stability_and_oxygen_vacancy_formation_energy_of_ABO3_perovskites/5334142/1</a>}, DOI={10.6084/m9.figshare.5334142.v1}, abstractNote={ABO3 perovskites are oxide materials that are used for a variety of applications such as solid oxide fuel cells, piezo-, ferro-electricity and water splitting. Due to their remarkable stability with respect to cation substitution, new compounds for such applications potentially await discovery. In this work, we present an exhaustive dataset of formation energies of 5,329 cubic and distorted perovskites that were calculated using first-principles density functional theory. In addition to formation energies, several additional properties such as oxidation states, band gap, oxygen vacancy formation energy, and thermodynamic stability with respect to all phases in the Open Quantum Materials Database are also made publicly available. This large dataset for this ubiquitous crystal structure type contains 395 perovskites that are predicted to be thermodynamically stable, of which many have not yet been experimentally reported, and therefore represent theoretical predictions. The dataset thus opens avenues for future use, including materials discovery in many research-active areas.}, publisher={figshare}, author={Emery, Antoine}, year={2017}, month={Aug}}</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Datasets Available in Matminer</a><ul>
+<li><a class="reference internal" href="#boltztrap-mp">boltztrap_mp</a></li>
+<li><a class="reference internal" href="#castelli-perovskites">castelli_perovskites</a></li>
+<li><a class="reference internal" href="#citrine-thermal-conductivity">citrine_thermal_conductivity</a></li>
+<li><a class="reference internal" href="#dielectric-constant">dielectric_constant</a></li>
+<li><a class="reference internal" href="#double-perovskites-gap">double_perovskites_gap</a></li>
+<li><a class="reference internal" href="#double-perovskites-gap-lumo">double_perovskites_gap_lumo</a></li>
+<li><a class="reference internal" href="#elastic-tensor-2015">elastic_tensor_2015</a></li>
+<li><a class="reference internal" href="#expt-formation-enthalpy">expt_formation_enthalpy</a></li>
+<li><a class="reference internal" href="#expt-gap">expt_gap</a></li>
+<li><a class="reference internal" href="#flla">flla</a></li>
+<li><a class="reference internal" href="#glass-binary">glass_binary</a></li>
+<li><a class="reference internal" href="#glass-ternary-hipt">glass_ternary_hipt</a></li>
+<li><a class="reference internal" href="#glass-ternary-landolt">glass_ternary_landolt</a></li>
+<li><a class="reference internal" href="#heusler-magnetic">heusler_magnetic</a></li>
+<li><a class="reference internal" href="#jarvis-dft-2d">jarvis_dft_2d</a></li>
+<li><a class="reference internal" href="#jarvis-dft-3d">jarvis_dft_3d</a></li>
+<li><a class="reference internal" href="#jarvis-ml-dft-training">jarvis_ml_dft_training</a></li>
+<li><a class="reference internal" href="#m2ax">m2ax</a></li>
+<li><a class="reference internal" href="#mp-all">mp_all</a></li>
+<li><a class="reference internal" href="#mp-nostruct">mp_nostruct</a></li>
+<li><a class="reference internal" href="#phonon-dielectric-mp">phonon_dielectric_mp</a></li>
+<li><a class="reference internal" href="#piezoelectric-tensor">piezoelectric_tensor</a></li>
+<li><a class="reference internal" href="#steel-strength">steel_strength</a></li>
+<li><a class="reference internal" href="#wolverton-oxides">wolverton_oxides</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/dataset_summary.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.8.
+    </div>
+
+  </body>
+</html>

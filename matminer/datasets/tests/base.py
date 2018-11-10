@@ -3,6 +3,11 @@ import os
 
 from matminer.datasets.utils import _load_dataset_dict
 
+# Set global flag based on environment variable
+# specifying whether or not to run full test or partial test
+_dataset_test_env_var = os.environ.get("MATMINER_DATASET_FULL_TEST", "False")
+do_complete_test = (_dataset_test_env_var.upper() == "TRUE")
+
 
 class DataSetTest(unittest.TestCase):
     def setUp(self):
@@ -10,7 +15,27 @@ class DataSetTest(unittest.TestCase):
             'flla',
             'elastic_tensor_2015',
             'piezoelectric_tensor',
-            'dielectric_constant'
+            'dielectric_constant',
+            'castelli_perovskites',
+            'boltztrap_mp',
+            'phonon_dielectric_mp',
+            'glass_ternary_hipt',
+            'double_perovskites_gap',
+            'double_perovskites_gap_lumo',
+            'mp_all',
+            'mp_nostruct',
+            'glass_ternary_landolt',
+            'citrine_thermal_conductivity',
+            'wolverton_oxides',
+            'heusler_magnetic',
+            'steel_strength',
+            'jarvis_ml_dft_training',
+            'jarvis_dft_2d',
+            'jarvis_dft_3d',
+            'glass_binary',
+            'm2ax',
+            'expt_gap',
+            'expt_formation_enthalpy'
         ]
         self.dataset_attributes = [
             'file_type',
@@ -40,3 +65,7 @@ class DataSetTest(unittest.TestCase):
         self._url = "https://ndownloader.figshare.com/files/13039562"
         self._hash = "c487f59ce0d48505c36633b4b202027" \
                      "d0c915474b081e8fb0bde8d5474ee59a1"
+
+
+if __name__ == "__main__":
+    unittest.main()

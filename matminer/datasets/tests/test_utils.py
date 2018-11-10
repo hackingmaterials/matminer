@@ -1,9 +1,11 @@
 import unittest
 import os
+import pandas as pd
 
-from matminer.datasets.tests import DataSetTest
+from matminer.datasets.tests.base import DataSetTest
 from matminer.datasets.utils import _load_dataset_dict, _get_file_sha256_hash, \
-    _fetch_external_dataset, _validate_dataset, _get_data_home
+    _fetch_external_dataset, _validate_dataset, _get_data_home, \
+    _read_dataframe_from_file
 
 
 class UtilsTest(DataSetTest):
@@ -84,6 +86,16 @@ class UtilsTest(DataSetTest):
 
         self.assertTrue(_get_file_sha256_hash(self._path) == self._hash)
         os.remove(self._path)
+
+    def test_read_dataframe_from_file(self):
+        if not os.path.exists(self._path):
+            _fetch_external_dataset(self._url, self._path)
+
+        self.assertTrue(isinstance(_read_dataframe_from_file(self._path),
+                                   pd.DataFrame))
+
+        with self.assertRaises(ValueError):
+            _read_dataframe_from_file("nonexistent.txt")
 
 
 if __name__ == "__main__":
