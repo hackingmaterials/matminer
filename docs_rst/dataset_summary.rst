@@ -23,7 +23,7 @@ pf_n      n-type thermoelectric power factor in uW/cm2.K where uW is microwatts 
 pf_p      p-type power factor in uW/cm2.K
 s_n       n-type Seebeck coefficient in micro Volts per Kelvin
 s_p       p-type Seebeck coefficient in micro Volts per Kelvin
-structure pymatgen Sttructure object describing the crystal structure of the material
+structure pymatgen Structure object describing the crystal structure of the material
 ========= ======================================================================================================================
 
 
@@ -73,7 +73,7 @@ publisher = {Dryad Digital Repository}
 --------------------
 castelli_perovskites
 --------------------
-18,928 perovskites generated with ABX combinatorics, calculating gbllsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.
+18,928 perovskites generated with ABX combinatorics, calculating gllbsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.
 
 **Number of entries:** 18928
 

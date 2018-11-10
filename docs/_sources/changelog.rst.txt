@@ -1,9 +1,15 @@
-.. title:: MatMiner Changlog
+.. title:: MatMiner Changelog
 
 
 ==================
 matminer Changelog
 ==================
+
+**v0.4.4**
+
+* Further revamp data set loaders and management (D. Dopp)
+* Better default chunksize for multiprocessing should improve performance (L. Ward)
+* Improve oxidation state featurizer (A. Dunn)
 
 **v0.4.3**
 

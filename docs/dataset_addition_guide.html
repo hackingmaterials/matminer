@@ -6,10 +6,10 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Guide to adding datasets to matminer &#8212; matminer 0.4.3 documentation</title>
+    <title>Guide to adding datasets to matminer &#8212; matminer 0.4.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -205,11 +205,10 @@ convenience function should be added alongside dataset tests.</p>
 is described in the file metadata. See prior datasets for examples and
 the .txt file from step 2 for column type info. A typical test consists of
 a call to a universal test function that only needs specifiers of what
-dataframe columns should be of what type, followed by dataset specific type tests
+dataframe columns should be of what type and dataset specific type tests
 if necessary.</p>
 <p>Example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_dielectric_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="c1"># Universal Tests</span>
     <span class="n">object_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;material_id&#39;</span><span class="p">,</span> <span class="s1">&#39;formula&#39;</span><span class="p">,</span> <span class="s1">&#39;structure&#39;</span><span class="p">,</span>
                       <span class="s1">&#39;e_electronic&#39;</span><span class="p">,</span> <span class="s1">&#39;e_total&#39;</span><span class="p">,</span> <span class="s1">&#39;cif&#39;</span><span class="p">,</span> <span class="s1">&#39;meta&#39;</span><span class="p">,</span>
                       <span class="s1">&#39;poscar&#39;</span><span class="p">]</span>
@@ -219,14 +218,15 @@ if necessary.</p>
 
     <span class="n">bool_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pot_ferroelectric&#39;</span><span class="p">]</span>
 
+    <span class="c1"># Unique Tests</span>
+    <span class="k">def</span> <span class="nf">_unique_tests</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;structure&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Structure</span><span class="p">)</span>
+
+    <span class="c1"># Universal Tests</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">universal_dataset_check</span><span class="p">(</span>
         <span class="s2">&quot;dielectric_constant&quot;</span><span class="p">,</span> <span class="n">object_headers</span><span class="p">,</span> <span class="n">numeric_headers</span><span class="p">,</span>
-        <span class="n">bool_headers</span><span class="o">=</span><span class="n">bool_headers</span><span class="p">,</span>
+        <span class="n">bool_headers</span><span class="o">=</span><span class="n">bool_headers</span><span class="p">,</span> <span class="n">test_func</span><span class="o">=</span><span class="n">_unique_tests</span>
     <span class="p">)</span>
-
-    <span class="c1"># Unique tests</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;dielectric_constant&quot;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;structure&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Structure</span><span class="p">)</span>
 </pre></div>
 </div>
 </li>
@@ -333,13 +333,13 @@ convenience function. See existing tests for examples.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.4 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
     </div>
 
   </body>
