@@ -87,7 +87,6 @@ class MDFDataRetrieval(BaseDataRetrieval):
         results = self.forge.aggregate()
         return make_dataframe(results, unwind_arrays=unwind_arrays)
 
-
     def get_data(self, squery, unwind_arrays=True, **kwargs):
         """
         Gets a dataframe from the MDF API from an explicit string
@@ -105,7 +104,6 @@ class MDFDataRetrieval(BaseDataRetrieval):
         """
         results = self.forge.aggregate(q=squery, **kwargs)
         return make_dataframe(results, unwind_arrays=unwind_arrays)
-
 
 
 #TODO: could add parallel functionality, but doesn't seem to be too slow
