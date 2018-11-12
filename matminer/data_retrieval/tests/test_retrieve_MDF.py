@@ -18,12 +18,10 @@ class MDFDataRetrievalTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.mdf_dr = MDFDataRetrieval(anonymous=True)
-        # cls.oqmd_version = cls.mdf_dr.forge.get_dataset_version('oqmd')
 
-    @unittest.expectedFailure
     def test_get_dataframe(self):
         results = self.mdf_dr.get_dataframe({
-            "source_names": ['oqmd_v%d' % self.oqmd_version],
+            "source_names": ['oqmd'],
             "elements": ["Ag", "Be", "V"]},
             unwind_arrays=False)
         for elts in results['material.elements']:
@@ -31,13 +29,12 @@ class MDFDataRetrievalTest(unittest.TestCase):
             self.assertTrue("Ag" in elts)
             self.assertTrue("V" in elts)
 
-    @unittest.expectedFailure
     def test_get_dataframe_by_query(self):
-        qstring = "(mdf.source_name:oqmd_v{0}) AND "\
+        qstring = "(mdf.source_name:oqmd) AND "\
                   "(material.elements:Si AND material.elements:V AND "\
-                  "oqmd_v{0}.band_gap.value:[0.5 TO *])".format(self.oqmd_version)
+                  "oqmd.band_gap.value:[0.5 TO *])"
         mdf_df = self.mdf_dr.get_data(qstring, unwind_arrays=False)
-        self.assertTrue((mdf_df['oqmd_v%d.band_gap.value'%self.oqmd_version] > 0.5).all())
+        self.assertTrue((mdf_df['oqmd.band_gap.value'] > 0.5).all())
         for elts in mdf_df['material.elements']:
             self.assertTrue("Si" in elts)
             self.assertTrue("V" in elts)
