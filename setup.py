@@ -17,7 +17,7 @@ if __name__ == "__main__":
         author_email='anubhavster@gmail.com',
         license='modified BSD',
         packages=find_packages(),
-        package_data={'matminer.datasets': ['*.csv'],
+        package_data={'matminer.datasets': ['*.json'],
                       'matminer.featurizers': ["*.yaml"],
                       'matminer.utils.data_files': ['*.csv', '*.tsv', '*.json', 'magpie_elementdata/*.table']},
         zip_safe=False,
