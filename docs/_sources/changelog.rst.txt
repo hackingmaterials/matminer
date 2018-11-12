@@ -5,7 +5,14 @@
 matminer Changelog
 ==================
 
+**v0.4.5**
+
+* fix for missing data set loader file (D. Dopp)
+* fix MDF unit tests (L. Ward)
+
 **v0.4.4**
+
+.. warning:: Data set loaders may not work properly due to a missing file in this release
 
 * Further revamp data set loaders and management (D. Dopp)
 * Better default chunksize for multiprocessing should improve performance (L. Ward)
