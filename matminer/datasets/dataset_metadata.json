@@ -234,6 +234,21 @@
         "reference": "https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046",
         "url": "https://ndownloader.figshare.com/files/13464368"
     },
+    "glass_binary_v2": {
+        "bibtex_refs": [
+            "@article{doi:10.1021/acs.jpclett.7b01046,\nauthor = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},\ntitle = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},\njournal = {The Journal of Physical Chemistry Letters},\nvolume = {8},\nnumber = {14},\npages = {3434-3439},\nyear = {2017},\ndoi = {10.1021/acs.jpclett.7b01046},\nnote ={PMID: 28697303},\neprint = {\nhttps://doi.org/10.1021/acs.jpclett.7b01046\n\n}}"
+        ],
+        "columns": {
+            "formula": "chemical formula",
+            "gfa": "glass forming ability, correlated with the phase column, designating whether the composition can form monolithic glass or not, 1: glass forming (\"AM\"), 0: non-full-forming(\"CR\")"
+        },
+        "description": "Identical to glass_binary dataset, but with duplicate entries merged. If there was a disagreement in gfa when merging the class was defaulted to 1.",
+        "file_type": "json.gz",
+        "hash": "70ef83f6c7130615b759ae52eb9c48ec77503bcc34b00aec328de372d9f19c90",
+        "num_entries": 5483,
+        "reference": "https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046",
+        "url": "https://ndownloader.figshare.com/files/13553498"
+    },
     "glass_ternary_hipt": {
         "bibtex_refs": [
             "@article {Reneaaq1566,\nauthor = {Ren, Fang and Ward, Logan and Williams, Travis and Laws, Kevin J. and Wolverton, Christopher and Hattrick-Simpers, Jason and Mehta, Apurva},\ntitle = {Accelerated discovery of metallic glasses through iteration of machine learning and high-throughput experiments},\nvolume = {4},\nnumber = {4},\nyear = {2018},\ndoi = {10.1126/sciadv.aaq1566},\npublisher = {American Association for the Advancement of Science},\nabstract = {With more than a hundred elements in the periodic table, a large number of potential new materials exist to address the technological and societal challenges we face today; however, without some guidance, searching through this vast combinatorial space is frustratingly slow and expensive, especially for materials strongly influenced by processing. We train a machine learning (ML) model on previously reported observations, parameters from physiochemical theories, and make it synthesis method{\\textendash}dependent to guide high-throughput (HiTp) experiments to find a new system of metallic glasses in the Co-V-Zr ternary. Experimental observations are in good agreement with the predictions of the model, but there are quantitative discrepancies in the precise compositions predicted. We use these discrepancies to retrain the ML model. The refined model has significantly improved accuracy not only for the Co-V-Zr system but also across all other available validation data. We then use the refined model to guide the discovery of metallic glasses in two additional previously unreported ternaries. Although our approach of iterative use of ML and HiTp experiments has guided us to rapid discovery of three new glass-forming systems, it has also provided us with a quantitatively accurate, synthesis method{\\textendash}sensitive predictor for metallic glasses that improves performance with use and thus promises to greatly accelerate discovery of many new metallic glasses. We believe that this discovery paradigm is applicable to a wider range of materials and should prove equally powerful for other materials and properties that are synthesis path{\\textendash}dependent and that current physiochemical theories find challenging to predict.},\nURL = {http://advances.sciencemag.org/content/4/4/eaaq1566},\neprint = {http://advances.sciencemag.org/content/4/4/eaaq1566.full.pdf},\njournal = {Science Advances}\n}"

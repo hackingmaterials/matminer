@@ -357,6 +357,15 @@ class DataSetsTest(DataSetTest):
             "glass_binary", object_headers, numeric_headers
         )
 
+    def test_glass_binary_v2(self):
+        object_headers = ['formula']
+
+        numeric_headers = ['gfa']
+
+        self.universal_dataset_check(
+            "glass_binary_v2", object_headers, numeric_headers
+        )
+
     def test_m2ax(self):
         object_headers = ['formula']
 
