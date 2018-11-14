@@ -114,6 +114,10 @@ if do_complete_test:
         def test_load_glass_binary(self):
             df = load_glass_binary()
             self.assertTrue(isinstance(df, pd.DataFrame))
+            self.assertEqual(len(df), 5483)
+            df = load_glass_binary(version="v1")
+            self.assertTrue(isinstance(df, pd.DataFrame))
+            self.assertEqual(len(df), 5959)
 
         def test_load_m2ax(self):
             df = load_m2ax()

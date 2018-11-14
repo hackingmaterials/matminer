@@ -438,11 +438,14 @@ def load_jarvis_dft_2d(drop_nan_columns=None, data_home=None,
     return df.dropna(subset=drop_nan_columns)
 
 
-def load_glass_binary(data_home=None, download_if_missing=True):
+def load_glass_binary(version="v2", data_home=None, download_if_missing=True):
     """
     Convenience function for loading the glass_binary dataset.
 
     Args:
+        version (str): Version identifier for dataset, see dataset description
+            for explanation of each. Defaults to v2
+
         data_home (str, None): Where to loom for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
@@ -450,7 +453,13 @@ def load_glass_binary(data_home=None, download_if_missing=True):
 
     Returns: (pd.DataFrame)
     """
-    df = load_dataset("glass_binary", data_home, download_if_missing)
+
+    # Set version tag if dataset is updated to a new version
+    dataset_identifier = "glass_binary"
+    if version != "v1":
+        dataset_identifier = "_".join([dataset_identifier, version])
+
+    df = load_dataset(dataset_identifier, data_home, download_if_missing)
 
     return df
 

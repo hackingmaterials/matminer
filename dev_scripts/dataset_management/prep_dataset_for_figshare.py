@@ -377,6 +377,37 @@ def _preprocess_glass_binary(file_path):
     return "glass_binary", df
 
 
+def _preprocess_glass_binary_v2(file_path):
+    """
+    Metallic glass formation data for binary alloys, collected from various
+    experimental techniques such as melt-spinning or mechanical alloying.
+    This dataset covers all compositions with an interval of 5 at.% in 59
+    binary systems, containing a total of 5483 alloys in the dataset.
+    The target property of this dataset is the glass forming ability (GFA),
+    i.e. whether the composition can form monolithic glass or not, which is
+    either 1 for glass forming or 0 for non-full glass forming.
+
+    References:
+        https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046
+
+    Returns:
+        formula (input): chemical formula
+        phase (target): only in the "ternary" dataset, designating the phase
+                        obtained in glass producing experiments,
+                        "AM": amorphous phase
+                        "CR": crystalline phase
+        gfa (target): glass forming ability, correlated with the phase column,
+                      designating whether the composition can form monolithic
+                      glass or not,
+                      1: glass forming ("AM")
+                      0: non-full-glass forming ("CR")
+
+    """
+    df = _read_dataframe_from_file(file_path)
+
+    return "glass_binary_v2", df
+
+
 def _preprocess_expt_formation_enthalpy(file_path):
     """
     Experimental formation enthalpies for inorganic compounds, collected from
@@ -1184,6 +1215,7 @@ _datasets_to_preprocessing_routines = {
     "wolverton_oxides": _preprocess_wolverton_oxides,
     "m2ax_elastic": _preprocess_m2ax,
     "glass_binary": _preprocess_glass_binary,
+    "glass_binary_v2": _preprocess_glass_binary_v2,
     "formation_enthalpy_expt": _preprocess_expt_formation_enthalpy,
     "zhuo_gap_expt": _preprocess_expt_gap,
     "jdft_2d-7-7-2018": _preprocess_jarvis_dft_2d,
