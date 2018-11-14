@@ -1149,8 +1149,8 @@ def _preprocess_dielectric_constant(file_path):
         ep_e poly (target): Polycrystalline electronic contribution to
             dielectric constant (estimate/avg)
         ep poly (target): Polycrystalline dielectric constant (estimate/avg)
-        pot. ferroelectric (target): If imaginary optical phonon modes present at
-            the Gamma point, the material is potentially ferroelectric
+        pot. ferroelectric (target): If imaginary optical phonon modes present
+            at the Gamma point, the material is potentially ferroelectric
     """
     df = _read_dataframe_from_file(file_path, comment="#")
 
