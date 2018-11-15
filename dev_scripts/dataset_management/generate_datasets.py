@@ -61,7 +61,7 @@ def convert_to_oxide_composition(df, composition_col_name="composition"):
 
 # Functions for generating static datasets from various database resources
 def generate_mp(max_nsites=None, properties=None, write_to_csv=False,
-                write_to_compressed_json=True):
+                write_to_compressed_json=False, include_oxide_info=True):
     """
     Grabs all mp materials. This will create two csv/json.gz files:
         * mp_nostruct: All MP materials, not including structures
@@ -77,6 +77,9 @@ def generate_mp(max_nsites=None, properties=None, write_to_csv=False,
 
         write_to_compressed_json (bool): whether to write resulting
             dataframe to json.gz file
+
+        include_oxide_info (bool): Whether to convert pymatgen objects to
+            objects including oxidation state information
 
     Returns (pandas.DataFrame):
         retrieved/generated data without structure data
@@ -123,8 +126,17 @@ def generate_mp(max_nsites=None, properties=None, write_to_csv=False,
 
     # Convert returned data to the appropriate
     # pymatgen Structure/Composition objects
-    df = convert_to_oxide_structure(df)
-    df = convert_to_oxide_composition(df)
+    df = DictToObject(
+        target_col_id="structure", overwrite_data=True
+    ).featurize_dataframe(df, "structure")
+
+    df = StrToComposition(
+        target_col_id="composition", overwrite_data=True
+    ).featurize_dataframe(df, "composition")
+
+    if include_oxide_info:
+        df = convert_to_oxide_structure(df)
+        df = convert_to_oxide_composition(df)
 
     tqdm.write("DataFrame with {} entries created".format(len(df)))
 
@@ -142,7 +154,8 @@ def generate_mp(max_nsites=None, properties=None, write_to_csv=False,
     return df
 
 
-def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=True):
+def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=False,
+                            include_oxide_info=True):
     """
     Grabs all materials with elasticity data.
     This will return a csv/json.gz file:
@@ -153,6 +166,9 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=True):
 
         write_to_compressed_json (bool): whether to write resulting
             dataframe to json.gz file
+
+        include_oxide_info (bool): Whether to add oxidation info to pymatgen
+            objects
 
     Returns (pandas.DataFrame):
         retrieved/generated data
@@ -172,7 +188,7 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=True):
     df = pd.DataFrame()
     mpdr = MPDataRetrieval()
 
-    # Iterate over each site number to ensure return object isn't too large
+    # Iterate over each site number to ensure returned object isn't too large
     for site_num in tqdm([i for i in range(1, 101)] + [{"$gt": 100}],
                          desc="Querying MP"):
         criteria["nsites"] = site_num
@@ -200,7 +216,6 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=True):
     ))
 
     df = df[~(df["elasticity.warnings"].apply(bool))]
-
     df = df.drop(["elasticity.warnings"], axis=1)
 
     tqdm.write("There are {} elastic entries on MP with no warnings".format(
@@ -212,8 +227,17 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=True):
 
     # Convert returned data to the appropriate
     # pymatgen Structure/Composition objects
-    df = convert_to_oxide_structure(df)
-    df = convert_to_oxide_composition(df)
+    df = DictToObject(
+        target_col_id="structure", overwrite_data=True
+    ).featurize_dataframe(df, "structure")
+
+    df = StrToComposition(
+        target_col_id="composition", overwrite_data=True
+    ).featurize_dataframe(df, "composition")
+
+    if include_oxide_info:
+        df = convert_to_oxide_structure(df)
+        df = convert_to_oxide_composition(df)
 
     print(df.describe())
     print(df.head())
@@ -232,5 +256,5 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=True):
 
 if __name__ == "__main__":
     generate_mp(write_to_csv=True, write_to_compressed_json=True)
-    # generate_elastic_tensor()
+    generate_elastic_tensor(write_to_csv=True, write_to_compressed_json=True)
 
