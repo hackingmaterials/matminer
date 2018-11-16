@@ -1,4 +1,5 @@
 from time import sleep
+from math import ceil
 
 import pandas as pd
 from tqdm import tqdm
@@ -11,7 +12,8 @@ from matminer.featurizers.conversions import DictToObject, \
 from matminer.data_retrieval.retrieve_MP import MPDataRetrieval, MPRestError
 
 
-def convert_to_oxide_structure(df, structure_col_name="structure"):
+def convert_to_oxide_structure(df, structure_col_name="structure",
+                               batch_size=1000):
     """
     Takes a dataframe with a pymatgen Structure column and adds oxidation data
     to it. If structure is not a proper object, will try to convert first.
@@ -21,21 +23,37 @@ def convert_to_oxide_structure(df, structure_col_name="structure"):
 
         structure_col_name (str): The identifier of the structure column
 
+        batch_size (int): Size of batches to process dataframe in
+
     Returns: (pd.DataFrame)
     """
+    if batch_size is None:
+        batch_size = len(df)
+
     if not isinstance(df[structure_col_name][0], Structure):
         df = DictToObject(
             target_col_id=structure_col_name, overwrite_data=True
         ).featurize_dataframe(df, structure_col_name)
 
-    df = StructureToOxidStructure(
-        target_col_id=structure_col_name, overwrite_data=True
-    ).featurize_dataframe(df, structure_col_name)
+    oxide_featurizer = StructureToOxidStructure(
+            target_col_id=structure_col_name, overwrite_data=True
+        )
+
+    # Process in batches to give usable progress bar
+    for i in tqdm(range(ceil(len(df) / batch_size)),
+                  desc="Processing oxidation state of structures in batches"):
+        start_index = i * batch_size
+        end_index = start_index + batch_size
+
+        df.iloc[start_index:end_index] = oxide_featurizer.featurize_dataframe(
+            df.iloc[start_index:end_index], structure_col_name, pbar=False
+        )
 
     return df
 
 
-def convert_to_oxide_composition(df, composition_col_name="composition"):
+def convert_to_oxide_composition(df, composition_col_name="composition",
+                                 batch_size=1000):
     """
     Takes a dataframe with a pymatgen Composition column and adds oxidation data
     to it. If composition is not a proper object, will try to convert first.
@@ -45,16 +63,31 @@ def convert_to_oxide_composition(df, composition_col_name="composition"):
 
         composition_col_name (str): The identifier of the composition column
 
+        batch_size (int): Size of batches to process dataframe in
+
     Returns: (pd.DataFrame)
     """
+    if batch_size is None:
+        batch_size = len(df)
+
     if not isinstance(df[composition_col_name][0], Composition):
         df = StrToComposition(
             target_col_id=composition_col_name, overwrite_data=True
         ).featurize_dataframe(df, composition_col_name)
 
-    df = CompositionToOxidComposition(
+    oxide_featurizer = CompositionToOxidComposition(
         target_col_id=composition_col_name, overwrite_data=True
-    ).featurize_dataframe(df, composition_col_name)
+    )
+
+    # Process in batches to give usable progress bar
+    for i in tqdm(range(ceil(len(df) / batch_size)),
+                  desc="Processing oxidation state of compositions in batches"):
+        start_index = i * batch_size
+        end_index = start_index + batch_size
+
+        df.iloc[start_index:end_index] = oxide_featurizer.featurize_dataframe(
+            df.iloc[start_index:end_index], composition_col_name, pbar=False
+        )
 
     return df
 
@@ -124,6 +157,11 @@ def generate_mp(max_nsites=None, properties=None, write_to_csv=False,
 
         df = df.append(site_response)
 
+    df.rename(columns={'elasticity.K_VRH': 'K_VRH',
+                       'elasticity.G_VRH': 'G_VRH',
+                       'pretty_formula': 'composition'},
+              index=str, inplace=True)
+
     # Convert returned data to the appropriate
     # pymatgen Structure/Composition objects
     df = DictToObject(
@@ -159,7 +197,8 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=False,
     """
     Grabs all materials with elasticity data.
     This will return a csv/json.gz file:
-        * mp_all: All MP materials, including structures
+        * elastic_tensor_2018: All MP materials with elasticity data,
+            including structures
 
     Args:
         write_to_csv (bool): whether to write resulting dataframe to csv
@@ -208,7 +247,8 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=False,
         df = df.append(site_response)
 
     df.rename(columns={'elasticity.K_VRH': 'K_VRH',
-                       'elasticity.G_VRH': 'G_VRH'},
+                       'elasticity.G_VRH': 'G_VRH',
+                       'pretty_formula': 'composition'},
               index=str, inplace=True)
 
     tqdm.write("There are {} elastic entries on MP".format(
@@ -222,8 +262,7 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=False,
         df['K_VRH'].count()
     ))
 
-    print(df.describe())
-    print(df.head())
+    print(df.columns)
 
     # Convert returned data to the appropriate
     # pymatgen Structure/Composition objects
@@ -255,6 +294,6 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=False,
 
 
 if __name__ == "__main__":
-    generate_mp(write_to_csv=True, write_to_compressed_json=True)
+    # generate_mp(write_to_csv=True, write_to_compressed_json=True)
     generate_elastic_tensor(write_to_csv=True, write_to_compressed_json=True)
 
