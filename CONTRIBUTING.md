@@ -46,4 +46,4 @@ Great Bug Reports tend to have:
 We love thorough bug reports.
 
 #### References
-This document was adapted from the open-source contribution guidelines for Facebook's Draft
+This document was adapted from the open-source contribution guidelines for Facebook's Draft, as well as briandk's [contribution template](https://gist.github.com/briandk/3d2e8b3ec8daf5a27a62). 
