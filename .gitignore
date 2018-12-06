@@ -45,3 +45,6 @@ nosetests.xml
 
 # Pycharm
 .idea/*
+
+# Datasets
+matminer/datasets/*
