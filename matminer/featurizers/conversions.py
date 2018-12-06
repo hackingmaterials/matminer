@@ -407,6 +407,11 @@ class StructureToOxidStructure(ConversionFeaturizer):
             (`pymatgen.core.structure.Structure`): A Structure object decorated
                 with oxidation states.
         """
+        els_have_oxi_states = [hasattr(s, "oxi_state") for s in
+                               structure.composition.elements]
+        if all(els_have_oxi_states):
+            return [structure]
+
         try:
             structure.add_oxidation_state_by_guess(**self.oxi_guess_params)
         except ValueError as e:
@@ -478,8 +483,10 @@ class CompositionToOxidComposition(ConversionFeaturizer):
                 decorated with oxidation states.
         """
         els_have_oxi_states = [hasattr(s, "oxi_state") for s in comp.elements]
+
         if all(els_have_oxi_states):
             return [comp]
+
         elif any(els_have_oxi_states):
             if self.coerce_mixed:
                 comp = comp.element_composition
