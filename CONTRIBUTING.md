@@ -14,16 +14,14 @@ If you are making a bug report, incorporate as many elements of the following as
 * Steps to reproduce - be specific! **Provide sample code.**
 * What you expected would happen, compared to what actually happens
 * The full stack trace of any errors you encounter
-* Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
+* Notes (possibly including why you think this might be happening, or steps you tried that didn't work)
 
-We love thorough bug reports as this means the development team can make quick and meaningful fixes!
-
-When we confirm your bug report, we'll move it to the GitHub issues as soon as possible. 
+We love thorough bug reports as this means the development team can make quick and meaningful fixes. When we confirm your bug report, we'll move it to the GitHub issues where its progress can be further tracked.
 
 ## Contributing code modifications or additions through Github
-We use github to host code, to track issues and feature requests, as well as accept pull requests.
+We use github to host code, to track issues and feature requests, as well as accept pull requests. We maintain a list of all contributors to matminer [here.](http://hackingmaterials.github.io/matminer/contributors.html)
 
-Pull requests are the best way to propose changes to the codebase. Follow the [Github flow](https://guides.github.com/introduction/flow/)) for more information on this procedure.
+Pull requests are the best way to propose changes to the codebase. Follow the [Github flow](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow) for more information on this procedure.
 
 The basic procedure for making a PR is:
 * Fork the repo and create your branch from master.
@@ -31,7 +29,7 @@ The basic procedure for making a PR is:
 * When you're finished, go to your fork and make a Pull Request. It will automatically update if you need to make further changes.
 
 ### How to Make a **Great** Pull Request
-Keeping an expanding, open-source codebase readable and maintainable is hard; for this reason, we have a few tips for writing good PRs:
+We have a few tips for writing good PRs that are accepted into the main repo:
 
 * Use the Google Code style for all of your code. Find an example [here.](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html)
 * Your code should have (4) spaces instead of tabs.
