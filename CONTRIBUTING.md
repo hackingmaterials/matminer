@@ -3,31 +3,28 @@ We love your input! We want to make contributing to matminer as easy and transpa
 * Reporting a bug
 * Discussing the current state of the code
 * Submitting a fix
-* Proposing new features
+* Proposing or implementing new features
 * Becoming a maintainer
 
-### Reporting bugs, getting help, and discussion
-The first place to go is the [Google Group](https://groups.google.com/forum/#!forum/matminer). Start a new topic, and then read the next section if you are making a bug report.
+## Reporting bugs, getting help, and discussion
+At any time, feel free to start a thread on our [Google Group](https://groups.google.com/forum/#!forum/matminer).
 
-### Bug reports
-Great Bug Reports tend to have:
+If you are making a bug report, incorporate as many elements of the following as possible to ensure a timely response and avoid the need for followups:
 * A quick summary and/or background
-* Steps to reproduce
-* Be specific!
-* Give sample code if you can. My stackoverflow question includes sample code that anyone with a base R setup can run to reproduce what I was seeing
-* What you expected would happen
-* What actually happens
+* Steps to reproduce - be specific! **Provide sample code.**
+* What you expected would happen, compared to what actually happens
+* The full stack trace of any errors you encounter
 * Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
-We love thorough bug reports!
+
+We love thorough bug reports as this means the development team can make quick and meaningful fixes!
+
 When we confirm your bug report, we'll move it to the GitHub issues as soon as possible. 
 
-### We Develop with Github
+## Contributing code modifications or additions through Github
 We use github to host code, to track issues and feature requests, as well as accept pull requests.
 
-### All Code Changes Happen Through Pull Requests
-Pull requests are the best way to propose changes to the codebase (we use the [Github flow](https://guides.github.com/introduction/flow/)).
+Pull requests are the best way to propose changes to the codebase. Follow the [Github flow](https://guides.github.com/introduction/flow/)) for more information on this procedure.
 
-### Making a Pull Request
 The basic procedure for making a PR is:
 * Fork the repo and create your branch from master.
 * Commit your improvements to your branch and push to your Github fork (repo).
