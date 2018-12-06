@@ -121,13 +121,13 @@ class TestConversions(TestCase):
                                 [[0, 0, 0], [0.2, 0.2, 0.2], [0.5, 0.5, 0.5]])
         df = DataFrame(data={'structure': [test_struct]})
         sto = StructureToOxidStructure(return_structure_on_error=False,
-                                       max_sites=-2)
+                                       max_sites=2)
         self.assertRaises(ValueError, sto.featurize_dataframe, df,
                           'structure')
 
         # check non oxi state structure returned correctly
         sto = StructureToOxidStructure(return_structure_on_error=True,
-                                       max_sites=-3)
+                                       max_sites=2)
         df = sto.featurize_dataframe(df, 'structure')
         self.assertEqual(df["structure_oxid"].tolist()[0][0].specie,
                          Element("Sb"))
@@ -142,13 +142,13 @@ class TestConversions(TestCase):
         # test error handling
         df = DataFrame(data={"composition": [Composition("Fe2O3")]})
         cto = CompositionToOxidComposition(
-            return_composition_on_error=False, max_sites=-2)
+            return_composition_on_error=False, max_sites=2)
         self.assertRaises(ValueError, cto.featurize_dataframe, df,
                           'composition')
 
         # check non oxi state structure returned correctly
         cto = CompositionToOxidComposition(
-            return_composition_on_error=True, max_sites=-2)
+            return_composition_on_error=True, max_sites=2)
         df = cto.featurize_dataframe(df, 'composition')
         self.assertEqual(df["composition_oxid"].tolist()[0],
                          Composition({"Fe": 2, "O": 3}))
