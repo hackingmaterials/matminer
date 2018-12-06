@@ -1,3 +1,5 @@
+import pandas as pd
+
 from matminer.datasets import load_dataset
 
 # Convenience functions provided to make accessing datasets simpler.
@@ -511,5 +513,51 @@ def load_expt_formation_enthalpy(data_home=None, download_if_missing=True):
     Returns: (pd.DataFrame)
     """
     df = load_dataset("expt_formation_enthalpy", data_home, download_if_missing)
+
+    return df
+
+
+def load_brgoch_superhard_training(subset="all", drop_suspect=False,
+                                   data_home=None, download_if_missing=True):
+    """
+    Convenience function for loading the expt_formation_enthalpy dataset.
+
+    Args:
+        subset (str): Identifier for subset of data to return,
+            all: all possible columns including metadata, engineered features,
+                 and basic descriptors
+            brgoch_features: only features from reference paper and targets
+            basic_descriptors: only composition/structure columns and targets
+
+        data_home (str, None): Where to loom for and store the loaded dataset
+
+        download_if_missing (bool): Whether or not to download the dataset if
+            it isn't on disk
+
+    Returns: (pd.DataFrame)
+    """
+    if subset not in {"all", "brgoch_features", "basic_descriptors"}:
+        raise ValueError("Error: dataset subset identifier {} "
+                         "not recognized".format(subset))
+
+    df = load_dataset("brgoch_superhard_training", data_home,
+                      download_if_missing)
+
+    if drop_suspect:
+        df = df[~df["suspect_value"]]
+
+    if subset in {"all", "brgoch_features"}:
+        feats_expanded = pd.DataFrame([feat_dict
+                                       for feat_dict in df["brgoch_feats"]])
+        df = pd.concat([df, feats_expanded], axis=1)
+
+    if subset == "basic_descriptors":
+        df = df.drop([feat for feat in df.columns
+                      if feat not in {"composition", "structure",
+                                      "shear_modulus", "bulk_modulus"}], axis=1)
+    elif subset == "brgoch_features":
+        df = df.drop(["composition", "structure", "initial_structure",
+                      "formula", "material_id", "suspect_value",
+                      "brgoch_feats"], axis=1)
 
     return df

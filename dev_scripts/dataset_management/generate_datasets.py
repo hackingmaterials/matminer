@@ -296,4 +296,3 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=False,
 if __name__ == "__main__":
     # generate_mp(write_to_csv=True, write_to_compressed_json=True)
     generate_elastic_tensor(write_to_csv=True, write_to_compressed_json=True)
-

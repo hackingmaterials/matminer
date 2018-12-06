@@ -10,7 +10,8 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_phonon_dielectric_mp, load_piezoelectric_tensor, load_mp, \
     load_wolverton_oxides, load_heusler_magnetic, load_steel_strength, \
     load_jarvis_ml_dft_training, load_jarvis_dft_2d, load_jarvis_dft_3d, \
-    load_expt_formation_enthalpy, load_expt_gap, load_glass_binary, load_m2ax
+    load_expt_formation_enthalpy, load_expt_gap, load_glass_binary, load_m2ax, \
+    load_brgoch_superhard_training
 
 if do_complete_test:
 
@@ -173,6 +174,19 @@ if do_complete_test:
             df = load_jarvis_dft_3d(drop_nan_columns='epsilon_x opt')
             self.assertEqual(len(df), 19027)
 
+        def test_load_brgoch_superhard_training(self):
+            df = load_brgoch_superhard_training()
+            self.assertTrue(isinstance(df, pd.DataFrame))
+            self.assertEqual(len(df.columns), 159)
+            self.assertEqual(len(df), 2574)
+            df = load_brgoch_superhard_training(drop_suspect=True)
+            self.assertEqual(len(df), 2570)
+            df = load_brgoch_superhard_training(subset="brgoch_features")
+            self.assertEqual(len(df), 2574)
+            self.assertEqual(len(df.columns), 152)
+            df = load_brgoch_superhard_training(subset="basic_descriptors")
+            self.assertEqual(len(df), 2537)
+            self.assertEqual(len(df.columns), 4)
 
 if __name__ == "__main__":
     unittest.main()
