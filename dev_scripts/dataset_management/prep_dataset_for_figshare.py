@@ -60,14 +60,18 @@ Data convention guidelines
     pymatgen.core.structure/composition"""
 
 
-def _clear_incomplete_dataframe_rows(df):
-    mask = np.any(df.isna(), axis=1)
+def _clear_incomplete_dataframe_rows(df, col_names=None):
+    if col_names is None:
+        col_names = df.columns
 
-    return df.loc[~mask]
+    mask = np.any(df[col_names].isna(), axis=1)
+
+    return df[~mask]
 
 
 def _preprocess_brgoch_superhard_training(file_path):
     """
+    # TODO
     2537 materials used for training regressors that predict shear
     and bulk modulus.
 
@@ -161,9 +165,9 @@ def _preprocess_brgoch_superhard_training(file_path):
     mp_retriever = MPDataRetrieval()
     props_to_query = props_to_save + ["elasticity.K_VRH", "elasticity.G_VRH"]
 
-    for material_index, material in tqdm(df.iterrows(),
-                                         desc="Processing Dataset",
-                                         total=len(df)):
+    for material_index in tqdm(range(len(df)), desc="Processing Dataset"):
+        material = df.loc[material_index]
+
         # Zip features from original paper into single column
         brgoch_feats = df.loc[
             material_index, composition_features + structure_features
@@ -171,8 +175,8 @@ def _preprocess_brgoch_superhard_training(file_path):
         df.loc[material_index, "brgoch_feats"].update(brgoch_feats.to_dict())
 
         retriever_criteria = {
-            'pretty_formula': material['formula'],
-            'spacegroup.number': material['space_group_number']
+            'pretty_formula': str(material['formula']),
+            'spacegroup.number': int(material['space_group_number'])
         }
 
         # While loop with try except block to handle server response errors
@@ -191,7 +195,9 @@ def _preprocess_brgoch_superhard_training(file_path):
                 sleep(3)
 
         # Clean retrieved query
-        mp_query = _clear_incomplete_dataframe_rows(mp_query)
+        mp_query = _clear_incomplete_dataframe_rows(
+            mp_query, col_names=["initial_structure", "structure"]
+        )
 
         # Throw out entry if no hits on MP
         if len(mp_query) == 0:
@@ -213,6 +219,10 @@ def _preprocess_brgoch_superhard_training(file_path):
                 closest_mat_distance = inf
                 # For each mat calculate euclidean distance from db entry
                 for i, entry in mp_query.iterrows():
+                    # Pass if mat doesn't have K_VRH or G_VRH data
+                    if np.any(entry.isna()):
+                        pass
+
                     bulk_dif = (entry["elasticity.K_VRH"]
                                 - material["bulk_modulus"])
                     shear_dif = (entry["elasticity.G_VRH"]
@@ -226,38 +236,47 @@ def _preprocess_brgoch_superhard_training(file_path):
 
             mat_data = mp_query.loc[closest_mat_index]
 
-            # Check similarity of  dataset entry to the selected MP entry
-            bulk_abs_dif = abs(
-                mat_data["elasticity.K_VRH"] - material["bulk_modulus"]
-            )
-            shear_abs_dif = abs(
-                mat_data["elasticity.G_VRH"] - material["shear_modulus"]
-            )
-
-            bulk_relative_dif = bulk_abs_dif / material["bulk_modulus"]
-            shear_relative_dif = shear_abs_dif / material["shear_modulus"]
-
-            # Discard entry if MP entry is too different from dataset entry
-            if ((bulk_relative_dif > .05 or shear_relative_dif > .05)
-                    and (bulk_abs_dif > 1 or shear_abs_dif > 1)):
-                tqdm.write(
-                    "\nWarning: MP entry selected for {} with space "
-                    "group {} has a difference in elastic data "
-                    "greater than 5 percent/1GPa!".format(
-                        material["formula"], material["space_group_number"]
-                    )
-                )
-                tqdm.write("Bulk moduli dataset vs. MP: {} {}".format(
-                    material["bulk_modulus"],
-                    mat_data["elasticity.K_VRH"]
-                ))
-                tqdm.write("Shear moduli dataset vs. MP: {} {}".format(
-                    material["shear_modulus"],
-                    mat_data["elasticity.G_VRH"]
-                ))
+            # Case of only one material but missing elasticity data,
+            # Consider suspect bc no data to compare against
+            if np.any(mat_data.isna()):
+                tqdm.write("NaN values found in MP hit.")
                 tqdm.write("Data point will be marked as suspect\n")
                 df.loc[material_index, "suspect_value"] = True
                 num_mismatching_entries += 1
+
+            # Mark suspect if MP entry is too different from dataset entry
+            else:
+                # Check similarity of  dataset entry to the selected MP entry
+                bulk_abs_dif = abs(
+                    mat_data["elasticity.K_VRH"] - material["bulk_modulus"]
+                )
+                shear_abs_dif = abs(
+                    mat_data["elasticity.G_VRH"] - material["shear_modulus"]
+                )
+
+                bulk_relative_dif = bulk_abs_dif / material["bulk_modulus"]
+                shear_relative_dif = shear_abs_dif / material["shear_modulus"]
+
+                if ((bulk_relative_dif > .05 or shear_relative_dif > .05)
+                        and (bulk_abs_dif > 1 or shear_abs_dif > 1)):
+                    tqdm.write(
+                        "\nWarning: MP entry selected for {} with space "
+                        "group {} has a difference in elastic data "
+                        "greater than 5 percent/1GPa!".format(
+                            material["formula"], material["space_group_number"]
+                        )
+                    )
+                    tqdm.write("Bulk moduli dataset vs. MP: {} {}".format(
+                        material["bulk_modulus"],
+                        mat_data["elasticity.K_VRH"]
+                    ))
+                    tqdm.write("Shear moduli dataset vs. MP: {} {}".format(
+                        material["shear_modulus"],
+                        mat_data["elasticity.G_VRH"]
+                    ))
+                    tqdm.write("Data point will be marked as suspect\n")
+                    df.loc[material_index, "suspect_value"] = True
+                    num_mismatching_entries += 1
 
             df.loc[material_index, props_to_save] = mat_data[props_to_save]
 
