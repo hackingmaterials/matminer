@@ -1,5 +1,6 @@
 from __future__ import division, unicode_literals, print_function
 
+import os
 import math
 import json
 import itertools
@@ -29,7 +30,7 @@ from matminer.featurizers.site import OPSiteFingerprint, \
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_all_nearest_neighbors
 
-__authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
+__authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, ' \
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
               'Alex Dunn <ardunn@lbl.gov>'
 
@@ -258,11 +259,13 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
            By default, this featurizer generates RDFs for each pair
            of elements in the training set."""
 
-    def __init__(self, cutoff=20.0, bin_size=0.1, include_elems=(), exclude_elems=()):
+    def __init__(self, cutoff=20.0, bin_size=0.1, include_elems=(),
+                 exclude_elems=()):
         self.cutoff = cutoff
         self.bin_size = bin_size
         self.elements_ = None
-        self.include_elems = list(include_elems)  # Makes sure the element lists are ordered
+        self.include_elems = list(
+            include_elems)  # Makes sure the element lists are ordered
         self.exclude_elems = list(exclude_elems)
 
     def fit(self, X, y=None):
@@ -284,7 +287,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         # Get all of elements that appaer
         for strc in X:
-            elements.update([e.element if isinstance(e, Specie) else e for e in strc.composition.keys()])
+            elements.update([e.element if isinstance(e, Specie) else e for e in
+                             strc.composition.keys()])
 
         # Remove the elements excluded by the user
         elements.difference_update([Element(e) for e in self.exclude_elems])
@@ -311,7 +315,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         if self.elements_ is None:
             raise Exception("You must run 'fit' first!")
 
-        dist_bins, prdf = self.compute_prdf(s)  # Assemble the PRDF for each pair
+        dist_bins, prdf = self.compute_prdf(
+            s)  # Assemble the PRDF for each pair
 
         # Convert the PRDF into a feature array
         zeros = np.zeros_like(dist_bins)  # Zeros if elements don't appear
@@ -361,10 +366,11 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         prdf = {}
         dist_bins = self._make_bins()
         shell_volume = 4.0 / 3.0 * math.pi * (
-            np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+                np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
-            dist_hist, dist_bins = np.histogram(distances, bins=dist_bins, density=False)
+            dist_hist, dist_bins = np.histogram(distances, bins=dist_bins,
+                                                density=False)
             # Normalize
             n_alpha = composition[key[0]] * s.num_sites
             rdf = dist_hist / shell_volume / n_alpha
@@ -386,7 +392,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             raise Exception("You must run 'fit' first!")
         bin_edges = self._make_bins()
         labels = []
-        for e1, e2 in itertools.combinations_with_replacement(self.elements_, 2):
+        for e1, e2 in itertools.combinations_with_replacement(self.elements_,
+                                                              2):
             for r_start, r_end in zip(bin_edges, bin_edges[1:]):
                 labels.append("{}-{} PRDF r={:.2f}-{:.2f}".format(
                     e1, e2, r_start, r_end
@@ -847,7 +854,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             labelset_1D = slabels + plabels + dlabels + flabels
 
             # account for period tags
-            if self.size==39:
+            if self.size == 39:
                 period_labels = ["period {}".format(i) for i in range(1, 8)]
                 labelset_1D += period_labels
 
@@ -992,7 +999,8 @@ class SiteStatsFingerprint(BaseFeaturizer):
         vals = [[] for t in self._site_labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
-                    and (self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
+                    and (
+                    self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
                 opvalstmp = self.site_featurizer.featurize(s, i)
                 for j, opval in enumerate(opvalstmp):
                     if opval is None:
@@ -1033,8 +1041,8 @@ class SiteStatsFingerprint(BaseFeaturizer):
             if self.covariance:
                 sl = self._site_labels
                 for i, sa in enumerate(sl):
-                    for sb in sl[(i+1):]:
-                        labels.append('covariance %s-%s'%(sa, sb))
+                    for sb in sl[(i + 1):]:
+                        labels.append('covariance %s-%s' % (sa, sb))
             return labels
         else:
             return self._site_labels
@@ -1100,7 +1108,8 @@ class SiteStatsFingerprint(BaseFeaturizer):
                 properties=["Number", "AtomicWeight",
                             "Column", "Row", "CovalentRadius",
                             "Electronegativity"], signed=False),
-                stats=['holder_mean::%d' % d for d in range(0, 4 + 1)] + ['std_dev'],
+                stats=['holder_mean::%d' % d for d in range(0, 4 + 1)] + [
+                    'std_dev'],
             )
 
         elif preset == "Composition-dejong2016_SD":
@@ -1113,12 +1122,14 @@ class SiteStatsFingerprint(BaseFeaturizer):
 
         elif preset == "BondLength-dejong2016":
             return SiteStatsFingerprint(AverageBondLength(VoronoiNN()),
-                                        stats=['holder_mean::%d' % d for d in range(-4, 4 + 1)]
+                                        stats=['holder_mean::%d' % d for d in
+                                               range(-4, 4 + 1)]
                                               + ['std_dev', 'geom_std_dev'])
 
         elif preset == "BondAngle-dejong2016":
             return SiteStatsFingerprint(AverageBondAngle(VoronoiNN()),
-                                        stats=['holder_mean::%d' % d for d in range(-4, 4 + 1)]
+                                        stats=['holder_mean::%d' % d for d in
+                                               range(-4, 4 + 1)]
                                               + ['std_dev', 'geom_std_dev'])
 
         else:
@@ -1270,7 +1281,6 @@ class BondFractions(BaseFeaturizer):
             self.allowed_bonds = self._sanitize_bonds(allowed_bonds)
             self.fitted_bonds_ = self._sanitize_bonds(allowed_bonds)
 
-
     @staticmethod
     def from_preset(preset, **kwargs):
         """
@@ -1321,7 +1331,8 @@ class BondFractions(BaseFeaturizer):
         if self.allowed_bonds is None:
             self.fitted_bonds_ = sanitized
         else:
-            self.fitted_bonds_ = [b for b in sanitized if b in self.allowed_bonds]
+            self.fitted_bonds_ = [b for b in sanitized if
+                                  b in self.allowed_bonds]
             if len(self.fitted_bonds_) == 0:
                 warnings.warn("The intersection between the allowed bonds "
                               "and the fitted bonds is zero. There's no bonds"
@@ -1433,11 +1444,12 @@ class BondFractions(BaseFeaturizer):
         Ensure the Featurizer has been fit to the dataframe
         """
         if self.fitted_bonds_ is None:
-            raise NotFittedError('BondFractions must have a list of allowed bonds.'
-                                 ' Either pass in a list of bonds to the '
-                                 'initializer with allowed_bonds, use "fit" with'
-                                 ' a list of structures, or do both to sets the '
-                                 'intersection of the two as the allowed list.')
+            raise NotFittedError(
+                'BondFractions must have a list of allowed bonds.'
+                ' Either pass in a list of bonds to the '
+                'initializer with allowed_bonds, use "fit" with'
+                ' a list of structures, or do both to sets the '
+                'intersection of the two as the allowed list.')
 
     def _sanitize_bonds(self, bonds):
         """
@@ -1547,7 +1559,8 @@ class BondFractions(BaseFeaturizer):
         abonds_species = {v: k for k, v in abonds_species.items()}
 
         for lb in local_bonds.keys():
-            local_bonds[lb] = 0.0 if np.isnan(local_bonds[lb]) else local_bonds[lb]
+            local_bonds[lb] = 0.0 if np.isnan(local_bonds[lb]) else local_bonds[
+                lb]
 
             if lb in self.fitted_bonds_:
                 abonds_data[lb] += local_bonds[lb]
@@ -1571,7 +1584,7 @@ class BondFractions(BaseFeaturizer):
                     d0 = u_mends[0] - l_mends[0]
                     d1 = u_mends[1] - l_mends[1]
 
-                    d = (d0**2.0 + d1**2.0)**0.5
+                    d = (d0 ** 2.0 + d1 ** 2.0) ** 0.5
                     if not d_min:
                         d_min = d
                         nearest = [abss]
@@ -1586,7 +1599,7 @@ class BondFractions(BaseFeaturizer):
                         pass
 
                 # Divide bond fraction equally among all equiv. approximate bonds
-                bond_frac = local_bonds[lb]/len(nearest)
+                bond_frac = local_bonds[lb] / len(nearest)
                 for n in nearest:
                     # Get the name of the approximate bond from the map
                     ab = abonds_species[n]
@@ -1648,6 +1661,7 @@ class BagofBonds(BaseFeaturizer):
             how bonds are represented in the dataframe.
 
     """
+
     def __init__(self, coulomb_matrix=CoulombMatrix(), token=' - '):
         self.coulomb_matrix = coulomb_matrix
         self.token = token
@@ -1678,7 +1692,7 @@ class BagofBonds(BaseFeaturizer):
         unpadded_bobs = [self.bag(s, return_baglens=True) for s in X]
         bonds = [list(bob.keys()) for bob in unpadded_bobs]
         bonds = np.unique(sum(bonds, []))
-        baglens = [0]*len(bonds)
+        baglens = [0] * len(bonds)
 
         for i, bond in enumerate(bonds):
             for bob in unpadded_bobs:
@@ -1688,7 +1702,7 @@ class BagofBonds(BaseFeaturizer):
         self.baglens = dict(zip(bonds, baglens))
         # Sort the bags by bag length, with the shortest coming first.
         self.ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
-                                    key=lambda bl: bl[1])]
+                                                   key=lambda bl: bl[1])]
         return self
 
     def bag(self, s, return_baglens=False):
@@ -1785,7 +1799,7 @@ class BagofBonds(BaseFeaturizer):
                                                         baglen_fit))
             elif baglen_s < baglen_fit:
                 padded_bob[bond] = unpadded_bob[bond] + \
-                                   [0.0]*(baglen_fit - baglen_s)
+                                   [0.0] * (baglen_fit - baglen_s)
             else:
                 padded_bob[bond] = unpadded_bob[bond]
 
@@ -1867,7 +1881,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
     """
 
     def __init__(self, weight='area',
-                  stats=("minimum", "maximum", "range", "mean", "avg_dev")):
+                 stats=("minimum", "maximum", "range", "mean", "avg_dev")):
         self.weight = weight
         self.stats = stats
 
@@ -1880,14 +1894,14 @@ class StructuralHeterogeneity(BaseFeaturizer):
         #   variation within each cell
         mean_bond_lengths = np.zeros((len(strc),))
         bond_length_var = np.zeros_like(mean_bond_lengths)
-        for i,nn in enumerate(nns):
+        for i, nn in enumerate(nns):
             weights = [n['weight'] for n in nn]
             lengths = [n['poly_info']['face_dist'] * 2 for n in nn]
             mean_bond_lengths[i] = PropertyStats.mean(lengths, weights)
 
             # Compute the mean absolute deviation of the bond lengths
             bond_length_var[i] = PropertyStats.avg_dev(lengths, weights) / \
-                mean_bond_lengths[i]
+                                 mean_bond_lengths[i]
 
         # Normalize the bond lengths by the average of the whole structure
         #   This is done to make the attributes length-scale-invariant
@@ -1901,7 +1915,8 @@ class StructuralHeterogeneity(BaseFeaturizer):
 
         # Compute the variance in volume
         cell_volumes = [sum(x['poly_info']['volume'] for x in nn) for nn in nns]
-        features.append(PropertyStats.avg_dev(cell_volumes) / np.mean(cell_volumes))
+        features.append(
+            PropertyStats.avg_dev(cell_volumes) / np.mean(cell_volumes))
 
         return features
 
@@ -2024,10 +2039,11 @@ class ChemicalOrdering(BaseFeaturizer):
     def featurize(self, strc):
         # Shortcut: Return 0 if there is only 1 type of atom
         if len(strc.composition) == 1:
-            return [0]*len(self.shells)
+            return [0] * len(self.shells)
 
         # Get a list of types
-        elems, fracs = zip(*strc.composition.element_composition.fractional_composition.items())
+        elems, fracs = zip(
+            *strc.composition.element_composition.fractional_composition.items())
 
         # Precompute the list of NNs in the structure
         voro = VoronoiNN(weight=self.weight)
@@ -2056,7 +2072,7 @@ class ChemicalOrdering(BaseFeaturizer):
 
                 # Compute the ordering parameter
                 ordering[site_idx, :] = 1 - ordering[site_idx, :] / \
-                                            total_weight / np.array(fracs)
+                                        total_weight / np.array(fracs)
 
             # Compute the average ordering for the entire structure
             output.append(np.abs(ordering).mean())
@@ -2064,7 +2080,8 @@ class ChemicalOrdering(BaseFeaturizer):
         return output
 
     def feature_labels(self):
-        return ["mean ordering parameter shell {}".format(n) for n in self.shells]
+        return ["mean ordering parameter shell {}".format(n) for n in
+                self.shells]
 
     def citations(self):
         return ["@article{Ward2017,"
@@ -2197,27 +2214,32 @@ class JARVISML(BaseFeaturizer):
     Find details in:
     https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
     """
-    def __init__(self):
 
-        with open("/Users/ardunn/alex/lbl/projects/common_env/dev_codes/matminer/matminer/matminer/featurizers/jarvis/element_charges.json", "r") as f:
+    def __init__(self):
+        basedir = os.path.dirname(os.path.realpath(__file__))
+        jdir = os.path.join(basedir , "jarvis/")
+        chgfile = os.path.join(jdir, "element_charges.json")
+        chemfile = os.path.join(jdir, "element_chem.json")
+
+        with open(chgfile,  "r") as f:
             self.el_chrg_json = json.load(f)
-        with open("/Users/ardunn/alex/lbl/projects/common_env/dev_codes/matminer/matminer/matminer/featurizers/jarvis/element_chem.json", "r") as f:
+        with open(chemfile, "r") as f:
             self.el_chem_json = json.load(f)
 
     def featurize(self, s):
-        return self.get_comp_descp(s, print_names=True)
+        return self.get_cfids(s, print_names=False)
 
     def feature_labels(self):
-        return self.get_comp_descp(s, print_names=True)
+        return self.get_cfids(s, print_names=True)
 
     def citations(self):
         pass
 
     def implementors(self):
-        pass
+        return ["Alex Dunn"]
 
-    def get_comp_descp(self, struct, jcell=True, jmean_chem=True, jmean_chg=True,
-                       jrdf=False, jrdf_adf=True, print_names=False):
+    def get_cfids(self, struct, jcell=True, jmean_chem=True, jmean_chg=True,
+                  jrdf=False, jrdf_adf=True, print_names=False):
         """
         Get chemo-structural CFID decriptors
 
@@ -2233,19 +2255,18 @@ class JARVISML(BaseFeaturizer):
               cat: catenated final descriptors
         """
         cat = []
-        # try:
         s = self.get_effective_structure(struct)
         cell = []
         mean_chem = []
         rdf = []
-        adf = []
+        # adf = []
         nn = []
         mean_chg = []
         adfa = []
         adfb = []
         ddf = []
 
-        if jmean_chem == True:
+        if jmean_chem:
             comp = s.composition
             el_dict = comp.get_el_amt_dict()
             arr = []
@@ -2253,46 +2274,36 @@ class JARVISML(BaseFeaturizer):
                 des = self.get_descrp_arr(k)
                 arr.append(des)
             mean_chem = np.mean(arr, axis=0)
-            # print ('mean_chem',len(mean_chem))
 
-        if jcell == True:
+        if jcell:
             v_pa = round(float(s.volume) / float(s.composition.num_atoms), 5)
             logv_pa = round(
-                math.log(float(s.volume) / float(s.composition.num_atoms)),
-                5)
+                math.log(float(s.volume) / float(s.composition.num_atoms)), 5)
             pf = round(self.packing_fraction(s), 5)
             density = round(s.density, 5)
             cell = np.array([v_pa, logv_pa, pf, density])
-            # print ('jcell',len(cell))
 
-        if jrdf == True:
-            distrdf, bins, bo = self.get_rdf(s=s)
+        if jrdf:
+            distrdf, bins, bo = self.get_rdf(structure=s)
             rdf = np.array(distrdf)
             # print ('rdf',len(rdf))
 
-        if jrdf_adf == True:
-            adfa, adfb, ddf, rdf, nn = self.rdf_ang_dist(s=s)
+        if jrdf_adf:
+            adfa, adfb, ddf, rdf, nn = self.rdf_ang_dist(structure=s)
             adfa = np.array(adfa)
             adfb = np.array(adfb)
             rdf = np.array(rdf)
             ddf = np.array(ddf)
             nn = np.array(nn)
-            # print ('adfa',len(adfa))
-            # print ('ddf',len(ddf))
-            # print ('adfb',len(adfb))
-            # print ('rdf',len(rdf))
-            # print ('nn',len(nn))
 
-        if jmean_chg == True:
-
+        if jmean_chg:
             chgarr = []
             for k, v in el_dict.items():
                 chg = self.get_chgdescrp_arr(k)
                 chgarr.append(chg)
             mean_chg = np.mean(chgarr, axis=0)
-            # print ('mean_chg',len(mean_chg))
 
-        if print_names == True:
+        if print_names:
             nmes = []
             chem_nm = self.get_descrp_arr_name()
             for d, nm in zip(
@@ -2308,7 +2319,6 @@ class JARVISML(BaseFeaturizer):
                             tag = str(nm) + str('_') + str(ff)
                         nmes.append(str(tag))
             cat = np.array(cat).astype(float)
-            # print (nmes,len(nmes))
             return nmes
         else:
             for d, nm in zip(
@@ -2319,120 +2329,14 @@ class JARVISML(BaseFeaturizer):
                     for ff, dd in enumerate(d):
                         cat.append(dd)
             cat = np.array(cat).astype(float)
-            ##except:
-        # pass
         return cat
 
-    def get_chemonly(self, string=''):
-        """
-        Get only mean chemical descriptors for a chemical formula, say Al2O3
-
-        Args:
-             string: chemical formula, say Al2O3, NaCl etc.
-        Returns:
-               mean_chem: average chemical descriptors
-        """
-        comp = Composition(string)
-        el_dict = comp.get_el_amt_dict()
-        arr = []
-        for k, v in el_dict.items():
-            des = self.get_descrp_arr(k)
-            arr.append(des)
-        mean_chem = np.mean(arr, axis=0)
-        return mean_chem
-
-    @staticmethod
-    def get_effective_structure(s=None, tol=8.0):
-        """
-        Check if there is vacuum, if so get actual size of the structure
-        and the add vaccum of size tol to make sure structures
-        are independent of user defined vacuum
-
-        Args:
-             s: Structure object
-             tol: vacuum tolerance
-        Returns:
-               s: re-structure structure with tol vacuum
-        """
-        coords = s.cart_coords
-        range_x = max(coords[:, 0]) - min(coords[:, 0])
-        range_y = max(coords[:, 1]) - min(coords[:, 1])
-        range_z = max(coords[:, 2]) - min(coords[:, 2])
-        a = s.lattice.matrix[0][0]
-        b = s.lattice.matrix[1][1]
-        c = s.lattice.matrix[2][2]
-        # print 'range_x=max',range_x
-        if abs(a - range_x) > tol: a = range_x + tol
-        if abs(b - range_y) > tol: b = range_y + tol
-        if abs(c - range_z) > tol: c = range_z + tol
-        # print 'abc',a,b,c
-        arr = Lattice([[a, s.lattice.matrix[0][1], s.lattice.matrix[0][2]],
-                       [s.lattice.matrix[1][0], b, s.lattice.matrix[1][2]],
-                       [s.lattice.matrix[2][0], s.lattice.matrix[2][1], c]])
-        s = Structure(arr, s.species, coords, coords_are_cartesian=True)
-        return s
-
-    @staticmethod
-    def el_combs(structure):
-        """
-        Get element combinations for a Structure object
-
-        Args:
-            structure: Structure object
-        Returns:
-               comb: combinations
-          """
-        sym = structure.symbol_set
-        tmp = map('-'.join, itertools.product(sym, repeat=2))
-        comb = list(set([str('-'.join(sorted(i.split('-')))) for i in tmp]))
-        return comb
-
-    @staticmethod
-    def flatten_out(arr=[], tol=0.1):
-        """
-        Determine first cut-off
-
-        Args:
-             arr: array
-             tol: toelrance
-        Return:
-              rcut: cut-off for a given tolerance tol,
-              because sometimes RDF peaks could be very close
-        """
-
-        rcut_buffer = tol
-        io1 = 0
-        io2 = 1
-        io3 = 2
-        delta = arr[io2] - arr[io1]
-
-        while delta < rcut_buffer and io3 < len(arr):
-            io1 = io1 + 1
-            io2 = io2 + 1
-            io3 = io3 + 1
-            delta = arr[io2] - arr[io1]
-        # print ('arr',len(arr),io1,io2,io3)
-        rcut = (arr[io2] + arr[io1]) / float(2.0)
-        return rcut
-
-    @staticmethod
-    def smooth_kde(x, y):
-        """
-        For making smooth distributions
-        """
-        denn = gaussian_kde(y)
-        denn.covariance_factor = lambda: .25
-        denn._compute_covariance()
-        xs = np.linspace(0, max(x), 100)
-        kde = denn(xs)
-        return kde
-
-    def get_prdf(self, s=None, cutoff=10.0, intvl=0.1):
+    def get_prdf(self, structure=None, cutoff=10.0, intvl=0.1):
         """
         Get partial radial distribution function
 
         Args:
-             s: Structure object
+             structure: Structure object
              cutoff: maximum cutoff in Angstrom
              intvl: bin-size
              plot_prdf: whether to plot PRDF
@@ -2441,15 +2345,14 @@ class JARVISML(BaseFeaturizer):
               max-cutoff to ensure all the element-combinations are included
         """
 
-        neighbors_lst = s.get_all_neighbors(cutoff)
-        comb = self.el_combs(
-            structure=s)  # [str(i[0])+str('-')+str(i[1]) for i in list(itertools.product(sps, repeat=2))]
+        neighbors_lst = structure.get_all_neighbors(cutoff)
+        comb = self.el_combs(structure=structure)
         info = {}
         for c in comb:
             for i, ii in enumerate(neighbors_lst):
                 for j in ii:
-                    comb1 = str(s[i].specie) + str('-') + str(j[0].specie)
-                    comb2 = str(j[0].specie) + str('-') + str(s[i].specie)
+                    comb1 = str(structure[i].specie) + str('-') + str(j[0].specie)
+                    comb2 = str(j[0].specie) + str('-') + str(structure[i].specie)
                     if comb1 == c or comb2 == c:
                         info.setdefault(c, []).append(j[1])
         for i in info.items():
@@ -2461,13 +2364,13 @@ class JARVISML(BaseFeaturizer):
                                                 density=False)
             shell_vol = 4.0 / 3.0 * math.pi * (
                     np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
-            number_density = s.num_sites / s.volume
+            number_density = structure.num_sites / structure.volume
             rdf = dist_hist / shell_vol / number_density / len(neighbors_lst)
             # newy=smooth_kde(dist_bins[:-1],rdf)
         cut_off = {}
 
         for i, j in info.items():
-            cut_off[i] = self.flatten_out(arr=j, tol=0.1)
+            cut_off[i] = self.flatten(arr=j, tol=0.1)
         # print 'cut_off',cut_off
         # for i,j in info.items():
         #   print
@@ -2475,42 +2378,12 @@ class JARVISML(BaseFeaturizer):
         #   print
         return max(cut_off.items(), key=itemgetter(1))[1]
 
-    @staticmethod
-    def get_rdf(s=None, cutoff=10.0, intvl=0.1):
-        """
-        Get total radial distribution function
-
-        Args:
-             s: Structure object
-             cutoff: maximum distance for binning
-             intvl: bin-size
-        Returns:
-               bins, distribution
-        """
-        neighbors_lst = s.get_all_neighbors(cutoff)
-        all_distances = np.concatenate(tuple(map(lambda x: \
-                                                     [itemgetter(1)(e) for e in
-                                                      x],
-                                                 neighbors_lst)))
-        rdf_dict = {}
-        dist_hist, dist_bins = np.histogram(all_distances, \
-                                            bins=np.arange(0, cutoff + intvl,
-                                                           intvl),
-                                            density=False)  # equivalent to bon-order
-        shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) \
-                                      - np.power(dist_bins[:-1], 3))
-        number_density = s.num_sites / s.volume
-        rdf = dist_hist / shell_vol / number_density / len(neighbors_lst)
-        return dist_bins[:-1], [round(i, 4) for i in rdf], dist_hist / float(
-            len(s))  # [{'distances': dist_bins[:-1], 'distribution': rdf}]
-        # bins,rdf,nearest neighbour
-
-    def rdf_ang_dist(self, s='', c_size=10.0, max_cut=5.0):
+    def rdf_ang_dist(self, structure='', c_size=10.0, max_cut=5.0):
         """
         Get radial and angular distribution functions
 
         Args:
-            s: Structure object
+            structure: Structure object
             c_size: max. cell size
             plot: whether to plot distributions
             max_cut: max. bond cut-off for angular distribution
@@ -2522,12 +2395,12 @@ class JARVISML(BaseFeaturizer):
              Radial distribution funcion
              Bond order distribution
         """
-        x, y, z = self.get_rdf(s)
+        x, y, z = self.get_rdf(structure)
         arr = []
         for i, j in zip(x, z):
             if j > 0.0:
                 arr.append(i)
-        box = s.lattice.matrix
+        box = structure.lattice.matrix
         rcut_buffer = 0.11
         io1 = 0
         io2 = 1
@@ -2540,32 +2413,21 @@ class JARVISML(BaseFeaturizer):
             io2 = io2 + 1
             io3 = io3 + 1
             delta = arr[io2] - arr[io1]
-        # print 'here2'
         rcut1 = (arr[io2] + arr[io1]) / float(2.0)
-        # print "arr=",arr[0],arr[1],arr[2],arr[3]
-        rcut = self.get_prdf(s=s)  # (arr[io2]+arr[io1])/float(2.0)
-        # print "rcut=",rcut,"rcut1=",rcut1
-        # print io3,io2,len(arr)
+        rcut = self.get_prdf(structure=structure)
         delta = arr[io3] - arr[io2]
         while (delta < rcut_buffer and arr[io3] < max_cut and arr[
             io2] < max_cut):
             io2 = io2 + 1
             io3 = io3 + 1
-            # print arr[io3],arr[io2],io3,io2
-            # print arr[io3],arr[io2]
             delta = arr[io3] - arr[io2]
         rcut2 = float(arr[io3] + arr[io2]) / float(2.0)
-        # print "rcut2=",rcut2
-
-        # print 'here3'
         dim1 = int(float(c_size) / float(max(abs(box[0])))) + 1
         dim2 = int(float(c_size) / float(max(abs(box[1])))) + 1
         dim3 = int(float(c_size) / float(max(abs(box[2])))) + 1
         dim = [dim1, dim2, dim3]
-        # rcut2=(arr[2]+arr[3])/2.0
         dim = np.array(dim)
-        coords = s.frac_coords  # get_frac(s.cart_coords,s.lattice.matrix) #s.frac_coords
-
+        coords = structure.frac_coords
         lat = np.zeros((3, 3))
         lat[0][0] = dim[0] * box[0][0]
         lat[0][1] = dim[0] * box[0][1]
@@ -2576,16 +2438,11 @@ class JARVISML(BaseFeaturizer):
         lat[2][0] = dim[2] * box[2][0]
         lat[2][1] = dim[2] * box[2][1]
         lat[2][2] = dim[2] * box[2][2]
-        # print "lat="
-        # print lat
-        # print ""
-
-        all_symbs = [i.symbol for i in s.species]
+        all_symbs = [i.symbol for i in structure.species]
         nat = len(coords)
         new_nat = nat * dim[0] * dim[1] * dim[2]
         new_coords = np.zeros((new_nat, 3))
-        new_symbs = []  # np.chararray((new_nat))
-
+        new_symbs = []
         count = 0
         for i in range(nat):
             for j in range(dim[0]):
@@ -2599,8 +2456,6 @@ class JARVISML(BaseFeaturizer):
                             dim[2])
                         new_symbs.append(all_symbs[i])
                         count = count + 1
-
-        # print 'here4'
         nat = new_nat
         coords = new_coords
         znm = 0
@@ -2614,8 +2469,6 @@ class JARVISML(BaseFeaturizer):
         bondy = np.zeros((max_n, nat))
         bondz = np.zeros((max_n, nat))
         dim05 = [float(1 / 2.) for i in dim]
-        # print "dim",dim
-        # print "dim05",dim05
         for i in range(nat):
             for j in range(i + 1, nat):
                 diff = coords[i] - coords[j]
@@ -2639,7 +2492,6 @@ class JARVISML(BaseFeaturizer):
                     bondx[nn_index1][j] = -new_diff[0]
                     bondy[nn_index1][j] = -new_diff[1]
                     bondz[nn_index1][j] = -new_diff[2]
-
         ang_at = {}
 
         for i in range(nat):
@@ -2663,21 +2515,12 @@ class JARVISML(BaseFeaturizer):
                     else:
                         znm = znm + 1
         angs = np.array([float(i) for i in ang_at.keys()])
-        # print "Angs",angs
         norm = np.array(
             [float(len(i)) / float(len(set(i))) for i in ang_at.values()])
-        # print ('angs',angs,len(angs))
-        # angs_np=np.array(angs)
-        # print ('angs',angs_np,len(angs_np))
-        # print ('norm',norm.shape,angs.shape)
         ang_hist1, ang_bins1 = np.histogram(angs, weights=norm,
                                             bins=np.arange(1, 181.0, 1),
                                             density=False)
 
-        # print 'here5'
-
-        # print "rcut1=",rcut1
-        # Dihedral angle distribution
         znm = 0
         bond_arr = []
         deg_arr = []
@@ -2700,7 +2543,6 @@ class JARVISML(BaseFeaturizer):
                 if dd < rcut1 and dd >= 0.1:
                     nn_index = nn[i]  # index of the neighbor
                     nn[i] = nn[i] + 1
-                    # print nn_index
                     dist[nn_index][i] = dd  # nn_index counter id
                     nn_id[nn_index][i] = j  # exact id
                     bondx[nn_index, i] = new_diff[0]
@@ -2713,8 +2555,6 @@ class JARVISML(BaseFeaturizer):
                     bondx[nn_index1, j] = -new_diff[0]
                     bondy[nn_index1, j] = -new_diff[1]
                     bondz[nn_index1, j] = -new_diff[2]
-        # print 'here6',rcut2
-
         dih_at = {}
         for i in range(nat):
             for in1 in range(nn[i]):
@@ -2763,13 +2603,11 @@ class JARVISML(BaseFeaturizer):
                                     theta = math.degrees(math.atan2(
                                         np.linalg.norm(v2) * np.dot(v1, v23),
                                         np.dot(v12, v23)))
-                                    if theta < 0.00001: theta = - theta
-                                    # print "theta=",theta
+                                    if theta < 0.00001:
+                                        theta = - theta
                                     dih_at.setdefault(round(theta, 3),
                                                       []).append(i)
         dih = np.array([float(i) for i in dih_at.keys()])
-        dih1 = set(dih)
-        # print "dih",dih1
         norm = np.array(
             [float(len(i)) / float(len(set(i))) for i in dih_at.values()])
 
@@ -2777,7 +2615,7 @@ class JARVISML(BaseFeaturizer):
                                             bins=np.arange(1, 181.0, 1),
                                             density=False)
 
-        ### 2nd neighbors
+        # 2nd neighbors
         znm = 0
         bond_arr = []
         deg_arr = []
@@ -2812,9 +2650,7 @@ class JARVISML(BaseFeaturizer):
                     bondx[nn_index1, j] = -new_diff[0]
                     bondy[nn_index1, j] = -new_diff[1]
                     bondz[nn_index1, j] = -new_diff[2]
-
         ang_at = {}
-
         for i in range(nat):
             for in1 in range(nn[i]):
                 j1 = nn_id[in1][i]
@@ -2831,7 +2667,6 @@ class JARVISML(BaseFeaturizer):
                         if cos >= 1.0:
                             cos = cos - 0.000001
                         deg = math.degrees(math.acos(cos))
-                        # ang_at.setdefault(deg, []).append(i)
                         ang_at.setdefault(round(deg, 3), []).append(i)
                     else:
                         znm = znm + 1
@@ -2842,7 +2677,8 @@ class JARVISML(BaseFeaturizer):
         ang_hist2, ang_bins2 = np.histogram(angs, weights=norm,
                                             bins=np.arange(1, 181.0, 1),
                                             density=False)
-        return ang_hist1, ang_hist2, dih_hist1, y, z  # adfa,adfb,ddf,rdf,bondo
+        # adfa, adfb, ddf, rdf, bondo
+        return ang_hist1, ang_hist2, dih_hist1, y, z
 
     def get_chgdescrp_arr(self, elm=''):
         """
@@ -2872,30 +2708,32 @@ class JARVISML(BaseFeaturizer):
         arr = []
         try:
             d = self.el_chem_json[elm]
-            arr = []
-            for k, v in d.items():
-                arr.append(k)
+            arr = list(d.keys())
+            # arr = []
+            # for k, v in d.items():
+            #     arr.append(k)
         except:
             pass
         return arr
 
-    def get_descrp_arr(self, elm=''):
+    def get_descrp_arr(self, element):
         """
         Get chemical descriptors for an element
 
         Args:
-             elm: element name
+             element: element name
         Returns:
                arr: array value
         """
-        arr = []
         try:
-            d = self.el_chem_json[elm]
+            d = self.el_chem_json[element]
+            # arr = np.array(list(d.values())).astype(float)
             arr = []
             for k, v in d.items():
                 arr.append(v)
             arr = np.array(arr).astype(float)
-        except:
+        except Exception as E:
+            print(E)
             pass
         return arr
 
@@ -2915,7 +2753,140 @@ class JARVISML(BaseFeaturizer):
         pf = np.array([4 * math.pi * total_rad / (3 * s.volume)])
         return pf[0]
 
+    @staticmethod
+    def get_effective_structure(s=None, tol=8.0):
+        """
+        Check if there is vacuum, if so get actual size of the structure
+        and the add vaccum of size tol to make sure structures
+        are independent of user defined vacuum
 
+        Args:
+             s: Structure object
+             tol: vacuum tolerance
+        Returns:
+               s: re-structure structure with tol vacuum
+        """
+        coords = s.cart_coords
+        range_x = max(coords[:, 0]) - min(coords[:, 0])
+        range_y = max(coords[:, 1]) - min(coords[:, 1])
+        range_z = max(coords[:, 2]) - min(coords[:, 2])
+        a = s.lattice.matrix[0][0]
+        b = s.lattice.matrix[1][1]
+        c = s.lattice.matrix[2][2]
+        if abs(a - range_x) > tol: a = range_x + tol
+        if abs(b - range_y) > tol: b = range_y + tol
+        if abs(c - range_z) > tol: c = range_z + tol
+        arr = Lattice([[a, s.lattice.matrix[0][1], s.lattice.matrix[0][2]],
+                       [s.lattice.matrix[1][0], b, s.lattice.matrix[1][2]],
+                       [s.lattice.matrix[2][0], s.lattice.matrix[2][1], c]])
+        s = Structure(arr, s.species, coords, coords_are_cartesian=True)
+        return s
+
+    @staticmethod
+    def el_combs(structure):
+        """
+        Get element combinations for a Structure object
+
+        Args:
+            structure: Structure object
+        Returns:
+               comb: combinations
+          """
+        sym = structure.symbol_set
+        tmp = map('-'.join, itertools.product(sym, repeat=2))
+        comb = list(set([str('-'.join(sorted(i.split('-')))) for i in tmp]))
+        return comb
+
+    @staticmethod
+    def flatten(arr, tol=0.1):
+        """
+        Determine first cut-off
+
+        Args:
+             arr: array
+             tol: toelrance
+        Return:
+              rcut: cut-off for a given tolerance tol,
+              because sometimes RDF peaks could be very close
+        """
+
+        rcut_buffer = tol
+        io1 = 0
+        io2 = 1
+        io3 = 2
+        delta = arr[io2] - arr[io1]
+
+        while delta < rcut_buffer and io3 < len(arr):
+            io1 = io1 + 1
+            io2 = io2 + 1
+            io3 = io3 + 1
+            delta = arr[io2] - arr[io1]
+        # print ('arr',len(arr),io1,io2,io3)
+        rcut = (arr[io2] + arr[io1]) / float(2.0)
+        return rcut
+
+    @staticmethod
+    def smooth_kde(x, y):
+        """
+        For making smooth distributions
+        """
+        denn = gaussian_kde(y)
+        denn.covariance_factor = lambda: .25
+        denn._compute_covariance()
+        xs = np.linspace(0, max(x), 100)
+        kde = denn(xs)
+        return kde
+
+    @staticmethod
+    def get_rdf(structure=None, cutoff=10.0, intvl=0.1):
+        """
+        Get total radial distribution function
+
+        Args:
+             structure: Structure object
+             cutoff: maximum distance for binning
+             intvl: bin-size
+        Returns:
+               bins, distribution
+        """
+        neighbors_lst = structure.get_all_neighbors(cutoff)
+        all_distances = np.concatenate(tuple(map(lambda x: \
+                                                     [itemgetter(1)(e) for e in
+                                                      x],
+                                                 neighbors_lst)))
+        rdf_dict = {}
+        dist_hist, dist_bins = np.histogram(all_distances, \
+                                            bins=np.arange(0, cutoff + intvl,
+                                                           intvl),
+                                            density=False)  # equivalent to bon-order
+        shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) \
+                                           - np.power(dist_bins[:-1], 3))
+        number_density = structure.num_sites / structure.volume
+        rdf = dist_hist / shell_vol / number_density / len(neighbors_lst)
+        bins = dist_bins[:-1]
+        dist = [round(i, 4) for i in rdf]
+        scaled_dist = dist_hist / float(len(structure))
+        return bins, dist, scaled_dist
+
+
+
+# def get_chemonly(self, string=''):
+#     """
+#     Get only mean chemical descriptors for a chemical formula, say Al2O3
+#
+#     Args:
+#          string: chemical formula, say Al2O3, NaCl etc.
+#     Returns:
+#            mean_chem: average chemical descriptors
+#     """
+#     comp = Composition(string)
+#     el_dict = comp.get_el_amt_dict()
+#     arr = []
+#     for k, v in el_dict.items():
+#         des = self.get_descrp_arr(k)
+#         arr.append(des)
+#     mean_chem = np.mean(arr, axis=0)
+#     return mean_chem
 
 
 if __name__ == "__main__":
@@ -2927,6 +2898,13 @@ if __name__ == "__main__":
     jml = JARVISML()
 
     s = df["structure"].iloc[0]
+    s2 = df["structure"].iloc[49]
     print("featurizing...")
     des = jml.featurize(s)
+    print(des)
     print(len(des))
+
+
+    des2 = jml.featurize(s2)
+    print(des2)
+    print(len(des2))
