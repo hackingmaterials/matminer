@@ -2208,13 +2208,14 @@ class XRDPowderPattern(BaseFeaturizer):
         return ['Anubhav Jain', 'Matthew Horton']
 
 
-class JARVISML(BaseFeaturizer):
+class JarvisCFID(BaseFeaturizer):
     """
     Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML.
 
     Chemo-structural descriptors from five different sub-methods,cincluding
     pairwise radial, nearest neighbor, bond-angle, dihedral-angle and
-    core-charge distributions.
+    core-charge distributions. With all descriptors enabled, there are 1,557
+    features per structure.
 
     Adapted from the nist/jarvis package hosted at:
     https://github.com/usnistgov/jarvis
@@ -2222,7 +2223,15 @@ class JARVISML(BaseFeaturizer):
     Find details at: https://journals.aps.org/prmaterials/abstract/10.1103/
         PhysRevMaterials.2.083801
 
-
+    Args/Features:
+        use_cell (bool): Use structure cell descriptors (4 features, based
+            on DensityFeatures and log volume per atom).
+        use_chem (bool): Use chemical composition descriptors (438 features)
+        use_chg (bool): Use core charge descriptors (378 features)
+        use_adf (bool): Use angular distribution function (179 features)
+        use_rdf (bool): Use radial distribution function (100 features)
+        use_ddf (bool): Use dihedral angle distribution function (179 features)
+        use_nn (bool): Use nearest neighbors (100 descriptors)
     """
 
     def __init__(self, use_cell=True, use_chem=True, use_chg=True, use_rdf=True,
@@ -2321,34 +2330,11 @@ class JARVISML(BaseFeaturizer):
                 descriptors.append(ddf)
             if self.use_nn:
                 descriptors.append(nn)
-
         flat = list(itertools.chain.from_iterable(descriptors))
         return np.array(flat).astype(float)
 
     def feature_labels(self):
         return self.labels
-
-    def citations(self):
-        return ["@article{PhysRevMaterials.2.083801, "
-                "title = {Machine learning with force-field-inspired "
-                "descriptors for materials: Fast screening and mapping "
-                "energy landscape},"
-                "author = {Choudhary, Kamal and DeCost, Brian and Tavazza, "
-                "Francesca},"
-                "journal = {Phys. Rev. Materials},"
-                "volume = {2},"
-                "issue = {8},"
-                "pages = {083801},"
-                "numpages = {8},"
-                "year = {2018},"
-                "month = {Aug},"
-                "publisher = {American Physical Society},"
-                "doi = {10.1103/PhysRevMaterials.2.083801}, "
-                "url = "
-                "{https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}}"]
-
-    def implementors(self):
-        return ["Alex Dunn"]
 
     def get_distributions(self, structure, c_size=10.0, max_cut=5.0):
         """
@@ -2482,6 +2468,7 @@ class JARVISML(BaseFeaturizer):
         ang_hist1, ang_bins1 = np.histogram(angs, weights=norm,
                                             bins=binrng,
                                             density=False)
+        # 1st neighbors
         nn = np.zeros((nat), dtype='int')
         max_n = 500  # maximum number of neighbors
         dist = np.zeros((max_n, nat))
@@ -2646,6 +2633,28 @@ class JARVISML(BaseFeaturizer):
             arr = []
         return arr
 
+    def citations(self):
+        return ["@article{PhysRevMaterials.2.083801, "
+                "title = {Machine learning with force-field-inspired "
+                "descriptors for materials: Fast screening and mapping "
+                "energy landscape},"
+                "author = {Choudhary, Kamal and DeCost, Brian and Tavazza, "
+                "Francesca},"
+                "journal = {Phys. Rev. Materials},"
+                "volume = {2},"
+                "issue = {8},"
+                "pages = {083801},"
+                "numpages = {8},"
+                "year = {2018},"
+                "month = {Aug},"
+                "publisher = {American Physical Society},"
+                "doi = {10.1103/PhysRevMaterials.2.083801}, "
+                "url = "
+                "{https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}}"]
+
+    def implementors(self):
+        return ["Alex Dunn"]
+
     def _cutoff_from_combinations(self, structure=None, cutoff=10.0):
         """
         Get the cutoff, ensuring that no elemental combination is left out.
@@ -2663,10 +2672,10 @@ class JARVISML(BaseFeaturizer):
         for c in comb:
             for i, ii in enumerate(neighbors_lst):
                 for j in ii:
-                    comb1 = str(structure[i].specie) + str('-') + str(
-                        j[0].specie)
-                    comb2 = str(j[0].specie) + str('-') + str(
-                        structure[i].specie)
+                    comb1 = str(structure[i].specie) + str('-') + \
+                            str(j[0].specie)
+                    comb2 = str(j[0].specie) + str('-') + \
+                            str(structure[i].specie)
                     if comb1 == c or comb2 == c:
                         info.setdefault(c, []).append(j[1])
         for i in info.items():
@@ -2771,24 +2780,28 @@ class JARVISML(BaseFeaturizer):
                        [s.lattice.matrix[1][0], b, s.lattice.matrix[1][2]],
                        [s.lattice.matrix[2][0], s.lattice.matrix[2][1], c]])
         s = Structure(arr, s.species, coords, coords_are_cartesian=True)
+        s.remove_oxidation_states()
         return s
 
 
 if __name__ == "__main__":
     from matminer.datasets.dataset_retrieval import load_dataset
+    from pymatgen import MPRester
+
 
     print("retrieving dataset")
     df = load_dataset("elastic_tensor_2015")
     # print("creating jarvisml")
-    jml = JARVISML()
+    jml = JarvisCFID()
     jml.set_n_jobs(1)
 
-    df = jml.featurize_dataframe(df, "structure")
-    print(df.shape)
-    print(df)
+    # df = jml.featurize_dataframe(df, "structure")
+    # print(df.shape)
+    # print(df)
 
     # s = df["structure"].iloc[0]
     # s2 = df["structure"].iloc[49]
+
     # print("featurizing...")
     # des = jml.featurize(s)
     # print(jml.feature_labels())
@@ -2799,3 +2812,8 @@ if __name__ == "__main__":
     # des2 = jml.featurize(s2)
     # print(des2)
     # print(len(des2))
+
+    s = MPRester().get_structure_by_material_id(material_id='mp-573697')
+    print(s)
+
+    print(jml.featurize(s))
