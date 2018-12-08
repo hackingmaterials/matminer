@@ -2247,7 +2247,7 @@ class JarvisCFID(BaseFeaturizer):
         self.use_nn = use_nn
 
         basedir = os.path.dirname(os.path.realpath(__file__))
-        jdir = os.path.join(basedir, "jarvis/")
+        jdir = os.path.join(basedir, "../utils/data_files/jarvis/")
         chgfile = os.path.join(jdir, "element_charges.json")
         chemfile = os.path.join(jdir, "element_chem.json")
 
@@ -2780,38 +2780,3 @@ class JarvisCFID(BaseFeaturizer):
         s = Structure(arr, s.species, coords, coords_are_cartesian=True)
         s.remove_oxidation_states()
         return s
-
-
-if __name__ == "__main__":
-    from matminer.datasets.dataset_retrieval import load_dataset
-    from pymatgen import MPRester
-
-
-    print("retrieving dataset")
-    df = load_dataset("elastic_tensor_2015")
-    # print("creating jarvisml")
-    jml = JarvisCFID()
-    jml.set_n_jobs(1)
-
-    # df = jml.featurize_dataframe(df, "structure")
-    # print(df.shape)
-    # print(df)
-
-    # s = df["structure"].iloc[0]
-    # s2 = df["structure"].iloc[49]
-
-    # print("featurizing...")
-    # des = jml.featurize(s)
-    # print(jml.feature_labels())
-    # print(len(jml.feature_labels()))
-    # print(des)
-    # print(len(des))
-    #
-    # des2 = jml.featurize(s2)
-    # print(des2)
-    # print(len(des2))
-
-    s = MPRester().get_structure_by_material_id(material_id='mp-573697')
-    print(s)
-
-    print(jml.featurize(s))
