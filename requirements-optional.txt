@@ -6,6 +6,3 @@ ase==3.14.1
 
 # MDF
 mdf_forge==0.6.1
-
-# JARVIS
-jarvis-tools=2018.11.7

@@ -2210,9 +2210,19 @@ class XRDPowderPattern(BaseFeaturizer):
 
 class JARVISML(BaseFeaturizer):
     """
-        Classical Force-field Inspired Descriptors (CFID)
-    Find details in:
-    https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
+    Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML.
+
+    Chemo-structural descriptors from five different sub-methods,cincluding
+    pairwise radial, nearest neighbor, bond-angle, dihedral-angle and
+    core-charge distributions.
+
+    Adapted from the nist/jarvis package hosted at:
+    https://github.com/usnistgov/jarvis
+
+    Find details at: https://journals.aps.org/prmaterials/abstract/10.1103/
+        PhysRevMaterials.2.083801
+
+
     """
 
     def __init__(self, use_cell=True, use_chem=True, use_chg=True, use_rdf=True,
@@ -2260,14 +2270,9 @@ class JARVISML(BaseFeaturizer):
 
         Args:
             s: Structure object
-            jcell: whether to use cell-size descriptors
-            jmean_chem: whether to use average chemical descriptors
-            jmean_chg: whether to use average charge distribution descriptors
-            jmean_rdf: whether to use radial distribution descriptors
-            jrdf_adf: whether to use radial as well as angle distribution descriptors
-            print_names: whether to print names of descriptors
+
         Returns:
-              cat: catenated final descriptors
+              (np.ndarray) Final descriptors
         """
         s = self._clean_structure(s)
         descriptors = []
@@ -2301,6 +2306,7 @@ class JARVISML(BaseFeaturizer):
 
         if any([self.use_rdf, self.use_adf, self.use_ddf, self.use_nn]):
             adf_1, adf_2, ddf, rdf, nn = self.get_distributions(structure=s)
+            # 1st and 2nd cutoff ADFs
             adf_1 = np.array(adf_1)
             adf_2 = np.array(adf_2)
             rdf = np.array(rdf)
@@ -2323,7 +2329,23 @@ class JARVISML(BaseFeaturizer):
         return self.labels
 
     def citations(self):
-        pass
+        return ["@article{PhysRevMaterials.2.083801, "
+                "title = {Machine learning with force-field-inspired "
+                "descriptors for materials: Fast screening and mapping "
+                "energy landscape},"
+                "author = {Choudhary, Kamal and DeCost, Brian and Tavazza, "
+                "Francesca},"
+                "journal = {Phys. Rev. Materials},"
+                "volume = {2},"
+                "issue = {8},"
+                "pages = {083801},"
+                "numpages = {8},"
+                "year = {2018},"
+                "month = {Aug},"
+                "publisher = {American Physical Society},"
+                "doi = {10.1103/PhysRevMaterials.2.083801}, "
+                "url = "
+                "{https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}}"]
 
     def implementors(self):
         return ["Alex Dunn"]
