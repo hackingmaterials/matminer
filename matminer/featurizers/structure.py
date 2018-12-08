@@ -2228,7 +2228,8 @@ class JarvisCFID(BaseFeaturizer):
             on DensityFeatures and log volume per atom).
         use_chem (bool): Use chemical composition descriptors (438 features)
         use_chg (bool): Use core charge descriptors (378 features)
-        use_adf (bool): Use angular distribution function (179 features)
+        use_adf (bool): Use angular distribution function (179 features x 2, one
+             set of features for each cutoff).
         use_rdf (bool): Use radial distribution function (100 features)
         use_ddf (bool): Use dihedral angle distribution function (179 features)
         use_nn (bool): Use nearest neighbors (100 descriptors)
