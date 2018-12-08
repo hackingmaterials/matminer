@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import pymatgen.analysis.local_env as pmg_le
 import scipy.constants as const
-from pymatgen import Structure, Lattice, Composition
+from pymatgen import Structure, Lattice
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
@@ -2290,7 +2290,7 @@ class JarvisCFID(BaseFeaturizer):
 
         if self.use_chem:
             arr = []
-            for k, v in el_dict.items():
+            for k in el_dict.keys():
                 des = self.get_chem(k)
                 arr.append(des)
             mean_chem = np.mean(arr, axis=0)
@@ -2308,7 +2308,7 @@ class JarvisCFID(BaseFeaturizer):
 
         if self.use_chg:
             chgarr = []
-            for k, v in el_dict.items():
+            for k in el_dict.keys():
                 chg = self.get_chg(k)
                 chgarr.append(chg)
             mean_chg = np.mean(chgarr, axis=0)
@@ -2466,9 +2466,8 @@ class JarvisCFID(BaseFeaturizer):
         norm = np.array(
             [float(len(i)) / float(len(set(i))) for i in ang_at.values()])
         binrng = np.arange(1, 181.0, 1)
-        ang_hist1, ang_bins1 = np.histogram(angs, weights=norm,
-                                            bins=binrng,
-                                            density=False)
+        ang_hist1, _ = np.histogram(angs, weights=norm, bins=binrng,
+                                    density=False)
         # 1st neighbors
         nn = np.zeros((nat), dtype='int')
         max_n = 500  # maximum number of neighbors
@@ -2537,9 +2536,8 @@ class JarvisCFID(BaseFeaturizer):
         dih = np.array([float(i) for i in dih_at.keys()])
         norm = np.array(
             [float(len(i)) / float(len(set(i))) for i in dih_at.values()])
-        dih_hist1, dih_bins1 = np.histogram(dih, weights=norm,
-                                            bins=np.arange(1, 181.0, 1),
-                                            density=False)
+        dih_hist1, _ = np.histogram(dih, weights=norm, bins=binrng,
+                                    density=False)
         # 2nd neighbors
         znm = 0
         nn = np.zeros((nat), dtype='int')
@@ -2594,9 +2592,8 @@ class JarvisCFID(BaseFeaturizer):
         angs = np.array([float(i) for i in ang_at.keys()])
         norm = np.array(
             [float(len(i)) / float(len(set(i))) for i in ang_at.values()])
-        ang_hist2, ang_bins2 = np.histogram(angs, weights=norm,
-                                            bins=np.arange(1, 181.0, 1),
-                                            density=False)
+        ang_hist2, _ = np.histogram(angs, weights=norm, bins=binrng,
+                                    density=False)
         # adf_1, adf_2, ddf, rdf, bond-order/nn
         return ang_hist1, ang_hist2, dih_hist1, y, z
 
@@ -2627,7 +2624,7 @@ class JarvisCFID(BaseFeaturizer):
         try:
             d = self.el_chem_json[element]
             arr = []
-            for k, v in d.items():
+            for v in d.values():
                 arr.append(v)
             arr = np.array(arr).astype(float)
         except (KeyError, IndexError):
