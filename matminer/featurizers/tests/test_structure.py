@@ -8,6 +8,7 @@ import unittest
 
 import numpy as np
 import pandas as pd
+from matminer.featurizers.utils.cgcnn import get_cgcnn_data
 from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure, Lattice, Molecule
@@ -22,7 +23,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
-    Dimensionality, XRDPowderPattern
+    Dimensionality, XRDPowderPattern, CGCNNFeaturizer
 
 
 class StructureFeaturesTest(PymatgenTest):
@@ -591,6 +592,32 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(pattern[44], 0.4083, places=2)
         self.assertEqual(len(pattern), 91)
         self.assertEqual(len(xpp.feature_labels()), 91)
+
+    def test_cgcnn_featurizer(self):
+        id_prop_data, embedding, struct_list = get_cgcnn_data()
+        atom_fea_len = 64
+        cgcnn_featurizer = CGCNNFeaturizer()
+        cgcnn_featurizer.fit(
+            X=struct_list, y=id_prop_data, use_pretrained=None, warm_start=None,
+            save_model=False, output_path=None, atom_init_fea=embedding,
+            train_size=5, val_size=2, test_size=3, atom_fea_len=atom_fea_len)
+        self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
+
+        for struct in struct_list:
+            result = cgcnn_featurizer.featurize(struct)
+            self.assertEqual(len(result), atom_fea_len)
+
+        id_prop_data, embedding, struct_list = get_cgcnn_data(type="regression")
+        cgcnn_featurizer = CGCNNFeaturizer()
+        cgcnn_featurizer.fit(
+            task="regression", X=struct_list, y=id_prop_data,
+            use_pretrained=None, warm_start=None, atom_fea_len=atom_fea_len,
+            save_model=False, output_path=None, atom_init_fea=embedding,
+            train_size=6, val_size=2, test_size=2)
+        cgcnn_featurizer.set_n_jobs(1)
+        result = cgcnn_featurizer.featurize_many(entries=struct_list)
+        self.assertEqual(np.array(result).shape,
+                         (len(struct_list), atom_fea_len))
 
 
 if __name__ == '__main__':
