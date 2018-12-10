@@ -1,15 +1,28 @@
 from __future__ import division, unicode_literals, print_function
 
 import itertools
+import os
+import traceback
 import warnings
 from collections import OrderedDict
 from math import pi
 from operator import itemgetter
+from random import sample
 
 import numpy as np
 import pandas as pd
 import pymatgen.analysis.local_env as pmg_le
 import scipy.constants as const
+import sys
+from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.site import OPSiteFingerprint, \
+    CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint, \
+    AverageBondAngle, AverageBondLength
+from matminer.featurizers.utils.cgcnn import filter_paras, Normalizer, \
+    CrystalGraphConvNetWrapper, DatasetWrapper, train, validate
+from matminer.featurizers.utils.stats import PropertyStats
+from matminer.utils.caching import get_all_nearest_neighbors
+from matminer.utils.utils import is_notebook
 from pymatgen import Structure
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
@@ -19,14 +32,8 @@ from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from scipy.stats import gaussian_kde
+from six import reraise
 from sklearn.exceptions import NotFittedError
-
-from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, \
-    CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint, \
-    AverageBondAngle, AverageBondLength
-from matminer.featurizers.utils.stats import PropertyStats
-from matminer.utils.caching import get_all_nearest_neighbors
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
@@ -830,9 +837,12 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                     characterizing s
         """
         s *= [3, 3, 3]
+        print("get_atom_ofms", s)
         ofms, counts = self.get_atom_ofms(s, True)
+        print("get_mean_ofm", s)
         mean_ofm = self.get_mean_ofm(ofms, counts)
         if self.flatten:
+            print(mean_ofm.A.flatten())
             return mean_ofm.A.flatten()
         else:
             return [mean_ofm.A]
@@ -2188,3 +2198,296 @@ class XRDPowderPattern(BaseFeaturizer):
 
     def implementors(self):
         return ['Anubhav Jain', 'Matthew Horton']
+
+
+class CGCNNFeaturizer(BaseFeaturizer):
+    # "CGCNNFeaturizer requires cgcnn and torch to be installed."
+    # "Please follow the install instructions in the cgcnn repo:"
+    # " https://github.com/txie-93/cgcnn")
+
+    def __init__(self):
+        self._best_model = None
+        self._latest_model = None
+
+    def fit(self, X, y, atom_init_fea,
+            use_pretrained=False, pretrained_name=None,
+            warm_start=False, warm_start_file=None, warm_start_latest=False,
+            save_model=True, output_path="/tmp/CGCNNFeaturizer",
+            **cgcnn_kwargs):
+        """
+        Args:
+            X (Series/list): An iterable of pymatgen Structure objects
+            y : target property that CGCNN aims to predict
+            use_pretrained: True of False. Whether use pretrained model.
+            pretrained_name: Which cgcnn pretrained model to use, only work
+                             if use_pretrained parameter is True.
+            warm_start: True of False. Whether warm start from a model.
+            warm_start_file: Where is warm start model, only work if warm_start
+                             parameter is True.
+            warm_start_latest: Warm start from latest model or best model.
+                               If true, warm start from latest model,
+                               otherwise, warm start from best model.
+            save_model: Whether save model to disk.
+            output_path: output path, save model and others.
+
+        Returns:
+            self
+
+        # TODO allow users to input the customized atomic vector
+        # TODO allow using the user-defined model?
+        """
+        from cgcnn.data import get_train_val_test_loader
+        import torch
+        import torch.nn as nn
+        from torch.optim.lr_scheduler import MultiStepLR
+
+        # init kwargs
+        self.init_kwargs(atom_init_fea, cgcnn_kwargs)
+
+        # load data and init model
+        self.dataset = DatasetWrapper(X, y, **self.dataset_kwargs)
+        model = self.init_model(cgcnn_kwargs=cgcnn_kwargs)
+
+        if use_pretrained:
+            self.use_pretrained_model(model=model,
+                                      pretrained_name=pretrained_name)
+            return self
+        else:
+            train_loader, val_loader, test_loader = get_train_val_test_loader(
+                self.dataset, **self.dataloader_kwargs)
+
+            # init normalizer, optimizer
+            normalizer = self.init_normalizer(dataset=self.dataset)
+            optimizer = self.init_optimizer(cgcnn_kwargs, model)
+
+            if self.cuda:
+                model.cuda()
+
+            # define loss func
+            criterion = nn.NLLLoss() if self.task == 'classification' \
+                else nn.MSELoss()
+
+            # init epochs parameters
+            start_epoch, best_epoch = 0, 0
+            best_mae_error = 1e10 if self.task == 'regression' else 0.
+
+            # optionally resume from a checkpoint
+            if warm_start:
+                if os.path.isfile(warm_start_file):
+                    checkpoint = torch.load(warm_start_file)
+                    if warm_start_latest:
+                        # load best model and set it to self best_model
+                        model.load_state_dict(checkpoint['best_state_dict'])
+                        self._best_model = model
+
+                        # TODO: verify if load_stat can change self._best_model
+                        # warm start from latest model
+                        model.load_state_dict(checkpoint['state_dict'])
+                        start_epoch = checkpoint['epoch']
+                    else:
+                        start_epoch = checkpoint['best_epoch'] + 1
+                        model.load_state_dict(checkpoint['best_state_dict'])
+                        self._best_model = model
+                    best_epoch = checkpoint['best_epoch']
+                    best_mae_error = checkpoint['best_mae_error']
+                    optimizer.load_state_dict(checkpoint['optimizer'])
+                    normalizer.load_state_dict(checkpoint['normalizer'])
+                    print("Warm start from '{}' (epoch {})"
+                          .format(warm_start_file, checkpoint['epoch']))
+                else:
+                    warnings.warn("Warm start file not found.")
+
+            scheduler = MultiStepLR(
+                optimizer=optimizer,
+                gamma=cgcnn_kwargs.get("gamma", 0.1),
+                milestones=cgcnn_kwargs.get("lr_milestones", [100]))
+
+            epochs = cgcnn_kwargs.get("epochs", 30)
+            print_freq = cgcnn_kwargs.get('print_freq', 10)
+            for epoch in range(start_epoch, epochs):
+                train(train_loader=train_loader, model=model,
+                      criterion=criterion, optimizer=optimizer,
+                      epoch=epoch, normalizer=normalizer,
+                      task=self.task, cuda=self.cuda, print_freq=print_freq)
+                print(cgcnn_kwargs.get('test', False))
+                mae_error = \
+                    validate(val_loader=val_loader, model=model,
+                             criterion=criterion, normalizer=normalizer,
+                             output_path=output_path, task=self.task,
+                             test=cgcnn_kwargs.get('test', False),
+                             cuda=self.cuda,  print_freq=print_freq)
+                if mae_error is np.nan:
+                    raise ValueError("Exit due to mae_error is NaN")
+
+                scheduler.step()
+
+                # remember the best mae_eror and save checkpoint
+                if self.task == 'regression':
+                    is_best = mae_error < best_mae_error
+                    best_mae_error = min(mae_error, best_mae_error)
+                else:
+                    is_best = mae_error > best_mae_error
+                    best_mae_error = max(mae_error, best_mae_error)
+
+                if is_best:
+                    self._best_model, best_epoch = model, epoch
+                self._latest_model = model
+            if save_model:
+                if not os.path.exists(output_path):
+                    os.makedirs(output_path)
+                torch.save({'epoch': epochs+1,
+                            'state_dict': self._latest_model.state_dict(),
+                            'best_epoch': best_epoch,
+                            'best_state_dict': self._best_model.state_dict(),
+                            'best_mae_error': best_mae_error,
+                            'optimizer': optimizer.state_dict(),
+                            'normalizer': normalizer.state_dict()},
+                           os.path.join(output_path, "cgcnn_model.pth.tar"))
+        return self
+
+    def featurize(self, strc):
+        """
+        Args:
+            strc: structure object
+
+        Returns: fitted feature
+
+        """
+        from torch.utils.data import DataLoader
+        from torch.autograd import Variable
+        dataloader_kwargs = filter_paras(self.dataloader_kwargs, DataLoader)
+        dataset = DatasetWrapper([strc], [-1], **self.dataset_kwargs)
+        struc_loader = DataLoader(dataset, **dataloader_kwargs)
+        self._best_model.get_feature = True
+
+        for idx, (feature, _, _) in enumerate(struc_loader):
+            if self.cuda:
+                input_var = (Variable(feature[0].cuda(async=True),
+                                      volatile=True),
+                             Variable(feature[1].cuda(async=True),
+                                      volatile=True),
+                             feature[2].cuda(async=True),
+                             [crys_idx.cuda(async=True)
+                              for crys_idx in feature[3]])
+            else:
+                input_var = (Variable(feature[0], volatile=True),
+                             Variable(feature[1], volatile=True),
+                             feature[2],
+                             feature[3])
+            result = self._best_model(*input_var).tolist()[idx]
+            return result
+
+    def feature_labels(self):
+        return ['CGCNN_vector_'.format(x) for x in range(self.atom_fea_len)]
+
+    # get the best model
+    @property
+    def model(self):
+        return self._best_model
+
+    # get the latest model
+    @property
+    def latest_model(self):
+        return self._latest_model
+
+    def init_kwargs(self, atom_init_fea, cgcnn_kwargs):
+        import torch
+        from cgcnn.data import collate_pool
+
+        self.cuda = cgcnn_kwargs.get("disable_cuda", True) and \
+                    torch.cuda.is_available()
+        self.dataset_kwargs = \
+            {"atom_init_fea": atom_init_fea,
+             "radius": cgcnn_kwargs.get("radius", 8),
+             "dmin": cgcnn_kwargs.get("dmin", 0),
+             "step": cgcnn_kwargs.get("step", 0.2)}
+        self.dataloader_kwargs = \
+            {"batch_size": cgcnn_kwargs.get("batch_size", 256),
+             "num_workers": cgcnn_kwargs.get("num_workers", 0),
+             "train_size": cgcnn_kwargs.get("train_size", None),
+             "val_size": cgcnn_kwargs.get("val_size", 1000),
+             "test_size": cgcnn_kwargs.get("test_size", 1000),
+             "return_test": cgcnn_kwargs.get("return_test", True),
+             "collate_fn": collate_pool,
+             "pin_memory": self.cuda}
+        self.atom_fea_len = cgcnn_kwargs.get("atom_fea_len", 64)
+        self.task = cgcnn_kwargs.get("task", 'classification')
+
+    def init_model(self, cgcnn_kwargs):
+        structures, _, _ = self.dataset[0]
+        orig_atom_fea_len = structures[0].shape[-1]
+        nbr_fea_len = structures[1].shape[-1]
+
+        model = CrystalGraphConvNetWrapper(
+            orig_atom_fea_len=orig_atom_fea_len,
+            nbr_fea_len=nbr_fea_len,
+            atom_fea_len=self.atom_fea_len,
+            n_conv=cgcnn_kwargs.get("n_conv", 3),
+            h_fea_len=cgcnn_kwargs.get("h_fea_len", 128),
+            n_h=cgcnn_kwargs.get("n_h", 1),
+            classification=True if self.task == 'classification' else False)
+        return model
+
+    def init_normalizer(self, dataset):
+        import torch
+        from cgcnn.data import collate_pool
+
+        if self.task == 'classification':
+            normalizer = Normalizer(torch.zeros(2))
+            normalizer.load_state_dict({'mean': 0., 'std': 1.})
+        else:
+            if len(dataset) < 500:
+                warnings.warn('Dataset has less than 500 data points. '
+                              'Lower accuracy is expected. ')
+                sample_data_list = [dataset[i] for i in range(len(dataset))]
+            else:
+                sample_data_list = [dataset[i] for i in
+                                    sample(range(len(dataset)), 500)]
+            _, sample_target, _ = collate_pool(sample_data_list)
+            normalizer = Normalizer(sample_target)
+        return normalizer
+
+    def init_optimizer(self, cgcnn_kwargs, model):
+        import torch.optim as optim
+
+        optimizer_name = cgcnn_kwargs.get("optim", 'SGD')
+        if optimizer_name == 'SGD':
+            optimizer = optim.SGD(model.parameters(),
+                                  cgcnn_kwargs.get("lr", 0.01),
+                                  momentum=cgcnn_kwargs.get(
+                                      "momentum", 0.9),
+                                  weight_decay=cgcnn_kwargs.get(
+                                      "weight_decay", 0))
+        elif optimizer_name == 'Adam':
+            optimizer = optim.Adam(model.parameters(),
+                                   cgcnn_kwargs.get("lr", 0.01),
+                                   weight_decay=cgcnn_kwargs.get(
+                                       "weight_decay", 0))
+        else:
+            raise ValueError('Only SGD or Adam is allowed as optim')
+
+        return optimizer
+
+    def use_pretrained_model(self, model, pretrained_name):
+        import cgcnn
+        import torch
+
+        pre_trained_path = os.path.join(os.path.dirname(cgcnn.__file__),
+                                        "..", "pre-trained")
+        if os.path.isfile(os.path.join(pre_trained_path,
+                                       pretrained_name + ".pth.tar")):
+            checkpoint = torch.load(
+                os.path.join(os.path.dirname(cgcnn.__file__), "..",
+                             "pre-trained", pretrained_name + ".pth.tar"),
+                map_location=lambda storage, loc: storage)
+            model.load_state_dict(checkpoint['state_dict'])
+            self._best_model = model
+            self._latest_model = model
+        else:
+            pretrained_list = list()
+            for file in os.listdir(pre_trained_path):
+                if file.endswith(".pth.tar"):
+                    pretrained_list.append(file[:-8])
+            raise ValueError("The given pretrained model {} is unknown, "
+                             "Possible values are {}.".format(pretrained_name,
+                                                              pretrained_list))
