@@ -18,8 +18,22 @@ from torch.utils.data import Dataset
 
 
 class DatasetWrapper(Dataset):
+    """
+    Dataset object for torch load data.
+    """
     def __init__(self, X, y, atom_init_fea, radius=8, max_num_nbr=12,
                  dmin=0, step=0.2, random_seed=123):
+        """
+        Args:
+            X (Series/list): An iterable of pymatgen Structure objects.
+            y (Series/list) : X's target property that CGCNN aims to predict.
+            atom_init_fea (dict) : Dict of {atom_id: atom_features}.
+            radius (int): Maximum inter-atomic distance.
+            max_num_nbr (int): The max number of every atom's neighbors.
+            dmin (int): Minimum inter-atomic distance.
+            step (float): Step size for the Gaussian filter.
+            random_seed (int): random seed.
+        """
         self.max_num_nbr = max_num_nbr
         self.radius = radius
         self.target_data = list(zip(range(len(y)), y))
@@ -74,9 +88,26 @@ class DatasetWrapper(Dataset):
 
 
 class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
+    """
+    Create a crystal graph convolutional neural network for predicting total
+    material properties.
+
+    Wrapper for CrystalGraphConvNet, add get features ability.
+    """
     def __init__(self, orig_atom_fea_len, nbr_fea_len,
                  atom_fea_len=64, n_conv=3, h_fea_len=128, n_h=1,
                  classification=False):
+        """
+        Args:
+            orig_atom_fea_len (int): Number of atom features in the input.
+            nbr_fea_len (int): Number of bond features.
+            atom_fea_len (int): Number of hidden atom features
+                                in the convolutional layers.
+            n_conv (int): Number of convolutional layers.
+            h_fea_len (int): Number of hidden features after pooling.
+            n_h (int): Number of hidden layers after pooling.
+            classification (bool): Classification task or regression task.
+        """
         super(CrystalGraphConvNetWrapper, self).__init__(
             orig_atom_fea_len=orig_atom_fea_len, nbr_fea_len=nbr_fea_len,
             atom_fea_len=atom_fea_len, n_conv=n_conv, h_fea_len=h_fea_len,
@@ -89,33 +120,29 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
 
     @get_feature.setter
     def get_feature(self, get_feature):
+        """
+        _get_feature parameter defines the model's mission.
+        If it's True, just calculate the features, otherwise, train the model.
+        """
         self._get_feature = get_feature
 
     def forward(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx):
         """
         Forward pass
 
-        N: Total number of atoms in the batch
-        M: Max number of neighbors
-        N0: Total number of crystals in the batch
+        Args:
+            atom_fea (Variable(torch.Tensor)): shape (N, orig_atom_fea_len)
+              Atom features from atom type.
+            nbr_fea (Variable(torch.Tensor)): shape (N, M, nbr_fea_len)
+              Bond features of each atom's M neighbors.
+            nbr_fea_idx (torch.LongTensor): shape (N, M)
+              Indices of M neighbors of each atom.
+            crystal_atom_idx (list of torch.LongTensor):  length N0
+              Mapping from the crystal idx to atom idx.
 
-        Parameters
-        ----------
-
-        atom_fea: Variable(torch.Tensor) shape (N, orig_atom_fea_len)
-          Atom features from atom type
-        nbr_fea: Variable(torch.Tensor) shape (N, M, nbr_fea_len)
-          Bond features of each atom's M neighbors
-        nbr_fea_idx: torch.LongTensor shape (N, M)
-          Indices of M neighbors of each atom
-        crystal_atom_idx: list of torch.LongTensor of length N0
-          Mapping from the crystal idx to atom idx
-
-        Returns
-        -------
-
-        prediction: nn.Variable shape (N, )
-          Atom hidden features after convolution
+        Returns:
+            prediction (nn.Variable): shape (N, )
+              Atom hidden features after convolution
 
         """
         atom_fea_emb1 = self.embedding(atom_fea)
@@ -144,14 +171,41 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
 
 
 def filter_paras(dict_to_filter, func):
+    """
+    Auto filter parameters dict due to func valid parameters
+    Args:
+        dict_to_filter (dict): Parameters dict.
+        func (object):  function object.
+
+    Returns:
+        filtered_dict (dict): Valid parameters dict
+
+    """
     sig = inspect.signature(func)
-    filter_keys = [param.name for param in sig.parameters.values() if param.kind == param.POSITIONAL_OR_KEYWORD and param.name in dict_to_filter.keys()]
-    filtered_dict = {filter_key:dict_to_filter[filter_key] for filter_key in filter_keys}
+    filter_keys = [param.name for param in sig.parameters.values()
+                   if param.kind == param.POSITIONAL_OR_KEYWORD and
+                   param.name in dict_to_filter.keys()]
+    filtered_dict = {filter_key:dict_to_filter[filter_key]
+                     for filter_key in filter_keys}
     return filtered_dict
 
 
 def train(train_loader, model, criterion, optimizer, epoch, normalizer,
           task='regression', cuda=False, print_freq=10):
+    """
+    Train a cgcnn model.
+
+    Args:
+        train_loader (DataLoader): DataLoader object for training data.
+        model: Cgcnn model object.
+        criterion: Loss function object.
+        optimizer: Optimizer object.
+        epoch (int): Epoch number.
+        normalizer (Normalizer): Normalizer object.
+        task (str): Task type, classification or regression
+        cuda (bool): Use cuda or not. If True, use cuda, otherwise, don't use.
+        print_freq (int): Result print frequency.
+    """
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -248,6 +302,25 @@ def train(train_loader, model, criterion, optimizer, epoch, normalizer,
 
 def validate(val_loader, model, criterion, normalizer, output_path,
              test=False, task='regression', cuda=False, print_freq=10):
+    """
+    Train a cgcnn model.
+
+    Args:
+        val_loader (DataLoader): DataLoader object for validate data.
+        model (CrystalGraphConvNetWrapper): Cgcnn model.
+        criterion (object): Loss function.
+        normalizer (Normalizer): Normalizer object.
+        output_path (str): Output path.
+        test (bool): Whether predict test data and save it to disk.
+        task (str): Task type, classification or regression
+        cuda (bool): Use cuda or not. If True, use cuda, otherwise, don't use.
+        print_freq (int): Result print frequency.
+
+    Returns:
+        avg (float): Return average of mean absolute error if task is
+                     regression, otherwise, return average or auc score.
+    """
+
     batch_time = AverageMeter()
     losses = AverageMeter()
     if task == 'regression':
@@ -366,8 +439,19 @@ def validate(val_loader, model, criterion, normalizer, output_path,
         return auc_scores.avg
 
 
-def get_cgcnn_data(type="classification"):
-    if type == "classification":
+def get_cgcnn_data(task="classification"):
+    """
+    Get cgcnn sample data.
+    Args:
+        task (str): Classification or regression,
+                    decided which sample data to return.
+
+    Returns:
+        id_prop_data (list): List of property data.
+        elem_embedding (list): List of element features.
+        struct_list (list): List of structure object.
+    """
+    if task == "classification":
         cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..",
                                        "data", "sample-classification")
     else:
@@ -397,16 +481,28 @@ def mae(prediction, target):
     """
     Computes the mean absolute error between prediction and target
 
-    Parameters
-    ----------
-
-    prediction: torch.Tensor (N, 1)
-    target: torch.Tensor (N, 1)
+    Args:
+        prediction(torch.Tensor (N, 1)): Predict tensor.
+        target(torch.Tensor (N, 1)): Target tensor.
     """
     return torch.mean(torch.abs(target - prediction))
 
 
 def class_eval(prediction, target):
+    """
+    Evaluate deep learning result.
+
+    Args:
+        prediction(torch.Tensor (N, 2)): Predict tensor.
+        target(torch.Tensor (N, 1)): Target tensor.
+
+    Returns:
+        accuracy (float): Accuracy score.
+        precision (float): Precision score.
+        recall (float): Recall score.
+        fscore (float): F score.
+        auc_score (float): AUC (Area Under the curve) score.
+    """
     prediction = np.exp(prediction.numpy())
     target = target.numpy()
     pred_label = np.argmax(prediction, axis=1)
@@ -427,11 +523,8 @@ class AtomCustomArrayInitializer(AtomInitializer):
     dictionary mapping from element number to a list representing the
     feature vector of the element.
 
-    Parameters
-    ----------
-
-    elem_embedding_file: str
-        The path to the .json file
+    Args:
+        elem_embedding_file (str): The path to the .json file
     """
     def __init__(self, elem_embedding):
         elem_embedding = {int(key): value for key, value
