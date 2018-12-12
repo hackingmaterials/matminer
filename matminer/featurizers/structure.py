@@ -4,8 +4,9 @@ import itertools
 import os
 import traceback
 import warnings
+import json
 from collections import OrderedDict
-from math import pi
+from math import pi, ceil
 from operator import itemgetter
 from random import sample
 
@@ -14,11 +15,12 @@ import pandas as pd
 import pymatgen.analysis.local_env as pmg_le
 import scipy.constants as const
 import sys
+from copy import copy
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
     CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint, \
     AverageBondAngle, AverageBondLength
-from matminer.featurizers.utils.cgcnn import filter_paras, Normalizer, \
+from matminer.featurizers.utils.cgcnn import appropriate_kwargs, Normalizer, \
     CrystalGraphConvNetWrapper, DatasetWrapper, train, validate
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_all_nearest_neighbors
@@ -39,6 +41,7 @@ __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
               'Alex Dunn <ardunn@lbl.gov>'
 
+module_dir = os.path.dirname(os.path.abspath(__file__))
 ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
 
 
@@ -837,12 +840,9 @@ class OrbitalFieldMatrix(BaseFeaturizer):
                     characterizing s
         """
         s *= [3, 3, 3]
-        print("get_atom_ofms", s)
         ofms, counts = self.get_atom_ofms(s, True)
-        print("get_mean_ofm", s)
         mean_ofm = self.get_mean_ofm(ofms, counts)
         if self.flatten:
-            print(mean_ofm.A.flatten())
             return mean_ofm.A.flatten()
         else:
             return [mean_ofm.A]
@@ -2217,15 +2217,17 @@ class CGCNNFeaturizer(BaseFeaturizer):
         self._best_model = None
         self._latest_model = None
 
-    def fit(self, X, y, atom_init_fea,
+    def fit(self, X, y, task='classification', atom_init_fea=None,
             use_pretrained=False, pretrained_name=None,
             warm_start=False, warm_start_file=None, warm_start_latest=False,
-            save_model=True, save_checkpoint=False, checkpoint_interval=100,
-            output_path="/tmp/CGCNNFeaturizer", **cgcnn_kwargs):
+            save_checkpoint=False, checkpoint_interval=100, del_checkpoint=True,
+            save_model=True, output_path="/tmp/CGCNNFeaturizer",
+            **cgcnn_kwargs):
         """
         Args:
             X (Series/list): An iterable of pymatgen Structure objects.
             y (Series/list) : X's target property that CGCNN aims to predict.
+            task (str):
             atom_init_fea (dict) : A dict of {atom's id: atom's feature}.
             use_pretrained (bool): True of False. Whether use pretrained model.
             pretrained_name (str): Which cgcnn pretrained model to use, only
@@ -2239,10 +2241,12 @@ class CGCNNFeaturizer(BaseFeaturizer):
             save_model (bool): Whether save model to disk.
             save_checkpoint (bool): Whether save checkpoint while training.
             checkpoint_interval (int): Save checkpoint every n epochs.
+            del_checkpoint (bool): Whether to delete checkpoint when
+                                   the program runs successfully.
             output_path (str): Output path, save model and others.
             **cgcnn_kwargs: Cgcnn's kwargs, contains:
-                n_conv, h_fea_len, n_hepochs, print_freq, test,
-                    atom_fea_len, task (CrystalGraphConvNetWrapper kwargs)
+                n_conv, h_fea_len, num_epochs, print_freq, test,
+                    atom_fea_len (CrystalGraphConvNetWrapper kwargs)
                 optim, lr, momentum, weight_decay (optimizer kwargs)
                 gamma, lr_milestones (MultiStepLR kwargs)
                 disable_cuda, radius, dmin (DatasetWrapper kwargs)
@@ -2250,63 +2254,77 @@ class CGCNNFeaturizer(BaseFeaturizer):
                     train_size, val_size, test_size, (DataLoader_kwargs).
         Returns:
             self
-
         """
-        from cgcnn.data import get_train_val_test_loader
+
         import torch
         import torch.nn as nn
         from torch.optim.lr_scheduler import MultiStepLR
-        from copy import copy
-        # init kwargs
-        print(cgcnn_kwargs.get("h_fea_len", 128))
-        self.init_kwargs(atom_init_fea, cgcnn_kwargs)
+        from cgcnn.data import get_train_val_test_loader
 
-        # load data and init model
-        self.dataset = DatasetWrapper(X, y, **self.dataset_kwargs)
-        model = self.init_model(cgcnn_kwargs)
-        print(cgcnn_kwargs.get("h_fea_len", 128))
-        print(model.conv_to_fc)
-        print(model.fc_out)
-        print(model.state_dict())
+        # initialize atom_init_fea parameter
+        if atom_init_fea is None:
+            atom_file = os.path.join(module_dir, "tests",
+                                     "cgcnn_atom_feature.json")
+            with open(atom_file) as f:
+                atom_init_fea = json.load(f)
 
+        # initialize kwargs
+        self.task = task
+        self._initialize_kwargs(atom_init_fea, cgcnn_kwargs)
+
+        # load data and initialize model
+        self.dataset = DatasetWrapper(X, y, **self._dataset_kwargs)
+        model = self._initialize_model()
+
+        # check checkpoint_interval
+        # if it more than num_epochs, set it as num_epochs/2
+        if save_checkpoint and checkpoint_interval >= self._num_epochs:
+            checkpoint_interval = ceil(self._num_epochs / 2)
+
+        # start fit
         if use_pretrained:
-            self.use_pretrained_model(model, pretrained_name)
+            self._use_pretrained_model(model, pretrained_name)
             return self
         else:
             # if save model or save checkpoint or save test predict, then check
             # output path, if not exist, then create it.
-            if save_model or save_checkpoint or self.test:
+            if save_model or save_checkpoint or self._test:
                 if not os.path.exists(output_path):
                     os.makedirs(output_path)
 
             train_loader, val_loader, test_loader = get_train_val_test_loader(
-                self.dataset, **self.dataloader_kwargs)
+                self.dataset, **self._dataloader_kwargs)
 
-            # init normalizer, optimizer
-            normalizer = self.init_normalizer()
-            optimizer = self.init_optimizer(model, cgcnn_kwargs)
+            # initialize normalizer, optimizer
+            normalizer = self._initialize_normalizer()
+            optimizer = self._initialize_optimizer(model)
 
-            if self.cuda:
+            if self._cuda:
                 model.cuda()
 
             # define loss func
             criterion = nn.NLLLoss() if self.task == 'classification' \
                 else nn.MSELoss()
 
-            # init epochs parameters
+            # initialize epochs parameters
             start_epoch, best_epoch = 0, 0
-            best_mae_error = 1e10 if self.task == 'regression' else 0.
+            best_score = 1e10 if self.task == 'regression' else 0.
 
             # optionally resume from a checkpoint
             if warm_start:
                 if os.path.isfile(warm_start_file):
                     checkpoint = torch.load(warm_start_file)
                     if warm_start_latest:
-                        # load best model and set it to self best_model
-                        model.load_state_dict(checkpoint['best_state_dict'])
+                        # Load and set best model. If checkpoint is user defined
+                        #  and don't have the best_state_dict parameter, then
+                        # load state_dict and set it to the best model.
+                        if 'best_state_dict' in checkpoint.keys():
+                            model.load_state_dict(checkpoint['best_state_dict'])
+                        else:
+                            model.load_state_dict(checkpoint['state_dict'])
 
                         # use copy to avoid best_model being affected by
-                        # model changes .
+                        # model changes.
                         self._best_model = copy(model)
 
                         # warm start from latest model
@@ -2317,7 +2335,10 @@ class CGCNNFeaturizer(BaseFeaturizer):
                         model.load_state_dict(checkpoint['best_state_dict'])
                         self._best_model = copy(model)
                     best_epoch = checkpoint['best_epoch']
-                    best_mae_error = checkpoint['best_mae_error']
+                    # The best key name for best_score is 'best_score', but we
+                    # use 'best_mae_error' for compatible with the cgcnn
+                    # project's pre-trained model.
+                    best_score = checkpoint['best_mae_error']
                     optimizer.load_state_dict(checkpoint['optimizer'])
                     normalizer.load_state_dict(checkpoint['normalizer'])
                     print("Warm start from '{}' (epoch {})"
@@ -2325,46 +2346,53 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 else:
                     warnings.warn("Warm start file not found.")
 
-            scheduler = MultiStepLR(
-                optimizer=optimizer,
-                gamma=cgcnn_kwargs.get("gamma", 0.1),
-                milestones=cgcnn_kwargs.get("lr_milestones", [100]))
+            scheduler = MultiStepLR(optimizer=optimizer,
+                                    **self._scheduler_kwargd)
 
-            epochs = cgcnn_kwargs.get("epochs", 30)
-            print_freq = cgcnn_kwargs.get('print_freq', 10)
-            for epoch in range(start_epoch, epochs):
+            checkpoint_file = os.path.join(output_path,
+                                           'cgcnn_checkpoint.pth.tar')
+            for epoch in range(start_epoch, self._num_epochs):
                 train(train_loader, model, criterion, optimizer, epoch,
-                      normalizer, task=self.task, cuda=self.cuda,
-                      print_freq=print_freq)
+                      normalizer, task=self.task, cuda=self._cuda,
+                      print_freq=self._print_freq)
 
-                mae_error = \
+                score = \
                     validate(val_loader, model, criterion, normalizer,
-                             output_path, task=self.task, test=self.test,
-                             cuda=self.cuda, print_freq=print_freq)
-                if mae_error is np.nan:
+                             output_path, task=self.task, test=self._test,
+                             cuda=self._cuda, print_freq=self._print_freq)
+                if score is np.nan:
                     raise ValueError("Exit due to mae_error is NaN")
 
                 scheduler.step()
 
-                # remember the best mae_eror and save checkpoint
+                # calc best score
                 if self.task == 'regression':
-                    is_best = mae_error < best_mae_error
-                    best_mae_error = min(mae_error, best_mae_error)
+                    is_best = score < best_score
+                    best_score = min(score, best_score)
                 else:
-                    is_best = mae_error > best_mae_error
-                    best_mae_error = max(mae_error, best_mae_error)
+                    is_best = score > best_score
+                    best_score = max(score, best_score)
 
                 if is_best:
                     self._best_model, best_epoch = copy(model), epoch
                 self._latest_model = model
+
+                # save checkpoint
                 if save_checkpoint and epoch % checkpoint_interval == 0:
-                    self.save_model(epoch, best_epoch, best_mae_error,
-                                    optimizer, normalizer, output_path,
-                                    output_file='cgcnn_checkpoint.pth.tar')
+                    self._save_model(epoch, best_epoch, best_score,
+                                     optimizer, normalizer, checkpoint_file)
+
+            # Save model to disk.
+            model_file = os.path.join(output_path, 'cgcnn_model.pth.tar')
             if save_model:
-                self.save_model(epochs, best_epoch, best_mae_error,
-                                optimizer, normalizer, output_path,
-                                output_file='cgcnn_model.pth.tar')
+                self._save_model(self._num_epochs, best_epoch, best_score,
+                                 optimizer, normalizer, model_file)
+
+            # Delete checkpoint if needed.
+            if save_checkpoint and del_checkpoint and \
+                    os.path.exists(checkpoint_file):
+                os.remove(checkpoint_file)
+
         return self
 
     def featurize(self, strc):
@@ -2377,60 +2405,77 @@ class CGCNNFeaturizer(BaseFeaturizer):
         """
         from torch.utils.data import DataLoader
         from torch.autograd import Variable
-        dataloader_kwargs = filter_paras(self.dataloader_kwargs, DataLoader)
-        dataset = DatasetWrapper([strc], [-1], **self.dataset_kwargs)
-        struc_loader = DataLoader(dataset, **dataloader_kwargs)
-        self._best_model.get_feature = True
 
-        for idx, (feature, _, _) in enumerate(struc_loader):
-            if self.cuda:
-                input_var = (Variable(feature[0].cuda(async=True),
-                                      volatile=True),
-                             Variable(feature[1].cuda(async=True),
-                                      volatile=True),
-                             feature[2].cuda(async=True),
-                             [crys_idx.cuda(async=True)
-                              for crys_idx in feature[3]])
+        dataloader_kwargs = appropriate_kwargs(self._dataloader_kwargs,
+                                               DataLoader)
+        dataset = DatasetWrapper([strc], [-1], **self._dataset_kwargs)
+        struc_loader = DataLoader(dataset, **dataloader_kwargs)
+
+        for idx, (input_, _, _) in enumerate(struc_loader):
+            if self._cuda:
+                atom_fea = Variable(input_[0].cuda(async=True), volatile=True)
+                nbr_fea = Variable(input_[1].cuda(async=True), volatile=True)
+                nbr_fea_idx = input_[2].cuda(async=True)
+                crystal_atom_idx = [crys_idx.cuda(async=True)
+                                    for crys_idx in input_[3]]
             else:
-                input_var = (Variable(feature[0], volatile=True),
-                             Variable(feature[1], volatile=True),
-                             feature[2],
-                             feature[3])
-            result = self._best_model(*input_var).tolist()[idx]
+                atom_fea = Variable(input_[0], volatile=True)
+                nbr_fea = Variable(input_[1], volatile=True)
+                nbr_fea_idx = input_[2]
+                crystal_atom_idx = input_[3]
+            result = self._best_model.extract_feature(
+                atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx).tolist()[idx]
             return result
 
     def feature_labels(self):
         return ['CGCNN_vector_'.format(x) for x in range(self.atom_fea_len)]
 
-    # get the best model
     @property
     def model(self):
+        """Get the best model"""
         return self._best_model
 
-    # get the latest model
     @property
     def latest_model(self):
+        """Get the latest model"""
         return self._latest_model
 
-    def init_kwargs(self, atom_init_fea, cgcnn_kwargs):
+    def _initialize_kwargs(self, atom_init_fea, cgcnn_kwargs):
         """
-        Init self based kwargs: dataset_kwargs, dataloader_kwargs, and so on.
+        Initialize self based kwargs: dataset_kwargs, dataloader_kwargs,
+            and so on.
         Args:
             atom_init_fea (dict): Dict of {atom's id: atom's feature}.
             cgcnn_kwargs (dict): Cgcnn kwargs.
-
         """
         import torch
         from cgcnn.data import collate_pool
 
-        self.cuda = cgcnn_kwargs.get("disable_cuda", True) and \
-                    torch.cuda.is_available()
-        self.dataset_kwargs = \
+        # Initialize common kwargs
+        self._cuda = \
+            cgcnn_kwargs.get("disable_cuda", True) and \
+            torch.cuda.is_available()
+        self._test = cgcnn_kwargs.get('test', False)
+        self._num_epochs = cgcnn_kwargs.get("num_epochs", 30)
+        self._print_freq = cgcnn_kwargs.get('print_freq', 10)
+
+        # Initialize cgcnn model kwargs
+        self.atom_fea_len = cgcnn_kwargs.get("atom_fea_len", 64)
+        self._model_kwargs = \
+            {"atom_fea_len": self.atom_fea_len,
+             "n_conv": cgcnn_kwargs.get("n_conv", 3),
+             "h_fea_len": cgcnn_kwargs.get("h_fea_len", 128),
+             "n_h": cgcnn_kwargs.get("n_h", 1)}
+
+        # Initialize py-torch dataset kwargs
+        self._dataset_kwargs = \
             {"atom_init_fea": atom_init_fea,
              "radius": cgcnn_kwargs.get("radius", 8),
              "dmin": cgcnn_kwargs.get("dmin", 0),
              "step": cgcnn_kwargs.get("step", 0.2)}
-        self.dataloader_kwargs = \
+
+        # Initialize dataloader kwargs
+        self._dataloader_kwargs = \
             {"batch_size": cgcnn_kwargs.get("batch_size", 256),
              "num_workers": cgcnn_kwargs.get("num_workers", 0),
              "train_size": cgcnn_kwargs.get("train_size", None),
@@ -2438,16 +2483,24 @@ class CGCNNFeaturizer(BaseFeaturizer):
              "test_size": cgcnn_kwargs.get("test_size", 1000),
              "return_test": cgcnn_kwargs.get("return_test", True),
              "collate_fn": collate_pool,
-             "pin_memory": self.cuda}
-        self.atom_fea_len = cgcnn_kwargs.get("atom_fea_len", 64)
-        self.task = cgcnn_kwargs.get("task", 'classification')
-        self.test = cgcnn_kwargs.get('test', False)
+             "pin_memory": self._cuda}
 
-    def init_model(self, cgcnn_kwargs):
+        # Initialize optimizer kwargs
+        self._optimizer_name = cgcnn_kwargs.get("optim", 'SGD')
+        self._optimizer_kwargd = \
+            {"lr": cgcnn_kwargs.get("lr", 0.01),
+             "momentum": cgcnn_kwargs.get("momentum", 0.9),
+             "weight_decay": cgcnn_kwargs.get("weight_decay", 0)}
+
+        # Initialize scheduler kwargs
+        self._optimizer_name = cgcnn_kwargs.get("optim", 'SGD')
+        self._scheduler_kwargd = \
+            {"gamma": cgcnn_kwargs.get("gamma", 0.1),
+             "milestones": cgcnn_kwargs.get("lr_milestones", [100])}
+
+    def _initialize_model(self):
         """
-        Init cgcnn model object based on cgcnn kwargs.
-        Args:
-            cgcnn_kwargs (dict): Cgcnn kwargs
+        Initialize cgcnn model object based on cgcnn kwargs.
 
         Returns:
             model (CrystalGraphConvNetWrapper): Inited cgcnn model object
@@ -2459,16 +2512,13 @@ class CGCNNFeaturizer(BaseFeaturizer):
         model = CrystalGraphConvNetWrapper(
             orig_atom_fea_len=orig_atom_fea_len,
             nbr_fea_len=nbr_fea_len,
-            atom_fea_len=self.atom_fea_len,
-            n_conv=cgcnn_kwargs.get("n_conv", 3),
-            h_fea_len=cgcnn_kwargs.get("h_fea_len", 128),
-            n_h=cgcnn_kwargs.get("n_h", 1),
-            classification=True if self.task == 'classification' else False)
+            classification=True if self.task == 'classification' else False,
+            **self._model_kwargs)
         return model
 
-    def init_normalizer(self):
+    def _initialize_normalizer(self):
         """
-        Init Normalizer object based on task type and dataset.
+        Initialize Normalizer object based on task type and dataset.
 
         Returns:
             normalizer (Normalizer): Inited normalizer object
@@ -2492,62 +2542,56 @@ class CGCNNFeaturizer(BaseFeaturizer):
             normalizer = Normalizer(sample_target)
         return normalizer
 
-    @staticmethod
-    def init_optimizer(model, cgcnn_kwargs):
+    def _initialize_optimizer(self, model):
         """
-        Init optimizer object base on cgcnn model object and cgcnn kwargs.
+        Initialize optimizer object base on cgcnn model object and cgcnn kwargs.
         Args:
             model (CrystalGraphConvNetWrapper): Cgcnn model object
-            cgcnn_kwargs (dict): Cgcnn kwargs
 
         Returns:
             optimizer (optim.SGD/optim.Adam): Inited optimizer object
         """
         import torch.optim as optim
 
-        optimizer_name = cgcnn_kwargs.get("optim", 'SGD')
-        if optimizer_name == 'SGD':
-            optimizer = optim.SGD(model.parameters(),
-                                  cgcnn_kwargs.get("lr", 0.01),
-                                  momentum=cgcnn_kwargs.get(
-                                      "momentum", 0.9),
-                                  weight_decay=cgcnn_kwargs.get(
-                                      "weight_decay", 0))
-        elif optimizer_name == 'Adam':
-            optimizer = optim.Adam(model.parameters(),
-                                   cgcnn_kwargs.get("lr", 0.01),
-                                   weight_decay=cgcnn_kwargs.get(
-                                       "weight_decay", 0))
+        if self._optimizer_name == 'SGD':
+            sgd_kwargs = appropriate_kwargs(self._optimizer_kwargd, optim.Adam)
+            optimizer = optim.SGD(model.parameters(), **sgd_kwargs)
+        elif self._optimizer_name == 'Adam':
+            adam_kwargs = appropriate_kwargs(self._optimizer_kwargd, optim.Adam)
+            optimizer = optim.Adam(model.parameters(), **adam_kwargs)
         else:
             raise ValueError('Only SGD or Adam is allowed as optim')
 
         return optimizer
 
-    def save_model(self, epoch, best_epoch, best_mae_error, optimizer,
-                   normalizer, output_path, output_file):
+    def _save_model(self, epoch, best_epoch, best_score, optimizer,
+                    normalizer, output_file):
         """
         Save cgcnn model to disk.
 
         Args:
             epoch (int): Latest epoch.
             best_epoch (int): Best epoch.
-            best_mae_error (float): Best mean absolute error.
+            best_score (float): Best mean absolute error.
             optimizer: Optimizer object.
             normalizer: Normalizer object.
-            output_path (str): Output path.
             output_file (str): Output file.
         """
         import torch
+
+        # The best key for best_score is 'best_score', but we use
+        # 'best_mae_error' for compatible with the cgcnn project's
+        # pre-trained model.
         torch.save({'epoch': epoch + 1,
                     'state_dict': self._latest_model.state_dict(),
                     'best_epoch': best_epoch,
                     'best_state_dict': self._best_model.state_dict(),
-                    'best_mae_error': best_mae_error,
+                    'best_mae_error': best_score,
                     'optimizer': optimizer.state_dict(),
                     'normalizer': normalizer.state_dict()},
-                   os.path.join(output_path, output_file))
+                   output_file)
 
-    def use_pretrained_model(self, model, pretrained_name):
+    def _use_pretrained_model(self, model, pretrained_name):
         """
         Set self._best_model and self._latest_model based on pre-trained model.
         Args:
@@ -2566,7 +2610,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 os.path.join(os.path.dirname(cgcnn.__file__), "..",
                              "pre-trained", pretrained_name + ".pth.tar"),
                 map_location=lambda storage, loc: storage)
-            print(checkpoint['state_dict'])
+
             model.load_state_dict(checkpoint['state_dict'])
             self._best_model = model
             self._latest_model = model
@@ -2575,8 +2619,8 @@ class CGCNNFeaturizer(BaseFeaturizer):
             for file in os.listdir(pre_trained_path):
                 if file.endswith(".pth.tar"):
                     pretrained_list.append(file[:-8])
-            raise ValueError("The given pretrained model {} is unknown, "
-                             "Possible values are {}.".format(pretrained_name,
+            raise ValueError("The given pre-trained model {} is unknown, "
+                             "Possible models are {}.".format(pretrained_name,
                                                               pretrained_list))
 
     def citations(self):
