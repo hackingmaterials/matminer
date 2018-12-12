@@ -5,10 +5,10 @@
 from __future__ import unicode_literals, division
 import os
 import unittest
-
+import csv
+import json
 import numpy as np
 import pandas as pd
-from matminer.featurizers.utils.cgcnn import get_cgcnn_data
 from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure, Lattice, Molecule
@@ -598,7 +598,7 @@ class StructureFeaturesTest(PymatgenTest):
     def test_cgcnn_featurizer(self):
         import torch
         # test regular classification.
-        cla_props, cla_atom_features, cla_structs = get_cgcnn_data()
+        cla_props, cla_atom_features, cla_structs = self._get_cgcnn_data()
         atom_fea_len = 64
         cgcnn_featurizer = CGCNNFeaturizer()
 
@@ -628,7 +628,8 @@ class StructureFeaturesTest(PymatgenTest):
             self.assertEqual(len(result), atom_fea_len)
 
         # test regular regression and default atom_init_fea.
-        reg_props, reg_atom_features, reg_structs = get_cgcnn_data("regression")
+        reg_props, reg_atom_features, reg_structs = \
+            self._get_cgcnn_data("regression")
         cgcnn_featurizer = CGCNNFeaturizer()
         cgcnn_featurizer.fit(
             task="regression", X=reg_structs, y=reg_props,
@@ -673,7 +674,6 @@ class StructureFeaturesTest(PymatgenTest):
             self.assertAlmostEqual(result[-1], validate_feature, 4)
 
         # test warm start regression.
-        reg_props, reg_atom_features, reg_structs = get_cgcnn_data("regression")
         warm_start_file = os.path.join(test_dir,
                                        'cgcnn_test_regression_model.pth.tar')
         warm_start_model = torch.load(warm_start_file)
@@ -693,6 +693,49 @@ class StructureFeaturesTest(PymatgenTest):
         result = cgcnn_featurizer.featurize_many(entries=reg_structs)
         self.assertEqual(np.array(result).shape,
                          (len(reg_structs), atom_fea_len))
+
+    @staticmethod
+    def _get_cgcnn_data(task="classification"):
+        """
+        Get cgcnn sample data.
+        Args:
+            task (str): Classification or regression,
+                        decided which sample data to return.
+
+        Returns:
+            id_prop_data (list): List of property data.
+            elem_embedding (list): List of element features.
+            struct_list (list): List of structure object.
+        """
+        import cgcnn
+
+        if task == "classification":
+            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__),
+                                           "..",
+                                           "data", "sample-classification")
+        else:
+            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__),
+                                           "..",
+                                           "data", "sample-regression")
+
+        struct_list = list()
+        cif_list = list()
+        with open(os.path.join(cgcnn_data_path, "id_prop.csv")) as f:
+            reader = csv.reader(f)
+            id_prop_data = [row[1] for row in reader]
+        with open(os.path.join(cgcnn_data_path, "atom_init.json")) as f:
+            elem_embedding = json.load(f)
+
+        for file in os.listdir(cgcnn_data_path):
+            if file.endswith('.cif'):
+                cif_list.append(int(file[:-4]))
+                cif_list = sorted(cif_list)
+        for cif_name in cif_list:
+            crystal = Structure.from_file(os.path.join(cgcnn_data_path,
+                                                       '{}.cif'.format(
+                                                           cif_name)))
+            struct_list.append(crystal)
+        return id_prop_data, elem_embedding, struct_list
 
 
 if __name__ == '__main__':

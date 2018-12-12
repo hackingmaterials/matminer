@@ -407,44 +407,6 @@ def validate(val_loader, model, criterion, normalizer, output_path,
         return auc_scores.avg
 
 
-def get_cgcnn_data(task="classification"):
-    """
-    Get cgcnn sample data.
-    Args:
-        task (str): Classification or regression,
-                    decided which sample data to return.
-
-    Returns:
-        id_prop_data (list): List of property data.
-        elem_embedding (list): List of element features.
-        struct_list (list): List of structure object.
-    """
-    if task == "classification":
-        cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..",
-                                       "data", "sample-classification")
-    else:
-        cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..",
-                                       "data", "sample-regression")
-
-    struct_list = list()
-    cif_list = list()
-    with open(os.path.join(cgcnn_data_path, "id_prop.csv")) as f:
-        reader = csv.reader(f)
-        id_prop_data = [row[1] for row in reader]
-    with open(os.path.join(cgcnn_data_path, "atom_init.json")) as f:
-        elem_embedding = json.load(f)
-
-    for file in os.listdir(cgcnn_data_path):
-        if file.endswith('.cif'):
-            cif_list.append(int(file[:-4]))
-            cif_list = sorted(cif_list)
-    for cif_name in cif_list:
-        crystal = Structure.from_file(os.path.join(cgcnn_data_path,
-                                                   '{}.cif'.format(cif_name)))
-        struct_list.append(crystal)
-    return id_prop_data, elem_embedding, struct_list
-
-
 def mae(prediction, target):
     """
     Computes the mean absolute error between prediction and target

@@ -1,8 +1,12 @@
 from unittest import TestCase
 
 import torch
+import os
+import json
+import csv
+import cgcnn
 from matminer.featurizers.utils.cgcnn import DatasetWrapper, \
-    CrystalGraphConvNetWrapper, appropriate_kwargs, get_cgcnn_data, mae, \
+    CrystalGraphConvNetWrapper, appropriate_kwargs, mae, \
     class_eval, AtomCustomArrayInitializer, AverageMeter, Normalizer
 from pymatgen.core import Structure, Lattice
 
@@ -14,6 +18,10 @@ class TestPropertyStats(TestCase):
                             to_unit_cell=False, coords_are_cartesian=False)
 
         self.target = torch.Tensor([1, 0, 1])
+
+    def test_get_cgcnn_data(self):
+        id_prop_data, _, struct_list = self._get_cgcnn_data()
+        self.assertEqual(len(id_prop_data), len(struct_list))
 
     def test_datasetwrapper(self):
         datasetwrapper = DatasetWrapper([self.sc], [0], {13: [-1, -1]})
@@ -42,13 +50,9 @@ class TestPropertyStats(TestCase):
 
     def test_appropriate_kwargs(self):
         init_dict = {'task': 'classification', 'no_task': True}
-        arange_dict = appropriate_kwargs(init_dict, get_cgcnn_data)
+        arange_dict = appropriate_kwargs(init_dict, self._get_cgcnn_data)
         self.assertEqual(set(arange_dict.keys()), {'task'})
         self.assertEqual(arange_dict['task'], 'classification')
-
-    def test_get_cgcnn_data(self):
-        id_prop_data, _, struct_list = get_cgcnn_data()
-        self.assertEqual(len(id_prop_data), len(struct_list))
 
     def test_mae(self):
         mae_result = mae(torch.Tensor([1]), torch.Tensor([1]))
@@ -93,3 +97,41 @@ class TestPropertyStats(TestCase):
         self.assertAlmostEqual(state_dict['mean'].numpy(), 2/3)
         self.assertAlmostEqual(state_dict['std'].numpy(), 0.5774, 4)
 
+    @staticmethod
+    def _get_cgcnn_data(task="classification"):
+        """
+        Get cgcnn sample data.
+        Args:
+            task (str): Classification or regression,
+                        decided which sample data to return.
+
+        Returns:
+            id_prop_data (list): List of property data.
+            elem_embedding (list): List of element features.
+            struct_list (list): List of structure object.
+        """
+        if task == "classification":
+            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__),
+                                           "..", "data", "sample-classification")
+        else:
+            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__),
+                                           "..", "data", "sample-regression")
+
+        struct_list = list()
+        cif_list = list()
+        with open(os.path.join(cgcnn_data_path, "id_prop.csv")) as f:
+            reader = csv.reader(f)
+            id_prop_data = [row[1] for row in reader]
+        with open(os.path.join(cgcnn_data_path, "atom_init.json")) as f:
+            elem_embedding = json.load(f)
+
+        for file in os.listdir(cgcnn_data_path):
+            if file.endswith('.cif'):
+                cif_list.append(int(file[:-4]))
+                cif_list = sorted(cif_list)
+        for cif_name in cif_list:
+            crystal = Structure.from_file(os.path.join(cgcnn_data_path,
+                                                       '{}.cif'.format(
+                                                           cif_name)))
+            struct_list.append(crystal)
+        return id_prop_data, elem_embedding, struct_list
