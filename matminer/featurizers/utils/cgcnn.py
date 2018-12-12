@@ -112,23 +112,10 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
             orig_atom_fea_len=orig_atom_fea_len, nbr_fea_len=nbr_fea_len,
             atom_fea_len=atom_fea_len, n_conv=n_conv, h_fea_len=h_fea_len,
             n_h=n_h, classification=classification)
-        self._get_feature = False
 
-    @property
-    def get_feature(self):
-        return self._get_feature
-
-    @get_feature.setter
-    def get_feature(self, get_feature):
+    def extract_feature(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx):
         """
-        _get_feature parameter defines the model's mission.
-        If it's True, just calculate the features, otherwise, train the model.
-        """
-        self._get_feature = get_feature
-
-    def forward(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx):
-        """
-        Forward pass
+        Deep Learning feature extraction.
 
         Args:
             atom_fea (Variable(torch.Tensor)): shape (N, orig_atom_fea_len)
@@ -141,53 +128,34 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
               Mapping from the crystal idx to atom idx.
 
         Returns:
-            prediction (nn.Variable): shape (N, )
-              Atom hidden features after convolution
+            feature (list): deep learning feature
 
         """
-        atom_fea_emb1 = self.embedding(atom_fea)
-        atom_fea_conv2 = atom_fea_emb1
+        atom_fea = self.embedding(atom_fea)
         for conv_func in self.convs:
-            atom_fea_conv2 = conv_func(atom_fea_conv2, nbr_fea, nbr_fea_idx)
-        crys_fea_pool3 = self.pooling(atom_fea_conv2, crystal_atom_idx)
-        crys_fea_fc4 = self.conv_to_fc(self.conv_to_fc_softplus(crys_fea_pool3))
-        crys_fea_fcac5 = self.conv_to_fc_softplus(crys_fea_fc4)
-        if self.classification:
-            crys_fea_fcac5 = self.dropout(crys_fea_fcac5)
-
-        crys_fea_ac6 = crys_fea_fcac5
-        if hasattr(self, 'fcs') and hasattr(self, 'softpluses'):
-            for fc, softplus in zip(self.fcs, self.softpluses):
-                crys_fea_ac6 = softplus(fc(crys_fea_ac6))
-
-        out = self.fc_out(crys_fea_ac6)
-        if self.classification:
-            out = self.logsoftmax(out)
-
-        if self.get_feature:
-            features = torch.cat([crys_fea_pool3], dim=1)
-            return features
-        return out
+            atom_fea = conv_func(atom_fea, nbr_fea, nbr_fea_idx)
+        feature = self.pooling(atom_fea, crystal_atom_idx)
+        return feature
 
 
-def filter_paras(dict_to_filter, func):
+def appropriate_kwargs(kwargs, func):
     """
-    Auto filter parameters dict due to func valid parameters
+    Auto get the appropriate kwargs dict due to func parameters
     Args:
-        dict_to_filter (dict): Parameters dict.
+        kwargs (dict): Kwargs dict.
         func (object):  function object.
 
     Returns:
-        filtered_dict (dict): Valid parameters dict
+        filtered_dict (dict): Appropriate kwargs dict
 
     """
     sig = inspect.signature(func)
     filter_keys = [param.name for param in sig.parameters.values()
                    if param.kind == param.POSITIONAL_OR_KEYWORD and
-                   param.name in dict_to_filter.keys()]
-    filtered_dict = {filter_key:dict_to_filter[filter_key]
-                     for filter_key in filter_keys}
-    return filtered_dict
+                   param.name in kwargs.keys()]
+    appropriate_dict = {filter_key: kwargs[filter_key]
+                        for filter_key in filter_keys}
+    return appropriate_dict
 
 
 def train(train_loader, model, criterion, optimizer, epoch, normalizer,

@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import torch
 from matminer.featurizers.utils.cgcnn import DatasetWrapper, \
-    CrystalGraphConvNetWrapper, filter_paras, get_cgcnn_data, mae, \
+    CrystalGraphConvNetWrapper, appropriate_kwargs, get_cgcnn_data, mae, \
     class_eval, AtomCustomArrayInitializer, AverageMeter, Normalizer
 from pymatgen.core import Structure, Lattice
 
@@ -10,8 +10,8 @@ from pymatgen.core import Structure, Lattice
 class TestPropertyStats(TestCase):
     def setUp(self):
         self.sc = Structure(Lattice([[3.52, 0, 0], [0, 3.52, 0], [0, 0, 3.52]]),
-            ["Al"], [[0, 0, 0]], validate_proximity=False, to_unit_cell=False,
-            coords_are_cartesian=False)
+                            ["Al"], [[0, 0, 0]], validate_proximity=False,
+                            to_unit_cell=False, coords_are_cartesian=False)
 
         self.target = torch.Tensor([1, 0, 1])
 
@@ -24,11 +24,25 @@ class TestPropertyStats(TestCase):
 
     def test_crystal_graph_convnet_wrapper(self):
         model = CrystalGraphConvNetWrapper(2, 41, classification=True)
-        self.assertEqual(model.get_feature, False)
+        state_dict = model.state_dict()
+        self.assertEqual(state_dict['embedding.weight'].size(),
+                         torch.Size([64, 2]))
+        self.assertEqual(state_dict['embedding.bias'].size(),
+                         torch.Size([64]))
+        self.assertEqual(state_dict['convs.0.fc_full.weight'].size(),
+                         torch.Size([128, 169]))
+        self.assertEqual(state_dict['convs.1.bn1.weight'].size(),
+                         torch.Size([128]))
+        self.assertEqual(state_dict['convs.2.bn2.bias'].size(),
+                         torch.Size([64]))
+        self.assertEqual(state_dict['conv_to_fc.weight'].size(),
+                         torch.Size([128, 64]))
+        self.assertEqual(state_dict['fc_out.weight'].size(),
+                         torch.Size([2, 128]))
 
-    def test_filter_paras(self):
+    def test_appropriate_kwargs(self):
         init_dict = {'task': 'classification', 'no_task': True}
-        arange_dict = filter_paras(init_dict, get_cgcnn_data)
+        arange_dict = appropriate_kwargs(init_dict, get_cgcnn_data)
         self.assertEqual(set(arange_dict.keys()), {'task'})
         self.assertEqual(arange_dict['task'], 'classification')
 
