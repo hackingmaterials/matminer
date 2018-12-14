@@ -374,8 +374,6 @@ class StructureToOxidStructure(ConversionFeaturizer):
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:
-        **kwargs: Parameters to control the settings for
-            `pymatgen.io.structure.Structure.add_oxidation_state_by_guess()`.
         target_col_id (str or None): The column in which the converted data will
             be written. If the column already exists then an error will be
             thrown unless `overwrite_data` is set to `True`. If `target_col_id`
@@ -386,12 +384,18 @@ class StructureToOxidStructure(ConversionFeaturizer):
             will only work if `overwrite_data=True`).
         overwrite_data (bool): Overwrite any data in `target_column` if it
             exists.
+        return_original_on_error: If the oxidation states cannot be
+            guessed and set to True, the structure without oxidation states will
+            be returned. If set to False, an error will be thrown.
+        **kwargs: Parameters to control the settings for
+            `pymatgen.io.structure.Structure.add_oxidation_state_by_guess()`.
     """
 
     def __init__(self, target_col_id='structure_oxid', overwrite_data=False,
-                 **kwargs):
+                 return_original_on_error=False, **kwargs):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
+        self.return_original_on_error = return_original_on_error
 
     def featurize(self, structure):
         """Add oxidation states to a Structure using pymatgen's guessing routines.
@@ -403,7 +407,17 @@ class StructureToOxidStructure(ConversionFeaturizer):
             (`pymatgen.core.structure.Structure`): A Structure object decorated
                 with oxidation states.
         """
-        structure.add_oxidation_state_by_guess(**self.oxi_guess_params)
+        els_have_oxi_states = [hasattr(s, "oxi_state") for s in
+                               structure.composition.elements]
+        if all(els_have_oxi_states):
+            return [structure]
+
+        try:
+            structure.add_oxidation_state_by_guess(**self.oxi_guess_params)
+        except ValueError as e:
+            if not self.return_original_on_error:
+                raise e
+
         return [structure]
 
     def citations(self):
@@ -429,8 +443,6 @@ class CompositionToOxidComposition(ConversionFeaturizer):
     but instead can be applied to pre-process data or as part of a Pipeline.
 
     Args:
-        **kwargs: Parameters to control the settings for
-            `pymatgen.io.structure.Structure.add_oxidation_state_by_guess()`.
         target_col_id (str or None): The column in which the converted data will
             be written. If the column already exists then an error will be
             thrown unless `overwrite_data` is set to `True`. If `target_col_id`
@@ -444,14 +456,21 @@ class CompositionToOxidComposition(ConversionFeaturizer):
         coerce_mixed (bool): If a composition has both species containing
             oxid states and not containing oxid states, strips all of the
             oxid states and guesses the entire composition's oxid states.
+        return_original_on_error: If the oxidation states cannot be
+            guessed and set to True, the composition without oxidation states
+            will be returned. If set to False, an error will be thrown.
+        **kwargs: Parameters to control the settings for
+            `pymatgen.io.structure.Structure.add_oxidation_state_by_guess()`.
 
     """
 
     def __init__(self, target_col_id='composition_oxid', overwrite_data=False,
-                 coerce_mixed=True, **kwargs):
+                 coerce_mixed=True, return_original_on_error=False,
+                 **kwargs):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
         self.coerce_mixed = coerce_mixed
+        self.return_original_on_error = return_original_on_error
 
     def featurize(self, comp):
         """Add oxidation states to a Structure using pymatgen's guessing routines.
@@ -464,8 +483,10 @@ class CompositionToOxidComposition(ConversionFeaturizer):
                 decorated with oxidation states.
         """
         els_have_oxi_states = [hasattr(s, "oxi_state") for s in comp.elements]
+
         if all(els_have_oxi_states):
             return [comp]
+
         elif any(els_have_oxi_states):
             if self.coerce_mixed:
                 comp = comp.element_composition
@@ -474,8 +495,13 @@ class CompositionToOxidComposition(ConversionFeaturizer):
                                  "and without oxidation states. Please enable "
                                  "coercion to all oxidation states with "
                                  "coerce_mixed.".format(comp))
-        return [comp.add_charges_from_oxi_state_guesses(
-            **self.oxi_guess_params)]
+        try:
+            comp = comp.add_charges_from_oxi_state_guesses(
+                **self.oxi_guess_params)
+        except ValueError as e:
+            if not self.return_original_on_error:
+                raise e
+        return [comp]
 
     def citations(self):
         return [(
@@ -488,4 +514,3 @@ class CompositionToOxidComposition(ConversionFeaturizer):
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose", "Alex Dunn"]
-

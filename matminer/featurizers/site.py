@@ -1907,7 +1907,8 @@ class BondOrientationalParameter(BaseFeaturizer):
 
 
 class SiteElementalProperty(BaseFeaturizer):
-    """Elemental properties of atom on a certain site
+    """
+    Elemental properties of atom on a certain site
 
     Features:
         site [property] - Elemental property for this site
