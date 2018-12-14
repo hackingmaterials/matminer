@@ -460,7 +460,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
 
 class MultipleFeaturizer(BaseFeaturizer):
-    """Class to run multiple featurizers on the same input data.
+    """
+    Class to run multiple featurizers on the same input data.
 
     All featurizers must take the same kind of data as input
     to the featurize function.
@@ -529,7 +530,8 @@ class MultipleFeaturizer(BaseFeaturizer):
 
 
 class StackedFeaturizer(BaseFeaturizer):
-    """Use the output of a machine learning model as features
+    """
+    Use the output of a machine learning model as features
 
     For regression models, we use the single output class.
 
