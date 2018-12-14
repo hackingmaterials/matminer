@@ -2223,6 +2223,12 @@ class CGCNNFeaturizer(BaseFeaturizer):
         - Features for the structures extracted from CGCNN model after pooling.
     """
     def __init__(self):
+        import torch
+        import torch.nn as nn
+        from torch.optim.lr_scheduler import MultiStepLR
+        from cgcnn.data import get_train_val_test_loader
+
+
         self._best_model = None
         self._latest_model = None
 
@@ -2230,7 +2236,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
             use_pretrained=False, pretrained_name=None,
             warm_start=False, warm_start_file=None, warm_start_latest=False,
             save_checkpoint=False, checkpoint_interval=100, del_checkpoint=True,
-            save_model=True, output_path="/tmp/CGCNNFeaturizer",
+            save_model=False, output_path="/tmp/CGCNNFeaturizer",
             **cgcnn_kwargs):
         """
         Args:
@@ -2279,12 +2285,16 @@ class CGCNNFeaturizer(BaseFeaturizer):
                     -task (str): "classification" or "regression",
                         default "classification".
                 Dataset(Wrapper) kwargs:
+                    -max_num_nbr (int): The maximum number of neighbors while
+                        constructing the crystal graph, default 12
                     -radius (float): The cutoff radius for searching neighbors,
                         default 8
                     -dmin (float): The minimum distance for constructing
                         GaussianDistance, default 0
                     -step (float): The step size for constructing
                         GaussianDistance, default 0.2
+                    -random_seed (int): Random seed for shuffling the dataset,
+                        default 123
                 DataLoader kwargs:
                     batch_size (int): Mini-batch size, default 256
                     num_workers (int): Number of data loading workers, default 0
@@ -2313,10 +2323,6 @@ class CGCNNFeaturizer(BaseFeaturizer):
         Returns:
             self
         """
-        import torch
-        import torch.nn as nn
-        from torch.optim.lr_scheduler import MultiStepLR
-        from cgcnn.data import get_train_val_test_loader
 
         # set atom_init_fea
         if atom_init_fea is None:
@@ -2527,9 +2533,11 @@ class CGCNNFeaturizer(BaseFeaturizer):
         # Initialize pytorch dataset kwargs
         self._dataset_kwargs = \
             {"atom_init_fea": atom_init_fea,
+             "max_num_nbr": cgcnn_kwargs.get("max_num_nbr", 12),
              "radius": cgcnn_kwargs.get("radius", 8),
              "dmin": cgcnn_kwargs.get("dmin", 0),
-             "step": cgcnn_kwargs.get("step", 0.2)}
+             "step": cgcnn_kwargs.get("step", 0.2),
+             "random_seed": cgcnn_kwargs.get("random_seed", 123)}
 
         # Initialize dataloader kwargs
         self._dataloader_kwargs = \

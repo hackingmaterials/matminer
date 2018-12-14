@@ -1,5 +1,4 @@
 import inspect
-import json
 import os
 import functools
 import warnings
@@ -8,10 +7,8 @@ import numpy as np
 import time
 import random
 import torch
-import cgcnn
 from cgcnn.data import AtomInitializer, GaussianDistance
 from cgcnn.model import CrystalGraphConvNet
-from pymatgen.core import Structure
 from sklearn import metrics
 from torch.autograd import Variable
 from torch.utils.data import Dataset
@@ -19,33 +16,33 @@ from torch.utils.data import Dataset
 
 class DatasetWrapper(Dataset):
     """
-    Dataset object for torch load data.
+    Wrapper for a dataset containing pymatgen Structure objects.
+    This is modified from CGCNN repo's CIFData for wrapping dataset where the
+    structures are stored in CIF files.
+    As we already have X as an iterable of pymatgen Structure objects, we can
+    use this wrapper instead of CIFData.
     """
-    def __init__(self, X, y, atom_init_fea, radius=8, max_num_nbr=12,
+    def __init__(self, X, y, atom_init_fea, max_num_nbr=12, radius=8,
                  dmin=0, step=0.2, random_seed=123):
         """
         Args:
             X (Series/list): An iterable of pymatgen Structure objects.
-            y (Series/list) : X's target property that CGCNN aims to predict.
-            atom_init_fea (dict) : Dict of {atom_id: atom_features}.
-            radius (int): Maximum inter-atomic distance.
+            y (Series/list): target property that CGCNN is to predict.
+            atom_init_fea (dict): A dict of {atom type: atom feature}.
             max_num_nbr (int): The max number of every atom's neighbors.
-            dmin (int): Minimum inter-atomic distance.
-            step (float): Step size for the Gaussian filter.
-            random_seed (int): random seed.
+            radius (float): Cutoff radius for searching neighbors.
+            dmin (int): The minimum distance for constructing GaussianDistance.
+            step (float): The step size for constructing GaussianDistance.
+            random_seed (int): Random seed for shuffling the dataset.
         """
         self.max_num_nbr = max_num_nbr
         self.radius = radius
         self.target_data = list(zip(range(len(y)), y))
         random.seed(random_seed)
         random.shuffle(self.target_data)
-        self._strcs = X
+        self.structures = X
         self.ari = AtomCustomArrayInitializer(atom_init_fea)
         self.gdf = GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
-
-    @property
-    def strcs(self):
-        return self._strcs
 
     def __len__(self):
         return len(self.target_data)
@@ -53,7 +50,7 @@ class DatasetWrapper(Dataset):
     @functools.lru_cache(maxsize=None)  # Cache loaded structures
     def __getitem__(self, idx):
         atom_idx, target = self.target_data[idx]
-        crystal = self._strcs[atom_idx]
+        crystal = self.structures[atom_idx]
         atom_fea = np.vstack(
             [self.ari.get_atom_fea(crystal[i].specie.number)
              for i in range(len(crystal))])
@@ -89,10 +86,10 @@ class DatasetWrapper(Dataset):
 
 class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
     """
-    Create a crystal graph convolutional neural network for predicting total
-    material properties.
-
-    Wrapper for CrystalGraphConvNet, add get features ability.
+    Wrapper for CrystalGraphConvNet in the CGCNN repo and add extract_feature
+    to extract the feature vector after pooling layer of CGCNN model as
+    features for the structures.
+    Please see the CrystalGraphConvNet in the CGCNN repo for more details
     """
     def __init__(self, orig_atom_fea_len, nbr_fea_len,
                  atom_fea_len=64, n_conv=3, h_fea_len=128, n_h=1,
@@ -102,7 +99,7 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
             orig_atom_fea_len (int): Number of atom features in the input.
             nbr_fea_len (int): Number of bond features.
             atom_fea_len (int): Number of hidden atom features
-                                in the convolutional layers.
+                in the convolutional layers.
             n_conv (int): Number of convolutional layers.
             h_fea_len (int): Number of hidden features after pooling.
             n_h (int): Number of hidden layers after pooling.
@@ -115,7 +112,8 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
 
     def extract_feature(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx):
         """
-        Deep Learning feature extraction.
+        Extract the feature vector after pooling layer of CGCNN model as
+        features for the structures.
 
         Args:
             atom_fea (Variable(torch.Tensor)): shape (N, orig_atom_fea_len)
@@ -140,13 +138,13 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
 
 def appropriate_kwargs(kwargs, func):
     """
-    Auto get the appropriate kwargs dict due to func parameters
+    Auto get the appropriate kwargs according to those allowed by the func.
     Args:
-        kwargs (dict): Kwargs dict.
-        func (object):  function object.
+        kwargs (dict): kwargs.
+        func (object): function object.
 
     Returns:
-        filtered_dict (dict): Appropriate kwargs dict
+        filtered_dict (dict): filtered kwargs.
 
     """
     sig = inspect.signature(func)
@@ -161,7 +159,8 @@ def appropriate_kwargs(kwargs, func):
 def train(train_loader, model, criterion, optimizer, epoch, normalizer,
           task='regression', cuda=False, print_freq=10):
     """
-    Train a cgcnn model.
+    Train a cgcnn model. This is minor-modified from that of the CGCNN
+    repo to allow input parameters instead of using command line arguments.
 
     Args:
         train_loader (DataLoader): DataLoader object for training data.
@@ -170,7 +169,7 @@ def train(train_loader, model, criterion, optimizer, epoch, normalizer,
         optimizer: Optimizer object.
         epoch (int): Epoch number.
         normalizer (Normalizer): Normalizer object.
-        task (str): Task type, classification or regression
+        task (str): Task type, "classification" or "regression"
         cuda (bool): Use cuda or not. If True, use cuda, otherwise, don't use.
         print_freq (int): Result print frequency.
     """
@@ -271,7 +270,8 @@ def train(train_loader, model, criterion, optimizer, epoch, normalizer,
 def validate(val_loader, model, criterion, normalizer, output_path,
              test=False, task='regression', cuda=False, print_freq=10):
     """
-    Train a cgcnn model.
+    Validate a cgcnn model. This is minor-modified from that of the CGCNN
+    repo to allow input parameters instead of using command line arguments.
 
     Args:
         val_loader (DataLoader): DataLoader object for validate data.
@@ -420,7 +420,7 @@ def mae(prediction, target):
 
 def class_eval(prediction, target):
     """
-    Evaluate deep learning result.
+    Evaluate learning results.
 
     Args:
         prediction(torch.Tensor (N, 2)): Predict tensor.
@@ -503,4 +503,3 @@ class Normalizer(object):
     def load_state_dict(self, state_dict):
         self.mean = state_dict['mean']
         self.std = state_dict['std']
-
