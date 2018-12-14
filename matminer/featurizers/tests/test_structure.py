@@ -24,6 +24,11 @@ from matminer.featurizers.structure import DensityFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
     Dimensionality, XRDPowderPattern, CGCNNFeaturizer
+try:
+    import torch
+    import cgcnn
+except ImportError:
+    torch, cgcnn = None, None
 
 test_dir = os.path.join(os.path.dirname(__file__))
 
@@ -595,17 +600,19 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(pattern), 91)
         self.assertEqual(len(xpp.feature_labels()), 91)
 
+    @unittest.skipIf(not (torch and cgcnn),
+                     "pytorch or cgcnn not installed.")
     def test_cgcnn_featurizer(self):
-        import torch
         # test regular classification.
         cla_props, cla_atom_features, cla_structs = self._get_cgcnn_data()
         atom_fea_len = 64
-        cgcnn_featurizer = CGCNNFeaturizer()
+        cgcnn_featurizer = \
+            CGCNNFeaturizer(use_pretrained=False, warm_start=False,
+                            save_model=False, atom_init_fea=cla_atom_features,
+                            train_size=5, val_size=2, test_size=3,
+                            atom_fea_len=atom_fea_len)
 
-        cgcnn_featurizer.fit(
-            X=cla_structs, y=cla_props, use_pretrained=False,
-            warm_start=False, save_model=False, atom_init_fea=cla_atom_features,
-            train_size=5, val_size=2, test_size=3, atom_fea_len=atom_fea_len)
+        cgcnn_featurizer.fit(X=cla_structs, y=cla_props)
         self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
         state_dict = cgcnn_featurizer.model.state_dict()
         self.assertEqual(state_dict['embedding.weight'].size(),
@@ -630,23 +637,27 @@ class StructureFeaturesTest(PymatgenTest):
         # test regular regression and default atom_init_fea.
         reg_props, reg_atom_features, reg_structs = \
             self._get_cgcnn_data("regression")
-        cgcnn_featurizer = CGCNNFeaturizer()
-        cgcnn_featurizer.fit(
-            task="regression", X=reg_structs, y=reg_props,
-            use_pretrained=False, warm_start=False, save_model=False,
-            atom_fea_len=atom_fea_len, train_size=6, val_size=2, test_size=2)
+        cgcnn_featurizer = \
+            CGCNNFeaturizer(task="regression", use_pretrained=False,
+                            warm_start=False, save_model=False,
+                            atom_fea_len=atom_fea_len, train_size=6,
+                            val_size=2, test_size=2)
+
+        cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
         cgcnn_featurizer.set_n_jobs(1)
         result = cgcnn_featurizer.featurize_many(entries=reg_structs)
         self.assertEqual(np.array(result).shape,
                          (len(reg_structs), atom_fea_len))
 
-        # # test classification from pre-trained model.
-        cgcnn_featurizer = CGCNNFeaturizer()
+        # test classification from pre-trained model.
+        cgcnn_featurizer = \
+            CGCNNFeaturizer(use_pretrained=True, h_fea_len=32, n_conv=4,
+                            pretrained_name='semi-metal-classification',
+                            warm_start=False, save_model=False,
+                            atom_init_fea=cla_atom_features, train_size=5,
+                            val_size=2, test_size=3, atom_fea_len=atom_fea_len)
         cgcnn_featurizer.fit(
-            X=cla_structs, y=cla_props, use_pretrained=True,
-            pretrained_name='semi-metal-classification', h_fea_len=32, n_conv=4,
-            warm_start=False, save_model=False, atom_init_fea=cla_atom_features,
-            train_size=5, val_size=2, test_size=3, atom_fea_len=atom_fea_len)
+            X=cla_structs, y=cla_props, )
         self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
 
         validate_features = [2.1295, 2.1288, 1.8504, 1.9175, 2.1094,
@@ -657,12 +668,14 @@ class StructureFeaturesTest(PymatgenTest):
             self.assertAlmostEqual(result[0], validate_feature, 4)
 
         # test regression from pre-trained model.
-        cgcnn_featurizer = CGCNNFeaturizer()
-        cgcnn_featurizer.fit(
-            task="regression", X=reg_structs, y=reg_props, use_pretrained=True,
-            pretrained_name='formation-energy-per-atom', h_fea_len=32, n_conv=4,
-            warm_start=False, save_model=False, atom_init_fea=reg_atom_features,
-            train_size=5, val_size=2, test_size=3, atom_fea_len=atom_fea_len)
+        cgcnn_featurizer = \
+            CGCNNFeaturizer(task="regression", use_pretrained=True,
+                            pretrained_name='formation-energy-per-atom',
+                            h_fea_len=32, n_conv=4, warm_start=False,
+                            save_model=False, atom_init_fea=reg_atom_features,
+                            train_size=5, val_size=2, test_size=3,
+                            atom_fea_len=atom_fea_len)
+        cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
         self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
 
         validate_features = [1.6871, 1.5679, 1.5316, 1.6419, 1.6031,
@@ -682,13 +695,14 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(warm_start_model['best_mae_error'].numpy(),
                                2.3700, 4)
 
-        cgcnn_featurizer = CGCNNFeaturizer()
-        cgcnn_featurizer.fit(
-            task="regression", X=reg_structs, y=reg_props,
-            use_pretrained=False, save_model=False,
-            warm_start=True, warm_start_file=warm_start_file, epochs=100,
-            atom_fea_len=atom_fea_len, atom_init_fea=reg_atom_features,
-            train_size=6, val_size=2, test_size=2)
+        cgcnn_featurizer = \
+            CGCNNFeaturizer(task="regression", use_pretrained=False,
+                            save_model=False, warm_start=True,
+                            warm_start_file=warm_start_file, epochs=100,
+                            atom_fea_len=atom_fea_len,
+                            atom_init_fea=reg_atom_features,
+                            train_size=6, val_size=2, test_size=2)
+        cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
         cgcnn_featurizer.set_n_jobs(1)
         result = cgcnn_featurizer.featurize_many(entries=reg_structs)
         self.assertEqual(np.array(result).shape,
