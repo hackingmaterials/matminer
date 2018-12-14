@@ -5,6 +5,12 @@
 matminer Changelog
 ==================
 
+**v0.4.6**
+
+* Jarvis CFID descriptors (A. Dunn, K. Choudhary)
+* Allow oxi conversion featurizers to return original object (A. Ganose)
+* better contribution docs (A. Dunn, A. Jain)
+
 **v0.4.5**
 
 * fix for missing data set loader file (D. Dopp)

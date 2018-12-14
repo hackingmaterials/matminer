@@ -183,9 +183,9 @@ Changelog
 
 Check out our full changelog :doc:`here. </changelog>`
 
------------------------------
-Contributions and Bug Reports
------------------------------
+-------------------------
+Contributions and Support
+-------------------------
 Want to see something added or changed? Here's a few ways you can!
 
 * Help us improve the documentation. Tell us where you got 'stuck' and improve the install process for everyone.
@@ -193,6 +193,8 @@ Want to see something added or changed? Here's a few ways you can!
 * Contribute code! Fork our `Github repo <https://github.com/hackingmaterials/matminer>`_ and make a pull request.
 
 Submit all questions and contact to the `Google group <https://groups.google.com/forum/#!forum/matminer>`_
+
+A comprehensive guide to contributions can be found `here. <https://github.com/hackingmaterials/matminer/blob/master/CONTRIBUTING.md>`_
 
 A full list of contributors can be found :doc:`here. </contributors>`
 
