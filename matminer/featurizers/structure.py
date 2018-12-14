@@ -5,7 +5,6 @@ import sys
 import json
 import itertools
 import warnings
-import traceback
 from collections import OrderedDict
 from math import pi, ceil
 from operator import itemgetter
@@ -52,7 +51,7 @@ except ImportError:
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
-              'Alex Dunn <ardunn@lbl.gov>'
+              'Alex Dunn <ardunn@lbl.gov>, Qi Wang <wqthu11@gmail.com>'
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
