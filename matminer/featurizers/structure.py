@@ -2651,7 +2651,7 @@ class JarvisCFID(BaseFeaturizer):
                 "{https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}}"]
 
     def implementors(self):
-        return ["Alex Dunn"]
+        return ["Alex Dunn", "Kamal Choudhary"]
 
     def _cutoff_from_combinations(self, structure=None, cutoff=10.0):
         """
