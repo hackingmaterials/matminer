@@ -13,12 +13,12 @@ try:
     sys.argv += ['/tmp']
     sys.path.append(
         os.path.abspath(os.path.join(os.path.dirname(cgcnn.__file__), "..")))
-    from main import mae, class_eval, AverageMeter, Normalizer
+    from main import mae, class_eval, AverageMeter
     sys.path.pop(-1)
 except ImportError:
     torch = None
     cgcnn = None
-    mae, class_eval, AverageMeter, Normalizer = None, None, None, None
+    mae, class_eval, AverageMeter = None, None, None
 
 
 class TestCGCNNWrappers(TestCase):

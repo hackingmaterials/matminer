@@ -2411,7 +2411,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
                     os.makedirs(self.output_path)
 
             if self._test:
-                train_loader, val_loader, test_loader = \
+                train_loader, val_loader, _ = \
                     cgcnn_data.get_train_val_test_loader(
                         dataset=self.dataset, **self._dataloader_kwargs)
             else:
@@ -2548,7 +2548,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
             return features
 
     def feature_labels(self):
-        return ['CGCNN_feature_'.format(x) for x in range(self._atom_fea_len)]
+        return ['CGCNN_feature_{}'.format(x) for x in range(self._atom_fea_len)]
 
     @property
     def model(self):
