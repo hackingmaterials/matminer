@@ -51,7 +51,8 @@ class PropertyStats(object):
             float - Desired statistic
         """
         statistics = stat.split("::")
-        return getattr(PropertyStats, statistics[0])(data_lst, weights, *statistics[1:])
+        return getattr(PropertyStats, statistics[0])(data_lst, weights,
+                                                     *statistics[1:])
 
     @staticmethod
     def minimum(data_lst, weights=None):
@@ -149,8 +150,11 @@ class PropertyStats(object):
         if weights is None:
             return np.std(data_lst)
         else:
-            beta = np.sum(weights) / (np.sum(weights) ** 2 - np.sum(np.power(weights, 2)))
-            dev = np.power(np.subtract(data_lst, PropertyStats.mean(data_lst, weights=weights)), 2)
+            beta = np.sum(weights) / (
+                        np.sum(weights) ** 2 - np.sum(np.power(weights, 2)))
+            dev = np.power(np.subtract(data_lst, PropertyStats.mean(data_lst,
+                                                                    weights=weights)),
+                           2)
             return np.sqrt(beta * np.dot(dev, weights))
 
     @staticmethod
@@ -231,7 +235,8 @@ class PropertyStats(object):
 
         # Compute the geometric std dev
         mean = PropertyStats.holder_mean(data_lst, weights, 0)
-        beta = np.sum(weights) / (np.sum(weights) ** 2 - np.sum(np.power(weights, 2)))
+        beta = np.sum(weights) / (
+                    np.sum(weights) ** 2 - np.sum(np.power(weights, 2)))
         dev = np.log(np.true_divide(data_lst, mean))
         return np.sqrt(np.exp(beta * np.dot(weights, np.power(dev, 2))))
 
@@ -288,25 +293,29 @@ class PropertyStats(object):
             if power == -1:
                 denom = 0
                 for idx, x in enumerate(data_lst):
-                    denom += weights[idx]/x
+                    denom += weights[idx] / x
 
                 return sum(weights) / denom
 
             # If power=0, return geometric mean
             elif power == 0:
-                return np.product(np.power(data_lst, np.true_divide(weights, np.sum(weights))))
+                return np.product(np.power(data_lst, np.true_divide(weights,
+                                                                    np.sum(
+                                                                        weights))))
             else:
-                return np.power(np.sum(np.multiply(weights, np.power(data_lst, power))) / alpha, 1.0/power)
+                return np.power(np.sum(
+                    np.multiply(weights, np.power(data_lst, power))) / alpha,
+                                1.0 / power)
 
     @staticmethod
-    def sorted(data_lst):
+    def sorted(data_lst, weights=None):
         """
         Returns the sorted data_lst
         """
         return np.sort(data_lst)
 
     @staticmethod
-    def eigenvalues(data_lst, symm = False, sort = False):
+    def eigenvalues(data_lst, symm=False, sort=False):
         """
         Return the eigenvalues of a matrix as a numpy array
         Args:
@@ -315,13 +324,27 @@ class PropertyStats(object):
             sort: wheter to sort the eigenvalues
         Returns: eigenvalues
         """
-        eigs = np.linalg.eigvalsh(data_lst) if symm else np.linalg.eigvals(data_lst)
+        eigs = np.linalg.eigvalsh(data_lst) if symm else np.linalg.eigvals(
+            data_lst)
         if sort:
             eigs.sort()
         return eigs
 
     @staticmethod
-    def flatten(data_lst):
+    def flatten(data_lst, weights=None):
         """Returns a flattened copy of data_lst-as a numpy array
         """
         return np.array(data_lst).flatten()
+
+    @staticmethod
+    def quantile(data_lst, weights=None, q=0.5):
+        """
+        Return a specific quantile.
+        Args:
+            data_lst (list or np.ndarray): 1D data list to be used for computing
+                quantiles
+            q (float): The quantile, as a fraction between 0 and 1.
+        Returns:
+            (float) The computed quantile of the data_lst.
+        """
+        return np.quantile(data_lst, q=q)
