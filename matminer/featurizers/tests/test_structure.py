@@ -350,7 +350,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(opvals[-1], 0.0, places=7)
 
         # Test coordination number
-        cn_fp = SiteStatsFingerprint.from_preset("JMolNN", stats=("mean",))
+        cn_fp = SiteStatsFingerprint.from_preset("JmolNN", stats=("mean",))
         cn_vals = cn_fp.featurize(self.diamond)
         self.assertEqual(cn_vals[0], 4.0)
 
