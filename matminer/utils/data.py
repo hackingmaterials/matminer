@@ -295,7 +295,7 @@ class WordEmbeddingElementData(AbstractData):
     """
     Class to get word embedding vectors of elements. These word embeddings were
     generated using NLP + Neural Network techniques on more than 3 million
-    scientific abstracts. 
+    scientific abstracts.
 
     Citation TBA.
 
