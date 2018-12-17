@@ -71,6 +71,19 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem["mean X"][0], 2.796, 1)
         self.assertAlmostEqual(df_elem["maximum block"][0], 3, 1)
 
+    def test_elem_word_embedding(self):
+        df_elem = ElementProperty.from_preset("word_embedding").featurize_dataframe(self.df, col_id="composition")
+        self.assertAlmostEqual(df_elem["range embedding_149"].iloc[0],
+                               0.06827970966696739)
+        self.assertAlmostEqual(df_elem["range embedding_149"].iloc[1],
+                               0.06827970966696739)
+        self.assertAlmostEqual(df_elem["mean embedding_18"].iloc[0],
+                               -0.020534400502219795)
+        self.assertAlmostEqual(df_elem["mean embedding_18"].iloc[1],
+                               -0.02483355056028813)
+
+
+
     def test_valence(self):
         df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_val["avg s valence electrons"][0], 2.0)
