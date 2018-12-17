@@ -347,4 +347,5 @@ class PropertyStats(object):
         Returns:
             (float) The computed quantile of the data_lst.
         """
+        q = float(q)
         return np.quantile(data_lst, q=q)
