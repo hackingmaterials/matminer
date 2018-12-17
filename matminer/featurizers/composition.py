@@ -17,7 +17,7 @@ from sklearn.neighbors.unsupervised import NearestNeighbors
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    CohesiveEnergyData, MixingEnthalpy, WordEmbeddingElementData
+    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
@@ -66,8 +66,8 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = MagpieData()
         elif data_source == "deml":
             self.data_source = DemlData()
-        elif data_source == "word_embedding":
-            self.data_source = WordEmbeddingElementData()
+        elif data_source == "matscholar_el":
+            self.data_source = MatscholarElementData()
         else:
             self.data_source = data_source
 
@@ -80,7 +80,7 @@ class ElementProperty(BaseFeaturizer):
         Return ElementProperty from a preset string
         Args:
             preset_name: (str) can be one of "magpie", "deml", "matminer", or
-                "word_embedding".
+                "matscholar_el".
 
         Returns:
 
@@ -117,10 +117,10 @@ class ElementProperty(BaseFeaturizer):
                         "bulk_modulus",
                         "coefficient_of_linear_thermal_expansion"]
 
-        elif preset_name == "word_embedding":
-            data_source = "word_embedding"
+        elif preset_name == "matscholar_el":
+            data_source = "matscholar_el"
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
-            features = WordEmbeddingElementData().prop_names
+            features = MatscholarElementData().prop_names
 
         else:
             raise ValueError("Invalid preset_name specified!")
