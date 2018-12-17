@@ -103,12 +103,12 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_ionic["avg ionic char"][0], 0.114461319)
 
         # Test 'fast'
-        self.assertEquals(1.0, featurizer.featurize(Composition("Fe3O4"))[0])
+        self.assertEqual(1.0, featurizer.featurize(Composition("Fe3O4"))[0])
         featurizer.fast = True
-        self.assertEquals(0, featurizer.featurize(Composition("Fe3O4"))[0])
+        self.assertEqual(0, featurizer.featurize(Composition("Fe3O4"))[0])
 
         # Make sure 'fast' works if I use-precomputed oxidation states
-        self.assertEquals(1, featurizer.featurize(Composition({
+        self.assertEqual(1, featurizer.featurize(Composition({
             Specie('Fe', 2): 1,
             Specie('Fe', 3): 2,
             Specie('O', -2): 4
@@ -175,8 +175,8 @@ class CompositionFeaturesTest(PymatgenTest):
     def test_oxidation_states(self):
         featurizer = OxidationStates.from_preset("deml")
         features = dict(zip(featurizer.feature_labels(), featurizer.featurize(self.df["composition"][1])))
-        self.assertAlmostEquals(4, features["range oxidation state"])
-        self.assertAlmostEquals(2, features["maximum oxidation state"])
+        self.assertAlmostEqual(4, features["range oxidation state"])
+        self.assertAlmostEqual(2, features["maximum oxidation state"])
 
     def test_cohesive_energy(self):
         mpr = MPRester()
@@ -276,7 +276,7 @@ class CompositionFeaturesTest(PymatgenTest):
             ef.featurize_many(stable_clusters),
             n_neighbors=1)
         self.assertArrayAlmostEqual([[0]]*8, ds)
-        self.assertEquals(8, nn_lookup._fit_X.shape[0])
+        self.assertEqual(8, nn_lookup._fit_X.shape[0])
 
         # Swap the order of the clusters, make sure it gets the same list
         nn_lookup_swapped = f.create_cluster_lookup_tool([Element('Zr'),
@@ -285,22 +285,22 @@ class CompositionFeaturesTest(PymatgenTest):
                                     sorted(nn_lookup_swapped._fit_X.tolist()))
 
         # Make sure we had a cache hit
-        self.assertEquals(1, f._create_cluster_lookup_tool.cache_info().misses)
-        self.assertEquals(1, f._create_cluster_lookup_tool.cache_info().hits)
+        self.assertEqual(1, f._create_cluster_lookup_tool.cache_info().misses)
+        self.assertEqual(1, f._create_cluster_lookup_tool.cache_info().hits)
 
         # Change the tolerance, see if it changes the results properly
         f.threshold = 0.002
         nn_lookup = f.create_cluster_lookup_tool([Element('Cu'),
                                                   Element('Zr')])
-        self.assertEquals(2, nn_lookup._fit_X.shape[0])
+        self.assertEqual(2, nn_lookup._fit_X.shape[0])
         ds, _ = nn_lookup.kneighbors(
             ef.featurize_many([Composition('CuZr10'), Composition('Cu3Zr12')]),
             n_neighbors=1)
         self.assertArrayAlmostEqual([[0]]*2, ds)
 
         # Make sure we had a cache miss
-        self.assertEquals(2, f._create_cluster_lookup_tool.cache_info().misses)
-        self.assertEquals(1, f._create_cluster_lookup_tool.cache_info().hits)
+        self.assertEqual(2, f._create_cluster_lookup_tool.cache_info().misses)
+        self.assertEqual(1, f._create_cluster_lookup_tool.cache_info().hits)
 
         # Compute the distances from Cu50Zr50
         mean_dists = f.compute_nearest_cluster_distance(Composition('CuZr'))
@@ -317,7 +317,7 @@ class CompositionFeaturesTest(PymatgenTest):
         df = pd.DataFrame({'comp': [Composition('CuZr')]})
         f.featurize_dataframe(df, 'comp')
 
-        self.assertEquals(6, len(df.columns))
+        self.assertEqual(6, len(df.columns))
         self.assertIn('dist from 5 clusters |APE| < 0.002', df.columns)
 
         self.assertAlmostEqual(0.003508794,
