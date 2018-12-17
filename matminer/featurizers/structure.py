@@ -2261,7 +2261,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
                  warm_start=False, warm_start_file=None,
                  warm_start_latest=False, save_checkpoint=False,
                  checkpoint_interval=100, del_checkpoint=True,
-                 save_model=False, output_path="/tmp/CGCNNFeaturizer",
+                 save_model=False, output_path=None,
                  **cgcnn_kwargs):
         """
         Args:
@@ -2345,7 +2345,9 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 These input cgcnn_kwargs will be processed and grouped in
                 _initialize_kwargs.
         """
-
+        if (save_model or save_checkpoint) and output_path is None:
+            raise ValueError("When save model or save checkpoint is True, "
+                             "output_path parameter must also be provided.")
         self.task = task
         self.use_pretrained = use_pretrained
         self.pretrained_name = pretrained_name
@@ -2409,6 +2411,8 @@ class CGCNNFeaturizer(BaseFeaturizer):
             if self.save_model or self.save_checkpoint:
                 if not os.path.exists(self.output_path):
                     os.makedirs(self.output_path)
+                checkpoint_file = os.path.join(self.output_path,
+                                               'cgcnn_checkpoint.pth.tar')
 
             if self._test:
                 train_loader, val_loader, _ = \
@@ -2418,7 +2422,6 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 train_loader, val_loader = \
                     cgcnn_data.get_train_val_test_loader(
                         dataset=self.dataset, **self._dataloader_kwargs)
-
 
             # Initialize normalizer and optimizer
             normalizer = self._initialize_normalizer(Normalizer)
@@ -2470,8 +2473,6 @@ class CGCNNFeaturizer(BaseFeaturizer):
             scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
                                                        **self._scheduler_kwargs)
 
-            checkpoint_file = os.path.join(self.output_path,
-                                           'cgcnn_checkpoint.pth.tar')
             for epoch in range(start_epoch, self._num_epochs):
                 train(train_loader=train_loader, model=model,
                       criterion=criterion, optimizer=optimizer,
@@ -2505,8 +2506,9 @@ class CGCNNFeaturizer(BaseFeaturizer):
                                      optimizer, normalizer, checkpoint_file)
 
             # Save model to disk
-            model_file = os.path.join(self.output_path, 'cgcnn_model.pth.tar')
             if self.save_model:
+                model_file = os.path.join(self.output_path,
+                                          'cgcnn_model.pth.tar')
                 self._save_model(self._num_epochs, best_epoch, best_score,
                                  optimizer, normalizer, model_file)
 
@@ -2526,26 +2528,22 @@ class CGCNNFeaturizer(BaseFeaturizer):
             Features extracted after the pooling layer in CGCNN model
         """
 
-        dataloader_kwargs = appropriate_kwargs(self._dataloader_kwargs,
-                                               DataLoader)
         dataset = CIFDataWrapper([strc], [-1], **self._dataset_kwargs)
-        struc_loader = DataLoader(dataset, **dataloader_kwargs)
-
-        for idx, (input_, _, _) in enumerate(struc_loader):
-            if self._cuda:
-                atom_fea = Variable(input_[0].cuda(async=True), volatile=True)
-                nbr_fea = Variable(input_[1].cuda(async=True), volatile=True)
-                nbr_fea_idx = input_[2].cuda(async=True)
-                crystal_atom_idx = [crys_idx.cuda(async=True)
-                                    for crys_idx in input_[3]]
-            else:
-                atom_fea = Variable(input_[0], volatile=True)
-                nbr_fea = Variable(input_[1], volatile=True)
-                nbr_fea_idx = input_[2]
-                crystal_atom_idx = input_[3]
-            features = self._best_model.extract_feature(
-                atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx).tolist()[idx]
-            return features
+        input_, _, _ = self._dataloader_kwargs["collate_fn"]([dataset[0]])
+        if self._cuda:
+            atom_fea = Variable(input_[0].cuda(async=True), volatile=True)
+            nbr_fea = Variable(input_[1].cuda(async=True), volatile=True)
+            nbr_fea_idx = input_[2].cuda(async=True)
+            crystal_atom_idx = [crys_idx.cuda(async=True)
+                                for crys_idx in input_[3]]
+        else:
+            atom_fea = Variable(input_[0], volatile=True)
+            nbr_fea = Variable(input_[1], volatile=True)
+            nbr_fea_idx = input_[2]
+            crystal_atom_idx = input_[3]
+        features = self._best_model.extract_feature(
+            atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx).tolist()[0]
+        return features
 
     def feature_labels(self):
         return ['CGCNN_feature_{}'.format(x) for x in range(self._atom_fea_len)]
@@ -2632,7 +2630,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
 
         # Because CGCNN's main.py need command-line arguments (argparse model),
         # so we should add the required arguments to sys.argv.
-        sys.argv += ['/tmp', '--task', self.task,
+        sys.argv += ['place_holder', '--task', self.task,
                      '--print-freq', str(self._print_freq)]
         if not self._cuda:
             sys.argv += ['--disable-cuda']

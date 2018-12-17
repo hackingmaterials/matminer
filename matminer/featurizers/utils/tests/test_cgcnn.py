@@ -1,6 +1,5 @@
 from unittest import TestCase
 import unittest
-import sys
 import os
 import json
 import csv
@@ -10,19 +9,13 @@ from pymatgen.core import Structure, Lattice
 try:
     import cgcnn
     import torch
-    sys.argv += ['/tmp']
-    sys.path.append(
-        os.path.abspath(os.path.join(os.path.dirname(cgcnn.__file__), "..")))
-    from main import mae, class_eval, AverageMeter
-    sys.path.pop(-1)
 except ImportError:
     torch = None
     cgcnn = None
-    mae, class_eval, AverageMeter = None, None, None
 
 
 class TestCGCNNWrappers(TestCase):
-    @unittest.skipIf(not (torch and cgcnn and class_eval),
+    @unittest.skipIf(not (torch and cgcnn),
                      "pytorch or cgcnn not installed.")
     def setUp(self):
         self.sc = Structure(Lattice([[3.52, 0, 0], [0, 3.52, 0], [0, 0, 3.52]]),
