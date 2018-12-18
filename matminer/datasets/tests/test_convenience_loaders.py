@@ -177,15 +177,19 @@ if do_complete_test:
         def test_load_brgoch_superhard_training(self):
             df = load_brgoch_superhard_training()
             self.assertTrue(isinstance(df, pd.DataFrame))
-            self.assertEqual(len(df.columns), 159)
+            self.assertEqual(len(df.columns), 158)
             self.assertEqual(len(df), 2574)
             df = load_brgoch_superhard_training(drop_suspect=True)
-            self.assertEqual(len(df), 0)
+            self.assertEqual(len(df), 2494)
             df = load_brgoch_superhard_training(subset="brgoch_features")
-            self.assertEqual(len(df), 0)
+            self.assertEqual(len(df), 2574)
             self.assertEqual(len(df.columns), 152)
             df = load_brgoch_superhard_training(subset="basic_descriptors")
-            self.assertEqual(len(df), 0)
+            self.assertEqual(len(df), 2574)
+            self.assertEqual(len(df.columns), 4)
+            df = load_brgoch_superhard_training(subset="basic_descriptors",
+                                                drop_suspect=True)
+            self.assertEqual(len(df), 2494)
             self.assertEqual(len(df.columns), 4)
 
 if __name__ == "__main__":

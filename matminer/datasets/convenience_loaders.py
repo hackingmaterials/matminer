@@ -552,7 +552,9 @@ def load_brgoch_superhard_training(subset="all", drop_suspect=False,
     if subset in {"all", "brgoch_features"}:
         feats_expanded = pd.DataFrame([feat_dict
                                        for feat_dict in df["brgoch_feats"]])
-        df = pd.concat([df, feats_expanded], axis=1)
+
+        for column in feats_expanded.columns:
+            df[column] = feats_expanded[column]
 
     if subset == "basic_descriptors":
         df = df.drop([feat for feat in df.columns
