@@ -166,7 +166,7 @@ class TestBaseClass(PymatgenTest):
             implementors = multi_f.implementors()
             self.assertIn('Us', implementors)
             self.assertIn('Them', implementors)
-            self.assertEquals(2, len(implementors))
+            self.assertEqual(2, len(implementors))
 
             # Ensure BaseFeaturizer operation without overriden featurize_dataframe
             with warnings.catch_warnings(record=True) as w:
@@ -206,7 +206,7 @@ class TestBaseClass(PymatgenTest):
 #
 #            # Test dataframe
 #            data = multi_f.featurize_dataframe(data, ['x', 'x2'])
-#            self.assertEquals(['y', 'y2'], multi_f.feature_labels())
+#            self.assertEqual(['y', 'y2'], multi_f.feature_labels())
 #            self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]],
 #                                        data[['y', 'y2']])
 
@@ -269,12 +269,12 @@ class TestBaseClass(PymatgenTest):
 
         #  Test the predictions
         f = StackedFeaturizer(self.single, model)
-        self.assertEquals([2], f.featurize(data['x'][0]))
+        self.assertEqual([2], f.featurize(data['x'][0]))
 
         #  Test the feature names
-        self.assertEquals(['prediction'], f.feature_labels())
+        self.assertEqual(['prediction'], f.feature_labels())
         f.name = 'ML'
-        self.assertEquals(['ML prediction'], f.feature_labels())
+        self.assertEqual(['ML prediction'], f.feature_labels())
 
         # Test classifier
         model = DummyClassifier("prior")
@@ -283,12 +283,12 @@ class TestBaseClass(PymatgenTest):
 
         #  Test the prediction
         f.model = model
-        self.assertEquals([2. / 3], f.featurize(data['x'][0]))
+        self.assertEqual([2. / 3], f.featurize(data['x'][0]))
 
         #  Test the feature labels
         self.assertRaises(ValueError, f.feature_labels)
         f.class_names = ['A', 'B']
-        self.assertEquals(['ML P(A)'], f.feature_labels())
+        self.assertEqual(['ML P(A)'], f.feature_labels())
 
         # Test with three classes
         data['y'] = [0, 2, 1]
@@ -296,7 +296,7 @@ class TestBaseClass(PymatgenTest):
 
         self.assertArrayAlmostEqual([1. / 3] * 2, f.featurize(data['x'][0]))
         f.class_names = ['A', 'B', 'C']
-        self.assertEquals(['ML P(A)', 'ML P(B)'], f.feature_labels())
+        self.assertEqual(['ML P(A)', 'ML P(B)'], f.feature_labels())
 
     def test_multiindex_inplace(self):
         df_1lvl = pd.DataFrame({'x': [1, 2, 3]})
@@ -413,16 +413,16 @@ class TestBaseClass(PymatgenTest):
         # Call featurize on both, check the number of cache misses/hits
         feat.featurize(data['strcs'][0])
         feat.featurize(data['strcs'][1])
-        self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
-        self.assertEquals(2, _get_all_nearest_neighbors.cache_info().misses)
+        self.assertEqual(2, _get_all_nearest_neighbors.cache_info().hits)
+        self.assertEqual(2, _get_all_nearest_neighbors.cache_info().misses)
 
         # Verify the number of cache misses, it should be the same as before
         feat.set_n_jobs(1)
         _get_all_nearest_neighbors.cache_clear()
         feat.featurize_dataframe(data, 'strcs')
 
-        self.assertEquals(2, _get_all_nearest_neighbors.cache_info().hits)
-        self.assertEquals(2, _get_all_nearest_neighbors.cache_info().misses)
+        self.assertEqual(2, _get_all_nearest_neighbors.cache_info().hits)
+        self.assertEqual(2, _get_all_nearest_neighbors.cache_info().misses)
 
     def test_ignore_errors(self):
         # Make sure multiplefeaturizer returns the correct sub-featurizer multiindex keys
@@ -443,12 +443,12 @@ class TestBaseClass(PymatgenTest):
 
             # Make sure it completes successfully
             results = mf.featurize_many(data['x'], ignore_errors=True, return_errors=re)
-            self.assertEquals(5 if re else 3, len(results[0]))
+            self.assertEqual(5 if re else 3, len(results[0]))
 
             # Make sure it works with featurize dataframe
             results = mf.featurize_dataframe(data, 'x', ignore_errors=True,
                                              return_errors=re, multiindex=mi)
-            self.assertEquals(6 if re else 4, len(results.columns))
+            self.assertEqual(6 if re else 4, len(results.columns))
 
             #  Special test for returning errors (only should work when returning errors)
             #   I only am going to test the single index case for simplicity

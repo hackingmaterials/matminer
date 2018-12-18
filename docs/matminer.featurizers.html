@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.4.5 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.4.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -2367,7 +2367,7 @@ Instead, they should be used to pre-process data, either through a standalone
 transformation or as part of a Pipeline.</p>
 <dl class="class">
 <dt id="matminer.featurizers.conversions.CompositionToOxidComposition">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">CompositionToOxidComposition</code><span class="sig-paren">(</span><em>target_col_id='composition_oxid'</em>, <em>overwrite_data=False</em>, <em>coerce_mixed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">CompositionToOxidComposition</code><span class="sig-paren">(</span><em>target_col_id='composition_oxid'</em>, <em>overwrite_data=False</em>, <em>coerce_mixed=True</em>, <em>return_original_on_error=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
 <p>Utility featurizer to add oxidation states to a pymatgen Composition.</p>
 <p>Oxidation states are determined using pymatgen’s guessing routines.
@@ -2377,8 +2377,6 @@ but instead can be applied to pre-process data or as part of a Pipeline.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Parameters to control the settings for</dt>
-<dd><cite>pymatgen.io.structure.Structure.add_oxidation_state_by_guess()</cite>.</dd>
 <dt>target_col_id (str or None): The column in which the converted data will</dt>
 <dd>be written. If the column already exists then an error will be
 thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
@@ -2392,12 +2390,17 @@ will only work if <cite>overwrite_data=True</cite>).</dd>
 <dt>coerce_mixed (bool): If a composition has both species containing</dt>
 <dd>oxid states and not containing oxid states, strips all of the
 oxid states and guesses the entire composition’s oxid states.</dd>
+<dt>return_original_on_error: If the oxidation states cannot be</dt>
+<dd>guessed and set to True, the composition without oxidation states
+will be returned. If set to False, an error will be thrown.</dd>
+<dt><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Parameters to control the settings for</dt>
+<dd><cite>pymatgen.io.structure.Structure.add_oxidation_state_by_guess()</cite>.</dd>
 </dl>
 </dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.conversions.CompositionToOxidComposition.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='composition_oxid'</em>, <em>overwrite_data=False</em>, <em>coerce_mixed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='composition_oxid'</em>, <em>overwrite_data=False</em>, <em>coerce_mixed=True</em>, <em>return_original_on_error=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -2961,7 +2964,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.conversions.StructureToOxidStructure">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">StructureToOxidStructure</code><span class="sig-paren">(</span><em>target_col_id='structure_oxid'</em>, <em>overwrite_data=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">StructureToOxidStructure</code><span class="sig-paren">(</span><em>target_col_id='structure_oxid'</em>, <em>overwrite_data=False</em>, <em>return_original_on_error=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
 <p>Utility featurizer to add oxidation states to a pymatgen Structure.</p>
 <p>Oxidation states are determined using pymatgen’s guessing routines.
@@ -2971,8 +2974,6 @@ but instead can be applied to pre-process data or as part of a Pipeline.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs: Parameters to control the settings for</dt>
-<dd><cite>pymatgen.io.structure.Structure.add_oxidation_state_by_guess()</cite>.</dd>
 <dt>target_col_id (str or None): The column in which the converted data will</dt>
 <dd>be written. If the column already exists then an error will be
 thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
@@ -2983,12 +2984,17 @@ the data will be written “in place” to the <cite>col_id</cite> column (this
 will only work if <cite>overwrite_data=True</cite>).</dd>
 <dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
 <dd>exists.</dd>
+<dt>return_original_on_error: If the oxidation states cannot be</dt>
+<dd>guessed and set to True, the structure without oxidation states will
+be returned. If set to False, an error will be thrown.</dd>
+<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs: Parameters to control the settings for</dt>
+<dd><cite>pymatgen.io.structure.Structure.add_oxidation_state_by_guess()</cite>.</dd>
 </dl>
 </dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.conversions.StructureToOxidStructure.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='structure_oxid'</em>, <em>overwrite_data=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='structure_oxid'</em>, <em>overwrite_data=False</em>, <em>return_original_on_error=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.StructureToOxidStructure.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -6380,6 +6386,138 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dd></dl>
 
 <dl class="class">
+<dt id="matminer.featurizers.structure.JarvisCFID">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">JarvisCFID</code><span class="sig-paren">(</span><em>use_cell=True</em>, <em>use_chem=True</em>, <em>use_chg=True</em>, <em>use_rdf=True</em>, <em>use_adf=True</em>, <em>use_ddf=True</em>, <em>use_nn=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML.</p>
+<p>Chemo-structural descriptors from five different sub-methods,cincluding
+pairwise radial, nearest neighbor, bond-angle, dihedral-angle and
+core-charge distributions. With all descriptors enabled, there are 1,557
+features per structure.</p>
+<p>Adapted from the nist/jarvis package hosted at:
+<a class="reference external" href="https://github.com/usnistgov/jarvis">https://github.com/usnistgov/jarvis</a></p>
+<dl class="docutils">
+<dt>Find details at: <a class="reference external" href="https://journals.aps.org/prmaterials/abstract/10.1103/">https://journals.aps.org/prmaterials/abstract/10.1103/</a></dt>
+<dd>PhysRevMaterials.2.083801</dd>
+<dt>Args/Features:</dt>
+<dd><dl class="first docutils">
+<dt>use_cell (bool): Use structure cell descriptors (4 features, based</dt>
+<dd>on DensityFeatures and log volume per atom).</dd>
+</dl>
+<p>use_chem (bool): Use chemical composition descriptors (438 features)
+use_chg (bool): Use core charge descriptors (378 features)
+use_adf (bool): Use angular distribution function (179 features x 2, one</p>
+<blockquote>
+<div>set of features for each cutoff).</div></blockquote>
+<p class="last">use_rdf (bool): Use radial distribution function (100 features)
+use_ddf (bool): Use dihedral angle distribution function (179 features)
+use_nn (bool): Use nearest neighbors (100 descriptors)</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.structure.JarvisCFID.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>use_cell=True</em>, <em>use_chem=True</em>, <em>use_chg=True</em>, <em>use_rdf=True</em>, <em>use_adf=True</em>, <em>use_ddf=True</em>, <em>use_nn=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.JarvisCFID.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.JarvisCFID.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.JarvisCFID.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get chemo-structural CFID decriptors</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>s: Structure object</dd>
+<dt>Returns:</dt>
+<dd>(np.ndarray) Final descriptors</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.JarvisCFID.get_chem">
+<code class="descname">get_chem</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID.get_chem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get chemical descriptors for an element</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>element: element name</dd>
+<dt>Returns:</dt>
+<dd>arr: descriptor array value</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.JarvisCFID.get_chg">
+<code class="descname">get_chg</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID.get_chg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get charge descriptors for an element</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>element: element name</dd>
+<dt>Returns:</dt>
+<dd>arr: descriptor array values</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.JarvisCFID.get_distributions">
+<code class="descname">get_distributions</code><span class="sig-paren">(</span><em>structure</em>, <em>c_size=10.0</em>, <em>max_cut=5.0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID.get_distributions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get radial and angular distribution functions</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>structure: Structure object
+c_size: max. cell size
+max_cut: max. bond cut-off for angular distribution</dd>
+<dt>Retruns:</dt>
+<dd>adfa, adfb, ddf, rdf, bondo
+Angular distribution upto first cut-off
+Angular distribution upto second cut-off
+Dihedral angle distribution upto first cut-off
+Radial distribution funcion
+Bond order distribution</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.JarvisCFID.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.JarvisCFID.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="matminer.featurizers.structure.MaximumPackingEfficiency">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">MaximumPackingEfficiency</code><a class="headerlink" href="#matminer.featurizers.structure.MaximumPackingEfficiency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
@@ -7448,7 +7586,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.6 documentation</a> &#187;</li> 
       </ul>
     </div>
 

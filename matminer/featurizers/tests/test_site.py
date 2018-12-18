@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from pymatgen import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
-from pymatgen.analysis.local_env import VoronoiNN, JMolNN, CrystalNN
+from pymatgen.analysis.local_env import VoronoiNN, JmolNN, CrystalNN
 
 from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, CrystalNNFingerprint, \
@@ -319,15 +319,15 @@ class FingerprintTests(PymatgenTest):
         vnn.fit(df_cscl[['struct', 'site']])
         vnn_csros = vnn.featurize_dataframe(df_cscl, ['struct', 'site'])
         self.assertAlmostEqual(vnn_csros['CSRO_Cl_VoronoiNN'][0], -0.0714285714)
-        jmnn = ChemicalSRO.from_preset("JMolNN", el_radius_updates={"Al": 1.55})
+        jmnn = ChemicalSRO.from_preset("JmolNN", el_radius_updates={"Al": 1.55})
         jmnn.fit(df_sc[['struct', 'site']])
         jmnn_csros = jmnn.featurize_dataframe(df_sc, ['struct', 'site'])
-        self.assertAlmostEqual(jmnn_csros['CSRO_Al_JMolNN'][0], 0.0)
-        jmnn = ChemicalSRO.from_preset("JMolNN")
+        self.assertAlmostEqual(jmnn_csros['CSRO_Al_JmolNN'][0], 0.0)
+        jmnn = ChemicalSRO.from_preset("JmolNN")
         jmnn.fit(df_cscl[['struct', 'site']])
         jmnn_csros = jmnn.featurize_dataframe(df_cscl, ['struct', 'site'])
-        self.assertAlmostEqual(jmnn_csros['CSRO_Cs_JMolNN'][0], -0.5)
-        self.assertAlmostEqual(jmnn_csros['CSRO_Cl_JMolNN'][0], -0.5)
+        self.assertAlmostEqual(jmnn_csros['CSRO_Cs_JmolNN'][0], -0.5)
+        self.assertAlmostEqual(jmnn_csros['CSRO_Cl_JmolNN'][0], -0.5)
         mdnn = ChemicalSRO.from_preset("MinimumDistanceNN")
         mdnn.fit(df_cscl[['struct', 'site']])
         mdnn_csros = mdnn.featurize_dataframe(df_cscl, ['struct', 'site'])
@@ -415,15 +415,15 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(cnv.featurize(self.cscl, 0)[0], 11.648923254)
         self.assertAlmostEqual(cnv.featurize(self.cscl, 1)[0], 11.648923254)
         self.assertEqual(len(cnv.citations()), 2)
-        cnj = CoordinationNumber.from_preset('JMolNN')
-        self.assertEqual(cnj.feature_labels()[0], 'CN_JMolNN')
+        cnj = CoordinationNumber.from_preset('JmolNN')
+        self.assertEqual(cnj.feature_labels()[0], 'CN_JmolNN')
         self.assertAlmostEqual(cnj.featurize(self.sc, 0)[0], 0)
         self.assertAlmostEqual(cnj.featurize(self.cscl, 0)[0], 0)
         self.assertAlmostEqual(cnj.featurize(self.cscl, 1)[0], 0)
         self.assertEqual(len(cnj.citations()), 1)
-        jmnn = JMolNN(el_radius_updates={"Al": 1.55, "Cl": 1.7, "Cs": 1.7})
+        jmnn = JmolNN(el_radius_updates={"Al": 1.55, "Cl": 1.7, "Cs": 1.7})
         cnj = CoordinationNumber(jmnn)
-        self.assertEqual(cnj.feature_labels()[0], 'CN_JMolNN')
+        self.assertEqual(cnj.feature_labels()[0], 'CN_JmolNN')
         self.assertAlmostEqual(cnj.featurize(self.sc, 0)[0], 6)
         self.assertAlmostEqual(cnj.featurize(self.cscl, 0)[0], 8)
         self.assertAlmostEqual(cnj.featurize(self.cscl, 1)[0], 8)

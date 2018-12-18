@@ -289,3 +289,28 @@ class MixingEnthalpy:
 
         key = tuple(sorted((elemA.symbol, elemB.symbol)))
         return self.mixing_data.get(key, np.nan)
+
+
+class MatscholarElementData(AbstractData):
+    """
+    Class to get word embedding vectors of elements. These word embeddings were
+    generated using NLP + Neural Network techniques on more than 3 million
+    scientific abstracts.
+
+    #TODO: add citation (expected mid-2019).
+
+    """
+    def __init__(self):
+        dfile = os.path.join(module_dir,
+                             "data_files/matscholar_els.json")
+        with open(dfile, "r") as fp:
+            embeddings = json.load(fp)
+        self.prop_names = ["matscholar_el_{}".format(i) for i in range(1, 201)]
+        all_element_data = {}
+        for el, embedding in embeddings.items():
+            all_element_data[el] = dict(zip(self.prop_names, embedding))
+        self.all_element_data = all_element_data
+
+    def get_elemental_property(self, elem, property_name):
+        estr = str(elem)
+        return self.all_element_data[estr][property_name]

@@ -759,7 +759,7 @@ class ChemicalSRO(BaseFeaturizer):
         """
         Use one of the standard instances of a given NearNeighbor class.
         Args:
-            preset (str): preset type ("VoronoiNN", "JMolNN",
+            preset (str): preset type ("VoronoiNN", "JmolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
                           or "MinimumVIRENN").
             **kwargs: allow to pass args to the NearNeighbor class.
@@ -857,7 +857,7 @@ class ChemicalSRO(BaseFeaturizer):
                 'mit drei unbestimmten ganzen Zahlen}, journal={Journal '
                 'f\"ur die reine und angewandte Mathematik}, number={40}, '
                 'pages={209-227}, doi={10.1515/crll.1850.40.209}, year={1850}}')
-        if self.nn.__class__.__name__ == 'JMolNN':
+        if self.nn.__class__.__name__ == 'JmolNN':
             citations.append('@misc{jmol, title = {Jmol: an open-source Java '
                 'viewer for chemical structures in 3D}, howpublished = {'
                 '\\url{http://www.jmol.org/}}}')
@@ -1266,7 +1266,7 @@ class CoordinationNumber(BaseFeaturizer):
         """
         Use one of the standard instances of a given NearNeighbor class.
         Args:
-            preset (str): preset type ("VoronoiNN", "JMolNN",
+            preset (str): preset type ("VoronoiNN", "JmolNN",
                           "MiniumDistanceNN", "MinimumOKeeffeNN",
                           or "MinimumVIRENN").
             **kwargs: allow to pass args to the NearNeighbor class.
@@ -1330,7 +1330,7 @@ class CoordinationNumber(BaseFeaturizer):
                 'mit drei unbestimmten ganzen Zahlen}, journal={Journal '
                 'f\"ur die reine und angewandte Mathematik}, number={40}, '
                 'pages={209-227}, doi={10.1515/crll.1850.40.209}, year={1850}}')
-        if self.nn.__class__.__name__ == 'JMolNN':
+        if self.nn.__class__.__name__ == 'JmolNN':
             citations.append('@misc{jmol, title = {Jmol: an open-source Java '
                 'viewer for chemical structures in 3D}, howpublished = {'
                 '\\url{http://www.jmol.org/}}}')
@@ -1907,7 +1907,8 @@ class BondOrientationalParameter(BaseFeaturizer):
 
 
 class SiteElementalProperty(BaseFeaturizer):
-    """Elemental properties of atom on a certain site
+    """
+    Elemental properties of atom on a certain site
 
     Features:
         site [property] - Elemental property for this site

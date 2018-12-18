@@ -48,3 +48,6 @@ nosetests.xml
 
 # Dataset generation logs
 dataset_prep.log
+
+# Datasets
+matminer/datasets/*.json.gz
