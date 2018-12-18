@@ -52,3 +52,4 @@ Other
 * David Waroquiers (UC Louvain, Belgium)
 * Logan Williams (U Michigan Ann Arbor)
 * Aidan Thompson (Sandia National Lab)
+* Kamal Choudhary (NIST)

@@ -1154,7 +1154,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         else:
             # TODO: Why assume coordination number? Should this just raise an error? - lw
             # One of the various Coordination Number presets:
-            # MinimumVIRENN, MinimumDistanceNN, JMolNN, VoronoiNN, etc.
+            # MinimumVIRENN, MinimumDistanceNN, JmolNN, VoronoiNN, etc.
             try:
                 return SiteStatsFingerprint(
                     CoordinationNumber.from_preset(preset), **kwargs)
@@ -1307,7 +1307,7 @@ class BondFractions(BaseFeaturizer):
         Pass args to __init__, such as allowed_bonds, using this method as well.
 
         Args:
-            preset (str): preset type ("CrystalNN", "VoronoiNN", "JMolNN",
+            preset (str): preset type ("CrystalNN", "VoronoiNN", "JmolNN",
             "MiniumDistanceNN", "MinimumOKeeffeNN", or "MinimumVIRENN").
 
         Returns:
