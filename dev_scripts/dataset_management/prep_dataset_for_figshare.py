@@ -236,8 +236,8 @@ def _preprocess_brgoch_superhard_training(file_path):
             bulk_relative_dif = bulk_abs_dif / material["bulk_modulus"]
             shear_relative_dif = shear_abs_dif / material["shear_modulus"]
 
-            if ((bulk_relative_dif > .05 or shear_relative_dif > .05)
-                    and (bulk_abs_dif > 1 or shear_abs_dif > 1)):
+            if ((bulk_relative_dif > .05 and bulk_abs_dif > 1)
+                    or (shear_relative_dif > .05 and shear_abs_dif > 1)):
                 err_msg = "\nMP entry selected for {} with space group {} " \
                           "has a difference in elastic data greater than 5 " \
                           "percent/1GPa!".format(material["formula"],
@@ -272,13 +272,13 @@ def _preprocess_brgoch_superhard_training(file_path):
     # leave missing structures as nan values
     structure_obs = []
     for s in df["structure"]:
-        if isinstance(s, dict):
-            structure_obs.append(Structure.from_dict(s))
-        elif np.isnan(s):
-            structure_obs.append(s)
-        else:
-            raise ValueError("Something went wrong, invalid "
-                             "value {} in structure column".format(s))
+        if not isinstance(s, Structure):
+            if isinstance(s, dict):
+                s = Structure.from_dict(s)
+            elif not isinstance(s, np.float) and np.isnan(s):
+                raise ValueError("Something went wrong, invalid "
+                                 "value {} in structure column".format(s))
+        structure_obs.append(s)
 
     df["structure"] = structure_obs
 
