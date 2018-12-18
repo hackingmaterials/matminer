@@ -31,16 +31,15 @@
             "bulk_modulus": "VRH bulk modulus",
             "composition": "pymatgen composition object",
             "formula": "Chemical formula as a string",
-            "initial_structure": "pymatgen structure object before relaxation",
             "material_id": "materials project id",
             "structure": "pymatgen structure object",
             "shear_modulus": "VRH shear modulus",
-            "suspect_value": "True if bulk or shear value did not closely match (within 5%/1GPa of MP) materials project value at time of cross reference"
+            "suspect_value": "True if bulk or shear value did not closely match (within 5%/1GPa of MP) materials project value at time of cross reference or if no material could be found"
         },
-        "description": "2537 materials used for training regressors that predict shear and bulk modulus.",
+        "description": "2574 materials used for training regressors that predict shear and bulk modulus.",
         "file_type": "json.gz",
         "hash": "5377a593311af362c42dccfd66b27fe9d3196770f507965cea2d1a9986f9a4a9",
-        "num_entries": 2537,
+        "num_entries": 2574,
         "reference": "Machine Learning Directed Search for Ultraincompressible, Superhard Materials\nAria Mansouri Tehrani, Anton O. Oliynyk, Marcus Parry, Zeshan Rizvi, Samantha Couper, Feng Lin, Lowell Miyagi, Taylor D. Sparks, and Jakoah Brgoch\nJournal of the American Chemical Society 2018 140 (31), 9844-9853\nDOI: 10.1021/jacs.8b02717",
         "url": "https://ndownloader.figshare.com/files/13753853"
     },

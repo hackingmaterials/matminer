@@ -20,7 +20,7 @@ def load_elastic_tensor(version="2015", include_metadata=False, data_home=None,
         include_metadata (bool): Whether or not to include the cif, meta,
             and poscar dataset columns. False by default.
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -45,7 +45,7 @@ def load_piezoelectric_tensor(include_metadata=False, data_home=None,
         include_metadata (bool): Whether or not to include the cif, meta,
             and poscar dataset columns. False by default.
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -69,7 +69,7 @@ def load_dielectric_constant(include_metadata=False, data_home=None,
         include_metadata (bool): Whether or not to include the cif, meta,
             and poscar dataset columns. False by default.
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -89,7 +89,7 @@ def load_flla(data_home=None, download_if_missing=True):
     Convenience function for loading the flla dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -106,7 +106,7 @@ def load_castelli_perovskites(data_home=None, download_if_missing=True):
     Convenience function for loading the castelli_perovskites dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -123,7 +123,7 @@ def load_boltztrap_mp(data_home=None, download_if_missing=True):
     Convenience function for loading the boltztrap_mp dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -140,7 +140,7 @@ def load_phonon_dielectric_mp(data_home=None, download_if_missing=True):
     Convenience function for loading the phonon_dielectric_mp dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -164,7 +164,7 @@ def load_glass_ternary_landolt(processing="all", unique_composition=True,
         unique_composition (bool): Whether or not to combine compositions with
             the same formula
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -195,7 +195,7 @@ def load_double_perovskites_gap(return_lumo=False, data_home=None,
         return_lumo (bool) Whether or not to provide LUMO energy dataframe in
             addition to gap dataframe. Defaults to False.
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -217,7 +217,7 @@ def load_double_perovskites_gap_lumo(data_home=None, download_if_missing=True):
     Convenience function for loading the double_perovskites_gap_lumo dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -239,7 +239,7 @@ def load_glass_ternary_hipt(system="all", data_home=None,
         system (str, list): return items only from the requested system(s)
             options are: "CoFeZr", "CoTiZr", "CoVZr", "FeTiNb"
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -270,7 +270,7 @@ def load_citrine_thermal_conductivity(room_temperature=True, data_home=None,
         room_temperature (bool) Whether or not to only return items with room
             temperature k_condition. True by default.
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
@@ -296,7 +296,7 @@ def load_mp(include_structures=False, data_home=None, download_if_missing=True):
         include_structures (bool) Whether or not to load the full mp
             structure data. False by default.
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
@@ -316,7 +316,7 @@ def load_wolverton_oxides(data_home=None, download_if_missing=True):
     Convenience function for loading the wolverton oxides dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
@@ -333,7 +333,7 @@ def load_heusler_magnetic(data_home=None, download_if_missing=True):
     Convenience function for loading the heusler magnetic dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
@@ -350,7 +350,7 @@ def load_steel_strength(data_home=None, download_if_missing=True):
     Convenience function for loading the steel strength dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
@@ -371,7 +371,7 @@ def load_jarvis_ml_dft_training(drop_nan_columns=None, data_home=None,
         drop_nan_columns (list, str): Column or columns to drop rows
         containing NaN values from
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
@@ -397,7 +397,7 @@ def load_jarvis_dft_3d(drop_nan_columns=None, data_home=None,
         drop_nan_columns (list, str): Column or columns to drop rows
         containing NaN values from
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
@@ -423,7 +423,7 @@ def load_jarvis_dft_2d(drop_nan_columns=None, data_home=None,
         drop_nan_columns (list, str): Column or columns to drop rows
         containing NaN values from
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
            it isn't on disk
@@ -448,7 +448,7 @@ def load_glass_binary(version="v2", data_home=None, download_if_missing=True):
         version (str): Version identifier for dataset, see dataset description
             for explanation of each. Defaults to v2
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -471,7 +471,7 @@ def load_m2ax(data_home=None, download_if_missing=True):
     Convenience function for loading the m2ax dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -488,7 +488,7 @@ def load_expt_gap(data_home=None, download_if_missing=True):
     Convenience function for loading the expt_gap dataset.me
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -505,7 +505,7 @@ def load_expt_formation_enthalpy(data_home=None, download_if_missing=True):
     Convenience function for loading the expt_formation_enthalpy dataset.
 
     Args:
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -528,8 +528,11 @@ def load_brgoch_superhard_training(subset="all", drop_suspect=False,
                  and basic descriptors
             brgoch_features: only features from reference paper and targets
             basic_descriptors: only composition/structure columns and targets
+        
+        drop_suspect (bool): Whether to drop values with possibly incorrect 
+            elastic data and materials that could not be verified 
 
-        data_home (str, None): Where to loom for and store the loaded dataset
+        data_home (str, None): Where to look for and store the loaded dataset
 
         download_if_missing (bool): Whether or not to download the dataset if
             it isn't on disk
@@ -556,8 +559,7 @@ def load_brgoch_superhard_training(subset="all", drop_suspect=False,
                       if feat not in {"composition", "structure",
                                       "shear_modulus", "bulk_modulus"}], axis=1)
     elif subset == "brgoch_features":
-        df = df.drop(["composition", "structure", "initial_structure",
-                      "formula", "material_id", "suspect_value",
-                      "brgoch_feats"], axis=1)
+        df = df.drop(["composition", "structure", "formula", "material_id", 
+                      "suspect_value", "brgoch_feats"], axis=1)
 
     return df

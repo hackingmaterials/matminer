@@ -397,7 +397,7 @@ class DataSetsTest(DataSetTest):
 
     def test_brgoch_superhard_training(self):
         object_headers = ['formula', 'material_id', 'structure', 'composition',
-                          'initial_structure', 'brgoch_feats']
+                          'brgoch_feats']
 
         numeric_headers = ['shear_modulus', 'bulk_modulus']
 
@@ -405,7 +405,6 @@ class DataSetsTest(DataSetTest):
 
         def _unique_tests(df):
             self.assertEqual(type(df['structure'][0]), Structure)
-            self.assertEqual(type(df['initial_structure'][0]), Structure)
             self.assertEqual(type(df['composition'][0]), Composition)
             self.assertTrue(isinstance(df["brgoch_feats"][0], dict))
 

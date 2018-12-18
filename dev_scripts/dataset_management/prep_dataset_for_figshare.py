@@ -74,8 +74,7 @@ def _clear_incomplete_dataframe_rows(df, col_names=None):
 
 def _preprocess_brgoch_superhard_training(file_path):
     """
-    # TODO
-    2537 materials used for training shear and bulk modulus predictors.
+    2574 materials used for training shear and bulk modulus predictors.
 
     References:
         https://pubs.acs.org/doi/pdf/10.1021/jacs.8b02717
@@ -199,10 +198,10 @@ def _preprocess_brgoch_superhard_training(file_path):
 
         # Throw out entry if no hits on MP
         if len(mp_query) == 0:
-            error_msg = "No valid materials found for entry with formula {} " \
-                        "and space group {}. Data point will be marked as " \
-                        "suspect".format(material['formula'],
-                                         material['space_group_number'])
+            error_msg = "\nNo valid materials found for entry with formula " \
+                        "{} and space group {}. Data point will be marked as " \
+                        "suspect\n".format(material['formula'],
+                                           material['space_group_number'])
             logging.warning(error_msg)
             df.loc[material_index, "suspect_value"] = True
 
@@ -239,7 +238,7 @@ def _preprocess_brgoch_superhard_training(file_path):
 
             if ((bulk_relative_dif > .05 or shear_relative_dif > .05)
                     and (bulk_abs_dif > 1 or shear_abs_dif > 1)):
-                err_msg = "MP entry selected for {} with space group {} " \
+                err_msg = "\nMP entry selected for {} with space group {} " \
                           "has a difference in elastic data greater than 5 " \
                           "percent/1GPa!".format(material["formula"],
                                                  material["space_group_number"])
@@ -266,12 +265,22 @@ def _preprocess_brgoch_superhard_training(file_path):
     # Report on discarded entries
     if np.any(df["suspect_value"]):
         print("{} entries could not be accurately cross referenced with "
-              "Materials Project".format(len(df[df["suspect_value"]])))
+              "Materials Project. "
+              "See log file for details".format(len(df[df["suspect_value"]])))
 
-    # Turn structure strings into Structure objects
-    for alias in ['structure', 'initial_structure']:
-        df[alias] = pd.Series([Structure.from_dict(s)
-                               for s in df[alias]])
+    # Turn structure dicts into Structure objects,
+    # leave missing structures as nan values
+    structure_obs = []
+    for s in df["structure"]:
+        if isinstance(s, dict):
+            structure_obs.append(Structure.from_dict(s))
+        elif np.isnan(s):
+            structure_obs.append(s)
+        else:
+            raise ValueError("Something went wrong, invalid "
+                             "value {} in structure column".format(s))
+
+    df["structure"] = structure_obs
 
     return "brgoch_superhard_training", df
 

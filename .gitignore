@@ -45,3 +45,6 @@ nosetests.xml
 
 # Pycharm
 .idea/*
+
+# Dataset generation logs
+dataset_prep.log
