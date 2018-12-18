@@ -41,12 +41,11 @@ from matminer.utils.caching import get_all_nearest_neighbors
 try:
     import torch
     import torch.optim as optim
-    from torch.utils.data import DataLoader
     from torch.autograd import Variable
     import cgcnn
     import cgcnn.data as cgcnn_data
 except ImportError:
-    torch, optim, DataLoader, Variable = None, None, None, None
+    torch, optim, Variable = None, None, None
     cgcnn, cgcnn_data = None, None
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
@@ -2630,7 +2629,8 @@ class CGCNNFeaturizer(BaseFeaturizer):
 
         # Because CGCNN's main.py need command-line arguments (argparse model),
         # so we should add the required arguments to sys.argv.
-        sys.argv += ['place_holder', '--task', self.task,
+        sys.argv += ['_',
+                     '--task', self.task,
                      '--print-freq', str(self._print_freq)]
         if not self._cuda:
             sys.argv += ['--disable-cuda']
