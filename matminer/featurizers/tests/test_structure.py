@@ -9,6 +9,7 @@ import csv
 import json
 import numpy as np
 import pandas as pd
+from multiprocessing import set_start_method
 from sklearn.exceptions import NotFittedError
 
 from pymatgen import Structure, Lattice, Molecule
@@ -603,7 +604,7 @@ class StructureFeaturesTest(PymatgenTest):
     @unittest.skipIf(not (torch and cgcnn),
                      "pytorch or cgcnn not installed.")
     def test_cgcnn_featurizer(self):
-        # test regular classification.
+        # Test regular classification.
         cla_props, cla_atom_features, cla_structs = self._get_cgcnn_data()
         atom_fea_len = 64
         cgcnn_featurizer = \
@@ -634,7 +635,7 @@ class StructureFeaturesTest(PymatgenTest):
             result = cgcnn_featurizer.featurize(struct)
             self.assertEqual(len(result), atom_fea_len)
 
-        # test regular regression and default atom_init_fea.
+        # Test regular regression and default atom_init_fea and featurize_many.
         reg_props, reg_atom_features, reg_structs = \
             self._get_cgcnn_data("regression")
         cgcnn_featurizer = \
@@ -645,19 +646,19 @@ class StructureFeaturesTest(PymatgenTest):
 
         cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
         cgcnn_featurizer.set_n_jobs(1)
+
         result = cgcnn_featurizer.featurize_many(entries=reg_structs)
         self.assertEqual(np.array(result).shape,
                          (len(reg_structs), atom_fea_len))
 
-        # test classification from pre-trained model.
+        # Test classification from pre-trained model.
         cgcnn_featurizer = \
             CGCNNFeaturizer(use_pretrained=True, h_fea_len=32, n_conv=4,
                             pretrained_name='semi-metal-classification',
                             warm_start=False, save_model=False,
                             atom_init_fea=cla_atom_features, train_size=5,
                             val_size=2, test_size=3, atom_fea_len=atom_fea_len)
-        cgcnn_featurizer.fit(
-            X=cla_structs, y=cla_props, )
+        cgcnn_featurizer.fit(X=cla_structs, y=cla_props)
         self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
 
         validate_features = [2.1295, 2.1288, 1.8504, 1.9175, 2.1094,
@@ -667,7 +668,7 @@ class StructureFeaturesTest(PymatgenTest):
             self.assertEqual(len(result), atom_fea_len)
             self.assertAlmostEqual(result[0], validate_feature, 4)
 
-        # test regression from pre-trained model.
+        # Test regression from pre-trained model.
         cgcnn_featurizer = \
             CGCNNFeaturizer(task="regression", use_pretrained=True,
                             pretrained_name='formation-energy-per-atom',
@@ -686,7 +687,7 @@ class StructureFeaturesTest(PymatgenTest):
             self.assertEqual(len(result), atom_fea_len)
             self.assertAlmostEqual(result[-1], validate_feature, 4)
 
-        # test warm start regression.
+        # Test warm start regression.
         warm_start_file = os.path.join(test_dir,
                                        'cgcnn_test_regression_model.pth.tar')
         warm_start_model = torch.load(warm_start_file)
@@ -703,10 +704,47 @@ class StructureFeaturesTest(PymatgenTest):
                             atom_init_fea=reg_atom_features,
                             train_size=6, val_size=2, test_size=2)
         cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
-        cgcnn_featurizer.set_n_jobs(1)
+
+        # If use CGCNN featurize_many(), you should change the multiprocessing
+        # start_method to 'spawn', because Gloo (that uses Infiniband) and
+        # NCCL2 are not fork safe, pytorch don't support them or just
+        # set n_jobs = 1 to avoid multiprocessing as follows.
+        set_start_method('spawn', force=True)
         result = cgcnn_featurizer.featurize_many(entries=reg_structs)
         self.assertEqual(np.array(result).shape,
                          (len(reg_structs), atom_fea_len))
+
+        # Test featurize_dataframe.
+        df = pd.DataFrame.from_dict({"structure": cla_structs})
+        cgcnn_featurizer = \
+            CGCNNFeaturizer(use_pretrained=False, warm_start=False,
+                            save_model=False, atom_init_fea=cla_atom_features,
+                            train_size=5, val_size=2, test_size=3,
+                            atom_fea_len=atom_fea_len)
+        cgcnn_featurizer.fit(X=df["structure"], y=cla_props)
+        self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
+        cgcnn_featurizer.set_n_jobs(1)
+        result = cgcnn_featurizer.featurize_dataframe(df, "structure")
+        self.assertTrue("CGCNN_feature_{}".format(atom_fea_len - 1)
+                        in result.columns)
+        self.assertEqual(np.array(result).shape,
+                         (len(reg_structs), atom_fea_len + 1))
+
+        # Test fit_featurize_dataframe.
+        df = pd.DataFrame.from_dict({"structure": cla_structs})
+        cgcnn_featurizer = \
+            CGCNNFeaturizer(use_pretrained=False, warm_start=False,
+                            save_model=False, atom_init_fea=cla_atom_features,
+                            train_size=5, val_size=2, test_size=3,
+                            atom_fea_len=atom_fea_len)
+        cgcnn_featurizer.set_n_jobs(1)
+        result = cgcnn_featurizer.fit_featurize_dataframe(
+            df, "structure", fit_args=[cla_props])
+        self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
+        self.assertTrue("CGCNN_feature_{}".format(atom_fea_len - 1)
+                        in result.columns)
+        self.assertEqual(np.array(result).shape,
+                         (len(reg_structs), atom_fea_len + 1))
 
     @staticmethod
     def _get_cgcnn_data(task="classification"):
@@ -721,8 +759,6 @@ class StructureFeaturesTest(PymatgenTest):
             elem_embedding (list): List of element features.
             struct_list (list): List of structure object.
         """
-        import cgcnn
-
         if task == "classification":
             cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__),
                                            "..",
