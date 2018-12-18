@@ -528,9 +528,9 @@ def load_brgoch_superhard_training(subset="all", drop_suspect=False,
                  and basic descriptors
             brgoch_features: only features from reference paper and targets
             basic_descriptors: only composition/structure columns and targets
-        
+
         drop_suspect (bool): Whether to drop values with possibly incorrect 
-            elastic data and materials that could not be verified 
+            elastic data and materials that could not be verified
 
         data_home (str, None): Where to look for and store the loaded dataset
 
@@ -563,5 +563,4 @@ def load_brgoch_superhard_training(subset="all", drop_suspect=False,
     elif subset == "brgoch_features":
         df = df.drop(["composition", "structure", "formula", "material_id", 
                       "suspect_value", "brgoch_feats"], axis=1)
-
     return df
