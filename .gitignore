@@ -46,5 +46,8 @@ nosetests.xml
 # Pycharm
 .idea/*
 
+# Dataset generation logs
+dataset_prep.log
+
 # Datasets
-matminer/datasets/*
+matminer/datasets/*.json.gz
