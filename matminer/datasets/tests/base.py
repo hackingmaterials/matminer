@@ -33,9 +33,11 @@ class DataSetTest(unittest.TestCase):
             'jarvis_dft_2d',
             'jarvis_dft_3d',
             'glass_binary',
+            'glass_binary_v2',
             'm2ax',
             'expt_gap',
-            'expt_formation_enthalpy'
+            'expt_formation_enthalpy',
+            'brgoch_superhard_training'
         ]
         self.dataset_attributes = [
             'file_type',

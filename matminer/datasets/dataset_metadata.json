@@ -22,6 +22,27 @@
         "reference": "Ricci, F. et al. An ab initio electronic transport database for inorganic materials. Sci. Data 4:170085 doi: 10.1038/sdata.2017.85 (2017).\nRicci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data from: An ab initio electronic transport database for inorganic materials. Dryad Digital Repository. https://doi.org/10.5061/dryad.gn001",
         "url": "https://ndownloader.figshare.com/files/13297511"
     },
+    "brgoch_superhard_training": {
+        "bibtex_refs": [
+            "@article{doi:10.1021/jacs.8b02717,\nauthor = {Mansouri Tehrani, Aria and Oliynyk, Anton O. and Parry, Marcus and Rizvi, Zeshan and Couper, Samantha and Lin, Feng and Miyagi, Lowell and Sparks, Taylor D. and Brgoch, Jakoah},\ntitle = {Machine Learning Directed Search for Ultraincompressible, Superhard Materials},\njournal = {Journal of the American Chemical Society},\nvolume = {140},\nnumber = {31},\npages = {9844-9853},\nyear = {2018},\ndoi = {10.1021/jacs.8b02717},\nnote ={PMID: 30010335},\nURL = {\nhttps://doi.org/10.1021/jacs.8b02717\n},\neprint = {\nhttps://doi.org/10.1021/jacs.8b02717\n}\n}"
+        ],
+        "columns": {
+            "brgoch_feats": "features used in brgoch study compressed to a dictionary",
+            "bulk_modulus": "VRH bulk modulus",
+            "composition": "pymatgen composition object",
+            "formula": "Chemical formula as a string",
+            "material_id": "materials project id",
+            "structure": "pymatgen structure object",
+            "shear_modulus": "VRH shear modulus",
+            "suspect_value": "True if bulk or shear value did not closely match (within 5%/1GPa of MP) materials project value at time of cross reference or if no material could be found"
+        },
+        "description": "2574 materials used for training regressors that predict shear and bulk modulus.",
+        "file_type": "json.gz",
+        "hash": "c1b228ba4b54429937e3ed6b0ce8e90284099bf38f55fadf183816ddd45f3b40",
+        "num_entries": 2574,
+        "reference": "Machine Learning Directed Search for Ultraincompressible, Superhard Materials\nAria Mansouri Tehrani, Anton O. Oliynyk, Marcus Parry, Zeshan Rizvi, Samantha Couper, Feng Lin, Lowell Miyagi, Taylor D. Sparks, and Jakoah Brgoch\nJournal of the American Chemical Society 2018 140 (31), 9844-9853\nDOI: 10.1021/jacs.8b02717",
+        "url": "https://ndownloader.figshare.com/files/13858931"
+    },
     "castelli_perovskites": {
         "bibtex_refs": [
             "@Article{C2EE22341D,\nauthor =\"Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, S\u00f8ren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.\",\ntitle  =\"New cubic perovskites for one- and two-photon water splitting using the computational materials repository\",\njournal  =\"Energy Environ. Sci.\",\nyear  =\"2012\",\nvolume  =\"5\",\nissue  =\"10\",\npages  =\"9034-9043\",\npublisher  =\"The Royal Society of Chemistry\",\ndoi  =\"10.1039/C2EE22341D\",\nurl  =\"http://dx.doi.org/10.1039/C2EE22341D\",\nabstract  =\"A new efficient photoelectrochemical cell (PEC) is one of the possible solutions to the energy and climate problems of our time. Such a device requires development of new semiconducting materials with tailored properties with respect to stability and light absorption. Here we perform computational screening of around 19\u2009000 oxides{,} oxynitrides{,} oxysulfides{,} oxyfluorides{,} and oxyfluoronitrides in the cubic perovskite structure with PEC applications in mind. We address three main applications: light absorbers for one- and two-photon water splitting and high-stability transparent shields to protect against corrosion. We end up with 20{,} 12{,} and 15 different combinations of oxides{,} oxynitrides and oxyfluorides{,} respectively{,} inviting further experimental investigation.\"}"
@@ -233,6 +254,21 @@
         "num_entries": 5959,
         "reference": "https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046",
         "url": "https://ndownloader.figshare.com/files/13464368"
+    },
+    "glass_binary_v2": {
+        "bibtex_refs": [
+            "@article{doi:10.1021/acs.jpclett.7b01046,\nauthor = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},\ntitle = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},\njournal = {The Journal of Physical Chemistry Letters},\nvolume = {8},\nnumber = {14},\npages = {3434-3439},\nyear = {2017},\ndoi = {10.1021/acs.jpclett.7b01046},\nnote ={PMID: 28697303},\neprint = {\nhttps://doi.org/10.1021/acs.jpclett.7b01046\n\n}}"
+        ],
+        "columns": {
+            "formula": "chemical formula",
+            "gfa": "glass forming ability, correlated with the phase column, designating whether the composition can form monolithic glass or not, 1: glass forming (\"AM\"), 0: non-full-forming(\"CR\")"
+        },
+        "description": "Identical to glass_binary dataset, but with duplicate entries merged. If there was a disagreement in gfa when merging the class was defaulted to 1.",
+        "file_type": "json.gz",
+        "hash": "70ef83f6c7130615b759ae52eb9c48ec77503bcc34b00aec328de372d9f19c90",
+        "num_entries": 5483,
+        "reference": "https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046",
+        "url": "https://ndownloader.figshare.com/files/13553498"
     },
     "glass_ternary_hipt": {
         "bibtex_refs": [
