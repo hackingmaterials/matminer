@@ -6,10 +6,10 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.4.6 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.4.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -45,6 +45,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="matminer.featurizers.utils.html">matminer.featurizers.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.utils.html#module-matminer.featurizers.utils.cgcnn">matminer.featurizers.utils.cgcnn module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.utils.html#module-matminer.featurizers.utils.grdf">matminer.featurizers.utils.grdf module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.utils.html#module-matminer.featurizers.utils.stats">matminer.featurizers.utils.stats module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.utils.html#module-matminer.featurizers.utils">Module contents</a></li>
@@ -164,7 +165,7 @@ if kpoints is provided (e.g. for kpoints == [[0.0, 0.0, 0.0]]):</p>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.bandstructure.BandFeaturizer.get_bindex_bspin">
-<em class="property">static </em><code class="descname">get_bindex_bspin</code><span class="sig-paren">(</span><em>is_cbm</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer.get_bindex_bspin" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">get_bindex_bspin</code><span class="sig-paren">(</span><em>extremum</em>, <em>is_cbm</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.bandstructure.BandFeaturizer.get_bindex_bspin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the band index and spin of band extremum</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -534,7 +535,7 @@ exceptions have this extra feature set to NaN.</dd>
 
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.fit_featurize_dataframe">
-<code class="descname">fit_featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.fit_featurize_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit_featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>fit_args=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.fit_featurize_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>The dataframe equivalent of fit_transform. Takes a dataframe and
 column id as input, fits the featurizer to that dataframe, and
 returns a featurized dataframe. Accepts the same arguments as
@@ -543,9 +544,10 @@ featurize_dataframe.</p>
 <dt>Args:</dt>
 <dd><p class="first">df (Pandas dataframe): Dataframe containing input data.
 col_id (str or list of str): column label containing objects to</p>
-<blockquote class="last">
+<blockquote>
 <div>featurize. Can be multiple labels if the featurize function
 requires multiple inputs.</div></blockquote>
+<p class="last">fit_args (list): list of arguments for fit function.</p>
 </dd>
 <dt>Returns:</dt>
 <dd>updated dataframe based on featurizer fitted to that dataframe.</dd>
@@ -917,7 +919,7 @@ of hard spheres.</p>
 relate to the distance between a composition and the composition of
 the clusters of atoms expected to be efficiently packed based on a
 theory from
-<a href="#id49"><span class="problematic" id="id50">`Laws et al.&lt;http://www.nature.com/doifinder/10.1038/ncomms9123&gt;`_</span></a>.
+<a href="#id51"><span class="problematic" id="id52">`Laws et al.&lt;http://www.nature.com/doifinder/10.1038/ncomms9123&gt;`_</span></a>.
 The second corresponds to the packing efficiency of a system if all atoms
 in the alloy are simultaneously as efficiently-packed as possible.</p>
 <p>The packing efficiency in these models is based on the Atomic Packing
@@ -929,7 +931,7 @@ positive. If the difference is too small, the APE is negative.</p>
 <dl class="docutils">
 <dt>Features:</dt>
 <dd><dl class="first last docutils">
-<dt>dist from {k} clusters <a href="#id43"><span class="problematic" id="id44">|APE|</span></a> &lt; {thr} - The distance between an</dt>
+<dt>dist from {k} clusters <a href="#id45"><span class="problematic" id="id46">|APE|</span></a> &lt; {thr} - The distance between an</dt>
 <dd>alloy composition and the k clusters that have a packing efficiency
 below thr from ideal</dd>
 <dt>mean simul. packing efficiency - Mean packing efficiency of all atoms.</dt>
@@ -980,9 +982,9 @@ efficient clusters very expensive for large numbers of types</div></blockquote>
 <code class="descname">compute_nearest_cluster_distance</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.compute_nearest_cluster_distance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the distance between a composition and that the nearest
 efficiently-packed clusters.</p>
-<p>Measures the mean <img class="math" src="_images/math/0467e0003559a763cbcd16dcd0bf3c33f9c65901.png" alt="L_2"/> distance between the alloy composition
-and the <img class="math" src="_images/math/e9203da50e1059455123460d4e716c9c7f440cc3.png" alt="k"/>-nearest clusters with Atomic Packing Efficiencies
-within the user-specified tolerance of 1. <img class="math" src="_images/math/e9203da50e1059455123460d4e716c9c7f440cc3.png" alt="k"/> is any of the
+<p>Measures the mean <img class="math" src="_images/math/cce73c20b14f5d57454e0ad66f02dd004d949e0c.png" alt="L_2"/> distance between the alloy composition
+and the <img class="math" src="_images/math/0b7c1e16a3a8a849bb8ffdcdbf86f65fd1f30438.png" alt="k"/>-nearest clusters with Atomic Packing Efficiencies
+within the user-specified tolerance of 1. <img class="math" src="_images/math/0b7c1e16a3a8a849bb8ffdcdbf86f65fd1f30438.png" alt="k"/> is any of the
 numbers defined in the “n_nearest” parameter of this class.</p>
 <p>If there are less than <cite>k</cite> efficient clusters in the system, we use
 the maximum distance betweeen any two compositions (1) for the
@@ -1055,9 +1057,9 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.composition.AtomicPackingEfficiency.find_ideal_cluster_size">
 <code class="descname">find_ideal_cluster_size</code><span class="sig-paren">(</span><em>radius_ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.AtomicPackingEfficiency.find_ideal_cluster_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the optimal cluster size for a certain radius ratio</p>
-<p>Finds the number of nearest neighbors <img class="math" src="_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> that minimizes
-<img class="math" src="_images/math/31880c4812286affe8e1e36fce7bdc56e8e28458.png" alt="|1 - rp(n)/r|"/>, where <img class="math" src="_images/math/8ec4bad22a4dd149e5658ab17c4358b3dbc8dc1e.png" alt="rp(n)"/> is the ideal radius
-ratio for a certain <img class="math" src="_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> and <img class="math" src="_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/> is the actual ratio.</p>
+<p>Finds the number of nearest neighbors <img class="math" src="_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/> that minimizes
+<img class="math" src="_images/math/2c79776b8b888d73f48a6a996815a078713a2a78.png" alt="|1 - rp(n)/r|"/>, where <img class="math" src="_images/math/18f11bbc89febc978169289978481f64a403be7e.png" alt="rp(n)"/> is the ideal radius
+ratio for a certain <img class="math" src="_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/> and <img class="math" src="_images/math/eaa6ad49a7f78fe5a13b486690163bf2dc7e3e60.png" alt="r"/> is the actual ratio.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>radius_ratio (float): math:<cite>r / r_{neighbor}</cite></dd>
@@ -1078,7 +1080,7 @@ atoms for a neighbor with a certain number of nearest neighbors.</p>
 <dt>Args:</dt>
 <dd>n_neighbors (int): Number of atoms in 1st NN shell</dd>
 <dt>Return:</dt>
-<dd>(float) ideal radius ratio <img class="math" src="_images/math/a25e560325b732d03aa5e9a69521f2bfa67e5f4e.png" alt="r / r_{neighbor}"/></dd>
+<dd>(float) ideal radius ratio <img class="math" src="_images/math/0c9c2dac2bd7f86735f42ef4184918c37425d67a.png" alt="r / r_{neighbor}"/></dd>
 </dl>
 </dd></dl>
 
@@ -1216,7 +1218,11 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dd><p>Return ElementProperty from a preset string
 Args:</p>
 <blockquote>
-<div>preset_name: (str) can be one of “magpie”, “deml”, or “matminer”</div></blockquote>
+<div><dl class="docutils">
+<dt>preset_name: (str) can be one of “magpie”, “deml”, “matminer”, or</dt>
+<dd>“matscholar_el”.</dd>
+</dl>
+</div></blockquote>
 <p>Returns:</p>
 </dd></dl>
 
@@ -1578,7 +1584,11 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dd><p>Return ElementProperty from a preset string
 Args:</p>
 <blockquote>
-<div>preset_name: (str) can be one of “magpie”, “deml”, or “matminer”</div></blockquote>
+<div><dl class="docutils">
+<dt>preset_name: (str) can be one of “magpie”, “deml”, “matminer”, or</dt>
+<dd>“matscholar_el”.</dd>
+</dl>
+</div></blockquote>
 <p>Returns:</p>
 </dd></dl>
 
@@ -2225,8 +2235,8 @@ Yang delta - Atomic size mismatch term</dd>
 <p>rac{r_i}{ar{r}} 
 ight)^2 }`</p>
 <blockquote>
-<div><p>where <img class="math" src="_images/math/496867ca68c428fa123f26f0f73997632e61e116.png" alt="c_i"/> and <img class="math" src="_images/math/ee29958a93bd815ef9f3e2508e54fa1871d0d111.png" alt="r_i"/> are the fraction and radius of
-element <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/>, and <div class="system-message">
+<div><p>where <img class="math" src="_images/math/ff90a5f025d9fd305aac19c8dd64fa15f0c789a1.png" alt="c_i"/> and <img class="math" src="_images/math/889fc7f9c8e35e08413407d53c89909849345138.png" alt="r_i"/> are the fraction and radius of
+element <img class="math" src="_images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/>, and <div class="system-message">
 <p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">ar{r}</tt>)</p>
 latex exited with error
 [stdout]
@@ -2252,6 +2262,7 @@ For additional information on amsmath, use the `?' option.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amscls/amsthm.sty)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amssymb.sty
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/anyfontsize/anyfontsize.sty)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucsencs.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd)
@@ -2264,8 +2275,8 @@ See the inputenc package documentation for explanation.
 Type  H &lt;return&gt;  for immediate help.
  ...                                              
                                                   
-l.12 $^^H
-         ar{r}$
+l.13 \fontsize{12}{14}\selectfont $^^H
+                                      ar{r}$
 [1] (./math.aux) )
 (see the transcript file for additional information)
 Output written on math.dvi (1 page, 208 bytes).
@@ -2291,9 +2302,9 @@ average of the radii. We use the radii compiled by
 <div>:math:<a href="#id3"><span class="problematic" id="id4">`</span></a></div></blockquote>
 <p>rac{T_m Delta S_{mix}}{ |  Delta H_{mix} | }`</p>
 <blockquote>
-<div><p>Where <img class="math" src="_images/math/f761880e192d4bc7f9a3b7c5b0c495177b219bba.png" alt="T_m"/> is average melting temperature,
-<img class="math" src="_images/math/9d2e3563d506091cb1a66a8405841ef4728fbd43.png" alt="\Delta S_{mix}"/> is the ideal mixing entropy,
-and <img class="math" src="_images/math/c9c2aeea32459ab854f099f25fd5310801d90ab2.png" alt="\Delta H_{mix}"/> is the average mixing enthalpies
+<div><p>Where <img class="math" src="_images/math/5fa6513bef00e529069be708641fcce5a1535803.png" alt="T_m"/> is average melting temperature,
+<img class="math" src="_images/math/ac5b8bd01421ff3a8f1a464013ce05b7a4373141.png" alt="\Delta S_{mix}"/> is the ideal mixing entropy,
+and <img class="math" src="_images/math/56e23ea8dd42fdbfc2b216f54b730114ec8acfd8.png" alt="\Delta H_{mix}"/> is the average mixing enthalpies
 of all pairs of elements in the alloy</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -3108,7 +3119,7 @@ idx (int): index of target site in structure.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.deprecated.CrystalSiteFingerprint.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>cation_anion=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.deprecated.CrystalSiteFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>cation_anion=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.deprecated.CrystalSiteFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use preset parameters to get the fingerprint
 Args:</p>
 <blockquote>
@@ -3649,11 +3660,11 @@ computed using the function:
 <p>e j} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <blockquote>
-<div>where <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/9172efc523d7488d4c3ed299d0be813de01503b8.png" alt="\eta"/> is a scaling function,
-<img class="math" src="_images/math/35bab58b40a77a2e24ecb9f58898f1813de64459.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> and <img class="math" src="_images/math/d32c78b759903e3f4bd4fd2ce0b86358f7500c5d.png" alt="j"/>, and <img class="math" src="_images/math/074903764bb5a464b7c346e84f43cba2174f3ab0.png" alt="f(r)"/> is a cutoff function where
+<div>where <img class="math" src="_images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/6b21e0b0899a0d2879d3b8019087fa630bab4ea2.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/5635a7c34414599c2452d72430811e816b460335.png" alt="\eta"/> is a scaling function,
+<img class="math" src="_images/math/08e21b3be44ad4aac8ed231afc369152e9c8539c.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> and <img class="math" src="_images/math/6b21e0b0899a0d2879d3b8019087fa630bab4ea2.png" alt="j"/>, and <img class="math" src="_images/math/3c6c50508e2411873e8aec04b9b0d0b026227dad.png" alt="f(r)"/> is a cutoff function where
 :math:<a href="#id15"><span class="problematic" id="id16">`</span></a>f(r) = 0.5[cos(</div></blockquote>
 <dl class="docutils">
-<dt>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/b851d3a5fb872ad82d61f964772ca1cc2520a590.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</dt>
+<dt>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/326c6fcc3609b0c2183f6a9e23d4aa1d4b141ea2.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</dt>
 <dd>The direction-resolved fingerprints are computed using
 :math:<a href="#id17"><span class="problematic" id="id18">`</span></a>V_i^k(eta) = sumlimits_{i</dd>
 </dl>
@@ -3661,7 +3672,7 @@ rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 rac{r_{ij}^k}{r_{ij}} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <blockquote>
-<div>where <img class="math" src="_images/math/22a57909899e26fbb172500446c43f2ba7ebd563.png" alt="r_{ij}^k"/> is the <img class="math" src="_images/math/95cd8c0e712982ebb308efa59408cf9962067b3c.png" alt="k^{th}"/> component of <div class="system-message">
+<div>where <img class="math" src="_images/math/eda67b6e5103620f15dda4926fbd244c38024373.png" alt="r_{ij}^k"/> is the <img class="math" src="_images/math/3af01b3f850c53aa06a7ef9878392efada5f2e71.png" alt="k^{th}"/> component of <div class="system-message">
 <p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">old{r}_i - old{r}_j</tt>)</p>
 latex exited with error
 [stdout]
@@ -3687,6 +3698,7 @@ For additional information on amsmath, use the `?' option.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amscls/amsthm.sty)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amssymb.sty
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/anyfontsize/anyfontsize.sty)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/ucs/ucsencs.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd)
@@ -3699,8 +3711,8 @@ See the inputenc package documentation for explanation.
 Type  H &lt;return&gt;  for immediate help.
  ...                                              
                                                   
-l.12 $^^H
-         old{r}_i - ^^Hold{r}_j$
+l.13 \fontsize{12}{14}\selectfont $^^H
+                                      old{r}_i - ^^Hold{r}_j$
 
 ! Package inputenc Error: Keyboard character used is undefined
 (inputenc)                in inputencoding `utf8x'.
@@ -3709,8 +3721,8 @@ See the inputenc package documentation for explanation.
 Type  H &lt;return&gt;  for immediate help.
  ...                                              
                                                   
-l.12 $^^Hold{r}_i - ^^H
-                       old{r}_j$
+l.13 ...size{12}{14}\selectfont $^^Hold{r}_i - ^^H
+                                                  old{r}_j$
 [1] (./math.aux) )
 (see the transcript file for additional information)
 Output written on math.dvi (1 page, 328 bytes).
@@ -3870,7 +3882,7 @@ idx (int): index of target site in structure struct.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.AngularFourierSeries.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>width=0.5</em>, <em>spacing=0.5</em>, <em>cutoff=10</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AngularFourierSeries.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>width=0.5</em>, <em>spacing=0.5</em>, <em>cutoff=10</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.AngularFourierSeries.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Preset bin functions for this featurizer. Example use:</dt>
 <dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AFS</span> <span class="o">=</span> <span class="n">AngularFourierSeries</span><span class="o">.</span><span class="n">from_preset</span><span class="p">(</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
@@ -4073,13 +4085,13 @@ We weigh the contributions of each neighbor with the solid angle of the Voronoi 
 (see <cite>Mickel et al. &lt;https://aip.scitation.org/doi/abs/10.1063/1.4774084&gt;_</cite> for further
 discussion). The weighing scheme makes these descriptors vary smoothly with small distortions
 of a crystal structure.</p>
-<p>In addition to the average spherical harmonics, this class can also compute the <img class="math" src="_images/math/fa34489cf430b7630b30f28b2eb050e2489e3523.png" alt="W"/> and
-<img class="math" src="_images/math/5faf686e0e8426c21ae030d783d5624321d18476.png" alt="\hat{W}"/> parameters proposed by <a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al.</a>.</p>
+<p>In addition to the average spherical harmonics, this class can also compute the <img class="math" src="_images/math/953bde2ab2fca30897f66185e5b37b73747b8b46.png" alt="W"/> and
+<img class="math" src="_images/math/240509feeacaad2b6744f49f69502b84f78f1fef.png" alt="\hat{W}"/> parameters proposed by <a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al.</a>.</p>
 <dl class="docutils">
 <dt>Attributes:</dt>
 <dd>BOOP Q l=&lt;n&gt; - Average spherical harmonic for a certain degree, n.
 BOOP W l=&lt;n&gt; - W parameter for a certain degree of spherical harmonic, n.
-BOOP What l=&lt;n&gt; - <img class="math" src="_images/math/5faf686e0e8426c21ae030d783d5624321d18476.png" alt="\hat{W}"/> parameter for a certain degree of spherical harmonic, n.</dd>
+BOOP What l=&lt;n&gt; - <img class="math" src="_images/math/240509feeacaad2b6744f49f69502b84f78f1fef.png" alt="\hat{W}"/> parameter for a certain degree of spherical harmonic, n.</dd>
 <dt>References:</dt>
 <dd><a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al., _PRB_ (1983)</a>
 <a class="reference external" href="http://link.aps.org/doi/10.1103/PhysRevB.95.144110">Seko et al., _PRB_ (2017)</a></dd>
@@ -4226,7 +4238,7 @@ idx (int): index of target site in structure struct.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.ChemEnvSiteFingerprint.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemEnvSiteFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemEnvSiteFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use a standard collection of CE types and
 choose your ChemEnv neighbor-finding strategy.
 Args:</p>
@@ -4350,9 +4362,9 @@ idx (int): index of target site in structure.</div></blockquote>
 <dd><p>Identify elements to be included in the following featurization,
 by intersecting the elements present in the passed structures with
 those explicitly included (or excluded) in __init__. Only elements
-in the <a href="#id51"><span class="problematic" id="id52">self.el_list_</span></a> will be featurized.
+in the <a href="#id53"><span class="problematic" id="id54">self.el_list_</span></a> will be featurized.
 Besides, compositions of the passed structures will also be “stored”
-in a dict of <a href="#id53"><span class="problematic" id="id54">self.el_amt_dict_</span></a>, avoiding repeated calculation of
+in a dict of <a href="#id55"><span class="problematic" id="id56">self.el_amt_dict_</span></a>, avoiding repeated calculation of
 composition when featurizing multiple sites in the same structure.
 Args:</p>
 <blockquote>
@@ -4382,12 +4394,12 @@ Args:</p>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.ChemicalSRO.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemicalSRO.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.ChemicalSRO.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use one of the standard instances of a given NearNeighbor class.
 Args:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>preset (str): preset type (“VoronoiNN”, “JMolNN”,</dt>
+<dt>preset (str): preset type (“VoronoiNN”, “JmolNN”,</dt>
 <dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
 or “MinimumVIRENN”).</dd>
 </dl>
@@ -4501,12 +4513,12 @@ idx (int): index of target site in structure struct.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.CoordinationNumber.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CoordinationNumber.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use one of the standard instances of a given NearNeighbor class.
 Args:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>preset (str): preset type (“VoronoiNN”, “JMolNN”,</dt>
+<dt>preset (str): preset type (“VoronoiNN”, “JmolNN”,</dt>
 <dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
 or “MinimumVIRENN”).</dd>
 </dl>
@@ -4607,7 +4619,7 @@ idx (int): index of target site in structure.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.CrystalNNFingerprint.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.CrystalNNFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use preset parameters to get the fingerprint
 Args:</p>
 <blockquote>
@@ -4770,7 +4782,7 @@ Args:</p>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.GaussianSymmFunc.cosine_cutoff">
-<em class="property">static </em><code class="descname">cosine_cutoff</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.cosine_cutoff" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">cosine_cutoff</code><span class="sig-paren">(</span><em>rs</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.cosine_cutoff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Polynomial cutoff function to give a smoothed truncation of the Gaussian
 symmetry functions.
 Args:</p>
@@ -4810,7 +4822,7 @@ idx (int): index of target site in structure.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.GaussianSymmFunc.g2">
-<em class="property">static </em><code class="descname">g2</code><span class="sig-paren">(</span><em>rs</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.g2" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">g2</code><span class="sig-paren">(</span><em>eta</em>, <em>rs</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.g2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gaussian radial symmetry function of the center atom,
 given an eta parameter.
 Args:</p>
@@ -4826,7 +4838,7 @@ cutoff (float): cutoff distance.</div></blockquote>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.GaussianSymmFunc.g4">
-<em class="property">static </em><code class="descname">g4</code><span class="sig-paren">(</span><em>zetas</em>, <em>gammas</em>, <em>neigh_dist</em>, <em>neigh_coords</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.g4" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">g4</code><span class="sig-paren">(</span><em>etas</em>, <em>zetas</em>, <em>gammas</em>, <em>neigh_dist</em>, <em>neigh_coords</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GaussianSymmFunc.g4" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gaussian angular symmetry function of the center atom,
 given a set of eta, zeta and gamma parameters.
 Args:</p>
@@ -4979,7 +4991,7 @@ labels</p>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.GeneralizedRadialDistributionFunction.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>width=1.0</em>, <em>spacing=1.0</em>, <em>cutoff=10</em>, <em>mode='GRDF'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GeneralizedRadialDistributionFunction.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>width=1.0</em>, <em>spacing=1.0</em>, <em>cutoff=10</em>, <em>mode='GRDF'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.GeneralizedRadialDistributionFunction.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Preset bin functions for this featurizer. Example use:</dt>
 <dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GRDF</span> <span class="o">=</span> <span class="n">GeneralizedRadialDistributionFunction</span><span class="o">.</span><span class="n">from_preset</span><span class="p">(</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
@@ -5021,16 +5033,16 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <blockquote>
 <div><p>Differences in elemental properties between site and its neighboring sites.</p>
 <p>Uses the Voronoi tessellation of the structure to determine the
-neighbors of the site, and assigns each neighbor (<img class="math" src="_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/>) a
-weight (<img class="math" src="_images/math/59dc9a44d175aae008c18691b9f662270e36ef5d.png" alt="A_n"/>) that corresponds to the area of the facet
+neighbors of the site, and assigns each neighbor (<img class="math" src="_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/>) a
+weight (<img class="math" src="_images/math/12249dbb3a129598bfef9a4f490147c6a4537213.png" alt="A_n"/>) that corresponds to the area of the facet
 on the tessellation corresponding to that neighbor.
 The local property difference is then computed by
 :math:<a href="#id30"><span class="problematic" id="id31">`</span></a></p>
 </div></blockquote>
 <dl class="docutils">
-<dt>rac{sum_n {A_n <a href="#id45"><span class="problematic" id="id46">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
-<dd><p class="first">where <img class="math" src="_images/math/99caa835285abdbc99536106ff1d075a870c2650.png" alt="p_n"/> is the property (e.g., atomic number) of a neighbor
-and <img class="math" src="_images/math/2aa528e29c4df6e3a7e44783f02f45e46012b948.png" alt="p_0"/> is the property of a site. If signed parameter is assigned
+<dt>rac{sum_n {A_n <a href="#id47"><span class="problematic" id="id48">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
+<dd><p class="first">where <img class="math" src="_images/math/66b30555c6212f4bfbe96c9a9dfceb59d818aef6.png" alt="p_n"/> is the property (e.g., atomic number) of a neighbor
+and <img class="math" src="_images/math/298204ab1b85022412ad261503dcab8bd14fb321.png" alt="p_0"/> is the property of a site. If signed parameter is assigned
 True, signed difference of the properties is returned instead of absolute
 difference.</p>
 <dl class="last docutils">
@@ -5109,7 +5121,7 @@ in any derived featurizer subclass.</p>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.LocalPropertyDifference.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.LocalPropertyDifference.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.LocalPropertyDifference.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new LocalPropertyDifference class according to a preset</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -5305,7 +5317,7 @@ in any derived featurizer subclass.</p>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.site.SiteElementalProperty.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.SiteElementalProperty.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.SiteElementalProperty.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the class with pre-defined settings</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -5781,12 +5793,12 @@ types.</dd>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.structure.BondFractions.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BondFractions.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.BondFractions.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use one of the standard instances of a given NearNeighbor class.
 Pass args to __init__, such as allowed_bonds, using this method as well.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>preset (str): preset type (“CrystalNN”, “VoronoiNN”, “JMolNN”,
+<dd>preset (str): preset type (“CrystalNN”, “VoronoiNN”, “JmolNN”,
 “MiniumDistanceNN”, “MinimumOKeeffeNN”, or “MinimumVIRENN”).</dd>
 <dt>Returns:</dt>
 <dd>CoordinationNumber from a preset.</dd>
@@ -5812,6 +5824,240 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dd></dl>
 
 <dl class="class">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">CGCNNFeaturizer</code><span class="sig-paren">(</span><em>task='classification'</em>, <em>atom_init_fea=None</em>, <em>pretrained_name=None</em>, <em>warm_start_file=None</em>, <em>warm_start_latest=False</em>, <em>save_model_to_dir=None</em>, <em>save_checkpoint_to_dir=None</em>, <em>checkpoint_interval=100</em>, <em>del_checkpoint=True</em>, <em>**cgcnn_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Features generated by training a Crystal Graph Convolutional Neural Network
+(CGCNN) model.</p>
+<dl class="docutils">
+<dt>This featurizer requires a CGCNN model that can either be:</dt>
+<dd><ol class="first last arabic simple">
+<li>from a pretrained model, currently only supports the models from
+the CGCNN repo (12/10/18): <a class="reference external" href="https://github.com/txie-93/cgcnn">https://github.com/txie-93/cgcnn</a>;</li>
+<li>train a CGCNN model based on the X (structures) and y (target) from
+fresh start;</li>
+<li>similar to 2), but train a model from a warm_start model that can
+either be a pretrained model or saved checkpoints.</li>
+</ol>
+</dd>
+</dl>
+<p>Please see the fit function for more details.</p>
+<p>After obtaining a CGCNN model, we will featurize the structures by taking
+the crystal feature vector obtained after pooling as the features.</p>
+<p>This featurizer requires installing cgcnn and torch. We wrap and refractor
+some of the classes and functions from the original cgcnn to make them
+work better for matminer. Please also see utils/cgcnn for more details.</p>
+<dl class="docutils">
+<dt>Features:</dt>
+<dd><ul class="first last simple">
+<li>Features for the structures extracted from CGCNN model after pooling.</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>task='classification'</em>, <em>atom_init_fea=None</em>, <em>pretrained_name=None</em>, <em>warm_start_file=None</em>, <em>warm_start_latest=False</em>, <em>save_model_to_dir=None</em>, <em>save_checkpoint_to_dir=None</em>, <em>checkpoint_interval=100</em>, <em>del_checkpoint=True</em>, <em>**cgcnn_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>task (str):</dt>
+<dd>Task type, “classification” or “regression”.</dd>
+<dt>atom_init_fea (dict):</dt>
+<dd>A dict of {atom type: atom feature}. If not provided, will use
+the default atom features from the CGCNN repo.</dd>
+<dt>pretrained_name (str):</dt>
+<dd>CGCNN pretrained model name, if None don’t use pre-trained model</dd>
+<dt>warm_start_file (str):</dt>
+<dd>The warm start model file, if None, don’t warm start.</dd>
+<dt>warm_start_latest(bool):</dt>
+<dd>Warm start from the latest model or best model.
+This is set because we customize our checkpoints to contain both
+best model and latest model. And if the warm start model does
+not contain these two options, will just use the static_dict
+given in the model/checkpoints to warm start.</dd>
+<dt>save_model_to_dir (str):</dt>
+<dd>Whether to save the best model to disk, if None, don’t save,
+otherwise, save the best model to ‘save_model_to_dir’ path.</dd>
+<dt>save_checkpoint_to_dir (str):</dt>
+<dd>Whether to save checkpoint during training, if None, don’t save,
+otherwise, save the it to ‘save_checkpoint_to_dir’ path.</dd>
+<dt>checkpoint_interval (int):</dt>
+<dd>Save checkpoint every n epochs if save_checkpoint_to_dir is not
+None. If the epochs is less than this checkpoint_interval, will
+reset the checkpoint_interval as int(epochs/2).</dd>
+<dt>del_checkpoint (bool):</dt>
+<dd>Whether to delete checkpoints if training ends successfully.</dd>
+<dt><a href="#id33"><span class="problematic" id="id34">**</span></a>cgcnn_kwargs (optional): settings of CGCNN, containing:</dt>
+<dd><dl class="first docutils">
+<dt>CrystalGraphConvNet model kwargs:</dt>
+<dd><dl class="first docutils">
+<dt>-atom_fea_len (int): Number of hidden atom features in conv</dt>
+<dd>layers, default 64.</dd>
+</dl>
+<p>-n_conv (int): Number of conv layers, default 3.
+-h_fea_len (int): Number of hidden features after pooling,</p>
+<blockquote>
+<div>default 128.</div></blockquote>
+<p>-n_epochs (int): Number of total epochs to run, default 30.
+-print_freq (bool): Print frequency, default 10.
+-test (bool): Whether to save test predictions
+-task (str): “classification” or “regression”,</p>
+<blockquote class="last">
+<div>default “classification”.</div></blockquote>
+</dd>
+<dt>Dataset (CIFDataWrapper) kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>-max_num_nbr (int): The maximum number of neighbors while</dt>
+<dd>constructing the crystal graph, default 12</dd>
+<dt>-radius (float): The cutoff radius for searching neighbors,</dt>
+<dd>default 8</dd>
+<dt>-dmin (float): The minimum distance for constructing</dt>
+<dd>GaussianDistance, default 0</dd>
+<dt>-step (float): The step size for constructing</dt>
+<dd>GaussianDistance, default 0.2</dd>
+<dt>-random_seed (int): Random seed for shuffling the dataset,</dt>
+<dd>default 123</dd>
+</dl>
+</dd>
+<dt>DataLoader kwargs:</dt>
+<dd><p class="first">batch_size (int): Mini-batch size, default 256
+num_workers (int): Number of data loading workers, default 0
+train_size (int): Number of training data to be loaded,</p>
+<blockquote>
+<div>default none</div></blockquote>
+<dl class="last docutils">
+<dt>val_size (int): Number of validation data to be loaded,</dt>
+<dd>default 1000</dd>
+<dt>test_size (int): Number of test data to be loaded,</dt>
+<dd>default 1000</dd>
+<dt>“return_test” (bool): Whether to return the test dataset</dt>
+<dd>loader. default True</dd>
+</dl>
+</dd>
+<dt>Optimizer kwargs:</dt>
+<dd><dl class="first docutils">
+<dt>-optim (str): Choose an optimizer, “SGD” or “Adam”,</dt>
+<dd>default “SGD”.</dd>
+</dl>
+<p class="last">-lr (float): Initial learning rate, default 0.01
+-momentum (float): Momentum, default 0.9
+-weight_decay (float): Weight decay (default: 0)</p>
+</dd>
+<dt>Scheduler MultiStepLR kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>-gamma (float): Multiplicative factor of learning rate</dt>
+<dd>decay, default: 0.1.</dd>
+<dt>-lr_milestones (list): List of epoch indices.</dt>
+<dd>Must be increasing.</dd>
+</dl>
+</dd>
+</dl>
+<p class="last">These input cgcnn_kwargs will be processed and grouped in
+_initialize_kwargs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>strc</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the feature vector after pooling layer of the CGCNN model obtained
+from fit.
+Args:</p>
+<blockquote>
+<div>strc (Structure): Structure object</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>Features extracted after the pooling layer in CGCNN model</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a CGCNN model that can either be:
+1) from a pretrained model, currently only supports the models from</p>
+<blockquote>
+<div>the CGCNN repo;</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>train a CGCNN model based on the X (structures) and y (target) from
+fresh start;</li>
+<li>similar to 2), but train a model from a warm_start model that can
+either be a pretrained model or saved checkpoints.</li>
+</ol>
+<p>Note that to use CGCNNFeaturizer, a target y is needed!
+Args:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>X (Series/list):</dt>
+<dd>An iterable of pymatgen Structure objects.</dd>
+<dt>y (Series/list):</dt>
+<dd>Target property that CGCNN is designed to predict.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>self</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer.latest_model">
+<code class="descname">latest_model</code><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer.latest_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the latest model</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.featurizers.structure.CGCNNFeaturizer.model">
+<code class="descname">model</code><a class="headerlink" href="#matminer.featurizers.structure.CGCNNFeaturizer.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the best model</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="matminer.featurizers.structure.ChemicalOrdering">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">ChemicalOrdering</code><span class="sig-paren">(</span><em>shells=(1</em>, <em>2</em>, <em>3)</em>, <em>weight='area'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.ChemicalOrdering" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
@@ -5822,16 +6068,16 @@ structure deviates from random using a Warren-Cowley-like ordering
 parameter. The first step of this calculation is to determine the nearest
 neighbor shells of each site. Then, for each shell a degree of order for
 each type is determined by computing:</p>
-<p>:math:<a href="#id33"><span class="problematic" id="id34">`</span></a>lpha (t,s) = 1 -</p>
+<p>:math:<a href="#id35"><span class="problematic" id="id36">`</span></a>lpha (t,s) = 1 -</p>
 </div></blockquote>
 <p>rac{sum_n w_n delta (t - t_n)}{x_t sum_n w_n}`</p>
 <blockquote>
-<div><p>where <img class="math" src="_images/math/083b5d48a524b6f7a39570bbe0d51d474cb588e6.png" alt="w_n"/> is the weight associated with a certain neighbor,
-<img class="math" src="_images/math/44a53fd8bbb2f72416882129ccc4cf64e49fc3df.png" alt="t_p"/> is the type of the neighbor, and <img class="math" src="_images/math/86ec1edb070ffe9216097a80189ee3434c9b5f20.png" alt="x_t"/> is the fraction
+<div><p>where <img class="math" src="_images/math/182c7d0771b253a55441383d191fce92f3d58e02.png" alt="w_n"/> is the weight associated with a certain neighbor,
+<img class="math" src="_images/math/2ff684758d53878ad22e0ebaa7f34d709cc1b6a4.png" alt="t_p"/> is the type of the neighbor, and <img class="math" src="_images/math/1b1fd12d69ea533588e033d255888cb6a17cdca6.png" alt="x_t"/> is the fraction
 of type t in the structure. For atoms that are randomly dispersed in a
 structure, this formula yields 0 for all types. For structures where
 each site is surrounded only by atoms of another type, this formula
-yields large values of <img class="math" src="_images/math/1c7982e9bed52596de46d839a5334f537de1c35d.png" alt="alpha"/>.</p>
+yields large values of <img class="math" src="_images/math/2fe13d18c90531495ad5a8b7976e2a7bda67ae7e.png" alt="alpha"/>.</p>
 <p>The mean absolute value of this parameter across all sites is used
 as a feature.</p>
 <dl class="docutils">
@@ -5919,7 +6165,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>Generate the Coulomb matrix, M, of the input
 structure (or molecule).  The Coulomb matrix was put forward by
 Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-off-diagonal elements M_ij = Z_i*Z_j/<a href="#id47"><span class="problematic" id="id48">|R_i-R_j|</span></a>
+off-diagonal elements M_ij = Z_i*Z_j/<a href="#id49"><span class="problematic" id="id50">|R_i-R_j|</span></a>
 and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
 the nuclear charge and the position of atom i, respectively.</p>
 <dl class="docutils">
@@ -6086,7 +6332,7 @@ structure. This feature is sensitive to bond length tables that you use.</p>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id36"><span class="problematic" id="id37">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
+<dt><a href="#id38"><span class="problematic" id="id39">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
 <dd>pymatgen.</dd>
 </dl>
 </dd>
@@ -6238,7 +6484,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">EwaldEnergy</code><span class="sig-paren">(</span><em>accuracy=4</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Compute the energy from Coulombic interactions.</p>
-<p>Note: The energy is computed using _charges already defined for the <a href="#id55"><span class="problematic" id="id56">structure_</span></a>.</p>
+<p>Note: The energy is computed using _charges already defined for the <a href="#id57"><span class="problematic" id="id58">structure_</span></a>.</p>
 <dl class="docutils">
 <dt>Features:</dt>
 <dd>ewald_energy - Coulomb interaction energy of the structure</dd>
@@ -7170,7 +7416,7 @@ stats ([str]): list of weighted statistics to compute for each feature.</p>
 <div>If stats is None, a list is returned for each features
 that contains the calculated feature for each site in the
 structure.
-<a href="#id38"><span class="problematic" id="id39">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
+<a href="#id40"><span class="problematic" id="id41">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
 <dl class="docutils">
 <dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
 <dd>zero means metals/cations only)</dd>
@@ -7220,7 +7466,7 @@ in any derived featurizer subclass.</p>
 
 <dl class="staticmethod">
 <dt id="matminer.featurizers.structure.SiteStatsFingerprint.from_preset">
-<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_preset</code><span class="sig-paren">(</span><em>preset</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a SiteStatsFingerprint class according to a preset</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -7461,7 +7707,7 @@ pattern_length (float): length of final array; defaults to one value</p>
 <blockquote>
 <div>per degree (i.e. two_theta_range + 1)</div></blockquote>
 <dl class="last docutils">
-<dt><a href="#id41"><span class="problematic" id="id42">**</span></a>kwargs: any other arguments to pass into pymatgen’s XRDCalculator,</dt>
+<dt><a href="#id43"><span class="problematic" id="id44">**</span></a>kwargs: any other arguments to pass into pymatgen’s XRDCalculator,</dt>
 <dd>such as the type of radiation.</dd>
 </dl>
 </dd>
@@ -7535,7 +7781,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">matminer.featurizers package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
@@ -7586,13 +7832,13 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.8 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
 
   </body>

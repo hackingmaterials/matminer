@@ -6,10 +6,10 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Datasets Available in Matminer &#8212; matminer 0.4.6 documentation</title>
+    <title>Datasets Available in Matminer &#8212; matminer 0.4.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -115,6 +115,71 @@ journal = {Scientific Data},
 URL = {<a class="reference external" href="https://doi.org/10.5061/dryad.gn001">https://doi.org/10.5061/dryad.gn001</a>},
 doi = {doi:10.5061/dryad.gn001},
 publisher = {Dryad Digital Repository}
+}</p>
+</div>
+<div class="section" id="brgoch-superhard-training">
+<h2>brgoch_superhard_training<a class="headerlink" href="#brgoch-superhard-training" title="Permalink to this headline">¶</a></h2>
+<p>2574 materials used for training regressors that predict shear and bulk modulus.</p>
+<p><strong>Number of entries:</strong> 2574</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>brgoch_feats</td>
+<td>features used in brgoch study compressed to a dictionary</td>
+</tr>
+<tr class="row-odd"><td>bulk_modulus</td>
+<td>VRH bulk modulus</td>
+</tr>
+<tr class="row-even"><td>composition</td>
+<td>pymatgen composition object</td>
+</tr>
+<tr class="row-odd"><td>formula</td>
+<td>Chemical formula as a string</td>
+</tr>
+<tr class="row-even"><td>material_id</td>
+<td>materials project id</td>
+</tr>
+<tr class="row-odd"><td>structure</td>
+<td>pymatgen structure object</td>
+</tr>
+<tr class="row-even"><td>shear_modulus</td>
+<td>VRH shear modulus</td>
+</tr>
+<tr class="row-odd"><td>suspect_value</td>
+<td>True if bulk or shear value did not closely match (within 5%/1GPa of MP) materials project value at time of cross reference or if no material could be found</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p>Machine Learning Directed Search for Ultraincompressible, Superhard Materials
+Aria Mansouri Tehrani, Anton O. Oliynyk, Marcus Parry, Zeshan Rizvi, Samantha Couper, Feng Lin, Lowell Miyagi, Taylor D. Sparks, and Jakoah Brgoch
+Journal of the American Chemical Society 2018 140 (31), 9844-9853
+DOI: 10.1021/jacs.8b02717</p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{doi:10.1021/jacs.8b02717,
+author = {Mansouri Tehrani, Aria and Oliynyk, Anton O. and Parry, Marcus and Rizvi, Zeshan and Couper, Samantha and Lin, Feng and Miyagi, Lowell and Sparks, Taylor D. and Brgoch, Jakoah},
+title = {Machine Learning Directed Search for Ultraincompressible, Superhard Materials},
+journal = {Journal of the American Chemical Society},
+volume = {140},
+number = {31},
+pages = {9844-9853},
+year = {2018},
+doi = {10.1021/jacs.8b02717},
+note ={PMID: 30010335},
+URL = {
+https://doi.org/10.1021/jacs.8b02717
+},
+eprint = {
+https://doi.org/10.1021/jacs.8b02717
+}
 }</p>
 </div>
 <div class="section" id="castelli-perovskites">
@@ -733,6 +798,46 @@ eprint = {https://doi.org/10.1063/1.4812323}
 <h2>glass_binary<a class="headerlink" href="#glass-binary" title="Permalink to this headline">¶</a></h2>
 <p>Metallic glass formation data for binary alloys, collected from various experimental techniques such as melt-spinning or mechanical alloying. This dataset covers all compositions with an interval of 5 at. % in 59 binary systems, containing a total of 5959 alloys in the dataset. The target property of this dataset is the glass forming ability (GFA), i.e. whether the composition can form monolithic glass or not, which is either 1 for glass forming or 0 for non-full glass forming.</p>
 <p><strong>Number of entries:</strong> 5959</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="96%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>formula</td>
+<td>chemical formula</td>
+</tr>
+<tr class="row-odd"><td>gfa</td>
+<td>glass forming ability, correlated with the phase column, designating whether the composition can form monolithic glass or not, 1: glass forming (“AM”), 0: non-full-forming(“CR”)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046">https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;article{doi:10.1021/acs.jpclett.7b01046,
+author = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},
+title = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},
+journal = {The Journal of Physical Chemistry Letters},
+volume = {8},
+number = {14},
+pages = {3434-3439},
+year = {2017},
+doi = {10.1021/acs.jpclett.7b01046},
+note ={PMID: 28697303},
+eprint = {
+https://doi.org/10.1021/acs.jpclett.7b01046</p>
+<p>}}</p>
+</div>
+<div class="section" id="glass-binary-v2">
+<h2>glass_binary_v2<a class="headerlink" href="#glass-binary-v2" title="Permalink to this headline">¶</a></h2>
+<p>Identical to glass_binary dataset, but with duplicate entries merged. If there was a disagreement in gfa when merging the class was defaulted to 1.</p>
+<p><strong>Number of entries:</strong> 5483</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="4%" />
@@ -1737,10 +1842,11 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Datasets Available in Matminer</a><ul>
 <li><a class="reference internal" href="#boltztrap-mp">boltztrap_mp</a></li>
+<li><a class="reference internal" href="#brgoch-superhard-training">brgoch_superhard_training</a></li>
 <li><a class="reference internal" href="#castelli-perovskites">castelli_perovskites</a></li>
 <li><a class="reference internal" href="#citrine-thermal-conductivity">citrine_thermal_conductivity</a></li>
 <li><a class="reference internal" href="#dielectric-constant">dielectric_constant</a></li>
@@ -1751,6 +1857,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
 <li><a class="reference internal" href="#expt-gap">expt_gap</a></li>
 <li><a class="reference internal" href="#flla">flla</a></li>
 <li><a class="reference internal" href="#glass-binary">glass_binary</a></li>
+<li><a class="reference internal" href="#glass-binary-v2">glass_binary_v2</a></li>
 <li><a class="reference internal" href="#glass-ternary-hipt">glass_ternary_hipt</a></li>
 <li><a class="reference internal" href="#glass-ternary-landolt">glass_ternary_landolt</a></li>
 <li><a class="reference internal" href="#heusler-magnetic">heusler_magnetic</a></li>
@@ -1800,13 +1907,13 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.8 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
 
   </body>

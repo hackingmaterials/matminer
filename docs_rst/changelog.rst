@@ -5,6 +5,14 @@
 matminer Changelog
 ==================
 
+**v0.4.8**
+
+* CGCNN featurizer / model (Q. Wang, T. Xie)
+* Text-mined element embedding featurizer (A. Dunn)
+* add Brgoch data set (D. Dopp)
+* add quartile to PropertyStats (A. Dunn)
+* minor fixes, improvements (A. Dunn, A. Jain)
+
 **v0.4.6**
 
 * Jarvis CFID descriptors (A. Dunn, K. Choudhary)

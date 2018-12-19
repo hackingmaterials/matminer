@@ -6,10 +6,10 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.datasets package &#8212; matminer 0.4.6 documentation</title>
+    <title>matminer.datasets package &#8212; matminer 0.4.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,7 +50,35 @@
 <dd><p>Convenience function for loading the boltztrap_mp dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="last docutils">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
+<dd>it isn’t on disk</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns: (pd.DataFrame)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.datasets.convenience_loaders.load_brgoch_superhard_training">
+<code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_brgoch_superhard_training</code><span class="sig-paren">(</span><em>subset='all'</em>, <em>drop_suspect=False</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_brgoch_superhard_training" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function for loading the expt_formation_enthalpy dataset.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>subset (str): Identifier for subset of data to return,</dt>
+<dd><dl class="first docutils">
+<dt>all: all possible columns including metadata, engineered features,</dt>
+<dd>and basic descriptors</dd>
+</dl>
+<p class="last">brgoch_features: only features from reference paper and targets
+basic_descriptors: only composition/structure columns and targets</p>
+</dd>
+<dt>drop_suspect (bool): Whether to drop values with possibly incorrect </dt>
+<dd>elastic data and materials that could not be verified</dd>
+</dl>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -66,7 +94,7 @@
 <dd><p>Convenience function for loading the castelli_perovskites dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -86,7 +114,7 @@
 <dt>room_temperature (bool) Whether or not to only return items with room</dt>
 <dd>temperature k_condition. True by default.</dd>
 </dl>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -106,7 +134,7 @@
 <dt>include_metadata (bool): Whether or not to include the cif, meta,</dt>
 <dd>and poscar dataset columns. False by default.</dd>
 </dl>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -126,7 +154,7 @@
 <dt>return_lumo (bool) Whether or not to provide LUMO energy dataframe in</dt>
 <dd>addition to gap dataframe. Defaults to False.</dd>
 </dl>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -142,7 +170,7 @@
 <dd><p>Convenience function for loading the double_perovskites_gap_lumo dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -164,7 +192,7 @@
 <dt>include_metadata (bool): Whether or not to include the cif, meta,</dt>
 <dd>and poscar dataset columns. False by default.</dd>
 </dl>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -180,7 +208,7 @@
 <dd><p>Convenience function for loading the expt_formation_enthalpy dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -196,7 +224,7 @@
 <dd><p>Convenience function for loading the expt_gap dataset.me</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -212,7 +240,7 @@
 <dd><p>Convenience function for loading the flla dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -224,11 +252,15 @@
 
 <dl class="function">
 <dt id="matminer.datasets.convenience_loaders.load_glass_binary">
-<code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_glass_binary</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_glass_binary" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_glass_binary</code><span class="sig-paren">(</span><em>version='v2'</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_glass_binary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the glass_binary dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><dl class="first docutils">
+<dt>version (str): Version identifier for dataset, see dataset description</dt>
+<dd>for explanation of each. Defaults to v2</dd>
+</dl>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -248,7 +280,7 @@
 <dt>system (str, list): return items only from the requested system(s)</dt>
 <dd>options are: “CoFeZr”, “CoTiZr”, “CoVZr”, “FeTiNb”</dd>
 </dl>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -270,7 +302,7 @@
 <dt>unique_composition (bool): Whether or not to combine compositions with</dt>
 <dd>the same formula</dd>
 </dl>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -286,7 +318,7 @@
 <dd><p>Convenience function for loading the heusler magnetic dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -304,7 +336,7 @@
 <dt>Args:</dt>
 <dd><p class="first">drop_nan_columns (list, str): Column or columns to drop rows
 containing NaN values from</p>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -322,7 +354,7 @@ containing NaN values from</p>
 <dt>Args:</dt>
 <dd><p class="first">drop_nan_columns (list, str): Column or columns to drop rows
 containing NaN values from</p>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -340,7 +372,7 @@ containing NaN values from</p>
 <dt>Args:</dt>
 <dd><p class="first">drop_nan_columns (list, str): Column or columns to drop rows
 containing NaN values from</p>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -356,7 +388,7 @@ containing NaN values from</p>
 <dd><p>Convenience function for loading the m2ax dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -376,7 +408,7 @@ containing NaN values from</p>
 <dt>include_structures (bool) Whether or not to load the full mp</dt>
 <dd>structure data. False by default.</dd>
 </dl>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -392,7 +424,7 @@ containing NaN values from</p>
 <dd><p>Convenience function for loading the phonon_dielectric_mp dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -412,7 +444,7 @@ containing NaN values from</p>
 <dt>include_metadata (bool): Whether or not to include the cif, meta,</dt>
 <dd>and poscar dataset columns. False by default.</dd>
 </dl>
-<p>data_home (str, None): Where to loom for and store the loaded dataset</p>
+<p>data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -428,7 +460,7 @@ containing NaN values from</p>
 <dd><p>Convenience function for loading the steel strength dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -444,7 +476,7 @@ containing NaN values from</p>
 <dd><p>Convenience function for loading the wolverton oxides dataset.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to loom for and store the loaded dataset</p>
+<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
 <dl class="last docutils">
 <dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
 <dd>it isn’t on disk</dd>
@@ -598,7 +630,7 @@ by default.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">matminer.datasets package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
@@ -642,13 +674,13 @@ by default.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.4.8 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
 
   </body>

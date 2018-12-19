@@ -70,6 +70,60 @@ publisher = {Dryad Digital Repository}
 
 
 
+-------------------------
+brgoch_superhard_training
+-------------------------
+2574 materials used for training regressors that predict shear and bulk modulus.
+
+**Number of entries:** 2574
+
+============= ============================================================================================================================================================
+Column        Description
+============= ============================================================================================================================================================
+brgoch_feats  features used in brgoch study compressed to a dictionary
+bulk_modulus  VRH bulk modulus
+composition   pymatgen composition object
+formula       Chemical formula as a string
+material_id   materials project id
+structure     pymatgen structure object
+shear_modulus VRH shear modulus
+suspect_value True if bulk or shear value did not closely match (within 5%/1GPa of MP) materials project value at time of cross reference or if no material could be found
+============= ============================================================================================================================================================
+
+
+
+**Reference**
+
+Machine Learning Directed Search for Ultraincompressible, Superhard Materials
+Aria Mansouri Tehrani, Anton O. Oliynyk, Marcus Parry, Zeshan Rizvi, Samantha Couper, Feng Lin, Lowell Miyagi, Taylor D. Sparks, and Jakoah Brgoch
+Journal of the American Chemical Society 2018 140 (31), 9844-9853
+DOI: 10.1021/jacs.8b02717
+
+
+
+**Bibtex Formatted Citations**
+
+@article{doi:10.1021/jacs.8b02717,
+author = {Mansouri Tehrani, Aria and Oliynyk, Anton O. and Parry, Marcus and Rizvi, Zeshan and Couper, Samantha and Lin, Feng and Miyagi, Lowell and Sparks, Taylor D. and Brgoch, Jakoah},
+title = {Machine Learning Directed Search for Ultraincompressible, Superhard Materials},
+journal = {Journal of the American Chemical Society},
+volume = {140},
+number = {31},
+pages = {9844-9853},
+year = {2018},
+doi = {10.1021/jacs.8b02717},
+note ={PMID: 30010335},
+URL = {
+https://doi.org/10.1021/jacs.8b02717
+},
+eprint = {
+https://doi.org/10.1021/jacs.8b02717
+}
+}
+
+
+
+
 --------------------
 castelli_perovskites
 --------------------
@@ -586,6 +640,48 @@ glass_binary
 Metallic glass formation data for binary alloys, collected from various experimental techniques such as melt-spinning or mechanical alloying. This dataset covers all compositions with an interval of 5 at. % in 59 binary systems, containing a total of 5959 alloys in the dataset. The target property of this dataset is the glass forming ability (GFA), i.e. whether the composition can form monolithic glass or not, which is either 1 for glass forming or 0 for non-full glass forming.
 
 **Number of entries:** 5959
+
+======= =================================================================================================================================================================================
+Column  Description
+======= =================================================================================================================================================================================
+formula chemical formula
+gfa     glass forming ability, correlated with the phase column, designating whether the composition can form monolithic glass or not, 1: glass forming ("AM"), 0: non-full-forming("CR")
+======= =================================================================================================================================================================================
+
+
+
+**Reference**
+
+https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046
+
+
+
+**Bibtex Formatted Citations**
+
+@article{doi:10.1021/acs.jpclett.7b01046,
+author = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},
+title = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},
+journal = {The Journal of Physical Chemistry Letters},
+volume = {8},
+number = {14},
+pages = {3434-3439},
+year = {2017},
+doi = {10.1021/acs.jpclett.7b01046},
+note ={PMID: 28697303},
+eprint = {
+https://doi.org/10.1021/acs.jpclett.7b01046
+
+}}
+
+
+
+
+---------------
+glass_binary_v2
+---------------
+Identical to glass_binary dataset, but with duplicate entries merged. If there was a disagreement in gfa when merging the class was defaulted to 1.
+
+**Number of entries:** 5483
 
 ======= =================================================================================================================================================================================
 Column  Description
