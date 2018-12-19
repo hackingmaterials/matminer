@@ -38,6 +38,7 @@ from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
     CrystalGraphConvNetWrapper, CIFDataWrapper
 from matminer.utils.caching import get_all_nearest_neighbors
 
+# For the CGCNNFeaturizer
 try:
     import torch
     import torch.optim as optim
@@ -2234,7 +2235,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
 
     This featurizer requires a CGCNN model that can either be:
         1) from a pretrained model, currently only supports the models from
-           the CGCNN repo: https://github.com/txie-93/cgcnn;
+           the CGCNN repo (12/10/18): https://github.com/txie-93/cgcnn;
         2) train a CGCNN model based on the X (structures) and y (target) from
            fresh start;
         3) similar to 2), but train a model from a warm_start model that can
@@ -2253,15 +2254,13 @@ class CGCNNFeaturizer(BaseFeaturizer):
     """
     @requires(torch and cgcnn,
               "CGCNNFeaturizer requires pytorch and cgcnn to be installed with "
-              "Python bindings. Please get it at http://pytorch.org and "
+              "Python bindings. Please refer to http://pytorch.org and "
               "https://github.com/txie-93/cgcnn.")
     def __init__(self, task='classification', atom_init_fea=None,
-                 use_pretrained=False, pretrained_name=None,
-                 warm_start=False, warm_start_file=None,
-                 warm_start_latest=False, save_checkpoint=False,
-                 checkpoint_interval=100, del_checkpoint=True,
-                 save_model=False, output_path=None,
-                 **cgcnn_kwargs):
+                 pretrained_name=None, warm_start_file=None,
+                 warm_start_latest=False, save_model_to_dir=None,
+                 save_checkpoint_to_dir=None, checkpoint_interval=100,
+                 del_checkpoint=True, **cgcnn_kwargs):
         """
         Args:
             task (str):
@@ -2269,33 +2268,28 @@ class CGCNNFeaturizer(BaseFeaturizer):
             atom_init_fea (dict):
                 A dict of {atom type: atom feature}. If not provided, will use
                 the default atom features from the CGCNN repo.
-            use_pretrained (bool):
-                Whether to use a pretrained model from the CGCNN repo.
             pretrained_name (str):
-                CGCNN pretrained model name, only works if use_pretrained=True.
-            warm_start (bool):
-                Whether warm start the training from a model.
+                CGCNN pretrained model name, if None don't use pre-trained model
             warm_start_file (str):
-                The path to the warm start model, only works if warm_start=True.
+                The warm start model file, if None, don't warm start.
             warm_start_latest(bool):
                 Warm start from the latest model or best model.
                 This is set because we customize our checkpoints to contain both
                 best model and latest model. And if the warm start model does
                 not contain these two options, will just use the static_dict
                 given in the model/checkpoints to warm start.
-            save_model (bool):
-                Whether to save the best model to disk.
-            save_checkpoint (bool):
-                Whether to save checkpoints during training.
+            save_model_to_dir (str):
+                Whether to save the best model to disk, if None, don't save,
+                otherwise, save the best model to 'save_model_to_dir' path.
+            save_checkpoint_to_dir (str):
+                Whether to save checkpoint during training, if None, don't save,
+                otherwise, save the it to 'save_checkpoint_to_dir' path.
             checkpoint_interval (int):
-                Save checkpoint every n epochs. If the epochs is less than
-                this checkpoint_interval, will reset the checkpoint_interval
-                as int(epochs/2).
+                Save checkpoint every n epochs if save_checkpoint_to_dir is not
+                None. If the epochs is less than this checkpoint_interval, will
+                reset the checkpoint_interval as int(epochs/2).
             del_checkpoint (bool):
                 Whether to delete checkpoints if training ends successfully.
-            output_path (str):
-                Output path to save the model and checkpoints, etc.
-                Output path, save model and others.
             **cgcnn_kwargs (optional): settings of CGCNN, containing:
                 CrystalGraphConvNet model kwargs:
                     -atom_fea_len (int): Number of hidden atom features in conv
@@ -2344,20 +2338,14 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 These input cgcnn_kwargs will be processed and grouped in
                 _initialize_kwargs.
         """
-        if (save_model or save_checkpoint) and output_path is None:
-            raise ValueError("When save model or save checkpoint is True, "
-                             "output_path parameter must also be provided.")
         self.task = task
-        self.use_pretrained = use_pretrained
         self.pretrained_name = pretrained_name
-        self.warm_start = warm_start
         self.warm_start_file = warm_start_file
         self.warm_start_latest = warm_start_latest
-        self.save_checkpoint = save_checkpoint
+        self.save_model_to_dir = save_model_to_dir
+        self.save_checkpoint_to_dir = save_checkpoint_to_dir
         self.checkpoint_interval = checkpoint_interval
         self.del_checkpoint = del_checkpoint
-        self.save_model = save_model
-        self.output_path = output_path
 
         # Set atom_init_fea
         if atom_init_fea is None:
@@ -2389,132 +2377,134 @@ class CGCNNFeaturizer(BaseFeaturizer):
         Returns:
             self
         """
+
         # Load data and initialize model
         self.dataset = CIFDataWrapper(X, y, **self._dataset_kwargs)
         model = self._initialize_model()
 
+        # Get the CGCNN pre-trained model
+        if self.pretrained_name is not None:
+            self._use_pretrained_model(model, self.pretrained_name)
+            return self
+
         # If checkpoint_interval > num_epochs, set it as num_epochs/2
-        if self.save_checkpoint and \
+        if self.save_checkpoint_to_dir and \
                 self.checkpoint_interval >= self._num_epochs:
             self.checkpoint_interval = math.ceil(self._num_epochs / 2)
 
-        # Get the CGCNN model
-        if self.use_pretrained:
-            self._use_pretrained_model(model, self.pretrained_name)
-            return self
+        # Initialize CGCNN's train, validate function and Normalizer class
+        train, validate, Normalizer = self._initialize_cgcnn()
+
+        if self._test:
+            train_loader, val_loader, _ = \
+                cgcnn_data.get_train_val_test_loader(
+                    dataset=self.dataset, **self._dataloader_kwargs)
         else:
-            # Initialize CGCNN's train, validate function and Normalizer class
-            train, validate, Normalizer = self._initialize_cgcnn()
+            train_loader, val_loader = \
+                cgcnn_data.get_train_val_test_loader(
+                    dataset=self.dataset, **self._dataloader_kwargs)
 
-            # Check output_path
-            if self.save_model or self.save_checkpoint:
-                if not os.path.exists(self.output_path):
-                    os.makedirs(self.output_path)
-                checkpoint_file = os.path.join(self.output_path,
-                                               'cgcnn_checkpoint.pth.tar')
+        # Initialize normalizer and optimizer
+        normalizer = self._initialize_normalizer(Normalizer)
+        optimizer = self._initialize_optimizer(model)
 
-            if self._test:
-                train_loader, val_loader, _ = \
-                    cgcnn_data.get_train_val_test_loader(
-                        dataset=self.dataset, **self._dataloader_kwargs)
-            else:
-                train_loader, val_loader = \
-                    cgcnn_data.get_train_val_test_loader(
-                        dataset=self.dataset, **self._dataloader_kwargs)
+        if self._cuda:
+            model.cuda()
 
-            # Initialize normalizer and optimizer
-            normalizer = self._initialize_normalizer(Normalizer)
-            optimizer = self._initialize_optimizer(model)
+        # Define loss func
+        criterion = torch.nn.NLLLoss() if self.task == 'classification' \
+            else torch.nn.MSELoss()
 
-            if self._cuda:
-                model.cuda()
+        # Initialize epochs parameters
+        start_epoch, best_epoch = 0, 0
+        best_score = 1e10 if self.task == 'regression' else 0.
 
-            # Define loss func
-            criterion = torch.nn.NLLLoss() if self.task == 'classification' \
-                else torch.nn.MSELoss()
-
-            # Initialize epochs parameters
-            start_epoch, best_epoch = 0, 0
-            best_score = 1e10 if self.task == 'regression' else 0.
-
-            # Optionally resume from a checkpoint
-            if self.warm_start:
-                if os.path.isfile(self.warm_start_file):
-                    checkpoint = torch.load(self.warm_start_file)
-                    if self.warm_start_latest:
-                        # Load and set best model. If checkpoint doesn't
-                        # have the best_state_dict, then load the state_dict
-                        if 'best_state_dict' in checkpoint.keys():
-                            model.load_state_dict(checkpoint['best_state_dict'])
-                        else:
-                            model.load_state_dict(checkpoint['state_dict'])
-
-                        # Use copy to avoid best_model being affected by changes
-                        self._best_model = copy(model)
-
-                        # Warm start from latest model
-                        model.load_state_dict(checkpoint['state_dict'])
-                        start_epoch = checkpoint['epoch']
-                    else:
-                        start_epoch = checkpoint['best_epoch'] + 1
+        # Optionally resume from a checkpoint
+        if self.warm_start_file is not None:
+            if os.path.isfile(self.warm_start_file):
+                checkpoint = torch.load(self.warm_start_file)
+                if self.warm_start_latest:
+                    # Load and set best model. If checkpoint doesn't
+                    # have the best_state_dict, then load the state_dict
+                    if 'best_state_dict' in checkpoint.keys():
                         model.load_state_dict(checkpoint['best_state_dict'])
-                        self._best_model = copy(model)
-                    best_epoch = checkpoint['best_epoch']
-                    # We use 'best_mae_error' for compatible with the cgcnn
-                    # project's pre-trained model.
-                    best_score = checkpoint['best_mae_error']
-                    optimizer.load_state_dict(checkpoint['optimizer'])
-                    normalizer.load_state_dict(checkpoint['normalizer'])
-                    print("Warm start from '{}' (epoch {})."
-                          .format(self.warm_start_file, checkpoint['epoch']))
+                    else:
+                        model.load_state_dict(checkpoint['state_dict'])
+
+                    # Use copy to avoid best_model being affected by changes
+                    self._best_model = copy(model)
+
+                    # Warm start from latest model
+                    model.load_state_dict(checkpoint['state_dict'])
+                    start_epoch = checkpoint['epoch']
                 else:
-                    warnings.warn("Warm start file not found.")
-            scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
-                                                       **self._scheduler_kwargs)
+                    start_epoch = checkpoint['best_epoch'] + 1
+                    model.load_state_dict(checkpoint['best_state_dict'])
+                    self._best_model = copy(model)
+                best_epoch = checkpoint['best_epoch']
+                # We use 'best_mae_error' for compatible with the cgcnn
+                # project's pre-trained model.
+                best_score = checkpoint['best_mae_error']
+                optimizer.load_state_dict(checkpoint['optimizer'])
+                normalizer.load_state_dict(checkpoint['normalizer'])
+                print("Warm start from '{}' (epoch {})."
+                      .format(self.warm_start_file, checkpoint['epoch']))
+            else:
+                warnings.warn("Warm start file not found.")
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
+                                                   **self._scheduler_kwargs)
+        # Save checkpoint
+        if self.save_checkpoint_to_dir is not None:
+            if not os.path.exists(self.save_checkpoint_to_dir):
+                os.makedirs(self.save_checkpoint_to_dir)
+            checkpoint_file = os.path.join(self.save_checkpoint_to_dir,
+                                           'cgcnn_checkpoint.pth.tar')
 
-            for epoch in range(start_epoch, self._num_epochs):
-                train(train_loader=train_loader, model=model,
-                      criterion=criterion, optimizer=optimizer,
-                      epoch=epoch, normalizer=normalizer)
+        for epoch in range(start_epoch, self._num_epochs):
+            train(train_loader=train_loader, model=model,
+                  criterion=criterion, optimizer=optimizer,
+                  epoch=epoch, normalizer=normalizer)
 
-                score = validate(val_loader=val_loader, model=model,
-                                 criterion=criterion, normalizer=normalizer,
-                                 test=self._test)
+            score = validate(val_loader=val_loader, model=model,
+                             criterion=criterion, normalizer=normalizer,
+                             test=self._test)
 
-                if score is np.nan:
-                    raise ValueError("Exit due to mae_error is NaN")
+            if score is np.nan:
+                raise ValueError("Exit due to mae_error is NaN")
 
-                scheduler.step()
+            scheduler.step()
 
-                # Calculate best score
-                if self.task == 'regression':
-                    is_best = score < best_score
-                    best_score = min(score, best_score)
-                else:
-                    is_best = score > best_score
-                    best_score = max(score, best_score)
+            # Calculate best score
+            if self.task == 'regression':
+                is_best = score < best_score
+                best_score = min(score, best_score)
+            else:
+                is_best = score > best_score
+                best_score = max(score, best_score)
 
-                if is_best:
-                    self._best_model, best_epoch = copy(model), epoch
-                self._latest_model = model
+            if is_best:
+                self._best_model, best_epoch = copy(model), epoch
+            self._latest_model = model
 
-                # Save checkpoint
-                if self.save_checkpoint and \
-                        epoch % self.checkpoint_interval == 0:
-                    self._save_model(epoch, best_epoch, best_score,
-                                     optimizer, normalizer, checkpoint_file)
+            # Save checkpoint
+            if self.save_checkpoint_to_dir is not None and \
+                    epoch % self.checkpoint_interval == 0:
+                self._save_model(epoch, best_epoch, best_score,
+                                 optimizer, normalizer, checkpoint_file)
 
-            # Save model to disk
-            if self.save_model:
-                model_file = os.path.join(self.output_path,
-                                          'cgcnn_model.pth.tar')
-                self._save_model(self._num_epochs, best_epoch, best_score,
-                                 optimizer, normalizer, model_file)
+        # Save model
+        if self.save_model_to_dir is not None:
+            if not os.path.exists(self.save_model_to_dir):
+                os.makedirs(self.save_model_to_dir)
+            model_file = os.path.join(self.save_model_to_dir,
+                                      'cgcnn_model.pth.tar')
+            self._save_model(self._num_epochs, best_epoch, best_score,
+                             optimizer, normalizer, model_file)
 
-            # Delete checkpoint
-            if self.save_checkpoint and self.del_checkpoint and \
-                    os.path.exists(checkpoint_file):
-                os.remove(checkpoint_file)
+        # Delete checkpoint
+        if self.save_checkpoint_to_dir is not None and self.del_checkpoint and \
+                os.path.exists(checkpoint_file):
+            os.remove(checkpoint_file)
         return self
 
     def featurize(self, strc):
@@ -2621,14 +2611,15 @@ class CGCNNFeaturizer(BaseFeaturizer):
             Normalizer (class): CGCNN's Normalizer class.
         """
 
-        # Because CGCNN's train and validate function is in the main.py file,
-        # which is in the parent path of CGCNN's package, so we should add the
-        # parent path to the system path first, then import them.
+        # As cgcnn repo's train and validate function are in the main.py that is
+        # in the parent path, we have to add it to the system path first.
         main_path = os.path.join(os.path.dirname(cgcnn.__file__), "..")
         sys.path.append(os.path.abspath(main_path))
 
-        # Because CGCNN's main.py need command-line arguments (argparse model),
-        # so we should add the required arguments to sys.argv.
+        # As cgcnn repo's main.py need command-line arguments (argparse model),
+        # we have to add the required arguments to sys.argv.
+        # "_" is a place holder to hold the place of folder name as required by
+        # cgcnn repo yet is not needed here as we have wrapped the CIFData class
         sys.argv += ['_',
                      '--task', self.task,
                      '--print-freq', str(self._print_freq)]
@@ -2779,7 +2770,8 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 "{https://link.aps.org/doi/10.1103/PhysRevLett.120.145301}}"]
 
     def implementors(self):
-        return ['Qi Wang']
+        return ['Qi Wang', 'Tian Xie']
+
 
 class JarvisCFID(BaseFeaturizer):
     """

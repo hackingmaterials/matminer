@@ -25,6 +25,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
     Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID
+
+# For the CGCNNFeaturizer
 try:
     import torch
     import cgcnn
@@ -608,8 +610,7 @@ class StructureFeaturesTest(PymatgenTest):
         cla_props, cla_atom_features, cla_structs = self._get_cgcnn_data()
         atom_fea_len = 64
         cgcnn_featurizer = \
-            CGCNNFeaturizer(use_pretrained=False, warm_start=False,
-                            save_model=False, atom_init_fea=cla_atom_features,
+            CGCNNFeaturizer(atom_init_fea=cla_atom_features,
                             train_size=5, val_size=2, test_size=3,
                             atom_fea_len=atom_fea_len)
 
@@ -639,10 +640,8 @@ class StructureFeaturesTest(PymatgenTest):
         reg_props, reg_atom_features, reg_structs = \
             self._get_cgcnn_data("regression")
         cgcnn_featurizer = \
-            CGCNNFeaturizer(task="regression", use_pretrained=False,
-                            warm_start=False, save_model=False,
-                            atom_fea_len=atom_fea_len, train_size=6,
-                            val_size=2, test_size=2)
+            CGCNNFeaturizer(task="regression", atom_fea_len=atom_fea_len,
+                            train_size=6, val_size=2, test_size=2)
 
         cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
         cgcnn_featurizer.set_n_jobs(1)
@@ -653,9 +652,8 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test classification from pre-trained model.
         cgcnn_featurizer = \
-            CGCNNFeaturizer(use_pretrained=True, h_fea_len=32, n_conv=4,
+            CGCNNFeaturizer(h_fea_len=32, n_conv=4,
                             pretrained_name='semi-metal-classification',
-                            warm_start=False, save_model=False,
                             atom_init_fea=cla_atom_features, train_size=5,
                             val_size=2, test_size=3, atom_fea_len=atom_fea_len)
         cgcnn_featurizer.fit(X=cla_structs, y=cla_props)
@@ -670,10 +668,9 @@ class StructureFeaturesTest(PymatgenTest):
 
         # Test regression from pre-trained model.
         cgcnn_featurizer = \
-            CGCNNFeaturizer(task="regression", use_pretrained=True,
+            CGCNNFeaturizer(task="regression", h_fea_len=32, n_conv=4,
                             pretrained_name='formation-energy-per-atom',
-                            h_fea_len=32, n_conv=4, warm_start=False,
-                            save_model=False, atom_init_fea=reg_atom_features,
+                            atom_init_fea=reg_atom_features,
                             train_size=5, val_size=2, test_size=3,
                             atom_fea_len=atom_fea_len)
         cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
@@ -697,10 +694,8 @@ class StructureFeaturesTest(PymatgenTest):
                                2.3700, 4)
 
         cgcnn_featurizer = \
-            CGCNNFeaturizer(task="regression", use_pretrained=False,
-                            save_model=False, warm_start=True,
-                            warm_start_file=warm_start_file, epochs=100,
-                            atom_fea_len=atom_fea_len,
+            CGCNNFeaturizer(task="regression", warm_start_file=warm_start_file,
+                            epochs=100, atom_fea_len=atom_fea_len,
                             atom_init_fea=reg_atom_features,
                             train_size=6, val_size=2, test_size=2)
         cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
@@ -717,8 +712,7 @@ class StructureFeaturesTest(PymatgenTest):
         # Test featurize_dataframe.
         df = pd.DataFrame.from_dict({"structure": cla_structs})
         cgcnn_featurizer = \
-            CGCNNFeaturizer(use_pretrained=False, warm_start=False,
-                            save_model=False, atom_init_fea=cla_atom_features,
+            CGCNNFeaturizer(atom_init_fea=cla_atom_features,
                             train_size=5, val_size=2, test_size=3,
                             atom_fea_len=atom_fea_len)
         cgcnn_featurizer.fit(X=df["structure"], y=cla_props)
@@ -733,11 +727,9 @@ class StructureFeaturesTest(PymatgenTest):
         # Test fit_featurize_dataframe.
         df = pd.DataFrame.from_dict({"structure": cla_structs})
         cgcnn_featurizer = \
-            CGCNNFeaturizer(use_pretrained=False, warm_start=False,
-                            save_model=False, atom_init_fea=cla_atom_features,
+            CGCNNFeaturizer(atom_init_fea=cla_atom_features,
                             train_size=5, val_size=2, test_size=3,
                             atom_fea_len=atom_fea_len)
-        cgcnn_featurizer.set_n_jobs(1)
         result = cgcnn_featurizer.fit_featurize_dataframe(
             df, "structure", fit_args=[cla_props])
         self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
