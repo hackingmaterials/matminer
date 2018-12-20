@@ -159,7 +159,7 @@ class PlotlyFigTest(PymatgenTest):
         pcp_true = self.fopen("template_pcp.json")
         self.assertTrue(pcp_test == pcp_true)
 
-    @unittest.skip("some weird plotly thing? see: https://github.com/hackingmaterials/matminer/issues/348")
+    # @unittest.skip("some weird plotly thing? see: https://github.com/hackingmaterials/matminer/issues/348")
     def test_violin(self):
         vio_test = self.pf.violin(
             [a, b, c, b, a, c, b], cols=xlabels, return_plot=True)['layout']
@@ -196,5 +196,5 @@ class PlotlyFigTest(PymatgenTest):
 
 
 if __name__ == "__main__":
-    # refresh_json(open_plots=True)
-    unittest.main()
+    refresh_json(open_plots=True)
+    # unittest.main()
