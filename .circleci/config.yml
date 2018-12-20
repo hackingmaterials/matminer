@@ -18,8 +18,7 @@ jobs:
           command: |
             cd ~
             git clone https://github.com/txie-93/cgcnn.git
-            cd cgcnn
-            echo "export PYTHONPATH=\"\$PYTHONPATH:$(pwd)\"" >> $BASH_ENV
+            export PYTHONPATH="$PYTHONPATH:~/cgcnn"
             echo $PYTHONPATH
             source ~/tox_env/bin/activate
             tox
