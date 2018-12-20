@@ -34,6 +34,7 @@ if [[ "$add_pp_to_brc" == "y" ]]; then
     echo "export PYTHONPATH=\"\$PYTHONPATH:$(pwd)\"" >> "$brcpath"
 fi
 
-pip install torch==0.3.1                        # Ensure CGCNN has the required version!
+#pip install torch==0.3.1                        # Ensure CGCNN has the required version!
+pip install torch==0.4.1                         # Current CGCNN loaded method will probably work for tests
 pip install torchvision
 echo -e "\033[31mTo ensure CGCNN is found outside this shell, please ensure $(pwd) to your PYTHONPATH in your ~/.bash_profile and/or ~/.bashrc files!\033[0m"
