@@ -144,9 +144,9 @@ The Plotly module contains the :code:`PlotlyFig` class that wraps around Plotly'
 Examples
 --------
 
-Check out some examples of how to use matminer! These examples and more can be found in the `matminer_examples <https://github.com/hackingmaterials/matminer_examples>`_ repo.
+Check out some examples of how to use matminer!
 
-1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/intro_predicting_bulk_modulus.ipynb>`_)
+1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/machine-learning/intro_predicting_bulk_modulus.ipynb>`_)
 
 2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/experiment_vs_computed_bandgap.ipynb>`_)
 
@@ -159,6 +159,8 @@ Check out some examples of how to use matminer! These examples and more can be f
 6. Advanced Visualization (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/notebooks/advanced_visualization.ipynb>`_)
 
 7. Running a kernel ridge regression model on vector descriptors (`Python script <https://github.com/hackingmaterials/matminer_examples/blob/master/scripts/kernel_ridge_SCM_OFM.py>`_)
+
+8. Many more examples! See the `matminer_examples <https://github.com/hackingmaterials/matminer_examples>`_ repo for details.
 
 ---------------
 Citing matminer
