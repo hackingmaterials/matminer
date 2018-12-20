@@ -22,4 +22,5 @@ jobs:
             export PYTHONPATH="$PYTHONPATH:~/cgcnn"
             echo $PYTHONPATH
             source ~/mmenv/bin/activate
+            cd ~/matminer
             tox
