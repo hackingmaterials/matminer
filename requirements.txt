@@ -11,3 +11,4 @@ sympy==1.1.1
 scikit_learn==0.20.0
 requests==2.20.0
 monty==1.0.3
+numpy==1.15.2
