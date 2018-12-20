@@ -14,9 +14,11 @@ jobs:
             python -m venv ~/tox_env
             source ~/tox_env/bin/activate
             pip install tox tox-pyenv
+            pip install --upgrade pip
             cd ~
             git clone https://github.com/txie-93/cgcnn.git
-            echo 'export PYTHONPATH="$PYTHONPATH:$HOME/cgcnn"' >> $BASH_ENV
+            cd cgcnn
+            echo "export PYTHONPATH=\"\$PYTHONPATH:$(pwd)\"" >> $BASH_ENV
       - run:
           name: Run matminer tests
           command: |
