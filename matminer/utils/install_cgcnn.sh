@@ -4,11 +4,11 @@
 
 echo -e "\033[31mPlease make sure you are inside your desired venv (or conda env) before running this script!\033[0m"
 read -p "Enter (full) path of install directory for CGCNN: " cgcnn_install_dir
-cd $cgcnn_install_dir
+cd "$cgcnn_install_dir"
 while [[ $? -eq 1 ]]; do
     echo -e "\033[31m$cgcnn_install_dir not a valid installation path.\033[0m"
     read -p "Enter (full) path of install directory for CGCNN: " cgcnn_install_dir
-    cd $cgcnn_install_dir;
+    cd "$cgcnn_install_dir";
 done
 echo "Downloading CNCGG from source"
 git clone https://github.com/txie-93/cgcnn      # conda install can be clunky to use
@@ -20,7 +20,7 @@ if [[ "$add_pp_to_bp" == "y" ]]; then
     if [[ -z "$bppath" ]]; then
         bppath="$HOME/.bash_profile"
     fi
-    echo "\n# Adding CGCNN directory to PYTHONPATH for matminer" >> "$bppath"
+    echo "# Adding CGCNN directory to PYTHONPATH for matminer" >> "$bppath"
     echo "export PYTHONPATH=\"\$PYTHONPATH:$(pwd)\"" >> "$bppath"
 fi
 
@@ -30,8 +30,8 @@ if [[ "$add_pp_to_brc" == "y" ]]; then
     if [[ -z "$brcpath" ]]; then
         brcpath="$HOME/.bashrc"
     fi
-    echo '# Adding CGCNN directory to PYTHONPATH for matminer' >> "$bppath"
-    echo "export PYTHONPATH=\"\$PYTHONPATH:$(pwd)\"" >> "$bppath"
+    echo '# Adding CGCNN directory to PYTHONPATH for matminer' >> "$brcpath"
+    echo "export PYTHONPATH=\"\$PYTHONPATH:$(pwd)\"" >> "$brcpath"
 fi
 
 pip install torch==0.3.1                        # Ensure CGCNN has the required version!
