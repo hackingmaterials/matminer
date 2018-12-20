@@ -21,5 +21,5 @@ jobs:
             git clone https://github.com/txie-93/cgcnn.git
             export PYTHONPATH="$PYTHONPATH:~/cgcnn"
             echo $PYTHONPATH
-            source ~/tox_env/bin/activate
+            source ~/mmenv/bin/activate
             tox
