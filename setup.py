@@ -19,7 +19,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         package_data={'matminer.datasets': ['*.json'],
                       'matminer.featurizers': ["*.yaml"],
-                      'matminer.utils.data_files': ['*.csv', '*.tsv', '*.json', 'magpie_elementdata/*.table']},
+                      'matminer.utils.data_files': ['*.csv', '*.tsv', '*.json', 'magpie_elementdata/*.table', 'jarvis/*.json']},
         zip_safe=False,
         install_requires=['pymatgen>=2018.8.7', 'tqdm>=4.14.0', 'pandas>=0.20.1',
                           'pymongo>=3.4.0', 'pint>=0.8.1', 'six>=1.10.0',
