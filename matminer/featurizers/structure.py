@@ -2531,7 +2531,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
             nbr_fea_idx = input_[2]
             crystal_atom_idx = input_[3]
         features = self._best_model.extract_feature(
-            atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx).data.tolist()[0]
+            atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx).tolist()[0]
         return features
 
     def feature_labels(self):
