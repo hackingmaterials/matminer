@@ -6,7 +6,3 @@ ase==3.14.1
 
 # MDF
 mdf_forge==0.6.1
-
-# CGCNN requirements
-torch==0.4.1
-torchvision==0.2.1
