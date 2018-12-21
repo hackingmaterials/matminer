@@ -8,19 +8,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Set up env
+          name: Make tox env
           command: |
-            python -m venv ~/mmenv
-            source ~/mmenv/bin/activate
-            pip install --upgrade pip
+            mkdir ~/tox_env
+            python -m venv ~/tox_env
+            source ~/tox_env/bin/activate
             pip install tox tox-pyenv
       - run:
           name: Run matminer tests
           command: |
-            cd ~
-            git clone https://github.com/txie-93/cgcnn.git
-            export PYTHONPATH="$PYTHONPATH:~/cgcnn"
-            echo $PYTHONPATH
-            source ~/mmenv/bin/activate
-            cd ~/matminer
+            source ~/tox_env/bin/activate
             tox

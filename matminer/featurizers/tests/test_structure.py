@@ -603,6 +603,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(pattern), 91)
         self.assertEqual(len(xpp.feature_labels()), 91)
 
+    @unittest.skipIf(not (torch and cgcnn),
+                     "pytorch or cgcnn not installed.")
     def test_cgcnn_featurizer(self):
         # Test regular classification.
         cla_props, cla_atom_features, cla_structs = self._get_cgcnn_data()
