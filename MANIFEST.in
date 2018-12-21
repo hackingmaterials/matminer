@@ -5,6 +5,7 @@ include matminer/utils/data_files/*.csv
 include matminer/utils/data_files/*.tsv
 include matminer/utils/data_files/*.json
 include matminer/utils/data_files/magpie_elementdata/*.table
+include matminer/utils/data_files/jarvis*
 recursive-include matminer *
 recursive-exclude matminer *.pyc
 recursive-include docs *
