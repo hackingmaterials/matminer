@@ -21,7 +21,7 @@ if __name__ == "__main__":
                       'matminer.featurizers': ["*.yaml"],
                       'matminer.utils.data_files': ['*.csv', '*.tsv', '*.json', 'magpie_elementdata/*.table', 'jarvis/*.json']},
         zip_safe=False,
-        install_requires=['pymatgen>=2018.8.7', 'tqdm>=4.14.0', 'pandas>=0.20.1',
+        install_requires=['pymatgen>=2018.12.12', 'tqdm>=4.14.0', 'pandas>=0.20.1',
                           'pymongo>=3.4.0', 'pint>=0.8.1', 'six>=1.10.0',
                           'citrination-client>=4.0.0', 'plotly>=3.2.1',
                           'mdf_forge>=0.6.1', 'scikit-learn>=0.19.0',
