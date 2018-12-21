@@ -2254,8 +2254,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
     """
     @requires(torch and cgcnn,
               "CGCNNFeaturizer requires pytorch and cgcnn to be installed with "
-              "Python bindings. Please use the installation script in "
-              "matminer/utils/install_cgcnn.sh or refer to http://pytorch.org "
+              "Python bindings. Please refer to http://pytorch.org "
               "and https://github.com/txie-93/cgcnn.")
     def __init__(self, task='classification', atom_init_fea=None,
                  pretrained_name=None, warm_start_file=None,
