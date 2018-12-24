@@ -345,7 +345,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             else:
                 tqdm_func = tqdm.tqdm
             # list() required, tqdm has issues with memory if generator given
-            entries = tqdm_func(list(entries), desc=self.__class__.__name__)
+            # (don't wrap entries in tqdm call) entries = tqdm_func(list(entries), desc=self.__class__.__name__)
 
         # Run the actual featurization
         if self.n_jobs == 1:
@@ -364,10 +364,28 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                            return_errors=return_errors,
                                            pbar=pbar)
             with Pool(self.n_jobs) as p:
-                func = partial(self.featurize_wrapper,
+                func = partial(self.featurize_imap_wrapper,
                                return_errors=return_errors,
                                ignore_errors=ignore_errors)
-                return p.map(func, entries, chunksize=self.chunksize)
+                entries = list(
+                    enumerate(entries))  # turns entries into [(0, entry_1), (1, entry_2), (2, entry_3), ... ]
+                results = []
+                for i, result in tqdm_func(
+                        p.imap_unordered(func, entries, chunksize=self.chunksize), total=len(entries)):
+                    results[i] = result
+                return results
+
+    def featurize_imap_wrapper(self, data):
+        """
+        A helper function to featurize the tuple form data
+
+        Args:
+            data: a tuple of (index, object)
+
+        Returns:
+            the index of the data and the featurized object
+        """
+        return data[0], self.featurize_wrapper(data[1])
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         """
