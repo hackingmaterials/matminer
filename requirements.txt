@@ -1,4 +1,4 @@
-pymatgen==2018.12.12
+pymatgen==2018.11.30
 pandas==0.22.0
 tqdm==4.23.1
 pymongo==3.6.1
