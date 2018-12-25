@@ -345,7 +345,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             else:
                 tqdm_func = tqdm.tqdm
             # list() required, tqdm has issues with memory if generator given
-            # (don't wrap entries in tqdm call) entries = tqdm_func(list(entries), desc=self.__class__.__name__)
+            entries = tqdm_func(list(entries), desc=self.__class__.__name__)
 
         # Run the actual featurization
         if self.n_jobs == 1:
@@ -367,25 +367,32 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 func = partial(self.featurize_imap_wrapper,
                                return_errors=return_errors,
                                ignore_errors=ignore_errors)
-                entries = list(
-                    enumerate(entries))  # turns entries into [(0, entry_1), (1, entry_2), (2, entry_3), ... ]
+                entries = list(enumerate(entries))  # turns entries into [(0, entry_1), (1, entry_2), (2, entry_3), ... ]
                 results = []
+                #set chunksize if self.chunksize=None as imap doesnt support chunksize=None
+                if self.chunksize is None:
+                    chunksize, extra = divmod(len(entries), self.n_jobs * 4)
+                    if extra:
+                        chunksize += 1
+                else:
+                    chunksize = self.chunksize
                 for i, result in tqdm_func(
-                        p.imap_unordered(func, entries, chunksize=self.chunksize), total=len(entries)):
-                    results[i] = result
+                        p.imap_unordered(func, entries, chunksize=chunksize), total=len(entries)):
+                    results.append(result)
                 return results
 
-    def featurize_imap_wrapper(self, data):
+    def featurize_imap_wrapper(self, data, return_errors=False, ignore_errors=False):
         """
-        A helper function to featurize the tuple form data
+        A helper function that accepts the index of the entry and the entry itself. Returns
+        the index and the object, featurized by calling the feature_wrapper function.
 
         Args:
-            data: a tuple of (index, object)
+            data object: a tuple of (index, object)
 
         Returns:
-            the index of the data and the featurized object
+            the index of the data object and the featurized object
         """
-        return data[0], self.featurize_wrapper(data[1])
+        return data[0], self.featurize_wrapper(data[1], return_errors, ignore_errors)
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         """
