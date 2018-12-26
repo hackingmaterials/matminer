@@ -13,6 +13,8 @@ jobs:
             mkdir ~/tox_env
             python -m venv ~/tox_env
             source ~/tox_env/bin/activate
+            pip install --upgrade pip
+            pip install --upgrade setuptools
             pip install tox tox-pyenv
       - run:
           name: Run matminer tests
