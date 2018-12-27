@@ -7,6 +7,11 @@ jobs:
       - image: circleci/python:3.6.2
     steps:
       - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
       - run:
           name: Make tox env
           command: |
@@ -21,3 +26,7 @@ jobs:
           command: |
             source ~/tox_env/bin/activate
             tox
+      - save_cache:
+          paths:
+          - ./test_env
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
