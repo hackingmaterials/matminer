@@ -5,6 +5,11 @@
 matminer Changelog
 ==================
 
+**v0.4.9**
+
+* fix PIP setup of JARVIS data files (A. Dunn)
+* some test configuration fixes (A. Dunn)
+
 **v0.4.8**
 
 * CGCNN featurizer / model (Q. Wang, T. Xie)
