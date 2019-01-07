@@ -345,7 +345,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             else:
                 tqdm_func = tqdm.tqdm
             # list() required, tqdm has issues with memory if generator given
-            entries = tqdm_func(list(entries), desc=self.__class__.__name__)
+            if sys.version_info[0] < 3 and n_jobs == 1 and pbar == True:
+                entries = tqdm_func(list(entries), desc=self.__class__.__name__)
+            else:
+                entries = list(entries)
 
         # Run the actual featurization
         if self.n_jobs == 1:
@@ -369,7 +372,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                ignore_errors=ignore_errors)
                 entries = list(enumerate(entries))  # turns entries into [(0, entry_1), (1, entry_2), (2, entry_3), ... ]
                 results = []
-                #set chunksize if self.chunksize=None as imap doesnt support chunksize=None
+                # set chunksize if self.chunksize=None as imap doesnt support chunksize=None
                 if self.chunksize is None:
                     chunksize, extra = divmod(len(entries), self.n_jobs * 4)
                     if extra:
