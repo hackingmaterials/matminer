@@ -2520,10 +2520,10 @@ class CGCNNFeaturizer(BaseFeaturizer):
         dataset = CIFDataWrapper([strc], [-1], **self._dataset_kwargs)
         input_, _, _ = self._dataloader_kwargs["collate_fn"]([dataset[0]])
         if self._cuda:
-            atom_fea = Variable(input_[0].cuda(async=True), volatile=True)
-            nbr_fea = Variable(input_[1].cuda(async=True), volatile=True)
-            nbr_fea_idx = input_[2].cuda(async=True)
-            crystal_atom_idx = [crys_idx.cuda(async=True)
+            atom_fea = Variable(input_[0].cuda(non_blocking=True), volatile=True)
+            nbr_fea = Variable(input_[1].cuda(non_blocking=True), volatile=True)
+            nbr_fea_idx = input_[2].cuda(non_blocking=True)
+            crystal_atom_idx = [crys_idx.cuda(non_blocking=True)
                                 for crys_idx in input_[3]]
         else:
             atom_fea = Variable(input_[0], volatile=True)
