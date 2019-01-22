@@ -345,7 +345,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             else:
                 tqdm_func = tqdm.tqdm
             # list() required, tqdm has issues with memory if generator given
-            if sys.version_info[0] < 3 and n_jobs == 1 and pbar == True:
+            if (sys.version_info[0] < 3 or self.n_jobs == 1) and pbar:
                 entries = tqdm_func(list(entries), desc=self.__class__.__name__)
             else:
                 entries = list(entries)
@@ -367,7 +367,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                            return_errors=return_errors,
                                            pbar=pbar)
             with Pool(self.n_jobs) as p:
-                func = partial(self.featurize_imap_wrapper,
+                func = partial(self._featurize_imap_wrapper,
                                return_errors=return_errors,
                                ignore_errors=ignore_errors)
                 entries = list(enumerate(entries))  # turns entries into [(0, entry_1), (1, entry_2), (2, entry_3), ... ]
@@ -384,7 +384,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                     results.append(result)
                 return results
 
-    def featurize_imap_wrapper(self, data, return_errors=False, ignore_errors=False):
+    def _featurize_imap_wrapper(self, data, return_errors=False, ignore_errors=False):
         """
         A helper function that accepts the index of the entry and the entry itself. Returns
         the index and the object, featurized by calling the feature_wrapper function.
