@@ -1,5 +1,4 @@
 version: 2
-
 jobs:
   py367:
     working_directory: ~/matminer
@@ -53,3 +52,11 @@ jobs:
           paths:
             - ./test_env
           key: py372-dependencies-{{ checksum "requirements.txt" }}
+
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - py367
+      - py372
