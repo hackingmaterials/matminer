@@ -13,19 +13,18 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
       - run:
-          name: Make tox env
+          name: Set up env via pip
           command: |
-            mkdir ~/tox_env
-            python -m venv ~/tox_env
-            source ~/tox_env/bin/activate
+            python3 -m venv test_env
+            . test_env/bin/activate
             pip install --upgrade pip
+            pip install --quiet -r requirements.txt
             pip install --upgrade setuptools
-            pip install tox tox-pyenv
+            pip install -e .
       - run:
           name: Run matminer tests
           command: |
-            source ~/tox_env/bin/activate
-            tox
+            python setup.py test
       - save_cache:
           paths:
           - ./test_env
