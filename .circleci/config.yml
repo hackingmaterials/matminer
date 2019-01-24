@@ -1,17 +1,17 @@
 version: 2
 
 jobs:
-  build:
+  py367:
     working_directory: ~/matminer
     docker:
-      - image: circleci/python:3.6.2
+      - image: circleci/python:3.6.7
     steps:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
+          - py367-dependencies-{{ checksum "requirements.txt" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - py367-dependencies-
       - run:
           name: Set up env via pip
           command: |
@@ -26,4 +26,30 @@ jobs:
       - save_cache:
           paths:
           - ./test_env
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+          key: py367-dependencies-{{ checksum "requirements.txt" }}
+  py372:
+    working_directory: ~/matminer
+    docker:
+      - image: circleci/python:3.7.2
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - py372-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - py372-dependencies-
+      - run:
+          name: Set up env via pip
+          command: |
+            python3 -m venv test_env
+            . test_env/bin/activate
+            pip install --upgrade pip
+            pip install --upgrade setuptools
+            cd ~/matminer
+            pip install -r requirements.txt
+            pip install -e .
+            python setup.py test
+      - save_cache:
+          paths:
+            - ./test_env
+          key: py372-dependencies-{{ checksum "requirements.txt" }}
