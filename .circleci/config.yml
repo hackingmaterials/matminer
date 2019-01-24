@@ -22,9 +22,6 @@ jobs:
             cd ~/matminer
             pip install -r requirements.txt
             pip install -e .
-      - run:
-          name: Run matminer tests
-          command: |
             python setup.py test
       - save_cache:
           paths:
