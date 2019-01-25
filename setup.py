@@ -5,6 +5,8 @@ import os
 from setuptools import setup, find_packages
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
+reqs_raw = open(os.path.join(module_dir, "requirements.txt")).read()
+reqs_list = [r.replace("==", ">=") for r in reqs_raw.split("\n")]
 
 if __name__ == "__main__":
     setup(
@@ -21,13 +23,9 @@ if __name__ == "__main__":
                       'matminer.featurizers': ["*.yaml"],
                       'matminer.utils.data_files': ['*.csv', '*.tsv', '*.json', 'magpie_elementdata/*.table', 'jarvis/*.json']},
         zip_safe=False,
-        install_requires=['pymatgen>=2018.12.12', 'tqdm>=4.14.0', 'pandas>=0.20.1',
-                          'pymongo>=3.4.0', 'pint>=0.8.1', 'six>=1.10.0',
-                          'citrination-client>=4.0.0', 'plotly>=3.2.1',
-                          'mdf_forge>=0.6.1', 'scikit-learn>=0.19.0',
-                          'sympy>=1.1.1', 'requests>=2.20.0'],
+        install_requires=reqs_list,
         extras_require={'mpds': ['jmespath>=0.9.3', 'ujson>=1.35', 'httplib2>=0.10.3', 'ase>=3.14.1'],
-                        'plot': ['matplotlib>=2.0.0']},
+                        'mdf': ['mdf_forge==0.6.1']},
         classifiers=['Programming Language :: Python :: 2.7',
                      'Programming Language :: Python :: 3.6',
                      'Development Status :: 4 - Beta',
@@ -41,4 +39,4 @@ if __name__ == "__main__":
         tests_require=['nose'],
         scripts=[]
         # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
-    )
+)
