@@ -6,6 +6,7 @@ from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 
 from aflow import K  # module of aflow Keyword properties
 from aflow.control import Query
+from aflow.caster import cast
 
 __author__ = ['Maxwell Dylla <280mtd@gmail.com>']
 
@@ -15,17 +16,17 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
 
     AFLOW uses the AFLUX API syntax. The aflow library handles the HTTP network
     requests for material properties. Note that this helper library is not an
-    offical reposiotry of the AFLOW consortium.
+    official repository of the AFLOW consortium.
     """
 
     def api_link(self):
         return "https://rosenbrockc.github.io/aflow/index.html"
 
     def get_dataframe(self, criteria, properties, request_size=10000,
-                      request_limit=0, index_auid=True, autocast=False):
-        """Retrieves data from AFLOW in a dataframe format.
+                      request_limit=0, index_auid=True):
+        """Retrieves data from AFLOW in a DataFrame format.
 
-        The method builds an AFLUX API query from the given filter criteria
+        The method builds an AFLUX API query from pymongo-like filter criteria
         and requested properties. Then, results are collected over HTTP.
 
         Args:
@@ -39,18 +40,15 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
                     {'auid': {'$in': ['aflow:a17a2da2f3d3953a']}}
                 INVALID:
                     {'auid': {'$not': {'$in': ['aflow:a17a2da2f3d3953a']}}}
-            properties: (list of str) Properties returned  in the dataframe.
+            properties: (list of str) Properties returned  in the DataFrame.
                 See the api link for a list of supported properties.
             request_size: (int) Number of results to return per HTTP request.
             request_limit: (int) Maximum number of requests to submit. The
                 default behavior is to request all matching records.
             index_auid: (bool) Whether to set the "AFLOW unique identifier" as
-                the index of the dataframe.
-            autocast: (bool) Whether to autocast the types of each column using
-                the aflow library. If no autocasting, then all values are cast
-                as strings. There is a large speed-penalty for autocasting.
+                the index of the DataFrame.
 
-        Returns (pandas.Dataframe): The data requested from the AFLOW database.
+        Returns (pandas.DataFrame): The data requested from the AFLOW database.
         """
 
         # ensures that 'auid' is in requested properties if desired for index
@@ -61,10 +59,11 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         query = RetrievalQuery.from_pymongo(criteria, properties, request_size)
 
         # submits HTTP requests and collects results
-        if autocast:  # type casts each result (slow)
-            df = self.collect_casted_requests(query, request_limit, properties)
-        else:  # bypasses type casting (fast)
-            df = self.collect_raw_requests(query, request_limit)
+        df = self.collect_raw_requests(query, request_limit)
+
+        # casts each column into the correct data-type
+        for keyword in df.columns.values:
+            df[keyword] = self.cast_aflow_series(df[keyword])
 
         # sets the auid as the index if desired
         if index_auid:
@@ -73,7 +72,7 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         return df
 
     def collect_raw_requests(self, query, request_limit):
-        """Collects the string-casted results of a query (fast).
+        """Collects the string-casted results of a query.
 
         Args:
             query: (aflow.control.Query) A query with unprocessed requests.
@@ -96,30 +95,19 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
             records.update(query.responses[page])
         return DataFrame.from_dict(data=records, orient='index')
 
-    def collect_casted_requests(self, query, request_limit, properties):
-        """Collects the type-casted results of a query (slow).
-
-        aflow.control.Query supports lazy evaluation over the results of the
-        query. This is slow, but also offers easy casing of the properties.
+    @staticmethod
+    def cast_aflow_series(series):
+        """Casts AFLOW data (pandas Series) as the appropriate python type.
 
         Args:
-            query: (aflow.control.Query) A query with unprocessed requests.
-            request_limit: (int) Maximum number of requests to submit.
-            properties: (list of str) Properties returned  in the dataframe.
-                See the api link for a list of supported properties.
+            series: (pandas.Series) Str data to cast. The name attribute should
+                correspond to a string representation of an aflow.Keyword
+
+        Returns: (list) Data casted as the appropriate python object.
         """
 
-        records = {}
-        if not request_limit:  # interates through all results
-            for i, entry in enumerate(query):
-                records[i] = [getattr(entry, prop) for prop in properties]
-        else:  # iterates through slice of results
-            query[0]  # requests first page to reveal total results
-            limit = min(query._N, query.k * request_limit)
-            for i, entry in enumerate(query[0:limit]):
-                records[i] = [getattr(entry, prop) for prop in properties]
-        return DataFrame.from_dict(data=records, orient='index',
-                                   columns=properties)
+        aflow_type, keyword = getattr(K, series.name).atype, series.name
+        return [cast(aflow_type, keyword, i) for i in series.values]
 
 
 class RetrievalQuery(Query):
@@ -132,8 +120,8 @@ class RetrievalQuery(Query):
 
         Args:
             criteria: (dict) Pymongo-like query operator. See the
-                AFLOWDataRetrieval.get_dataframe method for more details
-            properties: (list of str) Properties returned  in the dataframe.
+                AFLOWDataRetrieval.get_DataFrame method for more details
+            properties: (list of str) Properties returned in the DataFrame.
                 See the api link for a list of supported properties.
             request_size: (int) Number of results to return per HTTP request.
         """
@@ -146,7 +134,7 @@ class RetrievalQuery(Query):
         # determines properties returned by query
         query.select(*[getattr(K, i) for i in properties])
 
-        # supresses properties that may have been included in criteria
+        # suppresses properties that may have been included in criteria
         # but are not requested properties to be returned
         excluded_keywords = set(criteria.keys()) - set(properties)
         query.exclude(*[getattr(K, i) for i in excluded_keywords])
@@ -192,11 +180,15 @@ class RetrievalQuery(Query):
 
 
 if __name__ == '__main__':
+    from aflow.entries import AflowFile
+
     ret = AFLOWDataRetrieval()
     item = ret.get_dataframe(criteria={'spacegroup_relax': {'$in': [216, 225]},
                                        'natoms': 3,
-                                       'compound': 'Hf1Ni1Sn1'},
-                             properties=['compound', 'enthalpy_formation_atom'],
+                                       'enthalpy_formation_atom': {'$lt': 0.0}},
+                             properties=['aurl', 'enthalpy_formation_atom',
+                                         'positions_fractional', 'geometry',
+                                         'files', 'prototype'],
                              request_size=100000, request_limit=12,
-                             index_auid=True, autocast=False)
-    print(type(item['enthalpy_formation_atom'][1]))
+                             index_auid=True)
+    print(item['positions_fractional'])
