@@ -5,6 +5,8 @@ from __future__ import division, unicode_literals
 import unittest
 import numpy as np
 
+from pymatgen.core.structure import Structure
+
 from matminer.data_retrieval.retrieve_AFLOW import AFLOWDataRetrieval
 
 
@@ -16,7 +18,8 @@ class AFLOWDataRetrievalTest(unittest.TestCase):
         df = self.aflowdr.get_dataframe(
             criteria={'auid': 'aflow:a17a2da2f3d3953a'},
             properties=['density', 'enthalpy_formation_atom',
-                        'positions_fractional'])
+                        'positions_fractional'],
+            files=['structure'])
 
         # ensures that only one result is returned for a single auid
         self.assertEqual(len(df['aurl']), 1)
@@ -28,6 +31,10 @@ class AFLOWDataRetrievalTest(unittest.TestCase):
 
         # ensures that auid is set as the index
         self.assertTrue(df.index.values[0] == 'aflow:a17a2da2f3d3953a')
+
+        # ensures that structures are downloaded
+        self.assertTrue(isinstance(df['structure'][0], Structure))
+
 
 if __name__ == "__main__":
     unittest.main()

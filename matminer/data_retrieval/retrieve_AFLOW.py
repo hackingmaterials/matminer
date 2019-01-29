@@ -2,13 +2,19 @@ from functools import reduce
 
 from pandas import DataFrame
 
+from pymatgen.core.structure import Structure
+
 from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 
 from aflow import K  # module of aflow Keyword properties
-from aflow.control import Query
 from aflow.caster import cast
+from aflow.control import Query
+from aflow.entries import AflowFile
 
 __author__ = ['Maxwell Dylla <280mtd@gmail.com>']
+
+
+file_map = {'structure': 'CONTCAR.relax.vasp'}
 
 
 class AFLOWDataRetrieval(BaseDataRetrieval):
@@ -24,8 +30,8 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
     def api_link(self):
         return "https://rosenbrockc.github.io/aflow/index.html"
 
-    def get_dataframe(self, criteria, properties, request_size=10000,
-                      request_limit=0, index_auid=True):
+    def get_dataframe(self, criteria, properties, files=None,
+                      request_size=10000, request_limit=0, index_auid=True):
         """Retrieves data from AFLOW in a DataFrame format.
 
         The method builds an AFLUX API query from pymongo-like filter criteria
@@ -45,6 +51,13 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
                     {'auid': {'$not': {'$in': ['aflow:a17a2da2f3d3953a']}}}
             properties: (list of str) Properties returned  in the DataFrame.
                 See the api link for a list of supported properties.
+            files: (list of str) For convienience, specific files may also be
+                downloaded as pymatgen objects. Each file download is collected
+                by a seperate HTTP request (read slow). The default behavior is
+                to return none of these objects. Supported files:
+                    "structure" - the relaxed structure
+                    "band_structure" - TODO
+                    "dos" - TODO
             request_size: (int) Number of results to return per HTTP request.
             request_limit: (int) Maximum number of requests to submit. The
                 default behavior is to request all matching records.
@@ -68,11 +81,46 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         for keyword in df.columns.values:
             df[keyword] = self._cast_series(df[keyword])
 
+        # collects the relaxed structure if requested
+        if 'structure' in files:
+            df['structure'] = [self.get_relaxed_structure(url) for url in
+                               df['aurl'].values]
+
         # sets the auid as the index if desired
         if index_auid:
             df.set_index('auid', inplace=True)
 
         return df
+
+    @staticmethod
+    def get_relaxed_structure(aurl):
+        """Collects the relaxed structure as a pymatgen.Structure.
+
+        Args:
+            aurl: (str) The url for the material entry in AFLOW.
+
+        Returns: (pymatgen.Structure) The relaxed structure.
+        """
+
+        # downloads the file as a string
+        file = AflowFile(aurl, 'CONTCAR.relax.vasp')()  # calling induces dwnld
+
+        # returns the python object
+        return Structure.from_str(file, fmt='poscar')
+
+    @staticmethod
+    def _cast_series(series):
+        """Casts AFLOW data (pandas Series) as the appropriate python type.
+
+        Args:
+            series: (pandas.Series) Str data to cast. The name attribute should
+                correspond to a string representation of an aflow.Keyword
+
+        Returns: (list) Data casted as the appropriate python object.
+        """
+
+        aflow_type, keyword = getattr(K, series.name).atype, series.name
+        return [cast(aflow_type, keyword, i) for i in series.values]
 
     @staticmethod
     def _collect_requests(query, request_limit):
@@ -100,20 +148,6 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         for page in range(1, page_limit + 1):
             records.update(query.responses[page])
         return DataFrame.from_dict(data=records, orient='index')
-
-    @staticmethod
-    def _cast_series(series):
-        """Casts AFLOW data (pandas Series) as the appropriate python type.
-
-        Args:
-            series: (pandas.Series) Str data to cast. The name attribute should
-                correspond to a string representation of an aflow.Keyword
-
-        Returns: (list) Data casted as the appropriate python object.
-        """
-
-        aflow_type, keyword = getattr(K, series.name).atype, series.name
-        return [cast(aflow_type, keyword, i) for i in series.values]
 
 
 class RetrievalQuery(Query):
