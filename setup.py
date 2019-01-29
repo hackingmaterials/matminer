@@ -49,7 +49,7 @@ if __name__ == "__main__":
                      'Topic :: Other/Nonlisted Topic',
                      'Topic :: Scientific/Engineering'],
         test_suite='nose.collector',
-        tests_require=['nose'].extend(extras_list),
+        tests_require=['nose'],
         scripts=[]
         # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
 )
