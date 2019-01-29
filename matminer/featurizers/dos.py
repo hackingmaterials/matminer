@@ -29,11 +29,11 @@ class SiteDOS(BaseFeaturizer):
     Returns (list of floats):
         cbm_score_i (float): fractional score for i in {s,p,d,f}
         cbm_score_total (float): the total sum of all the {s,p,d,f} scores
-            this is useful information when comparing the relative
+            this is usefull information when comparing the relative
             contributions from multiples sites
         vbm_score_i (float): fractional score for i in {s,p,d,f}
         vbm_score_total (float): the total sum of all the {s,p,d,f} scores
-            this is useful information when comparing the relative
+            this is usefull information when comparing the relative
             contributions from multiples sites
     """
     def __init__(self, decay_length=0.1, sampling_resolution=100,
@@ -56,9 +56,9 @@ class SiteDOS(BaseFeaturizer):
         if dos.structure is None:
             raise ValueError('The input dos must contain the structure.')
 
-        orbscores = get_site_dos_scores(dos, idx, self.decay_length,
+        orbscores = get_site_dos_scores(dos, self.decay_length,
                                         self.sampling_resolution,
-                                        self.gaussian_smear)
+                                        self.gaussian_smear, idx)
 
         features = []
         for edge in ['cbm', 'vbm']:
@@ -104,7 +104,7 @@ class DOSFeaturizer(BaseFeaturizer):
         xbm_location_i (str): fractional coordinate of ith contributor/site
         xbm_character_i (str): character of ith contributor (s, p, d, f)
         xbm_specie_i (str): elemental specie of ith contributor (ex: 'Ti')
-        xbm_hybridization (int): the amount of hybridization at the band edge
+        xbm_hybridization (int): the ammount of hybridization at the band edge
             characterized by an entropy score (x ln x). the hybridization score
             is larger for a greater number of significant contributors
     """
@@ -358,7 +358,7 @@ class Hybridization(BaseFeaturizer):
 
     def feature_labels(self):
         """
-        Returns ([str]): feature names starting with the extrema (cbm or vbm)
+        Returns ([str]): feature names starting with the extremum (cbm or vbm)
         followed by either s,p,d,f orbital to show normalized contribution
         or a pair showing their hybridization or contribution of an element.
         See the class docs for examples.
@@ -457,8 +457,8 @@ def get_cbm_vbm_scores(dos, decay_length, sampling_resolution, gaussian_smear):
     return orbital_scores
 
 
-def get_site_dos_scores(dos, idx, decay_length, sampling_resolution,
-                        gaussian_smear):
+def get_site_dos_scores(dos, decay_length, sampling_resolution,
+                        gaussian_smear, idx):
     """
     Quantifies the contribution of all atomic orbitals (s/p/d/f) from a
     particular crystal site to the conduction band minimum (CBM) and the
