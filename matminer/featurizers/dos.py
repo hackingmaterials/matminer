@@ -6,6 +6,78 @@ from pymatgen import Spin
 from pymatgen.electronic_structure.dos import CompleteDos, FermiDos
 
 
+class SiteDOS(BaseFeaturizer):
+    """
+    report the fractional s/p/d/f dos for a particular site. a CompleteDos
+    object is required because knowledge of the structure is needed. this
+    featurizer will work for metals as well as semiconductors. if the dos is a
+    semiconductor, cbm and vbm will correspond to the two respective band
+    edges. if the dos is a metal, then cbm and vbm correspond to above and
+    below the fermi level, respectively.
+
+    Args:
+        decay_length (float in eV):
+            the dos is sampled by an exponential decay function. this parameter
+            sets the decay length of the exponential. three times the
+            decay_length corresponds to 10% sampling strength. there is a hard
+            cutoff at five times the decay length (1% sampling strength)
+        sampling_resolution (int):
+            number of points to sample dos
+        gaussian_smear (float in eV):
+            Gaussian smearing (sigma) around each sampled point in dos
+
+    Returns (list of floats):
+        cbm_score_i (float): fractional score for i in {s,p,d,f}
+        cbm_score_total (float): the total sum of all the {s,p,d,f} scores
+            this is useful information when comparing the relative
+            contributions from multiples sites
+        vbm_score_i (float): fractional score for i in {s,p,d,f}
+        vbm_score_total (float): the total sum of all the {s,p,d,f} scores
+            this is useful information when comparing the relative
+            contributions from multiples sites
+    """
+    def __init__(self, decay_length=0.1, sampling_resolution=100,
+                 gaussian_smear=0.05):
+        self.decay_length = decay_length
+        self.sampling_resolution = sampling_resolution
+        self.gaussian_smear = gaussian_smear
+
+    def featurize(self, dos, idx):
+        """
+        get dos scores for given site index
+
+        Args:
+            dos (pymatgen CompleteDos or their dict):
+                dos to featurize, must contain pdos and structure
+            idx (int): index of target site in structure.
+        """
+        if isinstance(dos, dict):
+            dos = CompleteDos.from_dict(dos)
+        if dos.structure is None:
+            raise ValueError('The input dos must contain the structure.')
+
+        orbscores = get_site_dos_scores(dos, idx, self.decay_length,
+                                        self.sampling_resolution,
+                                        self.gaussian_smear)
+
+        features = []
+        for edge in ['cbm', 'vbm']:
+            for score in ['s', 'p', 'd', 'f', 'total']:
+                features.append(orbscores[edge][score])
+        return features
+
+    def feature_labels(self):
+        """
+        Returns (list of str): list of names of the features. See the docs for
+            the featurizer class for more information.
+        """
+        labels = []
+        for edge in ['cbm', 'vbm']:
+            for score in ['s', 'p', 'd', 'f', 'total']:
+                labels.append('{}_{}'.format(edge, score))
+        return labels
+
+
 class DOSFeaturizer(BaseFeaturizer):
     """
     Significant character and contribution of the density of state from a
@@ -32,7 +104,7 @@ class DOSFeaturizer(BaseFeaturizer):
         xbm_location_i (str): fractional coordinate of ith contributor/site
         xbm_character_i (str): character of ith contributor (s, p, d, f)
         xbm_specie_i (str): elemental specie of ith contributor (ex: 'Ti')
-        xbm_hybridization (int): the ammount of hybridization at the band edge
+        xbm_hybridization (int): the amount of hybridization at the band edge
             characterized by an entropy score (x ln x). the hybridization score
             is larger for a greater number of significant contributors
     """
@@ -286,7 +358,7 @@ class Hybridization(BaseFeaturizer):
 
     def feature_labels(self):
         """
-        Returns ([str]): feature names starting with the extremum (cbm or vbm)
+        Returns ([str]): feature names starting with the extrema (cbm or vbm)
         followed by either s,p,d,f orbital to show normalized contribution
         or a pair showing their hybridization or contribution of an element.
         See the class docs for examples.
@@ -383,3 +455,89 @@ def get_cbm_vbm_scores(dos, decay_length, sampling_resolution, gaussian_smear):
         orbital['cbm_score'] /= total_cbm
         orbital['vbm_score'] /= total_vbm
     return orbital_scores
+
+
+def get_site_dos_scores(dos, idx, decay_length, sampling_resolution,
+                        gaussian_smear):
+    """
+    Quantifies the contribution of all atomic orbitals (s/p/d/f) from a
+    particular crystal site to the conduction band minimum (CBM) and the
+    valence band maximum (VBM). An exponential decay function is used to sample
+    the DOS. if the dos is a metal, then CBM and VBM indicate the orbital
+    scores above and below the fermi energy, respectively.
+
+    Args:
+        dos (pymatgen CompleteDos or their dict):
+            The density of states to featurize. Must be a complete DOS,
+            (i.e. contains PDOS and structure, in addition to total DOS)
+        decay_length (float in eV):
+            The dos is sampled by an exponential decay function. this parameter
+            sets the decay length of the exponential. Three times the decay
+            length corresponds to 10% sampling strength. There is a hard cutoff
+            at five times the decay length (1% sampling strength)
+        sampling_resolution (int):
+            Number of points to sample DOS
+        gaussian_smear (float in eV):
+            Gaussian smearing (sigma) around each sampled point in the DOS
+        idx (int):
+            site index for which to gather dos s/p/d/f scores
+
+    Returns:
+        orbital_scores (dict):
+            a dictionary of the fractional s/p/d/f orbital scores from the
+            total dos accumulated from that site. dictionary structure:
+                {cbm: {s: (float), ..., f: (float), total: (float)},
+                 vbm: {s: (float), ..., f: (float), total: (float)}}
+    """
+    cbm, vbm = dos.get_cbm_vbm(tol=0.01)
+    structure = dos.structure
+    site = structure.sites[idx]
+
+    # calculate s/p/d/f dos for cbm and vbm
+    orbital_scores = {}
+    proj = dos.get_site_spd_dos(site)
+    for orb in proj:
+
+        # smear dos for spin up and down
+        smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
+        dos_up = smear_dos[Spin.up]
+        dos_down = smear_dos[Spin.down] if Spin.down in smear_dos \
+            else smear_dos[Spin.up]
+        dos_total = [sum(id) for id in zip(dos_up, dos_down)]
+
+        # determine energy range to sample
+        energies = [e for e in proj[orb].energies]
+        vbm_space = np.linspace(vbm, vbm - (5. * decay_length),
+                                num=sampling_resolution)
+        cbm_space = np.linspace(cbm, cbm + (5. * decay_length),
+                                num=sampling_resolution)
+
+        # accumulate dos score over energy range
+        vbm_score = 0
+        for e in vbm_space:
+            vbm_score += (np.interp(e, energies, dos_total) *
+                          np.exp(-(vbm - e) * decay_length))
+        cbm_score = 0
+        for e in cbm_space:
+            cbm_score += (np.interp(e, energies, dos_total) *
+                          np.exp(-(e - cbm) * decay_length))
+        orbital_scores[str(orb)] = {'cbm': cbm_score, 'vbm': vbm_score}
+
+    # ensure that f-orbitals are represented as zero contribution if none
+    if not ('f' in orbital_scores.keys()):
+        orbital_scores['f'] = {'cbm': 0.0, 'vbm': 0.0}
+
+    # reorder scores so band edge is first followed by orbital
+    reordered_scores = {}
+    for band in ['cbm', 'vbm']:
+        reordered_scores[band] = {}
+        for orb in ['s', 'p', 'd', 'f']:
+            reordered_scores[band][orb] = orbital_scores[orb][band]
+
+    # normalize by total cbm/vbm edge contribution from site
+    for edge in reordered_scores:
+        total_score = sum(reordered_scores[edge].values())
+        for orb in reordered_scores[edge].keys():
+            reordered_scores[edge][orb] /= total_score
+        reordered_scores[edge]['total'] = total_score
+    return reordered_scores
