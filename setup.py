@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import yaml
+import ruamel.yaml as yaml
 
 from setuptools import setup, find_packages
 
