@@ -48,8 +48,8 @@ if __name__ == "__main__":
                      'Operating System :: OS Independent',
                      'Topic :: Other/Nonlisted Topic',
                      'Topic :: Scientific/Engineering'],
-        test_suite='nose.collector',
-        tests_require=['nose'],
+        test_suite='tests',
+        tests_require=extras_list,
         scripts=[]
         # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
 )
