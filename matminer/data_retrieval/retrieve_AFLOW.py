@@ -14,9 +14,11 @@ __author__ = ['Maxwell Dylla <280mtd@gmail.com>']
 class AFLOWDataRetrieval(BaseDataRetrieval):
     """Retrieves data from the AFLOW database.
 
-    AFLOW uses the AFLUX API syntax. The aflow library handles the HTTP network
+    AFLOW uses the AFLUX API syntax, and the aflow library handles the HTTP
     requests for material properties. Note that this helper library is not an
-    official repository of the AFLOW consortium.
+    official repository of the AFLOW consortium. However, this library does
+    dynamically generate the keywords supported by the AFLUX API from their
+    servers, which makes it robust against changes in the AFLOW system.
     """
 
     def api_link(self):
@@ -27,7 +29,8 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         """Retrieves data from AFLOW in a DataFrame format.
 
         The method builds an AFLUX API query from pymongo-like filter criteria
-        and requested properties. Then, results are collected over HTTP.
+        and requested properties. Then, results are collected over HTTP. Note
+        that the "compound", "auid", and "aurl" fields are always returned.
 
         Args:
             criteria: (dict) Pymongo-like query operator. The first-level
@@ -59,11 +62,11 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         query = RetrievalQuery.from_pymongo(criteria, properties, request_size)
 
         # submits HTTP requests and collects results
-        df = self.collect_raw_requests(query, request_limit)
+        df = self._collect_requests(query, request_limit)
 
         # casts each column into the correct data-type
         for keyword in df.columns.values:
-            df[keyword] = self.cast_aflow_series(df[keyword])
+            df[keyword] = self._cast_series(df[keyword])
 
         # sets the auid as the index if desired
         if index_auid:
@@ -71,12 +74,15 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
 
         return df
 
-    def collect_raw_requests(self, query, request_limit):
+    @staticmethod
+    def _collect_requests(query, request_limit):
         """Collects the string-casted results of a query.
 
         Args:
             query: (aflow.control.Query) A query with unprocessed requests.
             request_limit: (int) Maximum number of requests to submit.
+
+        Returns: (DataFrame) Results collected from the query.
         """
 
         # requests the first page of results to determine number of pages
@@ -85,7 +91,7 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         if request_limit and (page_limit > request_limit):
             page_limit = request_limit
 
-        # requests remaining pages
+        # requests the remaining pages
         for page in range(2, page_limit + 1):
             query._request(page, query.k)
 
@@ -96,7 +102,7 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         return DataFrame.from_dict(data=records, orient='index')
 
     @staticmethod
-    def cast_aflow_series(series):
+    def _cast_series(series):
         """Casts AFLOW data (pandas Series) as the appropriate python type.
 
         Args:
@@ -111,7 +117,7 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
 
 
 class RetrievalQuery(Query):
-    """Provides additional methods for constructing class instances.
+    """Provides instance constructors for pymongo-like queries.
     """
 
     @classmethod
@@ -124,24 +130,25 @@ class RetrievalQuery(Query):
             properties: (list of str) Properties returned in the DataFrame.
                 See the api link for a list of supported properties.
             request_size: (int) Number of results to return per HTTP request.
+                Note that this is similar to "limit" in pymongo.find.
         """
         # initializes query
         query = RetrievalQuery(batch_size=request_size)
 
         # adds filters to query
-        query.add_pymongo_filters(criteria)
+        query._add_filters(criteria)
 
         # determines properties returned by query
         query.select(*[getattr(K, i) for i in properties])
 
-        # suppresses properties that may have been included in criteria
-        # but are not requested properties to be returned
+        # suppresses properties that may have been included as search criteria
+        # but are not requested properties, which the user wants returned
         excluded_keywords = set(criteria.keys()) - set(properties)
         query.exclude(*[getattr(K, i) for i in excluded_keywords])
 
         return query
 
-    def add_pymongo_filters(self, pymongo_query):
+    def _add_filters(self, pymongo_query):
         """Generates aflow filters from a pymongo-like filter.
 
         Args:
@@ -177,18 +184,3 @@ class RetrievalQuery(Query):
 
             else:  # handles simple equivalence
                 self.filter(keyword == value)
-
-
-if __name__ == '__main__':
-    from aflow.entries import AflowFile
-
-    ret = AFLOWDataRetrieval()
-    item = ret.get_dataframe(criteria={'spacegroup_relax': {'$in': [216, 225]},
-                                       'natoms': 3,
-                                       'enthalpy_formation_atom': {'$lt': 0.0}},
-                             properties=['aurl', 'enthalpy_formation_atom',
-                                         'positions_fractional', 'geometry',
-                                         'files', 'prototype'],
-                             request_size=100000, request_limit=12,
-                             index_auid=True)
-    print(item['positions_fractional'])
