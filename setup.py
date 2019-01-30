@@ -48,7 +48,7 @@ if __name__ == "__main__":
                      'Operating System :: OS Independent',
                      'Topic :: Other/Nonlisted Topic',
                      'Topic :: Scientific/Engineering'],
-        test_suite='tests',
+        test_suite='matminer',
         tests_require=extras_list,
         scripts=[]
         # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
