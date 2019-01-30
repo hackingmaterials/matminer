@@ -1,3 +1,5 @@
+import os
+
 import httplib2
 try:
     import ujson as json
@@ -26,7 +28,9 @@ class MPDSDataRetrievalTest(unittest.TestCase):
         self.schema = json.loads(content)
         Draft4Validator.check_schema(self.schema)
 
+    @unittest.skipIf('MPDS_KEY' not in os.environ)
     def test_valid_answer(self):
+
         client = MPDSDataRetrieval()
         answer = client.get_data(self.test_request, fields={})
 
