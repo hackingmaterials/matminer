@@ -396,7 +396,7 @@ class TestBaseClass(PymatgenTest):
                                                    ("Custom", "Custom2", 'x'),
                                                    multiindex=True)
 
-    @unittest.skipIf('CI' in os.environ)
+    @unittest.skipIf(os.environ['CI'] == 'circle', "We skip this test when running circleci")
     def test_caching(self):
         """Test whether MultiFeaturizer properly caches """
 

@@ -28,7 +28,7 @@ class MPDSDataRetrievalTest(unittest.TestCase):
         self.schema = json.loads(content)
         Draft4Validator.check_schema(self.schema)
 
-    @unittest.skipIf('MPDS_KEY' not in os.environ)
+    @unittest.skipIf('MPDS_KEY' not in os.environ, "MPDS_KEY env var not set")
     def test_valid_answer(self):
 
         client = MPDSDataRetrieval()
