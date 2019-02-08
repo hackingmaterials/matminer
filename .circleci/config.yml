@@ -14,6 +14,7 @@ jobs:
       - run:
           name: Set up env via pip
           command: |
+            export CI=circle
             python3 -m venv test_env
             . test_env/bin/activate
             pip install --upgrade pip
@@ -40,6 +41,7 @@ jobs:
       - run:
           name: Set up env via pip
           command: |
+            export CI=circle
             python3 -m venv test_env
             . test_env/bin/activate
             pip install --upgrade pip
