@@ -1,8 +1,23 @@
 matminer.data\_retrieval package
 ================================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    matminer.data_retrieval.tests
+
 Submodules
 ----------
+
+matminer.data\_retrieval.retrieve\_AFLOW module
+-----------------------------------------------
+
+.. automodule:: matminer.data_retrieval.retrieve_AFLOW
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 matminer.data\_retrieval.retrieve\_Citrine module
 -------------------------------------------------

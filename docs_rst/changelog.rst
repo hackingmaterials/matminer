@@ -5,6 +5,12 @@
 matminer Changelog
 ==================
 
+**v0.5.1**
+
+* AFLOW data retrieval (M. Dylla)
+* SiteDOS featurizer (M. Dylla)
+* fix various testing (A. Dunn, M. Dylla, L. Ward)
+
 **v0.5.0**
 
 * fix for Py3.7 and pytorch (L. Ward)
