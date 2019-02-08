@@ -2,6 +2,10 @@ from functools import reduce
 
 from pandas import DataFrame
 
+from urllib.error import HTTPError
+
+from http.client import RemoteDisconnected
+
 from pymatgen.core.structure import Structure
 
 from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
@@ -9,7 +13,7 @@ from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from aflow import K  # module of aflow Keyword properties
 from aflow.caster import cast
 from aflow.control import Query
-from aflow.entries import AflowFile
+from aflow.entries import Entry
 
 __author__ = ['Maxwell Dylla <280mtd@gmail.com>']
 
@@ -27,7 +31,7 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
     def api_link(self):
         return "https://rosenbrockc.github.io/aflow/index.html"
 
-    def get_dataframe(self, criteria, properties, files=None,
+    def get_dataframe(self, criteria, properties, files=[],
                       request_size=10000, request_limit=0, index_auid=True):
         """Retrieves data from AFLOW in a DataFrame format.
 
@@ -41,7 +45,9 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
                 of the dictionary must either be singletons (int, str, etc.) or
                 dictionaries. The keys of this second-level dictionary can be
                 the pymongo operators '$in', '$gt', '$lt', or '$not.' There can
-                not be further nesting.
+                not be further nesting. No more than 100 compounds should be
+                queried for at one time with the '$in' operator because it will
+                make the request URL too long.
                 VALID:
                     {'auid': {'$in': ['aflow:a17a2da2f3d3953a']}}
                 INVALID:
@@ -52,7 +58,8 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
                 downloaded as pymatgen objects. Each file download is collected
                 by a seperate HTTP request (read slow). The default behavior is
                 to return none of these objects. Supported files:
-                    "structure" - the relaxed structure
+                    "prototype_structure" - the prototype structure
+                    "input_structure" - the input structure
                     "band_structure" - TODO
                     "dos" - TODO
             request_size: (int) Number of results to return per HTTP request.
@@ -64,24 +71,26 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         Returns (pandas.DataFrame): The data requested from the AFLOW database.
         """
 
-        # ensures that 'auid' is in requested properties if desired for index
-        if index_auid and ('auid' not in properties):
-            properties.append('auid')
-
         # generates a query for submitting HTTP requests to AFLOW servers
         query = RetrievalQuery.from_pymongo(criteria, properties, request_size)
+        results = self._collect_requests(query, request_limit)
 
-        # submits HTTP requests and collects results
-        df = self._collect_requests(query, request_limit)
+        # collects optional files if requested
+        if files:
+            for entry, data in results.items():
+                for file in files:
+                    collector = getattr(self, '_get_{}'.format(file))
+                    results[entry][file] = collector(data)
+        else:
+            pass
 
-        # casts each column into the correct data-type
+        # casts each dataframe column into the correct data-type
+        df = DataFrame.from_dict(data=results, orient='index')
         for keyword in df.columns.values:
-            df[keyword] = self._cast_series(df[keyword])
-
-        # collects the relaxed structures if requested
-        if 'structure' in files:
-            df['structure'] = [self.get_relaxed_structure(url) for url in
-                               df['aurl'].values]
+            try:
+                df[keyword] = self._cast_series(df[keyword])
+            except Exception:
+                continue
 
         # sets the auid as the index if desired
         if index_auid:
@@ -90,19 +99,51 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         return df
 
     @staticmethod
-    def get_relaxed_structure(aurl):
+    def _get_prototype_structure(raw_data):
+        """Collects the prototype structure as a pymatgen.Structure.
+
+        Args:
+            raw_data: (dict) Raw data of an AFLOW entry used to construct an
+                aflow.Entry object.
+
+        Returns: (pymatgen.Structure) The prototype structure.
+        """
+        entry = Entry(**raw_data)
+        files = entry.files
+
+        try:
+            try:
+                file = entry.files[
+                    '*{}.cif'.format(entry.prototype).replace('\n', '')]()
+            except Exception:
+                try:
+                    file = entry.files[
+                        '{}.cif'.format(entry.prototype).replace('\n', '')]()
+                except Exception:
+                    file = None
+            return Structure.from_str(file, fmt='cif')
+        except Exception:
+            print('dwnld of prototype failed... using POSCAR.orig as a proxy')
+
+            try:
+                file = entry.files['POSCAR.orig']()
+                return Structure.from_str(file, fmt='poscar')
+            except Exception:
+                print('*{}.cif'.format(entry.prototype).replace('\n', ''))
+                print(entry.files)
+
+    @staticmethod
+    def _get_relaxed_structure(raw_data):
         """Collects the relaxed structure as a pymatgen.Structure.
 
         Args:
-            aurl: (str) The url for the material entry in AFLOW.
+            raw_data: (dict) Raw data of an AFLOW entry used to construct an
+                aflow.Entry object.
 
         Returns: (pymatgen.Structure) The relaxed structure.
         """
-
-        # downloads the file as a string
-        file = AflowFile(aurl, 'CONTCAR.relax.vasp')()  # calling induces dwnld
-
-        # returns the python object
+        entry = Entry(**raw_data)
+        file = entry.files['CONTCAR.relax.vasp']()
         return Structure.from_str(file, fmt='poscar')
 
     @staticmethod
@@ -138,13 +179,23 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
 
         # requests the remaining pages
         for page in range(2, page_limit + 1):
-            query._request(page, query.k)
+            attempt = 1
+            while attempt:
+                try:
+                    query._request(page, query.k)
+                    break
+                except (RemoteDisconnected, HTTPError) as e:
+                    if attempt >= 5:
+                        raise e
+                    else:
+                        attempt += 1
+                        continue
 
         # collects request responses
         records = {}
         for page in range(1, page_limit + 1):
             records.update(query.responses[page])
-        return DataFrame.from_dict(data=records, orient='index')
+        return records
 
 
 class RetrievalQuery(Query):
