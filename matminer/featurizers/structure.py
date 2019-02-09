@@ -660,6 +660,49 @@ class SineCoulombMatrix(BaseFeaturizer):
         return ["Kyle Bystrom"]
 
 
+class CoulombMatrixEigenvalues(BaseFeaturizer):
+    """
+    Flat, ML-ready vectors from Coulomb matrix information.
+
+    Takes a CoulombMatrix featurizer, computes the matrix, takes the
+    eigenvalues, and 0-pads them to an even length vector for a given set
+    of structures.
+
+    Args:
+        coulomb_matrix (SineCoulombMatrix, CoulombMatrix): A coulomb matrix
+            featurizer.
+    """
+    def __init__(self, coulomb_matrix=SineCoulombMatrix()):
+        self.coulomb_matrix = coulomb_matrix
+        self._max_eigs = None
+
+    def fit(self, X, y=None):
+        nsites = [structure.num_sites for structure in X]
+        # CM makes sites x sites matrix; max eigvals for n x n matrix is n
+        self._max_eigs = max(nsites)
+        return self
+
+    def featurize(self, s):
+        if not self._max_eigs:
+            raise NotFittedError("Please fit CoulombMatrixEigenvalues to a "
+                                 "dataframe before featurizing.")
+        cm = self.coulomb_matrix.featurize(s)[0]
+        eigs, _ = np.linalg.eig(cm)
+        zeros = np.zeros((self._max_eigs,))
+        zeros[:len(eigs)] = eigs
+        return zeros
+
+    def feature_labels(self):
+        cm_name = self.coulomb_matrix.__class__.__name__
+        return ["{} eig {}".format(cm_name, i) for i in range(self._max_eigs)]
+
+    def citations(self):
+        return self.coulomb_matrix.citations()
+
+    def implementors(self):
+        return ["Alex Dunn"]
+
+
 class OrbitalFieldMatrix(BaseFeaturizer):
     """
     Representation based on the valence shell electrons of neighboring atoms.
