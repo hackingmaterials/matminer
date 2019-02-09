@@ -669,7 +669,7 @@ class CoulombMatrixEigenvalues(BaseFeaturizer):
     of structures.
 
     Note: This featurizer must be fit to a set of data before using. To do this,
-        use the "fit" method (or call fit_featurize_dataframe). 
+        use the "fit" method (or call fit_featurize_dataframe).
 
     Args:
         coulomb_matrix (SineCoulombMatrix, CoulombMatrix): A coulomb matrix
