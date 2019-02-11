@@ -615,6 +615,7 @@ class SineCoulombMatrix(BaseFeaturizer):
     def __init__(self, diag_elems=True, flatten=True):
         self.diag_elems = diag_elems
         self.flatten = flatten
+        self._max_eigs = None
 
     def fit(self, X, y=None):
         if self.flatten:
@@ -633,7 +634,7 @@ class SineCoulombMatrix(BaseFeaturizer):
         """
         self._check_fitted()
         sites = s.sites
-        Zs = np.array([site.specie.Z for site in sites])
+        atomic_numbers = np.array([site.specie.Z for site in sites])
         sin_mat = np.zeros((len(sites), len(sites)))
         coords = np.array([site.frac_coords for site in sites])
         lattice = s.lattice.matrix
@@ -642,16 +643,16 @@ class SineCoulombMatrix(BaseFeaturizer):
             for j in range(len(sin_mat)):
                 if i == j:
                     if self.diag_elems:
-                        sin_mat[i][i] = 0.5 * Zs[i] ** 2.4
+                        sin_mat[i][i] = 0.5 * atomic_numbers[i] ** 2.4
                 elif i < j:
                     vec = coords[i] - coords[j]
                     coord_vec = np.sin(np.pi * vec) ** 2
                     trig_dist = np.linalg.norm(
                         (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
-                    sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
+                    sin_mat[i][j] = atomic_numbers[i] * atomic_numbers[j] / \
+                                    trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
-
         if self.flatten:
             eigs, _ = np.linalg.eig(sin_mat)
             zeros = np.zeros((self._max_eigs,))
@@ -667,6 +668,7 @@ class SineCoulombMatrix(BaseFeaturizer):
                     range(self._max_eigs)]
         else:
             return ["sine coulomb matrix"]
+
 
     def _check_fitted(self):
         if self.flatten and not self._max_eigs:
