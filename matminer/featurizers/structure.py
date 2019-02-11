@@ -534,14 +534,40 @@ class CoulombMatrix(BaseFeaturizer):
     and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
     the nuclear charge and the position of atom i, respectively.
 
+    Coulomb Matrix features are flattened (for ML-readiness) by default. Use
+    fit before featurizing to use flattened features. To return the matrix form,
+    set flatten=False.
+
     Args:
-        diag_elems: (bool) flag indicating whether (True, default) to use
-                    the original definition of the diagonal elements;
-                    if set to False, the diagonal elements are set to zero.
+        diag_elems (bool): flag indication whether (True, default) to use
+            the original definition of the diagonal elements; if set to False,
+            the diagonal elements are set to 0
+        flatten (bool): If True, returns a flattened vector based on eigenvalues
+            of the matrix form. Otherwise, returns a matrix object (single
+            feature), which will likely need to be processed further.
     """
 
-    def __init__(self, diag_elems=True):
+    def __init__(self, diag_elems=True, flatten=True):
         self.diag_elems = diag_elems
+        self.flatten = flatten
+        self._max_eigs = None
+
+    def fit(self, X, y=None):
+        """
+        Fit the Coulomb Matrix to a list of structures.
+
+        Args:
+            X ([Structure]): A list of pymatgen structures.
+            y (None): Matched arg used for sklearn fit inheritance. Not used.
+
+        Returns:
+
+        """
+        if self.flatten:
+            nsites = [structure.num_sites for structure in X]
+            # CM makes sites x sites matrix; max eigvals for n x n matrix is n
+            self._max_eigs = max(nsites)
+        return self
 
     def featurize(self, s):
         """
@@ -553,27 +579,46 @@ class CoulombMatrix(BaseFeaturizer):
         Returns:
             m: (Nsites x Nsites matrix) Coulomb matrix.
         """
-        m = [[] for site in s.sites]
-        z = []
+        self._check_fitted()
+        m = [[] for _ in s.sites]
+        atomic_numbers = []
         for site in s.sites:
             if isinstance(site.specie, Element):
-                z.append(site.specie.Z)
+                atomic_numbers.append(site.specie.Z)
             else:
-                z.append(site.specie.element.Z)
+                atomic_numbers.append(site.specie.element.Z)
         for i in range(s.num_sites):
             for j in range(s.num_sites):
                 if i == j:
                     if self.diag_elems:
-                        m[i].append(0.5 * z[i] ** 2.4)
+                        m[i].append(0.5 * atomic_numbers[i] ** 2.4)
                     else:
                         m[i].append(0)
                 else:
                     d = s.get_distance(i, j) * ANG_TO_BOHR
-                    m[i].append(z[i] * z[j] / d)
-        return [np.array(m)]
+                    m[i].append(atomic_numbers[i] * atomic_numbers[j] / d)
+        cm = np.array(m)
+
+        if self.flatten:
+            eigs, _ = np.linalg.eig(cm)
+            zeros = np.zeros((self._max_eigs,))
+            zeros[:len(eigs)] = eigs
+            return zeros
+        else:
+            return [cm]
 
     def feature_labels(self):
-        return ["coulomb matrix"]
+        self._check_fitted()
+        if self.flatten:
+            return ["coulomb matrix eig {}".format(i) for i in
+                    range(self._max_eigs)]
+        else:
+            return ["coulomb matrix"]
+
+    def _check_fitted(self):
+        if self.flatten and not self._max_eigs:
+            raise NotFittedError("Please fit the CoulombMatrix before "
+                                 "featurizing if using flatten=True.")
 
     def citations(self):
         return ["@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
@@ -620,7 +665,6 @@ class SineCoulombMatrix(BaseFeaturizer):
     def fit(self, X, y=None):
         if self.flatten:
             nsites = [structure.num_sites for structure in X]
-            # CM makes sites x sites matrix; max eigvals for n x n matrix is n
             self._max_eigs = max(nsites)
         return self
 
@@ -668,7 +712,6 @@ class SineCoulombMatrix(BaseFeaturizer):
                     range(self._max_eigs)]
         else:
             return ["sine coulomb matrix"]
-
 
     def _check_fitted(self):
         if self.flatten and not self._max_eigs:

@@ -254,13 +254,14 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_coulomb_matrix(self):
         # flat
-        cme = CoulombMatrixEigenvalues(coulomb_matrix=CoulombMatrix())
+        cm = CoulombMatrix(flatten=True)
         df = pd.DataFrame({"s": [self.diamond, self.nacl]})
-        cme.fit(df["s"])
-        df = cme.featurize_dataframe(df, "s")
-        labels = cme.feature_labels()
+        with self.assertRaises(NotFittedError):
+            df = cm.featurize_dataframe(df, "s")
+        df = cm.fit_featurize_dataframe(df, "s")
+        labels = cm.feature_labels()
         self.assertListEqual(labels,
-                             ["CoulombMatrix eig 0", "CoulombMatrix eig 1"])
+                             ["coulomb matrix eig 0", "coulomb matrix eig 1"])
         self.assertArrayAlmostEqual(df[labels].iloc[0],
                                     [49.169453, 24.546758],
                                     decimal=5)
@@ -272,14 +273,15 @@ class StructureFeaturesTest(PymatgenTest):
         species = ["C", "C", "H", "H"]
         coords = [[0, 0, 0], [0, 0, 1.203], [0, 0, -1.06], [0, 0, 2.263]]
         acetylene = Molecule(species, coords)
-        morig = CoulombMatrix().featurize(acetylene)
+        morig = CoulombMatrix(flatten=False).featurize(acetylene)
         mtarget = [[36.858, 15.835391290, 2.995098235, 1.402827813], \
                    [15.835391290, 36.858, 1.4028278132103624, 2.9950982], \
                    [2.9368896127, 1.402827813, 0.5, 0.159279959], \
                    [1.4028278132, 2.995098235, 0.159279959, 0.5]]
         self.assertAlmostEqual(
             int(np.linalg.norm(morig - np.array(mtarget))), 0)
-        m = CoulombMatrix(False).featurize(acetylene)[0]
+        m = CoulombMatrix(diag_elems=False,
+                          flatten=False).featurize(acetylene)[0]
         self.assertAlmostEqual(m[0][0], 0.0)
         self.assertAlmostEqual(m[1][1], 0.0)
         self.assertAlmostEqual(m[2][2], 0.0)
