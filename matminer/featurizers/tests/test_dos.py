@@ -6,7 +6,7 @@ import pandas as pd
 import unittest
 
 from matminer.featurizers.dos import DOSFeaturizer, DopingFermi, \
-    Hybridization, SiteDOS
+    Hybridization, SiteDOS, DosAsymmetry
 from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.util.testing import PymatgenTest
 
@@ -19,6 +19,10 @@ class DOSFeaturesTest(PymatgenTest):
         with open(os.path.join(test_dir, 'si_dos.json'), 'r') as sDOS:
             si_dos = CompleteDos.from_dict(json.load(sDOS))
         self.df = pd.DataFrame({'dos': [si_dos], 'site': [0]})
+
+        with open(os.path.join(test_dir, 'nb3sn_dos.json'), 'r') as sDOS:
+            nb3sn_dos = CompleteDos.from_dict(json.load(sDOS))
+        self.nb3sn_df = pd.DataFrame({'dos': [nb3sn_dos]})
 
     def test_SiteDOS(self):
 
@@ -106,6 +110,13 @@ class DOSFeaturesTest(PymatgenTest):
         df = hy.featurize_dataframe(df, col_id=['dos', 'decay_length'])
         self.assertAlmostEqual(df['cbm_s'][0], 0.409, 2)
         self.assertAlmostEqual(df['vbm_p'][0], 0.943, 2)
+
+    def test_DosAsymmetry(self):
+        asym = DosAsymmetry(
+            decay_length=0.5, sampling_resolution=100, gaussian_smear=0.05)
+        asym = asym.featurize_dataframe(
+            self.nb3sn_df, col_id='dos', inplace=False)['dos_asymmetry'][0]
+        self.assertAlmostEqual(asym, -0.9100, 3)
 
 
 if __name__ == '__main__':
