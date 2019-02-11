@@ -12,6 +12,16 @@ __author__ = ['Saurabh Bajaj <sbajaj@lbl.gov>',
 class MPDataRetrieval(BaseDataRetrieval):
     """
     Retrieves data from the Materials Project database.
+
+    If you use this data retrieval class, please additionally cite:
+
+    Ong, S.P., Cholia, S., Jain, A., Brafman, M., Gunter, D., Ceder, G.,
+    Persson, K.A., 2015. The Materials Application Programming Interface
+    (API): A simple, flexible and efficient API for materials data based on
+    REpresentational State Transfer (REST) principles. Computational
+    Materials Science 97, 209–215.
+    https://doi.org/10.1016/j.commatsci.2014.10.037
+
     """
 
     def __init__(self, api_key=None):

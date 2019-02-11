@@ -26,6 +26,13 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
     official repository of the AFLOW consortium. However, this library does
     dynamically generate the keywords supported by the AFLUX API from their
     servers, which makes it robust against changes in the AFLOW system.
+
+    If you use this data retrieval class, please additionally cite:
+    Rose, F., Toher, C., Gossett, E., Oses, C., Nardelli, M.B., Fornari, M.,
+    Curtarolo, S., 2017. AFLUX: The LUX materials search API for the AFLOW
+    data repositories. Computational Materials Science 137, 362–370.
+    https://doi.org/10.1016/j.commatsci.2017.04.036
+
     """
 
     def api_link(self):

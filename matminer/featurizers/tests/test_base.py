@@ -405,6 +405,9 @@ class TestBaseClass(PymatgenTest):
             SiteStatsFingerprint.from_preset("LocalPropertyDifference_ward-prb-2017"),
             SiteStatsFingerprint.from_preset("CoordinationNumber_ward-prb-2017")
         ], iterate_over_entries=True)
+        
+        # Reset the cache before tests
+        _get_all_nearest_neighbors.cache_clear()
 
         # Create a dataframe with two SC structures in it
         data = pd.DataFrame({'strcs': [
