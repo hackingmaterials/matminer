@@ -480,7 +480,8 @@ class StructureFeaturesTest(PymatgenTest):
     def test_bob(self):
 
         # Test a single fit and featurization
-        bob = BagofBonds(coulomb_matrix=SineCoulombMatrix(), token=' - ')
+        scm = SineCoulombMatrix(flatten=False)
+        bob = BagofBonds(coulomb_matrix=scm, token=' - ')
         bob.fit([self.ni3al])
         truth1 = [235.74041833262768, 1486.4464890775491, 1486.4464890775491,
                   1486.4464890775491, 38.69353092306119, 38.69353092306119,
@@ -499,7 +500,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(bob.feature_labels(), truth1_labels)
 
         # Test padding from fitting and dataframe featurization
-        bob.coulomb_matrix = CoulombMatrix()
+        bob.coulomb_matrix = CoulombMatrix(flatten=False)
         bob.fit([self.ni3al, self.cscl, self.diamond_no_oxi])
         df = pd.DataFrame({'structures': [self.cscl]})
         df = bob.featurize_dataframe(df, 'structures')
@@ -510,7 +511,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df['Al - Ni bond #0'][0], 0.0)
 
         # Test error handling for bad fits or null fits
-        bob = BagofBonds()
+        bob = BagofBonds(CoulombMatrix(flatten=False))
         self.assertRaises(NotFittedError, bob.featurize, self.nacl)
         bob.fit([self.ni3al, self.diamond])
         self.assertRaises(ValueError, bob.featurize, self.nacl)\

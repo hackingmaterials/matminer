@@ -551,16 +551,21 @@ class CoulombMatrix(BaseFeaturizer):
         self.flatten = flatten
         self._max_eigs = None
 
+    def _check_fitted(self):
+        if self.flatten and not self._max_eigs:
+            raise NotFittedError("Please fit the CoulombMatrix before "
+                                 "featurizing if using flatten=True.")
+
     def fit(self, X, y=None):
         """
         Fit the Coulomb Matrix to a list of structures.
 
         Args:
             X ([Structure]): A list of pymatgen structures.
-            y (None): Matched arg used for sklearn fit inheritance. Not used.
+            y : unused (added for consistency with overridden method signature)
 
         Returns:
-
+            self
         """
         if self.flatten:
             n_sites = [structure.num_sites for structure in X]
@@ -614,11 +619,6 @@ class CoulombMatrix(BaseFeaturizer):
         else:
             return ["coulomb matrix"]
 
-    def _check_fitted(self):
-        if self.flatten and not self._max_eigs:
-            raise NotFittedError("Please fit the CoulombMatrix before "
-                                 "featurizing if using flatten=True.")
-
     def citations(self):
         return ["@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
                 "Fast and accurate modeling of molecular atomization energies"
@@ -661,7 +661,22 @@ class SineCoulombMatrix(BaseFeaturizer):
         self.flatten = flatten
         self._max_eigs = None
 
+    def _check_fitted(self):
+        if self.flatten and not self._max_eigs:
+            raise NotFittedError("Please fit the SineCoulombMatrix before "
+                                 "featurizing if using flatten=True.")
+
     def fit(self, X, y=None):
+        """
+        Fit the Sine Coulomb Matrix to a list of structures.
+
+        Args:
+            X ([Structure]): A list of pymatgen structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
         if self.flatten:
             nsites = [structure.num_sites for structure in X]
             self._max_eigs = max(nsites)
@@ -673,7 +688,7 @@ class SineCoulombMatrix(BaseFeaturizer):
             s (Structure or Molecule): input structure (or molecule)
 
         Returns:
-            (Nsites x Nsites matrix) Sine matrix.
+            (Nsites x Nsites matrix) Sine matrix or
         """
         self._check_fitted()
         sites = s.sites
@@ -711,11 +726,6 @@ class SineCoulombMatrix(BaseFeaturizer):
                     range(self._max_eigs)]
         else:
             return ["sine coulomb matrix"]
-
-    def _check_fitted(self):
-        if self.flatten and not self._max_eigs:
-            raise NotFittedError("Please fit the SineCoulombMatrix before "
-                                 "featurizing if using flatten=True.")
 
     def citations(self):
         return ["@article {QUA:QUA24917,"
@@ -1752,7 +1762,8 @@ class BagofBonds(BaseFeaturizer):
     Args:
         coulomb_matrix (BaseFeaturizer): A featurizer object containing a
             "featurize" method which returns a matrix of size nsites x nsites.
-            Good choices are CoulombMatrix() or SineCoulombMatrix()
+            Good choices are CoulombMatrix() or SineCoulombMatrix(), with the
+            flatten=False parameter set.
         token (str): The string used to separate species in a bond, including
             spaces. The token must contain at least one space and cannot have
             alphabetic characters in it, and should be padded by spaces. For
@@ -1761,12 +1772,15 @@ class BagofBonds(BaseFeaturizer):
 
     """
 
-    def __init__(self, coulomb_matrix=CoulombMatrix(), token=' - '):
+    def __init__(self, coulomb_matrix=SineCoulombMatrix(flatten=False),
+                 token=' - '):
         self.coulomb_matrix = coulomb_matrix
         self.token = token
+        self.bag_lens = None
+        self.ordered_bonds = None
 
     def _check_fitted(self):
-        if not hasattr(self, 'baglens') or not hasattr(self, 'ordered_bonds'):
+        if not self.bag_lens or not self.ordered_bonds:
             raise NotFittedError("BagofBonds not fitted to any list of "
                                  "structures! Use the 'fit' method to define "
                                  "the bags and the maximum length of each bag.")
@@ -1786,7 +1800,6 @@ class BagofBonds(BaseFeaturizer):
 
         Returns:
             self
-
         """
         unpadded_bobs = [self.bag(s, return_baglens=True) for s in X]
         bonds = [list(bob.keys()) for bob in unpadded_bobs]
@@ -1798,9 +1811,9 @@ class BagofBonds(BaseFeaturizer):
                 if bond in bob:
                     baglen = bob[bond]
                     baglens[i] = max((baglens[i], baglen))
-        self.baglens = dict(zip(bonds, baglens))
+        self.bag_lens = dict(zip(bonds, baglens))
         # Sort the bags by bag length, with the shortest coming first.
-        self.ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
+        self.ordered_bonds = [b[0] for b in sorted(self.bag_lens.items(),
                                                    key=lambda bl: bl[1])]
         return self
 
@@ -1811,7 +1824,8 @@ class BagofBonds(BaseFeaturizer):
         concatenated, will have different lengths.
 
         Args:
-            s (Structure): A pymatgen Structure or IStructure object.
+            s (Structure): A pymatgen Structure or IStructure object. May also
+                work with a
             return_baglens (bool): If True, returns the bag of bonds with as
                 a dictionary with the number of bonds as values in place
                 of the vectors of coulomb matrix vals. If False, calculates
@@ -1822,10 +1836,6 @@ class BagofBonds(BaseFeaturizer):
                 Site objects representing bonds or sites, and the values are the
                 Coulomb matrix values for that bag.
         """
-        if not isinstance(s, (Structure)):
-            raise TypeError("BagofBonds must take in a pymatgen Structure "
-                            "object, not {}".format(type(s)))
-
         sites = s.sites
         nsites = len(sites)
         bonds = np.zeros((nsites, nsites), dtype=object)
@@ -1881,14 +1891,14 @@ class BagofBonds(BaseFeaturizer):
         self._check_fitted()
         unpadded_bob = self.bag(s)
         padded_bob = {bag: [0.0] * int(length) for bag, length in
-                      self.baglens.items()}
+                      self.bag_lens.items()}
 
         for bond in unpadded_bob:
-            if bond not in list(self.baglens.keys()):
+            if bond not in list(self.bag_lens.keys()):
                 raise ValueError("{} is not in the fitted "
                                  "bonds/sites!".format(bond))
             baglen_s = len(unpadded_bob[bond])
-            baglen_fit = self.baglens[bond]
+            baglen_fit = self.bag_lens[bond]
 
             if baglen_s > baglen_fit:
                 raise ValueError("The bond {} has more entries than was "
@@ -1914,7 +1924,7 @@ class BagofBonds(BaseFeaturizer):
                 basename = str(bag[0]) + " site #"
             else:
                 basename = str(bag[0]) + self.token + str(bag[1]) + " bond #"
-            bls = [basename + str(i) for i in range(self.baglens[bag])]
+            bls = [basename + str(i) for i in range(self.bag_lens[bag])]
             labels += bls
         return labels
 
