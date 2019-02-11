@@ -24,8 +24,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
-    Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID, \
-    CoulombMatrixEigenvalues
+    Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID
 
 # For the CGCNNFeaturizer
 try:
@@ -254,6 +253,22 @@ class StructureFeaturesTest(PymatgenTest):
             d["distances"]) - 1]), 7275)
 
     def test_coulomb_matrix(self):
+        # flat
+        cme = CoulombMatrixEigenvalues(coulomb_matrix=CoulombMatrix())
+        df = pd.DataFrame({"s": [self.diamond, self.nacl]})
+        cme.fit(df["s"])
+        df = cme.featurize_dataframe(df, "s")
+        labels = cme.feature_labels()
+        self.assertListEqual(labels,
+                             ["CoulombMatrix eig 0", "CoulombMatrix eig 1"])
+        self.assertArrayAlmostEqual(df[labels].iloc[0],
+                                    [49.169453, 24.546758],
+                                    decimal=5)
+        self.assertArrayAlmostEqual(df[labels].iloc[1],
+                                    [153.774731, 452.894322],
+                                    decimal=5)
+
+        # matrix
         species = ["C", "C", "H", "H"]
         coords = [[0, 0, 0], [0, 0, 1.203], [0, 0, -1.06], [0, 0, 2.263]]
         acetylene = Molecule(species, coords)
@@ -271,12 +286,30 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(m[3][3], 0.0)
 
     def test_sine_coulomb_matrix(self):
-        scm = SineCoulombMatrix()
+        # flat
+        scm = SineCoulombMatrix(flatten=True)
+        df = pd.DataFrame({"s": [self.sc, self.ni3al]})
+        with self.assertRaises(NotFittedError):
+            df = scm.featurize_dataframe(df, "s")
+        df = scm.fit_featurize_dataframe(df, "s")
+        labels = scm.feature_labels()
+        self.assertEqual(labels[0], "sine coulomb matrix eig 0")
+        self.assertArrayAlmostEqual(
+            df[labels].iloc[0],
+            [235.740418, 0.0, 0.0, 0.0],
+            decimal=5)
+        self.assertArrayAlmostEqual(
+            df[labels].iloc[1],
+            [232.578562, 1656.288171, 1403.106576, 1403.106576],
+            decimal=5)
+
+        # matrix
+        scm = SineCoulombMatrix(flatten=False)
         sin_mat = scm.featurize(self.diamond)
         mtarget = [[36.8581, 6.147068], [6.147068, 36.8581]]
         self.assertAlmostEqual(
             np.linalg.norm(sin_mat - np.array(mtarget)), 0.0, places=4)
-        scm = SineCoulombMatrix(False)
+        scm = SineCoulombMatrix(diag_elems=False, flatten=False)
         sin_mat = scm.featurize(self.diamond)[0]
         self.assertEqual(sin_mat[0][0], 0)
         self.assertEqual(sin_mat[1][1], 0)
@@ -797,41 +830,6 @@ class StructureFeaturesTest(PymatgenTest):
         fvec = jcf.featurize(self.diamond)
         self.assertAlmostEqual(fvec[-1], 24, places=3)
         self.assertAlmostEqual(fvec[0], 0, places=3)
-
-
-    def test_coulomb_matrix_eigenvalues(self):
-
-        # Regular CoulombMatrix
-        cme = CoulombMatrixEigenvalues(coulomb_matrix=CoulombMatrix())
-        df = pd.DataFrame({"s": [self.diamond, self.nacl]})
-        cme.fit(df["s"])
-        df = cme.featurize_dataframe(df, "s")
-        labels = cme.feature_labels()
-        self.assertListEqual(labels,
-                             ["CoulombMatrix eig 0", "CoulombMatrix eig 1"])
-        self.assertArrayAlmostEqual(df[labels].iloc[0],
-                                    [49.169453, 24.546758],
-                                    decimal=5)
-        self.assertArrayAlmostEqual(df[labels].iloc[1],
-                                    [153.774731, 452.894322],
-                                    decimal=5)
-
-        # Try SineCoulombMatrix
-        scme = CoulombMatrixEigenvalues(coulomb_matrix=SineCoulombMatrix())
-        df = pd.DataFrame({"s": [self.sc, self.ni3al]})
-        df = scme.fit_featurize_dataframe(df, "s")
-        labels = scme.feature_labels()
-        self.assertEqual(labels[0], "SineCoulombMatrix eig 0")
-        self.assertArrayAlmostEqual(
-            df[labels].iloc[0],
-            [235.740418, 0.0, 0.0, 0.0],
-            decimal=5)
-        self.assertArrayAlmostEqual(
-            df[labels].iloc[1],
-            [232.578562, 1656.288171, 1403.106576, 1403.106576],
-            decimal=5)
-
-
 
 
 if __name__ == '__main__':
