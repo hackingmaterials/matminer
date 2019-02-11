@@ -585,7 +585,7 @@ class CoulombMatrix(BaseFeaturizer):
                 " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}"]
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ["Nils E. R. Zimmermann", "Alex Dunn"]
 
 
 class SineCoulombMatrix(BaseFeaturizer):
@@ -599,14 +599,29 @@ class SineCoulombMatrix(BaseFeaturizer):
     sin**2 function of the vector between the sites which is periodic
     in the dimensions of the structure lattice. See paper for details.
 
+    Coulomb Matrix features are flattened (for ML-readiness) by default. Use
+    fit before featurizing to use flattened features. To return the matrix form,
+    set flatten=False.
+
     Args:
         diag_elems (bool): flag indication whether (True, default) to use
-                the original definition of the diagonal elements;
-                if set to False, the diagonal elements are set to 0
+            the original definition of the diagonal elements; if set to False,
+            the diagonal elements are set to 0
+        flatten (bool): If True, returns a flattened vector based on eigenvalues
+            of the matrix form. Otherwise, returns a matrix object (single
+            feature), which will likely need to be processed further.
     """
 
-    def __init__(self, diag_elems=True):
+    def __init__(self, diag_elems=True, flatten=True):
         self.diag_elems = diag_elems
+        self.flatten = flatten
+
+    def fit(self, X, y=None):
+        if self.flatten:
+            nsites = [structure.num_sites for structure in X]
+            # CM makes sites x sites matrix; max eigvals for n x n matrix is n
+            self._max_eigs = max(nsites)
+        return self
 
     def featurize(self, s):
         """
@@ -616,12 +631,12 @@ class SineCoulombMatrix(BaseFeaturizer):
         Returns:
             (Nsites x Nsites matrix) Sine matrix.
         """
+        self._check_fitted()
         sites = s.sites
         Zs = np.array([site.specie.Z for site in sites])
         sin_mat = np.zeros((len(sites), len(sites)))
         coords = np.array([site.frac_coords for site in sites])
         lattice = s.lattice.matrix
-        pi = np.pi
 
         for i in range(len(sin_mat)):
             for j in range(len(sin_mat)):
@@ -630,21 +645,40 @@ class SineCoulombMatrix(BaseFeaturizer):
                         sin_mat[i][i] = 0.5 * Zs[i] ** 2.4
                 elif i < j:
                     vec = coords[i] - coords[j]
-                    coord_vec = np.sin(pi * vec) ** 2
+                    coord_vec = np.sin(np.pi * vec) ** 2
                     trig_dist = np.linalg.norm(
                         (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
                     sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
-        return [sin_mat]
+
+        if self.flatten:
+            eigs, _ = np.linalg.eig(sin_mat)
+            zeros = np.zeros((self._max_eigs,))
+            zeros[:len(eigs)] = eigs
+            return zeros
+        else:
+            return [sin_mat]
 
     def feature_labels(self):
-        return ["sine coulomb matrix"]
+        self._check_fitted()
+        if self.flatten:
+            return ["sine coulomb matrix eig {}".format(i) for i in
+                    range(self._max_eigs)]
+        else:
+            return ["sine coulomb matrix"]
+
+    def _check_fitted(self):
+        if self.flatten and not self._max_eigs:
+            raise NotFittedError("Please fit the SineCoulombMatrix before "
+                                 "featurizing if using flatten=True.")
 
     def citations(self):
         return ["@article {QUA:QUA24917,"
-                "author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
-                "title = {Crystal structure representations for machine learning models of formation energies},"
+                "author = {Faber, Felix and Lindmaa, Alexander and von "
+                "Lilienfeld, O. Anatole and Armiento, Rickard},"
+                "title = {Crystal structure representations for machine "
+                "learning models of formation energies},"
                 "journal = {International Journal of Quantum Chemistry},"
                 "volume = {115},"
                 "number = {16},"
@@ -652,58 +686,13 @@ class SineCoulombMatrix(BaseFeaturizer):
                 "url = {http://dx.doi.org/10.1002/qua.24917},"
                 "doi = {10.1002/qua.24917},"
                 "pages = {1094--1101},"
-                "keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
+                "keywords = {machine learning, formation energies, "
+                "representations, crystal structure, periodic systems},"
                 "year = {2015},"
                 "}"]
 
     def implementors(self):
-        return ["Kyle Bystrom"]
-
-
-class CoulombMatrixEigenvalues(BaseFeaturizer):
-    """
-    Flat, ML-ready vectors from Coulomb matrix information.
-
-    Takes a CoulombMatrix featurizer, computes the matrix, takes the
-    eigenvalues, and 0-pads them to an even length vector for a given set
-    of structures.
-
-    Note: This featurizer must be fit to a set of data before using. To do this,
-        use the "fit" method (or call fit_featurize_dataframe).
-
-    Args:
-        coulomb_matrix (SineCoulombMatrix, CoulombMatrix): A coulomb matrix
-            featurizer.
-    """
-    def __init__(self, coulomb_matrix=SineCoulombMatrix()):
-        self.coulomb_matrix = coulomb_matrix
-        self._max_eigs = None
-
-    def fit(self, X, y=None):
-        nsites = [structure.num_sites for structure in X]
-        # CM makes sites x sites matrix; max eigvals for n x n matrix is n
-        self._max_eigs = max(nsites)
-        return self
-
-    def featurize(self, s):
-        if not self._max_eigs:
-            raise NotFittedError("Please fit CoulombMatrixEigenvalues to a "
-                                 "dataframe before featurizing.")
-        cm = self.coulomb_matrix.featurize(s)[0]
-        eigs, _ = np.linalg.eig(cm)
-        zeros = np.zeros((self._max_eigs,))
-        zeros[:len(eigs)] = eigs
-        return zeros
-
-    def feature_labels(self):
-        cm_name = self.coulomb_matrix.__class__.__name__
-        return ["{} eig {}".format(cm_name, i) for i in range(self._max_eigs)]
-
-    def citations(self):
-        return self.coulomb_matrix.citations()
-
-    def implementors(self):
-        return ["Alex Dunn"]
+        return ["Kyle Bystrom", "Alex Dunn"]
 
 
 class OrbitalFieldMatrix(BaseFeaturizer):
