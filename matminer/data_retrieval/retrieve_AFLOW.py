@@ -66,7 +66,7 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
                 by a seperate HTTP request (read slow). The default behavior is
                 to return none of these objects. Supported files:
                     "prototype_structure" - the prototype structure
-                    "input_structure" - the input structure
+                    "relaxed_structure" - the relaxed structure
                     "band_structure" - TODO
                     "dos" - TODO
             request_size: (int) Number of results to return per HTTP request.
