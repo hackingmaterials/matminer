@@ -525,14 +525,13 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
 class CoulombMatrix(BaseFeaturizer):
     """
-    Generate the Coulomb matrix, a representation of nuclear coulombic interaction.
+    The Coulomb matrix, a representation of nuclear coulombic interaction.
 
-    Generate the Coulomb matrix, M, of the input
-    structure (or molecule).  The Coulomb matrix was put forward by
-    Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-    off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j|
-    and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
-    the nuclear charge and the position of atom i, respectively.
+    Generate the Coulomb matrix, M, of the input structure (or molecule). The
+    Coulomb matrix was put forward by Rupp et al. (Phys. Rev. Lett. 108, 058301,
+    2012) and is defined by off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j| and
+    diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote the nuclear charge
+    and the position of atom i, respectively.
 
     Coulomb Matrix features are flattened (for ML-readiness) by default. Use
     fit before featurizing to use flattened features. To return the matrix form,
@@ -564,9 +563,9 @@ class CoulombMatrix(BaseFeaturizer):
 
         """
         if self.flatten:
-            nsites = [structure.num_sites for structure in X]
+            n_sites = [structure.num_sites for structure in X]
             # CM makes sites x sites matrix; max eigvals for n x n matrix is n
-            self._max_eigs = max(nsites)
+            self._max_eigs = max(n_sites)
         return self
 
     def featurize(self, s):
@@ -580,7 +579,7 @@ class CoulombMatrix(BaseFeaturizer):
             m: (Nsites x Nsites matrix) Coulomb matrix.
         """
         self._check_fitted()
-        m = [[] for _ in s.sites]
+        m = np.zeros((s.num_sites, s.num_sites))
         atomic_numbers = []
         for site in s.sites:
             if isinstance(site.specie, Element):
@@ -591,12 +590,12 @@ class CoulombMatrix(BaseFeaturizer):
             for j in range(s.num_sites):
                 if i == j:
                     if self.diag_elems:
-                        m[i].append(0.5 * atomic_numbers[i] ** 2.4)
+                        m[i, j] = 0.5 * atomic_numbers[i] ** 2.4
                     else:
-                        m[i].append(0)
+                        m[i, j] = 0
                 else:
                     d = s.get_distance(i, j) * ANG_TO_BOHR
-                    m[i].append(atomic_numbers[i] * atomic_numbers[j] / d)
+                    m[i, j] = atomic_numbers[i] * atomic_numbers[j] / d
         cm = np.array(m)
 
         if self.flatten:
