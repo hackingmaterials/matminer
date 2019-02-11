@@ -13,7 +13,7 @@ from copy import copy
 
 import numpy as np
 import pandas as pd
-from scipy.misc import comb
+from scipy.special import comb
 import scipy.constants as const
 import pymatgen.analysis.local_env as pmg_le
 
@@ -54,9 +54,9 @@ except ImportError:
 # SOAPFeaturizer
 try:
     import dscribe
-    from dscribe.descriptors import SOAP
+    from dscribe.descriptors import SOAP as SOAP_dscribe
 except ImportError:
-    dscribe, SOAP = None, None
+    dscribe, SOAP_dscribe = None, None
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
@@ -667,52 +667,6 @@ class SineCoulombMatrix(BaseFeaturizer):
 
     def implementors(self):
         return ["Kyle Bystrom"]
-
-
-class CoulombMatrixEigenvalues(BaseFeaturizer):
-    """
-    Flat, ML-ready vectors from Coulomb matrix information.
-
-    Takes a CoulombMatrix featurizer, computes the matrix, takes the
-    eigenvalues, and 0-pads them to an even length vector for a given set
-    of structures.
-
-    Note: This featurizer must be fit to a set of data before using. To do this,
-        use the "fit" method (or call fit_featurize_dataframe). 
-
-    Args:
-        coulomb_matrix (SineCoulombMatrix, CoulombMatrix): A coulomb matrix
-            featurizer.
-    """
-    def __init__(self, coulomb_matrix=SineCoulombMatrix()):
-        self.coulomb_matrix = coulomb_matrix
-        self._max_eigs = None
-
-    def fit(self, X, y=None):
-        nsites = [structure.num_sites for structure in X]
-        # CM makes sites x sites matrix; max eigvals for n x n matrix is n
-        self._max_eigs = max(nsites)
-        return self
-
-    def featurize(self, s):
-        if not self._max_eigs:
-            raise NotFittedError("Please fit CoulombMatrixEigenvalues to a "
-                                 "dataframe before featurizing.")
-        cm = self.coulomb_matrix.featurize(s)[0]
-        eigs, _ = np.linalg.eig(cm)
-        zeros = np.zeros((self._max_eigs,))
-        zeros[:len(eigs)] = eigs
-        return zeros
-
-    def feature_labels(self):
-        cm_name = self.coulomb_matrix.__class__.__name__
-        return ["{} eig {}".format(cm_name, i) for i in range(self._max_eigs)]
-
-    def citations(self):
-        return self.coulomb_matrix.citations()
-
-    def implementors(self):
-        return ["Alex Dunn"]
 
 
 class OrbitalFieldMatrix(BaseFeaturizer):
@@ -3402,9 +3356,9 @@ class JarvisCFID(BaseFeaturizer):
         return s
 
 
-class SOAPFeaturizer(BaseFeaturizer):
+class SOAP(BaseFeaturizer):
     """
-    Smooth overlap of atomic positions.
+    Smooth overlap of atomic positions (interface via dscribe).
 
     The smooth overlap of atomic positions descriptors provided by dscribe and
     SOAPLite. This implementation uses orthogonalized spherical primitive
@@ -3422,22 +3376,57 @@ class SOAPFeaturizer(BaseFeaturizer):
         Phys.  Chem. Chem. Phys. 18, 13754 (2016),
         https://doi.org/10.1039/c6cp00415f
 
+    Implementation (and some documentation) originally based on dscribe:
+    https://github.com/SINGROUP/dscribe. Please see their page for the latest
+    updates.
+
     Args:
 
     """
-
-    @requires(dscribe, "SOAPFeaturizer requires the dscribe (packaged with "
-                       "SOAPLite).")
-    def __init__(self, rcut=3.0, nmax=5, lmax=2, ):
-        self.rcut = rcut
-        self.nmax = nmax
-        self.lmax = lmax
+    @requires(dscribe, "SOAPFeaturizer requires dscribe (packaged with "
+                       "SOAPLite). Install from github.com/SINGROUP/dscribe")
+    def __init__(self, r_cut=3.0, n_max=5, l_max=2, **soap_kwargs):
+        self.r_cut = r_cut
+        self.n_max = n_max
+        self.l_max = l_max
+        self.sigma = soap_kwargs.get("sigma", 1.0)
+        self.rbf = soap_kwargs.get("rbf", "gto")
+        self.periodic = soap_kwargs.get("periodic", True)
+        self.crossover = soap_kwargs.get("crossover", True)
+        self.normalize = soap_kwargs.get("normalize", True)
+        self.average = soap_kwargs.get("average", True)
+        self.sparse = soap_kwargs.get("sparse", False)
         self.adaptor = AseAtomsAdaptor()
         self.length = None
         self.atomic_numbers = None
         self.soap = None
 
+        if not self.average:
+            raise ValueError("Sitewise SOAP not supported in matminer. Please"
+                             "see the dscribe and SOAPLite documentation for "
+                             "more information. "
+                             "<https://github.com/SINGROUP/dscribe>")
+        if self.sparse:
+            raise ValueError("Sparse matrix SOAP not supported in matminer."
+                             "Please see the dscribe and SOAPLite documentation"
+                             " for more information. "
+                             "<https://github.com/SINGROUP/dscribe>")
+
+    def _check_fitted(self):
+        if not self.soap:
+            raise NotFittedError("Please fit SOAP before featurizing.")
+
     def fit(self, X, y=None):
+        """
+        Fit the SOAP structure featurizer to a dataframe.
+
+        Args:
+            X ([SiteCollection]): For example, a list of pymatgen Structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
         elements = []
         for s in X:
             c = s.composition.elements
@@ -3446,25 +3435,60 @@ class SOAPFeaturizer(BaseFeaturizer):
                     elements.append(e)
         self.atomic_numbers = [e.Z for e in elements]
         length = comb(len(self.atomic_numbers) + 1, 2) * \
-                 comb(self.nmax + 1, 2) * \
-                 (self.lmax + 1)
+                 comb(self.n_max + 1, 2) * \
+                 (self.l_max + 1)
         self.length = int(length)
-        self.soap = SOAP(atomic_numbers=self.atomic_numbers,
-                         rcut=self.rcut,
-                         nmax=self.nmax,
-                         lmax=self.lmax,
-                         periodic=True,
-                         sparse=False,
-                         average=True,
-                         normalize=True)
+        self.soap = SOAP_dscribe(atomic_numbers=self.atomic_numbers,
+                                 rcut=self.r_cut,
+                                 nmax=self.n_max,
+                                 lmax=self.l_max,
+                                 sigma=self.sigma,
+                                 rbf=self.rbf,
+                                 periodic=self.periodic,
+                                 crossover=self.crossover,
+                                 average=self.average,
+                                 normalize=self.normalize,
+                                 sparse=self.sparse)
         return self
 
     def featurize(self, s):
+        self._check_fitted()
         s_ase = self.adaptor.get_atoms(s)
         return self.soap.create(s_ase).tolist()[0]
 
     def feature_labels(self):
+        self._check_fitted()
         return ["SOAP_{}".format(i) for i in range(self.length)]
+
+    def citations(self):
+        return ["@article{PhysRevB.87.184115,"
+                "title = {On representing chemical environments},"
+                "author = {Bart\'ok, Albert P. and Kondor, Risi and Cs\'anyi, "
+                "G\'abor},"
+                "journal = {Phys. Rev. B},"
+                "volume = {87},"
+                "issue = {18},"
+                "pages = {184115},"
+                "numpages = {16},"
+                "year = {2013},"
+                "month = {May},"
+                "publisher = {American Physical Society},"
+                "doi = {10.1103/PhysRevB.87.184115},"
+                "url = {https://link.aps.org/doi/10.1103/PhysRevB.87.184115}}",
+                "@Article{C6CP00415F,"
+                "author ={De, Sandip and BartÃ³k, Albert P. and CsÃ¡nyi, GÃ¡bor"
+                " and Ceriotti, Michele},"
+                "title  ={Comparing molecules and solids across structural and "
+                "alchemical space},"
+                "journal = {Phys. Chem. Chem. Phys.},"
+                "year = {2016},"
+                "volume = {18},"
+                "issue = {20},"
+                "pages = {13754-13769},"
+                "publisher = {The Royal Society of Chemistry},"
+                "doi = {10.1039/C6CP00415F},"
+                "url = {http://dx.doi.org/10.1039/C6CP00415F},}"]
 
     def implementors(self):
         return ["Alex Dunn", "Lauri Himanen"]
+
