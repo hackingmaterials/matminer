@@ -13,6 +13,7 @@ from copy import copy
 
 import numpy as np
 import pandas as pd
+from scipy.misc import comb
 import scipy.constants as const
 import pymatgen.analysis.local_env as pmg_le
 
@@ -28,6 +29,7 @@ from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.io.ase import AseAtomsAdaptor
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
@@ -48,6 +50,13 @@ try:
 except ImportError:
     torch, optim, Variable = None, None, None
     cgcnn, cgcnn_data = None, None
+
+# SOAPFeaturizer
+try:
+    import dscribe
+    from dscribe.descriptors import SOAP
+except ImportError:
+    dscribe, SOAP = None, None
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
@@ -3391,3 +3400,71 @@ class JarvisCFID(BaseFeaturizer):
         s = Structure(arr, s.species, coords, coords_are_cartesian=True)
         s.remove_oxidation_states()
         return s
+
+
+class SOAPFeaturizer(BaseFeaturizer):
+    """
+    Smooth overlap of atomic positions.
+
+    The smooth overlap of atomic positions descriptors provided by dscribe and
+    SOAPLite. This implementation uses orthogonalized spherical primitive
+    gaussian-typevorbitals as the radial basis set to reach a fast analytical
+    solution. Please see the dscribe SOAP documentation for more details.
+
+    Based originally on the following publications:
+
+    "On representing chemical environments, Albert P. Bartók, Risi
+        Kondor, and Gábor Csányi, Phys. Rev. B 87, 184115, (2013),
+        https://doi.org/10.1103/PhysRevB.87.184115
+
+    "Comparing molecules and solids across structural and alchemical
+        space", Sandip De, Albert P. Bartók, Gábor Csányi and Michele Ceriotti,
+        Phys.  Chem. Chem. Phys. 18, 13754 (2016),
+        https://doi.org/10.1039/c6cp00415f
+
+    Args:
+
+    """
+
+    @requires(dscribe, "SOAPFeaturizer requires the dscribe (packaged with "
+                       "SOAPLite).")
+    def __init__(self, rcut=3.0, nmax=5, lmax=2, ):
+        self.rcut = rcut
+        self.nmax = nmax
+        self.lmax = lmax
+        self.adaptor = AseAtomsAdaptor()
+        self.length = None
+        self.atomic_numbers = None
+        self.soap = None
+
+    def fit(self, X, y=None):
+        elements = []
+        for s in X:
+            c = s.composition.elements
+            for e in c:
+                if e not in elements:
+                    elements.append(e)
+        self.atomic_numbers = [e.Z for e in elements]
+        length = comb(len(self.atomic_numbers) + 1, 2) * \
+                 comb(self.nmax + 1, 2) * \
+                 (self.lmax + 1)
+        self.length = int(length)
+        self.soap = SOAP(atomic_numbers=self.atomic_numbers,
+                         rcut=self.rcut,
+                         nmax=self.nmax,
+                         lmax=self.lmax,
+                         periodic=True,
+                         sparse=False,
+                         average=True,
+                         normalize=True)
+        return self
+
+    def featurize(self, s):
+        s_ase = self.adaptor.get_atoms(s)
+        return self.soap.create(s_ase).tolist()[0]
+
+    def feature_labels(self):
+        return ["SOAP_{}".format(i) for i in range(self.length)]
+
+    def implementors(self):
+        return ["Alex Dunn", "Lauri Himanen"]
