@@ -780,7 +780,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         `Pham et al. _Sci Tech Adv Mat_. 2017 <http://dx.doi.org/10.1080/14686996.2017.1378060>_`
     """
 
-    def __init__(self, period_tag=False, flatten=False):
+    def __init__(self, period_tag=False, flatten=True):
         """Initialize the featurizer
 
         Args:
