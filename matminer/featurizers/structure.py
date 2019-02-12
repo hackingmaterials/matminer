@@ -3362,7 +3362,7 @@ class SOAP(BaseFeaturizer):
 
     The smooth overlap of atomic positions descriptors provided by dscribe and
     SOAPLite. This implementation uses orthogonalized spherical primitive
-    gaussian-typevorbitals as the radial basis set to reach a fast analytical
+    gaussian-type orbitals as the radial basis set to reach a fast analytical
     solution. Please see the dscribe SOAP documentation for more details.
 
     Based originally on the following publications:
