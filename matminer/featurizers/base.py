@@ -191,7 +191,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                                                    **kwargs)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True,
+                            return_errors=False, inplace=False,
                             multiindex=False, pbar=True):
         """
         Compute features for all entries contained in input dataframe.
@@ -207,7 +207,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             return_errors (bool). Returns the errors encountered for each
                 row in a separate `XFeaturizer errors` column if True. Requires
                 ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
+            inplace (bool): Whether to add new columns to input dataframe (df).
+                With many features, inplace=True can cause featurization to
+                become extremely slow; inplace=False is recommended.
             multiindex (bool): If True, use a Featurizer - Feature 2-level
                 index using the MultiIndex capabilities of pandas. If done
                 inplace, multiindex featurization will overwrite the original
@@ -260,8 +262,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         if inplace:
             # Update the existing dataframe
-            for k in labels:
-                df[k] = res[k]
+            df[labels] =res[labels]
             return df
         else:
             # Create new dataframe and ensure columns are ordered properly
