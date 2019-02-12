@@ -3,3 +3,7 @@ ujson==1.35
 jmespath==0.9.3
 httplib2==0.10.3
 ase==3.14.1
+
+
+# dscribe
+dscribe==0.1.8
