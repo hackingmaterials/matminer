@@ -3381,11 +3381,31 @@ class SOAP(BaseFeaturizer):
     updates.
 
     Args:
+        r_cut (float): Cutoff radius (>1) for local region, in angstrom.
+        n_max (int): Number of basis functions to be used.
+        l_max (int): Number of l's to be used (spherical harmonic)
 
+        **soap_kwargs: (from dscribe docs)
+                periodic (bool): Determines whether the system is considered to
+                    be periodic.
+                sigma (float): The standard deviation of the gaussians used to
+                    expand the atomic density.
+                rbf (str): The radial basis functions to use. The available
+                    options are:
+                        * "gto": Spherical gaussian type orbitals defined as
+                            :math:`\phi(r) = \\beta r^l e^{-\\alpha r^2}`
+                crossover (bool): Default True, if crossover of atomic types
+                    should be included in the power spectrum.
+                average (bool): Whether to build an average output for all
+                    selected positions. Before averaging the outputs for
+                    individual atoms are normalized.
+                normalize (bool): Whether to normalize the final output.
+                sparse (bool): Whether the output should be a sparse matrix or a
+                    dense numpy array.
     """
     @requires(dscribe, "SOAPFeaturizer requires dscribe (packaged with "
                        "SOAPLite). Install from github.com/SINGROUP/dscribe")
-    def __init__(self, r_cut=3.0, n_max=5, l_max=2, **soap_kwargs):
+    def __init__(self, r_cut=3.0, n_max=4, l_max=2, **soap_kwargs):
         self.r_cut = r_cut
         self.n_max = n_max
         self.l_max = l_max
