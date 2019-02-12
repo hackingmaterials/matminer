@@ -25,7 +25,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
     Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID, \
-    CoulombMatrixEigenvalues
+    SOAP
 
 # For the CGCNNFeaturizer
 try:
@@ -798,40 +798,25 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(fvec[-1], 24, places=3)
         self.assertAlmostEqual(fvec[0], 0, places=3)
 
+    def test_SOAP(self):
+        # Test individual samples
+        soap = SOAP(n_max=4, l_max=2, r_cut=3.0)
+        soap.fit([self.diamond])
+        v = soap.featurize(self.diamond)
+        self.assertEqual(len(v), 30)
+        self.assertAlmostEqual(v[0], 0.00150121, places=6)
 
-    def test_coulomb_matrix_eigenvalues(self):
+        soap.fit([self.ni3al])
+        v = soap.featurize(self.ni3al)
+        self.assertEqual(len(v), 90)
+        self.assertAlmostEqual(v[0], 0.0001772097, places=6)
 
-        # Regular CoulombMatrix
-        cme = CoulombMatrixEigenvalues(coulomb_matrix=CoulombMatrix())
-        df = pd.DataFrame({"s": [self.diamond, self.nacl]})
-        cme.fit(df["s"])
-        df = cme.featurize_dataframe(df, "s")
-        labels = cme.feature_labels()
-        self.assertListEqual(labels,
-                             ["CoulombMatrix eig 0", "CoulombMatrix eig 1"])
-        self.assertArrayAlmostEqual(df[labels].iloc[0],
-                                    [49.169453, 24.546758],
-                                    decimal=5)
-        self.assertArrayAlmostEqual(df[labels].iloc[1],
-                                    [153.774731, 452.894322],
-                                    decimal=5)
-
-        # Try SineCoulombMatrix
-        scme = CoulombMatrixEigenvalues(coulomb_matrix=SineCoulombMatrix())
-        df = pd.DataFrame({"s": [self.sc, self.ni3al]})
-        df = scme.fit_featurize_dataframe(df, "s")
-        labels = scme.feature_labels()
-        self.assertEqual(labels[0], "SineCoulombMatrix eig 0")
-        self.assertArrayAlmostEqual(
-            df[labels].iloc[0],
-            [235.740418, 0.0, 0.0, 0.0],
-            decimal=5)
-        self.assertArrayAlmostEqual(
-            df[labels].iloc[1],
-            [232.578562, 1656.288171, 1403.106576, 1403.106576],
-            decimal=5)
-
-
+        # Test dataframe fitting
+        df = pd.DataFrame({"s": [self.diamond, self.ni3al, self.nacl]})
+        soap.fit(df["s"])
+        df = soap.featurize_dataframe(df, "s", inplace=False)
+        self.assertTupleEqual(df.shape, (3, 451))
+        self.assertAlmostEqual(df["SOAP_449"].iloc[1], 0.005192, places=5)
 
 
 if __name__ == '__main__':
