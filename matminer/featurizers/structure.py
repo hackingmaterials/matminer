@@ -13,6 +13,7 @@ from copy import copy
 
 import numpy as np
 import pandas as pd
+from scipy.special import comb
 import scipy.constants as const
 import pymatgen.analysis.local_env as pmg_le
 
@@ -28,6 +29,7 @@ from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.io.ase import AseAtomsAdaptor
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
@@ -48,6 +50,13 @@ try:
 except ImportError:
     torch, optim, Variable = None, None, None
     cgcnn, cgcnn_data = None, None
+
+# SOAPFeaturizer
+try:
+    import dscribe
+    from dscribe.descriptors import SOAP as SOAP_dscribe
+except ImportError:
+    dscribe, SOAP_dscribe = None, None
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
@@ -3345,3 +3354,161 @@ class JarvisCFID(BaseFeaturizer):
         s = Structure(arr, s.species, coords, coords_are_cartesian=True)
         s.remove_oxidation_states()
         return s
+
+
+class SOAP(BaseFeaturizer):
+    """
+    Smooth overlap of atomic positions (interface via dscribe).
+
+    The smooth overlap of atomic positions descriptors provided by dscribe and
+    SOAPLite. This implementation uses orthogonalized spherical primitive
+    gaussian-type orbitals as the radial basis set to reach a fast analytical
+    solution. Please see the dscribe SOAP documentation for more details.
+
+    Based originally on the following publications:
+
+    "On representing chemical environments, Albert P. Bartók, Risi
+        Kondor, and Gábor Csányi, Phys. Rev. B 87, 184115, (2013),
+        https://doi.org/10.1103/PhysRevB.87.184115
+
+    "Comparing molecules and solids across structural and alchemical
+        space", Sandip De, Albert P. Bartók, Gábor Csányi and Michele Ceriotti,
+        Phys.  Chem. Chem. Phys. 18, 13754 (2016),
+        https://doi.org/10.1039/c6cp00415f
+
+    Implementation (and some documentation) originally based on dscribe:
+    https://github.com/SINGROUP/dscribe. Please see their page for the latest
+    updates.
+
+    Args:
+        r_cut (float): Cutoff radius (>1) for local region, in angstrom.
+        n_max (int): Number of basis functions to be used.
+        l_max (int): Number of l's to be used (spherical harmonic)
+
+        **soap_kwargs: (from dscribe docs)
+                periodic (bool): Determines whether the system is considered to
+                    be periodic.
+                sigma (float): The standard deviation of the gaussians used to
+                    expand the atomic density.
+                rbf (str): The radial basis functions to use. The available
+                    options are:
+                        * "gto": Spherical gaussian type orbitals defined as
+                            :math:`\phi(r) = \\beta r^l e^{-\\alpha r^2}`
+                crossover (bool): Default True, if crossover of atomic types
+                    should be included in the power spectrum.
+                average (bool): Whether to build an average output for all
+                    selected positions. Before averaging the outputs for
+                    individual atoms are normalized.
+                normalize (bool): Whether to normalize the final output.
+                sparse (bool): Whether the output should be a sparse matrix or a
+                    dense numpy array.
+    """
+    @requires(dscribe, "SOAPFeaturizer requires dscribe (packaged with "
+                       "SOAPLite). Install from github.com/SINGROUP/dscribe")
+    def __init__(self, r_cut=3.0, n_max=4, l_max=2, **soap_kwargs):
+        self.r_cut = r_cut
+        self.n_max = n_max
+        self.l_max = l_max
+        self.sigma = soap_kwargs.get("sigma", 1.0)
+        self.rbf = soap_kwargs.get("rbf", "gto")
+        self.periodic = soap_kwargs.get("periodic", True)
+        self.crossover = soap_kwargs.get("crossover", True)
+        self.normalize = soap_kwargs.get("normalize", True)
+        self.average = soap_kwargs.get("average", True)
+        self.sparse = soap_kwargs.get("sparse", False)
+        self.adaptor = AseAtomsAdaptor()
+        self.length = None
+        self.atomic_numbers = None
+        self.soap = None
+
+        if not self.average:
+            raise ValueError("Sitewise SOAP not supported in matminer. Please"
+                             "see the dscribe and SOAPLite documentation for "
+                             "more information. "
+                             "<https://github.com/SINGROUP/dscribe>")
+        if self.sparse:
+            raise ValueError("Sparse matrix SOAP not supported in matminer."
+                             "Please see the dscribe and SOAPLite documentation"
+                             " for more information. "
+                             "<https://github.com/SINGROUP/dscribe>")
+
+    def _check_fitted(self):
+        if not self.soap:
+            raise NotFittedError("Please fit SOAP before featurizing.")
+
+    def fit(self, X, y=None):
+        """
+        Fit the SOAP structure featurizer to a dataframe.
+
+        Args:
+            X ([SiteCollection]): For example, a list of pymatgen Structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
+        elements = []
+        for s in X:
+            c = s.composition.elements
+            for e in c:
+                if e not in elements:
+                    elements.append(e)
+        self.atomic_numbers = [e.Z for e in elements]
+        length = comb(len(self.atomic_numbers) + 1, 2) * \
+                 comb(self.n_max + 1, 2) * \
+                 (self.l_max + 1)
+        self.length = int(length)
+        self.soap = SOAP_dscribe(atomic_numbers=self.atomic_numbers,
+                                 rcut=self.r_cut,
+                                 nmax=self.n_max,
+                                 lmax=self.l_max,
+                                 sigma=self.sigma,
+                                 rbf=self.rbf,
+                                 periodic=self.periodic,
+                                 crossover=self.crossover,
+                                 average=self.average,
+                                 normalize=self.normalize,
+                                 sparse=self.sparse)
+        return self
+
+    def featurize(self, s):
+        self._check_fitted()
+        s_ase = self.adaptor.get_atoms(s)
+        return self.soap.create(s_ase).tolist()[0]
+
+    def feature_labels(self):
+        self._check_fitted()
+        return ["SOAP_{}".format(i) for i in range(self.length)]
+
+    def citations(self):
+        return ["@article{PhysRevB.87.184115,"
+                "title = {On representing chemical environments},"
+                "author = {Bart\'ok, Albert P. and Kondor, Risi and Cs\'anyi, "
+                "G\'abor},"
+                "journal = {Phys. Rev. B},"
+                "volume = {87},"
+                "issue = {18},"
+                "pages = {184115},"
+                "numpages = {16},"
+                "year = {2013},"
+                "month = {May},"
+                "publisher = {American Physical Society},"
+                "doi = {10.1103/PhysRevB.87.184115},"
+                "url = {https://link.aps.org/doi/10.1103/PhysRevB.87.184115}}",
+                "@Article{C6CP00415F,"
+                "author ={De, Sandip and BartÃ³k, Albert P. and CsÃ¡nyi, GÃ¡bor"
+                " and Ceriotti, Michele},"
+                "title  ={Comparing molecules and solids across structural and "
+                "alchemical space},"
+                "journal = {Phys. Chem. Chem. Phys.},"
+                "year = {2016},"
+                "volume = {18},"
+                "issue = {20},"
+                "pages = {13754-13769},"
+                "publisher = {The Royal Society of Chemistry},"
+                "doi = {10.1039/C6CP00415F},"
+                "url = {http://dx.doi.org/10.1039/C6CP00415F},}"]
+
+    def implementors(self):
+        return ["Alex Dunn", "Lauri Himanen"]
+
