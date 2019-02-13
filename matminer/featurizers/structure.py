@@ -534,23 +534,53 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
 class CoulombMatrix(BaseFeaturizer):
     """
-    Generate the Coulomb matrix, a representation of nuclear coulombic interaction.
+    The Coulomb matrix, a representation of nuclear coulombic interaction.
 
-    Generate the Coulomb matrix, M, of the input
-    structure (or molecule).  The Coulomb matrix was put forward by
-    Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-    off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j|
-    and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
-    the nuclear charge and the position of atom i, respectively.
+    Generate the Coulomb matrix, M, of the input structure (or molecule). The
+    Coulomb matrix was put forward by Rupp et al. (Phys. Rev. Lett. 108, 058301,
+    2012) and is defined by off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j| and
+    diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote the nuclear charge
+    and the position of atom i, respectively.
+
+    Coulomb Matrix features are flattened (for ML-readiness) by default. Use
+    fit before featurizing to use flattened features. To return the matrix form,
+    set flatten=False.
 
     Args:
-        diag_elems: (bool) flag indicating whether (True, default) to use
-                    the original definition of the diagonal elements;
-                    if set to False, the diagonal elements are set to zero.
+        diag_elems (bool): flag indication whether (True, default) to use
+            the original definition of the diagonal elements; if set to False,
+            the diagonal elements are set to 0
+        flatten (bool): If True, returns a flattened vector based on eigenvalues
+            of the matrix form. Otherwise, returns a matrix object (single
+            feature), which will likely need to be processed further.
     """
 
-    def __init__(self, diag_elems=True):
+    def __init__(self, diag_elems=True, flatten=True):
         self.diag_elems = diag_elems
+        self.flatten = flatten
+        self._max_eigs = None
+
+    def _check_fitted(self):
+        if self.flatten and not self._max_eigs:
+            raise NotFittedError("Please fit the CoulombMatrix before "
+                                 "featurizing if using flatten=True.")
+
+    def fit(self, X, y=None):
+        """
+        Fit the Coulomb Matrix to a list of structures.
+
+        Args:
+            X ([Structure]): A list of pymatgen structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
+        if self.flatten:
+            n_sites = [structure.num_sites for structure in X]
+            # CM makes sites x sites matrix; max eigvals for n x n matrix is n
+            self._max_eigs = max(n_sites)
+        return self
 
     def featurize(self, s):
         """
@@ -562,27 +592,41 @@ class CoulombMatrix(BaseFeaturizer):
         Returns:
             m: (Nsites x Nsites matrix) Coulomb matrix.
         """
-        m = [[] for site in s.sites]
-        z = []
+        self._check_fitted()
+        m = np.zeros((s.num_sites, s.num_sites))
+        atomic_numbers = []
         for site in s.sites:
             if isinstance(site.specie, Element):
-                z.append(site.specie.Z)
+                atomic_numbers.append(site.specie.Z)
             else:
-                z.append(site.specie.element.Z)
+                atomic_numbers.append(site.specie.element.Z)
         for i in range(s.num_sites):
             for j in range(s.num_sites):
                 if i == j:
                     if self.diag_elems:
-                        m[i].append(0.5 * z[i] ** 2.4)
+                        m[i, j] = 0.5 * atomic_numbers[i] ** 2.4
                     else:
-                        m[i].append(0)
+                        m[i, j] = 0
                 else:
                     d = s.get_distance(i, j) * ANG_TO_BOHR
-                    m[i].append(z[i] * z[j] / d)
-        return [np.array(m)]
+                    m[i, j] = atomic_numbers[i] * atomic_numbers[j] / d
+        cm = np.array(m)
+
+        if self.flatten:
+            eigs, _ = np.linalg.eig(cm)
+            zeros = np.zeros((self._max_eigs,))
+            zeros[:len(eigs)] = eigs
+            return zeros
+        else:
+            return [cm]
 
     def feature_labels(self):
-        return ["coulomb matrix"]
+        self._check_fitted()
+        if self.flatten:
+            return ["coulomb matrix eig {}".format(i) for i in
+                    range(self._max_eigs)]
+        else:
+            return ["coulomb matrix"]
 
     def citations(self):
         return ["@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
@@ -594,7 +638,7 @@ class CoulombMatrix(BaseFeaturizer):
                 " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}"]
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ["Nils E. R. Zimmermann", "Alex Dunn"]
 
 
 class SineCoulombMatrix(BaseFeaturizer):
@@ -608,14 +652,44 @@ class SineCoulombMatrix(BaseFeaturizer):
     sin**2 function of the vector between the sites which is periodic
     in the dimensions of the structure lattice. See paper for details.
 
+    Coulomb Matrix features are flattened (for ML-readiness) by default. Use
+    fit before featurizing to use flattened features. To return the matrix form,
+    set flatten=False.
+
     Args:
         diag_elems (bool): flag indication whether (True, default) to use
-                the original definition of the diagonal elements;
-                if set to False, the diagonal elements are set to 0
+            the original definition of the diagonal elements; if set to False,
+            the diagonal elements are set to 0
+        flatten (bool): If True, returns a flattened vector based on eigenvalues
+            of the matrix form. Otherwise, returns a matrix object (single
+            feature), which will likely need to be processed further.
     """
 
-    def __init__(self, diag_elems=True):
+    def __init__(self, diag_elems=True, flatten=True):
         self.diag_elems = diag_elems
+        self.flatten = flatten
+        self._max_eigs = None
+
+    def _check_fitted(self):
+        if self.flatten and not self._max_eigs:
+            raise NotFittedError("Please fit the SineCoulombMatrix before "
+                                 "featurizing if using flatten=True.")
+
+    def fit(self, X, y=None):
+        """
+        Fit the Sine Coulomb Matrix to a list of structures.
+
+        Args:
+            X ([Structure]): A list of pymatgen structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
+        if self.flatten:
+            nsites = [structure.num_sites for structure in X]
+            self._max_eigs = max(nsites)
+        return self
 
     def featurize(self, s):
         """
@@ -623,37 +697,51 @@ class SineCoulombMatrix(BaseFeaturizer):
             s (Structure or Molecule): input structure (or molecule)
 
         Returns:
-            (Nsites x Nsites matrix) Sine matrix.
+            (Nsites x Nsites matrix) Sine matrix or
         """
+        self._check_fitted()
         sites = s.sites
-        Zs = np.array([site.specie.Z for site in sites])
+        atomic_numbers = np.array([site.specie.Z for site in sites])
         sin_mat = np.zeros((len(sites), len(sites)))
         coords = np.array([site.frac_coords for site in sites])
         lattice = s.lattice.matrix
-        pi = np.pi
 
         for i in range(len(sin_mat)):
             for j in range(len(sin_mat)):
                 if i == j:
                     if self.diag_elems:
-                        sin_mat[i][i] = 0.5 * Zs[i] ** 2.4
+                        sin_mat[i][i] = 0.5 * atomic_numbers[i] ** 2.4
                 elif i < j:
                     vec = coords[i] - coords[j]
-                    coord_vec = np.sin(pi * vec) ** 2
+                    coord_vec = np.sin(np.pi * vec) ** 2
                     trig_dist = np.linalg.norm(
                         (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
-                    sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
+                    sin_mat[i][j] = atomic_numbers[i] * atomic_numbers[j] / \
+                                    trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
-        return [sin_mat]
+        if self.flatten:
+            eigs, _ = np.linalg.eig(sin_mat)
+            zeros = np.zeros((self._max_eigs,))
+            zeros[:len(eigs)] = eigs
+            return zeros
+        else:
+            return [sin_mat]
 
     def feature_labels(self):
-        return ["sine coulomb matrix"]
+        self._check_fitted()
+        if self.flatten:
+            return ["sine coulomb matrix eig {}".format(i) for i in
+                    range(self._max_eigs)]
+        else:
+            return ["sine coulomb matrix"]
 
     def citations(self):
         return ["@article {QUA:QUA24917,"
-                "author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
-                "title = {Crystal structure representations for machine learning models of formation energies},"
+                "author = {Faber, Felix and Lindmaa, Alexander and von "
+                "Lilienfeld, O. Anatole and Armiento, Rickard},"
+                "title = {Crystal structure representations for machine "
+                "learning models of formation energies},"
                 "journal = {International Journal of Quantum Chemistry},"
                 "volume = {115},"
                 "number = {16},"
@@ -661,12 +749,13 @@ class SineCoulombMatrix(BaseFeaturizer):
                 "url = {http://dx.doi.org/10.1002/qua.24917},"
                 "doi = {10.1002/qua.24917},"
                 "pages = {1094--1101},"
-                "keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
+                "keywords = {machine learning, formation energies, "
+                "representations, crystal structure, periodic systems},"
                 "year = {2015},"
                 "}"]
 
     def implementors(self):
-        return ["Kyle Bystrom"]
+        return ["Kyle Bystrom", "Alex Dunn"]
 
 
 class OrbitalFieldMatrix(BaseFeaturizer):
@@ -700,7 +789,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         `Pham et al. _Sci Tech Adv Mat_. 2017 <http://dx.doi.org/10.1080/14686996.2017.1378060>_`
     """
 
-    def __init__(self, period_tag=False, flatten=False):
+    def __init__(self, period_tag=False, flatten=True):
         """Initialize the featurizer
 
         Args:
@@ -1682,7 +1771,8 @@ class BagofBonds(BaseFeaturizer):
     Args:
         coulomb_matrix (BaseFeaturizer): A featurizer object containing a
             "featurize" method which returns a matrix of size nsites x nsites.
-            Good choices are CoulombMatrix() or SineCoulombMatrix()
+            Good choices are CoulombMatrix() or SineCoulombMatrix(), with the
+            flatten=False parameter set.
         token (str): The string used to separate species in a bond, including
             spaces. The token must contain at least one space and cannot have
             alphabetic characters in it, and should be padded by spaces. For
@@ -1691,12 +1781,15 @@ class BagofBonds(BaseFeaturizer):
 
     """
 
-    def __init__(self, coulomb_matrix=CoulombMatrix(), token=' - '):
+    def __init__(self, coulomb_matrix=SineCoulombMatrix(flatten=False),
+                 token=' - '):
         self.coulomb_matrix = coulomb_matrix
         self.token = token
+        self.bag_lens = None
+        self.ordered_bonds = None
 
     def _check_fitted(self):
-        if not hasattr(self, 'baglens') or not hasattr(self, 'ordered_bonds'):
+        if not self.bag_lens or not self.ordered_bonds:
             raise NotFittedError("BagofBonds not fitted to any list of "
                                  "structures! Use the 'fit' method to define "
                                  "the bags and the maximum length of each bag.")
@@ -1716,7 +1809,6 @@ class BagofBonds(BaseFeaturizer):
 
         Returns:
             self
-
         """
         unpadded_bobs = [self.bag(s, return_baglens=True) for s in X]
         bonds = [list(bob.keys()) for bob in unpadded_bobs]
@@ -1728,9 +1820,9 @@ class BagofBonds(BaseFeaturizer):
                 if bond in bob:
                     baglen = bob[bond]
                     baglens[i] = max((baglens[i], baglen))
-        self.baglens = dict(zip(bonds, baglens))
+        self.bag_lens = dict(zip(bonds, baglens))
         # Sort the bags by bag length, with the shortest coming first.
-        self.ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
+        self.ordered_bonds = [b[0] for b in sorted(self.bag_lens.items(),
                                                    key=lambda bl: bl[1])]
         return self
 
@@ -1741,7 +1833,8 @@ class BagofBonds(BaseFeaturizer):
         concatenated, will have different lengths.
 
         Args:
-            s (Structure): A pymatgen Structure or IStructure object.
+            s (Structure): A pymatgen Structure or IStructure object. May also
+                work with a
             return_baglens (bool): If True, returns the bag of bonds with as
                 a dictionary with the number of bonds as values in place
                 of the vectors of coulomb matrix vals. If False, calculates
@@ -1752,10 +1845,6 @@ class BagofBonds(BaseFeaturizer):
                 Site objects representing bonds or sites, and the values are the
                 Coulomb matrix values for that bag.
         """
-        if not isinstance(s, (Structure)):
-            raise TypeError("BagofBonds must take in a pymatgen Structure "
-                            "object, not {}".format(type(s)))
-
         sites = s.sites
         nsites = len(sites)
         bonds = np.zeros((nsites, nsites), dtype=object)
@@ -1811,14 +1900,14 @@ class BagofBonds(BaseFeaturizer):
         self._check_fitted()
         unpadded_bob = self.bag(s)
         padded_bob = {bag: [0.0] * int(length) for bag, length in
-                      self.baglens.items()}
+                      self.bag_lens.items()}
 
         for bond in unpadded_bob:
-            if bond not in list(self.baglens.keys()):
+            if bond not in list(self.bag_lens.keys()):
                 raise ValueError("{} is not in the fitted "
                                  "bonds/sites!".format(bond))
             baglen_s = len(unpadded_bob[bond])
-            baglen_fit = self.baglens[bond]
+            baglen_fit = self.bag_lens[bond]
 
             if baglen_s > baglen_fit:
                 raise ValueError("The bond {} has more entries than was "
@@ -1844,7 +1933,7 @@ class BagofBonds(BaseFeaturizer):
                 basename = str(bag[0]) + " site #"
             else:
                 basename = str(bag[0]) + self.token + str(bag[1]) + " bond #"
-            bls = [basename + str(i) for i in range(self.baglens[bag])]
+            bls = [basename + str(i) for i in range(self.bag_lens[bag])]
             labels += bls
         return labels
 

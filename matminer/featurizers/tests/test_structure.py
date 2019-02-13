@@ -254,35 +254,71 @@ class StructureFeaturesTest(PymatgenTest):
             d["distances"]) - 1]), 7275)
 
     def test_coulomb_matrix(self):
+        # flat
+        cm = CoulombMatrix(flatten=True)
+        df = pd.DataFrame({"s": [self.diamond, self.nacl]})
+        with self.assertRaises(NotFittedError):
+            df = cm.featurize_dataframe(df, "s")
+        df = cm.fit_featurize_dataframe(df, "s")
+        labels = cm.feature_labels()
+        self.assertListEqual(labels,
+                             ["coulomb matrix eig 0", "coulomb matrix eig 1"])
+        self.assertArrayAlmostEqual(df[labels].iloc[0],
+                                    [49.169453, 24.546758],
+                                    decimal=5)
+        self.assertArrayAlmostEqual(df[labels].iloc[1],
+                                    [153.774731, 452.894322],
+                                    decimal=5)
+
+        # matrix
         species = ["C", "C", "H", "H"]
         coords = [[0, 0, 0], [0, 0, 1.203], [0, 0, -1.06], [0, 0, 2.263]]
         acetylene = Molecule(species, coords)
-        morig = CoulombMatrix().featurize(acetylene)
+        morig = CoulombMatrix(flatten=False).featurize(acetylene)
         mtarget = [[36.858, 15.835391290, 2.995098235, 1.402827813], \
                    [15.835391290, 36.858, 1.4028278132103624, 2.9950982], \
                    [2.9368896127, 1.402827813, 0.5, 0.159279959], \
                    [1.4028278132, 2.995098235, 0.159279959, 0.5]]
         self.assertAlmostEqual(
             int(np.linalg.norm(morig - np.array(mtarget))), 0)
-        m = CoulombMatrix(False).featurize(acetylene)[0]
+        m = CoulombMatrix(diag_elems=False,
+                          flatten=False).featurize(acetylene)[0]
         self.assertAlmostEqual(m[0][0], 0.0)
         self.assertAlmostEqual(m[1][1], 0.0)
         self.assertAlmostEqual(m[2][2], 0.0)
         self.assertAlmostEqual(m[3][3], 0.0)
 
     def test_sine_coulomb_matrix(self):
-        scm = SineCoulombMatrix()
+        # flat
+        scm = SineCoulombMatrix(flatten=True)
+        df = pd.DataFrame({"s": [self.sc, self.ni3al]})
+        with self.assertRaises(NotFittedError):
+            df = scm.featurize_dataframe(df, "s")
+        df = scm.fit_featurize_dataframe(df, "s")
+        labels = scm.feature_labels()
+        self.assertEqual(labels[0], "sine coulomb matrix eig 0")
+        self.assertArrayAlmostEqual(
+            df[labels].iloc[0],
+            [235.740418, 0.0, 0.0, 0.0],
+            decimal=5)
+        self.assertArrayAlmostEqual(
+            df[labels].iloc[1],
+            [232.578562, 1656.288171, 1403.106576, 1403.106576],
+            decimal=5)
+
+        # matrix
+        scm = SineCoulombMatrix(flatten=False)
         sin_mat = scm.featurize(self.diamond)
         mtarget = [[36.8581, 6.147068], [6.147068, 36.8581]]
         self.assertAlmostEqual(
             np.linalg.norm(sin_mat - np.array(mtarget)), 0.0, places=4)
-        scm = SineCoulombMatrix(False)
+        scm = SineCoulombMatrix(diag_elems=False, flatten=False)
         sin_mat = scm.featurize(self.diamond)[0]
         self.assertEqual(sin_mat[0][0], 0)
         self.assertEqual(sin_mat[1][1], 0)
 
     def test_orbital_field_matrix(self):
-        ofm_maker = OrbitalFieldMatrix()
+        ofm_maker = OrbitalFieldMatrix(flatten=False)
         ofm = ofm_maker.featurize(self.diamond)[0]
         mtarget = np.zeros((32, 32))
         mtarget[1][1] = 1.4789015  # 1.3675444
@@ -297,7 +333,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(
             np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
-        ofm_maker = OrbitalFieldMatrix(True)
+        ofm_maker = OrbitalFieldMatrix(True, flatten=False)
         ofm = ofm_maker.featurize(self.diamond)[0]
         mtarget = np.zeros((39, 39))
         mtarget[1][1] = 1.4789015
@@ -445,7 +481,8 @@ class StructureFeaturesTest(PymatgenTest):
     def test_bob(self):
 
         # Test a single fit and featurization
-        bob = BagofBonds(coulomb_matrix=SineCoulombMatrix(), token=' - ')
+        scm = SineCoulombMatrix(flatten=False)
+        bob = BagofBonds(coulomb_matrix=scm, token=' - ')
         bob.fit([self.ni3al])
         truth1 = [235.74041833262768, 1486.4464890775491, 1486.4464890775491,
                   1486.4464890775491, 38.69353092306119, 38.69353092306119,
@@ -464,7 +501,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(bob.feature_labels(), truth1_labels)
 
         # Test padding from fitting and dataframe featurization
-        bob.coulomb_matrix = CoulombMatrix()
+        bob.coulomb_matrix = CoulombMatrix(flatten=False)
         bob.fit([self.ni3al, self.cscl, self.diamond_no_oxi])
         df = pd.DataFrame({'structures': [self.cscl]})
         df = bob.featurize_dataframe(df, 'structures')
@@ -475,7 +512,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df['Al - Ni bond #0'][0], 0.0)
 
         # Test error handling for bad fits or null fits
-        bob = BagofBonds()
+        bob = BagofBonds(CoulombMatrix(flatten=False))
         self.assertRaises(NotFittedError, bob.featurize, self.nacl)
         bob.fit([self.ni3al, self.diamond])
         self.assertRaises(ValueError, bob.featurize, self.nacl)\
@@ -817,7 +854,6 @@ class StructureFeaturesTest(PymatgenTest):
         df = soap.featurize_dataframe(df, "s", inplace=False)
         self.assertTupleEqual(df.shape, (3, 451))
         self.assertAlmostEqual(df["SOAP_449"].iloc[1], 0.005192, places=5)
-
 
 if __name__ == '__main__':
     unittest.main()
