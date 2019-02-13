@@ -21,6 +21,12 @@ class MDFDataRetrieval(BaseDataRetrieval):
 
         >>>results = mdf_dr.get_dataframe({"source_names": ["oqmd"],
         >>>          "match_ranges": {"oqmd.band_gap.value": [4.0, "*"]}})
+
+    If you use this data retrieval class, please additionally cite:
+    Blaiszik, B., Chard, K., Pruyne, J., Ananthakrishnan, R., Tuecke, S.,
+    Foster, I., 2016. The Materials Data Facility: Data Services to Advance
+    Materials Science Research. JOM 68, 2045–2052.
+    https://doi.org/10.1007/s11837-016-2001-3
     """
 
     def __init__(self, anonymous=False, **kwargs):

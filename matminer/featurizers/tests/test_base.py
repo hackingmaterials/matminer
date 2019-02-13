@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, division, print_function
 
+import os
 import unittest
 import pandas as pd
 import numpy as np
@@ -395,6 +396,7 @@ class TestBaseClass(PymatgenTest):
                                                    ("Custom", "Custom2", 'x'),
                                                    multiindex=True)
 
+    @unittest.skipIf(os.environ['CI'] == 'circle', "We skip this test when running circleci")
     def test_caching(self):
         """Test whether MultiFeaturizer properly caches """
 

@@ -24,7 +24,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     SineCoulombMatrix, OrbitalFieldMatrix, GlobalSymmetryFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
-    Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID
+    Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID, \
+    SOAP
 
 # For the CGCNNFeaturizer
 try:
@@ -834,6 +835,25 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(fvec[-1], 24, places=3)
         self.assertAlmostEqual(fvec[0], 0, places=3)
 
+    def test_SOAP(self):
+        # Test individual samples
+        soap = SOAP(n_max=4, l_max=2, r_cut=3.0)
+        soap.fit([self.diamond])
+        v = soap.featurize(self.diamond)
+        self.assertEqual(len(v), 30)
+        self.assertAlmostEqual(v[0], 0.00150121, places=6)
+
+        soap.fit([self.ni3al])
+        v = soap.featurize(self.ni3al)
+        self.assertEqual(len(v), 90)
+        self.assertAlmostEqual(v[0], 0.0001772097, places=6)
+
+        # Test dataframe fitting
+        df = pd.DataFrame({"s": [self.diamond, self.ni3al, self.nacl]})
+        soap.fit(df["s"])
+        df = soap.featurize_dataframe(df, "s", inplace=False)
+        self.assertTupleEqual(df.shape, (3, 451))
+        self.assertAlmostEqual(df["SOAP_449"].iloc[1], 0.005192, places=5)
 
 if __name__ == '__main__':
     unittest.main()

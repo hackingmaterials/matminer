@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.data_retrieval package &#8212; matminer 0.5.0 documentation</title>
+    <title>matminer.data_retrieval package &#8212; matminer 0.5.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -39,8 +39,29 @@
             
   <div class="section" id="matminer-data-retrieval-package">
 <h1>matminer.data_retrieval package<a class="headerlink" href="#matminer-data-retrieval-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="matminer.data_retrieval.tests.html">matminer.data_retrieval.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#matminer-data-retrieval-tests-test-retrieve-aflow-module">matminer.data_retrieval.tests.test_retrieve_AFLOW module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_Citrine">matminer.data_retrieval.tests.test_retrieve_Citrine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MDF">matminer.data_retrieval.tests.test_retrieve_MDF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MP">matminer.data_retrieval.tests.test_retrieve_MP module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#matminer-data-retrieval-tests-test-retrieve-mpds-module">matminer.data_retrieval.tests.test_retrieve_MPDS module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MongoDB">matminer.data_retrieval.tests.test_retrieve_MongoDB module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="matminer-data-retrieval-retrieve-aflow-module">
+<h2>matminer.data_retrieval.retrieve_AFLOW module<a class="headerlink" href="#matminer-data-retrieval-retrieve-aflow-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-matminer.data_retrieval.retrieve_Citrine">
 <span id="matminer-data-retrieval-retrieve-citrine-module"></span><h2>matminer.data_retrieval.retrieve_Citrine module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_Citrine" title="Permalink to this headline">¶</a></h2>
@@ -166,6 +187,11 @@ keyword arg.</p>
 &gt;&gt;&gt;          “match_ranges”: {“oqmd.band_gap.value”: [4.0, “*”]}})</p>
 </dd>
 </dl>
+<p>If you use this data retrieval class, please additionally cite:
+Blaiszik, B., Chard, K., Pruyne, J., Ananthakrishnan, R., Tuecke, S.,
+Foster, I., 2016. The Materials Data Facility: Data Services to Advance
+Materials Science Research. JOM 68, 2045–2052.
+<a class="reference external" href="https://doi.org/10.1007/s11837-016-2001-3">https://doi.org/10.1007/s11837-016-2001-3</a></p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>anonymous=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
@@ -274,6 +300,13 @@ results with band gap higher than 3.</dd>
 <em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MP.</code><code class="descname">MPDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
 <p>Retrieves data from the Materials Project database.</p>
+<p>If you use this data retrieval class, please additionally cite:</p>
+<p>Ong, S.P., Cholia, S., Jain, A., Brafman, M., Gunter, D., Ceder, G.,
+Persson, K.A., 2015. The Materials Application Programming Interface
+(API): A simple, flexible and efficient API for materials data based on
+REpresentational State Transfer (REST) principles. Computational
+Materials Science 97, 209–215.
+<a class="reference external" href="https://doi.org/10.1016/j.commatsci.2014.10.037">https://doi.org/10.1016/j.commatsci.2014.10.037</a></p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
@@ -554,7 +587,9 @@ criteria.</p>
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">matminer.data_retrieval package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#matminer-data-retrieval-retrieve-aflow-module">matminer.data_retrieval.retrieve_AFLOW module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_Citrine">matminer.data_retrieval.retrieve_Citrine module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MDF">matminer.data_retrieval.retrieve_MDF module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MP">matminer.data_retrieval.retrieve_MP module</a></li>
@@ -598,7 +633,7 @@ criteria.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 

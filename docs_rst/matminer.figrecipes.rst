@@ -1,6 +1,13 @@
 matminer.figrecipes package
 ===========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    matminer.figrecipes.tests
+
 Submodules
 ----------
 
