@@ -59,7 +59,8 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
                 downloaded as pymatgen objects. Each file download is collected
                 by a seperate HTTP request (read slow). The default behavior is
                 to return none of these objects. Supported files:
-                    "structure" - the relaxed structure
+                    "prototype_structure" - the prototype structure
+                    "input_structure" - the input structure
                     "band_structure" - TODO
                     "dos" - TODO
             request_size: (int) Number of results to return per HTTP request.

@@ -377,6 +377,79 @@ class Hybridization(BaseFeaturizer):
         return ['Alireza Faghaninia', 'Anubhav Jain', 'Maxwell Dylla']
 
 
+class DosAsymmetry(BaseFeaturizer):
+    """Quantifies the asymmetry of the DOS near the Fermi level.
+
+    The DOS asymmetry is defined the natural logarithm of the quotient of the
+    total DOS above the Fermi level and the total DOS below the Fermi level. A
+    positive number indicates that there are more states directly above the
+    Fermi level than below the Fermi level. This featurizer is only meant for
+    metals and semi-metals.
+
+    Args:
+        decay_length (float in eV):
+            The dos is sampled by an exponential decay function. this parameter
+            sets the decay length of the exponential. Three times the decay
+            length corresponds to 10% sampling strength. There is a hard cutoff
+            at five times the decay length (1% sampling strength)
+        sampling_resolution (int):
+            Number of points to sample DOS
+        gaussian_smear (float in eV):
+            Gaussian smearing (sigma) around each sampled point in the DOS
+    """
+    def __init__(self, decay_length=0.5, sampling_resolution=100,
+                 gaussian_smear=0.05):
+        self.decay_length = decay_length
+        self.sampling_resolution = sampling_resolution
+        self.gaussian_smear = gaussian_smear
+
+    def featurize(self, dos):
+        """Calculates the DOS asymmetry.
+
+        Args:
+            dos (Dos): A pymatgen Dos object.
+
+        Returns:
+            A float describing the asymmetry of the DOS.
+        """
+
+        # smears dos for spin up and down
+        smear_dos = dos.get_smeared_densities(self.gaussian_smear)
+        dos_up = smear_dos[Spin.up]
+        dos_down = smear_dos[Spin.down] if Spin.down in smear_dos \
+            else smear_dos[Spin.up]
+        dos_total = [sum(id) for id in zip(dos_up, dos_down)]
+
+        # determines energy range to sample
+        energies = [e for e in dos.energies]
+        vbm_space = np.linspace(dos.efermi,
+                                dos.efermi - (5. * self.decay_length),
+                                num=self.sampling_resolution)
+        cbm_space = np.linspace(dos.efermi,
+                                dos.efermi + (5. * self.decay_length),
+                                num=self.sampling_resolution)
+
+        # accumulates dos score over energy ranges
+        vbm_score = 0
+        for e in vbm_space:
+            vbm_score += (np.interp(e, energies, dos_total) *
+                          np.exp(-(dos.efermi - e) * self.decay_length))
+        cbm_score = 0
+        for e in cbm_space:
+            cbm_score += (np.interp(e, energies, dos_total) *
+                          np.exp(-(e - dos.efermi) * self.decay_length))
+
+        return np.log(cbm_score / vbm_score)
+
+    def feature_labels(self):
+        """Returns the labels for each of the features.
+        """
+        return ['dos_asymmetry']
+
+    def implementors(self):
+        return ['Maxwell Dylla']
+
+
 def get_cbm_vbm_scores(dos, decay_length, sampling_resolution, gaussian_smear):
     """
     Quantifies the contribution of all atomic orbitals (s/p/d/f) from all
