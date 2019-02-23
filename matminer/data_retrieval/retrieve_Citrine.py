@@ -42,7 +42,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
         """
         if api_key:
             api_key = api_key
-        elif os.environ["CITRINATION_API_KEY"]:
+        elif os.environ.get("CITRINATION_API_KEY"):
             api_key = os.environ["CITRINATION_API_KEY"]
         else:
             api_key = os.environ["CITRINE_KEY"]
