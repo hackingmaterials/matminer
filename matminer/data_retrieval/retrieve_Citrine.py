@@ -40,7 +40,13 @@ class CitrineDataRetrieval(BaseDataRetrieval):
             api_key: (str) Your Citrine API key, or None if
                 you've set the CITRINE_KEY environment variable
         """
-        api_key = api_key if api_key else os.environ["CITRINE_KEY"]
+        if api_key:
+            api_key = api_key
+        elif os.environ["CITRINATION_API_KEY"]:
+            api_key = os.environ["CITRINATION_API_KEY"]
+        else:
+            api_key = os.environ["CITRINE_KEY"]
+            
         self.client = CitrinationClient(api_key, "https://citrination.com")
 
     def api_link(self):
