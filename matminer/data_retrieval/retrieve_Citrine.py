@@ -11,9 +11,8 @@ from pandas.io.json import json_normalize
 import numpy as np
 from collections import Counter
 
-
 __author__ = ['Saurabh Bajaj <sbajaj@lbl.gov>',
-             'Alireza Faghaninia <alireza.faghaninia@gmail.com>']
+              'Alireza Faghaninia <alireza.faghaninia@gmail.com>']
 
 
 def parse_scalars(scalars):
@@ -34,6 +33,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
     CitrineDataRetrieval is used to retrieve data from the Citrination database
     See API client docs at api_link below.
     """
+
     def __init__(self, api_key=None):
         """
         Args:
@@ -46,7 +46,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
             api_key = os.environ["CITRINATION_API_KEY"]
         else:
             api_key = os.environ["CITRINE_KEY"]
-            
+
         self.client = CitrinationClient(api_key, "https://citrination.com")
 
     def api_link(self):
@@ -103,8 +103,10 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                     if "properties" in system_value:
                         p_df = pd.DataFrame()
                         # Rename duplicate property names in a record with progressive numbering
-                        all_prop_names = [x["name"] for x in system_value["properties"]]
-                        counts = {k: v for k, v in Counter(all_prop_names).items() if v > 1}
+                        all_prop_names = [x["name"] for x in
+                                          system_value["properties"]]
+                        counts = {k: v for k, v in
+                                  Counter(all_prop_names).items() if v > 1}
                         for i in reversed(range(len(all_prop_names))):
                             item = all_prop_names[i]
                             if item in counts and counts[item]:
@@ -112,24 +114,33 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                                 counts[item] -= 1
 
                         # add each property, and its associated fields, as a new column
-                        for p_idx, prop in enumerate(system_value["properties"]):
+                        for p_idx, prop in enumerate(
+                                system_value["properties"]):
                             # Rename property name according to above duplicate numbering
                             prop["name"] = all_prop_names[p_idx]
                             if "scalars" in prop:
-                                p_df.at[counter, prop["name"]] = parse_scalars(prop["scalars"])
+                                p_df.at[counter, prop["name"]] = parse_scalars(
+                                    prop["scalars"])
                             elif "vectors" in prop:
                                 p_df[prop["name"]] = prop["vectors"]
                             elif "matrices" in prop:
                                 p_df[prop["name"]] = prop["matrices"]
                             # parse all keys in the Property object except 'name', 'scalars', 'vectors', and 'matrices'
                             for prop_key in prop:
-                                if prop_key not in ["name", "scalars", "vectors", "matrices"]:
+                                if prop_key not in ["name", "scalars",
+                                                    "vectors", "matrices"]:
                                     # If value is a list of multiple items, set the cell to the entire list by first
-                                    if isinstance(prop[prop_key], list) and len(prop[prop_key])>1:
-                                        p_df[prop["name"] + "-" + prop_key] = np.nan
+                                    if isinstance(prop[prop_key], list) and len(
+                                            prop[prop_key]) > 1:
+                                        p_df[prop[
+                                                 "name"] + "-" + prop_key] = np.nan
                                         p_df[prop["name"] + "-" + prop_key] = \
-                                            p_df[prop["name"] + "-" + prop_key].astype(object)
-                                    p_df.at[counter, prop["name"] + "-" + prop_key] = prop[prop_key]
+                                            p_df[prop[
+                                                     "name"] + "-" + prop_key].astype(
+                                                object)
+                                    p_df.at[counter, prop[
+                                        "name"] + "-" + prop_key] = prop[
+                                        prop_key]
                         p_df.index = [counter]
                         prop_df = prop_df.append(p_df)
             df_prop = pd.concat([non_prop_df, prop_df], axis=1)
@@ -152,13 +163,15 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                 else:
                     uid = []
                 try:
-                    if len(uid+common_fields) > 0:
-                        df = df.merge(df_prop, on=uid+common_fields, how="outer")
+                    if len(uid + common_fields) > 0:
+                        df = df.merge(df_prop, on=uid + common_fields,
+                                      how="outer")
                     else:
                         df = df.join(df_prop, how="outer")
                 except (TypeError, KeyError):
                     raise TypeError('Use scalar/string fields for common_fields'
-                                    'common_fields among: {}'.format(optcomcols))
+                                    'common_fields among: {}'.format(
+                        optcomcols))
         uninformative_columns = ["category", "uid"]
         optcomcols = [c for c in optcomcols if c not in uninformative_columns]
         for col in uninformative_columns:
@@ -170,8 +183,8 @@ class CitrineDataRetrieval(BaseDataRetrieval):
         return df
 
     def get_data(self, formula=None, prop=None, data_type=None,
-                     reference=None, min_measurement=None, max_measurement=None,
-                     from_record=None, data_set_id=None, max_results=None):
+                 reference=None, min_measurement=None, max_measurement=None,
+                 from_record=None, data_set_id=None, max_results=None):
         """
         Gets raw api data from Citrine in json format. See api_link for more
         information on input parameters
@@ -204,10 +217,13 @@ class CitrineDataRetrieval(BaseDataRetrieval):
         # Construct all of the relevant queries from input args
         formula_query = ChemicalFieldQuery(filter=ChemicalFilter(equal=formula))
         prop_query = PropertyQuery(name=FieldQuery(filter=Filter(equal=prop)),
-                                   value=FieldQuery(filter=Filter(min=min_measurement,
-                                                                  max=max_measurement)),
-                                   data_type=FieldQuery(filter=Filter(equal=data_type)))
-        ref_query = ReferenceQuery(doi=FieldQuery(filter=Filter(equal=reference)))
+                                   value=FieldQuery(
+                                       filter=Filter(min=min_measurement,
+                                                     max=max_measurement)),
+                                   data_type=FieldQuery(
+                                       filter=Filter(equal=data_type)))
+        ref_query = ReferenceQuery(
+            doi=FieldQuery(filter=Filter(equal=reference)))
 
         system_query = PifSystemQuery(chemical_formula=formula_query,
                                       properties=prop_query,
@@ -227,7 +243,8 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                                                     size=per_page)
 
             # Check if any results found
-            if "hits" not in self.client.search.pif_search(pif_query).as_dictionary():
+            if "hits" not in self.client.search.pif_search(
+                    pif_query).as_dictionary():
                 raise KeyError("No results found!")
 
             data = self.client.search.pif_search(pif_query).as_dictionary()["hits"]
