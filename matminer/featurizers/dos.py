@@ -378,7 +378,8 @@ class Hybridization(BaseFeaturizer):
 
 
 class DosAsymmetry(BaseFeaturizer):
-    """Quantifies the asymmetry of the DOS near the Fermi level.
+    """
+    Quantifies the asymmetry of the DOS near the Fermi level.
 
     The DOS asymmetry is defined the natural logarithm of the quotient of the
     total DOS above the Fermi level and the total DOS below the Fermi level. A
