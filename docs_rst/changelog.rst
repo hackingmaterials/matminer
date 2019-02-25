@@ -5,6 +5,16 @@
 matminer Changelog
 ==================
 
+**v0.5.3**
+
+* fix typo bug that got introduced in 0.5.2 pypi release
+
+**v0.5.2**
+
+* better flattening for ColoumbMatrix featurizers, making them more usable (A. Dunn)
+* SOAP featurizer using the dscribe package (A. Dunn)
+* DosAsymmetry featurizer (M. Dylla)
+
 **v0.5.1**
 
 * AFLOW data retrieval (M. Dylla)
