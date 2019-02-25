@@ -18,7 +18,8 @@ from matminer.featurizers.base import BaseFeaturizer
 
 
 class ConversionFeaturizer(BaseFeaturizer):
-    """Abstract class to perform data conversions.
+    """
+    Abstract class to perform data conversions.
 
     Featurizers subclassing this class do not produce machine learning-ready
     features but instead are used to pre-process data. As Featurizers,
@@ -100,7 +101,8 @@ class ConversionFeaturizer(BaseFeaturizer):
 
 
 class StrToComposition(ConversionFeaturizer):
-    """Utility featurizer to convert a string to a Composition
+    """
+    Utility featurizer to convert a string to a Composition
 
     The expected input is a composition in string form (e.g. "Fe2O3").
 
@@ -158,7 +160,8 @@ class StrToComposition(ConversionFeaturizer):
 
 
 class StructureToComposition(ConversionFeaturizer):
-    """Utility featurizer to convert a Structure to a Composition.
+    """
+    Utility featurizer to convert a Structure to a Composition.
 
     The expected input is a `pymatgen.core.structure.Structure` object.
 
@@ -215,7 +218,8 @@ class StructureToComposition(ConversionFeaturizer):
 
 
 class StructureToIStructure(ConversionFeaturizer):
-    """Utility featurizer to convert a Structure to an immutable IStructure.
+    """
+    Utility featurizer to convert a Structure to an immutable IStructure.
 
     This is useful if you are using features that employ caching.
 
@@ -268,7 +272,8 @@ class StructureToIStructure(ConversionFeaturizer):
 
 
 class DictToObject(ConversionFeaturizer):
-    """Utility featurizer to decode a dict to Python object via MSON.
+    """
+    Utility featurizer to decode a dict to Python object via MSON.
 
     Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
@@ -317,7 +322,8 @@ class DictToObject(ConversionFeaturizer):
 
 
 class JsonToObject(ConversionFeaturizer):
-    """Utility featurizer to decode json data to a Python object via MSON.
+    """
+    Utility featurizer to decode json data to a Python object via MSON.
 
     Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
@@ -365,7 +371,8 @@ class JsonToObject(ConversionFeaturizer):
 
 
 class StructureToOxidStructure(ConversionFeaturizer):
-    """Utility featurizer to add oxidation states to a pymatgen Structure.
+    """
+    Utility featurizer to add oxidation states to a pymatgen Structure.
 
     Oxidation states are determined using pymatgen's guessing routines.
     The expected input is a `pymatgen.core.structure.Structure` object.
@@ -434,7 +441,8 @@ class StructureToOxidStructure(ConversionFeaturizer):
 
 
 class CompositionToOxidComposition(ConversionFeaturizer):
-    """Utility featurizer to add oxidation states to a pymatgen Composition.
+    """
+    Utility featurizer to add oxidation states to a pymatgen Composition.
 
     Oxidation states are determined using pymatgen's guessing routines.
     The expected input is a `pymatgen.core.composition.Composition` object.
