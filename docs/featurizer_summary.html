@@ -13,6 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -160,6 +161,50 @@
 </table>
 </div>
 </div>
+<div class="section" id="conversions">
+<h2>conversions<a class="headerlink" href="#conversions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="conversion-utilities">
+<h3>Conversion utilities.<a class="headerlink" href="#conversion-utilities" title="Permalink to this headline">¶</a></h3>
+<p>(matminer.featurizers.conversions)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">ConversionFeaturizer</span></code></td>
+<td>Abstract class to perform data conversions. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.ConversionFeaturizer">[more]</a></td>
+</tr>
+<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">StrToComposition</span></code></td>
+<td>Utility featurizer to convert a string to a Composition <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StrToComposition">[more]</a></td>
+</tr>
+<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">StructureToComposition</span></code></td>
+<td>Utility featurizer to convert a Structure to a Composition. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StructureToComposition">[more]</a></td>
+</tr>
+<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">StructureToIStructure</span></code></td>
+<td>Utility featurizer to convert a Structure to an immutable IStructure. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StructureToIStructure">[more]</a></td>
+</tr>
+<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">DictToObject</span></code></td>
+<td>Utility featurizer to decode a dict to Python object via MSON. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.DictToObject">[more]</a></td>
+</tr>
+<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">JsonToObject</span></code></td>
+<td>Utility featurizer to decode json data to a Python object via MSON. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.JsonToObject">[more]</a></td>
+</tr>
+<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">StructureToOxidStructure</span></code></td>
+<td>Utility featurizer to add oxidation states to a pymatgen Structure. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StructureToOxidStructure">[more]</a></td>
+</tr>
+<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">CompositionToOxidComposition</span></code></td>
+<td>Utility featurizer to add oxidation states to a pymatgen Composition. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.CompositionToOxidComposition">[more]</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="section" id="dos">
 <h2>dos<a class="headerlink" href="#dos" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="features-based-on-a-material-s-electronic-density-of-states">
@@ -187,6 +232,9 @@
 </tr>
 <tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">Hybridization</span></code></td>
 <td>quantify s/p/d/f orbital character and their hybridizations at band edges <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.Hybridization">[more]</a></td>
+</tr>
+<tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">DosAsymmetry</span></code></td>
+<td>Quantifies the asymmetry of the DOS near the Fermi level. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DosAsymmetry">[more]</a></td>
 </tr>
 </tbody>
 </table>
@@ -318,7 +366,7 @@
 <td>Calculate the inherent electronic radial distribution function (ReDF) <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.ElectronicRadialDistributionFunction">[more]</a></td>
 </tr>
 <tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">CoulombMatrix</span></code></td>
-<td>Generate the Coulomb matrix, a representation of nuclear coulombic interaction. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.CoulombMatrix">[more]</a></td>
+<td>The Coulomb matrix, a representation of nuclear coulombic interaction. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.CoulombMatrix">[more]</a></td>
 </tr>
 <tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">SineCoulombMatrix</span></code></td>
 <td>A variant of the Coulomb matrix developed for periodic crystals. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.SineCoulombMatrix">[more]</a></td>
@@ -362,6 +410,9 @@
 <tr class="row-even"><td><code class="code docutils literal notranslate"><span class="pre">JarvisCFID</span></code></td>
 <td>Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML. <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.JarvisCFID">[more]</a></td>
 </tr>
+<tr class="row-odd"><td><code class="code docutils literal notranslate"><span class="pre">SOAP</span></code></td>
+<td>Smooth overlap of atomic positions (interface via dscribe). <a class="reference external" href="https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.SOAP">[more]</a></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -387,6 +438,10 @@
 </li>
 <li><a class="reference internal" href="#composition">composition</a><ul>
 <li><a class="reference internal" href="#features-based-on-a-material-s-composition">Features based on a material’s composition.</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#conversions">conversions</a><ul>
+<li><a class="reference internal" href="#conversion-utilities">Conversion utilities.</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#dos">dos</a><ul>
@@ -447,7 +502,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
     </div>
 
   </body>

@@ -24,7 +24,7 @@ mod_summs = {"structure": "Generating features based on a material's crystal str
              "composition": "Features based on a material's composition.\n",
              "function": "Classes for expanding sets of features calculated with other featurizers.\n",
              "bandstructure": "Features derived from a material's electronic bandstructure.\n",
-             "conversions": "Conversion utilities."}
+             "conversions": "Conversion utilities.\n"}
 
 url_base = " `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#"
 
