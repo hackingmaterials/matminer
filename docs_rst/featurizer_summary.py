@@ -28,6 +28,7 @@ mod_summs = {"structure": "Generating features based on a material's crystal str
 
 url_base = " `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#"
 
+
 def generate_tables():
     """
     Generate nicely formatted tables of all features in RST format.
