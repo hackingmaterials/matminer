@@ -10,6 +10,7 @@ from matminer.featurizers import structure
 from matminer.featurizers import dos
 from matminer.featurizers import bandstructure
 from matminer.featurizers import function
+from matminer.featurizers import conversions
 from matminer.featurizers.base import BaseFeaturizer
 
 __authors__ = 'Alex Dunn <ardunn@lbl.gov>'
@@ -23,7 +24,7 @@ mod_summs = {"structure": "Generating features based on a material's crystal str
              "composition": "Features based on a material's composition.\n",
              "function": "Classes for expanding sets of features calculated with other featurizers.\n",
              "bandstructure": "Features derived from a material's electronic bandstructure.\n",
-             "conversion": "Conversion utilities."}
+             "conversions": "Conversion utilities."}
 
 url_base = " `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#"
 
@@ -44,7 +45,9 @@ def generate_tables():
             "tables grouped by module.\n"
     tables = [mmfeat, mmdes]
     subclasses = []
-    for sc in BaseFeaturizer.__subclasses__() + [BaseFeaturizer]:
+    scnames = BaseFeaturizer.__subclasses__() + [BaseFeaturizer]
+    scnames += conversions.ConversionFeaturizer.__subclasses__()
+    for sc in scnames:
         scdict = {"name": sc.__name__}
         scdict["doc"] = sc.__doc__.splitlines()[1].lstrip()
         scdict["module"] = sc.__module__
