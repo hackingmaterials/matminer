@@ -207,19 +207,15 @@ class CationProperty(ElementProperty):
     def from_preset(cls, preset_name):
         if preset_name == "deml":
             data_source = "deml"
-            features = ["total_ioniz", "xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]
+            features = ["total_ioniz", "xtal_field_split", "magn_moment",
+                        "so_coupling", "sat_magn"]
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
-            raise ValueError('Preset "%s" not found'%preset_name)
+            raise ValueError('Preset "%s" not found' % preset_name)
         return cls(data_source, features, stats)
 
     def feature_labels(self):
-        labels = []
-        for attr in self.features:
-            for stat in self.stats:
-                labels.append("%s %s of cations"%(stat, attr))
-
-        return labels
+        return [f + " of cations" for f in super().feature_labels()]
 
     def featurize(self, comp):
         # Check if oxidation states are present
