@@ -39,47 +39,47 @@ class CompositionFeaturesTest(PymatgenTest):
 
     def test_elem(self):
         df_elem = ElementProperty.from_preset("magpie").featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elem["minimum Number"][0], 8)
-        self.assertAlmostEqual(df_elem["maximum Number"][0], 26)
-        self.assertAlmostEqual(df_elem["range Number"][0], 18)
-        self.assertAlmostEqual(df_elem["mean Number"][0], 15.2)
-        self.assertAlmostEqual(df_elem["avg_dev Number"][0], 8.64)
-        self.assertAlmostEqual(df_elem["mode Number"][0], 8)
+        self.assertAlmostEqual(df_elem["MagpieData minimum Number"][0], 8)
+        self.assertAlmostEqual(df_elem["MagpieData maximum Number"][0], 26)
+        self.assertAlmostEqual(df_elem["MagpieData range Number"][0], 18)
+        self.assertAlmostEqual(df_elem["MagpieData mean Number"][0], 15.2)
+        self.assertAlmostEqual(df_elem["MagpieData avg_dev Number"][0], 8.64)
+        self.assertAlmostEqual(df_elem["MagpieData mode Number"][0], 8)
 
     def test_elem_deml(self):
         df_elem_deml = ElementProperty.from_preset("deml").featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elem_deml["minimum atom_num"][0], 8)
-        self.assertAlmostEqual(df_elem_deml["maximum atom_num"][0], 26)
-        self.assertAlmostEqual(df_elem_deml["range atom_num"][0], 18)
-        self.assertAlmostEqual(df_elem_deml["mean atom_num"][0], 15.2)
-        self.assertAlmostEqual(df_elem_deml["std_dev atom_num"][0], 12.7279, 4)
+        self.assertAlmostEqual(df_elem_deml["DemlData minimum atom_num"][0], 8)
+        self.assertAlmostEqual(df_elem_deml["DemlData maximum atom_num"][0], 26)
+        self.assertAlmostEqual(df_elem_deml["DemlData range atom_num"][0], 18)
+        self.assertAlmostEqual(df_elem_deml["DemlData mean atom_num"][0], 15.2)
+        self.assertAlmostEqual(df_elem_deml["DemlData std_dev atom_num"][0], 12.7279, 4)
 
     def test_cation_properties(self):
         featurizer = CationProperty.from_preset("deml")
         features = dict(zip(featurizer.feature_labels(), featurizer.featurize(self.df["composition"][1])))
-        self.assertAlmostEqual(features["minimum magn_moment of cations"], 5.48)
-        self.assertAlmostEqual(features["maximum magn_moment of cations"], 5.48)
-        self.assertAlmostEqual(features["range magn_moment of cations"], 0)
-        self.assertAlmostEqual(features["mean magn_moment of cations"], 5.48)
-        self.assertAlmostEqual(features["std_dev magn_moment of cations"], 0)
+        self.assertAlmostEqual(features["DemlData minimum magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["DemlData maximum magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["DemlData range magn_moment of cations"], 0)
+        self.assertAlmostEqual(features["DemlData mean magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["DemlData std_dev magn_moment of cations"], 0)
 
     def test_elem_matminer(self):
         df_elem = ElementProperty.from_preset("matminer").featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elem["minimum melting_point"][0], 54.8, 1)
-        self.assertTrue(math.isnan(df_elem["maximum bulk_modulus"][0]))
-        self.assertAlmostEqual(df_elem["range X"][0], 1.61, 1)
-        self.assertAlmostEqual(df_elem["mean X"][0], 2.796, 1)
-        self.assertAlmostEqual(df_elem["maximum block"][0], 3, 1)
+        self.assertAlmostEqual(df_elem["PymatgenData minimum melting_point"][0], 54.8, 1)
+        self.assertTrue(math.isnan(df_elem["PymatgenData maximum bulk_modulus"][0]))
+        self.assertAlmostEqual(df_elem["PymatgenData range X"][0], 1.61, 1)
+        self.assertAlmostEqual(df_elem["PymatgenData mean X"][0], 2.796, 1)
+        self.assertAlmostEqual(df_elem["PymatgenData maximum block"][0], 3, 1)
 
     def test_elem_matscholar_el(self):
         df_elem = ElementProperty.from_preset("matscholar_el").featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elem["range matscholar_el_149"].iloc[0],
+        self.assertAlmostEqual(df_elem["MatscholarElementData range embedding 149"].iloc[0],
                                0.06827970966696739)
-        self.assertAlmostEqual(df_elem["range matscholar_el_149"].iloc[1],
+        self.assertAlmostEqual(df_elem["MatscholarElementData range embedding 149"].iloc[1],
                                0.06827970966696739)
-        self.assertAlmostEqual(df_elem["mean matscholar_el_18"].iloc[0],
+        self.assertAlmostEqual(df_elem["MatscholarElementData mean embedding 18"].iloc[0],
                                -0.020534400502219795)
-        self.assertAlmostEqual(df_elem["mean matscholar_el_18"].iloc[1],
+        self.assertAlmostEqual(df_elem["MatscholarElementData mean embedding 18"].iloc[1],
                                -0.02483355056028813)
 
 
@@ -141,11 +141,11 @@ class CompositionFeaturesTest(PymatgenTest):
                                        stats=["minimum", "maximum", "range", "mean", "std_dev"],
                                        data_source="deml")\
             .featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_fere_corr["minimum FERE correction"][0], -0.15213431610903)
-        self.assertAlmostEqual(df_fere_corr["maximum FERE correction"][0], 0.23)
-        self.assertAlmostEqual(df_fere_corr["range FERE correction"][0], 0.382134316)
-        self.assertAlmostEqual(df_fere_corr["mean FERE correction"][0], 0.077146274)
-        self.assertAlmostEqual(df_fere_corr["std_dev FERE correction"][0], 0.270209766)
+        self.assertAlmostEqual(df_fere_corr["DemlData minimum FERE correction"][0], -0.15213431610903)
+        self.assertAlmostEqual(df_fere_corr["DemlData maximum FERE correction"][0], 0.23)
+        self.assertAlmostEqual(df_fere_corr["DemlData range FERE correction"][0], 0.382134316)
+        self.assertAlmostEqual(df_fere_corr["DemlData mean FERE correction"][0], 0.077146274)
+        self.assertAlmostEqual(df_fere_corr["DemlData std_dev FERE correction"][0], 0.270209766)
 
     def test_atomic_orbitals(self):
         df_atomic_orbitals = AtomicOrbitals().featurize_dataframe(self.df, col_id="composition")
