@@ -1995,7 +1995,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
             Divided by the mean Voronoi cell volume.
 
     References:
-         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.024104>`_
     """
 
     def __init__(self, weight='area',
@@ -2060,7 +2060,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
                 "title = {{Including crystal structure attributes "
                 "in machine learning models of formation energies "
                 "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
                 "volume = {96},year = {2017}}"]
 
     def implementors(self):
@@ -2108,7 +2108,7 @@ class MaximumPackingEfficiency(BaseFeaturizer):
                 "title = {{Including crystal structure attributes "
                 "in machine learning models of formation energies "
                 "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
                 "volume = {96},year = {2017}}"]
 
     def implementors(self):
@@ -2142,7 +2142,7 @@ class ChemicalOrdering(BaseFeaturizer):
             atoms in the n<sup>th</sup> neighbor shell
 
     References:
-         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_"""
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.024104>`_"""
 
     def __init__(self, shells=(1, 2, 3), weight='area'):
         """Initialize the featurizer
@@ -2213,7 +2213,7 @@ class ChemicalOrdering(BaseFeaturizer):
                 "title = {{Including crystal structure attributes "
                 "in machine learning models of formation energies "
                 "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
                 "volume = {96},year = {2017}}"]
 
     def implementors(self):
