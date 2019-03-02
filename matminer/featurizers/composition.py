@@ -49,6 +49,20 @@ class ElementProperty(BaseFeaturizer):
 
     To initialize quickly, use the from_preset() method.
 
+    Features: Based on the statistics of the data_source chosen, computed
+    by element stoichiometry. The format generally is:
+
+    "{data source} {statistic} {property}"
+
+    For example:
+
+    "PymetgenData range X"  # Range of electronegativity from Pymatgen data
+
+    For a list of all statistics, see the PropertyStats documentation; for a
+    list of all attributes available for a given data_source, see the
+    documentation for the data sources (e.g., PymatgenData, MagpieData,
+    MatscholarElementData, etc.).
+
     Args:
         data_source (AbstractData or str): source from which to retrieve
             element property data (or use str for preset: "pymatgen",
@@ -73,6 +87,8 @@ class ElementProperty(BaseFeaturizer):
 
         self.features = features
         self.stats = stats
+        # Initialize stats computer
+        self.pstats = PropertyStats()
 
     @classmethod
     def from_preset(cls, preset_name):
@@ -140,9 +156,6 @@ class ElementProperty(BaseFeaturizer):
 
         all_attributes = []
 
-        # Initialize stats computer
-        pstats = PropertyStats()
-
         # Get the element names and fractions
         elements, fractions = zip(*comp.element_composition.items())
 
@@ -150,7 +163,7 @@ class ElementProperty(BaseFeaturizer):
             elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
 
             for stat in self.stats:
-                all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
+                all_attributes.append(self.pstats.calc_stat(elem_data, stat, fractions))
 
         return all_attributes
 
@@ -198,9 +211,22 @@ class CationProperty(ElementProperty):
     """
     Features based on properties of cations in a material
 
-    Requires that oxidation states have already been determined
+    Requires that oxidation states have already been determined. Property
+    statistics weighted by composition.
 
-    Computes composition-weighted statistics of different elemental properties
+    Features: Based on the statistics of the data_source chosen, computed
+    by element stoichiometry. The format generally is:
+
+    "{data source} {statistic} {property}"
+
+    For example:
+
+    "DemlData range magn_moment" # Range of magnetic moment via Deml et al. data
+
+    For a list of all statistics, see the PropertyStats documentation; for a
+    list of all attributes available for a given data_source, see the
+    documentation for the data sources (e.g., PymatgenData, MagpieData,
+    MatscholarElementData, etc.).
     """
 
     @classmethod
