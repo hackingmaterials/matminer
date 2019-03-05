@@ -1,5 +1,8 @@
+import os
 import json
 import math
+import unittest
+
 
 from monty.json import MontyEncoder
 from unittest import TestCase
@@ -242,11 +245,13 @@ class TestConversions(TestCase):
         self.assertEqual(df_2lvl[new_col_id].tolist()[0], struct)
         self.assertEqual(df_2lvl[new_col_id].tolist()[1], struct)
 
+    @unittest.skipIf("PMG_MAPI_KEY" not in os.environ,
+                     "PMG_MAPI_KEY not in environement variables.")
     def test_composition_to_structurefromMP(self):
         df = DataFrame(data={"composition": [Composition("Fe2O3"),
                                              Composition("N9Al34Fe234")]})
 
-        cto = CompositionToStructureFromMP()
+        cto = CompositionToStructureFromMP(mapi_key=os.environ["PMG_MAPI_KEY"])
         df = cto.featurize_dataframe(df, 'composition')
         structures = df["structure"].tolist()
         self.assertTrue(isinstance(structures[0], Structure))
