@@ -956,18 +956,17 @@ class CohesiveEnergy(BaseFeaturizer):
                 your compound. If not set, will look up the most stable
                 formation energy from the Materials Project database.
         """
+        comp = comp.reduced_composition
         el_amt_dict = comp.get_el_amt_dict()
 
         formation_energy_per_atom = formation_energy_per_atom or None
 
         if not formation_energy_per_atom:
             # Get formation energy of most stable structure from MP
-            struct_lst = MPRester(self.mapi_key).get_data(
-                comp.formula.replace(" ", ""))
+            struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
             if len(struct_lst) > 0:
                 most_stable_entry = sorted(struct_lst, key=lambda e: e['energy_per_atom'])[0]
-                formation_energy_per_atom = most_stable_entry[
-                    'formation_energy_per_atom']
+                formation_energy_per_atom = most_stable_entry['formation_energy_per_atom']
             else:
                 raise ValueError('No structure found in MP for {}'.format(comp))
 
@@ -997,7 +996,6 @@ class CohesiveEnergy(BaseFeaturizer):
             "@book{Kittel, author = {Kittel, C}, isbn = {978-0-471-41526-8}, "
             "publisher = {Wiley}, title = {{Introduction to Solid State "
             "Physics, 8th Edition}}, year = {2005}}"]
-
 
 class Miedema(BaseFeaturizer):
     """
