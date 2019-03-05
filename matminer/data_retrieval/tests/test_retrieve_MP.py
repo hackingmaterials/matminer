@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from matminer.data_retrieval.retrieve_MP import MPDataRetrieval

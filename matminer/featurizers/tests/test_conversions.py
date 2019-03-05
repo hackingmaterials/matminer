@@ -1,13 +1,10 @@
-import os
 import json
 import math
 import unittest
 
-
 from monty.json import MontyEncoder
 from unittest import TestCase
 from pandas import DataFrame, MultiIndex
-
 
 from pymatgen.core.structure import IStructure
 from pymatgen import Composition, Lattice, Structure, Element, SETTINGS
@@ -102,15 +99,19 @@ class TestConversions(TestCase):
 
         sto = StructureToOxidStructure()
         df = sto.featurize_dataframe(df, 'structure')
-        self.assertEqual(df["structure_oxid"].tolist()[0][0].specie.oxi_state, -1)
-        self.assertEqual(df["structure_oxid"].tolist()[0][1].specie.oxi_state, +1)
+        self.assertEqual(df["structure_oxid"].tolist()[0][0].specie.oxi_state,
+                         -1)
+        self.assertEqual(df["structure_oxid"].tolist()[0][1].specie.oxi_state,
+                         +1)
 
         sto = StructureToOxidStructure(target_col_id='structure_oxid2',
                                        oxi_states_override={"Cl": [-2],
                                                             "Cs": [+2]})
         df = sto.featurize_dataframe(df, 'structure')
-        self.assertEqual(df["structure_oxid2"].tolist()[0][0].specie.oxi_state, -2)
-        self.assertEqual(df["structure_oxid2"].tolist()[0][1].specie.oxi_state, +2)
+        self.assertEqual(df["structure_oxid2"].tolist()[0][0].specie.oxi_state,
+                         -2)
+        self.assertEqual(df["structure_oxid2"].tolist()[0][1].specie.oxi_state,
+                         +2)
 
         # original is preserved
         self.assertEqual(df["structure"].tolist()[0][0].specie, Element("Cl"))
