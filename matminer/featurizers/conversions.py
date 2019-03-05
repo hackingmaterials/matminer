@@ -561,10 +561,14 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
             (`pymatgen.core.structure.Structure`): A Structure object.
         """
 
-        formula = comp.reduced_formula
-        structs = self.mpr.get_structures(formula)
-        if structs:
-            return [structs[0]]
+        entries = self.mpr.get_data(comp.reduced_formula, prop="energy_per_atom")
+        if len(entries) > 0:
+            most_stable_entry = \
+            sorted(entries, key=lambda e: e['energy_per_atom'])[0]
+            s = self.mpr.get_structure_by_material_id(
+                most_stable_entry["material_id"])
+            return[s]
+        
         return [float("nan")]
 
     def citations(self):
