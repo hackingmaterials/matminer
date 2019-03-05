@@ -148,13 +148,13 @@ class StrToComposition(ConversionFeaturizer):
             return [Composition(string_composition)]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -206,13 +206,13 @@ class StructureToComposition(ConversionFeaturizer):
             return [structure.composition]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -260,13 +260,13 @@ class StructureToIStructure(ConversionFeaturizer):
         return [IStructure.from_sites(structure)]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Logan Ward", "Alex Ganose"]
@@ -310,13 +310,13 @@ class DictToObject(ConversionFeaturizer):
         return [md.process_decoded(dict_data)]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -359,13 +359,13 @@ class JsonToObject(ConversionFeaturizer):
         return [json.loads(json_data, cls=MontyDecoder)]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -429,13 +429,13 @@ class StructureToOxidStructure(ConversionFeaturizer):
         return [structure]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -513,13 +513,13 @@ class CompositionToOxidComposition(ConversionFeaturizer):
         return [comp]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose", "Alex Dunn"]
