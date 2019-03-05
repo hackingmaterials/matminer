@@ -15,12 +15,10 @@ import numpy as np
 import pandas as pd
 from scipy.special import comb
 import scipy.constants as const
-import pymatgen.analysis.local_env as pmg_le
-
 from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 from monty.dev import requires
-
+from pymatgen.core.periodic_table import _pt_data as PMG_PT_DATA
 from pymatgen import Structure, Lattice
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
@@ -30,6 +28,7 @@ from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.io.ase import AseAtomsAdaptor
+import pymatgen.analysis.local_env as pmg_le
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
@@ -1205,8 +1204,15 @@ class SiteStatsFingerprint(BaseFeaturizer):
         elif preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
 
-        elif preset == "OPSiteFingerprint":
-            return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
+        elif preset == "BondOrientationalParameter":
+            from matminer.featurizers.site import BondOrientationalParameter
+            return SiteStatsFingerprint(BondOrientationalParameter(),
+                                        stats=["minimum", "maximum", "range", "mean", "avg_dev"])
+
+        elif preset == "ChemEnvSiteFingerprint":
+            from matminer.featurizers.site import ChemEnvSiteFingerprint
+            return SiteStatsFingerprint(ChemEnvSiteFingerprint.from_preset("multi_weights"),
+                                        stats=["minimum", "maximum", "range", "mean", "avg_dev"])
 
         elif preset == "LocalPropertyDifference_ward-prb-2017":
             return SiteStatsFingerprint(
@@ -3494,7 +3500,9 @@ class SOAP(BaseFeaturizer):
     """
     @requires(dscribe, "SOAPFeaturizer requires dscribe (packaged with "
                        "SOAPLite). Install from github.com/SINGROUP/dscribe")
-    def __init__(self, r_cut=3.0, n_max=4, l_max=2, **soap_kwargs):
+    def __init__(self, all_elements=False, r_cut=3.0, n_max=4, l_max=2,
+                 **soap_kwargs):
+        self.all_elements = all_elements
         self.r_cut = r_cut
         self.n_max = n_max
         self.l_max = l_max
@@ -3536,12 +3544,16 @@ class SOAP(BaseFeaturizer):
         Returns:
             self
         """
-        elements = []
-        for s in X:
-            c = s.composition.elements
-            for e in c:
-                if e not in elements:
-                    elements.append(e)
+        if self.all_elements:
+            elements = [Element(e) for e in PMG_PT_DATA.keys()]
+        else:
+            elements = []
+            for s in X:
+                c = s.composition.elements
+                for e in c:
+                    if e not in elements:
+                        elements.append(e)
+
         self.atomic_numbers = [e.Z for e in elements]
         length = comb(len(self.atomic_numbers) + 1, 2) * \
                  comb(self.n_max + 1, 2) * \
@@ -3601,3 +3613,120 @@ class SOAP(BaseFeaturizer):
     def implementors(self):
         return ["Alex Dunn", "Lauri Himanen"]
 
+
+
+# class XMatrix(BaseFeaturizer):
+#     """
+#     A variant of the Coulomb matrix developed for periodic crystals.
+#
+#     This function generates a variant of the Coulomb matrix developed
+#     for periodic crystals by Faber et al. (Inter. J. Quantum Chem.
+#     115, 16, 2015). It is identical to the Coulomb matrix, except
+#     that the inverse distance function is replaced by the inverse of a
+#     sin**2 function of the vector between the sites which is periodic
+#     in the dimensions of the structure lattice. See paper for details.
+#
+#     Coulomb Matrix features are flattened (for ML-readiness) by default. Use
+#     fit before featurizing to use flattened features. To return the matrix form,
+#     set flatten=False.
+#
+#     Args:
+#         diag_elems (bool): flag indication whether (True, default) to use
+#             the original definition of the diagonal elements; if set to False,
+#             the diagonal elements are set to 0
+#         flatten (bool): If True, returns a flattened vector based on eigenvalues
+#             of the matrix form. Otherwise, returns a matrix object (single
+#             feature), which will likely need to be processed further.
+#     """
+#
+#     def __init__(self, diag_elems=True, flatten=True):
+#         self.diag_elems = diag_elems
+#         self.flatten = flatten
+#         self._max_eigs = None
+#
+#     def _check_fitted(self):
+#         if self.flatten and not self._max_eigs:
+#             raise NotFittedError("Please fit the SineCoulombMatrix before "
+#                                  "featurizing if using flatten=True.")
+#
+#     def fit(self, X, y=None):
+#         """
+#         Fit the Sine Coulomb Matrix to a list of structures.
+#
+#         Args:
+#             X ([Structure]): A list of pymatgen structures.
+#             y : unused (added for consistency with overridden method signature)
+#
+#         Returns:
+#             self
+#         """
+#         if self.flatten:
+#             nsites = [structure.num_sites for structure in X]
+#             self._max_eigs = max(nsites)
+#         return self
+#
+#     def featurize(self, s):
+#         """
+#         Args:
+#             s (Structure or Molecule): input structure (or molecule)
+#
+#         Returns:
+#             (Nsites x Nsites matrix) Sine matrix or
+#         """
+#         self._check_fitted()
+#         sites = s.sites
+#         atomic_numbers = np.array([site.specie.Z for site in sites])
+#         sin_mat = np.zeros((len(sites), len(sites)))
+#         coords = np.array([site.frac_coords for site in sites])
+#         lattice = s.lattice.matrix
+#
+#         for i in range(len(sin_mat)):
+#             for j in range(len(sin_mat)):
+#                 if i == j:
+#                     if self.diag_elems:
+#                         sin_mat[i][i] = 0.5 * atomic_numbers[i] ** 2.4
+#                 elif i < j:
+#                     vec = coords[i] - coords[j]
+#                     coord_vec = np.sin(np.pi * vec) ** 2
+#                     trig_dist = np.linalg.norm(
+#                         (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
+#                     sin_mat[i][j] = atomic_numbers[i] * atomic_numbers[j] / \
+#                                     trig_dist
+#                 else:
+#                     sin_mat[i][j] = sin_mat[j][i]
+#         if self.flatten:
+#             eigs, _ = np.linalg.eig(sin_mat)
+#             zeros = np.zeros((self._max_eigs,))
+#             zeros[:len(eigs)] = eigs
+#             return zeros
+#         else:
+#             return [sin_mat]
+#
+#     def feature_labels(self):
+#         self._check_fitted()
+#         if self.flatten:
+#             return ["sine coulomb matrix eig {}".format(i) for i in
+#                     range(self._max_eigs)]
+#         else:
+#             return ["sine coulomb matrix"]
+#
+#     def citations(self):
+#         return ["@article {QUA:QUA24917,"
+#                 "author = {Faber, Felix and Lindmaa, Alexander and von "
+#                 "Lilienfeld, O. Anatole and Armiento, Rickard},"
+#                 "title = {Crystal structure representations for machine "
+#                 "learning models of formation energies},"
+#                 "journal = {International Journal of Quantum Chemistry},"
+#                 "volume = {115},"
+#                 "number = {16},"
+#                 "issn = {1097-461X},"
+#                 "url = {http://dx.doi.org/10.1002/qua.24917},"
+#                 "doi = {10.1002/qua.24917},"
+#                 "pages = {1094--1101},"
+#                 "keywords = {machine learning, formation energies, "
+#                 "representations, crystal structure, periodic systems},"
+#                 "year = {2015},"
+#                 "}"]
+#
+#     def implementors(self):
+#         return ["Kyle Bystrom", "Alex Dunn"]
