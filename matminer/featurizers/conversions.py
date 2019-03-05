@@ -11,6 +11,7 @@ import json
 
 from monty.json import MontyDecoder
 
+from pymatgen import MPRester
 from pymatgen.core.structure import IStructure
 from pymatgen.core.composition import Composition
 
@@ -522,3 +523,73 @@ class CompositionToOxidComposition(ConversionFeaturizer):
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose", "Alex Dunn"]
+
+
+class CompositionToStructureFromMP(ConversionFeaturizer):
+    """
+    Featurizer to get a Structure object from Materials Project using the
+    composition alone. The most stable entry from Materials Project is selected,
+    or NaN if no entry is found in the Materials Project.
+
+    Args:
+        target_col_id (str or None): The column in which the converted data will
+            be written. If the column already exists then an error will be
+            thrown unless `overwrite_data` is set to `True`. If `target_col_id`
+            begins with an underscore the data will be written to the column:
+            `"{}_{}".format(col_id, target_col_id[1:])`, where `col_id` is the
+            column being featurized. If `target_col_id` is set to None then
+            the data will be written "in place" to the `col_id` column (this
+            will only work if `overwrite_data=True`).
+        overwrite_data (bool): Overwrite any data in `target_column` if it
+            exists.
+        map_key (str): Materials API key
+
+    """
+
+    def __init__(self, target_col_id='structure', overwrite_data=False,
+                 mapi_key=None):
+        super().__init__(target_col_id, overwrite_data)
+        self.mpr = MPRester(mapi_key)
+
+    def featurize(self, comp):
+        """
+        Get the most stable structure from Materials Project
+        Args:
+            comp (`pymatgen.core.composition.Composition`): A composition.
+
+        Returns:
+            (`pymatgen.core.structure.Structure`): A Structure object.
+        """
+
+        formula = comp.reduced_formula
+        structs = self.mpr.get_structures(formula)
+        if structs:
+            return [structs[0]]
+        return [float("nan")]
+
+    def citations(self):
+        return [
+            "@article{doi:10.1063/1.4812323, author = {Jain,Anubhav and Ong,"
+            "Shyue Ping  and Hautier,Geoffroy and Chen,Wei and Richards, "
+            "William Davidson  and Dacek,Stephen and Cholia,Shreyas "
+            "and Gunter,Dan  and Skinner,David and Ceder,Gerbrand "
+            "and Persson,Kristin A. }, title = {Commentary: The Materials "
+            "Project: A materials genome approach to accelerating materials "
+            "innovation}, journal = {APL Materials}, volume = {1}, number = "
+            "{1}, pages = {011002}, year = {2013}, doi = {10.1063/1.4812323}, "
+            "URL = {https://doi.org/10.1063/1.4812323}, "
+            "eprint = {https://doi.org/10.1063/1.4812323}}",
+            "@article{Ong2015, author = {Ong, Shyue Ping and Cholia, "
+            "Shreyas and Jain, Anubhav and Brafman, Miriam and Gunter, Dan "
+            "and Ceder, Gerbrand and Persson, Kristin a.}, doi = "
+            "{10.1016/j.commatsci.2014.10.037}, issn = {09270256}, "
+            "journal = {Computational Materials Science}, month = {feb}, "
+            "pages = {209--215}, publisher = {Elsevier B.V.}, title = "
+            "{{The Materials Application Programming Interface (API): A simple, "
+            "flexible and efficient API for materials data based on "
+            "REpresentational State Transfer (REST) principles}}, "
+            "url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025614007113}, "
+            "volume = {97}, year = {2015} } "]
+
+    def implementors(self):
+        return ["Anubhav Jain"]

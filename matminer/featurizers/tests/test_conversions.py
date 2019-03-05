@@ -1,4 +1,5 @@
 import json
+import math
 
 from monty.json import MontyEncoder
 from unittest import TestCase
@@ -11,7 +12,7 @@ from pymatgen import Composition, Lattice, Structure, Element
 from matminer.featurizers.conversions import (
     StrToComposition, StructureToComposition, StructureToIStructure,
     DictToObject, JsonToObject, StructureToOxidStructure,
-    CompositionToOxidComposition)
+    CompositionToOxidComposition, CompositionToStructureFromMP)
 
 
 class TestConversions(TestCase):
@@ -241,3 +242,13 @@ class TestConversions(TestCase):
         self.assertEqual(df_2lvl[new_col_id].tolist()[0], struct)
         self.assertEqual(df_2lvl[new_col_id].tolist()[1], struct)
 
+    def test_composition_to_structurefromMP(self):
+        df = DataFrame(data={"composition": [Composition("Fe2O3"),
+                                             Composition("N9Al34Fe234")]})
+
+        cto = CompositionToStructureFromMP()
+        df = cto.featurize_dataframe(df, 'composition')
+        structures = df["structure"].tolist()
+        self.assertTrue(isinstance(structures[0], Structure))
+        self.assertGreaterEqual(len(structures[0]), 5)  # has at least 5 sites
+        self.assertTrue(math.isnan(structures[1]))
