@@ -2,16 +2,17 @@ import os
 import unittest
 
 from matminer.data_retrieval.retrieve_MP import MPDataRetrieval
+from pymatgen import SETTINGS
 from pymatgen.electronic_structure.bandstructure import BandStructureSymmLine, \
     BandStructure
 from pymatgen.electronic_structure.dos import CompleteDos
 
 
-@unittest.skipIf("PMG_MAPI_KEY" not in os.environ,
-                 "PMG_MAPI_KEY not in environement variables.")
+@unittest.skipIf(not SETTINGS.get("PMG_MAPI_KEY", ""),
+                 "PMG_MAPI_KEY not in environment variables.")
 class MPDataRetrievalTest(unittest.TestCase):
     def setUp(self):
-        self.mpdr = MPDataRetrieval(api_key=os.environ["PMG_MAPI_KEY"])
+        self.mpdr = MPDataRetrieval()
 
     def test_get_data(self):
         df = self.mpdr.get_dataframe(criteria={"material_id": "mp-23"},

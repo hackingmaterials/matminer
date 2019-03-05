@@ -10,7 +10,7 @@ from pandas import DataFrame, MultiIndex
 
 
 from pymatgen.core.structure import IStructure
-from pymatgen import Composition, Lattice, Structure, Element
+from pymatgen import Composition, Lattice, Structure, Element, SETTINGS
 
 from matminer.featurizers.conversions import (
     StrToComposition, StructureToComposition, StructureToIStructure,
@@ -245,13 +245,13 @@ class TestConversions(TestCase):
         self.assertEqual(df_2lvl[new_col_id].tolist()[0], struct)
         self.assertEqual(df_2lvl[new_col_id].tolist()[1], struct)
 
-    @unittest.skipIf("PMG_MAPI_KEY" not in os.environ,
+    @unittest.skipIf(not SETTINGS.get("PMG_MAPI_KEY", ""),
                      "PMG_MAPI_KEY not in environment variables.")
     def test_composition_to_structurefromMP(self):
         df = DataFrame(data={"composition": [Composition("Fe2O3"),
                                              Composition("N9Al34Fe234")]})
 
-        cto = CompositionToStructureFromMP(mapi_key=os.environ["PMG_MAPI_KEY"])
+        cto = CompositionToStructureFromMP()
         df = cto.featurize_dataframe(df, 'composition')
         structures = df["structure"].tolist()
         self.assertTrue(isinstance(structures[0], Structure))
