@@ -246,7 +246,7 @@ class TestConversions(TestCase):
         self.assertEqual(df_2lvl[new_col_id].tolist()[1], struct)
 
     @unittest.skipIf("PMG_MAPI_KEY" not in os.environ,
-                     "PMG_MAPI_KEY not in environement variables.")
+                     "PMG_MAPI_KEY not in environment variables.")
     def test_composition_to_structurefromMP(self):
         df = DataFrame(data={"composition": [Composition("Fe2O3"),
                                              Composition("N9Al34Fe234")]})
