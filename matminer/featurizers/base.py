@@ -265,7 +265,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         else:
             # Create new dataframe and ensure columns are ordered properly
             new = pd.concat([df, res], axis=1)
-            return new[df.columns.tolist() + res.columns.tolist()]
+            df = new[df.columns.tolist() + res.columns.tolist()]
+            return new
 
     def _generate_column_labels(self, multiindex, return_errors):
         """Create a list of column names for a dataframe
