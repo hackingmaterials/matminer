@@ -191,7 +191,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                                                    **kwargs)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True,
+                            return_errors=False, inplace=False,
                             multiindex=False, pbar=True):
         """
         Compute features for all entries contained in input dataframe.
