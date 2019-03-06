@@ -191,7 +191,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                                                    **kwargs)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True,
+                            return_errors=False, inplace=False,
                             multiindex=False, pbar=True):
         """
         Compute features for all entries contained in input dataframe.
@@ -260,8 +260,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         if inplace:
             # Update the existing dataframe
-            for k in labels:
-                df[k] = res[k]
+            df[labels] = res[labels]
             return df
         else:
             # Create new dataframe and ensure columns are ordered properly
