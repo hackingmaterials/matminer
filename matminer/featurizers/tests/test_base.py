@@ -181,7 +181,7 @@ class TestBaseClass(PymatgenTest):
             multi_f = MultipleFeaturizer([self.single, self.multi, f])
             data = self.make_test_data()
             with warnings.catch_warnings(record=True) as w:
-                multi_f.featurize_dataframe(data, 'x')
+                data = multi_f.featurize_dataframe(data, 'x')
                 self.assertEqual(len(w), 0)
 
             self.assertArrayAlmostEqual(data['representation'][0],
