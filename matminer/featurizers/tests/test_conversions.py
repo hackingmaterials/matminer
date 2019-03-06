@@ -223,6 +223,7 @@ class TestConversions(TestCase):
             df_2lvl, ("custom", "comp_str"), multiindex=True,
             return_errors=True, ignore_errors=True
         )
+        df_2lvl = df_2lvl[~df_2lvl.index.duplicated()]
         self.assertTrue(
             all(df_2lvl[("custom", "StrToComposition Exceptions")].isnull()))
 
