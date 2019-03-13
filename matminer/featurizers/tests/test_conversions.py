@@ -124,7 +124,9 @@ class TestConversions(TestCase):
         # test in-place
         sto = StructureToOxidStructure(target_col_id=None, overwrite_data=True)
         df = sto.featurize_dataframe(df, 'structure')
-        print(df["structure"]["structure"])
+        print(type(df["structure"]))
+        print(list(df["structure"]))
+        print(df["structure"])
         self.assertEqual(df["structure"].tolist()[0][0].specie.oxi_state, -1)
 
         # test error handling
