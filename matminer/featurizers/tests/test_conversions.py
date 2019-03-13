@@ -120,7 +120,7 @@ class TestConversions(TestCase):
         sto = StructureToOxidStructure(target_col_id=None, overwrite_data=True)
         df = sto.featurize_dataframe(df, 'structure')
         print(list(df))
-        self.assertEqual(df[list(df)[0]].tolist()[0][0].specie.oxi_state, -1)
+        self.assertEqual(df[list(df)[3]].tolist()[0][0].specie.oxi_state, -1)
 
         # test error handling
         test_struct = Structure([5, 0, 0, 0, 5, 0, 0, 0, 5], ['Sb', 'F', 'O'],
