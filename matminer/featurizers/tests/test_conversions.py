@@ -126,7 +126,7 @@ class TestConversions(TestCase):
         df = sto.featurize_dataframe(df, 'structure')
         print(type(df["structure"]))
         print(list(df["structure"]))
-        print(df["structure"])
+        print(df["structure"].iloc[0]["structure"])
         self.assertEqual(df["structure"].tolist()[0][0].specie.oxi_state, -1)
 
         # test error handling
