@@ -119,7 +119,7 @@ class TestConversions(TestCase):
                          +2)
 
         # original is preserved
-        self.assertEqual(df["structure"].tolist()[0][0].specie, Element("Cl"))
+        self.assertEqual(df["structure"]["structure"].tolist()[0][0].specie, Element("Cl"))
 
         # test in-place
         sto = StructureToOxidStructure(target_col_id=None, overwrite_data=True)
