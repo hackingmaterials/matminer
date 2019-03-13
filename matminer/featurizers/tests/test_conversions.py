@@ -128,7 +128,7 @@ class TestConversions(TestCase):
         print(type(df["structure"]))
         print(list(df["structure"]))
         print(df["structure"].iloc[0]["structure"].iloc[0])
-        print(type(df["structure"].iloc[0]["structure"].iloc[0]))
+        print(type(df["structure"].iloc[0]["structure"].iloc[0][0]))
         self.assertEqual(df["structure"].iloc[0]["structure"].iloc[0].specie.oxi_state, -1)
 
         # test error handling
