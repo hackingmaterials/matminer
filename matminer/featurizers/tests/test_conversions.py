@@ -118,7 +118,7 @@ class TestConversions(TestCase):
 
         # test in-place
         sto = StructureToOxidStructure(target_col_id=None, overwrite_data=True)
-        df = sto.featurize_dataframe(df, 'structure', inplace=True)
+        df = sto.featurize_dataframe(df, 'structure')
         self.assertEqual(df["structure"].tolist()[0][0].specie.oxi_state, -1)
 
         # test error handling
@@ -209,7 +209,7 @@ class TestConversions(TestCase):
 
         sto = StrToComposition(target_col_id=None, overwrite_data=True)
         df_2lvl = sto.featurize_dataframe(
-            df_2lvl, ("custom", "comp_str"), inplace = True, multiindex=True)
+            df_2lvl, ("custom", "comp_str"), multiindex=True)
         self.assertEqual(df_2lvl[("custom", "comp_str")].tolist(),
                          [Composition("Fe2"), Composition("MnO2")])
 
@@ -221,9 +221,7 @@ class TestConversions(TestCase):
         sto = StrToComposition(target_col_id=None, overwrite_data=True)
         df_2lvl = sto.featurize_dataframe(
             df_2lvl, ("custom", "comp_str"), multiindex=True,
-            return_errors=True, ignore_errors=True
-        )
-        df_2lvl = df_2lvl[~df_2lvl.index.duplicated()]
+            return_errors=True, ignore_errors=True)
         self.assertTrue(
             all(df_2lvl[("custom", "StrToComposition Exceptions")].isnull()))
 
