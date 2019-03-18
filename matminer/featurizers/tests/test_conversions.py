@@ -207,7 +207,7 @@ class TestConversions(TestCase):
         df_2lvl.columns = MultiIndex.from_product((["custom"],
                                                    df_2lvl.columns.values))
 
-        sto = StrToComposition(target_col_id=None, overwrite_data=False)
+        sto = StrToComposition(target_col_id=None, overwrite_data=True)
         df_2lvl = sto.featurize_dataframe(
             df_2lvl, ("custom", "comp_str"), multiindex=True)
         self.assertEqual(df_2lvl[("custom", "comp_str")].tolist(),
