@@ -326,6 +326,7 @@ class MEGNetElementData(AbstractData):
     generated using the Materials Graph Network (MEGNet) developed by the
     MaterialsVirtualLab at U.C. San Diego and described in the following
     preprint:
+    
     https://arxiv.org/abs/1812.05055
 
     The code for MEGNet can be found at:
