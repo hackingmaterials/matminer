@@ -17,7 +17,7 @@ from glob import glob
 from pymatgen import Element
 from pymatgen.core.periodic_table import _pt_data
 
-__author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain'
+__author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn'
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
