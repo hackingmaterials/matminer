@@ -82,7 +82,15 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_elem["MatscholarElementData mean embedding 18"].iloc[1],
                                -0.02483355056028813)
 
-
+    def test_elem_megnet_el(self):
+        pd.set_option('display.max_rows', 500)
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.width', 1000)
+        df_elem = ElementProperty.from_preset("megnet_el").featurize_dataframe(self.df, col_id="composition")
+        self.assertAlmostEqual(df_elem["MEGNetElementData maximum embedding 1"].iloc[0], 0.127333, places=6)
+        self.assertAlmostEqual(df_elem["MEGNetElementData maximum embedding 1"].iloc[1], 0.127333, places=6)
+        self.assertAlmostEqual(df_elem["MEGNetElementData maximum embedding 11"].iloc[0], 0.160505, places=6)
+        self.assertAlmostEqual(df_elem["MEGNetElementData maximum embedding 11"].iloc[1], 0.160505, places=6)
 
     def test_valence(self):
         df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")
