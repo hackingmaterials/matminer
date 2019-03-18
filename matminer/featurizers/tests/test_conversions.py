@@ -210,7 +210,7 @@ class TestConversions(TestCase):
         sto = StrToComposition(target_col_id=None, overwrite_data=True)
         df_2lvl = sto.featurize_dataframe(
             df_2lvl, ("custom", "comp_str"), multiindex=True)
-        self.assertEqual(df_2lvl[("custom", "comp_str")][df_2lvl[("custom", "comp_str")].columns[0]].tolist(),
+        self.assertEqual(df_2lvl[("custom", "comp_str")][df_2lvl[("custom", "comp_str")].columns[1]].tolist(),
                          [Composition("Fe2"), Composition("MnO2")])
 
         # Try inplace multiindex conversion with return errors
