@@ -108,26 +108,17 @@ class TestConversions(TestCase):
                                        oxi_states_override={"Cl": [-2],
                                                             "Cs": [+2]})
         df = sto.featurize_dataframe(df, 'structure')
-        print(type(df["structure_oxid2"]))
-        print(df["structure_oxid2"])
-        print(df["structure_oxid2"].tolist())
-        print(df["structure_oxid2"].tolist()[0][0])
-        print(type(df["structure_oxid2"].tolist()[0]))
         self.assertEqual(df["structure_oxid2"].tolist()[0][0].specie.oxi_state,
                          -2)
         self.assertEqual(df["structure_oxid2"].tolist()[0][1].specie.oxi_state,
                          +2)
 
         # original is preserved
-        print(type(df["structure"].tolist()[0][0]))
         self.assertEqual(df["structure"].tolist()[0][0].specie, Element("Cl"))
 
         # test in-place
         sto = StructureToOxidStructure(target_col_id=None, overwrite_data=True)
         df = sto.featurize_dataframe(df, 'structure')
-        print(type(df["structure"]))
-        print(list(df["structure"]))
-        print(df["structure"].iloc[0][list(df["structure"])[1]].iloc[0])
         self.assertEqual(df["structure"].iloc[0]["structure"].iloc[0][0].specie, Element("Cl"))
 
         # test error handling
