@@ -265,7 +265,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         else:
             # Create new dataframe and ensure columns are ordered properly
             new = pd.concat([df, res], axis=1)
-            if getattr(self, '_target_col_id', None):
+            if getattr(self, '_target_col_id', col_id):
                 return new[df.columns.tolist() + res.columns.tolist()][col_id]
             else:
                 return new[df.columns.tolist() + res.columns.tolist()]
