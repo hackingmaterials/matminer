@@ -57,6 +57,7 @@ class TestPymatgenData(TestCase):
 
 
 class TestMatScholarData(TestCase):
+
     def setUp(self):
         self.data_source = MatscholarElementData()
 
@@ -64,9 +65,27 @@ class TestMatScholarData(TestCase):
         embedding_cu = self.data_source.get_elemental_property(Element("Cu"), "embedding 3")
         self.assertAlmostEqual(0.028666902333498, embedding_cu)
 
-    def test_get_property_missing(self):
         with self.assertRaises(ValueError):
             self.data_source.get_elemental_property(Element("Db"), "embedding 9")
+
+
+class TestMEGNetData(TestCase):
+
+    def setUp(self):
+        self.data_source= MEGNetElementData()
+
+    def test_get_property(self):
+        embedding_cu = self.data_source.get_elemental_property(Element("Cu"), "embedding 1")
+        self.assertAlmostEqual(0.18259364366531372, embedding_cu)
+
+        # MEGNet embeddings have element data for elements 1-94, plus 0 for
+        # "dummy" atoms.
+        embedding_md = self.data_source.get_elemental_property(Element("Md"), "embedding 1")
+        self.assertAlmostEqual(-0.044910576194524765, embedding_md)
+
+        embedding_dummy = self.data_source.all_element_data["Dummy"]["embedding 1"]
+        self.assertAlmostEqual(-0.044910576194524765, embedding_dummy)
+
 
 class TestMixingEnthalpy(TestCase):
 
