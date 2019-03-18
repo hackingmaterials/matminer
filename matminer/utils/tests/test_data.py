@@ -5,7 +5,7 @@ from math import isnan
 from pymatgen.core.periodic_table import Specie
 
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    MixingEnthalpy
+    MixingEnthalpy, MatscholarElementData, MEGNetElementData
 from pymatgen import Element
 
 
@@ -55,6 +55,18 @@ class TestPymatgenData(TestCase):
         self.data_source.use_common_oxi_states = False
         self.assertEqual((2, 3), self.data_source.get_oxidation_states(Element("Nd")))
 
+
+class TestMatScholarData(TestCase):
+    def setUp(self):
+        self.data_source = MatscholarElementData()
+
+    def test_get_property(self):
+        embedding_cu = self.data_source.get_elemental_property(Element("Cu"), "embedding 3")
+        self.assertAlmostEqual(0.028666902333498, embedding_cu)
+
+    def test_get_property_missing(self):
+        with self.assertRaises(ValueError):
+            self.data_source.get_elemental_property(Element("Db"), "embedding 9")
 
 class TestMixingEnthalpy(TestCase):
 
