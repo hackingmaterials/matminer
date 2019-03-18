@@ -261,7 +261,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if inplace:
             # Update the existing dataframe
             df[labels] = res[labels]
-            return df
+            return None
         else:
             # Create new dataframe and ensure columns are ordered properly
             new = pd.concat([df, res], axis=1)
