@@ -420,28 +420,6 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                        " with ignore_errors=True"
                 reraise(type(e), type(e)(msg), sys.exc_info()[2])
 
-    # def valid_entries_fraction(self, entries):
-    #     """
-    #     Determine whether the dataframe input to the featurizer will be valid
-    #     and in scope. For example, Miedema is only in scope for intermetallic
-    #     compounds.
-    #
-    #     Also a good time to raise warnings if the featurizer will be
-    #     particularly computationally intensive, etc.
-    #
-    #     If not defined in a featurizer subclass, simply returns 1, meaning all
-    #     entries are valid.
-    #
-    #     Args:
-    #         entries (Iterable, Series): The entries (e.g., Compositions) to be
-    #             pre-checked. Should have the same types that featurize takes.
-    #
-    #     Returns:
-    #         frac (float): A fraction between 0 and 1 of the valid entries. 1.0
-    #             means all entries are valid. 0 means no entries are valid.
-    #     """
-    #     return 1.0
-
     def featurize(self, *x):
         """
         Main featurizer function, which has to be implemented
