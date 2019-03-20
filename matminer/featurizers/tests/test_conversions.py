@@ -31,7 +31,8 @@ class TestConversions(TestCase):
 
         stc = StrToComposition(target_col_id='comp_str', overwrite_data=True)
 
-        dfres_ipt = stc.featurize_dataframe(df, 'comp_str', inplace=True)
+        dfres_ipt = df.copy()
+        stc.featurize_dataframe(dfres_ipt, 'comp_str', inplace=True)
         self.assertListEqual(dfres_ipt.columns.tolist(), ["comp_str"])
 
         dfres_ipf = stc.featurize_dataframe(df, 'comp_str', inplace=False)
