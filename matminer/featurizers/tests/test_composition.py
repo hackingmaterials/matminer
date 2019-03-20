@@ -322,7 +322,7 @@ class CompositionFeaturesTest(PymatgenTest):
 
         # Test the dataframe calculator
         df = pd.DataFrame({'comp': [Composition('CuZr')]})
-        f.featurize_dataframe(df, 'comp')
+        df = f.featurize_dataframe(df, 'comp')
 
         self.assertEqual(6, len(df.columns))
         self.assertIn('dist from 5 clusters |APE| < 0.002', df.columns)

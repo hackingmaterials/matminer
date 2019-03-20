@@ -15,12 +15,9 @@ import numpy as np
 import pandas as pd
 from scipy.special import comb
 import scipy.constants as const
-import pymatgen.analysis.local_env as pmg_le
-
 from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 from monty.dev import requires
-
 from pymatgen import Structure, Lattice
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
@@ -30,6 +27,7 @@ from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.io.ase import AseAtomsAdaptor
+import pymatgen.analysis.local_env as pmg_le
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
@@ -1201,9 +1199,6 @@ class SiteStatsFingerprint(BaseFeaturizer):
             return SiteStatsFingerprint(
                 CrystalNNFingerprint.from_preset("ops", cation_anion=True),
                 **kwargs)
-
-        elif preset == "OPSiteFingerprint":
-            return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
 
         elif preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
@@ -3542,6 +3537,7 @@ class SOAP(BaseFeaturizer):
             for e in c:
                 if e not in elements:
                     elements.append(e)
+
         self.atomic_numbers = [e.Z for e in elements]
         length = comb(len(self.atomic_numbers) + 1, 2) * \
                  comb(self.n_max + 1, 2) * \

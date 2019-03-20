@@ -191,7 +191,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                                                    **kwargs)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True,
+                            return_errors=False, inplace=False,
                             multiindex=False, pbar=True):
         """
         Compute features for all entries contained in input dataframe.
@@ -207,7 +207,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             return_errors (bool). Returns the errors encountered for each
                 row in a separate `XFeaturizer errors` column if True. Requires
                 ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
+            inplace (bool): If True, adds columns to the original object in
+                memory and returns None. Else, returns the updated object.
+                Should be identical to pandas inplace behavior.
             multiindex (bool): If True, use a Featurizer - Feature 2-level
                 index using the MultiIndex capabilities of pandas. If done
                 inplace, multiindex featurization will overwrite the original
@@ -239,7 +241,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         # Check names to avoid overwriting the current columns
         # ConversionFeaturizer have attribute called _overwrite_data which
         # determines whether an Error is thrown
-        if not getattr(self, '_overwrite_data', False):
+        overwrite = getattr(self, '_overwrite_data', False)
+        if not overwrite:
             for col in df.columns.values:
                 if col in labels:
                     raise ValueError(
@@ -260,11 +263,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         if inplace:
             # Update the existing dataframe
-            for k in labels:
-                df[k] = res[k]
-            return df
+            df[labels] = res[labels]
+            return None
         else:
             # Create new dataframe and ensure columns are ordered properly
+            res_labels = res.columns.tolist()
+            if overwrite:
+                overlapping_labels = [c for c in res_labels if c in df.columns]
+                df = df.drop(columns=overlapping_labels)
             new = pd.concat([df, res], axis=1)
             return new[df.columns.tolist() + res.columns.tolist()]
 
@@ -284,7 +290,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if return_errors:
             labels.append(self.__class__.__name__ + " Exceptions")
 
-        if multiindex and len(labels[0]) == 2:
+        ix_types = (pd.Index, list, tuple)
+        if multiindex and len(labels[0]) == 2 and isinstance(labels[0], ix_types):
             # conversion featurizer, aiming to featurize in place.
             # conversion featurizers only have one feature label.
             # If return_errors=False, the transformation is:
