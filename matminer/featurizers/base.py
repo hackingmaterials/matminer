@@ -239,7 +239,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         # Check names to avoid overwriting the current columns
         # ConversionFeaturizer have attribute called _overwrite_data which
         # determines whether an Error is thrown
-        if not getattr(self, '_overwrite_data', False):
+        overwrite = getattr(self, '_overwrite_data', False)
+        if not overwrite:
             for col in df.columns.values:
                 if col in labels:
                     raise ValueError(
@@ -264,6 +265,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             return df
         else:
             # Create new dataframe and ensure columns are ordered properly
+            res_labels = res.columns.tolist()
+            overlapping_labels = [c for c in res_labels if c in df.columns]
+            df = df.drop(columns=overlapping_labels)
             new = pd.concat([df, res], axis=1)
             return new[df.columns.tolist() + res.columns.tolist()]
 
