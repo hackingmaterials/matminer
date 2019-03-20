@@ -17,6 +17,27 @@ from matminer.featurizers.conversions import (
 
 class TestConversions(TestCase):
 
+    def test_conversion_overwrite(self):
+        # Test with overwrite
+        d = {'comp_str': ["Fe2", "MnO2"]}
+        df = DataFrame(data=d)
+
+        stc = StrToComposition(target_col_id='comp_str', overwrite_data=False)
+        with self.assertRaises(ValueError):
+            df = stc.featurize_dataframe(df, 'comp_str', inplace=True)
+
+        with self.assertRaises(ValueError):
+            df = stc.featurize_dataframe(df, 'comp_str', inplace=False)
+
+        stc = StrToComposition(target_col_id='comp_str', overwrite_data=True)
+
+        dfres_ipt = df.copy()
+        stc.featurize_dataframe(dfres_ipt, 'comp_str', inplace=True)
+        self.assertListEqual(dfres_ipt.columns.tolist(), ["comp_str"])
+
+        dfres_ipf = stc.featurize_dataframe(df, 'comp_str', inplace=False)
+        self.assertListEqual(dfres_ipf.columns.tolist(), ["comp_str"])
+
     def test_str_to_composition(self):
         d = {'comp_str': ["Fe2", "MnO2"]}
 
@@ -208,8 +229,9 @@ class TestConversions(TestCase):
                                                    df_2lvl.columns.values))
 
         sto = StrToComposition(target_col_id=None, overwrite_data=True)
+
         df_2lvl = sto.featurize_dataframe(
-            df_2lvl, ("custom", "comp_str"), multiindex=True)
+            df_2lvl, ("custom", "comp_str"), multiindex=True, inplace=False)
         self.assertEqual(df_2lvl[("custom", "comp_str")].tolist(),
                          [Composition("Fe2"), Composition("MnO2")])
 
@@ -221,8 +243,8 @@ class TestConversions(TestCase):
         sto = StrToComposition(target_col_id=None, overwrite_data=True)
         df_2lvl = sto.featurize_dataframe(
             df_2lvl, ("custom", "comp_str"), multiindex=True,
-            return_errors=True, ignore_errors=True
-        )
+            return_errors=True, ignore_errors=True)
+
         self.assertTrue(
             all(df_2lvl[("custom", "StrToComposition Exceptions")].isnull()))
 
