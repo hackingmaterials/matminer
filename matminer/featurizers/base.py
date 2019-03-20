@@ -266,8 +266,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         else:
             # Create new dataframe and ensure columns are ordered properly
             res_labels = res.columns.tolist()
-            overlapping_labels = [c for c in res_labels if c in df.columns]
-            df = df.drop(columns=overlapping_labels)
+            if overwrite:
+                overlapping_labels = [c for c in res_labels if c in df.columns]
+                df = df.drop(columns=overlapping_labels)
             new = pd.concat([df, res], axis=1)
             return new[df.columns.tolist() + res.columns.tolist()]
 
@@ -287,7 +288,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if return_errors:
             labels.append(self.__class__.__name__ + " Exceptions")
 
-        if multiindex and len(labels[0]) == 2:
+        ix_types = (pd.Index, list, tuple)
+        if multiindex and len(labels[0]) == 2 and isinstance(labels[0], ix_types):
             # conversion featurizer, aiming to featurize in place.
             # conversion featurizers only have one feature label.
             # If return_errors=False, the transformation is:
