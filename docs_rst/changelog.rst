@@ -5,6 +5,12 @@
 matminer Changelog
 ==================
 
+**v0.5.4**
+
+* add elementproperty source name to feature labels (A. Dunn)
+* update Citrine API key detection logic (matSciMalcolm + A. Jain)
+* misc. fixes (A. Dunn)
+
 **v0.5.3**
 
 * fix typo bug that got introduced in 0.5.2 pypi release
