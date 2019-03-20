@@ -210,6 +210,9 @@ class TestBaseClass(PymatgenTest):
            data = multi_f.featurize_dataframe(data, ['x', 'x2'], multiindex=True)
            self.assertIn(("MultiArgs2", "y2"), data.columns)
            self.assertIn(("SingleFeaturizerMultiArgs", "y"), data.columns)
+           self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]],
+                                       data[[("SingleFeaturizerMultiArgs", "y"),
+                                             ("MultiArgs2", "y2")]])
 
     def test_featurize_many(self):
         # Single argument
@@ -331,7 +334,7 @@ class TestBaseClass(PymatgenTest):
         df_compoundkey.columns = pd.MultiIndex.from_product((["CK"],
                                                              df_compoundkey.columns.values))
         with self.assertRaises(ValueError):
-            df_compoundkey = self.multi.featurize_dataframe(df_compoundkey, ("CK", "x"))
+            _ = self.multi.featurize_dataframe(df_compoundkey, ("CK", "x"))
 
     def test_multiindex_return(self):
         # For inplace=False, where the method of assigning keys is different
