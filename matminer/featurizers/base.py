@@ -207,7 +207,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             return_errors (bool). Returns the errors encountered for each
                 row in a separate `XFeaturizer errors` column if True. Requires
                 ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
+            inplace (bool): If True, adds columns to the original object in
+                memory and returns None. Else, returns the updated object.
+                Should be identical to pandas inplace behavior.
             multiindex (bool): If True, use a Featurizer - Feature 2-level
                 index using the MultiIndex capabilities of pandas. If done
                 inplace, multiindex featurization will overwrite the original
