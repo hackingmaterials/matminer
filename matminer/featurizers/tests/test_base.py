@@ -137,11 +137,13 @@ class TestBaseClass(PymatgenTest):
 
     def test_inplace(self):
         data = self.make_test_data()
-        self.single.featurize_dataframe(data, 'x', inplace=False)
+        df_returned = self.single.featurize_dataframe(data, 'x', inplace=False)
         self.assertNotIn('y', data.columns)
+        self.assertIn('y', df_returned.columns)
 
-        self.single.featurize_dataframe(data, 'x', inplace=True)
+        df_returned = self.single.featurize_dataframe(data, 'x', inplace=True)
         self.assertIn('y', data)
+        self.assertIsNone(df_returned)
 
     def test_indices(self):
         data = self.make_test_data()
