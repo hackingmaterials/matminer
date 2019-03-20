@@ -68,11 +68,7 @@ class MatrixFeaturizer(BaseFeaturizer):
 
 class MultiArgs2(SingleFeaturizerMultiArgs):
     def featurize(self, *x):
-        # Making a 2D array to test whether MutliFeaturizer
-        #  can handle featurizers that have both 1D vectors with
-        #  singleton dimensions (e.g., shape==(4,1)) and those
-        #  without (e.g., shape==(4,))
-        return [super(MultiArgs2, self).featurize(*x)]
+        return super(MultiArgs2, self).featurize(*x)
 
     def feature_labels(self):
         return ['y2']
@@ -187,29 +183,28 @@ class TestBaseClass(PymatgenTest):
             self.assertArrayAlmostEqual(data['representation'][0],
                                         [[1.0, 0.0], [0.0, 1.0]])
 
-# Leaving this here fore now in case this issue crops up again.
-#    def test_multifeatures(self):
-#        multiargs2 = MultiArgs2()
-#
-#        # test iterating over both entries and featurizers
-#        for iter_entries in [True, False]:
-#            # Make a test dataset with two input variables
-#            data = self.make_test_data()
-#            data['x2'] = [4, 5, 6]
-#
-#            # Create featurizer
-#            multi_f = MultipleFeaturizer([self.multiargs, multiargs2],
-#                                         iterate_over_entries=iter_entries)
-#
-#            # Test featurize with multiple arguments
-#            features = multi_f.featurize(0, 2)
-#            self.assertArrayAlmostEqual([2, 2], features)
-#
-#            # Test dataframe
-#            data = multi_f.featurize_dataframe(data, ['x', 'x2'])
-#            self.assertEqual(['y', 'y2'], multi_f.feature_labels())
-#            self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]],
-#                                        data[['y', 'y2']])
+    def test_multifeatures_multiargs(self):
+        multiargs2 = MultiArgs2()
+
+        # test iterating over both entries and featurizers
+        for iter_entries in [True, False]:
+           # Make a test dataset with two input variables
+           data = self.make_test_data()
+           data['x2'] = [4, 5, 6]
+
+           # Create featurizer
+           multi_f = MultipleFeaturizer([self.multiargs, multiargs2],
+                                        iterate_over_entries=iter_entries)
+
+           # Test featurize with multiple arguments
+           features = multi_f.featurize(0, 2)
+           self.assertArrayAlmostEqual([2, 2], features)
+
+           # Test dataframe
+           data = multi_f.featurize_dataframe(data, ['x', 'x2'])
+           self.assertEqual(['y', 'y2'], multi_f.feature_labels())
+           self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]],
+                                       data[['y', 'y2']])
 
     def test_featurize_many(self):
         # Single argument
@@ -396,7 +391,8 @@ class TestBaseClass(PymatgenTest):
                                                    ("Custom", "Custom2", 'x'),
                                                    multiindex=True)
 
-    @unittest.skipIf(os.environ['CI'] == 'circle', "We skip this test when running circleci")
+    @unittest.skipIf(os.environ.get("CI", None) == 'circle',
+                     "We skip this test when running circleci")
     def test_caching(self):
         """Test whether MultiFeaturizer properly caches """
 
