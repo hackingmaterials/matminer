@@ -1,7 +1,7 @@
 import copy
 import unittest
 
-from pymatgen import Composition, Structure, Lattice, Element
+from pymatgen import Composition, Structure, Lattice, Element, DummySpecie
 
 from matminer.utils.prefeaturization import basic_composition_stats, \
     element_is_metal, basic_structure_stats
@@ -26,6 +26,11 @@ class TestPrefeaturization(unittest.TestCase):
                                 self.sc]
         comps = ["CH4", "Li2O3", "WC", "PtAu", "LaO3", "AcTh", "Nd"]
         self.test_compositions = [Composition(c) for c in comps]
+
+        dummy_dicts = [{DummySpecie("QQQ"): 1},
+                        {DummySpecie("QQQ"): 0.99, Element("H"): 0.01}]
+        dummy_comps = [Composition(cdict) for cdict in dummy_dicts]
+        self.test_compositions += dummy_comps
 
     def test_element_is_metal(self):
         # Alkali(ne)
@@ -57,14 +62,21 @@ class TestPrefeaturization(unittest.TestCase):
 
     def test_composition_percentage_stats(self):
         stats = basic_composition_stats(self.test_compositions)
-        self.assertAlmostEqual(stats["fraction_all_metal"], 3 / 7)
-        self.assertAlmostEqual(stats["fraction_all_rare_earth_metal"], 2 / 7)
-        self.assertAlmostEqual(stats["fraction_all_transition_metal"], 1 / 7)
-        self.assertAlmostEqual(stats["fraction_contains_metal"], 6 / 7)
+        self.assertAlmostEqual(stats["fraction_all_metal"], 3 / 9)
+        self.assertAlmostEqual(stats["fraction_all_rare_earth_metal"], 2 / 9)
+        self.assertAlmostEqual(stats["fraction_all_transition_metal"], 1 / 9)
+        self.assertAlmostEqual(stats["fraction_contains_metal"], 6 / 9)
         self.assertAlmostEqual(stats["fraction_contains_transition_metal"],
-                               4 / 7)
+                               4 / 9)
         self.assertAlmostEqual(stats["fraction_contains_rare_earth_metal"],
-                               3 / 7)
+                               3 / 9)
+        self.assertAlmostEqual(stats["fraction_contains_dummy"], 2 / 9)
+        self.assertAlmostEqual(stats["fraction_all_dummy"], 1 / 9)
+
+        element_list = [Element(e) for e in ["Pt", "La", "O"]]
+        stats2 = basic_composition_stats(self.test_compositions, element_list)
+        self.assertAlmostEqual(stats2["fraction_all_in_element_list"], 1/9)
+        self.assertAlmostEqual(stats2["fraction_any_in_element_list"], 3/9)
 
     def test_structure_percentage_stats(self):
         stats = basic_structure_stats(self.test_structures)
