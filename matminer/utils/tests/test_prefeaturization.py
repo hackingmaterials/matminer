@@ -28,7 +28,7 @@ class TestPrefeaturization(unittest.TestCase):
         self.test_compositions = [Composition(c) for c in comps]
 
         dummy_dicts = [{DummySpecie("QQQ"): 1},
-                        {DummySpecie("QQQ"): 0.99, Element("H"): 0.01}]
+                       {DummySpecie("QQQ"): 0.99, Element("H"): 0.01}]
         dummy_comps = [Composition(cdict) for cdict in dummy_dicts]
         self.test_compositions += dummy_comps
 
@@ -75,8 +75,8 @@ class TestPrefeaturization(unittest.TestCase):
 
         element_list = [Element(e) for e in ["Pt", "La", "O"]]
         stats2 = basic_composition_stats(self.test_compositions, element_list)
-        self.assertAlmostEqual(stats2["fraction_all_in_element_list"], 1/9)
-        self.assertAlmostEqual(stats2["fraction_any_in_element_list"], 3/9)
+        self.assertAlmostEqual(stats2["fraction_all_in_element_list"], 1 / 9)
+        self.assertAlmostEqual(stats2["fraction_any_in_element_list"], 3 / 9)
 
     def test_structure_percentage_stats(self):
         stats = basic_structure_stats(self.test_structures)
