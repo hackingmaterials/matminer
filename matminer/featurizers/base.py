@@ -151,7 +151,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     def chunksize(self):
         return self._chunksize if hasattr(self, '_chunksize') else None
 
-    def valid_fraction(self, *args, **kwargs):
+    def valid_fraction(self, *args, **kwargs) -> float:
         """
         Return the fraction of dataframe input which will be valid and in scope
         for a particular featurzer. For example, return the fraction of
