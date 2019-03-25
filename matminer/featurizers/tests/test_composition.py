@@ -190,6 +190,7 @@ class CompositionFeaturesTest(PymatgenTest):
                                            Composition("Mg10Cu50Ca40"),
                                            Composition("Fe2O3")]})
         miedema = Miedema(struct_types='all')
+        self.assertAlmostEqual(miedema.valid_fraction(df["composition"]), 2/3)
         mfps = miedema.featurize_dataframe(df, col_id="composition")
         self.assertAlmostEqual(mfps['Miedema_deltaH_inter'][0], -0.003445022152)
         self.assertAlmostEqual(mfps['Miedema_deltaH_amor'][0], 0.0707658836300)

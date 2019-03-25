@@ -18,6 +18,7 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     CohesiveEnergyData, MixingEnthalpy, MatscholarElementData
+from matminer.utils.prefeaturization import basic_composition_stats
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
@@ -1082,6 +1083,26 @@ class Miedema(BaseFeaturizer):
         else:
             raise NotImplementedError('data_source {} not implemented yet'.
                                       format(self, data_source))
+
+    def valid_fraction(self, compositions):
+        """
+        Determine (from a list of compositions) the fraction of compositions
+        which are valid for the Miedema model.
+
+        This featurizer is not in scope for elements which do not have
+        parameters in the Miedema model.
+
+        Args:
+            compositions ([Composition]): An iterable of pymatgen Compositions.
+
+        Returns:
+            (float): A fraction of the compositions entered which are valid for
+                this featurizer.
+
+        """
+        element_list = [Element(estr) for estr in self.df_dataset.index]
+        stats = basic_composition_stats(compositions, element_list=element_list)
+        return stats["fraction_all_in_element_list"]
 
     def deltaH_chem(self, elements, fracs, struct):
         """
