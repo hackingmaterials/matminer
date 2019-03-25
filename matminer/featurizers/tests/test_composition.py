@@ -231,10 +231,14 @@ class CompositionFeaturesTest(PymatgenTest):
 
     def test_yang(self):
         comps = list(map(Composition, ["ZrHfTiCuNi", "CuNi",
-                                       "CoCrFeNiCuAl0.3", "CoCrFeNiCuAl"]))
+                                       "CoCrFeNiCuAl0.3", "CoCrFeNiCuAl",
+                                       "LaO3"]))
 
         # Run the featurization
         feat = YangSolidSolution()
+
+        self.assertAlmostEqual(feat.valid_fraction(comps), 0.8, places=2)
+
         feat.set_n_jobs(1)
         features = feat.featurize_many(comps)
 
@@ -245,7 +249,7 @@ class CompositionFeaturesTest(PymatgenTest):
         # I use a high tolerance because matminer uses a different source
         #   of radii than the original paper (do not have Kittel's atomic
         #   radii available)
-        self.assertEqual((4, 2), np.array(features).shape)
+        self.assertEqual((5, 2), np.array(features).shape)
         self.assertArrayAlmostEqual([0.95, 0.1021], features[0], decimal=2)
         self.assertArrayAlmostEqual([2.22, 0.0], features[1], decimal=2)
         self.assertArrayAlmostEqual([158.5, 0.0315], features[2], decimal=1)

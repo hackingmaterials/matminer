@@ -1412,6 +1412,38 @@ class YangSolidSolution(BaseFeaturizer):
         # Load in a table of elemental properties
         self.elem_data = MagpieData()
 
+    def valid_fraction(self, compositions):
+        """
+        Determine (from a list of compositions) the fraction of compositions
+        which are valid for the Yang Solid Solution model. This is just an
+        approximastion of true validity because Yang has defined parameters for
+        binary combinations of metals, but here we simply validate against the
+        list of elements contained in those binary combinations.
+
+        This featurizer is not in scope for elements which do not have
+        parameters in the Yang model.
+
+        Args:
+            compositions ([Composition]): An iterable of pymatgen Compositions.
+
+        Returns:
+            (float): A fraction of the compositions entered which are valid for
+                this featurizer.
+
+        """
+        element_list = ["Dy", "Mn", "Y", "Nd", "Ag", "Cs", "Tm", "Pd", "Sn",
+                        "Rh", "Pr", "Er", "K", "In", "Tb", "Rb", "H", "N",
+                        "Ni", "Hg", "Ca", "Mo", "Li", "Th", "U", "At", "Ga",
+                        "La", "Ru", "Lu", "Eu", "Si", "B", "Zr", "Ce", "Pm",
+                        "Ge", "Sm", "Ta", "Ti", "Po", "Sc", "Mg", "Sr", "P",
+                        "C", "Ir", "Pa", "V", "Zn", "Sb", "Na", "W", "Re",
+                        "Tl", "Pt", "Gd", "Cr", "Co", "Ba", "Os", "Hf", "Pb",
+                        "Cu", "Tc", "Al", "As", "Ho", "Yb", "Au", "Be", "Nb",
+                        "Cd", "Fe", "Bi"]
+        element_list = [Element(e) for e in element_list]
+        stats = basic_composition_stats(compositions, element_list=element_list)
+        return stats["fraction_all_in_element_list"]
+
     def featurize(self, comp):
         return [self.compute_omega(comp), self.compute_delta(comp)]
 
