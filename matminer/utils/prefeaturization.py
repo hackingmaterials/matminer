@@ -12,7 +12,7 @@ from pymatgen import Element, DummySpecie
 __author__ = ["Alex Dunn <ardunn@lbl.gov>"]
 
 
-def basic_structure_stats(structures):
+def basic_structure_stats(structures) -> dict:
     """
     Basic structure statistics related to the scope and performance of
     some structure featurizers.
@@ -41,7 +41,7 @@ def basic_structure_stats(structures):
     return stats
 
 
-def basic_composition_stats(compositions, element_list=None):
+def basic_composition_stats(compositions, element_list=None) -> dict:
     """
     Basic fractional metrics based on compositions.
 
@@ -127,7 +127,7 @@ def basic_composition_stats(compositions, element_list=None):
     return {k: np.sum(count) / len(compositions) for k, count in counts.items()}
 
 
-def element_is_metal(e):
+def element_is_metal(e: Element) -> bool:
     """
     Determines whether an element is a metal.
 
