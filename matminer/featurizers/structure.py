@@ -37,6 +37,7 @@ from matminer.featurizers.utils.stats import PropertyStats
 from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
     CrystalGraphConvNetWrapper, CIFDataWrapper
 from matminer.utils.caching import get_all_nearest_neighbors
+from matminer.utils.prefeaturization import basic_structure_stats
 
 # For the CGCNNFeaturizer
 try:
@@ -82,6 +83,9 @@ class DensityFeatures(BaseFeaturizer):
         """
         self.features = ["density", "vpa", "packing fraction"] if not \
             desired_features else desired_features
+
+    def valid_fraction(self, structures):
+        return basic_structure_stats(structures)["fraction_ordered"]
 
     def featurize(self, s):
         output = []

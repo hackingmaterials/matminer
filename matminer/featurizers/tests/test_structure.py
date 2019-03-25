@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals, division
 import os
+import copy
 import unittest
 import csv
 import json
@@ -87,6 +88,11 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(f[0], 2.105, 2)
         self.assertAlmostEqual(f[1], 23.046, 2)
         self.assertAlmostEqual(f[2], 0.620, 2)
+
+        nacl_disordered = copy.deepcopy(self.nacl)
+        nacl_disordered.replace_species({"Cl1-": "Cl0.99H0.01"})
+        structures = [self.diamond, self.nacl, nacl_disordered]
+        self.assertAlmostEqual(df.valid_fraction(structures), 2/3)
 
     def test_global_symmetry(self):
         gsf = GlobalSymmetryFeatures()
