@@ -85,6 +85,20 @@ class DensityFeatures(BaseFeaturizer):
             desired_features else desired_features
 
     def valid_fraction(self, structures):
+        """
+        Determine the fraction of valid entries for DensityFeatures.
+
+        DensityFeatures only works (currently) on ordered structures, so
+        structures which have at least one disordered (partial occupancy) site
+        are declared invalid.
+
+        Args:
+            structures ([pymatgen.Structure]): The list of pymatgen structures
+                to screen for validity with DensityFeatures.
+
+        Returns:
+            (float): The fraction of valid (ordered) entries for DensityFeatures
+        """
         return basic_structure_stats(structures)["fraction_ordered"]
 
     def featurize(self, s):
