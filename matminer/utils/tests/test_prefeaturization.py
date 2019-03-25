@@ -22,7 +22,8 @@ class TestPrefeaturization(unittest.TestCase):
                             ["Al"], [[0, 0, 0]], validate_proximity=False,
                             to_unit_cell=False,
                             coords_are_cartesian=False)
-        self.test_structures = [self.ni3al, self.sc, self.ni3al_partial, self.sc]
+        self.test_structures = [self.ni3al, self.sc, self.ni3al_partial,
+                                self.sc]
         comps = ["CH4", "Li2O3", "WC", "PtAu", "LaO3", "AcTh", "Nd"]
         self.test_compositions = [Composition(c) for c in comps]
 
@@ -56,12 +57,14 @@ class TestPrefeaturization(unittest.TestCase):
 
     def test_composition_percentage_stats(self):
         stats = basic_composition_stats(self.test_compositions)
-        self.assertAlmostEqual(stats["fraction_all_metal"], 3/7)
-        self.assertAlmostEqual(stats["fraction_all_rare_earth_metal"], 2/7)
-        self.assertAlmostEqual(stats["fraction_all_transition_metal"], 1/7)
-        self.assertAlmostEqual(stats["fraction_contains_metal"], 6/7)
-        self.assertAlmostEqual(stats["fraction_contains_transition_metal"], 4/7)
-        self.assertAlmostEqual(stats["fraction_contains_rare_earth_metal"], 3/7)
+        self.assertAlmostEqual(stats["fraction_all_metal"], 3 / 7)
+        self.assertAlmostEqual(stats["fraction_all_rare_earth_metal"], 2 / 7)
+        self.assertAlmostEqual(stats["fraction_all_transition_metal"], 1 / 7)
+        self.assertAlmostEqual(stats["fraction_contains_metal"], 6 / 7)
+        self.assertAlmostEqual(stats["fraction_contains_transition_metal"],
+                               4 / 7)
+        self.assertAlmostEqual(stats["fraction_contains_rare_earth_metal"],
+                               3 / 7)
 
     def test_structure_percentage_stats(self):
         stats = basic_structure_stats(self.test_structures)
