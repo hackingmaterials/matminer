@@ -151,6 +151,33 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     def chunksize(self):
         return self._chunksize if hasattr(self, '_chunksize') else None
 
+    def valid_fraction(self, *args, **kwargs):
+        """
+        Return the fraction of dataframe input which will be valid and in scope
+        for a particular featurzer. For example, return the fraction of
+        compositions which will be out of scope for a particular composition
+        featurizer. Can be useful for "prechecking" a dataframe before running
+        an expensive featurizer.
+
+        Also a good place to raise warnings if the featurizer will be
+        particularly computationally intensive, etc.
+
+        Should be overridden if needed by BaseFeaturizer subclasses. If not
+        overridden by a featurizer subclass, simply returns 1, meaning all
+        entries are valid.
+
+        Args:
+            *args, **kwargs: Should include one or more iterables of entries
+                (e.g., a list of Compositions) and any parameters needed to
+                determine what is a "valid" entry for a particular featurizer.
+                These parameters will be determined by the specific featurizer.
+
+        Returns:
+            frac (float): A fraction between 0 and 1 of the valid entries. 1.0
+                means all entries are valid. 0 means no entries are valid.
+        """
+        return 1.0
+
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
 
