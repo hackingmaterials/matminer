@@ -46,7 +46,7 @@
 <li class="toctree-l1"><a class="reference internal" href="matminer.featurizers.tests.html">matminer.featurizers.tests package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.tests.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.tests.html#module-matminer.featurizers.tests.test_bandstructure">matminer.featurizers.tests.test_bandstructure module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.tests.html#matminer-featurizers-tests-test-base-module">matminer.featurizers.tests.test_base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.tests.html#module-matminer.featurizers.tests.test_base">matminer.featurizers.tests.test_base module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.tests.html#module-matminer.featurizers.tests.test_composition">matminer.featurizers.tests.test_composition module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.tests.html#module-matminer.featurizers.tests.test_conversions">matminer.featurizers.tests.test_conversions module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.tests.html#module-matminer.featurizers.tests.test_dos">matminer.featurizers.tests.test_dos module</a></li>
@@ -465,7 +465,7 @@ in any derived featurizer subclass.</p>
 
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.featurize_dataframe">
-<code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>ignore_errors=False</em>, <em>return_errors=False</em>, <em>inplace=True</em>, <em>multiindex=False</em>, <em>pbar=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descname">featurize_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>ignore_errors=False</em>, <em>return_errors=False</em>, <em>inplace=False</em>, <em>multiindex=False</em>, <em>pbar=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.featurize_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute features for all entries contained in input dataframe.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -481,13 +481,14 @@ are thrown as normal.</dd>
 <dt>return_errors (bool). Returns the errors encountered for each</dt>
 <dd>row in a separate <cite>XFeaturizer errors</cite> column if True. Requires
 ignore_errors to be True.</dd>
-</dl>
-<p>inplace (bool): Whether to add new columns to input dataframe (df)
-multiindex (bool): If True, use a Featurizer - Feature 2-level</p>
-<blockquote>
-<div>index using the MultiIndex capabilities of pandas. If done
+<dt>inplace (bool): If True, adds columns to the original object in</dt>
+<dd>memory and returns None. Else, returns the updated object.
+Should be identical to pandas inplace behavior.</dd>
+<dt>multiindex (bool): If True, use a Featurizer - Feature 2-level</dt>
+<dd>index using the MultiIndex capabilities of pandas. If done
 inplace, multiindex featurization will overwrite the original
-dataframe’s column index.</div></blockquote>
+dataframe’s column index.</dd>
+</dl>
 <p class="last">pbar (bool): Shows a progress bar if True.</p>
 </dd>
 <dt>Returns:</dt>
@@ -2490,6 +2491,81 @@ will be returned. If set to False, an error will be thrown.</dd>
 <dl class="method">
 <dt id="matminer.featurizers.conversions.CompositionToOxidComposition.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToOxidComposition.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.conversions.CompositionToStructureFromMP">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.conversions.</code><code class="descname">CompositionToStructureFromMP</code><span class="sig-paren">(</span><em>target_col_id='structure'</em>, <em>overwrite_data=False</em>, <em>mapi_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToStructureFromMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.conversions.ConversionFeaturizer" title="matminer.featurizers.conversions.ConversionFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.conversions.ConversionFeaturizer</span></code></a></p>
+<p>Featurizer to get a Structure object from Materials Project using the
+composition alone. The most stable entry from Materials Project is selected,
+or NaN if no entry is found in the Materials Project.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>target_col_id (str or None): The column in which the converted data will</dt>
+<dd>be written. If the column already exists then an error will be
+thrown unless <cite>overwrite_data</cite> is set to <cite>True</cite>. If <cite>target_col_id</cite>
+begins with an underscore the data will be written to the column:
+<cite>“{}_{}”.format(col_id, target_col_id[1:])</cite>, where <cite>col_id</cite> is the
+column being featurized. If <cite>target_col_id</cite> is set to None then
+the data will be written “in place” to the <cite>col_id</cite> column (this
+will only work if <cite>overwrite_data=True</cite>).</dd>
+<dt>overwrite_data (bool): Overwrite any data in <cite>target_column</cite> if it</dt>
+<dd>exists.</dd>
+</dl>
+<p class="last">map_key (str): Materials API key</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.conversions.CompositionToStructureFromMP.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>target_col_id='structure'</em>, <em>overwrite_data=False</em>, <em>mapi_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToStructureFromMP.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.CompositionToStructureFromMP.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToStructureFromMP.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.CompositionToStructureFromMP.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToStructureFromMP.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the most stable structure from Materials Project
+Args:</p>
+<blockquote>
+<div>comp (<cite>pymatgen.core.composition.Composition</cite>): A composition.</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(<cite>pymatgen.core.structure.Structure</cite>): A Structure object.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.conversions.CompositionToStructureFromMP.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.conversions.CompositionToStructureFromMP.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
 <dl class="docutils">
 <dt>Returns:</dt>
