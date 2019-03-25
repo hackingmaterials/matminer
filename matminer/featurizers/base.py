@@ -157,7 +157,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         for a particular featurzer. For example, return the fraction of
         compositions which will be out of scope for a particular composition
         featurizer. Can be useful for "prechecking" a dataframe before running
-        an expensive featurizer.
+        an expensive featurizer; therefore this valid_fraction check should
+        preferably run VERY QUICKLY, even on large datasets.
 
         Also a good place to raise warnings if the featurizer will be
         particularly computationally intensive, etc.
