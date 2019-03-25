@@ -7,6 +7,7 @@ computationally difficult for a particular featurizer.
 from copy import deepcopy
 
 import numpy as np
+from pymatgen import Element, DummySpecie
 
 __author__ = ["Alex Dunn <ardunn@lbl.gov>"]
 
@@ -40,18 +41,27 @@ def basic_structure_stats(structures):
     return stats
 
 
-def basic_composition_stats(compositions):
+def basic_composition_stats(compositions, element_list=None):
     """
     Basic fractional metrics based on compositions.
 
     Current metrics are: fraction of compositions that contain metal,
     fraction of compositions that are all metal, fraction of compositions that
     contain transition metal, fraction of compositions that are all transition
-    metal, fraction of compositions that contain rare earth metals, and
-    fraction of compositions that are all rare earth metals.
+    metal, fraction of compositions that contain rare earth metals,
+    fraction of compositions that are all rare earth metals, and fraction of
+    compositions that contain a dummy specie.
+
+    If element_list is set, the fraction of compositions with all elements
+    in the element list and fraction of compositions with at least one element
+    in the element list will also be added to the returned stats.
 
     Args:
         compositions ([Compositions]): An iterable of pymatgen Comnpositions.
+        element_list ([Element]): A list of elements to use for examining a list
+            of compositions further. For example, by defining an element_list,
+            you will also get fraction_all_elements_in_element_list as a
+            returned statistic.
 
     Returns:
         (dict): A list of fractions based on the above metrics.
@@ -64,21 +74,56 @@ def basic_composition_stats(compositions):
         "fraction_contains_transition_metal",
         "fraction_all_transition_metal",
         "fraction_contains_rare_earth_metal",
-        "fraction_all_rare_earth_metal"
+        "fraction_all_rare_earth_metal",
+        "fraction_contains_dummy",
+        "fraction_all_dummy"
     ]
+
+    if element_list:
+        keys += [
+            "fraction_all_in_element_list",
+            "fraction_any_in_element_list"
+        ]
+        if not all([isinstance(e, Element) for e in element_list]):
+            raise TypeError("Not everything in element_list is a pymatgen "
+                            "Element! Please convert your elements to pymatgen"
+                            " Elements.")
+
     counts = {k: deepcopy(preallocated) for k in keys}
     for i, c in enumerate(compositions):
-        metals = [element_is_metal(e) for e in c.elements]
+        elements = c.elements
+
+        # prevent attribute errors when checking other attrs
+        is_dummy = []
+        for e in elements:
+            if isinstance(e, DummySpecie):
+                e.is_transition_metal = False
+                e.is_rare_earth_metal = False
+                e.is_alkali = False
+                e.is_alkaline = False
+                e.is_post_transition_metal = False
+                is_dummy.append(True)
+            else:
+                is_dummy.append(False)
+        counts["fraction_contains_dummy"][i] = any(is_dummy)
+        counts["fraction_all_dummy"][i] = all(is_dummy)
+
+        metals = [element_is_metal(e) for e in elements]
         counts["fraction_contains_metal"][i] = any(metals)
         counts["fraction_all_metal"][i] = all(metals)
 
-        t_metals = [e.is_transition_metal for e in c.elements]
+        t_metals = [e.is_transition_metal for e in elements]
         counts["fraction_contains_transition_metal"][i] = any(t_metals)
         counts["fraction_all_transition_metal"][i] = all(t_metals)
 
-        re_metals = [e.is_rare_earth_metal for e in c.elements]
+        re_metals = [e.is_rare_earth_metal for e in elements]
         counts["fraction_contains_rare_earth_metal"][i] = any(re_metals)
         counts["fraction_all_rare_earth_metal"][i] = all(re_metals)
+
+        if element_list:
+            elist = [e in element_list for e in elements]
+            counts["fraction_all_in_element_list"][i] = all(elist)
+            counts["fraction_any_in_element_list"][i] = any(elist)
     return {k: np.sum(count) / len(compositions) for k, count in counts.items()}
 
 
