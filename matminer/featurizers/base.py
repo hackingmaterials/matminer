@@ -159,8 +159,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             -> [float, pd.DataFrame]:
         """
         Precheck an entire dataframe. Subclasses wanting to use precheck
-        functinoality should not override this method, they sh0uld override
-        precheck (unless the entire df (determines whether single entries pass
+        functinoality should not override this method, they should override
+        precheck (unless the entire df determines whether single entries pass
         or fail a precheck).
 
         Prechecking should be a quick and useful way to check that for a
@@ -207,20 +207,22 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     def precheck(self, x) -> bool:
         """
         Precheck (provide an estimate of whether a featurizer will work or not)
-        for a single entry (e.g., a single composition). Prechecks should be:
+        for a single entry (e.g., a single composition). If the entry fails the
+        precheck, it will most likely fail featurization; if it passes, it is
+        likely (but not guaranteed) to featurize correctly.
+
+        Prechecks should be:
             * accurate (but can be good estimates rather than ground truth)
             * fast to evaluate
             * unlikely to be obsolete via changes in the featurizer in the near
                 future
 
         This method should be overridden by any featurizer requiring its
-        use, as by default all entries will pass prechecking. Also, this
-        method should run very quickly - we are just pre-checking before
-        featurization, after all.
+        use, as by default all entries will pass prechecking. Also, precheck
+        is a good opportunity to throw warnings about long runtimes (e.g., doing
+        nearest neighbors computations on a structure with many thousand sites).
 
-        Also, precheck is a good opportunity to throw warnings about long
-        runtimes (e.g., doing nearest neighbors computations on a structure
-        with many thousand sites).
+        See the documentation for precheck_dataframe for more information.
 
         Args:
             x (Composition, Structure, etc.): Input to-be-featurized.
