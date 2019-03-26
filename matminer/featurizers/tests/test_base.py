@@ -46,6 +46,7 @@ class SingleFeaturizerMultiArgsWithPrecheck(SingleFeaturizerMultiArgs):
         # If the sum is even, return True, else False
         return True if (x[1] + x[0]) % 2 == 0 else False
 
+
 class MultipleFeatureFeaturizer(BaseFeaturizer):
     def feature_labels(self):
         return ['w', 'z']
@@ -552,7 +553,7 @@ class TestBaseClass(PymatgenTest):
 
         data['x2'] = [3, 3, 3]
         frac = fm.precheck_dataframe(data, ['x', 'x2'], return_frac=True)
-        self.assertAlmostEqual(frac, 2/3)
+        self.assertAlmostEqual(frac, 2 / 3)
 
         mpckey = "SingleFeaturizerMultiArgsWithPrecheck precheck pass"
 
@@ -561,13 +562,10 @@ class TestBaseClass(PymatgenTest):
                               inplace=True)
         self.assertArrayEqual(data_ipm[mpckey].tolist(), [True, False, True])
 
-
         df3 = fm.precheck_dataframe(data, ['x', 'x2'], return_frac=False,
                                     inplace=False)
         self.assertArrayEqual(df3[mpckey].tolist(), [True, False, True])
         self.assertNotIn(mpckey, data.columns.tolist())
-
-
 
 
 if __name__ == '__main__':
