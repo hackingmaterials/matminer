@@ -1083,6 +1083,24 @@ class Miedema(BaseFeaturizer):
             raise NotImplementedError('data_source {} not implemented yet'.
                                       format(self, data_source))
 
+        self.element_list = [Element(estr) for estr in self.df_dataset.index]
+
+    def precheck(self, c: Composition) -> bool:
+        """
+        Precheck a single entry. Miedema does not work for compositons
+        containing any elments for which the Miedema model has no parameters.
+        To precheck an entire dataframe (qnd automatically gather
+        the fraction of structures that will pass the precheck), please use
+        precheck_dataframe.
+
+        Args:
+            c (pymatgen.Composition): The composition to precheck.
+
+        Returns:
+            (bool): If True, s passed the precheck; otherwise, it failed.
+        """
+        return all([e in self.element_list for e in c.elements])
+
     def deltaH_chem(self, elements, fracs, struct):
         """
         Chemical term of formation enthalpy
@@ -1390,6 +1408,25 @@ class YangSolidSolution(BaseFeaturizer):
 
         # Load in a table of elemental properties
         self.elem_data = MagpieData()
+
+    def precheck(self, c: Composition) -> bool:
+        """
+        Precheck a single entry. YangSolidSolution does not work for compositons
+        containing any binary elment combinations for which the model has no
+        parameters. We can nearly equivalently approximate this by checking
+        against the unary element list.
+
+        To precheck an entire dataframe (qnd automatically gather
+        the fraction of structures that will pass the precheck), please use
+        precheck_dataframe.
+
+        Args:
+            c (pymatgen.Composition): The composition to precheck.
+
+        Returns:
+            (bool): If True, s passed the precheck; otherwise, it failed.
+        """
+        return all([e in self.dhf_mix.valid_element_list for e in c.elements])
 
     def featurize(self, comp):
         return [self.compute_omega(comp), self.compute_delta(comp)]

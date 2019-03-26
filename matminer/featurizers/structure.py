@@ -83,6 +83,21 @@ class DensityFeatures(BaseFeaturizer):
         self.features = ["density", "vpa", "packing fraction"] if not \
             desired_features else desired_features
 
+    def precheck(self, s: Structure) -> bool:
+        """
+        Precheck a single entry. DensityFeatures does not work for disordered
+        structures. To precheck an entire dataframe (qnd automatically gather
+        the fraction of structures that will pass the precheck), please use
+        precheck_dataframe.
+
+        Args:
+            s (pymatgen.Structure): The structure to precheck.
+
+        Returns:
+            (bool): If True, s passed the precheck; otherwise, it failed.
+        """
+        return s.is_ordered
+
     def featurize(self, s):
         output = []
 

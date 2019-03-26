@@ -190,6 +190,8 @@ class CompositionFeaturesTest(PymatgenTest):
                                            Composition("Mg10Cu50Ca40"),
                                            Composition("Fe2O3")]})
         miedema = Miedema(struct_types='all')
+        self.assertFalse(miedema.precheck(df["composition"].iloc[-1]))
+        self.assertAlmostEqual(miedema.precheck_dataframe(df, "composition"), 2 / 3)
         mfps = miedema.featurize_dataframe(df, col_id="composition")
         self.assertAlmostEqual(mfps['Miedema_deltaH_inter'][0], -0.003445022152)
         self.assertAlmostEqual(mfps['Miedema_deltaH_amor'][0], 0.0707658836300)
@@ -229,11 +231,17 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_no_latt'][2]), True)
 
     def test_yang(self):
-        comps = list(map(Composition, ["ZrHfTiCuNi", "CuNi",
-                                       "CoCrFeNiCuAl0.3", "CoCrFeNiCuAl"]))
+        comps = list(map(Composition,
+                         ["ZrHfTiCuNi", "CuNi", "CoCrFeNiCuAl0.3",
+                          "CoCrFeNiCuAl", "LaO3"]))
 
         # Run the featurization
         feat = YangSolidSolution()
+
+        df = pd.DataFrame({"composition": comps})
+        self.assertFalse(feat.precheck(comps[-1]))
+        self.assertAlmostEqual(feat.precheck_dataframe(df, "composition"), 0.8, places=2)
+
         feat.set_n_jobs(1)
         features = feat.featurize_many(comps)
 
@@ -244,7 +252,7 @@ class CompositionFeaturesTest(PymatgenTest):
         # I use a high tolerance because matminer uses a different source
         #   of radii than the original paper (do not have Kittel's atomic
         #   radii available)
-        self.assertEqual((4, 2), np.array(features).shape)
+        self.assertEqual((5, 2), np.array(features).shape)
         self.assertArrayAlmostEqual([0.95, 0.1021], features[0], decimal=2)
         self.assertArrayAlmostEqual([2.22, 0.0], features[1], decimal=2)
         self.assertArrayAlmostEqual([158.5, 0.0315], features[2], decimal=1)
