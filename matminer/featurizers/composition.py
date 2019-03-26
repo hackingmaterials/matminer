@@ -1085,7 +1085,7 @@ class Miedema(BaseFeaturizer):
 
         self.element_list = [Element(estr) for estr in self.df_dataset.index]
 
-    def precheck(self, c):
+    def precheck(self, c: Composition) -> bool:
         """
         Precheck a single entry. Miedema does not work for compositons
         containing any elments for which the Miedema model has no parameters.
@@ -1419,7 +1419,7 @@ class YangSolidSolution(BaseFeaturizer):
             "Yb", "Au", "Be", "Nb", "Cd", "Fe", "Bi"]
         self.element_list = [Element(e) for e in element_list]
 
-    def precheck(self, c):
+    def precheck(self, c: Composition) -> bool:
         """
         Precheck a single entry. YangSolidSolution does not work for compositons
         containing any binary elment combinations for which the model has no
