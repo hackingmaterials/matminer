@@ -204,20 +204,26 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 df = pd.concat([df, res], axis=1)
             return df
 
-    def precheck(self, entry):
+    def precheck(self, x) -> bool:
         """
         Precheck (provide an estimate of whether a featurizer will work or not)
-        for a single entry (e.g., a single composition).
+        for a single entry (e.g., a single composition). Prechecks should be:
+            * accurate (but can be good estimates rather than ground truth)
+            * fast to evaluate
+            * unlikely to be obsolete via changes in the featurizer in the near
+                future
 
         This method should be overridden by any featurizer requiring its
-        use, as by default all entries will pass prechecking.
+        use, as by default all entries will pass prechecking. Also, this
+        method should run very quickly - we are just pre-checking before
+        featurization, after all.
 
         Also, precheck is a good opportunity to throw warnings about long
         runtimes (e.g., doing nearest neighbors computations on a structure
         with many thousand sites).
 
         Args:
-            entry (Composition, Structure, etc.): An object to-be-featurized.
+            x (Composition, Structure, etc.): Input to-be-featurized.
 
         Returns:
             (bool): True, if passes the precheck. False, if fails.
