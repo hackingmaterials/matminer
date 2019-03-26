@@ -265,6 +265,11 @@ class MixingEnthalpy:
         Size Difference, Heat of Mixing and Period of Constituent Elements and
         Its Application to Characterization of the Main Alloying Element.
         Mater. Trans. 46, 2817–2829 (2005).
+
+    Attributes:
+        valid_element_list ([Element]): A list of elements for which the
+            mixing enthalpy parameters are defined (although no guarantees
+            are provided that all combinations of this list will be available).
     """
 
     def __init__(self):
@@ -275,6 +280,15 @@ class MixingEnthalpy:
         for a, b, dHf in mixing_dataset.itertuples(index=False):
             key = tuple(sorted((a, b)))
             self.mixing_data[key] = dHf
+        valid_elements = [
+            "Dy", "Mn", "Y", "Nd", "Ag", "Cs", "Tm", "Pd", "Sn", "Rh", "Pr",
+            "Er", "K", "In", "Tb", "Rb", "H", "N", "Ni", "Hg", "Ca", "Mo", "Li",
+            "Th", "U", "At", "Ga", "La", "Ru", "Lu", "Eu", "Si", "B", "Zr",
+            "Ce", "Pm", "Ge", "Sm", "Ta", "Ti", "Po", "Sc", "Mg", "Sr", "P",
+            "C", "Ir", "Pa", "V", "Zn", "Sb", "Na", "W", "Re", "Tl", "Pt", "Gd",
+            "Cr", "Co", "Ba", "Os", "Hf", "Pb", "Cu", "Tc", "Al", "As", "Ho",
+            "Yb", "Au", "Be", "Nb", "Cd", "Fe", "Bi"]
+        self.valid_element_list = [Element(e) for e in valid_elements]
 
     def get_mixing_enthalpy(self, elemA, elemB):
         """

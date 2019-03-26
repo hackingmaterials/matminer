@@ -1409,16 +1409,6 @@ class YangSolidSolution(BaseFeaturizer):
         # Load in a table of elemental properties
         self.elem_data = MagpieData()
 
-        element_list = [
-            "Dy", "Mn", "Y", "Nd", "Ag", "Cs", "Tm", "Pd", "Sn", "Rh", "Pr",
-            "Er", "K", "In", "Tb", "Rb", "H", "N", "Ni", "Hg", "Ca", "Mo", "Li",
-            "Th", "U", "At", "Ga", "La", "Ru", "Lu", "Eu", "Si", "B", "Zr",
-            "Ce", "Pm", "Ge", "Sm", "Ta", "Ti", "Po", "Sc", "Mg", "Sr", "P",
-            "C", "Ir", "Pa", "V", "Zn", "Sb", "Na", "W", "Re", "Tl", "Pt", "Gd",
-            "Cr", "Co", "Ba", "Os", "Hf", "Pb", "Cu", "Tc", "Al", "As", "Ho",
-            "Yb", "Au", "Be", "Nb", "Cd", "Fe", "Bi"]
-        self.element_list = [Element(e) for e in element_list]
-
     def precheck(self, c: Composition) -> bool:
         """
         Precheck a single entry. YangSolidSolution does not work for compositons
@@ -1436,7 +1426,7 @@ class YangSolidSolution(BaseFeaturizer):
         Returns:
             (bool): If True, s passed the precheck; otherwise, it failed.
         """
-        return all([e in self.element_list for e in c.elements])
+        return all([e in self.dhf_mix.valid_element_list for e in c.elements])
 
     def featurize(self, comp):
         return [self.compute_omega(comp), self.compute_delta(comp)]
