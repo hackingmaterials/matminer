@@ -231,14 +231,16 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_no_latt'][2]), True)
 
     def test_yang(self):
-        comps = list(map(Composition, ["ZrHfTiCuNi", "CuNi",
-                                       "CoCrFeNiCuAl0.3", "CoCrFeNiCuAl",
-                                       "LaO3"]))
+        comps = list(map(Composition,
+                         ["ZrHfTiCuNi", "CuNi", "CoCrFeNiCuAl0.3",
+                          "CoCrFeNiCuAl", "LaO3"]))
 
         # Run the featurization
         feat = YangSolidSolution()
 
-        self.assertAlmostEqual(feat.precheck(comps), 0.8, places=2)
+        df = pd.DataFrame({"composition": comps})
+        self.assertFalse(feat.precheck(comps[-1]))
+        self.assertAlmostEqual(feat.precheck_dataframe(df, "composition"), 0.8, places=2)
 
         feat.set_n_jobs(1)
         features = feat.featurize_many(comps)
