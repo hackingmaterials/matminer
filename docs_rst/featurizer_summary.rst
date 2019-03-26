@@ -92,6 +92,7 @@ Name                                   Description
 :code:`JsonToObject`                   Utility featurizer to decode json data to a Python object via MSON. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.JsonToObject>`_
 :code:`StructureToOxidStructure`       Utility featurizer to add oxidation states to a pymatgen Structure. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StructureToOxidStructure>`_
 :code:`CompositionToOxidComposition`   Utility featurizer to add oxidation states to a pymatgen Composition. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.CompositionToOxidComposition>`_
+:code:`CompositionToStructureFromMP`   Featurizer to get a Structure object from Materials Project using the `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.CompositionToStructureFromMP>`_
 ====================================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 
 

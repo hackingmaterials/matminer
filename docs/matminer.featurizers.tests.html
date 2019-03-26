@@ -67,8 +67,448 @@
 </dd></dl>
 
 </div>
-<div class="section" id="matminer-featurizers-tests-test-base-module">
-<h2>matminer.featurizers.tests.test_base module<a class="headerlink" href="#matminer-featurizers-tests-test-base-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-matminer.featurizers.tests.test_base">
+<span id="matminer-featurizers-tests-test-base-module"></span><h2>matminer.featurizers.tests.test_base module<a class="headerlink" href="#module-matminer.featurizers.tests.test_base" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.FittableFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">FittableFeaturizer</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>This test featurizer tests fitting qualities of BaseFeaturizer, including
+refittability and different results based on different fits.</p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**fit_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the parameters of this featurizer based on available data</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>X - [list of tuples], training data</dd>
+<dt>Returns:</dt>
+<dd>self</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.MatrixFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">MatrixFeaturizer</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MatrixFeaturizer.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MatrixFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MatrixFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MatrixFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.MultiArgs2">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">MultiArgs2</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiArgs2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultiArgs2.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiArgs2.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultiArgs2.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiArgs2.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultiArgs2.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiArgs2.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.MultiTypeFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">MultiTypeFeaturizer</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiTypeFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>A featurizer that returns multiple dtypes</p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultiTypeFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiTypeFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultiTypeFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiTypeFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">MultipleFeatureFeaturizer</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizer">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">SingleFeaturizer</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizer.citations">
+<code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should be a string citation,</dt>
+<dd>ideally in BibTeX format.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizer.feature_labels">
+<code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>([str]) attribute labels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizer.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizer.implementors">
+<code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(list) each element should either be a string with author name (e.g.,</dt>
+<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">SingleFeaturizerMultiArgs</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.tests.test_base.SingleFeaturizer" title="matminer.featurizers.tests.test_base.SingleFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.tests.test_base.SingleFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>x: input data to featurize (type depends on featurizer).</dd>
+<dt>Returns:</dt>
+<dd>(list) one or more features.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">TestBaseClass</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.util.testing.PymatgenTest</span></code></p>
+<dl class="staticmethod">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.make_test_data">
+<em class="property">static </em><code class="descname">make_test_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.make_test_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.setUp">
+<code class="descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up the test fixture before exercising it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_caching">
+<code class="descname">test_caching</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_caching" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether MultiFeaturizer properly caches</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_dataframe">
+<code class="descname">test_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_featurize_many">
+<code class="descname">test_featurize_many</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_featurize_many" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_fittable">
+<code class="descname">test_fittable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_fittable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_ignore_errors">
+<code class="descname">test_ignore_errors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_ignore_errors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_indices">
+<code class="descname">test_indices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_indices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_inplace">
+<code class="descname">test_inplace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_inplace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_matrix">
+<code class="descname">test_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the ability to add features that are matrices to a dataframe</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multifeature_no_zero_index">
+<code class="descname">test_multifeature_no_zero_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multifeature_no_zero_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether multifeaturizer can handle series that lack a entry with index==0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multifeatures_multiargs">
+<code class="descname">test_multifeatures_multiargs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multifeatures_multiargs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multiindex_in_multifeaturizer">
+<code class="descname">test_multiindex_in_multifeaturizer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multiindex_in_multifeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multiindex_inplace">
+<code class="descname">test_multiindex_inplace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multiindex_inplace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multiindex_return">
+<code class="descname">test_multiindex_return</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multiindex_return" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multiple">
+<code class="descname">test_multiple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multiple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multiprocessing_df">
+<code class="descname">test_multiprocessing_df</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multiprocessing_df" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multitype_multifeat">
+<code class="descname">test_multitype_multifeat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multitype_multifeat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test Multifeaturizer when a featurizer returns a non-numeric type</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_stacked_featurizer">
+<code class="descname">test_stacked_featurizer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_stacked_featurizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-matminer.featurizers.tests.test_composition">
 <span id="matminer-featurizers-tests-test-composition-module"></span><h2>matminer.featurizers.tests.test_composition module<a class="headerlink" href="#module-matminer.featurizers.tests.test_composition" title="Permalink to this headline">¶</a></h2>
@@ -202,6 +642,11 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="matminer.featurizers.tests.test_conversions.TestConversions.test_composition_to_structurefromMP">
+<code class="descname">test_composition_to_structurefromMP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_conversions.TestConversions.test_composition_to_structurefromMP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="matminer.featurizers.tests.test_conversions.TestConversions.test_conversion_multiindex">
 <code class="descname">test_conversion_multiindex</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_conversions.TestConversions.test_conversion_multiindex" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -209,6 +654,11 @@
 <dl class="method">
 <dt id="matminer.featurizers.tests.test_conversions.TestConversions.test_conversion_multiindex_dynamic">
 <code class="descname">test_conversion_multiindex_dynamic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_conversions.TestConversions.test_conversion_multiindex_dynamic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_conversions.TestConversions.test_conversion_overwrite">
+<code class="descname">test_conversion_overwrite</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_conversions.TestConversions.test_conversion_overwrite" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -589,7 +1039,7 @@
 <li><a class="reference internal" href="#">matminer.featurizers.tests package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.tests.test_bandstructure">matminer.featurizers.tests.test_bandstructure module</a></li>
-<li><a class="reference internal" href="#matminer-featurizers-tests-test-base-module">matminer.featurizers.tests.test_base module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.tests.test_base">matminer.featurizers.tests.test_base module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.tests.test_composition">matminer.featurizers.tests.test_composition module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.tests.test_conversions">matminer.featurizers.tests.test_conversions module</a></li>
 <li><a class="reference internal" href="#module-matminer.featurizers.tests.test_dos">matminer.featurizers.tests.test_dos module</a></li>
