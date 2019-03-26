@@ -41,6 +41,11 @@ class SingleFeaturizerMultiArgs(SingleFeaturizer):
         return [x[0] + x[1]]
 
 
+class SingleFeaturizerMultiArgsWithPrecheck(SingleFeaturizerMultiArgs):
+    def precheck(self, *x):
+        # If the sum is even, return True, else False
+        return True if (x[1] + x[0]) % 2 == 0 else False
+
 class MultipleFeatureFeaturizer(BaseFeaturizer):
     def feature_labels(self):
         return ['w', 'z']
@@ -523,8 +528,8 @@ class TestBaseClass(PymatgenTest):
         self.multiargs.featurize_many(data[['x', 'y']])
 
     def test_precheck(self):
+        # Test with a single argument
         f = SingleFeaturizerWithPrecheck()
-        # Make a dataset without a index == 0
         data = self.make_test_data()
         self.assertTrue(f.precheck(2))
         self.assertFalse(f.precheck(3))
@@ -538,6 +543,31 @@ class TestBaseClass(PymatgenTest):
 
         df2 = f.precheck_dataframe(data, 'x', return_frac=False, inplace=False)
         self.assertArrayEqual(df2[pckey].tolist(), [False, True, False])
+        self.assertNotIn(pckey, data.columns.tolist())
+
+        # Test with multiple arguments
+        fm = SingleFeaturizerMultiArgsWithPrecheck()
+        self.assertTrue(fm.precheck(1, 1))
+        self.assertFalse(fm.precheck(1, 2))
+
+        data['x2'] = [3, 3, 3]
+        frac = fm.precheck_dataframe(data, ['x', 'x2'], return_frac=True)
+        self.assertAlmostEqual(frac, 2/3)
+
+        mpckey = "SingleFeaturizerMultiArgsWithPrecheck precheck pass"
+
+        data_ipm = copy.deepcopy(data)
+        fm.precheck_dataframe(data_ipm, ['x', 'x2'], return_frac=False,
+                              inplace=True)
+        self.assertArrayEqual(data_ipm[mpckey].tolist(), [True, False, True])
+
+
+        df3 = fm.precheck_dataframe(data, ['x', 'x2'], return_frac=False,
+                                    inplace=False)
+        self.assertArrayEqual(df3[mpckey].tolist(), [True, False, True])
+        self.assertNotIn(mpckey, data.columns.tolist())
+
+
 
 
 if __name__ == '__main__':
