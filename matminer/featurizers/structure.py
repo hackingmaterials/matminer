@@ -87,7 +87,7 @@ class DensityFeatures(BaseFeaturizer):
         """
         Precheck a single entry. DensityFeatures does not work for disordered
         structures. To precheck an entire dataframe (qnd automatically gather
-        the fraction of structures that will pass the precheck, please use
+        the fraction of structures that will pass the precheck), please use
         precheck_dataframe.
 
         Args:

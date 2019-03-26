@@ -1084,25 +1084,23 @@ class Miedema(BaseFeaturizer):
             raise NotImplementedError('data_source {} not implemented yet'.
                                       format(self, data_source))
 
-    def valid_fraction(self, compositions):
-        """
-        Determine (from a list of compositions) the fraction of compositions
-        which are valid for the Miedema model.
+        self.element_list = [Element(estr) for estr in self.df_dataset.index]
 
-        This featurizer is not in scope for elements which do not have
-        parameters in the Miedema model.
+    def precheck(self, c):
+        """
+        Precheck a single entry. Miedema does not work for compositons
+        containing any elments for which the Miedema model has no parameters.
+        To precheck an entire dataframe (qnd automatically gather
+        the fraction of structures that will pass the precheck), please use
+        precheck_dataframe.
 
         Args:
-            compositions ([Composition]): An iterable of pymatgen Compositions.
+            c (pymatgen.Composition): The composition to precheck.
 
         Returns:
-            (float): A fraction of the compositions entered which are valid for
-                this featurizer.
-
+            (bool): If True, s passed the precheck; otherwise, it failed.
         """
-        element_list = [Element(estr) for estr in self.df_dataset.index]
-        stats = basic_composition_stats(compositions, element_list=element_list)
-        return stats["fraction_all_in_element_list"]
+        return all([e in self.element_list for e in c.elements])
 
     def deltaH_chem(self, elements, fracs, struct):
         """
@@ -1412,7 +1410,7 @@ class YangSolidSolution(BaseFeaturizer):
         # Load in a table of elemental properties
         self.elem_data = MagpieData()
 
-    def valid_fraction(self, compositions):
+    def precheck(self, compositions):
         """
         Determine (from a list of compositions) the fraction of compositions
         which are valid for the Yang Solid Solution model. This is just an
