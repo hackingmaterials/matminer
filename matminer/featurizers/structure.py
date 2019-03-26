@@ -37,7 +37,6 @@ from matminer.featurizers.utils.stats import PropertyStats
 from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
     CrystalGraphConvNetWrapper, CIFDataWrapper
 from matminer.utils.caching import get_all_nearest_neighbors
-from matminer.utils.prefeaturization import basic_structure_stats
 
 # For the CGCNNFeaturizer
 try:
@@ -84,22 +83,20 @@ class DensityFeatures(BaseFeaturizer):
         self.features = ["density", "vpa", "packing fraction"] if not \
             desired_features else desired_features
 
-    def valid_fraction(self, structures):
+    def precheck(self, s: Structure) -> bool:
         """
-        Determine the fraction of valid entries for DensityFeatures.
-
-        DensityFeatures only works (currently) on ordered structures, so
-        structures which have at least one disordered (partial occupancy) site
-        are declared invalid.
+        Precheck a single entry. DensityFeatures does not work for disordered
+        structures. To precheck an entire dataframe (qnd automatically gather
+        the fraction of structures that will pass the precheck, please use
+        precheck_dataframe.
 
         Args:
-            structures ([pymatgen.Structure]): The list of pymatgen structures
-                to screen for validity with DensityFeatures.
+            s (pymatgen.Structure): The structure to precheck.
 
         Returns:
-            (float): The fraction of valid (ordered) entries for DensityFeatures
+            (bool): If True, s passed the precheck; otherwise, it failed.
         """
-        return basic_structure_stats(structures)["fraction_ordered"]
+        return s.is_ordered
 
     def featurize(self, s):
         output = []

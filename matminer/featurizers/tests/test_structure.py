@@ -91,8 +91,10 @@ class StructureFeaturesTest(PymatgenTest):
 
         nacl_disordered = copy.deepcopy(self.nacl)
         nacl_disordered.replace_species({"Cl1-": "Cl0.99H0.01"})
+        self.assertFalse(df.precheck(nacl_disordered))
         structures = [self.diamond, self.nacl, nacl_disordered]
-        self.assertAlmostEqual(df.valid_fraction(structures), 2/3)
+        df2 = pd.DataFrame({"structure": structures})
+        self.assertAlmostEqual(df.precheck_dataframe(df2, "structure"), 2 / 3)
 
     def test_global_symmetry(self):
         gsf = GlobalSymmetryFeatures()
