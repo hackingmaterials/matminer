@@ -155,11 +155,11 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     def chunksize(self):
         return self._chunksize if hasattr(self, '_chunksize') else None
 
-    def precheck_dataframe(self, df, col, return_frac=True, inplace=False) \
+    def precheck_dataframe(self, df, col_id, return_frac=True, inplace=False) \
             -> [float, pd.DataFrame]:
         """
         Precheck an entire dataframe. Subclasses wanting to use precheck
-        functinoality should not override this method, they should override
+        functionality should not override this method, they should override
         precheck (unless the entire df determines whether single entries pass
         or fail a precheck).
 
@@ -178,7 +178,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         Args:
             df (pd.DataFrame): A dataframe
-            col (str): The column in df specifying the input to the featurizer.
+            col_id (str or [str]): column label containing objects to featurize.
+                Can be multiple labels if the featurize function requires
+                multiple inputs.
             return_frac (bool): If True, returns the fraction of entries
                 passing the precheck (e.g., 0.5). Else, returns a dataframe.
             inplace (bool); Only relevant if return_frac=False. If inplace=True,
@@ -191,7 +193,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 an extra boolean column added for the precheck.
 
         """
-        prechecks = [self.precheck(e) for e in df[col]]
+        col_id = [col_id] if isinstance(col_id, string_types) else col_id
+        prechecks = [self.precheck(*entries) for entries in df[col_id].values]
 
         if return_frac:
             return np.sum(prechecks) / len(prechecks)
@@ -204,7 +207,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                 df = pd.concat([df, res], axis=1)
             return df
 
-    def precheck(self, x) -> bool:
+    def precheck(self, *x) -> bool:
         """
         Precheck (provide an estimate of whether a featurizer will work or not)
         for a single entry (e.g., a single composition). If the entry fails the
@@ -225,7 +228,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         See the documentation for precheck_dataframe for more information.
 
         Args:
-            x (Composition, Structure, etc.): Input to-be-featurized.
+            *x (Composition, Structure, etc.): Input to-be-featurized. Can be
+                a single input or multiple inputs.
 
         Returns:
             (bool): True, if passes the precheck. False, if fails.
@@ -303,8 +307,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         """
 
         # If only one column and user provided a string, put it inside a list
-        if isinstance(col_id, string_types):
-            col_id = [col_id]
+        col_id = [col_id] if isinstance(col_id, string_types) else col_id
 
         # Multiindexing doesn't play nice with other options!
         if multiindex:
