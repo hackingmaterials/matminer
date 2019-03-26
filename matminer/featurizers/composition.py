@@ -18,7 +18,6 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     CohesiveEnergyData, MixingEnthalpy, MatscholarElementData
-from matminer.utils.prefeaturization import basic_composition_stats
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
