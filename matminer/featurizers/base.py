@@ -36,6 +36,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     a featurizer that returns the partial radial distribution function
     may need to know which elements are present in a dataset.
 
+    You can can also use the `precheck` and `precheck_dataframe` methods to
+    ensure a featurizer is in scope for a given sample (or dataset) before
+    featurizing.
+
     You can also employ the featurizer as part of a ScikitLearn Pipeline object.
     For these cases, ScikitLearn calls the `transform` function of the
     `BaseFeaturizer` which is a less-featured wrapper of `featurize_many`. You
@@ -151,34 +155,75 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     def chunksize(self):
         return self._chunksize if hasattr(self, '_chunksize') else None
 
-    def valid_fraction(self, entries) -> float:
+    def precheck_dataframe(self, df, col, return_frac=True, inplace=False) \
+            -> [float, pd.DataFrame]:
         """
-        Return the fraction of dataframe input which will be valid and in scope
-        for a particular featurzer. For example, return the fraction of
-        compositions which will be out of scope for a particular composition
-        featurizer. Can be useful for "prechecking" a dataframe before running
-        an expensive featurizer; therefore this valid_fraction check should
-        preferably run VERY QUICKLY, even on large datasets.
+        Precheck an entire dataframe. Subclasses wanting to use precheck
+        functinoality should not override this method, they sh0uld override
+        precheck (unless the entire df (determines whether single entries pass
+        or fail a precheck).
 
-        Also a good place to raise warnings if the featurizer will be
-        particularly computationally intensive, etc.
+        Prechecking should be a quick and useful way to check that for a
+        particular dataframe (set of featurizer inputs), the featurizer is:
 
-        Should be overridden if needed by BaseFeaturizer subclasses. If not
-        overridden by a featurizer subclass, simply returns 1, meaning all
-        entries are valid.
+            1. in scope, and/or...
+            2. robust to errors and/or...
+            3. any other reason you would not practically want to use this
+                featurizer in on this dataframe.
+
+        By prechecking before featurizing, you can avoid applying featurizers
+        to data that will ultimately fail, return unreliable numbers, or
+        are out of scope. Prechecking is also a good time to throw/observe
+        warnings (such as long runtime warnings!).
 
         Args:
-            entries (Iterable): An iterable of compositions, structures,
-                bandstructures, or DOS objects (depending on the kind of
-                featurizer which is pverriding this method). May also be an
-                iterable of multiple inputs, if the subclass Featurizer requires
-                it.
+            df (pd.DataFrame): A dataframe
+            col (str): The column in df specifying the input to the featurizer.
+            return_frac (bool): If True, returns the fraction of entries
+                passing the precheck (e.g., 0.5). Else, returns a dataframe.
+            inplace (bool); Only relevant if return_frac=False. If inplace=True,
+                the input dataframe is modified in memory with a boolean column
+                for precheck. Otherwise, a new df with this column is returned.
 
         Returns:
-            frac (float): A fraction between 0 and 1 of the valid entries. 1.0
-                means all entries are valid. 0 means no entries are valid.
+            (bool, pd.DataFrame): If return_frac=True, returns the fraction of
+                entries passing the precheck. Else, returns the dataframe with
+                an extra boolean column added for the precheck.
+
         """
-        return 1.0
+        prechecks = [self.precheck(e) for e in df[col]]
+
+        if return_frac:
+            return np.sum(prechecks) / len(prechecks)
+        else:
+            precheck_col = "{} precheck pass".format(self.__class__.__name__)
+            if inplace:
+                df[precheck_col] = prechecks
+            else:
+                res = pd.DataFrame({precheck_col: prechecks})
+                df = pd.concat([df, res], axis=1)
+            return df
+
+    def precheck(self, entry):
+        """
+        Precheck (provide an estimate of whether a featurizer will work or not)
+        for a single entry (e.g., a single composition).
+
+        This method should be overridden by any featurizer requiring its
+        use, as by default all entries will pass prechecking.
+
+        Also, precheck is a good opportunity to throw warnings about long
+        runtimes (e.g., doing nearest neighbors computations on a structure
+        with many thousand sites).
+
+        Args:
+            entry (Composition, Structure, etc.): An object to-be-featurized.
+
+        Returns:
+            (bool): True, if passes the precheck. False, if fails.
+
+        """
+        return True
 
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
