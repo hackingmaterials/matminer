@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.5.4 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -331,6 +331,9 @@ featurization methods can function. Generally, you pass the dataset to
 fit to determine which features a featurizer should compute. For example,
 a featurizer that returns the partial radial distribution function
 may need to know which elements are present in a dataset.</p>
+<p>You can can also use the <cite>precheck</cite> and <cite>precheck_dataframe</cite> methods to
+ensure a featurizer is in scope for a given sample (or dataset) before
+featurizing.</p>
 <p>You can also employ the featurizer as part of a ScikitLearn Pipeline object.
 For these cases, ScikitLearn calls the <cite>transform</cite> function of the
 <cite>BaseFeaturizer</cite> which is a less-featured wrapper of <cite>featurize_many</cite>. You
@@ -599,6 +602,92 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dt id="matminer.featurizers.base.BaseFeaturizer.n_jobs">
 <code class="descname">n_jobs</code><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.n_jobs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.base.BaseFeaturizer.precheck">
+<code class="descname">precheck</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.precheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck (provide an estimate of whether a featurizer will work or not)
+for a single entry (e.g., a single composition). If the entry fails the
+precheck, it will most likely fail featurization; if it passes, it is
+likely (but not guaranteed) to featurize correctly.</p>
+<dl class="docutils">
+<dt>Prechecks should be:</dt>
+<dd><ul class="first last simple">
+<li>accurate (but can be good estimates rather than ground truth)</li>
+<li>fast to evaluate</li>
+<li><dl class="first docutils">
+<dt>unlikely to be obsolete via changes in the featurizer in the near</dt>
+<dd>future</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>This method should be overridden by any featurizer requiring its
+use, as by default all entries will pass prechecking. Also, precheck
+is a good opportunity to throw warnings about long runtimes (e.g., doing
+nearest neighbors computations on a structure with many thousand sites).</p>
+<p>See the documentation for precheck_dataframe for more information.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>x (Composition, Structure, etc.): Input to-be-featurized. Can be</dt>
+<dd>a single input or multiple inputs.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>(bool): True, if passes the precheck. False, if fails.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.base.BaseFeaturizer.precheck_dataframe">
+<code class="descname">precheck_dataframe</code><span class="sig-paren">(</span><em>df</em>, <em>col_id</em>, <em>return_frac=True</em>, <em>inplace=False</em><span class="sig-paren">)</span> &#x2192; [&lt;class 'float'&gt;, &lt;class 'pandas.core.frame.DataFrame'&gt;]<a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.precheck_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck an entire dataframe. Subclasses wanting to use precheck
+functionality should not override this method, they should override
+precheck (unless the entire df determines whether single entries pass
+or fail a precheck).</p>
+<p>Prechecking should be a quick and useful way to check that for a
+particular dataframe (set of featurizer inputs), the featurizer is:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>in scope, and/or…</li>
+<li>robust to errors and/or…</li>
+<li><dl class="first docutils">
+<dt>any other reason you would not practically want to use this</dt>
+<dd>featurizer in on this dataframe.</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+<p>By prechecking before featurizing, you can avoid applying featurizers
+to data that will ultimately fail, return unreliable numbers, or
+are out of scope. Prechecking is also a good time to throw/observe
+warnings (such as long runtime warnings!).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">df (pd.DataFrame): A dataframe
+col_id (str or [str]): column label containing objects to featurize.</p>
+<blockquote>
+<div>Can be multiple labels if the featurize function requires
+multiple inputs.</div></blockquote>
+<dl class="last docutils">
+<dt>return_frac (bool): If True, returns the fraction of entries</dt>
+<dd>passing the precheck (e.g., 0.5). Else, returns a dataframe.</dd>
+<dt>inplace (bool); Only relevant if return_frac=False. If inplace=True,</dt>
+<dd>the input dataframe is modified in memory with a boolean column
+for precheck. Otherwise, a new df with this column is returned.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(bool, pd.DataFrame): If return_frac=True, returns the fraction of</dt>
+<dd>entries passing the precheck. Else, returns the dataframe with
+an extra boolean column added for the precheck.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.set_chunksize">
@@ -944,7 +1033,7 @@ of hard spheres.</p>
 relate to the distance between a composition and the composition of
 the clusters of atoms expected to be efficiently packed based on a
 theory from
-<a href="#id53"><span class="problematic" id="id54">`Laws et al.&lt;http://www.nature.com/doifinder/10.1038/ncomms9123&gt;`_</span></a>.
+<a href="#id55"><span class="problematic" id="id56">`Laws et al.&lt;http://www.nature.com/doifinder/10.1038/ncomms9123&gt;`_</span></a>.
 The second corresponds to the packing efficiency of a system if all atoms
 in the alloy are simultaneously as efficiently-packed as possible.</p>
 <p>The packing efficiency in these models is based on the Atomic Packing
@@ -956,7 +1045,7 @@ positive. If the difference is too small, the APE is negative.</p>
 <dl class="docutils">
 <dt>Features:</dt>
 <dd><dl class="first last docutils">
-<dt>dist from {k} clusters <a href="#id47"><span class="problematic" id="id48">|APE|</span></a> &lt; {thr} - The distance between an</dt>
+<dt>dist from {k} clusters <a href="#id49"><span class="problematic" id="id50">|APE|</span></a> &lt; {thr} - The distance between an</dt>
 <dd>alloy composition and the k clusters that have a packing efficiency
 below thr from ideal</dd>
 <dt>mean simul. packing efficiency - Mean packing efficiency of all atoms.</dt>
@@ -1253,11 +1342,14 @@ MatscholarElementData, etc.).</p>
 Args:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>preset_name: (str) can be one of “magpie”, “deml”, “matminer”, or</dt>
-<dd>“matscholar_el”.</dd>
+<dt>preset_name: (str) can be one of “magpie”, “deml”, “matminer”,</dt>
+<dd>“matscholar_el”, or “megnet_el”.</dd>
 </dl>
 </div></blockquote>
-<p>Returns:</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>ElementProperty based on the preset name.</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1628,11 +1720,14 @@ MatscholarElementData, etc.).</p>
 Args:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>preset_name: (str) can be one of “magpie”, “deml”, “matminer”, or</dt>
-<dd>“matscholar_el”.</dd>
+<dt>preset_name: (str) can be one of “magpie”, “deml”, “matminer”,</dt>
+<dd>“matscholar_el”, or “megnet_el”.</dd>
 </dl>
 </div></blockquote>
-<p>Returns:</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>ElementProperty based on the preset name.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1927,6 +2022,22 @@ keys like “email” or “institution” (e.g., {“name”: “Anubhav
 Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
 </dl>
 </dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.Miedema.precheck">
+<code class="descname">precheck</code><span class="sig-paren">(</span><em>c: pymatgen.core.composition.Composition</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#matminer.featurizers.composition.Miedema.precheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck a single entry. Miedema does not work for compositons
+containing any elments for which the Miedema model has no parameters.
+To precheck an entire dataframe (qnd automatically gather
+the fraction of structures that will pass the precheck), please use
+precheck_dataframe.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>c (pymatgen.Composition): The composition to precheck.</dd>
+<dt>Returns:</dt>
+<dd>(bool): If True, s passed the precheck; otherwise, it failed.</dd>
 </dl>
 </dd></dl>
 
@@ -2274,7 +2385,7 @@ Yang delta - Atomic size mismatch term</dd>
 <code class="descname">compute_delta</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.compute_delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute Yang’s delta parameter</p>
 <blockquote>
-<div>:math:<a href="#id1"><span class="problematic" id="id2">`</span></a>sqrt{sum^n_{i=1} c_i left( 1 -</div></blockquote>
+<div>:math:<a href="#id3"><span class="problematic" id="id4">`</span></a>sqrt{sum^n_{i=1} c_i left( 1 -</div></blockquote>
 <p>rac{r_i}{ar{r}} 
 ight)^2 }`</p>
 <blockquote>
@@ -2342,7 +2453,7 @@ average of the radii. We use the radii compiled by
 <code class="descname">compute_omega</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.compute_omega" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute Yang’s mixing thermodynamics descriptor</p>
 <blockquote>
-<div>:math:<a href="#id3"><span class="problematic" id="id4">`</span></a></div></blockquote>
+<div>:math:<a href="#id5"><span class="problematic" id="id6">`</span></a></div></blockquote>
 <p>rac{T_m Delta S_{mix}}{ |  Delta H_{mix} | }`</p>
 <blockquote>
 <div><p>Where <img class="math" src="_images/math/5fa6513bef00e529069be708641fcce5a1535803.png" alt="T_m"/> is average melting temperature,
@@ -2397,6 +2508,24 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="matminer.featurizers.composition.YangSolidSolution.precheck">
+<code class="descname">precheck</code><span class="sig-paren">(</span><em>c: pymatgen.core.composition.Composition</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#matminer.featurizers.composition.YangSolidSolution.precheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck a single entry. YangSolidSolution does not work for compositons
+containing any binary elment combinations for which the model has no
+parameters. We can nearly equivalently approximate this by checking
+against the unary element list.</p>
+<p>To precheck an entire dataframe (qnd automatically gather
+the fraction of structures that will pass the precheck), please use
+precheck_dataframe.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>c (pymatgen.Composition): The composition to precheck.</dd>
+<dt>Returns:</dt>
+<dd>(bool): If True, s passed the precheck; otherwise, it failed.</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="function">
@@ -2447,7 +2576,7 @@ oxid states and guesses the entire composition’s oxid states.</dd>
 <dt>return_original_on_error: If the oxidation states cannot be</dt>
 <dd>guessed and set to True, the composition without oxidation states
 will be returned. If set to False, an error will be thrown.</dd>
-<dt><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Parameters to control the settings for</dt>
+<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs: Parameters to control the settings for</dt>
 <dd><cite>pymatgen.io.structure.Structure.add_oxidation_state_by_guess()</cite>.</dd>
 </dl>
 </dd>
@@ -2675,7 +2804,7 @@ col_id (str or list of str): column label containing objects to</p>
 <div>featurize. Can be multiple labels if the featurize function
 requires multiple inputs.</div></blockquote>
 <dl class="last docutils">
-<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs: Additional keyword arguments that will be passed through</dt>
+<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs: Additional keyword arguments that will be passed through</dt>
 <dd>to <cite>BseFeaturizer.featurize_dataframe()</cite>.</dd>
 </dl>
 </dd>
@@ -3116,7 +3245,7 @@ will only work if <cite>overwrite_data=True</cite>).</dd>
 <dt>return_original_on_error: If the oxidation states cannot be</dt>
 <dd>guessed and set to True, the structure without oxidation states will
 be returned. If set to False, an error will be thrown.</dd>
-<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs: Parameters to control the settings for</dt>
+<dt><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs: Parameters to control the settings for</dt>
 <dd><cite>pymatgen.io.structure.Structure.add_oxidation_state_by_guess()</cite>.</dd>
 </dl>
 </dd>
@@ -3849,7 +3978,7 @@ features for each argument.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id11"><span class="problematic" id="id12">*</span></a>args: list of numbers to generate functional output</dt>
+<dt><a href="#id13"><span class="problematic" id="id14">*</span></a>args: list of numbers to generate functional output</dt>
 <dd>features</dd>
 </dl>
 </dd>
@@ -3953,18 +4082,18 @@ potentials. These features come in two forms: atomic fingerprints and
 direction-resolved fingerprints.
 Atomic fingerprints describe the local environment of an atom and are
 computed using the function:
-:math:<a href="#id13"><span class="problematic" id="id14">`</span></a>A_i(eta) = sumlimits_{i</p>
+:math:<a href="#id15"><span class="problematic" id="id16">`</span></a>A_i(eta) = sumlimits_{i</p>
 </div></blockquote>
 <p>e j} e^{-(
 rac{r_{ij}}{eta})^2} f(r_{ij})`</p>
 <blockquote>
 <div>where <img class="math" src="_images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/6b21e0b0899a0d2879d3b8019087fa630bab4ea2.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/5635a7c34414599c2452d72430811e816b460335.png" alt="\eta"/> is a scaling function,
 <img class="math" src="_images/math/08e21b3be44ad4aac8ed231afc369152e9c8539c.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> and <img class="math" src="_images/math/6b21e0b0899a0d2879d3b8019087fa630bab4ea2.png" alt="j"/>, and <img class="math" src="_images/math/3c6c50508e2411873e8aec04b9b0d0b026227dad.png" alt="f(r)"/> is a cutoff function where
-:math:<a href="#id15"><span class="problematic" id="id16">`</span></a>f(r) = 0.5[cos(</div></blockquote>
+:math:<a href="#id17"><span class="problematic" id="id18">`</span></a>f(r) = 0.5[cos(</div></blockquote>
 <dl class="docutils">
 <dt>rac{pi r_{ij}}{R_c}) + 1]` if <img class="math" src="_images/math/326c6fcc3609b0c2183f6a9e23d4aa1d4b141ea2.png" alt="r &lt; R_c:math:"/> and 0 otherwise.</dt>
 <dd>The direction-resolved fingerprints are computed using
-:math:<a href="#id17"><span class="problematic" id="id18">`</span></a>V_i^k(eta) = sumlimits_{i</dd>
+:math:<a href="#id19"><span class="problematic" id="id20">`</span></a>V_i^k(eta) = sumlimits_{i</dd>
 </dl>
 <p>e j} 
 rac{r_{ij}^k}{r_{ij}} e^{-(
@@ -4660,9 +4789,9 @@ idx (int): index of target site in structure.</div></blockquote>
 <dd><p>Identify elements to be included in the following featurization,
 by intersecting the elements present in the passed structures with
 those explicitly included (or excluded) in __init__. Only elements
-in the <a href="#id55"><span class="problematic" id="id56">self.el_list_</span></a> will be featurized.
+in the <a href="#id57"><span class="problematic" id="id58">self.el_list_</span></a> will be featurized.
 Besides, compositions of the passed structures will also be “stored”
-in a dict of <a href="#id57"><span class="problematic" id="id58">self.el_amt_dict_</span></a>, avoiding repeated calculation of
+in a dict of <a href="#id59"><span class="problematic" id="id60">self.el_amt_dict_</span></a>, avoiding repeated calculation of
 composition when featurizing multiple sites in the same structure.
 Args:</p>
 <blockquote>
@@ -4701,7 +4830,7 @@ Args:</p>
 <dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
 or “MinimumVIRENN”).</dd>
 </dl>
-<p><a href="#id20"><span class="problematic" id="id21">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
+<p><a href="#id22"><span class="problematic" id="id23">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -4762,7 +4891,7 @@ use_weights (string) - Method used to account for weights of neighbors:</p>
 ‘sum’ - Use sum of weights as the coordination number
 ‘effective’ - Compute the ‘effective coordination number’, which</p>
 <blockquote>
-<div>is computed as :math:<a href="#id22"><span class="problematic" id="id23">`</span></a></div></blockquote>
+<div>is computed as :math:<a href="#id24"><span class="problematic" id="id25">`</span></a></div></blockquote>
 </div></blockquote>
 </dd>
 </dl>
@@ -4820,7 +4949,7 @@ Args:</p>
 <dd>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
 or “MinimumVIRENN”).</dd>
 </dl>
-<p><a href="#id24"><span class="problematic" id="id25">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
+<p><a href="#id26"><span class="problematic" id="id27">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -4872,7 +5001,7 @@ Args:</p>
 <dd>to dictionaries that map an element to a value
 (e.g., chem_info[“Pauling scale”][“O”] = 3.44)</dd>
 </dl>
-<p><a href="#id26"><span class="problematic" id="id27">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
+<p><a href="#id28"><span class="problematic" id="id29">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
 </div></blockquote>
 </dd></dl>
 
@@ -4922,7 +5051,7 @@ idx (int): index of target site in structure.</div></blockquote>
 Args:</p>
 <blockquote>
 <div>preset (str): name of preset (“cn” or “ops”)
-<a href="#id28"><span class="problematic" id="id29">**</span></a>kwargs: other settings to be passed into CrystalNN class</div></blockquote>
+<a href="#id30"><span class="problematic" id="id31">**</span></a>kwargs: other settings to be passed into CrystalNN class</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -5335,10 +5464,10 @@ neighbors of the site, and assigns each neighbor (<img class="math" src="_images
 weight (<img class="math" src="_images/math/12249dbb3a129598bfef9a4f490147c6a4537213.png" alt="A_n"/>) that corresponds to the area of the facet
 on the tessellation corresponding to that neighbor.
 The local property difference is then computed by
-:math:<a href="#id30"><span class="problematic" id="id31">`</span></a></p>
+:math:<a href="#id32"><span class="problematic" id="id33">`</span></a></p>
 </div></blockquote>
 <dl class="docutils">
-<dt>rac{sum_n {A_n <a href="#id49"><span class="problematic" id="id50">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
+<dt>rac{sum_n {A_n <a href="#id51"><span class="problematic" id="id52">|p_n - p_0|</span></a>}}{sum_n {A_n}}`</dt>
 <dd><p class="first">where <img class="math" src="_images/math/66b30555c6212f4bfbe96c9a9dfceb59d818aef6.png" alt="p_n"/> is the property (e.g., atomic number) of a neighbor
 and <img class="math" src="_images/math/298204ab1b85022412ad261503dcab8bd14fb321.png" alt="p_0"/> is the property of a site. If signed parameter is assigned
 True, signed difference of the properties is returned instead of absolute
@@ -6188,7 +6317,7 @@ None. If the epochs is less than this checkpoint_interval, will
 reset the checkpoint_interval as int(epochs/2).</dd>
 <dt>del_checkpoint (bool):</dt>
 <dd>Whether to delete checkpoints if training ends successfully.</dd>
-<dt><a href="#id33"><span class="problematic" id="id34">**</span></a>cgcnn_kwargs (optional): settings of CGCNN, containing:</dt>
+<dt><a href="#id35"><span class="problematic" id="id36">**</span></a>cgcnn_kwargs (optional): settings of CGCNN, containing:</dt>
 <dd><dl class="first docutils">
 <dt>CrystalGraphConvNet model kwargs:</dt>
 <dd><dl class="first docutils">
@@ -6369,7 +6498,7 @@ structure deviates from random using a Warren-Cowley-like ordering
 parameter. The first step of this calculation is to determine the nearest
 neighbor shells of each site. Then, for each shell a degree of order for
 each type is determined by computing:</p>
-<p>:math:<a href="#id35"><span class="problematic" id="id36">`</span></a>lpha (t,s) = 1 -</p>
+<p>:math:<a href="#id37"><span class="problematic" id="id38">`</span></a>lpha (t,s) = 1 -</p>
 </div></blockquote>
 <p>rac{sum_n w_n delta (t - t_n)}{x_t sum_n w_n}`</p>
 <blockquote>
@@ -6465,7 +6594,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>The Coulomb matrix, a representation of nuclear coulombic interaction.</p>
 <p>Generate the Coulomb matrix, M, of the input structure (or molecule). The
 Coulomb matrix was put forward by Rupp et al. (Phys. Rev. Lett. 108, 058301,
-2012) and is defined by off-diagonal elements M_ij = Z_i*Z_j/<a href="#id51"><span class="problematic" id="id52">|R_i-R_j|</span></a> and
+2012) and is defined by off-diagonal elements M_ij = Z_i*Z_j/<a href="#id53"><span class="problematic" id="id54">|R_i-R_j|</span></a> and
 diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote the nuclear charge
 and the position of atom i, respectively.</p>
 <p>Coulomb Matrix features are flattened (for ML-readiness) by default. Use
@@ -6636,6 +6765,21 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="matminer.featurizers.structure.DensityFeatures.precheck">
+<code class="descname">precheck</code><span class="sig-paren">(</span><em>s: pymatgen.core.structure.Structure</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#matminer.featurizers.structure.DensityFeatures.precheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck a single entry. DensityFeatures does not work for disordered
+structures. To precheck an entire dataframe (qnd automatically gather
+the fraction of structures that will pass the precheck), please use
+precheck_dataframe.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>s (pymatgen.Structure): The structure to precheck.</dd>
+<dt>Returns:</dt>
+<dd>(bool): If True, s passed the precheck; otherwise, it failed.</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -6651,7 +6795,7 @@ structure. This feature is sensitive to bond length tables that you use.</p>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id38"><span class="problematic" id="id39">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
+<dt><a href="#id40"><span class="problematic" id="id41">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt>
 <dd>pymatgen.</dd>
 </dl>
 </dd>
@@ -6803,7 +6947,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">EwaldEnergy</code><span class="sig-paren">(</span><em>accuracy=4</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.EwaldEnergy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Compute the energy from Coulombic interactions.</p>
-<p>Note: The energy is computed using _charges already defined for the <a href="#id59"><span class="problematic" id="id60">structure_</span></a>.</p>
+<p>Note: The energy is computed using _charges already defined for the <a href="#id61"><span class="problematic" id="id62">structure_</span></a>.</p>
 <dl class="docutils">
 <dt>Features:</dt>
 <dd>ewald_energy - Coulomb interaction energy of the structure</dd>
@@ -7656,7 +7800,7 @@ updates.</p>
 n_max (int): Number of basis functions to be used.
 l_max (int): Number of l’s to be used (spherical harmonic)</p>
 <dl class="last docutils">
-<dt><a href="#id40"><span class="problematic" id="id41">**</span></a>soap_kwargs: (from dscribe docs)</dt>
+<dt><a href="#id42"><span class="problematic" id="id43">**</span></a>soap_kwargs: (from dscribe docs)</dt>
 <dd><dl class="first docutils">
 <dt>periodic (bool): Determines whether the system is considered to</dt>
 <dd>be periodic.</dd>
@@ -7889,7 +8033,7 @@ stats ([str]): list of weighted statistics to compute for each feature.</p>
 <div>If stats is None, a list is returned for each features
 that contains the calculated feature for each site in the
 structure.
-<a href="#id42"><span class="problematic" id="id43">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
+<a href="#id44"><span class="problematic" id="id45">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</div></blockquote>
 <dl class="docutils">
 <dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt>
 <dd>zero means metals/cations only)</dd>
@@ -8180,7 +8324,7 @@ pattern_length (float): length of final array; defaults to one value</p>
 <blockquote>
 <div>per degree (i.e. two_theta_range + 1)</div></blockquote>
 <dl class="last docutils">
-<dt><a href="#id45"><span class="problematic" id="id46">**</span></a>kwargs: any other arguments to pass into pymatgen’s XRDCalculator,</dt>
+<dt><a href="#id47"><span class="problematic" id="id48">**</span></a>kwargs: any other arguments to pass into pymatgen’s XRDCalculator,</dt>
 <dd>such as the type of radiation.</dd>
 </dl>
 </dd>
@@ -8305,7 +8449,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 

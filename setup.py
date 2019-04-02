@@ -22,7 +22,7 @@ for val in extras_dict.values():
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.5.4',
+        version='0.5.5',
         description='matminer is a library that contains tools for data '
                     'mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
