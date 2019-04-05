@@ -997,6 +997,7 @@ class CohesiveEnergy(BaseFeaturizer):
             "publisher = {Wiley}, title = {{Introduction to Solid State "
             "Physics, 8th Edition}}, year = {2005}}"]
 
+
 class Miedema(BaseFeaturizer):
     """
     Formation enthalpies of intermetallic compounds, from Miedema et al.
@@ -1005,56 +1006,42 @@ class Miedema(BaseFeaturizer):
     solid solution and amorphous phase of a given composition, based on
     semi-empirical Miedema model (and some extensions), particularly for
     transitional metal alloys.
+
     Support elemental, binary and multicomponent alloys.
-        For elemental/binary alloys, the formulation is based on the original
-        works by Miedema et al. in 1980s;
-        For multicomponent alloys, the formulation is basically the linear
-        combination of sub-binary systems. This is reported to work well for
-        ternary alloys, but needs to be careful with quaternary alloys and more.
+    For elemental/binary alloys, the formulation is based on the original
+    works by Miedema et al. in 1980s;
+    For multicomponent alloys, the formulation is basically the linear
+    combination of sub-binary systems. This is reported to work well for
+    ternary alloys, but needs to be careful with quaternary alloys and more.
 
     Args:
-        struct_types (str or list of str): default='inter'
-            if str, one target structure;
-            if list, a list of target structures.
-            e.g.
-            'inter': intermetallic compound
-            'ss': solid solution
-            'amor': amorphous phase
-            'all': same for ['inter', 'ss', 'amor']
-            ['inter', 'ss']: amorphous phase and solid solution, as an example
-        ss_types (str or list of str): only for ss, default='min'
-            if str, one structure type of ss;
-            if list, a list of structure types of ss.
-            e.g.
-            'fcc': fcc solid solution
-            'bcc': bcc solid solution
-            'hcp': hcp solid solution
+        struct_types (str or [str]): default='inter'
+            if str, one target structure; if list, a list of target structures.
+            'inter': intermetallic compound; 'ss': solid solution
+            'amor': amorphous phase; 'all': same for ['inter', 'ss', 'amor']
+            ['inter', 'ss']: amorphous phase and solid solution
+        ss_types (str or [str]): only for ss, default='min'
+            if str, one structure prototype of ss;
+            if list, a list of prototypes of ss.
+            'fcc': fcc solid solution; 'bcc': bcc solid solution
+            'hcp': hcp solid solution;
             'no_latt': solid solution with no specific structure type
             'min': min value of ['fcc', 'bcc', 'hcp', 'no_latt']
             'all': same for ['fcc', 'bcc', 'hcp', 'no_latt']
-            ['fcc', 'bcc']: fcc and bcc solid solutions, as an example
-        data_source (str): default='Miedema', source of dataset
-            'Miedema': read from 'Miedema.csv'
-                        parameterized by Miedema et al. in 1980s,
-                        containing parameters for 73 types of elements:
-                         'molar_volume'
-                         'electron_density'
-                         'electronegativity'
-                         'valence_electrons'
-                         'a_const'
-                         'R_const'
-                         'H_trans'
-                         'compressibility'
-                         'shear_modulus'
-                         'melting_point'
-                         'structural_stability'
+            ['fcc', 'bcc']: fcc and bcc solid solutions
+        data_source (str): source of dataset, default='Miedema'
+            'Miedema': read 'Miedema.csv' placed in "matminer/utils/data_files/"
+            parameterized for 73 elements by Miedema et al. in 1980s, containing
+            'molar_volume', 'electron_density', 'electronegativity'
+            'valence_electrons', 'a_const', 'R_const', 'H_trans'
+            'compressibility', 'shear_modulus', 'melting_point'
+            'structural_stability'
     Returns:
-        (list of floats) Miedema formation enthalpies (per atom)
-            -formation_enthalpy_inter: for intermetallic compound
-            -formation_enthalpy_ss: for solid solution, can be divided into
-                                   'min', 'fcc', 'bcc', 'hcp', 'no_latt'
-                                    for different lattice_types
-            -formation_enthalpy_amor: for amorphous phase
+        (list of floats) Miedema formation enthalpies (eV/atom)
+            -Miedema_deltaH_inter: for intermetallic compound
+            -Miedema_deltaH_ss: for solid solution, can include 'fcc', 'bcc',
+                'hcp', 'no_latt', 'min' for different ss_types
+            -Miedema_deltaH_amor: for amorphous phase
     """
 
     def __init__(self, struct_types='inter', ss_types='min',
