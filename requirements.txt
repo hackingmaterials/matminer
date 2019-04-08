@@ -1,6 +1,6 @@
 numpy==1.16.0
 requests==2.20.0
-pymatgen==2019.1.24
+pymatgen==2019.3.27
 pandas==0.23.4
 tqdm==4.23.1
 pymongo==3.6.1
@@ -11,4 +11,4 @@ plotly==3.2.1
 future==0.16.0
 sympy==1.1.1
 scikit_learn==0.20.0
-monty==1.0.3
+monty==2.0.2
