@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers.tests package &#8212; matminer 0.5.4 documentation</title>
+    <title>matminer.featurizers.tests package &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -404,6 +404,92 @@ in any derived featurizer subclass.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgsWithPrecheck">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">SingleFeaturizerMultiArgsWithPrecheck</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgsWithPrecheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs" title="matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgsWithPrecheck.precheck">
+<code class="descname">precheck</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgsWithPrecheck.precheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck (provide an estimate of whether a featurizer will work or not)
+for a single entry (e.g., a single composition). If the entry fails the
+precheck, it will most likely fail featurization; if it passes, it is
+likely (but not guaranteed) to featurize correctly.</p>
+<dl class="docutils">
+<dt>Prechecks should be:</dt>
+<dd><ul class="first last simple">
+<li>accurate (but can be good estimates rather than ground truth)</li>
+<li>fast to evaluate</li>
+<li><dl class="first docutils">
+<dt>unlikely to be obsolete via changes in the featurizer in the near</dt>
+<dd>future</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>This method should be overridden by any featurizer requiring its
+use, as by default all entries will pass prechecking. Also, precheck
+is a good opportunity to throw warnings about long runtimes (e.g., doing
+nearest neighbors computations on a structure with many thousand sites).</p>
+<p>See the documentation for precheck_dataframe for more information.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>x (Composition, Structure, etc.): Input to-be-featurized. Can be</dt>
+<dd>a single input or multiple inputs.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>(bool): True, if passes the precheck. False, if fails.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizerWithPrecheck">
+<em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">SingleFeaturizerWithPrecheck</code><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizerWithPrecheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.tests.test_base.SingleFeaturizer" title="matminer.featurizers.tests.test_base.SingleFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.tests.test_base.SingleFeaturizer</span></code></a></p>
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.SingleFeaturizerWithPrecheck.precheck">
+<code class="descname">precheck</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizerWithPrecheck.precheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck (provide an estimate of whether a featurizer will work or not)
+for a single entry (e.g., a single composition). If the entry fails the
+precheck, it will most likely fail featurization; if it passes, it is
+likely (but not guaranteed) to featurize correctly.</p>
+<dl class="docutils">
+<dt>Prechecks should be:</dt>
+<dd><ul class="first last simple">
+<li>accurate (but can be good estimates rather than ground truth)</li>
+<li>fast to evaluate</li>
+<li><dl class="first docutils">
+<dt>unlikely to be obsolete via changes in the featurizer in the near</dt>
+<dd>future</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>This method should be overridden by any featurizer requiring its
+use, as by default all entries will pass prechecking. Also, precheck
+is a good opportunity to throw warnings about long runtimes (e.g., doing
+nearest neighbors computations on a structure with many thousand sites).</p>
+<p>See the documentation for precheck_dataframe for more information.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">*</span></a>x (Composition, Structure, etc.): Input to-be-featurized. Can be</dt>
+<dd>a single input or multiple inputs.</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>(bool): True, if passes the precheck. False, if fails.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="matminer.featurizers.tests.test_base.TestBaseClass">
 <em class="property">class </em><code class="descclassname">matminer.featurizers.tests.test_base.</code><code class="descname">TestBaseClass</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.util.testing.PymatgenTest</span></code></p>
@@ -463,7 +549,8 @@ in any derived featurizer subclass.</p>
 <dl class="method">
 <dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_multifeature_no_zero_index">
 <code class="descname">test_multifeature_no_zero_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multifeature_no_zero_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test whether multifeaturizer can handle series that lack a entry with index==0</p>
+<dd><p>Test whether multifeaturizer can handle series that lack a entry
+with index==0</p>
 </dd></dl>
 
 <dl class="method">
@@ -501,6 +588,11 @@ in any derived featurizer subclass.</p>
 <code class="descname">test_multitype_multifeat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_multitype_multifeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test Multifeaturizer when a featurizer returns a non-numeric type</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_precheck">
+<code class="descname">test_precheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.TestBaseClass.test_precheck" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.tests.test_base.TestBaseClass.test_stacked_featurizer">
@@ -570,6 +662,11 @@ in any derived featurizer subclass.</p>
 <dl class="method">
 <dt id="matminer.featurizers.tests.test_composition.CompositionFeaturesTest.test_elem_matscholar_el">
 <code class="descname">test_elem_matscholar_el</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_composition.CompositionFeaturesTest.test_elem_matscholar_el" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.tests.test_composition.CompositionFeaturesTest.test_elem_megnet_el">
+<code class="descname">test_elem_megnet_el</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_composition.CompositionFeaturesTest.test_elem_megnet_el" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1083,7 +1180,7 @@ in any derived featurizer subclass.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 

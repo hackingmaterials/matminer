@@ -17,7 +17,7 @@ from sklearn.neighbors.unsupervised import NearestNeighbors
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData
+    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData, MEGNetElementData
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
@@ -82,6 +82,8 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = DemlData()
         elif data_source == "matscholar_el":
             self.data_source = MatscholarElementData()
+        elif data_source == "megnet_el":
+            self.data_source = MEGNetElementData()
         else:
             self.data_source = data_source
 
@@ -95,11 +97,11 @@ class ElementProperty(BaseFeaturizer):
         """
         Return ElementProperty from a preset string
         Args:
-            preset_name: (str) can be one of "magpie", "deml", "matminer", or
-                "matscholar_el".
+            preset_name: (str) can be one of "magpie", "deml", "matminer",
+                "matscholar_el", or "megnet_el".
 
         Returns:
-
+            ElementProperty based on the preset name.
         """
         if preset_name == "magpie":
             data_source = "magpie"
@@ -137,6 +139,11 @@ class ElementProperty(BaseFeaturizer):
             data_source = "matscholar_el"
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
             features = MatscholarElementData().prop_names
+
+        elif preset_name == "megnet_el":
+            data_source = "megnet_el"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev"]
+            features = MEGNetElementData().prop_names
 
         else:
             raise ValueError("Invalid preset_name specified!")
@@ -199,12 +206,29 @@ class ElementProperty(BaseFeaturizer):
                 "publisher = {Elsevier B.V.}, title = {{Python Materials Genomics (pymatgen): A robust, open-source python "
                 "library for materials analysis}}, url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
                 "volume = {68}, year = {2013} } "]
+        elif self.data_source.__class__.__name__ == "MEGNetElementData":
+            # TODO: Cite MEGNet publication (not preprint) once released!
+            citation = [
+                "@ARTICLE{2018arXiv181205055C,"
+                "author = {{Chen}, Chi and {Ye}, Weike and {Zuo}, Yunxing and {Zheng}, Chen and {Ong}, Shyue Ping},"
+                "title = '{Graph Networks as a Universal Machine Learning Framework for Molecules and Crystals}',"
+                "journal = {arXiv e-prints},"
+                "keywords = {Condensed Matter - Materials Science, Physics - Computational Physics},"
+                "year = '2018',"
+                "month = 'Dec',"
+                "eid = {arXiv:1812.05055},"
+                "pages = {arXiv:1812.05055},"
+                "archivePrefix = {arXiv},"
+                "eprint = {1812.05055},"
+                "primaryClass = {cond-mat.mtrl-sci},"
+                "adsurl = {https://ui.adsabs.harvard.edu/\#abs/2018arXiv181205055C},"
+                "adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"]
         else:
             citation = []
         return citation
 
     def implementors(self):
-        return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
+        return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn"]
 
 
 class CationProperty(ElementProperty):

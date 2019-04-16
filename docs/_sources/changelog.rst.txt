@@ -5,6 +5,14 @@
 matminer Changelog
 ==================
 
+**v0.5.5**
+
+* Add a precheck() and precheck_dataframe() function that can be used to quickly see if a featurizer is likely to give NaN values (A. Dunn)
+* Add MEGNET 1Neuron element embeddings (A. Dunn)
+* fix inplace setting (S. Cherfaoui, A. Dunn, A. Ganose)
+* add a conversion featurizer to get a structure from composition using MP most stable structure (A. Jain)
+* misc code cleanups (A. Jain, A. Dunn)
+
 **v0.5.4**
 
 * add elementproperty source name to feature labels (A. Dunn)

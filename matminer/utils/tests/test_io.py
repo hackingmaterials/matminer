@@ -111,6 +111,6 @@ class IOTest(PymatgenTest):
 
 
 if __name__ == '__main__':
-    #generate_json_files()
+    # generate_json_files()
     unittest.main()
 

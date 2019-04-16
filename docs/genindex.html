@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Index &#8212; matminer 0.5.4 documentation</title>
+    <title>Index &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -244,6 +244,8 @@
         <li><a href="matminer.utils.html#matminer.utils.data.CohesiveEnergyData.__init__">(matminer.utils.data.CohesiveEnergyData method)</a>
 </li>
         <li><a href="matminer.utils.html#matminer.utils.data.DemlData.__init__">(matminer.utils.data.DemlData method)</a>
+</li>
+        <li><a href="matminer.utils.html#matminer.utils.data.MEGNetElementData.__init__">(matminer.utils.data.MEGNetElementData method)</a>
 </li>
         <li><a href="matminer.utils.html#matminer.utils.data.MagpieData.__init__">(matminer.utils.data.MagpieData method)</a>
 </li>
@@ -1147,6 +1149,8 @@
 </li>
         <li><a href="matminer.utils.html#matminer.utils.data.DemlData.get_elemental_property">(matminer.utils.data.DemlData method)</a>
 </li>
+        <li><a href="matminer.utils.html#matminer.utils.data.MEGNetElementData.get_elemental_property">(matminer.utils.data.MEGNetElementData method)</a>
+</li>
         <li><a href="matminer.utils.html#matminer.utils.data.MagpieData.get_elemental_property">(matminer.utils.data.MagpieData method)</a>
 </li>
         <li><a href="matminer.utils.html#matminer.utils.data.MatscholarElementData.get_elemental_property">(matminer.utils.data.MatscholarElementData method)</a>
@@ -1644,6 +1648,8 @@
 </li>
       <li><a href="matminer.featurizers.utils.html#matminer.featurizers.utils.stats.PropertyStats.mean">mean() (matminer.featurizers.utils.stats.PropertyStats static method)</a>
 </li>
+      <li><a href="matminer.utils.html#matminer.utils.data.MEGNetElementData">MEGNetElementData (class in matminer.utils.data)</a>
+</li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema">Miedema (class in matminer.featurizers.composition)</a>
 </li>
       <li><a href="matminer.featurizers.utils.html#matminer.featurizers.utils.stats.PropertyStats.minimum">minimum() (matminer.featurizers.utils.stats.PropertyStats static method)</a>
@@ -1714,11 +1720,27 @@
 </li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.structure.PartialRadialDistributionFunction">PartialRadialDistributionFunction (class in matminer.featurizers.structure)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matminer.figrecipes.html#matminer.figrecipes.plot.PlotlyFig">PlotlyFig (class in matminer.figrecipes.plot)</a>
 </li>
       <li><a href="matminer.figrecipes.tests.html#matminer.figrecipes.tests.test_plots.PlotlyFigTest">PlotlyFigTest (class in matminer.figrecipes.tests.test_plots)</a>
+</li>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer.precheck">precheck() (matminer.featurizers.base.BaseFeaturizer method)</a>
+
+      <ul>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.composition.Miedema.precheck">(matminer.featurizers.composition.Miedema method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.composition.YangSolidSolution.precheck">(matminer.featurizers.composition.YangSolidSolution method)</a>
+</li>
+        <li><a href="matminer.featurizers.html#matminer.featurizers.structure.DensityFeatures.precheck">(matminer.featurizers.structure.DensityFeatures method)</a>
+</li>
+        <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgsWithPrecheck.precheck">(matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgsWithPrecheck method)</a>
+</li>
+        <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.SingleFeaturizerWithPrecheck.precheck">(matminer.featurizers.tests.test_base.SingleFeaturizerWithPrecheck method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer.precheck_dataframe">precheck_dataframe() (matminer.featurizers.base.BaseFeaturizer method)</a>
 </li>
       <li><a href="matminer.featurizers.utils.html#matminer.featurizers.utils.stats.PropertyStats">PropertyStats (class in matminer.featurizers.utils.stats)</a>
 </li>
@@ -1795,7 +1817,11 @@
 </li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestDemlData.setUp">(matminer.utils.tests.test_data.TestDemlData method)</a>
 </li>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMEGNetData.setUp">(matminer.utils.tests.test_data.TestMEGNetData method)</a>
+</li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMagpieData.setUp">(matminer.utils.tests.test_data.TestMagpieData method)</a>
+</li>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMatScholarData.setUp">(matminer.utils.tests.test_data.TestMatScholarData method)</a>
 </li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMixingEnthalpy.setUp">(matminer.utils.tests.test_data.TestMixingEnthalpy method)</a>
 </li>
@@ -1817,6 +1843,10 @@
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.SingleFeaturizer">SingleFeaturizer (class in matminer.featurizers.tests.test_base)</a>
 </li>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs">SingleFeaturizerMultiArgs (class in matminer.featurizers.tests.test_base)</a>
+</li>
+      <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgsWithPrecheck">SingleFeaturizerMultiArgsWithPrecheck (class in matminer.featurizers.tests.test_base)</a>
+</li>
+      <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.SingleFeaturizerWithPrecheck">SingleFeaturizerWithPrecheck (class in matminer.featurizers.tests.test_base)</a>
 </li>
       <li><a href="matminer.featurizers.html#matminer.featurizers.dos.SiteDOS">SiteDOS (class in matminer.featurizers.dos)</a>
 </li>
@@ -1990,6 +2020,8 @@
 </li>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_composition.CompositionFeaturesTest.test_elem_matscholar_el">test_elem_matscholar_el() (matminer.featurizers.tests.test_composition.CompositionFeaturesTest method)</a>
 </li>
+      <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_composition.CompositionFeaturesTest.test_elem_megnet_el">test_elem_megnet_el() (matminer.featurizers.tests.test_composition.CompositionFeaturesTest method)</a>
+</li>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_composition.CompositionFeaturesTest.test_en_diff">test_en_diff() (matminer.featurizers.tests.test_composition.CompositionFeaturesTest method)</a>
 </li>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_structure.StructureFeaturesTest.test_ewald">test_ewald() (matminer.featurizers.tests.test_structure.StructureFeaturesTest method)</a>
@@ -2069,7 +2101,11 @@
       <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestDemlData.test_get_property">test_get_property() (matminer.utils.tests.test_data.TestDemlData method)</a>
 
       <ul>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMEGNetData.test_get_property">(matminer.utils.tests.test_data.TestMEGNetData method)</a>
+</li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMagpieData.test_get_property">(matminer.utils.tests.test_data.TestMagpieData method)</a>
+</li>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMatScholarData.test_get_property">(matminer.utils.tests.test_data.TestMatScholarData method)</a>
 </li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestPymatgenData.test_get_property">(matminer.utils.tests.test_data.TestPymatgenData method)</a>
 </li>
@@ -2204,6 +2240,8 @@
 </li>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_structure.StructureFeaturesTest.test_prdf">test_prdf() (matminer.featurizers.tests.test_structure.StructureFeaturesTest method)</a>
 </li>
+      <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.TestBaseClass.test_precheck">test_precheck() (matminer.featurizers.tests.test_base.TestBaseClass method)</a>
+</li>
       <li><a href="matminer.featurizers.utils.tests.html#matminer.featurizers.utils.tests.test_stats.TestPropertyStats.test_quantile">test_quantile() (matminer.featurizers.utils.tests.test_stats.TestPropertyStats method)</a>
 </li>
       <li><a href="matminer.featurizers.utils.tests.html#matminer.featurizers.utils.tests.test_stats.TestPropertyStats.test_range">test_range() (matminer.featurizers.utils.tests.test_stats.TestPropertyStats method)</a>
@@ -2311,6 +2349,10 @@
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_function.TestFunctionFeaturizer">TestFunctionFeaturizer (class in matminer.featurizers.tests.test_function)</a>
 </li>
       <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMagpieData">TestMagpieData (class in matminer.utils.tests.test_data)</a>
+</li>
+      <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMatScholarData">TestMatScholarData (class in matminer.utils.tests.test_data)</a>
+</li>
+      <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMEGNetData">TestMEGNetData (class in matminer.utils.tests.test_data)</a>
 </li>
       <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMixingEnthalpy">TestMixingEnthalpy (class in matminer.utils.tests.test_data)</a>
 </li>
@@ -2425,7 +2467,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 
