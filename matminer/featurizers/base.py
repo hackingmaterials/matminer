@@ -501,10 +501,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                     return [float("nan")] * len(self.feature_labels())
             else:
                 msg = str(e)
-                msg += "\nTo skip errors when featurizing specific compounds," \
-                       " consider running the batch featurize() operation " \
-                       "(e.g., featurize_many(), featurize_dataframe(), etc.)" \
-                       " with ignore_errors=True"
+                msg += "\nTO SKIP THESE ERRORS when featurizing specific " \
+                       "compounds, set 'ignore_errors=True' when running " \
+                       "the batch featurize() operation (e.g., " \
+                       "featurize_many(), featurize_dataframe(), etc.)."
                 reraise(type(e), type(e)(msg), sys.exc_info()[2])
 
     def featurize(self, *x):
