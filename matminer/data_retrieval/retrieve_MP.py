@@ -86,7 +86,7 @@ class MPDataRetrieval(BaseDataRetrieval):
         """
         if index_mpid and "material_id" not in properties:
             properties.append("material_id")
-        data = self.mprester.query(criteria, properties, mp_decode)
+        data = self.mprester.query(criteria, properties, mp_decode=mp_decode)
         return data
 
     def try_get_prop_by_material_id(self, prop, material_id_list, **kwargs):
