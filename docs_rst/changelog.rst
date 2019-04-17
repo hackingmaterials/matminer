@@ -5,6 +5,10 @@
 matminer Changelog
 ==================
 
+**v0.5.0**
+
+* fix for Py3.7 and pytorch (L. Ward)
+
 **v0.4.9**
 
 * fix PIP setup of JARVIS data files (A. Dunn)
