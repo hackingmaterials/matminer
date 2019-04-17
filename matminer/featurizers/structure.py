@@ -13,13 +13,11 @@ from copy import copy
 
 import numpy as np
 import pandas as pd
+from scipy.special import comb
 import scipy.constants as const
-import pymatgen.analysis.local_env as pmg_le
-
 from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 from monty.dev import requires
-
 from pymatgen import Structure, Lattice
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
@@ -28,6 +26,8 @@ from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.io.ase import AseAtomsAdaptor
+import pymatgen.analysis.local_env as pmg_le
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
@@ -48,6 +48,13 @@ try:
 except ImportError:
     torch, optim, Variable = None, None, None
     cgcnn, cgcnn_data = None, None
+
+# SOAPFeaturizer
+try:
+    import dscribe
+    from dscribe.descriptors import SOAP as SOAP_dscribe
+except ImportError:
+    dscribe, SOAP_dscribe = None, None
 
 __authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
               'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
@@ -75,6 +82,21 @@ class DensityFeatures(BaseFeaturizer):
         """
         self.features = ["density", "vpa", "packing fraction"] if not \
             desired_features else desired_features
+
+    def precheck(self, s: Structure) -> bool:
+        """
+        Precheck a single entry. DensityFeatures does not work for disordered
+        structures. To precheck an entire dataframe (qnd automatically gather
+        the fraction of structures that will pass the precheck), please use
+        precheck_dataframe.
+
+        Args:
+            s (pymatgen.Structure): The structure to precheck.
+
+        Returns:
+            (bool): If True, s passed the precheck; otherwise, it failed.
+        """
+        return s.is_ordered
 
     def featurize(self, s):
         output = []
@@ -525,23 +547,53 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
 class CoulombMatrix(BaseFeaturizer):
     """
-    Generate the Coulomb matrix, a representation of nuclear coulombic interaction.
+    The Coulomb matrix, a representation of nuclear coulombic interaction.
 
-    Generate the Coulomb matrix, M, of the input
-    structure (or molecule).  The Coulomb matrix was put forward by
-    Rupp et al. (Phys. Rev. Lett. 108, 058301, 2012) and is defined by
-    off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j|
-    and diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote
-    the nuclear charge and the position of atom i, respectively.
+    Generate the Coulomb matrix, M, of the input structure (or molecule). The
+    Coulomb matrix was put forward by Rupp et al. (Phys. Rev. Lett. 108, 058301,
+    2012) and is defined by off-diagonal elements M_ij = Z_i*Z_j/|R_i-R_j| and
+    diagonal elements 0.5*Z_i^2.4, where Z_i and R_i denote the nuclear charge
+    and the position of atom i, respectively.
+
+    Coulomb Matrix features are flattened (for ML-readiness) by default. Use
+    fit before featurizing to use flattened features. To return the matrix form,
+    set flatten=False.
 
     Args:
-        diag_elems: (bool) flag indicating whether (True, default) to use
-                    the original definition of the diagonal elements;
-                    if set to False, the diagonal elements are set to zero.
+        diag_elems (bool): flag indication whether (True, default) to use
+            the original definition of the diagonal elements; if set to False,
+            the diagonal elements are set to 0
+        flatten (bool): If True, returns a flattened vector based on eigenvalues
+            of the matrix form. Otherwise, returns a matrix object (single
+            feature), which will likely need to be processed further.
     """
 
-    def __init__(self, diag_elems=True):
+    def __init__(self, diag_elems=True, flatten=True):
         self.diag_elems = diag_elems
+        self.flatten = flatten
+        self._max_eigs = None
+
+    def _check_fitted(self):
+        if self.flatten and not self._max_eigs:
+            raise NotFittedError("Please fit the CoulombMatrix before "
+                                 "featurizing if using flatten=True.")
+
+    def fit(self, X, y=None):
+        """
+        Fit the Coulomb Matrix to a list of structures.
+
+        Args:
+            X ([Structure]): A list of pymatgen structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
+        if self.flatten:
+            n_sites = [structure.num_sites for structure in X]
+            # CM makes sites x sites matrix; max eigvals for n x n matrix is n
+            self._max_eigs = max(n_sites)
+        return self
 
     def featurize(self, s):
         """
@@ -553,27 +605,41 @@ class CoulombMatrix(BaseFeaturizer):
         Returns:
             m: (Nsites x Nsites matrix) Coulomb matrix.
         """
-        m = [[] for site in s.sites]
-        z = []
+        self._check_fitted()
+        m = np.zeros((s.num_sites, s.num_sites))
+        atomic_numbers = []
         for site in s.sites:
             if isinstance(site.specie, Element):
-                z.append(site.specie.Z)
+                atomic_numbers.append(site.specie.Z)
             else:
-                z.append(site.specie.element.Z)
+                atomic_numbers.append(site.specie.element.Z)
         for i in range(s.num_sites):
             for j in range(s.num_sites):
                 if i == j:
                     if self.diag_elems:
-                        m[i].append(0.5 * z[i] ** 2.4)
+                        m[i, j] = 0.5 * atomic_numbers[i] ** 2.4
                     else:
-                        m[i].append(0)
+                        m[i, j] = 0
                 else:
                     d = s.get_distance(i, j) * ANG_TO_BOHR
-                    m[i].append(z[i] * z[j] / d)
-        return [np.array(m)]
+                    m[i, j] = atomic_numbers[i] * atomic_numbers[j] / d
+        cm = np.array(m)
+
+        if self.flatten:
+            eigs, _ = np.linalg.eig(cm)
+            zeros = np.zeros((self._max_eigs,))
+            zeros[:len(eigs)] = eigs
+            return zeros
+        else:
+            return [cm]
 
     def feature_labels(self):
-        return ["coulomb matrix"]
+        self._check_fitted()
+        if self.flatten:
+            return ["coulomb matrix eig {}".format(i) for i in
+                    range(self._max_eigs)]
+        else:
+            return ["coulomb matrix"]
 
     def citations(self):
         return ["@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
@@ -585,7 +651,7 @@ class CoulombMatrix(BaseFeaturizer):
                 " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}"]
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ["Nils E. R. Zimmermann", "Alex Dunn"]
 
 
 class SineCoulombMatrix(BaseFeaturizer):
@@ -599,14 +665,44 @@ class SineCoulombMatrix(BaseFeaturizer):
     sin**2 function of the vector between the sites which is periodic
     in the dimensions of the structure lattice. See paper for details.
 
+    Coulomb Matrix features are flattened (for ML-readiness) by default. Use
+    fit before featurizing to use flattened features. To return the matrix form,
+    set flatten=False.
+
     Args:
         diag_elems (bool): flag indication whether (True, default) to use
-                the original definition of the diagonal elements;
-                if set to False, the diagonal elements are set to 0
+            the original definition of the diagonal elements; if set to False,
+            the diagonal elements are set to 0
+        flatten (bool): If True, returns a flattened vector based on eigenvalues
+            of the matrix form. Otherwise, returns a matrix object (single
+            feature), which will likely need to be processed further.
     """
 
-    def __init__(self, diag_elems=True):
+    def __init__(self, diag_elems=True, flatten=True):
         self.diag_elems = diag_elems
+        self.flatten = flatten
+        self._max_eigs = None
+
+    def _check_fitted(self):
+        if self.flatten and not self._max_eigs:
+            raise NotFittedError("Please fit the SineCoulombMatrix before "
+                                 "featurizing if using flatten=True.")
+
+    def fit(self, X, y=None):
+        """
+        Fit the Sine Coulomb Matrix to a list of structures.
+
+        Args:
+            X ([Structure]): A list of pymatgen structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
+        if self.flatten:
+            nsites = [structure.num_sites for structure in X]
+            self._max_eigs = max(nsites)
+        return self
 
     def featurize(self, s):
         """
@@ -614,37 +710,51 @@ class SineCoulombMatrix(BaseFeaturizer):
             s (Structure or Molecule): input structure (or molecule)
 
         Returns:
-            (Nsites x Nsites matrix) Sine matrix.
+            (Nsites x Nsites matrix) Sine matrix or
         """
+        self._check_fitted()
         sites = s.sites
-        Zs = np.array([site.specie.Z for site in sites])
+        atomic_numbers = np.array([site.specie.Z for site in sites])
         sin_mat = np.zeros((len(sites), len(sites)))
         coords = np.array([site.frac_coords for site in sites])
         lattice = s.lattice.matrix
-        pi = np.pi
 
         for i in range(len(sin_mat)):
             for j in range(len(sin_mat)):
                 if i == j:
                     if self.diag_elems:
-                        sin_mat[i][i] = 0.5 * Zs[i] ** 2.4
+                        sin_mat[i][i] = 0.5 * atomic_numbers[i] ** 2.4
                 elif i < j:
                     vec = coords[i] - coords[j]
-                    coord_vec = np.sin(pi * vec) ** 2
+                    coord_vec = np.sin(np.pi * vec) ** 2
                     trig_dist = np.linalg.norm(
                         (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
-                    sin_mat[i][j] = Zs[i] * Zs[j] / trig_dist
+                    sin_mat[i][j] = atomic_numbers[i] * atomic_numbers[j] / \
+                                    trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
-        return [sin_mat]
+        if self.flatten:
+            eigs, _ = np.linalg.eig(sin_mat)
+            zeros = np.zeros((self._max_eigs,))
+            zeros[:len(eigs)] = eigs
+            return zeros
+        else:
+            return [sin_mat]
 
     def feature_labels(self):
-        return ["sine coulomb matrix"]
+        self._check_fitted()
+        if self.flatten:
+            return ["sine coulomb matrix eig {}".format(i) for i in
+                    range(self._max_eigs)]
+        else:
+            return ["sine coulomb matrix"]
 
     def citations(self):
         return ["@article {QUA:QUA24917,"
-                "author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},"
-                "title = {Crystal structure representations for machine learning models of formation energies},"
+                "author = {Faber, Felix and Lindmaa, Alexander and von "
+                "Lilienfeld, O. Anatole and Armiento, Rickard},"
+                "title = {Crystal structure representations for machine "
+                "learning models of formation energies},"
                 "journal = {International Journal of Quantum Chemistry},"
                 "volume = {115},"
                 "number = {16},"
@@ -652,12 +762,13 @@ class SineCoulombMatrix(BaseFeaturizer):
                 "url = {http://dx.doi.org/10.1002/qua.24917},"
                 "doi = {10.1002/qua.24917},"
                 "pages = {1094--1101},"
-                "keywords = {machine learning, formation energies, representations, crystal structure, periodic systems},"
+                "keywords = {machine learning, formation energies, "
+                "representations, crystal structure, periodic systems},"
                 "year = {2015},"
                 "}"]
 
     def implementors(self):
-        return ["Kyle Bystrom"]
+        return ["Kyle Bystrom", "Alex Dunn"]
 
 
 class OrbitalFieldMatrix(BaseFeaturizer):
@@ -691,7 +802,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         `Pham et al. _Sci Tech Adv Mat_. 2017 <http://dx.doi.org/10.1080/14686996.2017.1378060>_`
     """
 
-    def __init__(self, period_tag=False, flatten=False):
+    def __init__(self, period_tag=False, flatten=True):
         """Initialize the featurizer
 
         Args:
@@ -1103,9 +1214,6 @@ class SiteStatsFingerprint(BaseFeaturizer):
             return SiteStatsFingerprint(
                 CrystalNNFingerprint.from_preset("ops", cation_anion=True),
                 **kwargs)
-
-        elif preset == "OPSiteFingerprint":
-            return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
 
         elif preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
@@ -1673,7 +1781,8 @@ class BagofBonds(BaseFeaturizer):
     Args:
         coulomb_matrix (BaseFeaturizer): A featurizer object containing a
             "featurize" method which returns a matrix of size nsites x nsites.
-            Good choices are CoulombMatrix() or SineCoulombMatrix()
+            Good choices are CoulombMatrix() or SineCoulombMatrix(), with the
+            flatten=False parameter set.
         token (str): The string used to separate species in a bond, including
             spaces. The token must contain at least one space and cannot have
             alphabetic characters in it, and should be padded by spaces. For
@@ -1682,12 +1791,15 @@ class BagofBonds(BaseFeaturizer):
 
     """
 
-    def __init__(self, coulomb_matrix=CoulombMatrix(), token=' - '):
+    def __init__(self, coulomb_matrix=SineCoulombMatrix(flatten=False),
+                 token=' - '):
         self.coulomb_matrix = coulomb_matrix
         self.token = token
+        self.bag_lens = None
+        self.ordered_bonds = None
 
     def _check_fitted(self):
-        if not hasattr(self, 'baglens') or not hasattr(self, 'ordered_bonds'):
+        if not self.bag_lens or not self.ordered_bonds:
             raise NotFittedError("BagofBonds not fitted to any list of "
                                  "structures! Use the 'fit' method to define "
                                  "the bags and the maximum length of each bag.")
@@ -1707,7 +1819,6 @@ class BagofBonds(BaseFeaturizer):
 
         Returns:
             self
-
         """
         unpadded_bobs = [self.bag(s, return_baglens=True) for s in X]
         bonds = [list(bob.keys()) for bob in unpadded_bobs]
@@ -1719,9 +1830,9 @@ class BagofBonds(BaseFeaturizer):
                 if bond in bob:
                     baglen = bob[bond]
                     baglens[i] = max((baglens[i], baglen))
-        self.baglens = dict(zip(bonds, baglens))
+        self.bag_lens = dict(zip(bonds, baglens))
         # Sort the bags by bag length, with the shortest coming first.
-        self.ordered_bonds = [b[0] for b in sorted(self.baglens.items(),
+        self.ordered_bonds = [b[0] for b in sorted(self.bag_lens.items(),
                                                    key=lambda bl: bl[1])]
         return self
 
@@ -1732,7 +1843,8 @@ class BagofBonds(BaseFeaturizer):
         concatenated, will have different lengths.
 
         Args:
-            s (Structure): A pymatgen Structure or IStructure object.
+            s (Structure): A pymatgen Structure or IStructure object. May also
+                work with a
             return_baglens (bool): If True, returns the bag of bonds with as
                 a dictionary with the number of bonds as values in place
                 of the vectors of coulomb matrix vals. If False, calculates
@@ -1743,10 +1855,6 @@ class BagofBonds(BaseFeaturizer):
                 Site objects representing bonds or sites, and the values are the
                 Coulomb matrix values for that bag.
         """
-        if not isinstance(s, (Structure)):
-            raise TypeError("BagofBonds must take in a pymatgen Structure "
-                            "object, not {}".format(type(s)))
-
         sites = s.sites
         nsites = len(sites)
         bonds = np.zeros((nsites, nsites), dtype=object)
@@ -1802,14 +1910,14 @@ class BagofBonds(BaseFeaturizer):
         self._check_fitted()
         unpadded_bob = self.bag(s)
         padded_bob = {bag: [0.0] * int(length) for bag, length in
-                      self.baglens.items()}
+                      self.bag_lens.items()}
 
         for bond in unpadded_bob:
-            if bond not in list(self.baglens.keys()):
+            if bond not in list(self.bag_lens.keys()):
                 raise ValueError("{} is not in the fitted "
                                  "bonds/sites!".format(bond))
             baglen_s = len(unpadded_bob[bond])
-            baglen_fit = self.baglens[bond]
+            baglen_fit = self.bag_lens[bond]
 
             if baglen_s > baglen_fit:
                 raise ValueError("The bond {} has more entries than was "
@@ -1835,7 +1943,7 @@ class BagofBonds(BaseFeaturizer):
                 basename = str(bag[0]) + " site #"
             else:
                 basename = str(bag[0]) + self.token + str(bag[1]) + " bond #"
-            bls = [basename + str(i) for i in range(self.baglens[bag])]
+            bls = [basename + str(i) for i in range(self.bag_lens[bag])]
             labels += bls
         return labels
 
@@ -1897,7 +2005,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
             Divided by the mean Voronoi cell volume.
 
     References:
-         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.024104>`_
     """
 
     def __init__(self, weight='area',
@@ -1962,7 +2070,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
                 "title = {{Including crystal structure attributes "
                 "in machine learning models of formation energies "
                 "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
                 "volume = {96},year = {2017}}"]
 
     def implementors(self):
@@ -2010,7 +2118,7 @@ class MaximumPackingEfficiency(BaseFeaturizer):
                 "title = {{Including crystal structure attributes "
                 "in machine learning models of formation energies "
                 "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
                 "volume = {96},year = {2017}}"]
 
     def implementors(self):
@@ -2044,7 +2152,7 @@ class ChemicalOrdering(BaseFeaturizer):
             atoms in the n<sup>th</sup> neighbor shell
 
     References:
-         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_"""
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.024104>`_"""
 
     def __init__(self, shells=(1, 2, 3), weight='area'):
         """Initialize the featurizer
@@ -2115,7 +2223,7 @@ class ChemicalOrdering(BaseFeaturizer):
                 "title = {{Including crystal structure attributes "
                 "in machine learning models of formation energies "
                 "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.014107},"
+                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
                 "volume = {96},year = {2017}}"]
 
     def implementors(self):
@@ -3345,3 +3453,162 @@ class JarvisCFID(BaseFeaturizer):
         s = Structure(arr, s.species, coords, coords_are_cartesian=True)
         s.remove_oxidation_states()
         return s
+
+
+class SOAP(BaseFeaturizer):
+    """
+    Smooth overlap of atomic positions (interface via dscribe).
+
+    The smooth overlap of atomic positions descriptors provided by dscribe and
+    SOAPLite. This implementation uses orthogonalized spherical primitive
+    gaussian-type orbitals as the radial basis set to reach a fast analytical
+    solution. Please see the dscribe SOAP documentation for more details.
+
+    Based originally on the following publications:
+
+    "On representing chemical environments, Albert P. Bartók, Risi
+        Kondor, and Gábor Csányi, Phys. Rev. B 87, 184115, (2013),
+        https://doi.org/10.1103/PhysRevB.87.184115
+
+    "Comparing molecules and solids across structural and alchemical
+        space", Sandip De, Albert P. Bartók, Gábor Csányi and Michele Ceriotti,
+        Phys.  Chem. Chem. Phys. 18, 13754 (2016),
+        https://doi.org/10.1039/c6cp00415f
+
+    Implementation (and some documentation) originally based on dscribe:
+    https://github.com/SINGROUP/dscribe. Please see their page for the latest
+    updates.
+
+    Args:
+        r_cut (float): Cutoff radius (>1) for local region, in angstrom.
+        n_max (int): Number of basis functions to be used.
+        l_max (int): Number of l's to be used (spherical harmonic)
+
+        **soap_kwargs: (from dscribe docs)
+                periodic (bool): Determines whether the system is considered to
+                    be periodic.
+                sigma (float): The standard deviation of the gaussians used to
+                    expand the atomic density.
+                rbf (str): The radial basis functions to use. The available
+                    options are:
+                        * "gto": Spherical gaussian type orbitals defined as
+                            :math:`\phi(r) = \\beta r^l e^{-\\alpha r^2}`
+                crossover (bool): Default True, if crossover of atomic types
+                    should be included in the power spectrum.
+                average (bool): Whether to build an average output for all
+                    selected positions. Before averaging the outputs for
+                    individual atoms are normalized.
+                normalize (bool): Whether to normalize the final output.
+                sparse (bool): Whether the output should be a sparse matrix or a
+                    dense numpy array.
+    """
+    @requires(dscribe, "SOAPFeaturizer requires dscribe (packaged with "
+                       "SOAPLite). Install from github.com/SINGROUP/dscribe")
+    def __init__(self, r_cut=3.0, n_max=4, l_max=2, **soap_kwargs):
+        self.r_cut = r_cut
+        self.n_max = n_max
+        self.l_max = l_max
+        self.sigma = soap_kwargs.get("sigma", 1.0)
+        self.rbf = soap_kwargs.get("rbf", "gto")
+        self.periodic = soap_kwargs.get("periodic", True)
+        self.crossover = soap_kwargs.get("crossover", True)
+        self.normalize = soap_kwargs.get("normalize", True)
+        self.average = soap_kwargs.get("average", True)
+        self.sparse = soap_kwargs.get("sparse", False)
+        self.adaptor = AseAtomsAdaptor()
+        self.length = None
+        self.atomic_numbers = None
+        self.soap = None
+
+        if not self.average:
+            raise ValueError("Sitewise SOAP not supported in matminer. Please"
+                             "see the dscribe and SOAPLite documentation for "
+                             "more information. "
+                             "<https://github.com/SINGROUP/dscribe>")
+        if self.sparse:
+            raise ValueError("Sparse matrix SOAP not supported in matminer."
+                             "Please see the dscribe and SOAPLite documentation"
+                             " for more information. "
+                             "<https://github.com/SINGROUP/dscribe>")
+
+    def _check_fitted(self):
+        if not self.soap:
+            raise NotFittedError("Please fit SOAP before featurizing.")
+
+    def fit(self, X, y=None):
+        """
+        Fit the SOAP structure featurizer to a dataframe.
+
+        Args:
+            X ([SiteCollection]): For example, a list of pymatgen Structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
+        elements = []
+        for s in X:
+            c = s.composition.elements
+            for e in c:
+                if e not in elements:
+                    elements.append(e)
+
+        self.atomic_numbers = [e.Z for e in elements]
+        length = comb(len(self.atomic_numbers) + 1, 2) * \
+                 comb(self.n_max + 1, 2) * \
+                 (self.l_max + 1)
+        self.length = int(length)
+        self.soap = SOAP_dscribe(atomic_numbers=self.atomic_numbers,
+                                 rcut=self.r_cut,
+                                 nmax=self.n_max,
+                                 lmax=self.l_max,
+                                 sigma=self.sigma,
+                                 rbf=self.rbf,
+                                 periodic=self.periodic,
+                                 crossover=self.crossover,
+                                 average=self.average,
+                                 normalize=self.normalize,
+                                 sparse=self.sparse)
+        return self
+
+    def featurize(self, s):
+        self._check_fitted()
+        s_ase = self.adaptor.get_atoms(s)
+        return self.soap.create(s_ase).tolist()[0]
+
+    def feature_labels(self):
+        self._check_fitted()
+        return ["SOAP_{}".format(i) for i in range(self.length)]
+
+    def citations(self):
+        return ["@article{PhysRevB.87.184115,"
+                "title = {On representing chemical environments},"
+                "author = {Bart\'ok, Albert P. and Kondor, Risi and Cs\'anyi, "
+                "G\'abor},"
+                "journal = {Phys. Rev. B},"
+                "volume = {87},"
+                "issue = {18},"
+                "pages = {184115},"
+                "numpages = {16},"
+                "year = {2013},"
+                "month = {May},"
+                "publisher = {American Physical Society},"
+                "doi = {10.1103/PhysRevB.87.184115},"
+                "url = {https://link.aps.org/doi/10.1103/PhysRevB.87.184115}}",
+                "@Article{C6CP00415F,"
+                "author ={De, Sandip and BartÃ³k, Albert P. and CsÃ¡nyi, GÃ¡bor"
+                " and Ceriotti, Michele},"
+                "title  ={Comparing molecules and solids across structural and "
+                "alchemical space},"
+                "journal = {Phys. Chem. Chem. Phys.},"
+                "year = {2016},"
+                "volume = {18},"
+                "issue = {20},"
+                "pages = {13754-13769},"
+                "publisher = {The Royal Society of Chemistry},"
+                "doi = {10.1039/C6CP00415F},"
+                "url = {http://dx.doi.org/10.1039/C6CP00415F},}"]
+
+    def implementors(self):
+        return ["Alex Dunn", "Lauri Himanen"]
+

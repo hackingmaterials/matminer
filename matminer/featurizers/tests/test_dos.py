@@ -5,7 +5,8 @@ import os
 import pandas as pd
 import unittest
 
-from matminer.featurizers.dos import DOSFeaturizer, DopingFermi, Hybridization
+from matminer.featurizers.dos import DOSFeaturizer, DopingFermi, \
+    Hybridization, SiteDOS, DosAsymmetry
 from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.util.testing import PymatgenTest
 
@@ -17,7 +18,37 @@ class DOSFeaturesTest(PymatgenTest):
     def setUp(self):
         with open(os.path.join(test_dir, 'si_dos.json'), 'r') as sDOS:
             si_dos = CompleteDos.from_dict(json.load(sDOS))
-        self.df = pd.DataFrame({'dos': [si_dos]})
+        self.df = pd.DataFrame({'dos': [si_dos], 'site': [0]})
+
+        with open(os.path.join(test_dir, 'nb3sn_dos.json'), 'r') as sDOS:
+            nb3sn_dos = CompleteDos.from_dict(json.load(sDOS))
+        self.nb3sn_df = pd.DataFrame({'dos': [nb3sn_dos]})
+
+    def test_SiteDOS(self):
+
+        dos = self.df['dos'][0]
+
+        # ensure that both sites give same scores (expected behavior for si)
+        features0 = SiteDOS(decay_length=0.1).featurize(dos, 0)
+        features1 = SiteDOS(decay_length=0.1).featurize(dos, 1)
+        self.assertArrayEqual(features0, features1)
+
+        # ensure that fractional scores sum to 1
+        total_fraction = sum(features0[0: 4])
+        self.assertAlmostEqual(total_fraction, 1.0, 3)
+        total_fraction = sum(features0[5: 9])
+        self.assertAlmostEqual(total_fraction, 1.0, 3)
+
+        # ensure that there is more total dos in the valence band edge
+        self.assertTrue(features0[4] < features0[9])
+
+        # ensure that a wider sampling of the dos gives larger total scores
+        features2 = SiteDOS(decay_length=0.2).featurize(dos, 0)
+        self.assertTrue(features0[4] < features2[4])
+        self.assertTrue(features0[9] < features2[9])
+
+        # ensure featurize_datafame() works
+        SiteDOS().featurize_dataframe(self.df, col_id=['dos', 'site'])
 
     def test_DOSFeaturizer(self):
         dos_feats = DOSFeaturizer(contributors=2).featurize_dataframe(
@@ -79,6 +110,13 @@ class DOSFeaturesTest(PymatgenTest):
         df = hy.featurize_dataframe(df, col_id=['dos', 'decay_length'])
         self.assertAlmostEqual(df['cbm_s'][0], 0.409, 2)
         self.assertAlmostEqual(df['vbm_p'][0], 0.943, 2)
+
+    def test_DosAsymmetry(self):
+        asym = DosAsymmetry(
+            decay_length=0.5, sampling_resolution=100, gaussian_smear=0.05)
+        asym = asym.featurize_dataframe(
+            self.nb3sn_df, col_id='dos', inplace=False)['dos_asymmetry'][0]
+        self.assertAlmostEqual(asym, -0.9100, 3)
 
 
 if __name__ == '__main__':

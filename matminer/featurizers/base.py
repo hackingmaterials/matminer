@@ -36,6 +36,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     a featurizer that returns the partial radial distribution function
     may need to know which elements are present in a dataset.
 
+    You can can also use the `precheck` and `precheck_dataframe` methods to
+    ensure a featurizer is in scope for a given sample (or dataset) before
+    featurizing.
+
     You can also employ the featurizer as part of a ScikitLearn Pipeline object.
     For these cases, ScikitLearn calls the `transform` function of the
     `BaseFeaturizer` which is a less-featured wrapper of `featurize_many`. You
@@ -151,6 +155,88 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     def chunksize(self):
         return self._chunksize if hasattr(self, '_chunksize') else None
 
+    def precheck_dataframe(self, df, col_id, return_frac=True, inplace=False) \
+            -> [float, pd.DataFrame]:
+        """
+        Precheck an entire dataframe. Subclasses wanting to use precheck
+        functionality should not override this method, they should override
+        precheck (unless the entire df determines whether single entries pass
+        or fail a precheck).
+
+        Prechecking should be a quick and useful way to check that for a
+        particular dataframe (set of featurizer inputs), the featurizer is:
+
+            1. in scope, and/or...
+            2. robust to errors and/or...
+            3. any other reason you would not practically want to use this
+                featurizer in on this dataframe.
+
+        By prechecking before featurizing, you can avoid applying featurizers
+        to data that will ultimately fail, return unreliable numbers, or
+        are out of scope. Prechecking is also a good time to throw/observe
+        warnings (such as long runtime warnings!).
+
+        Args:
+            df (pd.DataFrame): A dataframe
+            col_id (str or [str]): column label containing objects to featurize.
+                Can be multiple labels if the featurize function requires
+                multiple inputs.
+            return_frac (bool): If True, returns the fraction of entries
+                passing the precheck (e.g., 0.5). Else, returns a dataframe.
+            inplace (bool); Only relevant if return_frac=False. If inplace=True,
+                the input dataframe is modified in memory with a boolean column
+                for precheck. Otherwise, a new df with this column is returned.
+
+        Returns:
+            (bool, pd.DataFrame): If return_frac=True, returns the fraction of
+                entries passing the precheck. Else, returns the dataframe with
+                an extra boolean column added for the precheck.
+
+        """
+        col_id = [col_id] if isinstance(col_id, string_types) else col_id
+        prechecks = [self.precheck(*entries) for entries in df[col_id].values]
+
+        if return_frac:
+            return np.sum(prechecks) / len(prechecks)
+        else:
+            precheck_col = "{} precheck pass".format(self.__class__.__name__)
+            if inplace:
+                df[precheck_col] = prechecks
+            else:
+                res = pd.DataFrame({precheck_col: prechecks})
+                df = pd.concat([df, res], axis=1)
+            return df
+
+    def precheck(self, *x) -> bool:
+        """
+        Precheck (provide an estimate of whether a featurizer will work or not)
+        for a single entry (e.g., a single composition). If the entry fails the
+        precheck, it will most likely fail featurization; if it passes, it is
+        likely (but not guaranteed) to featurize correctly.
+
+        Prechecks should be:
+            * accurate (but can be good estimates rather than ground truth)
+            * fast to evaluate
+            * unlikely to be obsolete via changes in the featurizer in the near
+                future
+
+        This method should be overridden by any featurizer requiring its
+        use, as by default all entries will pass prechecking. Also, precheck
+        is a good opportunity to throw warnings about long runtimes (e.g., doing
+        nearest neighbors computations on a structure with many thousand sites).
+
+        See the documentation for precheck_dataframe for more information.
+
+        Args:
+            *x (Composition, Structure, etc.): Input to-be-featurized. Can be
+                a single input or multiple inputs.
+
+        Returns:
+            (bool): True, if passes the precheck. False, if fails.
+
+        """
+        return True
+
     def fit(self, X, y=None, **fit_kwargs):
         """Update the parameters of this featurizer based on available data
 
@@ -191,7 +277,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                                                                    **kwargs)
 
     def featurize_dataframe(self, df, col_id, ignore_errors=False,
-                            return_errors=False, inplace=True,
+                            return_errors=False, inplace=False,
                             multiindex=False, pbar=True):
         """
         Compute features for all entries contained in input dataframe.
@@ -207,7 +293,9 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
             return_errors (bool). Returns the errors encountered for each
                 row in a separate `XFeaturizer errors` column if True. Requires
                 ignore_errors to be True.
-            inplace (bool): Whether to add new columns to input dataframe (df)
+            inplace (bool): If True, adds columns to the original object in
+                memory and returns None. Else, returns the updated object.
+                Should be identical to pandas inplace behavior.
             multiindex (bool): If True, use a Featurizer - Feature 2-level
                 index using the MultiIndex capabilities of pandas. If done
                 inplace, multiindex featurization will overwrite the original
@@ -219,8 +307,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         """
 
         # If only one column and user provided a string, put it inside a list
-        if isinstance(col_id, string_types):
-            col_id = [col_id]
+        col_id = [col_id] if isinstance(col_id, string_types) else col_id
 
         # Multiindexing doesn't play nice with other options!
         if multiindex:
@@ -239,7 +326,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         # Check names to avoid overwriting the current columns
         # ConversionFeaturizer have attribute called _overwrite_data which
         # determines whether an Error is thrown
-        if not getattr(self, '_overwrite_data', False):
+        overwrite = getattr(self, '_overwrite_data', False)
+        if not overwrite:
             for col in df.columns.values:
                 if col in labels:
                     raise ValueError(
@@ -260,11 +348,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         if inplace:
             # Update the existing dataframe
-            for k in labels:
-                df[k] = res[k]
-            return df
+            df[labels] = res[labels]
+            return None
         else:
             # Create new dataframe and ensure columns are ordered properly
+            res_labels = res.columns.tolist()
+            if overwrite:
+                overlapping_labels = [c for c in res_labels if c in df.columns]
+                df = df.drop(columns=overlapping_labels)
             new = pd.concat([df, res], axis=1)
             return new[df.columns.tolist() + res.columns.tolist()]
 
@@ -284,7 +375,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         if return_errors:
             labels.append(self.__class__.__name__ + " Exceptions")
 
-        if multiindex and len(labels[0]) == 2:
+        ix_types = (pd.Index, list, tuple)
+        if multiindex and len(labels[0]) == 2 and isinstance(labels[0], ix_types):
             # conversion featurizer, aiming to featurize in place.
             # conversion featurizers only have one feature label.
             # If return_errors=False, the transformation is:
@@ -409,10 +501,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
                     return [float("nan")] * len(self.feature_labels())
             else:
                 msg = str(e)
-                msg += "\nTo skip errors when featurizing specific compounds," \
-                       " consider running the batch featurize() operation " \
-                       "(e.g., featurize_many(), featurize_dataframe(), etc.)" \
-                       " with ignore_errors=True"
+                msg += "\nTO SKIP THESE ERRORS when featurizing specific " \
+                       "compounds, set 'ignore_errors=True' when running " \
+                       "the batch featurize() operation (e.g., " \
+                       "featurize_many(), featurize_dataframe(), etc.)."
                 reraise(type(e), type(e)(msg), sys.exc_info()[2])
 
     def featurize(self, *x):

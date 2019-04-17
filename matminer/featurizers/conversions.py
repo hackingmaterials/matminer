@@ -11,6 +11,7 @@ import json
 
 from monty.json import MontyDecoder
 
+from pymatgen import MPRester
 from pymatgen.core.structure import IStructure
 from pymatgen.core.composition import Composition
 
@@ -18,7 +19,8 @@ from matminer.featurizers.base import BaseFeaturizer
 
 
 class ConversionFeaturizer(BaseFeaturizer):
-    """Abstract class to perform data conversions.
+    """
+    Abstract class to perform data conversions.
 
     Featurizers subclassing this class do not produce machine learning-ready
     features but instead are used to pre-process data. As Featurizers,
@@ -100,7 +102,8 @@ class ConversionFeaturizer(BaseFeaturizer):
 
 
 class StrToComposition(ConversionFeaturizer):
-    """Utility featurizer to convert a string to a Composition
+    """
+    Utility featurizer to convert a string to a Composition
 
     The expected input is a composition in string form (e.g. "Fe2O3").
 
@@ -145,20 +148,21 @@ class StrToComposition(ConversionFeaturizer):
             return [Composition(string_composition)]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
 
 
 class StructureToComposition(ConversionFeaturizer):
-    """Utility featurizer to convert a Structure to a Composition.
+    """
+    Utility featurizer to convert a Structure to a Composition.
 
     The expected input is a `pymatgen.core.structure.Structure` object.
 
@@ -202,20 +206,21 @@ class StructureToComposition(ConversionFeaturizer):
             return [structure.composition]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
 
 
 class StructureToIStructure(ConversionFeaturizer):
-    """Utility featurizer to convert a Structure to an immutable IStructure.
+    """
+    Utility featurizer to convert a Structure to an immutable IStructure.
 
     This is useful if you are using features that employ caching.
 
@@ -255,20 +260,21 @@ class StructureToIStructure(ConversionFeaturizer):
         return [IStructure.from_sites(structure)]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Logan Ward", "Alex Ganose"]
 
 
 class DictToObject(ConversionFeaturizer):
-    """Utility featurizer to decode a dict to Python object via MSON.
+    """
+    Utility featurizer to decode a dict to Python object via MSON.
 
     Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
@@ -304,20 +310,21 @@ class DictToObject(ConversionFeaturizer):
         return [md.process_decoded(dict_data)]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
 
 
 class JsonToObject(ConversionFeaturizer):
-    """Utility featurizer to decode json data to a Python object via MSON.
+    """
+    Utility featurizer to decode json data to a Python object via MSON.
 
     Note that this Featurizer does not produce machine learning-ready features
     but instead can be applied to pre-process data or as part of a Pipeline.
@@ -352,20 +359,21 @@ class JsonToObject(ConversionFeaturizer):
         return [json.loads(json_data, cls=MontyDecoder)]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
 
 
 class StructureToOxidStructure(ConversionFeaturizer):
-    """Utility featurizer to add oxidation states to a pymatgen Structure.
+    """
+    Utility featurizer to add oxidation states to a pymatgen Structure.
 
     Oxidation states are determined using pymatgen's guessing routines.
     The expected input is a `pymatgen.core.structure.Structure` object.
@@ -421,20 +429,21 @@ class StructureToOxidStructure(ConversionFeaturizer):
         return [structure]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
 
 
 class CompositionToOxidComposition(ConversionFeaturizer):
-    """Utility featurizer to add oxidation states to a pymatgen Composition.
+    """
+    Utility featurizer to add oxidation states to a pymatgen Composition.
 
     Oxidation states are determined using pymatgen's guessing routines.
     The expected input is a `pymatgen.core.composition.Composition` object.
@@ -504,13 +513,87 @@ class CompositionToOxidComposition(ConversionFeaturizer):
         return [comp]
 
     def citations(self):
-        return [(
+        return [
             "@article{ward_agrawal_choudary_wolverton_2016, title={A "
             "general-purpose machine learning framework for predicting "
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}")]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose", "Alex Dunn"]
+
+
+class CompositionToStructureFromMP(ConversionFeaturizer):
+    """
+    Featurizer to get a Structure object from Materials Project using the
+    composition alone. The most stable entry from Materials Project is selected,
+    or NaN if no entry is found in the Materials Project.
+
+    Args:
+        target_col_id (str or None): The column in which the converted data will
+            be written. If the column already exists then an error will be
+            thrown unless `overwrite_data` is set to `True`. If `target_col_id`
+            begins with an underscore the data will be written to the column:
+            `"{}_{}".format(col_id, target_col_id[1:])`, where `col_id` is the
+            column being featurized. If `target_col_id` is set to None then
+            the data will be written "in place" to the `col_id` column (this
+            will only work if `overwrite_data=True`).
+        overwrite_data (bool): Overwrite any data in `target_column` if it
+            exists.
+        map_key (str): Materials API key
+
+    """
+
+    def __init__(self, target_col_id='structure', overwrite_data=False,
+                 mapi_key=None):
+        super().__init__(target_col_id, overwrite_data)
+        self.mpr = MPRester(mapi_key)
+
+    def featurize(self, comp):
+        """
+        Get the most stable structure from Materials Project
+        Args:
+            comp (`pymatgen.core.composition.Composition`): A composition.
+
+        Returns:
+            (`pymatgen.core.structure.Structure`): A Structure object.
+        """
+
+        entries = self.mpr.get_data(comp.reduced_formula, prop="energy_per_atom")
+        if len(entries) > 0:
+            most_stable_entry = \
+            sorted(entries, key=lambda e: e['energy_per_atom'])[0]
+            s = self.mpr.get_structure_by_material_id(
+                most_stable_entry["material_id"])
+            return[s]
+        
+        return [float("nan")]
+
+    def citations(self):
+        return [
+            "@article{doi:10.1063/1.4812323, author = {Jain,Anubhav and Ong,"
+            "Shyue Ping  and Hautier,Geoffroy and Chen,Wei and Richards, "
+            "William Davidson  and Dacek,Stephen and Cholia,Shreyas "
+            "and Gunter,Dan  and Skinner,David and Ceder,Gerbrand "
+            "and Persson,Kristin A. }, title = {Commentary: The Materials "
+            "Project: A materials genome approach to accelerating materials "
+            "innovation}, journal = {APL Materials}, volume = {1}, number = "
+            "{1}, pages = {011002}, year = {2013}, doi = {10.1063/1.4812323}, "
+            "URL = {https://doi.org/10.1063/1.4812323}, "
+            "eprint = {https://doi.org/10.1063/1.4812323}}",
+            "@article{Ong2015, author = {Ong, Shyue Ping and Cholia, "
+            "Shreyas and Jain, Anubhav and Brafman, Miriam and Gunter, Dan "
+            "and Ceder, Gerbrand and Persson, Kristin a.}, doi = "
+            "{10.1016/j.commatsci.2014.10.037}, issn = {09270256}, "
+            "journal = {Computational Materials Science}, month = {feb}, "
+            "pages = {209--215}, publisher = {Elsevier B.V.}, title = "
+            "{{The Materials Application Programming Interface (API): A simple, "
+            "flexible and efficient API for materials data based on "
+            "REpresentational State Transfer (REST) principles}}, "
+            "url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025614007113}, "
+            "volume = {97}, year = {2015} } "]
+
+    def implementors(self):
+        return ["Anubhav Jain"]

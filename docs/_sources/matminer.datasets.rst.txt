@@ -1,6 +1,13 @@
 matminer.datasets package
 =========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    matminer.datasets.tests
+
 Submodules
 ----------
 

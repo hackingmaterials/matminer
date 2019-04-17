@@ -24,6 +24,7 @@ Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the Hacking
 * Julien Brenneck
 * Alex Ganose
 * Daniel Dopp
+* Samy Cherfaoui
 
 University of Chicago
 ----------------------

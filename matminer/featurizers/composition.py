@@ -17,7 +17,7 @@ from sklearn.neighbors.unsupervised import NearestNeighbors
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData
+    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData, MEGNetElementData
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
@@ -49,6 +49,20 @@ class ElementProperty(BaseFeaturizer):
 
     To initialize quickly, use the from_preset() method.
 
+    Features: Based on the statistics of the data_source chosen, computed
+    by element stoichiometry. The format generally is:
+
+    "{data source} {statistic} {property}"
+
+    For example:
+
+    "PymetgenData range X"  # Range of electronegativity from Pymatgen data
+
+    For a list of all statistics, see the PropertyStats documentation; for a
+    list of all attributes available for a given data_source, see the
+    documentation for the data sources (e.g., PymatgenData, MagpieData,
+    MatscholarElementData, etc.).
+
     Args:
         data_source (AbstractData or str): source from which to retrieve
             element property data (or use str for preset: "pymatgen",
@@ -68,22 +82,26 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = DemlData()
         elif data_source == "matscholar_el":
             self.data_source = MatscholarElementData()
+        elif data_source == "megnet_el":
+            self.data_source = MEGNetElementData()
         else:
             self.data_source = data_source
 
         self.features = features
         self.stats = stats
+        # Initialize stats computer
+        self.pstats = PropertyStats()
 
     @classmethod
     def from_preset(cls, preset_name):
         """
         Return ElementProperty from a preset string
         Args:
-            preset_name: (str) can be one of "magpie", "deml", "matminer", or
-                "matscholar_el".
+            preset_name: (str) can be one of "magpie", "deml", "matminer",
+                "matscholar_el", or "megnet_el".
 
         Returns:
-
+            ElementProperty based on the preset name.
         """
         if preset_name == "magpie":
             data_source = "magpie"
@@ -122,6 +140,11 @@ class ElementProperty(BaseFeaturizer):
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
             features = MatscholarElementData().prop_names
 
+        elif preset_name == "megnet_el":
+            data_source = "megnet_el"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev"]
+            features = MEGNetElementData().prop_names
+
         else:
             raise ValueError("Invalid preset_name specified!")
 
@@ -140,9 +163,6 @@ class ElementProperty(BaseFeaturizer):
 
         all_attributes = []
 
-        # Initialize stats computer
-        pstats = PropertyStats()
-
         # Get the element names and fractions
         elements, fractions = zip(*comp.element_composition.items())
 
@@ -150,15 +170,16 @@ class ElementProperty(BaseFeaturizer):
             elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
 
             for stat in self.stats:
-                all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
+                all_attributes.append(self.pstats.calc_stat(elem_data, stat, fractions))
 
         return all_attributes
 
     def feature_labels(self):
         labels = []
         for attr in self.features:
+            src = self.data_source.__class__.__name__
             for stat in self.stats:
-                labels.append("%s %s" % (stat, attr))
+                labels.append("{} {} {}".format(src, stat, attr))
         return labels
 
     def citations(self):
@@ -185,40 +206,66 @@ class ElementProperty(BaseFeaturizer):
                 "publisher = {Elsevier B.V.}, title = {{Python Materials Genomics (pymatgen): A robust, open-source python "
                 "library for materials analysis}}, url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
                 "volume = {68}, year = {2013} } "]
+        elif self.data_source.__class__.__name__ == "MEGNetElementData":
+            # TODO: Cite MEGNet publication (not preprint) once released!
+            citation = [
+                "@ARTICLE{2018arXiv181205055C,"
+                "author = {{Chen}, Chi and {Ye}, Weike and {Zuo}, Yunxing and {Zheng}, Chen and {Ong}, Shyue Ping},"
+                "title = '{Graph Networks as a Universal Machine Learning Framework for Molecules and Crystals}',"
+                "journal = {arXiv e-prints},"
+                "keywords = {Condensed Matter - Materials Science, Physics - Computational Physics},"
+                "year = '2018',"
+                "month = 'Dec',"
+                "eid = {arXiv:1812.05055},"
+                "pages = {arXiv:1812.05055},"
+                "archivePrefix = {arXiv},"
+                "eprint = {1812.05055},"
+                "primaryClass = {cond-mat.mtrl-sci},"
+                "adsurl = {https://ui.adsabs.harvard.edu/\#abs/2018arXiv181205055C},"
+                "adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"]
         else:
             citation = []
         return citation
 
     def implementors(self):
-        return ["Jiming Chen", "Logan Ward", "Anubhav Jain"]
+        return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn"]
 
 
 class CationProperty(ElementProperty):
     """
     Features based on properties of cations in a material
 
-    Requires that oxidation states have already been determined
+    Requires that oxidation states have already been determined. Property
+    statistics weighted by composition.
 
-    Computes composition-weighted statistics of different elemental properties
+    Features: Based on the statistics of the data_source chosen, computed
+    by element stoichiometry. The format generally is:
+
+    "{data source} {statistic} {property}"
+
+    For example:
+
+    "DemlData range magn_moment" # Range of magnetic moment via Deml et al. data
+
+    For a list of all statistics, see the PropertyStats documentation; for a
+    list of all attributes available for a given data_source, see the
+    documentation for the data sources (e.g., PymatgenData, MagpieData,
+    MatscholarElementData, etc.).
     """
 
     @classmethod
     def from_preset(cls, preset_name):
         if preset_name == "deml":
             data_source = "deml"
-            features = ["total_ioniz", "xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]
+            features = ["total_ioniz", "xtal_field_split", "magn_moment",
+                        "so_coupling", "sat_magn"]
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
-            raise ValueError('Preset "%s" not found'%preset_name)
+            raise ValueError('Preset "%s" not found' % preset_name)
         return cls(data_source, features, stats)
 
     def feature_labels(self):
-        labels = []
-        for attr in self.features:
-            for stat in self.stats:
-                labels.append("%s %s of cations"%(stat, attr))
-
-        return labels
+        return [f + " of cations" for f in super().feature_labels()]
 
     def featurize(self, comp):
         # Check if oxidation states are present
@@ -933,18 +980,17 @@ class CohesiveEnergy(BaseFeaturizer):
                 your compound. If not set, will look up the most stable
                 formation energy from the Materials Project database.
         """
+        comp = comp.reduced_composition
         el_amt_dict = comp.get_el_amt_dict()
 
         formation_energy_per_atom = formation_energy_per_atom or None
 
         if not formation_energy_per_atom:
             # Get formation energy of most stable structure from MP
-            struct_lst = MPRester(self.mapi_key).get_data(
-                comp.formula.replace(" ", ""))
+            struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
             if len(struct_lst) > 0:
                 most_stable_entry = sorted(struct_lst, key=lambda e: e['energy_per_atom'])[0]
-                formation_energy_per_atom = most_stable_entry[
-                    'formation_energy_per_atom']
+                formation_energy_per_atom = most_stable_entry['formation_energy_per_atom']
             else:
                 raise ValueError('No structure found in MP for {}'.format(comp))
 
@@ -974,7 +1020,6 @@ class CohesiveEnergy(BaseFeaturizer):
             "@book{Kittel, author = {Kittel, C}, isbn = {978-0-471-41526-8}, "
             "publisher = {Wiley}, title = {{Introduction to Solid State "
             "Physics, 8th Edition}}, year = {2005}}"]
-
 
 class Miedema(BaseFeaturizer):
     """
@@ -1061,6 +1106,24 @@ class Miedema(BaseFeaturizer):
         else:
             raise NotImplementedError('data_source {} not implemented yet'.
                                       format(self, data_source))
+
+        self.element_list = [Element(estr) for estr in self.df_dataset.index]
+
+    def precheck(self, c: Composition) -> bool:
+        """
+        Precheck a single entry. Miedema does not work for compositons
+        containing any elments for which the Miedema model has no parameters.
+        To precheck an entire dataframe (qnd automatically gather
+        the fraction of structures that will pass the precheck), please use
+        precheck_dataframe.
+
+        Args:
+            c (pymatgen.Composition): The composition to precheck.
+
+        Returns:
+            (bool): If True, s passed the precheck; otherwise, it failed.
+        """
+        return all([e in self.element_list for e in c.elements])
 
     def deltaH_chem(self, elements, fracs, struct):
         """
@@ -1369,6 +1432,25 @@ class YangSolidSolution(BaseFeaturizer):
 
         # Load in a table of elemental properties
         self.elem_data = MagpieData()
+
+    def precheck(self, c: Composition) -> bool:
+        """
+        Precheck a single entry. YangSolidSolution does not work for compositons
+        containing any binary elment combinations for which the model has no
+        parameters. We can nearly equivalently approximate this by checking
+        against the unary element list.
+
+        To precheck an entire dataframe (qnd automatically gather
+        the fraction of structures that will pass the precheck), please use
+        precheck_dataframe.
+
+        Args:
+            c (pymatgen.Composition): The composition to precheck.
+
+        Returns:
+            (bool): If True, s passed the precheck; otherwise, it failed.
+        """
+        return all([e in self.dhf_mix.valid_element_list for e in c.elements])
 
     def featurize(self, comp):
         return [self.compute_omega(comp), self.compute_delta(comp)]

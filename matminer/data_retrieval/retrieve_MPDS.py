@@ -74,6 +74,14 @@ class MPDSDataRetrieval(BaseDataRetrieval):
 
     *or*
     jsonobj = client.get_data({"formula":"SrTiO3"}, fields=[])
+
+    If you use this data retrieval class, please additionally cite:
+    Blokhin, E., Villars, P., 2018. The PAULING FILE Project and Materials
+    Platform for Data Science: From Big Data Toward Materials Genome,
+    in: Andreoni, W., Yip, S. (Eds.), Handbook of Materials Modeling :
+    Methods: Theory and Modeling. Springer International Publishing, Cham,
+    pp. 1–26. https://doi.org/10.1007/978-3-319-42913-7_62-1
+
     """
     default_properties = ('Phase', 'Formula', 'SG',
                           'Entry', 'Property', 'Units', 'Value')

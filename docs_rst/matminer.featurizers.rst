@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    matminer.featurizers.tests
     matminer.featurizers.utils
 
 Submodules

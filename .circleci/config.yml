@@ -1,21 +1,66 @@
 version: 2
-
 jobs:
-  build:
+  py367:
     working_directory: ~/matminer
     docker:
-      - image: circleci/python:3.6.2
+      - image: circleci/python:3.6.7
     steps:
       - checkout
+      - restore_cache:
+          keys:
+          - py367-dependencies-{{ checksum "requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - py367-dependencies-
       - run:
-          name: Make tox env
+          name: Set up env via pip
           command: |
-            mkdir ~/tox_env
-            python -m venv ~/tox_env
-            source ~/tox_env/bin/activate
-            pip install tox tox-pyenv
+            export CI=circle
+            python3 -m venv test_env
+            . test_env/bin/activate
+            pip install --upgrade pip
+            pip install --upgrade setuptools
+            cd ~/matminer
+            pip install -r requirements.txt
+            pip install -r requirements-optional.txt
+            pip install -e .
+            python setup.py test
+      - save_cache:
+          paths:
+          - ./test_env
+          key: py367-dependencies-{{ checksum "requirements.txt" }}
+  py371:
+    working_directory: ~/matminer
+    docker:
+      - image: circleci/python:3.7.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - py371-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - py371-dependencies-
       - run:
-          name: Run matminer tests
+          name: Set up env via pip
           command: |
-            source ~/tox_env/bin/activate
-            tox
+            export CI=circle
+            python3 -m venv test_env
+            . test_env/bin/activate
+            pip install --upgrade pip
+            pip install --upgrade setuptools
+            cd ~/matminer
+            pip install -r requirements.txt
+            pip install -r requirements-optional.txt
+            pip install -e .
+            python setup.py test
+      - save_cache:
+          paths:
+            - ./test_env
+          key: py371-dependencies-{{ checksum "requirements.txt" }}
+
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - py367
+      - py371

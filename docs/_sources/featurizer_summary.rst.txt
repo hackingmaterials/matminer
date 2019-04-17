@@ -73,6 +73,31 @@ Name                              Description
 
 
 
+-----------
+conversions
+-----------
+Conversion utilities.
+----------------------
+
+(matminer.featurizers.conversions)
+
+====================================   ================================================================================================================================================================================================================================================================================================================================================================================================================
+Name                                   Description
+====================================   ================================================================================================================================================================================================================================================================================================================================================================================================================
+:code:`ConversionFeaturizer`           Abstract class to perform data conversions. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.ConversionFeaturizer>`_
+:code:`StrToComposition`               Utility featurizer to convert a string to a Composition `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StrToComposition>`_
+:code:`StructureToComposition`         Utility featurizer to convert a Structure to a Composition. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StructureToComposition>`_
+:code:`StructureToIStructure`          Utility featurizer to convert a Structure to an immutable IStructure. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StructureToIStructure>`_
+:code:`DictToObject`                   Utility featurizer to decode a dict to Python object via MSON. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.DictToObject>`_
+:code:`JsonToObject`                   Utility featurizer to decode json data to a Python object via MSON. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.JsonToObject>`_
+:code:`StructureToOxidStructure`       Utility featurizer to add oxidation states to a pymatgen Structure. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.StructureToOxidStructure>`_
+:code:`CompositionToOxidComposition`   Utility featurizer to add oxidation states to a pymatgen Composition. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.CompositionToOxidComposition>`_
+:code:`CompositionToStructureFromMP`   Featurizer to get a Structure object from Materials Project using the `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.conversions.CompositionToStructureFromMP>`_
+====================================   ================================================================================================================================================================================================================================================================================================================================================================================================================
+
+
+
+
 ---
 dos
 ---
@@ -84,9 +109,11 @@ Features based on a material's electronic density of states.
 =====================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 Name                    Description
 =====================   ================================================================================================================================================================================================================================================================================================================================================================================================================
+:code:`SiteDOS`         report the fractional s/p/d/f dos for a particular site. a CompleteDos `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.SiteDOS>`_
 :code:`DOSFeaturizer`   Significant character and contribution of the density of state from a `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DOSFeaturizer>`_
 :code:`DopingFermi`     The fermi level (w.r.t. selected reference energy) associated with a `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DopingFermi>`_
 :code:`Hybridization`   quantify s/p/d/f orbital character and their hybridizations at band edges `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.Hybridization>`_
+:code:`DosAsymmetry`    Quantifies the asymmetry of the DOS near the Fermi level. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.dos.DosAsymmetry>`_
 =====================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 
 
@@ -158,7 +185,7 @@ Name                                           Description
 :code:`RadialDistributionFunction`             Calculate the radial distribution function (RDF) of a crystal structure. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.RadialDistributionFunction>`_
 :code:`PartialRadialDistributionFunction`      Compute the partial radial distribution function (PRDF) of an xtal structure `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.PartialRadialDistributionFunction>`_
 :code:`ElectronicRadialDistributionFunction`   Calculate the inherent electronic radial distribution function (ReDF) `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.ElectronicRadialDistributionFunction>`_
-:code:`CoulombMatrix`                          Generate the Coulomb matrix, a representation of nuclear coulombic interaction. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.CoulombMatrix>`_
+:code:`CoulombMatrix`                          The Coulomb matrix, a representation of nuclear coulombic interaction. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.CoulombMatrix>`_
 :code:`SineCoulombMatrix`                      A variant of the Coulomb matrix developed for periodic crystals. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.SineCoulombMatrix>`_
 :code:`OrbitalFieldMatrix`                     Representation based on the valence shell electrons of neighboring atoms. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.OrbitalFieldMatrix>`_
 :code:`MinimumRelativeDistances`               Determines the relative distance of each site to its closest neighbor. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.MinimumRelativeDistances>`_
@@ -173,6 +200,7 @@ Name                                           Description
 :code:`XRDPowderPattern`                       1D array representing powder diffraction of a structure as calculated by `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.XRDPowderPattern>`_
 :code:`CGCNNFeaturizer`                        Features generated by training a Crystal Graph Convolutional Neural Network `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.CGCNNFeaturizer>`_
 :code:`JarvisCFID`                             Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML. `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.JarvisCFID>`_
+:code:`SOAP`                                   Smooth overlap of atomic positions (interface via dscribe). `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#matminer.featurizers.structure.SOAP>`_
 ============================================   ================================================================================================================================================================================================================================================================================================================================================================================================================
 
 
