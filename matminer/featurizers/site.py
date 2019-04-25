@@ -62,11 +62,11 @@ with open(os.path.join(os.path.dirname(
 
 class AGNIFingerprints(BaseFeaturizer):
     """
-    Product integral of RDF and Gaussian window function, from Botu et al.
+    Product integral of RDF and Gaussian window function, from `Botu et al <http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908>`_.
 
     Integral of the product of the radial distribution function and a
-    Gaussian window function. Originally used by [Botu *et al*]
-    (http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908) to fit empiricial
+    Gaussian window function. Originally used by
+    `Botu et al <http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908>`_ to fit empiricial
     potentials. These features come in two forms: atomic fingerprints and
     direction-resolved fingerprints.
     Atomic fingerprints describe the local environment of an atom and are
