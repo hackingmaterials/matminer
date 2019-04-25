@@ -23,6 +23,8 @@ __date__ = "Sep 1, 2014"
 @task
 def make_doc(ctx):
     with cd("docs_rst"):
+        ctx.run("python featurizer_summary.py > featurizer_summary.rst")
+        ctx.run("python dataset_summary.py > dataset_summary.rst")
         ctx.run("sphinx-apidoc -o . -f ../matminer")
         ctx.run("make html")
         ctx.run("cp _static/* ../docs/html/_static")

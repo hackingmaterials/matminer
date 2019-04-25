@@ -1,5 +1,9 @@
 Information about elemental property lookup tables. Most of this data was taken from Mathematica's elemental property data (sources described at http://reference.wolfram.com/mathematica/note/ElementDataSourceInformation.html). Modifications and, when not from Mathematica, original sources are listed.
 
+AtomicRadius.table
+    Property: Atomic radius
+    Units: Angstrom
+    Source: pymatgen, which used http://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page).
 AtomicVolume.table
     Property: Volume of an atom of each element
     Units: A^3 / atom
@@ -26,6 +30,10 @@ Density.table
     Property: Density of element at STP
     Units: g/L
     Source: Mathematica
+ElectronAffinity.table
+	Property: Electron affinitiy
+	Units: kJ/mol
+	Source: Mathematica
 Electronegativity.table
     Property: Pauling electronegativity (right?)
     Source: Mathematica
@@ -58,6 +66,10 @@ HeatFusion.table
     Units: kJ/mol
     Source: CRC Handbook
     Notes: Heat of fusion are listed per diatomic molecule for appropriate elements, we computed per mole of atoms (i.e., divided listed value by 2)
+HeatVaporization.table
+    Property: Enthalpy of vaporization for elements at their boiling temperatures
+    Units: kJ/mol
+    Source: Mathematica
 GSestFCClatcnt.table
     Property: Estimated FCC lattice parameter based on the DFT volume of the
 OQMD ground state for each element
@@ -106,6 +118,10 @@ MiracleRadius.table
     Property: Assessed radii of elements in metallic glass structures
     Units: pm
     Source: Miracle et al., 2010. doi:10.1179/095066010X12646898728200
+MolarVolume.table
+    Property: Molar Volume
+    Units: cm^3
+    Source: pymatgen
 n_ws^third.table
     Property: Electron density at surface of Wigner-Sietz cell. Used in Miedema's model
     Source: Cohesion in metals: transition metal alloys, (North-Holland, Amsterdam, 1988)
@@ -159,6 +175,10 @@ phi.table
     Source: Cohesion in metals: transition metal alloys, (North-Holland, Amsterdam, 1988)
 Row.table
     Property: Row on periodic table
+FirstIonizationEnergy.table
+    Property: Energy to remove the second electron from an element
+    Units: eV
+    Source: CRC Handbook
 ShearModulus.table
     Property: Shear modulus
     Units: GPa
@@ -168,3 +188,31 @@ SpaceGroupNumber.table
     Property: Space group of T=0K ground state structure
     Source: Only structures from the ICSD were evaluated 
         Pm used OQMD groundstate in Spacegroup 194, which is only 4 meV/atom below 166. No ICSD structure
+ThermalConductivity.table
+    Property: Thermal conductivity
+    Units: W/m-K
+    Source: Pymatgen
+VdWRadius.table
+    Property: Van der Waals radius
+    Units: Angstrom
+    Source: pymatgen, which took from http://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)
+ZungerPP-r_s.table
+	Property: Psuedopotential radius of s orbital
+	Units: a.u.
+	Source: http://link.aps.org/doi/10.1103/PhysRevB.22.5839
+ZungerPP-r_p.table
+	Property: Psuedopotential radius of p orbital
+	Units: a.u.
+	Source: http://link.aps.org/doi/10.1103/PhysRevB.22.5839
+ZungerPP-r_d.table
+	Property: Psuedopotential radius of d orbital
+	Units: a.u.
+	Source: http://link.aps.org/doi/10.1103/PhysRevB.22.5839
+ZungerPP-r_sigma.table
+	Property: Sum of the radii of s and p orbitals
+	Units: a.u.
+	Source(s): http://link.aps.org/doi/10.1103/PhysRevB.22.5839; http://linkinghub.elsevier.com/retrieve/pii/0022508885901109
+ZungerPP-r_pi.table
+	Property: Absolute value of the different between the radii of s and p orbitals
+	Units: a.u.
+	Source: http://link.aps.org/doi/10.1103/PhysRevB.22.5839

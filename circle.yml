@@ -1,8 +1,0 @@
-dependencies:
-  override:
-    - pip install tox tox-pyenv
-    - pyenv local 3.6.2
-test:
-  override:
-    - tox:
-        timeout: 1500

@@ -21,7 +21,10 @@ Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the Hacking
 * Sayan Rowchowdhury
 * Alex Dunn
 * Jason Frost
-
+* Julien Brenneck
+* Alex Ganose
+* Daniel Dopp
+* Samy Cherfaoui
 
 University of Chicago
 ----------------------
@@ -29,6 +32,7 @@ University of Chicago
 * Logan Ward
 * Jiming Chen
 * Ashwin Aggarwal
+* Aik Rui
 
 
 `LBNL - Persson Group <http://perssongroup.lbl.gov/>`_
@@ -46,3 +50,8 @@ Other
 * Shyue Ping Ong (UC San Diego)
 * Evgeny Blokhin (Tilde Lab)
 * Max Dylla (Snyder Research Group, Northwestern University)
+* David Waroquiers (UC Louvain, Belgium)
+* Logan Williams (U Michigan Ann Arbor)
+* Aidan Thompson (Sandia National Lab)
+* Kamal Choudhary (NIST)
+* Tian Xie (MIT)

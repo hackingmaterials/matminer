@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Installing matminer &#8212; matminer 0.2.1 documentation</title>
+    <title>Installing matminer &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.2.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -26,8 +18,7 @@
  
 <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -48,36 +39,40 @@
             
   <div class="section" id="installing-matminer">
 <span id="installation-tutorial"></span><h1>Installing matminer<a class="headerlink" href="#installing-matminer" title="Permalink to this headline">¶</a></h1>
-<p>Matminer requires Python 3.x (Python 2.x might work for some time, but the underlying pymatgen library is discontinuing Python 2 support in 2018).</p>
-<p>There are a couple of quick and easy ways to install matminer:</p>
+<p>Matminer requires Python 3.6+.</p>
+<p>There are a couple of quick and easy ways to install matminer (see also some <strong>tips</strong> below):</p>
 <div class="section" id="install-and-update-via-pip">
 <h2>Install and update via pip<a class="headerlink" href="#install-and-update-via-pip" title="Permalink to this headline">¶</a></h2>
 <p>If you have installed pip, simply run the command in a bash terminal:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install matminer
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install matminer
 </pre></div>
 </div>
 <p>or, to install matminer in your user home folder, run the command:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install matminer --user
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install matminer --user
 </pre></div>
 </div>
-<p>To update matminer, simply type <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">matminer</span></code>.</p>
+<p>To update matminer, simply type <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">matminer</span></code>.</p>
 </div>
 <div class="section" id="install-in-development-mode">
 <h2>Install in development mode<a class="headerlink" href="#install-in-development-mode" title="Permalink to this headline">¶</a></h2>
 <p>To install from the latest source of the matminer code in developmental mode, clone the Git source:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone https://github.com/hackingmaterials/matminer.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/hackingmaterials/matminer.git
 </pre></div>
 </div>
 <p>and then enter the cloned repository/folder to install in developer mode:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> matminer
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> matminer
 $ python setup.py develop
 </pre></div>
 </div>
-<p>To update matminer, enter your cloned folder and type <code class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></code> followed by <code class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">develop</span></code>.</p>
+<p>To update matminer, enter your cloned folder and type <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> followed by <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">develop</span></code>.</p>
 </div>
-<div class="section" id="troubleshooting-issues">
-<h2>Troubleshooting/Issues<a class="headerlink" href="#troubleshooting-issues" title="Permalink to this headline">¶</a></h2>
-<p>Having issues installing? Open up an issue on our <a class="reference external" href="https://groups.google.com/forum/#!forum/matminer">forum</a>  describing your problem in full (including your system specifications, Python version information, and input/output log).</p>
+<div class="section" id="tips">
+<h2>Tips<a class="headerlink" href="#tips" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Make sure you are using Python 3.6 or higher</li>
+<li>If you have trouble with the installation of a component library (sympy, pymatgen, mdf-forge, etc.), you can try to run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&lt;&lt;component&gt;&gt;</span></code> or (if you are using Anaconda) <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">&lt;&lt;component&gt;&gt;</span></code> first, and then re-try the installation. For example, installing the pymatgen component on a Windows platform is easiest with Anaconda via <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">pymatgen</span></code>.</li>
+<li>If you still have trouble, open up a a ticket on our <a class="reference external" href="https://groups.google.com/forum/#!forum/matminer">forum</a>  describing your problem in full (including your system specifications, Python version information, and input/output log). There is a good likelihood that someone else is running into the same issue, and by posting it on the forum we can help make the documentation clearer and smoother.</li>
+</ul>
 </div>
 </div>
 
@@ -87,12 +82,12 @@ $ python setup.py develop
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Installing matminer</a><ul>
 <li><a class="reference internal" href="#install-and-update-via-pip">Install and update via pip</a></li>
 <li><a class="reference internal" href="#install-in-development-mode">Install in development mode</a></li>
-<li><a class="reference internal" href="#troubleshooting-issues">Troubleshooting/Issues</a></li>
+<li><a class="reference internal" href="#tips">Tips</a></li>
 </ul>
 </li>
 </ul>
@@ -106,12 +101,14 @@ $ python setup.py develop
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -127,13 +124,13 @@ $ python setup.py develop
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
 
   </body>

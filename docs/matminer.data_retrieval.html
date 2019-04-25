@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.data_retrieval package &#8212; matminer 0.2.1 documentation</title>
+    <title>matminer.data_retrieval package &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.2.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -26,8 +18,7 @@
  
 <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -48,47 +39,86 @@
             
   <div class="section" id="matminer-data-retrieval-package">
 <h1>matminer.data_retrieval package<a class="headerlink" href="#matminer-data-retrieval-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="matminer.data_retrieval.tests.html">matminer.data_retrieval.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#matminer-data-retrieval-tests-test-retrieve-aflow-module">matminer.data_retrieval.tests.test_retrieve_AFLOW module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_Citrine">matminer.data_retrieval.tests.test_retrieve_Citrine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MDF">matminer.data_retrieval.tests.test_retrieve_MDF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MP">matminer.data_retrieval.tests.test_retrieve_MP module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#matminer-data-retrieval-tests-test-retrieve-mpds-module">matminer.data_retrieval.tests.test_retrieve_MPDS module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MongoDB">matminer.data_retrieval.tests.test_retrieve_MongoDB module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="matminer-data-retrieval-retrieve-aflow-module">
+<h2>matminer.data_retrieval.retrieve_AFLOW module<a class="headerlink" href="#matminer-data-retrieval-retrieve-aflow-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-matminer.data_retrieval.retrieve_Citrine">
 <span id="matminer-data-retrieval-retrieve-citrine-module"></span><h2>matminer.data_retrieval.retrieve_Citrine module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_Citrine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval">
 <em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="descname">CitrineDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
+<p>CitrineDataRetrieval is used to retrieve data from the Citrination database
+See API client docs at api_link below.</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
-<dd>api_key: (str) Your Citrine API key, or None if you’ve set the CITRINE_KEY environment variable</dd>
+<dd><dl class="first last docutils">
+<dt>api_key: (str) Your Citrine API key, or None if</dt>
+<dd>you’ve set the CITRINE_KEY environment variable</dd>
 </dl>
-<p>Returns: None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_api_data">
-<code class="descname">get_api_data</code><span class="sig-paren">(</span><em>formula=None</em>, <em>property=None</em>, <em>data_type=None</em>, <em>reference=None</em>, <em>min_measurement=None</em>, <em>max_measurement=None</em>, <em>from_record=None</em>, <em>data_set_id=None</em>, <em>max_results=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_api_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets data from Citrine in a dataframe format.
-See client docs at <a class="reference external" href="http://citrineinformatics.github.io/api-documentation/">http://citrineinformatics.github.io/api-documentation/</a> for more details on these parameters.</p>
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.api_link">
+<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>The link to comprehensive API documentation or data source.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>formula=None</em>, <em>prop=None</em>, <em>data_type=None</em>, <em>reference=None</em>, <em>min_measurement=None</em>, <em>max_measurement=None</em>, <em>from_record=None</em>, <em>data_set_id=None</em>, <em>max_results=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets raw api data from Citrine in json format. See api_link for more
+information on input parameters</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first docutils">
-<dt>formula: (str) filter for the chemical formula field; only those results that have chemical formulas that</dt>
-<dd>contain this string will be returned</dd>
+<dt>formula: (str) filter for the chemical formula field; only those</dt>
+<dd>results that have chemical formulas that contain this string
+will be returned</dd>
 </dl>
-<p>property: (str) name of the property to search for
+<p>prop: (str) name of the property to search for
 data_type: (str) ‘EXPERIMENTAL’/’COMPUTATIONAL’/’MACHINE_LEARNING’;</p>
 <blockquote>
-<div>filter for properties obtained from experimental work, computational methods, or machine learning.</div></blockquote>
+<div>filter for properties obtained from experimental work,
+computational methods, or machine learning.</div></blockquote>
 <dl class="docutils">
-<dt>reference: (str) filter for the reference field; only those results that have contributors that contain</dt>
-<dd>this string will be returned</dd>
+<dt>reference: (str) filter for the reference field; only those</dt>
+<dd>results that have contributors that contain this string
+will be returned</dd>
 </dl>
 <p class="last">min_measurement: (str/num) minimum of the property value range
 max_measurement: (str/num) maximum of the property value range
-from_record: (int) index of the first record to return (indexed from 0)
+from_record: (int) index of first record to return (indexed from 0)
 data_set_id: (int) id of the particular data set to search on
 max_results: (int) number of records to limit the results to</p>
 </dd>
@@ -98,12 +128,29 @@ max_results: (int) number of records to limit the results to</p>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>json_lst</em>, <em>show_columns=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts list of json/pifs to a Pandas dataframe</p>
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=None</em>, <em>common_fields=None</em>, <em>secondary_fields=False</em>, <em>print_properties_options=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a Pandas dataframe object from data retrieved from
+the Citrine API.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>json_lst: (list) of json/pifs
-show_columns: (list) list of columns to show from the resulting dataframe</dd>
+<dd><dl class="first last docutils">
+<dt>criteria (dict): see get_data method for supported keys except</dt>
+<dd>prop; prop should be included in properties.</dd>
+<dt>properties ([str]): requested properties/fields/columns.</dt>
+<dd>For example, [“Seebeck coefficient”, “Band gap”]. If unsure
+about the exact words, capitalization, etc try something like
+[“gap”] and “max_results”: 3 and print_properties_options=True
+to see the exact options for this field</dd>
+<dt>common_fields ([str]): fields that are common to all the requested</dt>
+<dd>properties. Common example can be “chemicalFormula”. Look for
+suggested common fields after a quick query for more info</dd>
+<dt>secondary_fields (bool): if True, fields not included in properties</dt>
+<dd>may be added to the output (e.g. references). Recommended only
+if len(properties)==1</dd>
+<dt>print_properties_options (bool): whether to print available options</dt>
+<dd>for “properties” and “common_fields” arguments.</dd>
+</dl>
+</dd>
 </dl>
 <p>Returns: (object) Pandas dataframe object containing the results</p>
 </dd></dl>
@@ -121,15 +168,145 @@ show_columns: (list) list of columns to show from the resulting dataframe</dd>
 <dd></dd></dl>
 
 </div>
+<div class="section" id="module-matminer.data_retrieval.retrieve_MDF">
+<span id="matminer-data-retrieval-retrieve-mdf-module"></span><h2>matminer.data_retrieval.retrieve_MDF module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MDF" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval">
+<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MDF.</code><code class="descname">MDFDataRetrieval</code><span class="sig-paren">(</span><em>anonymous=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
+<p>MDFDataRetrieval is used to retrieve data from the Materials Data Facility
+database and convert them into a Pandas DataFrame. Note that invocation
+with full access to MDF will require authentication (see api_link) but an
+anonymous mode is supported, which can be used with anonymous=True as a
+keyword arg.</p>
+<dl class="docutils">
+<dt>Examples:</dt>
+<dd><p class="first">&gt;&gt;&gt;mdf_dr = MDFDataRetrieval(anonymous=True)
+&gt;&gt;&gt;results = mdf_dr.get_dataframe({“elements”:[“Ag”, “Be”], “source_names”: [“oqmd”]})</p>
+<p class="last">&gt;&gt;&gt;results = mdf_dr.get_dataframe({“source_names”: [“oqmd”],
+&gt;&gt;&gt;          “match_ranges”: {“oqmd.band_gap.value”: [4.0, “*”]}})</p>
+</dd>
+</dl>
+<p>If you use this data retrieval class, please additionally cite:
+Blaiszik, B., Chard, K., Pruyne, J., Ananthakrishnan, R., Tuecke, S.,
+Foster, I., 2016. The Materials Data Facility: Data Services to Advance
+Materials Science Research. JOM 68, 2045–2052.
+<a class="reference external" href="https://doi.org/10.1007/s11837-016-2001-3">https://doi.org/10.1007/s11837-016-2001-3</a></p>
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>anonymous=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>anonymous (bool): whether to use anonymous login (i. e. no</dt>
+<dd>globus authentication)</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: kwargs for Forge, including index (globus search index</dt>
+<dd>to search on), local_ep, anonymous</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.api_link">
+<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>The link to comprehensive API documentation or data source.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>squery</em>, <em>unwind_arrays=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a dataframe from the MDF API from an explicit string
+query (rather than input args like get_dataframe).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">squery (str): String for explicit query
+unwind_arrays (bool): whether or not to unwind arrays in</p>
+<blockquote>
+<div>flattening docs for dataframe</div></blockquote>
+<p class="last"><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: kwargs for query</p>
+</dd>
+<dt>Returns:</dt>
+<dd>dataframe corresponding to query</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_dataframe">
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=None</em>, <em>unwind_arrays=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves data from the MDF API and formats it as a Pandas Dataframe</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>criteria (dict): options for keys are</dt>
+<dd><p class="first">source_names ([str]): source names to include, e. g. [“oqmd”]
+elements ([str]): elements to include, e. g. [“Ag”, “Si”]
+titles ([str]): titles to include, e. g. [“Coarsening of a</p>
+<blockquote>
+<div>semisolid Al-Cu alloy”]</div></blockquote>
+<p>tags ([str]): tags to include, e. g. [“outcar”]
+resource_types ([str]): resources to include, e. g. [“record”]
+match_fields ({}): field-value mappings to include, e. g.</p>
+<blockquote>
+<div>{“oqmd.converged”: True}</div></blockquote>
+<dl class="last docutils">
+<dt>exclude_fields ({}): field-value mappings to exclude, e. g.</dt>
+<dd>{“oqmd.converged”: False}</dd>
+<dt>match_ranges ({}): field-range mappings to include, e. g.</dt>
+<dd>{“oqmd.band_gap.value”: [1, 5]}, use “*” for no lower
+or upper bound, e. g. {“oqdm.band_gap.value”: [1, “*”]},</dd>
+<dt>exclude_ranges ({}): field-range mapping to exclude,</dt>
+<dd>{“oqmd.band_gap.value”: [3, “*”]} to exclude all
+results with band gap higher than 3.</dd>
+<dt>raw (bool): whether or not to return raw (non-dataframe)</dt>
+<dd>output, defaults to False</dd>
+</dl>
+</dd>
+<dt>unwind_arrays (bool): whether or not to unwind arrays in</dt>
+<dd>flattening docs for dataframe</dd>
+</dl>
+</dd>
+<dt>Returns (pandas.DataFrame):</dt>
+<dd>DataFrame corresponding to all documents from aggregated query</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.data_retrieval.retrieve_MDF.make_dataframe">
+<code class="descclassname">matminer.data_retrieval.retrieve_MDF.</code><code class="descname">make_dataframe</code><span class="sig-paren">(</span><em>docs</em>, <em>unwind_arrays=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.make_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats raw docs returned from MDF API search into a dataframe</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>docs [{}]: list of documents from forge search</dt>
+<dd>or aggregation</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns: DataFrame corresponding to formatted docs</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-matminer.data_retrieval.retrieve_MP">
 <span id="matminer-data-retrieval-retrieve-mp-module"></span><h2>matminer.data_retrieval.retrieve_MP module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MP" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval">
 <em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MP.</code><code class="descname">MPDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>MPDataRetrieval is used to retrieve data from the Materials Project
-database, print the results, and convert them into an indexed Pandas
-dataframe.</p>
+<dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
+<p>Retrieves data from the Materials Project database.</p>
+<p>If you use this data retrieval class, please additionally cite:</p>
+<p>Ong, S.P., Cholia, S., Jain, A., Brafman, M., Gunter, D., Ceder, G.,
+Persson, K.A., 2015. The Materials Application Programming Interface
+(API): A simple, flexible and efficient API for materials data based on
+REpresentational State Transfer (REST) principles. Computational
+Materials Science 97, 209–215.
+<a class="reference external" href="https://doi.org/10.1016/j.commatsci.2014.10.037">https://doi.org/10.1016/j.commatsci.2014.10.037</a></p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
@@ -144,13 +321,19 @@ dataframe.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties</em>, <em>mp_decode=False</em>, <em>index_mpid=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets data from MP in a dataframe format.
-See API docs at
-<a class="reference external" href="https://materialsproject.org/wiki/index.php/The_Materials_API">https://materialsproject.org/wiki/index.php/The_Materials_API</a>
-for more details.</p>
+<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.api_link">
+<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>The link to comprehensive API documentation or data source.</p>
 <dl class="docutils">
+<dt>Returns:</dt>
+<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties</em>, <em>mp_decode=False</em>, <em>index_mpid=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
 <dt>criteria: (str/dict) see MPRester.query() for a description of this</dt>
@@ -165,8 +348,55 @@ possible.</dd>
 <dd>index.</dd>
 </dl>
 </dd>
+<dt>Returns ([dict]):</dt>
+<dd>a list of jsons that match the criteria and contain properties</dd>
 </dl>
-<p>Returns: A pandas Dataframe object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe">
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties</em>, <em>index_mpid=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets data from MP in a dataframe format. See api_link for more details.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">criteria (dict): the same as in get_data
+properties ([str]): the same properties supported as in get_data</p>
+<blockquote>
+<div>plus: “structure”, “initial_structure”, “final_structure”,
+“bandstructure” (line mode), “bandstructure_uniform”,
+“phonon_bandstructure”, “phonon_ddb”, “phonon_bandstructure”,
+“phonon_dos”. Note that for a long list of compounds, it may
+take a long time to retrieve some of these objects.</div></blockquote>
+<p class="last">index_mpid (bool): the same as in get_data
+kwargs (dict): the same keyword arguments as in get_data</p>
+</dd>
+</dl>
+<p>Returns (pandas.Dataframe):</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.try_get_prop_by_material_id">
+<code class="descname">try_get_prop_by_material_id</code><span class="sig-paren">(</span><em>prop</em>, <em>material_id_list</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.try_get_prop_by_material_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the relevant get_prop_by_material_id. “prop” is a property such
+as bandstructure that is not readily available in supported properties
+of the get_data function but via the get_bandstructure_by_material_id
+method for example.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>prop (str): the name of the property. Options are:</dt>
+<dd>“bandstructure”, “dos”, “phonon_dos”, “phonon_bandstructure”,
+“phonon_ddb”</dd>
+</dl>
+<p>material_id_list ([str]): list of material_id of compounds
+kwargs (dict): other keyword arguments that get_*_by_material_id</p>
+<blockquote class="last">
+<div>may have; e.g. line_mode in get_bandstructure_by_material_id</div></blockquote>
+</dd>
+<dt>Returns ([target prop object or NaN]):</dt>
+<dd>If the target property is not available for a certain material_id,
+NaN is returned.</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -180,12 +410,11 @@ possible.</dd>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval">
 <em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">MongoDataRetrieval</code><span class="sig-paren">(</span><em>coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tool to retrieve data from a MongoDB collection and put into a pandas
-Dataframe object</p>
+<dd><p>Retrieves data from a MongoDB collection to a pandas.Dataframe object</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>coll: A MongoDB collection object</dd>
@@ -193,23 +422,34 @@ Dataframe object</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.api_link">
+<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>The link to comprehensive API documentation or data source.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>projection</em>, <em>query=None</em>, <em>sort=None</em>, <em>limit=None</em>, <em>idx_field=None</em>, <em>strict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=None</em>, <em>limit=0</em>, <em>sort=None</em>, <em>idx_field=None</em>, <em>strict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>projection: (list) - a list of str fields to retrieve; dot-notation is</dt>
-<dd>allowed. Set to “None” to try to auto-detect the fields.</dd>
-</dl>
-<p>query: (JSON) - a pymongo-style query to filter data records
+<dd><p class="first">criteria: (dict) - a pymongo-style query to filter data records
+properties: ([str] or None) - a list of str fields to retrieve;</p>
+<blockquote>
+<div>dot-notation is allowed (e.g. “structure.lattice.a”).
+Set to “None” to try to auto-detect the fields.</div></blockquote>
+<p>limit: (int) - max number of entries. 0 means no limit
 sort: (tuple) - pymongo-style sort option
-limit: (int) - max number of entries
 idx_field: (str) - name of field to use as index (must have unique</p>
 <blockquote>
 <div>entries)</div></blockquote>
 <p class="last">strict: (bool) - if False, replaces missing values with NaN</p>
 </dd>
 </dl>
+<p>Returns (pandas.DataFrame):</p>
 </dd></dl>
 
 </dd></dl>
@@ -218,10 +458,11 @@ idx_field: (str) - name of field to use as index (must have unique</p>
 <dt id="matminer.data_retrieval.retrieve_MongoDB.clean_projection">
 <code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">clean_projection</code><span class="sig-paren">(</span><em>projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.clean_projection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Projecting on e.g. ‘a.b.’ and ‘a’ is disallowed in MongoDb, so project
-inclusively. See unit tests for examples of what this is doing.
-Args:</p>
-<blockquote>
-<div>projection: (list) - list of fields to retrieve; dot-notation is allowed.</div></blockquote>
+inclusively. See unit tests for examples of what this is doing.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>projection: (list) - list of fields to retrieve; dot-notation is allowed.</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -232,11 +473,103 @@ Args:</p>
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.remove_ints">
 <code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">remove_ints</code><span class="sig-paren">(</span><em>projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.remove_ints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms a string like “a.1.x” to “a.x” - for Mongo projection purposes
-Args:</p>
+<dd><p>Transforms a string like “a.1.x” to “a.x” - for Mongo projection purposes</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>projection: (str) the projection to remove ints from</dd>
+</dl>
+<p>Returns (str)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matminer.data_retrieval.retrieve_base">
+<span id="matminer-data-retrieval-retrieve-base-module"></span><h2>matminer.data_retrieval.retrieve_base module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_base" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="matminer.data_retrieval.retrieve_base.BaseDataRetrieval">
+<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_base.</code><code class="descname">BaseDataRetrieval</code><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Abstract class to retrieve data from various material APIs while adhering to
+a quasi-standard format for querying.</p>
+<p>## Implementing a new DataRetrieval class</p>
+<p>If you have an API which you’d like to incorporate into matminer’s data
+retrieval tools, using BaseDataRetrieval is the preferred way of doing so.
+All DataRetrieval classes should subclass BaseDataRetrieval and implement
+the following:</p>
 <blockquote>
-<div>projection: (str) the projection to remove ints from</div></blockquote>
-<p>Returns:</p>
+<div><ul class="simple">
+<li>get_dataframe()</li>
+<li>api_link()</li>
+</ul>
+</div></blockquote>
+<p>Retrieving data should be done by the user with get_dataframe. Criteria
+should be a dictionary which will be used to form a query to the database.
+Properties should be a list which defines the columns that will be returned.
+While the ‘criteria’ and ‘properties’ arguments may have different valid
+values depending on the database, they should always have sensible formats
+and names if possible. For example, the user should be calling this:</p>
+<dl class="docutils">
+<dt>df = MyDataRetrieval().get_dataframe(criteria={‘band_gap’: 0.0},</dt>
+<dd>properties=[‘structure’])</dd>
+</dl>
+<p>…or this:</p>
+<dl class="docutils">
+<dt>df = MyDataRetrieval().get_dataframe(criteria={‘band_gap’: [0.0, 0.15]},</dt>
+<dd>properties=[“density of states”])</dd>
+</dl>
+<p>NOT this:</p>
+<dl class="docutils">
+<dt>df = MyDataRetrieval().get_dataframe(criteria={‘query.bg[0] &amp;&amp; band_gap’: 0.0},</dt>
+<dd>properties=[‘Struct.page[Value]’])</dd>
+</dl>
+<p>The implemented DataRetrieval class should handle the conversion from a
+‘sensible’ query to a query fit for the individual API and database.</p>
+<p>There may be cases where a ‘sensible’ query is not sufficient to define a
+query to the API; in this case, use the get_dataframe kwargs sparingly to
+augment the criteria, properties, or form of the underlying API query.</p>
+<p>A method for accessing raw DB data with an API-native query <em>may</em> be
+provided by overriding get_data. The link to the original API documentation
+<em>must</em> be provided by overriding api_link().</p>
+<p>## Documenting a DataRetrieval class</p>
+<p>The class documentation for each DataRetrieval class must contain a brief
+description of the possible data that can be retrieved with the API source.
+It should also detail the form of the criteria and properties that can be
+retrieved with the class, and/or should link to a web page showing this
+information. The options of the class must all be defined in the <cite>__init__</cite>
+function of the class, and we recommend documenting them using the
+[Google style](<a class="reference external" href="https://google.github.io/styleguide/pyguide.html">https://google.github.io/styleguide/pyguide.html</a>).</p>
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_base.BaseDataRetrieval.api_link">
+<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>The link to comprehensive API documentation or data source.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_base.BaseDataRetrieval.get_dataframe">
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a dataframe of properties from the database which satisfy
+criteria.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>criteria (dict): The name of each criterion is the key; the value</dt>
+<dd>or range of the criterion is the value.</dd>
+<dt>properties (list): Properties to return from the query matching</dt>
+<dd>the criteria. For example, [‘structure’, ‘formula’]</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(pandas DataFrame) The dataframe containing properties as columns</dt>
+<dd>and samples as rows.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -251,14 +584,18 @@ Args:</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">matminer.data_retrieval package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#matminer-data-retrieval-retrieve-aflow-module">matminer.data_retrieval.retrieve_AFLOW module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_Citrine">matminer.data_retrieval.retrieve_Citrine module</a></li>
+<li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MDF">matminer.data_retrieval.retrieve_MDF module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MP">matminer.data_retrieval.retrieve_MP module</a></li>
 <li><a class="reference internal" href="#matminer-data-retrieval-retrieve-mpds-module">matminer.data_retrieval.retrieve_MPDS module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MongoDB">matminer.data_retrieval.retrieve_MongoDB module</a></li>
+<li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_base">matminer.data_retrieval.retrieve_base module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval">Module contents</a></li>
 </ul>
 </li>
@@ -273,12 +610,14 @@ Args:</p>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -294,13 +633,13 @@ Args:</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
 
   </body>

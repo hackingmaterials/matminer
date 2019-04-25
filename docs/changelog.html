@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>MatMiner Changlog &#8212; matminer 0.2.1 documentation</title>
+    <title>MatMiner Changelog &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.2.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -26,8 +18,7 @@
  
 <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -48,6 +39,251 @@
             
   <div class="section" id="matminer-changelog">
 <h1>matminer Changelog<a class="headerlink" href="#matminer-changelog" title="Permalink to this headline">¶</a></h1>
+<p><strong>v0.5.5</strong></p>
+<ul class="simple">
+<li>Add a precheck() and precheck_dataframe() function that can be used to quickly see if a featurizer is likely to give NaN values (A. Dunn)</li>
+<li>Add MEGNET 1Neuron element embeddings (A. Dunn)</li>
+<li>fix inplace setting (S. Cherfaoui, A. Dunn, A. Ganose)</li>
+<li>add a conversion featurizer to get a structure from composition using MP most stable structure (A. Jain)</li>
+<li>misc code cleanups (A. Jain, A. Dunn)</li>
+</ul>
+<p><strong>v0.5.4</strong></p>
+<ul class="simple">
+<li>add elementproperty source name to feature labels (A. Dunn)</li>
+<li>update Citrine API key detection logic (matSciMalcolm + A. Jain)</li>
+<li>misc. fixes (A. Dunn)</li>
+</ul>
+<p><strong>v0.5.3</strong></p>
+<ul class="simple">
+<li>fix typo bug that got introduced in 0.5.2 pypi release</li>
+</ul>
+<p><strong>v0.5.2</strong></p>
+<ul class="simple">
+<li>better flattening for ColoumbMatrix featurizers, making them more usable (A. Dunn)</li>
+<li>SOAP featurizer using the dscribe package (A. Dunn)</li>
+<li>DosAsymmetry featurizer (M. Dylla)</li>
+</ul>
+<p><strong>v0.5.1</strong></p>
+<ul class="simple">
+<li>AFLOW data retrieval (M. Dylla)</li>
+<li>SiteDOS featurizer (M. Dylla)</li>
+<li>fix various testing (A. Dunn, M. Dylla, L. Ward)</li>
+</ul>
+<p><strong>v0.5.0</strong></p>
+<ul class="simple">
+<li>fix for Py3.7 and pytorch (L. Ward)</li>
+</ul>
+<p><strong>v0.4.9</strong></p>
+<ul class="simple">
+<li>fix PIP setup of JARVIS data files (A. Dunn)</li>
+<li>some test configuration fixes (A. Dunn)</li>
+</ul>
+<p><strong>v0.4.8</strong></p>
+<ul class="simple">
+<li>CGCNN featurizer / model (Q. Wang, T. Xie)</li>
+<li>Text-mined element embedding featurizer (A. Dunn)</li>
+<li>add Brgoch data set (D. Dopp)</li>
+<li>add quartile to PropertyStats (A. Dunn)</li>
+<li>minor fixes, improvements (A. Dunn, A. Jain)</li>
+</ul>
+<p><strong>v0.4.6</strong></p>
+<ul class="simple">
+<li>Jarvis CFID descriptors (A. Dunn, K. Choudhary)</li>
+<li>Allow oxi conversion featurizers to return original object (A. Ganose)</li>
+<li>better contribution docs (A. Dunn, A. Jain)</li>
+</ul>
+<p><strong>v0.4.5</strong></p>
+<ul class="simple">
+<li>fix for missing data set loader file (D. Dopp)</li>
+<li>fix MDF unit tests (L. Ward)</li>
+</ul>
+<p><strong>v0.4.4</strong></p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Data set loaders may not work properly due to a missing file in this release</p>
+</div>
+<ul class="simple">
+<li>Further revamp data set loaders and management (D. Dopp)</li>
+<li>Better default chunksize for multiprocessing should improve performance (L. Ward)</li>
+<li>Improve oxidation state featurizer (A. Dunn)</li>
+</ul>
+<p><strong>v0.4.3</strong></p>
+<ul class="simple">
+<li>Revamped test / example data loader classes (D. Dopp, A. Ganose, A. Dunn)</li>
+<li>Add chunksize support to improve performance of dataframe featurization (A. Ganose)</li>
+<li>Improve performance of BandCenter with large coefficients (A. Faghaninia)</li>
+<li>Revamp of MultiFeaturizer (A. Ganose)</li>
+<li>Custom progress bar for running in notebook (A. Ganose)</li>
+<li>Improved multi-index for conversion featurizerse (A. Ganose)</li>
+<li>Minor fixes / improvements (D. Dopp, A. Ganose, A. Faghaninia)</li>
+</ul>
+<p><strong>v0.4.2</strong></p>
+<ul class="simple">
+<li>Refactor conversion utils to be featurizers for consistency and parallelism (A. Ganose)</li>
+<li>Average Bond Length and Bond Angle implementations (A. Rui, L. Ward)</li>
+<li>Add ability to serialize dataframes as JSON with MontyEncoder (A. Ganose)</li>
+<li>support added for fractional compositions in AtomicOrbitals (M. Dylla)</li>
+<li>Add ability to flatten OFM (A. Dunn)</li>
+<li>updates to FunctionFeaturizer (J. Montoya)</li>
+<li>Various bugfixes (L. Ward, A. Ganose)</li>
+</ul>
+<p><strong>v0.4.1</strong></p>
+<ul class="simple">
+<li>Better elemental properties for Magpie features (L. Ward)</li>
+<li>Improvements to Seko representation (L. Ward)</li>
+<li>Some bugfixes for multiplefeaturizer and compatibility with progress bars (L. Ward, A. Dunn)</li>
+<li>More intuitive input arguments for featurize_many (L. Ward)</li>
+<li>Bugfixes for BOOP features (L. Ward, A. Thompson)</li>
+</ul>
+<p><strong>v0.4.0</strong></p>
+<ul class="simple">
+<li>Progressbar for featurizers (A. Dunn)</li>
+<li>Add BOOP features (L. Ward)</li>
+<li>Add Seko features, including more lookuip tables for MagpieData and elemental property site features + covariance, skew, kurtosis (L. Ward)</li>
+<li>New scheme for GRDF/AFS bin functions (L. Ward)</li>
+<li>misc fixes (A. Dunn., L. Ward)</li>
+</ul>
+<p><strong>v0.3.9</strong></p>
+<ul class="simple">
+<li>BandEdge renamed to Hybridization, gives smoother featurizations (M. Dylla, A. Faghaninia)</li>
+<li>Add hoverinfo option for many plots (A. Dunn)</li>
+<li>minor fixes (A. Faghaninia)</li>
+</ul>
+<p><strong>v0.3.8</strong></p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is an unsupported / aborted release</p>
+</div>
+<p><strong>v0.3.7</strong></p>
+<ul class="simple">
+<li>faster implementation of GaussianSymmFunc (L. Ward)</li>
+<li>more resilient Yang and AtomicPackingEfficiency (L. Ward)</li>
+<li>some fixes for PRDF featurizer (A. Faghaninia)</li>
+<li>add <a href="#id1"><span class="problematic" id="id2">*</span></a>.tsv files to package_data, should fix Miedema PyPI install (A. Faghaninia)</li>
+</ul>
+<p><strong>v0.3.6</strong></p>
+<ul class="simple">
+<li>Improve MPDataRetrieval to serialize objects (A. Faghaninia)</li>
+<li>Some fixes to GDRF and AFS (L. Williams, M. Dylla)</li>
+<li>Some fixes for Ewald (A. Faghaninia)</li>
+<li>improve error messages (A. Jain)</li>
+</ul>
+<p><strong>v0.3.5</strong></p>
+<ul class="simple">
+<li>some tools for sklearn Pipeline integration (J. Brenneck)</li>
+<li>ability to add a chemical descriptor to CNFingerprint (N. Zimmermann, hat tip to S. Dwaraknath and A. Jain)</li>
+<li>add phase diagram-like “triangle” plot (A. Faghaninia)</li>
+<li>add harmonic mean (holder_mean::-1) to PropertyStats (A. Jain)</li>
+</ul>
+<p><strong>v0.3.4</strong></p>
+<ul class="simple">
+<li>add XRDPowderPattern featurizer (A. Jain)</li>
+<li>add multi-index support for featurizers (A. Dunn)</li>
+<li>add BandEdge featurizer (A. Faghaninia)</li>
+<li>better labels support in xy plots + debugs and cleanups (A. Faghaninia)</li>
+<li>deprecate CrystalSiteFingerprint</li>
+<li>remove  a few old and unused site OP functions/methods (A. Jain)</li>
+<li>doc improvements (A. Faghaninia)</li>
+<li>bug fixes, minor code improvements, etc. (N. Zimmermann, A. Dunn, Q. Wang, A. Faghaninia)</li>
+</ul>
+<p><strong>v0.3.3</strong></p>
+<ul class="simple">
+<li>add StackedFeaturizer (L. Ward)</li>
+<li>changes to reference energies in BranchPointEnergy featurizer (A. Faghaninia)</li>
+<li>doc improvements (A. Dunn)</li>
+</ul>
+<p><strong>v0.3.2</strong></p>
+<ul class="simple">
+<li>Major overhaul / redesign of data retrieval classes for consistency (A. Faghaninia, A. Dunn)</li>
+<li>Updates / redesign of function featurizer (J. Montoya)</li>
+<li>Add Yang’s solid solution features (L. Ward)</li>
+<li>Add cluster packing efficiency features (L. Ward)</li>
+<li>update to MDF data retrieval (L. Ward)</li>
+<li>update to Citrine data retrieval for new pycc (S. Bajaj)</li>
+<li>Branch point energy takes into account symmetry (A. Faghaninia)</li>
+<li>minor code and doc updates (A. Jain, A. Faghaninia)</li>
+</ul>
+<p><strong>v0.3.1</strong></p>
+<ul class="simple">
+<li>add caching for featurizers (L. Ward)</li>
+<li>add CrystalNNFingerprint (A. Jain)</li>
+<li>some x-y plot updates (A. Faghaninia)</li>
+<li>speedup to chemenv featurizer (D. Waroquiers)</li>
+<li>minor code cleanups, bugfixes (A. Dunn, L. Ward, N. Zimmermann, A. Jain)</li>
+</ul>
+<p><strong>v0.3.0</strong></p>
+<ul class="simple">
+<li>add structural heterogeneity features (L. Ward)</li>
+<li>add maximum packing efficiency feature (L. Ward)</li>
+<li>add chemical ordering features (L. Ward)</li>
+<li>New BagofBonds based on original paper, old featurizer now BondFractions (A. Dunn)</li>
+<li>add DopingFermi featurizer (A. Faghaninia, A. Jain)</li>
+<li>shortcut for getting composition features from structure (L. Ward)</li>
+<li>fix static mode output in PlotlyFig (A. Dunn)</li>
+<li>some misc Figrecipes updates (A. Dunn)</li>
+<li>add fit_featurize method to base (A. Dunn)</li>
+<li>minor cleanups, doc updates and new docs (A. Jain, L. Ward, A. Dunn)</li>
+</ul>
+<p><strong>v0.2.9</strong></p>
+<ul class="simple">
+<li>fix pymatgen dep (A. Jain)</li>
+</ul>
+<p><strong>v0.2.8</strong></p>
+<ul class="simple">
+<li>new FunctionFeaturizer to combine features into mini functions (J. Montoya)</li>
+<li>updates to PlotlyFig (A. Dunn)</li>
+<li>Update default n_jobs to cpu_count() (A. Dunn)</li>
+<li>test fixes and updates (A. Dunn, N. Zimmermann, J. Montoya)</li>
+<li>move Jupyter notebooks to matminer_examples repo, separate from matminer (J. Montoya)</li>
+<li>add presets for AFS, GRDF featurizes (M. Dylla)</li>
+<li>update CircleCI testing (A. Dunn)</li>
+<li>code cleanups (A. Dunn, A. Jain, J. Montoya)</li>
+</ul>
+<p><strong>v0.2.6</strong></p>
+<ul class="simple">
+<li>modify ChemicalRSO to use fit() method (Q. Wang)</li>
+<li>more updates to FigRecipes (A. Dunn, A. Faghaninia)</li>
+<li>misc code cleanups (M. Dylla, A. Faghaninia, A. Jain, K. Bostrom, Q. Wang)</li>
+<li>fix missing yaml file from package data (A. Jain)</li>
+</ul>
+<p><strong>v0.2.5</strong></p>
+<ul class="simple">
+<li>Major rework of BaseFeaturizer to subclass BaseEstimator/TransformerMixin of sklearn. Allows for support of fit() function needed by many featurizers (L. Ward)</li>
+<li>BaseFeaturizer can return errors as a new column (A. Dunn)</li>
+<li>Clean up data getter signatures (J. Montoya)</li>
+<li>Re-implement PRDF (L. Ward)</li>
+<li>GaussianSymmFunc featurizer (Q. Wang)</li>
+<li>misc code clean up (L. Ward, A. Jain)</li>
+</ul>
+<p><strong>v0.2.4</strong></p>
+<ul class="simple">
+<li>updates to PlotlyFig (A. Dunn, A. Faghaninia)</li>
+<li>adapt to new OP parameters (N. Zimmermann)</li>
+<li>bugfixes, cleanups, doc updates (A. Faghaninia, A. Dunn, Q. Wang, N. Zimmermann, A. Jain)</li>
+</ul>
+<p><strong>v0.2.3</strong></p>
+<ul class="simple">
+<li>MDF data retrieval (J. Montoya)</li>
+<li>new VoronoiFingerprint descriptors (Q. Wang)</li>
+<li>new ChemicalSRO descriptors (Q. Wang)</li>
+<li>bugfixes to featurize_many (A. Dunn)</li>
+<li>minor bug fixes, cleanups, slighly improved docs, etc.</li>
+</ul>
+<p><strong>v0.2.2</strong></p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Py2 compatibility is officially dropped in this version. Please upgrade to Python 3.x.</p>
+</div>
+<ul class="simple">
+<li>multiprocessing for pandas dataframes (A. Dunn, L. Ward)</li>
+<li>new CoordinationNumber site featurizer based on NearNeighbor algos (N. Zimmermann)</li>
+<li>update OP fingerprints for latest pymatgen (N. Zimmermann)</li>
+<li>OPStructureFingerprint -&gt; SiteStatsFingerprint that takes in any site fingerprint function (A. Jain)</li>
+<li>Add BondFractions featurizer (A. Dunn)</li>
+<li>multi-index for pandas dataframes (A. Dunn)</li>
+<li>cleanup of formatting for citations, implementors, feature_labels to always be list (N. Zimmermann)</li>
+<li>minor bug fixes, cleanups, slighly improved docs, etc.</li>
+</ul>
 <p><strong>v0.2.1</strong></p>
 <ul class="simple">
 <li>further improvements to test data sets (K. Bystrom)</li>
@@ -175,12 +411,14 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -196,13 +434,13 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
 
   </body>

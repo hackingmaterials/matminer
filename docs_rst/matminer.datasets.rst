@@ -1,20 +1,36 @@
-matminer\.datasets package
-==========================
+matminer.datasets package
+=========================
 
 Subpackages
 -----------
 
 .. toctree::
 
-    matminer.datasets.test_datasets
+    matminer.datasets.tests
 
 Submodules
 ----------
 
-matminer\.datasets\.dataframe\_loader module
---------------------------------------------
+matminer.datasets.convenience\_loaders module
+---------------------------------------------
 
-.. automodule:: matminer.datasets.dataframe_loader
+.. automodule:: matminer.datasets.convenience_loaders
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matminer.datasets.dataset\_retrieval module
+-------------------------------------------
+
+.. automodule:: matminer.datasets.dataset_retrieval
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matminer.datasets.utils module
+------------------------------
+
+.. automodule:: matminer.datasets.utils
     :members:
     :undoc-members:
     :show-inheritance:

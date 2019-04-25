@@ -11,13 +11,13 @@ import json
 import six
 import abc
 import numpy as np
+import pandas as pd
 from glob import glob
-from collections import defaultdict
 
 from pymatgen import Element
 from pymatgen.core.periodic_table import _pt_data
 
-__author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain'
+__author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn'
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -94,13 +94,18 @@ class OxidationStateDependentData(AbstractData):
             (float) - Value of property
         """
 
-        return self.get_charge_dependent_property(specie.element, specie.oxi_state, property_name)
+        return self.get_charge_dependent_property(specie.element,
+                                                  specie.oxi_state,
+                                                  property_name)
 
 
 class CohesiveEnergyData(AbstractData):
     """Get the cohesive energy of an element.
 
-    TODO: Where is this data from? -wardlt
+    Data is extracted from KnowledgeDoor Cohesive Energy Handbook online
+    (http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html),
+    which in turn got the data from Introduction to Solid State Physics,
+    8th Edition, by Charles Kittel (ISBN 978-0-471-41526-8), 2005.
     """
 
     def __init__(self):
@@ -144,7 +149,8 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
         self.all_props["FERE correction"] = fere_corr
 
         # List out the available charge-dependent properties
-        self.charge_dependent_properties = ["xtal_field_split", "magn_moment", "so_coupling", "sat_magn"]
+        self.charge_dependent_properties = ["xtal_field_split", "magn_moment",
+                                            "so_coupling", "sat_magn"]
 
     def get_elemental_property(self, elem, property_name):
         if "valence" in property_name:
@@ -166,10 +172,12 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
     def get_charge_dependent_property(self, element, charge, property_name):
         if property_name == "total_ioniz":
             if charge < 0:
-                raise ValueError("total ionization energy only defined for charge > 0")
+                raise ValueError(
+                    "total ionization energy only defined for charge > 0")
             return sum(self.all_props["ionization_en"][element.symbol][:charge])
         else:
-            return self.all_props[property_name].get(element.symbol, {}).get(charge, np.nan)
+            return self.all_props[property_name].get(element.symbol, {}).get(
+                charge, np.nan)
 
 
 class MagpieData(AbstractData, OxidationStatesMixin):
@@ -181,21 +189,22 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     """
 
     def __init__(self):
-        self.all_elemental_props = defaultdict(dict)
-        self.available_props = []
+        self.all_elemental_props = dict()
+        available_props = []
         self.data_dir = os.path.join(module_dir, "data_files",
                                      'magpie_elementdata')
 
         # Make a list of available properties
         for datafile in glob(os.path.join(self.data_dir, "*.table")):
-            self.available_props.append(
+            available_props.append(
                 os.path.basename(datafile).replace('.table', ''))
 
         # parse and store elemental properties
-        for descriptor_name in self.available_props:
+        for descriptor_name in available_props:
             with open(os.path.join(self.data_dir,
                                    '{}.table'.format(descriptor_name)),
                       'r') as f:
+                self.all_elemental_props[descriptor_name] = dict()
                 lines = f.readlines()
                 for atomic_no in range(1, len(_pt_data) + 1):  # max Z=103
                     try:
@@ -250,3 +259,118 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
 
     def get_charge_dependent_property(self, element, charge, property_name):
         return getattr(element, property_name)[charge]
+
+
+class MixingEnthalpy:
+    """
+    Values of :math:`\Delta H^{max}_{AB}` for different pairs of elements.
+
+    Based on the Miedema model. Tabulated by:
+        A. Takeuchi, A. Inoue, Classification of Bulk Metallic Glasses by Atomic
+        Size Difference, Heat of Mixing and Period of Constituent Elements and
+        Its Application to Characterization of the Main Alloying Element.
+        Mater. Trans. 46, 2817–2829 (2005).
+
+    Attributes:
+        valid_element_list ([Element]): A list of elements for which the
+            mixing enthalpy parameters are defined (although no guarantees
+            are provided that all combinations of this list will be available).
+    """
+
+    def __init__(self):
+        mixing_dataset = pd.read_csv(os.path.join(module_dir, 'data_files',
+                                                  'MiedemaLiquidDeltaHf.tsv'),
+                                     delim_whitespace=True)
+        self.mixing_data = {}
+        for a, b, dHf in mixing_dataset.itertuples(index=False):
+            key = tuple(sorted((a, b)))
+            self.mixing_data[key] = dHf
+        valid_elements = [
+            "Dy", "Mn", "Y", "Nd", "Ag", "Cs", "Tm", "Pd", "Sn", "Rh", "Pr",
+            "Er", "K", "In", "Tb", "Rb", "H", "N", "Ni", "Hg", "Ca", "Mo", "Li",
+            "Th", "U", "At", "Ga", "La", "Ru", "Lu", "Eu", "Si", "B", "Zr",
+            "Ce", "Pm", "Ge", "Sm", "Ta", "Ti", "Po", "Sc", "Mg", "Sr", "P",
+            "C", "Ir", "Pa", "V", "Zn", "Sb", "Na", "W", "Re", "Tl", "Pt", "Gd",
+            "Cr", "Co", "Ba", "Os", "Hf", "Pb", "Cu", "Tc", "Al", "As", "Ho",
+            "Yb", "Au", "Be", "Nb", "Cd", "Fe", "Bi"]
+        self.valid_element_list = [Element(e) for e in valid_elements]
+
+    def get_mixing_enthalpy(self, elemA, elemB):
+        """
+        Get the mixing enthalpy between different elements
+
+        Args:
+            elemA (Element): An element
+            elemB (Element): Second element
+        Returns:
+            (float) mixing enthalpy, nan if pair is not in a table
+        """
+
+        key = tuple(sorted((elemA.symbol, elemB.symbol)))
+        return self.mixing_data.get(key, np.nan)
+
+
+class MatscholarElementData(AbstractData):
+    """
+    Class to get word embedding vectors of elements. These word embeddings were
+    generated using NLP + Neural Network techniques on more than 3 million
+    scientific abstracts.
+
+    #TODO: add citation (expected mid-2019).
+    """
+
+    def __init__(self):
+        dfile = os.path.join(module_dir,
+                             "data_files/matscholar_els.json")
+        with open(dfile, "r") as fp:
+            embeddings = json.load(fp)
+        self.prop_names = ["embedding {}".format(i) for i in range(1, 201)]
+        all_element_data = {}
+        for el, embedding in embeddings.items():
+            all_element_data[el] = dict(zip(self.prop_names, embedding))
+        self.all_element_data = all_element_data
+
+    def get_elemental_property(self, elem, property_name):
+        return self.all_element_data[str(elem)][property_name]
+
+
+class MEGNetElementData(AbstractData):
+    """
+    Class to get neural network embeddings of elements. These embeddings were
+    generated using the Materials Graph Network (MEGNet) developed by the
+    MaterialsVirtualLab at U.C. San Diego and described in the following
+    preprint:
+
+    https://arxiv.org/abs/1812.05055
+
+    The code for MEGNet can be found at:
+    https://github.com/materialsvirtuallab/megnet
+
+    #TODO: add publication reference when MEGNet is published
+
+    The embeddings were generated by training the MEGNet Graph Network on
+    60,000 structures from the Materials Project for predicting formation
+    energy, and may be an effective way of applying transfer learning to
+    smaller datasets using crystal-graph-based networks.
+    """
+
+    def __init__(self):
+        dfile = os.path.join(module_dir,
+                             "data_files/megnet_elemental_embedding.json")
+        self._dummy = "Dummy"
+        with open(dfile, "r") as fp:
+            embeddings = json.load(fp)
+        self.prop_names = ["embedding {}".format(i) for i in range(1, 17)]
+        self.all_element_data = {}
+        for i in range(95):
+            embedding_dict = dict(zip(self.prop_names, embeddings[i]))
+            if i == 0:
+                self.all_element_data[self._dummy] = embedding_dict
+            else:
+                self.all_element_data[str(Element.from_Z(i))] = embedding_dict
+
+    def get_elemental_property(self, elem, property_name):
+        estr = str(elem)
+        if estr not in self.all_element_data.keys():
+            estr = self._dummy
+        return self.all_element_data[estr][property_name]

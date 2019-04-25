@@ -20,7 +20,7 @@ from matminer import __version__
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('..'))
-print sys.path
+# print sys.path
 
 # -- General configuration -----------------------------------------------------
 
@@ -31,7 +31,7 @@ print sys.path
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest',
               'sphinx.ext.intersphinx', 'sphinx.ext.todo',
-              'sphinx.ext.coverage', 'sphinx.ext.pngmath',
+              'sphinx.ext.coverage', 'sphinx.ext.imgmath',
               'sphinx.ext.ifconfig']
 
 # Add any paths that contain templates here, relative to this directory.

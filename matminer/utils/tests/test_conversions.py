@@ -5,10 +5,12 @@ from pandas import DataFrame
 
 import json
 
+from pymatgen.core.structure import IStructure
+
 from matminer.utils.conversions import dict_to_object, \
     structure_to_oxidstructure, \
     str_to_composition, json_to_object, structure_to_composition, \
-    composition_to_oxidcomposition
+    composition_to_oxidcomposition, structure_to_istructure
 from pymatgen import Composition, Lattice, Structure, Element
 
 
@@ -54,7 +56,6 @@ class TestConversions(TestCase):
         self.assertEqual(df["structure"].tolist()[0], struct)
         self.assertEqual(df["structure"].tolist()[1], struct)
 
-
     def test_json_to_object(self):
         coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
         lattice = Lattice([[3.8401979337, 0.00, 0.00],
@@ -69,29 +70,41 @@ class TestConversions(TestCase):
         df["structure"] = json_to_object(df["structure_json"])
         self.assertEqual(df["structure"].tolist()[0], struct)
 
-    # TODO: restore test after pymatgen update which fixes a bug
-    # def test_structure_to_oxidstructure(self):
-    #     cscl = Structure(Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
-    #                      ["Cl", "Cs"], [[0.45, 0.5, 0.5], [0, 0, 0]])
-    #     d = {'structure': [cscl]}
-    #     df = DataFrame(data=d)
-    #
-    #     df["struct_oxid"] = structure_to_oxidstructure(df["structure"])
-    #     self.assertEqual(df["struct_oxid"].tolist()[0][0].specie.oxi_state, -1)
-    #     self.assertEqual(df["struct_oxid"].tolist()[0][1].specie.oxi_state, +1)
-    #
-    #     df["struct_oxid2"] = structure_to_oxidstructure(df["structure"], oxi_states_override={"Cl": [-2], "Cs": [+2]})
-    #     self.assertEqual(df["struct_oxid2"].tolist()[0][0].specie.oxi_state, -2)
-    #     self.assertEqual(df["struct_oxid2"].tolist()[0][1].specie.oxi_state, +2)
-    #
-    #     # original is preserved
-    #     self.assertEqual(df["structure"].tolist()[0][0].specie, Element("Cl"))
-    #
-    #     # test in-place
-    #     structure_to_oxidstructure(df["structure"], inplace=True)
-    #     self.assertEqual(df["structure"].tolist()[0][0].specie.oxi_state, -1)
+    def test_structure_to_oxidstructure(self):
+        cscl = Structure(Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
+                         ["Cl", "Cs"], [[0.45, 0.5, 0.5], [0, 0, 0]])
+        d = {'structure': [cscl]}
+        df = DataFrame(data=d)
+
+        df["struct_oxid"] = structure_to_oxidstructure(df["structure"])
+        self.assertEqual(df["struct_oxid"].tolist()[0][0].specie.oxi_state, -1)
+        self.assertEqual(df["struct_oxid"].tolist()[0][1].specie.oxi_state, +1)
+
+        df["struct_oxid2"] = structure_to_oxidstructure(df["structure"], oxi_states_override={"Cl": [-2], "Cs": [+2]})
+        self.assertEqual(df["struct_oxid2"].tolist()[0][0].specie.oxi_state, -2)
+        self.assertEqual(df["struct_oxid2"].tolist()[0][1].specie.oxi_state, +2)
+
+        # original is preserved
+        self.assertEqual(df["structure"].tolist()[0][0].specie, Element("Cl"))
+
+        # test in-place
+        structure_to_oxidstructure(df["structure"], inplace=True)
+        self.assertEqual(df["structure"].tolist()[0][0].specie.oxi_state, -1)
 
     def test_composition_to_oxidcomposition(self):
         df = DataFrame(data={"composition": [Composition("Fe2O3")]})
         df["composition_oxid"] = composition_to_oxidcomposition(df["composition"])
         self.assertEqual(df["composition_oxid"].tolist()[0], Composition({"Fe3+": 2, "O2-":3}))
+
+    def test_to_istructure(self):
+        cscl = Structure(Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
+            ["Cl", "Cs"], [[0.45, 0.5, 0.5], [0, 0, 0]])
+        df = DataFrame({"structure": [cscl]})
+
+        # Run the conversion
+        df["istructure"] = structure_to_istructure(df["structure"])
+
+        # Make sure the new structure is an IStructure, and equal
+        #  to the original structure
+        self.assertIsInstance(df["istructure"][0], IStructure)
+        self.assertEqual(df["istructure"][0], df["structure"][0])

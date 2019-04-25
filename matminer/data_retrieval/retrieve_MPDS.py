@@ -6,10 +6,15 @@ import time
 import warnings
 
 import six
+from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from six.moves.urllib_parse import urlencode
 
 import httplib2
-import ujson as json
+
+try:
+    import ujson as json
+except ImportError:
+    import json
 
 import pandas as pd
 
@@ -19,7 +24,7 @@ from pymatgen.core.lattice import Lattice
 try:
     import jmespath
 except ImportError as ex:
-    warnings.warn(ex)
+    warnings.warn(str(ex))
 
 use_ase = False
 try:
@@ -28,7 +33,8 @@ try:
 
     use_ase = True
 except ImportError as ex:
-    warnings.warn(ex)
+    warnings.warn(str(ex))
+
 
 __author__ = 'Evgeny Blokhin <eb@tilde.pro>'
 __copyright__ = 'Copyright (c) 2017, Evgeny Blokhin, Tilde Materials Informatics'
@@ -46,11 +52,10 @@ class APIError(Exception):
         return repr(self.msg)
 
 
-class MPDSDataRetrieval(object):
+class MPDSDataRetrieval(BaseDataRetrieval):
     """
-    An example Python implementation
-    of the API consumer for the MPDS platform,
-    see http://developer.mpds.io
+    Retrieves data from Materials Platform for Data Science (MPDS).
+    See api_link for more information.
 
     Usage:
     $>export MPDS_KEY=...
@@ -69,36 +74,17 @@ class MPDSDataRetrieval(object):
 
     *or*
     jsonobj = client.get_data({"formula":"SrTiO3"}, fields=[])
+
+    If you use this data retrieval class, please additionally cite:
+    Blokhin, E., Villars, P., 2018. The PAULING FILE Project and Materials
+    Platform for Data Science: From Big Data Toward Materials Genome,
+    in: Andreoni, W., Yip, S. (Eds.), Handbook of Materials Modeling :
+    Methods: Theory and Modeling. Springer International Publishing, Cham,
+    pp. 1–26. https://doi.org/10.1007/978-3-319-42913-7_62-1
+
     """
-    default_fields = {
-        'S': [
-            'phase_id',
-            'chemical_formula',
-            'sg_n',
-            'entry',
-            lambda: 'crystal structure',
-            lambda: 'A'
-        ],
-        'P': [
-            'sample.material.phase_id',
-            'sample.material.chemical_formula',
-            'sample.material.condition[0].scalar[0].value',
-            'sample.material.entry',
-            'sample.measurement[0].property.name',
-            'sample.measurement[0].property.units',
-            'sample.measurement[0].property.scalar'
-        ],
-        'C': [
-            lambda: None,
-            'title',
-            lambda: None,
-            'entry',
-            lambda: 'phase diagram',
-            'naxes',
-            'arity'
-        ]
-    }
-    default_titles = ['Phase', 'Formula', 'SG', 'Entry', 'Property', 'Units', 'Value']
+    default_properties = ('Phase', 'Formula', 'SG',
+                          'Entry', 'Property', 'Units', 'Value')
 
     endpoint = "https://api.mpds.io/v0/download/facet"
 
@@ -119,6 +105,9 @@ class MPDSDataRetrieval(object):
         self.api_key = api_key if api_key else os.environ['MPDS_KEY']
         self.network = httplib2.Http()
         self.endpoint = endpoint or MPDSDataRetrieval.endpoint
+
+    def api_link(self):
+        return "http://developer.mpds.io"
 
     def _request(self, query, phases=None, page=0):
         phases = ','.join([str(int(x)) for x in phases]) if phases else ''
@@ -152,7 +141,6 @@ class MPDSDataRetrieval(object):
             return array
 
         output = []
-
         for item in array:
             filtered = []
             for object_type in ['S', 'P', 'C']:
@@ -165,22 +153,22 @@ class MPDSDataRetrieval(object):
                     break
             else:
                 raise APIError("API error: unknown data type")
-
             output.append(filtered)
-
         return output
 
-    def get_data(self, search, phases=[], fields=default_fields):
+    def get_data(self, criteria, phases=None, fields=None):
         """
         Retrieve data in JSON.
         JSON is expected to be valid against the schema
         at http://developer.mpds.io/mpds.schema.json
 
         Args:
-            search: (dict) Search query like {"categ_A": "val_A", "categ_B": "val_B"},
+            criteria (dict): Search query like {"categ_A": "val_A", "categ_B": "val_B"},
                 documented at http://developer.mpds.io/#Categories
-            phases: (list) Phase IDs, according to the MPDS distinct phases concept
-            fields: (dict) Data of interest for C-, S-, and P-entries,
+                example: criteria={"elements": "K-Ag", "classes": "iodide",
+                                "props": "heat capacity", "lattices": "cubic"}
+            phases (list): Phase IDs, according to the MPDS distinct phases concept
+            fields (dict): Data of interest for C-, S-, and P-entries,
                 e.g. for phase diagrams: {'C': ['naxes', 'arity', 'shapes']},
                 documented at http://developer.mpds.io/#JSON-schemata
 
@@ -188,7 +176,40 @@ class MPDSDataRetrieval(object):
             List of dicts: C-, S-, and P-entries, the format is
             documented at http://developer.mpds.io/#JSON-schemata
         """
+
+        default_fields = {
+            'S': [
+                'phase_id',
+                'chemical_formula',
+                'sg_n',
+                'entry',
+                lambda: 'crystal structure',
+                lambda: 'A'
+            ],
+            'P': [
+                'sample.material.phase_id',
+                'sample.material.chemical_formula',
+                'sample.material.condition[0].scalar[0].value',
+                'sample.material.entry',
+                'sample.measurement[0].property.name',
+                'sample.measurement[0].property.units',
+                'sample.measurement[0].property.scalar'
+            ],
+            'C': [
+                lambda: None,
+                'title',
+                lambda: None,
+                'entry',
+                lambda: 'phase diagram',
+                'naxes',
+                'arity'
+            ]
+        }
+
+        fields = default_fields if fields is None else fields
+
         output = []
+        phases = phases or []
         counter, hits_count = 0, 0
         fields = {
             key: [jmespath.compile(item) if isinstance(item, six.string_types) else item() for item in value]
@@ -196,7 +217,7 @@ class MPDSDataRetrieval(object):
         } if fields else None
 
         while True:
-            result = self._request(search, phases=phases, page=counter)
+            result = self._request(criteria, phases=phases, page=counter)
             if result['error']:
                 raise APIError(result['error'], result.get('code', 0))
 
@@ -230,28 +251,18 @@ class MPDSDataRetrieval(object):
         sys.stdout.flush()
         return output
 
-    def get_dataframe(self, *args, **kwargs):
+    def get_dataframe(self, criteria, properties=default_properties, **kwargs):
         """
         Retrieve data as a Pandas dataframe.
 
         Args:
-            search: (dict) Search query like {"categ_A": "val_A", "categ_B": "val_B"},
-                documented at http://developer.mpds.io/#Categories
-            phases: (list) Phase IDs, according to the MPDS distinct phases concept
-            fields: (dict) Data of interest for C-, S-, and P-entries,
-                e.g. for phase diagrams: {'C': ['naxes', 'arity', 'shapes']},
-                documented at http://developer.mpds.io/#JSON-schemata
-            columns: (list) Column names for Pandas dataframe
+            criteria (dict): the same as criteria in get_data
+            properties ([str]): list of properties/titles to be included
+            **kwargs: other keyword arguments available in get_data
 
-        Returns: (object) Pandas dataframe object containing the results
+        Returns: (object) Pandas DataFrame object containing the results
         """
-        columns = kwargs.get('columns')
-        if columns:
-            del kwargs['columns']
-        else:
-            columns = MPDSDataRetrieval.default_titles
-
-        return pd.DataFrame(self.get_data(*args, **kwargs), columns=columns)
+        return pd.DataFrame(self.get_data(criteria=criteria, **kwargs), columns=properties)
 
     @staticmethod
     def compile_crystal(datarow, flavor='pmg'):

@@ -1,0 +1,49 @@
+1:
+  - "sgl_bd"
+2:
+  - "L-shaped"
+  - "water-like"
+  - "bent 120 degrees"
+  - "bent 150 degrees"
+  - "linear"
+3:
+  - "trigonal planar"
+  - "trigonal non-coplanar"
+  - "T-shaped"
+4:
+  - "square co-planar"
+  - "tetrahedral"
+  - "rectangular see-saw-like"
+  - "see-saw-like"
+  - "trigonal pyramidal"
+5:
+  - "pentagonal planar"
+  - "square pyramidal"
+  - "trigonal bipyramidal"
+6:
+  - "hexagonal planar"
+  - "octahedral"
+  - "pentagonal pyramidal"
+7:
+  - "hexagonal pyramidal"
+  - "pentagonal bipyramidal"
+8:
+  - "body-centered cubic"
+  - "hexagonal bipyramidal"
+9:
+  - "q2"
+  - "q4"
+  - "q6"
+10:
+  - "q2"
+  - "q4"
+  - "q6"
+11:
+  - "q2"
+  - "q4"
+  - "q6"
+12:
+  - "cuboctahedral"
+  - "q2"
+  - "q4"
+  - "q6"
