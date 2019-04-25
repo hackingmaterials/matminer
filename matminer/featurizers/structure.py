@@ -19,6 +19,7 @@ from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 from monty.dev import requires
 from pymatgen import Structure, Lattice
+from pymatgen.analysis import bond_valence
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
@@ -3612,3 +3613,161 @@ class SOAP(BaseFeaturizer):
     def implementors(self):
         return ["Alex Dunn", "Lauri Himanen"]
 
+    
+class GlobalInstabilityIndex(BaseFeaturizer):
+    '''Will compute the global instability index of a structure.
+    
+    The default is to use IUCr 2016 bond valence parameters for computing 
+    bond valence sums. If the structure has disordered site occupancies 
+    or non-integer valences on sites, pymatgen's bond valence sum method 
+    can be used instead. 
+    
+    Note that pymatgen's bond valence sum method is prone to error unless 
+    the correct scale factor is supplied. A scale factor based on testing 
+    with perovskites is used here.
+    
+    Based on the following publication:
+    
+    "Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho, 
+        Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction", 
+        A.Salinas-Sanchez, J.L.Garcia-Muñoz, J.Rodriguez-Carvajal,
+        R.Saez-Puche, and J.L.Martinez, Journal of Solid State Chemistry,
+        100, 201-211 (1992),
+        https://doi.org/10.1016/0022-4596(92)90094-C
+        
+    Args:
+        r_cut: Float, how far to search for neighbors when computing bond valences
+        disordered_pymatgen: Boolean, whether to fall back on pymatgen's bond valence sum
+                             method for disordered structures
+    Returns:
+        gii: Float, global instability index
+    '''
+    
+    def __init__(self, r_cut, disordered_pymatgen):
+        
+        basedir = os.path.dirname(os.path.realpath(__file__))
+        bv_path = os.path.join(basedir, "../utils/data_files/Bond_valences2016.csv")
+        self.bv_values = pd.read_csv(bv_path)
+        
+        self.r_cut = r_cut
+        self.disordered_pymatgen = disordered_pymatgen
+        
+    
+    def featurize(self, struct):
+        """
+        Get global instability index.
+        
+        Args:
+        struct: Pymatgen Structure object
+        """
+        if not struct.is_ordered:
+            if self.disordered_pymatgen:
+                gii = self.calc_gii_pymatgen(struct)
+                if gii > 0.6:
+                    raise ValueError(
+                        "GII extremely large. Pymatgen method may not be suitable "
+                        "or structure may be unusual.")
+                return [gii]
+            else:
+                raise ValueError('Structure must be ordered for table lookup method.')
+        
+        gii = calc_gii_iucr(struct)
+        return [gii]
+        
+    def calc_gii_iucr(self, struct):
+        elements = [str(i) for i in struct.composition.element_composition.elements]
+        bond_valence_sums = []
+        cutoff = self.r_cut
+        
+        # for loop to calculate the BV sum on each site
+        for site in struct:
+            site_val = site.species.elements[0].oxi_state
+            site_el = str(site.species.element_composition.elements[0])
+            bvs = 0
+            neighbors = struct.get_neighbors(site, r=cutoff)
+            for neighbor in neighbors:
+                neighbor_val = neighbor[0].species.elements[0].oxi_state
+                neighbor_el = str(neighbor[0].species.element_composition.elements[0])
+                if neighbor_val % 1 != 0 or site_val % 1 != 0:
+                    raise ValueError('Some sites have non-integer valences.')
+                dist = neighbor[1]
+
+                try:
+                    if site_el != elements[-1] and neighbor_el == elements[-1]:
+                        params = self.get_bv_params(cation=site_el,
+                                               anion=neighbor_el,
+                                               cat_val=site_val, 
+                                               an_val=neighbor_val)
+                        bvs += self.compute_bv(params, dist)
+                    elif site_el == elements[-1] and neighbor_el != elements[-1]:
+                        params = self.get_bv_params(cation=neighbor_el,
+                                               anion=site_el,
+                                               cat_val=neighbor_val, 
+                                               an_val=site_val)
+                        bvs -= self.compute_bv(params, dist)
+                except:
+                    raise ValueError('BV parameters for {} with valence {} and {}{} not found in table'.format(
+                        site_el, site_val, neighbor_el, neighbor_val))
+            bond_valence_sums.append(bvs - site_val)
+        gii = np.linalg.norm(bond_valence_sums) / np.sqrt(len(bond_valence_sums))
+        if gii > 0.6:
+            raise Exception("GII extremely large. Table parameters may "
+                            "not be suitable or structure may be unusual.")
+        return gii
+    
+    def get_bv_params(self, cation, anion, cat_val, an_val):
+        """Lookup bond valence parameters from IUPAC table.
+        Args:
+            cation: String, cation element
+            anion: String, anion element
+            cat_val: Integer, cation formal valence
+            an_val: Integer, anion formal valence
+        Returns:
+            bond_val_list: dataframe of bond valence parameters
+        """
+        bv_data = self.bv_values
+        bond_val_list = bv_data[(bv_data['Atom1'] == cation) & (bv_data['Atom1_valence'] == cat_val)\
+                      & (bv_data['Atom2'] == anion) & (bv_data['Atom2_valence'] == an_val)]
+        return bond_val_list.iloc[0] # If multiple values exist, take first one
+
+
+    def compute_bv(self, params, dist):
+        """Compute bond valence from parameters.
+        Args:
+            params: Dataframe with Ro and B parameters
+            dist: Float, distance to neighboring atom
+        Returns:
+            bv: Float, bond valence
+        """
+        bv = np.exp((params['Ro']- dist)/params['B'])
+        return bv
+    
+    def calc_gii_pymatgen(self, struct):
+    """Calculates global instability index using Pymatgen's bond valence sum.
+    Args:
+        struct: Pymatgen Structure object
+    Returns:
+        gii: Float, global instability index
+    """
+    deviations = []
+    cutoff=self.r_cut
+    if struct.is_ordered:
+        for site in struct:
+            nn = struct.get_neighbors(site,r=cutoff)
+            bvs = bond_valence.calculate_bv_sum(site, nn, scale_factor=0.965)
+            deviations.append(bvs - site.species.elements[0].oxi_state)
+        gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
+    else:
+        for site in struct:
+            nn = struct.get_neighbors(site,r=cutoff)
+            bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=0.965)
+            min_diff = min(
+                [bvs - spec.oxi_state for spec in site.species.elements]
+            )
+            deviations.append(min_diff)
+        gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
+    return gii
+    
+    
+    def implementors(self):
+        return ["Nicholas Wagner"]
