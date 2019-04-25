@@ -2135,7 +2135,7 @@ class ChemicalOrdering(BaseFeaturizer):
     neighbor shells of each site. Then, for each shell a degree of order for
     each type is determined by computing:
 
-    :math:`\alpha (t,s) = 1 - \frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}`
+    :math:`\\alpha (t,s) = 1 - \\frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}`
 
     where :math:`w_n` is the weight associated with a certain neighbor,
     :math:`t_p` is the type of the neighbor, and :math:`x_t` is the fraction

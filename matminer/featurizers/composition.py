@@ -1499,7 +1499,7 @@ class YangSolidSolution(BaseFeaturizer):
     def compute_delta(self, comp):
         """Compute Yang's delta parameter
 
-        :math:`\sqrt{\sum^n_{i=1} c_i \left( 1 - \\frac{r_i}{\\bar{r}} \right)^2 }`
+        :math:`\sqrt{\sum^n_{i=1} c_i \left( 1 - \\frac{r_i}{\\bar{r}} \\right)^2 }`
 
         where :math:`c_i` and :math:`r_i` are the fraction and radius of
         element :math:`i`, and :math:`\\bar{r}` is the fraction-weighted
