@@ -1807,7 +1807,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         ratio for a certain :math:`n` and :math:`r` is the actual ratio.
 
         Args:
-            radius_ratio (float): math:`r / r_{neighbor}`
+            radius_ratio (float): :math:`r / r_{neighbor}`
         Returns:
             (int) number of neighboring atoms for that will be the most
             efficiently packed.
