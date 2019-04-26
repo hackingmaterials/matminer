@@ -74,7 +74,7 @@ class AGNIFingerprints(BaseFeaturizer):
     :math:`A_i(\eta) = \sum\limits_{i \\ne j} e^{-(\\frac{r_{ij}}{\eta})^2} f(r_{ij})`
     where :math:`i` is the index of the atom, :math:`j` is the index of a neighboring atom, :math:`\eta` is a scaling function,
     :math:`r_{ij}` is the distance between atoms :math:`i` and :math:`j`, and :math:`f(r)` is a cutoff function where
-    :math:`f(r) = 0.5[cos(\\frac{\pi r_{ij}}{R_c}) + 1]` if :math:`r < R_c` and :math:`0` otherwise.
+    :math:`f(r) = 0.5[\cos(\\frac{\pi r_{ij}}{R_c}) + 1]` if :math:`r < R_c` and :math:`0` otherwise.
     The direction-resolved fingerprints are computed using
     :math:`V_i^k(\eta) = \sum\limits_{i \\ne j} \\frac{r_{ij}^k}{r_{ij}} e^{-(\\frac{r_{ij}}{\eta})^2} f(r_{ij})`
     where :math:`r_{ij}^k` is the :math:`k^{th}` component of :math:`\\bold{r}_i - \\bold{r}_j`.
