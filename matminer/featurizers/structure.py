@@ -3643,7 +3643,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         gii: Float, global instability index
     '''
     
-    def __init__(self, r_cut, disordered_pymatgen):
+    def __init__(self, r_cut=4.0, disordered_pymatgen=False):
         
         basedir = os.path.dirname(os.path.realpath(__file__))
         bv_path = os.path.join(basedir, "../utils/data_files/Bond_valences2016.csv")
@@ -3689,7 +3689,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             else:
                 raise ValueError('Structure must be ordered for table lookup method.')
         
-        gii = calc_gii_iucr(struct)
+        gii = self.calc_gii_iucr(struct)
         return [gii]
         
     def calc_gii_iucr(self, struct):
