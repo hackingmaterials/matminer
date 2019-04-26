@@ -3653,6 +3653,24 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         self.disordered_pymatgen = disordered_pymatgen
         
     
+    def precheck(self, struct):
+        """Bond valence methods require atom pairs with oxidation states.
+        
+        Args:
+            struct: Pymatgen Structure
+        """
+        anions = ["O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"]
+        elems = [str(x.element) for x in struct.composition.elements]
+        check = any([e in anions for e in elems])
+        valences = [site.species.elements[0].oxi_state for site in struct]
+        if min(valences) == 0:
+            check = False
+        
+        if len(struct) > 200:
+            raise UserWarning("Computing bond valence sums for over 200 sites. "
+                              "Might be slow")
+        return check
+    
     def featurize(self, struct):
         """
         Get global instability index.
@@ -3743,30 +3761,30 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         return bv
     
     def calc_gii_pymatgen(self, struct):
-    """Calculates global instability index using Pymatgen's bond valence sum.
-    Args:
-        struct: Pymatgen Structure object
-    Returns:
-        gii: Float, global instability index
-    """
-    deviations = []
-    cutoff=self.r_cut
-    if struct.is_ordered:
-        for site in struct:
-            nn = struct.get_neighbors(site,r=cutoff)
-            bvs = bond_valence.calculate_bv_sum(site, nn, scale_factor=0.965)
-            deviations.append(bvs - site.species.elements[0].oxi_state)
-        gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
-    else:
-        for site in struct:
-            nn = struct.get_neighbors(site,r=cutoff)
-            bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=0.965)
-            min_diff = min(
-                [bvs - spec.oxi_state for spec in site.species.elements]
-            )
-            deviations.append(min_diff)
-        gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
-    return gii
+        """Calculates global instability index using Pymatgen's bond valence sum.
+        Args:
+            struct: Pymatgen Structure object
+        Returns:
+            gii: Float, global instability index
+        """
+        deviations = []
+        cutoff=self.r_cut
+        if struct.is_ordered:
+            for site in struct:
+                nn = struct.get_neighbors(site,r=cutoff)
+                bvs = bond_valence.calculate_bv_sum(site, nn, scale_factor=0.965)
+                deviations.append(bvs - site.species.elements[0].oxi_state)
+            gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
+        else:
+            for site in struct:
+                nn = struct.get_neighbors(site,r=cutoff)
+                bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=0.965)
+                min_diff = min(
+                    [bvs - spec.oxi_state for spec in site.species.elements]
+                )
+                deviations.append(min_diff)
+            gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
+        return gii
     
     
     def implementors(self):
