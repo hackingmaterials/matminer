@@ -3637,8 +3637,8 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         
     Args:
         r_cut: Float, how far to search for neighbors when computing bond valences
-        disordered_pymatgen: Boolean, whether to fall back on pymatgen's bond valence sum
-                             method for disordered structures
+        disordered_pymatgen: Boolean, whether to fall back on pymatgen's bond 
+            valence sum method for disordered structures
     Returns:
         gii: Float, global instability index
     '''
