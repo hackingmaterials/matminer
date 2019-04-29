@@ -3615,7 +3615,8 @@ class SOAP(BaseFeaturizer):
 
     
 class GlobalInstabilityIndex(BaseFeaturizer):
-    '''Will compute the global instability index of a structure.
+    '''
+    Will compute the global instability index of a structure.
     
     The default is to use IUCr 2016 bond valence parameters for computing 
     bond valence sums. If the structure has disordered site occupancies 
@@ -3625,6 +3626,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     Note that pymatgen's bond valence sum method is prone to error unless 
     the correct scale factor is supplied. A scale factor based on testing 
     with perovskites is used here.
+    TODO: Use scipy to optimize scale factor for minimizing GII
     
     Based on the following publication:
     
@@ -3639,8 +3641,6 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         r_cut: Float, how far to search for neighbors when computing bond valences
         disordered_pymatgen: Boolean, whether to fall back on pymatgen's bond 
             valence sum method for disordered structures
-    Returns:
-        gii: Float, global instability index
     '''
     
     def __init__(self, r_cut=4.0, disordered_pymatgen=False):
@@ -3655,28 +3655,38 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     
     def precheck(self, struct):
         """Bond valence methods require atom pairs with oxidation states.
-        
+
         Args:
             struct: Pymatgen Structure
         """
         anions = ["O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"]
+        # if structure lacks oxidation state information, fail precheck
+        if any(isinstance(site.species.elements[0], Element) for site in struct):
+            return False
         elems = [str(x.element) for x in struct.composition.elements]
-        check = any([e in anions for e in elems])
+
+        # If compound is not ionically bonded, it is going to fail
+        if not any([e in anions for e in elems]):
+            return False
         valences = [site.species.elements[0].oxi_state for site in struct]
+
+        # If the oxidation states are technically provided but 0, return false
         if min(valences) == 0:
-            check = False
-        
+            return False
+
         if len(struct) > 200:
             raise UserWarning("Computing bond valence sums for over 200 sites. "
                               "Might be slow")
-        return check
+        return True
     
     def featurize(self, struct):
         """
         Get global instability index.
         
         Args:
-        struct: Pymatgen Structure object
+            struct: Pymatgen Structure object
+        Returns:
+            [gii]: Length 1 list with float value
         """
         if not struct.is_ordered:
             if self.disordered_pymatgen:
@@ -3690,6 +3700,9 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 raise ValueError('Structure must be ordered for table lookup method.')
         
         gii = self.calc_gii_iucr(struct)
+        if gii > 0.6:
+            raise Exception("GII extremely large. Table parameters may "
+                            "not be suitable or structure may be unusual.")
         return [gii]
         
     def calc_gii_iucr(self, struct):
@@ -3728,9 +3741,6 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                         site_el, site_val, neighbor_el, neighbor_val))
             bond_valence_sums.append(bvs - site_val)
         gii = np.linalg.norm(bond_valence_sums) / np.sqrt(len(bond_valence_sums))
-        if gii > 0.6:
-            raise Exception("GII extremely large. Table parameters may "
-                            "not be suitable or structure may be unusual.")
         return gii
     
     def get_bv_params(self, cation, anion, cat_val, an_val):
