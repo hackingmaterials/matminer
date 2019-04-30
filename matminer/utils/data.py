@@ -435,7 +435,7 @@ class IUCrBondValenceData:
         Returns:
             bond_val_list: dataframe of bond valence parameters
         """
-        bond_val_list = self.params.loc[(bv_data['Atom1'] == str(cation)) \ 
+        bond_val_list = self.params.loc[(bv_data['Atom1'] == str(cation)) \
                                 & (bv_data['Atom1_valence'] == cat_val) \
                                 & (bv_data['Atom2'] == str(anion)) \
                                 & (bv_data['Atom2_valence'] == an_val)]
