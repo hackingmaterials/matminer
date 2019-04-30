@@ -3631,8 +3631,8 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     
     Based on the following publication:
     
-    "Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho, 
-        Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction", 
+    'Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho, 
+        Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction', 
         A.Salinas-Sanchez, J.L.Garcia-Muñoz, J.Rodriguez-Carvajal,
         R.Saez-Puche, and J.L.Martinez, Journal of Solid State Chemistry,
         100, 201-211 (1992),
@@ -3658,7 +3658,8 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         
     
     def precheck(self, struct):
-        """Bond valence methods require atom pairs with oxidation states.
+        """
+        Bond valence methods require atom pairs with oxidation states.
 
         Args:
             struct: Pymatgen Structure
@@ -3711,6 +3712,8 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         
     def calc_gii_iucr(self, struct):
         elements = [str(i) for i in struct.composition.element_composition.elements]
+        if elements[0] == elements[-1]:
+            raise ValueError("No oxidation states with single element.")
         bond_valence_sums = []
         cutoff = self.r_cut
         
@@ -3803,7 +3806,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     
     
     def implementors(self):
-        return ["Nicholas Wagner"]
+        return ["Nicholas Wagner", "Nenian Charles"]
 
     def citations(self):
         return ["@article{PhysRevB.87.184115,"
