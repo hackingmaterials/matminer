@@ -3615,7 +3615,7 @@ class SOAP(BaseFeaturizer):
 
     
 class GlobalInstabilityIndex(BaseFeaturizer):
-    '''
+    """
     Will compute the global instability index of a structure.
     
     The default is to use IUCr 2016 bond valence parameters for computing 
@@ -3641,12 +3641,21 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         r_cut: Float, how far to search for neighbors when computing bond valences
         disordered_pymatgen: Boolean, whether to fall back on pymatgen's bond 
             valence sum method for disordered structures
-    '''
+    
+    Features:
+        The global instability index is the square root of the sum of squared 
+            differences of the bond valence sums from the formal valences 
+            averaged over all atoms in the unit cell.
+    """
     
     def __init__(self, r_cut=4.0, disordered_pymatgen=False):
         
         basedir = os.path.dirname(os.path.realpath(__file__))
-        bv_path = os.path.join(basedir, "../utils/data_files/Bond_valences2016.csv")
+        bv_path = os.path.join(basedir, 
+                               "..", 
+                               "utils", 
+                               "data_files",
+                               "Bond_valences2016.csv")
         self.bv_values = pd.read_csv(bv_path)
         
         self.r_cut = r_cut
@@ -3799,3 +3808,18 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     
     def implementors(self):
         return ["Nicholas Wagner"]
+
+    def citations(self):
+        return ["@article{PhysRevB.87.184115,"
+                "title = {Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho," 
+                " Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction},"
+                "author = {Salinas-Sanchez, A. and Garcia-Muñoz, J.L. and Rodriguez-Carvajal, "
+                "J. and Saez-Puche, R. and Martinez, J.L.},"
+                "journal = {Journal of Solid State Chemistry},"
+                "volume = {100},"
+                "issue = {2},"
+                "pages = {201-211},"
+                "year = {1992},"
+                "doi = {10.1016/0022-4596(92)90094-C},"
+                "url = {https://doi.org/10.1016/0022-4596(92)90094-C}}",
+                ]
