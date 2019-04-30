@@ -38,6 +38,7 @@ from matminer.featurizers.utils.stats import PropertyStats
 from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
     CrystalGraphConvNetWrapper, CIFDataWrapper
 from matminer.utils.caching import get_all_nearest_neighbors
+from matminer.utils.data import IUCrBondValenceData
 
 # For the CGCNNFeaturizer
 try:
@@ -3650,14 +3651,8 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     
     def __init__(self, r_cut=4.0, disordered_pymatgen=False):
         
-        basedir = os.path.dirname(os.path.realpath(__file__))
-        bv_path = os.path.join(basedir, 
-                               "..", 
-                               "utils", 
-                               "data_files",
-                               "Bond_valences2016.csv")
-        self.bv_values = pd.read_csv(bv_path)
-        
+        bv = IUCrBondValenceData()
+        self.bv_values = bv.params
         self.r_cut = r_cut
         self.disordered_pymatgen = disordered_pymatgen
         
@@ -3699,7 +3694,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         """
         if not struct.is_ordered:
             if self.disordered_pymatgen:
-                gii = self.calc_gii_pymatgen(struct)
+                gii = self.calc_gii_pymatgen(struct, scale=0.965)
                 if gii > 0.6:
                     raise ValueError(
                         "GII extremely large. Pymatgen method may not be suitable "
@@ -3779,10 +3774,11 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         bv = np.exp((params['Ro']- dist)/params['B'])
         return bv
     
-    def calc_gii_pymatgen(self, struct):
+    def calc_gii_pymatgen(self, struct, scale_factor=0.965):
         """Calculates global instability index using Pymatgen's bond valence sum.
         Args:
             struct: Pymatgen Structure object
+            scale: Float, tunable scale factor for bond valence
         Returns:
             gii: Float, global instability index
         """
@@ -3791,13 +3787,13 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         if struct.is_ordered:
             for site in struct:
                 nn = struct.get_neighbors(site,r=cutoff)
-                bvs = bond_valence.calculate_bv_sum(site, nn, scale_factor=0.965)
+                bvs = bond_valence.calculate_bv_sum(site, nn, scale_factor=scale_factor)
                 deviations.append(bvs - site.species.elements[0].oxi_state)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
         else:
             for site in struct:
                 nn = struct.get_neighbors(site,r=cutoff)
-                bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=0.965)
+                bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=scale_factor)
                 min_diff = min(
                     [bvs - spec.oxi_state for spec in site.species.elements]
                 )
