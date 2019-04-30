@@ -3695,7 +3695,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         """
         if not struct.is_ordered:
             if self.disordered_pymatgen:
-                gii = self.calc_gii_pymatgen(struct, scale=0.965)
+                gii = self.calc_gii_pymatgen(struct, scale_factor=0.965)
                 if gii > 0.6:
                     raise ValueError(
                         "GII extremely large. Pymatgen method may not be suitable "
