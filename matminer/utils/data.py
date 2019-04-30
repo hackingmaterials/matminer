@@ -409,7 +409,7 @@ class IUCrBondValenceData:
     #***************************************************************
     """
     
-    def __init__(self, load_raw=False):
+    def __init__(self):
         # Load parameters as pandas dataframe
         filepath = os.path.join(
             module_dir,
