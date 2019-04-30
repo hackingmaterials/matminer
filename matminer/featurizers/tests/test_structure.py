@@ -862,7 +862,7 @@ class StructureFeaturesTest(PymatgenTest):
         df = soap.featurize_dataframe(df, "s", inplace=False)
         self.assertTupleEqual(df.shape, (3, 451))
         self.assertAlmostEqual(df["SOAP_449"].iloc[1], 0.005192, places=5)
-        
+
     def test_GlobalInstabilityIndex(self):
         # Test diamond and ni3al fail precheck
         gii = GlobalInstabilityIndex(r_cut=4.0, disordered_pymatgen=False)
