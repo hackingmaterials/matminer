@@ -383,7 +383,7 @@ class IUCrBondValenceData:
     (https://www.iucr.org/resources/data/datasets/bond-valence-parameters)
     Both the raw source CIF and cleaned csv file are made accessible here.
     Within the source CIF, there are citations for every set of parameters.
-    
+
     The copyright notice and disclaimer are reproduced below
     #***************************************************************
     # COPYRIGHT NOTICE
