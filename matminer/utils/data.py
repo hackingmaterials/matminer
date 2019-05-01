@@ -375,10 +375,10 @@ class MEGNetElementData(AbstractData):
             estr = self._dummy
         return self.all_element_data[estr][property_name]
 
-    
+
 class IUCrBondValenceData:
     """Get empirical bond valence parameters.
-    
+
     Data come from International Union of Crystallography 2016 tables.
     (https://www.iucr.org/resources/data/datasets/bond-valence-parameters)
     Both the raw source CIF and cleaned csv file are made accessible here.
@@ -408,7 +408,7 @@ class IUCrBondValenceData:
     #
     #***************************************************************
     """
-    
+
     def __init__(self):
         # Load parameters as pandas dataframe
         filepath = os.path.join(
