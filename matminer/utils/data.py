@@ -374,3 +374,71 @@ class MEGNetElementData(AbstractData):
         if estr not in self.all_element_data.keys():
             estr = self._dummy
         return self.all_element_data[estr][property_name]
+
+
+class IUCrBondValenceData:
+    """Get empirical bond valence parameters.
+
+    Data come from International Union of Crystallography 2016 tables.
+    (https://www.iucr.org/resources/data/datasets/bond-valence-parameters)
+    Both the raw source CIF and cleaned csv file are made accessible here.
+    Within the source CIF, there are citations for every set of parameters.
+
+    The copyright notice and disclaimer are reproduced below
+    #***************************************************************
+    # COPYRIGHT NOTICE
+    # This table may be used and distributed without fee for
+    # non-profit purposes providing
+    # 1) that this copyright notice is included and
+    # 2) no fee is charged for the table and
+    # 3) details of any changes made in this list by anyone other than
+    # the copyright owner are suitably noted in the _audit_update record
+    # Please consult the copyright owner regarding any other uses.
+    #
+    # The copyright is owned by I. David Brown, Brockhouse Institute for
+    # Materials Research, McMaster University, Hamilton, Ontario Canada.
+    # idbrown@mcmaster.ca
+    #
+    #*****************************DISCLAIMER************************
+    #
+    # The values reported here are taken from the literature and
+    # other sources and the author does not warrant their correctness
+    # nor accept any responsibility for errors.  Users are advised to
+    # consult the primary sources.
+    #
+    #***************************************************************
+    """
+
+    def __init__(self):
+        # Load parameters as pandas dataframe
+        filepath = os.path.join(
+            module_dir,
+            "data_files",
+            "bvparm2016.cif")
+        self.params = pd.read_csv(filepath, sep='\s+',
+                                  header=None,
+                                  names=['Atom1', 'Atom1_valence',
+                                         'Atom2', 'Atom2_valence',
+                                         'Ro', 'B',
+                                         'ref_id', 'details'],
+                                  skiprows=172,
+                                  skipfooter=1,
+                                  index_col=False)
+
+    def get_bv_params(self, cation, anion, cat_val, an_val):
+        """Lookup bond valence parameters from IUPAC table.
+        Args:
+            cation (Element): cation element
+            anion (Element): anion element
+            cat_val (Integer): cation formal oxidation state
+            an_val (Integer): anion formal oxidation state
+        Returns:
+            bond_val_list: dataframe of bond valence parameters
+        """
+        bond_val_list = self.params.loc[(bv_data['Atom1'] == str(cation)) \
+                                & (bv_data['Atom1_valence'] == cat_val) \
+                                & (bv_data['Atom2'] == str(anion)) \
+                                & (bv_data['Atom2_valence'] == an_val)]
+        return bond_val_list.iloc[0] # If multiple values exist, take first one
+                                     # as recommended for reliability.
+
