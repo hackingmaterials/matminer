@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>matminer.datasets package &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,6 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -65,12 +64,11 @@
 <dt id="matminer.datasets.convenience_loaders.load_boltztrap_mp">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_boltztrap_mp</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_boltztrap_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the boltztrap_mp dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -81,24 +79,22 @@
 <dt id="matminer.datasets.convenience_loaders.load_brgoch_superhard_training">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_brgoch_superhard_training</code><span class="sig-paren">(</span><em>subset='all'</em>, <em>drop_suspect=False</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_brgoch_superhard_training" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the expt_formation_enthalpy dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>subset (str): Identifier for subset of data to return,</dt>
-<dd><dl class="first docutils">
-<dt>all: all possible columns including metadata, engineered features,</dt>
-<dd>and basic descriptors</dd>
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>subset (str): Identifier for subset of data to return,</dt><dd><dl class="simple">
+<dt>all: all possible columns including metadata, engineered features,</dt><dd><p>and basic descriptors</p>
+</dd>
 </dl>
-<p class="last">brgoch_features: only features from reference paper and targets
+<p>brgoch_features: only features from reference paper and targets
 basic_descriptors: only composition/structure columns and targets</p>
 </dd>
-<dt>drop_suspect (bool): Whether to drop values with possibly incorrect </dt>
-<dd>elastic data and materials that could not be verified</dd>
+<dt>drop_suspect (bool): Whether to drop values with possibly incorrect </dt><dd><p>elastic data and materials that could not be verified</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -109,12 +105,11 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_castelli_perovskites">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_castelli_perovskites</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_castelli_perovskites" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the castelli_perovskites dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -125,16 +120,15 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_citrine_thermal_conductivity">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_citrine_thermal_conductivity</code><span class="sig-paren">(</span><em>room_temperature=True</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_citrine_thermal_conductivity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the citrine thermal conductivity dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>room_temperature (bool) Whether or not to only return items with room</dt>
-<dd>temperature k_condition. True by default.</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>room_temperature (bool) Whether or not to only return items with room</dt><dd><p>temperature k_condition. True by default.</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -145,16 +139,15 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_dielectric_constant">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_dielectric_constant</code><span class="sig-paren">(</span><em>include_metadata=False</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_dielectric_constant" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the dielectric_constant dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>include_metadata (bool): Whether or not to include the cif, meta,</dt>
-<dd>and poscar dataset columns. False by default.</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>include_metadata (bool): Whether or not to include the cif, meta,</dt><dd><p>and poscar dataset columns. False by default.</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -165,16 +158,15 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_double_perovskites_gap">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_double_perovskites_gap</code><span class="sig-paren">(</span><em>return_lumo=False</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_double_perovskites_gap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the double_perovskites_gap dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>return_lumo (bool) Whether or not to provide LUMO energy dataframe in</dt>
-<dd>addition to gap dataframe. Defaults to False.</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>return_lumo (bool) Whether or not to provide LUMO energy dataframe in</dt><dd><p>addition to gap dataframe. Defaults to False.</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -185,12 +177,11 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_double_perovskites_gap_lumo">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_double_perovskites_gap_lumo</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_double_perovskites_gap_lumo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the double_perovskites_gap_lumo dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -201,18 +192,17 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_elastic_tensor">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_elastic_tensor</code><span class="sig-paren">(</span><em>version='2015'</em>, <em>include_metadata=False</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_elastic_tensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the elastic_tensor dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>version (str): Version of the elastic_tensor dataset to load</dt>
-<dd>(defaults to 2015)</dd>
-<dt>include_metadata (bool): Whether or not to include the cif, meta,</dt>
-<dd>and poscar dataset columns. False by default.</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>version (str): Version of the elastic_tensor dataset to load</dt><dd><p>(defaults to 2015)</p>
+</dd>
+<dt>include_metadata (bool): Whether or not to include the cif, meta,</dt><dd><p>and poscar dataset columns. False by default.</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -223,12 +213,11 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_expt_formation_enthalpy">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_expt_formation_enthalpy</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_expt_formation_enthalpy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the expt_formation_enthalpy dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -239,12 +228,11 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_expt_gap">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_expt_gap</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_expt_gap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the expt_gap dataset.me</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -255,12 +243,11 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_flla">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_flla</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_flla" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the flla dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -271,16 +258,15 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_glass_binary">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_glass_binary</code><span class="sig-paren">(</span><em>version='v2'</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_glass_binary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the glass_binary dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>version (str): Version identifier for dataset, see dataset description</dt>
-<dd>for explanation of each. Defaults to v2</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>version (str): Version identifier for dataset, see dataset description</dt><dd><p>for explanation of each. Defaults to v2</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -291,16 +277,15 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_glass_ternary_hipt">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_glass_ternary_hipt</code><span class="sig-paren">(</span><em>system='all'</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_glass_ternary_hipt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the glass_ternary_hipt dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>system (str, list): return items only from the requested system(s)</dt>
-<dd>options are: “CoFeZr”, “CoTiZr”, “CoVZr”, “FeTiNb”</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>system (str, list): return items only from the requested system(s)</dt><dd><p>options are: “CoFeZr”, “CoTiZr”, “CoVZr”, “FeTiNb”</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -311,18 +296,17 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_glass_ternary_landolt">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_glass_ternary_landolt</code><span class="sig-paren">(</span><em>processing='all'</em>, <em>unique_composition=True</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_glass_ternary_landolt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the glass_ternary_landolt dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>processing (str): return only items with a specified processing method</dt>
-<dd>defaults to all, options are sputtering and meltspin</dd>
-<dt>unique_composition (bool): Whether or not to combine compositions with</dt>
-<dd>the same formula</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>processing (str): return only items with a specified processing method</dt><dd><p>defaults to all, options are sputtering and meltspin</p>
+</dd>
+<dt>unique_composition (bool): Whether or not to combine compositions with</dt><dd><p>the same formula</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -333,12 +317,11 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_heusler_magnetic">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_heusler_magnetic</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_heusler_magnetic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the heusler magnetic dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -349,14 +332,13 @@ basic_descriptors: only composition/structure columns and targets</p>
 <dt id="matminer.datasets.convenience_loaders.load_jarvis_dft_2d">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_jarvis_dft_2d</code><span class="sig-paren">(</span><em>drop_nan_columns=None</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_jarvis_dft_2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the jarvis dft 2d dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">drop_nan_columns (list, str): Column or columns to drop rows
+<dl>
+<dt>Args:</dt><dd><p>drop_nan_columns (list, str): Column or columns to drop rows
 containing NaN values from</p>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -367,14 +349,13 @@ containing NaN values from</p>
 <dt id="matminer.datasets.convenience_loaders.load_jarvis_dft_3d">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_jarvis_dft_3d</code><span class="sig-paren">(</span><em>drop_nan_columns=None</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_jarvis_dft_3d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the jarvis dft 3d dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">drop_nan_columns (list, str): Column or columns to drop rows
+<dl>
+<dt>Args:</dt><dd><p>drop_nan_columns (list, str): Column or columns to drop rows
 containing NaN values from</p>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -385,14 +366,13 @@ containing NaN values from</p>
 <dt id="matminer.datasets.convenience_loaders.load_jarvis_ml_dft_training">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_jarvis_ml_dft_training</code><span class="sig-paren">(</span><em>drop_nan_columns=None</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_jarvis_ml_dft_training" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the jarvis ml dft training dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">drop_nan_columns (list, str): Column or columns to drop rows
+<dl>
+<dt>Args:</dt><dd><p>drop_nan_columns (list, str): Column or columns to drop rows
 containing NaN values from</p>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -403,12 +383,11 @@ containing NaN values from</p>
 <dt id="matminer.datasets.convenience_loaders.load_m2ax">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_m2ax</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_m2ax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the m2ax dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -419,16 +398,15 @@ containing NaN values from</p>
 <dt id="matminer.datasets.convenience_loaders.load_mp">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_mp</code><span class="sig-paren">(</span><em>include_structures=False</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the materials project dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>include_structures (bool) Whether or not to load the full mp</dt>
-<dd>structure data. False by default.</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>include_structures (bool) Whether or not to load the full mp</dt><dd><p>structure data. False by default.</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -439,12 +417,11 @@ containing NaN values from</p>
 <dt id="matminer.datasets.convenience_loaders.load_phonon_dielectric_mp">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_phonon_dielectric_mp</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_phonon_dielectric_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the phonon_dielectric_mp dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -455,16 +432,15 @@ containing NaN values from</p>
 <dt id="matminer.datasets.convenience_loaders.load_piezoelectric_tensor">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_piezoelectric_tensor</code><span class="sig-paren">(</span><em>include_metadata=False</em>, <em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_piezoelectric_tensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the piezoelectric_tensor dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>include_metadata (bool): Whether or not to include the cif, meta,</dt>
-<dd>and poscar dataset columns. False by default.</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>include_metadata (bool): Whether or not to include the cif, meta,</dt><dd><p>and poscar dataset columns. False by default.</p>
+</dd>
 </dl>
 <p>data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -475,12 +451,11 @@ containing NaN values from</p>
 <dt id="matminer.datasets.convenience_loaders.load_steel_strength">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_steel_strength</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_steel_strength" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the steel strength dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -491,12 +466,11 @@ containing NaN values from</p>
 <dt id="matminer.datasets.convenience_loaders.load_wolverton_oxides">
 <code class="descclassname">matminer.datasets.convenience_loaders.</code><code class="descname">load_wolverton_oxides</code><span class="sig-paren">(</span><em>data_home=None</em>, <em>download_if_missing=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.convenience_loaders.load_wolverton_oxides" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for loading the wolverton oxides dataset.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_home (str, None): Where to look for and store the loaded dataset</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): Whether or not to download the dataset if</dt>
-<dd>it isn’t on disk</dd>
+<dl>
+<dt>Args:</dt><dd><p>data_home (str, None): Where to look for and store the loaded dataset</p>
+<dl class="simple">
+<dt>download_if_missing (bool): Whether or not to download the dataset if</dt><dd><p>it isn’t on disk</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -510,16 +484,14 @@ containing NaN values from</p>
 <dt id="matminer.datasets.dataset_retrieval.get_available_datasets">
 <code class="descclassname">matminer.datasets.dataset_retrieval.</code><code class="descname">get_available_datasets</code><span class="sig-paren">(</span><em>print_datasets=True</em>, <em>print_descriptions=True</em>, <em>sort_method='alphabetical'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_available_datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for retrieving the datasets available within matminer.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>print_datasets (bool): Whether to, along with returning a</dt>
-<dd>list of dataset names, also print info on each dataset</dd>
-<dt>print_descriptions (bool): Whether to print the description of the</dt>
-<dd>dataset along with the name. Ignored if print_datasets is False</dd>
-<dt>sort_method (str): By what metric to sort the datasets when retrieving</dt>
-<dd><p class="first">their information.</p>
-<p class="last">alphabetical: sorts by dataset name,
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>print_datasets (bool): Whether to, along with returning a</dt><dd><p>list of dataset names, also print info on each dataset</p>
+</dd>
+<dt>print_descriptions (bool): Whether to print the description of the</dt><dd><p>dataset along with the name. Ignored if print_datasets is False</p>
+</dd>
+<dt>sort_method (str): By what metric to sort the datasets when retrieving</dt><dd><p>their information.</p>
+<p>alphabetical: sorts by dataset name,
 num_entries: sorts by number of dataset entries</p>
 </dd>
 </dl>
@@ -532,10 +504,9 @@ num_entries: sorts by number of dataset entries</p>
 <dt id="matminer.datasets.dataset_retrieval.get_dataset_attribute">
 <code class="descclassname">matminer.datasets.dataset_retrieval.</code><code class="descname">get_dataset_attribute</code><span class="sig-paren">(</span><em>dataset_name</em>, <em>attrib_key</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_dataset_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for getting generic attributes of the dataset</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">dataset_name (str): Name of the dataset querying info from</p>
-<p class="last">attrib_key (str): Name of attribute to pull</p>
+<dl>
+<dt>Args:</dt><dd><p>dataset_name (str): Name of the dataset querying info from</p>
+<p>attrib_key (str): Name of attribute to pull</p>
 </dd>
 </dl>
 <p>Returns: Dataset attribute</p>
@@ -545,9 +516,9 @@ num_entries: sorts by number of dataset entries</p>
 <dt id="matminer.datasets.dataset_retrieval.get_dataset_citations">
 <code class="descclassname">matminer.datasets.dataset_retrieval.</code><code class="descname">get_dataset_citations</code><span class="sig-paren">(</span><em>dataset_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_dataset_citations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for getting dataset citations</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>dataset_name (str): name of the dataset being queried</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dataset_name (str): name of the dataset being queried</p>
+</dd>
 </dl>
 <p>Returns: (list)</p>
 </dd></dl>
@@ -556,10 +527,10 @@ num_entries: sorts by number of dataset entries</p>
 <dt id="matminer.datasets.dataset_retrieval.get_dataset_column_description">
 <code class="descclassname">matminer.datasets.dataset_retrieval.</code><code class="descname">get_dataset_column_description</code><span class="sig-paren">(</span><em>dataset_name</em>, <em>dataset_column</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_dataset_column_description" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for getting dataset column description</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>dataset_name (str): name of the dataset being queried
-dataset_column (str): name of the column to get description from</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dataset_name (str): name of the dataset being queried
+dataset_column (str): name of the column to get description from</p>
+</dd>
 </dl>
 <p>Returns: (str)</p>
 </dd></dl>
@@ -568,9 +539,9 @@ dataset_column (str): name of the column to get description from</dd>
 <dt id="matminer.datasets.dataset_retrieval.get_dataset_columns">
 <code class="descclassname">matminer.datasets.dataset_retrieval.</code><code class="descname">get_dataset_columns</code><span class="sig-paren">(</span><em>dataset_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_dataset_columns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for getting dataset column list</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>dataset_name (str): name of the dataset being queried</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dataset_name (str): name of the dataset being queried</p>
+</dd>
 </dl>
 <p>Returns: (list)</p>
 </dd></dl>
@@ -579,9 +550,9 @@ dataset_column (str): name of the column to get description from</dd>
 <dt id="matminer.datasets.dataset_retrieval.get_dataset_description">
 <code class="descclassname">matminer.datasets.dataset_retrieval.</code><code class="descname">get_dataset_description</code><span class="sig-paren">(</span><em>dataset_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_dataset_description" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for getting dataset description</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>dataset_name (str): name of the dataset being queried</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dataset_name (str): name of the dataset being queried</p>
+</dd>
 </dl>
 <p>Returns: (str)</p>
 </dd></dl>
@@ -590,9 +561,9 @@ dataset_column (str): name of the column to get description from</dd>
 <dt id="matminer.datasets.dataset_retrieval.get_dataset_num_entries">
 <code class="descclassname">matminer.datasets.dataset_retrieval.</code><code class="descname">get_dataset_num_entries</code><span class="sig-paren">(</span><em>dataset_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_dataset_num_entries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for getting dataset number of entries</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>dataset_name (str): name of the dataset being queried</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dataset_name (str): name of the dataset being queried</p>
+</dd>
 </dl>
 <p>Returns: (int)</p>
 </dd></dl>
@@ -601,9 +572,9 @@ dataset_column (str): name of the column to get description from</dd>
 <dt id="matminer.datasets.dataset_retrieval.get_dataset_reference">
 <code class="descclassname">matminer.datasets.dataset_retrieval.</code><code class="descname">get_dataset_reference</code><span class="sig-paren">(</span><em>dataset_name</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_dataset_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for getting dataset reference</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>dataset_name (str): name of the dataset being queried</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dataset_name (str): name of the dataset being queried</p>
+</dd>
 </dl>
 <p>Returns: (str)</p>
 </dd></dl>
@@ -615,20 +586,19 @@ dataset_column (str): name of the column to get description from</dd>
 <p>Dataset file is stored/loaded from data_home if specified, otherwise at
 the MATMINER_DATA environment variable if set or at matminer/datasets
 by default.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>name (str): keyword specifying what dataset to load, run</dt>
-<dd>matminer.datasets.get_available_datasets() for options</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>name (str): keyword specifying what dataset to load, run</dt><dd><p>matminer.datasets.get_available_datasets() for options</p>
+</dd>
 </dl>
 <p>data_home (str): path to folder to look for dataset file</p>
-<dl class="last docutils">
-<dt>download_if_missing (bool): whether to download the dataset if is not</dt>
-<dd>found on disk</dd>
+<dl class="simple">
+<dt>download_if_missing (bool): whether to download the dataset if is not</dt><dd><p>found on disk</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns: (pd.DataFrame,</dt>
-<dd>tuple -&gt; (pd.DataFrame, pd.DataFrame) if return_lumo = True)</dd>
+<dt>Returns: (pd.DataFrame,</dt><dd><p>tuple -&gt; (pd.DataFrame, pd.DataFrame) if return_lumo = True)</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -673,8 +643,6 @@ by default.</p>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -698,7 +666,7 @@ by default.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
 
   </body>
