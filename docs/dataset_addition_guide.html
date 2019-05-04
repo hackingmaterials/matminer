@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Guide to adding datasets to matminer &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,6 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -58,10 +57,10 @@ six primary steps:</p>
 <div class="section" id="fork-the-matminer-repository-on-github">
 <h2>1. Fork the matminer repository on GitHub<a class="headerlink" href="#fork-the-matminer-repository-on-github" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>The matminer code base, including the metadata that defines how matminer handles datasets,
-is available <a class="reference external" href="https://github.com/hackingmaterials/matminer">on GitHub.</a></li>
-<li>All editing should take place either within the dev_scripts/dataset_management
-folder or within matminer/datasets</li>
+<li><p>The matminer code base, including the metadata that defines how matminer handles datasets,
+is available <a class="reference external" href="https://github.com/hackingmaterials/matminer">on GitHub.</a></p></li>
+<li><p>All editing should take place either within the dev_scripts/dataset_management
+folder or within matminer/datasets</p></li>
 </ul>
 </div>
 <div class="section" id="prepare-the-dataset-for-long-term-hosting">
@@ -87,7 +86,7 @@ running it on their selected datasets.</p>
 <div class="section" id="to-update-the-script-to-preprocess-your-dataset">
 <h3><strong>To update the script to preprocess your dataset:</strong><a class="headerlink" href="#to-update-the-script-to-preprocess-your-dataset" title="Permalink to this headline">¶</a></h3>
 <ul>
-<li><p class="first">Write a preprocessor for the dataset in <code class="docutils literal notranslate"><span class="pre">prep_dataset_for_figshare.py</span></code></p>
+<li><p>Write a preprocessor for the dataset in <code class="docutils literal notranslate"><span class="pre">prep_dataset_for_figshare.py</span></code></p>
 <p>The preprocessor should take the dataset path, do any necessary
 preprocessing to turn it into a usable dataframe, and return a tuple
 of the form <code class="docutils literal notranslate"><span class="pre">(string_of_dataset_name,</span> <span class="pre">dataframe)</span></code>. If the preprocessor
@@ -119,7 +118,7 @@ passed on to the underlying pandas loading functions.</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Add the preprocessor function to a dictionary which maps file names to preprocessors in <code class="docutils literal notranslate"><span class="pre">prep_dataset_for_figshare.py</span></code></p>
+<li><p>Add the preprocessor function to a dictionary which maps file names to preprocessors in <code class="docutils literal notranslate"><span class="pre">prep_dataset_for_figshare.py</span></code></p>
 <p>The prep script identifies datasets by their file name, a dictionary
 called <code class="docutils literal notranslate"><span class="pre">_datasets_to_preprocessing_routines</span></code> maps these dataset names
 to their preprocessor and should be updated like so:</p>
@@ -147,9 +146,9 @@ or a comparable open access academic data hosting service. The Hacking Materials
 group maintains a collective Figshare account and follows the following procedure
 when adding a dataset. Other contributors should follow a similar protocol.</p>
 <ul class="simple">
-<li>Add the dataset compressed json file as well as the original file as an entry in the “matminer datasets” figshare project</li>
-<li>Fill out <strong>ALL</strong> metadata carefully, see existing entries for examples of expected quality of citations and descriptions.</li>
-<li>If the dataset was originally generated from a source outside the group the source should be thoroughly cited within the dataset description and metadata</li>
+<li><p>Add the dataset compressed json file as well as the original file as an entry in the “matminer datasets” figshare project</p></li>
+<li><p>Fill out <strong>ALL</strong> metadata carefully, see existing entries for examples of expected quality of citations and descriptions.</p></li>
+<li><p>If the dataset was originally generated from a source outside the group the source should be thoroughly cited within the dataset description and metadata</p></li>
 </ul>
 </div>
 <div class="section" id="update-the-matminer-dataset-metadata-file">
@@ -163,16 +162,14 @@ can be added manually, it is preferable to run the helper script
 <code class="docutils literal notranslate"><span class="pre">modify_dataset_metadata.py</span></code> to do the bulk of interfacing with this file
 to prevent missing data or formatting mistakes.</p>
 <ul>
-<li><p class="first">Run the <code class="docutils literal notranslate"><span class="pre">modify_dataset_metadata.py</span></code> file and add the appropriate
+<li><p>Run the <code class="docutils literal notranslate"><span class="pre">modify_dataset_metadata.py</span></code> file and add the appropriate
 metadata, see existing metadata as a guideline for new datasets.</p>
 <p>The url attribute should be filled with a figshare download link for
 the individual file on figshare. Other items will be dataset specific
 or included in the .txt file produced in step 2.</p>
 </li>
-<li><p class="first">Replace the metadata file in matminer/datasets with the newly generated file (should be done automatically)</p>
-</li>
-<li><p class="first">Look over the modified <code class="docutils literal notranslate"><span class="pre">dataset_metadata.json</span></code> file and fix mistakes if necessary.</p>
-</li>
+<li><p>Replace the metadata file in matminer/datasets with the newly generated file (should be done automatically)</p></li>
+<li><p>Look over the modified <code class="docutils literal notranslate"><span class="pre">dataset_metadata.json</span></code> file and fix mistakes if necessary.</p></li>
 </ul>
 </div>
 <div class="section" id="update-the-dataset-tests-and-loading-code">
@@ -185,7 +182,7 @@ These convenience functions provide additional post processing options for
 filtering or modifying data in the dataset after it has been loaded. A
 convenience function should be added alongside dataset tests.</p>
 <ul>
-<li><p class="first">Update dataset names saved in <cite>matminer/datasets/tests/base.py</cite></p>
+<li><p>Update dataset names saved in <cite>matminer/datasets/tests/base.py</cite></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DataSetTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset_names</span> <span class="o">=</span> <span class="p">[</span>
@@ -200,7 +197,7 @@ convenience function should be added alongside dataset tests.</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Write a test for loading the dataset in test_datasets.py.</p>
+<li><p>Write a test for loading the dataset in test_datasets.py.</p>
 <p>These tests ensure that the dataset is downloadable and that its data matches what
 is described in the file metadata. See prior datasets for examples and
 the .txt file from step 2 for column type info. A typical test consists of
@@ -230,7 +227,7 @@ if necessary.</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Write a convenience function for the dataset in <cite>convenience_loaders.py</cite></p>
+<li><p>Write a convenience function for the dataset in <cite>convenience_loaders.py</cite></p>
 <p>This can be as simple as just returning the results of load_dataset
 or provide the user with extra options to return only subsets
 of the dataset with certain properties.</p>
@@ -264,7 +261,7 @@ of the dataset with certain properties.</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Write a test for the added convenience function</p>
+<li><p>Write a test for the added convenience function</p>
 <p>These tests can be simple and will depend on the options provided in the
 convenience function. See existing tests for examples.</p>
 </li>
@@ -273,8 +270,8 @@ convenience function. See existing tests for examples.</p>
 <div class="section" id="make-a-pull-request-to-the-matminer-github-repository">
 <h2>6. Make a Pull Request to the matminer GitHub repository<a class="headerlink" href="#make-a-pull-request-to-the-matminer-github-repository" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Make a commit describing the added dataset</li>
-<li>Make a pull request from your fork to the primary repository</li>
+<li><p>Make a commit describing the added dataset</p></li>
+<li><p>Make a pull request from your fork to the primary repository</p></li>
 </ul>
 </div>
 </div>
@@ -314,8 +311,6 @@ convenience function. See existing tests for examples.</p>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -339,7 +334,7 @@ convenience function. See existing tests for examples.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
 
   </body>

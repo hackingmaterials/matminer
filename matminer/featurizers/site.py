@@ -62,22 +62,22 @@ with open(os.path.join(os.path.dirname(
 
 class AGNIFingerprints(BaseFeaturizer):
     """
-    Product integral of RDF and Gaussian window function, from Botu et al.
+    Product integral of RDF and Gaussian window function, from `Botu et al <http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908>`_.
 
     Integral of the product of the radial distribution function and a
-    Gaussian window function. Originally used by [Botu *et al*]
-    (http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908) to fit empiricial
+    Gaussian window function. Originally used by
+    `Botu et al <http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908>`_ to fit empiricial
     potentials. These features come in two forms: atomic fingerprints and
     direction-resolved fingerprints.
     Atomic fingerprints describe the local environment of an atom and are
     computed using the function:
-    :math:`A_i(\eta) = \sum\limits_{i \ne j} e^{-(\frac{r_{ij}}{\eta})^2} f(r_{ij})`
+    :math:`A_i(\eta) = \sum\limits_{i \\ne j} e^{-(\\frac{r_{ij}}{\eta})^2} f(r_{ij})`
     where :math:`i` is the index of the atom, :math:`j` is the index of a neighboring atom, :math:`\eta` is a scaling function,
     :math:`r_{ij}` is the distance between atoms :math:`i` and :math:`j`, and :math:`f(r)` is a cutoff function where
-    :math:`f(r) = 0.5[cos(\frac{\pi r_{ij}}{R_c}) + 1]` if :math:`r < R_c:math:` and 0 otherwise.
+    :math:`f(r) = 0.5[\cos(\\frac{\pi r_{ij}}{R_c}) + 1]` if :math:`r < R_c` and :math:`0` otherwise.
     The direction-resolved fingerprints are computed using
-    :math:`V_i^k(\eta) = \sum\limits_{i \ne j} \frac{r_{ij}^k}{r_{ij}} e^{-(\frac{r_{ij}}{\eta})^2} f(r_{ij})`
-    where :math:`r_{ij}^k` is the :math:`k^{th}` component of :math:`\bold{r}_i - \bold{r}_j`.
+    :math:`V_i^k(\eta) = \sum\limits_{i \\ne j} \\frac{r_{ij}^k}{r_{ij}} e^{-(\\frac{r_{ij}}{\eta})^2} f(r_{ij})`
+    where :math:`r_{ij}^k` is the :math:`k^{th}` component of :math:`\\bold{r}_i - \\bold{r}_j`.
     Parameters:
     TODO: Differentiate between different atom types (maybe as another class)
     """
@@ -1285,7 +1285,7 @@ class CoordinationNumber(BaseFeaturizer):
                 'none' - Do not use weights when computing coordination number
                 'sum' - Use sum of weights as the coordination number
                 'effective' - Compute the 'effective coordination number', which
-                    is computed as :math:`\frac{(\sum_n w_n)^2)}{\sum_n w_n^2}`
+                    is computed as :math:`\\frac{(\sum_n w_n)^2)}{\sum_n w_n^2}`
             """
         self.nn = nn or VoronoiNN()
         self.use_weights = use_weights
@@ -1676,7 +1676,7 @@ class LocalPropertyDifference(BaseFeaturizer):
     weight (:math:`A_n`) that corresponds to the area of the facet
     on the tessellation corresponding to that neighbor.
     The local property difference is then computed by
-    :math:`\frac{\sum_n {A_n |p_n - p_0|}}{\sum_n {A_n}}`
+    :math:`\\frac{\sum_n {A_n |p_n - p_0|}}{\sum_n {A_n}}`
     where :math:`p_n` is the property (e.g., atomic number) of a neighbor
     and :math:`p_0` is the property of a site. If signed parameter is assigned
     True, signed difference of the properties is returned instead of absolute
