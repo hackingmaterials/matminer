@@ -3649,12 +3649,12 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             averaged over all atoms in the unit cell.
     """
     
-    def __init__(self, r_cut=4.0, pmg_bv_sum=False):
+    def __init__(self, r_cut=4.0, disordered_pymatgen=False):
         
         bv = IUCrBondValenceData()
         self.bv_values = bv.params
         self.r_cut = r_cut
-        self.pmg_bv_sum = pmg_bv_sum
+        self.disordered_pymatgen = disordered_pymatgen
 
     def precheck(self, struct):
         """
@@ -3664,20 +3664,21 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             struct: Pymatgen Structure
         """
 
+        anions = [
+            "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
+        ]
+
         # if structure lacks oxidation state information, fail precheck
         if any(isinstance(site.species.elements[0], Element) for site in struct):
             return False
         elems = [str(x.element) for x in struct.composition.elements]
 
         # If compound is not ionically bonded, it is going to fail
-        anions = [
-            "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
-        ]
         if not any([e in anions for e in elems]):
             return False
         valences = [site.species.elements[0].oxi_state for site in struct]
 
-        # If any oxidation state returns 0, will fail
+        # If the oxidation states are technically provided but any are 0, fails
         if not all(valences):
             return False
 
@@ -3698,20 +3699,26 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             [gii]: Length 1 list with float value
         """
 
-        if self.pmg_bv_sum:
-            if not struct.is_ordered:
+        if struct.is_ordered:
+            gii = self.calc_gii_iucr(struct)
+            if gii > 0.6:
+                raise Exception("GII extremely large. Table parameters may "
+                                "not be suitable or structure may be unusual.")
+
+        else:
+            if self.disordered_pymatgen:
+                gii = self.calc_gii_pymatgen(struct, scale_factor=0.965)
+                if gii > 0.6:
+                    raise ValueError(
+                        "GII extremely large. Pymatgen method may not be "
+                        "suitable or structure may be unusual."
+                    )
+                return [gii]
+            else:
                 raise ValueError(
                     'Structure must be ordered for table lookup method.'
                 )
-            gii = self.calc_gii_pymatgen(struct)
-        else:
-            gii = self.calc_gii_iucr(struct)
 
-        if gii > 0.6:
-            raise ValueError(
-                "GII extremely large. Pymatgen method may not be suitable or "
-                "structure may be unusual."
-            )
         return [gii]
         
     def calc_gii_iucr(self, s):
