@@ -3649,17 +3649,13 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             averaged over all atoms in the unit cell.
     """
     
-    def __init__(self, r_cut=4.0, disordered_pymatgen=False):
+    def __init__(self, r_cut=4.0, pmg_bv_sum=False):
         
         bv = IUCrBondValenceData()
         self.bv_values = bv.params
         self.r_cut = r_cut
-        self.disordered_pymatgen = disordered_pymatgen
+        self.pmg_bv_sum = pmg_bv_sum
 
-        self.anions = [
-            "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
-        ]
-        
     def precheck(self, struct):
         """
         Bond valence methods require atom pairs with oxidation states.
@@ -3674,17 +3670,21 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         elems = [str(x.element) for x in struct.composition.elements]
 
         # If compound is not ionically bonded, it is going to fail
-        if not any([e in self.anions for e in elems]):
+        anions = [
+            "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
+        ]
+        if not any([e in anions for e in elems]):
             return False
         valences = [site.species.elements[0].oxi_state for site in struct]
 
-        # If the oxidation states are technically provided but 0, return false
-        if min(valences) == 0:
+        # If any oxidation state returns 0, will fail
+        if not all(valences):
             return False
 
         if len(struct) > 200:
             warnings.warn(
-                "Computing bond valence sums for over 200 sites. Might be slow"
+                "Computing bond valence sums for over 200 sites. "
+                "Featurization might be very slow!"
             )
         return True
     
@@ -3697,24 +3697,21 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         Returns:
             [gii]: Length 1 list with float value
         """
-        if not struct.is_ordered:
-            if self.disordered_pymatgen:
-                gii = self.calc_gii_pymatgen(struct, scale_factor=0.965)
-                if gii > 0.6:
-                    raise ValueError(
-                        "GII extremely large. Pymatgen method may not be "
-                        "suitable or structure may be unusual."
-                    )
-                return [gii]
-            else:
+
+        if self.pmg_bv_sum:
+            if not struct.is_ordered:
                 raise ValueError(
                     'Structure must be ordered for table lookup method.'
                 )
-        
-        gii = self.calc_gii_iucr(struct)
+            gii = self.calc_gii_pymatgen(struct)
+        else:
+            gii = self.calc_gii_iucr(struct)
+
         if gii > 0.6:
-            raise Exception("GII extremely large. Table parameters may "
-                            "not be suitable or structure may be unusual.")
+            raise ValueError(
+                "GII extremely large. Pymatgen method may not be suitable or "
+                "structure may be unusual."
+            )
         return [gii]
         
     def calc_gii_iucr(self, s):
@@ -3753,7 +3750,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                         bvs -= self.compute_bv(params, dist)
                 except:
                     raise ValueError(
-                        'BV parameters for {} with valence {} and {}{} not '
+                        'BV parameters for {} with valence {} and {} {} not '
                         'found in table'
                         ''.format(site_el, site_val, neighbor_el, neighbor_val))
             bond_valence_sums.append(bvs - site_val)
