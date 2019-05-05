@@ -3762,7 +3762,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                                                cat_val=site_val, 
                                                an_val=neighbor_val)
                         bvs += self.compute_bv(params, dist)
-                    if np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
+                    elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
                         params = self.get_bv_params(cation=neighbor_el,
                                                anion=site_el,
                                                cat_val=neighbor_val, 
