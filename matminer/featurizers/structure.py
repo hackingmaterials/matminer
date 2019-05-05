@@ -3660,11 +3660,18 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     def precheck(self, struct):
         """
         Bond valence methods require atom pairs with oxidation states.
+        
+        Additionally, check if at least the first and last site's species
+        have a entry in the bond valence parameters.
 
         Args:
             struct: Pymatgen Structure
         """
-        anions = ["O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"]
+
+        anions = [
+            "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
+        ]
+
         # if structure lacks oxidation state information, fail precheck
         if any(isinstance(site.species.elements[0], Element) for site in struct):
             return False
@@ -3675,13 +3682,31 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             return False
         valences = [site.species.elements[0].oxi_state for site in struct]
 
-        # If the oxidation states are technically provided but 0, return false
-        if min(valences) == 0:
+        # If the oxidation states are technically provided but any are 0, fails
+        if not all(valences):
             return False
 
         if len(struct) > 200:
-            raise UserWarning("Computing bond valence sums for over 200 sites. "
-                              "Might be slow")
+            warnings.warn(
+                "Computing bond valence sums for over 200 sites. "
+                "Featurization might be very slow!"
+            )
+        
+        # Check that all cation-anion pairs are tabulated
+        specs = struct.composition.elements.copy()
+        while len(specs) > 1:
+            spec1 = specs.pop()
+            elem1 = str(spec1.element)
+            val_1 = spec1.oxi_state
+            for spec2 in specs:
+                elem2 = str(spec2.element)
+                val_2 = spec2.oxi_state
+                if np.sign(val_1) == -1 and  np.sign(val_2) == 1:
+                    try:
+                        self.get_bv_params(elem2, elem1, val_2, val_1)
+                    except IndexError:
+                        return False
+
         return True
     
     def featurize(self, struct):
@@ -3710,44 +3735,47 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                             "not be suitable or structure may be unusual.")
         return [gii]
         
-    def calc_gii_iucr(self, struct):
-        elements = [str(i) for i in struct.composition.element_composition.elements]
+    def calc_gii_iucr(self, s):
+        elements = [str(i) for i in s.composition.element_composition.elements]
         if elements[0] == elements[-1]:
             raise ValueError("No oxidation states with single element.")
         bond_valence_sums = []
         cutoff = self.r_cut
         
         # for loop to calculate the BV sum on each site
-        for site in struct:
+        for site in s:
             site_val = site.species.elements[0].oxi_state
             site_el = str(site.species.element_composition.elements[0])
             bvs = 0
-            neighbors = struct.get_neighbors(site, r=cutoff)
-            for neighbor in neighbors:
-                neighbor_val = neighbor[0].species.elements[0].oxi_state
-                neighbor_el = str(neighbor[0].species.element_composition.elements[0])
+            neighbors = s.get_neighbors(site, r=cutoff)
+            for n in neighbors:
+                neighbor_val = n[0].species.elements[0].oxi_state
+                neighbor_el = str(n[0].species.element_composition.elements[0])
                 if neighbor_val % 1 != 0 or site_val % 1 != 0:
                     raise ValueError('Some sites have non-integer valences.')
-                dist = neighbor[1]
+                dist = n[1]
 
                 try:
-                    if site_el != elements[-1] and neighbor_el == elements[-1]:
+                    if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
                         params = self.get_bv_params(cation=site_el,
                                                anion=neighbor_el,
                                                cat_val=site_val, 
                                                an_val=neighbor_val)
                         bvs += self.compute_bv(params, dist)
-                    elif site_el == elements[-1] and neighbor_el != elements[-1]:
+                    if np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
                         params = self.get_bv_params(cation=neighbor_el,
                                                anion=site_el,
                                                cat_val=neighbor_val, 
                                                an_val=site_val)
                         bvs -= self.compute_bv(params, dist)
                 except:
-                    raise ValueError('BV parameters for {} with valence {} and {}{} not found in table'.format(
-                        site_el, site_val, neighbor_el, neighbor_val))
+                    raise ValueError(
+                        'BV parameters for {} with valence {} and {} {} not '
+                        'found in table'
+                        ''.format(site_el, site_val, neighbor_el, neighbor_val))
             bond_valence_sums.append(bvs - site_val)
-        gii = np.linalg.norm(bond_valence_sums) / np.sqrt(len(bond_valence_sums))
+        gii = np.linalg.norm(bond_valence_sums) / \
+              np.sqrt(len(bond_valence_sums))
         return gii
     
     def get_bv_params(self, cation, anion, cat_val, an_val):
