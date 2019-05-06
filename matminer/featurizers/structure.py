@@ -3617,7 +3617,7 @@ class SOAP(BaseFeaturizer):
     
 class GlobalInstabilityIndex(BaseFeaturizer):
     """
-    Will compute the global instability index of a structure.
+    The global instability index of a structure.
     
     The default is to use IUCr 2016 bond valence parameters for computing 
     bond valence sums. If the structure has disordered site occupancies 
@@ -3655,8 +3655,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         self.bv_values = bv.params
         self.r_cut = r_cut
         self.disordered_pymatgen = disordered_pymatgen
-        
-    
+
     def precheck(self, struct):
         """
         Bond valence methods require atom pairs with oxidation states.
@@ -3664,7 +3663,11 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         Args:
             struct: Pymatgen Structure
         """
-        anions = ["O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"]
+
+        anions = [
+            "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
+        ]
+
         # if structure lacks oxidation state information, fail precheck
         if any(isinstance(site.species.elements[0], Element) for site in struct):
             return False
@@ -3675,13 +3678,15 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             return False
         valences = [site.species.elements[0].oxi_state for site in struct]
 
-        # If the oxidation states are technically provided but 0, return false
-        if min(valences) == 0:
+        # If the oxidation states are technically provided but any are 0, fails
+        if not all(valences):
             return False
 
         if len(struct) > 200:
-            raise UserWarning("Computing bond valence sums for over 200 sites. "
-                              "Might be slow")
+            warnings.warn(
+                "Computing bond valence sums for over 200 sites. "
+                "Featurization might be very slow!"
+            )
         return True
     
     def featurize(self, struct):
@@ -3693,42 +3698,48 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         Returns:
             [gii]: Length 1 list with float value
         """
-        if not struct.is_ordered:
+
+        if struct.is_ordered:
+            gii = self.calc_gii_iucr(struct)
+            if gii > 0.6:
+                raise Exception("GII extremely large. Table parameters may "
+                                "not be suitable or structure may be unusual.")
+
+        else:
             if self.disordered_pymatgen:
                 gii = self.calc_gii_pymatgen(struct, scale_factor=0.965)
                 if gii > 0.6:
                     raise ValueError(
-                        "GII extremely large. Pymatgen method may not be suitable "
-                        "or structure may be unusual.")
+                        "GII extremely large. Pymatgen method may not be "
+                        "suitable or structure may be unusual."
+                    )
                 return [gii]
             else:
-                raise ValueError('Structure must be ordered for table lookup method.')
-        
-        gii = self.calc_gii_iucr(struct)
-        if gii > 0.6:
-            raise Exception("GII extremely large. Table parameters may "
-                            "not be suitable or structure may be unusual.")
+                raise ValueError(
+                    'Structure must be ordered for table lookup method.'
+                )
+
         return [gii]
         
-    def calc_gii_iucr(self, struct):
-        elements = [str(i) for i in struct.composition.element_composition.elements]
+    def calc_gii_iucr(self, s):
+        elements = [str(i) for i in s.composition.element_composition.elements]
         if elements[0] == elements[-1]:
             raise ValueError("No oxidation states with single element.")
         bond_valence_sums = []
         cutoff = self.r_cut
         
         # for loop to calculate the BV sum on each site
-        for site in struct:
+        for site in s:
             site_val = site.species.elements[0].oxi_state
             site_el = str(site.species.element_composition.elements[0])
             bvs = 0
-            neighbors = struct.get_neighbors(site, r=cutoff)
-            for neighbor in neighbors:
-                neighbor_val = neighbor[0].species.elements[0].oxi_state
-                neighbor_el = str(neighbor[0].species.element_composition.elements[0])
+            neighbors = s.get_neighbors(site, r=cutoff)
+            for n in neighbors:
+                neighbor_val = n[0].species.elements[0].oxi_state
+                neighbor_el = str(n[0].species.element_composition.elements[0])
                 if neighbor_val % 1 != 0 or site_val % 1 != 0:
                     raise ValueError('Some sites have non-integer valences.')
-                dist = neighbor[1]
+                dist = n[1]
 
                 try:
                     if site_el != elements[-1] and neighbor_el == elements[-1]:
@@ -3737,17 +3748,21 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                                                cat_val=site_val, 
                                                an_val=neighbor_val)
                         bvs += self.compute_bv(params, dist)
-                    elif site_el == elements[-1] and neighbor_el != elements[-1]:
+                    elif site_el == elements[-1] and \
+                            neighbor_el != elements[-1]:
                         params = self.get_bv_params(cation=neighbor_el,
                                                anion=site_el,
                                                cat_val=neighbor_val, 
                                                an_val=site_val)
                         bvs -= self.compute_bv(params, dist)
                 except:
-                    raise ValueError('BV parameters for {} with valence {} and {}{} not found in table'.format(
-                        site_el, site_val, neighbor_el, neighbor_val))
+                    raise ValueError(
+                        'BV parameters for {} with valence {} and {} {} not '
+                        'found in table'
+                        ''.format(site_el, site_val, neighbor_el, neighbor_val))
             bond_valence_sums.append(bvs - site_val)
-        gii = np.linalg.norm(bond_valence_sums) / np.sqrt(len(bond_valence_sums))
+        gii = np.linalg.norm(bond_valence_sums) / \
+              np.sqrt(len(bond_valence_sums))
         return gii
     
     def get_bv_params(self, cation, anion, cat_val, an_val):
@@ -3761,12 +3776,15 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             bond_val_list: dataframe of bond valence parameters
         """
         bv_data = self.bv_values
-        bond_val_list = bv_data[(bv_data['Atom1'] == cation) & (bv_data['Atom1_valence'] == cat_val)\
-                      & (bv_data['Atom2'] == anion) & (bv_data['Atom2_valence'] == an_val)]
-        return bond_val_list.iloc[0] # If multiple values exist, take first one
+        bond_val_list = bv_data[(bv_data['Atom1'] == cation) &
+                                (bv_data['Atom1_valence'] == cat_val) &
+                                (bv_data['Atom2'] == anion) &
+                                (bv_data['Atom2_valence'] == an_val)]
+        # If multiple values exist, take first one
+        return bond_val_list.iloc[0]
 
-
-    def compute_bv(self, params, dist):
+    @staticmethod
+    def compute_bv(params, dist):
         """Compute bond valence from parameters.
         Args:
             params: Dataframe with Ro and B parameters
@@ -3774,11 +3792,11 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         Returns:
             bv: Float, bond valence
         """
-        bv = np.exp((params['Ro']- dist)/params['B'])
+        bv = np.exp((params['Ro'] - dist)/params['B'])
         return bv
     
     def calc_gii_pymatgen(self, struct, scale_factor=0.965):
-        """Calculates global instability index using Pymatgen's bond valence sum.
+        """Calculates global instability index using Pymatgen's bond valence sum
         Args:
             struct: Pymatgen Structure object
             scale: Float, tunable scale factor for bond valence
@@ -3803,10 +3821,12 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 deviations.append(min_diff)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
         return gii
-    
-    
+
+    def feature_labels(self):
+        return ["global instability index"]
+
     def implementors(self):
-        return ["Nicholas Wagner", "Nenian Charles"]
+        return ["Nicholas Wagner", "Nenian Charles", "Alex Dunn"]
 
     def citations(self):
         return ["@article{PhysRevB.87.184115,"
