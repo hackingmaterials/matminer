@@ -34,7 +34,7 @@ if __name__ == "__main__":
         package_data={
             'matminer.datasets': ['*.json'],
             'matminer.featurizers': ["*.yaml"],
-            'matminer.utils.data_files': ['*.csv', '*.tsv', '*.json',
+            'matminer.utils.data_files': ['*.cif', '*.csv', '*.tsv', '*.json',
                                           'magpie_elementdata/*.table',
                                           'jarvis/*.json']},
         zip_safe=False,
