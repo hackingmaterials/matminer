@@ -2137,7 +2137,7 @@ class ChemicalOrdering(BaseFeaturizer):
     neighbor shells of each site. Then, for each shell a degree of order for
     each type is determined by computing:
 
-    :math:`\alpha (t,s) = 1 - \frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}`
+    :math:`\\alpha (t,s) = 1 - \\frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}`
 
     where :math:`w_n` is the weight associated with a certain neighbor,
     :math:`t_p` is the type of the neighbor, and :math:`x_t` is the fraction
@@ -3617,7 +3617,7 @@ class SOAP(BaseFeaturizer):
     
 class GlobalInstabilityIndex(BaseFeaturizer):
     """
-    Will compute the global instability index of a structure.
+    The global instability index of a structure.
     
     The default is to use IUCr 2016 bond valence parameters for computing 
     bond valence sums. If the structure has disordered site occupancies 
@@ -3655,8 +3655,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         self.bv_values = bv.params
         self.r_cut = r_cut
         self.disordered_pymatgen = disordered_pymatgen
-        
-    
+
     def precheck(self, struct):
         """
         Bond valence methods require atom pairs with oxidation states.
@@ -3706,7 +3705,6 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                         self.get_bv_params(elem2, elem1, val_2, val_1)
                     except IndexError:
                         return False
-
         return True
     
     def featurize(self, struct):
@@ -3718,21 +3716,27 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         Returns:
             [gii]: Length 1 list with float value
         """
-        if not struct.is_ordered:
+
+        if struct.is_ordered:
+            gii = self.calc_gii_iucr(struct)
+            if gii > 0.6:
+                raise Exception("GII extremely large. Table parameters may "
+                                "not be suitable or structure may be unusual.")
+
+        else:
             if self.disordered_pymatgen:
                 gii = self.calc_gii_pymatgen(struct, scale_factor=0.965)
                 if gii > 0.6:
                     raise ValueError(
-                        "GII extremely large. Pymatgen method may not be suitable "
-                        "or structure may be unusual.")
+                        "GII extremely large. Pymatgen method may not be "
+                        "suitable or structure may be unusual."
+                    )
                 return [gii]
             else:
-                raise ValueError('Structure must be ordered for table lookup method.')
-        
-        gii = self.calc_gii_iucr(struct)
-        if gii > 0.6:
-            raise Exception("GII extremely large. Table parameters may "
-                            "not be suitable or structure may be unusual.")
+                raise ValueError(
+                    'Structure must be ordered for table lookup method.'
+                )
+
         return [gii]
         
     def calc_gii_iucr(self, s):
@@ -3789,12 +3793,15 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             bond_val_list: dataframe of bond valence parameters
         """
         bv_data = self.bv_values
-        bond_val_list = bv_data[(bv_data['Atom1'] == cation) & (bv_data['Atom1_valence'] == cat_val)\
-                      & (bv_data['Atom2'] == anion) & (bv_data['Atom2_valence'] == an_val)]
-        return bond_val_list.iloc[0] # If multiple values exist, take first one
+        bond_val_list = bv_data[(bv_data['Atom1'] == cation) &
+                                (bv_data['Atom1_valence'] == cat_val) &
+                                (bv_data['Atom2'] == anion) &
+                                (bv_data['Atom2_valence'] == an_val)]
+        # If multiple values exist, take first one
+        return bond_val_list.iloc[0]
 
-
-    def compute_bv(self, params, dist):
+    @staticmethod
+    def compute_bv(params, dist):
         """Compute bond valence from parameters.
         Args:
             params: Dataframe with Ro and B parameters
@@ -3802,11 +3809,11 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         Returns:
             bv: Float, bond valence
         """
-        bv = np.exp((params['Ro']- dist)/params['B'])
+        bv = np.exp((params['Ro'] - dist)/params['B'])
         return bv
     
     def calc_gii_pymatgen(self, struct, scale_factor=0.965):
-        """Calculates global instability index using Pymatgen's bond valence sum.
+        """Calculates global instability index using Pymatgen's bond valence sum
         Args:
             struct: Pymatgen Structure object
             scale: Float, tunable scale factor for bond valence
@@ -3831,10 +3838,12 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 deviations.append(min_diff)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
         return gii
-    
-    
+
+    def feature_labels(self):
+        return ["global instability index"]
+
     def implementors(self):
-        return ["Nicholas Wagner", "Nenian Charles"]
+        return ["Nicholas Wagner", "Nenian Charles", "Alex Dunn"]
 
     def citations(self):
         return ["@article{PhysRevB.87.184115,"

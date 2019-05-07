@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>matminer.featurizers.tests package &#8212; matminer 0.5.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,6 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -79,11 +78,10 @@ refittability and different results based on different fits.</p>
 <dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.citations">
 <code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Citation(s) and reference(s) for this feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should be a string citation,</dt>
-<dd>ideally in BibTeX format.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -93,9 +91,9 @@ refittability and different results based on different fits.</p>
 <dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate attribute names.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>([str]) attribute labels.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -104,11 +102,11 @@ refittability and different results based on different fits.</p>
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main featurizer function, which has to be implemented
 in any derived featurizer subclass.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>x: input data to featurize (type depends on featurizer).</dd>
-<dt>Returns:</dt>
-<dd>(list) one or more features.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -116,11 +114,11 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**fit_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the parameters of this featurizer based on available data</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>X - [list of tuples], training data</dd>
-<dt>Returns:</dt>
-<dd>self</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X - [list of tuples], training data</p>
+</dd>
+<dt>Returns:</dt><dd><p>self</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -128,13 +126,12 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.tests.test_base.FittableFeaturizer.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.FittableFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should either be a string with author name (e.g.,</dt>
-<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
 keys like “email” or “institution” (e.g., {“name”: “Anubhav
-Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -150,11 +147,10 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dt id="matminer.featurizers.tests.test_base.MatrixFeaturizer.citations">
 <code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Citation(s) and reference(s) for this feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should be a string citation,</dt>
-<dd>ideally in BibTeX format.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -164,9 +160,9 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dt id="matminer.featurizers.tests.test_base.MatrixFeaturizer.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate attribute names.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>([str]) attribute labels.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -175,11 +171,11 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main featurizer function, which has to be implemented
 in any derived featurizer subclass.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>x: input data to featurize (type depends on featurizer).</dd>
-<dt>Returns:</dt>
-<dd>(list) one or more features.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -187,13 +183,12 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.tests.test_base.MatrixFeaturizer.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MatrixFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should either be a string with author name (e.g.,</dt>
-<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
 keys like “email” or “institution” (e.g., {“name”: “Anubhav
-Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -215,9 +210,9 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dt id="matminer.featurizers.tests.test_base.MultiArgs2.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiArgs2.feature_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate attribute names.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>([str]) attribute labels.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -226,11 +221,11 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiArgs2.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main featurizer function, which has to be implemented
 in any derived featurizer subclass.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>x: input data to featurize (type depends on featurizer).</dd>
-<dt>Returns:</dt>
-<dd>(list) one or more features.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -245,9 +240,9 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.tests.test_base.MultiTypeFeaturizer.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiTypeFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate attribute names.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>([str]) attribute labels.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -256,11 +251,11 @@ in any derived featurizer subclass.</p>
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultiTypeFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main featurizer function, which has to be implemented
 in any derived featurizer subclass.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>x: input data to featurize (type depends on featurizer).</dd>
-<dt>Returns:</dt>
-<dd>(list) one or more features.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -274,11 +269,10 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.citations">
 <code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Citation(s) and reference(s) for this feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should be a string citation,</dt>
-<dd>ideally in BibTeX format.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -288,9 +282,9 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate attribute names.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>([str]) attribute labels.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -299,11 +293,11 @@ in any derived featurizer subclass.</p>
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main featurizer function, which has to be implemented
 in any derived featurizer subclass.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>x: input data to featurize (type depends on featurizer).</dd>
-<dt>Returns:</dt>
-<dd>(list) one or more features.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -311,13 +305,12 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.MultipleFeatureFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should either be a string with author name (e.g.,</dt>
-<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
 keys like “email” or “institution” (e.g., {“name”: “Anubhav
-Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -333,11 +326,10 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dt id="matminer.featurizers.tests.test_base.SingleFeaturizer.citations">
 <code class="descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer.citations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Citation(s) and reference(s) for this feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should be a string citation,</dt>
-<dd>ideally in BibTeX format.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -347,9 +339,9 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dt id="matminer.featurizers.tests.test_base.SingleFeaturizer.feature_labels">
 <code class="descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer.feature_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate attribute names.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>([str]) attribute labels.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -358,11 +350,11 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main featurizer function, which has to be implemented
 in any derived featurizer subclass.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>x: input data to featurize (type depends on featurizer).</dd>
-<dt>Returns:</dt>
-<dd>(list) one or more features.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -370,13 +362,12 @@ in any derived featurizer subclass.</p>
 <dt id="matminer.featurizers.tests.test_base.SingleFeaturizer.implementors">
 <code class="descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizer.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(list) each element should either be a string with author name (e.g.,</dt>
-<dd>“Anubhav Jain”) or a dictionary  with required key “name” and other
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
 keys like “email” or “institution” (e.g., {“name”: “Anubhav
-Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</dd>
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -393,11 +384,11 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <code class="descname">featurize</code><span class="sig-paren">(</span><em>*x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_base.SingleFeaturizerMultiArgs.featurize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main featurizer function, which has to be implemented
 in any derived featurizer subclass.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>x: input data to featurize (type depends on featurizer).</dd>
-<dt>Returns:</dt>
-<dd>(list) one or more features.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -414,14 +405,13 @@ in any derived featurizer subclass.</p>
 for a single entry (e.g., a single composition). If the entry fails the
 precheck, it will most likely fail featurization; if it passes, it is
 likely (but not guaranteed) to featurize correctly.</p>
-<dl class="docutils">
-<dt>Prechecks should be:</dt>
-<dd><ul class="first last simple">
-<li>accurate (but can be good estimates rather than ground truth)</li>
-<li>fast to evaluate</li>
-<li><dl class="first docutils">
-<dt>unlikely to be obsolete via changes in the featurizer in the near</dt>
-<dd>future</dd>
+<dl class="simple">
+<dt>Prechecks should be:</dt><dd><ul class="simple">
+<li><p>accurate (but can be good estimates rather than ground truth)</p></li>
+<li><p>fast to evaluate</p></li>
+<li><dl class="simple">
+<dt>unlikely to be obsolete via changes in the featurizer in the near</dt><dd><p>future</p>
+</dd>
 </dl>
 </li>
 </ul>
@@ -432,15 +422,14 @@ use, as by default all entries will pass prechecking. Also, precheck
 is a good opportunity to throw warnings about long runtimes (e.g., doing
 nearest neighbors computations on a structure with many thousand sites).</p>
 <p>See the documentation for precheck_dataframe for more information.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>x (Composition, Structure, etc.): Input to-be-featurized. Can be</dt>
-<dd>a single input or multiple inputs.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>x (Composition, Structure, etc.): Input to-be-featurized. Can be</dt><dd><p>a single input or multiple inputs.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>(bool): True, if passes the precheck. False, if fails.</dd>
+<dt>Returns:</dt><dd><p>(bool): True, if passes the precheck. False, if fails.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -457,14 +446,13 @@ nearest neighbors computations on a structure with many thousand sites).</p>
 for a single entry (e.g., a single composition). If the entry fails the
 precheck, it will most likely fail featurization; if it passes, it is
 likely (but not guaranteed) to featurize correctly.</p>
-<dl class="docutils">
-<dt>Prechecks should be:</dt>
-<dd><ul class="first last simple">
-<li>accurate (but can be good estimates rather than ground truth)</li>
-<li>fast to evaluate</li>
-<li><dl class="first docutils">
-<dt>unlikely to be obsolete via changes in the featurizer in the near</dt>
-<dd>future</dd>
+<dl class="simple">
+<dt>Prechecks should be:</dt><dd><ul class="simple">
+<li><p>accurate (but can be good estimates rather than ground truth)</p></li>
+<li><p>fast to evaluate</p></li>
+<li><dl class="simple">
+<dt>unlikely to be obsolete via changes in the featurizer in the near</dt><dd><p>future</p>
+</dd>
 </dl>
 </li>
 </ul>
@@ -475,15 +463,14 @@ use, as by default all entries will pass prechecking. Also, precheck
 is a good opportunity to throw warnings about long runtimes (e.g., doing
 nearest neighbors computations on a structure with many thousand sites).</p>
 <p>See the documentation for precheck_dataframe for more information.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><a href="#id3"><span class="problematic" id="id4">*</span></a>x (Composition, Structure, etc.): Input to-be-featurized. Can be</dt>
-<dd>a single input or multiple inputs.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><a href="#id3"><span class="problematic" id="id4">*</span></a>x (Composition, Structure, etc.): Input to-be-featurized. Can be</dt><dd><p>a single input or multiple inputs.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>(bool): True, if passes the precheck. False, if fails.</dd>
+<dt>Returns:</dt><dd><p>(bool): True, if passes the precheck. False, if fails.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -996,6 +983,11 @@ with index==0</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="matminer.featurizers.tests.test_structure.StructureFeaturesTest.test_GlobalInstabilityIndex">
+<code class="descname">test_GlobalInstabilityIndex</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_structure.StructureFeaturesTest.test_GlobalInstabilityIndex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="matminer.featurizers.tests.test_structure.StructureFeaturesTest.test_SOAP">
 <code class="descname">test_SOAP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.tests.test_structure.StructureFeaturesTest.test_SOAP" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1161,8 +1153,6 @@ with index==0</p>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -1186,7 +1176,7 @@ with index==0</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
 
   </body>

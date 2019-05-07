@@ -423,7 +423,8 @@ class IUCrBondValenceData:
                                          'ref_id', 'details'],
                                   skiprows=172,
                                   skipfooter=1,
-                                  index_col=False)
+                                  index_col=False,
+                                  engine="python")
 
     def get_bv_params(self, cation, anion, cat_val, an_val):
         """Lookup bond valence parameters from IUPAC table.
@@ -435,6 +436,8 @@ class IUCrBondValenceData:
         Returns:
             bond_val_list: dataframe of bond valence parameters
         """
+
+        bv_data = self.params
         bond_val_list = self.params.loc[(bv_data['Atom1'] == str(cation)) \
                                 & (bv_data['Atom1_valence'] == cat_val) \
                                 & (bv_data['Atom2'] == str(anion)) \
