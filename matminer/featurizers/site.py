@@ -1689,7 +1689,7 @@ class LocalPropertyDifference(BaseFeaturizer):
             Voronoi tessellation
 
     References:
-         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.014107>`_
+         `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.024104>`_
     """
 
     def __init__(self, data_source=MagpieData(), weight='area',
