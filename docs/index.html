@@ -1,17 +1,18 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>matminer (Materials Data Mining) &#8212; matminer 0.5.5 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>matminer (Materials Data Mining) &#8212; matminer 0.5.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -27,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">matminer 0.5.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">matminer 0.5.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,10 +51,10 @@
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>Matminer makes it easy to:</p>
 <ul class="simple">
-<li><p><strong>obtain materials data from various sources</strong> into the <a class="reference external" href="https://pandas.pydata.org">pandas</a> data format. Through pandas, matminer enables professional-level data manipulation and analysis capabilities for materials data.</p></li>
-<li><p><strong>transform and featurize complex materials attributes into numerical descriptors for data mining.</strong> For example, matminer can turn a composition such as “Fe3O4” into arrays of numbers representing things like average electronegativity or difference in ionic radii of the substituent elements. Matminer also contains sophisticated crystal structure and site featurizers (e.g., obtaining the coordination number or local environment of atoms in the structure) as well as featurizers for complex materials data such as band structures and density of states. All of these various featurizers are available under a consistent interface, making it easy to try different types of materials descriptors for an analysis and to transform materials science objects into physically-relevant numbers for data mining. A full <a class="reference internal" href="featurizer_summary.html"><span class="doc">Table of Featurizers</span></a> is available.</p></li>
-<li><p><strong>perform data mining on materials</strong>. Although matminer itself does not contain implementations of machine learning algorithms, it makes it easy to prepare and transform data sets for use with standard data mining packages such as <a class="reference external" href="http://scikit-learn.org">scikit-learn</a>. See our examples for more details.</p></li>
-<li><p><strong>generate interactive plots</strong> through an interface to the <a class="reference external" href="https://plot.ly">plotly</a> visualization package.</p></li>
+<li><strong>obtain materials data from various sources</strong> into the <a class="reference external" href="https://pandas.pydata.org">pandas</a> data format. Through pandas, matminer enables professional-level data manipulation and analysis capabilities for materials data.</li>
+<li><strong>transform and featurize complex materials attributes into numerical descriptors for data mining.</strong> For example, matminer can turn a composition such as “Fe3O4” into arrays of numbers representing things like average electronegativity or difference in ionic radii of the substituent elements. Matminer also contains sophisticated crystal structure and site featurizers (e.g., obtaining the coordination number or local environment of atoms in the structure) as well as featurizers for complex materials data such as band structures and density of states. All of these various featurizers are available under a consistent interface, making it easy to try different types of materials descriptors for an analysis and to transform materials science objects into physically-relevant numbers for data mining. A full <a class="reference internal" href="featurizer_summary.html"><span class="doc">Table of Featurizers</span></a> is available.</li>
+<li><strong>perform data mining on materials</strong>. Although matminer itself does not contain implementations of machine learning algorithms, it makes it easy to prepare and transform data sets for use with standard data mining packages such as <a class="reference external" href="http://scikit-learn.org">scikit-learn</a>. See our examples for more details.</li>
+<li><strong>generate interactive plots</strong> through an interface to the <a class="reference external" href="https://plot.ly">plotly</a> visualization package.</li>
 </ul>
 <p>A general workflow and overview of matminer’s capabilities is presented below:</p>
 <div class="line-block">
@@ -75,7 +76,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.data_retrieval.retrieve_Citrine</span> <span class="kn">import</span> <span class="n">CitrineDataRetrieval</span>
 <span class="kn">from</span> <span class="nn">matminer.data_retrieval.retrieve_MP</span> <span class="kn">import</span> <span class="n">MPDataRetrieval</span>
 
-<span class="n">df_citrine</span> <span class="o">=</span> <span class="n">CitrineDataRetrieval</span><span class="p">()</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Si&#39;</span><span class="p">,</span> <span class="nb">property</span><span class="o">=</span><span class="s1">&#39;band gap&#39;</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;EXPERIMENTAL&#39;</span><span class="p">)</span>
+<span class="n">df_citrine</span> <span class="o">=</span> <span class="n">CitrineDataRetrieval</span><span class="p">()</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s1">&#39;Si&#39;</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;band_gap&#39;</span><span class="p">])</span>
 <span class="n">df_mp</span> <span class="o">=</span> <span class="n">MPDataRetrieval</span><span class="p">()</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s1">&#39;Si&#39;</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;band_gap&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -138,14 +139,14 @@ Check out an example code and figure generated with figrecipes:</p>
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>Check out some examples of how to use matminer!</p>
 <ol class="arabic simple" start="0">
-<li><p>Examples index. (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/index.ipynb">Jupyter Notebook</a>)</p></li>
-<li><p>Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/machine_learning-nb/bulk_modulus.ipynb">Jupyter Notebook</a>)</p></li>
-<li><p>Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/expt_vs_comp_bandgap.ipynb">Jupyter Notebook</a>)</p></li>
-<li><p>Compare and plot U-O bond lengths in various compounds from the MPDS (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/mpds.ipynb">Jupyter Notebook</a>)</p></li>
-<li><p>Retrieve data from various online materials repositories (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/data_retrieval_basics.ipynb">Jupyter Notebook</a>)</p></li>
-<li><p>Basic Visualization using FigRecipes (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/figrecipes-nb/figrecipes_basics.ipynb">Jupyter Notebook</a>)</p></li>
-<li><p>Advanced Visualization (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/figrecipes-nb/figrecipes_advanced.ipynb">Jupyter Notebook</a>)</p></li>
-<li><p>Many more examples! See the <a class="reference external" href="https://github.com/hackingmaterials/matminer_examples">matminer_examples</a> repo for details.</p></li>
+<li>Examples index. (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/index.ipynb">Jupyter Notebook</a>)</li>
+<li>Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/machine_learning-nb/bulk_modulus.ipynb">Jupyter Notebook</a>)</li>
+<li>Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/expt_vs_comp_bandgap.ipynb">Jupyter Notebook</a>)</li>
+<li>Compare and plot U-O bond lengths in various compounds from the MPDS (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/mpds.ipynb">Jupyter Notebook</a>)</li>
+<li>Retrieve data from various online materials repositories (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/data_retrieval_basics.ipynb">Jupyter Notebook</a>)</li>
+<li>Basic Visualization using FigRecipes (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/figrecipes-nb/figrecipes_basics.ipynb">Jupyter Notebook</a>)</li>
+<li>Advanced Visualization (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/figrecipes-nb/figrecipes_advanced.ipynb">Jupyter Notebook</a>)</li>
+<li>Many more examples! See the <a class="reference external" href="https://github.com/hackingmaterials/matminer_examples">matminer_examples</a> repo for details.</li>
 </ol>
 </div>
 <div class="section" id="citing-matminer">
@@ -159,8 +160,8 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 </div>
 <p>Matminer helps users apply methods and data sets developed by the community. Please also cite the original sources, as this will add clarity to your article and credit the original authors:</p>
 <ul class="simple">
-<li><p>If you use one or more <strong>data retrieval methods</strong>, check the code documentation on the relevant paper(s) to cite.</p></li>
-<li><p>If you use one or more <strong>featurizers</strong>, please take advantage of the <code class="docutils literal notranslate"><span class="pre">citations()</span></code> function present for every featurizer in matminer. This function will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.</p></li>
+<li>If you use one or more <strong>data retrieval methods</strong>, check the code documentation on the relevant paper(s) to cite.</li>
+<li>If you use one or more <strong>featurizers</strong>, please take advantage of the <code class="docutils literal notranslate"><span class="pre">citations()</span></code> function present for every featurizer in matminer. This function will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.</li>
 </ul>
 </div>
 <div class="section" id="changelog">
@@ -171,9 +172,9 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 <h2>Contributions and Support<a class="headerlink" href="#contributions-and-support" title="Permalink to this headline">¶</a></h2>
 <p>Want to see something added or changed? Here’s a few ways you can!</p>
 <ul class="simple">
-<li><p>Help us improve the documentation. Tell us where you got ‘stuck’ and improve the install process for everyone.</p></li>
-<li><p>Let us know about areas of the code that are difficult to understand or use.</p></li>
-<li><p>Contribute code! Fork our <a class="reference external" href="https://github.com/hackingmaterials/matminer">Github repo</a> and make a pull request.</p></li>
+<li>Help us improve the documentation. Tell us where you got ‘stuck’ and improve the install process for everyone.</li>
+<li>Let us know about areas of the code that are difficult to understand or use.</li>
+<li>Contribute code! Fork our <a class="reference external" href="https://github.com/hackingmaterials/matminer">Github repo</a> and make a pull request.</li>
 </ul>
 <p>Submit all questions and contact to the <a class="reference external" href="https://groups.google.com/forum/#!forum/matminer">Google group</a></p>
 <p>A comprehensive guide to contributions can be found <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/CONTRIBUTING.md">here.</a></p>
@@ -184,9 +185,9 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 <h1>Code documentation<a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
 <p>Autogenerated code documentation below:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
 </ul>
 </div>
 
@@ -207,7 +208,7 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 </ul>
 </li>
 <li><a class="reference internal" href="#data-descriptor-tools">Data descriptor tools</a><ul>
-<li><a class="reference internal" href="#decorate-the-dataframe-with-composition-structural-and-or-band-structure-descriptors-features">Decorate the dataframe with <span class="xref std std-doc">composition, structural, and/or band structure descriptors/features</span></a></li>
+<li><a class="reference internal" href="#decorate-the-dataframe-with-composition-structural-and-or-band-structure-descriptors-features">Decorate the dataframe with <code class="docutils literal notranslate"><span class="pre">composition,</span> <span class="pre">structural,</span> <span class="pre">and/or</span> <span class="pre">band</span> <span class="pre">structure</span> <span class="pre">descriptors/features</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#plotting-tools">Plotting tools</a><ul>
@@ -236,6 +237,8 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -253,13 +256,13 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">matminer 0.5.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">matminer 0.5.6 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
 
   </body>
