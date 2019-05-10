@@ -172,7 +172,7 @@ class RetrievalQuery(Query):
                 Note that this is similar to "limit" in pymongo.find.
         """
         # initializes query
-        query = RetrievalQuery(batch_size=request_size)
+        query = cls(batch_size=request_size)
 
         # adds filters to query
         query._add_filters(criteria)

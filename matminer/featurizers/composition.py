@@ -1445,7 +1445,7 @@ class YangSolidSolution(BaseFeaturizer):
     def compute_omega(self, comp):
         """Compute Yang's mixing thermodynamics descriptor
 
-        :math:`\frac{T_m \Delta S_{mix}}{ |  \Delta H_{mix} | }`
+        :math:`\\frac{T_m \Delta S_{mix}}{ |  \Delta H_{mix} | }`
 
         Where :math:`T_m` is average melting temperature,
         :math:`\Delta S_{mix}` is the ideal mixing entropy,
@@ -1486,10 +1486,10 @@ class YangSolidSolution(BaseFeaturizer):
     def compute_delta(self, comp):
         """Compute Yang's delta parameter
 
-        :math:`\sqrt{\sum^n_{i=1} c_i \left( 1 - \frac{r_i}{\bar{r}} \right)^2 }`
+        :math:`\sqrt{\sum^n_{i=1} c_i \left( 1 - \\frac{r_i}{\\bar{r}} \\right)^2 }`
 
         where :math:`c_i` and :math:`r_i` are the fraction and radius of
-        element :math:`i`, and :math:`\bar{r}` is the fraction-weighted
+        element :math:`i`, and :math:`\\bar{r}` is the fraction-weighted
         average of the radii. We use the radii compiled by
         .. Miracle et al. `https://www.tandfonline.com/doi/ref/10.1179/095066010X12646898728200?scroll=top`.
 
@@ -1507,7 +1507,7 @@ class YangSolidSolution(BaseFeaturizer):
                                                         "MiracleRadius")
         mean_r = PropertyStats.mean(radii, fractions)
 
-        # Compute the mean (1 - r/\bar{r})^2
+        # Compute the mean (1 - r/\\bar{r})^2
         r_dev = np.power(1.0 - np.divide(radii, mean_r), 2)
         return np.sqrt(PropertyStats.mean(r_dev, fractions))
 
@@ -1794,7 +1794,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         ratio for a certain :math:`n` and :math:`r` is the actual ratio.
 
         Args:
-            radius_ratio (float): math:`r / r_{neighbor}`
+            radius_ratio (float): :math:`r / r_{neighbor}`
         Returns:
             (int) number of neighboring atoms for that will be the most
             efficiently packed.

@@ -22,7 +22,7 @@ for val in extras_dict.values():
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.5.5',
+        version='0.5.6',
         description='matminer is a library that contains tools for data '
                     'mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         package_data={
             'matminer.datasets': ['*.json'],
             'matminer.featurizers': ["*.yaml"],
-            'matminer.utils.data_files': ['*.csv', '*.tsv', '*.json',
+            'matminer.utils.data_files': ['*.cif', '*.csv', '*.tsv', '*.json',
                                           'magpie_elementdata/*.table',
                                           'jarvis/*.json']},
         zip_safe=False,

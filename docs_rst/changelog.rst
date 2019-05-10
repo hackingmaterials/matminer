@@ -5,6 +5,15 @@
 matminer Changelog
 ==================
 
+**v0.5.6**
+
+* add Global Instability Index featurizer (N. Wagner)
+* fix Citrine code in docs (D. Nishikawa)
+* fix Bond Valence data (K. Muraoka)
+* fix MPDataRetrieval (A. Ganose)
+* update citation / implementor list for SOAP (A. Jain)
+* misc bug fixes (K. Muraoka, C. Legaspi)
+
 **v0.5.5**
 
 * Add a precheck() and precheck_dataframe() function that can be used to quickly see if a featurizer is likely to give NaN values (A. Dunn)

@@ -19,6 +19,7 @@ from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 from monty.dev import requires
 from pymatgen import Structure, Lattice
+from pymatgen.analysis import bond_valence
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
@@ -37,6 +38,7 @@ from matminer.featurizers.utils.stats import PropertyStats
 from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
     CrystalGraphConvNetWrapper, CIFDataWrapper
 from matminer.utils.caching import get_all_nearest_neighbors
+from matminer.utils.data import IUCrBondValenceData
 
 # For the CGCNNFeaturizer
 try:
@@ -2135,7 +2137,7 @@ class ChemicalOrdering(BaseFeaturizer):
     neighbor shells of each site. Then, for each shell a degree of order for
     each type is determined by computing:
 
-    :math:`\alpha (t,s) = 1 - \frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}`
+    :math:`\\alpha (t,s) = 1 - \\frac{\sum_n w_n \delta (t - t_n)}{x_t \sum_n w_n}`
 
     where :math:`w_n` is the weight associated with a certain neighbor,
     :math:`t_p` is the type of the neighbor, and :math:`x_t` is the fraction
@@ -3607,8 +3609,263 @@ class SOAP(BaseFeaturizer):
                 "pages = {13754-13769},"
                 "publisher = {The Royal Society of Chemistry},"
                 "doi = {10.1039/C6CP00415F},"
-                "url = {http://dx.doi.org/10.1039/C6CP00415F},}"]
+                "url = {http://dx.doi.org/10.1039/C6CP00415F},}",
+
+                "@article{himanen_dscribe:_2019,"
+                "title = {{DScribe}: {Library} of {Descriptors} for {Machine} {Learning} in {Materials} {Science}},"
+                "shorttitle = {{DScribe}},"
+                "url = {http://arxiv.org/abs/1904.08875},"
+                "urldate = {2019-04-24},"
+                "journal = {arXiv:1904.08875 [cond-mat]},"
+                "author = {Himanen, Lauri and J√§ger, Marc O. J. and Morooka, Eiaki V. and Canova, Filippo Federici and Ranawat, Yashasvi S. and Gao, David Z. and Rinke, Patrick and Foster, Adam S.},"
+                "month = apr,"
+                "year = {2019}}"]
 
     def implementors(self):
-        return ["Alex Dunn", "Lauri Himanen"]
+        return ["Lauri Himanen and dscribe team", "Alex Dunn"]
 
+    
+class GlobalInstabilityIndex(BaseFeaturizer):
+    """
+    The global instability index of a structure.
+    
+    The default is to use IUCr 2016 bond valence parameters for computing 
+    bond valence sums. If the structure has disordered site occupancies 
+    or non-integer valences on sites, pymatgen's bond valence sum method 
+    can be used instead. 
+    
+    Note that pymatgen's bond valence sum method is prone to error unless 
+    the correct scale factor is supplied. A scale factor based on testing 
+    with perovskites is used here.
+    TODO: Use scipy to optimize scale factor for minimizing GII
+    
+    Based on the following publication:
+    
+    'Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho, 
+        Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction', 
+        A.Salinas-Sanchez, J.L.Garcia-Muñoz, J.Rodriguez-Carvajal,
+        R.Saez-Puche, and J.L.Martinez, Journal of Solid State Chemistry,
+        100, 201-211 (1992),
+        https://doi.org/10.1016/0022-4596(92)90094-C
+        
+    Args:
+        r_cut: Float, how far to search for neighbors when computing bond valences
+        disordered_pymatgen: Boolean, whether to fall back on pymatgen's bond 
+            valence sum method for disordered structures
+    
+    Features:
+        The global instability index is the square root of the sum of squared 
+            differences of the bond valence sums from the formal valences 
+            averaged over all atoms in the unit cell.
+    """
+    
+    def __init__(self, r_cut=4.0, disordered_pymatgen=False):
+        
+        bv = IUCrBondValenceData()
+        self.bv_values = bv.params
+        self.r_cut = r_cut
+        self.disordered_pymatgen = disordered_pymatgen
+
+    def precheck(self, struct):
+        """
+        Bond valence methods require atom pairs with oxidation states.
+        
+        Additionally, check if at least the first and last site's species
+        have a entry in the bond valence parameters.
+
+        Args:
+            struct: Pymatgen Structure
+        """
+
+        anions = [
+            "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
+        ]
+
+        # if structure lacks oxidation state information, fail precheck
+        if any(isinstance(site.species.elements[0], Element) for site in struct):
+            return False
+        elems = [str(x.element) for x in struct.composition.elements]
+
+        # If compound is not ionically bonded, it is going to fail
+        if not any([e in anions for e in elems]):
+            return False
+        valences = [site.species.elements[0].oxi_state for site in struct]
+
+        # If the oxidation states are technically provided but any are 0, fails
+        if not all(valences):
+            return False
+
+        if len(struct) > 200:
+            warnings.warn(
+                "Computing bond valence sums for over 200 sites. "
+                "Featurization might be very slow!"
+            )
+        
+        # Check that all cation-anion pairs are tabulated
+        specs = struct.composition.elements.copy()
+        while len(specs) > 1:
+            spec1 = specs.pop()
+            elem1 = str(spec1.element)
+            val_1 = spec1.oxi_state
+            for spec2 in specs:
+                elem2 = str(spec2.element)
+                val_2 = spec2.oxi_state
+                if np.sign(val_1) == -1 and  np.sign(val_2) == 1:
+                    try:
+                        self.get_bv_params(elem2, elem1, val_2, val_1)
+                    except IndexError:
+                        return False
+        return True
+    
+    def featurize(self, struct):
+        """
+        Get global instability index.
+        
+        Args:
+            struct: Pymatgen Structure object
+        Returns:
+            [gii]: Length 1 list with float value
+        """
+
+        if struct.is_ordered:
+            gii = self.calc_gii_iucr(struct)
+            if gii > 0.6:
+                raise Exception("GII extremely large. Table parameters may "
+                                "not be suitable or structure may be unusual.")
+
+        else:
+            if self.disordered_pymatgen:
+                gii = self.calc_gii_pymatgen(struct, scale_factor=0.965)
+                if gii > 0.6:
+                    raise ValueError(
+                        "GII extremely large. Pymatgen method may not be "
+                        "suitable or structure may be unusual."
+                    )
+                return [gii]
+            else:
+                raise ValueError(
+                    'Structure must be ordered for table lookup method.'
+                )
+
+        return [gii]
+        
+    def calc_gii_iucr(self, s):
+        elements = [str(i) for i in s.composition.element_composition.elements]
+        if elements[0] == elements[-1]:
+            raise ValueError("No oxidation states with single element.")
+        bond_valence_sums = []
+        cutoff = self.r_cut
+        
+        # for loop to calculate the BV sum on each site
+        for site in s:
+            site_val = site.species.elements[0].oxi_state
+            site_el = str(site.species.element_composition.elements[0])
+            bvs = 0
+            neighbors = s.get_neighbors(site, r=cutoff)
+            for n in neighbors:
+                neighbor_val = n[0].species.elements[0].oxi_state
+                neighbor_el = str(n[0].species.element_composition.elements[0])
+                if neighbor_val % 1 != 0 or site_val % 1 != 0:
+                    raise ValueError('Some sites have non-integer valences.')
+                dist = n[1]
+
+                try:
+                    if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
+                        params = self.get_bv_params(cation=site_el,
+                                               anion=neighbor_el,
+                                               cat_val=site_val, 
+                                               an_val=neighbor_val)
+                        bvs += self.compute_bv(params, dist)
+                    elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
+                        params = self.get_bv_params(cation=neighbor_el,
+                                               anion=site_el,
+                                               cat_val=neighbor_val, 
+                                               an_val=site_val)
+                        bvs -= self.compute_bv(params, dist)
+                except:
+                    raise ValueError(
+                        'BV parameters for {} with valence {} and {} {} not '
+                        'found in table'
+                        ''.format(site_el, site_val, neighbor_el, neighbor_val))
+            bond_valence_sums.append(bvs - site_val)
+        gii = np.linalg.norm(bond_valence_sums) / \
+              np.sqrt(len(bond_valence_sums))
+        return gii
+    
+    def get_bv_params(self, cation, anion, cat_val, an_val):
+        """Lookup bond valence parameters from IUPAC table.
+        Args:
+            cation: String, cation element
+            anion: String, anion element
+            cat_val: Integer, cation formal valence
+            an_val: Integer, anion formal valence
+        Returns:
+            bond_val_list: dataframe of bond valence parameters
+        """
+        bv_data = self.bv_values
+        bond_val_list = bv_data[(bv_data['Atom1'] == cation) &
+                                (bv_data['Atom1_valence'] == cat_val) &
+                                (bv_data['Atom2'] == anion) &
+                                (bv_data['Atom2_valence'] == an_val)]
+        # If multiple values exist, take first one
+        return bond_val_list.iloc[0]
+
+    @staticmethod
+    def compute_bv(params, dist):
+        """Compute bond valence from parameters.
+        Args:
+            params: Dataframe with Ro and B parameters
+            dist: Float, distance to neighboring atom
+        Returns:
+            bv: Float, bond valence
+        """
+        bv = np.exp((params['Ro'] - dist)/params['B'])
+        return bv
+    
+    def calc_gii_pymatgen(self, struct, scale_factor=0.965):
+        """Calculates global instability index using Pymatgen's bond valence sum
+        Args:
+            struct: Pymatgen Structure object
+            scale: Float, tunable scale factor for bond valence
+        Returns:
+            gii: Float, global instability index
+        """
+        deviations = []
+        cutoff=self.r_cut
+        if struct.is_ordered:
+            for site in struct:
+                nn = struct.get_neighbors(site,r=cutoff)
+                bvs = bond_valence.calculate_bv_sum(site, nn, scale_factor=scale_factor)
+                deviations.append(bvs - site.species.elements[0].oxi_state)
+            gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
+        else:
+            for site in struct:
+                nn = struct.get_neighbors(site,r=cutoff)
+                bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=scale_factor)
+                min_diff = min(
+                    [bvs - spec.oxi_state for spec in site.species.elements]
+                )
+                deviations.append(min_diff)
+            gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
+        return gii
+
+    def feature_labels(self):
+        return ["global instability index"]
+
+    def implementors(self):
+        return ["Nicholas Wagner", "Nenian Charles", "Alex Dunn"]
+
+    def citations(self):
+        return ["@article{PhysRevB.87.184115,"
+                "title = {Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho," 
+                " Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction},"
+                "author = {Salinas-Sanchez, A. and Garcia-Muñoz, J.L. and Rodriguez-Carvajal, "
+                "J. and Saez-Puche, R. and Martinez, J.L.},"
+                "journal = {Journal of Solid State Chemistry},"
+                "volume = {100},"
+                "issue = {2},"
+                "pages = {201-211},"
+                "year = {1992},"
+                "doi = {10.1016/0022-4596(92)90094-C},"
+                "url = {https://doi.org/10.1016/0022-4596(92)90094-C}}",
+                ]
