@@ -2801,7 +2801,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
         """
 
         if self._optimizer_name == 'SGD':
-            sgd_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.Adam)
+            sgd_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.SGD)
             optimizer = optim.SGD(model.parameters(), **sgd_kwargs)
         elif self._optimizer_name == 'Adam':
             adam_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.Adam)
