@@ -3609,10 +3609,20 @@ class SOAP(BaseFeaturizer):
                 "pages = {13754-13769},"
                 "publisher = {The Royal Society of Chemistry},"
                 "doi = {10.1039/C6CP00415F},"
-                "url = {http://dx.doi.org/10.1039/C6CP00415F},}"]
+                "url = {http://dx.doi.org/10.1039/C6CP00415F},}",
+
+                "@article{himanen_dscribe:_2019,"
+                "title = {{DScribe}: {Library} of {Descriptors} for {Machine} {Learning} in {Materials} {Science}},"
+                "shorttitle = {{DScribe}},"
+                "url = {http://arxiv.org/abs/1904.08875},"
+                "urldate = {2019-04-24},"
+                "journal = {arXiv:1904.08875 [cond-mat]},"
+                "author = {Himanen, Lauri and J√§ger, Marc O. J. and Morooka, Eiaki V. and Canova, Filippo Federici and Ranawat, Yashasvi S. and Gao, David Z. and Rinke, Patrick and Foster, Adam S.},"
+                "month = apr,"
+                "year = {2019}}"]
 
     def implementors(self):
-        return ["Alex Dunn", "Lauri Himanen"]
+        return ["Lauri Himanen and dscribe team", "Alex Dunn"]
 
     
 class GlobalInstabilityIndex(BaseFeaturizer):
