@@ -1123,7 +1123,8 @@ class Miedema(BaseFeaturizer):
         Returns:
             (bool): If True, s passed the precheck; otherwise, it failed.
         """
-        return all([e in self.element_list for e in c.elements])
+        return all([e in self.element_list
+                    for e in c.element_composition.elements])
 
     def deltaH_chem(self, elements, fracs, struct):
         """
@@ -1450,7 +1451,8 @@ class YangSolidSolution(BaseFeaturizer):
         Returns:
             (bool): If True, s passed the precheck; otherwise, it failed.
         """
-        return all([e in self.dhf_mix.valid_element_list for e in c.elements])
+        return all([e in self.dhf_mix.valid_element_list
+                    for e in c.element_composition.elements])
 
     def featurize(self, comp):
         return [self.compute_omega(comp), self.compute_delta(comp)]
