@@ -198,14 +198,14 @@ class CompositionFeaturesTest(PymatgenTest):
                                            Composition("Mg10Cu50Ca40"),
                                            Composition("Fe2O3")]})
         miedema = Miedema(struct_types='all')
-        self.assertFalse(miedema.precheck(df["composition"].iloc[0]))
+        self.assertTrue(miedema.precheck(df["composition"].iloc[0]))
         self.assertFalse(miedema.precheck(df["composition"].iloc[-1]))
         self.assertAlmostEqual(miedema.precheck_dataframe(df, "composition"), 2 / 3)
 
         # test precheck for oxidation-state decorated compositions
         df = CompositionToOxidComposition(return_original_on_error=True).\
             featurize_dataframe(df, 'composition')
-        self.assertFalse(miedema.precheck(df["composition_oxid"].iloc[0]))
+        self.assertTrue(miedema.precheck(df["composition_oxid"].iloc[0]))
         self.assertFalse(miedema.precheck(df["composition_oxid"].iloc[-1]))
         self.assertAlmostEqual(miedema.precheck_dataframe(df, "composition_oxid"), 2 / 3)
 
