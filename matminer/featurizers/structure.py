@@ -2803,7 +2803,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
         """
 
         if self._optimizer_name == 'SGD':
-            sgd_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.Adam)
+            sgd_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.SGD)
             optimizer = optim.SGD(model.parameters(), **sgd_kwargs)
         elif self._optimizer_name == 'Adam':
             adam_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.Adam)
@@ -3609,10 +3609,20 @@ class SOAP(BaseFeaturizer):
                 "pages = {13754-13769},"
                 "publisher = {The Royal Society of Chemistry},"
                 "doi = {10.1039/C6CP00415F},"
-                "url = {http://dx.doi.org/10.1039/C6CP00415F},}"]
+                "url = {http://dx.doi.org/10.1039/C6CP00415F},}",
+
+                "@article{himanen_dscribe:_2019,"
+                "title = {{DScribe}: {Library} of {Descriptors} for {Machine} {Learning} in {Materials} {Science}},"
+                "shorttitle = {{DScribe}},"
+                "url = {http://arxiv.org/abs/1904.08875},"
+                "urldate = {2019-04-24},"
+                "journal = {arXiv:1904.08875 [cond-mat]},"
+                "author = {Himanen, Lauri and J√§ger, Marc O. J. and Morooka, Eiaki V. and Canova, Filippo Federici and Ranawat, Yashasvi S. and Gao, David Z. and Rinke, Patrick and Foster, Adam S.},"
+                "month = apr,"
+                "year = {2019}}"]
 
     def implementors(self):
-        return ["Alex Dunn", "Lauri Himanen"]
+        return ["Lauri Himanen and dscribe team", "Alex Dunn"]
 
     
 class GlobalInstabilityIndex(BaseFeaturizer):
@@ -3659,6 +3669,9 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     def precheck(self, struct):
         """
         Bond valence methods require atom pairs with oxidation states.
+        
+        Additionally, check if at least the first and last site's species
+        have a entry in the bond valence parameters.
 
         Args:
             struct: Pymatgen Structure
@@ -3687,6 +3700,21 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 "Computing bond valence sums for over 200 sites. "
                 "Featurization might be very slow!"
             )
+        
+        # Check that all cation-anion pairs are tabulated
+        specs = struct.composition.elements.copy()
+        while len(specs) > 1:
+            spec1 = specs.pop()
+            elem1 = str(spec1.element)
+            val_1 = spec1.oxi_state
+            for spec2 in specs:
+                elem2 = str(spec2.element)
+                val_2 = spec2.oxi_state
+                if np.sign(val_1) == -1 and  np.sign(val_2) == 1:
+                    try:
+                        self.get_bv_params(elem2, elem1, val_2, val_1)
+                    except IndexError:
+                        return False
         return True
     
     def featurize(self, struct):
@@ -3742,14 +3770,13 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 dist = n[1]
 
                 try:
-                    if site_el != elements[-1] and neighbor_el == elements[-1]:
+                    if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
                         params = self.get_bv_params(cation=site_el,
                                                anion=neighbor_el,
                                                cat_val=site_val, 
                                                an_val=neighbor_val)
                         bvs += self.compute_bv(params, dist)
-                    elif site_el == elements[-1] and \
-                            neighbor_el != elements[-1]:
+                    elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
                         params = self.get_bv_params(cation=neighbor_el,
                                                anion=site_el,
                                                cat_val=neighbor_val, 
