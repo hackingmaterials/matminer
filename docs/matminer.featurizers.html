@@ -614,7 +614,7 @@ likely (but not guaranteed) to featurize correctly.</p>
 <dt>Prechecks should be:</dt>
 <dd><ul class="first last simple">
 <li>accurate (but can be good estimates rather than ground truth)</li>
-<li>fast to evaluate</li>
+<li>robust to evaluate</li>
 <li><dl class="first docutils">
 <dt>unlikely to be obsolete via changes in the featurizer in the near</dt>
 <dd>future</dd>
@@ -1750,12 +1750,12 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.composition.IonProperty">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">IonProperty</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.utils.data.PymatgenData object&gt;</em>, <em>fast=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.IonProperty" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">IonProperty</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.utils.data.PymatgenData object&gt;</em>, <em>robust=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.IonProperty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Ionic property attributes. Similar to ElementProperty.</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.IonProperty.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.utils.data.PymatgenData object&gt;</em>, <em>fast=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.IonProperty.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_source=&lt;matminer.utils.data.PymatgenData object&gt;</em>, <em>robust=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.IonProperty.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Args:</dt>
 <dd><blockquote class="first">
@@ -1765,7 +1765,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dl>
 </div></blockquote>
 <dl class="last docutils">
-<dt>fast - (boolean) whether to assume elements exist in a single oxidation state,</dt>
+<dt>robust - (boolean) whether to assume elements exist in a single oxidation state,</dt>
 <dd>which can dramatically accelerate the calculation of whether an ionic compound
 is possible, but will miss heterovalent compounds like Fe3O4.</dd>
 </dl>
@@ -7798,7 +7798,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>Smooth overlap of atomic positions (interface via dscribe).</p>
 <p>The smooth overlap of atomic positions descriptors provided by dscribe and
 SOAPLite. This implementation uses orthogonalized spherical primitive
-gaussian-type orbitals as the radial basis set to reach a fast analytical
+gaussian-type orbitals as the radial basis set to reach a robust analytical
 solution. Please see the dscribe SOAP documentation for more details.</p>
 <p>Based originally on the following publications:</p>
 <dl class="docutils">
