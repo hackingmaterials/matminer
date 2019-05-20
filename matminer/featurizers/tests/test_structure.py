@@ -26,7 +26,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
     Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID, \
-    SOAP
+    SOAP, GlobalInstabilityIndex
 
 # For the CGCNNFeaturizer
 try:
@@ -849,19 +849,44 @@ class StructureFeaturesTest(PymatgenTest):
         soap.fit([self.diamond])
         v = soap.featurize(self.diamond)
         self.assertEqual(len(v), 30)
-        self.assertAlmostEqual(v[0], 0.00150121, places=6)
+        self.assertAlmostEqual(v[0], 5.299953937530518, places=6)
 
         soap.fit([self.ni3al])
         v = soap.featurize(self.ni3al)
         self.assertEqual(len(v), 90)
-        self.assertAlmostEqual(v[0], 0.0001772097, places=6)
+        self.assertAlmostEqual(v[0], 0.10329483449459076, places=6)
 
         # Test dataframe fitting
         df = pd.DataFrame({"s": [self.diamond, self.ni3al, self.nacl]})
         soap.fit(df["s"])
         df = soap.featurize_dataframe(df, "s", inplace=False)
         self.assertTupleEqual(df.shape, (3, 451))
-        self.assertAlmostEqual(df["SOAP_449"].iloc[1], 0.005192, places=5)
+        self.assertAlmostEqual(df["SOAP_449"].iloc[1], 3.029167413711548, places=5)
+
+    def test_GlobalInstabilityIndex(self):
+        # Test diamond and ni3al fail precheck
+        gii = GlobalInstabilityIndex(r_cut=4.0, disordered_pymatgen=False)
+        self.assertFalse(gii.precheck(self.diamond))
+        self.assertFalse(gii.precheck(self.ni3al))
+        # Test they raise errors when featurizing
+        with self.assertRaises(AttributeError):
+            gii.featurize(self.ni3al)
+        with self.assertRaises(ValueError):
+            gii.featurize(self.diamond)
+
+        # Ordinary case of nacl
+        self.assertTrue(gii.precheck(self.nacl))
+        self.assertAlmostEqual(gii.featurize(self.nacl)[0], 0.08491655709)
+
+        # Behavior when disorder is present
+        gii_pymat = GlobalInstabilityIndex(r_cut=4.0, disordered_pymatgen=True)
+        nacl_disordered = copy.deepcopy(self.nacl)
+        nacl_disordered.replace_species({"Cl1-": "Cl0.5Br0.5"})
+        nacl_disordered.add_oxidation_state_by_element({'Na': 1, 'Cl': -1, 'Br': -1})
+        self.assertTrue(gii.precheck(nacl_disordered))
+        with self.assertRaises(ValueError):
+            gii.featurize(nacl_disordered)
+        self.assertAlmostEqual(gii_pymat.featurize(nacl_disordered)[0], 0.39766464)
 
 if __name__ == '__main__':
     unittest.main()

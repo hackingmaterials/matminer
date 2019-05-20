@@ -42,7 +42,8 @@ University of Chicago
 * Matt Horton
 * Donny Winston
 * Joseph Montoya
-
+* Koki Muraoka
+* Christian Legaspi
 
 Other
 -----
@@ -55,3 +56,5 @@ Other
 * Aidan Thompson (Sandia National Lab)
 * Kamal Choudhary (NIST)
 * Tian Xie (MIT)
+* Daiki Nishikawa
+* Nicholas Wagner (Northwestern University)

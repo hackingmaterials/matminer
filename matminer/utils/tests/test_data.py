@@ -5,7 +5,7 @@ from math import isnan
 from pymatgen.core.periodic_table import Specie
 
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    MixingEnthalpy, MatscholarElementData, MEGNetElementData
+    MixingEnthalpy, MatscholarElementData, MEGNetElementData, IUCrBondValenceData
 from pymatgen import Element
 
 
@@ -99,6 +99,14 @@ class TestMixingEnthalpy(TestCase):
                                                              Element('H')))
         self.assertTrue(isnan(self.data.get_mixing_enthalpy(Element('He'),
                                                             Element('H'))))
+class TestIUCrBondValenceData(TestCase):
+
+    def setUp(self):
+        self.data = IUCrBondValenceData()
+
+    def test_get_data(self):
+        nacl = self.data.get_bv_params("Na", "Cl", 1, -1)
+        self.assertAlmostEqual(nacl['Ro'], 2.15)
 
 if __name__ == "__main__":
     unittest.main()
