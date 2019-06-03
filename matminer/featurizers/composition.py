@@ -33,14 +33,38 @@ def has_oxidation_states(comp):
     TODO: Does this make sense to add to pymatgen? -wardlt
 
     Args:
-        comp - (Composition) Composition to check
+        comp (Composition): Composition to check
     Returns:
-        (Boolean) Whether this composition object contains oxidation states
+        (boolean) Whether this composition object contains oxidation states
     """
     for el in comp.elements:
         if not hasattr(el, "oxi_state") or el.oxi_state is None:
             return False
     return True
+
+
+def is_ionic(comp):
+    """Determines whether a compound is an ionic compound.
+
+    Looks at the oxidation states of each site and checks if both anions and cations exist
+
+    Args:
+        comp (Composition): Composition to check
+    Returns:
+        (bool) Whether the composition describes an ionic compound
+    """
+
+    has_cations = False
+    has_anions = False
+
+    for el in comp.elements:
+        if el.oxi_state < 0:
+            has_anions = True
+        if el.oxi_state > 0:
+            has_cations = True
+        if has_anions and has_cations:
+            return True
+    return False
 
 
 class ElementProperty(BaseFeaturizer):
@@ -271,6 +295,8 @@ class CationProperty(ElementProperty):
         # Check if oxidation states are present
         if not has_oxidation_states(comp):
             raise ValueError('Oxidation states have not been determined')
+        if not is_ionic(comp):
+            raise ValueError('Composition is not ionic')
 
         # Prepare to store the attributes
         all_attributes = []
@@ -507,6 +533,8 @@ class ElectronegativityDiff(BaseFeaturizer):
         # Check if oxidation states have been determined
         if not has_oxidation_states(comp):
             raise ValueError('Oxidation states have not yet been determined')
+        if not is_ionic(comp):
+            raise ValueError('Composition is not ionic')
 
         # Determine the average anion EN
         anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
