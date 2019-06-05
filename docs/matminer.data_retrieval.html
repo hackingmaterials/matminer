@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.data_retrieval package &#8212; matminer 0.5.6 documentation</title>
+    <title>matminer.data_retrieval package &#8212; matminer 0.5.7 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.7 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -49,7 +49,7 @@
 <li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_Citrine">matminer.data_retrieval.tests.test_retrieve_Citrine module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MDF">matminer.data_retrieval.tests.test_retrieve_MDF module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MP">matminer.data_retrieval.tests.test_retrieve_MP module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#matminer-data-retrieval-tests-test-retrieve-mpds-module">matminer.data_retrieval.tests.test_retrieve_MPDS module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MPDS">matminer.data_retrieval.tests.test_retrieve_MPDS module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests.test_retrieve_MongoDB">matminer.data_retrieval.tests.test_retrieve_MongoDB module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.data_retrieval.tests.html#module-matminer.data_retrieval.tests">Module contents</a></li>
 </ul>
@@ -402,8 +402,177 @@ NaN is returned.</dd>
 </dd></dl>
 
 </div>
-<div class="section" id="matminer-data-retrieval-retrieve-mpds-module">
-<h2>matminer.data_retrieval.retrieve_MPDS module<a class="headerlink" href="#matminer-data-retrieval-retrieve-mpds-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-matminer.data_retrieval.retrieve_MPDS">
+<span id="matminer-data-retrieval-retrieve-mpds-module"></span><h2>matminer.data_retrieval.retrieve_MPDS module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MPDS" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="matminer.data_retrieval.retrieve_MPDS.APIError">
+<em class="property">exception </em><code class="descclassname">matminer.data_retrieval.retrieve_MPDS.</code><code class="descname">APIError</code><span class="sig-paren">(</span><em>msg</em>, <em>code=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.APIError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Simple error handling</p>
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MPDS.APIError.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>msg</em>, <em>code=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.APIError.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval">
+<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MPDS.</code><code class="descname">MPDSDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em>, <em>endpoint=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
+<p>Retrieves data from Materials Platform for Data Science (MPDS).
+See api_link for more information.</p>
+<p>Usage:
+$&gt;export MPDS_KEY=…</p>
+<p>client = MPDSDataRetrieval()</p>
+<p>dataframe = client.get_dataframe({“formula”:”SrTiO3”, “props”:”phonons”})</p>
+<p><em>or</em>
+jsonobj = client.get_data(</p>
+<blockquote>
+<div><p>{“formula”:”SrTiO3”, “sgs”: 99, “props”:”atomic properties”},
+fields={</p>
+<blockquote>
+<div>‘S’:[“entry”, “cell_abc”, “sg_n”, “setting”, “basis_noneq”, “els_noneq”]</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>)</p>
+<p><em>or</em>
+jsonobj = client.get_data({“formula”:”SrTiO3”}, fields=[])</p>
+<p>If you use this data retrieval class, please additionally cite:
+Blokhin, E., Villars, P., 2018. The PAULING FILE Project and Materials
+Platform for Data Science: From Big Data Toward Materials Genome,
+in: Andreoni, W., Yip, S. (Eds.), Handbook of Materials Modeling :
+Methods: Theory and Modeling. Springer International Publishing, Cham,
+pp. 1–26. <a class="reference external" href="https://doi.org/10.1007/978-3-319-42913-7_62-1">https://doi.org/10.1007/978-3-319-42913-7_62-1</a></p>
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em>, <em>endpoint=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>MPDS API consumer constructor</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>api_key: (str) The MPDS API key, or None if the MPDS_KEY envvar is set
+endpoint: (str) MPDS API gateway URL</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.api_link">
+<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>The link to comprehensive API documentation or data source.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.chillouttime">
+<code class="descname">chillouttime</code><em class="property"> = 3</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.chillouttime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.compile_crystal">
+<em class="property">static </em><code class="descname">compile_crystal</code><span class="sig-paren">(</span><em>datarow</em>, <em>flavor='pmg'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.compile_crystal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper method for representing the MPDS crystal structures in two flavors:
+either as a Pymatgen Structure object, or as an ASE Atoms object.</p>
+<p>Attention! These two flavors are not compatible, e.g.
+primitive vs. crystallographic cell is defaulted,
+atoms wrapped or non-wrapped into the unit cell etc.</p>
+<p>Note, that the crystal structures are not retrieved by default,
+so one needs to specify the fields while retrieval:</p>
+<blockquote>
+<div><ul class="simple">
+<li>cell_abc</li>
+<li>sg_n</li>
+<li>setting</li>
+<li>basis_noneq</li>
+<li>els_noneq</li>
+</ul>
+</div></blockquote>
+<p>e.g. like this: {‘S’:[‘cell_abc’, ‘sg_n’, ‘setting’, ‘basis_noneq’, ‘els_noneq’]}
+NB. occupancies are not considered.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>datarow: (list) Required data to construct crystal structure:</dt>
+<dd>[cell_abc, sg_n, setting, basis_noneq, els_noneq]</dd>
+</dl>
+<p class="last">flavor: (str) Either “pmg”, or “ase”</p>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>if flavor is pmg, returns Pymatgen Structure object</li>
+<li>if flavor is ase, returns ASE Atoms object</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.default_properties">
+<code class="descname">default_properties</code><em class="property"> = ('Phase', 'Formula', 'SG', 'Entry', 'Property', 'Units', 'Value')</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.default_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.endpoint">
+<code class="descname">endpoint</code><em class="property"> = 'https://api.mpds.io/v0/download/facet'</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>criteria</em>, <em>phases=None</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve data in JSON.
+JSON is expected to be valid against the schema
+at <a class="reference external" href="http://developer.mpds.io/mpds.schema.json">http://developer.mpds.io/mpds.schema.json</a></p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>criteria (dict): Search query like {“categ_A”: “val_A”, “categ_B”: “val_B”},</dt>
+<dd><p class="first">documented at <a class="reference external" href="http://developer.mpds.io/#Categories">http://developer.mpds.io/#Categories</a>
+example: criteria={“elements”: “K-Ag”, “classes”: “iodide”,</p>
+<blockquote class="last">
+<div>“props”: “heat capacity”, “lattices”: “cubic”}</div></blockquote>
+</dd>
+</dl>
+<p>phases (list): Phase IDs, according to the MPDS distinct phases concept
+fields (dict): Data of interest for C-, S-, and P-entries,</p>
+<blockquote class="last">
+<div>e.g. for phase diagrams: {‘C’: [‘naxes’, ‘arity’, ‘shapes’]},
+documented at <a class="reference external" href="http://developer.mpds.io/#JSON-schemata">http://developer.mpds.io/#JSON-schemata</a></div></blockquote>
+</dd>
+<dt>Returns:</dt>
+<dd>List of dicts: C-, S-, and P-entries, the format is
+documented at <a class="reference external" href="http://developer.mpds.io/#JSON-schemata">http://developer.mpds.io/#JSON-schemata</a></dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_dataframe">
+<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=('Phase'</em>, <em>'Formula'</em>, <em>'SG'</em>, <em>'Entry'</em>, <em>'Property'</em>, <em>'Units'</em>, <em>'Value')</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve data as a Pandas dataframe.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>criteria (dict): the same as criteria in get_data
+properties ([str]): list of properties/titles to be included
+<a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: other keyword arguments available in get_data</dd>
+</dl>
+<p>Returns: (object) Pandas DataFrame object containing the results</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.maxnpages">
+<code class="descname">maxnpages</code><em class="property"> = 100</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.maxnpages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.pagesize">
+<code class="descname">pagesize</code><em class="property"> = 1000</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.pagesize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-matminer.data_retrieval.retrieve_MongoDB">
 <span id="matminer-data-retrieval-retrieve-mongodb-module"></span><h2>matminer.data_retrieval.retrieve_MongoDB module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MongoDB" title="Permalink to this headline">¶</a></h2>
@@ -593,7 +762,7 @@ criteria.</p>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_Citrine">matminer.data_retrieval.retrieve_Citrine module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MDF">matminer.data_retrieval.retrieve_MDF module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MP">matminer.data_retrieval.retrieve_MP module</a></li>
-<li><a class="reference internal" href="#matminer-data-retrieval-retrieve-mpds-module">matminer.data_retrieval.retrieve_MPDS module</a></li>
+<li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MPDS">matminer.data_retrieval.retrieve_MPDS module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_MongoDB">matminer.data_retrieval.retrieve_MongoDB module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval.retrieve_base">matminer.data_retrieval.retrieve_base module</a></li>
 <li><a class="reference internal" href="#module-matminer.data_retrieval">Module contents</a></li>
@@ -633,7 +802,7 @@ criteria.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.7 documentation</a> &#187;</li> 
       </ul>
     </div>
 

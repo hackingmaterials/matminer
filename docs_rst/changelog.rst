@@ -5,6 +5,13 @@
 matminer Changelog
 ==================
 
+**v0.5.7**
+
+* remove SOAP normalization flag (K. Murakoa)
+* fix precheck - Miedema and YangSolidSolution (Q. Wang)
+* improvements to Miedema - default structure types, docs (Q. Wang)
+* fix CGCNN optimizer (Q. Wang)
+
 **v0.5.6**
 
 * add Global Instability Index featurizer (N. Wagner)
