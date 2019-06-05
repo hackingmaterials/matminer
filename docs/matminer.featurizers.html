@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.5.6 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.5.7 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.7 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -1831,84 +1831,58 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="class">
 <dt id="matminer.featurizers.composition.Miedema">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">Miedema</code><span class="sig-paren">(</span><em>struct_types='inter'</em>, <em>ss_types='min'</em>, <em>data_source='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matminer.featurizers.composition.</code><code class="descname">Miedema</code><span class="sig-paren">(</span><em>struct_types='all'</em>, <em>ss_types='min'</em>, <em>data_source='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Formation enthalpies of intermetallic compounds, from Miedema et al.</p>
 <p>Calculate the formation enthalpies of the intermetallic compound,
 solid solution and amorphous phase of a given composition, based on
 semi-empirical Miedema model (and some extensions), particularly for
-transitional metal alloys.
-Support elemental, binary and multicomponent alloys.</p>
-<blockquote>
-<div>For elemental/binary alloys, the formulation is based on the original
+transitional metal alloys.</p>
+<p>Support elemental, binary and multicomponent alloys.
+For elemental/binary alloys, the formulation is based on the original
 works by Miedema et al. in 1980s;
 For multicomponent alloys, the formulation is basically the linear
 combination of sub-binary systems. This is reported to work well for
-ternary alloys, but needs to be careful with quaternary alloys and more.</div></blockquote>
+ternary alloys, but needs to be careful with quaternary alloys and more.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt>struct_types (str or list of str): default=’inter’</dt>
-<dd>if str, one target structure;
-if list, a list of target structures.
-e.g.
-‘inter’: intermetallic compound
-‘ss’: solid solution
-‘amor’: amorphous phase
-‘all’: same for [‘inter’, ‘ss’, ‘amor’]
-[‘inter’, ‘ss’]: amorphous phase and solid solution, as an example</dd>
-<dt>ss_types (str or list of str): only for ss, default=’min’</dt>
-<dd>if str, one structure type of ss;
-if list, a list of structure types of ss.
-e.g.
-‘fcc’: fcc solid solution
-‘bcc’: bcc solid solution
-‘hcp’: hcp solid solution
+<dt>struct_types (str or [str]): default=’all’</dt>
+<dd>‘inter’: intermetallic compound; ‘ss’: solid solution
+‘amor’: amorphous phase; ‘all’: same for [‘inter’, ‘ss’, ‘amor’]
+[‘inter’, ‘ss’]: amorphous phase and solid solution</dd>
+<dt>ss_types (str or [str]): only for ss, default=’min’</dt>
+<dd>‘fcc’: fcc solid solution; ‘bcc’: bcc solid solution
+‘hcp’: hcp solid solution;
 ‘no_latt’: solid solution with no specific structure type
 ‘min’: min value of [‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’]
 ‘all’: same for [‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’]
-[‘fcc’, ‘bcc’]: fcc and bcc solid solutions, as an example</dd>
-<dt>data_source (str): default=’Miedema’, source of dataset</dt>
-<dd><dl class="first last docutils">
-<dt>‘Miedema’: read from ‘Miedema.csv’</dt>
-<dd><p class="first">parameterized by Miedema et al. in 1980s,
-containing parameters for 73 types of elements:</p>
-<blockquote class="last">
-<div>‘molar_volume’
-‘electron_density’
-‘electronegativity’
-‘valence_electrons’
-‘a_const’
-‘R_const’
-‘H_trans’
-‘compressibility’
-‘shear_modulus’
-‘melting_point’
-‘structural_stability’</div></blockquote>
-</dd>
-</dl>
-</dd>
+[‘fcc’, ‘bcc’]: fcc and bcc solid solutions</dd>
+<dt>data_source (str): source of dataset, default=’Miedema’</dt>
+<dd>‘Miedema’: ‘Miedema.csv’ placed in “matminer/utils/data_files/”
+parameterized for 73 elements by Miedema et al. in 1980s, containing
+‘molar_volume’, ‘electron_density’, ‘electronegativity’
+‘valence_electrons’, ‘a_const’, ‘R_const’, ‘H_trans’
+‘compressibility’, ‘shear_modulus’, ‘melting_point’
+‘structural_stability’</dd>
 </dl>
 </dd>
 <dt>Returns:</dt>
 <dd><dl class="first last docutils">
-<dt>(list of floats) Miedema formation enthalpies (per atom)</dt>
-<dd><p class="first">-formation_enthalpy_inter: for intermetallic compound
--formation_enthalpy_ss: for solid solution, can be divided into</p>
+<dt>(list of floats) Miedema formation enthalpies (eV/atom) for input</dt>
+<dd><p class="first">struct_types:
+-Miedema_deltaH_inter: for intermetallic compound
+-Miedema_deltaH_ss: for solid solution, can include ‘fcc’, ‘bcc’,</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>‘min’, ‘fcc’, ‘bcc’, ‘hcp’, ‘no_latt’</dt>
-<dd>for different lattice_types</dd>
-</dl>
-</div></blockquote>
-<p class="last">-formation_enthalpy_amor: for amorphous phase</p>
+<div>‘hcp’, ‘no_latt’, ‘min’ based on input ss_types</div></blockquote>
+<p class="last">-Miedema_deltaH_amor: for amorphous phase</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.composition.Miedema.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>struct_types='inter'</em>, <em>ss_types='min'</em>, <em>data_source='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>struct_types='all'</em>, <em>ss_types='min'</em>, <em>data_source='Miedema'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.Miedema.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -2480,9 +2454,22 @@ precheck_dataframe.</p>
 <p>TODO: Does this make sense to add to pymatgen? -wardlt</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>comp - (Composition) Composition to check</dd>
+<dd>comp (Composition): Composition to check</dd>
 <dt>Returns:</dt>
-<dd>(Boolean) Whether this composition object contains oxidation states</dd>
+<dd>(boolean) Whether this composition object contains oxidation states</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="matminer.featurizers.composition.is_ionic">
+<code class="descclassname">matminer.featurizers.composition.</code><code class="descname">is_ionic</code><span class="sig-paren">(</span><em>comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.is_ionic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether a compound is an ionic compound.</p>
+<p>Looks at the oxidation states of each site and checks if both anions and cations exist</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>comp (Composition): Composition to check</dd>
+<dt>Returns:</dt>
+<dd>(bool) Whether the composition describes an ionic compound</dd>
 </dl>
 </dd></dl>
 
@@ -6882,18 +6869,18 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <em class="property">class </em><code class="descclassname">matminer.featurizers.structure.</code><code class="descname">GlobalInstabilityIndex</code><span class="sig-paren">(</span><em>r_cut=4.0</em>, <em>disordered_pymatgen=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalInstabilityIndex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>The global instability index of a structure.</p>
-<p>The default is to use IUCr 2016 bond valence parameters for computing 
-bond valence sums. If the structure has disordered site occupancies 
-or non-integer valences on sites, pymatgen’s bond valence sum method 
+<p>The default is to use IUCr 2016 bond valence parameters for computing
+bond valence sums. If the structure has disordered site occupancies
+or non-integer valences on sites, pymatgen’s bond valence sum method
 can be used instead.</p>
-<p>Note that pymatgen’s bond valence sum method is prone to error unless 
-the correct scale factor is supplied. A scale factor based on testing 
+<p>Note that pymatgen’s bond valence sum method is prone to error unless
+the correct scale factor is supplied. A scale factor based on testing
 with perovskites is used here.
 TODO: Use scipy to optimize scale factor for minimizing GII</p>
 <p>Based on the following publication:</p>
 <dl class="docutils">
-<dt>‘Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho, </dt>
-<dd>Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction’, 
+<dt>‘Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho,</dt>
+<dd>Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction’,
 A.Salinas-Sanchez, J.L.Garcia-Muñoz, J.Rodriguez-Carvajal,
 R.Saez-Puche, and J.L.Martinez, Journal of Solid State Chemistry,
 100, 201-211 (1992),
@@ -6906,8 +6893,8 @@ disordered_pymatgen: Boolean, whether to fall back on pymatgen’s bond</p>
 </dd>
 <dt>Features:</dt>
 <dd><dl class="first last docutils">
-<dt>The global instability index is the square root of the sum of squared </dt>
-<dd>differences of the bond valence sums from the formal valences 
+<dt>The global instability index is the square root of the sum of squared</dt>
+<dd>differences of the bond valence sums from the formal valences
 averaged over all atoms in the unit cell.</dd>
 </dl>
 </dd>
@@ -8468,7 +8455,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.7 documentation</a> &#187;</li> 
       </ul>
     </div>
 

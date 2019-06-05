@@ -12,11 +12,9 @@ from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, \
-    ValenceOrbital, IonProperty, \
-    ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, \
-    CohesiveEnergy, \
-    BandCenter, Miedema, CationProperty, OxidationStates, AtomicOrbitals, \
-    YangSolidSolution, AtomicPackingEfficiency
+    ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, \
+    ElectronegativityDiff, CohesiveEnergy, BandCenter, Miedema, CationProperty, OxidationStates,\
+    AtomicOrbitals, YangSolidSolution, AtomicPackingEfficiency, is_ionic
 from matminer.featurizers.conversions import CompositionToOxidComposition
 
 
@@ -25,6 +23,12 @@ class CompositionFeaturesTest(PymatgenTest):
     def setUp(self):
         self.df = pd.DataFrame({"composition": [Composition("Fe2O3"),
                                                 Composition({Specie("Fe", 2): 1, Specie("O", -2): 1})]})
+
+    def test_is_ionic(self):
+        """Test checking whether a compound is ionic"""
+
+        self.assertTrue(is_ionic(Composition({Specie("Fe", 2): 1, Specie("O", -2): 1})))
+        self.assertFalse(is_ionic(Composition({Specie("Fe", 0): 1, Specie("Al", 0): 1})))
 
     def test_stoich(self):
         featurizer = Stoichiometry(num_atoms=True)
