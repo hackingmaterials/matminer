@@ -3748,6 +3748,16 @@ class GlobalInstabilityIndex(BaseFeaturizer):
 
         return [gii]
 
+    def get_equiv_sites(self, s, site):
+        """Find identical sites from analyzing space group symmetry."""
+        sga = SpacegroupAnalyzer(s, symprec=0.01)
+        sg = sga.get_space_group_operations
+        sym_data = sga.get_symmetry_dataset()
+        equiv_atoms = sym_data["equivalent_atoms"]
+        wyckoffs = sym_data["wyckoffs"]
+        sym_struct = SymmetrizedStructure(s, sg, equiv_atoms, wyckoffs)
+        equivs = sym_struct.find_equivalent_sites(site)
+        return equivs
     
     def calc_gii_iucr(self, s):
         """Computes global instability index using tabulated bv params.
@@ -3759,15 +3769,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         """
         elements = [str(i) for i in s.composition.element_composition.elements]
         if elements[0] == elements[-1]:
-            raise ValueError("No oxidation states with single element.")
-        
-        # Find symmetry of structure to identify Wyckoff sites
-        sga = SpacegroupAnalyzer(s, symprec=0.01)
-        sg = sga.get_space_group_operations
-        sym_data = sga.get_symmetry_dataset()
-        equiv_atoms = sym_data["equivalent_atoms"]
-        wyckoffs = sym_data["wyckoffs"]
-        sym_struct = SymmetrizedStructure(s, sg, equiv_atoms, wyckoffs)
+            raise ValueError("No oxidation states with single element.")    
         
         bond_valence_sums = []
         cutoff = self.r_cut
@@ -3777,7 +3779,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         
         for i, neighbor_list in enumerate(pairs):
             site = s[i]
-            equivs = sym_struct.find_equivalent_sites(site)
+            equivs = self.get_equiv_sites(s, site)
             flag = False
             
             # If symm. identical site has cached bond valence sum difference, 
