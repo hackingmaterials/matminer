@@ -14,6 +14,8 @@ matminer works with the `pandas <https://pandas.pydata.org>`_ data format in ord
 
 matminer is `open source <https://github.com/hackingmaterials/matminer>`_ via a BSD-style license.
 
+If you like matminer, you might also check out `automatminer <https://github.com/hackingmaterials/automatminer>`_ which automatically fits a machine learning pipeline to your problem using matminer descriptors.
+
 
 -------------------
 Installing matminer
@@ -61,7 +63,7 @@ For example, to compare experimental and computed band gaps of Si, one can emplo
    from matminer.data_retrieval.retrieve_Citrine import CitrineDataRetrieval
    from matminer.data_retrieval.retrieve_MP import MPDataRetrieval
 
-   df_citrine = CitrineDataRetrieval().get_dataframe(formula='Si', property='band gap', data_type='EXPERIMENTAL')
+   df_citrine = CitrineDataRetrieval().get_dataframe(criteria='Si', properties=['band_gap'])
    df_mp = MPDataRetrieval().get_dataframe(criteria='Si', properties=['band_gap'])
 
 `MongoDataRetrieval <https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MongoDB.py>`_ is another data retrieval tool developed that allows for the parsing of any `MongoDB <https://www.mongodb.com/>`_ collection (which follows a flexible JSON schema), into a Pandas dataframe that has a format similar to the output dataframe from the above data retrieval tools. The arguments of the :code:`get_dataframe` method allow to utilize MongoDB's rich and powerful query/aggregation syntax structure. More information on customization of queries can be found in the `MongoDB documentation <https://docs.mongodb.com/manual/>`_.

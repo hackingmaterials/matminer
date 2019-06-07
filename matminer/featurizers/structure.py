@@ -2803,7 +2803,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
         """
 
         if self._optimizer_name == 'SGD':
-            sgd_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.Adam)
+            sgd_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.SGD)
             optimizer = optim.SGD(model.parameters(), **sgd_kwargs)
         elif self._optimizer_name == 'Adam':
             adam_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.Adam)
@@ -3514,7 +3514,6 @@ class SOAP(BaseFeaturizer):
         self.rbf = soap_kwargs.get("rbf", "gto")
         self.periodic = soap_kwargs.get("periodic", True)
         self.crossover = soap_kwargs.get("crossover", True)
-        self.normalize = soap_kwargs.get("normalize", True)
         self.average = soap_kwargs.get("average", True)
         self.sparse = soap_kwargs.get("sparse", False)
         self.adaptor = AseAtomsAdaptor()
@@ -3569,7 +3568,6 @@ class SOAP(BaseFeaturizer):
                                  periodic=self.periodic,
                                  crossover=self.crossover,
                                  average=self.average,
-                                 normalize=self.normalize,
                                  sparse=self.sparse)
         return self
 
@@ -3609,48 +3607,58 @@ class SOAP(BaseFeaturizer):
                 "pages = {13754-13769},"
                 "publisher = {The Royal Society of Chemistry},"
                 "doi = {10.1039/C6CP00415F},"
-                "url = {http://dx.doi.org/10.1039/C6CP00415F},}"]
+                "url = {http://dx.doi.org/10.1039/C6CP00415F},}",
+
+                "@article{himanen_dscribe:_2019,"
+                "title = {{DScribe}: {Library} of {Descriptors} for {Machine} {Learning} in {Materials} {Science}},"
+                "shorttitle = {{DScribe}},"
+                "url = {http://arxiv.org/abs/1904.08875},"
+                "urldate = {2019-04-24},"
+                "journal = {arXiv:1904.08875 [cond-mat]},"
+                "author = {Himanen, Lauri and J√§ger, Marc O. J. and Morooka, Eiaki V. and Canova, Filippo Federici and Ranawat, Yashasvi S. and Gao, David Z. and Rinke, Patrick and Foster, Adam S.},"
+                "month = apr,"
+                "year = {2019}}"]
 
     def implementors(self):
-        return ["Alex Dunn", "Lauri Himanen"]
+        return ["Lauri Himanen and dscribe team", "Alex Dunn"]
 
-    
+
 class GlobalInstabilityIndex(BaseFeaturizer):
     """
     The global instability index of a structure.
-    
-    The default is to use IUCr 2016 bond valence parameters for computing 
-    bond valence sums. If the structure has disordered site occupancies 
-    or non-integer valences on sites, pymatgen's bond valence sum method 
-    can be used instead. 
-    
-    Note that pymatgen's bond valence sum method is prone to error unless 
-    the correct scale factor is supplied. A scale factor based on testing 
+
+    The default is to use IUCr 2016 bond valence parameters for computing
+    bond valence sums. If the structure has disordered site occupancies
+    or non-integer valences on sites, pymatgen's bond valence sum method
+    can be used instead.
+
+    Note that pymatgen's bond valence sum method is prone to error unless
+    the correct scale factor is supplied. A scale factor based on testing
     with perovskites is used here.
     TODO: Use scipy to optimize scale factor for minimizing GII
-    
+
     Based on the following publication:
-    
-    'Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho, 
-        Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction', 
+
+    'Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho,
+        Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction',
         A.Salinas-Sanchez, J.L.Garcia-Muñoz, J.Rodriguez-Carvajal,
         R.Saez-Puche, and J.L.Martinez, Journal of Solid State Chemistry,
         100, 201-211 (1992),
         https://doi.org/10.1016/0022-4596(92)90094-C
-        
+
     Args:
         r_cut: Float, how far to search for neighbors when computing bond valences
-        disordered_pymatgen: Boolean, whether to fall back on pymatgen's bond 
+        disordered_pymatgen: Boolean, whether to fall back on pymatgen's bond
             valence sum method for disordered structures
-    
+
     Features:
-        The global instability index is the square root of the sum of squared 
-            differences of the bond valence sums from the formal valences 
+        The global instability index is the square root of the sum of squared
+            differences of the bond valence sums from the formal valences
             averaged over all atoms in the unit cell.
     """
-    
+
     def __init__(self, r_cut=4.0, disordered_pymatgen=False):
-        
+
         bv = IUCrBondValenceData()
         self.bv_values = bv.params
         self.r_cut = r_cut
@@ -3659,7 +3667,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     def precheck(self, struct):
         """
         Bond valence methods require atom pairs with oxidation states.
-        
+
         Additionally, check if at least the first and last site's species
         have a entry in the bond valence parameters.
 
@@ -3690,7 +3698,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 "Computing bond valence sums for over 200 sites. "
                 "Featurization might be very slow!"
             )
-        
+
         # Check that all cation-anion pairs are tabulated
         specs = struct.composition.elements.copy()
         while len(specs) > 1:
@@ -3706,11 +3714,11 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                     except IndexError:
                         return False
         return True
-    
+
     def featurize(self, struct):
         """
         Get global instability index.
-        
+
         Args:
             struct: Pymatgen Structure object
         Returns:
@@ -3738,14 +3746,14 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 )
 
         return [gii]
-        
+
     def calc_gii_iucr(self, s):
         elements = [str(i) for i in s.composition.element_composition.elements]
         if elements[0] == elements[-1]:
             raise ValueError("No oxidation states with single element.")
         bond_valence_sums = []
         cutoff = self.r_cut
-        
+
         # for loop to calculate the BV sum on each site
         for site in s:
             site_val = site.species.elements[0].oxi_state
@@ -3763,13 +3771,13 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                     if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
                         params = self.get_bv_params(cation=site_el,
                                                anion=neighbor_el,
-                                               cat_val=site_val, 
+                                               cat_val=site_val,
                                                an_val=neighbor_val)
                         bvs += self.compute_bv(params, dist)
                     elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
                         params = self.get_bv_params(cation=neighbor_el,
                                                anion=site_el,
-                                               cat_val=neighbor_val, 
+                                               cat_val=neighbor_val,
                                                an_val=site_val)
                         bvs -= self.compute_bv(params, dist)
                 except:
@@ -3781,7 +3789,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         gii = np.linalg.norm(bond_valence_sums) / \
               np.sqrt(len(bond_valence_sums))
         return gii
-    
+
     def get_bv_params(self, cation, anion, cat_val, an_val):
         """Lookup bond valence parameters from IUPAC table.
         Args:
@@ -3811,7 +3819,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         """
         bv = np.exp((params['Ro'] - dist)/params['B'])
         return bv
-    
+
     def calc_gii_pymatgen(self, struct, scale_factor=0.965):
         """Calculates global instability index using Pymatgen's bond valence sum
         Args:
@@ -3847,7 +3855,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
 
     def citations(self):
         return ["@article{PhysRevB.87.184115,"
-                "title = {Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho," 
+                "title = {Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho,"
                 " Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction},"
                 "author = {Salinas-Sanchez, A. and Garcia-Muñoz, J.L. and Rodriguez-Carvajal, "
                 "J. and Saez-Puche, R. and Martinez, J.L.},"

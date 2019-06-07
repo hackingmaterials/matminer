@@ -12,11 +12,10 @@ from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, \
-    ValenceOrbital, IonProperty, \
-    ElementFraction, TMetalFraction, ElectronAffinity, ElectronegativityDiff, \
-    CohesiveEnergy, \
-    BandCenter, Miedema, CationProperty, OxidationStates, AtomicOrbitals, \
-    YangSolidSolution, AtomicPackingEfficiency
+    ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, \
+    ElectronegativityDiff, CohesiveEnergy, BandCenter, Miedema, CationProperty, OxidationStates,\
+    AtomicOrbitals, YangSolidSolution, AtomicPackingEfficiency, is_ionic
+from matminer.featurizers.conversions import CompositionToOxidComposition
 
 
 class CompositionFeaturesTest(PymatgenTest):
@@ -24,6 +23,12 @@ class CompositionFeaturesTest(PymatgenTest):
     def setUp(self):
         self.df = pd.DataFrame({"composition": [Composition("Fe2O3"),
                                                 Composition({Specie("Fe", 2): 1, Specie("O", -2): 1})]})
+
+    def test_is_ionic(self):
+        """Test checking whether a compound is ionic"""
+
+        self.assertTrue(is_ionic(Composition({Specie("Fe", 2): 1, Specie("O", -2): 1})))
+        self.assertFalse(is_ionic(Composition({Specie("Fe", 0): 1, Specie("Al", 0): 1})))
 
     def test_stoich(self):
         featurizer = Stoichiometry(num_atoms=True)
@@ -197,8 +202,17 @@ class CompositionFeaturesTest(PymatgenTest):
                                            Composition("Mg10Cu50Ca40"),
                                            Composition("Fe2O3")]})
         miedema = Miedema(struct_types='all')
+        self.assertTrue(miedema.precheck(df["composition"].iloc[0]))
         self.assertFalse(miedema.precheck(df["composition"].iloc[-1]))
         self.assertAlmostEqual(miedema.precheck_dataframe(df, "composition"), 2 / 3)
+
+        # test precheck for oxidation-state decorated compositions
+        df = CompositionToOxidComposition(return_original_on_error=True).\
+            featurize_dataframe(df, 'composition')
+        self.assertTrue(miedema.precheck(df["composition_oxid"].iloc[0]))
+        self.assertFalse(miedema.precheck(df["composition_oxid"].iloc[-1]))
+        self.assertAlmostEqual(miedema.precheck_dataframe(df, "composition_oxid"), 2 / 3)
+
         mfps = miedema.featurize_dataframe(df, col_id="composition")
         self.assertAlmostEqual(mfps['Miedema_deltaH_inter'][0], -0.003445022152)
         self.assertAlmostEqual(mfps['Miedema_deltaH_amor'][0], 0.0707658836300)
@@ -211,6 +225,13 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_inter'][2]), True)
         self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_amor'][2]), True)
         self.assertAlmostEqual(math.isnan(mfps['Miedema_deltaH_ss_min'][2]), True)
+
+        # make sure featurization works equally for compositions with or without
+        # oxidation states
+        mfps = miedema.featurize_dataframe(df, col_id="composition_oxid")
+        self.assertAlmostEqual(mfps['Miedema_deltaH_inter'][0], -0.003445022152)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_amor'][0], 0.0707658836300)
+        self.assertAlmostEqual(mfps['Miedema_deltaH_ss_min'][0], 0.03663599755)
 
     def test_miedema_ss(self):
         df = pd.DataFrame({"composition": [Composition("TiZr"),
@@ -246,8 +267,14 @@ class CompositionFeaturesTest(PymatgenTest):
         feat = YangSolidSolution()
 
         df = pd.DataFrame({"composition": comps})
-        self.assertFalse(feat.precheck(comps[-1]))
+        self.assertFalse(feat.precheck(df["composition"].iloc[-1]))
         self.assertAlmostEqual(feat.precheck_dataframe(df, "composition"), 0.8, places=2)
+
+        # test precheck for oxidation-state decorated compositions
+        df = CompositionToOxidComposition(return_original_on_error=True). \
+            featurize_dataframe(df, 'composition')
+        self.assertFalse(feat.precheck(df["composition_oxid"].iloc[-1]))
+        self.assertAlmostEqual(feat.precheck_dataframe(df, "composition_oxid"), 0.8, places=2)
 
         feat.set_n_jobs(1)
         features = feat.featurize_many(comps)
