@@ -27,6 +27,7 @@ from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.symmetry.structure import SymmetrizedStructure
 from pymatgen.io.ase import AseAtomsAdaptor
 import pymatgen.analysis.local_env as pmg_le
 
@@ -3728,14 +3729,14 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         if struct.is_ordered:
             gii = self.calc_gii_iucr(struct)
             if gii > 0.6:
-                raise Exception("GII extremely large. Table parameters may "
+                warnings.warn("GII extremely large. Table parameters may "
                                 "not be suitable or structure may be unusual.")
 
         else:
             if self.disordered_pymatgen:
                 gii = self.calc_gii_pymatgen(struct, scale_factor=0.965)
                 if gii > 0.6:
-                    raise ValueError(
+                    warnings.warn(
                         "GII extremely large. Pymatgen method may not be "
                         "suitable or structure may be unusual."
                     )
@@ -3747,47 +3748,110 @@ class GlobalInstabilityIndex(BaseFeaturizer):
 
         return [gii]
 
+    
     def calc_gii_iucr(self, s):
+        """Computes global instability index using tabulated bv params.
+        
+        Args:
+            s: Pymatgen Structure object
+        Returns:
+            gii: Float, the global instability index
+        """
         elements = [str(i) for i in s.composition.element_composition.elements]
         if elements[0] == elements[-1]:
             raise ValueError("No oxidation states with single element.")
+        
+        # Find symmetry of structure to identify Wyckoff sites
+        sga = SpacegroupAnalyzer(s, symprec=0.01)
+        sg = sga.get_space_group_operations
+        sym_data = sga.get_symmetry_dataset()
+        equiv_atoms = sym_data["equivalent_atoms"]
+        wyckoffs = sym_data["wyckoffs"]
+        sym_struct = SymmetrizedStructure(s, sg, equiv_atoms, wyckoffs)
+        
         bond_valence_sums = []
         cutoff = self.r_cut
-
-        # for loop to calculate the BV sum on each site
-        for site in s:
+        pairs = s.get_all_neighbors(r=cutoff)
+        site_val_sums = {} # Cache bond valence deviations
+        parameters_dict = {} # Cache bond valence parameters
+        
+        for i, neighbor_list in enumerate(pairs):
+            site = s[i]
+            equivs = sym_struct.find_equivalent_sites(site)
+            flag = False
+            
+            # If symm. identical site has cached bond valence sum difference, 
+            # use it to avoid unnecessary calculations
+            for item in equivs:
+                if item in site_val_sums: 
+                    bond_valence_sums.append(site_val_sums[item])
+                    site_val_sums[site] = site_val_sums[item]
+                    flag = True
+                    break
+            if flag:
+                continue
             site_val = site.species.elements[0].oxi_state
             site_el = str(site.species.element_composition.elements[0])
             bvs = 0
-            neighbors = s.get_neighbors(site, r=cutoff)
-            for n in neighbors:
-                neighbor_val = n[0].species.elements[0].oxi_state
-                neighbor_el = str(n[0].species.element_composition.elements[0])
+            for neighbor_info in neighbor_list:
+                neighbor = neighbor_info[0]
+                dist = neighbor_info[1]
+                neighbor_val = neighbor.species.elements[0].oxi_state
+                neighbor_el = str(
+                        neighbor.species.element_composition.elements[0])
                 if neighbor_val % 1 != 0 or site_val % 1 != 0:
                     raise ValueError('Some sites have non-integer valences.')
-                dist = n[1]
-
                 try:
                     if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
-                        params = self.get_bv_params(cation=site_el,
-                                               anion=neighbor_el,
-                                               cat_val=site_val,
-                                               an_val=neighbor_val)
+                        if (site_el, 
+                            neighbor_el, 
+                            site_val, 
+                            neighbor_val) in parameters_dict:
+                            params = parameters_dict[(site_el, 
+                                                      neighbor_el, 
+                                                      site_val, 
+                                                      neighbor_val)]
+                        else:
+                            params = self.get_bv_params(cation=site_el,
+                                                   anion=neighbor_el,
+                                                   cat_val=site_val,
+                                                   an_val=neighbor_val)
+                            parameters_dict[(site_el, 
+                                             neighbor_el, 
+                                             site_val, 
+                                             neighbor_val)] = params
                         bvs += self.compute_bv(params, dist)
                     elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
-                        params = self.get_bv_params(cation=neighbor_el,
-                                               anion=site_el,
-                                               cat_val=neighbor_val,
-                                               an_val=site_val)
+                        if (site_el, 
+                            neighbor_el, 
+                            site_val, 
+                            neighbor_val) in parameters_dict:
+                            params = parameters_dict[(neighbor_el, 
+                                                      site_el, 
+                                                      neighbor_val, 
+                                                      site_val)]
+                        else:
+                            params = self.get_bv_params(cation=neighbor_el,
+                                                   anion=site_el,
+                                                   cat_val=neighbor_val,
+                                                   an_val=site_val)
+                            parameters_dict[(neighbor_el, 
+                                             site_el, 
+                                             neighbor_val, 
+                                             site_val)] = params
                         bvs -= self.compute_bv(params, dist)
                 except:
                     raise ValueError(
                         'BV parameters for {} with valence {} and {} {} not '
                         'found in table'
-                        ''.format(site_el, site_val, neighbor_el, neighbor_val))
-            bond_valence_sums.append(bvs - site_val)
-        gii = np.linalg.norm(bond_valence_sums) / \
-              np.sqrt(len(bond_valence_sums))
+                        ''.format(site_el, 
+                                  site_val, 
+                                  neighbor_el, 
+                                  neighbor_val))
+    
+            site_val_sums[site] = bvs - site_val
+        gii = np.linalg.norm(list(site_val_sums.values())) /\
+              np.sqrt(len(site_val_sums))
         return gii
 
     def get_bv_params(self, cation, anion, cat_val, an_val):
@@ -3833,13 +3897,17 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         if struct.is_ordered:
             for site in struct:
                 nn = struct.get_neighbors(site,r=cutoff)
-                bvs = bond_valence.calculate_bv_sum(site, nn, scale_factor=scale_factor)
+                bvs = bond_valence.calculate_bv_sum(site, 
+                                                    nn, 
+                                                    scale_factor=scale_factor)
                 deviations.append(bvs - site.species.elements[0].oxi_state)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
         else:
             for site in struct:
                 nn = struct.get_neighbors(site,r=cutoff)
-                bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=scale_factor)
+                bvs = bond_valence.calculate_bv_sum_unordered(site, 
+                                                              nn, 
+                                                              scale_factor=scale_factor)
                 min_diff = min(
                     [bvs - spec.oxi_state for spec in site.species.elements]
                 )
