@@ -444,4 +444,4 @@ class IUCrBondValenceData:
                                 & (bv_data['Atom2_valence'] == an_val)]
         return bond_val_list.iloc[0] # If multiple values exist, take first one
                                      # as recommended for reliability.
-        
+
