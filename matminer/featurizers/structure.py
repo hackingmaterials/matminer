@@ -3775,7 +3775,6 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         cutoff = self.r_cut
         pairs = s.get_all_neighbors(r=cutoff)
         site_val_sums = {} # Cache bond valence deviations
-        parameters_dict = {} # Cache bond valence parameters
         
         for i, neighbor_list in enumerate(pairs):
             site = s[i]
@@ -3805,42 +3804,16 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                     raise ValueError('Some sites have non-integer valences.')
                 try:
                     if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
-                        if (site_el, 
-                            neighbor_el, 
-                            site_val, 
-                            neighbor_val) in parameters_dict:
-                            params = parameters_dict[(site_el, 
-                                                      neighbor_el, 
-                                                      site_val, 
-                                                      neighbor_val)]
-                        else:
-                            params = self.get_bv_params(cation=site_el,
+                        params = self.get_bv_params(cation=site_el,
                                                    anion=neighbor_el,
                                                    cat_val=site_val,
                                                    an_val=neighbor_val)
-                            parameters_dict[(site_el, 
-                                             neighbor_el, 
-                                             site_val, 
-                                             neighbor_val)] = params
                         bvs += self.compute_bv(params, dist)
                     elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
-                        if (site_el, 
-                            neighbor_el, 
-                            site_val, 
-                            neighbor_val) in parameters_dict:
-                            params = parameters_dict[(neighbor_el, 
-                                                      site_el, 
-                                                      neighbor_val, 
-                                                      site_val)]
-                        else:
-                            params = self.get_bv_params(cation=neighbor_el,
+                        params = self.get_bv_params(cation=neighbor_el,
                                                    anion=site_el,
                                                    cat_val=neighbor_val,
                                                    an_val=site_val)
-                            parameters_dict[(neighbor_el, 
-                                             site_el, 
-                                             neighbor_val, 
-                                             site_val)] = params
                         bvs -= self.compute_bv(params, dist)
                 except:
                     raise ValueError(
@@ -3856,6 +3829,8 @@ class GlobalInstabilityIndex(BaseFeaturizer):
               np.sqrt(len(site_val_sums))
         return gii
 
+    # Cache bond valence parameters
+    @lru_cache(maxsize=512)
     def get_bv_params(self, cation, anion, cat_val, an_val):
         """Lookup bond valence parameters from IUPAC table.
         Args:
