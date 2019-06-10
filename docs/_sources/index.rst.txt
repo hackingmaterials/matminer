@@ -14,6 +14,8 @@ matminer works with the `pandas <https://pandas.pydata.org>`_ data format in ord
 
 matminer is `open source <https://github.com/hackingmaterials/matminer>`_ via a BSD-style license.
 
+If you like matminer, you might also check out `automatminer <https://github.com/hackingmaterials/automatminer>`_ which automatically fits a machine learning pipeline to your problem using matminer descriptors.
+
 
 -------------------
 Installing matminer
