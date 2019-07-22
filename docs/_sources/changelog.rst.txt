@@ -5,6 +5,10 @@
 matminer Changelog
 ==================
 
+**v0.5.8**
+
+* optimizations for Global Instability Index featurizer (N. Wagner, L. Ward)
+
 **v0.5.7**
 
 * remove SOAP normalization flag (K. Murakoa)

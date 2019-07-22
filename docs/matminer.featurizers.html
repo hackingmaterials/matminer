@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.5.7 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.5.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.8 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -6908,7 +6908,14 @@ averaged over all atoms in the unit cell.</dd>
 <dl class="method">
 <dt id="matminer.featurizers.structure.GlobalInstabilityIndex.calc_gii_iucr">
 <code class="descname">calc_gii_iucr</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalInstabilityIndex.calc_gii_iucr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes global instability index using tabulated bv params.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>s: Pymatgen Structure object</dd>
+<dt>Returns:</dt>
+<dd>gii: Float, the global instability index</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.structure.GlobalInstabilityIndex.calc_gii_pymatgen">
@@ -6974,9 +6981,9 @@ dist: Float, distance to neighboring atom</div></blockquote>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="attribute">
 <dt id="matminer.featurizers.structure.GlobalInstabilityIndex.get_bv_params">
-<code class="descname">get_bv_params</code><span class="sig-paren">(</span><em>cation</em>, <em>anion</em>, <em>cat_val</em>, <em>an_val</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalInstabilityIndex.get_bv_params" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_bv_params</code><a class="headerlink" href="#matminer.featurizers.structure.GlobalInstabilityIndex.get_bv_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lookup bond valence parameters from IUPAC table.
 Args:</p>
 <blockquote>
@@ -6988,6 +6995,12 @@ an_val: Integer, anion formal valence</div></blockquote>
 <dt>Returns:</dt>
 <dd>bond_val_list: dataframe of bond valence parameters</dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.GlobalInstabilityIndex.get_equiv_sites">
+<code class="descname">get_equiv_sites</code><span class="sig-paren">(</span><em>s</em>, <em>site</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalInstabilityIndex.get_equiv_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find identical sites from analyzing space group symmetry.</p>
 </dd></dl>
 
 <dl class="method">
@@ -8455,7 +8468,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.8 documentation</a> &#187;</li> 
       </ul>
     </div>
 
