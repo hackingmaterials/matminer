@@ -17,7 +17,8 @@ from sklearn.neighbors.unsupervised import NearestNeighbors
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData, MEGNetElementData
+    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData, MEGNetElementData, \
+    MeredigData
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
@@ -253,6 +254,83 @@ class ElementProperty(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn"]
+
+class Meredig(BaseFeaturizer):
+    """
+    Class to calculate features as defined in Meredig et. al.
+    """
+
+    def __init__(self):
+        self.data_source = MeredigData()
+
+        self.features = [e.strip()+" fraction" for e in self.data_source.element_names]
+        self.features = self.features+["mean AtomicWeight", "mean Column", "mean Row", "range AtomicNumber", "mean AtomicNumber",
+        "range AtomicRadius", "mean AtomicRadius", "range Electronegativity", "mean Electronegativity", "mean NsValence",
+        "mean NpValence", "mean NdValence", "mean NfValence", "fraction NsValence",
+        "fraction NpValence", "fraction NdValence", "fraction NfValence"]
+        # Initialize stats computer
+        self.pstats = PropertyStats()
+
+    def featurize(self, comp):
+        """
+        Get elemental property attributes
+
+        Args:
+            comp: Pymatgen composition object
+
+        Returns:
+            all_attributes: Specified property statistics of features
+        """
+
+        #First 103 features are element fractions
+        n_elements = 103
+        element_fractions = [0] * n_elements
+        el_list = list(comp.element_composition.fractional_composition.items())
+        for el in el_list:
+            obj = el
+            atomic_number_i = obj[0].number - 1
+            element_fractions[atomic_number_i] = obj[1]
+
+        #Calculate the remaining features
+        # Get the element names and fractions
+        elements, fractions = zip(*comp.element_composition.items())
+        attributes = [0] * (len(self.features) - n_elements)
+
+        #Total valence electrons, stored so we can calculate orbital fractions
+        valence_sum = 0
+        for i,feat in enumerate(self.features[n_elements:]):
+            stat = feat.split(" ")[0]
+            attr = " ".join(feat.split(" ")[1:])
+
+            if stat != "fraction":
+                elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
+
+                attributes[i] = self.pstats.calc_stat(elem_data, stat, fractions)
+                if "Valence" in attr:
+                    valence_sum += attributes[i]
+            elif stat == "fraction":
+                feature_mean_index = self.features.index("mean "+attr) - n_elements
+                if valence_sum != 0:
+                    attributes[i] = attributes[feature_mean_index]/valence_sum
+                else:
+                    attributes[i] = 0
+
+        return element_fractions+attributes
+
+    def feature_labels(self):
+        return self.features
+
+    def citations(self):
+        citation = [
+            "@article{meredig_agrawal_kirklin_saal_doak_thompson_zhang_choudhary_wolverton_2014, title={Combinatorial "
+            "screening for new materials in unconstrained composition space with machine learning}, "
+            "volume={89}, DOI={10.1103/PhysRevB.89.094104}, number={1}, journal={Physical "
+            "Review B}, author={B. Meredig, A. Agrawal, S. Kirklin, J. E. Saal, J. W. Doak, A. Thompson, "
+            "K. Zhang, A. Choudhary, and C. Wolverton}, year={2014}}"]
+        return citation
+
+    def implementors(self):
+        return ["Amalie Trewartha"]
 
 
 class CationProperty(ElementProperty):
