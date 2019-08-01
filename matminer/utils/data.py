@@ -240,7 +240,7 @@ class MeredigData(AbstractData):
                                      'meredig_elementdata')
         with open(os.path.join(self.data_dir,'ElementName.table'),'r') as f:
             self.element_names = f.readlines()
-            
+
         # Make a list of available properties
         for datafile in glob(os.path.join(self.data_dir, "*.table")):
             available_props.append(
