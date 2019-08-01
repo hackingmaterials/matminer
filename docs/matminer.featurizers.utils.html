@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>matminer.featurizers.utils package &#8212; matminer 0.5.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,6 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -61,18 +60,18 @@
 <span id="matminer-featurizers-utils-cgcnn-module"></span><h2>matminer.featurizers.utils.cgcnn module<a class="headerlink" href="#module-matminer.featurizers.utils.cgcnn" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.featurizers.utils.cgcnn.AtomCustomArrayInitializer">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.cgcnn.</code><code class="descname">AtomCustomArrayInitializer</code><span class="sig-paren">(</span><em>elem_embedding</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.AtomCustomArrayInitializer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.cgcnn.</code><code class="sig-name descname">AtomCustomArrayInitializer</code><span class="sig-paren">(</span><em class="sig-param">elem_embedding</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.AtomCustomArrayInitializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cgcnn.data.AtomInitializer</span></code></p>
 <p>Initialize atom feature vectors using a JSON file, which is a python
 dictionary mapping from element number to a list representing the
 feature vector of the element.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>elem_embedding_file (str): The path to the .json file</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>elem_embedding_file (str): The path to the .json file</p>
+</dd>
 </dl>
 <dl class="method">
 <dt id="matminer.featurizers.utils.cgcnn.AtomCustomArrayInitializer.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>elem_embedding</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.AtomCustomArrayInitializer.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">elem_embedding</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.AtomCustomArrayInitializer.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -80,8 +79,8 @@ feature vector of the element.</p>
 
 <dl class="class">
 <dt id="matminer.featurizers.utils.cgcnn.CIFDataWrapper">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.cgcnn.</code><code class="descname">CIFDataWrapper</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>atom_init_fea</em>, <em>max_num_nbr=12</em>, <em>radius=8</em>, <em>dmin=0</em>, <em>step=0.2</em>, <em>random_seed=123</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CIFDataWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.cgcnn.</code><code class="sig-name descname">CIFDataWrapper</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">atom_init_fea</em>, <em class="sig-param">max_num_nbr=12</em>, <em class="sig-param">radius=8</em>, <em class="sig-param">dmin=0</em>, <em class="sig-param">step=0.2</em>, <em class="sig-param">random_seed=123</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CIFDataWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
 <p>Wrapper for a dataset containing pymatgen Structure objects.
 This is modified from CGCNN repo’s CIFData for wrapping dataset where the
 structures are stored in CIF files.
@@ -89,17 +88,17 @@ As we already have X as an iterable of pymatgen Structure objects, we can
 use this wrapper instead of CIFData.</p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.cgcnn.CIFDataWrapper.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>atom_init_fea</em>, <em>max_num_nbr=12</em>, <em>radius=8</em>, <em>dmin=0</em>, <em>step=0.2</em>, <em>random_seed=123</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CIFDataWrapper.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd>X (Series/list): An iterable of pymatgen Structure objects.
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">atom_init_fea</em>, <em class="sig-param">max_num_nbr=12</em>, <em class="sig-param">radius=8</em>, <em class="sig-param">dmin=0</em>, <em class="sig-param">step=0.2</em>, <em class="sig-param">random_seed=123</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CIFDataWrapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><p>X (Series/list): An iterable of pymatgen Structure objects.
 y (Series/list): target property that CGCNN is to predict.
 atom_init_fea (dict): A dict of {atom type: atom feature}.
 max_num_nbr (int): The max number of every atom’s neighbors.
 radius (float): Cutoff radius for searching neighbors.
 dmin (int): The minimum distance for constructing GaussianDistance.
 step (float): The step size for constructing GaussianDistance.
-random_seed (int): Random seed for shuffling the dataset.</dd>
+random_seed (int): Random seed for shuffling the dataset.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -107,23 +106,23 @@ random_seed (int): Random seed for shuffling the dataset.</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.cgcnn.</code><code class="descname">CrystalGraphConvNetWrapper</code><span class="sig-paren">(</span><em>orig_atom_fea_len</em>, <em>nbr_fea_len</em>, <em>atom_fea_len=64</em>, <em>n_conv=3</em>, <em>h_fea_len=128</em>, <em>n_h=1</em>, <em>classification=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.cgcnn.</code><code class="sig-name descname">CrystalGraphConvNetWrapper</code><span class="sig-paren">(</span><em class="sig-param">orig_atom_fea_len</em>, <em class="sig-param">nbr_fea_len</em>, <em class="sig-param">atom_fea_len=64</em>, <em class="sig-param">n_conv=3</em>, <em class="sig-param">h_fea_len=128</em>, <em class="sig-param">n_h=1</em>, <em class="sig-param">classification=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cgcnn.model.CrystalGraphConvNet</span></code></p>
 <p>Wrapper for CrystalGraphConvNet in the CGCNN repo and add extract_feature
 function to extract the feature vector after pooling layer of CGCNN model
 as features for the structures.
 Please see the CrystalGraphConvNet in the CGCNN repo for more details</p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>orig_atom_fea_len</em>, <em>nbr_fea_len</em>, <em>atom_fea_len=64</em>, <em>n_conv=3</em>, <em>h_fea_len=128</em>, <em>n_h=1</em>, <em>classification=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">orig_atom_fea_len (int): Number of atom features in the input.
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">orig_atom_fea_len</em>, <em class="sig-param">nbr_fea_len</em>, <em class="sig-param">atom_fea_len=64</em>, <em class="sig-param">n_conv=3</em>, <em class="sig-param">h_fea_len=128</em>, <em class="sig-param">n_h=1</em>, <em class="sig-param">classification=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Args:</dt><dd><p>orig_atom_fea_len (int): Number of atom features in the input.
 nbr_fea_len (int): Number of bond features.
 atom_fea_len (int): Number of hidden atom features</p>
 <blockquote>
-<div>in the convolutional layers.</div></blockquote>
-<p class="last">n_conv (int): Number of convolutional layers.
+<div><p>in the convolutional layers.</p>
+</div></blockquote>
+<p>n_conv (int): Number of convolutional layers.
 h_fea_len (int): Number of hidden features after pooling.
 n_h (int): Number of hidden layers after pooling.
 classification (bool): Classification task or regression task.</p>
@@ -133,24 +132,23 @@ classification (bool): Classification task or regression task.</p>
 
 <dl class="method">
 <dt id="matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper.extract_feature">
-<code class="descname">extract_feature</code><span class="sig-paren">(</span><em>atom_fea</em>, <em>nbr_fea</em>, <em>nbr_fea_idx</em>, <em>crystal_atom_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper.extract_feature" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extract_feature</code><span class="sig-paren">(</span><em class="sig-param">atom_fea</em>, <em class="sig-param">nbr_fea</em>, <em class="sig-param">nbr_fea_idx</em>, <em class="sig-param">crystal_atom_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper.extract_feature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract the feature vector after pooling layer of CGCNN model as
 features for the structures.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>atom_fea (Variable(torch.Tensor)): shape (N, orig_atom_fea_len)</dt>
-<dd>Atom features from atom type.</dd>
-<dt>nbr_fea (Variable(torch.Tensor)): shape (N, M, nbr_fea_len)</dt>
-<dd>Bond features of each atom’s M neighbors.</dd>
-<dt>nbr_fea_idx (torch.LongTensor): shape (N, M)</dt>
-<dd>Indices of M neighbors of each atom.</dd>
-<dt>crystal_atom_idx (list of torch.LongTensor):  length N0</dt>
-<dd>Mapping from the crystal idx to atom idx.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>atom_fea (Variable(torch.Tensor)): shape (N, orig_atom_fea_len)</dt><dd><p>Atom features from atom type.</p>
+</dd>
+<dt>nbr_fea (Variable(torch.Tensor)): shape (N, M, nbr_fea_len)</dt><dd><p>Bond features of each atom’s M neighbors.</p>
+</dd>
+<dt>nbr_fea_idx (torch.LongTensor): shape (N, M)</dt><dd><p>Indices of M neighbors of each atom.</p>
+</dd>
+<dt>crystal_atom_idx (list of torch.LongTensor):  length N0</dt><dd><p>Mapping from the crystal idx to atom idx.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>feature (list): deep learning feature</dd>
+<dt>Returns:</dt><dd><p>feature (list): deep learning feature</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -158,15 +156,16 @@ features for the structures.</p>
 
 <dl class="function">
 <dt id="matminer.featurizers.utils.cgcnn.appropriate_kwargs">
-<code class="descclassname">matminer.featurizers.utils.cgcnn.</code><code class="descname">appropriate_kwargs</code><span class="sig-paren">(</span><em>kwargs</em>, <em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.appropriate_kwargs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.featurizers.utils.cgcnn.</code><code class="sig-name descname">appropriate_kwargs</code><span class="sig-paren">(</span><em class="sig-param">kwargs</em>, <em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.appropriate_kwargs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Auto get the appropriate kwargs according to those allowed by the func.
 Args:</p>
 <blockquote>
-<div>kwargs (dict): kwargs.
-func (object): function object.</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>filtered_dict (dict): filtered kwargs.</dd>
+<div><p>kwargs (dict): kwargs.
+func (object): function object.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>filtered_dict (dict): filtered kwargs.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -176,28 +175,28 @@ func (object): function object.</div></blockquote>
 <p>Functions designed to work with General Radial Distribution Function</p>
 <dl class="class">
 <dt id="matminer.featurizers.utils.grdf.AbstractPairwise">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">AbstractPairwise</code><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.grdf.</code><code class="sig-name descname">AbstractPairwise</code><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract class for pairwise functions used in Generalized Radial Distribution Function</p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.AbstractPairwise.name">
-<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise.name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a label for this pairwise function</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>(string) Label for the function</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(string) Label for the function</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matminer.featurizers.utils.grdf.AbstractPairwise.volume">
-<code class="descname">volume</code><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise.volume" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">volume</code><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise.volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the volume of this pairwise function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>cutoff (float): Cutoff distance for radial distribution function</dd>
-<dt>Returns:</dt>
-<dd>(float): Volume of bin</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cutoff (float): Cutoff distance for radial distribution function</p>
+</dd>
+<dt>Returns:</dt><dd><p>(float): Volume of bin</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -205,16 +204,16 @@ func (object): function object.</div></blockquote>
 
 <dl class="class">
 <dt id="matminer.featurizers.utils.grdf.Bessel">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">Bessel</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Bessel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.grdf.</code><code class="sig-name descname">Bessel</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Bessel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="matminer.featurizers.utils.grdf.AbstractPairwise"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.utils.grdf.AbstractPairwise</span></code></a></p>
 <p>Bessel pairwise function</p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Bessel.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Bessel.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Bessel.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>n (int): Degree of Bessel function</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>n (int): Degree of Bessel function</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -222,28 +221,28 @@ func (object): function object.</div></blockquote>
 
 <dl class="class">
 <dt id="matminer.featurizers.utils.grdf.Cosine">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">Cosine</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.grdf.</code><code class="sig-name descname">Cosine</code><span class="sig-paren">(</span><em class="sig-param">a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="matminer.featurizers.utils.grdf.AbstractPairwise"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.utils.grdf.AbstractPairwise</span></code></a></p>
-<p>Cosine pairwise function: <img class="math" src="_images/math/775308689ec82d24ee08490a702181d1ccbe59d8.png" alt="cos(ar)"/></p>
+<p>Cosine pairwise function: <img class="math" src="_images/math/18711f8217158b267749b882e02ef2f9f17431c0.png" alt="cos(ar)"/></p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Cosine.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>a (float): Frequency factor for cosine function</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>a (float): Frequency factor for cosine function</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Cosine.volume">
-<code class="descname">volume</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine.volume" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">volume</code><span class="sig-paren">(</span><em class="sig-param">cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Cosine.volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the volume of this pairwise function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>cutoff (float): Cutoff distance for radial distribution function</dd>
-<dt>Returns:</dt>
-<dd>(float): Volume of bin</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cutoff (float): Cutoff distance for radial distribution function</p>
+</dd>
+<dt>Returns:</dt><dd><p>(float): Volume of bin</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -251,29 +250,29 @@ func (object): function object.</div></blockquote>
 
 <dl class="class">
 <dt id="matminer.featurizers.utils.grdf.Gaussian">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">Gaussian</code><span class="sig-paren">(</span><em>width</em>, <em>center</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Gaussian" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.grdf.</code><code class="sig-name descname">Gaussian</code><span class="sig-paren">(</span><em class="sig-param">width</em>, <em class="sig-param">center</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Gaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="matminer.featurizers.utils.grdf.AbstractPairwise"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.utils.grdf.AbstractPairwise</span></code></a></p>
 <p>Gaussian function, with specified width and center</p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Gaussian.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>width</em>, <em>center</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Gaussian.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">width</em>, <em class="sig-param">center</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Gaussian.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the gaussian function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>width (float): Width of the gaussian
-center (float): Center of the gaussian</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>width (float): Width of the gaussian
+center (float): Center of the gaussian</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Gaussian.volume">
-<code class="descname">volume</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Gaussian.volume" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">volume</code><span class="sig-paren">(</span><em class="sig-param">cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Gaussian.volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the volume of this pairwise function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>cutoff (float): Cutoff distance for radial distribution function</dd>
-<dt>Returns:</dt>
-<dd>(float): Volume of bin</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cutoff (float): Cutoff distance for radial distribution function</p>
+</dd>
+<dt>Returns:</dt><dd><p>(float): Volume of bin</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -281,29 +280,29 @@ center (float): Center of the gaussian</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.utils.grdf.Histogram">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">Histogram</code><span class="sig-paren">(</span><em>start</em>, <em>width</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Histogram" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.grdf.</code><code class="sig-name descname">Histogram</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">width</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="matminer.featurizers.utils.grdf.AbstractPairwise"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.utils.grdf.AbstractPairwise</span></code></a></p>
 <p>Rectangular window function, used in conventional Radial Distribution Functions</p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Histogram.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>start</em>, <em>width</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Histogram.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">width</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Histogram.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the window function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>start (float): Beginning of window
-width (float): Size of window</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>start (float): Beginning of window
+width (float): Size of window</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Histogram.volume">
-<code class="descname">volume</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Histogram.volume" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">volume</code><span class="sig-paren">(</span><em class="sig-param">cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Histogram.volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the volume of this pairwise function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>cutoff (float): Cutoff distance for radial distribution function</dd>
-<dt>Returns:</dt>
-<dd>(float): Volume of bin</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cutoff (float): Cutoff distance for radial distribution function</p>
+</dd>
+<dt>Returns:</dt><dd><p>(float): Volume of bin</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -311,28 +310,28 @@ width (float): Size of window</dd>
 
 <dl class="class">
 <dt id="matminer.featurizers.utils.grdf.Sine">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">Sine</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.grdf.</code><code class="sig-name descname">Sine</code><span class="sig-paren">(</span><em class="sig-param">a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="matminer.featurizers.utils.grdf.AbstractPairwise"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.utils.grdf.AbstractPairwise</span></code></a></p>
-<p>Sine pairwise function: <img class="math" src="_images/math/20380591afec1e5625f65892e5af51719381bf91.png" alt="sin(ar)"/></p>
+<p>Sine pairwise function: <img class="math" src="_images/math/e37b8a88ae16543f49591bf090bf9bd2fe5088da.png" alt="sin(ar)"/></p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Sine.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">a</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>a (float): Frequency factor for sine function</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>a (float): Frequency factor for sine function</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.Sine.volume">
-<code class="descname">volume</code><span class="sig-paren">(</span><em>cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine.volume" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">volume</code><span class="sig-paren">(</span><em class="sig-param">cutoff</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.Sine.volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the volume of this pairwise function</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>cutoff (float): Cutoff distance for radial distribution function</dd>
-<dt>Returns:</dt>
-<dd>(float): Volume of bin</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cutoff (float): Cutoff distance for radial distribution function</p>
+</dd>
+<dt>Returns:</dt><dd><p>(float): Volume of bin</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -340,13 +339,13 @@ width (float): Size of window</dd>
 
 <dl class="function">
 <dt id="matminer.featurizers.utils.grdf.initialize_pairwise_function">
-<code class="descclassname">matminer.featurizers.utils.grdf.</code><code class="descname">initialize_pairwise_function</code><span class="sig-paren">(</span><em>name</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.initialize_pairwise_function" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.featurizers.utils.grdf.</code><code class="sig-name descname">initialize_pairwise_function</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">**options</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.grdf.initialize_pairwise_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new pairwise function object</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>name (string): Name of class to instantiate</dd>
-<dt>Keyword Arguments:</dt>
-<dd>Any options for the pairwise class (see each pairwise function for details)</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name (string): Name of class to instantiate</p>
+</dd>
+<dt>Keyword Arguments:</dt><dd><p>Any options for the pairwise class (see each pairwise function for details)</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -355,7 +354,7 @@ width (float): Size of window</dd>
 <span id="matminer-featurizers-utils-stats-module"></span><h2>matminer.featurizers.utils.stats module<a class="headerlink" href="#module-matminer.featurizers.utils.stats" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.featurizers.utils.stats.PropertyStats">
-<em class="property">class </em><code class="descclassname">matminer.featurizers.utils.stats.</code><code class="descname">PropertyStats</code><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.stats.</code><code class="sig-name descname">PropertyStats</code><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>This class contains statistical operations that are commonly employed
 when computing features.</p>
@@ -377,224 +376,226 @@ two colons. For example, the 0th Holder mean would be:</p>
 <p>You can, of course, call the statistical functions directly. All take at
 least two arguments.  The first is the data being assessed and the second,
 optional, argument is the weights.</p>
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.avg_dev">
-<em class="property">static </em><code class="descname">avg_dev</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.avg_dev" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">avg_dev</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.avg_dev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mean absolute deviation of list of element data.</p>
 <p>This is computed by first calculating the mean of the list,
 and then computing the average absolute difference between each value
 and the mean.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights (list of floats): Weights for each value</dd>
-<dt>Returns:</dt>
-<dd>mean absolute deviation</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</p>
+</dd>
+<dt>Returns:</dt><dd><p>mean absolute deviation</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.calc_stat">
-<em class="property">static </em><code class="descname">calc_stat</code><span class="sig-paren">(</span><em>data_lst</em>, <em>stat</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.calc_stat" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">calc_stat</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">stat</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.calc_stat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a property statistic</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">data_lst (list of floats): list of values
+<dl>
+<dt>Args:</dt><dd><p>data_lst (list of floats): list of values
 stat (str) - Name of property to be compute. If there are arguments to the statistics function, these</p>
 <blockquote>
-<div>should be added after the name and separated by two colons. For example, the 2nd Holder mean would
-be “holder_mean::2”</div></blockquote>
-<p class="last">weights (list of floats): (Optional) weights for each element in data_lst</p>
+<div><p>should be added after the name and separated by two colons. For example, the 2nd Holder mean would
+be “holder_mean::2”</p>
+</div></blockquote>
+<p>weights (list of floats): (Optional) weights for each element in data_lst</p>
 </dd>
-<dt>Returns:</dt>
-<dd>float - Desired statistic</dd>
+<dt>Returns:</dt><dd><p>float - Desired statistic</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.eigenvalues">
-<em class="property">static </em><code class="descname">eigenvalues</code><span class="sig-paren">(</span><em>data_lst</em>, <em>symm=False</em>, <em>sort=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.eigenvalues" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">eigenvalues</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">symm=False</em>, <em class="sig-param">sort=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.eigenvalues" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the eigenvalues of a matrix as a numpy array
 Args:</p>
 <blockquote>
-<div>data_lst: (matrix-like) of values
+<div><p>data_lst: (matrix-like) of values
 symm: whether to assume the matrix is symmetric
-sort: wheter to sort the eigenvalues</div></blockquote>
+sort: wheter to sort the eigenvalues</p>
+</div></blockquote>
 <p>Returns: eigenvalues</p>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.flatten">
-<em class="property">static </em><code class="descname">flatten</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.flatten" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.flatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a flattened copy of data_lst-as a numpy array</p>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.geom_std_dev">
-<em class="property">static </em><code class="descname">geom_std_dev</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.geom_std_dev" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">geom_std_dev</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.geom_std_dev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geometric standard deviation</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights (list of floats): Weights for each value</dd>
-<dt>Returns:</dt>
-<dd>geometric standard deviation</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</p>
+</dd>
+<dt>Returns:</dt><dd><p>geometric standard deviation</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.holder_mean">
-<em class="property">static </em><code class="descname">holder_mean</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em>, <em>power=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.holder_mean" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">holder_mean</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">power=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.holder_mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Holder mean
 Args:</p>
 <blockquote>
-<div>data_lst: (list/array) of values
+<div><p>data_lst: (list/array) of values
 weights: (list/array) of weights
-power: (int/float/str) which holder mean to compute</div></blockquote>
+power: (int/float/str) which holder mean to compute</p>
+</div></blockquote>
 <p>Returns: Holder mean</p>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.inverse_mean">
-<em class="property">static </em><code class="descname">inverse_mean</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.inverse_mean" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">inverse_mean</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.inverse_mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mean of the inverse of each entry</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights (list of floats): Weights for each value</dd>
-<dt>Returns:</dt>
-<dd>inverse mean</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</p>
+</dd>
+<dt>Returns:</dt><dd><p>inverse mean</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.kurtosis">
-<em class="property">static </em><code class="descname">kurtosis</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.kurtosis" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">kurtosis</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.kurtosis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kurtosis of a list of data</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights (list of floats): Weights for each value</dd>
-<dt>Returns:</dt>
-<dd>kurtosis</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</p>
+</dd>
+<dt>Returns:</dt><dd><p>kurtosis</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.maximum">
-<em class="property">static </em><code class="descname">maximum</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.maximum" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">maximum</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.maximum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum value in a list</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights: (ignored)</dd>
-<dt>Returns:</dt>
-<dd>maximum value</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights: (ignored)</p>
+</dd>
+<dt>Returns:</dt><dd><p>maximum value</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.mean">
-<em class="property">static </em><code class="descname">mean</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.mean" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Arithmetic mean of list</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights (list of floats): Weights for each value</dd>
-<dt>Returns:</dt>
-<dd>mean value</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</p>
+</dd>
+<dt>Returns:</dt><dd><p>mean value</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.minimum">
-<em class="property">static </em><code class="descname">minimum</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.minimum" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">minimum</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.minimum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Minimum value in a list</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights: (ignored)</dd>
-<dt>Returns:</dt>
-<dd>minimum value</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights: (ignored)</p>
+</dd>
+<dt>Returns:</dt><dd><p>minimum value</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.mode">
-<em class="property">static </em><code class="descname">mode</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.mode" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">mode</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mode of a list of data.</p>
 <p>If multiple elements occur equally-frequently (or same weight, if
 weights are provided), this function will return the minimum of those
 values.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights (list of floats): Weights for each value</dd>
-<dt>Returns:</dt>
-<dd>mode</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</p>
+</dd>
+<dt>Returns:</dt><dd><p>mode</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.quantile">
-<em class="property">static </em><code class="descname">quantile</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em>, <em>q=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.quantile" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">quantile</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">q=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.quantile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a specific quantile.
 Args:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>data_lst (list or np.ndarray): 1D data list to be used for computing</dt>
-<dd>quantiles</dd>
+<div><dl class="simple">
+<dt>data_lst (list or np.ndarray): 1D data list to be used for computing</dt><dd><p>quantiles</p>
+</dd>
 </dl>
 <p>q (float): The quantile, as a fraction between 0 and 1.</p>
 </div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>(float) The computed quantile of the data_lst.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(float) The computed quantile of the data_lst.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.range">
-<em class="property">static </em><code class="descname">range</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.range" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">range</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Range of a list</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights: (ignored)</dd>
-<dt>Returns:</dt>
-<dd>range</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights: (ignored)</p>
+</dd>
+<dt>Returns:</dt><dd><p>range</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.skewness">
-<em class="property">static </em><code class="descname">skewness</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.skewness" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">skewness</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.skewness" title="Permalink to this definition">¶</a></dt>
 <dd><p>Skewness of a list of data</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights (list of floats): Weights for each value</dd>
-<dt>Returns:</dt>
-<dd>shewness</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</p>
+</dd>
+<dt>Returns:</dt><dd><p>shewness</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.sorted">
-<em class="property">static </em><code class="descname">sorted</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.sorted" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">sorted</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.sorted" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the sorted data_lst</p>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.featurizers.utils.stats.PropertyStats.std_dev">
-<em class="property">static </em><code class="descname">std_dev</code><span class="sig-paren">(</span><em>data_lst</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.std_dev" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">std_dev</code><span class="sig-paren">(</span><em class="sig-param">data_lst</em>, <em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats.std_dev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standard deviation of a list of element data</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>data_lst (list of floats): List of values to be assessed
-weights (list of floats): Weights for each value</dd>
-<dt>Returns:</dt>
-<dd>standard deviation</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lst (list of floats): List of values to be assessed
+weights (list of floats): Weights for each value</p>
+</dd>
+<dt>Returns:</dt><dd><p>standard deviation</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -633,13 +634,11 @@ weights (list of floats): Weights for each value</dd>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -663,7 +662,7 @@ weights (list of floats): Weights for each value</dd>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
 
   </body>
