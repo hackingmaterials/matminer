@@ -17,8 +17,7 @@ from sklearn.neighbors.unsupervised import NearestNeighbors
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData, MEGNetElementData, \
-    MeredigData
+    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData, MEGNetElementData
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
@@ -258,16 +257,26 @@ class ElementProperty(BaseFeaturizer):
 class Meredig(BaseFeaturizer):
     """
     Class to calculate features as defined in Meredig et. al.
+
+    Features:
+        Atomic fraction of each of the first 103 elements, in order of atomic number.
+        17 statistics of elemental properties;
+            Mean atomic weight of constituent elements
+            Mean periodic table row and column number
+            Mean and range of atomic number
+            Mean and range of atomic radius
+            Mean and range of electronegativity
+            Mean number of valence electrons in each orbital
+            Fraction of total valence electrons in each orbital
+
     """
 
     def __init__(self):
-        self.data_source = MeredigData()
+        self.data_source = MagpieData()
 
-        self.features = [e.strip()+" fraction" for e in self.data_source.element_names]
-        self.features = self.features+["mean AtomicWeight", "mean Column", "mean Row", "range AtomicNumber", "mean AtomicNumber",
-        "range AtomicRadius", "mean AtomicRadius", "range Electronegativity", "mean Electronegativity", "mean NsValence",
-        "mean NpValence", "mean NdValence", "mean NfValence", "fraction NsValence",
-        "fraction NpValence", "fraction NdValence", "fraction NfValence"]
+        #The labels for statistics on element properties
+        self._element_property_feature_labels = ["mean AtomicWeight", "mean Column", "mean Row", "range Number", "mean Number",
+        "range AtomicRadius", "mean AtomicRadius", "range Electronegativity", "mean Electronegativity"]
         # Initialize stats computer
         self.pstats = PropertyStats()
 
@@ -282,43 +291,31 @@ class Meredig(BaseFeaturizer):
             all_attributes: Specified property statistics of features
         """
 
-        #First 103 features are element fractions
-        n_elements = 103
-        element_fractions = [0] * n_elements
-        el_list = list(comp.element_composition.fractional_composition.items())
-        for el in el_list:
-            obj = el
-            atomic_number_i = obj[0].number - 1
-            element_fractions[atomic_number_i] = obj[1]
+        #First 103 features are element fractions, we can get these from the ElementFraction featurizer
+        element_fraction_features = ElementFraction().featurize(comp)
 
-        #Calculate the remaining features
-        # Get the element names and fractions
+
+        #Next 9 features are statistics on elemental properties
         elements, fractions = zip(*comp.element_composition.items())
-        attributes = [0] * (len(self.features) - n_elements)
+        element_property_features = [0] * len(self._element_property_feature_labels)
 
-        #Total valence electrons, stored so we can calculate orbital fractions
-        valence_sum = 0
-        for i,feat in enumerate(self.features[n_elements:]):
+        for i,feat in enumerate(self._element_property_feature_labels):
             stat = feat.split(" ")[0]
             attr = " ".join(feat.split(" ")[1:])
 
-            if stat != "fraction":
-                elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
+            elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
+            element_property_features[i] = self.pstats.calc_stat(elem_data, stat, fractions)
 
-                attributes[i] = self.pstats.calc_stat(elem_data, stat, fractions)
-                if "Valence" in attr:
-                    valence_sum += attributes[i]
-            elif stat == "fraction":
-                feature_mean_index = self.features.index("mean "+attr) - n_elements
-                if valence_sum != 0:
-                    attributes[i] = attributes[feature_mean_index]/valence_sum
-                else:
-                    attributes[i] = 0
+        #Final 8 features are statistics on valence orbitals, available from the ValenceOrbital featurizer
+        valence_orbital_features = ValenceOrbital(orbitals=("s", "p", "d", "f"), props=("avg", "frac")).featurize(comp)
 
-        return element_fractions+attributes
+        return element_fraction_features+element_property_features+valence_orbital_features
 
     def feature_labels(self):
-        return self.features
+        #Since we have more features than just element fractions, append 'fraction' to element symbols for clarity
+        element_fraction_features = [e + " fraction" for e in ElementFraction().feature_labels()]
+        valence_orbital_features = ValenceOrbital().feature_labels()
+        return element_fraction_features+self._element_property_feature_labels+valence_orbital_features
 
     def citations(self):
         citation = [

@@ -224,46 +224,6 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     def get_oxidation_states(self, elem):
         return self.all_elemental_props["OxidationStates"][elem.symbol]
 
-class MeredigData(AbstractData):
-    """
-    Class to get data from Meredig files. See also:
-    B. Meredig, A. Agrawal, S. Kirklin, J. E. Saal, J. W. Doak, A. Thompson,
-    K. Zhang, A. Choudhary, and C. Wolverton, Combinatorial screening for new
-    materials in unconstrained composition space with machine learning,
-    Phys. Rev. D 89 (2014) 094104.
-    """
-
-    def __init__(self):
-        self.all_elemental_props = dict()
-        available_props = []
-        self.data_dir = os.path.join(module_dir, "data_files",
-                                     'meredig_elementdata')
-        with open(os.path.join(self.data_dir,'ElementName.table'),'r') as f:
-            self.element_names = f.readlines()
-
-        # Make a list of available properties
-        for datafile in glob(os.path.join(self.data_dir, "*.table")):
-            available_props.append(
-                os.path.basename(datafile).replace('.table', ''))
-
-        # parse and store elemental properties
-        for descriptor_name in available_props:
-            with open(os.path.join(self.data_dir,
-                                   '{}.table'.format(descriptor_name)),
-                      'r') as f:
-                self.all_elemental_props[descriptor_name] = dict()
-                lines = f.readlines()
-                for atomic_no in range(1, len(_pt_data) + 1):  # max Z=103
-                    try:
-                        prop_value = float(lines[atomic_no - 1])
-                    except ValueError:
-                        prop_value = float("NaN")
-                    self.all_elemental_props[descriptor_name][
-                        Element.from_Z(atomic_no).symbol] = prop_value
-
-    def get_elemental_property(self, elem, property_name):
-        return self.all_elemental_props[property_name][elem.symbol]
-
 class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
     """
     Class to get data from pymatgen. See also:

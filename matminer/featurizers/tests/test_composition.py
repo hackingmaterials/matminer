@@ -102,8 +102,8 @@ class CompositionFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df_val["Fe fraction"].iloc[1], 0.5)
         self.assertAlmostEqual(df_val["O fraction"].iloc[0], 3.0/5.0)
         self.assertAlmostEqual(df_val["O fraction"].iloc[1], 0.5)
-        self.assertAlmostEqual(df_val["fraction NsValence"].iloc[0], 0.294117647)
-        self.assertAlmostEqual(df_val["mean AtomicNumber"].iloc[0], 15.2)
+        self.assertAlmostEqual(df_val["frac s valence electrons"].iloc[0], 0.294117647)
+        self.assertAlmostEqual(df_val["mean Number"].iloc[0], 15.2)
 
     def test_valence(self):
         df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")
