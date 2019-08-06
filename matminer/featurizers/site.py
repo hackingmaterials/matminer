@@ -100,10 +100,9 @@ class AGNIFingerprints(BaseFeaturizer):
     def featurize(self, struct, idx):
         # Get all neighbors of this site
         my_site = struct[idx]
-        sites, dists = zip(*struct.get_neighbors(my_site, self.cutoff))
-
-        # Convert dists to a ndarray
-        dists = np.array(dists)
+        neighbors = struct.get_neighbors(my_site, self.cutoff)
+        sites = [n.site for n in neighbors]
+        dists = np.array([n.distance for n in neighbors])
 
         # If one of the features is direction-dependent, compute the :math:`(r_i - r_j) / r_{ij}`
         if any([x in self.directions for x in ['x', 'y', 'z']]):
