@@ -240,11 +240,11 @@ class OPSiteFingerprint(BaseFeaturizer):
         r = 6
         while len(neigh_dist) < 12:
             r += 1.0
-            neigh_dist = struct.get_neighbors(s, r)
+            neighbors = struct.get_neighbors(s, r)
 
         # Smoothen distance, but use relative distances.
-        dmin = min([d for n, d in neigh_dist])
-        neigh_dist = [[n, d / dmin] for n, d in neigh_dist]
+        dmin = min([n.distance for n in neigh_dist])
+        neigh_dist = [[n.site, n.distance / dmin] for n in neighbors]
         neigh_dist_alldrs = {}
         d_sorted_alldrs = {}
 
@@ -254,9 +254,8 @@ class OPSiteFingerprint(BaseFeaturizer):
             this_idr = 1.0 / this_dr
             neigh_dist_alldrs[i] = []
             for j in range(len(neigh_dist)):
-                neigh_dist_alldrs[i].append([neigh_dist[j][0],
-                                             (float(
-                                                 int(neigh_dist[j][1] * this_idr \
+                neigh_dist_alldrs[i].append(
+                    [neigh_dist[j][0], (float(int(neigh_dist[j][1] * this_idr \
                                                      + 0.5)) + 0.5) * this_dr])
             d_sorted_alldrs[i] = []
             for n, d in neigh_dist_alldrs[i]:
