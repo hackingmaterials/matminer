@@ -524,13 +524,13 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
-            neighs_dists = struct.get_neighbors(site, self.cutoff)
-            for neigh, dist in neighs_dists:
-                neigh_charge = float(neigh.specie.oxi_state)
-                bin_index = int(dist / self.dr)
-                redf_dict["distribution"][bin_index] += (
-                                                                this_charge * neigh_charge) / (
-                                                                struct.num_sites * dist)
+            neighbors = struct.get_neighbors(site, self.cutoff)
+            for n in neighbors:
+                neigh_charge = float(n.site.specie.oxi_state)
+                d = n.distance
+                bin_index = int(d / self.dr)
+                redf_dict["distribution"][bin_index] \
+                    += (this_charge * neigh_charge) / (struct.num_sites * d)
 
         return [redf_dict]
 
