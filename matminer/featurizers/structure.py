@@ -1047,18 +1047,21 @@ class MinimumRelativeDistances(BaseFeaturizer):
             s: Pymatgen Structure object.
 
         Returns:
-            min_rel_dists: (list of floats) list of all minimum relative
+            dists_relative_min: (list of floats) list of all minimum relative
                     distances (i.e., for all sites).
         """
         vire = ValenceIonicRadiusEvaluator(s)
-        min_rel_dists = []
+        dists_relative_min = []
         for site in vire.structure:
-            min_rel_dists.append(min([dist / (
-                    vire.radii[site.species_string] +
-                    vire.radii[neigh.species_string]) for neigh, dist in \
-                                      vire.structure.get_neighbors(site,
-                                                                   self.cutoff)]))
-        return [min_rel_dists[:]]
+            dists_relative = []
+            for n in vire.structure.get_neighbors(site, self.cutoff):
+                r_site = vire.radii[site.species_string]
+                r_neigh = vire.radii[n.site.species_string]
+                radii_dist = r_site + r_neigh
+                d_relative = n.distance / radii_dist
+                dists_relative.append(d_relative)
+            dists_relative_min.append(min(dists_relative))
+        return [dists_relative_min]
 
     def feature_labels(self):
         return ["minimum relative distance of each site"]
@@ -1079,7 +1082,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
                 "}"]
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ["Nils E. R. Zimmermann", "Alex Dunn"]
 
 
 class SiteStatsFingerprint(BaseFeaturizer):
