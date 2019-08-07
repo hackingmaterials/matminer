@@ -224,6 +224,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     def get_oxidation_states(self, elem):
         return self.all_elemental_props["OxidationStates"][elem.symbol]
 
+
 class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
     """
     Class to get data from pymatgen. See also:
