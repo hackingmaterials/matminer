@@ -863,6 +863,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertTupleEqual(df.shape, (3, 451))
         self.assertAlmostEqual(df["SOAP_449"].iloc[1], 3.029167413711548, places=5)
 
+    # todo: remove skip once https://github.com/materialsproject/pymatgen/pull/1548 is versioned into PMG
+    @unittest.skip()
     def test_GlobalInstabilityIndex(self):
         # Test diamond and ni3al fail precheck
         gii = GlobalInstabilityIndex(r_cut=4.0, disordered_pymatgen=False)
