@@ -1,6 +1,6 @@
 numpy==1.16.0
 requests==2.20.0
-pymatgen==2019.3.27
+pymatgen==2019.7.30
 pandas==0.23.4
 tqdm==4.23.1
 pymongo==3.6.1
