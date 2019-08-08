@@ -1154,12 +1154,12 @@ class Miedema(BaseFeaturizer):
             'all': same for ['fcc', 'bcc', 'hcp', 'no_latt']
             ['fcc', 'bcc']: fcc and bcc solid solutions
         data_source (str): source of dataset, default='Miedema'
-            'Miedema': 'Miedema.csv' placed in "matminer/utils/data_files/"
-            parameterized for 73 elements by Miedema et al. in 1980s, containing
+            'Miedema': 'Miedema.csv' placed in "matminer/utils/data_files/",
+            containing the following model parameters for 73 elements:
             'molar_volume', 'electron_density', 'electronegativity'
             'valence_electrons', 'a_const', 'R_const', 'H_trans'
             'compressibility', 'shear_modulus', 'melting_point'
-            'structural_stability'
+            'structural_stability'. Please see the references for details.
     Returns:
         (list of floats) Miedema formation enthalpies (eV/atom) for input
             struct_types:
