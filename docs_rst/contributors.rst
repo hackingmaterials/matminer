@@ -58,3 +58,4 @@ Other
 * Tian Xie (MIT)
 * Daiki Nishikawa
 * Nicholas Wagner (Northwestern University)
+* Amalie Trewartha (LBNL)

@@ -1,18 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>matminer.data_retrieval package &#8212; matminer 0.5.8 documentation</title>
+    <meta charset="utf-8" />
+    <title>matminer.data_retrieval package &#8212; matminer 0.5.9 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -28,7 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.8 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,18 +66,17 @@
 <span id="matminer-data-retrieval-retrieve-citrine-module"></span><h2>matminer.data_retrieval.retrieve_Citrine module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_Citrine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval">
-<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="descname">CitrineDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="sig-name descname">CitrineDataRetrieval</code><span class="sig-paren">(</span><em class="sig-param">api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
 <p>CitrineDataRetrieval is used to retrieve data from the Citrination database
 See API client docs at api_link below.</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>api_key: (str) Your Citrine API key, or None if</dt>
-<dd>you’ve set the CITRINE_KEY environment variable</dd>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>api_key: (str) Your Citrine API key, or None if</dt><dd><p>you’ve set the CITRINE_KEY environment variable</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -86,37 +84,37 @@ See API client docs at api_link below.</p>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.api_link">
-<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
 <dd><p>The link to comprehensive API documentation or data source.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(str): A link to the API documentation for this DataRetrieval class.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>formula=None</em>, <em>prop=None</em>, <em>data_type=None</em>, <em>reference=None</em>, <em>min_measurement=None</em>, <em>max_measurement=None</em>, <em>from_record=None</em>, <em>data_set_id=None</em>, <em>max_results=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param">formula=None</em>, <em class="sig-param">prop=None</em>, <em class="sig-param">data_type=None</em>, <em class="sig-param">reference=None</em>, <em class="sig-param">min_measurement=None</em>, <em class="sig-param">max_measurement=None</em>, <em class="sig-param">from_record=None</em>, <em class="sig-param">data_set_id=None</em>, <em class="sig-param">max_results=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets raw api data from Citrine in json format. See api_link for more
 information on input parameters</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>formula: (str) filter for the chemical formula field; only those</dt>
-<dd>results that have chemical formulas that contain this string
-will be returned</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>formula: (str) filter for the chemical formula field; only those</dt><dd><p>results that have chemical formulas that contain this string
+will be returned</p>
+</dd>
 </dl>
 <p>prop: (str) name of the property to search for
 data_type: (str) ‘EXPERIMENTAL’/’COMPUTATIONAL’/’MACHINE_LEARNING’;</p>
 <blockquote>
-<div>filter for properties obtained from experimental work,
-computational methods, or machine learning.</div></blockquote>
-<dl class="docutils">
-<dt>reference: (str) filter for the reference field; only those</dt>
-<dd>results that have contributors that contain this string
-will be returned</dd>
+<div><p>filter for properties obtained from experimental work,
+computational methods, or machine learning.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>reference: (str) filter for the reference field; only those</dt><dd><p>results that have contributors that contain this string
+will be returned</p>
+</dd>
 </dl>
-<p class="last">min_measurement: (str/num) minimum of the property value range
+<p>min_measurement: (str/num) minimum of the property value range
 max_measurement: (str/num) maximum of the property value range
 from_record: (int) index of first record to return (indexed from 0)
 data_set_id: (int) id of the particular data set to search on
@@ -128,27 +126,26 @@ max_results: (int) number of records to limit the results to</p>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=None</em>, <em>common_fields=None</em>, <em>secondary_fields=False</em>, <em>print_properties_options=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">common_fields=None</em>, <em class="sig-param">secondary_fields=False</em>, <em class="sig-param">print_properties_options=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.CitrineDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a Pandas dataframe object from data retrieved from
 the Citrine API.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>criteria (dict): see get_data method for supported keys except</dt>
-<dd>prop; prop should be included in properties.</dd>
-<dt>properties ([str]): requested properties/fields/columns.</dt>
-<dd>For example, [“Seebeck coefficient”, “Band gap”]. If unsure
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>criteria (dict): see get_data method for supported keys except</dt><dd><p>prop; prop should be included in properties.</p>
+</dd>
+<dt>properties ([str]): requested properties/fields/columns.</dt><dd><p>For example, [“Seebeck coefficient”, “Band gap”]. If unsure
 about the exact words, capitalization, etc try something like
 [“gap”] and “max_results”: 3 and print_properties_options=True
-to see the exact options for this field</dd>
-<dt>common_fields ([str]): fields that are common to all the requested</dt>
-<dd>properties. Common example can be “chemicalFormula”. Look for
-suggested common fields after a quick query for more info</dd>
-<dt>secondary_fields (bool): if True, fields not included in properties</dt>
-<dd>may be added to the output (e.g. references). Recommended only
-if len(properties)==1</dd>
-<dt>print_properties_options (bool): whether to print available options</dt>
-<dd>for “properties” and “common_fields” arguments.</dd>
+to see the exact options for this field</p>
+</dd>
+<dt>common_fields ([str]): fields that are common to all the requested</dt><dd><p>properties. Common example can be “chemicalFormula”. Look for
+suggested common fields after a quick query for more info</p>
+</dd>
+<dt>secondary_fields (bool): if True, fields not included in properties</dt><dd><p>may be added to the output (e.g. references). Recommended only
+if len(properties)==1</p>
+</dd>
+<dt>print_properties_options (bool): whether to print available options</dt><dd><p>for “properties” and “common_fields” arguments.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -159,12 +156,12 @@ if len(properties)==1</dd>
 
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_Citrine.get_value">
-<code class="descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="descname">get_value</code><span class="sig-paren">(</span><em>dict_item</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.get_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="sig-name descname">get_value</code><span class="sig-paren">(</span><em class="sig-param">dict_item</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.get_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_Citrine.parse_scalars">
-<code class="descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="descname">parse_scalars</code><span class="sig-paren">(</span><em>scalars</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.parse_scalars" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.data_retrieval.retrieve_Citrine.</code><code class="sig-name descname">parse_scalars</code><span class="sig-paren">(</span><em class="sig-param">scalars</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_Citrine.parse_scalars" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -172,18 +169,17 @@ if len(properties)==1</dd>
 <span id="matminer-data-retrieval-retrieve-mdf-module"></span><h2>matminer.data_retrieval.retrieve_MDF module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MDF" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval">
-<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MDF.</code><code class="descname">MDFDataRetrieval</code><span class="sig-paren">(</span><em>anonymous=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MDF.</code><code class="sig-name descname">MDFDataRetrieval</code><span class="sig-paren">(</span><em class="sig-param">anonymous=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
 <p>MDFDataRetrieval is used to retrieve data from the Materials Data Facility
 database and convert them into a Pandas DataFrame. Note that invocation
 with full access to MDF will require authentication (see api_link) but an
 anonymous mode is supported, which can be used with anonymous=True as a
 keyword arg.</p>
-<dl class="docutils">
-<dt>Examples:</dt>
-<dd><p class="first">&gt;&gt;&gt;mdf_dr = MDFDataRetrieval(anonymous=True)
+<dl>
+<dt>Examples:</dt><dd><p>&gt;&gt;&gt;mdf_dr = MDFDataRetrieval(anonymous=True)
 &gt;&gt;&gt;results = mdf_dr.get_dataframe({“elements”:[“Ag”, “Be”], “source_names”: [“oqmd”]})</p>
-<p class="last">&gt;&gt;&gt;results = mdf_dr.get_dataframe({“source_names”: [“oqmd”],
+<p>&gt;&gt;&gt;results = mdf_dr.get_dataframe({“source_names”: [“oqmd”],
 &gt;&gt;&gt;          “match_ranges”: {“oqmd.band_gap.value”: [4.0, “*”]}})</p>
 </dd>
 </dl>
@@ -194,14 +190,13 @@ Materials Science Research. JOM 68, 2045–2052.
 <a class="reference external" href="https://doi.org/10.1007/s11837-016-2001-3">https://doi.org/10.1007/s11837-016-2001-3</a></p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>anonymous=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>anonymous (bool): whether to use anonymous login (i. e. no</dt>
-<dd>globus authentication)</dd>
-<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: kwargs for Forge, including index (globus search index</dt>
-<dd>to search on), local_ep, anonymous</dd>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">anonymous=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>anonymous (bool): whether to use anonymous login (i. e. no</dt><dd><p>globus authentication)</p>
+</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: kwargs for Forge, including index (globus search index</dt><dd><p>to search on), local_ep, anonymous</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -209,69 +204,69 @@ Materials Science Research. JOM 68, 2045–2052.
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.api_link">
-<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
 <dd><p>The link to comprehensive API documentation or data source.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(str): A link to the API documentation for this DataRetrieval class.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>squery</em>, <em>unwind_arrays=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param">squery</em>, <em class="sig-param">unwind_arrays=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a dataframe from the MDF API from an explicit string
 query (rather than input args like get_dataframe).</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">squery (str): String for explicit query
+<dl>
+<dt>Args:</dt><dd><p>squery (str): String for explicit query
 unwind_arrays (bool): whether or not to unwind arrays in</p>
 <blockquote>
-<div>flattening docs for dataframe</div></blockquote>
-<p class="last"><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: kwargs for query</p>
+<div><p>flattening docs for dataframe</p>
+</div></blockquote>
+<p><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: kwargs for query</p>
 </dd>
-<dt>Returns:</dt>
-<dd>dataframe corresponding to query</dd>
+<dt>Returns:</dt><dd><p>dataframe corresponding to query</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=None</em>, <em>unwind_arrays=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">unwind_arrays=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.MDFDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves data from the MDF API and formats it as a Pandas Dataframe</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>criteria (dict): options for keys are</dt>
-<dd><p class="first">source_names ([str]): source names to include, e. g. [“oqmd”]
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>criteria (dict): options for keys are</dt><dd><p>source_names ([str]): source names to include, e. g. [“oqmd”]
 elements ([str]): elements to include, e. g. [“Ag”, “Si”]
 titles ([str]): titles to include, e. g. [“Coarsening of a</p>
 <blockquote>
-<div>semisolid Al-Cu alloy”]</div></blockquote>
+<div><p>semisolid Al-Cu alloy”]</p>
+</div></blockquote>
 <p>tags ([str]): tags to include, e. g. [“outcar”]
 resource_types ([str]): resources to include, e. g. [“record”]
 match_fields ({}): field-value mappings to include, e. g.</p>
 <blockquote>
-<div>{“oqmd.converged”: True}</div></blockquote>
-<dl class="last docutils">
-<dt>exclude_fields ({}): field-value mappings to exclude, e. g.</dt>
-<dd>{“oqmd.converged”: False}</dd>
-<dt>match_ranges ({}): field-range mappings to include, e. g.</dt>
-<dd>{“oqmd.band_gap.value”: [1, 5]}, use “*” for no lower
-or upper bound, e. g. {“oqdm.band_gap.value”: [1, “*”]},</dd>
-<dt>exclude_ranges ({}): field-range mapping to exclude,</dt>
-<dd>{“oqmd.band_gap.value”: [3, “*”]} to exclude all
-results with band gap higher than 3.</dd>
-<dt>raw (bool): whether or not to return raw (non-dataframe)</dt>
-<dd>output, defaults to False</dd>
+<div><p>{“oqmd.converged”: True}</p>
+</div></blockquote>
+<dl class="simple">
+<dt>exclude_fields ({}): field-value mappings to exclude, e. g.</dt><dd><p>{“oqmd.converged”: False}</p>
+</dd>
+<dt>match_ranges ({}): field-range mappings to include, e. g.</dt><dd><p>{“oqmd.band_gap.value”: [1, 5]}, use “*” for no lower
+or upper bound, e. g. {“oqdm.band_gap.value”: [1, “*”]},</p>
+</dd>
+<dt>exclude_ranges ({}): field-range mapping to exclude,</dt><dd><p>{“oqmd.band_gap.value”: [3, “*”]} to exclude all
+results with band gap higher than 3.</p>
+</dd>
+<dt>raw (bool): whether or not to return raw (non-dataframe)</dt><dd><p>output, defaults to False</p>
+</dd>
 </dl>
 </dd>
-<dt>unwind_arrays (bool): whether or not to unwind arrays in</dt>
-<dd>flattening docs for dataframe</dd>
+<dt>unwind_arrays (bool): whether or not to unwind arrays in</dt><dd><p>flattening docs for dataframe</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns (pandas.DataFrame):</dt>
-<dd>DataFrame corresponding to all documents from aggregated query</dd>
+<dt>Returns (pandas.DataFrame):</dt><dd><p>DataFrame corresponding to all documents from aggregated query</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -279,13 +274,12 @@ results with band gap higher than 3.</dd>
 
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_MDF.make_dataframe">
-<code class="descclassname">matminer.data_retrieval.retrieve_MDF.</code><code class="descname">make_dataframe</code><span class="sig-paren">(</span><em>docs</em>, <em>unwind_arrays=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.make_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MDF.</code><code class="sig-name descname">make_dataframe</code><span class="sig-paren">(</span><em class="sig-param">docs</em>, <em class="sig-param">unwind_arrays=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MDF.make_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats raw docs returned from MDF API search into a dataframe</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>docs [{}]: list of documents from forge search</dt>
-<dd>or aggregation</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>docs [{}]: list of documents from forge search</dt><dd><p>or aggregation</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -297,7 +291,7 @@ results with band gap higher than 3.</dd>
 <span id="matminer-data-retrieval-retrieve-mp-module"></span><h2>matminer.data_retrieval.retrieve_MP module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MP" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval">
-<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MP.</code><code class="descname">MPDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MP.</code><code class="sig-name descname">MPDataRetrieval</code><span class="sig-paren">(</span><em class="sig-param">api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
 <p>Retrieves data from the Materials Project database.</p>
 <p>If you use this data retrieval class, please additionally cite:</p>
@@ -309,12 +303,11 @@ Materials Science 97, 209–215.
 <a class="reference external" href="https://doi.org/10.1016/j.commatsci.2014.10.037">https://doi.org/10.1016/j.commatsci.2014.10.037</a></p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>api_key: (str) Your Materials Project API key, or None if you’ve</dt>
-<dd>set up your pymatgen config.</dd>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>api_key: (str) Your Materials Project API key, or None if you’ve</dt><dd><p>set up your pymatgen config.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -322,52 +315,51 @@ Materials Science 97, 209–215.
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.api_link">
-<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
 <dd><p>The link to comprehensive API documentation or data source.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(str): A link to the API documentation for this DataRetrieval class.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties</em>, <em>mp_decode=False</em>, <em>index_mpid=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>criteria: (str/dict) see MPRester.query() for a description of this</dt>
-<dd>parameter. String examples: “mp-1234”, “Fe2O3”, “Li-Fe-O’,
-“*2O3”. Dict example: {“band_gap”: {“$gt”: 1}}</dd>
-<dt>properties: (list) see MPRester.query() for a description of this</dt>
-<dd>parameter. Example: [“formula”, “formation_energy_per_atom”]</dd>
-<dt>mp_decode: (bool) see MPRester.query() for a description of this</dt>
-<dd>parameter. Whether to decode to a Pymatgen object where
-possible.</dd>
-<dt>index_mpid: (bool) Whether to set the materials_id as the dataframe</dt>
-<dd>index.</dd>
+<code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties</em>, <em class="sig-param">mp_decode=False</em>, <em class="sig-param">index_mpid=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>criteria: (str/dict) see MPRester.query() for a description of this</dt><dd><p>parameter. String examples: “mp-1234”, “Fe2O3”, “Li-Fe-O’,
+“*2O3”. Dict example: {“band_gap”: {“$gt”: 1}}</p>
+</dd>
+<dt>properties: (list) see MPRester.query() for a description of this</dt><dd><p>parameter. Example: [“formula”, “formation_energy_per_atom”]</p>
+</dd>
+<dt>mp_decode: (bool) see MPRester.query() for a description of this</dt><dd><p>parameter. Whether to decode to a Pymatgen object where
+possible.</p>
+</dd>
+<dt>index_mpid: (bool) Whether to set the materials_id as the dataframe</dt><dd><p>index.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns ([dict]):</dt>
-<dd>a list of jsons that match the criteria and contain properties</dd>
+<dt>Returns ([dict]):</dt><dd><p>a list of jsons that match the criteria and contain properties</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties</em>, <em>index_mpid=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties</em>, <em class="sig-param">index_mpid=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets data from MP in a dataframe format. See api_link for more details.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">criteria (dict): the same as in get_data
+<dl>
+<dt>Args:</dt><dd><p>criteria (dict): the same as in get_data
 properties ([str]): the same properties supported as in get_data</p>
 <blockquote>
-<div>plus: “structure”, “initial_structure”, “final_structure”,
+<div><p>plus: “structure”, “initial_structure”, “final_structure”,
 “bandstructure” (line mode), “bandstructure_uniform”,
 “phonon_bandstructure”, “phonon_ddb”, “phonon_bandstructure”,
 “phonon_dos”. Note that for a long list of compounds, it may
-take a long time to retrieve some of these objects.</div></blockquote>
-<p class="last">index_mpid (bool): the same as in get_data
+take a long time to retrieve some of these objects.</p>
+</div></blockquote>
+<p>index_mpid (bool): the same as in get_data
 kwargs (dict): the same keyword arguments as in get_data</p>
 </dd>
 </dl>
@@ -376,26 +368,26 @@ kwargs (dict): the same keyword arguments as in get_data</p>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.try_get_prop_by_material_id">
-<code class="descname">try_get_prop_by_material_id</code><span class="sig-paren">(</span><em>prop</em>, <em>material_id_list</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.try_get_prop_by_material_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">try_get_prop_by_material_id</code><span class="sig-paren">(</span><em class="sig-param">prop</em>, <em class="sig-param">material_id_list</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.try_get_prop_by_material_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call the relevant get_prop_by_material_id. “prop” is a property such
 as bandstructure that is not readily available in supported properties
 of the get_data function but via the get_bandstructure_by_material_id
 method for example.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>prop (str): the name of the property. Options are:</dt>
-<dd>“bandstructure”, “dos”, “phonon_dos”, “phonon_bandstructure”,
-“phonon_ddb”</dd>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>prop (str): the name of the property. Options are:</dt><dd><p>“bandstructure”, “dos”, “phonon_dos”, “phonon_bandstructure”,
+“phonon_ddb”</p>
+</dd>
 </dl>
 <p>material_id_list ([str]): list of material_id of compounds
 kwargs (dict): other keyword arguments that get_*_by_material_id</p>
-<blockquote class="last">
-<div>may have; e.g. line_mode in get_bandstructure_by_material_id</div></blockquote>
+<blockquote>
+<div><p>may have; e.g. line_mode in get_bandstructure_by_material_id</p>
+</div></blockquote>
 </dd>
-<dt>Returns ([target prop object or NaN]):</dt>
-<dd>If the target property is not available for a certain material_id,
-NaN is returned.</dd>
+<dt>Returns ([target prop object or NaN]):</dt><dd><p>If the target property is not available for a certain material_id,
+NaN is returned.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -406,12 +398,12 @@ NaN is returned.</dd>
 <span id="matminer-data-retrieval-retrieve-mpds-module"></span><h2>matminer.data_retrieval.retrieve_MPDS module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MPDS" title="Permalink to this headline">¶</a></h2>
 <dl class="exception">
 <dt id="matminer.data_retrieval.retrieve_MPDS.APIError">
-<em class="property">exception </em><code class="descclassname">matminer.data_retrieval.retrieve_MPDS.</code><code class="descname">APIError</code><span class="sig-paren">(</span><em>msg</em>, <em>code=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.APIError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MPDS.</code><code class="sig-name descname">APIError</code><span class="sig-paren">(</span><em class="sig-param">msg</em>, <em class="sig-param">code=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.APIError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>Simple error handling</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MPDS.APIError.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>msg</em>, <em>code=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.APIError.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">msg</em>, <em class="sig-param">code=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.APIError.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -419,7 +411,7 @@ NaN is returned.</dd>
 
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval">
-<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MPDS.</code><code class="descname">MPDSDataRetrieval</code><span class="sig-paren">(</span><em>api_key=None</em>, <em>endpoint=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MPDS.</code><code class="sig-name descname">MPDSDataRetrieval</code><span class="sig-paren">(</span><em class="sig-param">api_key=None</em>, <em class="sig-param">endpoint=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
 <p>Retrieves data from Materials Platform for Data Science (MPDS).
 See api_link for more information.</p>
@@ -433,7 +425,8 @@ jsonobj = client.get_data(</p>
 <div><p>{“formula”:”SrTiO3”, “sgs”: 99, “props”:”atomic properties”},
 fields={</p>
 <blockquote>
-<div>‘S’:[“entry”, “cell_abc”, “sg_n”, “setting”, “basis_noneq”, “els_noneq”]</div></blockquote>
+<div><p>‘S’:[“entry”, “cell_abc”, “sg_n”, “setting”, “basis_noneq”, “els_noneq”]</p>
+</div></blockquote>
 <p>}</p>
 </div></blockquote>
 <p>)</p>
@@ -447,34 +440,34 @@ Methods: Theory and Modeling. Springer International Publishing, Cham,
 pp. 1–26. <a class="reference external" href="https://doi.org/10.1007/978-3-319-42913-7_62-1">https://doi.org/10.1007/978-3-319-42913-7_62-1</a></p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>api_key=None</em>, <em>endpoint=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">api_key=None</em>, <em class="sig-param">endpoint=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>MPDS API consumer constructor</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>api_key: (str) The MPDS API key, or None if the MPDS_KEY envvar is set
-endpoint: (str) MPDS API gateway URL</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>api_key: (str) The MPDS API key, or None if the MPDS_KEY envvar is set
+endpoint: (str) MPDS API gateway URL</p>
+</dd>
 </dl>
 <p>Returns: None</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.api_link">
-<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
 <dd><p>The link to comprehensive API documentation or data source.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(str): A link to the API documentation for this DataRetrieval class.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.chillouttime">
-<code class="descname">chillouttime</code><em class="property"> = 3</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.chillouttime" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">chillouttime</code><em class="property"> = 3</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.chillouttime" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.compile_crystal">
-<em class="property">static </em><code class="descname">compile_crystal</code><span class="sig-paren">(</span><em>datarow</em>, <em>flavor='pmg'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.compile_crystal" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">compile_crystal</code><span class="sig-paren">(</span><em class="sig-param">datarow</em>, <em class="sig-param">flavor='pmg'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.compile_crystal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper method for representing the MPDS crystal structures in two flavors:
 either as a Pymatgen Structure object, or as an ASE Atoms object.</p>
 <p>Attention! These two flavors are not compatible, e.g.
@@ -484,27 +477,25 @@ atoms wrapped or non-wrapped into the unit cell etc.</p>
 so one needs to specify the fields while retrieval:</p>
 <blockquote>
 <div><ul class="simple">
-<li>cell_abc</li>
-<li>sg_n</li>
-<li>setting</li>
-<li>basis_noneq</li>
-<li>els_noneq</li>
+<li><p>cell_abc</p></li>
+<li><p>sg_n</p></li>
+<li><p>setting</p></li>
+<li><p>basis_noneq</p></li>
+<li><p>els_noneq</p></li>
 </ul>
 </div></blockquote>
 <p>e.g. like this: {‘S’:[‘cell_abc’, ‘sg_n’, ‘setting’, ‘basis_noneq’, ‘els_noneq’]}
 NB. occupancies are not considered.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>datarow: (list) Required data to construct crystal structure:</dt>
-<dd>[cell_abc, sg_n, setting, basis_noneq, els_noneq]</dd>
-</dl>
-<p class="last">flavor: (str) Either “pmg”, or “ase”</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>datarow: (list) Required data to construct crystal structure:</dt><dd><p>[cell_abc, sg_n, setting, basis_noneq, els_noneq]</p>
 </dd>
-<dt>Returns:</dt>
-<dd><ul class="first last simple">
-<li>if flavor is pmg, returns Pymatgen Structure object</li>
-<li>if flavor is ase, returns ASE Atoms object</li>
+</dl>
+<p>flavor: (str) Either “pmg”, or “ase”</p>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>if flavor is pmg, returns Pymatgen Structure object</p></li>
+<li><p>if flavor is ase, returns ASE Atoms object</p></li>
 </ul>
 </dd>
 </dl>
@@ -512,63 +503,63 @@ NB. occupancies are not considered.</p>
 
 <dl class="attribute">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.default_properties">
-<code class="descname">default_properties</code><em class="property"> = ('Phase', 'Formula', 'SG', 'Entry', 'Property', 'Units', 'Value')</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.default_properties" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">default_properties</code><em class="property"> = ('Phase', 'Formula', 'SG', 'Entry', 'Property', 'Units', 'Value')</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.default_properties" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.endpoint">
-<code class="descname">endpoint</code><em class="property"> = 'https://api.mpds.io/v0/download/facet'</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.endpoint" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">endpoint</code><em class="property"> = 'https://api.mpds.io/v0/download/facet'</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.endpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>criteria</em>, <em>phases=None</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">phases=None</em>, <em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve data in JSON.
 JSON is expected to be valid against the schema
 at <a class="reference external" href="http://developer.mpds.io/mpds.schema.json">http://developer.mpds.io/mpds.schema.json</a></p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>criteria (dict): Search query like {“categ_A”: “val_A”, “categ_B”: “val_B”},</dt>
-<dd><p class="first">documented at <a class="reference external" href="http://developer.mpds.io/#Categories">http://developer.mpds.io/#Categories</a>
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>criteria (dict): Search query like {“categ_A”: “val_A”, “categ_B”: “val_B”},</dt><dd><p>documented at <a class="reference external" href="http://developer.mpds.io/#Categories">http://developer.mpds.io/#Categories</a>
 example: criteria={“elements”: “K-Ag”, “classes”: “iodide”,</p>
-<blockquote class="last">
-<div>“props”: “heat capacity”, “lattices”: “cubic”}</div></blockquote>
+<blockquote>
+<div><p>“props”: “heat capacity”, “lattices”: “cubic”}</p>
+</div></blockquote>
 </dd>
 </dl>
 <p>phases (list): Phase IDs, according to the MPDS distinct phases concept
 fields (dict): Data of interest for C-, S-, and P-entries,</p>
-<blockquote class="last">
-<div>e.g. for phase diagrams: {‘C’: [‘naxes’, ‘arity’, ‘shapes’]},
-documented at <a class="reference external" href="http://developer.mpds.io/#JSON-schemata">http://developer.mpds.io/#JSON-schemata</a></div></blockquote>
+<blockquote>
+<div><p>e.g. for phase diagrams: {‘C’: [‘naxes’, ‘arity’, ‘shapes’]},
+documented at <a class="reference external" href="http://developer.mpds.io/#JSON-schemata">http://developer.mpds.io/#JSON-schemata</a></p>
+</div></blockquote>
 </dd>
-<dt>Returns:</dt>
-<dd>List of dicts: C-, S-, and P-entries, the format is
-documented at <a class="reference external" href="http://developer.mpds.io/#JSON-schemata">http://developer.mpds.io/#JSON-schemata</a></dd>
+<dt>Returns:</dt><dd><p>List of dicts: C-, S-, and P-entries, the format is
+documented at <a class="reference external" href="http://developer.mpds.io/#JSON-schemata">http://developer.mpds.io/#JSON-schemata</a></p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=('Phase'</em>, <em>'Formula'</em>, <em>'SG'</em>, <em>'Entry'</em>, <em>'Property'</em>, <em>'Units'</em>, <em>'Value')</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties=('Phase'</em>, <em class="sig-param">'Formula'</em>, <em class="sig-param">'SG'</em>, <em class="sig-param">'Entry'</em>, <em class="sig-param">'Property'</em>, <em class="sig-param">'Units'</em>, <em class="sig-param">'Value')</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve data as a Pandas dataframe.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>criteria (dict): the same as criteria in get_data
+<dl class="simple">
+<dt>Args:</dt><dd><p>criteria (dict): the same as criteria in get_data
 properties ([str]): list of properties/titles to be included
-<a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: other keyword arguments available in get_data</dd>
+<a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: other keyword arguments available in get_data</p>
+</dd>
 </dl>
 <p>Returns: (object) Pandas DataFrame object containing the results</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.maxnpages">
-<code class="descname">maxnpages</code><em class="property"> = 100</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.maxnpages" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">maxnpages</code><em class="property"> = 100</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.maxnpages" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.pagesize">
-<code class="descname">pagesize</code><em class="property"> = 1000</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.pagesize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pagesize</code><em class="property"> = 1000</em><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.pagesize" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -578,44 +569,45 @@ properties ([str]): list of properties/titles to be included
 <span id="matminer-data-retrieval-retrieve-mongodb-module"></span><h2>matminer.data_retrieval.retrieve_MongoDB module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_MongoDB" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval">
-<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">MongoDataRetrieval</code><span class="sig-paren">(</span><em>coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="sig-name descname">MongoDataRetrieval</code><span class="sig-paren">(</span><em class="sig-param">coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="matminer.data_retrieval.retrieve_base.BaseDataRetrieval"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.data_retrieval.retrieve_base.BaseDataRetrieval</span></code></a></p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">coll</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves data from a MongoDB collection to a pandas.Dataframe object</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>coll: A MongoDB collection object</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>coll: A MongoDB collection object</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.api_link">
-<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
 <dd><p>The link to comprehensive API documentation or data source.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(str): A link to the API documentation for this DataRetrieval class.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties=None</em>, <em>limit=0</em>, <em>sort=None</em>, <em>idx_field=None</em>, <em>strict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">criteria: (dict) - a pymongo-style query to filter data records
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">limit=0</em>, <em class="sig-param">sort=None</em>, <em class="sig-param">idx_field=None</em>, <em class="sig-param">strict=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Args:</dt><dd><p>criteria: (dict) - a pymongo-style query to filter data records
 properties: ([str] or None) - a list of str fields to retrieve;</p>
 <blockquote>
-<div>dot-notation is allowed (e.g. “structure.lattice.a”).
-Set to “None” to try to auto-detect the fields.</div></blockquote>
+<div><p>dot-notation is allowed (e.g. “structure.lattice.a”).
+Set to “None” to try to auto-detect the fields.</p>
+</div></blockquote>
 <p>limit: (int) - max number of entries. 0 means no limit
 sort: (tuple) - pymongo-style sort option
 idx_field: (str) - name of field to use as index (must have unique</p>
 <blockquote>
-<div>entries)</div></blockquote>
-<p class="last">strict: (bool) - if False, replaces missing values with NaN</p>
+<div><p>entries)</p>
+</div></blockquote>
+<p>strict: (bool) - if False, replaces missing values with NaN</p>
 </dd>
 </dl>
 <p>Returns (pandas.DataFrame):</p>
@@ -625,27 +617,27 @@ idx_field: (str) - name of field to use as index (must have unique</p>
 
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.clean_projection">
-<code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">clean_projection</code><span class="sig-paren">(</span><em>projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.clean_projection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="sig-name descname">clean_projection</code><span class="sig-paren">(</span><em class="sig-param">projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.clean_projection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Projecting on e.g. ‘a.b.’ and ‘a’ is disallowed in MongoDb, so project
 inclusively. See unit tests for examples of what this is doing.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>projection: (list) - list of fields to retrieve; dot-notation is allowed.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>projection: (list) - list of fields to retrieve; dot-notation is allowed.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.is_int">
-<code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">is_int</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.is_int" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="sig-name descname">is_int</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.is_int" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="matminer.data_retrieval.retrieve_MongoDB.remove_ints">
-<code class="descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="descname">remove_ints</code><span class="sig-paren">(</span><em>projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.remove_ints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MongoDB.</code><code class="sig-name descname">remove_ints</code><span class="sig-paren">(</span><em class="sig-param">projection</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MongoDB.remove_ints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms a string like “a.1.x” to “a.x” - for Mongo projection purposes</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>projection: (str) the projection to remove ints from</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>projection: (str) the projection to remove ints from</p>
+</dd>
 </dl>
 <p>Returns (str)</p>
 </dd></dl>
@@ -655,7 +647,7 @@ inclusively. See unit tests for examples of what this is doing.</p>
 <span id="matminer-data-retrieval-retrieve-base-module"></span><h2>matminer.data_retrieval.retrieve_base module<a class="headerlink" href="#module-matminer.data_retrieval.retrieve_base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_base.BaseDataRetrieval">
-<em class="property">class </em><code class="descclassname">matminer.data_retrieval.retrieve_base.</code><code class="descname">BaseDataRetrieval</code><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_base.</code><code class="sig-name descname">BaseDataRetrieval</code><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract class to retrieve data from various material APIs while adhering to
 a quasi-standard format for querying.</p>
@@ -666,8 +658,8 @@ All DataRetrieval classes should subclass BaseDataRetrieval and implement
 the following:</p>
 <blockquote>
 <div><ul class="simple">
-<li>get_dataframe()</li>
-<li>api_link()</li>
+<li><p>get_dataframe()</p></li>
+<li><p>api_link()</p></li>
 </ul>
 </div></blockquote>
 <p>Retrieving data should be done by the user with get_dataframe. Criteria
@@ -676,19 +668,19 @@ Properties should be a list which defines the columns that will be returned.
 While the ‘criteria’ and ‘properties’ arguments may have different valid
 values depending on the database, they should always have sensible formats
 and names if possible. For example, the user should be calling this:</p>
-<dl class="docutils">
-<dt>df = MyDataRetrieval().get_dataframe(criteria={‘band_gap’: 0.0},</dt>
-<dd>properties=[‘structure’])</dd>
+<dl class="simple">
+<dt>df = MyDataRetrieval().get_dataframe(criteria={‘band_gap’: 0.0},</dt><dd><p>properties=[‘structure’])</p>
+</dd>
 </dl>
 <p>…or this:</p>
-<dl class="docutils">
-<dt>df = MyDataRetrieval().get_dataframe(criteria={‘band_gap’: [0.0, 0.15]},</dt>
-<dd>properties=[“density of states”])</dd>
+<dl class="simple">
+<dt>df = MyDataRetrieval().get_dataframe(criteria={‘band_gap’: [0.0, 0.15]},</dt><dd><p>properties=[“density of states”])</p>
+</dd>
 </dl>
 <p>NOT this:</p>
-<dl class="docutils">
-<dt>df = MyDataRetrieval().get_dataframe(criteria={‘query.bg[0] &amp;&amp; band_gap’: 0.0},</dt>
-<dd>properties=[‘Struct.page[Value]’])</dd>
+<dl class="simple">
+<dt>df = MyDataRetrieval().get_dataframe(criteria={‘query.bg[0] &amp;&amp; band_gap’: 0.0},</dt><dd><p>properties=[‘Struct.page[Value]’])</p>
+</dd>
 </dl>
 <p>The implemented DataRetrieval class should handle the conversion from a
 ‘sensible’ query to a query fit for the individual API and database.</p>
@@ -708,32 +700,30 @@ function of the class, and we recommend documenting them using the
 [Google style](<a class="reference external" href="https://google.github.io/styleguide/pyguide.html">https://google.github.io/styleguide/pyguide.html</a>).</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_base.BaseDataRetrieval.api_link">
-<code class="descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">api_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval.api_link" title="Permalink to this definition">¶</a></dt>
 <dd><p>The link to comprehensive API documentation or data source.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>(str): A link to the API documentation for this DataRetrieval class.</dd>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(str): A link to the API documentation for this DataRetrieval class.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_base.BaseDataRetrieval.get_dataframe">
-<code class="descname">get_dataframe</code><span class="sig-paren">(</span><em>criteria</em>, <em>properties</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve a dataframe of properties from the database which satisfy
 criteria.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>criteria (dict): The name of each criterion is the key; the value</dt>
-<dd>or range of the criterion is the value.</dd>
-<dt>properties (list): Properties to return from the query matching</dt>
-<dd>the criteria. For example, [‘structure’, ‘formula’]</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>criteria (dict): The name of each criterion is the key; the value</dt><dd><p>or range of the criterion is the value.</p>
+</dd>
+<dt>properties (list): Properties to return from the query matching</dt><dd><p>the criteria. For example, [‘structure’, ‘formula’]</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(pandas DataFrame) The dataframe containing properties as columns</dt>
-<dd>and samples as rows.</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(pandas DataFrame) The dataframe containing properties as columns</dt><dd><p>and samples as rows.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -778,13 +768,11 @@ criteria.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -802,13 +790,13 @@ criteria.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.8 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.5.9 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
 
   </body>
