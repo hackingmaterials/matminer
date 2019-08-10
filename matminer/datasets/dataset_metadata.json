@@ -649,153 +649,33 @@
         "url": "",
         "matbench_version": 0.1
     },
-    "matbench_mp_is_metal": {
+    "matbench_mp_log_shear": {
         "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
+            "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Angsten, Thomas\nand Jain, Anubhav and Notestine, Randy and Gamst, Anthony\nand Sluiter, Marcel and Krishna Ande, Chaitanya\nand van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac\nand Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.\nand Asta, Mark},\ntitle={Charting the complete elastic properties\nof inorganic crystalline compounds},\njournal={Scientific Data},\nyear={2015},\nmonth={Mar},\nday={17},\npublisher={The Author(s)},\nvolume={2},\npages={150009},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.9}\n}"
+        ],,
         "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
+            "log10(G_VRH)": "Target variable. Base 10 logarithm of the DFT Voigt-Reuss-Hill average shear moduli.",
             "structure": "Pymatgen Structure of the material."
         },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
+        "description": " Matbench v0.1 test dataset for predicting DFT log10 VRH-average shear modulus from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
         "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
+        "num_entries": 10987,
+        "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
         "url": "",
         "matbench_version": 0.1
     },
-    "matbench_mp_is_metal": {
+    "matbench_mp_log_bulk": {
         "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
+            "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Angsten, Thomas\nand Jain, Anubhav and Notestine, Randy and Gamst, Anthony\nand Sluiter, Marcel and Krishna Ande, Chaitanya\nand van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac\nand Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.\nand Asta, Mark},\ntitle={Charting the complete elastic properties\nof inorganic crystalline compounds},\njournal={Scientific Data},\nyear={2015},\nmonth={Mar},\nday={17},\npublisher={The Author(s)},\nvolume={2},\npages={150009},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.9}\n}"
+        ],,
         "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
+            "log10(K_VRH)": "Target variable. Base 10 logarithm of the DFT Voigt-Reuss-Hill average bulk moduli.",
             "structure": "Pymatgen Structure of the material."
         },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
+        "description": " Matbench v0.1 test dataset for predicting DFT log10 VRH-average bulk modulus from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
         "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
-        "matbench_version": 0.1
-    },
-    "matbench_mp_is_metal": {
-        "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
-        "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
-            "structure": "Pymatgen Structure of the material."
-        },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
-        "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
-        "matbench_version": 0.1
-    },
-    "matbench_mp_is_metal": {
-        "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
-        "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
-            "structure": "Pymatgen Structure of the material."
-        },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
-        "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
-        "matbench_version": 0.1
-    },
-    "matbench_mp_is_metal": {
-        "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
-        "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
-            "structure": "Pymatgen Structure of the material."
-        },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
-        "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
-        "matbench_version": 0.1
-    },
-    "matbench_mp_is_metal": {
-        "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
-        "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
-            "structure": "Pymatgen Structure of the material."
-        },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
-        "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
-        "matbench_version": 0.1
-    },
-    "matbench_mp_is_metal": {
-        "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
-        "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
-            "structure": "Pymatgen Structure of the material."
-        },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
-        "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
-        "matbench_version": 0.1
-    },
-    "matbench_mp_is_metal": {
-        "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
-        "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
-            "structure": "Pymatgen Structure of the material."
-        },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
-        "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
-        "matbench_version": 0.1
-    },
-    "matbench_mp_is_metal": {
-        "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
-        "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
-            "structure": "Pymatgen Structure of the material."
-        },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
-        "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
-        "matbench_version": 0.1
-    },
-    "matbench_mp_is_metal": {
-        "bibtex_refs": [
-            "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
-        ],
-        "columns": {
-            "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
-            "structure": "Pymatgen Structure of the material."
-        },
-        "description": " Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
-        "file_type": "json.gz",
-        "num_entries": 106113,
-        "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
+        "num_entries": 10987,
+        "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
         "url": "",
         "matbench_version": 0.1
     }
