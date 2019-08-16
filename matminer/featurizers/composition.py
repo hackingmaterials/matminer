@@ -1584,6 +1584,11 @@ class YangSolidSolution(BaseFeaturizer):
                 enthalpy += f1 * f2 * self.dhf_mix.get_mixing_enthalpy(e1, e2)
         enthalpy *= 4
 
+        # Make sure the enthalpy is nonzero
+        #  The limit as dH->0 of omega is +\inf. A very small positive dH will approximate
+        #  this limit without causing issues with infinite features
+        enthalpy = max(1e-6, abs(enthalpy))
+
         return abs(mean_Tm * entropy / enthalpy)
 
     def compute_delta(self, comp):
