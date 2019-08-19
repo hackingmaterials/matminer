@@ -3762,7 +3762,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         sym_struct = SymmetrizedStructure(s, sg, equiv_atoms, wyckoffs)
         equivs = sym_struct.find_equivalent_sites(site)
         return equivs
-    
+
     def calc_bv_sum(self, site_el, site_val, neighbor_list):
         """Computes bond valence sum for site.
         Args:
@@ -3801,8 +3801,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                               neighbor_el, 
                               neighbor_val))
         return bvs
-        
-    
+
     def calc_gii_iucr(self, s):
         """Computes global instability index using tabulated bv params.
         
