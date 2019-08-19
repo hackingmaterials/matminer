@@ -438,12 +438,12 @@ class IUCrBondValenceData:
                                   index_col=False,
                                   engine="python")
         if interpolate_soft:
-            self.params = self.interpolate_soft_anions(self.params)
+            self.params = self.interpolate_soft_anions()
 
-    def interpolate_soft_anions(self, params):
+    def interpolate_soft_anions(self):
         """Fill in missing parameters for oxidation states of soft anions."""
         high_electroneg = '|'.join(['O', 'Cl', 'F'])
-        subset = params.loc[(params['Atom1_valence'] == 9) & (~params['Atom2'].str.contains(high_electroneg))]
+        subset = self.params.loc[(self.params['Atom1_valence'] == 9) & (~self.params['Atom2'].str.contains(high_electroneg))]
         cation_subset = subset['Atom1'].unique()
         data = []
         for cation in cation_subset:
@@ -463,7 +463,7 @@ class IUCrBondValenceData:
                             }
                     data.append(entry)
         new_data = pd.DataFrame(data)
-        new_params = params.append(new_data, sort=True, ignore_index=True)
+        new_params = self.params.append(new_data, sort=True, ignore_index=True)
         return new_params
 
     def get_bv_params(self, cation, anion, cat_val, an_val):
