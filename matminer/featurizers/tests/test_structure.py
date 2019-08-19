@@ -881,7 +881,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(gii.featurize(self.nacl)[0], 0.08491655709)
         
         # Test bond valence sums are accurate for NaCl.
-        # Values are slightly less than 1 currently. 
+        # Values are closer to 0.915 than 1.0 due to structure specified here.
+        # Using CollCode181148 from the ICSD, I see bond valence sums of 0.979
         site1, site2 = (self.nacl[0], self.nacl[1])
         neighs1 = self.nacl.get_neighbors(site1, 4)
         neighs2 = self.nacl.get_neighbors(site2, 4)
