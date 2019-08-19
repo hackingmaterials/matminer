@@ -416,7 +416,12 @@ class IUCrBondValenceData:
         If interpolate_soft is True, fill in some missing values
         for anions such as I, Br, N, S, Se, etc. with the assumption
         that bond valence parameters of such anions don't depend on
-        cation oxidation state.
+        cation oxidation state. This assumption comes from Brese and O'Keeffe,
+        (1991), Acta Cryst. B47, 194, which states "with less electronegative
+        anions, ... R is not very different for different oxidation states in
+        general." In the original data source file, only one set of parameters
+        is usually provided for those less electronegative anions in a 9+
+        oxidation state, indicating they can be used with all oxidation states.
         """
         filepath = os.path.join(
             module_dir,
@@ -436,7 +441,7 @@ class IUCrBondValenceData:
             self.params = self.interpolate_soft_anions(self.params)
 
     def interpolate_soft_anions(self, params):
-        """Add """
+        """Fill in missing parameters for oxidation states of soft anions."""
         high_electroneg = '|'.join(['O', 'Cl', 'F'])
         subset = params.loc[(params['Atom1_valence'] == 9) & (~params['Atom2'].str.contains(high_electroneg))]
         cation_subset = subset['Atom1'].unique()
