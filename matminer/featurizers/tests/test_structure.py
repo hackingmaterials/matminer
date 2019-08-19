@@ -890,10 +890,10 @@ class StructureFeaturesTest(PymatgenTest):
         site_el1 = str(site1.species.element_composition.elements[0])
         site_val2 = site2.species.elements[0].oxi_state
         site_el2 = str(site2.species.element_composition.elements[0])
-        self.assertAlmostEqual(gii.calc_bv_sum(site_el1, 
+        self.assertAlmostEqual(gii.calc_bv_sum(site_el1,
                                                site_val1,
                                                neighs1), 0.9150834429025214)
-        self.assertAlmostEqual(gii.calc_bv_sum(site_el2, 
+        self.assertAlmostEqual(gii.calc_bv_sum(site_el2,
                                                site_val2,
                                                neighs2), -0.915083442902522)
 
