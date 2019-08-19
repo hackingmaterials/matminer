@@ -229,7 +229,7 @@ class DopingFermi(BaseFeaturizer):
         feats = []
         eref = 0.0
         for c in self.dopings:
-            fermi = dos.get_fermi(c=c, T=self.T, nstep=50)
+            fermi = dos.get_fermi(concentration=c, temperature=self.T, nstep=50)
             if isinstance(self.eref, str):
                 if self.eref == "dos_fermi":
                     eref = dos.efermi

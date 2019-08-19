@@ -5,6 +5,16 @@
 matminer Changelog
 ==================
 
+**v0.5.9**
+
+* add Meredig composition featurizer (A. Trewartha)
+* update / fix Miedema model parameters (Q. Wang)
+* update code for latest pymatgen (A. Dunn)
+
+**v0.5.8**
+
+* optimizations for Global Instability Index featurizer (N. Wagner, L. Ward)
+
 **v0.5.7**
 
 * remove SOAP normalization flag (K. Murakoa)
