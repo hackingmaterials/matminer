@@ -879,7 +879,7 @@ class StructureFeaturesTest(PymatgenTest):
         # Ordinary case of nacl
         self.assertTrue(gii.precheck(self.nacl))
         self.assertAlmostEqual(gii.featurize(self.nacl)[0], 0.08491655709)
-        
+
         # Test bond valence sums are accurate for NaCl.
         # Values are closer to 0.915 than 1.0 due to structure specified here.
         # Using CollCode181148 from the ICSD, I see bond valence sums of 0.979
