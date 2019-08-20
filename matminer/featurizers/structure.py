@@ -3762,7 +3762,46 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         sym_struct = SymmetrizedStructure(s, sg, equiv_atoms, wyckoffs)
         equivs = sym_struct.find_equivalent_sites(site)
         return equivs
-    
+
+    def calc_bv_sum(self, site_el, site_val, neighbor_list):
+        """Computes bond valence sum for site.
+        Args:
+            site_el (String): element name
+            site_val (Integer): valence of site
+            neighbor_list (List): List of neighboring sites and their distances
+        """
+        bvs = 0
+        for neighbor_info in neighbor_list:
+            neighbor = neighbor_info[0]
+            dist = neighbor_info[1]
+            neighbor_val = neighbor.species.elements[0].oxi_state
+            neighbor_el = str(
+                    neighbor.species.element_composition.elements[0])
+            if neighbor_val % 1 != 0 or site_val % 1 != 0:
+                raise ValueError('Some sites have non-integer valences.')
+            try:
+                if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
+                    params = self.get_bv_params(cation=site_el,
+                                               anion=neighbor_el,
+                                               cat_val=site_val,
+                                               an_val=neighbor_val)
+                    bvs += self.compute_bv(params, dist)
+                elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
+                    params = self.get_bv_params(cation=neighbor_el,
+                                               anion=site_el,
+                                               cat_val=neighbor_val,
+                                               an_val=site_val)
+                    bvs -= self.compute_bv(params, dist)
+            except:
+                raise ValueError(
+                    'BV parameters for {} with valence {} and {} {} not '
+                    'found in table'
+                    ''.format(site_el, 
+                              site_val, 
+                              neighbor_el, 
+                              neighbor_val))
+        return bvs
+
     def calc_gii_iucr(self, s):
         """Computes global instability index using tabulated bv params.
         
@@ -3797,36 +3836,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 continue
             site_val = site.species.elements[0].oxi_state
             site_el = str(site.species.element_composition.elements[0])
-            bvs = 0
-            for neighbor_info in neighbor_list:
-                neighbor = neighbor_info[0]
-                dist = neighbor_info[1]
-                neighbor_val = neighbor.species.elements[0].oxi_state
-                neighbor_el = str(
-                        neighbor.species.element_composition.elements[0])
-                if neighbor_val % 1 != 0 or site_val % 1 != 0:
-                    raise ValueError('Some sites have non-integer valences.')
-                try:
-                    if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
-                        params = self.get_bv_params(cation=site_el,
-                                                   anion=neighbor_el,
-                                                   cat_val=site_val,
-                                                   an_val=neighbor_val)
-                        bvs += self.compute_bv(params, dist)
-                    elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
-                        params = self.get_bv_params(cation=neighbor_el,
-                                                   anion=site_el,
-                                                   cat_val=neighbor_val,
-                                                   an_val=site_val)
-                        bvs -= self.compute_bv(params, dist)
-                except:
-                    raise ValueError(
-                        'BV parameters for {} with valence {} and {} {} not '
-                        'found in table'
-                        ''.format(site_el, 
-                                  site_val, 
-                                  neighbor_el, 
-                                  neighbor_val))
+            bvs = self.calc_bv_sum(site_val, site_el, neighbor_list)
     
             site_val_sums[site] = bvs - site_val
         gii = np.linalg.norm(list(site_val_sums.values())) /\
