@@ -629,9 +629,10 @@
         },
         "description": " Matbench v0.1 test dataset for predicting DFT PBE band gap from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
         "file_type": "json.gz",
+        "hash": "58b65746bd88329986ed66031a2ac1369c7c522f7bc9f9081528e07097c2c057",
         "num_entries": 106113,
         "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-        "url": "",
+        "url": "https://ndownloader.figshare.com/files/17084741",
         "matbench_version": 0.1
     },
     "matbench_mp_e_form": {
@@ -652,7 +653,7 @@
     "matbench_mp_log_shear": {
         "bibtex_refs": [
             "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Angsten, Thomas\nand Jain, Anubhav and Notestine, Randy and Gamst, Anthony\nand Sluiter, Marcel and Krishna Ande, Chaitanya\nand van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac\nand Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.\nand Asta, Mark},\ntitle={Charting the complete elastic properties\nof inorganic crystalline compounds},\njournal={Scientific Data},\nyear={2015},\nmonth={Mar},\nday={17},\npublisher={The Author(s)},\nvolume={2},\npages={150009},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.9}\n}"
-        ],,
+        ],
         "columns": {
             "log10(G_VRH)": "Target variable. Base 10 logarithm of the DFT Voigt-Reuss-Hill average shear moduli.",
             "structure": "Pymatgen Structure of the material."
@@ -667,7 +668,7 @@
     "matbench_mp_log_bulk": {
         "bibtex_refs": [
             "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Angsten, Thomas\nand Jain, Anubhav and Notestine, Randy and Gamst, Anthony\nand Sluiter, Marcel and Krishna Ande, Chaitanya\nand van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac\nand Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.\nand Asta, Mark},\ntitle={Charting the complete elastic properties\nof inorganic crystalline compounds},\njournal={Scientific Data},\nyear={2015},\nmonth={Mar},\nday={17},\npublisher={The Author(s)},\nvolume={2},\npages={150009},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.9}\n}"
-        ],,
+        ],
         "columns": {
             "log10(K_VRH)": "Target variable. Base 10 logarithm of the DFT Voigt-Reuss-Hill average bulk moduli.",
             "structure": "Pymatgen Structure of the material."
@@ -678,5 +679,24 @@
         "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
         "url": "",
         "matbench_version": 0.1
+    },
+    "matbench_dielectric": {
+        "bibtex_refs": [
+            "@Article{deJong2015,\nauthor={de Jong, Maarten and Chen, Wei and Angsten, Thomas\nand Jain, Anubhav and Notestine, Randy and Gamst, Anthony\nand Sluiter, Marcel and Krishna Ande, Chaitanya\nand van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac\nand Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.\nand Asta, Mark},\ntitle={Charting the complete elastic properties\nof inorganic crystalline compounds},\njournal={Scientific Data},\nyear={2015},\nmonth={Mar},\nday={17},\npublisher={The Author(s)},\nvolume={2},\npages={150009},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2015.9}\n}"
+        ],
+        "columns": {
+            "n": "Target variable. Refractive index",
+            "structure": "Pymatgen Structure of the material."
+        },
+        "description": " Matbench v0.1 test dataset for predicting DFT log VRH-average shear modulus from structure. Adapted from Materials Project database. Retrieved April 2, 2019.",
+        "file_type": "json.gz",
+        "num_entries": 10987,
+        "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
+        "url": "",
+        "matbench_version": 0.1,
+        "bibtex_refs": [
+            "@Article{Petousis2017,\nauthor={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric\nand Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja\nand Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},\ntitle={High-throughput screening of inorganic compounds for the\ndiscovery of novel dielectric and optical materials},\njournal={Scientific Data},\nyear={2017},\nmonth={Jan},\nday={31},\npublisher={The Author(s)},\nvolume={4},\npages={160134},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2016.134}\n}"
+        ],
+        "reference": "Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,\nChen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.\nHigh-throughput screening of inorganic compounds for the discovery\nof novel dielectric and optical materials. Sci. Data 4, 160134 (2017)."
     }
 }
