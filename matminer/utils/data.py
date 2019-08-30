@@ -409,8 +409,20 @@ class IUCrBondValenceData:
     #***************************************************************
     """
 
-    def __init__(self):
-        # Load parameters as pandas dataframe
+    def __init__(self, interpolate_soft=True):
+        """
+        Load bond valence parameters as pandas dataframe.
+
+        If interpolate_soft is True, fill in some missing values
+        for anions such as I, Br, N, S, Se, etc. with the assumption
+        that bond valence parameters of such anions don't depend on
+        cation oxidation state. This assumption comes from Brese and O'Keeffe,
+        (1991), Acta Cryst. B47, 194, which states "with less electronegative
+        anions, ... R is not very different for different oxidation states in
+        general." In the original data source file, only one set of parameters
+        is usually provided for those less electronegative anions in a 9+
+        oxidation state, indicating they can be used with all oxidation states.
+        """
         filepath = os.path.join(
             module_dir,
             "data_files",
@@ -425,6 +437,34 @@ class IUCrBondValenceData:
                                   skipfooter=1,
                                   index_col=False,
                                   engine="python")
+        if interpolate_soft:
+            self.params = self.interpolate_soft_anions()
+
+    def interpolate_soft_anions(self):
+        """Fill in missing parameters for oxidation states of soft anions."""
+        high_electroneg = '|'.join(['O', 'Cl', 'F'])
+        subset = self.params.loc[(self.params['Atom1_valence'] == 9) & (~self.params['Atom2'].str.contains(high_electroneg))]
+        cation_subset = subset['Atom1'].unique()
+        data = []
+        for cation in cation_subset:
+            anions = subset.loc[subset['Atom1'] == cation]['Atom2'].unique()
+            for anion in anions:
+                an_val, Ro, b, ref_id = subset.loc[(subset['Atom1'] == cation)
+                        & (subset['Atom2']==anion)][['Atom2_valence', 'Ro', 'B', 'ref_id']].values[0]
+                for n in range(1, 7):
+                    entry = {'Atom1': cation,
+                             'Atom1_valence': n,
+                             'Atom2': anion,
+                             'Atom2_valence': an_val,
+                             'Ro': Ro,
+                             'B': b,
+                             'ref_id': ref_id,
+                             'details': 'Interpolated'
+                            }
+                    data.append(entry)
+        new_data = pd.DataFrame(data)
+        new_params = self.params.append(new_data, sort=True, ignore_index=True)
+        return new_params
 
     def get_bv_params(self, cation, anion, cat_val, an_val):
         """Lookup bond valence parameters from IUPAC table.

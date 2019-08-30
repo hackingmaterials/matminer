@@ -1,3 +1,3 @@
-__version__ = '0.5.9'
+__version__ = '0.6.0'
 
 from matminer.figrecipes.plot import PlotlyFig
