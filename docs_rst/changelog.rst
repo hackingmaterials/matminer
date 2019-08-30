@@ -5,6 +5,11 @@
 matminer Changelog
 ==================
 
+**v0.6.0**
+
+* Ensure Yang omega is never NaN in YangSolidSolution featurizer (L. Ward)
+* More complete BV sum table, some code cleanups (N. Wagner)
+
 **v0.5.9**
 
 * add Meredig composition featurizer (A. Trewartha)
