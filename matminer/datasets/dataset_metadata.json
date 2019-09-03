@@ -732,7 +732,7 @@
     "url": "",
     "hash": ""
   },
-  "glass_ternary_landolt": {
+  "matbench_glass": {
     "bibtex_refs": [
       "@Misc{LandoltBornstein1997:sm_lbs_978-3-540-47679-5_2,\nauthor=\"Kawazoe, Y.\nand Masumoto, T.\nand Tsai, A.-P.\nand Yu, J.-Z.\nand Aihara Jr., T.\",\neditor=\"Kawazoe, Y.\nand Yu, J.-Z.\nand Tsai, A.-P.\nand Masumoto, T.\",\ntitle=\"Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {\\textperiodcentered} 1 Introduction: Datasheet from Landolt-B{\\\"o}rnstein - Group III Condensed Matter {\\textperiodcentered} Volume 37A: ``Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys'' in SpringerMaterials (https://dx.doi.org/10.1007/10510374{\\_}2)\",\npublisher=\"Springer-Verlag Berlin Heidelberg\",\nnote=\"Copyright 1997 Springer-Verlag Berlin Heidelberg\",\nnote=\"Part of SpringerMaterials\",\nnote=\"accessed 2018-10-23\",\ndoi=\"10.1007/10510374_2\",\nurl=\"https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2\"\n}",
       "@Article{Ward2016,\nauthor={Ward, Logan\nand Agrawal, Ankit\nand Choudhary, Alok\nand Wolverton, Christopher},\ntitle={A general-purpose machine learning framework for predicting properties of inorganic materials},\njournal={Npj Computational Materials},\nyear={2016},\nmonth={Aug},\nday={26},\npublisher={The Author(s)},\nvolume={2},\npages={16028},\nnote={Article},\nurl={http://dx.doi.org/10.1038/npjcompumats.2016.28}\n}"
@@ -747,6 +747,36 @@
     "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2\n10.1007/10510374_2 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 20-10-2018",
     "url": "",
         "hash": ""
+  },
+  "matbench_expt_gap": {
+    "bibtex_refs": [
+      "@article{doi:10.1021/acs.jpclett.8b00124,\nauthor = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},\ntitle = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},\njournal = {The Journal of Physical Chemistry Letters},\nvolume = {9},\nnumber = {7},\npages = {1668-1673},\nyear = {2018},\ndoi = {10.1021/acs.jpclett.8b00124},\nnote ={PMID: 29532658},\neprint = {\nhttps://doi.org/10.1021/acs.jpclett.8b00124\n\n}}"
+    ],
+    "columns": {
+      "composition": "Chemical formula.",
+      "gap expt": "Target variable. Experimentally measured gap, in eV."
+    },
+    "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information.",
+    "file_type": "json.gz",
+    "hash": "",
+    "num_entries": 6354,
+    "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
+    "url": "https://ndownloader.figshare.com/files/13464434"
+  },
+  "matbench_expt_is_metal": {
+    "bibtex_refs": [
+      "@article{doi:10.1021/acs.jpclett.8b00124,\nauthor = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},\ntitle = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},\njournal = {The Journal of Physical Chemistry Letters},\nvolume = {9},\nnumber = {7},\npages = {1668-1673},\nyear = {2018},\ndoi = {10.1021/acs.jpclett.8b00124},\nnote ={PMID: 29532658},\neprint = {\nhttps://doi.org/10.1021/acs.jpclett.8b00124\n\n}}"
+    ],
+    "columns": {
+      "composition": "Chemical formula.",
+      "gap expt": "Target variable. Experimentally measured gap, in eV."
+    },
+    "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information.",
+    "file_type": "json.gz",
+    "hash": "",
+    "num_entries": 6354,
+    "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
+    "url": "https://ndownloader.figshare.com/files/13464434"
   }
 }
 
