@@ -715,6 +715,7 @@
     "num_entries": 636,
     "reference": "2D Dataset discussed in:\nHigh-throughput Identification and Characterization of Two dimensional Materials using Density functional theory Kamal Choudhary, Irina Kalish, Ryan Beams & Francesca Tavazza Scientific Reports volume 7, Article number: 5179 (2017)\nOriginal 2D Data file sourced from:\nchoudhary, kamal; https://orcid.org/0000-0001-9737-8074 (2018): jdft_2d-7-7-2018.json. figshare. Dataset.",
     "url": "",
+    "matbench_version": 0.1,
     "hash": ""
   },
   "matbench_perovskites": {
@@ -730,6 +731,7 @@
     "num_entries": 18928,
     "reference": "Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, S\u00f8ren Dahl, Ib Chorkendorff, Thomas F. Jaramillo and Karsten W. Jacobsen (2012) New cubic perovskites for one- and two-photon water splitting using the computational materials repository. Energy Environ. Sci., 2012,5, 9034-9043 https://doi.org/10.1039/C2EE22341D",
     "url": "",
+    "matbench_version": 0.1,
     "hash": ""
   },
   "matbench_glass": {
@@ -746,7 +748,8 @@
     "num_entries": 7191,
     "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2\n10.1007/10510374_2 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 20-10-2018",
     "url": "",
-        "hash": ""
+    "matbench_version": 0.1,
+    "hash": ""
   },
   "matbench_expt_gap": {
     "bibtex_refs": [
@@ -758,10 +761,11 @@
     },
     "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information.",
     "file_type": "json.gz",
-    "hash": "",
     "num_entries": 6354,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
-    "url": "https://ndownloader.figshare.com/files/13464434"
+    "url": "https://ndownloader.figshare.com/files/13464434",
+    "matbench_version": 0.1,
+    "hash": ""
   },
   "matbench_expt_is_metal": {
     "bibtex_refs": [
@@ -773,10 +777,45 @@
     },
     "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information.",
     "file_type": "json.gz",
-    "hash": "",
     "num_entries": 6354,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
-    "url": "https://ndownloader.figshare.com/files/13464434"
+    "url": "https://ndownloader.figshare.com/files/13464434",
+    "matbench_version": 0.1,
+    "hash": ""
+  },
+  "matbench_phonons": {
+    "bibtex_refs": [
+      "@Article{Petretto2018,\nauthor={Petretto, Guido\nand Dwaraknath, Shyam\nand P.C. Miranda, Henrique\nand Winston, Donald\nand Giantomassi, Matteo\nand van Setten, Michiel J.\nand Gonze, Xavier\nand Persson, Kristin A.\nand Hautier, Geoffroy\nand Rignanese, Gian-Marco},\ntitle={High-throughput density-functional perturbation theory phonons for inorganic materials},\njournal={Scientific Data},\nyear={2018},\nmonth={May},\nday={01},\npublisher={The Author(s)},\nvolume={5},\npages={180065},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2018.65}\n}",
+      "@misc{petretto_dwaraknath_miranda_winston_giantomassi_rignanese_van setten_gonze_persson_hautier_2018, title={High-throughput Density-Functional Perturbation Theory phonons for inorganic materials}, url={https://figshare.com/collections/High-throughput_Density-Functional_Perturbation_Theory_phonons_for_inorganic_materials/3938023/1}, DOI={10.6084/m9.figshare.c.3938023.v1}, abstractNote={The knowledge of the vibrational properties of a material is of key importance to understand physical phenomena such as thermal conductivity, superconductivity, and ferroelectricity among others. However, detailed experimental phonon spectra are available only for a limited number of materials which hinders the large-scale analysis of vibrational properties and their derived quantities. In this work, we perform ab initio calculations of the full phonon dispersion and vibrational density of states for 1521 semiconductor compounds in the harmonic approximation based on density functional perturbation theory. The data is collected along with derived dielectric and thermodynamic properties. We present the procedure used to obtain the results, the details of the provided database and a validation based on the comparison with experimental data.}, publisher={figshare}, author={Petretto, Guido and Dwaraknath, Shyam and Miranda, Henrique P. C. and Winston, Donald and Giantomassi, Matteo and Rignanese, Gian-Marco and Van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A and Hautier, Geoffroy}, year={2018}, month={Apr}}"
+    ],
+    "columns": {
+      "last phdos peak": "Target variable. Frequency of the highest frequency optical phonon mode peak, in units of 1/cm; ; may be used as an estimation of dominant longitudinal optical phonon frequency.",
+      "structure": "Pymatgen Structure of the material."
+    },
+    "description": "Matbench v0.1 test dataset for predicting vibration properties from crystal structure. Original data retrieved from Petretto et al. Original calculations done via ABINIT in the harmonic approximation based on density functional perturbation theory.",
+    "file_type": "json.gz",
+    "num_entries": 1296,
+    "reference": "Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. Sci. Data 5:180065 doi: 10.1038/sdata.2018.65 (2018).\nPetretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. (2018). figshare. Collection.",
+    "url": "",
+    "matbench_version": 0.1,
+    "hash": ""
+  },
+  "steel_strength": {
+    "bibtex_refs": [
+      "@misc{Citrine Informatics,\ntitle = {Mechanical properties of some steels},\nhowpublished = {\\url{https://citrination.com/datasets/153092/},\n}"
+    ],
+    "columns": {
+      "composition": "Chemical formula.",
+      "yield strength": "Target variable. Experimentally measured steel yeild strengths, in GPa."
+    },
+    "description": "Matbench v0.1 dataset for predicting steel yeild strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.",
+    "file_type": "json.gz",
+    "hash": "",
+    "num_entries": 312,
+    "reference": "https://citrination.com/datasets/153092/",
+    "url": "",
+    "matbench_version": 0.1,
+    "hash": ""
   }
 }
 
