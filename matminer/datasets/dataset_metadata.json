@@ -303,7 +303,7 @@
     "file_type": "json.gz",
     "hash": "748efd0bd85da497ebcb894b2681bc7c16aed52295344432ca501216832aa260",
     "num_entries": 7191,
-        "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://www.springer.com/gp/book/9783540605072 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 03-09-2019",
+    "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://www.springer.com/gp/book/9783540605072 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 03-09-2019",
     "url": "https://ndownloader.figshare.com/files/13314428"
   },
   "heusler_magnetic": {
@@ -692,7 +692,7 @@
       "n": "Target variable. Refractive index (unitless).",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": " Matbench v0.1 test dataset for predicting refractive index from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having refractive indices less than 1 and those containing noble gases. Retrieved April 2, 2019.",
+    "description": "Matbench v0.1 test dataset for predicting refractive index from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having refractive indices less than 1 and those containing noble gases. Retrieved April 2, 2019.",
     "file_type": "json.gz",
     "num_entries": 4764,
     "url": "",
@@ -744,7 +744,7 @@
     "num_entries": 5680,
     "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://www.springer.com/gp/book/9783540605072 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 03-09-2019",
     "url": "",
-    "hash": ""
+    "hash": "36beb654e2a463ee2a6572105bea0ca2961eee7c7b26a25377bff2c3b338e53a"
   },
   "matbench_expt_gap": {
     "bibtex_refs": [
@@ -759,7 +759,7 @@
     "num_entries": 4604,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
     "url": "",
-    "hash": ""
+    "hash": "1e6816fb8e7132535b76cdac458c4d53944eca97e1ecb68e6a8fd853c9cedc3a"
   },
   "matbench_expt_is_metal": {
     "bibtex_refs": [
@@ -774,7 +774,7 @@
     "num_entries": 4921,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 \n https//:doi.org/10.1021/acs.jpclett.8b00124.",
     "url": "",
-    "hash": ""
+    "hash": "80fb0854cff5d4657d812793f4748d5c23a9407f6c59bcf5b86c818ebaa6910f"
   },
   "matbench_phonons": {
     "bibtex_refs": [
