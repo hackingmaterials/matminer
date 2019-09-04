@@ -3777,6 +3777,8 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             neighbor_val = neighbor.species.elements[0].oxi_state
             neighbor_el = str(
                     neighbor.species.element_composition.elements[0])
+            print(type(neighbor_val))
+            print(type(site_val), site_val)
             if neighbor_val % 1 != 0 or site_val % 1 != 0:
                 raise ValueError('Some sites have non-integer valences.')
             try:
