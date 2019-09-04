@@ -204,3 +204,43 @@ def get_dataset_column_description(dataset_name, dataset_column):
     Returns: (str)
     """
     return get_dataset_attribute(dataset_name, 'columns')[dataset_column]
+
+
+def get_all_dataset_info(dataset_name):
+    """
+    Helper function to get all info for a particular dataset, including:
+        - Citation info
+        - Bibtex-formatted references
+        - Dataset columns and their descriptions
+        - The dataset description
+        - The number of entries in the dataset
+
+    Args:
+        dataset_name (str): Name of the dataset querying info
+
+    Returns:
+        output_str (str): All metadata associated with the dataset, in a
+            formatted string.
+    """
+    description = get_dataset_description(dataset_name)
+    columns = get_dataset_columns()
+    column_descriptions = []
+    for c in columns:
+        column_descriptions.append(
+            get_dataset_column_description(dataset_name, c))
+    reference = get_dataset_reference(dataset_name)
+    citations = get_dataset_citations(dataset_name)
+    num_entries = get_dataset_num_entries(dataset_name)
+
+    output_str = f"Dataset: {dataset_name}\nDescription: {description}" \
+                 f"\nColumns:"
+    for i, c in enumerate(columns):
+        cd = column_descriptions[i]
+        output_str += f"\t{c}: {cd}\n"
+    output_str += f"Num Entries: {num_entries}\n" \
+                  f"Reference: {reference}\n" \
+                  f"Bibtex citations: {citations}"
+
+    return output_str
+
+
