@@ -616,8 +616,7 @@
     "num_entries": 106113,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
     "url": "https://ndownloader.figshare.com/files/17476034",
-    "hash": "9a028ed5750a4c76ca36e9f3c8d48fe0bf3fb21b76ec2289e58ae7048d527919",
-    "matbench_version": 0.1
+    "hash": "9a028ed5750a4c76ca36e9f3c8d48fe0bf3fb21b76ec2289e58ae7048d527919"
   },
   "matbench_mp_gap": {
     "bibtex_refs": [
@@ -632,8 +631,7 @@
     "hash": "58b65746bd88329986ed66031a2ac1369c7c522f7bc9f9081528e07097c2c057",
     "num_entries": 106113,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-    "url": "https://ndownloader.figshare.com/files/17084741",
-    "matbench_version": 0.1
+    "url": "https://ndownloader.figshare.com/files/17084741"
   },
   "matbench_mp_e_form": {
     "bibtex_refs": [
@@ -648,8 +646,7 @@
     "num_entries": 132752,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
     "url": "https://ndownloader.figshare.com/files/17476028",
-    "hash": "dedcb1d4ba2e3e50dbdd45ba5bc647a00e9c2bcf8f8bf556dc8e92caa39eb21f",
-    "matbench_version": 0.1
+    "hash": "dedcb1d4ba2e3e50dbdd45ba5bc647a00e9c2bcf8f8bf556dc8e92caa39eb21f"
   },
   "matbench_log_gvrh": {
     "bibtex_refs": [
@@ -664,8 +661,7 @@
     "num_entries": 10987,
     "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
     "url": "https://ndownloader.figshare.com/files/17476064",
-    "hash": "098af941f4c663270f1fe21abf20ffad6fb85ecbfcba5786ceac03983ac29da7",
-    "matbench_version": 0.1
+    "hash": "098af941f4c663270f1fe21abf20ffad6fb85ecbfcba5786ceac03983ac29da7"
   },
   "matbench_log_kvrh": {
     "bibtex_refs": [
@@ -680,8 +676,7 @@
     "num_entries": 10987,
     "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
     "url": "https://ndownloader.figshare.com/files/17476061",
-    "hash": "44b113ddb7e23aa18731a62c74afa7e5aa654199e0db5f951c8248a00955c9cd",
-    "matbench_version": 0.1
+    "hash": "44b113ddb7e23aa18731a62c74afa7e5aa654199e0db5f951c8248a00955c9cd"
   },
   "matbench_dielectric": {
     "bibtex_refs": [
