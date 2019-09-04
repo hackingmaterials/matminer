@@ -65,17 +65,15 @@ def load_dataset(name, data_home=None, download_if_missing=True):
     return df
 
 
-def get_available_datasets(print_datasets=True, print_descriptions=True,
-                           sort_method='alphabetical'):
+def print_available_datasets(format="short", sort_method='alphabetical'):
     """
     Function for retrieving the datasets available within matminer.
 
     Args:
-        print_datasets (bool): Whether to, along with returning a
-            list of dataset names, also print info on each dataset
-
-        print_descriptions (bool): Whether to print the description of the
-            dataset along with the name. Ignored if print_datasets is False
+        format (str): "short", "medium", or "long":
+            "short": only the dataset names
+            "medium": dataset names and their descriptions
+            "long": All dataset info associated with the dataset
 
         sort_method (str): By what metric to sort the datasets when retrieving
             their information.
@@ -102,13 +100,15 @@ def get_available_datasets(print_datasets=True, print_descriptions=True,
         dataset_names = sorted(_dataset_dict.keys())
 
     # If checks done before for loop to avoid unnecessary repetitive evaluation
-    if print_datasets and print_descriptions:
-        for name in dataset_names:
-            # Printing blank line with sep=\n to give extra line break
-            print(name, _dataset_dict[name]["description"], "", sep="\n")
-    elif print_datasets:
+    if format=="small":
         for name in dataset_names:
             print(name)
+    elif format=="medium":
+        for name in dataset_names:
+            print(name, _dataset_dict[name]["description"], "", sep="\n")
+    elif format == "long":
+        for name in dataset_names:
+            print(get_all_dataset_info(name))
 
     return dataset_names
 
@@ -223,7 +223,7 @@ def get_all_dataset_info(dataset_name):
             formatted string.
     """
     description = get_dataset_description(dataset_name)
-    columns = get_dataset_columns()
+    columns = get_dataset_columns(dataset_name)
     column_descriptions = []
     for c in columns:
         column_descriptions.append(
@@ -233,13 +233,13 @@ def get_all_dataset_info(dataset_name):
     num_entries = get_dataset_num_entries(dataset_name)
 
     output_str = f"Dataset: {dataset_name}\nDescription: {description}" \
-                 f"\nColumns:"
+                 f"\nColumns:\n"
     for i, c in enumerate(columns):
         cd = column_descriptions[i]
         output_str += f"\t{c}: {cd}\n"
     output_str += f"Num Entries: {num_entries}\n" \
                   f"Reference: {reference}\n" \
-                  f"Bibtex citations: {citations}"
+                  f"Bibtex citations: {citations}\n\n"
 
     return output_str
 
