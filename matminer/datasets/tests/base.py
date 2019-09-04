@@ -9,7 +9,7 @@ _dataset_test_env_var = os.environ.get("MATMINER_DATASET_FULL_TEST", "False")
 do_complete_test = (_dataset_test_env_var.upper() == "TRUE")
 
 
-class DataSetTest(unittest.TestCase):
+class DatasetTest(unittest.TestCase):
     def setUp(self):
         self.dataset_names = [
             'flla',

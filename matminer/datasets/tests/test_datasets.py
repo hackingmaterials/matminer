@@ -6,11 +6,11 @@ import numpy as np
 from pandas.api.types import is_numeric_dtype, is_object_dtype, is_bool_dtype
 from pymatgen.core.structure import Structure, Composition
 
-from matminer.datasets.tests.base import DataSetTest, do_complete_test
+from matminer.datasets.tests.base import DatasetTest, do_complete_test
 from matminer.datasets.dataset_retrieval import load_dataset
 
 
-class DataSetsTest(DataSetTest):
+class DataSetsTest(DatasetTest):
     # Runs tests common to all datasets,
     # makes it quicker to write tests for new datasets
     def universal_dataset_check(self, dataset_name, object_headers=None,

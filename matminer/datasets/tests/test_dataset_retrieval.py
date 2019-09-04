@@ -1,14 +1,14 @@
 import unittest
 from itertools import product
 
-from matminer.datasets.tests.base import DataSetTest
+from matminer.datasets.tests.base import DatasetTest
 from matminer.datasets.dataset_retrieval import load_dataset, \
     print_available_datasets, get_dataset_attribute, get_dataset_description, \
     get_dataset_num_entries, get_dataset_columns, get_dataset_reference, \
     get_dataset_column_description, get_dataset_citations, get_all_dataset_info
 
 
-class DataRetrievalTest(DataSetTest):
+class DataRetrievalTest(DatasetTest):
     # This test case only checks the dataset loaders exceptions
     # For more extensive tests of individual datasets see the
     # test_load_"dataset name" functions in test_datasets.py
