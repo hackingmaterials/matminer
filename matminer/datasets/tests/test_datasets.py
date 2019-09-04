@@ -423,31 +423,50 @@ class MatminerDatasetsTest(DataSetsTest):
 
 class MatminerDatasetsTest(DataSetsTest):
     """
-    All datasets hosted with matminer are tested here, excluding matbench
-    datasets.
+    Matbench datasets are tested here.
     """
 
     def test_matbench_v0_1(self):
-        object_headers = ['material_id', 'formula', 'structure',
-                          'compliance_tensor', 'elastic_tensor',
-                          'elastic_tensor_original', 'cif', 'poscar']
+        structure_key = "structure"
+        composition_key = "composition"
+        config_regression = {
+            "matbench_dielectric": ["n", structure_key],
+            "matbench_expt_gap": ["gap expt", composition_key],
+            "matbench_jdft2d": ["exfoliation_en", structure_key],
+            "matbench_log_gvrh": ["log10(G_VRH)", structure_key],
+            "matbench_log_kvrh": ["log10(K_VRH)", structure_key],
+            "matbench_mp_e_form": ["e_form", structure_key],
+            "matbench_perovskites": ["e_form", structure_key],
+            "matbench_phonons": ["last phdos peak", structure_key],
+            "matbench_steels": ["yield strength", composition_key],
+        }
 
-        numeric_headers = ['nsites', 'space_group', 'volume',
-                           'elastic_anisotropy', 'G_Reuss', 'G_VRH', 'G_Voigt',
-                           'K_Reuss', 'K_VRH', 'K_Voigt', 'poisson_ratio',
-                           'kpoint_density']
+        config_classification = {
+            "matbench_expt_is_metal": ["is_metal", composition_key],
+            "matbench_glass": ["gfa", composition_key],
+            "matbench_mp_is_metal": ["is_metal", structure_key],
+        }
 
-        def _unique_tests(df):
-            self.assertEqual(type(df['structure'][0]), Structure)
-            tensor_headers = ['compliance_tensor', 'elastic_tensor',
-                              'elastic_tensor_original']
-            for c in tensor_headers:
-                self.assertEqual(type(df[c][0]), np.ndarray)
+        clf = "classification"
+        reg = "regression"
+        config = {
+            clf: config_classification,
+            reg: config_regression
+        }
 
-        self.universal_dataset_check(
-            "elastic_tensor_2015", object_headers, numeric_headers,
-            test_func=_unique_tests
-        )
+        for problem_type, problems_config in config.items():
+            for ds, ds_config in problems_config.items():
+                object_headers = [ds_config[1]]
+                if problem_type == clf:
+                    numeric_headers = None
+                    bool_headers = [ds_config[0]]
+                else:
+                    numeric_headers = [ds_config[0]]
+                    bool_headers = None
+
+                self.universal_dataset_check(
+                    ds, object_headers, numeric_headers, bool_headers
+                )
 
 
 if __name__ == "__main__":
