@@ -88,7 +88,7 @@ def generate_tables():
 
             print(f"   * - {n}")
             description = dftable["doc"].iloc[i]
-            print(f"     - {description} {url}")
+            print(f"     - {description} {url}    ")
         print("\n\n")
 
 

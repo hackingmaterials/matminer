@@ -1065,7 +1065,7 @@ Various properties of 636 2D materials computed with the OptB88vdW and TBmBJ fun
    * - :code:`epsilon_z tbmbj`
      - Static dielectric function in z direction calculuated with TBMBJ functional.
    * - :code:`exfoliation_en`
-     - Exfoliation energy (monolayer formation E) in eV
+     - Exfoliation energy (monolayer formation E) in meV/atom
    * - :code:`gap opt`
      - Band gap calculated with OptB88vDW functional, in eV
    * - :code:`gap tbmbj`
