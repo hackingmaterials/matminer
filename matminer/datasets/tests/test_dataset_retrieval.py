@@ -1,5 +1,4 @@
 import unittest
-from itertools import product
 
 from matminer.datasets.tests.base import DatasetTest
 from matminer.datasets.dataset_retrieval import load_dataset, \
