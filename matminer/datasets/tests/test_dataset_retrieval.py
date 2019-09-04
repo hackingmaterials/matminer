@@ -83,6 +83,5 @@ class DataRetrievalTest(DataSetTest):
         self.assertTrue(isinstance(attrib, str))
 
 
-
 if __name__ == "__main__":
     unittest.main()
