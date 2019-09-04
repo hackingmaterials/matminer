@@ -66,12 +66,13 @@ def load_dataset(name, data_home=None, download_if_missing=True):
     return df
 
 
-def print_available_datasets(format="short", sort_method='alphabetical'):
+def get_available_datasets(print_format="medium", sort_method='alphabetical'):
     """
     Function for retrieving the datasets available within matminer.
 
     Args:
-        format (str): "short", "medium", or "long":
+        print_format (None, str): None, "short", "medium", or "long":
+            None: Don't print anything
             "short": only the dataset names
             "medium": dataset names and their descriptions
             "long": All dataset info associated with the dataset
@@ -101,15 +102,20 @@ def print_available_datasets(format="short", sort_method='alphabetical'):
         dataset_names = sorted(_dataset_dict.keys())
 
     # If checks done before for loop to avoid unnecessary repetitive evaluation
-    if format == "small":
-        for name in dataset_names:
-            print(name)
-    elif format == "medium":
-        for name in dataset_names:
-            print(name, _dataset_dict[name]["description"], "", sep="\n")
-    elif format == "long":
-        for name in dataset_names:
-            print(get_all_dataset_info(name))
+    if print_format is not None:
+        dataset_string = ""
+        if print_format == "short":
+            for dataset_name in dataset_names:
+                dataset_string += f"{dataset_name}\n"
+        elif print_format == "medium":
+            for dataset_name in dataset_names:
+                dataset_description = get_dataset_description(dataset_name)
+                dataset_string += f"{dataset_name}: " \
+                                  f"{dataset_description}\n"
+        elif print_format == "long":
+            for dataset_name in dataset_names:
+                dataset_string += f"{get_all_dataset_info(dataset_name)}"
+        print(dataset_string)
 
     return dataset_names
 

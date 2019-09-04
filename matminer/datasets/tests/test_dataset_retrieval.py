@@ -3,7 +3,7 @@ from itertools import product
 
 from matminer.datasets.tests.base import DatasetTest
 from matminer.datasets.dataset_retrieval import load_dataset, \
-    print_available_datasets, get_dataset_attribute, get_dataset_description, \
+    get_available_datasets, get_dataset_attribute, get_dataset_description, \
     get_dataset_num_entries, get_dataset_columns, get_dataset_reference, \
     get_dataset_column_description, get_dataset_citations, get_all_dataset_info
 
@@ -27,10 +27,9 @@ class DataRetrievalTest(DatasetTest):
     def test_print_available_datasets(self):
         # Go over all parameter combinations,
         # for each check that returned dataset is correct
-        for parameter_combo in product(["long", "short", "medium"],
-                                       ['alphabetical', 'num_entries']):
-            datasets = print_available_datasets(*parameter_combo)
-            if parameter_combo[1] == 'alphabetical':
+        for sort_method in ['alphabetical', 'num_entries']:
+            datasets = get_available_datasets(sort_method=sort_method)
+            if sort_method == 'alphabetical':
                 self.assertEqual(datasets, sorted(self.dataset_names))
             else:
                 self.assertEqual(
