@@ -80,6 +80,13 @@ class DataSetsTest(DataSetTest):
             )
             self.assertTrue(download_page.ok)
 
+
+class MatminerDatasetsTest(DataSetsTest):
+    """
+    All datasets hosted with matminer are tested here, excluding matbench
+    datasets.
+    """
+
     def test_elastic_tensor_2015(self):
         object_headers = ['material_id', 'formula', 'structure',
                           'compliance_tensor', 'elastic_tensor',
@@ -411,6 +418,35 @@ class DataSetsTest(DataSetTest):
         self.universal_dataset_check(
             "brgoch_superhard_training", object_headers, numeric_headers,
             bool_headers, test_func=_unique_tests
+        )
+
+
+class MatminerDatasetsTest(DataSetsTest):
+    """
+    All datasets hosted with matminer are tested here, excluding matbench
+    datasets.
+    """
+
+    def test_matbench_v0_1(self):
+        object_headers = ['material_id', 'formula', 'structure',
+                          'compliance_tensor', 'elastic_tensor',
+                          'elastic_tensor_original', 'cif', 'poscar']
+
+        numeric_headers = ['nsites', 'space_group', 'volume',
+                           'elastic_anisotropy', 'G_Reuss', 'G_VRH', 'G_Voigt',
+                           'K_Reuss', 'K_VRH', 'K_Voigt', 'poisson_ratio',
+                           'kpoint_density']
+
+        def _unique_tests(df):
+            self.assertEqual(type(df['structure'][0]), Structure)
+            tensor_headers = ['compliance_tensor', 'elastic_tensor',
+                              'elastic_tensor_original']
+            for c in tensor_headers:
+                self.assertEqual(type(df[c][0]), np.ndarray)
+
+        self.universal_dataset_check(
+            "elastic_tensor_2015", object_headers, numeric_headers,
+            test_func=_unique_tests
         )
 
 

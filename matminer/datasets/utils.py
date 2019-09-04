@@ -87,6 +87,8 @@ def _validate_dataset(data_path, url=None, file_hash=None,
 
     # Check to see if file hash matches the expected value, if hash is provided
     if file_hash is not None:
+        print(file_hash)
+        print(_get_file_sha256_hash(data_path))
         if file_hash != _get_file_sha256_hash(data_path):
             raise UserWarning(
                 "Error, hash of downloaded file does not match that "

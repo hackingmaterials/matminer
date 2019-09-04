@@ -101,10 +101,10 @@ def print_available_datasets(format="short", sort_method='alphabetical'):
         dataset_names = sorted(_dataset_dict.keys())
 
     # If checks done before for loop to avoid unnecessary repetitive evaluation
-    if format=="small":
+    if format == "small":
         for name in dataset_names:
             print(name)
-    elif format=="medium":
+    elif format == "medium":
         for name in dataset_names:
             print(name, _dataset_dict[name]["description"], "", sep="\n")
     elif format == "long":
@@ -249,5 +249,3 @@ def get_all_dataset_info(dataset_name):
                   f"SHA256 Hash Digest: {h}\n\n"
 
     return output_str
-
-
