@@ -183,7 +183,7 @@ filtering or modifying data in the dataset after it has been loaded. A
 convenience function should be added alongside dataset tests.</p>
 <ul>
 <li><p>Update dataset names saved in <cite>matminer/datasets/tests/base.py</cite></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DataSetTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DatasetTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset_names</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;flla&#39;</span><span class="p">,</span>

@@ -1,7 +1,7 @@
 import pandas as pd
 import unittest
 
-from matminer.datasets.tests.base import DataSetTest, do_complete_test
+from matminer.datasets.tests.base import DatasetTest, do_complete_test
 from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
     load_castelli_perovskites, load_flla, load_boltztrap_mp, \
     load_citrine_thermal_conductivity, load_dielectric_constant, \
@@ -15,7 +15,7 @@ from matminer.datasets.convenience_loaders import load_glass_ternary_hipt, \
 
 if do_complete_test:
 
-    class ConvenienceLoadersTest(DataSetTest):
+    class ConvenienceLoadersTest(DatasetTest):
         def test_load_glass_ternary_hipt(self):
             df = load_glass_ternary_hipt()
             self. assertTrue(isinstance(df, pd.DataFrame))

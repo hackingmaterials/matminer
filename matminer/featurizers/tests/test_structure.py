@@ -863,7 +863,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertTupleEqual(df.shape, (3, 451))
         self.assertAlmostEqual(df["SOAP_449"].iloc[1], 3.029167413711548, places=5)
 
-    # todo: remove skip once pymatgen version newer than 2019.7.30 is released.
+    #todo: remove skip once pymatgen version newer than 2019.7.30 is integrated.
     @unittest.expectedFailure
     def test_GlobalInstabilityIndex(self):
         # Test diamond and ni3al fail precheck
@@ -906,6 +906,7 @@ class StructureFeaturesTest(PymatgenTest):
         with self.assertRaises(ValueError):
             gii.featurize(nacl_disordered)
         self.assertAlmostEqual(gii_pymat.featurize(nacl_disordered)[0], 0.39766464)
+
 
 if __name__ == '__main__':
     unittest.main()

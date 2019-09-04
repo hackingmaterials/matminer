@@ -5,8 +5,9 @@ from matminer.datasets.utils import _load_dataset_dict, _get_data_home, \
 from matminer.utils.io import load_dataframe_from_json
 
 __author__ = "Kyle Bystrom <kylebystrom@berkeley.edu>, " \
-             "Anubhav Jain <ajain@lbl.gov>" \
-             "Daniel Dopp <dbdopp@lbl.gov>"
+             "Anubhav Jain <ajain@lbl.gov>, " \
+             "Daniel Dopp <dbdopp@lbl.gov>, " \
+             "Alex Dunn <ardunn@lbl.gov"
 
 _dataset_dict = None
 
@@ -65,17 +66,16 @@ def load_dataset(name, data_home=None, download_if_missing=True):
     return df
 
 
-def get_available_datasets(print_datasets=True, print_descriptions=True,
-                           sort_method='alphabetical'):
+def get_available_datasets(print_format="medium", sort_method='alphabetical'):
     """
     Function for retrieving the datasets available within matminer.
 
     Args:
-        print_datasets (bool): Whether to, along with returning a
-            list of dataset names, also print info on each dataset
-
-        print_descriptions (bool): Whether to print the description of the
-            dataset along with the name. Ignored if print_datasets is False
+        print_format (None, str): None, "short", "medium", or "long":
+            None: Don't print anything
+            "short": only the dataset names
+            "medium": dataset names and their descriptions
+            "long": All dataset info associated with the dataset
 
         sort_method (str): By what metric to sort the datasets when retrieving
             their information.
@@ -102,13 +102,20 @@ def get_available_datasets(print_datasets=True, print_descriptions=True,
         dataset_names = sorted(_dataset_dict.keys())
 
     # If checks done before for loop to avoid unnecessary repetitive evaluation
-    if print_datasets and print_descriptions:
-        for name in dataset_names:
-            # Printing blank line with sep=\n to give extra line break
-            print(name, _dataset_dict[name]["description"], "", sep="\n")
-    elif print_datasets:
-        for name in dataset_names:
-            print(name)
+    if print_format is not None:
+        dataset_string = ""
+        if print_format == "short":
+            for dataset_name in dataset_names:
+                dataset_string += f"{dataset_name}\n"
+        elif print_format == "medium":
+            for dataset_name in dataset_names:
+                dataset_description = get_dataset_description(dataset_name)
+                dataset_string += f"{dataset_name}: " \
+                                  f"{dataset_description}\n"
+        elif print_format == "long":
+            for dataset_name in dataset_names:
+                dataset_string += f"{get_all_dataset_info(dataset_name)}"
+        print(dataset_string)
 
     return dataset_names
 
@@ -204,3 +211,47 @@ def get_dataset_column_description(dataset_name, dataset_column):
     Returns: (str)
     """
     return get_dataset_attribute(dataset_name, 'columns')[dataset_column]
+
+
+def get_all_dataset_info(dataset_name):
+    """
+    Helper function to get all info for a particular dataset, including:
+        - Citation info
+        - Bibtex-formatted references
+        - Dataset columns and their descriptions
+        - The dataset description
+        - The number of entries in the dataset
+
+    Args:
+        dataset_name (str): Name of the dataset querying info
+
+    Returns:
+        output_str (str): All metadata associated with the dataset, in a
+            formatted string.
+    """
+    description = get_dataset_description(dataset_name)
+    columns = get_dataset_columns(dataset_name)
+    column_descriptions = []
+    for c in columns:
+        column_descriptions.append(
+            get_dataset_column_description(dataset_name, c))
+    reference = get_dataset_reference(dataset_name)
+    citations = get_dataset_citations(dataset_name)
+    num_entries = get_dataset_num_entries(dataset_name)
+    file_type = get_dataset_attribute(dataset_name, "file_type")
+    url = get_dataset_attribute(dataset_name, "url")
+    h = get_dataset_attribute(dataset_name, "hash")
+
+    output_str = f"Dataset: {dataset_name}\nDescription: {description}" \
+                 f"\nColumns:\n"
+    for i, c in enumerate(columns):
+        cd = column_descriptions[i]
+        output_str += f"\t{c}: {cd}\n"
+    output_str += f"Num Entries: {num_entries}\n" \
+                  f"Reference: {reference}\n" \
+                  f"Bibtex citations: {citations}\n" \
+                  f"File type: {file_type}\n" \
+                  f"Figshare URL: {url}\n" \
+                  f"SHA256 Hash Digest: {h}\n\n"
+
+    return output_str
