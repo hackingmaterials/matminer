@@ -343,7 +343,7 @@
       "epsilon_y tbmbj": "Static dielectric function in y direction calculuated with TBMBJ functional.",
       "epsilon_z opt": "Static dielectric function in z direction calculated with OptB88vDW functional.",
       "epsilon_z tbmbj": "Static dielectric function in z direction calculuated with TBMBJ functional.",
-      "exfoliation_en": "Exfoliation energy (monolayer formation E) in eV",
+      "exfoliation_en": "Exfoliation energy (monolayer formation E) in meV/atom",
       "gap opt": "Band gap calculated with OptB88vDW functional, in eV",
       "gap tbmbj": "Band gap calculated with TBMBJ functional, in eV",
       "jid": "JARVIS ID",
