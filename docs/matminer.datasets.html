@@ -503,6 +503,27 @@ containing NaN values from</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="matminer.datasets.dataset_retrieval.get_available_datasets">
+<code class="sig-prename descclassname">matminer.datasets.dataset_retrieval.</code><code class="sig-name descname">get_available_datasets</code><span class="sig-paren">(</span><em class="sig-param">print_format='medium'</em>, <em class="sig-param">sort_method='alphabetical'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_available_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for retrieving the datasets available within matminer.</p>
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>print_format (None, str): None, “short”, “medium”, or “long”:</dt><dd><p>None: Don’t print anything
+“short”: only the dataset names
+“medium”: dataset names and their descriptions
+“long”: All dataset info associated with the dataset</p>
+</dd>
+<dt>sort_method (str): By what metric to sort the datasets when retrieving</dt><dd><p>their information.</p>
+<p>alphabetical: sorts by dataset name,
+num_entries: sorts by number of dataset entries</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns: (list)</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="matminer.datasets.dataset_retrieval.get_dataset_attribute">
 <code class="sig-prename descclassname">matminer.datasets.dataset_retrieval.</code><code class="sig-name descname">get_dataset_attribute</code><span class="sig-paren">(</span><em class="sig-param">dataset_name</em>, <em class="sig-param">attrib_key</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.get_dataset_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for getting generic attributes of the dataset</p>
@@ -602,26 +623,6 @@ by default.</p>
 <dt>Returns: (pd.DataFrame,</dt><dd><p>tuple -&gt; (pd.DataFrame, pd.DataFrame) if return_lumo = True)</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="matminer.datasets.dataset_retrieval.print_available_datasets">
-<code class="sig-prename descclassname">matminer.datasets.dataset_retrieval.</code><code class="sig-name descname">print_available_datasets</code><span class="sig-paren">(</span><em class="sig-param">format='short'</em>, <em class="sig-param">sort_method='alphabetical'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.print_available_datasets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for retrieving the datasets available within matminer.</p>
-<dl>
-<dt>Args:</dt><dd><dl>
-<dt>format (str): “short”, “medium”, or “long”:</dt><dd><p>“short”: only the dataset names
-“medium”: dataset names and their descriptions
-“long”: All dataset info associated with the dataset</p>
-</dd>
-<dt>sort_method (str): By what metric to sort the datasets when retrieving</dt><dd><p>their information.</p>
-<p>alphabetical: sorts by dataset name,
-num_entries: sorts by number of dataset entries</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>Returns: (list)</p>
 </dd></dl>
 
 </div>

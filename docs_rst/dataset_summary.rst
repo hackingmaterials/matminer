@@ -5,6 +5,46 @@ Datasets Available in Matminer
 Below you will find descriptions and reference data on each available dataset, ordered by load_dataset() keyword argument
 
 
+boltztrap_mp
+brgoch_superhard_training
+castelli_perovskites
+citrine_thermal_conductivity
+dielectric_constant
+double_perovskites_gap
+double_perovskites_gap_lumo
+elastic_tensor_2015
+expt_formation_enthalpy
+expt_gap
+flla
+glass_binary
+glass_binary_v2
+glass_ternary_hipt
+glass_ternary_landolt
+heusler_magnetic
+jarvis_dft_2d
+jarvis_dft_3d
+jarvis_ml_dft_training
+m2ax
+matbench_dielectric
+matbench_expt_gap
+matbench_expt_is_metal
+matbench_glass
+matbench_jdft2d
+matbench_log_gvrh
+matbench_log_kvrh
+matbench_mp_e_form
+matbench_mp_gap
+matbench_mp_is_metal
+matbench_perovskites
+matbench_phonons
+matbench_steels
+mp_all
+mp_nostruct
+phonon_dielectric_mp
+piezoelectric_tensor
+steel_strength
+wolverton_oxides
+
 ------------
 boltztrap_mp
 ------------

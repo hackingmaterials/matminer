@@ -1,4 +1,4 @@
-from matminer.datasets import print_available_datasets, get_dataset_columns, \
+from matminer.datasets import get_available_datasets, get_dataset_columns, \
     get_dataset_column_description, get_dataset_reference, \
     get_dataset_num_entries, get_dataset_description, get_dataset_citations
 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     # For each dataset give the name, description,
     # num_entries, columns, and reference string
-    for dataset in print_available_datasets(format="short"):
+    for dataset in get_available_datasets(print_format="short"):
         # Name, description, and number of entries output
         print(make_rst_subtitle(dataset))
         print(get_dataset_description(dataset))
