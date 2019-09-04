@@ -303,7 +303,7 @@
     "file_type": "json.gz",
     "hash": "748efd0bd85da497ebcb894b2681bc7c16aed52295344432ca501216832aa260",
     "num_entries": 7191,
-    "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2\n10.1007/10510374_2 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 20-10-2018",
+        "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://www.springer.com/gp/book/9783540605072 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 03-09-2019",
     "url": "https://ndownloader.figshare.com/files/13314428"
   },
   "heusler_magnetic": {
@@ -739,12 +739,12 @@
       "composition": "Chemical formula.",
       "gfa": "Target variable. Glass forming ability: 1 means glass forming and corresponds to amorphous, 0 means non full glass forming."
     },
-    "description": "Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula. Retrieved from \"Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,\u2019 a volume of the Landolt\u2013 B\u00f6rnstein collection.",
+    "description": "Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula. Retrieved from \"Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,\u2019 a volume of the Landolt\u2013 B\u00f6rnstein collection. Deduplicated according to composition, ensuring no compositions were reported as both GFA and not GFA (i.e., all reports agreed on the classification designation).",
     "file_type": "json.gz",
-    "num_entries": 7191,
-    "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2\n10.1007/10510374_2 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 20-10-2018",
+    "num_entries": 5680,
+    "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://www.springer.com/gp/book/9783540605072 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 03-09-2019",
     "url": "",
-    "hash": "aff12fe9f03a3ec2be416f7ccb89e48b54b36cdee6253a39179ffa9ca4819a9"
+    "hash": ""
   },
   "matbench_expt_gap": {
     "bibtex_refs": [
@@ -754,12 +754,12 @@
       "composition": "Chemical formula.",
       "gap expt": "Target variable. Experimentally measured gap, in eV."
     },
-    "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information.",
+    "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports.",
     "file_type": "json.gz",
-    "num_entries": 6354,
+    "num_entries": 4604,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
     "url": "",
-    "hash": "bb9a22acaf11453843bd29b157dc03804dc46dba9ca65e447cbd4b6ba32391a6"
+    "hash": ""
   },
   "matbench_expt_is_metal": {
     "bibtex_refs": [
@@ -769,12 +769,12 @@
       "composition": "Chemical formula.",
       "is_metal": "Target variable. 1 if is a metal, 0 if nonmetal."
     },
-    "description": "Matbench v0.1 test dataset for classifying metallicity from composition alone. Retrieved from Zhuo et al. supplementary information.",
+    "description": "Matbench v0.1 test dataset for classifying metallicity from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, ensuring no conflicting reports were entered for any compositions (i.e., no reported compositions were both metal and nonmetal).",
     "file_type": "json.gz",
-    "num_entries": 6354,
+    "num_entries": 4921,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 \n https//:doi.org/10.1021/acs.jpclett.8b00124.",
     "url": "",
-    "hash": "f93418522359c917ca2c069183063e7eefbbfec59d3ebdcaff40673340257cf3"
+    "hash": ""
   },
   "matbench_phonons": {
     "bibtex_refs": [
@@ -798,7 +798,7 @@
     ],
     "columns": {
       "composition": "Chemical formula.",
-      "yield strength": "Target variable. Experimentally measured steel yeild strengths, in GPa."
+      "yield strength": "Target variable. Experimentally measured steel yield strengths, in GPa."
     },
     "description": "Matbench v0.1 dataset for predicting steel yeild strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.",
     "file_type": "json.gz",
