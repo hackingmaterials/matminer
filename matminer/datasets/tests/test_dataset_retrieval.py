@@ -3,9 +3,9 @@ from itertools import product
 
 from matminer.datasets.tests.base import DataSetTest
 from matminer.datasets.dataset_retrieval import load_dataset, \
-    get_available_datasets, get_dataset_attribute, get_dataset_description, \
+    print_available_datasets, get_dataset_attribute, get_dataset_description, \
     get_dataset_num_entries, get_dataset_columns, get_dataset_reference, \
-    get_dataset_column_description, get_dataset_citations
+    get_dataset_column_description, get_dataset_citations, get_all_dataset_info
 
 
 class DataRetrievalTest(DataSetTest):
@@ -24,13 +24,13 @@ class DataRetrievalTest(DataSetTest):
         with self.assertRaises(ValueError):
             load_dataset("a" + dataset_name + "a")
 
-    def test_get_available_datasets(self):
+    def test_print_available_datasets(self):
         # Go over all parameter combinations,
         # for each check that returned dataset is correct
-        for parameter_combo in product([True, False], [True, False],
+        for parameter_combo in product(["long", "short", "medium"],
                                        ['alphabetical', 'num_entries']):
-            datasets = get_available_datasets(*parameter_combo)
-            if parameter_combo[2] == 'alphabetical':
+            datasets = print_available_datasets(*parameter_combo)
+            if parameter_combo[1] == 'alphabetical':
                 self.assertEqual(datasets, sorted(self.dataset_names))
             else:
                 self.assertEqual(
@@ -76,6 +76,12 @@ class DataRetrievalTest(DataSetTest):
         dataset_name = sorted(self.dataset_dict.keys())[0]
         attrib = get_dataset_citations(dataset_name)
         self.assertTrue(isinstance(attrib, list))
+
+    def test_get_all_dataset_info(self):
+        dataset_name = sorted(self.dataset_dict.keys())[0]
+        attrib = get_all_dataset_info(dataset_name)
+        self.assertTrue(isinstance(attrib, str))
+
 
 
 if __name__ == "__main__":

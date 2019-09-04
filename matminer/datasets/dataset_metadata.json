@@ -627,13 +627,12 @@
       "gap pbe": "Target variable. The band gap as calculated by PBE DFT from the Materials Project, in eV.",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting DFT PBE band gap from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases.. Retrieved April 2, 2019.",
+    "description": "Matbench v0.1 test dataset for predicting DFT PBE band gap from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases. Retrieved April 2, 2019.",
     "file_type": "json.gz",
     "hash": "58b65746bd88329986ed66031a2ac1369c7c522f7bc9f9081528e07097c2c057",
     "num_entries": 106113,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
     "url": "https://ndownloader.figshare.com/files/17084741",
-    "hash": "",
     "matbench_version": 0.1
   },
   "matbench_mp_e_form": {
@@ -648,7 +647,7 @@
     "file_type": "json.gz",
     "num_entries": 132752,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-    "url": "",
+    "url": "https://doi.org/10.6084/m9.figshare.9755432",
     "hash": "dedcb1d4ba2e3e50dbdd45ba5bc647a00e9c2bcf8f8bf556dc8e92caa39eb21f",
     "matbench_version": 0.1
   },
@@ -773,12 +772,12 @@
     ],
     "columns": {
       "composition": "Chemical formula.",
-      "gap expt": "Target variable. Experimentally measured gap, in eV."
+      "is_metal": "Target variable. 1 if is a metal, 0 if nonmetal."
     },
-    "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information.",
+    "description": "Matbench v0.1 test dataset for classifying metallicity from composition alone. Retrieved from Zhuo et al. supplementary information.",
     "file_type": "json.gz",
     "num_entries": 6354,
-    "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
+    "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 \n https//:doi.org/10.1021/acs.jpclett.8b00124.",
     "url": "",
     "matbench_version": 0.1,
     "hash": "f93418522359c917ca2c069183063e7eefbbfec59d3ebdcaff40673340257cf3"
@@ -800,7 +799,7 @@
     "matbench_version": 0.1,
     "hash": "4db551f21ec5f577e6202725f10e34dfc509aa7df3a6bdaac497da7f6dbbb9b3"
   },
-  "steel_strength": {
+  "matbench_steels": {
     "bibtex_refs": [
       "@misc{Citrine Informatics,\ntitle = {Mechanical properties of some steels},\nhowpublished = {\\url{https://citrination.com/datasets/153092/},\n}"
     ],
@@ -813,7 +812,7 @@
     "hash": "",
     "num_entries": 312,
     "reference": "https://citrination.com/datasets/153092/",
-    "url": "",
+    "url": "https://doi.org/10.6084/m9.figshare.9755456",
     "matbench_version": 0.1,
     "hash": "473bc4957b2ea5e6465aef84bc29bb48ac34db27d69ea4ec5f508745c6fae252"
   }

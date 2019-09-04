@@ -5,8 +5,9 @@ from matminer.datasets.utils import _load_dataset_dict, _get_data_home, \
 from matminer.utils.io import load_dataframe_from_json
 
 __author__ = "Kyle Bystrom <kylebystrom@berkeley.edu>, " \
-             "Anubhav Jain <ajain@lbl.gov>" \
-             "Daniel Dopp <dbdopp@lbl.gov>"
+             "Anubhav Jain <ajain@lbl.gov>, " \
+             "Daniel Dopp <dbdopp@lbl.gov>, " \
+             "Alex Dunn <ardunn@lbl.gov"
 
 _dataset_dict = None
 
@@ -231,6 +232,9 @@ def get_all_dataset_info(dataset_name):
     reference = get_dataset_reference(dataset_name)
     citations = get_dataset_citations(dataset_name)
     num_entries = get_dataset_num_entries(dataset_name)
+    file_type = get_dataset_attribute(dataset_name, "file_type")
+    url = get_dataset_attribute(dataset_name, "url")
+    h = get_dataset_attribute(dataset_name, "hash")
 
     output_str = f"Dataset: {dataset_name}\nDescription: {description}" \
                  f"\nColumns:\n"
@@ -239,7 +243,10 @@ def get_all_dataset_info(dataset_name):
         output_str += f"\t{c}: {cd}\n"
     output_str += f"Num Entries: {num_entries}\n" \
                   f"Reference: {reference}\n" \
-                  f"Bibtex citations: {citations}\n\n"
+                  f"Bibtex citations: {citations}\n" \
+                  f"File type: {file_type}\n" \
+                  f"Figshare URL: {url}\n" \
+                  f"SHA256 Hash Digest: {h}/n/n"
 
     return output_str
 
