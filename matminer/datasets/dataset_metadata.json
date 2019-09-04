@@ -628,10 +628,10 @@
     },
     "description": "Matbench v0.1 test dataset for predicting DFT PBE band gap from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases. Retrieved April 2, 2019.",
     "file_type": "json.gz",
-    "hash": "58b65746bd88329986ed66031a2ac1369c7c522f7bc9f9081528e07097c2c057",
     "num_entries": 106113,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-    "url": "https://ndownloader.figshare.com/files/17084741"
+    "url": "https://ndownloader.figshare.com/files/17084741",
+    "hash": "58b65746bd88329986ed66031a2ac1369c7c522f7bc9f9081528e07097c2c057"
   },
   "matbench_mp_e_form": {
     "bibtex_refs": [
