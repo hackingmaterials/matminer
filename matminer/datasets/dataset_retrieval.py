@@ -246,7 +246,7 @@ def get_all_dataset_info(dataset_name):
                   f"Bibtex citations: {citations}\n" \
                   f"File type: {file_type}\n" \
                   f"Figshare URL: {url}\n" \
-                  f"SHA256 Hash Digest: {h}/n/n"
+                  f"SHA256 Hash Digest: {h}\n\n"
 
     return output_str
 
