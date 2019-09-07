@@ -111,7 +111,7 @@ def get_available_datasets(print_format="medium", sort_method='alphabetical'):
             for dataset_name in dataset_names:
                 dataset_description = get_dataset_description(dataset_name)
                 dataset_string += f"{dataset_name}: " \
-                                  f"{dataset_description}\n"
+                                  f"{dataset_description}\n\n"
         elif print_format == "long":
             for dataset_name in dataset_names:
                 dataset_string += f"{get_all_dataset_info(dataset_name)}"
