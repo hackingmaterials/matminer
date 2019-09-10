@@ -3684,9 +3684,14 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
         ]
 
-        # if structure lacks oxidation state information, fail precheck
-        if any(isinstance(site.species.elements[0], Element) for site in struct):
-            return False
+
+        for site in struct:
+            # Fail if site doesn't have either attribute
+            if not hasattr(site, "species"):
+                return False
+            if isinstance(site.species.elements[0], Element):
+                return False
+
         elems = [str(x.element) for x in struct.composition.elements]
 
         # If compound is not ionically bonded, it is going to fail
@@ -3763,11 +3768,11 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         equivs = sym_struct.find_equivalent_sites(site)
         return equivs
 
-    def calc_bv_sum(self, site_el, site_val, neighbor_list):
+    def calc_bv_sum(self, site_val, site_el, neighbor_list):
         """Computes bond valence sum for site.
         Args:
-            site_el (String): element name
             site_val (Integer): valence of site
+            site_el (String): element name
             neighbor_list (List): List of neighboring sites and their distances
         """
         bvs = 0
