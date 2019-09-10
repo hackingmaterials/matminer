@@ -863,8 +863,6 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertTupleEqual(df.shape, (3, 451))
         self.assertAlmostEqual(df["SOAP_449"].iloc[1], 3.029167413711548, places=5)
 
-    #todo: remove skip once pymatgen version newer than 2019.7.30 is integrated.
-    @unittest.expectedFailure
     def test_GlobalInstabilityIndex(self):
         # Test diamond and ni3al fail precheck
         gii = GlobalInstabilityIndex(r_cut=4.0, disordered_pymatgen=False)
@@ -890,11 +888,11 @@ class StructureFeaturesTest(PymatgenTest):
         site_el1 = str(site1.species.element_composition.elements[0])
         site_val2 = site2.species.elements[0].oxi_state
         site_el2 = str(site2.species.element_composition.elements[0])
-        self.assertAlmostEqual(gii.calc_bv_sum(site_el1,
-                                               site_val1,
+        self.assertAlmostEqual(gii.calc_bv_sum(site_val1,
+                                               site_el1,
                                                neighs1), 0.9150834429025214)
-        self.assertAlmostEqual(gii.calc_bv_sum(site_el2,
-                                               site_val2,
+        self.assertAlmostEqual(gii.calc_bv_sum(site_val2,
+                                               site_el2,
                                                neighs2), -0.915083442902522)
 
         # Behavior when disorder is present
