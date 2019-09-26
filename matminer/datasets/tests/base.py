@@ -9,7 +9,7 @@ _dataset_test_env_var = os.environ.get("MATMINER_DATASET_FULL_TEST", "False")
 do_complete_test = (_dataset_test_env_var.upper() == "TRUE")
 
 
-class DataSetTest(unittest.TestCase):
+class DatasetTest(unittest.TestCase):
     def setUp(self):
         self.dataset_names = [
             'flla',
@@ -37,7 +37,20 @@ class DataSetTest(unittest.TestCase):
             'm2ax',
             'expt_gap',
             'expt_formation_enthalpy',
-            'brgoch_superhard_training'
+            'brgoch_superhard_training',
+            'matbench_log_gvrh',
+            'matbench_log_kvrh',
+            'matbench_dielectric',
+            'matbench_jdft2d',
+            'matbench_mp_is_metal',
+            'matbench_mp_gap',
+            'matbench_mp_e_form',
+            'matbench_perovskites',
+            'matbench_glass',
+            'matbench_expt_gap',
+            'matbench_expt_is_metal',
+            'matbench_phonons',
+            'matbench_steels'
         ]
         self.dataset_attributes = [
             'file_type',

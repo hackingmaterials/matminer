@@ -169,7 +169,7 @@ convenience function should be added alongside dataset tests.
 
   .. code-block:: python
 
-    class DataSetTest(unittest.TestCase):
+    class DatasetTest(unittest.TestCase):
         def setUp(self):
             self.dataset_names = [
             'flla',

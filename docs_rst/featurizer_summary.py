@@ -17,14 +17,15 @@ __authors__ = 'Alex Dunn <ardunn@lbl.gov>'
 
 # Update the following dictionary if any new modules are added. Each key is
 # the name of the module and each value is a high level summary of its contents.
-mod_summs = {"structure": "Generating features based on a material's crystal structure.\n",
-             "site": "Features from individual sites in a material's crystal structure.\n",
-             "dos": "Features based on a material's electronic density of states.\n",
-             "base": "Parent classes and meta-featurizers.\n",
-             "composition": "Features based on a material's composition.\n",
-             "function": "Classes for expanding sets of features calculated with other featurizers.\n",
-             "bandstructure": "Features derived from a material's electronic bandstructure.\n",
-             "conversions": "Conversion utilities.\n"}
+mod_summs = {
+    "structure": "Generating features based on a material's crystal structure.",
+    "site": "Features from individual sites in a material's crystal structure.",
+    "dos": "Features based on a material's electronic density of states.",
+    "base": "Parent classes and meta-featurizers.",
+    "composition": "Features based on a material's composition.",
+    "function": "Classes for expanding sets of features calculated with other featurizers.",
+    "bandstructure": "Features derived from a material's electronic bandstructure.",
+    "conversions": "Conversion utilities."}
 
 url_base = " `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#"
 
@@ -37,14 +38,13 @@ def generate_tables():
         None
 
     Returns:
-        tables ([str]): A list of formatted strings, where each entry is a
-            separate table representing one module.
+        Prints a formatted string, where each main entry is a separate table
+        representing one module of featurizers.
     """
 
     mmfeat = "====================\nTable of Featurizers\n====================\n"
     mmdes = "Below, you will find a description of each featurizer, listed in " \
             "tables grouped by module.\n"
-    tables = [mmfeat, mmdes]
     subclasses = []
     scnames = BaseFeaturizer.__subclasses__() + [BaseFeaturizer]
     scnames += conversions.ConversionFeaturizer.__subclasses__()
@@ -56,32 +56,41 @@ def generate_tables():
         subclasses.append(scdict)
 
     df = pd.DataFrame(subclasses)
+    print(mmfeat)
+    print(mmdes)
 
     for ftype in np.unique(df['type']):
         dftable = df[df['type'] == ftype]
         dftable['codename'] = [":code:`" + n + "`" for n in dftable['name']]
-        mod = "\n(" + dftable['module'].iloc[0] + ")\n\n"
-        namelen = max([len(n) for n in dftable['codename']])
-        # doclen = max([len(d) for d in dftable['doc']])
-        doclen = 400
-        borderstr = "=" * namelen + "   " + "=" * doclen + "\n"
-        headerstr = "Name" + " " * (namelen - 1) + "Description\n"
-        tablestr = ""
+
+        ftype_border = "-" * len(ftype)
+        mod = "(" + dftable['module'].iloc[0] + ")"
+        des_border = "-" * len(mod_summs[ftype])
+
+        print(ftype_border)
+        print(ftype)
+        print(ftype_border)
+        print(mod_summs[ftype])
+        print(des_border + "\n")
+        print(mod)
+
+        print("\n.. list-table::")
+        print("   :align: left")
+        print("   :widths: 30 70")
+        # print("   :width: 70%")
+        print("   :header-rows: 1\n")
+        print("   * - Name")
+        print("     - Description")
         for i, n in enumerate(dftable['codename']):
-            url = url_base + dftable["module"].iloc[0] + "." + \
-                  dftable["name"].iloc[i] + ">`_"
-            tablestr += n + " " * (namelen - len(n) + 3) + \
-                        dftable['doc'].iloc[i] + url + "\n"
+            # url = url_base + dftable["module"].iloc[0] + "." + \
+            #       dftable["name"].iloc[i] + ">`_"
+            url = ""
 
+            print(f"   * - {n}")
+            description = dftable["doc"].iloc[i]
+            print(f"     - {description} {url}    ")
+        print("\n\n")
 
-        ftype_border = "\n" + "-" * len(ftype) + "\n"
-        des_border = "-" * len(mod_summs[ftype]) + "\n"
-        tables.append(ftype_border + ftype + ftype_border + mod_summs[ftype] +
-                      des_border + mod + borderstr + headerstr + borderstr +
-                      tablestr + borderstr + "\n\n")
-
-    return tables
 
 if __name__ == "__main__":
-    for t in generate_tables():
-        print(t)
+    generate_tables()

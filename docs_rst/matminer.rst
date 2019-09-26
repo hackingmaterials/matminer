@@ -6,16 +6,16 @@ Subpackages
 
 .. toctree::
 
-    matminer.data_retrieval
-    matminer.datasets
-    matminer.featurizers
-    matminer.figrecipes
-    matminer.utils
+   matminer.data_retrieval
+   matminer.datasets
+   matminer.featurizers
+   matminer.figrecipes
+   matminer.utils
 
 Module contents
 ---------------
 
 .. automodule:: matminer
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

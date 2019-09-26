@@ -1,14 +1,13 @@
 import unittest
-from itertools import product
 
-from matminer.datasets.tests.base import DataSetTest
+from matminer.datasets.tests.base import DatasetTest
 from matminer.datasets.dataset_retrieval import load_dataset, \
     get_available_datasets, get_dataset_attribute, get_dataset_description, \
     get_dataset_num_entries, get_dataset_columns, get_dataset_reference, \
-    get_dataset_column_description, get_dataset_citations
+    get_dataset_column_description, get_dataset_citations, get_all_dataset_info
 
 
-class DataRetrievalTest(DataSetTest):
+class DataRetrievalTest(DatasetTest):
     # This test case only checks the dataset loaders exceptions
     # For more extensive tests of individual datasets see the
     # test_load_"dataset name" functions in test_datasets.py
@@ -24,13 +23,12 @@ class DataRetrievalTest(DataSetTest):
         with self.assertRaises(ValueError):
             load_dataset("a" + dataset_name + "a")
 
-    def test_get_available_datasets(self):
+    def test_print_available_datasets(self):
         # Go over all parameter combinations,
         # for each check that returned dataset is correct
-        for parameter_combo in product([True, False], [True, False],
-                                       ['alphabetical', 'num_entries']):
-            datasets = get_available_datasets(*parameter_combo)
-            if parameter_combo[2] == 'alphabetical':
+        for sort_method in ['alphabetical', 'num_entries']:
+            datasets = get_available_datasets(sort_method=sort_method)
+            if sort_method == 'alphabetical':
                 self.assertEqual(datasets, sorted(self.dataset_names))
             else:
                 self.assertEqual(
@@ -76,6 +74,11 @@ class DataRetrievalTest(DataSetTest):
         dataset_name = sorted(self.dataset_dict.keys())[0]
         attrib = get_dataset_citations(dataset_name)
         self.assertTrue(isinstance(attrib, list))
+
+    def test_get_all_dataset_info(self):
+        dataset_name = sorted(self.dataset_dict.keys())[0]
+        attrib = get_all_dataset_info(dataset_name)
+        self.assertTrue(isinstance(attrib, str))
 
 
 if __name__ == "__main__":

@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     # For each dataset give the name, description,
     # num_entries, columns, and reference string
-    for dataset in get_available_datasets(print_datasets=False):
+    for dataset in get_available_datasets(print_format="short"):
         # Name, description, and number of entries output
         print(make_rst_subtitle(dataset))
         print(get_dataset_description(dataset))
@@ -45,21 +45,16 @@ if __name__ == "__main__":
                                for column in dataset_columns]
         desc_max_length = max(map(len, column_descriptions))
 
-        # Give column info table header
-        name_header = "Column"
-        desc_header = "Description"
-        colname_border_length = max(colname_max_length, len(name_header))
-        desc_border_length = max(desc_max_length, len(desc_header))
-        print("=" * colname_border_length, "=" * desc_border_length)
-        print(name_header + " " * (colname_border_length - len(name_header)),
-              desc_header)
-        print("=" * colname_border_length, "=" * desc_border_length)
-
-        # Give table rows
-        for column, description in zip(dataset_columns, column_descriptions):
-            print(column + " " * (colname_border_length - len(column)),
-                  description)
-        print("=" * colname_border_length, "=" * desc_border_length)
+        print(".. list-table::")
+        print("   :align: left")
+        print("   :widths: 20 80")
+        print("   :header-rows: 1\n")
+        print("   * - Column")
+        print("     - Description")
+        for c in dataset_columns:
+            print(f"   * - :code:`{c}`")
+            column_description = get_dataset_column_description(dataset, c)
+            print(f"     - {column_description}")
         print("\n\n")
 
         # Give dataset reference

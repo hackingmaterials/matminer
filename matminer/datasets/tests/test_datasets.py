@@ -6,11 +6,11 @@ import numpy as np
 from pandas.api.types import is_numeric_dtype, is_object_dtype, is_bool_dtype
 from pymatgen.core.structure import Structure, Composition
 
-from matminer.datasets.tests.base import DataSetTest, do_complete_test
+from matminer.datasets.tests.base import DatasetTest, do_complete_test
 from matminer.datasets.dataset_retrieval import load_dataset
 
 
-class DataSetsTest(DataSetTest):
+class DataSetsTest(DatasetTest):
     # Runs tests common to all datasets,
     # makes it quicker to write tests for new datasets
     def universal_dataset_check(self, dataset_name, object_headers=None,
@@ -79,6 +79,13 @@ class DataSetsTest(DataSetTest):
                 self.dataset_dict[dataset_name]["url"]
             )
             self.assertTrue(download_page.ok)
+
+
+class MatminerDatasetsTest(DataSetsTest):
+    """
+    All datasets hosted with matminer are tested here, excluding matbench
+    datasets.
+    """
 
     def test_elastic_tensor_2015(self):
         object_headers = ['material_id', 'formula', 'structure',
@@ -412,6 +419,54 @@ class DataSetsTest(DataSetTest):
             "brgoch_superhard_training", object_headers, numeric_headers,
             bool_headers, test_func=_unique_tests
         )
+
+
+class MatminerDatasetsTest(DataSetsTest):
+    """
+    Matbench datasets are tested here.
+    """
+
+    def test_matbench_v0_1(self):
+        structure_key = "structure"
+        composition_key = "composition"
+        config_regression = {
+            "matbench_dielectric": ["n", structure_key],
+            "matbench_expt_gap": ["gap expt", composition_key],
+            "matbench_jdft2d": ["exfoliation_en", structure_key],
+            "matbench_log_gvrh": ["log10(G_VRH)", structure_key],
+            "matbench_log_kvrh": ["log10(K_VRH)", structure_key],
+            "matbench_mp_e_form": ["e_form", structure_key],
+            "matbench_perovskites": ["e_form", structure_key],
+            "matbench_phonons": ["last phdos peak", structure_key],
+            "matbench_steels": ["yield strength", composition_key],
+        }
+
+        config_classification = {
+            "matbench_expt_is_metal": ["is_metal", composition_key],
+            "matbench_glass": ["gfa", composition_key],
+            "matbench_mp_is_metal": ["is_metal", structure_key],
+        }
+
+        clf = "classification"
+        reg = "regression"
+        config = {
+            clf: config_classification,
+            reg: config_regression
+        }
+
+        for problem_type, problems_config in config.items():
+            for ds, ds_config in problems_config.items():
+                object_headers = [ds_config[1]]
+                if problem_type == clf:
+                    numeric_headers = None
+                    bool_headers = [ds_config[0]]
+                else:
+                    numeric_headers = [ds_config[0]]
+                    bool_headers = None
+
+                self.universal_dataset_check(
+                    ds, object_headers, numeric_headers, bool_headers
+                )
 
 
 if __name__ == "__main__":

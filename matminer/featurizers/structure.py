@@ -524,13 +524,13 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
-            neighs_dists = struct.get_neighbors(site, self.cutoff)
-            for neigh, dist in neighs_dists:
-                neigh_charge = float(neigh.specie.oxi_state)
-                bin_index = int(dist / self.dr)
-                redf_dict["distribution"][bin_index] += (
-                                                                this_charge * neigh_charge) / (
-                                                                struct.num_sites * dist)
+            neighbors = struct.get_neighbors(site, self.cutoff)
+            for n in neighbors:
+                neigh_charge = float(n.site.specie.oxi_state)
+                d = n.distance
+                bin_index = int(d / self.dr)
+                redf_dict["distribution"][bin_index] \
+                    += (this_charge * neigh_charge) / (struct.num_sites * d)
 
         return [redf_dict]
 
@@ -1047,18 +1047,21 @@ class MinimumRelativeDistances(BaseFeaturizer):
             s: Pymatgen Structure object.
 
         Returns:
-            min_rel_dists: (list of floats) list of all minimum relative
+            dists_relative_min: (list of floats) list of all minimum relative
                     distances (i.e., for all sites).
         """
         vire = ValenceIonicRadiusEvaluator(s)
-        min_rel_dists = []
+        dists_relative_min = []
         for site in vire.structure:
-            min_rel_dists.append(min([dist / (
-                    vire.radii[site.species_string] +
-                    vire.radii[neigh.species_string]) for neigh, dist in \
-                                      vire.structure.get_neighbors(site,
-                                                                   self.cutoff)]))
-        return [min_rel_dists[:]]
+            dists_relative = []
+            for n in vire.structure.get_neighbors(site, self.cutoff):
+                r_site = vire.radii[site.species_string]
+                r_neigh = vire.radii[n.site.species_string]
+                radii_dist = r_site + r_neigh
+                d_relative = n.distance / radii_dist
+                dists_relative.append(d_relative)
+            dists_relative_min.append(min(dists_relative))
+        return [dists_relative_min]
 
     def feature_labels(self):
         return ["minimum relative distance of each site"]
@@ -1079,7 +1082,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
                 "}"]
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
+        return ["Nils E. R. Zimmermann", "Alex Dunn"]
 
 
 class SiteStatsFingerprint(BaseFeaturizer):
@@ -3681,9 +3684,14 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
         ]
 
-        # if structure lacks oxidation state information, fail precheck
-        if any(isinstance(site.species.elements[0], Element) for site in struct):
-            return False
+
+        for site in struct:
+            # Fail if site doesn't have either attribute
+            if not hasattr(site, "species"):
+                return False
+            if isinstance(site.species.elements[0], Element):
+                return False
+
         elems = [str(x.element) for x in struct.composition.elements]
 
         # If compound is not ionically bonded, it is going to fail
@@ -3759,7 +3767,46 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         sym_struct = SymmetrizedStructure(s, sg, equiv_atoms, wyckoffs)
         equivs = sym_struct.find_equivalent_sites(site)
         return equivs
-    
+
+    def calc_bv_sum(self, site_val, site_el, neighbor_list):
+        """Computes bond valence sum for site.
+        Args:
+            site_val (Integer): valence of site
+            site_el (String): element name
+            neighbor_list (List): List of neighboring sites and their distances
+        """
+        bvs = 0
+        for neighbor_info in neighbor_list:
+            neighbor = neighbor_info[0]
+            dist = neighbor_info[1]
+            neighbor_val = neighbor.species.elements[0].oxi_state
+            neighbor_el = str(
+                    neighbor.species.element_composition.elements[0])
+            if neighbor_val % 1 != 0 or site_val % 1 != 0:
+                raise ValueError('Some sites have non-integer valences.')
+            try:
+                if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
+                    params = self.get_bv_params(cation=site_el,
+                                               anion=neighbor_el,
+                                               cat_val=site_val,
+                                               an_val=neighbor_val)
+                    bvs += self.compute_bv(params, dist)
+                elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
+                    params = self.get_bv_params(cation=neighbor_el,
+                                               anion=site_el,
+                                               cat_val=neighbor_val,
+                                               an_val=site_val)
+                    bvs -= self.compute_bv(params, dist)
+            except:
+                raise ValueError(
+                    'BV parameters for {} with valence {} and {} {} not '
+                    'found in table'
+                    ''.format(site_el, 
+                              site_val, 
+                              neighbor_el, 
+                              neighbor_val))
+        return bvs
+
     def calc_gii_iucr(self, s):
         """Computes global instability index using tabulated bv params.
         
@@ -3794,36 +3841,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 continue
             site_val = site.species.elements[0].oxi_state
             site_el = str(site.species.element_composition.elements[0])
-            bvs = 0
-            for neighbor_info in neighbor_list:
-                neighbor = neighbor_info[0]
-                dist = neighbor_info[1]
-                neighbor_val = neighbor.species.elements[0].oxi_state
-                neighbor_el = str(
-                        neighbor.species.element_composition.elements[0])
-                if neighbor_val % 1 != 0 or site_val % 1 != 0:
-                    raise ValueError('Some sites have non-integer valences.')
-                try:
-                    if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
-                        params = self.get_bv_params(cation=site_el,
-                                                   anion=neighbor_el,
-                                                   cat_val=site_val,
-                                                   an_val=neighbor_val)
-                        bvs += self.compute_bv(params, dist)
-                    elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
-                        params = self.get_bv_params(cation=neighbor_el,
-                                                   anion=site_el,
-                                                   cat_val=neighbor_val,
-                                                   an_val=site_val)
-                        bvs -= self.compute_bv(params, dist)
-                except:
-                    raise ValueError(
-                        'BV parameters for {} with valence {} and {} {} not '
-                        'found in table'
-                        ''.format(site_el, 
-                                  site_val, 
-                                  neighbor_el, 
-                                  neighbor_val))
+            bvs = self.calc_bv_sum(site_val, site_el, neighbor_list)
     
             site_val_sums[site] = bvs - site_val
         gii = np.linalg.norm(list(site_val_sums.values())) /\

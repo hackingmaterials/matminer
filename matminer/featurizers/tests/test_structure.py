@@ -878,6 +878,23 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertTrue(gii.precheck(self.nacl))
         self.assertAlmostEqual(gii.featurize(self.nacl)[0], 0.08491655709)
 
+        # Test bond valence sums are accurate for NaCl.
+        # Values are closer to 0.915 than 1.0 due to structure specified here.
+        # Using CollCode181148 from the ICSD, I see bond valence sums of 0.979
+        site1, site2 = (self.nacl[0], self.nacl[1])
+        neighs1 = self.nacl.get_neighbors(site1, 4)
+        neighs2 = self.nacl.get_neighbors(site2, 4)
+        site_val1 = site1.species.elements[0].oxi_state
+        site_el1 = str(site1.species.element_composition.elements[0])
+        site_val2 = site2.species.elements[0].oxi_state
+        site_el2 = str(site2.species.element_composition.elements[0])
+        self.assertAlmostEqual(gii.calc_bv_sum(site_val1,
+                                               site_el1,
+                                               neighs1), 0.9150834429025214)
+        self.assertAlmostEqual(gii.calc_bv_sum(site_val2,
+                                               site_el2,
+                                               neighs2), -0.915083442902522)
+
         # Behavior when disorder is present
         gii_pymat = GlobalInstabilityIndex(r_cut=4.0, disordered_pymatgen=True)
         nacl_disordered = copy.deepcopy(self.nacl)
@@ -887,6 +904,7 @@ class StructureFeaturesTest(PymatgenTest):
         with self.assertRaises(ValueError):
             gii.featurize(nacl_disordered)
         self.assertAlmostEqual(gii_pymat.featurize(nacl_disordered)[0], 0.39766464)
+
 
 if __name__ == '__main__':
     unittest.main()
