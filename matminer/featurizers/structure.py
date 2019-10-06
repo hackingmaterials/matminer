@@ -3801,15 +3801,15 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 raise ValueError(
                     'BV parameters for {} with valence {} and {} {} not '
                     'found in table'
-                    ''.format(site_el, 
-                              site_val, 
-                              neighbor_el, 
+                    ''.format(site_el,
+                              site_val,
+                              neighbor_el,
                               neighbor_val))
         return bvs
 
     def calc_gii_iucr(self, s):
         """Computes global instability index using tabulated bv params.
-        
+
         Args:
             s: Pymatgen Structure object
         Returns:
@@ -3817,22 +3817,22 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         """
         elements = [str(i) for i in s.composition.element_composition.elements]
         if elements[0] == elements[-1]:
-            raise ValueError("No oxidation states with single element.")    
-        
+            raise ValueError("No oxidation states with single element.")
+
         bond_valence_sums = []
         cutoff = self.r_cut
         pairs = s.get_all_neighbors(r=cutoff)
         site_val_sums = {} # Cache bond valence deviations
-        
+
         for i, neighbor_list in enumerate(pairs):
             site = s[i]
             equivs = self.get_equiv_sites(s, site)
             flag = False
-            
-            # If symm. identical site has cached bond valence sum difference, 
+
+            # If symm. identical site has cached bond valence sum difference,
             # use it to avoid unnecessary calculations
             for item in equivs:
-                if item in site_val_sums: 
+                if item in site_val_sums:
                     bond_valence_sums.append(site_val_sums[item])
                     site_val_sums[site] = site_val_sums[item]
                     flag = True
@@ -3842,7 +3842,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             site_val = site.species.elements[0].oxi_state
             site_el = str(site.species.element_composition.elements[0])
             bvs = self.calc_bv_sum(site_val, site_el, neighbor_list)
-    
+
             site_val_sums[site] = bvs - site_val
         gii = np.linalg.norm(list(site_val_sums.values())) /\
               np.sqrt(len(site_val_sums))
@@ -3893,16 +3893,16 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         if struct.is_ordered:
             for site in struct:
                 nn = struct.get_neighbors(site,r=cutoff)
-                bvs = bond_valence.calculate_bv_sum(site, 
-                                                    nn, 
+                bvs = bond_valence.calculate_bv_sum(site,
+                                                    nn,
                                                     scale_factor=scale_factor)
                 deviations.append(bvs - site.species.elements[0].oxi_state)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
         else:
             for site in struct:
                 nn = struct.get_neighbors(site,r=cutoff)
-                bvs = bond_valence.calculate_bv_sum_unordered(site, 
-                                                              nn, 
+                bvs = bond_valence.calculate_bv_sum_unordered(site,
+                                                              nn,
                                                               scale_factor=scale_factor)
                 min_diff = min(
                     [bvs - spec.oxi_state for spec in site.species.elements]
@@ -3930,4 +3930,48 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 "year = {1992},"
                 "doi = {10.1016/0022-4596(92)90094-C},"
                 "url = {https://doi.org/10.1016/0022-4596(92)90094-C}}",
+                ]
+
+class StructuralComplexity(BaseFeaturizer):
+
+    def __init__(self, symprec=0.1):
+        self.symprec = symprec
+
+    def featurize(self, struct):
+        n_of_atoms = len(struct.sites)
+
+        sga = SpacegroupAnalyzer(struct, symprec=self.symprec)
+        sym_s = sga.get_symmetrized_structure()
+
+        v = n_of_atoms
+        iG = 0
+
+        for eq_site in sym_s.equivalent_sites:
+            m_i = len(eq_site)
+            p_i = m_i / v
+            iG -= p_i * np.log2(p_i)
+
+        iG_total = iG * n_of_atoms
+
+        return(iG, iG_total)
+
+    def implementors(self):
+        return ["Koki Muraoka"]
+
+    def feature_labels(self):
+        return ["structural complexity per atom", "structural complexity per cell"]
+
+    def citations(self):
+        return ["@article{complexity2013,"
+                "author = {Krivovichev, S. V.},"
+                "title = {Structural complexity of minerals: information storage and processing in the mineral world},"
+                "journal = {Mineral. Mag.},"
+                "volume = {77},"
+                "number = {3},"
+                "pages = {275-326},"
+                "year = {2013},"
+                "month = {04},"
+                "issn = {0026-461X},"
+                "doi = {10.1180/minmag.2013.077.3.05},"
+                "url = {https://doi.org/10.1180/minmag.2013.077.3.05}}",
                 ]
