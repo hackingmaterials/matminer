@@ -3933,6 +3933,19 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 ]
 
 class StructuralComplexity(BaseFeaturizer):
+    """
+    Shannon information entropy of a given crystal.
+
+    This descriptor treat a structure as a message
+    to evaluate structural complexity.
+
+    Features:
+        - information entropy (bits/atom)
+        - information entropy (bits/unit cell)
+
+    Args:
+        symprec: precision for symmetrizing a structure
+    """
 
     def __init__(self, symprec=0.1):
         self.symprec = symprec
@@ -3959,19 +3972,23 @@ class StructuralComplexity(BaseFeaturizer):
         return ["Koki Muraoka"]
 
     def feature_labels(self):
-        return ["structural complexity per atom", "structural complexity per cell"]
+        return [
+            "structural complexity per atom",
+            "structural complexity per cell"
+        ]
 
     def citations(self):
-        return ["@article{complexity2013,"
-                "author = {Krivovichev, S. V.},"
-                "title = {Structural complexity of minerals: information storage and processing in the mineral world},"
-                "journal = {Mineral. Mag.},"
-                "volume = {77},"
-                "number = {3},"
-                "pages = {275-326},"
-                "year = {2013},"
-                "month = {04},"
-                "issn = {0026-461X},"
-                "doi = {10.1180/minmag.2013.077.3.05},"
-                "url = {https://doi.org/10.1180/minmag.2013.077.3.05}}",
-                ]
+        return [
+            "@article{complexity2013,"
+            "author = {Krivovichev, S. V.},"
+            "title = {Structural complexity of minerals: information storage and processing in the mineral world},"
+            "journal = {Mineral. Mag.},"
+            "volume = {77},"
+            "number = {3},"
+            "pages = {275-326},"
+            "year = {2013},"
+            "month = {04},"
+            "issn = {0026-461X},"
+            "doi = {10.1180/minmag.2013.077.3.05},"
+            "url = {https://doi.org/10.1180/minmag.2013.077.3.05}}",
+        ]
