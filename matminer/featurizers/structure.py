@@ -3934,20 +3934,21 @@ class GlobalInstabilityIndex(BaseFeaturizer):
 
 class StructuralComplexity(BaseFeaturizer):
     """
-    Shannon information entropy of a given crystal.
+    Shannon information entropy of a structure.
 
     This descriptor treat a structure as a message
     to evaluate structural complexity (:math:`S`)
     using the following equation:
 
     :math:`S = - v \sum_{i=1}^{k} p_i \log_2 p_i`
+
     :math:`p_i = m_i / v`
 
-    where:math:`v` is the total number of atoms in the unit cell,
-   :math:`p_i` is the probability mass function,
-   :math:`k` is the number of symmetrically inequivalent sites, and
-   :math:`m_i` is the number of sites classified in :math:`i`th
-   symmetrically inequivalent site.
+    where :math:`v` is the total number of atoms in the unit cell,
+    :math:`p_i` is the probability mass function,
+    :math:`k` is the number of symmetrically inequivalent sites, and
+    :math:`m_i` is the number of sites classified in :math:`i` th
+    symmetrically inequivalent site.
 
     Features:
         - information entropy (bits/atom)
