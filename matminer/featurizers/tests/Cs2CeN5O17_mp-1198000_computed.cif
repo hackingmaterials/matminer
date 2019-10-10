@@ -1,0 +1,47 @@
+# generated using pymatgen
+data_Cs2CeN5O17
+_symmetry_space_group_name_H-M   C2/c
+_cell_length_a   11.28639991
+_cell_length_b   9.21429272
+_cell_length_c   16.77439573
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   104.30108480
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   15
+_chemical_formula_structural   Cs2CeN5O17
+_chemical_formula_sum   'Cs8 Ce4 N20 O68'
+_cell_volume   1690.41390110
+_cell_formula_units_Z   4
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  '-x, -y, -z'
+  3  '-x, y, -z+1/2'
+  4  'x, -y, z+1/2'
+  5  'x+1/2, y+1/2, z'
+  6  '-x+1/2, -y+1/2, -z'
+  7  '-x+1/2, y+1/2, -z+1/2'
+  8  'x+1/2, -y+1/2, z+1/2'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Cs  Cs0  8  0.185009  0.447980  0.922710  1
+  Ce  Ce1  4  0.000000  0.051468  0.250000  1
+  N  N2  8  0.011517  0.164818  0.449723  1
+  N  N3  8  0.238860  0.482184  0.156793  1
+  N  N4  4  0.000000  0.378296  0.250000  1
+  O  O5  8  0.043256  0.179725  0.994437  1
+  O  O6  8  0.048144  0.165800  0.704454  1
+  O  O7  8  0.053701  0.124485  0.122773  1
+  O  O8  8  0.095273  0.304577  0.285364  1
+  O  O9  8  0.123341  0.186316  0.459881  1
+  O  O10  8  0.133639  0.473320  0.113194  1
+  O  O11  8  0.172876  0.087071  0.863053  1
+  O  O12  8  0.232681  0.060158  0.278567  1
+  O  O13  4  0.000000  0.487701  0.750000  1

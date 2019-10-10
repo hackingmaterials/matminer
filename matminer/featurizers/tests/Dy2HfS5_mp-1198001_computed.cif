@@ -1,0 +1,39 @@
+# generated using pymatgen
+data_Dy2HfS5
+_symmetry_space_group_name_H-M   Pnma
+_cell_length_a   11.54747678
+_cell_length_b   7.73539856
+_cell_length_c   7.24994971
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   62
+_chemical_formula_structural   Dy2HfS5
+_chemical_formula_sum   'Dy8 Hf4 S20'
+_cell_volume   647.59693848
+_cell_formula_units_Z   4
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+  2  '-x, -y, -z'
+  3  '-x+1/2, -y, z+1/2'
+  4  'x+1/2, y, -z+1/2'
+  5  'x+1/2, -y+1/2, -z+1/2'
+  6  '-x+1/2, y+1/2, z+1/2'
+  7  '-x, y+1/2, -z'
+  8  'x, -y+1/2, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Dy  Dy0  8  0.178425  0.502547  0.023665  1
+  Hf  Hf1  4  0.005921  0.250000  0.575485  1
+  S  S2  8  0.093689  0.536167  0.661044  1
+  S  S3  4  0.003317  0.250000  0.946622  1
+  S  S4  4  0.181205  0.250000  0.332947  1
+  S  S5  4  0.207171  0.750000  0.311740  1

@@ -26,7 +26,8 @@ from matminer.featurizers.structure import DensityFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
     Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID, \
-    SOAP, GlobalInstabilityIndex
+    SOAP, GlobalInstabilityIndex, \
+    StructuralComplexity
 
 # For the CGCNNFeaturizer
 try:
@@ -905,6 +906,25 @@ class StructureFeaturesTest(PymatgenTest):
             gii.featurize(nacl_disordered)
         self.assertAlmostEqual(gii_pymat.featurize(nacl_disordered)[0], 0.39766464)
 
+    def test_structural_complexity(self):
+        s = Structure.from_file(
+            "matminer/featurizers/tests/"
+            "Dy2HfS5_mp-1198001_computed.cif")
+
+        featurizer = StructuralComplexity()
+        ig, igbits = featurizer.featurize(s)
+
+        self.assertAlmostEqual(2.5, ig, places=3)
+        self.assertAlmostEqual(80, igbits, places=3)
+
+        s = Structure.from_file(
+            "matminer/featurizers/tests/"
+            "Cs2CeN5O17_mp-1198000_computed.cif")
+
+        featurizer = StructuralComplexity()
+        ig, igbits = featurizer.featurize(s)
+
+        self.assertAlmostEqual(3.764, ig, places=3)
 
 if __name__ == '__main__':
     unittest.main()
