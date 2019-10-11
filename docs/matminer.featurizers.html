@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.6.0 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.6.1 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -27,7 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -6805,12 +6805,12 @@ averaged over all atoms in the unit cell.</p>
 
 <dl class="method">
 <dt id="matminer.featurizers.structure.GlobalInstabilityIndex.calc_bv_sum">
-<code class="sig-name descname">calc_bv_sum</code><span class="sig-paren">(</span><em class="sig-param">site_el</em>, <em class="sig-param">site_val</em>, <em class="sig-param">neighbor_list</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalInstabilityIndex.calc_bv_sum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calc_bv_sum</code><span class="sig-paren">(</span><em class="sig-param">site_val</em>, <em class="sig-param">site_el</em>, <em class="sig-param">neighbor_list</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.GlobalInstabilityIndex.calc_bv_sum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes bond valence sum for site.
 Args:</p>
 <blockquote>
-<div><p>site_el (String): element name
-site_val (Integer): valence of site
+<div><p>site_val (Integer): valence of site
+site_el (String): element name
 neighbor_list (List): List of neighboring sites and their distances</p>
 </div></blockquote>
 </dd></dl>
@@ -7701,9 +7701,13 @@ Phys.  Chem. Chem. Phys. 18, 13754 (2016),
 </dd>
 </dl>
 <p>Implementation (and some documentation) originally based on dscribe:
-<a class="reference external" href="https://github.com/SINGROUP/dscribe">https://github.com/SINGROUP/dscribe</a>. Please see their page for the latest
-updates.</p>
+<a class="reference external" href="https://github.com/SINGROUP/dscribe">https://github.com/SINGROUP/dscribe</a>.</p>
 <dl>
+<dt>“DScribe: Library of descriptors for machine learning in materials science”,</dt><dd><p>Himanen, L., J{“a}ger, M. O.J., Morooka, E. V., Federici
+Canova, F., Ranawat, Y. S., Gao, D. Z., Rinke, P. and Foster, A. S.
+Computer Physics Communications, 106949 (2019),
+<a class="reference external" href="https://doi.org/10.1016/j.cpc.2019.106949">https://doi.org/10.1016/j.cpc.2019.106949</a></p>
+</dd>
 <dt>Args:</dt><dd><p>r_cut (float): Cutoff radius (&gt;1) for local region, in angstrom.
 n_max (int): Number of basis functions to be used.
 l_max (int): Number of l’s to be used (spherical harmonic)</p>
@@ -7994,6 +7998,89 @@ kwargs - Options for SiteStatsFingerprint</p>
 <dl class="method">
 <dt id="matminer.featurizers.structure.SiteStatsFingerprint.implementors">
 <code class="sig-name descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.SiteStatsFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.structure.StructuralComplexity">
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.structure.</code><code class="sig-name descname">StructuralComplexity</code><span class="sig-paren">(</span><em class="sig-param">symprec=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.StructuralComplexity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Shannon information entropy of a structure.</p>
+<p>This descriptor treat a structure as a message
+to evaluate structural complexity (<img class="math" src="_images/math/b988975be41fd13b4d091c10202ba19374643586.png" alt="S"/>)
+using the following equation:</p>
+<p><img class="math" src="_images/math/ba11027b67a5958f16fb1495fba3b5fb7eadcaee.png" alt="S = - v \sum_{i=1}^{k} p_i \log_2 p_i"/></p>
+<p><img class="math" src="_images/math/0ee4480fa3fe2856c28f74b0aa03fde5e83cfb0a.png" alt="p_i = m_i / v"/></p>
+<p>where <img class="math" src="_images/math/02d98909b5d6acd6a7ff927d4d42790bdd407d58.png" alt="v"/> is the total number of atoms in the unit cell,
+<img class="math" src="_images/math/5247131b3b1b9cc457d29a9b08a19c2062ed3d16.png" alt="p_i"/> is the probability mass function,
+<img class="math" src="_images/math/9630132210b904754c9ab272b61cb527d12263ca.png" alt="k"/> is the number of symmetrically inequivalent sites, and
+<img class="math" src="_images/math/e1aaac0305e1b00c3c08173dd3e8402b6320c110.png" alt="m_i"/> is the number of sites classified in <img class="math" src="_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> th
+symmetrically inequivalent site.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>information entropy (bits/atom)</p></li>
+<li><p>information entropy (bits/unit cell)</p></li>
+</ul>
+</dd>
+<dt>Args:</dt><dd><p>symprec: precision for symmetrizing a structure</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.structure.StructuralComplexity.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">symprec=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.StructuralComplexity.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.StructuralComplexity.citations">
+<code class="sig-name descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.StructuralComplexity.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.StructuralComplexity.feature_labels">
+<code class="sig-name descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.StructuralComplexity.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.StructuralComplexity.featurize">
+<code class="sig-name descname">featurize</code><span class="sig-paren">(</span><em class="sig-param">struct</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.StructuralComplexity.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.structure.StructuralComplexity.implementors">
+<code class="sig-name descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.StructuralComplexity.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><dl class="simple">
@@ -8337,7 +8424,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 

@@ -295,6 +295,8 @@ Generating features based on a material's crystal structure.
      - Smooth overlap of atomic positions (interface via dscribe).     
    * - :code:`GlobalInstabilityIndex`
      - The global instability index of a structure.     
+   * - :code:`StructuralComplexity`
+     - Shannon information entropy of a structure.     
 
 
 
