@@ -20,8 +20,11 @@ jobs:
             pip install --upgrade pip
             pip install --upgrade setuptools
             cd ~/matminer
+            echo "running optional install"
             pip install -r requirements-optional.txt
+            echo "running requirements install"
             pip install -r requirements.txt
+            echo "running install matminer"
             pip install -e .
             python setup.py test
       - save_cache:
