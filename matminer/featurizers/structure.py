@@ -3483,8 +3483,13 @@ class SOAP(BaseFeaturizer):
         https://doi.org/10.1039/c6cp00415f
 
     Implementation (and some documentation) originally based on dscribe:
-    https://github.com/SINGROUP/dscribe. Please see their page for the latest
-    updates.
+    https://github.com/SINGROUP/dscribe.
+
+    "DScribe: Library of descriptors for machine learning in materials science",
+        Himanen, L., J{\"a}ger, M. O.J., Morooka, E. V., Federici
+        Canova, F., Ranawat, Y. S., Gao, D. Z., Rinke, P. and Foster, A. S.
+        Computer Physics Communications, 106949 (2019),
+        https://doi.org/10.1016/j.cpc.2019.106949
 
     Args:
         r_cut (float): Cutoff radius (>1) for local region, in angstrom.
@@ -3564,7 +3569,7 @@ class SOAP(BaseFeaturizer):
                  comb(self.n_max + 1, 2) * \
                  (self.l_max + 1)
         self.length = int(length)
-        self.soap = SOAP_dscribe(atomic_numbers=self.atomic_numbers,
+        self.soap = SOAP_dscribe(species=self.atomic_numbers,
                                  rcut=self.r_cut,
                                  nmax=self.n_max,
                                  lmax=self.l_max,
@@ -3614,15 +3619,16 @@ class SOAP(BaseFeaturizer):
                 "doi = {10.1039/C6CP00415F},"
                 "url = {http://dx.doi.org/10.1039/C6CP00415F},}",
 
-                "@article{himanen_dscribe:_2019,"
-                "title = {{DScribe}: {Library} of {Descriptors} for {Machine} {Learning} in {Materials} {Science}},"
-                "shorttitle = {{DScribe}},"
-                "url = {http://arxiv.org/abs/1904.08875},"
-                "urldate = {2019-04-24},"
-                "journal = {arXiv:1904.08875 [cond-mat]},"
-                "author = {Himanen, Lauri and J√§ger, Marc O. J. and Morooka, Eiaki V. and Canova, Filippo Federici and Ranawat, Yashasvi S. and Gao, David Z. and Rinke, Patrick and Foster, Adam S.},"
-                "month = apr,"
-                "year = {2019}}"]
+                '@article{dscribe, '
+                'author = {Himanen, Lauri and J{\"a}ger, Marc O.~J. and '
+                'Morooka, Eiaki V. and Federici Canova, Filippo and Ranawat, '
+                'Yashasvi S. and Gao, David Z. and Rinke, Patrick and Foster, '
+                'Adam S.}, '
+                'title = {{DScribe: Library of descriptors for machine '
+                'learning in materials science}}, '
+                'journal = {Computer Physics Communications}, '
+                'year = {2019}, pages = {106949}, '
+                'doi = {https://doi.org/10.1016/j.cpc.2019.106949}}']
 
     def implementors(self):
         return ["Lauri Himanen and dscribe team", "Alex Dunn"]

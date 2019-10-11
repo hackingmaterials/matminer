@@ -5,6 +5,12 @@
 matminer Changelog
 ==================
 
+**v0.6.1**
+
+* Update forum to Discourse link (A. Ganose)
+* Add StructuralCompelexity featurizer (K. Muraoka)
+* Resolve optional requirements problems, update sklearn requirement (A. Dunn)
+
 **v0.6.0**
 
 * Ensure Yang omega is never NaN in YangSolidSolution featurizer (L. Ward)

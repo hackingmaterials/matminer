@@ -850,19 +850,19 @@ class StructureFeaturesTest(PymatgenTest):
         soap.fit([self.diamond])
         v = soap.featurize(self.diamond)
         self.assertEqual(len(v), 30)
-        self.assertAlmostEqual(v[0], 0.0015012049116194248, places=6)
+        self.assertAlmostEqual(v[0], 5.299793243408203, places=6)
 
         soap.fit([self.ni3al])
         v = soap.featurize(self.ni3al)
         self.assertEqual(len(v), 90)
-        self.assertAlmostEqual(v[0], 0.00017587252659723163, places=6)
+        self.assertAlmostEqual(v[0], 0.10329483449459076, places=6)
 
         # Test dataframe fitting
         df = pd.DataFrame({"s": [self.diamond, self.ni3al, self.nacl]})
         soap.fit(df["s"])
         df = soap.featurize_dataframe(df, "s", inplace=False)
         self.assertTupleEqual(df.shape, (3, 451))
-        self.assertAlmostEqual(df["SOAP_449"].iloc[1], 0.005152813158929348, places=5)
+        self.assertAlmostEqual(df["SOAP_449"].iloc[1], 3.029167413711548, places=5)
 
     def test_GlobalInstabilityIndex(self):
         # Test diamond and ni3al fail precheck

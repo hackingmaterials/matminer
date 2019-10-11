@@ -51,5 +51,8 @@ Tips
 ----
 
 * Make sure you are using Python 3.6 or higher
-* If you have trouble with the installation of a component library (sympy, pymatgen, mdf-forge, etc.), you can try to run ``pip install <<component>>`` or (if you are using Anaconda) ``conda install <<component>>`` first, and then re-try the installation. For example, installing the pymatgen component on a Windows platform is easiest with Anaconda via ``conda install pymatgen``.
-* If you still have trouble, open up a a ticket on our `forum <https://groups.google.com/forum/#!forum/matminer>`_  describing your problem in full (including your system specifications, Python version information, and input/output log). There is a good likelihood that someone else is running into the same issue, and by posting it on the forum we can help make the documentation clearer and smoother.
+* If you have trouble with the installation of a component library (sympy, pymatgen, mdf-forge, etc.), you can try to run ``pip install <<component>>`` or (if you are using `Anaconda <https://www.anaconda.com/distribution/>`_) ``conda install <<component>>`` first, and then re-try the installation.
+
+    - For example, installing pymatgen on a Windows platform is easiest with Anaconda via ``conda install -c conda-forge pymatgen``.
+
+* If you still have trouble, open up a a ticket on our `forum <https://hackingmaterials.discourse.group/c/matminer>`_  describing your problem in full (including your system specifications, Python version information, and input/output log). There is a good likelihood that someone else is running into the same issue, and by posting it on the forum we can help make the documentation clearer and smoother.
