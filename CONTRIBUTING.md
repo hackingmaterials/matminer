@@ -7,7 +7,7 @@ We love your input! We want to make contributing to matminer as easy and transpa
 * Becoming a maintainer
 
 ## Reporting bugs, getting help, and discussion
-At any time, feel free to start a thread on our [Google Group](https://groups.google.com/forum/#!forum/matminer).
+At any time, feel free to start a thread on our [Discourse forum](https://hackingmaterials.discourse.group/c/matminer).
 
 If you are making a bug report, incorporate as many elements of the following as possible to ensure a timely response and avoid the need for followups:
 * A quick summary and/or background
@@ -35,10 +35,10 @@ We have a few tips for writing good PRs that are accepted into the main repo:
 * Your code should have (4) spaces instead of tabs.
 * If needed, update the documentation.
 * **Write tests** for new features! Good tests are 100%, absolutely necessary for good code. We use the python `unittest` framework -- see some of the other tests in this repo for examples, or review the [Hitchhiker's guide to python](https://docs.python-guide.org/writing/tests/) for some good resources on writing good tests.
-* Understand your contributions will fall under the same license as this repo. 
+* Understand your contributions will fall under the same license as this repo.
 
-When you submit your PR, our CI service will automatically run your tests. 
+When you submit your PR, our CI service will automatically run your tests.
 We welcome good discussion on the best ways to write your code, and the comments on your PR are an excellent area for discussion.
 
 #### References
-This document was adapted from the open-source contribution guidelines for Facebook's Draft, as well as briandk's [contribution template](https://gist.github.com/briandk/3d2e8b3ec8daf5a27a62). 
+This document was adapted from the open-source contribution guidelines for Facebook's Draft, as well as briandk's [contribution template](https://gist.github.com/briandk/3d2e8b3ec8daf5a27a62).
