@@ -5,18 +5,27 @@ import os
 from setuptools import setup, find_packages
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
-reqs_raw = open(os.path.join(module_dir, "requirements.txt")).read()
+
+# Requirements
+reqs_file = os.path.join(module_dir, "requirements.txt")
+with open(reqs_file, "r") as f:
+    reqs_raw = f.read()
 reqs_list = [r.replace("==", ">=") for r in reqs_raw.split("\n")]
 
-extras_dict = {'mpds': ['jmespath>=0.9.3', 'ujson>=1.35', 'httplib2>=0.10.3',
-                        'ase>=3.14.1'],
-               'mdf': ['mdf_forge==0.6.1'],
-               'aflow': ['aflow==0.0.9'],
-               'citrine': ['citrination-client==4.0.1'],
-               'dscribe': ['dscribe==0.2.5']}
-extras_list = []
-for val in extras_dict.values():
-    extras_list.extend(val)
+# Optional requirements
+extras_file = os.path.join(module_dir, "requirements-optional.txt")
+with open(extras_file, "r") as f:
+    extras_raw = f.read()
+extras_raw = [r for r in extras_raw.split("##") if r.strip() and "#" not in r]
+extras_dict = {}
+for req in extras_raw:
+    items = [i.replace("==", ">=") for i in req.split("\n") if i.strip()]
+    dependency_name = items[0].strip()
+    dependency_reqs = [i.strip() for i in items[1:] if i.strip()]
+    extras_dict[dependency_name] = dependency_reqs
+extras_list = list(extras_dict)
+extras_list = [r for d in extras_dict.values() for r in d]
+
 
 
 if __name__ == "__main__":

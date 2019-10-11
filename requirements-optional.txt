@@ -1,9 +1,24 @@
-# MPDS
+# This file is automatically parsed by setup.py
+# to add another dependency, list the name with a two #s preceding it
+# and then all the dependencies (in pip freeze format) immediately after.
+
+# Generally, don't mess with this file unless you know what you are doing.
+
+## MPDS
 ujson==1.35
 jmespath==0.9.3
 httplib2==0.10.3
 ase==3.14.1
 
-
-# dscribe
+## dscribe
 dscribe==0.1.8
+
+
+## MDF-forge
+mdf_forge==0.6.1
+
+## AFLOW
+aflow==0.0.9
+
+## Citrine
+citrination-client==4.0.1
