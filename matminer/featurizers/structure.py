@@ -3564,7 +3564,7 @@ class SOAP(BaseFeaturizer):
                  comb(self.n_max + 1, 2) * \
                  (self.l_max + 1)
         self.length = int(length)
-        self.soap = SOAP_dscribe(atomic_numbers=self.atomic_numbers,
+        self.soap = SOAP_dscribe(species=self.atomic_numbers,
                                  rcut=self.r_cut,
                                  nmax=self.n_max,
                                  lmax=self.l_max,
