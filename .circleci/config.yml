@@ -6,11 +6,11 @@ jobs:
       - image: circleci/python:3.6.7
     steps:
       - checkout
-#      - restore_cache:
-#          keys:
-#          - py367-dependencies-{{ checksum "requirements.txt" }}
-#          # fallback to using the latest cache if no exact match is found
-#          - py367-dependencies-
+      - restore_cache:
+          keys:
+          - py367-dependencies-{{ checksum "requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - py367-dependencies-
       - run:
           name: Set up env via pip
           command: |
@@ -20,11 +20,8 @@ jobs:
             pip install --upgrade pip
             pip install --upgrade setuptools
             cd ~/matminer
-            echo "running optional install"
             pip install -r requirements-optional.txt
-            echo "running requirements install"
             pip install -r requirements.txt
-            echo "running install matminer"
             pip install -e .
             python setup.py test
       - save_cache:
