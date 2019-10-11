@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Set up env via pip
           command: |
-            source dev_scripts/run_tests.sh
+            source dev_scripts/run_circleci_tests.sh
       - save_cache:
           paths:
           - ./test_env
@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Set up env via pip
           command: |
-            source dev_scripts/run_tests.sh
+            source dev_scripts/run_circleci_tests.sh
       - save_cache:
           paths:
             - ./test_env
