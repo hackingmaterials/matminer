@@ -1,5 +1,8 @@
 from __future__ import division, unicode_literals, print_function
 
+import sys
+import warnings
+
 import numpy as np
 from collections import OrderedDict
 from numpy.linalg import norm
@@ -34,6 +37,15 @@ class BranchPointEnergy(BaseFeaturizer):
         self.n_cb = n_cb
         self.calculate_band_edges = calculate_band_edges
         self.atol = atol
+
+        # Due to a bug in the multiprocessing library, featurizing large numbers
+        # of band structures with multiprocessing on Python < 3.8 can result in
+        # an error. See https://github.com/hackingmaterials/matminer/issues/417
+        if sys.version_info.major == 3 and sys.version_info.minor < 8:
+            warnings.warn("Multiprocessing for band structure featurizers "
+                          "is not recommended for Python versions < 3.8. "
+                          "Setting n_jobs to 1.")
+            self.set_n_jobs(1)
 
     def featurize(self, bs, target_gap=None, weights=None):
         """
@@ -137,6 +149,15 @@ class BandFeaturizer(BaseFeaturizer):
         self.kpoints = kpoints
         self.find_method = find_method
         self.nbands = nbands
+
+        # Due to a bug in the multiprocessing library, featurizing large numbers
+        # of band structures with multiprocessing on Python < 3.8 can result in
+        # an error. See https://github.com/hackingmaterials/matminer/issues/417
+        if sys.version_info.major == 3 and sys.version_info.minor < 8:
+            warnings.warn("Multiprocessing for band structure featurizers "
+                          "is not recommended for Python versions < 3.8."
+                          "Setting n_jobs to 1.")
+            self.set_n_jobs(1)
 
     def featurize(self, bs):
         """
