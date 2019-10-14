@@ -5,11 +5,16 @@
 matminer Changelog
 ==================
 
-**v0.6.1**
+**v0.6.2**
 
 * Update forum to Discourse link (A. Ganose)
-* Add StructuralCompelexity featurizer (K. Muraoka)
+* Add StructuralComplexity featurizer (K. Muraoka)
 * Resolve optional requirements problems, update sklearn requirement (A. Dunn)
+* Update references to DScribe (A. Dunn)
+
+**v0.6.1**
+
+This version was skipped due to an upload issue
 
 **v0.6.0**
 
