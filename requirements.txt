@@ -3,7 +3,7 @@ requests==2.20.0
 pymatgen==2019.10.2
 pandas==0.23.4
 tqdm==4.23.1
-pymongo==3.6.1
+pymongo==3.9.0
 pint==0.8.1
 six==1.11.0
 plotly==3.2.1
