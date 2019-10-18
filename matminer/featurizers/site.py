@@ -2288,10 +2288,10 @@ class SOAP(BaseFeaturizer):
         self.length = self.soap.get_number_of_features()
         return self
 
-    def featurize(self, s):
+    def featurize(self, struct, idx):
         self._check_fitted()
-        s_ase = self.adaptor.get_atoms(s)
-        return self.soap.create(s_ase).tolist()[0]
+        s_ase = self.adaptor.get_atoms(struct)
+        return self.soap.create(s_ase, positions=[idx]).tolist()[0]
 
     def feature_labels(self):
         self._check_fitted()
