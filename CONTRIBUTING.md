@@ -7,7 +7,7 @@ We love your input! We want to make contributing to matminer as easy and transpa
 * Becoming a maintainer
 
 ## Reporting bugs, getting help, and discussion
-At any time, feel free to start a thread on our [Discourse forum](https://hackingmaterials.discourse.group/c/matminer).
+At any time, feel free to start a thread on our [Discourse forum](https://discuss.matsci.org/c/matminer).
 
 If you are making a bug report, incorporate as many elements of the following as possible to ensure a timely response and avoid the need for followups:
 * A quick summary and/or background

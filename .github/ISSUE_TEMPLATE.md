@@ -1,5 +1,5 @@
 Please submit help issues to:
-https://hackingmaterials.discourse.group/c/matminer/automatminer
+https://discuss.matsci.org/c/matminer/automatminer
 
 The Github issues is no longer used except for internal development purposes.
 

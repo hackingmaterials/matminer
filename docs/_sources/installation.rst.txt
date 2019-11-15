@@ -55,4 +55,4 @@ Tips
 
     - For example, installing pymatgen on a Windows platform is easiest with Anaconda via ``conda install -c conda-forge pymatgen``.
 
-* If you still have trouble, open up a a ticket on our `forum <https://hackingmaterials.discourse.group/c/matminer>`_  describing your problem in full (including your system specifications, Python version information, and input/output log). There is a good likelihood that someone else is running into the same issue, and by posting it on the forum we can help make the documentation clearer and smoother.
+* If you still have trouble, open up a a ticket on our `forum <https://discuss.matsci.org/c/matminer>`_  describing your problem in full (including your system specifications, Python version information, and input/output log). There is a good likelihood that someone else is running into the same issue, and by posting it on the forum we can help make the documentation clearer and smoother.
