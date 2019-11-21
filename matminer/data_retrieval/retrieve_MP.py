@@ -74,7 +74,7 @@ class MPDataRetrieval(BaseDataRetrieval):
             df = df.set_index("material_id")
         return df
 
-    def get_data(self, criteria, properties, mp_decode=False, index_mpid=True):
+    def get_data(self, criteria, properties, mp_decode=True, index_mpid=True):
         """
         Args:
             criteria: (str/dict) see MPRester.query() for a description of this
