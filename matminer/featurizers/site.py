@@ -694,12 +694,30 @@ class VoronoiFingerprint(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = ['@book{okabe1992spatial,  '
-                    'title  = {Spatial tessellations}, '
-                    'author = {Okabe, Atsuyuki}, '
-                    'year   = {1992}, '
-                    'publisher = {Wiley Online Library}}']
-        return citation
+        voronoi_citation = (
+            '@book{okabe1992spatial,  '
+            'title  = {Spatial tessellations}, '
+            'author = {Okabe, Atsuyuki}, '
+            'year   = {1992}, '
+            'publisher = {Wiley Online Library}}')
+        symm_idx_citation = (
+            '@article{peng2011, '
+            'title={Structural signature of plastic deformation in metallic '
+            'glasses}, '
+            'author={H L Peng, M Z Li, W H Wang}, '
+            'journal={Physical Review Letters}, year={2011}}, '
+            'pages = {135503}, volume = {106}, issue = {13}, '
+            'doi = {10.1103/PhysRevLett.106.135503}}')
+        nn_stats_citation = (
+            '@article{Wang2019, '
+            'title = {A transferable machine-learning framework linking '
+            'interstice distribution and plastic heterogeneity in metallic '
+            'glasses}, '
+            'author = {Qi Wang and Anubhav Jain}, '
+            'journal = {Nature Communications}, year = {2019}, '
+            'pages = {}, volume = {}, '
+            'doi = {10.1038/s41467-019-13511-9}, url = {}}')
+        return [voronoi_citation, symm_idx_citation, nn_stats_citation]
 
     def implementors(self):
         return ['Qi Wang']
@@ -717,7 +735,7 @@ class IntersticeDistribution(BaseFeaturizer):
         radius_type (str): interstice radius type. (default: "MiracleRadius")
     """
     def __init__(self, cutoff=6.5, interstice_types=None, stats=None,
-                 radius_type="MiracleRadius"):
+                 radius_type='MiracleRadius'):
         self.cutoff = cutoff
         self.interstice_types = ['Dist', 'Area', 'Vol'] \
             if interstice_types is None else interstice_types
@@ -888,17 +906,14 @@ class IntersticeDistribution(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return ["@article{Wang2019,"
-                "author = {Qi Wang and Anubhav Jain},"
-                "doi = {10.1038/s41467-019-13511-9},"
-                "journal = {Nature Communications},"
-                "pages = {},"
-                "title = {A transferable machine-learning framework linking "
-                "interstice distribution and plastic heterogeneity in metallic "
-                "glasses},"
-                "url = {},"
-                "volume = {},"
-                "year = {2019}"]
+        return ['@article{Wang2019,'
+                'title = {A transferable machine-learning framework linking '
+                'interstice distribution and plastic heterogeneity in metallic '
+                'glasses}, '
+                'author = {Qi Wang and Anubhav Jain},'
+                'journal = {Nature Communications}, year = {2019}, '
+                'pages = {}, volume = {}, '
+                'doi = {10.1038/s41467-019-13511-9}, url = {}}']
 
     def implementors(self):
         return ['Qi Wang']
