@@ -739,8 +739,10 @@ class IntersticeDistribution(BaseFeaturizer):
 
     For amorphous alloys (metallic glasses), the coordination environments are
     anisotropic, which can be reflected in the inequality of the interstices
-    present around an atom. To describe this anisotropy, we derive statistics
+    present around an atom. To describe the anisotropy, here we derive statistics
     of the interstices to featurize the interstice distribution around the atom.
+    Other methods can be grouping the interstices into histogram grids of fixed
+    bins and the features are then a vector of the values of the histograms.
 
     User note:
     This class is particularly designed for featuring the site-specific packing
