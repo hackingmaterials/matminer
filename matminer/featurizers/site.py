@@ -756,20 +756,20 @@ class IntersticeDistribution(BaseFeaturizer):
         cutoff (float): cutoff distance in determining the potential
             neighbors for Voronoi tessellation analysis. (default: 6.5)
         interstice_types (str or [str]): interstice distribution types,
-            support sub-list of ['Dist', 'Area', 'Vol'].
+            support sub-list of ['dist', 'area', 'vol'].
         stats ([str]): statistics of distance/area/volume interstices.
         radius_type (str): interstice radius type. (default: "MiracleRadius")
     """
     def __init__(self, cutoff=6.5, interstice_types=None, stats=None,
                  radius_type='MiracleRadius'):
         self.cutoff = cutoff
-        self.interstice_types = ['Dist', 'Area', 'Vol'] \
+        self.interstice_types = ['dist', 'area', 'vol'] \
             if interstice_types is None else interstice_types
         if isinstance(self.interstice_types, str):
             self.interstice_types = [self.interstice_types]
         if all(t not in self.interstice_types for t in ['Dist', 'Area', 'Vol']):
             raise ValueError("interstice_types only support sub-list of "
-                             "['Dist', 'Area', 'Vol']")
+                             "['dist', 'area', 'vol']")
         self.stats = ['mean', 'std_dev', 'minimum', 'maximum'] \
             if stats is None else stats
         self.radius_type = radius_type
@@ -801,20 +801,20 @@ class IntersticeDistribution(BaseFeaturizer):
         # Get indices of the points forming the simplices in the triangulation
         convex_hull_simplices = ConvexHull(nn_coords).simplices
 
-        if 'Dist' in self.interstice_types:
+        if 'dist' in self.interstice_types:
             nn_dists = [nn['poly_info']['face_dist'] * 2 for nn in n_w]
             interstice_dist_list = IntersticeDistribution.\
                 analyze_dist_interstices(center_r, nn_rs, nn_dists)
             interstice_fps += [PropertyStats().calc_stat(
                 interstice_dist_list, stat) for stat in self.stats]
 
-        if 'Area' in self.interstice_types:
+        if 'area' in self.interstice_types:
             interstice_area_list = IntersticeDistribution.\
                 analyze_area_interstice(nn_coords, nn_rs, convex_hull_simplices)
             interstice_fps += [PropertyStats().calc_stat(
                 interstice_area_list, stat) for stat in self.stats]
 
-        if 'Vol' in self.interstice_types:
+        if 'vol' in self.interstice_types:
             interstice_vol_list = IntersticeDistribution.\
                 analyze_vol_interstice(struct[idx].coords, nn_coords,
                                        center_r, nn_rs, convex_hull_simplices)
