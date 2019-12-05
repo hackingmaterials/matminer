@@ -727,7 +727,7 @@ class VoronoiFingerprint(BaseFeaturizer):
 class IntersticeDistribution(BaseFeaturizer):
     """
     Interstice distribution in the neighboring cluster around an atom site.
-    
+
     The interstices are categorized to distance, area and volume interstices.
     Each of these metrics is a measures of the relative amount of empty space
     around each atom as determined using atomic sphere models. The distance
