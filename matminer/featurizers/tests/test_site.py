@@ -347,7 +347,7 @@ class FingerprintTests(PymatgenTest):
                            coords_are_cartesian=True)
         df_glass= pd.DataFrame({'struct': [cuzr_glass], 'site': [0]})
 
-        interstice_distribution = IntersticeDistribution(cutoff=5)
+        interstice_distribution = IntersticeDistribution()
         intersticefp = interstice_distribution.featurize_dataframe(
             df_glass, ['struct', 'site'])
 

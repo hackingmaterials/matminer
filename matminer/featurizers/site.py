@@ -792,7 +792,6 @@ class IntersticeDistribution(BaseFeaturizer):
             struct, idx).values()
 
         nn_coords = np.array([nn['site'].coords for nn in n_w])
-        print(nn_coords)
 
         # Get center atom's radius and its nearest neighbors' radii
         center_r = MagpieData().get_elemental_properties(
@@ -801,7 +800,7 @@ class IntersticeDistribution(BaseFeaturizer):
         nn_rs = np.array(MagpieData().get_elemental_properties(
             nn_els, self.radius_type)) / 100
 
-        # Get indices of the points forming the simplices in the triangulation
+        # Get indices of atoms forming the simplices of convex hull
         convex_hull_simplices = ConvexHull(nn_coords).simplices
 
         if 'dist' in self.interstice_types:
