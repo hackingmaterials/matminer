@@ -758,7 +758,7 @@ class IntersticeDistribution(BaseFeaturizer):
         interstice_types (str or [str]): interstice distribution types,
             support sub-list of ['dist', 'area', 'vol'].
         stats ([str]): statistics of distance/area/volume interstices.
-        radius_type (str): interstice radius type. (default: "MiracleRadius")
+        radius_type (str): source of radius estimate. (default: "MiracleRadius")
     """
     def __init__(self, cutoff=6.5, interstice_types=None, stats=None,
                  radius_type='MiracleRadius'):
@@ -767,7 +767,7 @@ class IntersticeDistribution(BaseFeaturizer):
             if interstice_types is None else interstice_types
         if isinstance(self.interstice_types, str):
             self.interstice_types = [self.interstice_types]
-        if all(t not in self.interstice_types for t in ['Dist', 'Area', 'Vol']):
+        if all(t not in self.interstice_types for t in ['dist', 'area', 'vol']):
             raise ValueError("interstice_types only support sub-list of "
                              "['dist', 'area', 'vol']")
         self.stats = ['mean', 'std_dev', 'minimum', 'maximum'] \
@@ -787,7 +787,8 @@ class IntersticeDistribution(BaseFeaturizer):
         interstice_fps = list()
 
         # Get the nearest neighbors using Voronoi tessellation
-        n_w = get_nearest_neighbors(VoronoiNN(cutoff=self.cutoff), struct, idx)
+        n_w = VoronoiNN(cutoff=self.cutoff).get_voronoi_polyhedra(
+            struct, idx).values()
 
         nn_coords = np.array([nn['site'].coords for nn in n_w])
 
@@ -841,10 +842,10 @@ class IntersticeDistribution(BaseFeaturizer):
     def analyze_area_interstice(nn_coords, nn_rs, convex_hull_simplices):
         """Analyze the area interstices in the neighbor convex hull facets.
         Args:
-            nn_coords (array-like): Nearest Neighbors' coordinates list.
-            nn_rs ([float]): Nearest Neighbors' radius list.
+            nn_coords (array-like): Nearest Neighbors' coordinates.
+            nn_rs ([float]): Nearest Neighbors' radii.
             convex_hull_simplices (array-like): Indices of points forming the
-                simplical facets of the convex hull.
+                simplicial facets of the convex hull.
         Returns:
             area_interstice_list ([float]): Area interstice list.
         """
@@ -852,26 +853,25 @@ class IntersticeDistribution(BaseFeaturizer):
 
         triplet_set = [(0, 1, 2), (1, 0, 2), (2, 0, 1)]
         for facet_indices in convex_hull_simplices:
+            facet_coords = nn_coords[facet_indices]
+            facet_rs = nn_rs[facet_indices]
             triangle_angles = list()
             for triplet in triplet_set:
-                a = nn_coords[facet_indices[triplet[1]]] - \
-                    nn_coords[facet_indices[triplet[0]]]
-                b = nn_coords[facet_indices[triplet[2]]] - \
-                    nn_coords[facet_indices[triplet[0]]]
-                triangle_angle = np.arccos(
+                a = facet_coords[triplet[1]] - facet_coords[triplet[0]]
+                b = facet_coords[triplet[2]] - facet_coords[triplet[0]]
+                t_a = np.arccos(
                     np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
-                triangle_angles.append(triangle_angle)
+                triangle_angles.append(t_a)
 
             packed_area = 0
-            for t_a, nn_r in zip(triangle_angles, nn_rs):
+            for t_a, nn_r in zip(triangle_angles, facet_rs):
                 packed_area += t_a / 2 * pow(nn_r, 2)
 
-            facet_coords = nn_coords[facet_indices]
             triangle_area = 0.5 * np.linalg.norm(np.cross(
                 np.array(facet_coords[0]) - np.array(facet_coords[2]),
                 np.array(facet_coords[1]) - np.array(facet_coords[2])))
 
-            area_interstice = 1 - packed_area/triangle_area  # in fraction
+            area_interstice = 1 - packed_area / triangle_area  # in fraction
             area_interstice_list.append(area_interstice
                                         if area_interstice > 0 else 0)
         return area_interstice_list
@@ -883,11 +883,11 @@ class IntersticeDistribution(BaseFeaturizer):
         atom and neighbor convex hull triplets.
         Args:
             center_coords (array-like): Central atomic coordinates.
-            nn_coords (array-like): Nearest Neighbors' coordinates list.
+            nn_coords (array-like): Nearest Neighbors' coordinates.
             center_r (float): central atom's radius.
-            nn_rs ([float]): Nearest Neighbors' radius list.
+            nn_rs ([float]): Nearest Neighbors' radii.
             convex_hull_simplices (array-like): Indices of points forming the
-                simplical facets of the convex hull.
+                simplicial facets of the convex hull.
         Returns:
             volume_interstice_list ([float]): Volume interstice list.
         """
@@ -895,19 +895,19 @@ class IntersticeDistribution(BaseFeaturizer):
 
         triplet_set = [(0, 1, 2), (1, 0, 2), (2, 0, 1)]
         for facet_indices in convex_hull_simplices:
+            facet_coords = nn_coords[facet_indices]
+            facet_rs = nn_rs[facet_indices]
             solid_angles = list()
-            for triplet in zip(facet_indices, triplet_set):
-                s_a = solid_angle(
-                    nn_coords[facet_indices[triplet[0]]],
-                    np.array([nn_coords[facet_indices[triplet[1]]],
-                              nn_coords[facet_indices[triplet[2]]],
-                              center_coords]))
+            for triplet in triplet_set:
+                s_a = solid_angle(facet_coords[triplet[0]],
+                                  np.array([facet_coords[triplet[1]],
+                                            facet_coords[triplet[2]],
+                                            center_coords]))
                 solid_angles.append(s_a)
 
             # calculate neighbors' packed volume
             packed_volume = 0
-            facet_coords = nn_coords[facet_indices]
-            for s_a, nn_r in zip(solid_angles, nn_rs):
+            for s_a, nn_r in zip(solid_angles, facet_rs):
                 packed_volume += s_a / 3 * pow(nn_r, 3)
 
             # add center atom's volume
@@ -916,19 +916,19 @@ class IntersticeDistribution(BaseFeaturizer):
 
             volume = vol_tetra(center_coords, *facet_coords)
 
-            volume_interstice = 1 - packed_volume/volume
+            volume_interstice = 1 - packed_volume / volume
             volume_interstice_list.append(volume_interstice
                                           if volume_interstice > 0 else 0)
         return volume_interstice_list
 
     def feature_labels(self):
         labels = list()
-        labels += ['Interstice_vol_%s' % stat for stat in self.stats] \
-            if 'Vol' in self.interstice_types else []
-        labels += ['Interstice_area_%s' % stat for stat in self.stats] \
-            if 'Area' in self.interstice_types else []
         labels += ['Interstice_dist_%s' % stat for stat in self.stats] \
-            if 'Dist' in self.interstice_types else []
+            if 'dist' in self.interstice_types else []
+        labels += ['Interstice_area_%s' % stat for stat in self.stats] \
+            if 'area' in self.interstice_types else []
+        labels += ['Interstice_vol_%s' % stat for stat in self.stats] \
+            if 'vol' in self.interstice_types else []
         return labels
 
     def citations(self):

@@ -9,7 +9,7 @@ from pymatgen.analysis.local_env import VoronoiNN, JmolNN, CrystalNN
 from matminer.featurizers.site import AGNIFingerprints, \
     OPSiteFingerprint, CrystalNNFingerprint, \
     EwaldSiteEnergy, \
-    VoronoiFingerprint, ChemEnvSiteFingerprint, \
+    VoronoiFingerprint, IntersticeDistribution, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
     GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference, \
     BondOrientationalParameter, SiteElementalProperty, AverageBondLength, AverageBondAngle
@@ -303,6 +303,66 @@ class FingerprintTests(PymatgenTest):
         self.assertAlmostEqual(vorofps['Voro_dist_std_dev'][0], 0.0)
         self.assertAlmostEqual(vorofps['Voro_dist_minimum'][0], 3.52)
         self.assertAlmostEqual(vorofps['Voro_dist_maximum'][0], 3.52)
+
+    def test_interstice_distribution_of_crystal(self):
+        bcc_li = Structure(Lattice([[3.51, 0, 0], [0, 3.51, 0], [0, 0, 3.51]]),
+                           ["Li"] * 2, [[0, 0, 0], [0.5, 0.5, 0.5]])
+        df_bcc_li= pd.DataFrame({'struct': [bcc_li], 'site': [1]})
+
+        interstice_distribution = IntersticeDistribution()
+        intersticefp = interstice_distribution.featurize_dataframe(
+            df_bcc_li, ['struct', 'site'])
+
+        self.assertAlmostEqual(intersticefp['Interstice_vol_mean'][0], 0.32, 2)
+        self.assertAlmostEqual(intersticefp['Interstice_vol_std_dev'][0], 0)
+        self.assertAlmostEqual(intersticefp['Interstice_vol_minimum'][0], 0.32, 2)
+        self.assertAlmostEqual(intersticefp['Interstice_vol_maximum'][0], 0.32, 2)
+        self.assertAlmostEqual(intersticefp['Interstice_area_mean'][0], 0.16682, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_area_std_dev'][0], 0)
+        self.assertAlmostEqual(intersticefp['Interstice_area_minimum'][0], 0.16682, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_area_maximum'][0], 0.16682, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_dist_mean'][0], 0.06621, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_dist_std_dev'][0], 0.07655, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_dist_minimum'][0], 0, 3)
+        self.assertAlmostEqual(intersticefp['Interstice_dist_maximum'][0], 0.15461, 5)
+
+    def test_interstice_distribution_of_glass(self):
+        cuzr_glass = Structure(Lattice([[25, 0, 0], [0, 25, 0], [0, 0, 25]]),
+                           ["Cu", "Cu", "Cu", "Cu", "Cu", "Zr", "Cu", "Zr",
+                            "Cu", "Zr", "Cu", "Zr", "Cu", "Cu"],
+                           [[11.81159679, 16.49480537, 21.69139442],
+                            [11.16777208, 17.87850033, 18.57877144],
+                            [12.22394796, 15.83218325, 19.37763412],
+                            [13.07053548, 14.34025424, 21.77557646],
+                            [10.78147725, 19.61647494, 20.77595531],
+                            [10.87541011, 14.65986432, 23.61517624],
+                            [12.76631002, 18.41479521, 20.46717947],
+                            [14.63911675, 16.47487037, 20.52671362],
+                            [14.2470256, 18.44215167, 22.56257566],
+                            [9.38050168, 16.87974592, 20.51885879],
+                            [10.66332986, 14.43900833, 20.545186],
+                            [11.57096832, 18.79848982, 23.26073408],
+                            [13.27048138, 16.38613795, 23.59697472],
+                            [9.55774984, 17.09220537, 23.1856528]],
+                           coords_are_cartesian=True)
+        df_glass= pd.DataFrame({'struct': [cuzr_glass], 'site': [0]})
+
+        interstice_distribution = IntersticeDistribution(cutoff=5)
+        intersticefp = interstice_distribution.featurize_dataframe(
+            df_glass, ['struct', 'site'])
+
+        self.assertAlmostEqual(intersticefp['Interstice_vol_mean'][0], 0.28905, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_vol_std_dev'][0], 0.04037, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_vol_minimum'][0], 0.21672, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_vol_maximum'][0], 0.39084, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_area_mean'][0], 0.16070, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_area_std_dev'][0], 0.05245, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_area_minimum'][0], 0.07132, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_area_maximum'][0], 0.26953, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_dist_mean'][0], 0.08154, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_dist_std_dev'][0], 0.14778, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_dist_minimum'][0], -0.04668, 5)
+        self.assertAlmostEqual(intersticefp['Interstice_dist_maximum'][0], 0.37565, 5)
 
     def test_chemicalSRO(self):
         df_sc = pd.DataFrame({'struct': [self.sc], 'site': [0]})
