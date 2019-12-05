@@ -725,6 +725,30 @@ class VoronoiFingerprint(BaseFeaturizer):
 
 class IntersticeDistribution(BaseFeaturizer):
     """
+    Interstice distribution in the neighboring cluster around an atom site.
+    
+    The interstices are categorized to distance, area and volume interstices.
+    Each of these metrics is a measures of the relative amount of empty space
+    around each atom as determined using atomic sphere models. The distance
+    interstice is the fraction of a bonding line unoccupied by the atom spheres;
+    The area interstice is the unoccupied area within the triangulated surface
+    formed by atom triplets in convex hull formed by neighbors, and the volume
+    interstice is the unoccupied portion of a tetrahedron formed between the
+    central atom and neighbor atom triplets. Please refer to the original paper
+    for more details (Wang et al. Nature Communications 2019)
+
+    For amorphous alloys (metallic glasses), the coordination environments are
+    anisotropic, which can be reflected in the inequality of the interstices
+    present around an atom. To describe this anisotropy, we derive statistics
+    of the interstices to featurize the interstice distribution around the atom.
+
+    User note:
+    This class is particularly designed for featuring the site-specific packing
+    heterogeneity in metallic glasses, especially the all-metallic-element ones.
+    If non-metallic-elements are present in the structures, the interstice
+    estimates may have larger deviation from actual values (despite this
+    deviation is systematic and thus the interstice estimates can still be
+    used to represent the packing heterogeneity).
 
     Args:
         cutoff (float): cutoff distance in determining the potential
