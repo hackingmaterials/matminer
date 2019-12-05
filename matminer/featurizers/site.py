@@ -803,7 +803,7 @@ class IntersticeDistribution(BaseFeaturizer):
         convex_hull_simplices = ConvexHull(nn_coords).simplices
 
         if 'dist' in self.interstice_types:
-            nn_dists = [nn['poly_info']['face_dist'] * 2 for nn in n_w]
+            nn_dists = [nn['face_dist'] * 2 for nn in n_w]
             interstice_dist_list = IntersticeDistribution.\
                 analyze_dist_interstices(center_r, nn_rs, nn_dists)
             interstice_fps += [PropertyStats().calc_stat(
