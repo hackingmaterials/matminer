@@ -35,11 +35,12 @@ import scipy.integrate as integrate
 from matminer.featurizers.base import BaseFeaturizer
 from math import pi
 from scipy.special import sph_harm
+from scipy.spatial import ConvexHull
 from sympy.physics.wigner import wigner_3j
 from pymatgen import Structure
 from pymatgen.core.periodic_table import Element
 from pymatgen.analysis.local_env import LocalStructOrderParams, \
-    VoronoiNN, CrystalNN
+    VoronoiNN, CrystalNN, solid_angle, vol_tetra
 import pymatgen.analysis
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
@@ -704,6 +705,205 @@ class VoronoiFingerprint(BaseFeaturizer):
         return ['Qi Wang']
 
 
+class IntersticeDistribution(BaseFeaturizer):
+    """
+
+    Args:
+        cutoff (float): cutoff distance in determining the potential
+            neighbors for Voronoi tessellation analysis. (default: 6.5)
+        interstice_types (str or [str]): interstice distribution types,
+            support sub-list of ['Dist', 'Area', 'Vol'].
+        stats ([str]): statistics of distance/area/volume interstices.
+        radius_type (str): interstice radius type. (default: "MiracleRadius")
+    """
+    def __init__(self, cutoff=6.5, interstice_types=None, stats=None,
+                 radius_type="MiracleRadius"):
+        self.cutoff = cutoff
+        self.interstice_types = ['Dist', 'Area', 'Vol'] \
+            if interstice_types is None else interstice_types
+        if isinstance(self.interstice_types, str):
+            self.interstice_types = [self.interstice_types]
+        if all(t not in self.interstice_types for t in ['Dist', 'Area', 'Vol']):
+            raise ValueError("interstice_types only support sub-list of "
+                             "['Dist', 'Area', 'Vol']")
+        self.stats = ['mean', 'std_dev', 'minimum', 'maximum'] \
+            if stats is None else stats
+        self.radius_type = radius_type
+
+    def featurize(self, struct, idx):
+        """
+        Get interstice distribution fingerprints of site with given index in
+        input structure.
+        Args:
+            struct (Structure): Pymatgen Structure object.
+            idx (int): index of target site in structure.
+        Returns:
+            interstice_fps ([float]): Interstice distribution fingerprints.
+        """
+        interstice_fps = list()
+
+        # Get the nearest neighbors using Voronoi tessellation
+        n_w = get_nearest_neighbors(VoronoiNN(cutoff=self.cutoff), struct, idx)
+
+        nn_coords = np.array([nn['site'].coords for nn in n_w])
+
+        # Get center atom's radius and its nearest neighbors' radii
+        center_r = MagpieData().get_elemental_properties(
+            [struct[idx].specie], self.radius_type)[0] / 100
+        nn_els = [nn['site'].specie for nn in n_w]
+        nn_rs = np.array(MagpieData().get_elemental_properties(
+            nn_els, self.radius_type)) / 100
+
+        # Get indices of the points forming the simplices in the triangulation
+        convex_hull_simplices = ConvexHull(nn_coords).simplices
+
+        if 'Dist' in self.interstice_types:
+            nn_dists = [nn['poly_info']['face_dist'] * 2 for nn in n_w]
+            interstice_dist_list = IntersticeDistribution.\
+                analyze_dist_interstices(center_r, nn_rs, nn_dists)
+            interstice_fps += [PropertyStats().calc_stat(
+                interstice_dist_list, stat) for stat in self.stats]
+
+        if 'Area' in self.interstice_types:
+            interstice_area_list = IntersticeDistribution.\
+                analyze_area_interstice(nn_coords, nn_rs, convex_hull_simplices)
+            interstice_fps += [PropertyStats().calc_stat(
+                interstice_area_list, stat) for stat in self.stats]
+
+        if 'Vol' in self.interstice_types:
+            interstice_vol_list = IntersticeDistribution.\
+                analyze_vol_interstice(struct[idx].coords, nn_coords,
+                                       center_r, nn_rs, convex_hull_simplices)
+            interstice_fps += [PropertyStats().calc_stat(
+                interstice_vol_list, stat) for stat in self.stats]
+        return interstice_fps
+
+    @staticmethod
+    def analyze_dist_interstices(center_r, nn_rs, nn_dists):
+        """Analyze the distance interstices between center atom and neighbors.
+        Args:
+            center_r (float): central atom's radius.
+            nn_rs ([float]): Nearest Neighbors' radii.
+            nn_dists ([float]): Nearest Neighbors' distances.
+        Returns:
+            dist_interstice_list ([float]): Distance interstice list.
+        """
+        dist_interstice_list = list()
+        for nn_dist, nn_r in zip(nn_dists, nn_rs):
+            dist_interstice_list.append(nn_dist / (center_r + nn_r) - 1)
+        return dist_interstice_list
+
+    @staticmethod
+    def analyze_area_interstice(nn_coords, nn_rs, convex_hull_simplices):
+        """Analyze the area interstices in the neighbor convex hull facets.
+        Args:
+            nn_coords (array-like): Nearest Neighbors' coordinates list.
+            nn_rs ([float]): Nearest Neighbors' radius list.
+            convex_hull_simplices (array-like): Indices of points forming the
+                simplical facets of the convex hull.
+        Returns:
+            area_interstice_list ([float]): Area interstice list.
+        """
+        area_interstice_list = list()
+
+        angle_set = [(0, 1, 2), (1, 0, 2), (2, 0, 1)]
+        for facet_indices in convex_hull_simplices:
+            triangle_angles = list()
+            for angle in angle_set:
+                a = nn_coords[facet_indices[angle[1]]] - \
+                    nn_coords[facet_indices[angle[0]]]
+                b = nn_coords[facet_indices[angle[2]]] - \
+                    nn_coords[facet_indices[angle[0]]]
+                triangle_angle = np.arccos(
+                    np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+                triangle_angles.append(triangle_angle)
+
+            packed_area = 0
+            for t_a, nn_r in zip(triangle_angles, nn_rs):
+                packed_area += t_a / 2 * pow(nn_r, 2)
+
+            facet_coords = nn_coords[facet_indices]
+            triangle_area = 0.5 * np.linalg.norm(np.cross(
+                np.array(facet_coords[0]) - np.array(facet_coords[2]),
+                np.array(facet_coords[1]) - np.array(facet_coords[2])))
+
+            area_interstice = 1 - packed_area/triangle_area  # in fraction
+            area_interstice_list.append(area_interstice
+                                        if area_interstice > 0 else 0)
+        return area_interstice_list
+
+    @staticmethod
+    def analyze_vol_interstice(center_coords, nn_coords, center_r,
+                               nn_rs, convex_hull_simplices):
+        """Analyze the volume interstices in the tetrahedra formed by center
+        atom and neighbor convex hull triplets.
+        Args:
+            center_coords (array-like): Central atomic coordinates.
+            nn_coords (array-like): Nearest Neighbors' coordinates list.
+            center_r (float): central atom's radius.
+            nn_rs ([float]): Nearest Neighbors' radius list.
+            convex_hull_simplices (array-like): Indices of points forming the
+                simplical facets of the convex hull.
+        Returns:
+            volume_interstice_list ([float]): Volume interstice list.
+        """
+        volume_interstice_list = list()
+
+        angle_set = [(0, 1, 2), (1, 0, 2), (2, 0, 1)]
+        for facet_indices in convex_hull_simplices:
+            solid_angles = list()
+            for idx, edge in zip(facet_indices, angle_set):
+                s_a = solid_angle(
+                    nn_coords[facet_indices[edge[0]]],
+                    np.array([nn_coords[facet_indices[edge[0]]],
+                              nn_coords[facet_indices[edge[1]]],
+                              center_coords]))
+                solid_angles.append(s_a)
+
+            # calculate neighbors' packed volume
+            packed_volume = 0
+            facet_coords = nn_coords[facet_indices]
+            for s_a, nn_r in zip(solid_angles, nn_rs):
+                packed_volume += s_a / 3 * pow(nn_r, 3)
+
+            # add center atom's volume
+            center_solid_angle = solid_angle(center_coords, facet_coords)
+            packed_volume += center_solid_angle / 3 * pow(center_r, 3)
+
+            volume = vol_tetra(center_coords, *facet_coords)
+
+            volume_interstice = 1 - packed_volume/volume
+            volume_interstice_list.append(volume_interstice
+                                          if volume_interstice > 0 else 0)
+        return volume_interstice_list
+
+    def feature_labels(self):
+        labels = list()
+        labels += ['Interstice_vol_%s' % stat for stat in self.stats] \
+            if 'Vol' in self.interstice_types else []
+        labels += ['Interstice_area_%s' % stat for stat in self.stats] \
+            if 'Area' in self.interstice_types else []
+        labels += ['Interstice_dist_%s' % stat for stat in self.stats] \
+            if 'Dist' in self.interstice_types else []
+        return labels
+
+    def citations(self):
+        return ["@article{Wang2019,"
+                "author = {Qi Wang and Anubhav Jain},"
+                "doi = {10.1038/s41467-019-13511-9},"
+                "journal = {Nature Communications},"
+                "pages = {},"
+                "title = {A transferable machine-learning framework linking "
+                "interstice distribution and plastic heterogeneity in metallic "
+                "glasses},"
+                "url = {},"
+                "volume = {},"
+                "year = {2019}"]
+
+    def implementors(self):
+        return ['Qi Wang']
+
+
 class ChemicalSRO(BaseFeaturizer):
     """
     Chemical short range ordering, deviation of local site and nominal structure compositions
@@ -720,7 +920,7 @@ class ChemicalSRO(BaseFeaturizer):
     A positive f_el indicates the "bonding" with the specific element
     is favored, at least in the target site;
     A negative f_el indicates the "bonding" is not favored, at least
-    in the target site.
+    in the target site
 
     Note that ChemicalSRO is only featurized for elements identified by
     "fit" (see following), thus "fit" must be called before "featurize",
