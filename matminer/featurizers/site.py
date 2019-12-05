@@ -715,8 +715,9 @@ class VoronoiFingerprint(BaseFeaturizer):
             'glasses}, '
             'author = {Qi Wang and Anubhav Jain}, '
             'journal = {Nature Communications}, year = {2019}, '
-            'pages = {}, volume = {}, '
-            'doi = {10.1038/s41467-019-13511-9}, url = {}}')
+            'pages = {5537}, volume = {10}, '
+            'doi = {10.1038/s41467-019-13511-9}, '
+            'url = {https://doi.org/10.1038/s41467-019-13511-9}}')
         return [voronoi_citation, symm_idx_citation, nn_stats_citation]
 
     def implementors(self):
@@ -735,7 +736,7 @@ class IntersticeDistribution(BaseFeaturizer):
     formed by atom triplets in convex hull formed by neighbors, and the volume
     interstice is the unoccupied portion of a tetrahedron formed between the
     central atom and neighbor atom triplets. Please refer to the original paper
-    for more details (Wang et al. Nature Communications 2019)
+    for more details (Wang et al. Nat Commun 10, 5537 (2019))
 
     For amorphous alloys (metallic glasses), the coordination environments are
     anisotropic, which can be reflected in the inequality of the interstices
@@ -940,8 +941,9 @@ class IntersticeDistribution(BaseFeaturizer):
                 'glasses}, '
                 'author = {Qi Wang and Anubhav Jain},'
                 'journal = {Nature Communications}, year = {2019}, '
-                'pages = {}, volume = {}, '
-                'doi = {10.1038/s41467-019-13511-9}, url = {}}']
+                'pages = {5537}, volume = {10}, '
+                'doi = {10.1038/s41467-019-13511-9}, '
+                'url = {https://doi.org/10.1038/s41467-019-13511-9}}']
 
     def implementors(self):
         return ['Qi Wang']
