@@ -806,14 +806,14 @@ class IntersticeDistribution(BaseFeaturizer):
         """
         area_interstice_list = list()
 
-        angle_set = [(0, 1, 2), (1, 0, 2), (2, 0, 1)]
+        triplet_set = [(0, 1, 2), (1, 0, 2), (2, 0, 1)]
         for facet_indices in convex_hull_simplices:
             triangle_angles = list()
-            for angle in angle_set:
-                a = nn_coords[facet_indices[angle[1]]] - \
-                    nn_coords[facet_indices[angle[0]]]
-                b = nn_coords[facet_indices[angle[2]]] - \
-                    nn_coords[facet_indices[angle[0]]]
+            for triplet in triplet_set:
+                a = nn_coords[facet_indices[triplet[1]]] - \
+                    nn_coords[facet_indices[triplet[0]]]
+                b = nn_coords[facet_indices[triplet[2]]] - \
+                    nn_coords[facet_indices[triplet[0]]]
                 triangle_angle = np.arccos(
                     np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
                 triangle_angles.append(triangle_angle)
@@ -849,14 +849,14 @@ class IntersticeDistribution(BaseFeaturizer):
         """
         volume_interstice_list = list()
 
-        angle_set = [(0, 1, 2), (1, 0, 2), (2, 0, 1)]
+        triplet_set = [(0, 1, 2), (1, 0, 2), (2, 0, 1)]
         for facet_indices in convex_hull_simplices:
             solid_angles = list()
-            for idx, edge in zip(facet_indices, angle_set):
+            for triplet in zip(facet_indices, triplet_set):
                 s_a = solid_angle(
-                    nn_coords[facet_indices[edge[0]]],
-                    np.array([nn_coords[facet_indices[edge[0]]],
-                              nn_coords[facet_indices[edge[1]]],
+                    nn_coords[facet_indices[triplet[0]]],
+                    np.array([nn_coords[facet_indices[triplet[1]]],
+                              nn_coords[facet_indices[triplet[2]]],
                               center_coords]))
                 solid_angles.append(s_a)
 
@@ -920,7 +920,7 @@ class ChemicalSRO(BaseFeaturizer):
     A positive f_el indicates the "bonding" with the specific element
     is favored, at least in the target site;
     A negative f_el indicates the "bonding" is not favored, at least
-    in the target site
+    in the target site.
 
     Note that ChemicalSRO is only featurized for elements identified by
     "fit" (see following), thus "fit" must be called before "featurize",
