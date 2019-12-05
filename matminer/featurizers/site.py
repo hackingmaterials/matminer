@@ -717,7 +717,7 @@ class VoronoiFingerprint(BaseFeaturizer):
             'journal = {Nature Communications}, year = {2019}, '
             'pages = {5537}, volume = {10}, '
             'doi = {10.1038/s41467-019-13511-9}, '
-            'url = {https://doi.org/10.1038/s41467-019-13511-9}}')
+            'url = {https://www.nature.com/articles/s41467-019-13511-9}}')
         return [voronoi_citation, symm_idx_citation, nn_stats_citation]
 
     def implementors(self):
@@ -943,7 +943,7 @@ class IntersticeDistribution(BaseFeaturizer):
                 'journal = {Nature Communications}, year = {2019}, '
                 'pages = {5537}, volume = {10}, '
                 'doi = {10.1038/s41467-019-13511-9}, '
-                'url = {https://doi.org/10.1038/s41467-019-13511-9}}']
+                'url = {https://www.nature.com/articles/s41467-019-13511-9}}']
 
     def implementors(self):
         return ['Qi Wang']
