@@ -704,7 +704,7 @@ class VoronoiFingerprint(BaseFeaturizer):
             '@article{peng2011, '
             'title={Structural signature of plastic deformation in metallic '
             'glasses}, '
-            'author={H L Peng, M Z Li, W H Wang}, '
+            'author={H L Peng, M Z Li and W H Wang}, '
             'journal={Physical Review Letters}, year={2011}}, '
             'pages = {135503}, volume = {106}, issue = {13}, '
             'doi = {10.1103/PhysRevLett.106.135503}}')
