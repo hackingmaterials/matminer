@@ -791,6 +791,7 @@ class IntersticeDistribution(BaseFeaturizer):
             struct, idx).values()
 
         nn_coords = np.array([nn['site'].coords for nn in n_w])
+        print(nn_coords)
 
         # Get center atom's radius and its nearest neighbors' radii
         center_r = MagpieData().get_elemental_properties(
@@ -842,10 +843,10 @@ class IntersticeDistribution(BaseFeaturizer):
     def analyze_area_interstice(nn_coords, nn_rs, convex_hull_simplices):
         """Analyze the area interstices in the neighbor convex hull facets.
         Args:
-            nn_coords (array-like): Nearest Neighbors' coordinates.
+            nn_coords (array-like, shape (N, 3)): Nearest Neighbors' coordinates
             nn_rs ([float]): Nearest Neighbors' radii.
-            convex_hull_simplices (array-like): Indices of points forming the
-                simplicial facets of the convex hull.
+            convex_hull_simplices (array-like, shape (M, 3)): Indices of points
+                forming the simplicial facets of convex hull.
         Returns:
             area_interstice_list ([float]): Area interstice list.
         """
@@ -863,6 +864,7 @@ class IntersticeDistribution(BaseFeaturizer):
                     np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
                 triangle_angles.append(t_a)
 
+            # calculate neighbors' packed area in the facet
             packed_area = 0
             for t_a, nn_r in zip(triangle_angles, facet_rs):
                 packed_area += t_a / 2 * pow(nn_r, 2)
@@ -882,12 +884,12 @@ class IntersticeDistribution(BaseFeaturizer):
         """Analyze the volume interstices in the tetrahedra formed by center
         atom and neighbor convex hull triplets.
         Args:
-            center_coords (array-like): Central atomic coordinates.
-            nn_coords (array-like): Nearest Neighbors' coordinates.
+            center_coords ([float]): Central atomic coordinates.
+            nn_coords (array-like, shape (N, 3)): Nearest Neighbors' coordinates
             center_r (float): central atom's radius.
             nn_rs ([float]): Nearest Neighbors' radii.
-            convex_hull_simplices (array-like): Indices of points forming the
-                simplicial facets of the convex hull.
+            convex_hull_simplices (array-like, shape (M, 3)): Indices of points
+                forming the simplicial facets of convex hull.
         Returns:
             volume_interstice_list ([float]): Volume interstice list.
         """
@@ -905,12 +907,12 @@ class IntersticeDistribution(BaseFeaturizer):
                                             center_coords]))
                 solid_angles.append(s_a)
 
-            # calculate neighbors' packed volume
+            # calculate neighbors' packed volume in the tetrahedron
             packed_volume = 0
             for s_a, nn_r in zip(solid_angles, facet_rs):
                 packed_volume += s_a / 3 * pow(nn_r, 3)
 
-            # add center atom's volume
+            # add center atom's volume in the tetrahedron
             center_solid_angle = solid_angle(center_coords, facet_coords)
             packed_volume += center_solid_angle / 3 * pow(center_r, 3)
 
