@@ -550,6 +550,7 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
                  mapi_key=None):
         super().__init__(target_col_id, overwrite_data)
         self.mpr = MPRester(mapi_key)
+        self.set_n_jobs(1)
 
     def featurize(self, comp):
         """
