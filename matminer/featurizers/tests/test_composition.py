@@ -12,9 +12,12 @@ from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import Stoichiometry, ElementProperty, \
-    ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, ElectronAffinity, \
-    ElectronegativityDiff, CohesiveEnergy, BandCenter, Miedema, CationProperty, OxidationStates,\
-    AtomicOrbitals, YangSolidSolution, AtomicPackingEfficiency, is_ionic, Meredig
+    ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, \
+    ElectronAffinity, \
+    ElectronegativityDiff, CohesiveEnergy, BandCenter, Miedema, CationProperty, \
+    OxidationStates, \
+    AtomicOrbitals, YangSolidSolution, AtomicPackingEfficiency, is_ionic, \
+    Meredig, CohesiveEnergyMP
 from matminer.featurizers.conversions import CompositionToOxidComposition
 
 
@@ -205,6 +208,13 @@ class CompositionFeaturesTest(PymatgenTest):
             raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
         df_cohesive_energy = CohesiveEnergy().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 5.15768, 2)
+
+    def test_cohesive_energy_mp(self):
+        mpr = MPRester()
+        if not mpr.api_key:
+            raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
+        df_cohesive_energy = CohesiveEnergyMP().featurize_dataframe(self.df, col_id="composition")
+        self.assertAlmostEqual(df_cohesive_energy["cohesive energy (MP)"][0], 5.945, 2)
 
     def test_miedema_all(self):
         df = pd.DataFrame({"composition": [Composition("TiZr"),
