@@ -103,12 +103,12 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_dimensionality(self):
         cscl = PymatgenTest.get_structure("CsCl")
+        graphite = PymatgenTest.get_structure("Graphite")
 
-        df = Dimensionality(bonds={("Cs", "Cl"): 3.5})
-        self.assertEqual(df.featurize(cscl)[0], 1)
+        df = Dimensionality()
 
-        df = Dimensionality(bonds={("Cs", "Cl"): 3.7})
         self.assertEqual(df.featurize(cscl)[0], 3)
+        self.assertEqual(df.featurize(graphite)[0], 2)
 
     def test_rdf_and_peaks(self):
         ## Test diamond
