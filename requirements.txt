@@ -8,6 +8,6 @@ pint==0.8.1
 six==1.11.0
 plotly==3.2.1
 future==0.16.0
-sympy==1.1.1
+sympy==1.4
 scikit_learn==0.21.3
 monty==3.0.1
