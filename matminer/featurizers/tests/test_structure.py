@@ -517,7 +517,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(df.columns.values), 25)
         self.assertAlmostEqual(df['Cs site #0'][0], 7513.468312122532)
         self.assertAlmostEqual(df['Al site #0'][0], 0.0)
-        self.assertAlmostEqual(df['Cs - Cl bond #1'][0], 135.74726437398044)
+        self.assertAlmostEqual(df['Cs - Cl bond #1'][0], 135.74726437398044, 3)
         self.assertAlmostEqual(df['Al - Ni bond #0'][0], 0.0)
 
         # Test error handling for bad fits or null fits
