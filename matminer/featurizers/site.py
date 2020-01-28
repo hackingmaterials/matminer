@@ -102,8 +102,8 @@ class AGNIFingerprints(BaseFeaturizer):
         # Get all neighbors of this site
         my_site = struct[idx]
         neighbors = struct.get_neighbors(my_site, self.cutoff)
-        sites = [n.site for n in neighbors]
-        dists = np.array([n.distance for n in neighbors])
+        sites = [n for n in neighbors]
+        dists = np.array([n.nn_distance for n in neighbors])
 
         # If one of the features is direction-dependent, compute the :math:`(r_i - r_j) / r_{ij}`
         if any([x in self.directions for x in ['x', 'y', 'z']]):
@@ -245,8 +245,8 @@ class OPSiteFingerprint(BaseFeaturizer):
             neighbors = struct.get_neighbors(s, r)
 
         # Smoothen distance, but use relative distances.
-        dmin = min([n.distance for n in neighbors])
-        neigh_dist = [[n.site, n.distance / dmin] for n in neighbors]
+        dmin = min([n.nn_distance for n in neighbors])
+        neigh_dist = [[n, n.nn_distance / dmin] for n in neighbors]
 
         neigh_dist_alldrs = {}
         d_sorted_alldrs = {}

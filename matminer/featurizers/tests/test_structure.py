@@ -103,12 +103,12 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_dimensionality(self):
         cscl = PymatgenTest.get_structure("CsCl")
+        graphite = PymatgenTest.get_structure("Graphite")
 
-        df = Dimensionality(bonds={("Cs", "Cl"): 3.5})
-        self.assertEqual(df.featurize(cscl)[0], 1)
+        df = Dimensionality()
 
-        df = Dimensionality(bonds={("Cs", "Cl"): 3.7})
         self.assertEqual(df.featurize(cscl)[0], 3)
+        self.assertEqual(df.featurize(graphite)[0], 2)
 
     def test_rdf_and_peaks(self):
         ## Test diamond
@@ -506,7 +506,7 @@ class StructureFeaturesTest(PymatgenTest):
                          'Ni - Ni bond #0', 'Ni - Ni bond #1',
                          'Ni - Ni bond #2', 'Ni - Ni bond #3',
                          'Ni - Ni bond #4', 'Ni - Ni bond #5']
-        self.assertAlmostEqual(bob.featurize(self.ni3al), truth1)
+        self.assertArrayAlmostEqual(bob.featurize(self.ni3al), truth1)
         self.assertEqual(bob.feature_labels(), truth1_labels)
 
         # Test padding from fitting and dataframe featurization
@@ -517,7 +517,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(df.columns.values), 25)
         self.assertAlmostEqual(df['Cs site #0'][0], 7513.468312122532)
         self.assertAlmostEqual(df['Al site #0'][0], 0.0)
-        self.assertAlmostEqual(df['Cs - Cl bond #1'][0], 135.74726437398044)
+        self.assertAlmostEqual(df['Cs - Cl bond #1'][0], 135.74726437398044, 3)
         self.assertAlmostEqual(df['Al - Ni bond #0'][0], 0.0)
 
         # Test error handling for bad fits or null fits
@@ -908,8 +908,8 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_structural_complexity(self):
         s = Structure.from_file(
-            "matminer/featurizers/tests/"
-            "Dy2HfS5_mp-1198001_computed.cif")
+            os.path.join(test_dir, "Dy2HfS5_mp-1198001_computed.cif")
+        )
 
         featurizer = StructuralComplexity()
         ig, igbits = featurizer.featurize(s)
@@ -918,13 +918,10 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(80, igbits, places=3)
 
         s = Structure.from_file(
-            "matminer/featurizers/tests/"
-            "Cs2CeN5O17_mp-1198000_computed.cif")
+            os.path.join(test_dir, "Cs2CeN5O17_mp-1198000_computed.cif")
+        )
 
         featurizer = StructuralComplexity()
         ig, igbits = featurizer.featurize(s)
 
         self.assertAlmostEqual(3.764, ig, places=3)
-
-if __name__ == '__main__':
-    unittest.main()

@@ -22,10 +22,10 @@ from monty.dev import requires
 from pymatgen import Structure, Lattice
 from pymatgen.analysis import bond_valence
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
+from pymatgen.analysis.dimensionality import get_dimensionality_larsen
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
 from pymatgen.analysis.local_env import VoronoiNN
-from pymatgen.analysis.structure_analyzer import get_dimensionality
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.structure import SymmetrizedStructure
@@ -197,32 +197,32 @@ class Dimensionality(BaseFeaturizer):
     structure. This feature is sensitive to bond length tables that you use.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, nn_method=pmg_le.CrystalNN()):
         """
 
         Args:
-            **kwargs: keyword args to pass to get_dimensionality() method of
-                pymatgen.
+            **nn_method: The nearest neighbor method used to determine atomic
+                connectivity.
         """
-        self.kwargs = kwargs
+        self.nn_method = nn_method
 
     def featurize(self, s):
-        return [get_dimensionality(s, **self.kwargs)]
+        bs = self.nn_method.get_bonded_structure(s)
+        return [get_dimensionality_larsen(bs)]
 
     def feature_labels(self):
         return ["dimensionality"]
 
     def citations(self):
-        return ["@article{Gorai2016a, "
-                "author = {Gorai, Prashun and Toberer, Eric and Stevanovic, "
-                "Vladan}, doi = {10.1039/C6TA04121C}, issn = {2050-7488}, "
-                "journal = {J. Mater. Chem. A}, number = {12},pages = {4136}, "
-                "title = {{Computational Identification of Promising "
-                "Thermoelectric Materials Among Known Quasi-2D Binary "
-                "Compounds}}, volume = {2}, year = {2016}}"]
+        return ["@article{larsen2019definition, title={Definition of a scoring "
+                "parameter to identify low-dimensional materials components},"
+                "author={Larsen, Peter Mahler and Pandey, Mohnish and Strange, "
+                "Mikkel and Jacobsen, Karsten Wedel}, journal={Physical Review "
+                "Materials}, volume={3}, number={3}, pages={034003}, "
+                "year={2019}, publisher={APS} }"]
 
     def implementors(self):
-        return ["Anubhav Jain"]
+        return ["Anubhav Jain", "Alex Ganose"]
 
 
 class RadialDistributionFunction(BaseFeaturizer):
@@ -526,8 +526,8 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             this_charge = float(site.specie.oxi_state)
             neighbors = struct.get_neighbors(site, self.cutoff)
             for n in neighbors:
-                neigh_charge = float(n.site.specie.oxi_state)
-                d = n.distance
+                neigh_charge = float(n.specie.oxi_state)
+                d = n.nn_distance
                 bin_index = int(d / self.dr)
                 redf_dict["distribution"][bin_index] \
                     += (this_charge * neigh_charge) / (struct.num_sites * d)
@@ -1056,9 +1056,9 @@ class MinimumRelativeDistances(BaseFeaturizer):
             dists_relative = []
             for n in vire.structure.get_neighbors(site, self.cutoff):
                 r_site = vire.radii[site.species_string]
-                r_neigh = vire.radii[n.site.species_string]
+                r_neigh = vire.radii[n.species_string]
                 radii_dist = r_site + r_neigh
-                d_relative = n.distance / radii_dist
+                d_relative = n.nn_distance / radii_dist
                 dists_relative.append(d_relative)
             dists_relative_min.append(min(dists_relative))
         return [dists_relative_min]
