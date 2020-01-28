@@ -10,4 +10,4 @@ plotly==3.2.1
 future==0.16.0
 sympy==1.1.1
 scikit_learn==0.21.3
-monty==3.0.1
+monty==3.0.2
