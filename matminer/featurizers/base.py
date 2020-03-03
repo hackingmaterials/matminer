@@ -438,7 +438,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
         # Add a progress bar
         if pbar:
             if is_notebook():
-                tqdm_func = tqdm.tqdm_notebook
+                tqdm_func = tqdm.notebook.tqdm
             else:
                 tqdm_func = tqdm.tqdm
             # list() required, tqdm has issues with memory if generator given
