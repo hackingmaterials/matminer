@@ -472,20 +472,20 @@ class StructureFeaturesTest(PymatgenTest):
         df = bf_voronoi.featurize_dataframe(df, 's')
 
         # Ensure all data is properly labelled and organized
-        self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, np.nan])
-        self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [np.nan, 0.5])
-        self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [np.nan, 0.0])
-        self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [np.nan, 0.5])
+        self.assertArrayEqual(df['C - C bond frac.'].to_numpy(), [1.0, np.nan])
+        self.assertArrayEqual(df['Al - Ni bond frac.'].to_numpy(), [np.nan, 0.5])
+        self.assertArrayEqual(df['Al - Al bond frac.'].to_numpy(), [np.nan, 0.0])
+        self.assertArrayEqual(df['Ni - Ni bond frac.'].to_numpy(), [np.nan, 0.5])
 
         # Test to make sure bad_bond_values (bbv) are still changed correctly
         # and check inplace behavior of featurize dataframe.
         bf_voronoi.bbv = 0.0
         df = pd.DataFrame.from_dict({'s': s_list})
         df = bf_voronoi.featurize_dataframe(df, 's')
-        self.assertArrayEqual(df['C - C bond frac.'].as_matrix(), [1.0, 0.0])
-        self.assertArrayEqual(df['Al - Ni bond frac.'].as_matrix(), [0.0, 0.5])
-        self.assertArrayEqual(df['Al - Al bond frac.'].as_matrix(), [0.0, 0.0])
-        self.assertArrayEqual(df['Ni - Ni bond frac.'].as_matrix(), [0.0, 0.5])
+        self.assertArrayEqual(df['C - C bond frac.'].to_numpy(), [1.0, 0.0])
+        self.assertArrayEqual(df['Al - Ni bond frac.'].to_numpy(), [0.0, 0.5])
+        self.assertArrayEqual(df['Al - Al bond frac.'].to_numpy(), [0.0, 0.0])
+        self.assertArrayEqual(df['Ni - Ni bond frac.'].to_numpy(), [0.0, 0.5])
 
     def test_bob(self):
 
