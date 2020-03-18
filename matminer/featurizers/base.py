@@ -250,7 +250,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
     def transform(self, X):
         """Compute features for a list of inputs"""
 
-        return self.featurize_many(X, ignore_errors=True)
+        return self.featurize_many(X, ignore_errors=True, pbar=False)
 
     def fit_featurize_dataframe(self, df, col_id, fit_args=None,
                                 *args, **kwargs):
