@@ -795,7 +795,7 @@
       "composition": "Chemical formula.",
       "yield strength": "Target variable. Experimentally measured steel yield strengths, in GPa."
     },
-    "description": "Matbench v0.1 dataset for predicting steel yeild strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.",
+    "description": "Matbench v0.1 dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.",
     "file_type": "json.gz",
     "hash": "",
     "num_entries": 312,
