@@ -58,8 +58,18 @@ class IOTest(PymatgenTest):
         test_file = os.path.join(test_dir, "dataframe.json")
         store_dataframe_as_json(self.df, temp_file)
 
-        self.assertTrue(
-            filecmp.cmp(temp_file, test_file), "Json files do not match.")
+        with zopen(temp_file, 'rb') as f:
+            temp_data = json.load(f)
+
+        with zopen(test_file, 'rb') as f:
+            test_data = json.load(f)
+
+        # remove version otherwise this will have to be updated everytime
+        # the pymatgen version changes
+        temp_data["data"][0][0].pop("@version")
+        test_data["data"][0][0].pop("@version")
+
+        self.assertDictsAlmostEqual(temp_data, test_data)
 
         # check writing gzipped json (comparing hashes doesn't work) so have to
         # compare contents
@@ -73,8 +83,10 @@ class IOTest(PymatgenTest):
         with zopen(test_file, 'rb') as f:
             test_data = json.load(f)
 
-        self.assertTrue(temp_data == test_data,
-                        "Compressed json files do not match.")
+        temp_data["data"][0][0].pop("@version")
+        test_data["data"][0][0].pop("@version")
+
+        self.assertDictsAlmostEqual(temp_data, test_data)
 
         # check writing bz2 compressed json (comparing hashes doesn't work)
         # check writing gzipped json (comparing hashes doesn't work) so have to
@@ -89,8 +101,10 @@ class IOTest(PymatgenTest):
         with zopen(test_file, 'rb') as f:
             test_data = json.load(f)
 
-        self.assertTrue(temp_data == test_data,
-                        "Compressed json files do not match.")
+        temp_data["data"][0][0].pop("@version")
+        test_data["data"][0][0].pop("@version")
+
+        self.assertDictsAlmostEqual(temp_data, test_data)
 
     def test_load_dataframe_from_json(self):
 
