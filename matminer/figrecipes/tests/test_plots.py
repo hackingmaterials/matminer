@@ -3,6 +3,8 @@ PlotlyFig testing. Most tests are run by comparing generated Plotly figures
 with pre-generated json files. Some are just ensuring Plotly does not throw
 errors.
 """
+from copy import deepcopy
+
 from monty.json import MontyEncoder
 
 __author__ = "Alex Dunn <ardunn@lbl.gov>"
@@ -55,45 +57,38 @@ def refresh_json(open_plots=False):
     bar = pf.bar(x=a, y=b, labels=xlabels, return_plot=True)
     pcp = pf.parallel_coordinates([a, b], cols=xlabels, return_plot=True)
 
-    # plotly figures need to be converted jsonable data
-    xys['data'] = [p.to_plotly_json() for p in xys['data']]
-    xym['data'] = [p.to_plotly_json() for p in xym['data']]
-    xy_colors['data'] = [p.to_plotly_json() for p in xy_colors['data']]
-    hmb['data'] = [p.to_plotly_json() for p in hmb['data']]
-    his['data'] = [p.to_plotly_json() for p in his['data']]
-    bar['data'] = [p.to_plotly_json() for p in bar['data']]
-    pcp['data'] = [p.to_plotly_json() for p in pcp['data']]
-
-    # Layout is compared for the plots which always convert to dataframes,
-    # as dataframes are not easily encoded by json.dump
-    vio = pf.violin([a, b, c, b, a, c, b], cols=xlabels, return_plot=True)
     scm = pf.scatter_matrix([a, b, c], return_plot=True)
-
-    # plotly layout needs to be converted jsonable data
-    vio = {'layout': vio['layout'].to_plotly_json()}
-    scm = {'layout': scm['layout'].to_plotly_json()}
+    vio = pf.violin([a, b, c, b, a, c, b], cols=xlabels, return_plot=True)
 
     df = pd.DataFrame(data=np.asarray([ah, bh, ch]).T,
                       columns=['ah', 'bh', 'ch'])
     x_labels = ['low', 'high']
     y_labels = ['small', 'large']
-    # TODO: this plot was not JSON serializable, use a different serialization method for all plots
+
+    # TODO: this plot was not JSON serializable, use a different serialization
+    #  method for all plots
     hmdf = pf.heatmap_df(df, x_labels=x_labels, y_labels=y_labels, return_plot=True)
-    hmdf['data'] = [p.to_plotly_json() for p in hmdf['data']]
 
     df = pd.DataFrame(np.random.rand(50, 3), columns=list('qwe'))
     triangle = pf.triangle(df[['q', 'w', 'e']], return_plot=True)
 
-    fnamedict = {"xys": xys, "xym": xym, "xy_colors":xy_colors,
+    fnamedict = {"xys": xys, "xym": xym, "xy_colors": xy_colors,
                  "hmb": hmb, "his": his, "bar": bar,
                  "pcp": pcp, "vio": vio, "scm": scm,
-                 'triangle': triangle,
-                 'hmdf': hmdf
+                 'triangle': triangle, 'hmdf': hmdf
                  }
 
-    for fname, obj in fnamedict.items():
+    for fname, orig_obj in fnamedict.items():
+        obj = deepcopy(orig_obj)
         if fname in ["vio", "scm"]:
-            obj = obj['layout']
+            # Layout is compared for the plots which always convert to
+            # dataframes, as dataframes are not easily encoded by json.dump
+            obj = obj['layout'].to_plotly_json()
+        elif fname in ["triangle"]:
+            pass
+        else:
+            # plotly figures need to be converted jsonable data
+            obj['data'] = [p.to_plotly_json() for p in obj['data']]
 
         with open("template_{}.json".format(fname), "w") as f:
             json.dump(obj, f, cls=MontyEncoder)
@@ -138,7 +133,7 @@ class PlotlyFigTest(PymatgenTest):
                                          return_plot=True)
         hmb_test['data'] = [p.to_plotly_json() for p in hmb_test['data']]
         hmb_true = self.fopen("template_hmb.json")
-        self.assertTrue(hmb_test == hmb_true)
+        self.assertEqual(hmb_test, hmb_true)
 
     def test_histogram(self):
         his_test = self.pf.histogram(a + b + c, n_bins=5, return_plot=True)
