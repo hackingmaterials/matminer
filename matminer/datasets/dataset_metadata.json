@@ -615,7 +615,7 @@
     "file_type": "json.gz",
     "num_entries": 106113,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-    "url": "https://ndownloader.figshare.com/files/17476034",
+    "url": "https://ml.materialsproject.org/matbench_mp_is_metal.json.gz",
     "hash": "9a028ed5750a4c76ca36e9f3c8d48fe0bf3fb21b76ec2289e58ae7048d527919"
   },
   "matbench_mp_gap": {
@@ -630,7 +630,7 @@
     "file_type": "json.gz",
     "num_entries": 106113,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-    "url": "https://ndownloader.figshare.com/files/17084741",
+    "url": "https://ml.materialsproject.org/matbench_mp_gap.json.gz",
     "hash": "58b65746bd88329986ed66031a2ac1369c7c522f7bc9f9081528e07097c2c057"
   },
   "matbench_mp_e_form": {
@@ -645,7 +645,7 @@
     "file_type": "json.gz",
     "num_entries": 132752,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
-    "url": "https://ndownloader.figshare.com/files/17476028",
+    "url": "https://ml.materialsproject.org/matbench_mp_e_form.json.gz",
     "hash": "dedcb1d4ba2e3e50dbdd45ba5bc647a00e9c2bcf8f8bf556dc8e92caa39eb21f"
   },
   "matbench_log_gvrh": {
@@ -660,7 +660,7 @@
     "file_type": "json.gz",
     "num_entries": 10987,
     "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
-    "url": "https://ndownloader.figshare.com/files/17476064",
+    "url": "https://ml.materialsproject.org/matbench_log_gvrh.json.gz",
     "hash": "098af941f4c663270f1fe21abf20ffad6fb85ecbfcba5786ceac03983ac29da7"
   },
   "matbench_log_kvrh": {
@@ -675,7 +675,7 @@
     "file_type": "json.gz",
     "num_entries": 10987,
     "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
-    "url": "https://ndownloader.figshare.com/files/17476061",
+    "url": "https://ml.materialsproject.org/matbench_log_kvrh.json.gz",
     "hash": "44b113ddb7e23aa18731a62c74afa7e5aa654199e0db5f951c8248a00955c9cd"
   },
   "matbench_dielectric": {
@@ -690,7 +690,7 @@
     "description": "Matbench v0.1 test dataset for predicting refractive index from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having refractive indices less than 1 and those containing noble gases. Retrieved April 2, 2019.",
     "file_type": "json.gz",
     "num_entries": 4764,
-    "url": "https://ndownloader.figshare.com/files/17476067",
+    "url": "https://ml.materialsproject.org/matbench_dielectric.json.gz",
     "hash": "83befa09bc2ec2f4b6143afc413157827a90e5e2e42c1eb507ccfa01bf26a1d6",
     "reference": "Petousis, I., Mrdjenovich, D., Ballouz, E., Liu, M., Winston, D.,\nChen, W., Graf, T., Schladt, T. D., Persson, K. A. & Prinz, F. B.\nHigh-throughput screening of inorganic compounds for the discovery\nof novel dielectric and optical materials. Sci. Data 4, 160134 (2017)."
   },
@@ -707,7 +707,7 @@
     "file_type": "json.gz",
     "num_entries": 636,
     "reference": "2D Dataset discussed in:\nHigh-throughput Identification and Characterization of Two dimensional Materials using Density functional theory Kamal Choudhary, Irina Kalish, Ryan Beams & Francesca Tavazza Scientific Reports volume 7, Article number: 5179 (2017)\nOriginal 2D Data file sourced from:\nchoudhary, kamal; https://orcid.org/0000-0001-9737-8074 (2018): jdft_2d-7-7-2018.json. figshare. Dataset.",
-    "url": "https://ndownloader.figshare.com/files/17476046",
+    "url": "https://ml.materialsproject.org/matbench_jdft2d.json.gz",
     "hash": "26057dc4524e193e32abffb296ce819b58b6e11d1278cae329a2f97817a4eddf"
   },
   "matbench_perovskites": {
@@ -722,7 +722,7 @@
     "file_type": "json.gz",
     "num_entries": 18928,
     "reference": "Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, S\u00f8ren Dahl, Ib Chorkendorff, Thomas F. Jaramillo and Karsten W. Jacobsen (2012) New cubic perovskites for one- and two-photon water splitting using the computational materials repository. Energy Environ. Sci., 2012,5, 9034-9043 https://doi.org/10.1039/C2EE22341D",
-    "url": "https://ndownloader.figshare.com/files/17494805",
+    "url": "https://ml.materialsproject.org/matbench_perovskites.json.gz",
     "hash": "4641e2417f8ec8b50096d2230864468dfa08278dc9d257c327f65d0305278483"
   },
   "matbench_glass": {
@@ -738,7 +738,7 @@
     "file_type": "json.gz",
     "num_entries": 5680,
     "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://www.springer.com/gp/book/9783540605072 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 03-09-2019",
-    "url": "https://ndownloader.figshare.com/files/17494637",
+    "url": "https://ml.materialsproject.org/matbench_glass.json.gz",
     "hash": "36beb654e2a463ee2a6572105bea0ca2961eee7c7b26a25377bff2c3b338e53a"
   },
   "matbench_expt_gap": {
@@ -753,7 +753,7 @@
     "file_type": "json.gz",
     "num_entries": 4604,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
-    "url": "https://ndownloader.figshare.com/files/17494814",
+    "url": "https://ml.materialsproject.org/matbench_expt_gap.json.gz",
     "hash": "1e6816fb8e7132535b76cdac458c4d53944eca97e1ecb68e6a8fd853c9cedc3a"
   },
   "matbench_expt_is_metal": {
@@ -768,7 +768,7 @@
     "file_type": "json.gz",
     "num_entries": 4921,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 \n https//:doi.org/10.1021/acs.jpclett.8b00124.",
-    "url": "https://ndownloader.figshare.com/files/17494820",
+    "url": "https://ml.materialsproject.org/matbench_expt_is_metal.json.gz",
     "hash": "80fb0854cff5d4657d812793f4748d5c23a9407f6c59bcf5b86c818ebaa6910f"
   },
   "matbench_phonons": {
@@ -784,7 +784,7 @@
     "file_type": "json.gz",
     "num_entries": 1296,
     "reference": "Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. Sci. Data 5:180065 doi: 10.1038/sdata.2018.65 (2018).\nPetretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. (2018). figshare. Collection.",
-    "url": "https://ndownloader.figshare.com/files/17476037",
+    "url": "https://ml.materialsproject.org/matbench_phonons.json.gz",
     "hash": "4db551f21ec5f577e6202725f10e34dfc509aa7df3a6bdaac497da7f6dbbb9b3"
   },
   "matbench_steels": {
@@ -800,7 +800,7 @@
     "hash": "",
     "num_entries": 312,
     "reference": "https://citrination.com/datasets/153092/",
-    "url": "https://ndownloader.figshare.com/files/17476040",
+    "url": "https://ml.materialsproject.org/matbench_steels.json.gz",
     "hash": "473bc4957b2ea5e6465aef84bc29bb48ac34db27d69ea4ec5f508745c6fae252"
   }
 }
