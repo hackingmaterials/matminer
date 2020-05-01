@@ -65,7 +65,7 @@ class TestMatScholarData(TestCase):
         embedding_cu = self.data_source.get_elemental_property(Element("Cu"), "embedding 3")
         self.assertAlmostEqual(0.028666902333498, embedding_cu)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(KeyError):
             self.data_source.get_elemental_property(Element("Db"), "embedding 9")
 
 
