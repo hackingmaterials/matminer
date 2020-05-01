@@ -94,7 +94,7 @@ def refresh_json(open_plots=False):
             json.dump(obj, f, cls=MontyEncoder)
 
     if open_plots:
-        for name, obj in fnamedict.items():
+        for obj in fnamedict.values():
             pf.create_plot(obj, return_plot=False)
 
 
