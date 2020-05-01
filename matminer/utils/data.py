@@ -213,7 +213,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
                                           lines[atomic_no - 1].split()]
                         else:
                             prop_value = float(lines[atomic_no - 1])
-                    except ValueError:
+                    except (ValueError, IndexError):
                         prop_value = float("NaN")
                     self.all_elemental_props[descriptor_name][
                         Element.from_Z(atomic_no).symbol] = prop_value
