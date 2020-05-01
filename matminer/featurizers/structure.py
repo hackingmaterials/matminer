@@ -525,12 +525,11 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
             neighbors = struct.get_neighbors(site, self.cutoff)
-            for n in neighbors:
-                neigh_charge = float(n.site.specie.oxi_state)
-                d = n.distance
-                bin_index = int(d / self.dr)
+            for nnsite, dist, *_ in neighbors:
+                neigh_charge = float(nnsite.specie.oxi_state)
+                bin_index = int(dist / self.dr)
                 redf_dict["distribution"][bin_index] \
-                    += (this_charge * neigh_charge) / (struct.num_sites * d)
+                    += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
         return [redf_dict]
 
@@ -1054,11 +1053,11 @@ class MinimumRelativeDistances(BaseFeaturizer):
         dists_relative_min = []
         for site in vire.structure:
             dists_relative = []
-            for n in vire.structure.get_neighbors(site, self.cutoff):
+            for nnsite, dist, *_ in vire.structure.get_neighbors(site, self.cutoff):
                 r_site = vire.radii[site.species_string]
-                r_neigh = vire.radii[n.site.species_string]
+                r_neigh = vire.radii[nnsite.species_string]
                 radii_dist = r_site + r_neigh
-                d_relative = n.distance / radii_dist
+                d_relative = dist / radii_dist
                 dists_relative.append(d_relative)
             dists_relative_min.append(min(dists_relative))
         return [dists_relative_min]

@@ -506,7 +506,7 @@ class StructureFeaturesTest(PymatgenTest):
                          'Ni - Ni bond #0', 'Ni - Ni bond #1',
                          'Ni - Ni bond #2', 'Ni - Ni bond #3',
                          'Ni - Ni bond #4', 'Ni - Ni bond #5']
-        self.assertAlmostEqual(bob.featurize(self.ni3al), truth1)
+        self.assertArrayAlmostEqual(bob.featurize(self.ni3al), truth1)
         self.assertEqual(bob.feature_labels(), truth1_labels)
 
         # Test padding from fitting and dataframe featurization
@@ -517,7 +517,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertEqual(len(df.columns.values), 25)
         self.assertAlmostEqual(df['Cs site #0'][0], 7513.468312122532)
         self.assertAlmostEqual(df['Al site #0'][0], 0.0)
-        self.assertAlmostEqual(df['Cs - Cl bond #1'][0], 135.74726437398044)
+        self.assertAlmostEqual(df['Cs - Cl bond #1'][0], 135.74726437398044, 5)
         self.assertAlmostEqual(df['Al - Ni bond #0'][0], 0.0)
 
         # Test error handling for bad fits or null fits
