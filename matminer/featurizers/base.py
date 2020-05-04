@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 from six import string_types, reraise
 from sklearn.base import TransformerMixin, BaseEstimator, is_classifier
-import tqdm
+from tqdm.auto import tqdm
 
-from matminer.utils.utils import homogenize_multiindex, is_notebook
+from matminer.utils.utils import homogenize_multiindex
 
 
 class BaseFeaturizer(BaseEstimator, TransformerMixin):
@@ -437,12 +437,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin):
 
         # Add a progress bar
         if pbar:
-            if is_notebook():
-                tqdm_func = tqdm.notebook.tqdm
-            else:
-                tqdm_func = tqdm.tqdm
             # list() required, tqdm has issues with memory if generator given
-            entries = tqdm_func(list(entries), desc=self.__class__.__name__)
+            entries = tqdm(list(entries), desc=self.__class__.__name__)
 
         # Run the actual featurization
         if self.n_jobs == 1:
