@@ -2040,7 +2040,7 @@ url={http://dx.doi.org/10.1038/sdata.2018.65}
 ---------------
 matbench_steels
 ---------------
-Matbench v0.1 dataset for predicting steel yeild strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.
+Matbench v0.1 dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.
 
 **Number of entries:** 312
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Table of Featurizers &#8212; matminer 0.6.2 documentation</title>
+    <title>Table of Featurizers &#8212; matminer 0.6.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -27,7 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -149,13 +149,16 @@
 <tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">CohesiveEnergy</span></code></p></td>
 <td><p>Cohesive energy per atom using elemental cohesive energies and</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">Miedema</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">CohesiveEnergyMP</span></code></p></td>
+<td><p>Cohesive energy per atom lookup using Materials Project</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">Miedema</span></code></p></td>
 <td><p>Formation enthalpies of intermetallic compounds, from Miedema et al.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">YangSolidSolution</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">YangSolidSolution</span></code></p></td>
 <td><p>Mixing thermochemistry and size mismatch terms of Yang and Zhang (2012)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">AtomicPackingEfficiency</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">AtomicPackingEfficiency</span></code></p></td>
 <td><p>Packing efficiency based on a geometric theory of the amorphous packing</p></td>
 </tr>
 </tbody>
@@ -295,40 +298,43 @@
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">VoronoiFingerprint</span></code></p></td>
 <td><p>Voronoi tessellation-based features around target site.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">ChemicalSRO</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">IntersticeDistribution</span></code></p></td>
+<td><p>Interstice distribution in the neighboring cluster around an atom site.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">ChemicalSRO</span></code></p></td>
 <td><p>Chemical short range ordering, deviation of local site and nominal structure compositions</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">GaussianSymmFunc</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">GaussianSymmFunc</span></code></p></td>
 <td><p>Gaussian symmetry function features suggested by Behler et al.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">EwaldSiteEnergy</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">EwaldSiteEnergy</span></code></p></td>
 <td><p>Compute site energy from Coulombic interactions</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">ChemEnvSiteFingerprint</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">ChemEnvSiteFingerprint</span></code></p></td>
 <td><p>Resemblance of given sites to ideal environments</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">CoordinationNumber</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">CoordinationNumber</span></code></p></td>
 <td><p>Number of first nearest neighbors of a site.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">GeneralizedRadialDistributionFunction</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">GeneralizedRadialDistributionFunction</span></code></p></td>
 <td><p>Compute the general radial distribution function (GRDF) for a site.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">AngularFourierSeries</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">AngularFourierSeries</span></code></p></td>
 <td><p>Compute the angular Fourier series (AFS), including both angular and radial info</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">LocalPropertyDifference</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">LocalPropertyDifference</span></code></p></td>
 <td><p>Differences in elemental properties between site and its neighboring sites.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">BondOrientationalParameter</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">BondOrientationalParameter</span></code></p></td>
 <td><p>Averages of spherical harmonics of local neighbors</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">SiteElementalProperty</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">SiteElementalProperty</span></code></p></td>
 <td><p>Elemental properties of atom on a certain site</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">AverageBondLength</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">AverageBondLength</span></code></p></td>
 <td><p>Determines the average bond length between one specific site</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">AverageBondAngle</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">AverageBondAngle</span></code></p></td>
 <td><p>Determines the average bond angles of a specific site with</p></td>
 </tr>
 </tbody>
@@ -504,7 +510,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 
