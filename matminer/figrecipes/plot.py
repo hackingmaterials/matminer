@@ -1196,8 +1196,7 @@ class PlotlyFig:
                                      'tickfont': font_style,
                                      'titlefont': font_style,
                                      }}
-        par_coords = go.Parcoords(line=line, dimensions=dimensions,
-                                  hoverinfo=self.hoverinfo)
+        par_coords = go.Parcoords(line=line, dimensions=dimensions)
 
         par_coords.tickfont = font_style
         par_coords.labelfont = font_style

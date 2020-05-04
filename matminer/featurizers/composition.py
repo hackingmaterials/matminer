@@ -12,7 +12,7 @@ from pymatgen import Element, MPRester
 from pymatgen.core.composition import Composition
 from pymatgen.core.molecular_orbitals import MolecularOrbitals
 from pymatgen.core.periodic_table import get_el_sp
-from sklearn.neighbors.unsupervised import NearestNeighbors
+from sklearn.neighbors import NearestNeighbors
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats

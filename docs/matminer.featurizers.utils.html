@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>matminer.featurizers.utils package &#8212; matminer 0.6.2 documentation</title>
+    <title>matminer.featurizers.utils package &#8212; matminer 0.6.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -27,7 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -61,7 +61,7 @@
 <dl class="class">
 <dt id="matminer.featurizers.utils.cgcnn.AtomCustomArrayInitializer">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.cgcnn.</code><code class="sig-name descname">AtomCustomArrayInitializer</code><span class="sig-paren">(</span><em class="sig-param">elem_embedding</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.AtomCustomArrayInitializer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Initialize atom feature vectors using a JSON file, which is a python
 dictionary mapping from element number to a list representing the
 feature vector of the element.</p>
@@ -80,7 +80,7 @@ feature vector of the element.</p>
 <dl class="class">
 <dt id="matminer.featurizers.utils.cgcnn.CIFDataWrapper">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.cgcnn.</code><code class="sig-name descname">CIFDataWrapper</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">atom_init_fea</em>, <em class="sig-param">max_num_nbr=12</em>, <em class="sig-param">radius=8</em>, <em class="sig-param">dmin=0</em>, <em class="sig-param">step=0.2</em>, <em class="sig-param">random_seed=123</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CIFDataWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Wrapper for a dataset containing pymatgen Structure objects.
 This is modified from CGCNN repo’s CIFData for wrapping dataset where the
 structures are stored in CIF files.
@@ -107,7 +107,7 @@ random_seed (int): Random seed for shuffling the dataset.</p>
 <dl class="class">
 <dt id="matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.cgcnn.</code><code class="sig-name descname">CrystalGraphConvNetWrapper</code><span class="sig-paren">(</span><em class="sig-param">orig_atom_fea_len</em>, <em class="sig-param">nbr_fea_len</em>, <em class="sig-param">atom_fea_len=64</em>, <em class="sig-param">n_conv=3</em>, <em class="sig-param">h_fea_len=128</em>, <em class="sig-param">n_h=1</em>, <em class="sig-param">classification=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.utils.cgcnn.CrystalGraphConvNetWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Wrapper for CrystalGraphConvNet in the CGCNN repo and add extract_feature
 function to extract the feature vector after pooling layer of CGCNN model
 as features for the structures.
@@ -176,7 +176,7 @@ func (object): function object.</p>
 <dl class="class">
 <dt id="matminer.featurizers.utils.grdf.AbstractPairwise">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.grdf.</code><code class="sig-name descname">AbstractPairwise</code><a class="headerlink" href="#matminer.featurizers.utils.grdf.AbstractPairwise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract class for pairwise functions used in Generalized Radial Distribution Function</p>
 <dl class="method">
 <dt id="matminer.featurizers.utils.grdf.AbstractPairwise.name">
@@ -355,7 +355,7 @@ width (float): Size of window</p>
 <dl class="class">
 <dt id="matminer.featurizers.utils.stats.PropertyStats">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.utils.stats.</code><code class="sig-name descname">PropertyStats</code><a class="headerlink" href="#matminer.featurizers.utils.stats.PropertyStats" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>This class contains statistical operations that are commonly employed
 when computing features.</p>
 <p>The primary way for interacting with this class is to call the
@@ -656,7 +656,7 @@ weights (list of floats): Weights for each value</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 
