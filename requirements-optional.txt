@@ -8,7 +8,7 @@
 ujson==2.0.3
 jmespath==0.9.5
 httplib2==0.17.3
-ase==3.14.1
+ase==3.19.1
 
 ## dscribe
 dscribe==0.2.9
