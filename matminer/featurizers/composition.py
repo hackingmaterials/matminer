@@ -2004,3 +2004,29 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         n = max(3, min(n_neighbors, 24))
 
         return self.ideal_ratio[n]
+
+
+class Roost(BaseFeaturizer):
+    """
+    Representation learning from stiochiometry
+    """
+
+    def __init__(self,):
+        pass
+
+    def featurize(self,):
+        pass
+
+    def feature_labels(self):
+        return []
+
+    def implementors(self):
+        return ["Rhys Goodall"]
+
+    def citations(self):
+        return ["@article{goodall2019predicting,"
+                "title={Predicting materials properties without crystal structure: "
+                "Deep representation learning from stoichiometry},"
+                "author={Goodall, Rhys EA and Lee, Alpha A},"
+                "journal={arXiv preprint arXiv:1910.00617},"
+                "year={2019}}"]
