@@ -186,6 +186,11 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     L. Ward, A. Agrawal, A. Choudhary, C. Wolverton, A general-purpose machine
     learning framework for predicting properties of inorganic materials,
     Npj Comput. Mater. 2 (2016) 16028.
+
+
+    Finding the exact meaning of each of these features can be quite difficult.
+    Reproduced in ./data_files/magpie_elementdata_feature_descriptions.txt.
+
     """
 
     def __init__(self):
