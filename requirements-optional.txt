@@ -7,7 +7,7 @@
 ## MPDS
 ujson==2.0.3
 jmespath==0.9.5
-httplib2==0.17.3
+httplib2==0.18.0
 ase==3.19.1
 
 ## dscribe
