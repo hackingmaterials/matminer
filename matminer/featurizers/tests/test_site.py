@@ -11,8 +11,9 @@ from matminer.featurizers.site import AGNIFingerprints, \
     EwaldSiteEnergy, \
     VoronoiFingerprint, IntersticeDistribution, ChemEnvSiteFingerprint, \
     CoordinationNumber, ChemicalSRO, GaussianSymmFunc, \
-    GeneralizedRadialDistributionFunction, AngularFourierSeries, LocalPropertyDifference, \
-    BondOrientationalParameter, SiteElementalProperty, AverageBondLength, AverageBondAngle
+    GeneralizedRadialDistributionFunction, AngularFourierSeries, \
+    LocalPropertyDifference, SOAP, BondOrientationalParameter, \
+    SiteElementalProperty, AverageBondLength, AverageBondAngle
 from matminer.featurizers.deprecated import CrystalSiteFingerprint
 from matminer.featurizers.utils.grdf import Gaussian
 
@@ -35,6 +36,26 @@ class FingerprintTests(PymatgenTest):
             ["H", "He"], [[0,0,0],[0.5,0.5,0.5]],
             validate_proximity=False, to_unit_cell=False,
             coords_are_cartesian=False)
+        self.diamond = Structure(
+            Lattice([[2.189, 0, 1.264], [0.73, 2.064, 1.264],
+                     [0, 0, 2.528]]), ["C0+", "C0+"], [[2.554, 1.806, 4.423],
+                                                       [0.365, 0.258, 0.632]],
+            validate_proximity=False,
+            to_unit_cell=False, coords_are_cartesian=True,
+            site_properties=None)
+        self.nacl = Structure(
+            Lattice([[3.485, 0, 2.012], [1.162, 3.286, 2.012],
+                     [0, 0, 4.025]]), ["Na1+", "Cl1-"], [[0, 0, 0],
+                                                         [2.324, 1.643, 4.025]],
+            validate_proximity=False,
+            to_unit_cell=False, coords_are_cartesian=True,
+            site_properties=None)
+        self.ni3al = Structure(
+            Lattice([[3.52, 0, 0], [0, 3.52, 0], [0, 0, 3.52]]),
+            ["Al", ] + ["Ni"] * 3,
+            [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0.5], [0, 0.5, 0.5]],
+            validate_proximity=False, to_unit_cell=False,
+            coords_are_cartesian=False, site_properties=None)
 
     def test_simple_cubic(self):
         """Test with an easy structure"""
@@ -690,6 +711,38 @@ class FingerprintTests(PymatgenTest):
         ft = AverageBondAngle(CrystalNN())
         for i in range(len(self.b1.sites)):
             self.assertAlmostEqual(ft.featurize(self.b1, i)[0], np.pi / 2)
+
+    def test_SOAP(self):
+
+        def n_soap_feat(soaper):
+            n_elems = len(soaper.elements_sorted)
+            lmax = soap.lmax
+            nmax = soap.nmax
+            n_blocks = n_elems * (n_elems + 1)/2
+            n_element_features = int((lmax + 1) * nmax * (nmax + 1)/2)
+            return int(n_element_features * n_blocks)
+
+        # Test individual samples
+        soap = SOAP(rcut=3.0, nmax=4, lmax=2, sigma=1, periodic=True)
+        soap.fit([self.diamond])
+        v = soap.featurize(self.diamond, 0)
+        self.assertEqual(len(v), n_soap_feat(soap))
+
+        soap.fit([self.ni3al])
+        v = soap.featurize(self.ni3al, 0)
+        self.assertEqual(len(v), n_soap_feat(soap))
+
+        # Test dataframe fitting
+        df = pd.DataFrame({"s": [self.diamond, self.ni3al, self.nacl], 'idx': [0, 1, 0]})
+        soap.fit(df["s"])
+        df = soap.featurize_dataframe(df, ['s', 'idx'])
+        self.assertTupleEqual(df.shape, (3, n_soap_feat(soap)+2))
+
+        # Check that only the first has carbon features
+        carbon_label = df["Z=6,Z'=6,l=0,n=0,n'=0"]
+        self.assertTrue(carbon_label[0] != 0)
+        self.assertTrue(carbon_label[1] == 0)
+        self.assertTrue(carbon_label[2] == 0)
 
     def tearDown(self):
         del self.sc

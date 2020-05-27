@@ -26,7 +26,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     EwaldEnergy, BondFractions, BagofBonds, StructuralHeterogeneity, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
     Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID, \
-    SOAP, GlobalInstabilityIndex, \
+    GlobalInstabilityIndex, \
     StructuralComplexity
 
 # For the CGCNNFeaturizer
@@ -843,26 +843,6 @@ class StructureFeaturesTest(PymatgenTest):
         fvec = jcf.featurize(self.diamond)
         self.assertAlmostEqual(fvec[-1], 24, places=3)
         self.assertAlmostEqual(fvec[0], 0, places=3)
-
-    def test_SOAP(self):
-        # Test individual samples
-        soap = SOAP(n_max=4, l_max=2, r_cut=3.0)
-        soap.fit([self.diamond])
-        v = soap.featurize(self.diamond)
-        self.assertEqual(len(v), 30)
-        self.assertAlmostEqual(v[0], 5.299793243408203, places=6)
-
-        soap.fit([self.ni3al])
-        v = soap.featurize(self.ni3al)
-        self.assertEqual(len(v), 90)
-        self.assertAlmostEqual(v[0], 0.10329483449459076, places=6)
-
-        # Test dataframe fitting
-        df = pd.DataFrame({"s": [self.diamond, self.ni3al, self.nacl]})
-        soap.fit(df["s"])
-        df = soap.featurize_dataframe(df, "s", inplace=False)
-        self.assertTupleEqual(df.shape, (3, 451))
-        self.assertAlmostEqual(df["SOAP_449"].iloc[1], 3.029167413711548, places=5)
 
     def test_GlobalInstabilityIndex(self):
         # Test diamond and ni3al fail precheck
