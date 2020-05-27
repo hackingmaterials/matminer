@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Predicting bulk moduli with matminer &#8212; matminer 0.6.2 documentation</title>
+    <title>Predicting bulk moduli with matminer &#8212; matminer 0.6.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -27,7 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -52,13 +52,13 @@ the dataset.</p>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="c1"># Set pandas view options</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.width&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -67,11 +67,11 @@ the dataset.</p>
 <p><strong>Step 1a: Import matminer’s MP data retrieval tool and get calculated bulk moduli and possible descriptors.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.data_retrieval.retrieve_MP</span> <span class="kn">import</span> <span class="n">MPDataRetrieval</span>
 
-<span class="n">api_key</span> <span class="o">=</span> <span class="bp">None</span>   <span class="c1"># Set your MP API key here. If set as an environment variable &#39;MAPI_KEY&#39;, set it to &#39;None&#39;</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># Set your MP API key here. If set as an environment variable &#39;MAPI_KEY&#39;, set it to &#39;None&#39;</span>
 <span class="n">mpr</span> <span class="o">=</span> <span class="n">MPDataRetrieval</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>     <span class="c1"># Create an adapter to the MP Database.</span>
 
 <span class="c1"># criteria is to get all entries with elasticity (K_VRH is bulk modulus) data</span>
-<span class="n">criteria</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;elasticity.K_VRH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ne&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}}</span>
+<span class="n">criteria</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;elasticity.K_VRH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ne&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}}</span>
 
 <span class="c1"># properties are the materials attributes we want</span>
 <span class="c1"># See https://github.com/materialsproject/mapidoc for available properties you can specify</span>
@@ -80,7 +80,7 @@ the dataset.</p>
 
 <span class="c1"># get the data!</span>
 <span class="n">df_mp</span> <span class="o">=</span> <span class="n">mpr</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="n">criteria</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
-<span class="k">print</span> <span class="s1">&#39;Number of bulk moduli extracted = {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_mp</span><span class="p">))</span>
+<span class="nb">print</span> <span class="s1">&#39;Number of bulk moduli extracted = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_mp</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><code class="code docutils literal notranslate"><span class="pre">Number</span> <span class="pre">of</span> <span class="pre">bulk</span> <span class="pre">moduli</span> <span class="pre">extracted</span> <span class="pre">=</span> <span class="pre">6023</span></code></p>
@@ -140,7 +140,7 @@ the dataset.</p>
                        <span class="s1">&#39;volume&#39;</span><span class="p">,</span> <span class="s1">&#39;nsites&#39;</span><span class="p">,</span> <span class="s1">&#39;spacegroup.symbol&#39;</span><span class="p">,</span> <span class="s1">&#39;e_above_hull&#39;</span><span class="p">,</span> <span class="s1">&#39;composition&#39;</span><span class="p">]]</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">df_mp</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">(</span><span class="n">X_cols</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Possible descriptors are: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_cols</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Possible descriptors are: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_cols</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Possible</span> <span class="n">descriptors</span> <span class="n">are</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;formation_energy_per_atom&#39;</span><span class="p">,</span> <span class="s1">&#39;band_gap&#39;</span><span class="p">,</span> <span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="s1">&#39;vpa&#39;</span><span class="p">,</span> <span class="s1">&#39;mean X&#39;</span><span class="p">,</span> <span class="s1">&#39;mean atomic_mass&#39;</span><span class="p">,</span>
@@ -158,8 +158,8 @@ the dataset.</p>
 <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
 <span class="c1"># get fit statistics</span>
-<span class="k">print</span> <span class="s1">&#39;R2 = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
-<span class="k">print</span> <span class="s1">&#39;RMSE = </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
+<span class="nb">print</span> <span class="s1">&#39;R2 = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span> <span class="s1">&#39;RMSE = </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">R2</span> <span class="o">=</span> <span class="mf">0.804</span>
@@ -170,15 +170,15 @@ the dataset.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span><span class="p">,</span> <span class="n">cross_val_score</span>
 
 <span class="c1"># Use 10-fold cross validation (90% training, 10% test)</span>
-<span class="n">crossvalidation</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">crossvalidation</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># compute cross validation scores for random forest model</span>
 <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;mean_squared_error&#39;</span><span class="p">,</span>
                          <span class="n">cv</span><span class="o">=</span><span class="n">crossvalidation</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">rmse_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
 
-<span class="k">print</span> <span class="s1">&#39;Cross-validation results:&#39;</span>
-<span class="k">print</span> <span class="s1">&#39;Folds: </span><span class="si">%i</span><span class="s1">, mean RMSE: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rmse_scores</span><span class="p">)))</span>
+<span class="nb">print</span> <span class="s1">&#39;Cross-validation results:&#39;</span>
+<span class="nb">print</span> <span class="s1">&#39;Folds: </span><span class="si">%i</span><span class="s1">, mean RMSE: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rmse_scores</span><span class="p">)))</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Cross</span><span class="o">-</span><span class="n">validation</span> <span class="n">results</span><span class="p">:</span>
@@ -204,9 +204,9 @@ the dataset.</p>
              <span class="s1">&#39;y_col&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span>
              <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span>
              <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;legend&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-             <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-             <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
+             <span class="s1">&#39;legend&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
 <span class="n">pf</span><span class="o">.</span><span class="n">xy_plot</span><span class="p">(</span><span class="n">x_col</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
            <span class="n">y_col</span><span class="o">=</span><span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">),</span>
@@ -228,8 +228,8 @@ Forest model to examine the importance of our features.</p>
 <span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="k">print</span> <span class="s1">&#39;R2 = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
-<span class="k">print</span> <span class="s1">&#39;RMSE = </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">rf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
+<span class="nb">print</span> <span class="s1">&#39;R2 = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span> <span class="s1">&#39;RMSE = </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">rf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">R2</span> <span class="o">=</span> <span class="mf">0.988</span>
@@ -241,8 +241,8 @@ Forest model to examine the importance of our features.</p>
 <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;mean_squared_error&#39;</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">crossvalidation</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">rmse_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
-<span class="k">print</span> <span class="s1">&#39;Cross-validation results:&#39;</span>
-<span class="k">print</span> <span class="s1">&#39;Folds: </span><span class="si">%i</span><span class="s1">, mean RMSE: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rmse_scores</span><span class="p">)))</span>
+<span class="nb">print</span> <span class="s1">&#39;Cross-validation results:&#39;</span>
+<span class="nb">print</span> <span class="s1">&#39;Folds: </span><span class="si">%i</span><span class="s1">, mean RMSE: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rmse_scores</span><span class="p">)))</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Cross</span><span class="o">-</span><span class="n">validation</span> <span class="n">results</span><span class="p">:</span>
@@ -269,9 +269,9 @@ Forest model to examine the importance of our features.</p>
            <span class="s1">&#39;y_col&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">450</span><span class="p">],</span>
            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span>
            <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;legend&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-           <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-           <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
+           <span class="s1">&#39;legend&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
 
 <span class="n">pf_rf</span><span class="o">.</span><span class="n">xy_plot</span><span class="p">(</span><span class="n">x_col</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
@@ -358,7 +358,7 @@ Forest model to examine the importance of our features.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 

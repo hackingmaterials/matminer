@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>matminer.featurizers package &#8212; matminer 0.6.2 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.6.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -27,7 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -1388,6 +1388,73 @@ formation energy from the Materials Project database.</p>
 <dl class="method">
 <dt id="matminer.featurizers.composition.CohesiveEnergy.implementors">
 <code class="sig-name descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergy.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matminer.featurizers.composition.CohesiveEnergyMP">
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.composition.</code><code class="sig-name descname">CohesiveEnergyMP</code><span class="sig-paren">(</span><em class="sig-param">mapi_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergyMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Cohesive energy per atom lookup using Materials Project</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>mapi_key (str): Materials API key for looking up cohesive energy</dt><dd><p>by composition alone.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.composition.CohesiveEnergyMP.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">mapi_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergyMP.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.CohesiveEnergyMP.citations">
+<code class="sig-name descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergyMP.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.CohesiveEnergyMP.feature_labels">
+<code class="sig-name descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergyMP.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.CohesiveEnergyMP.featurize">
+<code class="sig-name descname">featurize</code><span class="sig-paren">(</span><em class="sig-param">comp</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergyMP.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><p>comp: (str) compound composition, eg: “NaCl”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.composition.CohesiveEnergyMP.implementors">
+<code class="sig-name descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.CohesiveEnergyMP.implementors" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of implementors of the feature.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><dl class="simple">
@@ -5258,6 +5325,163 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dd></dl>
 
 <dl class="class">
+<dt id="matminer.featurizers.site.IntersticeDistribution">
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.site.</code><code class="sig-name descname">IntersticeDistribution</code><span class="sig-paren">(</span><em class="sig-param">cutoff=6.5</em>, <em class="sig-param">interstice_types=None</em>, <em class="sig-param">stats=None</em>, <em class="sig-param">radius_type='MiracleRadius'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Interstice distribution in the neighboring cluster around an atom site.</p>
+<p>The interstices are categorized to distance, area and volume interstices.
+Each of these metrics is a measures of the relative amount of empty space
+around each atom as determined using atomic sphere models. The distance
+interstice is the fraction of a bonding line unoccupied by the atom spheres;
+The area interstice is the unoccupied area within the triangulated surface
+formed by atom triplets in convex hull formed by neighbors, and the volume
+interstice is the unoccupied portion of a tetrahedron formed between the
+central atom and neighbor atom triplets. Please refer to the original paper
+for more details (Wang et al. Nat Commun 10, 5537 (2019))</p>
+<p>For amorphous alloys (metallic glasses), the coordination environments are
+anisotropic, which can be reflected in the inequality of the interstices
+present around an atom. To describe the anisotropy, here we derive statistics
+of the interstices to featurize the interstice distribution around the atom.
+Other methods can be grouping the interstices into histogram grids of fixed
+bins and the features are then a vector of the values of the histograms.</p>
+<p>User note:
+This class is particularly designed for featuring the site-specific packing
+heterogeneity in metallic glasses, especially the all-metallic-element ones.
+If non-metallic-elements are present in the structures, the interstice
+estimates may have larger deviation from actual values (despite this
+deviation is systematic and thus the interstice estimates can still be
+used to represent the packing heterogeneity).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>cutoff (float): cutoff distance in determining the potential</dt><dd><p>neighbors for Voronoi tessellation analysis. (default: 6.5)</p>
+</dd>
+<dt>interstice_types (str or [str]): interstice distribution types,</dt><dd><p>support sub-list of [‘dist’, ‘area’, ‘vol’].</p>
+</dd>
+</dl>
+<p>stats ([str]): statistics of distance/area/volume interstices.
+radius_type (str): source of radius estimate. (default: “MiracleRadius”)</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matminer.featurizers.site.IntersticeDistribution.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">cutoff=6.5</em>, <em class="sig-param">interstice_types=None</em>, <em class="sig-param">stats=None</em>, <em class="sig-param">radius_type='MiracleRadius'</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.IntersticeDistribution.analyze_area_interstice">
+<em class="property">static </em><code class="sig-name descname">analyze_area_interstice</code><span class="sig-paren">(</span><em class="sig-param">nn_coords</em>, <em class="sig-param">nn_rs</em>, <em class="sig-param">convex_hull_simplices</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution.analyze_area_interstice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze the area interstices in the neighbor convex hull facets.
+Args:</p>
+<blockquote>
+<div><p>nn_coords (array-like, shape (N, 3)): Nearest Neighbors’ coordinates
+nn_rs ([float]): Nearest Neighbors’ radii.
+convex_hull_simplices (array-like, shape (M, 3)): Indices of points</p>
+<blockquote>
+<div><p>forming the simplicial facets of convex hull.</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>area_interstice_list ([float]): Area interstice list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.IntersticeDistribution.analyze_dist_interstices">
+<em class="property">static </em><code class="sig-name descname">analyze_dist_interstices</code><span class="sig-paren">(</span><em class="sig-param">center_r</em>, <em class="sig-param">nn_rs</em>, <em class="sig-param">nn_dists</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution.analyze_dist_interstices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze the distance interstices between center atom and neighbors.
+Args:</p>
+<blockquote>
+<div><p>center_r (float): central atom’s radius.
+nn_rs ([float]): Nearest Neighbors’ radii.
+nn_dists ([float]): Nearest Neighbors’ distances.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dist_interstice_list ([float]): Distance interstice list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.IntersticeDistribution.analyze_vol_interstice">
+<em class="property">static </em><code class="sig-name descname">analyze_vol_interstice</code><span class="sig-paren">(</span><em class="sig-param">center_coords</em>, <em class="sig-param">nn_coords</em>, <em class="sig-param">center_r</em>, <em class="sig-param">nn_rs</em>, <em class="sig-param">convex_hull_simplices</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution.analyze_vol_interstice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze the volume interstices in the tetrahedra formed by center
+atom and neighbor convex hull triplets.
+Args:</p>
+<blockquote>
+<div><p>center_coords ([float]): Central atomic coordinates.
+nn_coords (array-like, shape (N, 3)): Nearest Neighbors’ coordinates
+center_r (float): central atom’s radius.
+nn_rs ([float]): Nearest Neighbors’ radii.
+convex_hull_simplices (array-like, shape (M, 3)): Indices of points</p>
+<blockquote>
+<div><p>forming the simplicial facets of convex hull.</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>volume_interstice_list ([float]): Volume interstice list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.IntersticeDistribution.citations">
+<code class="sig-name descname">citations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.IntersticeDistribution.feature_labels">
+<code class="sig-name descname">feature_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.IntersticeDistribution.featurize">
+<code class="sig-name descname">featurize</code><span class="sig-paren">(</span><em class="sig-param">struct</em>, <em class="sig-param">idx</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get interstice distribution fingerprints of site with given index in
+input structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>interstice_fps ([float]): Interstice distribution fingerprints.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="matminer.featurizers.site.IntersticeDistribution.implementors">
+<code class="sig-name descname">implementors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.IntersticeDistribution.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="matminer.featurizers.site.LocalPropertyDifference">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.site.</code><code class="sig-name descname">LocalPropertyDifference</code><span class="sig-paren">(</span><em class="sig-param">data_source=&lt;matminer.utils.data.MagpieData object&gt;</em>, <em class="sig-param">weight='area'</em>, <em class="sig-param">properties=('Electronegativity'</em>, <em class="sig-param">)</em>, <em class="sig-param">signed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.LocalPropertyDifference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
@@ -6541,17 +6765,17 @@ precheck_dataframe.</p>
 
 <dl class="class">
 <dt id="matminer.featurizers.structure.Dimensionality">
-<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.structure.</code><code class="sig-name descname">Dimensionality</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.structure.</code><code class="sig-name descname">Dimensionality</code><span class="sig-paren">(</span><em class="sig-param">nn_method=&lt;pymatgen.analysis.local_env.CrystalNN object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Returns dimensionality of structure: 1 means linear chains of atoms OR
 isolated atoms/no bonds, 2 means layered, 3 means 3D connected
 structure. This feature is sensitive to bond length tables that you use.</p>
 <dl class="method">
 <dt id="matminer.featurizers.structure.Dimensionality.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">nn_method=&lt;pymatgen.analysis.local_env.CrystalNN object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.Dimensionality.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
-<dt><a href="#id25"><span class="problematic" id="id26">**</span></a>kwargs: keyword args to pass to get_dimensionality() method of</dt><dd><p>pymatgen.</p>
+<dt><a href="#id25"><span class="problematic" id="id26">**</span></a>nn_method: The nearest neighbor method used to determine atomic</dt><dd><p>connectivity.</p>
 </dd>
 </dl>
 </dd>
@@ -7936,7 +8160,7 @@ stats ([str]): list of weighted statistics to compute for each feature.</p>
 <div><p>If stats is None, a list is returned for each features
 that contains the calculated feature for each site in the
 structure.
-<a href="#id29"><span class="problematic" id="id30">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=‘2nd_mode’</p>
+<a href="#id29"><span class="problematic" id="id30">*</span></a>Note for nth mode, stat must be ‘n*_mode’; e.g. stat=’2nd_mode’</p>
 </div></blockquote>
 <dl class="simple">
 <dt>min_oxi (int): minimum site oxidation state for inclusion (e.g.,</dt><dd><p>zero means metals/cations only)</p>
@@ -8424,7 +8648,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 

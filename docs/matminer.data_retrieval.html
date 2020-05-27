@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>matminer.data_retrieval package &#8212; matminer 0.6.2 documentation</title>
+    <title>matminer.data_retrieval package &#8212; matminer 0.6.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -27,7 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -325,7 +325,7 @@ Materials Science 97, 209–215.
 
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_data">
-<code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties</em>, <em class="sig-param">mp_decode=False</em>, <em class="sig-param">index_mpid=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param">criteria</em>, <em class="sig-param">properties</em>, <em class="sig-param">mp_decode=True</em>, <em class="sig-param">index_mpid=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
 <dt>criteria: (str/dict) see MPRester.query() for a description of this</dt><dd><p>parameter. String examples: “mp-1234”, “Fe2O3”, “Li-Fe-O’,
@@ -399,7 +399,7 @@ NaN is returned.</p>
 <dl class="exception">
 <dt id="matminer.data_retrieval.retrieve_MPDS.APIError">
 <em class="property">exception </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_MPDS.</code><code class="sig-name descname">APIError</code><span class="sig-paren">(</span><em class="sig-param">msg</em>, <em class="sig-param">code=0</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.data_retrieval.retrieve_MPDS.APIError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>Simple error handling</p>
 <dl class="method">
 <dt id="matminer.data_retrieval.retrieve_MPDS.APIError.__init__">
@@ -648,7 +648,7 @@ inclusively. See unit tests for examples of what this is doing.</p>
 <dl class="class">
 <dt id="matminer.data_retrieval.retrieve_base.BaseDataRetrieval">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.data_retrieval.retrieve_base.</code><code class="sig-name descname">BaseDataRetrieval</code><a class="headerlink" href="#matminer.data_retrieval.retrieve_base.BaseDataRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract class to retrieve data from various material APIs while adhering to
 a quasi-standard format for querying.</p>
 <p>## Implementing a new DataRetrieval class</p>
@@ -790,7 +790,7 @@ criteria.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.2 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 

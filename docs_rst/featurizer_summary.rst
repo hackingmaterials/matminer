@@ -91,6 +91,8 @@ Features based on a material's composition.
      - Class to calculate fraction of magnetic transition metals in a composition.     
    * - :code:`CohesiveEnergy`
      - Cohesive energy per atom using elemental cohesive energies and     
+   * - :code:`CohesiveEnergyMP`
+     - Cohesive energy per atom lookup using Materials Project     
    * - :code:`Miedema`
      - Formation enthalpies of intermetallic compounds, from Miedema et al.     
    * - :code:`YangSolidSolution`
@@ -207,6 +209,8 @@ Features from individual sites in a material's crystal structure.
      - A local order parameter fingerprint for periodic crystals.     
    * - :code:`VoronoiFingerprint`
      - Voronoi tessellation-based features around target site.     
+   * - :code:`IntersticeDistribution`
+     - Interstice distribution in the neighboring cluster around an atom site.     
    * - :code:`ChemicalSRO`
      - Chemical short range ordering, deviation of local site and nominal structure compositions     
    * - :code:`GaussianSymmFunc`
