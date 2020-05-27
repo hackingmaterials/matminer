@@ -26,11 +26,12 @@ class MDFDataRetrievalTest(unittest.TestCase):
             self.assertTrue("Ag" in elts)
             self.assertTrue("V" in elts)
 
-    @unittest.skipIf(not os.environ.get("CI", False),
+    @unittest.skipIf(os.environ.get("CI", False),
                      "Aggregations unable to run on CI")
     def test_get_dataframe_by_query(self):
-        qstring = '( NOT mdf.source_name:sluschi AND material.elements:Al AND' \
-                  '  NOT mdf.source_name:oqmd)'
+        qstring = "(mdf.source_name:oqmd) AND " \
+                  "(material.elements:Si AND material.elements:V AND " \
+                  "oqmd.band_gap.value:[0.5 TO *])"
         mdf_df = self.mdf_dr.get_data(qstring, unwind_arrays=False)
         self.assertTrue((mdf_df['oqmd.band_gap.value'] > 0.5).all())
         for elts in mdf_df['material.elements']:
