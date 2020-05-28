@@ -304,9 +304,9 @@ def load_mp(include_structures=False, data_home=None, download_if_missing=True):
     Returns: (pd.DataFrame)
     """
     if include_structures:
-        df = load_dataset('mp_all', data_home, download_if_missing)
+        df = load_dataset('mp_all_20181018', data_home, download_if_missing)
     else:
-        df = load_dataset('mp_nostruct', data_home, download_if_missing)
+        df = load_dataset('mp_nostruct_20181018', data_home, download_if_missing)
 
     return df
 
