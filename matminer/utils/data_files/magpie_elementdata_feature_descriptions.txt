@@ -1,5 +1,3 @@
-
-
 The following information is reproduced from the supplementary information of L. Ward, A. Agrawal, A. Choudhary, C. Wolverton, A general-purpose machine learning framework for predicting properties of inorganic materials. Npj Comput. Mater. 2 (2016) 16028.
 
 
