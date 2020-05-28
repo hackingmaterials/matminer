@@ -75,6 +75,5 @@ workflows:
             branches:
               only:
                 - master
-                - beta
     jobs:
       - py371_expensive
