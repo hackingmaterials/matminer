@@ -225,7 +225,7 @@ class MatminerDatasetsTest(DataSetsTest):
             "double_perovskites_gap_lumo", object_headers, numeric_headers,
         )
 
-    def test_mp_all(self):
+    def test_mp_all_20181018(self):
         object_headers = ['mpid', 'formula', 'structure', 'initial structure']
 
         numeric_headers = ['e_hull', 'gap pbe', 'mu_b', 'elastic anisotropy',
@@ -235,18 +235,18 @@ class MatminerDatasetsTest(DataSetsTest):
             self.assertEqual(type(df['structure'][0]), Structure)
 
         self.universal_dataset_check(
-            "mp_all", object_headers, numeric_headers,
+            "mp_all_20181018", object_headers, numeric_headers,
             test_func=_unique_tests
         )
 
-    def test_mp_nostruct(self):
+    def test_mp_nostruct_20181018(self):
         object_headers = ['mpid', 'formula']
 
         numeric_headers = ['e_hull', 'gap pbe', 'mu_b', 'elastic anisotropy',
                            'bulk modulus', 'shear modulus', 'e_form']
 
         self.universal_dataset_check(
-            "mp_nostruct", object_headers, numeric_headers,
+            "mp_nostruct_20181018", object_headers, numeric_headers,
         )
 
     def test_glass_ternary_landolt(self):
@@ -421,7 +421,7 @@ class MatminerDatasetsTest(DataSetsTest):
         )
 
 
-class MatminerDatasetsTest(DataSetsTest):
+class MatbenchDatasetsTest(DataSetsTest):
     """
     Matbench datasets are tested here.
     """
