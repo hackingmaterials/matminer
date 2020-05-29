@@ -2,13 +2,10 @@
 
 from __future__ import division, unicode_literals, absolute_import
 import unittest
+import os
+
 from matminer.data_retrieval.retrieve_MDF import MDFDataRetrieval, \
     make_dataframe
-import pandas as pd
-
-pd.set_option('display.width', 1000)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
 
 
 class MDFDataRetrievalTest(unittest.TestCase):
@@ -29,9 +26,11 @@ class MDFDataRetrievalTest(unittest.TestCase):
             self.assertTrue("Ag" in elts)
             self.assertTrue("V" in elts)
 
+    @unittest.skipIf(os.environ.get("CI", False),
+                     "Aggregations unable to run on CI")
     def test_get_dataframe_by_query(self):
-        qstring = "(mdf.source_name:oqmd) AND "\
-                  "(material.elements:Si AND material.elements:V AND "\
+        qstring = "(mdf.source_name:oqmd) AND " \
+                  "(material.elements:Si AND material.elements:V AND " \
                   "oqmd.band_gap.value:[0.5 TO *])"
         mdf_df = self.mdf_dr.get_data(qstring, unwind_arrays=False)
         self.assertTrue((mdf_df['oqmd.band_gap.value'] > 0.5).all())

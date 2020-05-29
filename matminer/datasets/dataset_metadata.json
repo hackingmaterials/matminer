@@ -451,7 +451,7 @@
     "reference": "http://iopscience.iop.org/article/10.1088/0953-8984/21/30/305403/meta",
     "url": "https://ndownloader.figshare.com/files/13464404"
   },
-  "mp_all": {
+  "mp_all_20181018": {
     "bibtex_refs": [
       "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
     ],
@@ -468,14 +468,14 @@
       "shear modulus": "in GPa, average of Voight, Reuss, and Hill",
       "structure": "A Pymatgen Structure object describing the material crystal structure"
     },
-    "description": "A complete copy of the Materials Project database as of 10/18/2018. Mp_all files contain structure data for each material while mp_nostruct does not.",
+    "description": "A complete copy of the Materials Project database as of 10/18/2018. mp_all files contain structure data for each material while mp_nostruct does not.",
     "file_type": "json.gz",
     "hash": "1f3de2dc7c68959647240921b841293fce918ea1708e6f3760ba35a9cdfe0500",
     "num_entries": 83989,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
     "url": "https://ndownloader.figshare.com/files/13309250"
   },
-  "mp_nostruct": {
+  "mp_nostruct_20181018": {
     "bibtex_refs": [
       "@article{Jain2013,\nauthor = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},\ndoi = {10.1063/1.4812323},\nissn = {2166532X},\njournal = {APL Materials},\nnumber = {1},\npages = {011002},\ntitle = {{The Materials Project: A materials genome approach to accelerating materials innovation}},\nurl = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\\&Agg=doi},\nvolume = {1},\nyear = {2013}\n}"
     ],
@@ -490,7 +490,7 @@
       "mu_b": "The total magnetization of the unit cell.",
       "shear modulus": "in GPa, average of Voight, Reuss, and Hill"
     },
-    "description": "A complete copy of the Materials Project database as of 10/18/2018. Mp_all files contain structure data for each material while mp_nostruct does not.",
+    "description": "A complete copy of the Materials Project database as of 10/18/2018. mp_all files contain structure data for each material while mp_nostruct does not.",
     "file_type": "json.gz",
     "hash": "48481abc390e0772defbbfa68d7db3b9bdef2519d407b82a581f2298f7df080f",
     "num_entries": 83989,
@@ -560,11 +560,11 @@
       "nb": "weight percent of Nb",
       "ni": "weight percent of Ni",
       "si": "weight percent of Si",
-      "tensile strength": "ultimate tensile strength in GPa",
+      "tensile strength": "ultimate tensile strength in MPa",
       "ti": "weight percent of Ti",
       "v": "weight percent of V",
       "w": "weight percent of W",
-      "yield strength": "yield strength in GPa"
+      "yield strength": "yield strength in MPa"
     },
     "description": "312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.",
     "file_type": "json.gz",
@@ -782,7 +782,7 @@
     },
     "description": "Matbench v0.1 test dataset for predicting vibration properties from crystal structure. Original data retrieved from Petretto et al. Original calculations done via ABINIT in the harmonic approximation based on density functional perturbation theory. Removed entries having a formation energy (or energy above the convex hull) more than 150meV.",
     "file_type": "json.gz",
-    "num_entries": 1296,
+    "num_entries": 1265,
     "reference": "Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. Sci. Data 5:180065 doi: 10.1038/sdata.2018.65 (2018).\nPetretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. (2018). figshare. Collection.",
     "url": "https://ml.materialsproject.org/matbench_phonons.json.gz",
     "hash": "4db551f21ec5f577e6202725f10e34dfc509aa7df3a6bdaac497da7f6dbbb9b3"
@@ -793,7 +793,7 @@
     ],
     "columns": {
       "composition": "Chemical formula.",
-      "yield strength": "Target variable. Experimentally measured steel yield strengths, in GPa."
+      "yield strength": "Target variable. Experimentally measured steel yield strengths, in MPa."
     },
     "description": "Matbench v0.1 dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.",
     "file_type": "json.gz",

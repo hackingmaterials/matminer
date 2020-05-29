@@ -10,10 +10,10 @@ pd.set_option('display.width', 1000)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-citrine_key = os.environ.get('CITRINE_KEY', None)
+citrine_key = os.environ.get('CITRINATION_API_KEY', None)
 
 
-@unittest.skipIf(citrine_key is None, "CITRINE_KEY env variable not set.")
+@unittest.skipIf(citrine_key is None, "CITRINATION_API_KEY env variable not set.")
 class CitrineDataRetrievalTest(unittest.TestCase):
     def setUp(self):
         self.cdr = CitrineDataRetrieval(citrine_key)

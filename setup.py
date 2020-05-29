@@ -45,7 +45,7 @@ if __name__ == "__main__":
             'matminer.featurizers': ["*.yaml"],
             'matminer.utils.data_files': ['*.cif', '*.csv', '*.tsv', '*.json',
                                           'magpie_elementdata/*.table',
-                                          'jarvis/*.json']},
+                                          'jarvis/*.json', '*.txt']},
         zip_safe=False,
         install_requires=reqs_list,
         extras_require=extras_dict,
