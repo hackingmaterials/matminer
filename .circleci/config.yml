@@ -66,14 +66,15 @@ workflows:
     jobs:
       - py367
       - py371
-  full_tests_datasets:
-    triggers:
-      - schedule:
-          # run every week at noon on the 7th and 21st day of each month
-          cron: "0 12 7,21 * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - py371_expensive
+# Bimonthly full dataset tests
+#  full_tests_datasets:
+#    triggers:
+#      - schedule:
+#          # run every week at noon on the 7th and 21st day of each month
+#          cron: "0 12 7,21 * *"
+#          filters:
+#            branches:
+#              only:
+#                - master
+#    jobs:
+#      - py371_expensive
