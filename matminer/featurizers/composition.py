@@ -8,7 +8,7 @@ from warnings import warn
 
 import numpy as np
 import pandas as pd
-from pymatgen import Element, MPRester
+from pymatgen import Element, MPRester, Structure
 from pymatgen.core.composition import Composition
 from pymatgen.core.molecular_orbitals import MolecularOrbitals
 from pymatgen.core.periodic_table import get_el_sp
@@ -179,13 +179,16 @@ class ElementProperty(BaseFeaturizer):
         Get elemental property attributes
 
         Args:
-            comp: Pymatgen composition object
+            comp: Pymatgen structure or composition object
 
         Returns:
             all_attributes: Specified property statistics of features
         """
 
         all_attributes = []
+        
+        if isinstance(comp, Structure):
+            comp = comp.composition
 
         # Get the element names and fractions
         elements, fractions = zip(*comp.element_composition.items())
