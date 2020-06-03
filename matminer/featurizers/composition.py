@@ -186,8 +186,7 @@ class ElementProperty(BaseFeaturizer):
         """
 
         all_attributes = []
-        
-        # Allow pmg structure
+
         if isinstance(comp, Structure):
             comp = comp.composition
 
