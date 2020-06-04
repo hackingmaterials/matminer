@@ -1,4 +1,4 @@
-numpy==1.18.4
+numpy==1.18.5
 requests==2.23.0
 pymatgen==2020.4.29
 pandas==1.0.4
