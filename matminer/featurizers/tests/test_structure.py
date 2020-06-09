@@ -112,53 +112,42 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_rdf_and_peaks(self):
         ## Test diamond
-        rdforig = RadialDistributionFunction().featurize(
-            self.diamond)
-        rdf = rdforig[0]
+        rdf = RadialDistributionFunction()
+        diamond_rdf = rdf.featurize(self.diamond)
 
         # Make sure it the last bin is cutoff-bin_max
-        self.assertAlmostEqual(max(rdf['distances']), 19.9)
+        self.assertAlmostEqual(max(rdf.bin_distances), 19.9)
 
         # Verify bin sizes
-        self.assertEqual(len(rdf['distribution']), 200)
+        self.assertEqual(len(diamond_rdf), 200)
 
         # Make sure it gets all of the peaks
-        self.assertEqual(np.count_nonzero(rdf['distribution']), 116)
+        self.assertEqual(np.count_nonzero(diamond_rdf), 116)
 
         # Check the values for a few individual peaks
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(1.5 / 0.1))], 15.12755155)
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(2.9 / 0.1))], 12.53193948)
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(19.9 / 0.1))], 0.822126129)
+        self.assertAlmostEqual(diamond_rdf[int(round(1.5 / 0.1))], 15.12755155)
+        self.assertAlmostEqual(diamond_rdf[int(round(2.9 / 0.1))], 12.53193948)
+        self.assertAlmostEqual(diamond_rdf[int(round(19.9 / 0.1))], 0.822126129)
 
         # Repeat test with NaCl (omitting comments). Altering cutoff distance
-        rdforig = RadialDistributionFunction(cutoff=10).featurize(self.nacl)
-        rdf = rdforig[0]
-        self.assertAlmostEqual(max(rdf['distances']), 9.9)
-        self.assertEqual(len(rdf['distribution']), 100)
-        self.assertEqual(np.count_nonzero(rdf['distribution']), 11)
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(2.8 / 0.1))], 27.09214168)
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(4.0 / 0.1))], 26.83338723)
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(9.8 / 0.1))], 3.024406467)
+        rdf2 = RadialDistributionFunction(cutoff=10)
+        nacl_rdf = rdf2.featurize(self.nacl)
+        self.assertAlmostEqual(max(rdf2.bin_distances), 9.9)
+        self.assertEqual(len(nacl_rdf), 100)
+        self.assertEqual(np.count_nonzero(nacl_rdf), 11)
+        self.assertAlmostEqual(nacl_rdf[int(round(2.8 / 0.1))], 27.09214168)
+        self.assertAlmostEqual(nacl_rdf[int(round(4.0 / 0.1))], 26.83338723)
+        self.assertAlmostEqual(nacl_rdf[int(round(9.8 / 0.1))], 3.024406467)
 
         # Repeat test with CsCl. Altering cutoff distance and bin_size
-        rdforig = RadialDistributionFunction(
-            cutoff=8, bin_size=0.5).featurize(self.cscl)
-        rdf = rdforig[0]
-        self.assertAlmostEqual(max(rdf['distances']), 7.5)
-        self.assertEqual(len(rdf['distribution']), 16)
-        self.assertEqual(np.count_nonzero(rdf['distribution']), 5)
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(3.5 / 0.5))], 6.741265585)
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(4.0 / 0.5))], 3.937582548)
-        self.assertAlmostEqual(
-            rdf['distribution'][int(round(7.0 / 0.5))], 1.805505363)
+        rdf3 = RadialDistributionFunction(cutoff=8, bin_size=0.5)
+        cscl_rdf = rdf3.featurize(self.cscl)
+        self.assertAlmostEqual(max(rdf3.bin_distances), 7.5)
+        self.assertEqual(len(cscl_rdf), 16)
+        self.assertEqual(np.count_nonzero(cscl_rdf), 5)
+        self.assertAlmostEqual(cscl_rdf[int(round(3.5 / 0.5))], 6.741265585)
+        self.assertAlmostEqual(cscl_rdf[int(round(4.0 / 0.5))], 3.937582548)
+        self.assertAlmostEqual(cscl_rdf[int(round(7.0 / 0.5))], 1.805505363)
 
     def test_prdf(self):
         # Test a few peaks in diamond

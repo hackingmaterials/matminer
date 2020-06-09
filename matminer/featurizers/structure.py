@@ -224,13 +224,19 @@ class RadialDistributionFunction(BaseFeaturizer):
         - Radial distribution function
 
     Args:
-        cutoff: (float) distance up to which to calculate the RDF.
-        bin_size: (float) size of each bin of the (discrete) RDF.
+        cutoff: (float) Angstrom distance up to which to calculate the RDF.
+        bin_size: (float) size in Angstrom of each bin of the (discrete) RDF.
+
+    Attributes:
+        bin_distances (np.Ndarray): The distances each bin represents. Can be
+            used for graphing the RDF.
     """
 
     def __init__(self, cutoff=20.0, bin_size=0.1):
         self.cutoff = cutoff
         self.bin_size = bin_size
+
+        self.bin_distances = np.arange(0, cutoff, bin_size)
 
     def featurize(self, s):
         """
@@ -261,10 +267,16 @@ class RadialDistributionFunction(BaseFeaturizer):
             dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         number_density = s.num_sites / s.volume
         rdf = dist_hist / shell_vol / number_density
-        return [{'distances': dist_bins[:-1], 'distribution': rdf}]
+        return rdf
 
     def feature_labels(self):
-        return ["radial distribution function"]
+        bin_dists_complete = np.concatenate((self.bin_distances, np.asarray([self.cutoff])))
+        flabels = [""] * len(self.bin_distances)
+        for i, _ in enumerate(self.bin_distances):
+            lower = f"{bin_dists_complete[i]}"[:5]
+            higher = f"{bin_dists_complete[i+1]}"[:5]
+            flabels[i] = f"rdf [{lower} - {higher}]A"
+        return flabels
 
     def citations(self):
         return []
