@@ -323,10 +323,10 @@ class MatscholarElementData(AbstractData):
         dfile = os.path.join(module_dir,
                              "data_files/matscholar_els.json")
         with open(dfile, "r") as fp:
-            embeddings = json.load(fp)
+            self.embeddings = json.load(fp)
         self.prop_names = ["embedding {}".format(i) for i in range(1, 201)]
         all_element_data = {}
-        for el, embedding in embeddings.items():
+        for el, embedding in self.embeddings.items():
             all_element_data[el] = dict(zip(self.prop_names, embedding))
         self.all_element_data = all_element_data
 
