@@ -6,7 +6,7 @@ import torch
 from torch.utils.data import Dataset
 from torch.nn import L1Loss, MSELoss, CrossEntropyLoss
 
-from roost.utils import Featuriser, Normalizer
+from roost.utils import Normalizer
 from roost.roost.model import Roost
 
 from matminer.utils.data import MatscholarElementData
@@ -17,7 +17,7 @@ class CompositionData(Dataset):
     automatically constructed from composition strings.
     """
 
-    def __init__(self, comp, targets=None, task="regression"):
+    def __init__(self, comp, targets=None, task="regression", emb="matscholar"):
         """
         """
         self.comp = comp
@@ -25,9 +25,14 @@ class CompositionData(Dataset):
         if targets is not None:
             self.targets = targets
         else:
-            self.targets = np.full_like(comp.values, np.nan)
+            self.targets = np.full_like(comp, np.nan).ravel()
 
-        self.elem_features = MatscholarElementData()
+        if emb == "matscholar":
+            self.elem_features = MatscholarElementData()
+        else:
+            raise NotImplementedError(
+                "Currently only the matscholar embedding is implemented"
+            )
 
         self.task = task
         if self.task == "regression":
@@ -70,7 +75,7 @@ class CompositionData(Dataset):
         assert len(elements) != 1, f"cry-id {cry_id} [{composition}] is a pure system"
         try:
             atom_fea = np.vstack(
-                [list(self.elem_features.get_elemental_properties(element)) 
+                [list(self.elem_features.get_elemental_embedding(element))
                 for element in elements]
             )
             # atom_fea = np.vstack(

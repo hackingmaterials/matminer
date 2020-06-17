@@ -2035,6 +2035,7 @@ class RoostFeaturizer(BaseFeaturizer):
         task="regression",
         loss="L2",
         model_name="roost",
+        elem_emb="matscholar",
         elem_fea_len=64,
         n_graph=3,
         run_id=1,
@@ -2055,9 +2056,12 @@ class RoostFeaturizer(BaseFeaturizer):
             "Only 'regression' or 'classification' allowed for 'task'"
         )
 
-        # NOTE pass in these values from matminer if possible?
         n_targets = 1 # hard coded for the time being
-        elem_emb_len = 200 # hard coded for matscholar
+        
+        if elem_emb == "matscholar":
+            elem_emb_len = 200 # hard coded for matscholar
+        else:
+            raise NotImplementedError("Currently only the matscholar embedding is implemented")
 
         self.data_params = {
             "batch_size": batch_size,
@@ -2109,6 +2113,7 @@ class RoostFeaturizer(BaseFeaturizer):
         self.run_id = run_id
 
         self.elem_fea_len = elem_fea_len
+        self.elem_emb = elem_emb
         self.task = task
         self.epochs = epochs
 
@@ -2133,10 +2138,12 @@ class RoostFeaturizer(BaseFeaturizer):
 
         self.fitted = False
 
+        # multiprocessing doesn't play nicely with pytorch/CUDA instances
+        self.set_n_jobs(1)
 
     def fit(self, X, y):
 
-        train_set = CompositionData(X, targets=y, task=self.task)
+        train_set = CompositionData(X, targets=y, task=self.task, emb=self.elem_emb)
 
         train_generator = DataLoader(train_set, **self.data_params)
 
@@ -2186,32 +2193,31 @@ class RoostFeaturizer(BaseFeaturizer):
         self.fitted = True
 
 
-    def featurize(self, comp):
+    def featurize(self, *comp):
 
         assert self.fitted, "Please fit this featuriser before use"
 
         test_set = CompositionData(comp, task=self.task)
 
         test_generator = DataLoader(test_set, **self.data_params)
+        
+        # NOTE featurisation is faster on the cpu unless data is batched
+        # currently featurise many doesn't use batches and instead applies
+        # the featuriser to each row in turn.
+        self.model.device = "cpu"
+        self.model.to("cpu")
 
         # Ensure model is in evaluation mode
-        self.eval()
+        self.model.eval()
 
-        with trange(len(test_generator)) as t:
-            for input_, _, _, _ in generator:
-
+        with torch.no_grad():
+            for input_, _, _, _ in test_generator:
                 # move tensors to GPU
                 input_ = (tensor.to(self.model.device) for tensor in input_)
+                # compute intermediate output
+                output = self.model.material_nn(*input_).numpy().ravel()
 
-                # compute output
-                output = self.model.material_nn(*input_)
-
-                # collect the model outputs
-                test_output.append(output)
-
-                t.update()
-
-        return torch.cat(test_output, dim=0).numpy(),
+        return output
 
     def feature_labels(self):
         return ["Roost_feature_{}".format(x) for x in range(self.elem_fea_len)]
