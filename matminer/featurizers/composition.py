@@ -25,19 +25,20 @@ from matminer.utils.data import (
     MatscholarElementData,
     MEGNetElementData
 )
-from matminer.featurizers.utils.roost import (
-    CompositionData,
-    collate_batch,
-    init_roost,
-)
 
 # For the RoostFeaturizer
 try:
     import torch
     from torch.utils.data import DataLoader
     from torch.utils.tensorboard import SummaryWriter
+    from matminer.featurizers.utils.roost import (
+        CompositionData,
+        collate_batch,
+        init_roost,
+    )
 except ImportError:
     torch, SummaryWriter, DataLoader = None, None, None
+    CompositionData, collate_batch, init_roost = None, None, None
 
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
@@ -2202,7 +2203,7 @@ class RoostFeaturizer(BaseFeaturizer):
         test_generator = DataLoader(test_set, **self.data_params)
         
         # NOTE featurisation is faster on the cpu unless data is batched
-        # currently featurise many doesn't use batches and instead applies
+        # currently featurise_many doesn't use batches and instead applies
         # the featuriser to each row in turn.
         self.model.device = "cpu"
         self.model.to("cpu")

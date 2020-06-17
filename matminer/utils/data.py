@@ -318,7 +318,7 @@ class MatscholarElementData(AbstractData):
 
     The data returned by this class are simply learned representations of the
     elements, taken from:
-    
+
     Tshitoyan, V., Dagdelen, J., Weston, L. et al. Unsupervised word embeddings
     capture latent knowledge from materials science literature. Nature 571,
     95–98 (2019). https://doi.org/10.1038/s41586-019-1335-8
@@ -339,7 +339,7 @@ class MatscholarElementData(AbstractData):
         return self.all_element_data[str(elem)][property_name]
 
     def get_elemental_embedding(self, elem):
-        return self.all_element_data[str(elem)].values()
+        return list(self.all_element_data[str(elem)].values())
 
 
 class MEGNetElementData(AbstractData):
@@ -347,7 +347,7 @@ class MEGNetElementData(AbstractData):
     Class to get neural network embeddings of elements. These embeddings were
     generated using the Materials Graph Network (MEGNet) developed by the
     MaterialsVirtualLab at U.C. San Diego and described in the publication:
-    
+
     Graph Networks as a Universal Machine Learning Framework for Molecules and
     Crystals. Chi Chen, Weike Ye, Yunxing Zuo, Chen Zheng, and Shyue Ping Ong
     Chemistry of Materials 2019 31 (9), 3564-3572,
@@ -390,7 +390,7 @@ class MEGNetElementData(AbstractData):
         estr = str(elem)
         if estr not in self.all_element_data.keys():
             estr = self._dummy
-        return self.all_element_data[estr].values()
+        return list(self.all_element_data[estr].values())
 
 
 class IUCrBondValenceData:

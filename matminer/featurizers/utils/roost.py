@@ -1,15 +1,20 @@
 import functools
 
 import numpy as np
-
-import torch
-from torch.utils.data import Dataset
-from torch.nn import L1Loss, MSELoss, CrossEntropyLoss
-
-from roost.utils import Normalizer
-from roost.roost.model import Roost
-
 from matminer.utils.data import MatscholarElementData
+
+try:
+    import torch
+    from torch.utils.data import Dataset
+    from torch.nn import L1Loss, MSELoss, CrossEntropyLoss
+
+    from roost.utils import Normalizer
+    from roost.roost.model import Roost
+except ImportError:
+    torch, Dataset = None, object
+    L1Loss, MSELoss, CrossEntropyLoss = None, None, None
+    Normalizer, Roost = object, object
+
 
 class CompositionData(Dataset):
     """
@@ -69,18 +74,14 @@ class CompositionData(Dataset):
         # cry_id and composition not needed but must exist for the code to work
         cry_id = None
         composition = None
-        elements, weights = zip(*self.comp[idx].element_composition.items())
+        elems, weights = zip(*self.comp[idx].element_composition.items())
         target = self.targets[idx]
         weights = np.atleast_2d(weights).T / np.sum(weights)
-        assert len(elements) != 1, f"cry-id {cry_id} [{composition}] is a pure system"
+        assert len(elems) != 1, f"cry-id {cry_id} [{composition}] is a pure system"
         try:
             atom_fea = np.vstack(
-                [list(self.elem_features.get_elemental_embedding(element))
-                for element in elements]
+                [self.elem_features.get_elemental_embedding(elem) for elem in elems]
             )
-            # atom_fea = np.vstack(
-            #     [self.elem_features.get_fea(element) for element in elements]
-            # )
         except AssertionError:
             raise AssertionError(
                 f"cry-id {cry_id} [{composition}] contains element types not in embedding"
@@ -90,11 +91,11 @@ class CompositionData(Dataset):
                 f"cry-id {cry_id} [{composition}] composition cannot be parsed into elements"
             )
 
-        env_idx = list(range(len(elements)))
+        env_idx = list(range(len(elems)))
         self_fea_idx = []
         nbr_fea_idx = []
-        nbrs = len(elements) - 1
-        for i, _ in enumerate(elements):
+        nbrs = len(elems) - 1
+        for i, _ in enumerate(elems):
             self_fea_idx += [i] * nbrs
             nbr_fea_idx += env_idx[:i] + env_idx[i + 1 :]
 
