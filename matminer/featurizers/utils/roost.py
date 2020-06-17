@@ -21,23 +21,19 @@ class CompositionData(Dataset):
         """
         """
         self.comp = comp
-        self.elements, self.weights = zip(*comp.element_composition.items())
 
-        if targets:
+        if targets is not None:
             self.targets = targets
         else:
             self.targets = np.full_like(comp.values, np.nan)
 
-        allowed_types = set(MatscholarElementData.embeddings.keys())
-        self.elem_features = Featuriser(allowed_types)
-        for key, value in MatscholarElementData.embeddings.items():
-            self.elem_features._embedding[key] = np.array(value, dtype=float)
+        self.elem_features = MatscholarElementData()
 
         self.task = task
         if self.task == "regression":
             self.n_targets = 1
         elif self.task == "classification":
-            if targets:
+            if targets is not None:
                 self.n_targets = np.max(self.targets) + 1
             else:
                 self.n_targets = 0
@@ -68,15 +64,18 @@ class CompositionData(Dataset):
         # cry_id and composition not needed but must exist for the code to work
         cry_id = None
         composition = None
-        elements = self.elements[idx]
-        weights = self.weights[idx]
+        elements, weights = zip(*self.comp[idx].element_composition.items())
         target = self.targets[idx]
         weights = np.atleast_2d(weights).T / np.sum(weights)
         assert len(elements) != 1, f"cry-id {cry_id} [{composition}] is a pure system"
         try:
             atom_fea = np.vstack(
-                [self.elem_features.get_fea(element) for element in elements]
+                [list(self.elem_features.get_elemental_properties(element)) 
+                for element in elements]
             )
+            # atom_fea = np.vstack(
+            #     [self.elem_features.get_fea(element) for element in elements]
+            # )
         except AssertionError:
             raise AssertionError(
                 f"cry-id {cry_id} [{composition}] contains element types not in embedding"

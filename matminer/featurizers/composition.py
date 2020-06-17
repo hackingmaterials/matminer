@@ -2110,6 +2110,7 @@ class RoostFeaturizer(BaseFeaturizer):
 
         self.elem_fea_len = elem_fea_len
         self.task = task
+        self.epochs = epochs
 
         if not os.path.isdir("models/"):
             os.makedirs("models/")
@@ -2133,23 +2134,20 @@ class RoostFeaturizer(BaseFeaturizer):
         self.fitted = False
 
 
-    def fit(self, comp, targets):
+    def fit(self, X, y):
 
-        train_set = CompositionData(comp, targets=targets, task=self.task)
+        train_set = CompositionData(X, targets=y, task=self.task)
 
         train_generator = DataLoader(train_set, **self.data_params)
 
         # if val_set is not None:
-        #     # 
         #     data_params.update({"batch_size": 16 * data_params["batch_size"]})
         #     val_generator = DataLoader(self.val_set, **data_params)
         # else:
         #     val_generator = None
 
         if self.model.task == "regression":
-            sample_target = torch.Tensor(
-                train_set.dataset.targets.iloc[train_set.indices].values
-            )
+            sample_target = torch.Tensor(train_set.targets)
             self.normalizer.fit(sample_target)
 
         # if (self.val_set is not None) and (self.model.best_val_score is None):
@@ -2188,7 +2186,7 @@ class RoostFeaturizer(BaseFeaturizer):
         self.fitted = True
 
 
-    def featurize(self, compositions, verbose=True):
+    def featurize(self, comp):
 
         assert self.fitted, "Please fit this featuriser before use"
 
@@ -2199,7 +2197,7 @@ class RoostFeaturizer(BaseFeaturizer):
         # Ensure model is in evaluation mode
         self.eval()
 
-        with trange(len(test_generator), disable=(not verbose)) as t:
+        with trange(len(test_generator)) as t:
             for input_, _, _, _ in generator:
 
                 # move tensors to GPU
