@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   py367:
     working_directory: ~/matminer
@@ -38,10 +38,43 @@ jobs:
           paths:
             - ./test_env
           key: py371-dependencies-{{ checksum "requirements.txt" }}
+  py371_expensive:
+    working_directory: ~/matminer
+    docker:
+      - image: circleci/python:3.7.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - py371-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - py371-dependencies-
+      - run:
+          name: Set up env via pip
+          command: |
+            export MATMINER_DATASET_FULL_TEST=True
+            source dev_scripts/run_circleci_tests.sh
+      - save_cache:
+          paths:
+            - ./test_env
+          key: py371-dependencies-{{ checksum "requirements.txt" }}
+
 
 workflows:
-  version: 2
+  version: 2.1
   build_and_test:
     jobs:
       - py367
       - py371
+# Bimonthly full dataset tests
+#  full_tests_datasets:
+#    triggers:
+#      - schedule:
+#          # run every week at noon on the 7th and 21st day of each month
+#          cron: "0 12 7,21 * *"
+#          filters:
+#            branches:
+#              only:
+#                - master
+#    jobs:
+#      - py371_expensive

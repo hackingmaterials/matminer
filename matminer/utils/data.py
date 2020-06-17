@@ -133,6 +133,9 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
     theory total energies and enthalpies of formation of metal-nonmetal
     compounds by linear regression, Phys. Rev. B - Condens. Matter Mater. Phys.
     93 (2016).
+
+    The meanings of each feature in the data can be found in
+    ./data_files/deml_elementdata.py
     """
 
     def __init__(self):
@@ -186,6 +189,10 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     L. Ward, A. Agrawal, A. Choudhary, C. Wolverton, A general-purpose machine
     learning framework for predicting properties of inorganic materials,
     Npj Comput. Mater. 2 (2016) 16028.
+
+
+    Finding the exact meaning of each of these features can be quite difficult.
+    Reproduced in ./data_files/magpie_elementdata_feature_descriptions.txt.
     """
 
     def __init__(self):
@@ -231,6 +238,9 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
     S.P. Ong, W.D. Richards, A. Jain, G. Hautier, M. Kocher, S. Cholia, et al.,
     Python Materials Genomics (pymatgen): A robust, open-source python library
     for materials analysis, Comput. Mater. Sci. 68 (2013) 314-319.
+
+    Meanings of each feature can be obtained from the pymatgen.Composition
+    documentation (attributes).
     """
 
     def __init__(self, use_common_oxi_states=True):

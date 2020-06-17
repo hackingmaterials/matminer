@@ -1,4 +1,3 @@
-export CI=circle
 python3 -m venv test_env
 . test_env/bin/activate
 pip install --quiet --upgrade pip
