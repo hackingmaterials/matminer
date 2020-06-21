@@ -26,20 +26,6 @@ from matminer.utils.data import (
     MEGNetElementData
 )
 
-# For the RoostFeaturizer
-try:
-    import torch
-    from torch.utils.data import DataLoader
-    from torch.utils.tensorboard import SummaryWriter
-    from matminer.featurizers.utils.roost import (
-        CompositionData,
-        collate_batch,
-        init_roost,
-    )
-except ImportError:
-    torch, SummaryWriter, DataLoader = None, None, None
-    CompositionData, collate_batch, init_roost = None, None, None
-
 __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
              'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
 
@@ -275,12 +261,14 @@ class ElementProperty(BaseFeaturizer):
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn"]
 
+
 class Meredig(BaseFeaturizer):
     """
     Class to calculate features as defined in Meredig et. al.
 
     Features:
-        Atomic fraction of each of the first 103 elements, in order of atomic number.
+        Atomic fraction of each of the first 103 elements, in order of
+        atomic number.
         17 statistics of elemental properties;
             Mean atomic weight of constituent elements
             Mean periodic table row and column number
@@ -295,9 +283,18 @@ class Meredig(BaseFeaturizer):
     def __init__(self):
         self.data_source = MagpieData()
 
-        #The labels for statistics on element properties
-        self._element_property_feature_labels = ["mean AtomicWeight", "mean Column", "mean Row", "range Number", "mean Number",
-        "range AtomicRadius", "mean AtomicRadius", "range Electronegativity", "mean Electronegativity"]
+        # The labels for statistics on element properties
+        self._element_property_feature_labels = [
+            "mean AtomicWeight",
+            "mean Column",
+            "mean Row",
+            "range Number",
+            "mean Number",
+            "range AtomicRadius",
+            "mean AtomicRadius",
+            "range Electronegativity",
+            "mean Electronegativity"
+        ]
         # Initialize stats computer
         self.pstats = PropertyStats()
 
@@ -1207,6 +1204,7 @@ class CohesiveEnergyMP(BaseFeaturizer):
             "url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025614007113}, "
             "volume = {97}, year = {2015} } "]
 
+
 class Miedema(BaseFeaturizer):
     """
     Formation enthalpies of intermetallic compounds, from Miedema et al.
@@ -2025,211 +2023,3 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         n = max(3, min(n_neighbors, 24))
 
         return self.ideal_ratio[n]
-
-
-class RoostFeaturizer(BaseFeaturizer):
-    """
-    Representation learning from stiochiometry
-    """
-
-    def __init__(self,
-        task="regression",
-        loss="L2",
-        model_name="roost",
-        elem_emb="matscholar",
-        elem_fea_len=64,
-        n_graph=3,
-        run_id=1,
-        seed=42,
-        epochs=100,
-        log=True,
-        optim="AdamW",
-        learning_rate=3e-4,
-        momentum=0.9,
-        weight_decay=1e-6,
-        batch_size=128,
-        workers=0, # load data in main process -- allows caching
-        device=torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu"),
-        **kwargs,
-    ):
-
-        assert task in ["regression", "classification"], (
-            "Only 'regression' or 'classification' allowed for 'task'"
-        )
-
-        n_targets = 1 # hard coded for the time being
-        
-        if elem_emb == "matscholar":
-            elem_emb_len = 200 # hard coded for matscholar
-        else:
-            raise NotImplementedError("Currently only the matscholar embedding is implemented")
-
-        self.data_params = {
-            "batch_size": batch_size,
-            "num_workers": workers,
-            "pin_memory": False,
-            "shuffle": True,
-            "collate_fn": collate_batch,
-        }
-
-        self.setup_params = {
-            "loss": loss,
-            "optim": optim,
-            "learning_rate": learning_rate,
-            "weight_decay": weight_decay,
-            "momentum": momentum,
-            "device": device,
-        }
-
-        self.model_params = {
-            "task": task,
-            "robust": False,
-            "n_targets": n_targets,
-            "elem_emb_len": elem_emb_len,
-            "elem_fea_len": elem_fea_len,
-            "n_graph": n_graph,
-            "elem_heads": 3,
-            "elem_gate": [256],
-            "elem_msg": [256],
-            "cry_heads": 3,
-            "cry_gate": [256],
-            "cry_msg": [256],
-            "out_hidden": [1024, 512, 256, 128, 64],
-        }
-
-        model, criterion, optimizer, scheduler, normalizer = init_roost(
-            model_name=model_name,
-            run_id=run_id,
-            **self.setup_params,
-            **self.model_params,
-        )
-
-        self.model = model
-        self.criterion = criterion
-        self.optimizer = optimizer
-        self.scheduler = scheduler
-        self.normalizer = normalizer
-
-        self.model_name = model_name
-        self.run_id = run_id
-
-        self.elem_fea_len = elem_fea_len
-        self.elem_emb = elem_emb
-        self.task = task
-        self.epochs = epochs
-
-        if not os.path.isdir("models/"):
-            os.makedirs("models/")
-
-        if not os.path.isdir(f"models/{model_name}/"):
-            os.makedirs(f"models/{model_name}/")
-
-        if log:
-            if not os.path.isdir("runs/"):
-                os.makedirs("runs/")
-
-            self.writer = SummaryWriter(
-                # log_dir=(f"runs/{model_name}-r{run_id}_" "{date:%d-%m-%Y_%H-%M-%S}").format(
-                #     date=datetime.datetime.now()
-                # )
-                log_dir=f"runs/{model_name}-r{run_id}"
-            )
-        else:
-            self.writer = None
-
-        self.fitted = False
-
-        # multiprocessing doesn't play nicely with pytorch/CUDA instances
-        self.set_n_jobs(1)
-
-    def fit(self, X, y):
-
-        train_set = CompositionData(X, targets=y, task=self.task, emb=self.elem_emb)
-
-        train_generator = DataLoader(train_set, **self.data_params)
-
-        # if val_set is not None:
-        #     data_params.update({"batch_size": 16 * data_params["batch_size"]})
-        #     val_generator = DataLoader(self.val_set, **data_params)
-        # else:
-        #     val_generator = None
-
-        if self.model.task == "regression":
-            sample_target = torch.Tensor(train_set.targets)
-            self.normalizer.fit(sample_target)
-
-        # if (self.val_set is not None) and (self.model.best_val_score is None):
-        #     print("Getting Validation Baseline")
-        #     with torch.no_grad():
-        #         _, v_metrics = self.model.evaluate(
-        #             generator=self.val_generator,
-        #             criterion=self.criterion,
-        #             optimizer=None,
-        #             normalizer=self.normalizer,
-        #             action="val",
-        #             verbose=True,
-        #         )
-        #         if self.model.task == "regression":
-        #             val_score = v_metrics["MAE"]
-        #             print(f"Validation Baseline: MAE {val_score:.3f}\n")
-        #         elif self.model.task == "classification":
-        #             val_score = v_metrics["Acc"]
-        #             print(f"Validation Baseline: Acc {val_score:.3f}\n")
-        #         self.model.best_val_score = val_score
-
-        self.model.fit(
-            train_generator=train_generator,
-            val_generator=None,
-            # val_generator=val_generator,
-            optimizer=self.optimizer,
-            scheduler=self.scheduler,
-            epochs=self.epochs,
-            criterion=self.criterion,
-            normalizer=self.normalizer,
-            model_name=self.model_name,
-            run_id=self.run_id,
-            writer=self.writer,
-        )
-
-        self.fitted = True
-
-
-    def featurize(self, *comp):
-
-        assert self.fitted, "Please fit this featuriser before use"
-
-        test_set = CompositionData(comp, task=self.task)
-
-        test_generator = DataLoader(test_set, **self.data_params)
-        
-        # NOTE featurisation is faster on the cpu unless data is batched
-        # currently featurise_many doesn't use batches and instead applies
-        # the featuriser to each row in turn.
-        self.model.device = "cpu"
-        self.model.to("cpu")
-
-        # Ensure model is in evaluation mode
-        self.model.eval()
-
-        with torch.no_grad():
-            for input_, _, _, _ in test_generator:
-                # move tensors to GPU
-                input_ = (tensor.to(self.model.device) for tensor in input_)
-                # compute intermediate output
-                output = self.model.material_nn(*input_).numpy().ravel()
-
-        return output
-
-    def feature_labels(self):
-        return ["Roost_feature_{}".format(x) for x in range(self.elem_fea_len)]
-
-    def implementors(self):
-        return ["Rhys Goodall"]
-
-    def citations(self):
-        return ["@article{goodall2019predicting,"
-                "title={Predicting materials properties without crystal structure: "
-                "Deep representation learning from stoichiometry},"
-                "author={Goodall, Rhys EA and Lee, Alpha A},"
-                "journal={arXiv preprint arXiv:1910.00617},"
-                "year={2019}}"]
