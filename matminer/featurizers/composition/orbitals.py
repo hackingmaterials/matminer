@@ -44,13 +44,14 @@ class ValenceOrbital(BaseFeaturizer):
         # Get the mean number of electrons in each shell
         avg = [
             PropertyStats.mean(
-                self.data_source.get_elemental_properties(elements, "N%sValence" % orb),
+                self.data_source.get_elemental_properties(elements, f"N{orb}Valence"),
                 weights=fractions)
             for orb in self.orbitals
         ]
 
         # If needed, get fraction of electrons in each shell
         if "frac" in self.props:
+            # NOTE comprhys: even if needed frac isn't used?
             avg_total_valence = PropertyStats.mean(
                 self.data_source.get_elemental_properties(elements, "NValence"),
                 weights=fractions)
@@ -126,21 +127,22 @@ class AtomicOrbitals(BaseFeaturizer):
                 the estimated bandgap from HOMO and LUMO energeis
         """
 
-        integer_comp, factor = comp.get_integer_formula_and_factor()
+        # NOTE comprhys: factor is unused
+        # integer_comp, factor = comp.get_integer_formula_and_factor()
+        integer_comp, _ = comp.get_integer_formula_and_factor()
 
         # warning message if composition is dilute and truncated
         if not (len(Composition(comp).elements) ==
                 len(Composition(integer_comp).elements)):
-            warn('AtomicOrbitals: {} truncated to {}'.format(comp,
-                                                             integer_comp))
+            warn(f"AtomicOrbitals: {comp} truncated to {integer_comp}")
 
         homo_lumo = MolecularOrbitals(integer_comp).band_edges
 
         feat = collections.OrderedDict()
         for edge in ['HOMO', 'LUMO']:
-            feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
-            feat['{}_element'.format(edge)] = homo_lumo[edge][0]
-            feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
+            feat[f"{edge}_character"] = homo_lumo[edge][1][-1]
+            feat[f"{edge}_element"] = homo_lumo[edge][0]
+            feat[f"{edge}_energy"] = homo_lumo[edge][2]
         feat['gap_AO'] = feat['LUMO_energy'] - feat['HOMO_energy']
 
         return list(feat.values())
@@ -148,9 +150,9 @@ class AtomicOrbitals(BaseFeaturizer):
     def feature_labels(self):
         feat = []
         for edge in ['HOMO', 'LUMO']:
-            feat.extend(['{}_character'.format(edge),
-                         '{}_element'.format(edge),
-                         '{}_energy'.format(edge)])
+            feat.extend([f"{edge}_character",
+                         f"{edge}_element",
+                         f"{edge}_energy"])
         feat.append("gap_AO")
         return feat
 

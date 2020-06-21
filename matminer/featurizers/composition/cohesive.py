@@ -44,7 +44,7 @@ class CohesiveEnergy(BaseFeaturizer):
                 most_stable_entry = sorted(struct_lst, key=lambda e: e['energy_per_atom'])[0]
                 formation_energy_per_atom = most_stable_entry['formation_energy_per_atom']
             else:
-                raise ValueError('No structure found in MP for {}'.format(comp))
+                raise ValueError(f"No structure found in MP for {comp}")
 
         # Subtract elemental cohesive energies from formation energy
         cohesive_energy = -formation_energy_per_atom * comp.num_atoms
@@ -101,9 +101,12 @@ class CohesiveEnergyMP(BaseFeaturizer):
                 try:
                     return [mpr.get_cohesive_energy(most_stable_entry["material_id"], per_atom=True)]
                 except:
-                    raise ValueError("No cohesive energy can be determined for material_id: {}".format(most_stable_entry["material_id"]))
+                    # NOTE comprhys: f-strings do not work with pandas hence use of `.format()`.
+                    raise ValueError(
+                        "No cohesive energy can be determined for material_id: {}".format(most_stable_entry["material_id"])
+                    )
             else:
-                raise ValueError('No structure found in MP for {}'.format(comp))
+                raise ValueError(f"No structure found in MP for {comp}")
 
     def feature_labels(self):
         return ["cohesive energy (MP)"]

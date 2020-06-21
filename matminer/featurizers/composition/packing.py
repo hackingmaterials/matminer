@@ -97,8 +97,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
     def feature_labels(self):
         return ['mean simul. packing efficiency',
                 'mean abs simul. packing efficiency'] + [
-                   'dist from {} clusters |APE| < {:.3f}'.format(k,
-                                                                 self.threshold)
+                   f"dist from {k} clusters |APE| < {self.threshold:.3f}"
                    for k in self.n_nearest]
 
     def citations(self):

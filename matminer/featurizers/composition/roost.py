@@ -43,7 +43,7 @@ class RoostFeaturizer(BaseFeaturizer):
             raise ValueError("Only 'regression' or 'classification' allowed for 'task'")
 
         n_targets = 1 # hard coded for the time being
-        
+
         if elem_emb == "matscholar":
             elem_emb_len = 200 # hard coded for matscholar
         else:
@@ -114,9 +114,10 @@ class RoostFeaturizer(BaseFeaturizer):
                 os.makedirs("runs/")
 
             self.writer = SummaryWriter(
-                # log_dir=(f"runs/{model_name}-r{run_id}_" "{date:%d-%m-%Y_%H-%M-%S}").format(
-                #     date=datetime.datetime.now()
-                # )
+                # NOTE comprhys: I find it useful to automatically label by
+                # time and date but haven't added this here as I imagine that
+                # people won't do as much experimentation with hypers and they
+                # can therefore use model_name to differentiate
                 log_dir=f"runs/{model_name}-r{run_id}"
             )
         else:
@@ -184,10 +185,10 @@ class RoostFeaturizer(BaseFeaturizer):
         self.model.device = "cpu"
         self.model.to("cpu")
 
-
     def featurize(self, *comp):
 
-        assert self.fitted, "Please fit this featuriser before use"
+        if not self.fitted:
+            raise ValueError(f"Please fit the {self} before use")
         test_set = CompositionData(comp, task=self.task)
 
         test_generator = DataLoader(test_set, **self.data_params)
@@ -206,7 +207,10 @@ class RoostFeaturizer(BaseFeaturizer):
         return output
 
     def feature_labels(self):
-        return ["Roost_feature_{}".format(x) for x in range(self.elem_fea_len)]
+        return [f"Roost_feature_{x}" for x in range(self.elem_fea_len)]
+
+    def __str__(self):
+        return "RoostFeaturizer"
 
     def implementors(self):
         return ["Rhys Goodall"]
@@ -497,7 +501,7 @@ def init_roost(
             raise NameError("Only L1 or L2 losses are allowed for regression tasks")
 
     num_param = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print("Total Number of Trainable Parameters: {}".format(num_param))
+    print(f"Total Number of Trainable Parameters: {num_param}")
 
     # TODO parallelise the code over multiple GPUs. Currently DataParallel
     # crashes as subsets of the batch have different sizes due to the use of

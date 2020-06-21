@@ -149,7 +149,7 @@ class ElementProperty(BaseFeaturizer):
         for attr in self.features:
             src = self.data_source.__class__.__name__
             for stat in self.stats:
-                labels.append("{} {} {}".format(src, stat, attr))
+                labels.append(f"{src} {stat} {attr}")
         return labels
 
     def citations(self):

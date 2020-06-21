@@ -405,4 +405,3 @@ class ElectronAffinity(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward"]
-
