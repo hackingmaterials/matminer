@@ -30,11 +30,7 @@ from matminer.featurizers.composition.packing import (
 from matminer.featurizers.composition.miedema import Miedema
 from matminer.featurizers.composition.meredig import Meredig
 from matminer.featurizers.composition.yang import YangSolidSolution
-try:
-    from matminer.featurizers.composition.roost import RoostFeaturizer
-except ImportError:
-    RoostFeaturizer = object
-
+from matminer.featurizers.composition.roost import RoostFeaturizer
 
 __author__ = ("Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, "
               "Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain")

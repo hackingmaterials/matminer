@@ -4,13 +4,27 @@ import numpy as np
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.data import MatscholarElementData
 
-import torch
-from torch.utils.data import Dataset, DataLoader
-from torch.nn import L1Loss, MSELoss, CrossEntropyLoss
-from torch.utils.tensorboard import SummaryWriter
+# NOTE comprhys: is this really the only thing we can do here?
+# won't think not throw an error for someone without Roost installed
+# trying to use the RoostFeaturizer?
+try:
+    import torch
+    from torch.utils.data import Dataset, DataLoader
+    from torch.nn import L1Loss, MSELoss, CrossEntropyLoss
+    from torch.utils.tensorboard import SummaryWriter
 
-from roost.core import Normalizer
-from roost.roost.model import Roost
+    from roost.core import Normalizer
+    from roost.roost.model import Roost
+    default_device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+except ImportError:
+    torch = None
+    Dataset, DataLoader = object, object
+    L1Loss, MSELoss, CrossEntropyLoss = object, object, object
+    SummaryWriter = object
+
+    Normalizer = object
+    Roost = object
+    default_device = None
 
 
 class RoostFeaturizer(BaseFeaturizer):
@@ -35,9 +49,13 @@ class RoostFeaturizer(BaseFeaturizer):
         weight_decay=1e-6,
         batch_size=128,
         workers=0, # load data in main process -- allows caching
-        device=torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu"),
+        device=default_device,
         **kwargs,
     ):
+
+        # NOTE kill the featurizer if library not installed
+        if Roost == object:
+            raise ImportError("Roost library unavailable - please install and try again")
 
         if task not in ["regression", "classification"]:
             raise ValueError("Only 'regression' or 'classification' allowed for 'task'")
