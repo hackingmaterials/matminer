@@ -36,5 +36,5 @@ except ImportError:
     RoostFeaturizer = object
 
 
-__author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
-             'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
+__author__ = ("Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, "
+              "Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain")

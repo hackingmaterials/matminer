@@ -9,7 +9,7 @@ from torch.utils.data import Dataset, DataLoader
 from torch.nn import L1Loss, MSELoss, CrossEntropyLoss
 from torch.utils.tensorboard import SummaryWriter
 
-from roost.utils import Normalizer
+from roost.core import Normalizer
 from roost.roost.model import Roost
 
 

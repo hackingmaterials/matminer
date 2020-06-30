@@ -11,13 +11,14 @@ from pymatgen import Composition, MPRester
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.util.testing import PymatgenTest
 
-from matminer.featurizers.composition import Stoichiometry, ElementProperty, \
-    ValenceOrbital, IonProperty, ElementFraction, TMetalFraction, \
-    ElectronAffinity, \
-    ElectronegativityDiff, CohesiveEnergy, BandCenter, Miedema, CationProperty, \
-    OxidationStates, \
-    AtomicOrbitals, YangSolidSolution, AtomicPackingEfficiency, is_ionic, \
-    Meredig, CohesiveEnergyMP
+from matminer.featurizers.composition import (
+    Stoichiometry, ElementProperty, ValenceOrbital,
+    IonProperty, ElementFraction, TMetalFraction,
+    ElectronAffinity, ElectronegativityDiff, BandCenter,
+    Miedema, CationProperty, OxidationStates, is_ionic,
+    AtomicOrbitals, YangSolidSolution, AtomicPackingEfficiency,
+    Meredig, CohesiveEnergy, CohesiveEnergyMP
+)
 from matminer.featurizers.conversions import CompositionToOxidComposition
 
 
