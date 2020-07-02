@@ -15,7 +15,10 @@ try:
 
     from roost.core import Normalizer
     from roost.roost.model import Roost
-    default_device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+    default_device = (
+        torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    )
 except ImportError:
     torch = None
     Dataset, DataLoader = object, object
@@ -32,40 +35,57 @@ class RoostFeaturizer(BaseFeaturizer):
     Representation learning from stiochiometry
     """
 
-    def __init__(self,
+    def __init__(
+        self,
         task="regression",
         loss="L2",
         model_name="roost",
         elem_emb="matscholar",
         elem_fea_len=64,
         n_graph=3,
+        elem_heads=3,
+        elem_gate=[256],
+        elem_msg=[256],
+        cry_heads=3,
+        cry_gate=[256],
+        cry_msg=[256],
+        out_hidden=[1024, 512, 256, 128, 64],
+        n_targets=None,
         run_id=1,
-        seed=42,
         epochs=100,
-        log=True,
         optim="AdamW",
         learning_rate=3e-4,
         momentum=0.9,
         weight_decay=1e-6,
         batch_size=128,
-        workers=0, # load data in main process -- allows caching
+        workers=0,  # load data in main process -- allows caching
         device=default_device,
         **kwargs,
     ):
 
-        # NOTE kill the featurizer if library not installed
+        # kill the featurizer if library not installed
         if Roost == object:
-            raise ImportError("Roost library unavailable - please install and try again")
+            raise ImportError(
+                "Roost library unavailable - please install and try again"
+            )
 
         if task not in ["regression", "classification"]:
-            raise ValueError("Only 'regression' or 'classification' allowed for 'task'")
+            raise ValueError(
+                "Only 'regression' or 'classification' allowed for 'task'"
+            )
 
-        n_targets = 1 # hard coded for the time being
+        if n_targets is None:
+            if task == "regression":
+                n_targets = 1  # hard coded for single target regression
+            elif task == "classification":
+                n_targets = 2  # hard coded for binary clf
 
         if elem_emb == "matscholar":
-            elem_emb_len = 200 # hard coded for matscholar
+            elem_emb_len = 200  # hard coded for matscholar
         else:
-            raise NotImplementedError("Currently only the matscholar embedding is implemented")
+            raise NotImplementedError(
+                "Currently only the matscholar embedding is implemented"
+            )
 
         self.data_params = {
             "batch_size": batch_size,
@@ -91,21 +111,22 @@ class RoostFeaturizer(BaseFeaturizer):
             "elem_emb_len": elem_emb_len,
             "elem_fea_len": elem_fea_len,
             "n_graph": n_graph,
-            "elem_heads": 3,
-            "elem_gate": [256],
-            "elem_msg": [256],
-            "cry_heads": 3,
-            "cry_gate": [256],
-            "cry_msg": [256],
-            "out_hidden": [1024, 512, 256, 128, 64],
+            "elem_heads": elem_heads,
+            "elem_gate": elem_gate,
+            "elem_msg": elem_msg,
+            "cry_heads": cry_heads,
+            "cry_gate": cry_gate,
+            "cry_msg": cry_msg,
+            "out_hidden": out_hidden,
         }
 
         model, criterion, optimizer, scheduler, normalizer = init_roost(
-            model_name=model_name,
-            run_id=run_id,
             **self.setup_params,
             **self.model_params,
         )
+
+        self.model_name = model_name
+        self.run_id = run_id
 
         self.model = model
         self.criterion = criterion
@@ -121,34 +142,22 @@ class RoostFeaturizer(BaseFeaturizer):
         self.task = task
         self.epochs = epochs
 
-        if not os.path.isdir("models/"):
-            os.makedirs("models/")
-
-        if not os.path.isdir(f"models/{model_name}/"):
-            os.makedirs(f"models/{model_name}/")
-
-        if log:
-            if not os.path.isdir("runs/"):
-                os.makedirs("runs/")
-
-            self.writer = SummaryWriter(
-                # NOTE comprhys: I find it useful to automatically label by
-                # time and date but haven't added this here as I imagine that
-                # people won't do as much experimentation with hypers and they
-                # can therefore use model_name to differentiate
-                log_dir=f"runs/{model_name}-r{run_id}"
-            )
-        else:
-            self.writer = None
-
         self.fitted = False
 
-        # multiprocessing doesn't play nicely with pytorch unless using their implementations
+        # NOTE multiprocessing doesn't play nicely with pytorch, apparently you
+        # can set the multiprocessing start method to spawn but it's safer just
+        # to only use one job?
+        # set_start_method('spawn', force=True)
         self.set_n_jobs(1)
 
-    def fit(self, X, y):
+    def fit(self, X, y, checkpoint=False, log=False, verbose=False):
 
         train_set = CompositionData(X, targets=y, task=self.task, emb=self.elem_emb)
+
+        # NOTE this is needed as we declare the model upfront without knowledge of the
+        # dataset.
+        if train_set.n_targets != self.model_params["n_targets"]:
+            raise ValueError("Number of targets for dataset does not match model")
 
         train_generator = DataLoader(train_set, **self.data_params)
 
@@ -181,6 +190,27 @@ class RoostFeaturizer(BaseFeaturizer):
         #             print(f"Validation Baseline: Acc {val_score:.3f}\n")
         #         self.model.best_val_score = val_score
 
+        if checkpoint:
+            if not os.path.isdir("models/"):
+                os.makedirs("models/")
+
+            if not os.path.isdir(f"models/{self.model_name}/"):
+                os.makedirs(f"models/{self.model_name}/")
+
+        if log:
+            if not os.path.isdir("runs/"):
+                os.makedirs("runs/")
+
+            writer = SummaryWriter(
+                # NOTE comprhys: I find it useful to automatically label by
+                # time and date but haven't added this here as I imagine that
+                # people won't do as much experimentation with hypers and they
+                # can therefore use model_name to differentiate
+                log_dir=f"runs/{self.model_name}-r{self.run_id}"
+            )
+        else:
+            writer = None
+
         self.model.fit(
             train_generator=train_generator,
             val_generator=None,
@@ -192,7 +222,9 @@ class RoostFeaturizer(BaseFeaturizer):
             normalizer=self.normalizer,
             model_name=self.model_name,
             run_id=self.run_id,
-            writer=self.writer,
+            checkpoint=checkpoint,
+            writer=writer,
+            verbose=verbose,
         )
 
         self.fitted = True
@@ -216,7 +248,7 @@ class RoostFeaturizer(BaseFeaturizer):
 
         with torch.no_grad():
             for input_, _, _, _ in test_generator:
-                # move tensors to GPU
+                # move tensors to device
                 input_ = (tensor.to(self.model.device) for tensor in input_)
                 # compute intermediate output
                 output = self.model.material_nn(*input_).numpy().ravel()
@@ -234,12 +266,14 @@ class RoostFeaturizer(BaseFeaturizer):
         return ["Rhys Goodall"]
 
     def citations(self):
-        return ["@article{goodall2019predicting,"
-                "title={Predicting materials properties without crystal structure: "
-                "Deep representation learning from stoichiometry},"
-                "author={Goodall, Rhys EA and Lee, Alpha A},"
-                "journal={arXiv preprint arXiv:1910.00617},"
-                "year={2019}}"]
+        return [
+            "@article{goodall2019predicting,"
+            "title={Predicting materials properties without crystal structure: "
+            "Deep representation learning from stoichiometry},"
+            "author={Goodall, Rhys EA and Lee, Alpha A},"
+            "journal={arXiv preprint arXiv:1910.00617},"
+            "year={2019}}"
+        ]
 
 
 class CompositionData(Dataset):
@@ -256,7 +290,8 @@ class CompositionData(Dataset):
         if targets is not None:
             self.targets = targets
         else:
-            self.targets = np.full_like(comp, np.nan).ravel()
+            # NOTE use an invalid value as placeholder when screening
+            self.targets = np.full_like(comp, -999).ravel()
 
         if emb == "matscholar":
             self.elem_features = MatscholarElementData()
@@ -430,8 +465,6 @@ def collate_batch(dataset_list):
 
 
 def init_roost(
-    model_name,
-    run_id,
     task,
     robust,
     loss,
@@ -460,7 +493,7 @@ def init_roost(
         model = Roost(**checkpoint["model_params"], device=device,)
         model.load_state_dict(checkpoint["state_dict"])
 
-        if model.model_params["robust"] == True:
+        if model.model_params["robust"] is True:
             raise NotImplementedError("Robust losses not supported within Matminer")
 
     else:
@@ -519,6 +552,9 @@ def init_roost(
             raise NameError("Only L1 or L2 losses are allowed for regression tasks")
 
     num_param = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+    print("RoostFeaturizer:")
+    print(f"The model will run on the {device} device")
     print(f"Total Number of Trainable Parameters: {num_param}")
 
     # TODO parallelise the code over multiple GPUs. Currently DataParallel

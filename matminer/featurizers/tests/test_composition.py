@@ -17,10 +17,16 @@ from matminer.featurizers.composition import (
     ElectronAffinity, ElectronegativityDiff, BandCenter,
     Miedema, CationProperty, OxidationStates, is_ionic,
     AtomicOrbitals, YangSolidSolution, AtomicPackingEfficiency,
-    Meredig, CohesiveEnergy, CohesiveEnergyMP
+    Meredig, CohesiveEnergy, CohesiveEnergyMP, RoostFeaturizer
 )
 from matminer.featurizers.conversions import CompositionToOxidComposition
 
+# For the RoostFeaturizer
+try:
+    import torch
+    import roost
+except ImportError:
+    torch, roost = None, None
 
 class CompositionFeaturesTest(PymatgenTest):
 
@@ -388,6 +394,63 @@ class CompositionFeaturesTest(PymatgenTest):
         # Make sure it works with composition that do not match any efficient clusters
         feat = f.compute_nearest_cluster_distance(Composition('Al'))
         self.assertArrayAlmostEqual([1]*3, feat)
+
+    @unittest.skipIf(not (torch and roost), "pytorch or roost not installed.")
+    def test_roost(self):
+        # set the seed for torch
+        torch.manual_seed(42)
+        elem_fea_len = 4
+
+        # Test regression
+        comps = list(map(Composition, ["ZrHfTiCuNi", "CuNi", "CoCrFeNiCuAl0.3"]))
+        df = pd.DataFrame({"composition": comps})
+        reg_targets = np.array([1.23, -1.23, 0.99])
+        roost = RoostFeaturizer(
+            task="regression",
+            epochs=10,
+            elem_fea_len=elem_fea_len,
+            out_hidden=[256],
+            )
+        self.assertEqual(roost.fitted, False)
+        roost.fit(df["composition"].values, reg_targets)
+        self.assertEqual(roost.fitted, True)
+        self.assertEqual(len(roost.feature_labels()), elem_fea_len)
+
+        df = roost.featurize_dataframe(df, col_id="composition")
+        reg_fea_0 = [0.132201, 0.086088, 0.141568]
+        reg_fea_1 = [0.023137, 0.031853, 0.025354]
+
+        for i, _ in enumerate(reg_fea_0):
+            self.assertAlmostEqual(df["Roost_feature_0"][i], reg_fea_0[i], 4)
+            self.assertAlmostEqual(df["Roost_feature_1"][i], reg_fea_1[i], 4)
+
+        # Test classification
+        # NOTE we do not reset the PRNG so the initialisation of this second
+        # model is only reproduced if carried out after the first test
+        comps = list(map(Composition, ["ZrHfTiCuNi", "CuNi", "CoCrFeNiCuAl0.3"]))
+        df = pd.DataFrame({"composition": comps})
+        clf_targets = np.array([1, 0, 0])
+        roost = RoostFeaturizer(
+            task="classification",
+            epochs=10,
+            elem_fea_len=elem_fea_len,
+            out_hidden=[256],
+            )
+        self.assertEqual(roost.fitted, False)
+        roost.fit(df["composition"].values, clf_targets)
+        self.assertEqual(roost.fitted, True)
+        self.assertEqual(len(roost.feature_labels()), elem_fea_len)
+
+        df = roost.featurize_dataframe(df, col_id="composition")
+        reg_fea_0 = [0.214613, 0.221740, 0.216369]
+        reg_fea_1 = [0.025175, 0.027475, 0.021176]
+
+        for i, _ in enumerate(reg_fea_0):
+            self.assertAlmostEqual(df["Roost_feature_0"][i], reg_fea_0[i], 4)
+            self.assertAlmostEqual(df["Roost_feature_1"][i], reg_fea_1[i], 4)
+
+        # TODO tests for warm restarts and pre-trained models if added if later PRs
+
 
 if __name__ == '__main__':
     unittest.main()

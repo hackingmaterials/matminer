@@ -11,7 +11,7 @@ from matminer.featurizers.composition.oxidation import (
     OxidationStates,
     ElectronegativityDiff,
     ElectronAffinity,
-    is_ionic, # needed for a test
+    is_ionic,  # needed for a test
 )
 from matminer.featurizers.composition.orbitals import (
     BandCenter,
