@@ -221,7 +221,8 @@ class RadialDistributionFunction(BaseFeaturizer):
     Calculate the radial distribution function (RDF) of a crystal structure.
 
     Features:
-        - Radial distribution function
+        - Radial distribution function. Each feature is the "density" of the
+          distribution at a certain radius.
 
     Args:
         cutoff: (float) Angstrom distance up to which to calculate the RDF.
@@ -245,7 +246,7 @@ class RadialDistributionFunction(BaseFeaturizer):
             s (Structure): Pymatgen Structure object.
 
         Returns:
-            rdf, dist: (tuple of arrays) the first element is the
+            rdf: (iterable) the first element is the
                     normalized RDF, whereas the second element is
                     the inner radius of the RDF bin.
         """
@@ -294,19 +295,21 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
 
+    Features:
+        Each feature corresponds to the density of number of bonds
+        for a certain pair of elements at a certain range of
+        distances. For example, "Al-Al PRDF r=1.00-1.50" corresponds
+        to the density of Al-Al bonds between 1 and 1.5 distance units
+        By default, this featurizer generates RDFs for each pair
+        of elements in the training set.
+
     Args:
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
         include_elems: (list of string), list of elements that must be included in PRDF
         exclude_elems: (list of string), list of elmeents that should not be included in PRDF
 
-    Features:
-        Each feature corresponds to the density of number of bonds
-           for a certain pair of elements at a certain range of
-           distances. For example, "Al-Al PRDF r=1.00-1.50" corresponds
-           to the density of Al-Al bonds between 1 and 1.5 distance units
-           By default, this featurizer generates RDFs for each pair
-           of elements in the training set."""
+    """
 
     def __init__(self, cutoff=20.0, bin_size=0.1, include_elems=(),
                  exclude_elems=()):
