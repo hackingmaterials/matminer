@@ -286,12 +286,8 @@ class RadialDistributionFunction(BaseFeaturizer):
         return rdf
 
     def feature_labels(self):
-        bin_dists_complete = np.concatenate((self.bin_distances, np.asarray([self.cutoff])))
-        flabels = [""] * len(self.bin_distances)
-        for i, _ in enumerate(self.bin_distances):
-            lower = f"{bin_dists_complete[i]}"[:5]
-            higher = f"{bin_dists_complete[i+1]}"[:5]
-            flabels[i] = f"rdf [{lower} - {higher}]A"
+        bin_labels = get_rdf_bin_labels(self.bin_distances, self.cutoff)
+        bin_labels = [f"rdf {bl}A" for bl in bin_labels]
         return flabels
 
     def citations(self):
@@ -521,7 +517,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         self.dr = dr
         self.nbins = int(self.cutoff / self.dr) + 1
         self.distances = np.array(
-            [(i + 0.5) * self.dr for i in range(self.nbins)]
+            [i * self.dr for i in range(self.nbins)]
         )
 
 
@@ -581,11 +577,9 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         return distribution
 
     def feature_labels(self):
-        flabels = [""] * len(self.distances)
-        for i, d in enumerate(self.distances):
-            dstr = f"{d}"[:8]
-            flabels[i] = f"ReDF [bin centered @ {dstr}]A"
-        return flabels
+        bin_labels = get_rdf_bin_labels(self.distances, self.cutoff, n_digits=8)
+        bin_labels = [f"ReDF {bl}A" for bl in bin_labels]
+        return bin_labels
 
     def citations(self):
         return ["@article{title={Method for the computational comparison"
@@ -3888,3 +3882,25 @@ class StructuralComplexity(BaseFeaturizer):
             "doi = {10.1180/minmag.2013.077.3.05},"
             "url = {https://doi.org/10.1180/minmag.2013.077.3.05}}",
         ]
+
+
+
+def get_rdf_bin_labels(bin_distances, cutoff, n_digits=5):
+    """
+
+    Args:
+        bin_distances:
+        cutoff:
+        n_digits:
+
+    Returns:
+
+    """
+    bin_dists_complete = np.concatenate(
+        (bin_distances, np.asarray([cutoff])))
+    flabels = [""] * len(bin_distances)
+    for i, _ in enumerate(bin_distances):
+        lower = f"{bin_dists_complete[i]}"[:n_digits]
+        higher = f"{bin_dists_complete[i + 1]}"[:n_digits]
+        flabels[i] = f"[{lower} - {higher}]"
+    return flabels

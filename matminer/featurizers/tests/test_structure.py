@@ -246,7 +246,11 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_redf(self):
 
-        # todo: add prechecks
+        # Test prechecking
+        erdf = ElectronicRadialDistributionFunction()
+        self.assertTrue()
+
+
         d = ElectronicRadialDistributionFunction().featurize(
             self.diamond)[0]
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
