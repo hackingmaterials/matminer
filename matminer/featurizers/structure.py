@@ -536,7 +536,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             (bool)
 
         """
-        if has_oxidation_states(s.composition):
+        if has_oxidation_states(s.composition) and s.is_ordered:
             return True
         else:
             return False
@@ -554,6 +554,11 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 'distances'; the ReDF itself is accessible via key
                 'redf'.
         """
+
+        if not has_oxidation_states(s.composition):
+            raise ValueError("Structure must have oxidation states")
+        if not s.is_ordered:
+            raise ValueError("Structure must be ordered")
         if self.dr <= 0:
             raise ValueError("width of bins for ReDF must be >0")
 
@@ -563,7 +568,6 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         # Add oxidation states.
         struct = ValenceIonicRadiusEvaluator(struct).structure
         distribution = np.zeros(self.nbins, dtype=np.float)
-
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
@@ -577,13 +581,10 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         return distribution
 
     def feature_labels(self):
-        bin_dists_complete = np.concatenate(
-            (self.bin_distances, np.asarray([self.cutoff])))
-        flabels = [""] * len(self.bin_distances)
-        for i, _ in enumerate(self.bin_distances):
-            lower = f"{bin_dists_complete[i]}"[:5]
-            higher = f"{bin_dists_complete[i + 1]}"[:5]
-            flabels[i] = f"rdf [{lower} - {higher}]A"
+        flabels = [""] * len(self.distances)
+        for i, d in enumerate(self.distances):
+            dstr = f"{d}"[:8]
+            flabels[i] = f"ReDF [bin centered @ {dstr}]A"
         return flabels
 
     def citations(self):
