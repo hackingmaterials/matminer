@@ -214,14 +214,14 @@ class CompositionFeaturesTest(PymatgenTest):
         if not mpr.api_key:
             raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
         df_cohesive_energy = CohesiveEnergy().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 5.15768, 2)
+        self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 5.179, 2)
 
     def test_cohesive_energy_mp(self):
         mpr = MPRester()
         if not mpr.api_key:
             raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
         df_cohesive_energy = CohesiveEnergyMP().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_cohesive_energy["cohesive energy (MP)"][0], 5.945, 2)
+        self.assertAlmostEqual(df_cohesive_energy["cohesive energy (MP)"][0], 5.978, 2)
 
     def test_miedema_all(self):
         df = pd.DataFrame({"composition": [Composition("TiZr"),

@@ -754,7 +754,7 @@
     "num_entries": 4604,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
     "url": "https://ml.materialsproject.org/matbench_expt_gap.json.gz",
-    "hash": "1e6816fb8e7132535b76cdac458c4d53944eca97e1ecb68e6a8fd853c9cedc3a"
+    "hash": "783e7d1461eb83b00b2f2942da4b95fda5e58a0d1ae26b581c24cf8a82ca75b2"
   },
   "matbench_expt_is_metal": {
     "bibtex_refs": [
@@ -769,7 +769,7 @@
     "num_entries": 4921,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 \n https//:doi.org/10.1021/acs.jpclett.8b00124.",
     "url": "https://ml.materialsproject.org/matbench_expt_is_metal.json.gz",
-    "hash": "80fb0854cff5d4657d812793f4748d5c23a9407f6c59bcf5b86c818ebaa6910f"
+    "hash": "8f2a4f9bacdcbc5c2c73615629ee7986f09d39bed40ba7db52b61b2889730887"
   },
   "matbench_phonons": {
     "bibtex_refs": [
