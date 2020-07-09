@@ -37,6 +37,7 @@ from matminer.featurizers.site import OPSiteFingerprint, \
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
     CrystalGraphConvNetWrapper, CIFDataWrapper
+from matminer.featurizers.utils.oxidation import has_oxidation_states
 from matminer.utils.caching import get_all_nearest_neighbors
 from matminer.utils.data import IUCrBondValenceData
 
@@ -239,6 +240,19 @@ class RadialDistributionFunction(BaseFeaturizer):
 
         self.bin_distances = np.arange(0, cutoff, bin_size)
 
+    def precheck(self, s):
+        """
+        Precheck the structure is ordered.
+
+        Args:
+            s: (pymatgen.Struture)
+
+        Returns:
+            (bool): True if passing precheck, false if failing
+
+        """
+        return s.is_ordered
+
     def featurize(self, s):
         """
         Get RDF of the input structure.
@@ -320,6 +334,19 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             include_elems)  # Makes sure the element lists are ordered
         self.exclude_elems = list(exclude_elems)
 
+    def precheck(self, s):
+        """
+        Precheck the structure is ordered.
+
+        Args:
+            s: (pymatgen.Struture)
+
+        Returns:
+            (bool): True if passing precheck, false if failing
+
+        """
+        return s.is_ordered
+
     def fit(self, X, y=None):
         """Define the list of elements to be included in the PRDF. By default,
         the PRDF will include all of the elements in `X`
@@ -367,8 +394,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         if self.elements_ is None:
             raise Exception("You must run 'fit' first!")
 
-        dist_bins, prdf = self.compute_prdf(
-            s)  # Assemble the PRDF for each pair
+        dist_bins, prdf = self.compute_prdf(s)  # Assemble the PRDF for each pair
 
         # Convert the PRDF into a feature array
         zeros = np.zeros_like(dist_bins)  # Zeros if elements don't appear
@@ -481,6 +507,8 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
     from atomic partial charges. Atomic charges are obtained
     from the ValenceIonicRadiusEvaluator class.
 
+    WARNING: The ReDF needs oxidation states to work correctly.
+
     Args:
         cutoff: (float) distance up to which the ReDF is to be
                 calculated (default: longest diagaonal in
@@ -491,6 +519,22 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
     def __init__(self, cutoff=None, dr=0.05):
         self.cutoff = cutoff
         self.dr = dr
+
+    def precheck(self, s) -> bool:
+        """
+        Check the structure to ensure the ReDF can be run.
+
+        Args:
+            s (pymatgen. Structure): Structure to precheck
+
+        Returns:
+            (bool)
+
+        """
+        if has_oxidation_states(s.composition):
+            return True
+        else:
+            return False
 
     def featurize(self, s):
         """

@@ -13,7 +13,7 @@ import pandas as pd
 from multiprocessing import set_start_method
 from sklearn.exceptions import NotFittedError
 
-from pymatgen import Structure, Lattice, Molecule
+from pymatgen import Structure, Lattice, Molecule, Specie
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import ElementProperty
@@ -78,6 +78,15 @@ class StructureFeaturesTest(PymatgenTest):
             coords_are_cartesian=False)
         self.bond_angles = range(5, 180, 5)
 
+
+        diamond_copy = copy.deepcopy(self.diamond)
+        diamond_copy.replace_species(
+            {Specie("C", 0.0):
+                 {Specie("C", 0.0): 0.99, Specie("Si", 0.0): 0.01}
+             }
+        )
+        self.disordered_diamond = diamond_copy
+
     def test_density_features(self):
         df = DensityFeatures()
         f = df.featurize(self.diamond)
@@ -114,6 +123,10 @@ class StructureFeaturesTest(PymatgenTest):
         ## Test diamond
         rdf = RadialDistributionFunction()
         diamond_rdf = rdf.featurize(self.diamond)
+
+        # Prechecking test
+        self.assertTrue(rdf.precheck(self.diamond))
+        self.assertFalse(rdf.precheck(self.disordered_diamond))
 
         # Make sure it the last bin is cutoff-bin_max
         self.assertAlmostEqual(max(rdf.bin_distances), 19.9)
@@ -154,6 +167,12 @@ class StructureFeaturesTest(PymatgenTest):
         # These expected numbers were derived by performing
         # the calculation in another code
         distances, prdf = PartialRadialDistributionFunction().compute_prdf(self.diamond)
+
+        # Check prechecking
+        prdf_obj = PartialRadialDistributionFunction()
+        self.assertTrue(prdf_obj.precheck(self.diamond))
+        self.assertFalse(prdf_obj.precheck(self.disordered_diamond))
+
         self.assertEqual(len(prdf.values()), 1)
         self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.4 / 0.1))], 0)
         self.assertAlmostEqual(prdf[('C', 'C')][int(round(1.5 / 0.1))], 1.32445167622)
@@ -226,6 +245,8 @@ class StructureFeaturesTest(PymatgenTest):
             [prdf[('Al', 'Al')], prdf[('Al', 'Ni')], prdf[('Ni', 'Ni')]]))
 
     def test_redf(self):
+
+        # todo: add prechecks
         d = ElectronicRadialDistributionFunction().featurize(
             self.diamond)[0]
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
