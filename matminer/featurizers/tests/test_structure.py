@@ -247,34 +247,41 @@ class StructureFeaturesTest(PymatgenTest):
     def test_redf(self):
 
         # Test prechecking
-        erdf = ElectronicRadialDistributionFunction()
-        self.assertTrue()
+        erdf = ElectronicRadialDistributionFunction(cutoff=10, dr=0.05)
+        self.assertTrue(erdf.precheck(self.diamond))
+        self.assertFalse(erdf.precheck(self.disordered_diamond))
+        self.assertFalse(erdf.precheck(self.diamond_no_oxi))
 
 
-        d = ElectronicRadialDistributionFunction().featurize(
-            self.diamond)[0]
-        self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
-        self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
-        self.assertAlmostEqual(int(1000 * d["distances"][len(
-            d["distances"]) - 1]), 6175)
-        self.assertAlmostEqual(int(1000 * d["distribution"][len(
-            d["distances"]) - 1]), 0)
-        d = ElectronicRadialDistributionFunction().featurize(
-            self.nacl)[0]
-        self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
-        self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
-        self.assertAlmostEqual(int(1000 * d["distances"][56]), 2825)
-        self.assertAlmostEqual(int(1000 * d["distribution"][56]), -2108)
-        self.assertAlmostEqual(int(1000 * d["distances"][len(
-            d["distances"]) - 1]), 9875)
-        d = ElectronicRadialDistributionFunction().featurize(
-            self.cscl)[0]
-        self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
-        self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
-        self.assertAlmostEqual(int(1000 * d["distances"][72]), 3625)
-        self.assertAlmostEqual(int(1000 * d["distribution"][72]), -2194)
-        self.assertAlmostEqual(int(1000 * d["distances"][len(
-            d["distances"]) - 1]), 7275)
+        d = erdf.featurize(self.diamond)
+        self.assertAlmostEqual(erdf.distances[0], 0)
+        self.assertAlmostEqual(erdf.distances[1], 0.05)
+
+        print(d)
+        self.assertAlmostEqual(d[0], 0)
+        self.assertAlmostEqual(d[-2], 0)
+
+        # self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
+        # self.assertAlmostEqual(int(1000 * d["distances"][len(
+        #     d["distances"]) - 1]), 6175)
+        # self.assertAlmostEqual(int(1000 * d["distribution"][len(
+        #     d["distances"]) - 1]), 0)
+        # d = ElectronicRadialDistributionFunction().featurize(
+        #     self.nacl)[0]
+        # self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
+        # self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
+        # self.assertAlmostEqual(int(1000 * d["distances"][56]), 2825)
+        # self.assertAlmostEqual(int(1000 * d["distribution"][56]), -2108)
+        # self.assertAlmostEqual(int(1000 * d["distances"][len(
+        #     d["distances"]) - 1]), 9875)
+        # d = ElectronicRadialDistributionFunction().featurize(
+        #     self.cscl)[0]
+        # self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
+        # self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
+        # self.assertAlmostEqual(int(1000 * d["distances"][72]), 3625)
+        # self.assertAlmostEqual(int(1000 * d["distribution"][72]), -2194)
+        # self.assertAlmostEqual(int(1000 * d["distances"][len(
+        #     d["distances"]) - 1]), 7275)
 
     def test_coulomb_matrix(self):
         # flat

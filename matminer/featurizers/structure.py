@@ -510,9 +510,12 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         cutoff: (float) distance up to which the ReDF is to be
                 calculated
         dr: (float) width of bins ("x"-axis) of ReDF (default: 0.05 A).
+
+    Attributes:
+        distances (np.ndarray): The distances at which each bin begins.
     """
 
-    def __init__(self, cutoff=40, dr=0.05):
+    def __init__(self, cutoff=20, dr=0.05):
         self.cutoff = cutoff
         self.dr = dr
         self.nbins = int(self.cutoff / self.dr) + 1
@@ -577,7 +580,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         return distribution
 
     def feature_labels(self):
-        bin_labels = get_rdf_bin_labels(self.distances, self.cutoff, n_digits=8)
+        bin_labels = get_rdf_bin_labels(self.distances, self.cutoff)
         bin_labels = [f"ReDF {bl}A" for bl in bin_labels]
         return bin_labels
 
@@ -3884,23 +3887,24 @@ class StructuralComplexity(BaseFeaturizer):
         ]
 
 
-
-def get_rdf_bin_labels(bin_distances, cutoff, n_digits=5):
+def get_rdf_bin_labels(bin_distances, cutoff):
     """
+    Common function for getting bin labels given the distances at which each
+    bin begins and the ending cutoff.
+
 
     Args:
-        bin_distances:
-        cutoff:
-        n_digits:
+        bin_distances (np.ndarray): The distances at which each bin begins.
+        cutoff (float): The final cutoff value.
 
     Returns:
+        [str]: The feature labels for the *RDF
 
     """
-    bin_dists_complete = np.concatenate(
-        (bin_distances, np.asarray([cutoff])))
+    bin_dists_complete = np.concatenate((bin_distances, np.asarray([cutoff])))
     flabels = [""] * len(bin_distances)
     for i, _ in enumerate(bin_distances):
-        lower = f"{bin_dists_complete[i]}"[:n_digits]
-        higher = f"{bin_dists_complete[i + 1]}"[:n_digits]
+        lower = "{:.5f}".format(bin_dists_complete[i])
+        higher = "{:.5f}".format(bin_dists_complete[i + 1])
         flabels[i] = f"[{lower} - {higher}]"
     return flabels
