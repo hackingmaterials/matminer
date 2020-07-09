@@ -252,36 +252,25 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertFalse(erdf.precheck(self.disordered_diamond))
         self.assertFalse(erdf.precheck(self.diamond_no_oxi))
 
-
+        # C has oxi state of 0 in diamond, so we expect them all to be 0
         d = erdf.featurize(self.diamond)
         self.assertAlmostEqual(erdf.distances[0], 0)
         self.assertAlmostEqual(erdf.distances[1], 0.05)
+        self.assertFalse(np.asarray(d).any())
 
-        print(d)
-        self.assertAlmostEqual(d[0], 0)
-        self.assertAlmostEqual(d[-2], 0)
+        d = erdf.featurize(self.nacl)
+        self.assertAlmostEqual(erdf.distances[0], 0)
+        self.assertAlmostEqual(erdf.distances[1], 0.05)
+        self.assertTrue(np.asarray(d).any())
+        self.assertAlmostEqual(d[-4], 0.81151636)
+        self.assertAlmostEqual(d[-13], -2.54280359)
+        self.assertAlmostEqual(d[56], -2.10838136)
 
-        # self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
-        # self.assertAlmostEqual(int(1000 * d["distances"][len(
-        #     d["distances"]) - 1]), 6175)
-        # self.assertAlmostEqual(int(1000 * d["distribution"][len(
-        #     d["distances"]) - 1]), 0)
-        # d = ElectronicRadialDistributionFunction().featurize(
-        #     self.nacl)[0]
-        # self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
-        # self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
-        # self.assertAlmostEqual(int(1000 * d["distances"][56]), 2825)
-        # self.assertAlmostEqual(int(1000 * d["distribution"][56]), -2108)
-        # self.assertAlmostEqual(int(1000 * d["distances"][len(
-        #     d["distances"]) - 1]), 9875)
-        # d = ElectronicRadialDistributionFunction().featurize(
-        #     self.cscl)[0]
-        # self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
-        # self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
-        # self.assertAlmostEqual(int(1000 * d["distances"][72]), 3625)
-        # self.assertAlmostEqual(int(1000 * d["distribution"][72]), -2194)
-        # self.assertAlmostEqual(int(1000 * d["distances"][len(
-        #     d["distances"]) - 1]), 7275)
+        d = erdf.featurize(self.cscl)
+        self.assertAlmostEqual(erdf.distances[0], 0)
+        self.assertAlmostEqual(erdf.distances[1], 0.05)
+        self.assertAlmostEqual(d[72], -2.19472661)
+        self.assertAlmostEqual(d[-13], 2.55004188)
 
     def test_coulomb_matrix(self):
         # flat
