@@ -519,10 +519,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         self.cutoff = cutoff
         self.dr = dr
         self.nbins = int(self.cutoff / self.dr) + 1
-        self.distances = np.array(
-            [i * self.dr for i in range(self.nbins)]
-        )
-
+        self.distances = np.array([i * self.dr for i in range(self.nbins)])
 
     def precheck(self, s) -> bool:
         """
@@ -535,10 +532,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             (bool)
 
         """
-        if has_oxidation_states(s.composition) and s.is_ordered:
-            return True
-        else:
-            return False
+        return has_oxidation_states(s.composition) and s.is_ordered
 
     def featurize(self, s):
         """
