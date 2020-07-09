@@ -170,7 +170,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         Returns:
             dist_bins - float, start of each of the bins
             prdf - dict, where the keys is a pair of elements (strings),
-                and the value is the radial distribution function for those paris of elements
+                and the value is the radial distribution function for
+                those paris of elements
         """
         # Get the composition of the array
         composition = s.composition.fractional_composition.to_reduced_dict
@@ -184,11 +185,13 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             distances_by_type[p] = []
 
         def get_symbol(site):
-            return site.specie.symbol if isinstance(site.specie,
-                                                    Element) else site.specie.element.symbol
+            if isinstance(site.specie, Element):
+                return site.specie.symbol
+            else:
+                return site.specie.element.symbol
 
-        for site, nlst in zip(s.sites,
-                              neighbors_lst):  # Each list is a list for each site
+        # Each list is a list for each site
+        for site, nlst in zip(s.sites, neighbors_lst):
             my_elem = get_symbol(site)
 
             for neighbor in nlst:

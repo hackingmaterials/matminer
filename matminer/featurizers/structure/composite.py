@@ -17,7 +17,7 @@ class JarvisCFID(BaseFeaturizer):
     """
     Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML.
 
-    Chemo-structural descriptors from five different sub-methods,cincluding
+    Chemo-structural descriptors from five different sub-methods, including
     pairwise radial, nearest neighbor, bond-angle, dihedral-angle and
     core-charge distributions. With all descriptors enabled, there are 1,557
     features per structure.
