@@ -217,6 +217,7 @@ class Dimensionality(BaseFeaturizer):
         return ["Anubhav Jain", "Alex Ganose"]
 
 
+
 class RadialDistributionFunction(BaseFeaturizer):
     """
     Calculate the radial distribution function (RDF) of a crystal structure.
@@ -511,14 +512,18 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
     Args:
         cutoff: (float) distance up to which the ReDF is to be
-                calculated (default: longest diagaonal in
-                primitive cell).
+                calculated
         dr: (float) width of bins ("x"-axis) of ReDF (default: 0.05 A).
     """
 
-    def __init__(self, cutoff=None, dr=0.05):
+    def __init__(self, cutoff=40, dr=0.05):
         self.cutoff = cutoff
         self.dr = dr
+        self.nbins = int(self.cutoff / self.dr) + 1
+        self.distances = np.array(
+            [(i + 0.5) * self.dr for i in range(self.nbins)]
+        )
+
 
     def precheck(self, s) -> bool:
         """
@@ -557,20 +562,8 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
         # Add oxidation states.
         struct = ValenceIonicRadiusEvaluator(struct).structure
+        distribution = np.zeros(self.nbins, dtype=np.float)
 
-        if self.cutoff is None:
-            # Set cutoff to longest diagonal.
-            a = struct.lattice.matrix[0]
-            b = struct.lattice.matrix[1]
-            c = struct.lattice.matrix[2]
-            self.cutoff = max(
-                [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c),
-                 np.linalg.norm(a - b + c), np.linalg.norm(a + b - c)])
-
-        nbins = int(self.cutoff / self.dr) + 1
-        redf_dict = {"distances": np.array(
-            [(i + 0.5) * self.dr for i in range(nbins)]),
-            "distribution": np.zeros(nbins, dtype=np.float)}
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
@@ -578,13 +571,20 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             for nnsite, dist, *_ in neighbors:
                 neigh_charge = float(nnsite.specie.oxi_state)
                 bin_index = int(dist / self.dr)
-                redf_dict["distribution"][bin_index] \
+                distribution[bin_index] \
                     += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
-        return [redf_dict]
+        return distribution
 
     def feature_labels(self):
-        return ["electronic radial distribution function"]
+        bin_dists_complete = np.concatenate(
+            (self.bin_distances, np.asarray([self.cutoff])))
+        flabels = [""] * len(self.bin_distances)
+        for i, _ in enumerate(self.bin_distances):
+            lower = f"{bin_dists_complete[i]}"[:5]
+            higher = f"{bin_dists_complete[i + 1]}"[:5]
+            flabels[i] = f"rdf [{lower} - {higher}]A"
+        return flabels
 
     def citations(self):
         return ["@article{title={Method for the computational comparison"
