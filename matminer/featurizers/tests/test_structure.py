@@ -27,7 +27,7 @@ from matminer.featurizers.structure import DensityFeatures, \
     MaximumPackingEfficiency, ChemicalOrdering, StructureComposition, \
     Dimensionality, XRDPowderPattern, CGCNNFeaturizer, JarvisCFID, \
     GlobalInstabilityIndex, \
-    StructuralComplexity
+    StructuralComplexity, get_rdf_bin_labels
 
 # For the CGCNNFeaturizer
 try:
@@ -271,6 +271,14 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(erdf.distances[1], 0.05)
         self.assertAlmostEqual(d[72], -2.19472661)
         self.assertAlmostEqual(d[-13], 2.55004188)
+
+    def test_get_rdf_bin_labels(self):
+        bin_distances = [1, 2, 3, 4, 5]
+        cutoff = 6
+        flabels = get_rdf_bin_labels(bin_distances, cutoff)
+        self.assertEqual(flabels[0], "[1.00000 - 2.00000]")
+        self.assertEqual(flabels[2], "[3.00000 - 4.00000]")
+        self.assertEqual(flabels[-1], "[5.00000 - 6.00000]")
 
     def test_coulomb_matrix(self):
         # flat
