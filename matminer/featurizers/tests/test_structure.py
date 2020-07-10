@@ -387,13 +387,26 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_min_relative_distances(self):
 
+        with self.assertRaises(ValueError):
+            MinimumRelativeDistances(include_species=False,
+                                     include_distances=False)
 
-        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+        mrd_nonuniform = MinimumRelativeDistances(flatten=False)
+        self.assertAlmostEqual(mrd_nonuniform.featurize(
                 self.diamond_no_oxi)[0][0], 1.1052576)
-        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+        self.assertAlmostEqual(mrd_nonuniform.featurize(
                 self.nacl)[0][0], 0.8891443)
-        self.assertAlmostEqual(MinimumRelativeDistances().featurize(
+        self.assertAlmostEqual(mrd_nonuniform.featurize(
                 self.cscl)[0][0], 0.9877540)
+
+        mrd_flat = MinimumRelativeDistances(flatten=True)
+
+        with self.assertRaises(NotFittedError):
+            mrd_flat.featurize(self.diamond)
+
+        print(self.diamond)
+        print(len(self.diamond.sites))
+
 
     def test_sitestatsfingerprint(self):
         # Test matrix.

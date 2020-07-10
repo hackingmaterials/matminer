@@ -1077,7 +1077,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
     each material, regardless of the number of sites in each structure.
     Returning flat output REQUIRES fitting (using self.fit(...)). If fit,
     structures having fewer sites than the max sites among the fitting
-    structures are extended NaN entries; structures with more are truncated.
+    structures are extended with NaNs; structures with more sites are truncated.
 
     To return non-flat (i.e., requiring further processing) features so that
     no features are NaN and no distances are truncated, use flatten=False.
@@ -1248,7 +1248,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return ["Nils E. R. Zimmermann", "Alex Dunn"]
 
     def _check_fitted(self):
-        if not self._max_sites and not self.flatten:
+        if not self._max_sites and self.flatten:
             raise NotFittedError(
                 "If using flatten=True, MinimumRelativeDistances must be fit "
                 "before using."
