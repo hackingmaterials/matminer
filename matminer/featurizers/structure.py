@@ -1066,15 +1066,53 @@ class MinimumRelativeDistances(BaseFeaturizer):
     """
     Determines the relative distance of each site to its closest neighbor.
 
+
     We use the relative distance,
     f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the
     absolute distances, r_ij, to account for the fact that different
     atoms/species have different sizes.  The function uses the
     valence-ionic radius estimator implemented in Pymatgen.
+
+    The features can be flattened so a uniform-length vector is returned for
+    each material, regardless of the number of sites in each structure.
+    Returning flat output REQUIRES fitting (using self.fit(...)). If fit,
+    structures having fewer sites than the max sites among the fitting
+    structures are extended NaN entries; structures with more are truncated.
+
+    To return non-flat (i.e., requiring further processing) features so that
+    no features are NaN and no distances are truncated, use flatten=False.
+
+    Features:
+
+        If using flatten=True:
+
+        site #{number} min. rel. dist. (float): The minimum relative distance of
+            site {number}
+        site #{number} specie (str): The string representing the specie at site
+            {number}
+        site #{number} neighbor specie(s) (str, tuple(str)): The neighbor specie
+            used to determine the minimum relative distance with respect to site
+            {number}. If multiple neighbor sites have equivalent minimum
+            relative distances,all these sites are listed in a tuple.
+
+
+        If using flatten=False:
+
+        minimum relative distance of each site ([float]): List of the minimum
+            relative distance for each site. Structures with different numbers
+            of sites will return a different length vector.
+
     Args:
-        cutoff: (float) (absolute) distance up to which tentative
-                closest neighbors (on the basis of relative distances)
-                are to be determined.
+        cutoff (float): (absolute) distance up to which tentative closest
+            neighbors (on the basis of relative distances) are to be determined.
+        flatten (bool): If True, returns a uniform length feature vector for
+            each structure regardless of the number of sites in the structure.
+            If True, you must call .fit() before featurizing.
+        include_distances (bool): Include the numerical minimum relative
+            distance in the returned features. Only used if flatten=True.
+        include_species (bool): Include the species for each site and the
+            species of the neighbor (as determined by minimum rel. distance).
+            Only used as flatten=True.
     """
 
     def __init__(self, cutoff=10.0, flatten=True, include_distances=True,
@@ -1091,7 +1129,6 @@ class MinimumRelativeDistances(BaseFeaturizer):
         self.flatten = flatten
         self._max_sites = None
 
-
     def fit(self, X, y=None):
         """
         Fit the MRD featurizer to a list of structures.
@@ -1105,7 +1142,6 @@ class MinimumRelativeDistances(BaseFeaturizer):
         """
         self._max_sites = max([len(s.sites) for s in X])
         return self
-
 
     def featurize(self, s):
         """
