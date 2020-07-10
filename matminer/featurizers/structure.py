@@ -1077,10 +1077,37 @@ class MinimumRelativeDistances(BaseFeaturizer):
                 are to be determined.
     """
 
-    def __init__(self, cutoff=10.0):
-        self.cutoff = cutoff
+    def __init__(self, cutoff=10.0, flatten=True, include_distances=True,
+                 include_species=True):
 
-    def featurize(self, s, cutoff=10.0):
+        if not include_distances and not include_species:
+            raise ValueError(
+                "Featurizer must return distances, species, or both."
+            )
+
+        self.include_distances = include_distances
+        self.include_species = include_species
+        self.cutoff = cutoff
+        self.flatten = flatten
+        self._max_sites = None
+
+
+    def fit(self, X, y=None):
+        """
+        Fit the MRD featurizer to a list of structures.
+
+        Args:
+            X ([Structure]): A list of pymatgen structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
+        self._max_sites = max([len(s.sites) for s in X])
+        return self
+
+
+    def featurize(self, s):
         """
         Get minimum relative distances of all sites of the input structure.
 
@@ -1091,21 +1118,82 @@ class MinimumRelativeDistances(BaseFeaturizer):
             dists_relative_min: (list of floats) list of all minimum relative
                     distances (i.e., for all sites).
         """
+
+
+        self._check_fitted()
+
         vire = ValenceIonicRadiusEvaluator(s)
-        dists_relative_min = []
-        for site in vire.structure:
+        n_sites = len(s.sites)
+        parent_site_species = [None] * n_sites
+        neighbor_site_species = [None] * n_sites
+        dists_relative_min = [None] * n_sites
+
+        for i, site in enumerate(vire.structure):
             dists_relative = []
-            for nnsite, dist, *_ in vire.structure.get_neighbors(site, self.cutoff):
+            neigh_species_relative = []
+            for nnsite, dist, *_ in vire.structure.get_neighbors(
+                    site, self.cutoff
+            ):
                 r_site = vire.radii[site.species_string]
                 r_neigh = vire.radii[nnsite.species_string]
                 radii_dist = r_site + r_neigh
                 d_relative = dist / radii_dist
                 dists_relative.append(d_relative)
-            dists_relative_min.append(min(dists_relative))
-        return [dists_relative_min]
+                neigh_species_relative.append(site.species_string)
+
+            dists_relative = np.asarray(dists_relative)
+            drmin = dists_relative.min()
+            dists_relative_min[i] = drmin
+            dists_relative_min_ix = np.where(dists_relative == drmin)
+
+            neigh_species_eq_pairs = \
+                np.asarray(neigh_species_relative)[dists_relative_min_ix]
+
+            parent_site_species[i] = site.species_string
+
+            specie_min_dist_pair_strings = \
+                [ns.species_string for ns in neigh_species_eq_pairs]
+
+            if len(specie_min_dist_pair_strings) == 1:
+                neighbor_site_species[i] = specie_min_dist_pair_strings[0]
+            else:
+                neighbor_site_species[i] = tuple(specie_min_dist_pair_strings)
+
+        if self.flatten:
+            features = []
+
+            for i in range(self._max_sites):
+                site_features = []
+                if i > n_sites - 1:
+                    if self.include_distances:
+                        site_features.append(dists_relative_min[i])
+                    if self.include_species:
+                        site_features.append(parent_site_species[i])
+                        site_features.append(neighbor_site_species[i])
+                else:
+                    site_features = [np.nan] * (int(self.include_distances) +
+                                                2 * int(self.include_species))
+                features += site_features
+
+        else:
+            return [dists_relative_min]
 
     def feature_labels(self):
-        return ["minimum relative distance of each site"]
+        self._check_fitted()
+
+        if self.flatten:
+            labels = []
+            for i in range(self._max_sites):
+                site_labels = []
+                if self.include_distances:
+                    site_labels.append(f"site #{i} min. rel. dist.")
+                if self.include_species:
+                    site_labels.append(f"site #{i} specie")
+                    site_labels.append(f"site #{i} neighbor specie(s)")
+                labels += site_labels
+            return labels
+        else:
+            return ["minimum relative distance of each site"]
 
     def citations(self):
         return ["@article{Zimmermann2017,"
@@ -1124,6 +1212,13 @@ class MinimumRelativeDistances(BaseFeaturizer):
 
     def implementors(self):
         return ["Nils E. R. Zimmermann", "Alex Dunn"]
+
+    def _check_fitted(self):
+        if not self._max_sites and not self.flatten:
+            raise NotFittedError(
+                "If using flatten=True, MinimumRelativeDistances must be fit "
+                "before using."
+            )
 
 
 class SiteStatsFingerprint(BaseFeaturizer):
