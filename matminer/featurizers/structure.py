@@ -1146,25 +1146,22 @@ class MinimumRelativeDistances(BaseFeaturizer):
             dists_relative_min[i] = drmin
             dists_relative_min_ix = np.where(dists_relative == drmin)
 
-            neigh_species_eq_pairs = \
+            neigh_species_equiv = \
                 np.asarray(neigh_species_relative)[dists_relative_min_ix]
 
             parent_site_species[i] = site.species_string
 
-            specie_min_dist_pair_strings = \
-                [ns.species_string for ns in neigh_species_eq_pairs]
-
-            if len(specie_min_dist_pair_strings) == 1:
-                neighbor_site_species[i] = specie_min_dist_pair_strings[0]
+            if len(neigh_species_equiv) == 1:
+                neighbor_site_species[i] = neigh_species_equiv[0]
             else:
-                neighbor_site_species[i] = tuple(specie_min_dist_pair_strings)
+                neighbor_site_species[i] = tuple(neigh_species_equiv)
 
         if self.flatten:
             features = []
 
             for i in range(self._max_sites):
                 site_features = []
-                if i > n_sites - 1:
+                if i <= n_sites - 1:
                     if self.include_distances:
                         site_features.append(dists_relative_min[i])
                     if self.include_species:
@@ -1174,6 +1171,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
                     site_features = [np.nan] * (int(self.include_distances) +
                                                 2 * int(self.include_species))
                 features += site_features
+            return features
 
         else:
             return [dists_relative_min]

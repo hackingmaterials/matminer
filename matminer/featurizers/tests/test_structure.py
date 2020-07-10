@@ -386,6 +386,8 @@ class StructureFeaturesTest(PymatgenTest):
             self.assertAlmostEqual(ofm_vector[ix], 1.4789015345821415)
 
     def test_min_relative_distances(self):
+
+
         self.assertAlmostEqual(MinimumRelativeDistances().featurize(
                 self.diamond_no_oxi)[0][0], 1.1052576)
         self.assertAlmostEqual(MinimumRelativeDistances().featurize(
