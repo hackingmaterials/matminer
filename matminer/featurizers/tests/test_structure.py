@@ -404,8 +404,45 @@ class StructureFeaturesTest(PymatgenTest):
         with self.assertRaises(NotFittedError):
             mrd_flat.featurize(self.diamond)
 
-        print(self.diamond)
-        print(len(self.diamond.sites))
+        # Fit on a structure with 2 sites:
+        mrd_flat.fit([self.diamond_no_oxi])
+
+        # Ensure it can featurize the structure it was fit on
+        f_diamond = mrd_flat.featurize(self.diamond_no_oxi)
+        self.assertAlmostEqual(f_diamond[0], 1.1052576)
+        self.assertEqual(f_diamond[1], "C")
+        self.assertEqual(f_diamond[2], "C")
+        self.assertAlmostEqual(f_diamond[3], 1.1052576)
+        self.assertEqual(f_diamond[4], "C")
+        self.assertEqual(f_diamond[5], "C")
+        self.assertEqual(len(f_diamond), 6)
+
+        # Ensure it can featurize a different structure w/ same n_sites (2)
+        f_cscl = mrd_flat.featurize(self.cscl)
+        self.assertAlmostEqual(f_cscl[0], 0.9877540)
+        self.assertEqual(f_cscl[1], "Cl-")
+        self.assertEqual(f_cscl[2][0], "Cl-")
+        self.assertEqual(len(f_cscl[2]), 4)
+        self.assertEqual(len(f_cscl), 6)
+
+
+        # Ensure it truncates extra sites on structure w/ more n_sites
+        f_ni3al = mrd_flat.featurize(self.ni3al)
+        self.assertAlmostEqual(f_ni3al[0], 0.95731379)
+        self.assertEqual(f_ni3al[1], "Al")
+        self.assertEqual(f_ni3al[2][0], "Al")
+        self.assertEqual(len(f_ni3al[2]), 12)
+        self.assertEqual(len(f_ni3al), 6)
+        self.assertAlmostEqual(f_ni3al[3], 0.921857729)
+
+        # Ensure it extends extra sites on structure with fewer n_sites
+        f_sc = mrd_flat.featurize(self.sc)
+        self.assertAlmostEqual(f_sc[0], 1.408)
+        self.assertEqual(f_sc[1], "Al")
+        self.assertEqual(f_sc[2][0], "Al")
+        self.assertEqual(len(f_sc[2]), 6)
+        self.assertEqual(len(f_sc), 6)
+        self.assertTrue(f_sc[3], np.nan)
 
 
     def test_sitestatsfingerprint(self):
