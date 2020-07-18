@@ -142,6 +142,10 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(diamond_rdf[int(round(2.9 / 0.1))], 12.53193948)
         self.assertAlmostEqual(diamond_rdf[int(round(19.9 / 0.1))], 0.822126129)
 
+        # Check the feature labels make sense
+        self.assertEqual(rdf.feature_labels()[0], "rdf [0.00000 - 0.10000]A")
+        self.assertEqual(rdf.feature_labels()[9], "rdf [0.90000 - 1.00000]A")
+
         # Repeat test with NaCl (omitting comments). Altering cutoff distance
         rdf2 = RadialDistributionFunction(cutoff=10)
         nacl_rdf = rdf2.featurize(self.nacl)
