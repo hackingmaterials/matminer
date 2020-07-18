@@ -134,21 +134,30 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         - Spacegroup number
         - Crystal system (1 of 7)
         - Centrosymmetry (has inversion symmetry)
+        - Number of symmetry ops, obtained from the spacegroup
     """
 
-    crystal_idx = {"triclinic": 7,
-                   "monoclinic": 6,
-                   "orthorhombic": 5,
-                   "tetragonal": 4,
-                   "trigonal": 3,
-                   "hexagonal": 2,
-                   "cubic": 1
-                   }
+    crystal_idx = {
+        "triclinic": 7,
+        "monoclinic": 6,
+        "orthorhombic": 5,
+        "tetragonal": 4,
+        "trigonal": 3,
+        "hexagonal": 2,
+        "cubic": 1
+    }
+
+    all_features = [
+        "spacegroup_num",
+        "crystal_system",
+        "crystal_system_int",
+        "is_centrosymmetric",
+        "n_symmetry_ops"
+    ]
 
     def __init__(self, desired_features=None):
-        self.features = ["spacegroup_num", "crystal_system",
-                         "crystal_system_int", "is_centrosymmetric"] if not \
-            desired_features else desired_features
+        self.features = \
+            desired_features if desired_features else self.all_features
 
     def featurize(self, s):
         sga = SpacegroupAnalyzer(s)
@@ -167,19 +176,19 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         if "is_centrosymmetric" in self.features:
             output.append(sga.is_laue())
 
+        if "n_symmetry_ops" in self.features:
+            output.append(len(sga.get_symmetry_operations()))
+
         return output
 
     def feature_labels(self):
-        all_features = ["spacegroup_num", "crystal_system",
-                        "crystal_system_int",
-                        "is_centrosymmetric"]  # enforce order
-        return [x for x in all_features if x in self.features]
+        return [x for x in self.all_features if x in self.features]
 
     def citations(self):
         return []
 
     def implementors(self):
-        return ["Anubhav Jain"]
+        return ["Anubhav Jain", "Alex Dunn"]
 
 
 class Dimensionality(BaseFeaturizer):
@@ -217,7 +226,6 @@ class Dimensionality(BaseFeaturizer):
         return ["Anubhav Jain", "Alex Ganose"]
 
 
-
 class RadialDistributionFunction(BaseFeaturizer):
     """
     Calculate the radial distribution function (RDF) of a crystal structure.
@@ -238,7 +246,6 @@ class RadialDistributionFunction(BaseFeaturizer):
     def __init__(self, cutoff=20.0, bin_size=0.1):
         self.cutoff = cutoff
         self.bin_size = bin_size
-
         self.bin_distances = np.arange(0, cutoff, bin_size)
 
     def precheck(self, s):
@@ -288,13 +295,13 @@ class RadialDistributionFunction(BaseFeaturizer):
     def feature_labels(self):
         bin_labels = get_rdf_bin_labels(self.bin_distances, self.cutoff)
         bin_labels = [f"rdf {bl}A" for bl in bin_labels]
-        return flabels
+        return bin_labels
 
     def citations(self):
         return []
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ["Saurabh Bajaj", "Alex Dunn"]
 
 
 class PartialRadialDistributionFunction(BaseFeaturizer):

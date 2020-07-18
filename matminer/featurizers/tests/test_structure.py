@@ -82,7 +82,7 @@ class StructureFeaturesTest(PymatgenTest):
         diamond_copy = copy.deepcopy(self.diamond)
         diamond_copy.replace_species(
             {Specie("C", 0.0):
-                 {Specie("C", 0.0): 0.99, Specie("Si", 0.0): 0.01}
+                    {Specie("C", 0.0): 0.99, Specie("Si", 0.0): 0.01}
              }
         )
         self.disordered_diamond = diamond_copy
@@ -108,7 +108,8 @@ class StructureFeaturesTest(PymatgenTest):
 
     def test_global_symmetry(self):
         gsf = GlobalSymmetryFeatures()
-        self.assertEqual(gsf.featurize(self.diamond), [227, "cubic", 1, True])
+        self.assertEqual(gsf.featurize(self.diamond),
+                         [227, "cubic", 1, True, 48])
 
     def test_dimensionality(self):
         cscl = PymatgenTest.get_structure("CsCl")
