@@ -33,7 +33,7 @@ import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
     CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint, \
-    AverageBondAngle, AverageBondLength
+    AverageBondAngle, AverageBondLength, SOAP
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
     CrystalGraphConvNetWrapper, CIFDataWrapper
@@ -1309,6 +1309,27 @@ class SiteStatsFingerprint(BaseFeaturizer):
     def _site_labels(self):
         return self.site_featurizer.feature_labels()
 
+    def fit(self, X, y=None, **fit_kwargs):
+        """
+        Fit the SiteStatsFeaturizer using the fitting function of the underlying
+        site featurizer. Only applicable if the site featurizer is fittable.
+
+        See the ".fit()" method of the site_featurizer used to construct the
+        class for more information.
+
+        Args:
+            X (Iterable):
+            y (optional, Iterable):
+            **fit_kwargs: Keyword arguments used by the fit function of the
+                site featurizer class.
+
+        Returns:
+            self (SiteStatsFeaturizer)
+
+        """
+        self.site_featurizer.fit(X, y, **fit_kwargs)
+        return self
+
     def featurize(self, s):
         # Get each feature for each site
         vals = [[] for t in self._site_labels]
@@ -1378,8 +1399,12 @@ class SiteStatsFingerprint(BaseFeaturizer):
             preset (str) - Name of preset
             kwargs - Options for SiteStatsFingerprint
         """
-
-        if preset == "CrystalNNFingerprint_cn":
+        if preset == "SOAP_formation_energy":
+            return SiteStatsFingerprint(
+                SOAP.from_preset("formation_energy"),
+                **kwargs
+            )
+        elif preset == "CrystalNNFingerprint_cn":
             return SiteStatsFingerprint(
                 CrystalNNFingerprint.from_preset("cn", cation_anion=False),
                 **kwargs)

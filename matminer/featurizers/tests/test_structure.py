@@ -468,7 +468,7 @@ class StructureFeaturesTest(PymatgenTest):
         # Test stats.
         op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint")
         opvals = op_struct_fp.featurize(self.diamond)
-        print(opvals, '**')
+        # print(opvals, '**')
         self.assertAlmostEqual(opvals[0], 0.0005, places=7)
         self.assertAlmostEqual(opvals[1], 0, places=7)
         self.assertAlmostEqual(opvals[2], 0.0005, places=7)
@@ -505,6 +505,15 @@ class StructureFeaturesTest(PymatgenTest):
         #  Test a structure with nonzero covariance
         features = prop_fp.featurize(self.nacl)
         self.assertArrayAlmostEqual([14, 29.22138464, 37.38969216], features)
+
+        # Test soap site featurizer
+        soap_fp = SiteStatsFingerprint.from_preset("SOAP_formation_energy")
+        soap_fp.fit([self.sc, self.diamond, self.nacl])
+        feats = soap_fp.featurize(self.diamond)
+        self.assertEqual(len(feats), 6480)
+        self.assertAlmostEqual(feats[0], 0.4412608, places=5)
+        self.assertAlmostEqual(feats[1], 0.0)
+        self.assertAlmostEqual(np.sum(feats), 207.88194724, places=5)
 
     def test_ewald(self):
         # Add oxidation states to all of the structures
