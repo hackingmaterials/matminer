@@ -20,4 +20,4 @@ mdf-forge==0.7.6
 aflow==0.0.11
 
 ## Citrine
-citrination-client==6.5.0
+citrination-client==6.5.1
