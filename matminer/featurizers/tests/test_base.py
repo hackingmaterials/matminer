@@ -85,6 +85,12 @@ class MultiArgs2(BaseFeaturizer):
     def feature_labels(self):
         return ['y2']
 
+    def citations(self):
+        return []
+
+    def implementors(self):
+        return []
+
 
 class FittableFeaturizer(BaseFeaturizer):
     """
@@ -117,6 +123,12 @@ class MultiTypeFeaturizer(BaseFeaturizer):
 
     def feature_labels(self):
         return ['label', 'int_label']
+
+    def citations(self):
+        return []
+
+    def implementors(self):
+        return []
 
 
 class TestBaseClass(PymatgenTest):
