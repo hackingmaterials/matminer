@@ -78,10 +78,13 @@ class SiteDOS(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return []
+        return ["@article{dylla2020machine,"
+        "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
+        "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
+        "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"]
 
     def implementors(self):
-        return []
+        return ["Max Dylla"]
 
 
 class DOSFeaturizer(BaseFeaturizer):
@@ -181,7 +184,10 @@ class DOSFeaturizer(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return []
+        return ["@article{dylla2020machine,"
+                "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
+                "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
+                "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"]
 
     def implementors(self):
         return ['Maxwell Dylla', 'Alireza Faghaninia', 'Anubhav Jain']
@@ -383,7 +389,10 @@ class Hybridization(BaseFeaturizer):
         return labels
 
     def citations(self):
-        return []
+        return ["@article{dylla2020machine,"
+        "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
+        "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
+        "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"]
 
     def implementors(self):
         return ['Alireza Faghaninia', 'Anubhav Jain', 'Maxwell Dylla']
