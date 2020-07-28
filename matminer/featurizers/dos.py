@@ -77,6 +77,12 @@ class SiteDOS(BaseFeaturizer):
                 labels.append('{}_{}'.format(edge, score))
         return labels
 
+    def citations(self):
+        return []
+
+    def implementors(self):
+        return []
+
 
 class DOSFeaturizer(BaseFeaturizer):
     """
@@ -173,6 +179,9 @@ class DOSFeaturizer(BaseFeaturizer):
                 i += 1
 
         return labels
+
+    def citations(self):
+        return []
 
     def implementors(self):
         return ['Maxwell Dylla', 'Alireza Faghaninia', 'Anubhav Jain']
@@ -373,6 +382,9 @@ class Hybridization(BaseFeaturizer):
                 labels.append('{}_{}'.format(ex, hybrid))
         return labels
 
+    def citations(self):
+        return []
+
     def implementors(self):
         return ['Alireza Faghaninia', 'Anubhav Jain', 'Maxwell Dylla']
 
@@ -446,6 +458,9 @@ class DosAsymmetry(BaseFeaturizer):
         """Returns the labels for each of the features.
         """
         return ['dos_asymmetry']
+
+    def citations(self):
+        return []
 
     def implementors(self):
         return ['Maxwell Dylla']
