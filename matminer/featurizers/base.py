@@ -427,7 +427,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
             raise Exception("'entries' must be a list-like object")
 
         # Special case: Empty list
-        if len(entries) is 0:
+        if len(entries) == 0:
             return []
 
         # If the featurize function only has a single arg, zip the inputs
