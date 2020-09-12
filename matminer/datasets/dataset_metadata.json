@@ -611,7 +611,7 @@
       "is_metal": "Target variable. 1 if the compound is a metal, 0 if the compound is not a metal. Metallicity determined with pymatgen",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases.. Retrieved April 2, 2019.",
+    "description": "Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 106113,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
@@ -626,7 +626,7 @@
       "gap pbe": "Target variable. The band gap as calculated by PBE DFT from the Materials Project, in eV.",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting DFT PBE band gap from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases. Retrieved April 2, 2019.",
+    "description": "Matbench v0.1 test dataset for predicting DFT PBE band gap from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 106113,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
@@ -641,7 +641,7 @@
       "e_form": "Target variable. Formation energy in eV as calculated by the Materials Project.",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting DFT formation energy from structure. Adapted from Materials Project database. Removed entries having formation energy more than 3.0eV and those containing noble gases. Retrieved April 2, 2019.",
+    "description": "Matbench v0.1 test dataset for predicting DFT formation energy from structure. Adapted from Materials Project database. Removed entries having formation energy more than 3.0eV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 132752,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
@@ -656,7 +656,7 @@
       "log10(G_VRH)": "Target variable. Base 10 logarithm of the DFT Voigt-Reuss-Hill average shear moduli in GPa",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting DFT log10 VRH-average shear modulus from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having negative G_Voigt, G_Reuss, G_VRH, K_Voigt, K_Reuss, or K_VRH and those failing G_Reuss <= G_VRH <= G_Voigt or K_Reuss <= K_VRH <= K_Voigt and those containing noble gases. Retrieved April 2, 2019.",
+    "description": "Matbench v0.1 test dataset for predicting DFT log10 VRH-average shear modulus from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having negative G_Voigt, G_Reuss, G_VRH, K_Voigt, K_Reuss, or K_VRH and those failing G_Reuss <= G_VRH <= G_Voigt or K_Reuss <= K_VRH <= K_Voigt and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 10987,
     "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
@@ -671,7 +671,7 @@
       "log10(K_VRH)": "Target variable. Base 10 logarithm of the DFT Voigt-Reuss-Hill average bulk moduli in GPa.",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting DFT log10 VRH-average bulk modulus from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having negative G_Voigt, G_Reuss, G_VRH, K_Voigt, K_Reuss, or K_VRH and those failing G_Reuss <= G_VRH <= G_Voigt or K_Reuss <= K_VRH <= K_Voigt and those containing noble gases. Retrieved April 2, 2019.",
+    "description": "Matbench v0.1 test dataset for predicting DFT log10 VRH-average bulk modulus from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having negative G_Voigt, G_Reuss, G_VRH, K_Voigt, K_Reuss, or K_VRH and those failing G_Reuss <= G_VRH <= G_Voigt or K_Reuss <= K_VRH <= K_Voigt and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 10987,
     "reference": "Jong, M. De, Chen, W., Angsten, T., Jain, A., Notestine, R., Gamst,\nA., Sluiter, M., Ande, C. K., Zwaag, S. Van Der, Plata, J. J., Toher,\nC., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., \"Charting\nthe complete elastic properties of inorganic crystalline compounds\",\nScientific Data volume 2, Article number: 150009 (2015)",
@@ -687,7 +687,7 @@
       "n": "Target variable. Refractive index (unitless).",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting refractive index from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having refractive indices less than 1 and those containing noble gases. Retrieved April 2, 2019.",
+    "description": "Matbench v0.1 test dataset for predicting refractive index from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having refractive indices less than 1 and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 4764,
     "url": "https://ml.materialsproject.org/matbench_dielectric.json.gz",
@@ -700,10 +700,10 @@
       "@misc{choudhary__2018, title={jdft_2d-7-7-2018.json}, url={https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1}, DOI={10.6084/m9.figshare.6815705.v1}, abstractNote={2D materials}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}"
     ],
     "columns": {
-      "exfoliation_en": "Target variable. Exfoliation energy (meV).",
+      "exfoliation_en": "Target variable. Exfoliation energy (meV/atom).",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting exfoliation energies from crystal structure (computed with the OptB88vdW and TBmBJ functionals). Adapted from the JARVIS DFT database.",
+    "description": "Matbench v0.1 test dataset for predicting exfoliation energies from crystal structure (computed with the OptB88vdW and TBmBJ functionals). Adapted from the JARVIS DFT database. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 636,
     "reference": "2D Dataset discussed in:\nHigh-throughput Identification and Characterization of Two dimensional Materials using Density functional theory Kamal Choudhary, Irina Kalish, Ryan Beams & Francesca Tavazza Scientific Reports volume 7, Article number: 5179 (2017)\nOriginal 2D Data file sourced from:\nchoudhary, kamal; https://orcid.org/0000-0001-9737-8074 (2018): jdft_2d-7-7-2018.json. figshare. Dataset.",
@@ -718,7 +718,7 @@
       "e_form": "Target variable. Heat of formation of the entire 5-atom perovskite cell, in eV as calculated by RPBE GGA-DFT. Note the reference state for oxygen was computed from oxygen's chemical potential in water vapor, not as oxygen molecules, to reflect the application which these perovskites were studied for.",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting formation energy from crystal structure. Adapted from an original dataset generated by Castelli et al.",
+    "description": "Matbench v0.1 test dataset for predicting formation energy from crystal structure. Adapted from an original dataset generated by Castelli et al. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 18928,
     "reference": "Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, S\u00f8ren Dahl, Ib Chorkendorff, Thomas F. Jaramillo and Karsten W. Jacobsen (2012) New cubic perovskites for one- and two-photon water splitting using the computational materials repository. Energy Environ. Sci., 2012,5, 9034-9043 https://doi.org/10.1039/C2EE22341D",
@@ -749,7 +749,7 @@
       "composition": "Chemical formula.",
       "gap expt": "Target variable. Experimentally measured gap, in eV."
     },
-    "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports.",
+    "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 4604,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 https:doi.org/10.1021/acs.jpclett.8b00124.",
@@ -764,7 +764,7 @@
       "composition": "Chemical formula.",
       "is_metal": "Target variable. 1 if is a metal, 0 if nonmetal."
     },
-    "description": "Matbench v0.1 test dataset for classifying metallicity from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, ensuring no conflicting reports were entered for any compositions (i.e., no reported compositions were both metal and nonmetal).",
+    "description": "Matbench v0.1 test dataset for classifying metallicity from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, ensuring no conflicting reports were entered for any compositions (i.e., no reported compositions were both metal and nonmetal). For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 4921,
     "reference": "Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 \n https//:doi.org/10.1021/acs.jpclett.8b00124.",
@@ -780,7 +780,7 @@
       "last phdos peak": "Target variable. Frequency of the highest frequency optical phonon mode peak, in units of 1/cm; ; may be used as an estimation of dominant longitudinal optical phonon frequency.",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting vibration properties from crystal structure. Original data retrieved from Petretto et al. Original calculations done via ABINIT in the harmonic approximation based on density functional perturbation theory. Removed entries having a formation energy (or energy above the convex hull) more than 150meV.",
+    "description": "Matbench v0.1 test dataset for predicting vibration properties from crystal structure. Original data retrieved from Petretto et al. Original calculations done via ABINIT in the harmonic approximation based on density functional perturbation theory. Removed entries having a formation energy (or energy above the convex hull) more than 150meV. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 1265,
     "reference": "Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. Sci. Data 5:180065 doi: 10.1038/sdata.2018.65 (2018).\nPetretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. (2018). figshare. Collection.",
@@ -795,7 +795,7 @@
       "composition": "Chemical formula.",
       "yield strength": "Target variable. Experimentally measured steel yield strengths, in MPa."
     },
-    "description": "Matbench v0.1 dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.",
+    "description": "Matbench v0.1 dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "hash": "",
     "num_entries": 312,
