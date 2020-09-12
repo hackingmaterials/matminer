@@ -734,7 +734,7 @@
       "composition": "Chemical formula.",
       "gfa": "Target variable. Glass forming ability: 1 means glass forming and corresponds to amorphous, 0 means non full glass forming."
     },
-    "description": "Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula. Retrieved from \"Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,\u2019 a volume of the Landolt\u2013 B\u00f6rnstein collection. Deduplicated according to composition, ensuring no compositions were reported as both GFA and not GFA (i.e., all reports agreed on the classification designation).",
+    "description": "Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula. Retrieved from \"Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,\u2019 a volume of the Landolt\u2013 B\u00f6rnstein collection. Deduplicated according to composition, ensuring no compositions were reported as both GFA and not GFA (i.e., all reports agreed on the classification designation). For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 5680,
     "reference": "Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials\nNonequilibrium Phase Diagrams of Ternary Amorphous Alloys \u00b7 1 Introduction Landolt-B\u00f6rnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) https://www.springer.com/gp/book/9783540605072 (Springer-Verlag Berlin Heidelberg \u00a9 1997) Accessed: 03-09-2019",
@@ -795,7 +795,7 @@
       "composition": "Chemical formula.",
       "yield strength": "Target variable. Experimentally measured steel yield strengths, in MPa."
     },
-    "description": "Matbench v0.1 dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
+    "description": "Matbench v0.1 test dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "hash": "",
     "num_entries": 312,
