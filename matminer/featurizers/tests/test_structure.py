@@ -439,13 +439,9 @@ class StructureFeaturesTest(PymatgenTest):
         # Test basic
         ewald = EwaldEnergy(accuracy=2)
         self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
-        self.assertAlmostEqual(ewald.featurize(self.nacl)[0], -8.84173626, 2)
+        self.assertAlmostEqual(ewald.featurize(self.nacl)[0], -4.418439, 2)
         self.assertLess(ewald.featurize(self.nacl),
                         ewald.featurize(self.cscl))  # Atoms are closer in NaCl
-
-        # Perform Ewald summation by "hand",
-        #  Using the result from GULP
-        self.assertArrayAlmostEqual([-8.84173626], ewald.featurize(self.nacl), 2)
 
     def test_bondfractions(self):
 
@@ -905,3 +901,6 @@ class StructureFeaturesTest(PymatgenTest):
         ig, igbits = featurizer.featurize(s)
 
         self.assertAlmostEqual(3.764, ig, places=3)
+
+if __name__ == '__main__':
+    unittest.main()
