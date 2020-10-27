@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    matminer.figrecipes.tests
 
@@ -18,7 +19,6 @@ matminer.figrecipes.plot module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

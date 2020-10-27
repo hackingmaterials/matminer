@@ -52,7 +52,6 @@ matminer.data\_retrieval.tests.test\_retrieve\_MongoDB module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

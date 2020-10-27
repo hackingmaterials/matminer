@@ -5,6 +5,14 @@
 matminer Changelog
 ==================
 
+**v0.6.4**
+
+* make BaseFeaturizer an ABC with abstractmethods (J. Riebesell)
+* default ewald summation to be per atom; change default feature name to reflect this (A. Jain)
+* add feature descriptions for magpie (A. Dunn)
+* correct yield strengths being accidentally in GPa instead of MPa (A. Dunn)
+* minor fixes / updates (B. Krull, A. Dunn, A. Ganose, A. Jain)
+
 **v0.6.3**
 
 * add IntersticeDistribution featurizer (Q. Wang)

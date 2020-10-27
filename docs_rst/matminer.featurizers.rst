@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    matminer.featurizers.tests
    matminer.featurizers.utils
@@ -83,7 +84,6 @@ matminer.featurizers.structure module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

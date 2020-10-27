@@ -59,3 +59,5 @@ Other
 * Daiki Nishikawa
 * Nicholas Wagner (Northwestern University)
 * Amalie Trewartha (LBNL)
+* Janosh Riebesell
+* Brandon Krull
