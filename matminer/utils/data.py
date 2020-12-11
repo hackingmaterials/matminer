@@ -444,7 +444,7 @@ class IUCrBondValenceData:
         filepath = os.path.join(
             module_dir,
             "data_files",
-            "bvparm2016.cif")
+            "bvparm2020.cif")
         self.params = pd.read_csv(filepath, sep='\s+',
                                   header=None,
                                   names=['Atom1', 'Atom1_valence',
