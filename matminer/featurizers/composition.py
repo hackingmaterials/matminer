@@ -2036,7 +2036,6 @@ class WenAlloys(BaseFeaturizer):
         self.data_source_magpie = MagpieData().all_elemental_props
         self.data_source_cohesive_energy = CohesiveEnergyData()
         self.data_source_enthalpy = MixingEnthalpy()
-        self.structure = 'fcc'
         self.element_feature_labels = []
         self.element_feature_labels.append('Weight Fraction')
         self.element_feature_labels.append('Atomic Fraction')
@@ -2053,9 +2052,6 @@ class WenAlloys(BaseFeaturizer):
         self.element_feature_labels.append('Electronegativity local mismatch')
         self.element_feature_labels.append('VEC mean')   
         self.element_feature_labels.append('Mixing enthalpy')        
-        self.element_feature_labels.append('Mixing enthalpy structure fcc')
-        self.element_feature_labels.append('Mixing enthalpy structure bcc')
-        self.element_feature_labels.append('Mixing enthalpy structure hcp')
         self.element_feature_labels.append('Mean cohesive energy')        
         self.element_feature_labels.append('Interant electrons')        
         self.element_feature_labels.append('Interant s electrons')        
@@ -2095,9 +2091,6 @@ class WenAlloys(BaseFeaturizer):
         element_property_features.append(self.compute_local_mismatch(self.electronegativity, self.fractions))
         element_property_features.append(self.mean_VEC)
         element_property_features.append(self.compute_enthalpy())
-        element_property_features.append(self.data_source_miedema.deltaH_struct(self.elements, self.fractions, 'fcc'))
-        element_property_features.append(self.data_source_miedema.deltaH_struct(self.elements, self.fractions, 'bcc'))
-        element_property_features.append(self.data_source_miedema.deltaH_struct(self.elements, self.fractions, 'hcp'))
         element_property_features.append(self.mean_cohesive_energy)
         element_property_features.append(self.interant_electrons)
         element_property_features.append(self.s_unfilled)
