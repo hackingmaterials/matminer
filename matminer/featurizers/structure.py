@@ -1279,12 +1279,13 @@ class EwaldEnergy(BaseFeaturizer):
     Features:
         ewald_energy - Coulomb interaction energy of the structure"""
 
-    def __init__(self, accuracy=4):
+    def __init__(self, accuracy=4, per_atom=True):
         """
         Args:
             accuracy (int): Accuracy of Ewald summation, number of decimal places
         """
         self.accuracy = accuracy
+        self.per_atom = per_atom
 
     def featurize(self, strc):
         """
@@ -1296,13 +1297,14 @@ class EwaldEnergy(BaseFeaturizer):
         """
         # Compute the total energy
         ewald = EwaldSummation(strc, acc_factor=self.accuracy)
-        return [ewald.total_energy]
+        return [ewald.total_energy / len(strc)] if self.per_atom \
+            else [ewald.total_energy]
 
     def feature_labels(self):
-        return ["ewald_energy"]
+        return ["ewald_energy_per_atom"] if self.per_atom else ["ewald_energy"]
 
     def implementors(self):
-        return ["Logan Ward"]
+        return ["Logan Ward", "Anubhav Jain"]
 
     def citations(self):
         return ["@Article{Ewald1921,"

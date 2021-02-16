@@ -1,17 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Datasets Available in Matminer &#8212; matminer 0.6.3 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Datasets Available in Matminer &#8212; matminer 0.6.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -27,7 +28,8 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Datasets Available in Matminer</a></li> 
       </ul>
     </div>  
 
@@ -72,8 +74,8 @@ matbench_mp_is_metal
 matbench_perovskites
 matbench_phonons
 matbench_steels
-mp_all
-mp_nostruct
+mp_all_20181018
+mp_nostruct_20181018
 phonon_dielectric_mp
 piezoelectric_tensor
 steel_strength
@@ -239,7 +241,7 @@ https://doi.org/10.1021/jacs.8b02717
 <td><p>similar to vbm but for conduction band</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">e_form</span></code></p></td>
-<td><p>heat of formation in eV</p></td>
+<td><p>heat of formation in eV, Note the reference state for oxygen was computed from oxygen’s chemical potential in water vapor, not as oxygen molecules, to reflect the application which these perovskites were studied for.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">fermi</span> <span class="pre">level</span></code></p></td>
 <td><p>the thermodynamic work required to add one electron to the body in eV</p></td>
@@ -1007,7 +1009,7 @@ editor=”Kawazoe, Y.
 and Yu, J.-Z.
 and Tsai, A.-P.
 and Masumoto, T.”,
-title=”Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {textperiodcentered} 1 Introduction: Datasheet from Landolt-B{“o}rnstein - Group III Condensed Matter {textperiodcentered} Volume 37A: <a href="#id1"><span class="problematic" id="id2">``</span></a>Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys’’ in SpringerMaterials (<a class="reference external" href="https://dx.doi.org/10.1007">https://dx.doi.org/10.1007</a>/10510374{_}2)”,
+title=”Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {textperiodcentered} 1 Introduction: Datasheet from Landolt-B{&quot;o}rnstein - Group III Condensed Matter {textperiodcentered} Volume 37A: <a href="#id1"><span class="problematic" id="id2">``</span></a>Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys’’ in SpringerMaterials (<a class="reference external" href="https://dx.doi.org/10.1007">https://dx.doi.org/10.1007</a>/10510374{_}2)”,
 publisher=”Springer-Verlag Berlin Heidelberg”,
 note=”Copyright 1997 Springer-Verlag Berlin Heidelberg”,
 note=”Part of SpringerMaterials”,
@@ -1441,7 +1443,7 @@ abstract={M 2 AX phases are a family of nanolaminate, ternary alloys that are co
 </div>
 <div class="section" id="matbench-dielectric">
 <h2>matbench_dielectric<a class="headerlink" href="#matbench-dielectric" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting refractive index from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having refractive indices less than 1 and those containing noble gases. Retrieved April 2, 2019.</p>
+<p>Matbench v0.1 test dataset for predicting refractive index from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having refractive indices less than 1 and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 4764</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1468,6 +1470,25 @@ Chen, W., Graf, T., Schladt, T. D., Persson, K. A. &amp; Prinz, F. B.
 High-throughput screening of inorganic compounds for the discovery
 of novel dielectric and optical materials. Sci. Data 4, 160134 (2017).</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;article{Jain2013,
 author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
 doi = {10.1063/1.4812323},
@@ -1499,7 +1520,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2016.13
 </div>
 <div class="section" id="matbench-expt-gap">
 <h2>matbench_expt_gap<a class="headerlink" href="#matbench-expt-gap" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports.</p>
+<p>Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 4604</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1525,6 +1546,25 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2016.13
 <li><p>Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorganic Solids by Machine Learning J. Phys. Chem. Lett. 2018, 9, 7, 1668-1673 <a class="reference external" href="https:doi.org/10.1021/acs.jpclett.8b00124">https:doi.org/10.1021/acs.jpclett.8b00124</a>.</p></li>
 </ol>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;article{doi:10.1021/acs.jpclett.8b00124,
 author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
 title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
@@ -1541,7 +1581,7 @@ https://doi.org/10.1021/acs.jpclett.8b00124</p>
 </div>
 <div class="section" id="matbench-expt-is-metal">
 <h2>matbench_expt_is_metal<a class="headerlink" href="#matbench-expt-is-metal" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for classifying metallicity from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, ensuring no conflicting reports were entered for any compositions (i.e., no reported compositions were both metal and nonmetal).</p>
+<p>Matbench v0.1 test dataset for classifying metallicity from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, ensuring no conflicting reports were entered for any compositions (i.e., no reported compositions were both metal and nonmetal). For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 4921</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1570,6 +1610,25 @@ https://doi.org/10.1021/acs.jpclett.8b00124</p>
 <div><p>https//:doi.org/10.1021/acs.jpclett.8b00124.</p>
 </div></blockquote>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;article{doi:10.1021/acs.jpclett.8b00124,
 author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
 title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
@@ -1586,7 +1645,7 @@ https://doi.org/10.1021/acs.jpclett.8b00124</p>
 </div>
 <div class="section" id="matbench-glass">
 <h2>matbench_glass<a class="headerlink" href="#matbench-glass" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula. Retrieved from “Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,’ a volume of the Landolt– Börnstein collection. Deduplicated according to composition, ensuring no compositions were reported as both GFA and not GFA (i.e., all reports agreed on the classification designation).</p>
+<p>Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula. Retrieved from “Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,’ a volume of the Landolt– Börnstein collection. Deduplicated according to composition, ensuring no compositions were reported as both GFA and not GFA (i.e., all reports agreed on the classification designation). For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 5680</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1611,6 +1670,25 @@ https://doi.org/10.1021/acs.jpclett.8b00124</p>
 <p>Y. Kawazoe, T. Masumoto, A.-P. Tsai, J.-Z. Yu, T. Aihara Jr. (1997) Y. Kawazoe, J.-Z. Yu, A.-P. Tsai, T. Masumoto (ed.) SpringerMaterials
 Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys · 1 Introduction Landolt-Börnstein - Group III Condensed Matter 37A (Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys) <a class="reference external" href="https://www.springer.com/gp/book/9783540605072">https://www.springer.com/gp/book/9783540605072</a> (Springer-Verlag Berlin Heidelberg © 1997) Accessed: 03-09-2019</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;Misc{LandoltBornstein1997:sm_lbs_978-3-540-47679-5_2,
 author=”Kawazoe, Y.
 and Masumoto, T.
@@ -1621,7 +1699,7 @@ editor=”Kawazoe, Y.
 and Yu, J.-Z.
 and Tsai, A.-P.
 and Masumoto, T.”,
-title=”Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {textperiodcentered} 1 Introduction: Datasheet from Landolt-B{“o}rnstein - Group III Condensed Matter {textperiodcentered} Volume 37A: <a href="#id3"><span class="problematic" id="id4">``</span></a>Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys’’ in SpringerMaterials (<a class="reference external" href="https://dx.doi.org/10.1007">https://dx.doi.org/10.1007</a>/10510374{_}2)”,
+title=”Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {textperiodcentered} 1 Introduction: Datasheet from Landolt-B{&quot;o}rnstein - Group III Condensed Matter {textperiodcentered} Volume 37A: <a href="#id3"><span class="problematic" id="id4">``</span></a>Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys’’ in SpringerMaterials (<a class="reference external" href="https://dx.doi.org/10.1007">https://dx.doi.org/10.1007</a>/10510374{_}2)”,
 publisher=”Springer-Verlag Berlin Heidelberg”,
 note=”Copyright 1997 Springer-Verlag Berlin Heidelberg”,
 note=”Part of SpringerMaterials”,
@@ -1648,7 +1726,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/npjcompumats.
 </div>
 <div class="section" id="matbench-jdft2d">
 <h2>matbench_jdft2d<a class="headerlink" href="#matbench-jdft2d" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting exfoliation energies from crystal structure (computed with the OptB88vdW and TBmBJ functionals). Adapted from the JARVIS DFT database.</p>
+<p>Matbench v0.1 test dataset for predicting exfoliation energies from crystal structure (computed with the OptB88vdW and TBmBJ functionals). Adapted from the JARVIS DFT database. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 636</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1675,6 +1753,25 @@ High-throughput Identification and Characterization of Two dimensional Materials
 Original 2D Data file sourced from:
 choudhary, kamal; <a class="reference external" href="https://orcid.org/0000-0001-9737-8074">https://orcid.org/0000-0001-9737-8074</a> (2018): jdft_2d-7-7-2018.json. figshare. Dataset.</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;Article{Choudhary2017,
 author={Choudhary, Kamal
 and Kalish, Irina
@@ -1695,7 +1792,7 @@ url={<a class="reference external" href="https://doi.org/10.1038/s41598-017-0540
 </div>
 <div class="section" id="matbench-log-gvrh">
 <h2>matbench_log_gvrh<a class="headerlink" href="#matbench-log-gvrh" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting DFT log10 VRH-average shear modulus from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having negative G_Voigt, G_Reuss, G_VRH, K_Voigt, K_Reuss, or K_VRH and those failing G_Reuss &lt;= G_VRH &lt;= G_Voigt or K_Reuss &lt;= K_VRH &lt;= K_Voigt and those containing noble gases. Retrieved April 2, 2019.</p>
+<p>Matbench v0.1 test dataset for predicting DFT log10 VRH-average shear modulus from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having negative G_Voigt, G_Reuss, G_VRH, K_Voigt, K_Reuss, or K_VRH and those failing G_Reuss &lt;= G_VRH &lt;= G_Voigt or K_Reuss &lt;= K_VRH &lt;= K_Voigt and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 10987</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1723,6 +1820,25 @@ C., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., “Charting
 the complete elastic properties of inorganic crystalline compounds”,
 Scientific Data volume 2, Article number: 150009 (2015)</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;Article{deJong2015,
 author={de Jong, Maarten and Chen, Wei and Angsten, Thomas
 and Jain, Anubhav and Notestine, Randy and Gamst, Anthony
@@ -1745,7 +1861,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2015.9"
 </div>
 <div class="section" id="matbench-log-kvrh">
 <h2>matbench_log_kvrh<a class="headerlink" href="#matbench-log-kvrh" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting DFT log10 VRH-average bulk modulus from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having negative G_Voigt, G_Reuss, G_VRH, K_Voigt, K_Reuss, or K_VRH and those failing G_Reuss &lt;= G_VRH &lt;= G_Voigt or K_Reuss &lt;= K_VRH &lt;= K_Voigt and those containing noble gases. Retrieved April 2, 2019.</p>
+<p>Matbench v0.1 test dataset for predicting DFT log10 VRH-average bulk modulus from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those having negative G_Voigt, G_Reuss, G_VRH, K_Voigt, K_Reuss, or K_VRH and those failing G_Reuss &lt;= G_VRH &lt;= G_Voigt or K_Reuss &lt;= K_VRH &lt;= K_Voigt and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 10987</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1773,6 +1889,25 @@ C., Curtarolo, S., Ceder, G., Persson, K. and Asta, M., “Charting
 the complete elastic properties of inorganic crystalline compounds”,
 Scientific Data volume 2, Article number: 150009 (2015)</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;Article{deJong2015,
 author={de Jong, Maarten and Chen, Wei and Angsten, Thomas
 and Jain, Anubhav and Notestine, Randy and Gamst, Anthony
@@ -1795,7 +1930,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2015.9"
 </div>
 <div class="section" id="matbench-mp-e-form">
 <h2>matbench_mp_e_form<a class="headerlink" href="#matbench-mp-e-form" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting DFT formation energy from structure. Adapted from Materials Project database. Removed entries having formation energy more than 3.0eV and those containing noble gases. Retrieved April 2, 2019.</p>
+<p>Matbench v0.1 test dataset for predicting DFT formation energy from structure. Adapted from Materials Project database. Removed entries having formation energy more than 3.0eV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 132752</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1822,6 +1957,25 @@ The Materials Project: A materials genome approach to accelerating materials inn
 APL Materials, 2013, 1(1), 011002.
 doi:10.1063/1.4812323</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;article{Jain2013,
 author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
 doi = {10.1063/1.4812323},
@@ -1837,7 +1991,7 @@ year = {2013}
 </div>
 <div class="section" id="matbench-mp-gap">
 <h2>matbench_mp_gap<a class="headerlink" href="#matbench-mp-gap" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting DFT PBE band gap from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases. Retrieved April 2, 2019.</p>
+<p>Matbench v0.1 test dataset for predicting DFT PBE band gap from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 106113</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1864,6 +2018,25 @@ The Materials Project: A materials genome approach to accelerating materials inn
 APL Materials, 2013, 1(1), 011002.
 doi:10.1063/1.4812323</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;article{Jain2013,
 author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
 doi = {10.1063/1.4812323},
@@ -1879,7 +2052,7 @@ year = {2013}
 </div>
 <div class="section" id="matbench-mp-is-metal">
 <h2>matbench_mp_is_metal<a class="headerlink" href="#matbench-mp-is-metal" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases.. Retrieved April 2, 2019.</p>
+<p>Matbench v0.1 test dataset for predicting DFT metallicity from structure. Adapted from Materials Project database. Removed entries having a formation energy (or energy above the convex hull) more than 150meV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 106113</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1906,6 +2079,25 @@ The Materials Project: A materials genome approach to accelerating materials inn
 APL Materials, 2013, 1(1), 011002.
 doi:10.1063/1.4812323</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;article{Jain2013,
 author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
 doi = {10.1063/1.4812323},
@@ -1921,7 +2113,7 @@ year = {2013}
 </div>
 <div class="section" id="matbench-perovskites">
 <h2>matbench_perovskites<a class="headerlink" href="#matbench-perovskites" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting formation energy from crystal structure. Adapted from an original dataset generated by Castelli et al.</p>
+<p>Matbench v0.1 test dataset for predicting formation energy from crystal structure. Adapted from an original dataset generated by Castelli et al. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 18928</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -1935,7 +2127,7 @@ year = {2013}
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">e_form</span></code></p></td>
-<td><p>Target variable. Heat of formation of the perovskite, in eV as calculated by PBE GGA-DFT.</p></td>
+<td><p>Target variable. Heat of formation of the entire 5-atom perovskite cell, in eV as calculated by RPBE GGA-DFT. Note the reference state for oxygen was computed from oxygen’s chemical potential in water vapor, not as oxygen molecules, to reflect the application which these perovskites were studied for.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">structure</span></code></p></td>
 <td><p>Pymatgen Structure of the material.</p></td>
@@ -1945,6 +2137,25 @@ year = {2013}
 <p><strong>Reference</strong></p>
 <p>Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, Søren Dahl, Ib Chorkendorff, Thomas F. Jaramillo and Karsten W. Jacobsen (2012) New cubic perovskites for one- and two-photon water splitting using the computational materials repository. Energy Environ. Sci., 2012,5, 9034-9043 <a class="reference external" href="https://doi.org/10.1039/C2EE22341D">https://doi.org/10.1039/C2EE22341D</a></p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;Article{C2EE22341D,
 author =”Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, Søren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.”,
 title  =”New cubic perovskites for one- and two-photon water splitting using the computational materials repository”,
@@ -1960,8 +2171,8 @@ abstract  =”A new efficient photoelectrochemical cell (PEC) is one of the poss
 </div>
 <div class="section" id="matbench-phonons">
 <h2>matbench_phonons<a class="headerlink" href="#matbench-phonons" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 test dataset for predicting vibration properties from crystal structure. Original data retrieved from Petretto et al. Original calculations done via ABINIT in the harmonic approximation based on density functional perturbation theory. Removed entries having a formation energy (or energy above the convex hull) more than 150meV.</p>
-<p><strong>Number of entries:</strong> 1296</p>
+<p>Matbench v0.1 test dataset for predicting vibration properties from crystal structure. Original data retrieved from Petretto et al. Original calculations done via ABINIT in the harmonic approximation based on density functional perturbation theory. Removed entries having a formation energy (or energy above the convex hull) more than 150meV. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
+<p><strong>Number of entries:</strong> 1265</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
 <col style="width: 20%" />
@@ -1985,6 +2196,25 @@ abstract  =”A new efficient photoelectrochemical cell (PEC) is one of the poss
 <p>Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. Sci. Data 5:180065 doi: 10.1038/sdata.2018.65 (2018).
 Petretto, G. et al. High-throughput density functional perturbation theory phonons for inorganic materials. (2018). figshare. Collection.</p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;Article{Petretto2018,
 author={Petretto, Guido
 and Dwaraknath, Shyam
@@ -2011,7 +2241,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2018.65
 </div>
 <div class="section" id="matbench-steels">
 <h2>matbench_steels<a class="headerlink" href="#matbench-steels" title="Permalink to this headline">¶</a></h2>
-<p>Matbench v0.1 dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated.</p>
+<p>Matbench v0.1 test dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.</p>
 <p><strong>Number of entries:</strong> 312</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -2028,21 +2258,40 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2018.65
 <td><p>Chemical formula.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">yield</span> <span class="pre">strength</span></code></p></td>
-<td><p>Target variable. Experimentally measured steel yield strengths, in GPa.</p></td>
+<td><p>Target variable. Experimentally measured steel yield strengths, in MPa.</p></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Reference</strong></p>
 <p><a class="reference external" href="https://citrination.com/datasets/153092/">https://citrination.com/datasets/153092/</a></p>
 <p><strong>Bibtex Formatted Citations</strong></p>
+<p>&#64;Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material’s composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm—namely, that crystal graph methods appear to outperform traditional machine learning methods given {textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={<a class="reference external" href="https://doi.org/10.1038/s41524-020-00406-3">https://doi.org/10.1038/s41524-020-00406-3</a>}
+}</p>
 <p>&#64;misc{Citrine Informatics,
 title = {Mechanical properties of some steels},
 howpublished = {url{<a class="reference external" href="https://citrination.com/datasets/153092/">https://citrination.com/datasets/153092/</a>},
 }</p>
 </div>
-<div class="section" id="mp-all">
-<h2>mp_all<a class="headerlink" href="#mp-all" title="Permalink to this headline">¶</a></h2>
-<p>A complete copy of the Materials Project database as of 10/18/2018. Mp_all files contain structure data for each material while mp_nostruct does not.</p>
+<div class="section" id="mp-all-20181018">
+<h2>mp_all_20181018<a class="headerlink" href="#mp-all-20181018" title="Permalink to this headline">¶</a></h2>
+<p>A complete copy of the Materials Project database as of 10/18/2018. mp_all files contain structure data for each material while mp_nostruct does not.</p>
 <p><strong>Number of entries:</strong> 83989</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -2109,9 +2358,9 @@ volume = {1},
 year = {2013}
 }</p>
 </div>
-<div class="section" id="mp-nostruct">
-<h2>mp_nostruct<a class="headerlink" href="#mp-nostruct" title="Permalink to this headline">¶</a></h2>
-<p>A complete copy of the Materials Project database as of 10/18/2018. Mp_all files contain structure data for each material while mp_nostruct does not.</p>
+<div class="section" id="mp-nostruct-20181018">
+<h2>mp_nostruct_20181018<a class="headerlink" href="#mp-nostruct-20181018" title="Permalink to this headline">¶</a></h2>
+<p>A complete copy of the Materials Project database as of 10/18/2018. mp_all files contain structure data for each material while mp_nostruct does not.</p>
 <p><strong>Number of entries:</strong> 83989</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
@@ -2364,7 +2613,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2015.53
 <td><p>weight percent of Si</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">tensile</span> <span class="pre">strength</span></code></p></td>
-<td><p>ultimate tensile strength in GPa</p></td>
+<td><p>ultimate tensile strength in MPa</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">ti</span></code></p></td>
 <td><p>weight percent of Ti</p></td>
@@ -2376,7 +2625,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2015.53
 <td><p>weight percent of W</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">yield</span> <span class="pre">strength</span></code></p></td>
-<td><p>yield strength in GPa</p></td>
+<td><p>yield strength in MPa</p></td>
 </tr>
 </tbody>
 </table>
@@ -2476,6 +2725,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -2517,8 +2767,8 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
 <li><a class="reference internal" href="#matbench-perovskites">matbench_perovskites</a></li>
 <li><a class="reference internal" href="#matbench-phonons">matbench_phonons</a></li>
 <li><a class="reference internal" href="#matbench-steels">matbench_steels</a></li>
-<li><a class="reference internal" href="#mp-all">mp_all</a></li>
-<li><a class="reference internal" href="#mp-nostruct">mp_nostruct</a></li>
+<li><a class="reference internal" href="#mp-all-20181018">mp_all_20181018</a></li>
+<li><a class="reference internal" href="#mp-nostruct-20181018">mp_nostruct_20181018</a></li>
 <li><a class="reference internal" href="#phonon-dielectric-mp">phonon_dielectric_mp</a></li>
 <li><a class="reference internal" href="#piezoelectric-tensor">piezoelectric_tensor</a></li>
 <li><a class="reference internal" href="#steel-strength">steel_strength</a></li>
@@ -2543,7 +2793,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -2557,13 +2807,14 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Datasets Available in Matminer</a></li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
 
   </body>

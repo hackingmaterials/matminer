@@ -68,7 +68,6 @@ matminer.featurizers.tests.test\_structure module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 
