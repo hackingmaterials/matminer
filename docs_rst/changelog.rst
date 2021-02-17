@@ -4,6 +4,10 @@
 ==================
 matminer Changelog
 ==================
+**v0.6.5**
+
+* update BV parameters to 2020 version; the existing 2016 version included errors including Rh4+
+* Fix matbench dataset urls
 
 **v0.6.4**
 
