@@ -33,10 +33,11 @@ import pymatgen.analysis.local_env as pmg_le
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import OPSiteFingerprint, \
     CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint, \
-    AverageBondAngle, AverageBondLength
+    AverageBondAngle, AverageBondLength, SOAP
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
     CrystalGraphConvNetWrapper, CIFDataWrapper
+from matminer.featurizers.utils.oxidation import has_oxidation_states
 from matminer.utils.caching import get_all_nearest_neighbors
 from matminer.utils.data import IUCrBondValenceData
 
@@ -133,21 +134,30 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         - Spacegroup number
         - Crystal system (1 of 7)
         - Centrosymmetry (has inversion symmetry)
+        - Number of symmetry ops, obtained from the spacegroup
     """
 
-    crystal_idx = {"triclinic": 7,
-                   "monoclinic": 6,
-                   "orthorhombic": 5,
-                   "tetragonal": 4,
-                   "trigonal": 3,
-                   "hexagonal": 2,
-                   "cubic": 1
-                   }
+    crystal_idx = {
+        "triclinic": 7,
+        "monoclinic": 6,
+        "orthorhombic": 5,
+        "tetragonal": 4,
+        "trigonal": 3,
+        "hexagonal": 2,
+        "cubic": 1
+    }
+
+    all_features = [
+        "spacegroup_num",
+        "crystal_system",
+        "crystal_system_int",
+        "is_centrosymmetric",
+        "n_symmetry_ops"
+    ]
 
     def __init__(self, desired_features=None):
-        self.features = ["spacegroup_num", "crystal_system",
-                         "crystal_system_int", "is_centrosymmetric"] if not \
-            desired_features else desired_features
+        self.features = \
+            desired_features if desired_features else self.all_features
 
     def featurize(self, s):
         sga = SpacegroupAnalyzer(s)
@@ -166,19 +176,19 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         if "is_centrosymmetric" in self.features:
             output.append(sga.is_laue())
 
+        if "n_symmetry_ops" in self.features:
+            output.append(len(sga.get_symmetry_operations()))
+
         return output
 
     def feature_labels(self):
-        all_features = ["spacegroup_num", "crystal_system",
-                        "crystal_system_int",
-                        "is_centrosymmetric"]  # enforce order
-        return [x for x in all_features if x in self.features]
+        return [x for x in self.all_features if x in self.features]
 
     def citations(self):
         return []
 
     def implementors(self):
-        return ["Anubhav Jain"]
+        return ["Anubhav Jain", "Alex Dunn"]
 
 
 class Dimensionality(BaseFeaturizer):
@@ -221,16 +231,35 @@ class RadialDistributionFunction(BaseFeaturizer):
     Calculate the radial distribution function (RDF) of a crystal structure.
 
     Features:
-        - Radial distribution function
+        - Radial distribution function. Each feature is the "density" of the
+          distribution at a certain radius.
 
     Args:
-        cutoff: (float) distance up to which to calculate the RDF.
-        bin_size: (float) size of each bin of the (discrete) RDF.
+        cutoff: (float) Angstrom distance up to which to calculate the RDF.
+        bin_size: (float) size in Angstrom of each bin of the (discrete) RDF.
+
+    Attributes:
+        bin_distances (np.Ndarray): The distances each bin represents. Can be
+            used for graphing the RDF.
     """
 
     def __init__(self, cutoff=20.0, bin_size=0.1):
         self.cutoff = cutoff
         self.bin_size = bin_size
+        self.bin_distances = np.arange(0, cutoff, bin_size)
+
+    def precheck(self, s):
+        """
+        Precheck the structure is ordered.
+
+        Args:
+            s: (pymatgen.Struture)
+
+        Returns:
+            (bool): True if passing precheck, false if failing
+
+        """
+        return s.is_ordered
 
     def featurize(self, s):
         """
@@ -239,7 +268,7 @@ class RadialDistributionFunction(BaseFeaturizer):
             s (Structure): Pymatgen Structure object.
 
         Returns:
-            rdf, dist: (tuple of arrays) the first element is the
+            rdf: (iterable) the first element is the
                     normalized RDF, whereas the second element is
                     the inner radius of the RDF bin.
         """
@@ -261,16 +290,18 @@ class RadialDistributionFunction(BaseFeaturizer):
             dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         number_density = s.num_sites / s.volume
         rdf = dist_hist / shell_vol / number_density
-        return [{'distances': dist_bins[:-1], 'distribution': rdf}]
+        return rdf
 
     def feature_labels(self):
-        return ["radial distribution function"]
+        bin_labels = get_rdf_bin_labels(self.bin_distances, self.cutoff)
+        bin_labels = [f"rdf {bl}A" for bl in bin_labels]
+        return bin_labels
 
     def citations(self):
         return []
 
     def implementors(self):
-        return ["Saurabh Bajaj"]
+        return ["Saurabh Bajaj", "Alex Dunn"]
 
 
 class PartialRadialDistributionFunction(BaseFeaturizer):
@@ -282,19 +313,21 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
 
+    Features:
+        Each feature corresponds to the density of number of bonds
+        for a certain pair of elements at a certain range of
+        distances. For example, "Al-Al PRDF r=1.00-1.50" corresponds
+        to the density of Al-Al bonds between 1 and 1.5 distance units
+        By default, this featurizer generates RDFs for each pair
+        of elements in the training set.
+
     Args:
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
         include_elems: (list of string), list of elements that must be included in PRDF
         exclude_elems: (list of string), list of elmeents that should not be included in PRDF
 
-    Features:
-        Each feature corresponds to the density of number of bonds
-           for a certain pair of elements at a certain range of
-           distances. For example, "Al-Al PRDF r=1.00-1.50" corresponds
-           to the density of Al-Al bonds between 1 and 1.5 distance units
-           By default, this featurizer generates RDFs for each pair
-           of elements in the training set."""
+    """
 
     def __init__(self, cutoff=20.0, bin_size=0.1, include_elems=(),
                  exclude_elems=()):
@@ -304,6 +337,19 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         self.include_elems = list(
             include_elems)  # Makes sure the element lists are ordered
         self.exclude_elems = list(exclude_elems)
+
+    def precheck(self, s):
+        """
+        Precheck the structure is ordered.
+
+        Args:
+            s: (pymatgen.Struture)
+
+        Returns:
+            (bool): True if passing precheck, false if failing
+
+        """
+        return s.is_ordered
 
     def fit(self, X, y=None):
         """Define the list of elements to be included in the PRDF. By default,
@@ -352,8 +398,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         if self.elements_ is None:
             raise Exception("You must run 'fit' first!")
 
-        dist_bins, prdf = self.compute_prdf(
-            s)  # Assemble the PRDF for each pair
+        dist_bins, prdf = self.compute_prdf(s)  # Assemble the PRDF for each pair
 
         # Convert the PRDF into a feature array
         zeros = np.zeros_like(dist_bins)  # Zeros if elements don't appear
@@ -466,16 +511,35 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
     from atomic partial charges. Atomic charges are obtained
     from the ValenceIonicRadiusEvaluator class.
 
+    WARNING: The ReDF needs oxidation states to work correctly.
+
     Args:
         cutoff: (float) distance up to which the ReDF is to be
-                calculated (default: longest diagaonal in
-                primitive cell).
+                calculated
         dr: (float) width of bins ("x"-axis) of ReDF (default: 0.05 A).
+
+    Attributes:
+        distances (np.ndarray): The distances at which each bin begins.
     """
 
-    def __init__(self, cutoff=None, dr=0.05):
+    def __init__(self, cutoff=20, dr=0.05):
         self.cutoff = cutoff
         self.dr = dr
+        self.nbins = int(self.cutoff / self.dr) + 1
+        self.distances = np.array([i * self.dr for i in range(self.nbins)])
+
+    def precheck(self, s) -> bool:
+        """
+        Check the structure to ensure the ReDF can be run.
+
+        Args:
+            s (pymatgen. Structure): Structure to precheck
+
+        Returns:
+            (bool)
+
+        """
+        return has_oxidation_states(s.composition) and s.is_ordered
 
     def featurize(self, s):
         """
@@ -490,6 +554,11 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 'distances'; the ReDF itself is accessible via key
                 'redf'.
         """
+
+        if not has_oxidation_states(s.composition):
+            raise ValueError("Structure must have oxidation states")
+        if not s.is_ordered:
+            raise ValueError("Structure must be ordered")
         if self.dr <= 0:
             raise ValueError("width of bins for ReDF must be >0")
 
@@ -498,20 +567,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
         # Add oxidation states.
         struct = ValenceIonicRadiusEvaluator(struct).structure
-
-        if self.cutoff is None:
-            # Set cutoff to longest diagonal.
-            a = struct.lattice.matrix[0]
-            b = struct.lattice.matrix[1]
-            c = struct.lattice.matrix[2]
-            self.cutoff = max(
-                [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c),
-                 np.linalg.norm(a - b + c), np.linalg.norm(a + b - c)])
-
-        nbins = int(self.cutoff / self.dr) + 1
-        redf_dict = {"distances": np.array(
-            [(i + 0.5) * self.dr for i in range(nbins)]),
-            "distribution": np.zeros(nbins, dtype=np.float)}
+        distribution = np.zeros(self.nbins, dtype=np.float)
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
@@ -519,13 +575,15 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             for nnsite, dist, *_ in neighbors:
                 neigh_charge = float(nnsite.specie.oxi_state)
                 bin_index = int(dist / self.dr)
-                redf_dict["distribution"][bin_index] \
+                distribution[bin_index] \
                     += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
-        return [redf_dict]
+        return distribution
 
     def feature_labels(self):
-        return ["electronic radial distribution function"]
+        bin_labels = get_rdf_bin_labels(self.distances, self.cutoff)
+        bin_labels = [f"ReDF {bl}A" for bl in bin_labels]
+        return bin_labels
 
     def citations(self):
         return ["@article{title={Method for the computational comparison"
@@ -1015,21 +1073,84 @@ class MinimumRelativeDistances(BaseFeaturizer):
     """
     Determines the relative distance of each site to its closest neighbor.
 
+
     We use the relative distance,
     f_ij = r_ij / (r^atom_i + r^atom_j), as a measure rather than the
     absolute distances, r_ij, to account for the fact that different
     atoms/species have different sizes.  The function uses the
     valence-ionic radius estimator implemented in Pymatgen.
+
+    The features can be flattened so a uniform-length vector is returned for
+    each material, regardless of the number of sites in each structure.
+    Returning flat output REQUIRES fitting (using self.fit(...)). If fit,
+    structures having fewer sites than the max sites among the fitting
+    structures are extended with NaNs; structures with more sites are truncated.
+
+    To return non-flat (i.e., requiring further processing) features so that
+    no features are NaN and no distances are truncated, use flatten=False.
+
+    Features:
+
+        If using flatten=True:
+
+        site #{number} min. rel. dist. (float): The minimum relative distance of
+            site {number}
+        site #{number} specie (str): The string representing the specie at site
+            {number}
+        site #{number} neighbor specie(s) (str, tuple(str)): The neighbor specie
+            used to determine the minimum relative distance with respect to site
+            {number}. If multiple neighbor sites have equivalent minimum
+            relative distances,all these sites are listed in a tuple.
+
+
+        If using flatten=False:
+
+        minimum relative distance of each site ([float]): List of the minimum
+            relative distance for each site. Structures with different numbers
+            of sites will return a different length vector.
+
     Args:
-        cutoff: (float) (absolute) distance up to which tentative
-                closest neighbors (on the basis of relative distances)
-                are to be determined.
+        cutoff (float): (absolute) distance up to which tentative closest
+            neighbors (on the basis of relative distances) are to be determined.
+        flatten (bool): If True, returns a uniform length feature vector for
+            each structure regardless of the number of sites in the structure.
+            If True, you must call .fit() before featurizing.
+        include_distances (bool): Include the numerical minimum relative
+            distance in the returned features. Only used if flatten=True.
+        include_species (bool): Include the species for each site and the
+            species of the neighbor (as determined by minimum rel. distance).
+            Only used as flatten=True.
     """
 
-    def __init__(self, cutoff=10.0):
-        self.cutoff = cutoff
+    def __init__(self, cutoff=10.0, flatten=True, include_distances=True,
+                 include_species=True):
 
-    def featurize(self, s, cutoff=10.0):
+        if not include_distances and not include_species:
+            raise ValueError(
+                "Featurizer must return distances, species, or both."
+            )
+
+        self.include_distances = include_distances
+        self.include_species = include_species
+        self.cutoff = cutoff
+        self.flatten = flatten
+        self._max_sites = None
+
+    def fit(self, X, y=None):
+        """
+        Fit the MRD featurizer to a list of structures.
+
+        Args:
+            X ([Structure]): A list of pymatgen structures.
+            y : unused (added for consistency with overridden method signature)
+
+        Returns:
+            self
+        """
+        self._max_sites = max([len(s.sites) for s in X])
+        return self
+
+    def featurize(self, s):
         """
         Get minimum relative distances of all sites of the input structure.
 
@@ -1040,21 +1161,80 @@ class MinimumRelativeDistances(BaseFeaturizer):
             dists_relative_min: (list of floats) list of all minimum relative
                     distances (i.e., for all sites).
         """
+
+
+        self._check_fitted()
+
         vire = ValenceIonicRadiusEvaluator(s)
-        dists_relative_min = []
-        for site in vire.structure:
+        n_sites = len(s.sites)
+        parent_site_species = [None] * n_sites
+        neighbor_site_species = [None] * n_sites
+        dists_relative_min = [None] * n_sites
+
+        for i, site in enumerate(vire.structure):
             dists_relative = []
-            for nnsite, dist, *_ in vire.structure.get_neighbors(site, self.cutoff):
+            neigh_species_relative = []
+            for nnsite, dist, *_ in vire.structure.get_neighbors(
+                    site, self.cutoff
+            ):
                 r_site = vire.radii[site.species_string]
                 r_neigh = vire.radii[nnsite.species_string]
                 radii_dist = r_site + r_neigh
                 d_relative = dist / radii_dist
                 dists_relative.append(d_relative)
-            dists_relative_min.append(min(dists_relative))
-        return [dists_relative_min]
+                neigh_species_relative.append(site.species_string)
+
+            dists_relative = np.asarray(dists_relative)
+            drmin = dists_relative.min()
+            dists_relative_min[i] = drmin
+            dists_relative_min_ix = np.where(dists_relative == drmin)
+
+            neigh_species_equiv = \
+                np.asarray(neigh_species_relative)[dists_relative_min_ix]
+
+            parent_site_species[i] = site.species_string
+
+            if len(neigh_species_equiv) == 1:
+                neighbor_site_species[i] = neigh_species_equiv[0]
+            else:
+                neighbor_site_species[i] = tuple(neigh_species_equiv)
+
+        if self.flatten:
+            features = []
+
+            for i in range(self._max_sites):
+                site_features = []
+                if i <= n_sites - 1:
+                    if self.include_distances:
+                        site_features.append(dists_relative_min[i])
+                    if self.include_species:
+                        site_features.append(parent_site_species[i])
+                        site_features.append(neighbor_site_species[i])
+                else:
+                    site_features = [np.nan] * (int(self.include_distances) +
+                                                2 * int(self.include_species))
+                features += site_features
+            return features
+
+        else:
+            return [dists_relative_min]
 
     def feature_labels(self):
-        return ["minimum relative distance of each site"]
+        self._check_fitted()
+
+        if self.flatten:
+            labels = []
+            for i in range(self._max_sites):
+                site_labels = []
+                if self.include_distances:
+                    site_labels.append(f"site #{i} min. rel. dist.")
+                if self.include_species:
+                    site_labels.append(f"site #{i} specie")
+                    site_labels.append(f"site #{i} neighbor specie(s)")
+                labels += site_labels
+            return labels
+        else:
+            return ["minimum relative distance of each site"]
 
     def citations(self):
         return ["@article{Zimmermann2017,"
@@ -1073,6 +1253,13 @@ class MinimumRelativeDistances(BaseFeaturizer):
 
     def implementors(self):
         return ["Nils E. R. Zimmermann", "Alex Dunn"]
+
+    def _check_fitted(self):
+        if not self._max_sites and self.flatten:
+            raise NotFittedError(
+                "If using flatten=True, MinimumRelativeDistances must be fit "
+                "before using."
+            )
 
 
 class SiteStatsFingerprint(BaseFeaturizer):
@@ -1121,6 +1308,27 @@ class SiteStatsFingerprint(BaseFeaturizer):
     @property
     def _site_labels(self):
         return self.site_featurizer.feature_labels()
+
+    def fit(self, X, y=None, **fit_kwargs):
+        """
+        Fit the SiteStatsFeaturizer using the fitting function of the underlying
+        site featurizer. Only applicable if the site featurizer is fittable.
+
+        See the ".fit()" method of the site_featurizer used to construct the
+        class for more information.
+
+        Args:
+            X (Iterable):
+            y (optional, Iterable):
+            **fit_kwargs: Keyword arguments used by the fit function of the
+                site featurizer class.
+
+        Returns:
+            self (SiteStatsFeaturizer)
+
+        """
+        self.site_featurizer.fit(X, y, **fit_kwargs)
+        return self
 
     def featurize(self, s):
         # Get each feature for each site
@@ -1191,8 +1399,12 @@ class SiteStatsFingerprint(BaseFeaturizer):
             preset (str) - Name of preset
             kwargs - Options for SiteStatsFingerprint
         """
-
-        if preset == "CrystalNNFingerprint_cn":
+        if preset == "SOAP_formation_energy":
+            return SiteStatsFingerprint(
+                SOAP.from_preset("formation_energy"),
+                **kwargs
+            )
+        elif preset == "CrystalNNFingerprint_cn":
             return SiteStatsFingerprint(
                 CrystalNNFingerprint.from_preset("cn", cation_anion=False),
                 **kwargs)
@@ -3830,3 +4042,26 @@ class StructuralComplexity(BaseFeaturizer):
             "doi = {10.1180/minmag.2013.077.3.05},"
             "url = {https://doi.org/10.1180/minmag.2013.077.3.05}}",
         ]
+
+
+def get_rdf_bin_labels(bin_distances, cutoff):
+    """
+    Common function for getting bin labels given the distances at which each
+    bin begins and the ending cutoff.
+
+
+    Args:
+        bin_distances (np.ndarray): The distances at which each bin begins.
+        cutoff (float): The final cutoff value.
+
+    Returns:
+        [str]: The feature labels for the *RDF
+
+    """
+    bin_dists_complete = np.concatenate((bin_distances, np.asarray([cutoff])))
+    flabels = [""] * len(bin_distances)
+    for i, _ in enumerate(bin_distances):
+        lower = "{:.5f}".format(bin_dists_complete[i])
+        higher = "{:.5f}".format(bin_dists_complete[i + 1])
+        flabels[i] = f"[{lower} - {higher}]"
+    return flabels

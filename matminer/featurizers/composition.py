@@ -16,6 +16,7 @@ from sklearn.neighbors import NearestNeighbors
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
+from matminer.featurizers.utils.oxidation import has_oxidation_states
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     CohesiveEnergyData, MixingEnthalpy, MatscholarElementData, MEGNetElementData
 
@@ -24,24 +25,6 @@ __author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(module_dir, "..", "utils", "data_files")
-
-
-# Utility operations
-def has_oxidation_states(comp):
-    """Check if a composition object has oxidation states for each element
-
-    TODO: Does this make sense to add to pymatgen? -wardlt
-
-    Args:
-        comp (Composition): Composition to check
-    Returns:
-        (boolean) Whether this composition object contains oxidation states
-    """
-    for el in comp.elements:
-        if not hasattr(el, "oxi_state") or el.oxi_state is None:
-            return False
-    return True
-
 
 def is_ionic(comp):
     """Determines whether a compound is an ionic compound.
@@ -1185,6 +1168,7 @@ class CohesiveEnergyMP(BaseFeaturizer):
             "REpresentational State Transfer (REST) principles}}, "
             "url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025614007113}, "
             "volume = {97}, year = {2015} } "]
+
 
 class Miedema(BaseFeaturizer):
     """
