@@ -10,5 +10,5 @@ plotly==4.8.1
 future==0.18.2
 sympy==1.6
 scikit_learn==0.23.1
-monty==3.0.2
+monty==2021.3.3
 jsonschema==3.2.0
