@@ -11,7 +11,7 @@ import json
 
 from monty.json import MontyDecoder
 
-from pymatgen import MPRester
+from pymatgen.ext.matproj import MPRester
 from pymatgen.core.structure import IStructure
 from pymatgen.core.composition import Composition
 

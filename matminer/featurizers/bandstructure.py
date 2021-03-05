@@ -9,7 +9,7 @@ from numpy.linalg import norm
 from scipy.interpolate import griddata
 
 from matminer.featurizers.base import BaseFeaturizer
-from pymatgen import Spin
+from pymatgen.electronic_structure.core import Spin
 from pymatgen.electronic_structure.bandstructure import BandStructure, \
     BandStructureSymmLine
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer

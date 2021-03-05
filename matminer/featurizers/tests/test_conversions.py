@@ -7,7 +7,8 @@ from unittest import TestCase
 from pandas import DataFrame, MultiIndex
 
 from pymatgen.core.structure import IStructure
-from pymatgen import Composition, Lattice, Structure, Element, SETTINGS
+from pymatgen.core import Composition, Lattice, Structure, Element
+from pymatgen.settings import SETTINGS
 
 from matminer.featurizers.conversions import (
     StrToComposition, StructureToComposition, StructureToIStructure,

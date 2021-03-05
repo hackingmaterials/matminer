@@ -4,7 +4,7 @@ from monty.json import MontyDecoder
 from monty.dev import deprecated
 
 import pandas as pd
-from pymatgen import Composition
+from pymatgen.core import Composition
 from pymatgen.core.structure import IStructure
 
 

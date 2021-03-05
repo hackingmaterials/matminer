@@ -11,7 +11,7 @@ from matminer.utils.conversions import dict_to_object, \
     structure_to_oxidstructure, \
     str_to_composition, json_to_object, structure_to_composition, \
     composition_to_oxidcomposition, structure_to_istructure
-from pymatgen import Composition, Lattice, Structure, Element
+from pymatgen.core import Composition, Lattice, Structure, Element
 
 
 class TestConversions(TestCase):

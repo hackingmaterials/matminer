@@ -6,7 +6,7 @@ from pymatgen.core.periodic_table import Specie
 
 from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
     MixingEnthalpy, MatscholarElementData, MEGNetElementData, IUCrBondValenceData
-from pymatgen import Element
+from pymatgen.core import Element
 
 
 class TestDemlData(TestCase):
