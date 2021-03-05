@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.composition import BandCenter
-from pymatgen.core import Spin
+from pymatgen.electronic_structure.core import Spin
 from pymatgen.electronic_structure.dos import CompleteDos, FermiDos
 
 
