@@ -11,7 +11,7 @@ httplib2==0.18.1
 ase==3.19.1
 
 ## dscribe
-dscribe==0.3.5
+dscribe==0.4.0
 
 ## MDF-forge
 mdf-forge==0.7.6
