@@ -4,7 +4,7 @@ pymatgen==2021.3.4
 pandas==1.2.3
 tqdm==4.58.0
 pymongo==3.11.2
-pint==0.16.1
+pint==0.17
 six==1.15.0
 plotly==4.14.3
 future==0.18.2
