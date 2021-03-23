@@ -779,7 +779,8 @@
     ],
     "columns": {
       "composition": "Chemical formula.",
-      "gap expt": "Target variable. Experimentally measured gap, in eV."
+      "gap expt": "Target variable. Experimentally measured gap, in eV.",
+      "likely_mpid": "Materials Project database ID (mp-id) most likely associated with each material. mp-ids were chosen from among computed materials in the Materials Project database (version 2021.03) that were 1) not marked 'theoretical', 2) had structures matching at least one ICSD material, and 3) were within 200 meV of the DFT-computed stable energy hull (e_above_hull < 0.2 eV). Among these candidates, we chose the mp-id with the lowest e_above_hull."
     },
     "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
