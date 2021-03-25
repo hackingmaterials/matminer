@@ -1,7 +1,7 @@
 import unittest
 
 from matminer.data_retrieval.retrieve_MP import MPDataRetrieval
-from pymatgen.settings import SETTINGS
+from pymatgen.core import SETTINGS
 from pymatgen.electronic_structure.bandstructure import BandStructureSymmLine, \
     BandStructure
 from pymatgen.electronic_structure.dos import CompleteDos

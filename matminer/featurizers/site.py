@@ -44,7 +44,7 @@ from pymatgen.core import Structure
 from pymatgen.core.periodic_table import Element
 from pymatgen.analysis.local_env import LocalStructOrderParams, \
     VoronoiNN, CrystalNN, solid_angle, vol_tetra
-import pymatgen.analysis
+import pymatgen.analysis.local_env
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder \
     import LocalGeometryFinder
@@ -62,8 +62,7 @@ except ImportError:
     dscribe, SOAP_dscribe = None, None
 
 cn_motif_op_params = {}
-with open(os.path.join(os.path.dirname(
-        pymatgen.analysis.__file__), 'cn_opt_params.yaml'), 'r') as f:
+with open(os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), 'cn_opt_params.yaml'), 'r') as f:
     cn_motif_op_params = yaml.safe_load(f)
 cn_target_motif_op = {}
 with open(os.path.join(os.path.dirname(
