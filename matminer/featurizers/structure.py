@@ -375,6 +375,8 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
                 and the value is the radial distribution function for those paris of elements
         """
         # Get the composition of the array
+        s = copy(s)
+        s.remove_oxidation_states()
         composition = s.composition.fractional_composition.to_reduced_dict
 
         # Get the distances between all atoms
@@ -2191,9 +2193,10 @@ class ChemicalOrdering(BaseFeaturizer):
 
                 # Get weight by type
                 for nn in nns:
-                    site_elem = nn['site'].specie.element \
-                        if isinstance(nn['site'].specie, Specie) else \
-                        nn['site'].specie
+                    site_elem = nn['site'].specie
+                    if hasattr(site_elem, "element"):
+                        site_elem = getattr(site_elem, "element")
+
                     elem_idx = elems.index(site_elem)
                     ordering[site_idx, elem_idx] += nn['weight']
 

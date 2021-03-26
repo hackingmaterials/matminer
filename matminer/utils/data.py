@@ -461,7 +461,9 @@ class IUCrBondValenceData:
     def interpolate_soft_anions(self):
         """Fill in missing parameters for oxidation states of soft anions."""
         high_electroneg = '|'.join(['O', 'Cl', 'F'])
-        subset = self.params.loc[(self.params['Atom1_valence'] == 9) & (~self.params['Atom2'].str.contains(high_electroneg))]
+        has_high = self.params['Atom2'].str.contains(high_electroneg)
+        has_high[pd.isnull(has_high)] = False
+        subset = self.params.loc[(self.params['Atom1_valence'] == 9) & (~has_high)]
         cation_subset = subset['Atom1'].unique()
         data = []
         for cation in cation_subset:
