@@ -1,10 +1,10 @@
 numpy==1.20.1
 requests==2.25.1
-pymatgen==2022.0.5
+pymatgen==2022.0.4
 pandas==1.2.3
 tqdm==4.59.0
 pymongo==3.11.2
-pint==0.17
+pint==0.16.1
 six==1.15.0
 plotly==4.14.3
 future==0.18.2
