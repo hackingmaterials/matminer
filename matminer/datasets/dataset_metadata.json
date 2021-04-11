@@ -707,7 +707,7 @@
       "@misc{choudhary__2018, title={jdft_2d-7-7-2018.json}, url={https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1}, DOI={10.6084/m9.figshare.6815705.v1}, abstractNote={2D materials}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}"
     ],
     "columns": {
-      "exfoliation_en": "Target variable. Exfoliation energy (meV).",
+      "exfoliation_en": "Target variable. Exfoliation energy (meV/atom).",
       "structure": "Pymatgen Structure of the material."
     },
     "description": "Matbench v0.1 test dataset for predicting exfoliation energies from crystal structure (computed with the OptB88vdW and TBmBJ functionals). Adapted from the JARVIS DFT database. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
