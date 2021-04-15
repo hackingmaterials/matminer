@@ -751,11 +751,11 @@
     "url": "https://ml.materialsproject.org/projects/matbench_glass.json.gz",
     "hash": "36beb654e2a463ee2a6572105bea0ca2961eee7c7b26a25377bff2c3b338e53a"
   },
-  "matbench_expt_formation_enthalpy": {
+  "expt_formation_enthalpy_kingsbury": {
     "bibtex_refs": [
       "@article{Kim2017,doi={10.1038/sdata.2017.162},url={https://doi.org/10.1038/sdata.2017.162},year={2017},month=oct,publisher={Springer Science and Business Media {LLC}}, volume = {4},  number = {1},  author = {George Kim and S. V. Meschel and Philip Nash and Wei Chen},title ={Experimental formation enthalpies for intermetallic phases and other inorganic compounds},journal={Scientific Data}}",
-      "@book{Kubaschewski1993,author={Kubaschewski, O. and Alcock, C.B. and Spencer, P.J.},edition={6th},isbn={0080418880},publisher={Pergamon Press},title={{Materials Thermochemistry}},year = {1993}},
-      "@misc{NIST,doi = {10.18434/T42S31},url = {http://kinetics.nist.gov/janaf/},author = {Malcolm W. Chase}, title = {NIST-JANAF Thermochemical Tables}, publisher = {National Institute of Standards and Technology},  year = {1998},  url={https://janaf.nist.org}}
+      "@book{Kubaschewski1993,author={Kubaschewski, O. and Alcock, C.B. and Spencer, P.J.},edition={6th},isbn={0080418880},publisher={Pergamon Press},title={{Materials Thermochemistry}},year = {1993}}",
+      "@misc{NIST,doi = {10.18434/T42S31},url = {http://kinetics.nist.gov/janaf/},author = {Malcolm W. Chase}, title = {NIST-JANAF Thermochemical Tables}, publisher = {National Institute of Standards and Technology},  year = {1998},  url={https://janaf.nist.org}}"
     ],
     "columns": {
       "formula": "Chemical formula.",
@@ -763,12 +763,27 @@
       "uncertainty": "Uncertainty reported in the experimental formation energy, in eV/atom.",
       "phaseinfo": "Description of the material's crystal structure or space group.",
       "reference": "Reference to the original data source.",
-      "likely_mpid": "Materials Project database ID (mp-id) most likely associated with each material. mp-ids were chosen from among computed materials in the Materials Project database (version 2021.03) that were 1) not marked 'theoretical', 2) had structures matching at least one ICSD material, and 3) were within 200 meV of the DFT-computed stable energy hull (e_above_hull < 0.2 eV). Among these candidates, we chose the mp-id with the lowest e_above_hull that matched the reported spacegroup (where available)."
+      "likely_mpid": "Materials Project database ID (mp-id) most likely associated with each material."
     },
-    "description": "Matbench v0.1 test dataset containing experimental standard formation enthalpies for solids. Formation enthalpies were compiled primarily from Kim et al., Kubaschewski, and the NIST JANAF tables (see references). Elements, liquids, and gases were excluded. Where there were multiple values for the same compound, Kubashewski values were discarded first. Among the remaining entries, we selected the value closest to the mean of all values for that material. Any material for which the range of reported values was larger than 0.1 eV/atom was removed from the dataset.",
+    "description": "Dataset containing experimental standard formation enthalpies for solids. Formation enthalpies were compiled primarily from Kim et al., Kubaschewski, and the NIST JANAF tables (see references). Elements, liquids, and gases were excluded. Data were deduplicated such that each material is associated with a single formation enthalpy value. Refer to Wang et al. (see references) for a complete desciption of the methods used. Materials Project database IDs (mp-ids) were assigned to materials from among computed materials in the Materials Project database (version 2021.03.22) that were 1) not marked 'theoretical', 2) had structures matching at least one ICSD material, and 3) were within 200 meV of the DFT-computed stable energy hull (e_above_hull < 0.2 eV). Among these candidates, we chose the mp-id with the lowest e_above_hull that matched the reported spacegroup (where available).",
     "file_type": "json.gz",
-    "num_entries": 2051,
-    "reference": "TBD",
+    "num_entries": 2135,
+    "reference": "Wang, A., Kingsbury, R., Horton, M., McDermott, M., Jain. A., Ong, S.P., Dwaraknath, S., Persson, A. A framework for quantifying uncertainty in DFT energy corrections. In preparation.",
+    "url": "",
+    "hash": ""
+  },
+  "expt_gap_kingsbury": {
+    "bibtex_refs": [
+    ],
+    "columns": {
+      "formula": "Chemical formula.",
+      "expt_gap": "Experimentally measured bandgap, in eV.",
+      "likely_mpid": "Materials Project database ID (mp-id) most likely associated with each material."
+    },
+    "description": "Identical to the matbench_expt_gap dataset, except that Materials Project database IDs (mp-ids) have been associated with each material using the same method as described for the expt_formation_enthalpy_kingsbury dataset. Columns have also been renamed for consistency with the formation enthalpy data.",
+    "file_type": "json.gz",
+    "num_entries": 4604,
+    "reference": "",
     "url": "",
     "hash": ""
   },
@@ -780,7 +795,6 @@
     "columns": {
       "composition": "Chemical formula.",
       "gap expt": "Target variable. Experimentally measured gap, in eV.",
-      "likely_mpid": "Materials Project database ID (mp-id) most likely associated with each material. mp-ids were chosen from among computed materials in the Materials Project database (version 2021.03) that were 1) not marked 'theoretical', 2) had structures matching at least one ICSD material, and 3) were within 200 meV of the DFT-computed stable energy hull (e_above_hull < 0.2 eV). Among these candidates, we chose the mp-id with the lowest e_above_hull."
     },
     "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
@@ -840,4 +854,3 @@
     "hash": "473bc4957b2ea5e6465aef84bc29bb48ac34db27d69ea4ec5f508745c6fae252"
   }
 }
-
