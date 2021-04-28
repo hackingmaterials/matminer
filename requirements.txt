@@ -9,6 +9,6 @@ six==1.15.0
 plotly==4.14.3
 future==0.18.2
 sympy==1.7.1
-scikit_learn==0.24.1
+scikit_learn==0.24.2
 monty==2021.3.3
 jsonschema==3.2.0
