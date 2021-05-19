@@ -772,8 +772,8 @@
     "description": "Dataset containing experimental standard formation enthalpies for solids. Formation enthalpies were compiled primarily from Kim et al., Kubaschewski, and the NIST JANAF tables (see references). Elements, liquids, and gases were excluded. Data were deduplicated such that each material is associated with a single formation enthalpy value. Refer to Wang et al. (see references) for a complete desciption of the methods used. Materials Project database IDs (mp-ids) were assigned to materials from among computed materials in the Materials Project database (version 2021.03.22) that were 1) not marked 'theoretical', 2) had structures matching at least one ICSD material, and 3) were within 200 meV of the DFT-computed stable energy hull (e_above_hull < 0.2 eV). Among these candidates, we chose the mp-id with the lowest e_above_hull that matched the reported spacegroup (where available).",
     "file_type": "json.gz",
     "num_entries": 2135,
-    "reference": "Wang, A., Kingsbury, R., Horton, M., McDermott, M., Jain. A., Ong, S.P., Dwaraknath, S., Persson, K. A framework for quantifying uncertainty in DFT energy corrections. In preparation.",
-    "url": "",
+    "reference": "Wang, A., Kingsbury, R., McDermott, M., Horton, M., Jain. A., Ong, S.P., Dwaraknath, S., Persson, K. A framework for quantifying uncertainty in DFT energy corrections. ChemRxiv. Preprint.",
+    "url": "https://doi.org/10.26434/chemrxiv.14593476.v1",
     "hash": ""
   },
   "expt_gap_kingsbury": {
