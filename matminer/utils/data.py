@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from glob import glob
 
-from pymatgen import Element
+from pymatgen.core.periodic_table import Element
 from pymatgen.core.periodic_table import _pt_data
 
 __author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn'
@@ -502,4 +502,3 @@ class IUCrBondValenceData:
                                 & (bv_data['Atom2_valence'] == an_val)]
         return bond_val_list.iloc[0] # If multiple values exist, take first one
                                      # as recommended for reliability.
-
