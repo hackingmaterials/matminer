@@ -12,11 +12,14 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7, 3.8]
+        mongodb-version: [4.4]
 
     runs-on: ubuntu-latest
 
     env:
+      PMG_MAPI_KEY: ${{ secrets.PMG_MAPI_KEY }}
       MATMINER_DATASET_FULL_TEST: True
+      MPLBACKEND: "Agg"
 
     steps:
     - uses: actions/checkout@v2
