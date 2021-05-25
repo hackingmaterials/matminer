@@ -1,4 +1,3 @@
-from __future__ import unicode_literals, division, print_function
 
 from math import sqrt
 from unittest import TestCase

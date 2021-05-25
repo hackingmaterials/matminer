@@ -1,4 +1,3 @@
-from __future__ import absolute_import, division
 from citrination_client import (
     CitrinationClient,
     ChemicalFieldQuery,

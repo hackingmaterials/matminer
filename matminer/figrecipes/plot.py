@@ -1,13 +1,12 @@
-from __future__ import division, unicode_literals, print_function
-import numpy as np
 import os.path
+import warnings
+from copy import deepcopy
+
+import numpy as np
 import pandas as pd
 import plotly
-import plotly.graph_objs as go
 import plotly.figure_factory as FF
-import warnings
-
-from copy import deepcopy
+import plotly.graph_objs as go
 from pandas.api.types import is_numeric_dtype
 
 __authors__ = (

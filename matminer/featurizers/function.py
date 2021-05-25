@@ -1,4 +1,3 @@
-from __future__ import division
 
 import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
