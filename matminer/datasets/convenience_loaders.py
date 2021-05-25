@@ -7,9 +7,7 @@ from matminer.datasets import load_dataset
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>" "Abhinav Ashar <abhinav_ashar@berkeley.edu>"
 
 
-def load_elastic_tensor(
-    version="2015", include_metadata=False, data_home=None, download_if_missing=True
-):
+def load_elastic_tensor(version="2015", include_metadata=False, data_home=None, download_if_missing=True):
     """
     Convenience function for loading the elastic_tensor dataset.
 
@@ -35,9 +33,7 @@ def load_elastic_tensor(
     return df
 
 
-def load_piezoelectric_tensor(
-    include_metadata=False, data_home=None, download_if_missing=True
-):
+def load_piezoelectric_tensor(include_metadata=False, data_home=None, download_if_missing=True):
     """
     Convenience function for loading the piezoelectric_tensor dataset.
 
@@ -60,9 +56,7 @@ def load_piezoelectric_tensor(
     return df
 
 
-def load_dielectric_constant(
-    include_metadata=False, data_home=None, download_if_missing=True
-):
+def load_dielectric_constant(include_metadata=False, data_home=None, download_if_missing=True):
     """
     Convenience function for loading the dielectric_constant dataset.
 
@@ -153,9 +147,7 @@ def load_phonon_dielectric_mp(data_home=None, download_if_missing=True):
     return df
 
 
-def load_glass_ternary_landolt(
-    processing="all", unique_composition=True, data_home=None, download_if_missing=True
-):
+def load_glass_ternary_landolt(processing="all", unique_composition=True, data_home=None, download_if_missing=True):
     """
     Convenience function for loading the glass_ternary_landolt dataset.
 
@@ -188,9 +180,7 @@ def load_glass_ternary_landolt(
     return df
 
 
-def load_double_perovskites_gap(
-    return_lumo=False, data_home=None, download_if_missing=True
-):
+def load_double_perovskites_gap(return_lumo=False, data_home=None, download_if_missing=True):
     """
     Convenience function for loading the double_perovskites_gap dataset.
 
@@ -208,9 +198,7 @@ def load_double_perovskites_gap(
     df = load_dataset("double_perovskites_gap")
 
     if return_lumo:
-        lumo = load_dataset(
-            "double_perovskites_gap_lumo", data_home, download_if_missing
-        )
+        lumo = load_dataset("double_perovskites_gap_lumo", data_home, download_if_missing)
         return df, lumo
 
     return df
@@ -256,18 +244,13 @@ def load_glass_ternary_hipt(system="all", data_home=None, download_if_missing=Tr
 
         for item in system:
             if item not in {"CoFeZr", "CoTiZr", "CoVZr", "FeTiNb"}:
-                raise AttributeError(
-                    "some of the system list {} are not "
-                    "in this dataset".format(system)
-                )
+                raise AttributeError("some of the system list {} are not " "in this dataset".format(system))
         df = df[df["system"].isin(system)]
 
     return df
 
 
-def load_citrine_thermal_conductivity(
-    room_temperature=True, data_home=None, download_if_missing=True
-):
+def load_citrine_thermal_conductivity(room_temperature=True, data_home=None, download_if_missing=True):
     """
     Convenience function for loading the citrine thermal conductivity dataset.
 
@@ -285,11 +268,7 @@ def load_citrine_thermal_conductivity(
     df = load_dataset("citrine_thermal_conductivity", data_home, download_if_missing)
 
     if room_temperature:
-        df = df[
-            df["k_condition"].isin(
-                ["room temperature", "Room temperature", "Standard", "298", "300"]
-            )
-        ]
+        df = df[df["k_condition"].isin(["room temperature", "Room temperature", "Standard", "298", "300"])]
     return df.drop(["k-units", "k_condition", "k_condition_units"], axis=1)
 
 
@@ -367,9 +346,7 @@ def load_steel_strength(data_home=None, download_if_missing=True):
     return df
 
 
-def load_jarvis_ml_dft_training(
-    drop_nan_columns=None, data_home=None, download_if_missing=True
-):
+def load_jarvis_ml_dft_training(drop_nan_columns=None, data_home=None, download_if_missing=True):
     """
     Convenience function for loading the jarvis ml dft training dataset.
 
@@ -521,9 +498,7 @@ def load_expt_formation_enthalpy(data_home=None, download_if_missing=True):
     return df
 
 
-def load_brgoch_superhard_training(
-    subset="all", drop_suspect=False, data_home=None, download_if_missing=True
-):
+def load_brgoch_superhard_training(subset="all", drop_suspect=False, data_home=None, download_if_missing=True):
     """
     Convenience function for loading the expt_formation_enthalpy dataset.
 
@@ -545,9 +520,7 @@ def load_brgoch_superhard_training(
     Returns: (pd.DataFrame)
     """
     if subset not in {"all", "brgoch_features", "basic_descriptors"}:
-        raise ValueError(
-            "Error: dataset subset identifier {} " "not recognized".format(subset)
-        )
+        raise ValueError("Error: dataset subset identifier {} " "not recognized".format(subset))
 
     df = load_dataset("brgoch_superhard_training", data_home, download_if_missing)
 
@@ -562,12 +535,7 @@ def load_brgoch_superhard_training(
 
     if subset == "basic_descriptors":
         df = df.drop(
-            [
-                feat
-                for feat in df.columns
-                if feat
-                not in {"composition", "structure", "shear_modulus", "bulk_modulus"}
-            ],
+            [feat for feat in df.columns if feat not in {"composition", "structure", "shear_modulus", "bulk_modulus"}],
             axis=1,
         )
     elif subset == "brgoch_features":

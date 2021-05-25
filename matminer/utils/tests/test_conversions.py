@@ -25,14 +25,10 @@ class TestConversions(TestCase):
 
         df = DataFrame(data=d)
         df["composition"] = str_to_composition(df["comp_str"])
-        self.assertEqual(
-            df["composition"].tolist(), [Composition("Fe2"), Composition("MnO2")]
-        )
+        self.assertEqual(df["composition"].tolist(), [Composition("Fe2"), Composition("MnO2")])
 
         df["composition_red"] = str_to_composition(df["comp_str"], reduce=True)
-        self.assertEqual(
-            df["composition_red"].tolist(), [Composition("Fe"), Composition("MnO2")]
-        )
+        self.assertEqual(df["composition_red"].tolist(), [Composition("Fe"), Composition("MnO2")])
 
     def test_structure_to_composition(self):
         coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
@@ -100,9 +96,7 @@ class TestConversions(TestCase):
         self.assertEqual(df["struct_oxid"].tolist()[0][0].specie.oxi_state, -1)
         self.assertEqual(df["struct_oxid"].tolist()[0][1].specie.oxi_state, +1)
 
-        df["struct_oxid2"] = structure_to_oxidstructure(
-            df["structure"], oxi_states_override={"Cl": [-2], "Cs": [+2]}
-        )
+        df["struct_oxid2"] = structure_to_oxidstructure(df["structure"], oxi_states_override={"Cl": [-2], "Cs": [+2]})
         self.assertEqual(df["struct_oxid2"].tolist()[0][0].specie.oxi_state, -2)
         self.assertEqual(df["struct_oxid2"].tolist()[0][1].specie.oxi_state, +2)
 
@@ -116,9 +110,7 @@ class TestConversions(TestCase):
     def test_composition_to_oxidcomposition(self):
         df = DataFrame(data={"composition": [Composition("Fe2O3")]})
         df["composition_oxid"] = composition_to_oxidcomposition(df["composition"])
-        self.assertEqual(
-            df["composition_oxid"].tolist()[0], Composition({"Fe3+": 2, "O2-": 3})
-        )
+        self.assertEqual(df["composition_oxid"].tolist()[0], Composition({"Fe3+": 2, "O2-": 3}))
 
     def test_to_istructure(self):
         cscl = Structure(

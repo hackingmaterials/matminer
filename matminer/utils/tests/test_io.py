@@ -112,19 +112,13 @@ class IOTest(PymatgenTest):
     def test_load_dataframe_from_json(self):
 
         df = load_dataframe_from_json(os.path.join(test_dir, "dataframe.json"))
-        self.assertTrue(
-            self.diamond == df["structure"][0], "Dataframe contents do not match"
-        )
+        self.assertTrue(self.diamond == df["structure"][0], "Dataframe contents do not match")
 
         df = load_dataframe_from_json(os.path.join(test_dir, "dataframe.json.gz"))
-        self.assertTrue(
-            self.diamond == df["structure"][0], "Dataframe contents do not match"
-        )
+        self.assertTrue(self.diamond == df["structure"][0], "Dataframe contents do not match")
 
         df = load_dataframe_from_json(os.path.join(test_dir, "dataframe.json.bz2"))
-        self.assertTrue(
-            self.diamond == df["structure"][0], "Dataframe contents do not match"
-        )
+        self.assertTrue(self.diamond == df["structure"][0], "Dataframe contents do not match")
 
     def tearDown(self):
         shutil.rmtree(self.temp_folder)

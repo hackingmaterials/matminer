@@ -98,9 +98,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
 
     pagesize = 1000
     maxnpages = 100  # NB one hit may reach 50kB in RAM, consider pagesize*maxnpages*50kB free RAM
-    chillouttime = (
-        3  # NB please, do not use values < 3, because the server may burn out
-    )
+    chillouttime = 3  # NB please, do not use values < 3, because the server may burn out
 
     def __init__(self, api_key=None, endpoint=None):
         """
@@ -230,12 +228,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         counter, hits_count = 0, 0
         fields = (
             {
-                key: [
-                    jmespath.compile(item)
-                    if isinstance(item, six.string_types)
-                    else item()
-                    for item in value
-                ]
+                key: [jmespath.compile(item) if isinstance(item, six.string_types) else item() for item in value]
                 for key, value in fields.items()
             }
             if fields
@@ -261,9 +254,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
             output.extend(self._massage(result["out"], fields))
 
             if hits_count and hits_count != result["count"]:
-                raise APIError(
-                    "API error: hits count has been changed during the query"
-                )
+                raise APIError("API error: hits count has been changed during the query")
             hits_count = result["count"]
 
             if counter == result["npages"] - 1:
@@ -293,9 +284,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
 
         Returns: (object) Pandas DataFrame object containing the results
         """
-        return pd.DataFrame(
-            self.get_data(criteria=criteria, **kwargs), columns=properties
-        )
+        return pd.DataFrame(self.get_data(criteria=criteria, **kwargs), columns=properties)
 
     @staticmethod
     def compile_crystal(datarow, flavor="pmg"):
@@ -338,9 +327,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         )
 
         if flavor == "pmg":
-            return Structure.from_spacegroup(
-                sg_n, Lattice.from_parameters(*cell_abc), els_noneq, basis_noneq
-            )
+            return Structure.from_spacegroup(sg_n, Lattice.from_parameters(*cell_abc), els_noneq, basis_noneq)
 
         elif flavor == "ase" and use_ase:
             atom_data = []

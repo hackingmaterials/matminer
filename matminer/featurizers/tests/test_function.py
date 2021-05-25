@@ -15,9 +15,7 @@ from sklearn.exceptions import NotFittedError
 
 class TestFunctionFeaturizer(unittest.TestCase):
     def setUp(self):
-        self.test_df = pd.DataFrame(
-            [{"a": n, "b": n + 1, "c": n + 2} for n in range(-1, 10)]
-        )
+        self.test_df = pd.DataFrame([{"a": n, "b": n + 1, "c": n + 2} for n in range(-1, 10)])
 
     def test_featurize(self):
         ff = FunctionFeaturizer()
@@ -47,15 +45,9 @@ class TestFunctionFeaturizer(unittest.TestCase):
         self.assertTrue(np.allclose(new_df["1/a"] * new_df["1/b"], new_df["1/(a*b)"]))
 
         ff = FunctionFeaturizer(expressions=expressions, multi_feature_depth=3)
-        new_df = ff.fit_featurize_dataframe(
-            self.test_df, ["a", "b", "c"], inplace=False
-        )
+        new_df = ff.fit_featurize_dataframe(self.test_df, ["a", "b", "c"], inplace=False)
         new_df = new_df.dropna()
-        self.assertTrue(
-            np.allclose(
-                new_df["1/a"] * new_df["1/b"] * new_df["1/c"], new_df["1/(a*b*c)"]
-            )
-        )
+        self.assertTrue(np.allclose(new_df["1/a"] * new_df["1/b"] * new_df["1/c"], new_df["1/(a*b*c)"]))
 
         # Test complex functionality
         expressions = ["sqrt(x)"]
@@ -63,9 +55,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
         new_df = ff.fit_featurize_dataframe(self.test_df, "a", inplace=False)
         self.assertEqual(new_df["sqrt(a)"][0], 1j)
 
-        ff = FunctionFeaturizer(
-            expressions=expressions, multi_feature_depth=2, combo_function=np.sum
-        )
+        ff = FunctionFeaturizer(expressions=expressions, multi_feature_depth=2, combo_function=np.sum)
         new_df = ff.fit_featurize_dataframe(self.test_df, ["a", "b"], inplace=False)
         self.assertAlmostEqual(new_df["sqrt(a) + sqrt(b)"][2], 2.41421356)
 
@@ -98,15 +88,11 @@ class TestFunctionFeaturizer(unittest.TestCase):
         self.assertTrue(parse_expr("x0 ** 2 * x1 ** 2") in test_combo_2)
         self.assertEqual(len(test_combo_2), 4)
 
-        test_combo_3 = generate_expressions_combinations(
-            ["1 / x", "x ** 2"], combo_depth=3
-        )
+        test_combo_3 = generate_expressions_combinations(["1 / x", "x ** 2"], combo_depth=3)
         self.assertTrue(parse_expr("x0 ** 2 / (x1 * x2)") in test_combo_3)
         self.assertEqual(len(test_combo_3), 8)
 
-        test_combo_4 = generate_expressions_combinations(
-            ["1 / x", "x ** 2", "exp(x)"], combo_function=np.sum
-        )
+        test_combo_4 = generate_expressions_combinations(["1 / x", "x ** 2", "exp(x)"], combo_function=np.sum)
         self.assertEqual(len(test_combo_4), 9)
         test_combo_4 = generate_expressions_combinations(
             ["1 / x", "x ** 2", "exp(x)"], combo_function=lambda x: x[1] - x[0]
@@ -117,9 +103,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
         ff1 = FunctionFeaturizer(expressions=["x ** 2"])
         ff2 = FunctionFeaturizer(expressions=["exp(x)", "1 / x"])
         mf = MultipleFeaturizer([ff1, ff2])
-        new_df = mf.fit_featurize_dataframe(
-            self.test_df, ["a", "b", "c"], inplace=False
-        )
+        new_df = mf.fit_featurize_dataframe(self.test_df, ["a", "b", "c"], inplace=False)
         self.assertEqual(len(new_df), 11)
 
 

@@ -96,9 +96,7 @@ class FunctionFeaturizer(BaseFeaturizer):
             [
                 (
                     n,
-                    generate_expressions_combinations(
-                        self.expressions, n, self.combo_function
-                    ),
+                    generate_expressions_combinations(self.expressions, n, self.combo_function),
                 )
                 for n in range(1, self.multi_feature_depth + 1)
             ]
@@ -125,9 +123,7 @@ class FunctionFeaturizer(BaseFeaturizer):
             Set of feature labels corresponding to expressions
         """
         if not self._feature_labels:
-            raise NotFittedError(
-                "Feature labels is only set if data is fitted" " to a dataframe"
-            )
+            raise NotFittedError("Feature labels is only set if data is fitted" " to a dataframe")
         return self._feature_labels
 
     def fit(self, X, y=None, **fit_kwargs):
@@ -213,9 +209,7 @@ class FunctionFeaturizer(BaseFeaturizer):
 
 # TODO: Have this filter expressions that evaluate to things without vars,
 # TODO:      # e. g. floats/ints
-def generate_expressions_combinations(
-    expressions, combo_depth=2, combo_function=np.prod
-):
+def generate_expressions_combinations(expressions, combo_depth=2, combo_function=np.prod):
     """
     This function takes a list of strings representing functions
     of x, converts them to sympy expressions, and combines

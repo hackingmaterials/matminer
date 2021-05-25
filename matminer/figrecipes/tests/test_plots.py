@@ -178,9 +178,7 @@ class PlotlyFigTest(PymatgenTest):
         self.assertTrue(pcp_test == pcp_true)
 
     def test_violin(self):
-        vio_test = self.pf.violin(
-            [a, b, c, b, a, c, b], cols=xlabels, return_plot=True
-        )["layout"]
+        vio_test = self.pf.violin([a, b, c, b, a, c, b], cols=xlabels, return_plot=True)["layout"]
         vio_test = vio_test.to_plotly_json()
         vio_true = self.fopen("template_vio.json")
 
@@ -201,9 +199,7 @@ class PlotlyFigTest(PymatgenTest):
         x_labels = ["low", "high"]
         y_labels = ["small", "large"]
         with self.assertWarns(UserWarning):
-            hmdf_test = self.pf.heatmap_df(
-                df, x_labels=x_labels, y_labels=y_labels, return_plot=True
-            )
+            hmdf_test = self.pf.heatmap_df(df, x_labels=x_labels, y_labels=y_labels, return_plot=True)
         hmdf_true = self.fopen("template_hmdf.json")
         self.assertTrue(hmdf_test, hmdf_true)
 

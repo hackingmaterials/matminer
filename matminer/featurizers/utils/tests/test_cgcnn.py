@@ -48,9 +48,7 @@ class TestCGCNNWrappers(TestCase):
         state_dict = model.state_dict()
         self.assertEqual(state_dict["embedding.weight"].size(), torch.Size([64, 2]))
         self.assertEqual(state_dict["embedding.bias"].size(), torch.Size([64]))
-        self.assertEqual(
-            state_dict["convs.0.fc_full.weight"].size(), torch.Size([128, 169])
-        )
+        self.assertEqual(state_dict["convs.0.fc_full.weight"].size(), torch.Size([128, 169]))
         self.assertEqual(state_dict["convs.1.bn1.weight"].size(), torch.Size([128]))
         self.assertEqual(state_dict["convs.2.bn2.bias"].size(), torch.Size([64]))
         self.assertEqual(state_dict["conv_to_fc.weight"].size(), torch.Size([128, 64]))
@@ -80,13 +78,9 @@ class TestCGCNNWrappers(TestCase):
             struct_list (list): List of structure object.
         """
         if task == "classification":
-            cgcnn_data_path = os.path.join(
-                os.path.dirname(cgcnn.__file__), "..", "data", "sample-classification"
-            )
+            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..", "data", "sample-classification")
         else:
-            cgcnn_data_path = os.path.join(
-                os.path.dirname(cgcnn.__file__), "..", "data", "sample-regression"
-            )
+            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..", "data", "sample-regression")
 
         struct_list = list()
         cif_list = list()
@@ -101,8 +95,6 @@ class TestCGCNNWrappers(TestCase):
                 cif_list.append(int(file[:-4]))
                 cif_list = sorted(cif_list)
         for cif_name in cif_list:
-            crystal = Structure.from_file(
-                os.path.join(cgcnn_data_path, "{}.cif".format(cif_name))
-            )
+            crystal = Structure.from_file(os.path.join(cgcnn_data_path, "{}.cif".format(cif_name)))
             struct_list.append(crystal)
         return id_prop_data, elem_embedding, struct_list

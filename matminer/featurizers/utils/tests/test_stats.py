@@ -15,9 +15,7 @@ class TestPropertyStats(TestCase):
         self.sample_2 = [0.5, 1.5, 0]
         self.sample_2_weights = [2, 1, 0.5]
 
-    def _run_test(
-        self, statistic, sample_1, sample_1_weighted, sample_2, sample_2_weighted
-    ):
+    def _run_test(self, statistic, sample_1, sample_1_weighted, sample_2, sample_2_weighted):
         """Run a test for a certain statistic against the two sample datasets
 
         Args:
@@ -28,16 +26,12 @@ class TestPropertyStats(TestCase):
             sample_2_weighted: float, expected value for statistic of sample 2 with weights
         """
 
-        self.assertAlmostEqual(
-            sample_1, PropertyStats.calc_stat(self.sample_1, statistic)
-        )
+        self.assertAlmostEqual(sample_1, PropertyStats.calc_stat(self.sample_1, statistic))
         self.assertAlmostEqual(
             sample_1_weighted,
             PropertyStats.calc_stat(self.sample_1, statistic, self.sample_1_weights),
         )
-        self.assertAlmostEqual(
-            sample_2, PropertyStats.calc_stat(self.sample_2, statistic)
-        )
+        self.assertAlmostEqual(sample_2, PropertyStats.calc_stat(self.sample_2, statistic))
         self.assertAlmostEqual(
             sample_2_weighted,
             PropertyStats.calc_stat(self.sample_2, statistic, self.sample_2_weights),
@@ -81,13 +75,9 @@ class TestPropertyStats(TestCase):
 
         # can't use run_test since it uses a sample with zero, which is not
         # allowed for Holder mean with -1
-        self.assertAlmostEqual(
-            PropertyStats.holder_mean([1, 1, 2], power=-1), 1.2, places=3
-        )
+        self.assertAlmostEqual(PropertyStats.holder_mean([1, 1, 2], power=-1), 1.2, places=3)
 
-        self.assertAlmostEqual(
-            PropertyStats.holder_mean([1, 2], [2, 1], power=-1), 1.2, places=3
-        )
+        self.assertAlmostEqual(PropertyStats.holder_mean([1, 2], [2, 1], power=-1), 1.2, places=3)
 
     def test_geom_std_dev(self):
         # This is right. Yes, a list without variation has a geom_std_dev of 1
@@ -95,9 +85,7 @@ class TestPropertyStats(TestCase):
 
         # Harder case
         self.assertAlmostEqual(1.166860716, PropertyStats.geom_std_dev([0.5, 1.5, 1]))
-        self.assertAlmostEqual(
-            1.352205875, PropertyStats.geom_std_dev([0.5, 1.5, 1], weights=[2, 1, 0])
-        )
+        self.assertAlmostEqual(1.352205875, PropertyStats.geom_std_dev([0.5, 1.5, 1], weights=[2, 1, 0]))
 
     def test_quantile(self):
         self._run_test("quantile::0.5", 1, 1, 0.5, 0.5)

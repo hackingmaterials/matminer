@@ -156,9 +156,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
     def chunksize(self):
         return self._chunksize if hasattr(self, "_chunksize") else None
 
-    def precheck_dataframe(
-        self, df, col_id, return_frac=True, inplace=False
-    ) -> [float, pd.DataFrame]:
+    def precheck_dataframe(self, df, col_id, return_frac=True, inplace=False) -> [float, pd.DataFrame]:
         """
         Precheck an entire dataframe. Subclasses wanting to use precheck
         functionality should not override this method, they should override
@@ -273,9 +271,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         """
         if fit_args is None:
             fit_args = []
-        return self.fit(df[col_id], *fit_args).featurize_dataframe(
-            df, col_id, *args, **kwargs
-        )
+        return self.fit(df[col_id], *fit_args).featurize_dataframe(df, col_id, *args, **kwargs)
 
     def featurize_dataframe(
         self,
@@ -320,16 +316,12 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         # Multiindexing doesn't play nice with other options!
         if multiindex:
             if inplace:
-                warnings.warn(
-                    "Multiindexing enabled with inplace=True! The "
-                    "original dataframe index has changed."
-                )
+                warnings.warn("Multiindexing enabled with inplace=True! The " "original dataframe index has changed.")
 
         elif isinstance(df.columns, pd.MultiIndex):
             # If input df is multi, but multi not enabled...
             raise ValueError(
-                "Please enable multiindexing to featurize an input"
-                " dataframe containing a column multiindex."
+                "Please enable multiindexing to featurize an input" " dataframe containing a column multiindex."
             )
 
         # Generate the labels for the columns
@@ -397,9 +389,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
             # But if return_errors=True, the transformation is:
             # [('l1', 'l2'), 'feat Exceptions'] ->
             # [('l1', 'l2'), ('l1', 'feat Exceptions')]
-            tmp_labels = [
-                label if isinstance(label, str) else label[1] for label in labels
-            ]
+            tmp_labels = [label if isinstance(label, str) else label[1] for label in labels]
             indices = ([labels[0][0]], tmp_labels)
             labels = pd.MultiIndex.from_product(indices)
 
@@ -408,9 +398,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
             labels = pd.MultiIndex.from_product(indices)
         return labels
 
-    def featurize_many(
-        self, entries, ignore_errors=False, return_errors=False, pbar=True
-    ):
+    def featurize_many(self, entries, ignore_errors=False, return_errors=False, pbar=True):
         """Featurize a list of entries.
 
         If `featurize` takes multiple inputs, supply inputs as a list of tuples.
@@ -433,9 +421,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         """
 
         if return_errors and not ignore_errors:
-            raise ValueError(
-                "Please set ignore_errors to True to use" " return_errors."
-            )
+            raise ValueError("Please set ignore_errors to True to use" " return_errors.")
 
         # Check inputs
         if not isinstance(entries, (tuple, list, np.ndarray, pd.Series, pd.DataFrame)):
@@ -448,9 +434,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         # If the featurize function only has a single arg, zip the inputs
         if isinstance(entries, pd.DataFrame):
             entries = entries.values
-        elif isinstance(entries, pd.Series) or not isinstance(
-            entries[0], (tuple, list, np.ndarray)
-        ):
+        elif isinstance(entries, pd.Series) or not isinstance(entries[0], (tuple, list, np.ndarray)):
             entries = zip(entries)
 
         # Add a progress bar
@@ -461,10 +445,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         # Run the actual featurization
         if self.n_jobs == 1:
             return [
-                self.featurize_wrapper(
-                    x, ignore_errors=ignore_errors, return_errors=return_errors
-                )
-                for x in entries
+                self.featurize_wrapper(x, ignore_errors=ignore_errors, return_errors=return_errors) for x in entries
             ]
         else:
             if sys.version_info[0] < 3:
@@ -618,9 +599,7 @@ class MultipleFeaturizer(BaseFeaturizer):
             f.fit(X, y, **fit_kwargs)
         return self
 
-    def featurize_many(
-        self, entries, ignore_errors=False, return_errors=False, pbar=True
-    ):
+    def featurize_many(self, entries, ignore_errors=False, return_errors=False, pbar=True):
         if self.iterate_over_entries:
             return super(MultipleFeaturizer, self).featurize_many(
                 entries,
@@ -645,9 +624,7 @@ class MultipleFeaturizer(BaseFeaturizer):
             return [
                 feature
                 for f in self.featurizers
-                for feature in f.featurize_wrapper(
-                    x, return_errors=return_errors, ignore_errors=ignore_errors
-                )
+                for feature in f.featurize_wrapper(x, return_errors=return_errors, ignore_errors=ignore_errors)
             ]
         else:
             return super(MultipleFeaturizer, self).featurize_wrapper(
@@ -661,12 +638,7 @@ class MultipleFeaturizer(BaseFeaturizer):
         return list(set(sum([f.implementors() for f in self.featurizers], [])))
 
     def _generate_column_labels(self, multiindex, return_errors):
-        return np.hstack(
-            [
-                f._generate_column_labels(multiindex, return_errors)
-                for f in self.featurizers
-            ]
-        )
+        return np.hstack([f._generate_column_labels(multiindex, return_errors) for f in self.featurizers])
 
     def set_n_jobs(self, n_jobs):
         super(MultipleFeaturizer, self).set_n_jobs(n_jobs)
@@ -705,9 +677,7 @@ class StackedFeaturizer(BaseFeaturizer):
 
         # Present warning about class_names
         if self.class_names is None and self._is_classifier():
-            warnings.warn(
-                "Class names are required for featurize_dataframe and feature_labels"
-            )
+            warnings.warn("Class names are required for featurize_dataframe and feature_labels")
 
     def _is_classifier(self):
         """Whether the underlying model is a classifier
@@ -734,9 +704,7 @@ class StackedFeaturizer(BaseFeaturizer):
         if self._is_classifier():
             if self.class_names is None:
                 raise ValueError("Class names are required for classification models")
-            return [
-                "{} P({})".format(name, cn).lstrip() for cn in self.class_names[:-1]
-            ]
+            return ["{} P({})".format(name, cn).lstrip() for cn in self.class_names[:-1]]
         else:
             return ["{} prediction".format(name).lstrip()]
 

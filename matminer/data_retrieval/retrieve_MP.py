@@ -54,15 +54,11 @@ class MPDataRetrieval(BaseDataRetrieval):
 
         Returns (pandas.Dataframe):
         """
-        data = self.get_data(
-            criteria=criteria, properties=properties, index_mpid=index_mpid, **kwargs
-        )
+        data = self.get_data(criteria=criteria, properties=properties, index_mpid=index_mpid, **kwargs)
         df = pd.DataFrame(data, columns=properties)
         for prop in ["dos", "phonon_dos", "phonon_bandstructure", "phonon_ddb"]:
             if prop in properties:
-                df[prop] = self.try_get_prop_by_material_id(
-                    prop=prop, material_id_list=df["material_id"].values
-                )
+                df[prop] = self.try_get_prop_by_material_id(prop=prop, material_id_list=df["material_id"].values)
         if "bandstructure" in properties:
             df["bandstructure"] = self.try_get_prop_by_material_id(
                 prop="bandstructure",

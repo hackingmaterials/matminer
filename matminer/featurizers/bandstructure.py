@@ -68,10 +68,7 @@ class BranchPointEnergy(BaseFeaturizer):
             raise ValueError("Cannot define a branch point energy for metals!")
 
         if isinstance(bs, BandStructureSymmLine):
-            raise ValueError(
-                "BranchPointEnergy works only with uniform (not "
-                "line mode) band structures!"
-            )
+            raise ValueError("BranchPointEnergy works only with uniform (not " "line mode) band structures!")
         vbm = bs.get_vbm()["energy"]
         cbm = bs.get_cbm()["energy"]
         shift = 0.0
@@ -100,10 +97,7 @@ class BranchPointEnergy(BaseFeaturizer):
                 vb_energies.sort(reverse=True)
                 cb_energies.sort()
                 total_sum_energies += (
-                    (
-                        sum(vb_energies[0 : self.n_vb]) / self.n_vb
-                        + sum(cb_energies[0 : self.n_cb]) / self.n_cb
-                    )
+                    (sum(vb_energies[0 : self.n_vb]) / self.n_vb + sum(cb_energies[0 : self.n_cb]) / self.n_cb)
                     * kpt_wts[kpt_idx]
                     / 2.0
                 )
@@ -212,9 +206,7 @@ class BandFeaturizer(BaseFeaturizer):
         cvd = {"p": bs.get_vbm(), "n": bs.get_cbm()}
         for itp, tp in enumerate(["p", "n"]):
             cvd[tp]["k"] = bs.kpoints[cvd[tp]["kpoint_index"][0]].frac_coords
-            cvd[tp]["bidx"], cvd[tp]["sidx"] = self.get_bindex_bspin(
-                cvd[tp], is_cbm=bool(itp)
-            )
+            cvd[tp]["bidx"], cvd[tp]["sidx"] = self.get_bindex_bspin(cvd[tp], is_cbm=bool(itp))
             cvd[tp]["Es"] = np.array(bs.bands[cvd[tp]["sidx"]][cvd[tp]["bidx"]])
         band_gap = bs.get_band_gap()
 
@@ -238,9 +230,7 @@ class BandFeaturizer(BaseFeaturizer):
                         obands["p"].append(bs.bands[spin][band_idx])
                     if min(bs.bands[spin][band_idx]) > bs.efermi:
                         obands["n"].append(bs.bands[spin][band_idx])
-            bands = {
-                tp: np.zeros((len(obands[tp]), len(self.kpoints))) for tp in ["p", "n"]
-            }
+            bands = {tp: np.zeros((len(obands[tp]), len(self.kpoints))) for tp in ["p", "n"]}
             for tp in ["p", "n"]:
                 for ib, ob in enumerate(obands[tp]):
                     bands[tp][ib, :] = griddata(
@@ -275,9 +265,7 @@ class BandFeaturizer(BaseFeaturizer):
             for tp in ["p", "n"]:
                 for k in self.kpoints:
                     for ib in range(self.nbands):
-                        labels.append(
-                            "{}_{};{};{}_en{}".format(tp, k[0], k[1], k[2], ib + 1)
-                        )
+                        labels.append("{}_{};{};{}_en{}".format(tp, k[0], k[1], k[2], ib + 1))
         return labels
 
     @staticmethod

@@ -94,9 +94,7 @@ class OxidationStateDependentData(AbstractData):
             (float) - Value of property
         """
 
-        return self.get_charge_dependent_property(
-            specie.element, specie.oxi_state, property_name
-        )
+        return self.get_charge_dependent_property(specie.element, specie.oxi_state, property_name)
 
 
 class CohesiveEnergyData(AbstractData):
@@ -110,9 +108,7 @@ class CohesiveEnergyData(AbstractData):
 
     def __init__(self):
         # Load elemental cohesive energy data from json file
-        with open(
-            os.path.join(module_dir, "data_files", "cohesive_energies.json"), "r"
-        ) as f:
+        with open(os.path.join(module_dir, "data_files", "cohesive_energies.json"), "r") as f:
             self.cohesive_energy_data = json.load(f)
 
     def get_elemental_property(self, elem, property_name="cohesive energy"):
@@ -168,9 +164,7 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
 
     def get_elemental_property(self, elem, property_name):
         if "valence" in property_name:
-            valence_dict = self.all_props["valence_e"][
-                self.all_props["col_num"][elem.symbol]
-            ]
+            valence_dict = self.all_props["valence_e"][self.all_props["col_num"][elem.symbol]]
             if property_name[-1] in ["s", "p", "d"]:
                 # Return one of the shells
                 return valence_dict[property_name[-1]]
@@ -190,11 +184,7 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
                 raise ValueError("total ionization energy only defined for charge > 0")
             return sum(self.all_props["ionization_en"][element.symbol][:charge])
         else:
-            return (
-                self.all_props[property_name]
-                .get(element.symbol, {})
-                .get(charge, np.nan)
-            )
+            return self.all_props[property_name].get(element.symbol, {}).get(charge, np.nan)
 
 
 class MagpieData(AbstractData, OxidationStatesMixin):
@@ -220,24 +210,18 @@ class MagpieData(AbstractData, OxidationStatesMixin):
 
         # parse and store elemental properties
         for descriptor_name in available_props:
-            with open(
-                os.path.join(self.data_dir, "{}.table".format(descriptor_name)), "r"
-            ) as f:
+            with open(os.path.join(self.data_dir, "{}.table".format(descriptor_name)), "r") as f:
                 self.all_elemental_props[descriptor_name] = dict()
                 lines = f.readlines()
                 for atomic_no in range(1, len(_pt_data) + 1):  # max Z=103
                     try:
                         if descriptor_name in ["OxidationStates"]:
-                            prop_value = [
-                                float(i) for i in lines[atomic_no - 1].split()
-                            ]
+                            prop_value = [float(i) for i in lines[atomic_no - 1].split()]
                         else:
                             prop_value = float(lines[atomic_no - 1])
                     except (ValueError, IndexError):
                         prop_value = float("NaN")
-                    self.all_elemental_props[descriptor_name][
-                        Element.from_Z(atomic_no).symbol
-                    ] = prop_value
+                    self.all_elemental_props[descriptor_name][Element.from_Z(atomic_no).symbol] = prop_value
 
     def get_elemental_property(self, elem, property_name):
         return self.all_elemental_props[property_name][elem.symbol]
@@ -278,11 +262,7 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
         Returns:
             [int] list of oxidation states
         """
-        return (
-            elem.common_oxidation_states
-            if self.use_common_oxi_states
-            else elem.oxidation_states
-        )
+        return elem.common_oxidation_states if self.use_common_oxi_states else elem.oxidation_states
 
     def get_charge_dependent_property(self, element, charge, property_name):
         return getattr(element, property_name)[charge]
@@ -560,9 +540,9 @@ class IUCrBondValenceData:
         for cation in cation_subset:
             anions = subset.loc[subset["Atom1"] == cation]["Atom2"].unique()
             for anion in anions:
-                an_val, Ro, b, ref_id = subset.loc[
-                    (subset["Atom1"] == cation) & (subset["Atom2"] == anion)
-                ][["Atom2_valence", "Ro", "B", "ref_id"]].values[0]
+                an_val, Ro, b, ref_id = subset.loc[(subset["Atom1"] == cation) & (subset["Atom2"] == anion)][
+                    ["Atom2_valence", "Ro", "B", "ref_id"]
+                ].values[0]
                 for n in range(1, 7):
                     entry = {
                         "Atom1": cation,

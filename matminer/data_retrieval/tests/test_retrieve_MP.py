@@ -9,9 +9,7 @@ from pymatgen.electronic_structure.bandstructure import (
 from pymatgen.electronic_structure.dos import CompleteDos
 
 
-@unittest.skipIf(
-    not SETTINGS.get("PMG_MAPI_KEY", ""), "PMG_MAPI_KEY not in environment variables."
-)
+@unittest.skipIf(not SETTINGS.get("PMG_MAPI_KEY", ""), "PMG_MAPI_KEY not in environment variables.")
 class MPDataRetrievalTest(unittest.TestCase):
     def setUp(self):
         self.mpdr = MPDataRetrieval()

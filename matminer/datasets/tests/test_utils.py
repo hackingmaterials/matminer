@@ -49,34 +49,24 @@ class UtilsTest(DatasetTest):
             os.remove(self._path)
 
         with self.assertRaises(IOError):
-            _validate_dataset(
-                self._path, self._url, self._hash, download_if_missing=False
-            )
+            _validate_dataset(self._path, self._url, self._hash, download_if_missing=False)
 
         # Check to make sure the IOError takes precedence over the ValueError
         with self.assertRaises(IOError):
-            _validate_dataset(
-                self._path, url=None, file_hash=self._hash, download_if_missing=False
-            )
+            _validate_dataset(self._path, url=None, file_hash=self._hash, download_if_missing=False)
 
         with self.assertRaises(ValueError):
-            _validate_dataset(
-                self._path, url=None, file_hash=self._hash, download_if_missing=True
-            )
+            _validate_dataset(self._path, url=None, file_hash=self._hash, download_if_missing=True)
 
         with self.assertRaises(UserWarning):
-            _validate_dataset(
-                self._path, self._url, file_hash="!@#$%^&*", download_if_missing=True
-            )
+            _validate_dataset(self._path, self._url, file_hash="!@#$%^&*", download_if_missing=True)
         os.remove(self._path)
 
         _validate_dataset(self._path, self._url, self._hash, download_if_missing=True)
         self.assertTrue(os.path.exists(self._path))
         os.remove(self._path)
 
-        _validate_dataset(
-            self._path, self._url, file_hash=None, download_if_missing=True
-        )
+        _validate_dataset(self._path, self._url, file_hash=None, download_if_missing=True)
         self.assertTrue(os.path.exists(self._path))
         os.remove(self._path)
 

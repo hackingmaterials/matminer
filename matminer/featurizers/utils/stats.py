@@ -87,11 +87,7 @@ class PropertyStats(object):
         Returns:
             range
         """
-        return (
-            (max(data_lst) - min(data_lst))
-            if not np.any(np.isnan(data_lst))
-            else float("nan")
-        )
+        return (max(data_lst) - min(data_lst)) if not np.any(np.isnan(data_lst)) else float("nan")
 
     @staticmethod
     def mean(data_lst, weights=None):
@@ -152,12 +148,8 @@ class PropertyStats(object):
         if weights is None:
             return np.std(data_lst)
         else:
-            beta = np.sum(weights) / (
-                np.sum(weights) ** 2 - np.sum(np.power(weights, 2))
-            )
-            dev = np.power(
-                np.subtract(data_lst, PropertyStats.mean(data_lst, weights=weights)), 2
-            )
+            beta = np.sum(weights) / (np.sum(weights) ** 2 - np.sum(np.power(weights, 2)))
+            dev = np.power(np.subtract(data_lst, PropertyStats.mean(data_lst, weights=weights)), 2)
             return np.sqrt(beta * np.dot(dev, weights))
 
     @staticmethod
@@ -301,9 +293,7 @@ class PropertyStats(object):
 
             # If power=0, return geometric mean
             elif power == 0:
-                return np.product(
-                    np.power(data_lst, np.true_divide(weights, np.sum(weights)))
-                )
+                return np.product(np.power(data_lst, np.true_divide(weights, np.sum(weights))))
             else:
                 return np.power(
                     np.sum(np.multiply(weights, np.power(data_lst, power))) / alpha,

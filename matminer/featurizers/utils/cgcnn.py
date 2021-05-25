@@ -71,12 +71,7 @@ class CIFDataWrapper(Dataset):
     def __getitem__(self, idx):
         atom_idx, target = self.target_data[idx]
         crystal = self.structures[atom_idx]
-        atom_fea = np.vstack(
-            [
-                self.ari.get_atom_fea(crystal[i].specie.number)
-                for i in range(len(crystal))
-            ]
-        )
+        atom_fea = np.vstack([self.ari.get_atom_fea(crystal[i].specie.number) for i in range(len(crystal))])
         atom_fea = torch.Tensor(atom_fea)
         all_nbrs = crystal.get_all_neighbors(self.radius, include_index=True)
         all_nbrs = [sorted(nbrs, key=lambda x: x[1]) for nbrs in all_nbrs]
@@ -88,13 +83,8 @@ class CIFDataWrapper(Dataset):
                     "If it happens frequently, consider increase "
                     "radius.".format(atom_idx)
                 )
-                nbr_fea_idx.append(
-                    list(map(lambda x: x[2], nbr)) + [0] * (self.max_num_nbr - len(nbr))
-                )
-                nbr_fea.append(
-                    list(map(lambda x: x[1], nbr))
-                    + [self.radius + 1.0] * (self.max_num_nbr - len(nbr))
-                )
+                nbr_fea_idx.append(list(map(lambda x: x[2], nbr)) + [0] * (self.max_num_nbr - len(nbr)))
+                nbr_fea.append(list(map(lambda x: x[1], nbr)) + [self.radius + 1.0] * (self.max_num_nbr - len(nbr)))
             else:
                 nbr_fea_idx.append(list(map(lambda x: x[2], nbr[: self.max_num_nbr])))
                 nbr_fea.append(list(map(lambda x: x[1], nbr[: self.max_num_nbr])))

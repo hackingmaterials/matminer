@@ -402,13 +402,7 @@ class StructureToOxidStructure(ConversionFeaturizer):
             `pymatgen.io.structure.Structure.add_oxidation_state_by_guess()`.
     """
 
-    def __init__(
-        self,
-        target_col_id="structure_oxid",
-        overwrite_data=False,
-        return_original_on_error=False,
-        **kwargs
-    ):
+    def __init__(self, target_col_id="structure_oxid", overwrite_data=False, return_original_on_error=False, **kwargs):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
         self.return_original_on_error = return_original_on_error
@@ -423,9 +417,7 @@ class StructureToOxidStructure(ConversionFeaturizer):
             (`pymatgen.core.structure.Structure`): A Structure object decorated
                 with oxidation states.
         """
-        els_have_oxi_states = [
-            hasattr(s, "oxi_state") for s in structure.composition.elements
-        ]
+        els_have_oxi_states = [hasattr(s, "oxi_state") for s in structure.composition.elements]
         if all(els_have_oxi_states):
             return [structure]
 
@@ -489,7 +481,7 @@ class CompositionToOxidComposition(ConversionFeaturizer):
         overwrite_data=False,
         coerce_mixed=True,
         return_original_on_error=False,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs

@@ -42,9 +42,7 @@ class AbstractPairwise(object):
             (string) Label for the function
         """
         params = sorted(self.__dict__.items(), key=lambda x: x[0])
-        return "{} {}".format(
-            self.__class__.__name__, " ".join("{}={}".format(k, v) for k, v in params)
-        )
+        return "{} {}".format(self.__class__.__name__, " ".join("{}={}".format(k, v) for k, v in params))
 
     def __call__(self, r_ij):
         """Compute the pairwise sum for a series of radii
@@ -69,10 +67,7 @@ class AbstractPairwise(object):
 
         results = integrate.quad(lambda x: 4.0 * pi * self(x) * x ** 2.0, 0, cutoff)
         if results[1] > 1e-5:
-            raise ValueError(
-                "Numerical integration fails for this function."
-                " Please implement analytic integral"
-            )
+            raise ValueError("Numerical integration fails for this function." " Please implement analytic integral")
         return results[0]
 
 
@@ -97,12 +92,7 @@ class Histogram(AbstractPairwise):
         )
 
     def volume(self, cutoff):
-        return (
-            4.0
-            / 3
-            * np.pi
-            * (min(self.start + self.width, cutoff) ** 3 - self.start ** 3)
-        )
+        return 4.0 / 3 * np.pi * (min(self.start + self.width, cutoff) ** 3 - self.start ** 3)
 
 
 class Gaussian(AbstractPairwise):
@@ -128,13 +118,8 @@ class Gaussian(AbstractPairwise):
             * (
                 np.sqrt(pi)
                 * (2 * self.center ** 2 + self.width ** 2)
-                * (
-                    erf((cutoff - self.center) / self.width)
-                    + erf(self.center / self.width)
-                )
-                + 2
-                * self.width
-                * (self.center * self(0) - (self.center + cutoff) * self(cutoff))
+                * (erf((cutoff - self.center) / self.width) + erf(self.center / self.width))
+                + 2 * self.width * (self.center * self(0) - (self.center + cutoff) * self(cutoff))
             )
         )
 
@@ -157,10 +142,7 @@ class Cosine(AbstractPairwise):
         return (
             4
             * pi
-            * (
-                ((self.a * cutoff) ** 2 - 2) * np.sin(self.a * cutoff)
-                + 2 * self.a * cutoff * np.cos(self.a * cutoff)
-            )
+            * (((self.a * cutoff) ** 2 - 2) * np.sin(self.a * cutoff) + 2 * self.a * cutoff * np.cos(self.a * cutoff))
             / self.a ** 3
         )
 

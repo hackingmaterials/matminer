@@ -55,9 +55,7 @@ class DOSFeaturesTest(PymatgenTest):
         SiteDOS().featurize_dataframe(self.df, col_id=["dos", "site"])
 
     def test_DOSFeaturizer(self):
-        dos_feats = DOSFeaturizer(contributors=2).featurize_dataframe(
-            self.df, col_id=["dos"]
-        )
+        dos_feats = DOSFeaturizer(contributors=2).featurize_dataframe(self.df, col_id=["dos"])
         # CBM:
         self.assertAlmostEqual(dos_feats["cbm_score_1"][0], 0.2586, 3)
         self.assertAlmostEqual(dos_feats["cbm_score_2"][0], 0.2586, 3)
@@ -77,9 +75,7 @@ class DOSFeaturesTest(PymatgenTest):
 
     def test_DopingFermi(self):
         dopings = [-1e18, -1e20, 1e18, 1e20]
-        df = DopingFermi(
-            dopings=dopings, eref="midgap", return_eref=True
-        ).featurize_dataframe(self.df, col_id=["dos"])
+        df = DopingFermi(dopings=dopings, eref="midgap", return_eref=True).featurize_dataframe(self.df, col_id=["dos"])
         self.assertAlmostEqual(df["fermi_c-1e+18T300"][0], 6.138458, places=4)
         self.assertAlmostEqual(df["fermi_c-1e+20T300"][0], 6.258075, places=4)
         self.assertAlmostEqual(df["fermi_c1e+18T300"][0], 5.497809, places=4)
@@ -118,12 +114,8 @@ class DOSFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(df["vbm_p"][0], 0.943, 2)
 
     def test_DosAsymmetry(self):
-        asym = DosAsymmetry(
-            decay_length=0.5, sampling_resolution=100, gaussian_smear=0.05
-        )
-        asym = asym.featurize_dataframe(self.nb3sn_df, col_id="dos", inplace=False)[
-            "dos_asymmetry"
-        ][0]
+        asym = DosAsymmetry(decay_length=0.5, sampling_resolution=100, gaussian_smear=0.05)
+        asym = asym.featurize_dataframe(self.nb3sn_df, col_id="dos", inplace=False)["dos_asymmetry"][0]
         self.assertAlmostEqual(asym, -0.9100, 3)
 
 

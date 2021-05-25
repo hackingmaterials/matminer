@@ -36,9 +36,7 @@ def get_value(dict_item):
     if "value" in dict_item:
         return dict_item["value"]
     elif "minimum" in dict_item and "maximum" in dict_item:
-        return "Minimum = {}, Maximum = {}".format(
-            dict_item["minimum"], dict_item["maximum"]
-        )
+        return "Minimum = {}, Maximum = {}".format(dict_item["minimum"], dict_item["maximum"])
 
 
 class CitrineDataRetrieval(BaseDataRetrieval):
@@ -122,11 +120,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                 if "system" in hit.keys():  # Check if 'system' key exists, else skip
                     system_value = hit["system"]
                     system_normdf = json_normalize(system_value)
-                    non_prop_cols = [
-                        cols
-                        for cols in system_normdf.columns
-                        if "properties" not in cols
-                    ]
+                    non_prop_cols = [cols for cols in system_normdf.columns if "properties" not in cols]
                     non_prop_row = pd.DataFrame()
                     for col in non_prop_cols:
                         non_prop_row[col] = system_normdf[col]
@@ -136,9 +130,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                         p_df = pd.DataFrame()
                         # Rename duplicate property names in a record with progressive numbering
                         all_prop_names = [x["name"] for x in system_value["properties"]]
-                        counts = {
-                            k: v for k, v in Counter(all_prop_names).items() if v > 1
-                        }
+                        counts = {k: v for k, v in Counter(all_prop_names).items() if v > 1}
                         for i in reversed(range(len(all_prop_names))):
                             item = all_prop_names[i]
                             if item in counts and counts[item]:
@@ -150,9 +142,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                             # Rename property name according to above duplicate numbering
                             prop["name"] = all_prop_names[p_idx]
                             if "scalars" in prop:
-                                p_df.at[counter, prop["name"]] = parse_scalars(
-                                    prop["scalars"]
-                                )
+                                p_df.at[counter, prop["name"]] = parse_scalars(prop["scalars"])
                             elif "vectors" in prop:
                                 p_df[prop["name"]] = prop["vectors"]
                             elif "matrices" in prop:
@@ -166,17 +156,12 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                                     "matrices",
                                 ]:
                                     # If value is a list of multiple items, set the cell to the entire list by first
-                                    if (
-                                        isinstance(prop[prop_key], list)
-                                        and len(prop[prop_key]) > 1
-                                    ):
+                                    if isinstance(prop[prop_key], list) and len(prop[prop_key]) > 1:
                                         p_df[prop["name"] + "-" + prop_key] = np.nan
                                         p_df[prop["name"] + "-" + prop_key] = p_df[
                                             prop["name"] + "-" + prop_key
                                         ].astype(object)
-                                    p_df.at[
-                                        counter, prop["name"] + "-" + prop_key
-                                    ] = prop[prop_key]
+                                    p_df.at[counter, prop["name"] + "-" + prop_key] = prop[prop_key]
                         p_df.index = [counter]
                         prop_df = prop_df.append(p_df)
             df_prop = pd.concat([non_prop_df, prop_df], axis=1)
@@ -205,8 +190,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                         df = df.join(df_prop, how="outer")
                 except (TypeError, KeyError):
                     raise TypeError(
-                        "Use scalar/string fields for common_fields"
-                        "common_fields among: {}".format(optcomcols)
+                        "Use scalar/string fields for common_fields" "common_fields among: {}".format(optcomcols)
                     )
         uninformative_columns = ["category", "uid"]
         optcomcols = [c for c in optcomcols if c not in uninformative_columns]
@@ -268,22 +252,16 @@ class CitrineDataRetrieval(BaseDataRetrieval):
         )
         ref_query = ReferenceQuery(doi=FieldQuery(filter=Filter(equal=reference)))
 
-        system_query = PifSystemQuery(
-            chemical_formula=formula_query, properties=prop_query, references=ref_query
-        )
+        system_query = PifSystemQuery(chemical_formula=formula_query, properties=prop_query, references=ref_query)
         dataset_query = DatasetQuery(id=Filter(equal=data_set_id))
         data_query = DataQuery(system=system_query, dataset=dataset_query)
 
         while True:
             # use per_page=max_results, eg: in case of max_results=68 < 100
             if max_results and max_results < per_page:
-                pif_query = PifSystemReturningQuery(
-                    query=data_query, from_index=start, size=max_results
-                )
+                pif_query = PifSystemReturningQuery(query=data_query, from_index=start, size=max_results)
             else:
-                pif_query = PifSystemReturningQuery(
-                    query=data_query, from_index=start, size=per_page
-                )
+                pif_query = PifSystemReturningQuery(query=data_query, from_index=start, size=per_page)
 
             # Check if any results found
             if "hits" not in self.client.search.pif_search(pif_query).as_dictionary():

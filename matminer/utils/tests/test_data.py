@@ -38,15 +38,11 @@ class TestDemlData(TestCase):
         )
         self.assertAlmostEqual(
             sum([2372300, 5250500]),
-            self.data_source.get_charge_dependent_property_from_specie(
-                Specie("He", 2), "total_ioniz"
-            ),
+            self.data_source.get_charge_dependent_property_from_specie(Specie("He", 2), "total_ioniz"),
         )
         self.assertAlmostEqual(
             18.6,
-            self.data_source.get_charge_dependent_property_from_specie(
-                Specie("V", 3), "xtal_field_split"
-            ),
+            self.data_source.get_charge_dependent_property_from_specie(Specie("V", 3), "xtal_field_split"),
         )
 
     def test_get_oxidation(self):
@@ -64,9 +60,7 @@ class TestMagpieData(TestCase):
         )
 
     def test_get_oxidation(self):
-        self.assertEqual(
-            [-4, 2, 4], self.data_source.get_oxidation_states(Element("C"))
-        )
+        self.assertEqual([-4, 2, 4], self.data_source.get_oxidation_states(Element("C")))
 
 
 class TestPymatgenData(TestCase):
@@ -80,9 +74,7 @@ class TestPymatgenData(TestCase):
         )
         self.assertAlmostEqual(
             1.26,
-            self.data_source.get_charge_dependent_property(
-                Element("Ac"), 3, "ionic_radii"
-            ),
+            self.data_source.get_charge_dependent_property(Element("Ac"), 3, "ionic_radii"),
         )
 
     def test_get_oxidation(self):
@@ -96,9 +88,7 @@ class TestMatScholarData(TestCase):
         self.data_source = MatscholarElementData()
 
     def test_get_property(self):
-        embedding_cu = self.data_source.get_elemental_property(
-            Element("Cu"), "embedding 3"
-        )
+        embedding_cu = self.data_source.get_elemental_property(Element("Cu"), "embedding 3")
         self.assertAlmostEqual(0.028666902333498, embedding_cu)
 
         with self.assertRaises(KeyError):
@@ -110,16 +100,12 @@ class TestMEGNetData(TestCase):
         self.data_source = MEGNetElementData()
 
     def test_get_property(self):
-        embedding_cu = self.data_source.get_elemental_property(
-            Element("Cu"), "embedding 1"
-        )
+        embedding_cu = self.data_source.get_elemental_property(Element("Cu"), "embedding 1")
         self.assertAlmostEqual(0.18259364366531372, embedding_cu)
 
         # MEGNet embeddings have element data for elements 1-94, plus 0 for
         # "dummy" atoms.
-        embedding_md = self.data_source.get_elemental_property(
-            Element("Md"), "embedding 1"
-        )
+        embedding_md = self.data_source.get_elemental_property(Element("Md"), "embedding 1")
         self.assertAlmostEqual(-0.044910576194524765, embedding_md)
 
         embedding_dummy = self.data_source.all_element_data["Dummy"]["embedding 1"]
@@ -131,15 +117,9 @@ class TestMixingEnthalpy(TestCase):
         self.data = MixingEnthalpy()
 
     def test_get_data(self):
-        self.assertEqual(
-            -27, self.data.get_mixing_enthalpy(Element("H"), Element("Pd"))
-        )
-        self.assertEqual(
-            -27, self.data.get_mixing_enthalpy(Element("Pd"), Element("H"))
-        )
-        self.assertTrue(
-            isnan(self.data.get_mixing_enthalpy(Element("He"), Element("H")))
-        )
+        self.assertEqual(-27, self.data.get_mixing_enthalpy(Element("H"), Element("Pd")))
+        self.assertEqual(-27, self.data.get_mixing_enthalpy(Element("Pd"), Element("H")))
+        self.assertTrue(isnan(self.data.get_mixing_enthalpy(Element("He"), Element("H"))))
 
 
 class TestIUCrBondValenceData(TestCase):

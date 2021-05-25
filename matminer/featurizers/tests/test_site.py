@@ -155,19 +155,13 @@ class FingerprintTests(PymatgenTest):
                 * np.exp(-((right_dist / 0.8) ** 2))
                 * 0.5
                 * (np.cos(np.pi * right_dist / 4) + 1)
-                - left_xdist
-                / left_dist
-                * np.exp(-((left_dist / 0.8) ** 2))
-                * 0.5
-                * (np.cos(np.pi * left_dist / 4) + 1)
+                - left_xdist / left_dist * np.exp(-((left_dist / 0.8) ** 2)) * 0.5 * (np.cos(np.pi * left_dist / 4) + 1)
             ),
             site1[8],
         )
 
     def test_dataframe(self):
-        data = pd.DataFrame(
-            {"strc": [self.cscl, self.cscl, self.sc], "site": [0, 1, 0]}
-        )
+        data = pd.DataFrame({"strc": [self.cscl, self.cscl, self.sc], "site": [0, 1, 0]})
 
         agni = AGNIFingerprints()
         agni.featurize_dataframe(data, ["strc", "site"])
@@ -218,9 +212,7 @@ class FingerprintTests(PymatgenTest):
             self.assertEqual(l[i], t[i])
         ops = opsf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 37)
-        self.assertAlmostEqual(
-            ops[opsf.feature_labels().index("octahedral CN_6")], 0.9995, places=7
-        )
+        self.assertAlmostEqual(ops[opsf.feature_labels().index("octahedral CN_6")], 0.9995, places=7)
         ops = opsf.featurize(self.cscl, 0)
         self.assertAlmostEqual(
             ops[opsf.feature_labels().index("body-centered cubic CN_8")],
@@ -238,9 +230,7 @@ class FingerprintTests(PymatgenTest):
         # The following test aims at ensuring the copying of the OP dictionaries work.
         opsfp = OPSiteFingerprint()
         cnnfp = CrystalNNFingerprint.from_preset("ops")
-        self.assertEqual(
-            len([1 for l in opsfp.feature_labels() if l.split()[0] == "wt"]), 0
-        )
+        self.assertEqual(len([1 for l in opsfp.feature_labels() if l.split()[0] == "wt"]), 0)
 
     def test_crystal_site_fingerprint(self):
         with self.assertWarns(FutureWarning):
@@ -301,13 +291,9 @@ class FingerprintTests(PymatgenTest):
         ops = csf.featurize(self.sc, 0)
         self.assertEqual(len(ops), 48)
         self.assertAlmostEqual(ops[csf.feature_labels().index("wt CN_6")], 1, places=4)
-        self.assertAlmostEqual(
-            ops[csf.feature_labels().index("octahedral CN_6")], 1, places=4
-        )
+        self.assertAlmostEqual(ops[csf.feature_labels().index("octahedral CN_6")], 1, places=4)
         ops = csf.featurize(self.cscl, 0)
-        self.assertAlmostEqual(
-            ops[csf.feature_labels().index("wt CN_8")], 0.5575257, places=4
-        )
+        self.assertAlmostEqual(ops[csf.feature_labels().index("wt CN_8")], 0.5575257, places=4)
         self.assertAlmostEqual(
             ops[csf.feature_labels().index("body-centered cubic CN_8")],
             0.5329344,
@@ -315,9 +301,7 @@ class FingerprintTests(PymatgenTest):
         )
 
     def test_crystal_nn_fingerprint(self):
-        cnnfp = CrystalNNFingerprint.from_preset(
-            "ops", distance_cutoffs=None, x_diff_weight=None
-        )
+        cnnfp = CrystalNNFingerprint.from_preset("ops", distance_cutoffs=None, x_diff_weight=None)
         l = cnnfp.feature_labels()
         t = [
             "wt CN_1",
@@ -386,16 +370,10 @@ class FingerprintTests(PymatgenTest):
             self.assertEqual(l[i], t[i])
         ops = cnnfp.featurize(self.sc, 0)
         self.assertEqual(len(ops), 61)
-        self.assertAlmostEqual(
-            ops[cnnfp.feature_labels().index("wt CN_6")], 1, places=7
-        )
-        self.assertAlmostEqual(
-            ops[cnnfp.feature_labels().index("octahedral CN_6")], 1, places=7
-        )
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index("wt CN_6")], 1, places=7)
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index("octahedral CN_6")], 1, places=7)
         ops = cnnfp.featurize(self.cscl, 0)
-        self.assertAlmostEqual(
-            ops[cnnfp.feature_labels().index("wt CN_8")], 0.498099, places=3
-        )
+        self.assertAlmostEqual(ops[cnnfp.feature_labels().index("wt CN_8")], 0.498099, places=3)
 
         self.assertAlmostEqual(
             ops[cnnfp.feature_labels().index("body-centered cubic CN_8")],
@@ -404,9 +382,7 @@ class FingerprintTests(PymatgenTest):
         )
 
         op_types = {6: ["wt", "oct_max"], 8: ["wt", "bcc"]}
-        cnnfp = CrystalNNFingerprint(
-            op_types, distance_cutoffs=None, x_diff_weight=None
-        )
+        cnnfp = CrystalNNFingerprint(op_types, distance_cutoffs=None, x_diff_weight=None)
         labels = ["wt CN_6", "oct_max CN_6", "wt CN_8", "bcc CN_8"]
         for l1, l2 in zip(cnnfp.feature_labels(), labels):
             self.assertEqual(l1, l2)
@@ -417,24 +393,16 @@ class FingerprintTests(PymatgenTest):
             "mass": {"Al": 26.9, "Cs+": 132.9, "Cl-": 35.4},
             "Pauling scale": {"Al": 1.61, "Cs+": 0.79, "Cl-": 3.16},
         }
-        cnnchemfp = CrystalNNFingerprint(
-            op_types, chem_info=chem_info, distance_cutoffs=None, x_diff_weight=None
-        )
+        cnnchemfp = CrystalNNFingerprint(op_types, chem_info=chem_info, distance_cutoffs=None, x_diff_weight=None)
         labels = labels + ["mass local diff", "Pauling scale local diff"]
         for l1, l2 in zip(cnnchemfp.feature_labels(), labels):
             self.assertEqual(l1, l2)
 
         feats = cnnchemfp.featurize(self.sc, 0)
         self.assertEqual(len(feats), 6)
-        self.assertAlmostEqual(
-            feats[cnnchemfp.feature_labels().index("wt CN_6")], 1, places=7
-        )
-        self.assertAlmostEqual(
-            feats[cnnchemfp.feature_labels().index("oct_max CN_6")], 1, places=7
-        )
-        self.assertAlmostEqual(
-            feats[cnnchemfp.feature_labels().index("mass local diff")], 0, places=7
-        )
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index("wt CN_6")], 1, places=7)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index("oct_max CN_6")], 1, places=7)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index("mass local diff")], 0, places=7)
         self.assertAlmostEqual(
             feats[cnnchemfp.feature_labels().index("Pauling scale local diff")],
             0,
@@ -442,12 +410,8 @@ class FingerprintTests(PymatgenTest):
         )
 
         feats = cnnchemfp.featurize(self.cscl, 0)
-        self.assertAlmostEqual(
-            feats[cnnchemfp.feature_labels().index("bcc CN_8")], 0.4761107, places=3
-        )
-        self.assertAlmostEqual(
-            feats[cnnchemfp.feature_labels().index("mass local diff")], 97.5, places=3
-        )
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index("bcc CN_8")], 0.4761107, places=3)
+        self.assertAlmostEqual(feats[cnnchemfp.feature_labels().index("mass local diff")], 97.5, places=3)
         self.assertAlmostEqual(
             feats[cnnchemfp.feature_labels().index("Pauling scale local diff")],
             -2.37,
@@ -526,9 +490,7 @@ class FingerprintTests(PymatgenTest):
         df_bcc_li = pd.DataFrame({"struct": [bcc_li], "site": [1]})
 
         interstice_distribution = IntersticeDistribution()
-        intersticefp = interstice_distribution.featurize_dataframe(
-            df_bcc_li, ["struct", "site"]
-        )
+        intersticefp = interstice_distribution.featurize_dataframe(df_bcc_li, ["struct", "site"])
 
         self.assertAlmostEqual(intersticefp["Interstice_vol_mean"][0], 0.32, 2)
         self.assertAlmostEqual(intersticefp["Interstice_vol_std_dev"][0], 0)
@@ -583,9 +545,7 @@ class FingerprintTests(PymatgenTest):
         df_glass = pd.DataFrame({"struct": [cuzr_glass], "site": [0]})
 
         interstice_distribution = IntersticeDistribution()
-        intersticefp = interstice_distribution.featurize_dataframe(
-            df_glass, ["struct", "site"]
-        )
+        intersticefp = interstice_distribution.featurize_dataframe(df_glass, ["struct", "site"])
 
         self.assertAlmostEqual(intersticefp["Interstice_vol_mean"][0], 0.28905, 5)
         self.assertAlmostEqual(intersticefp["Interstice_vol_std_dev"][0], 0.04037, 5)
@@ -686,9 +646,7 @@ class FingerprintTests(PymatgenTest):
 
         # Run the cscl-structure
         #   Compared to a result computed using GULP
-        self.assertAlmostEqual(
-            ewald.featurize(self.cscl, 0), ewald.featurize(self.cscl, 1)
-        )
+        self.assertAlmostEqual(ewald.featurize(self.cscl, 0), ewald.featurize(self.cscl, 1))
         self.assertAlmostEqual(ewald.featurize(self.cscl, 0)[0], -6.98112443 / 2, 3)
 
         # Re-run the Al structure to make sure it is accurate
@@ -775,9 +733,7 @@ class FingerprintTests(PymatgenTest):
         )
 
         # pairwise GRDF mode
-        grdf = GeneralizedRadialDistributionFunction(
-            bins=[f1, f2, f3], mode="pairwise_GRDF"
-        )
+        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3], mode="pairwise_GRDF")
         grdf.fit(s_tuples)
         features = grdf.transform(s_tuples)
         self.assertArrayAlmostEqual(features[0], [4.4807e-06, 3.1661e-04, 0.0267], 3)
@@ -917,9 +873,7 @@ class FingerprintTests(PymatgenTest):
         self.assertArrayAlmostEqual(sc_features, b1_features)
 
         # Comparing Q's to results from https://aip.scitation.org/doi/10.1063/1.4774084
-        self.assertArrayAlmostEqual(
-            [0, 0, 0, 0.764, 0, 0.354, 0, 0.718, 0, 0.411], sc_features[:10], decimal=3
-        )
+        self.assertArrayAlmostEqual([0, 0, 0, 0.764, 0, 0.354, 0, 0.718, 0, 0.411], sc_features[:10], decimal=3)
 
         # Comparing W's to results from https://link.aps.org/doi/10.1103/PhysRevB.28.784
         self.assertArrayAlmostEqual(
@@ -999,9 +953,7 @@ class FingerprintTests(PymatgenTest):
         self.assertEqual(len(v), n_soap_feat(soap))
 
         # Test dataframe fitting
-        df = pd.DataFrame(
-            {"s": [self.diamond, self.ni3al, self.nacl], "idx": [0, 1, 0]}
-        )
+        df = pd.DataFrame({"s": [self.diamond, self.ni3al, self.nacl], "idx": [0, 1, 0]})
         soap.fit(df["s"])
         df = soap.featurize_dataframe(df, ["s", "idx"])
         self.assertTupleEqual(df.shape, (3, n_soap_feat(soap) + 2))

@@ -11,8 +11,7 @@ from copy import deepcopy
 from pandas.api.types import is_numeric_dtype
 
 __authors__ = (
-    "Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, "
-    "Alireza Faghaninia  <alireza.faghaninia@gmail.com>"
+    "Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, " "Alireza Faghaninia  <alireza.faghaninia@gmail.com>"
 )
 
 
@@ -338,28 +337,18 @@ class PlotlyFig:
             filename = self.filename
 
         if self.mode in ["online", "static"]:
-            plotly.tools.set_credentials_file(
-                username=self.username, api_key=self.api_key
-            )
+            plotly.tools.set_credentials_file(username=self.username, api_key=self.api_key)
 
             if not os.path.isfile("~/.plotly/.credentials"):
                 if self.username is None:
-                    raise ValueError(
-                        'Field "username" must be filled in online and static '
-                        "plotting modes."
-                    )
+                    raise ValueError('Field "username" must be filled in online and static ' "plotting modes.")
                 if self.api_key is None:
-                    raise ValueError(
-                        'Field "api_key" must be filled in online and static'
-                        "plotting modes."
-                    )
+                    raise ValueError('Field "api_key" must be filled in online and static' "plotting modes.")
 
         if self.mode == "offline":
             if not filename.endswith(".html"):
                 filename += ".html"
-            plotly.offline.plot(
-                fig, filename=filename, auto_open=self.show_offline_plot
-            )
+            plotly.offline.plot(fig, filename=filename, auto_open=self.show_offline_plot)
         elif self.mode == "notebook":
             plotly.offline.init_notebook_mode()
             plotly.offline.iplot(fig)
@@ -382,9 +371,7 @@ class PlotlyFig:
                 width = 1920
 
             allowed_extensions = (".png", ".svg", ".jpeg", ".pdf")
-            if not self.filename or not self.filename.lower().endswith(
-                allowed_extensions
-            ):
+            if not self.filename or not self.filename.lower().endswith(allowed_extensions):
                 raise ValueError(
                     'field "filename" must be filled in static plotting '
                     "mode and must have an extension ending in "
@@ -545,11 +532,7 @@ class PlotlyFig:
             for i, size in enumerate(sizes):
                 if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
                     size = pd.Series(size).fillna(size.min())
-                    sizes[i] = (
-                        ((size - size.min()) / (size.max() - size.min()) + 0.05)
-                        * 30
-                        * marker_scale
-                    )
+                    sizes[i] = ((size - size.min()) / (size.max() - size.min()) + 0.05) * 30 * marker_scale
 
         if isinstance(modes, str):
             modes = [modes] * len(xy_pairs)
@@ -560,17 +543,13 @@ class PlotlyFig:
         for pair in xy_pairs:
             if len(pair) != 2:
                 raise ValueError(
-                    "each xy within xy_pairs must have only 2 axes"
-                    ' : x and y (hence the "pair"); e.g. (x, y)'
+                    "each xy within xy_pairs must have only 2 axes" ' : x and y (hence the "pair"); e.g. (x, y)'
                 )
             current_trace_x = self._data_from_str(pair[0])
             current_trace_y = self._data_from_str(pair[1])
             data.append((current_trace_x, current_trace_y))
             if len(list(current_trace_x)) != len(list(current_trace_y)):
-                warnings.warn(
-                    "inequal number of points in x and y: part of the"
-                    " data not plotted!"
-                )
+                warnings.warn("inequal number of points in x and y: part of the" " data not plotted!")
             if isinstance(pair[1], str):
                 names.append(pair[1])
             else:
@@ -588,9 +567,7 @@ class PlotlyFig:
             if isinstance(colors, str):
                 colors = [colors] * len(data)
             colorbar = colors
-            if len(list(colors)) == len(data) and any(
-                [isinstance(c, str) for c in colors]
-            ):
+            if len(list(colors)) == len(data) and any([isinstance(c, str) for c in colors]):
                 for itrace, color in enumerate(colors):
                     trace_color = self._data_from_str(color, is_color=True)
                     if (
@@ -607,22 +584,15 @@ class PlotlyFig:
                 showscale[0] = True  # in this case all traces use one colorbar
 
             if not isinstance(colorbar, (list, np.ndarray, pd.Series)):
-                raise ValueError(
-                    '"colors" must be a dataframe column name, '
-                    "list, np.ndarray or pd.Series"
-                )
+                raise ValueError('"colors" must be a dataframe column name, ' "list, np.ndarray or pd.Series")
             if color_range:
                 colorbar = pd.Series(colorbar)
                 colorbar[colorbar < color_range[0]] = color_range[0]
                 colorbar[colorbar > color_range[1]] = color_range[1]
 
-        labels = self.setup_labels(
-            labels=labels, data=None, expected_length=len(data[0][0])
-        )
+        labels = self.setup_labels(labels=labels, data=None, expected_length=len(data[0][0]))
 
-        markers = markers or [
-            {"symbol": "circle", "line": {"width": 1, "color": "black"}} for _ in data
-        ]
+        markers = markers or [{"symbol": "circle", "line": {"width": 1, "color": "black"}} for _ in data]
         if isinstance(markers, dict):
             markers = [deepcopy(markers) for _ in data]
 
@@ -636,9 +606,7 @@ class PlotlyFig:
             if markers[im].get("size", None) is None:
                 markers[im]["size"] = sizes[im]
             else:
-                raise ValueError(
-                    '"size" must not be set in markers, ' "use sizes argument instead"
-                )
+                raise ValueError('"size" must not be set in markers, ' "use sizes argument instead")
             if colorbar is not None:
                 if len(colors_list) > 0 and isinstance(colors_list[im], str):
                     markers[im]["color"] = colors_list[im]
@@ -678,10 +646,7 @@ class PlotlyFig:
         # for var in [labels, markers, lines]:
         for var in [markers, lines]:
             if len(list(var)) != len(data):
-                raise ValueError(
-                    '"labels", "markers" or "lines" length does'
-                    " not match with that of xy_pairs"
-                )
+                raise ValueError('"labels", "markers" or "lines" length does' " not match with that of xy_pairs")
         layout = deepcopy(self.layout)
 
         traces = []
@@ -736,7 +701,7 @@ class PlotlyFig:
         marker_scale=1.0,
         return_plot=False,
         default_color="#98AFC7",
-        **kwargs
+        **kwargs,
     ):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
@@ -780,8 +745,7 @@ class PlotlyFig:
         if data is None:
             if self.df is None:
                 raise ValueError(
-                    "scatter_matrix requires either dataframe labels and a "
-                    "dataframe or a list of numerical values."
+                    "scatter_matrix requires either dataframe labels and a " "dataframe or a list of numerical values."
                 )
             elif cols is None:
                 data = self.df
@@ -818,13 +782,7 @@ class PlotlyFig:
         text_scale = 1.0 / (nplots ** 0.2)
         tick_scale = 0.9 / (nplots ** 0.3)
         fig = FF.create_scatterplotmatrix(
-            data,
-            index=colors,
-            diag="histogram",
-            size=marker_size,
-            height=height,
-            width=width,
-            **kwargs
+            data, index=colors, diag="histogram", size=marker_size, height=height, width=width, **kwargs
         )
         badf = ["xaxis", "yaxis"]
         layout = deepcopy(self.layout)
@@ -835,21 +793,13 @@ class PlotlyFig:
         for iplot in range(nplots ** 2):
             fig["data"][iplot].update(hoverinfo=self.hoverinfo)
             for ax in ["x", "y"]:
-                fig["layout"]["{}axis{}".format(ax, iplot + 1)][
-                    "titlefont"
-                ] = self.font_style
-                fig["layout"]["{}axis{}".format(ax, iplot + 1)][
-                    "tickfont"
-                ] = self.font_style
-                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["titlefont"][
-                    "family"
-                ] = self.font_style["family"]
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["titlefont"] = self.font_style
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["tickfont"] = self.font_style
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["titlefont"]["family"] = self.font_style["family"]
                 fig["layout"]["{}axis{}".format(ax, iplot + 1)]["titlefont"]["size"] = (
                     self.font_style["size"] * text_scale
                 )
-                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["tickfont"][
-                    "family"
-                ] = self.font_style["family"]
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["tickfont"]["family"] = self.font_style["family"]
                 fig["layout"]["{}axis{}".format(ax, iplot + 1)]["tickfont"]["size"] = (
                     self.font_style["size"] * tick_scale
                 )
@@ -923,8 +873,7 @@ class PlotlyFig:
         if data is None:
             if cols is None and self.df is None:
                 raise ValueError(
-                    "Histogram requires either dataframe labels and a dataframe"
-                    " or a list of numerical values."
+                    "Histogram requires either dataframe labels and a dataframe" " or a list of numerical values."
                 )
             elif self.df is not None and cols is None:
                 cols = self.df.columns.values
@@ -941,12 +890,7 @@ class PlotlyFig:
             elif isinstance(data, pd.DataFrame):
                 cols = data.columns.values
             elif isinstance(data[0], dtypes):
-                data = pd.DataFrame(
-                    {
-                        "trace{}".format(i): pd.Series(data[i])
-                        for i, _ in enumerate(data)
-                    }
-                )
+                data = pd.DataFrame({"trace{}".format(i): pd.Series(data[i]) for i, _ in enumerate(data)})
                 cols = list(data.keys())
             else:
                 data = {"trace1": data}
@@ -972,20 +916,13 @@ class PlotlyFig:
                     if n_bins[i] is not None:
                         raise ValueError('Either set "n_bins" or "bins".')
                     if not bins[i].get("start") or not bins[i].get("end"):
-                        warnings.warn(
-                            '"size" key in bins ignored when "start" '
-                            'or "end" not specified'
-                        )
+                        warnings.warn('"size" key in bins ignored when "start" ' 'or "end" not specified')
                 elif n_bins[i] is not None:
                     warnings.warn(
-                        '"size" not specified in "bins", "n_bins" is '
-                        'ignored. Either set "bins" or "n_bins"'
+                        '"size" not specified in "bins", "n_bins" is ' 'ignored. Either set "bins" or "n_bins"'
                     )
                 if bins[i].get("start") is None != bins[i].get("end") is None:
-                    warnings.warn(
-                        'Both "start" and "end" must be present in '
-                        "bins; otherwise, it is ignored."
-                    )
+                    warnings.warn('Both "start" and "end" must be present in ' "bins; otherwise, it is ignored.")
 
             d = data[col]
             if isinstance(d, np.ndarray):
@@ -1107,9 +1044,7 @@ class PlotlyFig:
         # If data is passed in as a dataframe, not as x,y
         if data is not None and x is None and y is None:
             if not isinstance(data, pd.DataFrame):
-                raise TypeError(
-                    "'data' input type invalid. Valid types are" "DataFrames."
-                )
+                raise TypeError("'data' input type invalid. Valid types are" "DataFrames.")
 
             if isinstance(labels, str):
                 strlabel = deepcopy(labels)
@@ -1137,8 +1072,7 @@ class PlotlyFig:
                     colors = [colors] * len(y)
                 else:
                     raise ValueError(
-                        "Invalid data type for 'colors.' Please "
-                        "use a list-like object or pandas Series."
+                        "Invalid data type for 'colors.' Please " "use a list-like object or pandas Series."
                     )
         else:
             colors = [None] * len(y)
@@ -1210,8 +1144,7 @@ class PlotlyFig:
         if data is None:
             if self.df is None:
                 raise ValueError(
-                    "Violin plot requires either dataframe labels and a "
-                    "dataframe or a list of numerical values."
+                    "Violin plot requires either dataframe labels and a " "dataframe or a list of numerical values."
                 )
             data = self.df
 
@@ -1257,8 +1190,7 @@ class PlotlyFig:
             else:
                 if group_col is None:
                     raise ValueError(
-                        "Please specify group_col, the label of the column "
-                        "containing the groups for each row."
+                        "Please specify group_col, the label of the column " "containing the groups for each row."
                     )
 
             group_stats = {}
@@ -1274,8 +1206,7 @@ class PlotlyFig:
                 if group_value_counts[j] == 1:
                     data = data[data[group_col] != j]
                     warnings.warn(
-                        "Omitting rows with group = {} which have only one row "
-                        "in the dataframe.".format(j)
+                        "Omitting rows with group = {} which have only one row " "in the dataframe.".format(j)
                     )
 
         if use_colorscale:
@@ -1309,9 +1240,7 @@ class PlotlyFig:
         # Change sizes in all x-axis
         for item in fig["layout"]:
             if item.startswith("xaxis"):
-                fig["layout"][item].update(
-                    {"titlefont": self.font_style, "tickfont": self.font_style}
-                )
+                fig["layout"][item].update({"titlefont": self.font_style, "tickfont": self.font_style})
 
         if not hasattr(self, "width"):
             fig["layout"]["width"] = 1400
@@ -1442,9 +1371,7 @@ class PlotlyFig:
 
         if not data:
             if not self.df:
-                raise ValueError(
-                    "Either data or self.df (set in initializer)" "must be defined."
-                )
+                raise ValueError("Either data or self.df (set in initializer)" "must be defined.")
             else:
                 data = self.df.as_matrix()
                 x_labels = self.df.columns.values.tolist()
@@ -1460,9 +1387,7 @@ class PlotlyFig:
             colorscale_min = colorscale_range[0]
             colorscale_max = colorscale_range[1]
         else:
-            raise ValueError(
-                "The field 'colorscale_range' must be a list with two values."
-            )
+            raise ValueError("The field 'colorscale_range' must be a list with two values.")
 
         font_family = self.font_style["family"]
         font_size = self.font_style["size"]
@@ -1581,8 +1506,7 @@ class PlotlyFig:
                 data = self.df[cols]
         elif not isinstance(data, pd.DataFrame):
             raise ValueError(
-                '"heatmap_df" only supports dataframes with '
-                "numerical columns. Please use heatmap instead."
+                '"heatmap_df" only supports dataframes with ' "numerical columns. Please use heatmap instead."
             )
         cols = data.columns.values
         x_prop = cols[0]
@@ -1596,9 +1520,7 @@ class PlotlyFig:
         data = data.sort_values(y_prop, ascending=True)
         if y_nqs is None or len(data[y_prop].unique()) > y_nqs:
             try:
-                data["y_bin"] = pd.qcut(
-                    data[y_prop], y_nqs, labels=y_labels, precision=precision
-                ).astype(str)
+                data["y_bin"] = pd.qcut(data[y_prop], y_nqs, labels=y_labels, precision=precision).astype(str)
                 y_groups = data["y_bin"].unique()
             except BaseException:
                 warnings.warn("pd.qcut failed! categorizing on unique values")
@@ -1611,9 +1533,7 @@ class PlotlyFig:
         data = data.sort_values(x_prop, ascending=True)
         if x_nqs is None or len(data[x_prop].unique()) > x_nqs:
             try:
-                data["x_bin"] = pd.qcut(
-                    data[x_prop], x_nqs, labels=x_labels, precision=precision
-                ).astype(str)
+                data["x_bin"] = pd.qcut(data[x_prop], x_nqs, labels=x_labels, precision=precision).astype(str)
                 x_groups = data["x_bin"].unique()
             except BaseException:
                 warnings.warn("pd.qcut failed! categorizing on unique values")
@@ -1737,9 +1657,7 @@ class PlotlyFig:
         elif not isinstance(labels, (list, np.ndarray, pd.Series, pd.Index)):
             labels = [self._data_from_str(labels, data)]
         else:
-            if len(list(labels)) == expected_length and isinstance(
-                labels[0], (str, tuple)
-            ):
+            if len(list(labels)) == expected_length and isinstance(labels[0], (str, tuple)):
                 labels = [labels]
             else:
                 labels = [self._data_from_str(l) for l in labels]
@@ -1749,8 +1667,7 @@ class PlotlyFig:
             for label in labels:
                 if len(list(label)) != expected_length:
                     raise ValueError(
-                        "the length of this label is not equal to "
-                        "the expected length:\n{}".format(label)
+                        "the length of this label is not equal to " "the expected length:\n{}".format(label)
                     )
             labels = ["</br>".join([str(t) for t in l]) for l in zip(*labels)]
         return labels

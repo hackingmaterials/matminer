@@ -49,16 +49,12 @@ class TestConversions(TestCase):
         df = DataFrame(data=d)
         df = StrToComposition().featurize_dataframe(df, "comp_str")
 
-        self.assertEqual(
-            df["composition"].tolist(), [Composition("Fe2"), Composition("MnO2")]
-        )
+        self.assertEqual(df["composition"].tolist(), [Composition("Fe2"), Composition("MnO2")])
 
         stc = StrToComposition(reduce=True, target_col_id="composition_red")
         df = stc.featurize_dataframe(df, "comp_str")
 
-        self.assertEqual(
-            df["composition_red"].tolist(), [Composition("Fe"), Composition("MnO2")]
-        )
+        self.assertEqual(df["composition_red"].tolist(), [Composition("Fe"), Composition("MnO2")])
 
     def test_structure_to_composition(self):
         coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
@@ -179,9 +175,7 @@ class TestConversions(TestCase):
         df = DataFrame(data={"composition": [Composition("Fe2O3")]})
         cto = CompositionToOxidComposition()
         df = cto.featurize_dataframe(df, "composition")
-        self.assertEqual(
-            df["composition_oxid"].tolist()[0], Composition({"Fe3+": 2, "O2-": 3})
-        )
+        self.assertEqual(df["composition_oxid"].tolist()[0], Composition({"Fe3+": 2, "O2-": 3}))
 
         # test error handling
         df = DataFrame(data={"composition": [Composition("Fe2O3")]})
@@ -191,9 +185,7 @@ class TestConversions(TestCase):
         # check non oxi state structure returned correctly
         cto = CompositionToOxidComposition(return_original_on_error=True, max_sites=2)
         df = cto.featurize_dataframe(df, "composition")
-        self.assertEqual(
-            df["composition_oxid"].tolist()[0], Composition({"Fe": 2, "O": 3})
-        )
+        self.assertEqual(df["composition_oxid"].tolist()[0], Composition({"Fe": 2, "O": 3}))
 
     def test_to_istructure(self):
         cscl = Structure(
@@ -217,9 +209,7 @@ class TestConversions(TestCase):
 
         df_1lvl = DataFrame(data=d)
 
-        df_1lvl = StrToComposition().featurize_dataframe(
-            df_1lvl, "comp_str", multiindex=True
-        )
+        df_1lvl = StrToComposition().featurize_dataframe(df_1lvl, "comp_str", multiindex=True)
         self.assertEqual(
             df_1lvl[("StrToComposition", "composition")].tolist(),
             [Composition("Fe2"), Composition("MnO2")],
@@ -228,9 +218,7 @@ class TestConversions(TestCase):
         df_2lvl = DataFrame(data=d)
         df_2lvl.columns = MultiIndex.from_product((["custom"], df_2lvl.columns.values))
 
-        df_2lvl = StrToComposition().featurize_dataframe(
-            df_2lvl, ("custom", "comp_str"), multiindex=True
-        )
+        df_2lvl = StrToComposition().featurize_dataframe(df_2lvl, ("custom", "comp_str"), multiindex=True)
         self.assertEqual(
             df_2lvl[("StrToComposition", "composition")].tolist(),
             [Composition("Fe2"), Composition("MnO2")],
@@ -240,9 +228,7 @@ class TestConversions(TestCase):
         df_2lvl.columns = MultiIndex.from_product((["custom"], df_2lvl.columns.values))
 
         sto = StrToComposition(target_col_id="test")
-        df_2lvl = sto.featurize_dataframe(
-            df_2lvl, ("custom", "comp_str"), multiindex=True
-        )
+        df_2lvl = sto.featurize_dataframe(df_2lvl, ("custom", "comp_str"), multiindex=True)
         self.assertEqual(
             df_2lvl[("StrToComposition", "test")].tolist(),
             [Composition("Fe2"), Composition("MnO2")],
@@ -255,9 +241,7 @@ class TestConversions(TestCase):
 
         sto = StrToComposition(target_col_id=None, overwrite_data=True)
 
-        df_2lvl = sto.featurize_dataframe(
-            df_2lvl, ("custom", "comp_str"), multiindex=True, inplace=False
-        )
+        df_2lvl = sto.featurize_dataframe(df_2lvl, ("custom", "comp_str"), multiindex=True, inplace=False)
         self.assertEqual(
             df_2lvl[("custom", "comp_str")].tolist(),
             [Composition("Fe2"), Composition("MnO2")],
@@ -276,9 +260,7 @@ class TestConversions(TestCase):
             ignore_errors=True,
         )
 
-        self.assertTrue(
-            all(df_2lvl[("custom", "StrToComposition Exceptions")].isnull())
-        )
+        self.assertTrue(all(df_2lvl[("custom", "StrToComposition Exceptions")].isnull()))
 
     def test_conversion_multiindex_dynamic(self):
         # test dynamic target_col_id setting with multiindex
@@ -297,9 +279,7 @@ class TestConversions(TestCase):
         df_2lvl.columns = MultiIndex.from_product((["custom"], df_2lvl.columns.values))
 
         dto = DictToObject()
-        df_2lvl = dto.featurize_dataframe(
-            df_2lvl, ("custom", "structure_dict"), multiindex=True
-        )
+        df_2lvl = dto.featurize_dataframe(df_2lvl, ("custom", "structure_dict"), multiindex=True)
         new_col_id = ("DictToObject", "structure_dict_object")
         self.assertEqual(df_2lvl[new_col_id].tolist()[0], struct)
         self.assertEqual(df_2lvl[new_col_id].tolist()[1], struct)
@@ -309,9 +289,7 @@ class TestConversions(TestCase):
         "PMG_MAPI_KEY not in environment variables.",
     )
     def test_composition_to_structurefromMP(self):
-        df = DataFrame(
-            data={"composition": [Composition("Fe2O3"), Composition("N9Al34Fe234")]}
-        )
+        df = DataFrame(data={"composition": [Composition("Fe2O3"), Composition("N9Al34Fe234")]})
 
         cto = CompositionToStructureFromMP()
         df = cto.featurize_dataframe(df, "composition")

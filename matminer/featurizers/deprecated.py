@@ -47,18 +47,10 @@ class CrystalSiteFingerprint(BaseFeaturizer):
             return CrystalSiteFingerprint(optypes, cation_anion=cation_anion)
 
         else:
-            raise RuntimeError(
-                'preset "{}" is not supported in '
-                "CrystalSiteFingerprint".format(preset)
-            )
+            raise RuntimeError('preset "{}" is not supported in ' "CrystalSiteFingerprint".format(preset))
 
-    @deprecated(
-        message="CrystalSiteFingerprint is deprecated in favor of "
-        "CrystalNNFingerprint"
-    )
-    def __init__(
-        self, optypes, override_cn1=True, cutoff_radius=8, tol=1e-2, cation_anion=False
-    ):
+    @deprecated(message="CrystalSiteFingerprint is deprecated in favor of " "CrystalNNFingerprint")
+    def __init__(self, optypes, override_cn1=True, cutoff_radius=8, tol=1e-2, cation_anion=False):
         """
         Initialize the CrystalSiteFingerprint. Use the from_preset() function to
         use default params.
@@ -111,9 +103,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
             list of weighted order parameters of target site.
         """
 
-        cn_fingerprint_array = defaultdict(
-            list
-        )  # dict where key = CN, val is array that contains each OP for that CN
+        cn_fingerprint_array = defaultdict(list)  # dict where key = CN, val is array that contains each OP for that CN
         total_weight = math.pi / 4  # 1/4 unit circle area
 
         target = None
@@ -124,9 +114,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 if site.specie.oxi_state * m_oxi <= 0:  # opposite charge
                     target.append(site.specie)
             if not target:
-                raise ValueError(
-                    "No valid targets for site within cation_anion constraint!"
-                )
+                raise ValueError("No valid targets for site within cation_anion constraint!")
 
         # Use a Voronoi tessellation to identify neighbors of this site
         vnn = VoronoiNN(cutoff=self.cutoff_radius, targets=target)
@@ -152,11 +140,7 @@ class CrystalSiteFingerprint(BaseFeaturizer):
                 dist_bins.append(d)
 
         for dist_idx, dist in enumerate(dist_bins):
-            neigh_sites = [
-                n
-                for n, w in n_w.items()
-                if w > 0 and w / dist_sorted[0] >= dist / (1 + self.tol)
-            ]
+            neigh_sites = [n for n, w in n_w.items() if w > 0 and w / dist_sorted[0] >= dist / (1 + self.tol)]
             cn = len(neigh_sites)
             if cn in self.ops:
                 for opidx, op in enumerate(self.ops[cn]):
@@ -173,14 +157,8 @@ class CrystalSiteFingerprint(BaseFeaturizer):
 
                     # figure out the weight for this opval based on semicircle integration method
                     x1 = 1 - dist
-                    x2 = (
-                        1
-                        if dist_idx == len(dist_bins) - 1
-                        else 1 - dist_bins[dist_idx + 1]
-                    )
-                    weight = self._semicircle_integral(x2) - self._semicircle_integral(
-                        x1
-                    )
+                    x2 = 1 if dist_idx == len(dist_bins) - 1 else 1 - dist_bins[dist_idx + 1]
+                    weight = self._semicircle_integral(x2) - self._semicircle_integral(x1)
 
                     opval = opval * weight / total_weight
 
@@ -216,7 +194,4 @@ class CrystalSiteFingerprint(BaseFeaturizer):
         if r == x:
             return 0.25 * math.pi * r ** 2
 
-        return 0.5 * (
-            (x * math.sqrt(r ** 2 - x ** 2))
-            + (r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2)))
-        )
+        return 0.5 * ((x * math.sqrt(r ** 2 - x ** 2)) + (r ** 2 * math.atan(x / math.sqrt(r ** 2 - x ** 2))))

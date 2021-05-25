@@ -45,12 +45,7 @@ class DataSetsTest(DatasetTest):
             # Test all columns are there
             self.assertEqual(
                 sorted(list(df)),
-                sorted(
-                    [
-                        header
-                        for header in self.dataset_dict[dataset_name]["columns"].keys()
-                    ]
-                ),
+                sorted([header for header in self.dataset_dict[dataset_name]["columns"].keys()]),
             )
 
             # Test each column for appropriate type
@@ -209,9 +204,7 @@ class MatminerDatasetsTest(DataSetsTest):
         def _unique_tests(df):
             self.assertEqual(type(df["structure"][0]), Structure)
 
-        self.universal_dataset_check(
-            "flla", object_headers, numeric_headers, test_func=_unique_tests
-        )
+        self.universal_dataset_check("flla", object_headers, numeric_headers, test_func=_unique_tests)
 
     def test_castelli_perovskites(self):
         object_headers = ["structure", "formula"]
@@ -247,9 +240,7 @@ class MatminerDatasetsTest(DataSetsTest):
         def _unique_tests(df):
             self.assertEqual(type(df["structure"][0]), Structure)
 
-        self.universal_dataset_check(
-            "boltztrap_mp", object_headers, numeric_headers, test_func=_unique_tests
-        )
+        self.universal_dataset_check("boltztrap_mp", object_headers, numeric_headers, test_func=_unique_tests)
 
     def test_phonon_dielectric_mp(self):
         object_headers = ["structure", "formula", "mpid"]
@@ -315,9 +306,7 @@ class MatminerDatasetsTest(DataSetsTest):
         def _unique_tests(df):
             self.assertEqual(type(df["structure"][0]), Structure)
 
-        self.universal_dataset_check(
-            "mp_all_20181018", object_headers, numeric_headers, test_func=_unique_tests
-        )
+        self.universal_dataset_check("mp_all_20181018", object_headers, numeric_headers, test_func=_unique_tests)
 
     def test_mp_nostruct_20181018(self):
         object_headers = ["mpid", "formula"]
@@ -354,9 +343,7 @@ class MatminerDatasetsTest(DataSetsTest):
 
         numeric_headers = ["k_expt"]
 
-        self.universal_dataset_check(
-            "citrine_thermal_conductivity", object_headers, numeric_headers
-        )
+        self.universal_dataset_check("citrine_thermal_conductivity", object_headers, numeric_headers)
 
     def test_wolverton_oxides(self):
         object_headers = [
@@ -375,9 +362,7 @@ class MatminerDatasetsTest(DataSetsTest):
 
         numeric_headers = ["e_form", "e_hull", "vpa", "gap pbe", "e_form oxygen"]
 
-        self.universal_dataset_check(
-            "wolverton_oxides", object_headers, numeric_headers
-        )
+        self.universal_dataset_check("wolverton_oxides", object_headers, numeric_headers)
 
     def test_heusler_magnetic(self):
         object_headers = ["formula", "heusler type", "struct type"]
@@ -392,9 +377,7 @@ class MatminerDatasetsTest(DataSetsTest):
             "mu_b saturation",
         ]
 
-        self.universal_dataset_check(
-            "heusler_magnetic", object_headers, numeric_headers
-        )
+        self.universal_dataset_check("heusler_magnetic", object_headers, numeric_headers)
 
     def test_steel_strength(self):
         object_headers = ["formula"]
@@ -483,9 +466,7 @@ class MatminerDatasetsTest(DataSetsTest):
             self.assertEqual(type(df["structure"][0]), Structure)
             self.assertEqual(type(df["composition"][0]), Composition)
 
-        self.universal_dataset_check(
-            "jarvis_dft_3d", object_headers, numeric_headers, test_func=_unique_tests
-        )
+        self.universal_dataset_check("jarvis_dft_3d", object_headers, numeric_headers, test_func=_unique_tests)
 
     def test_jarvis_dft_2d(self):
         object_headers = [
@@ -513,9 +494,7 @@ class MatminerDatasetsTest(DataSetsTest):
             self.assertEqual(type(df["structure"][0]), Structure)
             self.assertEqual(type(df["composition"][0]), Composition)
 
-        self.universal_dataset_check(
-            "jarvis_dft_2d", object_headers, numeric_headers, test_func=_unique_tests
-        )
+        self.universal_dataset_check("jarvis_dft_2d", object_headers, numeric_headers, test_func=_unique_tests)
 
     def test_glass_binary(self):
         object_headers = ["formula"]
@@ -563,9 +542,7 @@ class MatminerDatasetsTest(DataSetsTest):
 
         numeric_headers = ["oqmdid", "e_form expt", "e_form mp", "e_form oqmd"]
 
-        self.universal_dataset_check(
-            "expt_formation_enthalpy", object_headers, numeric_headers
-        )
+        self.universal_dataset_check("expt_formation_enthalpy", object_headers, numeric_headers)
 
     def test_brgoch_superhard_training(self):
         object_headers = [
@@ -634,9 +611,7 @@ class MatbenchDatasetsTest(DataSetsTest):
                     numeric_headers = [ds_config[0]]
                     bool_headers = None
 
-                self.universal_dataset_check(
-                    ds, object_headers, numeric_headers, bool_headers
-                )
+                self.universal_dataset_check(ds, object_headers, numeric_headers, bool_headers)
 
 
 if __name__ == "__main__":

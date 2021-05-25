@@ -176,9 +176,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(rdf["distribution"][int(round(9.8 / 0.1))], 3.024406467)
 
         # Repeat test with CsCl. Altering cutoff distance and bin_size
-        rdforig = RadialDistributionFunction(cutoff=8, bin_size=0.5).featurize(
-            self.cscl
-        )
+        rdforig = RadialDistributionFunction(cutoff=8, bin_size=0.5).featurize(self.cscl)
         rdf = rdforig[0]
         self.assertAlmostEqual(max(rdf["distances"]), 7.5)
         self.assertEqual(len(rdf["distribution"]), 16)
@@ -199,9 +197,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(prdf[("C", "C")][int(round(19.9 / 0.1))], 0.07197902)
 
         # Test a few peaks in CsCl, make sure it gets all types correctly
-        distances, prdf = PartialRadialDistributionFunction(cutoff=10).compute_prdf(
-            self.cscl
-        )
+        distances, prdf = PartialRadialDistributionFunction(cutoff=10).compute_prdf(self.cscl)
         self.assertEqual(len(prdf.values()), 4)
         self.assertAlmostEqual(max(distances), 9.9)
         self.assertAlmostEqual(prdf[("Cs", "Cl")][int(round(3.6 / 0.1))], 0.477823197)
@@ -209,9 +205,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(prdf[("Cs", "Cs")][int(round(3.6 / 0.1))], 0)
 
         # Do Ni3Al, make sure it captures the antisymmetry of Ni/Al sites
-        distances, prdf = PartialRadialDistributionFunction(
-            cutoff=10, bin_size=0.5
-        ).compute_prdf(self.ni3al)
+        distances, prdf = PartialRadialDistributionFunction(cutoff=10, bin_size=0.5).compute_prdf(self.ni3al)
         self.assertEqual(len(prdf.values()), 4)
         self.assertAlmostEqual(prdf[("Ni", "Al")][int(round(2 / 0.5))], 0.125236677)
         self.assertAlmostEqual(prdf[("Al", "Ni")][int(round(2 / 0.5))], 0.37571003)
@@ -272,28 +266,20 @@ class StructureFeaturesTest(PymatgenTest):
         d = ElectronicRadialDistributionFunction().featurize(self.diamond)[0]
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
         self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
-        self.assertAlmostEqual(
-            int(1000 * d["distances"][len(d["distances"]) - 1]), 6175
-        )
-        self.assertAlmostEqual(
-            int(1000 * d["distribution"][len(d["distances"]) - 1]), 0
-        )
+        self.assertAlmostEqual(int(1000 * d["distances"][len(d["distances"]) - 1]), 6175)
+        self.assertAlmostEqual(int(1000 * d["distribution"][len(d["distances"]) - 1]), 0)
         d = ElectronicRadialDistributionFunction().featurize(self.nacl)[0]
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
         self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
         self.assertAlmostEqual(int(1000 * d["distances"][56]), 2825)
         self.assertAlmostEqual(int(1000 * d["distribution"][56]), -2108)
-        self.assertAlmostEqual(
-            int(1000 * d["distances"][len(d["distances"]) - 1]), 9875
-        )
+        self.assertAlmostEqual(int(1000 * d["distances"][len(d["distances"]) - 1]), 9875)
         d = ElectronicRadialDistributionFunction().featurize(self.cscl)[0]
         self.assertAlmostEqual(int(1000 * d["distances"][0]), 25)
         self.assertAlmostEqual(int(1000 * d["distribution"][0]), 0)
         self.assertAlmostEqual(int(1000 * d["distances"][72]), 3625)
         self.assertAlmostEqual(int(1000 * d["distribution"][72]), -2194)
-        self.assertAlmostEqual(
-            int(1000 * d["distances"][len(d["distances"]) - 1]), 7275
-        )
+        self.assertAlmostEqual(int(1000 * d["distances"][len(d["distances"]) - 1]), 7275)
 
     def test_coulomb_matrix(self):
         # flat
@@ -304,12 +290,8 @@ class StructureFeaturesTest(PymatgenTest):
         df = cm.fit_featurize_dataframe(df, "s")
         labels = cm.feature_labels()
         self.assertListEqual(labels, ["coulomb matrix eig 0", "coulomb matrix eig 1"])
-        self.assertArrayAlmostEqual(
-            df[labels].iloc[0], [49.169453, 24.546758], decimal=5
-        )
-        self.assertArrayAlmostEqual(
-            df[labels].iloc[1], [153.774731, 452.894322], decimal=5
-        )
+        self.assertArrayAlmostEqual(df[labels].iloc[0], [49.169453, 24.546758], decimal=5)
+        self.assertArrayAlmostEqual(df[labels].iloc[1], [153.774731, 452.894322], decimal=5)
 
         # matrix
         species = ["C", "C", "H", "H"]
@@ -338,9 +320,7 @@ class StructureFeaturesTest(PymatgenTest):
         df = scm.fit_featurize_dataframe(df, "s")
         labels = scm.feature_labels()
         self.assertEqual(labels[0], "sine coulomb matrix eig 0")
-        self.assertArrayAlmostEqual(
-            df[labels].iloc[0], [235.740418, 0.0, 0.0, 0.0], decimal=5
-        )
+        self.assertArrayAlmostEqual(df[labels].iloc[0], [235.740418, 0.0, 0.0, 0.0], decimal=5)
         self.assertArrayAlmostEqual(
             df[labels].iloc[1],
             [232.578562, 1656.288171, 1403.106576, 1403.106576],
@@ -351,9 +331,7 @@ class StructureFeaturesTest(PymatgenTest):
         scm = SineCoulombMatrix(flatten=False)
         sin_mat = scm.featurize(self.diamond)
         mtarget = [[36.8581, 6.147068], [6.147068, 36.8581]]
-        self.assertAlmostEqual(
-            np.linalg.norm(sin_mat - np.array(mtarget)), 0.0, places=4
-        )
+        self.assertAlmostEqual(np.linalg.norm(sin_mat - np.array(mtarget)), 0.0, places=4)
         scm = SineCoulombMatrix(diag_elems=False, flatten=False)
         sin_mat = scm.featurize(self.diamond)[0]
         self.assertEqual(sin_mat[0][0], 0)
@@ -399,15 +377,9 @@ class StructureFeaturesTest(PymatgenTest):
             self.assertAlmostEqual(ofm_vector[ix], 1.4789015345821415)
 
     def test_min_relative_distances(self):
-        self.assertAlmostEqual(
-            MinimumRelativeDistances().featurize(self.diamond_no_oxi)[0][0], 1.1052576
-        )
-        self.assertAlmostEqual(
-            MinimumRelativeDistances().featurize(self.nacl)[0][0], 0.8891443
-        )
-        self.assertAlmostEqual(
-            MinimumRelativeDistances().featurize(self.cscl)[0][0], 0.9877540
-        )
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(self.diamond_no_oxi)[0][0], 1.1052576)
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(self.nacl)[0][0], 0.8891443)
+        self.assertAlmostEqual(MinimumRelativeDistances().featurize(self.cscl)[0][0], 0.9877540)
 
     def test_sitestatsfingerprint(self):
         # Test matrix.
@@ -476,9 +448,7 @@ class StructureFeaturesTest(PymatgenTest):
         ewald = EwaldEnergy(accuracy=2)
         self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
         self.assertAlmostEqual(ewald.featurize(self.nacl)[0], -4.418439, 2)
-        self.assertLess(
-            ewald.featurize(self.nacl), ewald.featurize(self.cscl)
-        )  # Atoms are closer in NaCl
+        self.assertLess(ewald.featurize(self.nacl), ewald.featurize(self.cscl))  # Atoms are closer in NaCl
 
     def test_bondfractions(self):
 
@@ -603,8 +573,7 @@ class StructureFeaturesTest(PymatgenTest):
         labels = f.feature_labels()
         my_label = "mean local difference in Number"
         self.assertAlmostEqual(
-            (8 * big_face_area * big_face_diff)
-            / (8 * big_face_area + 6 * small_face_area),
+            (8 * big_face_area * big_face_diff) / (8 * big_face_area + 6 * small_face_area),
             features[labels.index(my_label)],
             places=3,
         )
@@ -636,10 +605,7 @@ class StructureFeaturesTest(PymatgenTest):
             8 * big_face_area + 6 * small_face_area
         )
         rel_var = (
-            (
-                8 * abs(np.sqrt(3) / 2 - average_dist) * big_face_area
-                + 6 * abs(1 - average_dist) * small_face_area
-            )
+            (8 * abs(np.sqrt(3) / 2 - average_dist) * big_face_area + 6 * abs(1 - average_dist) * small_face_area)
             / (8 * big_face_area + 6 * small_face_area)
             / average_dist
         )
@@ -653,9 +619,7 @@ class StructureFeaturesTest(PymatgenTest):
             site_properties=None,
         )
         features = f.featurize(cscl)
-        self.assertArrayAlmostEqual(
-            [0, 1, 1, rel_var, rel_var, 0, rel_var, 0, 0], features
-        )
+        self.assertArrayAlmostEqual([0, 1, 1, rel_var, rel_var, 0, rel_var, 0, 0], features)
 
     def test_packing_efficiency(self):
         f = MaximumPackingEfficiency()
@@ -732,9 +696,7 @@ class StructureFeaturesTest(PymatgenTest):
         state_dict = cgcnn_featurizer.model.state_dict()
         self.assertEqual(state_dict["embedding.weight"].size(), torch.Size([64, 92]))
         self.assertEqual(state_dict["embedding.bias"].size(), torch.Size([64]))
-        self.assertEqual(
-            state_dict["convs.0.fc_full.weight"].size(), torch.Size([128, 169])
-        )
+        self.assertEqual(state_dict["convs.0.fc_full.weight"].size(), torch.Size([128, 169]))
         self.assertEqual(state_dict["convs.1.bn1.weight"].size(), torch.Size([128]))
         self.assertEqual(state_dict["convs.2.bn2.bias"].size(), torch.Size([64]))
         self.assertEqual(state_dict["conv_to_fc.weight"].size(), torch.Size([128, 64]))
@@ -876,9 +838,7 @@ class StructureFeaturesTest(PymatgenTest):
             test_size=3,
             atom_fea_len=atom_fea_len,
         )
-        result = cgcnn_featurizer.fit_featurize_dataframe(
-            df, "structure", fit_args=[cla_props]
-        )
+        result = cgcnn_featurizer.fit_featurize_dataframe(df, "structure", fit_args=[cla_props])
         self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
         self.assertTrue("CGCNN_feature_{}".format(atom_fea_len - 1) in result.columns)
         self.assertEqual(np.array(result).shape, (len(reg_structs), atom_fea_len + 1))
@@ -897,13 +857,9 @@ class StructureFeaturesTest(PymatgenTest):
             struct_list (list): List of structure object.
         """
         if task == "classification":
-            cgcnn_data_path = os.path.join(
-                os.path.dirname(cgcnn.__file__), "..", "data", "sample-classification"
-            )
+            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..", "data", "sample-classification")
         else:
-            cgcnn_data_path = os.path.join(
-                os.path.dirname(cgcnn.__file__), "..", "data", "sample-regression"
-            )
+            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..", "data", "sample-regression")
 
         struct_list = list()
         cif_list = list()
@@ -918,9 +874,7 @@ class StructureFeaturesTest(PymatgenTest):
                 cif_list.append(int(file[:-4]))
                 cif_list = sorted(cif_list)
         for cif_name in cif_list:
-            crystal = Structure.from_file(
-                os.path.join(cgcnn_data_path, "{}.cif".format(cif_name))
-            )
+            crystal = Structure.from_file(os.path.join(cgcnn_data_path, "{}.cif".format(cif_name)))
             struct_list.append(crystal)
         return id_prop_data, elem_embedding, struct_list
 
@@ -967,12 +921,8 @@ class StructureFeaturesTest(PymatgenTest):
         site_el1 = str(site1.species.element_composition.elements[0])
         site_val2 = site2.species.elements[0].oxi_state
         site_el2 = str(site2.species.element_composition.elements[0])
-        self.assertAlmostEqual(
-            gii.calc_bv_sum(site_val1, site_el1, neighs1), 0.9150834429025214
-        )
-        self.assertAlmostEqual(
-            gii.calc_bv_sum(site_val2, site_el2, neighs2), -0.915083442902522
-        )
+        self.assertAlmostEqual(gii.calc_bv_sum(site_val1, site_el1, neighs1), 0.9150834429025214)
+        self.assertAlmostEqual(gii.calc_bv_sum(site_val2, site_el2, neighs2), -0.915083442902522)
 
         # Behavior when disorder is present
         gii_pymat = GlobalInstabilityIndex(r_cut=4.0, disordered_pymatgen=True)
@@ -985,9 +935,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(gii_pymat.featurize(nacl_disordered)[0], 0.39766464)
 
     def test_structural_complexity(self):
-        s = Structure.from_file(
-            os.path.join(test_dir, "Dy2HfS5_mp-1198001_computed.cif")
-        )
+        s = Structure.from_file(os.path.join(test_dir, "Dy2HfS5_mp-1198001_computed.cif"))
 
         featurizer = StructuralComplexity()
         ig, igbits = featurizer.featurize(s)
@@ -995,9 +943,7 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(2.5, ig, places=3)
         self.assertAlmostEqual(80, igbits, places=3)
 
-        s = Structure.from_file(
-            os.path.join(test_dir, "Cs2CeN5O17_mp-1198000_computed.cif")
-        )
+        s = Structure.from_file(os.path.join(test_dir, "Cs2CeN5O17_mp-1198000_computed.cif"))
 
         featurizer = StructuralComplexity()
         ig, igbits = featurizer.featurize(s)

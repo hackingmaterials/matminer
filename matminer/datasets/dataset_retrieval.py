@@ -52,22 +52,15 @@ def load_dataset(name, data_home=None, download_if_missing=True):
 
         # Very simple attempt to match unrecognized keyword to existing
         # dataset names in an attempt to give the user immediate feedback
-        possible_matches = [
-            x for x in _dataset_dict.keys() if name.lower() in x.lower()
-        ]
+        possible_matches = [x for x in _dataset_dict.keys() if name.lower() in x.lower()]
 
         if possible_matches:
-            error_string += (
-                "\nCould you have been looking for these similar "
-                "matches?:\n{}".format(possible_matches)
-            )
+            error_string += "\nCould you have been looking for these similar " "matches?:\n{}".format(possible_matches)
 
         raise ValueError(error_string)
 
     dataset_metadata = _dataset_dict[name]
-    data_path = os.path.join(
-        _get_data_home(data_home), name + "." + dataset_metadata["file_type"]
-    )
+    data_path = os.path.join(_get_data_home(data_home), name + "." + dataset_metadata["file_type"])
     _validate_dataset(
         data_path,
         dataset_metadata["url"],
@@ -105,10 +98,7 @@ def get_available_datasets(print_format="medium", sort_method="alphabetical"):
         _dataset_dict = _load_dataset_dict()
 
     if sort_method not in {"alphabetical", "num_entries"}:
-        raise ValueError(
-            "Error, unsupported sorting metric {}"
-            " see docs for options".format(sort_method)
-        )
+        raise ValueError("Error, unsupported sorting metric {}" " see docs for options".format(sort_method))
 
     if sort_method == "num_entries":
         dataset_names = sorted(

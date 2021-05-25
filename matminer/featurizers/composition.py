@@ -28,8 +28,7 @@ from matminer.utils.data import (
 )
 
 __author__ = (
-    "Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, "
-    "Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain"
+    "Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, " "Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain"
 )
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
@@ -238,9 +237,7 @@ class ElementProperty(BaseFeaturizer):
         elements, fractions = zip(*comp.element_composition.items())
 
         for attr in self.features:
-            elem_data = [
-                self.data_source.get_elemental_property(e, attr) for e in elements
-            ]
+            elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
 
             for stat in self.stats:
                 all_attributes.append(self.pstats.calc_stat(elem_data, stat, fractions))
@@ -365,35 +362,19 @@ class Meredig(BaseFeaturizer):
             stat = feat.split(" ")[0]
             attr = " ".join(feat.split(" ")[1:])
 
-            elem_data = [
-                self.data_source.get_elemental_property(e, attr) for e in elements
-            ]
-            element_property_features[i] = self.pstats.calc_stat(
-                elem_data, stat, fractions
-            )
+            elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
+            element_property_features[i] = self.pstats.calc_stat(elem_data, stat, fractions)
 
         # Final 8 features are statistics on valence orbitals, available from the ValenceOrbital featurizer
-        valence_orbital_features = ValenceOrbital(
-            orbitals=("s", "p", "d", "f"), props=("avg", "frac")
-        ).featurize(comp)
+        valence_orbital_features = ValenceOrbital(orbitals=("s", "p", "d", "f"), props=("avg", "frac")).featurize(comp)
 
-        return (
-            element_fraction_features
-            + element_property_features
-            + valence_orbital_features
-        )
+        return element_fraction_features + element_property_features + valence_orbital_features
 
     def feature_labels(self):
         # Since we have more features than just element fractions, append 'fraction' to element symbols for clarity
-        element_fraction_features = [
-            e + " fraction" for e in ElementFraction().feature_labels()
-        ]
+        element_fraction_features = [e + " fraction" for e in ElementFraction().feature_labels()]
         valence_orbital_features = ValenceOrbital().feature_labels()
-        return (
-            element_fraction_features
-            + self._element_property_feature_labels
-            + valence_orbital_features
-        )
+        return element_fraction_features + self._element_property_feature_labels + valence_orbital_features
 
     def citations(self):
         citation = [
@@ -467,10 +448,7 @@ class CationProperty(ElementProperty):
         cations, fractions = zip(*[(s, f) for s, f in comp.items() if s.oxi_state > 0])
 
         for attr in self.features:
-            elem_data = [
-                self.data_source.get_charge_dependent_property_from_specie(c, attr)
-                for c in cations
-            ]
+            elem_data = [self.data_source.get_charge_dependent_property_from_specie(c, attr) for c in cations]
 
             for stat in self.stats:
                 all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
@@ -574,9 +552,7 @@ class AtomicOrbitals(BaseFeaturizer):
         integer_comp, factor = comp.get_integer_formula_and_factor()
 
         # warning message if composition is dilute and truncated
-        if not (
-            len(Composition(comp).elements) == len(Composition(integer_comp).elements)
-        ):
+        if not (len(Composition(comp).elements) == len(Composition(integer_comp).elements)):
             warn("AtomicOrbitals: {} truncated to {}".format(comp, integer_comp))
 
         homo_lumo = MolecularOrbitals(integer_comp).band_edges
@@ -707,9 +683,7 @@ class ElectronegativityDiff(BaseFeaturizer):
             raise ValueError("Composition is not ionic")
 
         # Determine the average anion EN
-        anions, anion_fractions = zip(
-            *[(s, x) for s, x in comp.items() if s.oxi_state < 0]
-        )
+        anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
 
         # If there are no anions, raise an Exception
         if len(anions) == 0:
@@ -719,9 +693,7 @@ class ElectronegativityDiff(BaseFeaturizer):
         mean_anion_en = PropertyStats.mean(anion_en, anion_fractions)
 
         # Determine the EN difference for each cation
-        cations, cation_fractions = zip(
-            *[(s, x) for s, x in comp.items() if s.oxi_state > 0]
-        )
+        cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
 
         # If there are no cations, raise an Exception
         #  It is possible to construct a non-charge-balanced Composition,
@@ -732,10 +704,7 @@ class ElectronegativityDiff(BaseFeaturizer):
         en_difference = [mean_anion_en - s.element.X for s in cations]
 
         # Compute the statistics
-        return [
-            PropertyStats.calc_stat(en_difference, stat, cation_fractions)
-            for stat in self.stats
-        ]
+        return [PropertyStats.calc_stat(en_difference, stat, cation_fractions) for stat in self.stats]
 
     def feature_labels(self):
         labels = []
@@ -784,15 +753,11 @@ class ElectronAffinity(BaseFeaturizer):
         species, fractions = zip(*comp.items())
 
         # Determine which species are anions
-        anions, fractions = zip(
-            *[(s, f) for s, f in zip(species, fractions) if s.oxi_state < 0]
-        )
+        anions, fractions = zip(*[(s, f) for s, f in zip(species, fractions) if s.oxi_state < 0])
 
         # Compute the electron_affinity*formal_charge for each anion
         electron_affin = [
-            self.data_source.get_elemental_property(s.element, "electron_affin")
-            * s.oxi_state
-            for s in anions
+            self.data_source.get_elemental_property(s.element, "electron_affin") * s.oxi_state for s in anions
         ]
 
         # Compute the average affinity
@@ -1024,9 +989,7 @@ class IonProperty(BaseFeaturizer):
                 charges, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
                 cpd_possible = np.isclose(np.dot(charges, fractions), 0)
             else:
-                oxidation_states = [
-                    self.data_source.get_oxidation_states(e) for e in elements
-                ]
+                oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
                 if self.fast:
                     # Assume each element can have only 1 oxidation state
                     cpd_possible = False
@@ -1037,13 +1000,8 @@ class IonProperty(BaseFeaturizer):
                 else:
                     #  Use pymatgen's oxidation state checker which
                     #   can detect whether an takes >1 oxidation state (as in Fe3O4)
-                    oxi_state_dict = dict(
-                        zip([e.symbol for e in elements], oxidation_states)
-                    )
-                    cpd_possible = (
-                        len(comp.oxi_state_guesses(oxi_states_override=oxi_state_dict))
-                        > 0
-                    )
+                    oxi_state_dict = dict(zip([e.symbol for e in elements], oxidation_states))
+                    cpd_possible = len(comp.oxi_state_guesses(oxi_states_override=oxi_state_dict)) > 0
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
@@ -1229,21 +1187,15 @@ class CohesiveEnergy(BaseFeaturizer):
             # Get formation energy of most stable structure from MP
             struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(
-                    struct_lst, key=lambda e: e["energy_per_atom"]
-                )[0]
-                formation_energy_per_atom = most_stable_entry[
-                    "formation_energy_per_atom"
-                ]
+                most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
+                formation_energy_per_atom = most_stable_entry["formation_energy_per_atom"]
             else:
                 raise ValueError("No structure found in MP for {}".format(comp))
 
         # Subtract elemental cohesive energies from formation energy
         cohesive_energy = -formation_energy_per_atom * comp.num_atoms
         for el in el_amt_dict:
-            cohesive_energy += el_amt_dict[
-                el
-            ] * CohesiveEnergyData().get_elemental_property(el)
+            cohesive_energy += el_amt_dict[el] * CohesiveEnergyData().get_elemental_property(el)
 
         cohesive_energy_per_atom = cohesive_energy / comp.num_atoms
 
@@ -1291,15 +1243,9 @@ class CohesiveEnergyMP(BaseFeaturizer):
         with MPRester(self.mapi_key) as mpr:
             struct_lst = mpr.get_data(comp.reduced_formula)
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(
-                    struct_lst, key=lambda e: e["energy_per_atom"]
-                )[0]
+                most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
                 try:
-                    return [
-                        mpr.get_cohesive_energy(
-                            most_stable_entry["material_id"], per_atom=True
-                        )
-                    ]
+                    return [mpr.get_cohesive_energy(most_stable_entry["material_id"], per_atom=True)]
                 except:
                     raise ValueError(
                         "No cohesive energy can be determined for material_id: {}".format(
@@ -1404,13 +1350,9 @@ class Miedema(BaseFeaturizer):
 
         self.data_source = data_source
         if self.data_source == "Miedema":
-            self.df_dataset = pd.read_csv(
-                os.path.join(data_dir, "Miedema.csv"), index_col="element"
-            )
+            self.df_dataset = pd.read_csv(os.path.join(data_dir, "Miedema.csv"), index_col="element")
         else:
-            raise NotImplementedError(
-                "data_source {} not implemented yet".format(self, data_source)
-            )
+            raise NotImplementedError("data_source {} not implemented yet".format(self, data_source))
 
         self.element_list = [Element(estr) for estr in self.df_dataset.index]
 
@@ -1458,9 +1400,7 @@ class Miedema(BaseFeaturizer):
         else:
             gamma = 0
 
-        c_sf = (
-            fracs * np.power(v_molar, 2 / 3) / np.dot(fracs, np.power(v_molar, 2 / 3))
-        )
+        c_sf = fracs * np.power(v_molar, 2 / 3) / np.dot(fracs, np.power(v_molar, 2 / 3))
         f = (c_sf * (1 + gamma * np.power(np.multiply.reduce(c_sf, 0), 2)))[::-1]
         v_a = np.array(
             [
@@ -1514,18 +1454,14 @@ class Miedema(BaseFeaturizer):
         compr = np.array(df_el["compressibility"])
         shear_mod = np.array(df_el["shear_modulus"])
 
-        alp = np.multiply(1.5, np.power(v_molar, 2 / 3)) / reduce(
-            lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)
-        )
+        alp = np.multiply(1.5, np.power(v_molar, 2 / 3)) / reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3))
         v_a = v_molar + np.array(
             [
                 alp[0] * (elec[0] - elec[1]) / n_ws[0],
                 alp[1] * (elec[1] - elec[0]) / n_ws[1],
             ]
         )
-        alp_a = np.multiply(1.5, np.power(v_a, 2 / 3)) / reduce(
-            lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)
-        )
+        alp_a = np.multiply(1.5, np.power(v_a, 2 / 3)) / reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3))
 
         # effective volume in alloy
         vab_a = v_molar[0] + np.array(
@@ -1542,17 +1478,15 @@ class Miedema(BaseFeaturizer):
         )
 
         # H_elast A in B
-        hab_elast = (
-            2 * compr[0] * shear_mod[1] * np.power((vab_a[0] - vba_a[0]), 2)
-        ) / (4 * shear_mod[1] * vab_a[0] + 3 * compr[0] * vba_a[0])
-        # H_elast B in A
-        hba_elast = (
-            2 * compr[1] * shear_mod[0] * np.power((vba_a[1] - vab_a[1]), 2)
-        ) / (4 * shear_mod[0] * vba_a[1] + 3 * compr[1] * vab_a[1])
-
-        deltaH_elast = np.multiply.reduce(fracs, 0) * (
-            fracs[1] * hab_elast + fracs[0] * hba_elast
+        hab_elast = (2 * compr[0] * shear_mod[1] * np.power((vab_a[0] - vba_a[0]), 2)) / (
+            4 * shear_mod[1] * vab_a[0] + 3 * compr[0] * vba_a[0]
         )
+        # H_elast B in A
+        hba_elast = (2 * compr[1] * shear_mod[0] * np.power((vba_a[1] - vab_a[1]), 2)) / (
+            4 * shear_mod[0] * vba_a[1] + 3 * compr[1] * vab_a[1]
+        )
+
+        deltaH_elast = np.multiply.reduce(fracs, 0) * (fracs[1] * hab_elast + fracs[0] * hba_elast)
         return deltaH_elast
 
     def deltaH_struct(self, elements, fracs, latt):
@@ -1636,9 +1570,7 @@ class Miedema(BaseFeaturizer):
             }
         else:
             return 0
-        latt_stab_dict = collections.OrderedDict(
-            sorted(latt_stab_dict.items(), key=lambda t: t[0])
-        )
+        latt_stab_dict = collections.OrderedDict(sorted(latt_stab_dict.items(), key=lambda t: t[0]))
         # lattice stability of different lattice_types
         val_avg = np.dot(fracs, val)
         val_bd_lower, val_bd_upper = 0, 0
@@ -1649,11 +1581,9 @@ class Miedema(BaseFeaturizer):
             else:
                 val_bd_lower = key
 
-        latt_stab = (val_avg - val_bd_lower) * latt_stab_dict[val_bd_upper] / (
-            val_bd_upper - val_bd_lower
-        ) + (val_bd_upper - val_avg) * latt_stab_dict[val_bd_lower] / (
-            val_bd_upper - val_bd_lower
-        )
+        latt_stab = (val_avg - val_bd_lower) * latt_stab_dict[val_bd_upper] / (val_bd_upper - val_bd_lower) + (
+            val_bd_upper - val_avg
+        ) * latt_stab_dict[val_bd_lower] / (val_bd_upper - val_bd_lower)
 
         deltaH_struct = latt_stab - np.dot(fracs, struct_stab)
         return deltaH_struct
@@ -1703,9 +1633,7 @@ class Miedema(BaseFeaturizer):
             if struct_type == "inter":
                 deltaH_chem_inter = 0
                 for i_inter, el_bin in enumerate(el_bins):
-                    deltaH_chem_inter += self.deltaH_chem(
-                        el_bin, frac_bins[i_inter], "inter"
-                    )
+                    deltaH_chem_inter += self.deltaH_chem(el_bin, frac_bins[i_inter], "inter")
                 miedema.append(deltaH_chem_inter)
             # ss: solid solution
             elif struct_type == "ss":
@@ -1720,25 +1648,19 @@ class Miedema(BaseFeaturizer):
                         deltaH_ss_all = []
                         for latt in ["fcc", "bcc", "hcp", "no_latt"]:
                             deltaH_ss_all.append(
-                                deltaH_chem_ss
-                                + deltaH_elast_ss
-                                + self.deltaH_struct(elements, fracs, latt)
+                                deltaH_chem_ss + deltaH_elast_ss + self.deltaH_struct(elements, fracs, latt)
                             )
                         deltaH_ss_min = min(deltaH_ss_all)
                         miedema.append(deltaH_ss_min)
                     else:
                         deltaH_struct_ss = self.deltaH_struct(elements, fracs, ss_type)
-                        miedema.append(
-                            deltaH_chem_ss + deltaH_elast_ss + deltaH_struct_ss
-                        )
+                        miedema.append(deltaH_chem_ss + deltaH_elast_ss + deltaH_struct_ss)
             # amor: amorphous phase
             elif struct_type == "amor":
                 deltaH_chem_amor = 0
                 deltaH_topo_amor = self.deltaH_topo(elements, fracs)
                 for sub_bin, el_bin in enumerate(el_bins):
-                    deltaH_chem_amor += self.deltaH_chem(
-                        el_bin, frac_bins[sub_bin], "amor"
-                    )
+                    deltaH_chem_amor += self.deltaH_chem(el_bin, frac_bins[sub_bin], "amor")
                 miedema.append(deltaH_chem_amor + deltaH_topo_amor)
 
         # convert kJ/mol to eV/atom. The original Miedema model is in kJ/mol.
@@ -1830,12 +1752,7 @@ class YangSolidSolution(BaseFeaturizer):
         Returns:
             (bool): If True, s passed the precheck; otherwise, it failed.
         """
-        return all(
-            [
-                e in self.dhf_mix.valid_element_list
-                for e in c.element_composition.elements
-            ]
-        )
+        return all([e in self.dhf_mix.valid_element_list for e in c.element_composition.elements])
 
     def featurize(self, comp):
         return [self.compute_omega(comp), self.compute_delta(comp)]
@@ -1861,14 +1778,10 @@ class YangSolidSolution(BaseFeaturizer):
             return 0
 
         # Get the element names and fractions
-        elements, fractions = zip(
-            *comp.element_composition.fractional_composition.items()
-        )
+        elements, fractions = zip(*comp.element_composition.fractional_composition.items())
 
         # Get the mean melting temperature
-        mean_Tm = PropertyStats.mean(
-            self.elem_data.get_elemental_properties(elements, "MeltingT"), fractions
-        )
+        mean_Tm = PropertyStats.mean(self.elem_data.get_elemental_properties(elements, "MeltingT"), fractions)
 
         # Get the mixing entropy
         entropy = np.dot(fractions, np.log(fractions)) * 8.314 / 1000
@@ -2031,18 +1944,13 @@ class AtomicPackingEfficiency(BaseFeaturizer):
             return self.get_params() == other.get_params()
 
     def featurize(self, comp):
-        return list(
-            self.compute_simultaneous_packing_efficiency(comp)
-        ) + self.compute_nearest_cluster_distance(comp)
+        return list(self.compute_simultaneous_packing_efficiency(comp)) + self.compute_nearest_cluster_distance(comp)
 
     def feature_labels(self):
         return [
             "mean simul. packing efficiency",
             "mean abs simul. packing efficiency",
-        ] + [
-            "dist from {} clusters |APE| < {:.3f}".format(k, self.threshold)
-            for k in self.n_nearest
-        ]
+        ] + ["dist from {} clusters |APE| < {:.3f}".format(k, self.threshold) for k in self.n_nearest]
 
     def citations(self):
         return [
@@ -2082,9 +1990,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         best_ape = [self.find_ideal_cluster_size(r / mean_radius)[1] for r in radii]
 
         # Return the averages
-        return PropertyStats.mean(best_ape, fractions), PropertyStats.mean(
-            np.abs(best_ape), fractions
-        )
+        return PropertyStats.mean(best_ape, fractions), PropertyStats.mean(np.abs(best_ape), fractions)
 
     def compute_nearest_cluster_distance(self, comp):
         """Compute the distance between a composition and that the nearest
@@ -2106,9 +2012,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         """
 
         # Get the most common elements
-        elems, _ = zip(
-            *sorted(comp.element_composition.items(), key=lambda x: x[1], reverse=True)
-        )
+        elems, _ = zip(*sorted(comp.element_composition.items(), key=lambda x: x[1], reverse=True))
 
         # Get the cluster lookup tool using the most common elements
         cluster_lookup = self.create_cluster_lookup_tool(elems[: self.max_types])

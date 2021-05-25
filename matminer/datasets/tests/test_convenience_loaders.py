@@ -203,9 +203,7 @@ if do_complete_test:
             df = load_brgoch_superhard_training(subset="basic_descriptors")
             self.assertEqual(len(df), 2574)
             self.assertEqual(len(df.columns), 4)
-            df = load_brgoch_superhard_training(
-                subset="basic_descriptors", drop_suspect=True
-            )
+            df = load_brgoch_superhard_training(subset="basic_descriptors", drop_suspect=True)
             self.assertEqual(len(df), 2494)
             self.assertEqual(len(df.columns), 4)
 

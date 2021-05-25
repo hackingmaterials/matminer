@@ -56,9 +56,7 @@ class SiteDOS(BaseFeaturizer):
         if dos.structure is None:
             raise ValueError("The input dos must contain the structure.")
 
-        orbscores = get_site_dos_scores(
-            dos, idx, self.decay_length, self.sampling_resolution, self.gaussian_smear
-        )
+        orbscores = get_site_dos_scores(dos, idx, self.decay_length, self.sampling_resolution, self.gaussian_smear)
 
         features = []
         for edge in ["cbm", "vbm"]:
@@ -145,17 +143,13 @@ class DOSFeaturizer(BaseFeaturizer):
         if dos.structure is None:
             raise ValueError("The input dos must contain the structure.")
 
-        orbscores = get_cbm_vbm_scores(
-            dos, self.decay_length, self.sampling_resolution, self.gaussian_smear
-        )
+        orbscores = get_cbm_vbm_scores(dos, self.decay_length, self.sampling_resolution, self.gaussian_smear)
 
         feat = OrderedDict()
         for ex in ["cbm", "vbm"]:
             orbscores.sort(key=lambda x: x["{}_score".format(ex)], reverse=True)
             scores = np.array([s["{}_score".format(ex)] for s in orbscores])
-            feat["{}_hybridization".format(ex)] = -np.sum(
-                scores * np.log(scores + 1e-10)
-            )  # avoid log(0)
+            feat["{}_hybridization".format(ex)] = -np.sum(scores * np.log(scores + 1e-10))  # avoid log(0)
 
             i = 0
             while i < self.contributors:
@@ -166,9 +160,7 @@ class DOSFeaturizer(BaseFeaturizer):
                     feat["{}_location_{}".format(ex, i + 1)] = "{};{};{}".format(
                         sd["location"][0], sd["location"][1], sd["location"][2]
                     )
-                    feat["{}_score_{}".format(ex, i + 1)] = float(
-                        sd["{}_score".format(ex)]
-                    )
+                    feat["{}_score_{}".format(ex, i + 1)] = float(sd["{}_score".format(ex)])
                 else:
                     for p in ["character", "specie", "location", "score"]:
                         feat["{}_{}_{}".format(ex, p, i + 1)] = float("NaN")
@@ -358,9 +350,7 @@ class Hybridization(BaseFeaturizer):
         if dos.structure is None:
             raise ValueError("The input dos must contain the structure.")
 
-        orbscores = get_cbm_vbm_scores(
-            dos, decay_length, self.sampling_resolution, self.gaussian_smear
-        )
+        orbscores = get_cbm_vbm_scores(dos, decay_length, self.sampling_resolution, self.gaussian_smear)
         feat = OrderedDict()
         for ex in ["cbm", "vbm"]:
             for orbital in ["s", "p", "d", "f"]:
@@ -455,9 +445,7 @@ class DosAsymmetry(BaseFeaturizer):
         # smears dos for spin up and down
         smear_dos = dos.get_smeared_densities(self.gaussian_smear)
         dos_up = smear_dos[Spin.up]
-        dos_down = (
-            smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
-        )
+        dos_down = smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
         dos_total = [sum(id) for id in zip(dos_up, dos_down)]
 
         # determines energy range to sample
@@ -476,14 +464,10 @@ class DosAsymmetry(BaseFeaturizer):
         # accumulates dos score over energy ranges
         vbm_score = 0
         for e in vbm_space:
-            vbm_score += np.interp(e, energies, dos_total) * np.exp(
-                -(dos.efermi - e) * self.decay_length
-            )
+            vbm_score += np.interp(e, energies, dos_total) * np.exp(-(dos.efermi - e) * self.decay_length)
         cbm_score = 0
         for e in cbm_space:
-            cbm_score += np.interp(e, energies, dos_total) * np.exp(
-                -(e - dos.efermi) * self.decay_length
-            )
+            cbm_score += np.interp(e, energies, dos_total) * np.exp(-(e - dos.efermi) * self.decay_length)
 
         return np.log(cbm_score / vbm_score)
 
@@ -542,26 +526,16 @@ def get_cbm_vbm_scores(dos, decay_length, sampling_resolution, gaussian_smear):
             energies = [e for e in proj[orb].energies]
             smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
             dos_up = smear_dos[Spin.up]
-            dos_down = (
-                smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
-            )
+            dos_down = smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
             dos_total = [sum(id) for id in zip(dos_up, dos_down)]
             vbm_score = 0
-            vbm_space = np.linspace(
-                vbm, vbm - (5.0 * decay_length), num=sampling_resolution
-            )
+            vbm_space = np.linspace(vbm, vbm - (5.0 * decay_length), num=sampling_resolution)
             for e in vbm_space:
-                vbm_score += np.interp(e, energies, dos_total) * np.exp(
-                    -(vbm - e) * decay_length
-                )
+                vbm_score += np.interp(e, energies, dos_total) * np.exp(-(vbm - e) * decay_length)
             cbm_score = 0
-            cbm_space = np.linspace(
-                cbm, cbm + (5.0 * decay_length), num=sampling_resolution
-            )
+            cbm_space = np.linspace(cbm, cbm + (5.0 * decay_length), num=sampling_resolution)
             for e in cbm_space:
-                cbm_score += np.interp(e, energies, dos_total) * np.exp(
-                    -(e - cbm) * decay_length
-                )
+                cbm_score += np.interp(e, energies, dos_total) * np.exp(-(e - cbm) * decay_length)
 
             # add orbital scores to list
             orbital_score = {
@@ -574,12 +548,8 @@ def get_cbm_vbm_scores(dos, decay_length, sampling_resolution, gaussian_smear):
             orbital_scores.append(orbital_score)
 
     # normalize by total contribution
-    total_cbm = sum(
-        [orbital_scores[i]["cbm_score"] for i in range(0, len(orbital_scores))]
-    )
-    total_vbm = sum(
-        [orbital_scores[i]["vbm_score"] for i in range(0, len(orbital_scores))]
-    )
+    total_cbm = sum([orbital_scores[i]["cbm_score"] for i in range(0, len(orbital_scores))])
+    total_vbm = sum([orbital_scores[i]["vbm_score"] for i in range(0, len(orbital_scores))])
     for orbital in orbital_scores:
         orbital["cbm_score"] /= total_cbm
         orbital["vbm_score"] /= total_vbm
@@ -629,31 +599,21 @@ def get_site_dos_scores(dos, idx, decay_length, sampling_resolution, gaussian_sm
         # smear dos for spin up and down
         smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
         dos_up = smear_dos[Spin.up]
-        dos_down = (
-            smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
-        )
+        dos_down = smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
         dos_total = [sum(id) for id in zip(dos_up, dos_down)]
 
         # determine energy range to sample
         energies = [e for e in proj[orb].energies]
-        vbm_space = np.linspace(
-            vbm, vbm - (5.0 * decay_length), num=sampling_resolution
-        )
-        cbm_space = np.linspace(
-            cbm, cbm + (5.0 * decay_length), num=sampling_resolution
-        )
+        vbm_space = np.linspace(vbm, vbm - (5.0 * decay_length), num=sampling_resolution)
+        cbm_space = np.linspace(cbm, cbm + (5.0 * decay_length), num=sampling_resolution)
 
         # accumulate dos score over energy range
         vbm_score = 0
         for e in vbm_space:
-            vbm_score += np.interp(e, energies, dos_total) * np.exp(
-                -(vbm - e) * decay_length
-            )
+            vbm_score += np.interp(e, energies, dos_total) * np.exp(-(vbm - e) * decay_length)
         cbm_score = 0
         for e in cbm_space:
-            cbm_score += np.interp(e, energies, dos_total) * np.exp(
-                -(e - cbm) * decay_length
-            )
+            cbm_score += np.interp(e, energies, dos_total) * np.exp(-(e - cbm) * decay_length)
         orbital_scores[str(orb)] = {"cbm": cbm_score, "vbm": vbm_score}
 
     # ensure that f-orbitals are represented as zero contribution if none

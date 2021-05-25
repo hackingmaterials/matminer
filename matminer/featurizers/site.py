@@ -71,9 +71,7 @@ except ImportError:
 
 cn_motif_op_params = {}
 with open(
-    os.path.join(
-        os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"
-    ),
+    os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"),
     "r",
 ) as f:
     cn_motif_op_params = yaml.safe_load(f)
@@ -127,10 +125,7 @@ class AGNIFingerprints(BaseFeaturizer):
 
         # If one of the features is direction-dependent, compute the :math:`(r_i - r_j) / r_{ij}`
         if any([x in self.directions for x in ["x", "y", "z"]]):
-            disps = (
-                np.array([my_site.coords - s.coords for s in sites])
-                / dists[:, np.newaxis]
-            )
+            disps = np.array([my_site.coords - s.coords for s in sites]) / dists[:, np.newaxis]
 
         # Compute the cutoff function
         cutoff_func = 0.5 * (np.cos(np.pi * dists / self.cutoff) + 1)
@@ -138,9 +133,7 @@ class AGNIFingerprints(BaseFeaturizer):
         # Compute "e^(r/eta) * cutoff_func" for each eta
         windowed = np.zeros((len(dists), len(self.etas)))
         for i, eta in enumerate(self.etas):
-            windowed[:, i] = np.multiply(
-                np.exp(-1 * np.power(np.true_divide(dists, eta), 2)), cutoff_func
-            )
+            windowed[:, i] = np.multiply(np.exp(-1 * np.power(np.true_divide(dists, eta), 2)), cutoff_func)
 
         # Compute the fingerprints
         output = []
@@ -156,9 +149,7 @@ class AGNIFingerprints(BaseFeaturizer):
                     proj = [0.0, 0.0, 1.0]
                 else:
                     raise Exception("Unrecognized direction")
-                output.append(
-                    np.sum(windowed * np.dot(disps, proj)[:, np.newaxis], axis=0)
-                )
+                output.append(np.sum(windowed * np.dot(disps, proj)[:, np.newaxis], axis=0))
 
         # Return the results
         return np.hstack(output)
@@ -235,9 +226,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         zero_ops=True,
     ):
         self.cn_target_motif_op = (
-            copy.deepcopy(cn_target_motif_op)
-            if target_motifs is None
-            else copy.deepcopy(target_motifs)
+            copy.deepcopy(cn_target_motif_op) if target_motifs is None else copy.deepcopy(target_motifs)
         )
         self.dr = dr
         self.ddr = ddr
@@ -379,9 +368,7 @@ class OPSiteFingerprint(BaseFeaturizer):
             # print(maxval)
             nbins = int((maxval - minval) * idop)
             # print('{} {} {}'.format(minval, maxval, nbins))
-            hist, bin_edges = np.histogram(
-                op_tmp, bins=nbins, range=(minval, maxval), weights=None, density=False
-            )
+            hist, bin_edges = np.histogram(op_tmp, bins=nbins, range=(minval, maxval), weights=None, density=False)
             max_hist = max(hist)
             op_peaks = []
             for i, h in enumerate(hist):
@@ -462,9 +449,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
             return CrystalNNFingerprint(op_types, chem_info=None, **kwargs)
 
         else:
-            raise RuntimeError(
-                'preset "{}" is not supported in ' "CrystalNNFingerprint".format(preset)
-            )
+            raise RuntimeError('preset "{}" is not supported in ' "CrystalNNFingerprint".format(preset))
 
     def __init__(self, op_types, chem_info=None, **kwargs):
         """
@@ -556,9 +541,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
                                         self.chem_info[prop].get(elem_neigh),
                                     )
 
-                                    prop_delta[prop] += (
-                                        wt * (prop_neigh - prop_central) / cn
-                                    )
+                                    prop_delta[prop] += wt * (prop_neigh - prop_central) / cn
 
                     elif wt == 0:
                         cn_fingerprint.append(wt)
@@ -661,21 +644,9 @@ class VoronoiFingerprint(BaseFeaturizer):
         self.cutoff = cutoff
         self.use_symm_weights = use_symm_weights
         self.symm_weights = symm_weights
-        self.stats_vol = (
-            ["mean", "std_dev", "minimum", "maximum"]
-            if stats_vol is None
-            else copy.deepcopy(stats_vol)
-        )
-        self.stats_area = (
-            ["mean", "std_dev", "minimum", "maximum"]
-            if stats_area is None
-            else copy.deepcopy(stats_area)
-        )
-        self.stats_dist = (
-            ["mean", "std_dev", "minimum", "maximum"]
-            if stats_dist is None
-            else copy.deepcopy(stats_dist)
-        )
+        self.stats_vol = ["mean", "std_dev", "minimum", "maximum"] if stats_vol is None else copy.deepcopy(stats_vol)
+        self.stats_area = ["mean", "std_dev", "minimum", "maximum"] if stats_area is None else copy.deepcopy(stats_area)
+        self.stats_dist = ["mean", "std_dev", "minimum", "maximum"] if stats_dist is None else copy.deepcopy(stats_dist)
 
     def featurize(self, struct, idx):
         """
@@ -713,32 +684,20 @@ class VoronoiFingerprint(BaseFeaturizer):
                 area_list.append(nn["poly_info"]["area"])
                 dist_list.append(nn["poly_info"]["face_dist"] * 2)
                 if self.use_symm_weights:
-                    voro_idx_weights[nn["poly_info"]["n_verts"] - 3] += nn["poly_info"][
-                        self.symm_weights
-                    ]
+                    voro_idx_weights[nn["poly_info"]["n_verts"] - 3] += nn["poly_info"][self.symm_weights]
 
         symm_idx_list = voro_idx_list / sum(voro_idx_list)
         if self.use_symm_weights:
             symm_wt_list = voro_idx_weights / sum(voro_idx_weights)
-            voro_fps = list(
-                np.concatenate((voro_idx_list, symm_idx_list, symm_wt_list), axis=0)
-            )
+            voro_fps = list(np.concatenate((voro_idx_list, symm_idx_list, symm_wt_list), axis=0))
         else:
             voro_fps = list(np.concatenate((voro_idx_list, symm_idx_list), axis=0))
 
         voro_fps.append(sum(vol_list))
         voro_fps.append(sum(area_list))
-        voro_fps += [
-            PropertyStats().calc_stat(vol_list, stat_vol) for stat_vol in self.stats_vol
-        ]
-        voro_fps += [
-            PropertyStats().calc_stat(area_list, stat_area)
-            for stat_area in self.stats_area
-        ]
-        voro_fps += [
-            PropertyStats().calc_stat(dist_list, stat_dist)
-            for stat_dist in self.stats_dist
-        ]
+        voro_fps += [PropertyStats().calc_stat(vol_list, stat_vol) for stat_vol in self.stats_vol]
+        voro_fps += [PropertyStats().calc_stat(area_list, stat_area) for stat_area in self.stats_area]
+        voro_fps += [PropertyStats().calc_stat(dist_list, stat_dist) for stat_dist in self.stats_dist]
         return voro_fps
 
     def feature_labels(self):
@@ -825,22 +784,14 @@ class IntersticeDistribution(BaseFeaturizer):
         radius_type (str): source of radius estimate. (default: "MiracleRadius")
     """
 
-    def __init__(
-        self, cutoff=6.5, interstice_types=None, stats=None, radius_type="MiracleRadius"
-    ):
+    def __init__(self, cutoff=6.5, interstice_types=None, stats=None, radius_type="MiracleRadius"):
         self.cutoff = cutoff
-        self.interstice_types = (
-            ["dist", "area", "vol"] if interstice_types is None else interstice_types
-        )
+        self.interstice_types = ["dist", "area", "vol"] if interstice_types is None else interstice_types
         if isinstance(self.interstice_types, str):
             self.interstice_types = [self.interstice_types]
         if all(t not in self.interstice_types for t in ["dist", "area", "vol"]):
-            raise ValueError(
-                "interstice_types only support sub-list of " "['dist', 'area', 'vol']"
-            )
-        self.stats = (
-            ["mean", "std_dev", "minimum", "maximum"] if stats is None else stats
-        )
+            raise ValueError("interstice_types only support sub-list of " "['dist', 'area', 'vol']")
+        self.stats = ["mean", "std_dev", "minimum", "maximum"] if stats is None else stats
         self.radius_type = radius_type
 
     def featurize(self, struct, idx):
@@ -861,48 +812,29 @@ class IntersticeDistribution(BaseFeaturizer):
         nn_coords = np.array([nn["site"].coords for nn in n_w])
 
         # Get center atom's radius and its nearest neighbors' radii
-        center_r = (
-            MagpieData().get_elemental_properties(
-                [struct[idx].specie], self.radius_type
-            )[0]
-            / 100
-        )
+        center_r = MagpieData().get_elemental_properties([struct[idx].specie], self.radius_type)[0] / 100
         nn_els = [nn["site"].specie for nn in n_w]
-        nn_rs = (
-            np.array(MagpieData().get_elemental_properties(nn_els, self.radius_type))
-            / 100
-        )
+        nn_rs = np.array(MagpieData().get_elemental_properties(nn_els, self.radius_type)) / 100
 
         # Get indices of atoms forming the simplices of convex hull
         convex_hull_simplices = ConvexHull(nn_coords).simplices
 
         if "dist" in self.interstice_types:
             nn_dists = [nn["face_dist"] * 2 for nn in n_w]
-            interstice_dist_list = IntersticeDistribution.analyze_dist_interstices(
-                center_r, nn_rs, nn_dists
-            )
-            interstice_fps += [
-                PropertyStats().calc_stat(interstice_dist_list, stat)
-                for stat in self.stats
-            ]
+            interstice_dist_list = IntersticeDistribution.analyze_dist_interstices(center_r, nn_rs, nn_dists)
+            interstice_fps += [PropertyStats().calc_stat(interstice_dist_list, stat) for stat in self.stats]
 
         if "area" in self.interstice_types:
             interstice_area_list = IntersticeDistribution.analyze_area_interstice(
                 nn_coords, nn_rs, convex_hull_simplices
             )
-            interstice_fps += [
-                PropertyStats().calc_stat(interstice_area_list, stat)
-                for stat in self.stats
-            ]
+            interstice_fps += [PropertyStats().calc_stat(interstice_area_list, stat) for stat in self.stats]
 
         if "vol" in self.interstice_types:
             interstice_vol_list = IntersticeDistribution.analyze_vol_interstice(
                 struct[idx].coords, nn_coords, center_r, nn_rs, convex_hull_simplices
             )
-            interstice_fps += [
-                PropertyStats().calc_stat(interstice_vol_list, stat)
-                for stat in self.stats
-            ]
+            interstice_fps += [PropertyStats().calc_stat(interstice_vol_list, stat) for stat in self.stats]
         return interstice_fps
 
     @staticmethod
@@ -961,9 +893,7 @@ class IntersticeDistribution(BaseFeaturizer):
         return area_interstice_list
 
     @staticmethod
-    def analyze_vol_interstice(
-        center_coords, nn_coords, center_r, nn_rs, convex_hull_simplices
-    ):
+    def analyze_vol_interstice(center_coords, nn_coords, center_r, nn_rs, convex_hull_simplices):
         """Analyze the volume interstices in the tetrahedra formed by center
         atom and neighbor convex hull triplets.
         Args:
@@ -1008,28 +938,14 @@ class IntersticeDistribution(BaseFeaturizer):
             volume = vol_tetra(center_coords, *facet_coords)
 
             volume_interstice = 1 - packed_volume / volume
-            volume_interstice_list.append(
-                volume_interstice if volume_interstice > 0 else 0
-            )
+            volume_interstice_list.append(volume_interstice if volume_interstice > 0 else 0)
         return volume_interstice_list
 
     def feature_labels(self):
         labels = list()
-        labels += (
-            ["Interstice_dist_%s" % stat for stat in self.stats]
-            if "dist" in self.interstice_types
-            else []
-        )
-        labels += (
-            ["Interstice_area_%s" % stat for stat in self.stats]
-            if "area" in self.interstice_types
-            else []
-        )
-        labels += (
-            ["Interstice_vol_%s" % stat for stat in self.stats]
-            if "vol" in self.interstice_types
-            else []
-        )
+        labels += ["Interstice_dist_%s" % stat for stat in self.stats] if "dist" in self.interstice_types else []
+        labels += ["Interstice_area_%s" % stat for stat in self.stats] if "area" in self.interstice_types else []
+        labels += ["Interstice_vol_%s" % stat for stat in self.stats] if "vol" in self.interstice_types else []
         return labels
 
     def citations(self):
@@ -1135,10 +1051,7 @@ class ChemicalSRO(BaseFeaturizer):
         """
         structs = np.atleast_2d(X)[:, 0]
         if not all([isinstance(struct, Structure) for struct in structs]):
-            raise TypeError(
-                "This fit requires an array-like input of Pymatgen "
-                "Structures and sites!"
-            )
+            raise TypeError("This fit requires an array-like input of Pymatgen " "Structures and sites!")
 
         self.el_amt_dict_ = {}
         el_set_ = set()
@@ -1154,11 +1067,7 @@ class ChemicalSRO(BaseFeaturizer):
                 if els_:
                     self.el_amt_dict_[str(s)] = el_amt_
                 el_set_ = el_set_ | els_
-        self.el_list_ = (
-            sorted(list(el_set_), key=lambda el: Element(el).mendeleev_no)
-            if self.sort
-            else list(el_set_)
-        )
+        self.el_list_ = sorted(list(el_set_), key=lambda el: Element(el).mendeleev_no) if self.sort else list(el_set_)
         return self
 
     def featurize(self, struct, idx):
@@ -1189,9 +1098,7 @@ class ChemicalSRO(BaseFeaturizer):
     def feature_labels(self):
         check_is_fitted(self, ["el_amt_dict_", "el_list_"])
 
-        return [
-            "CSRO_{}_{}".format(el, self.nn.__class__.__name__) for el in self.el_list_
-        ]
+        return ["CSRO_{}_{}".format(el, self.nn.__class__.__name__) for el in self.el_list_]
 
     def citations(self):
         citations = []
@@ -1285,9 +1192,7 @@ class GaussianSymmFunc(BaseFeaturizer):
         cutoff (float): cutoff distance. (default: 6.5)
     """
 
-    def __init__(
-        self, etas_g2=None, etas_g4=None, zetas_g4=None, gammas_g4=None, cutoff=6.5
-    ):
+    def __init__(self, etas_g2=None, etas_g4=None, zetas_g4=None, gammas_g4=None, cutoff=6.5):
         self.etas_g2 = etas_g2 if etas_g2 else [0.05, 4.0, 20.0, 80.0]
         self.etas_g4 = etas_g4 if etas_g4 else [0.005]
         self.zetas_g4 = zetas_g4 if zetas_g4 else [1.0, 4.0]
@@ -1321,9 +1226,7 @@ class GaussianSymmFunc(BaseFeaturizer):
         Returns:
             (float) Gaussian radial symmetry function.
         """
-        ridge = np.exp(
-            -eta * (rs ** 2.0) / (cutoff ** 2.0)
-        ) * GaussianSymmFunc.cosine_cutoff(rs, cutoff)
+        ridge = np.exp(-eta * (rs ** 2.0) / (cutoff ** 2.0)) * GaussianSymmFunc.cosine_cutoff(rs, cutoff)
         return ridge.sum()
 
     @staticmethod
@@ -1367,14 +1270,7 @@ class GaussianSymmFunc(BaseFeaturizer):
             ind = 0
             for eta in etas:
                 # Compute the eta term
-                eta_term = (
-                    np.exp(
-                        -eta
-                        * (r_ij ** 2.0 + r_ik ** 2.0 + r_jk ** 2.0)
-                        / (cutoff ** 2.0)
-                    )
-                    * cutoff_fun
-                )
+                eta_term = np.exp(-eta * (r_ij ** 2.0 + r_ik ** 2.0 + r_jk ** 2.0) / (cutoff ** 2.0)) * cutoff_fun
                 for zeta in zetas:
                     for gamma in gammas:
                         term = (1.0 + gamma * cos_theta) ** zeta * eta_term
@@ -1398,9 +1294,7 @@ class GaussianSymmFunc(BaseFeaturizer):
         neighbors = struct.get_neighbors(struct[idx], self.cutoff)
 
         # Get coordinates of the neighbors, relative to the central atom
-        neigh_coords = np.subtract(
-            [neigh[0].coords for neigh in neighbors], struct[idx].coords
-        )
+        neigh_coords = np.subtract([neigh[0].coords for neigh in neighbors], struct[idx].coords)
 
         # Get the distances for later use
         neigh_dists = np.array([neigh[1] for neigh in neighbors])
@@ -1660,9 +1554,7 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
         """
         cevals = []
         self.lgf.setup_structure(structure=struct)
-        se = self.lgf.compute_structure_environments(
-            only_indices=[idx], maximum_distance_factor=self.max_dist_fac
-        )
+        se = self.lgf.compute_structure_environments(only_indices=[idx], maximum_distance_factor=self.max_dist_fac)
         for ce in self.cetypes:
             try:
                 tmp = se.get_csms(idx, ce)
@@ -1758,9 +1650,7 @@ class CoordinationNumber(BaseFeaturizer):
             weights = [n["weight"] for n in nns]
             return [np.sum(weights) ** 2 / np.sum(np.power(weights, 2))]
         else:
-            raise ValueError(
-                "Weighting method not recognized: " + str(self.use_weights)
-            )
+            raise ValueError("Weighting method not recognized: " + str(self.use_weights))
 
     def feature_labels(self):
         # TODO: Should names contain weighting scheme? -lw
@@ -1871,10 +1761,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         self.cutoff = cutoff
 
         if mode not in ["GRDF", "pairwise_GRDF"]:
-            raise AttributeError(
-                "{} is not a valid GRDF mode. try "
-                '"GRDF" or "pairwise_GRDF"'.format(mode)
-            )
+            raise AttributeError("{} is not a valid GRDF mode. try " '"GRDF" or "pairwise_GRDF"'.format(mode))
         else:
             self.mode = mode
 
@@ -1893,11 +1780,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         """
 
         max_sites = max([len(X[i][0]._sites) for i in range(len(X))])
-        self.fit_labels = [
-            "site2 {} {}".format(i, bin.name())
-            for bin in self.bins
-            for i in range(max_sites)
-        ]
+        self.fit_labels = ["site2 {} {}".format(i, bin.name()) for bin in self.bins for i in range(max_sites)]
         return self
 
     def featurize(self, struct, idx):
@@ -1922,9 +1805,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         # Indexing is [site#][neighbor#][pymatgen Site, distance, site index]
         sites = struct._sites
         central_site = sites[idx]
-        neighbors_lst = struct.get_neighbors(
-            central_site, self.cutoff, include_index=True
-        )
+        neighbors_lst = struct.get_neighbors(central_site, self.cutoff, include_index=True)
         sites = range(0, len(sites))
 
         # Generate lists of pairwise distances according to run mode
@@ -1934,8 +1815,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         else:
             # Make pairwise distance collections for pairwise GRDF
             distance_collection = [
-                [neighbor[1] for neighbor in neighbors_lst if neighbor[2] == site_idx]
-                for site_idx in sites
+                [neighbor[1] for neighbor in neighbors_lst if neighbor[2] == site_idx] for site_idx in sites
             ]
 
         # compute bin counts for each list of pairwise distances
@@ -1960,10 +1840,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
             if self.fit_labels:
                 return self.fit_labels
             else:
-                raise AttributeError(
-                    "the fit method must be called first, to "
-                    "determine the correct feature labels."
-                )
+                raise AttributeError("the fit method must be called first, to " "determine the correct feature labels.")
 
     @staticmethod
     def from_preset(preset, width=1.0, spacing=1.0, cutoff=10, mode="GRDF"):
@@ -2063,10 +1940,7 @@ class AngularFourierSeries(BaseFeaturizer):
         sites = struct._sites
         central_site = sites[idx]
         neighbors_lst = struct.get_neighbors(central_site, self.cutoff)
-        neighbor_collection = [
-            (neighbor[0].coords - central_site.coords, neighbor[1])
-            for neighbor in neighbors_lst
-        ]
+        neighbor_collection = [(neighbor[0].coords - central_site.coords, neighbor[1]) for neighbor in neighbors_lst]
 
         # Generate exhaustive permutations of neighbor pairs around each
         # central site (order matters). Does not allow repeat elements (i.e.
@@ -2082,9 +1956,7 @@ class AngularFourierSeries(BaseFeaturizer):
         neighbor_pairs = np.concatenate(
             [
                 np.clip(
-                    np.einsum("ij,ij->i", v1, v2)
-                    / np.linalg.norm(v1, axis=1)
-                    / np.linalg.norm(v2, axis=1),
+                    np.einsum("ij,ij->i", v1, v2) / np.linalg.norm(v1, axis=1) / np.linalg.norm(v2, axis=1),
                     -1.0,
                     1.0,
                 ).reshape(-1, 1),
@@ -2103,18 +1975,13 @@ class AngularFourierSeries(BaseFeaturizer):
             neighbor_pairs[:, 1].astype(float),
             neighbor_pairs[:, 2].astype(float),
         )
-        features = [
-            sum(combo[0](dist1) * combo[1](dist2) * cos_angles) for combo in bin_combos
-        ]
+        features = [sum(combo[0](dist1) * combo[1](dist2) * cos_angles) for combo in bin_combos]
 
         return features
 
     def feature_labels(self):
         bin_combos = list(itertools.product(self.bins, repeat=2))
-        return [
-            "AFS ({}, {})".format(combo[0].name(), combo[1].name())
-            for combo in bin_combos
-        ]
+        return ["AFS ({}, {})".format(combo[0].name(), combo[1].name()) for combo in bin_combos]
 
     @staticmethod
     def from_preset(preset, width=0.5, spacing=0.5, cutoff=10):
@@ -2265,14 +2132,9 @@ class LocalPropertyDifference(BaseFeaturizer):
             my_prop = self.data_source.get_elemental_property(my_site.specie, p)
             n_props = self.data_source.get_elemental_properties(elems, p)
             if self.signed == False:
-                output[i] = (
-                    np.dot(weights, np.abs(np.subtract(n_props, my_prop)))
-                    / total_weight
-                )
+                output[i] = np.dot(weights, np.abs(np.subtract(n_props, my_prop))) / total_weight
             else:
-                output[i] = (
-                    np.dot(weights, np.subtract(n_props, my_prop)) / total_weight
-                )
+                output[i] = np.dot(weights, np.subtract(n_props, my_prop)) / total_weight
 
         return output
 
@@ -2371,17 +2233,10 @@ class BondOrientationalParameter(BaseFeaturizer):
         Ws = []
         for l in range(1, self.max_l + 1):
             # Average the spherical harmonic over each neighbor, weighted by solid angle
-            qlm = dict(
-                (m, np.dot(weights, sph_harm(m, l, theta, phi)))
-                for m in range(-l, l + 1)
-            )
+            qlm = dict((m, np.dot(weights, sph_harm(m, l, theta, phi))) for m in range(-l, l + 1))
 
             # Compute the average over all m's
-            Qs.append(
-                np.sqrt(
-                    np.pi * 4 / (2 * l + 1) * np.sum(np.abs(list(qlm.values())) ** 2)
-                )
-            )
+            Qs.append(np.sqrt(np.pi * 4 / (2 * l + 1) * np.sum(np.abs(list(qlm.values())) ** 2)))
 
             # Compute the W, if desired
             if self.compute_W or self.compute_What:
@@ -2394,9 +2249,7 @@ class BondOrientationalParameter(BaseFeaturizer):
         # Compute Whats, if desired
         if self.compute_What:
             Whats = [
-                w / (q / np.sqrt(np.pi * 4 / (2 * l + 1))) ** 3
-                if abs(q) > 1.0e-6
-                else 0.0
+                w / (q / np.sqrt(np.pi * 4 / (2 * l + 1))) ** 3 if abs(q) > 1.0e-6 else 0.0
                 for l, q, w in zip(range(1, self.max_l + 1), Qs, Ws)
             ]
 
@@ -2467,9 +2320,7 @@ class SiteElementalProperty(BaseFeaturizer):
 
         # Get the properties
         elem = site.specie if isinstance(site.specie, Element) else site.specie.element
-        props = [
-            self.data_source.get_elemental_property(elem, p) for p in self.properties
-        ]
+        props = [self.data_source.get_elemental_property(elem, p) for p in self.properties]
 
         return props
 
@@ -2548,10 +2399,7 @@ def get_wigner_coeffs(l):
             - (float) Wigner coefficient
     """
 
-    return [
-        ((m1, m2, m3), float(wigner_3j(l, l, l, m1, m2, m3)))
-        for m1, m2, m3 in _iterate_wigner_3j(l)
-    ]
+    return [((m1, m2, m3), float(wigner_3j(l, l, l, m1, m2, m3))) for m1, m2, m3 in _iterate_wigner_3j(l)]
 
 
 def _iterate_wigner_3j(l):
@@ -2609,9 +2457,7 @@ class AverageBondLength(BaseFeaturizer):
         weights = [info["weight"] for info in nns]
         center_coord = strc[idx].coords
 
-        dists = np.linalg.norm(
-            np.subtract([site["site"].coords for site in nns], center_coord), axis=1
-        )
+        dists = np.linalg.norm(np.subtract([site["site"].coords for site in nns], center_coord), axis=1)
 
         return [PropertyStats.mean(dists, weights)]
 
@@ -2812,10 +2658,7 @@ class SOAP(BaseFeaturizer):
         """
         # Check that pymatgen.Structures are provided
         if not all([isinstance(struct, Structure) for struct in X]):
-            raise TypeError(
-                "This fit requires an array-like input of Pymatgen "
-                "Structures and sites!"
-            )
+            raise TypeError("This fit requires an array-like input of Pymatgen " "Structures and sites!")
 
         elements = set()
         for s in X:
@@ -2856,11 +2699,7 @@ class SOAP(BaseFeaturizer):
                     for ni in range(self.nmax):
                         for nj in range(self.nmax):
                             if nj >= ni and zj >= zi:
-                                labels.append(
-                                    "Z={},Z'={},l={},n={},n'={}".format(
-                                        zi, zj, l, ni, nj
-                                    )
-                                )
+                                labels.append("Z={},Z'={},l={},n={},n'={}".format(zi, zj, l, ni, nj))
 
         return labels
 

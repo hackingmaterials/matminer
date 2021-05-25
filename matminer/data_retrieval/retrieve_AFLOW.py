@@ -95,9 +95,7 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
 
         # collects the relaxed structures if requested
         if "structure" in files:
-            df["structure"] = [
-                self.get_relaxed_structure(url) for url in df["aurl"].values
-            ]
+            df["structure"] = [self.get_relaxed_structure(url) for url in df["aurl"].values]
 
         # sets the auid as the index if desired
         if index_auid:

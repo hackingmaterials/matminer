@@ -85,11 +85,7 @@ class DensityFeatures(BaseFeaturizer):
             desired_features: [str] - choose from "density", "vpa",
                 "packing fraction"
         """
-        self.features = (
-            ["density", "vpa", "packing fraction"]
-            if not desired_features
-            else desired_features
-        )
+        self.features = ["density", "vpa", "packing fraction"] if not desired_features else desired_features
 
     def precheck(self, s: Structure) -> bool:
         """
@@ -273,9 +269,7 @@ class RadialDistributionFunction(BaseFeaturizer):
 
         # Get the distances between all atoms
         neighbors_lst = s.get_all_neighbors(self.cutoff)
-        all_distances = np.concatenate(
-            tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst))
-        )
+        all_distances = np.concatenate(tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
 
         # Compute a histogram
         dist_hist, dist_bins = np.histogram(
@@ -285,12 +279,7 @@ class RadialDistributionFunction(BaseFeaturizer):
         )
 
         # Normalize counts
-        shell_vol = (
-            4.0
-            / 3.0
-            * math.pi
-            * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
-        )
+        shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         number_density = s.num_sites / s.volume
         rdf = dist_hist / shell_vol / number_density
         return [{"distances": dist_bins[:-1], "distribution": rdf}]
@@ -332,9 +321,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         self.cutoff = cutoff
         self.bin_size = bin_size
         self.elements_ = None
-        self.include_elems = list(
-            include_elems
-        )  # Makes sure the element lists are ordered
+        self.include_elems = list(include_elems)  # Makes sure the element lists are ordered
         self.exclude_elems = list(exclude_elems)
 
     def fit(self, X, y=None):
@@ -356,12 +343,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         # Get all of elements that appaer
         for strc in X:
-            elements.update(
-                [
-                    e.element if isinstance(e, Specie) else e
-                    for e in strc.composition.keys()
-                ]
-            )
+            elements.update([e.element if isinstance(e, Specie) else e for e in strc.composition.keys()])
 
         # Remove the elements excluded by the user
         elements.difference_update([Element(e) for e in self.exclude_elems])
@@ -423,15 +405,9 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             distances_by_type[p] = []
 
         def get_symbol(site):
-            return (
-                site.specie.symbol
-                if isinstance(site.specie, Element)
-                else site.specie.element.symbol
-            )
+            return site.specie.symbol if isinstance(site.specie, Element) else site.specie.element.symbol
 
-        for site, nlst in zip(
-            s.sites, neighbors_lst
-        ):  # Each list is a list for each site
+        for site, nlst in zip(s.sites, neighbors_lst):  # Each list is a list for each site
             my_elem = get_symbol(site)
 
             for neighbor in nlst:
@@ -443,17 +419,10 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         # Compute and normalize the prdfs
         prdf = {}
         dist_bins = self._make_bins()
-        shell_volume = (
-            4.0
-            / 3.0
-            * math.pi
-            * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
-        )
+        shell_volume = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
-            dist_hist, dist_bins = np.histogram(
-                distances, bins=dist_bins, density=False
-            )
+            dist_hist, dist_bins = np.histogram(distances, bins=dist_bins, density=False)
             # Normalize
             n_alpha = composition[key[0]] * s.num_sites
             rdf = dist_hist / shell_volume / n_alpha
@@ -477,9 +446,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         labels = []
         for e1, e2 in itertools.combinations_with_replacement(self.elements_, 2):
             for r_start, r_end in zip(bin_edges, bin_edges[1:]):
-                labels.append(
-                    "{}-{} PRDF r={:.2f}-{:.2f}".format(e1, e2, r_start, r_end)
-                )
+                labels.append("{}-{} PRDF r={:.2f}-{:.2f}".format(e1, e2, r_start, r_end))
         return labels
 
     def citations(self):
@@ -573,9 +540,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             for nnsite, dist, *_ in neighbors:
                 neigh_charge = float(nnsite.specie.oxi_state)
                 bin_index = int(dist / self.dr)
-                redf_dict["distribution"][bin_index] += (this_charge * neigh_charge) / (
-                    struct.num_sites * dist
-                )
+                redf_dict["distribution"][bin_index] += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
         return [redf_dict]
 
@@ -626,10 +591,7 @@ class CoulombMatrix(BaseFeaturizer):
 
     def _check_fitted(self):
         if self.flatten and not self._max_eigs:
-            raise NotFittedError(
-                "Please fit the CoulombMatrix before "
-                "featurizing if using flatten=True."
-            )
+            raise NotFittedError("Please fit the CoulombMatrix before " "featurizing if using flatten=True.")
 
     def fit(self, X, y=None):
         """
@@ -739,10 +701,7 @@ class SineCoulombMatrix(BaseFeaturizer):
 
     def _check_fitted(self):
         if self.flatten and not self._max_eigs:
-            raise NotFittedError(
-                "Please fit the SineCoulombMatrix before "
-                "featurizing if using flatten=True."
-            )
+            raise NotFittedError("Please fit the SineCoulombMatrix before " "featurizing if using flatten=True.")
 
     def fit(self, X, y=None):
         """
@@ -783,10 +742,7 @@ class SineCoulombMatrix(BaseFeaturizer):
                 elif i < j:
                     vec = coords[i] - coords[j]
                     coord_vec = np.sin(np.pi * vec) ** 2
-                    trig_dist = (
-                        np.linalg.norm((np.matrix(coord_vec) * lattice).A1)
-                        * ANG_TO_BOHR
-                    )
+                    trig_dist = np.linalg.norm((np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
                     sin_mat[i][j] = atomic_numbers[i] * atomic_numbers[j] / trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
@@ -801,9 +757,7 @@ class SineCoulombMatrix(BaseFeaturizer):
     def feature_labels(self):
         self._check_fitted()
         if self.flatten:
-            return [
-                "sine coulomb matrix eig {}".format(i) for i in range(self._max_eigs)
-            ]
+            return ["sine coulomb matrix eig {}".format(i) for i in range(self._max_eigs)]
         else:
             return ["sine coulomb matrix"]
 
@@ -907,15 +861,11 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             if el_struct[-1 - shell_num][0] < max_n - 2:
                 shell_num += 1
                 continue
-            elif (
-                el_struct[-1 - shell_num][0] < max_n - 1
-                and el_struct[-1 - shell_num][1] != "f"
-            ):
+            elif el_struct[-1 - shell_num][0] < max_n - 1 and el_struct[-1 - shell_num][1] != "f":
                 shell_num += 1
                 continue
             elif el_struct[-1 - shell_num][0] < max_n and (
-                el_struct[-1 - shell_num][1] != "d"
-                and el_struct[-1 - shell_num][1] != "f"
+                el_struct[-1 - shell_num][1] != "d" and el_struct[-1 - shell_num][1] != "f"
             ):
                 shell_num += 1
                 continue
@@ -964,13 +914,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         for other_site in site_dict:
             scale = other_site["weight"]
             other_atom = ohvs[other_site["site"].specie.Z]
-            atom_ofm += (
-                other_atom.T
-                * ref_atom
-                * scale
-                / site.distance(other_site["site"])
-                / ANG_TO_BOHR
-            )
+            atom_ofm += other_atom.T * ref_atom * scale / site.distance(other_site["site"]) / ANG_TO_BOHR
         return atom_ofm
 
     def get_atom_ofms(self, struct, symm=False):
@@ -1001,9 +945,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         else:
             indices = [i for i in range(len(struct.sites))]
         for index in indices:
-            ofms.append(
-                self.get_single_ofm(struct.sites[index], vnn.get_nn_info(struct, index))
-            )
+            ofms.append(self.get_single_ofm(struct.sites[index], vnn.get_nn_info(struct, index)))
         if symm:
             return ofms, counts
         return ofms
@@ -1282,24 +1224,16 @@ class SiteStatsFingerprint(BaseFeaturizer):
         """
 
         if preset == "CrystalNNFingerprint_cn":
-            return SiteStatsFingerprint(
-                CrystalNNFingerprint.from_preset("cn", cation_anion=False), **kwargs
-            )
+            return SiteStatsFingerprint(CrystalNNFingerprint.from_preset("cn", cation_anion=False), **kwargs)
 
         elif preset == "CrystalNNFingerprint_cn_cation_anion":
-            return SiteStatsFingerprint(
-                CrystalNNFingerprint.from_preset("cn", cation_anion=True), **kwargs
-            )
+            return SiteStatsFingerprint(CrystalNNFingerprint.from_preset("cn", cation_anion=True), **kwargs)
 
         elif preset == "CrystalNNFingerprint_ops":
-            return SiteStatsFingerprint(
-                CrystalNNFingerprint.from_preset("ops", cation_anion=False), **kwargs
-            )
+            return SiteStatsFingerprint(CrystalNNFingerprint.from_preset("ops", cation_anion=False), **kwargs)
 
         elif preset == "CrystalNNFingerprint_ops_cation_anion":
-            return SiteStatsFingerprint(
-                CrystalNNFingerprint.from_preset("ops", cation_anion=True), **kwargs
-            )
+            return SiteStatsFingerprint(CrystalNNFingerprint.from_preset("ops", cation_anion=True), **kwargs)
 
         elif preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
@@ -1312,9 +1246,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
 
         elif preset == "CoordinationNumber_ward-prb-2017":
             return SiteStatsFingerprint(
-                CoordinationNumber(
-                    nn=VoronoiNN(weight="area"), use_weights="effective"
-                ),
+                CoordinationNumber(nn=VoronoiNN(weight="area"), use_weights="effective"),
                 stats=["minimum", "maximum", "range", "mean", "avg_dev"],
             )
 
@@ -1353,15 +1285,13 @@ class SiteStatsFingerprint(BaseFeaturizer):
         elif preset == "BondLength-dejong2016":
             return SiteStatsFingerprint(
                 AverageBondLength(VoronoiNN()),
-                stats=["holder_mean::%d" % d for d in range(-4, 4 + 1)]
-                + ["std_dev", "geom_std_dev"],
+                stats=["holder_mean::%d" % d for d in range(-4, 4 + 1)] + ["std_dev", "geom_std_dev"],
             )
 
         elif preset == "BondAngle-dejong2016":
             return SiteStatsFingerprint(
                 AverageBondAngle(VoronoiNN()),
-                stats=["holder_mean::%d" % d for d in range(-4, 4 + 1)]
-                + ["std_dev", "geom_std_dev"],
+                stats=["holder_mean::%d" % d for d in range(-4, 4 + 1)] + ["std_dev", "geom_std_dev"],
             )
 
         else:
@@ -1369,9 +1299,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
             # One of the various Coordination Number presets:
             # MinimumVIRENN, MinimumDistanceNN, JmolNN, VoronoiNN, etc.
             try:
-                return SiteStatsFingerprint(
-                    CoordinationNumber.from_preset(preset), **kwargs
-                )
+                return SiteStatsFingerprint(CoordinationNumber.from_preset(preset), **kwargs)
             except:
                 pass
 
@@ -1405,9 +1333,7 @@ class EwaldEnergy(BaseFeaturizer):
         """
         # Compute the total energy
         ewald = EwaldSummation(strc, acc_factor=self.accuracy)
-        return (
-            [ewald.total_energy / len(strc)] if self.per_atom else [ewald.total_energy]
-        )
+        return [ewald.total_energy / len(strc)] if self.per_atom else [ewald.total_energy]
 
     def feature_labels(self):
         return ["ewald_energy_per_atom"] if self.per_atom else ["ewald_energy"]
@@ -1514,8 +1440,7 @@ class BondFractions(BaseFeaturizer):
         token_els = token.split(" ")
         if len(token_els) != 3 and token != " ":
             raise ValueError(
-                "The token must either be a space or be padded by"
-                "single spaces with no spaces in between."
+                "The token must either be a space or be padded by" "single spaces with no spaces in between."
             )
 
         self.token = token
@@ -1734,9 +1659,7 @@ class BondFractions(BaseFeaturizer):
                     "for example Cl - Cs"
                 )
             if not self.token in bond:
-                raise ValueError(
-                    'Token "{}" not found in bond: {}'.format(self.token, bond)
-                )
+                raise ValueError('Token "{}" not found in bond: {}'.format(self.token, bond))
             bond = bond.replace(" bond frac.", "")
             species = sorted(bond.split(self.token))
 
@@ -1956,9 +1879,7 @@ class BagofBonds(BaseFeaturizer):
                     baglens[i] = max((baglens[i], baglen))
         self.bag_lens = dict(zip(bonds, baglens))
         # Sort the bags by bag length, with the shortest coming first.
-        self.ordered_bonds = [
-            b[0] for b in sorted(self.bag_lens.items(), key=lambda bl: bl[1])
-        ]
+        self.ordered_bonds = [b[0] for b in sorted(self.bag_lens.items(), key=lambda bl: bl[1])]
         return self
 
     def bag(self, s, return_baglens=False):
@@ -2133,9 +2054,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
          `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.024104>`_
     """
 
-    def __init__(
-        self, weight="area", stats=("minimum", "maximum", "range", "mean", "avg_dev")
-    ):
+    def __init__(self, weight="area", stats=("minimum", "maximum", "range", "mean", "avg_dev")):
         self.weight = weight
         self.stats = stats
 
@@ -2154,9 +2073,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
             mean_bond_lengths[i] = PropertyStats.mean(lengths, weights)
 
             # Compute the mean absolute deviation of the bond lengths
-            bond_length_var[i] = (
-                PropertyStats.avg_dev(lengths, weights) / mean_bond_lengths[i]
-            )
+            bond_length_var[i] = PropertyStats.avg_dev(lengths, weights) / mean_bond_lengths[i]
 
         # Normalize the bond lengths by the average of the whole structure
         #   This is done to make the attributes length-scale-invariant
@@ -2168,9 +2085,7 @@ class StructuralHeterogeneity(BaseFeaturizer):
             mean_bond_lengths.max(),
             mean_bond_lengths.min(),
         ]
-        features += [
-            PropertyStats.calc_stat(bond_length_var, stat) for stat in self.stats
-        ]
+        features += [PropertyStats.calc_stat(bond_length_var, stat) for stat in self.stats]
 
         # Compute the variance in volume
         cell_volumes = [sum(x["poly_info"]["volume"] for x in nn) for nn in nns]
@@ -2304,9 +2219,7 @@ class ChemicalOrdering(BaseFeaturizer):
             return [0] * len(self.shells)
 
         # Get a list of types
-        elems, fracs = zip(
-            *strc.composition.element_composition.fractional_composition.items()
-        )
+        elems, fracs = zip(*strc.composition.element_composition.fractional_composition.items())
 
         # Precompute the list of NNs in the structure
         voro = VoronoiNN(weight=self.weight)
@@ -2335,9 +2248,7 @@ class ChemicalOrdering(BaseFeaturizer):
                     ordering[site_idx, elem_idx] += nn["weight"]
 
                 # Compute the ordering parameter
-                ordering[site_idx, :] = 1 - ordering[
-                    site_idx, :
-                ] / total_weight / np.array(fracs)
+                ordering[site_idx, :] = 1 - ordering[site_idx, :] / total_weight / np.array(fracs)
 
             # Compute the average ordering for the entire structure
             output.append(np.abs(ordering).mean())
@@ -2414,9 +2325,7 @@ class XRDPowderPattern(BaseFeaturizer):
     pymatgen. The powder is smeared / normalized according to gaussian_kde.
     """
 
-    def __init__(
-        self, two_theta_range=(0, 127), bw_method=0.05, pattern_length=None, **kwargs
-    ):
+    def __init__(self, two_theta_range=(0, 127), bw_method=0.05, pattern_length=None, **kwargs):
         """
         Initialize the featurizer.
 
@@ -2433,9 +2342,7 @@ class XRDPowderPattern(BaseFeaturizer):
         """
         self.two_theta_range = two_theta_range
         self.bw_method = bw_method
-        self.pattern_length = (
-            pattern_length or two_theta_range[1] - two_theta_range[0] + 1
-        )
+        self.pattern_length = pattern_length or two_theta_range[1] - two_theta_range[0] + 1
         self.xrd_calc = XRDCalculator(**kwargs)
 
     def featurize(self, strc):
@@ -2447,9 +2354,7 @@ class XRDPowderPattern(BaseFeaturizer):
             hist += [x1] * num
 
         kernel = gaussian_kde(hist, bw_method=self.bw_method)
-        x = np.linspace(
-            self.two_theta_range[0], self.two_theta_range[1], self.pattern_length
-        )
+        x = np.linspace(self.two_theta_range[0], self.two_theta_range[1], self.pattern_length)
         y = kernel(x)
 
         return y
@@ -2520,7 +2425,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
         save_checkpoint_to_dir=None,
         checkpoint_interval=100,
         del_checkpoint=True,
-        **cgcnn_kwargs
+        **cgcnn_kwargs,
     ):
         """
         Args:
@@ -2610,9 +2515,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
 
         # Set atom_init_fea
         if atom_init_fea is None:
-            atom_file = os.path.join(
-                module_dir, "..", "utils", "data_files", "cgcnn_atom_feature.json"
-            )
+            atom_file = os.path.join(module_dir, "..", "utils", "data_files", "cgcnn_atom_feature.json")
             with open(atom_file) as f:
                 self.atom_init_fea = json.load(f)
         else:
@@ -2673,9 +2576,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
             model.cuda()
 
         # Define loss func
-        criterion = (
-            torch.nn.NLLLoss() if self.task == "classification" else torch.nn.MSELoss()
-        )
+        criterion = torch.nn.NLLLoss() if self.task == "classification" else torch.nn.MSELoss()
 
         # Initialize epochs parameters
         start_epoch, best_epoch = 0, 0
@@ -2709,23 +2610,15 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 best_score = checkpoint["best_mae_error"]
                 optimizer.load_state_dict(checkpoint["optimizer"])
                 normalizer.load_state_dict(checkpoint["normalizer"])
-                print(
-                    "Warm start from '{}' (epoch {}).".format(
-                        self.warm_start_file, checkpoint["epoch"]
-                    )
-                )
+                print("Warm start from '{}' (epoch {}).".format(self.warm_start_file, checkpoint["epoch"]))
             else:
                 warnings.warn("Warm start file not found.")
-        scheduler = optim.lr_scheduler.MultiStepLR(
-            optimizer=optimizer, **self._scheduler_kwargs
-        )
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, **self._scheduler_kwargs)
         # Save checkpoint
         if self.save_checkpoint_to_dir is not None:
             if not os.path.exists(self.save_checkpoint_to_dir):
                 os.makedirs(self.save_checkpoint_to_dir)
-            checkpoint_file = os.path.join(
-                self.save_checkpoint_to_dir, "cgcnn_checkpoint.pth.tar"
-            )
+            checkpoint_file = os.path.join(self.save_checkpoint_to_dir, "cgcnn_checkpoint.pth.tar")
 
         for epoch in range(start_epoch, self._num_epochs):
             train(
@@ -2763,10 +2656,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
             self._latest_model = model
 
             # Save checkpoint
-            if (
-                self.save_checkpoint_to_dir is not None
-                and epoch % self.checkpoint_interval == 0
-            ):
+            if self.save_checkpoint_to_dir is not None and epoch % self.checkpoint_interval == 0:
                 self._save_model(
                     epoch,
                     best_epoch,
@@ -2791,11 +2681,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
             )
 
         # Delete checkpoint
-        if (
-            self.save_checkpoint_to_dir is not None
-            and self.del_checkpoint
-            and os.path.exists(checkpoint_file)
-        ):
+        if self.save_checkpoint_to_dir is not None and self.del_checkpoint and os.path.exists(checkpoint_file):
             os.remove(checkpoint_file)
         return self
 
@@ -2815,17 +2701,13 @@ class CGCNNFeaturizer(BaseFeaturizer):
             atom_fea = Variable(input_[0].cuda(non_blocking=True), volatile=True)
             nbr_fea = Variable(input_[1].cuda(non_blocking=True), volatile=True)
             nbr_fea_idx = input_[2].cuda(non_blocking=True)
-            crystal_atom_idx = [
-                crys_idx.cuda(non_blocking=True) for crys_idx in input_[3]
-            ]
+            crystal_atom_idx = [crys_idx.cuda(non_blocking=True) for crys_idx in input_[3]]
         else:
             atom_fea = Variable(input_[0], volatile=True)
             nbr_fea = Variable(input_[1], volatile=True)
             nbr_fea_idx = input_[2]
             crystal_atom_idx = input_[3]
-        features = self._best_model.extract_feature(
-            atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx
-        ).tolist()[0]
+        features = self._best_model.extract_feature(atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx).tolist()[0]
         return features
 
     def feature_labels(self):
@@ -2853,9 +2735,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
         self._test = cgcnn_kwargs.get("test", False)
         self._num_epochs = cgcnn_kwargs.get("num_epochs", 30)
         self._print_freq = cgcnn_kwargs.get("print_freq", 10)
-        self._cuda = torch.cuda.is_available() and not cgcnn_kwargs.get(
-            "disable_cuda", True
-        )
+        self._cuda = torch.cuda.is_available() and not cgcnn_kwargs.get("disable_cuda", True)
 
         # Initialize CrystalGraphConvNet model kwargs
         self._atom_fea_len = cgcnn_kwargs.get("atom_fea_len", 64)
@@ -2950,7 +2830,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
             orig_atom_fea_len=orig_atom_fea_len,
             nbr_fea_len=nbr_fea_len,
             classification=True if self.task == "classification" else False,
-            **self._model_kwargs
+            **self._model_kwargs,
         )
         # Initialize _best_model and _latest_model
         self._best_model = copy(model)
@@ -2971,15 +2851,10 @@ class CGCNNFeaturizer(BaseFeaturizer):
             normalizer.load_state_dict({"mean": 0.0, "std": 1.0})
         else:
             if len(self.dataset) < 500:
-                warnings.warn(
-                    "Dataset has less than 500 data points. "
-                    "Lower accuracy is expected. "
-                )
+                warnings.warn("Dataset has less than 500 data points. " "Lower accuracy is expected. ")
                 sample_data_list = [self.dataset[i] for i in range(len(self.dataset))]
             else:
-                sample_data_list = [
-                    self.dataset[i] for i in sample(range(len(self.dataset)), 500)
-                ]
+                sample_data_list = [self.dataset[i] for i in sample(range(len(self.dataset)), 500)]
             _, sample_target, _ = cgcnn_data.collate_pool(sample_data_list)
             normalizer = Normalizer(sample_target)
         return normalizer
@@ -3004,9 +2879,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
 
         return optimizer
 
-    def _save_model(
-        self, epoch, best_epoch, best_score, optimizer, normalizer, output_file
-    ):
+    def _save_model(self, epoch, best_epoch, best_score, optimizer, normalizer, output_file):
         """
         Save CGCNN model to disk if save_model=True.
         Args:
@@ -3042,9 +2915,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 only supports the models from the CGCNN repo.
         """
 
-        pre_trained_path = os.path.join(
-            os.path.dirname(cgcnn.__file__), "..", "pre-trained"
-        )
+        pre_trained_path = os.path.join(os.path.dirname(cgcnn.__file__), "..", "pre-trained")
         if os.path.isfile(os.path.join(pre_trained_path, pretrained_name + ".pth.tar")):
             checkpoint = torch.load(
                 os.path.join(
@@ -3184,12 +3055,8 @@ class JarvisCFID(BaseFeaturizer):
             descriptors.append(mean_chem)
 
         if self.use_cell:
-            log_vpa = round(
-                math.log(float(s.volume) / float(s.composition.num_atoms)), 5
-            )
-            dffer = DensityFeatures(
-                desired_features=["packing fraction", "vpa", "density"]
-            )
+            log_vpa = round(math.log(float(s.volume) / float(s.composition.num_atoms)), 5)
+            dffer = DensityFeatures(desired_features=["packing fraction", "vpa", "density"])
             feats = dffer.featurize(s)
             cell = np.array([log_vpa] + feats)
             descriptors.append(cell)
@@ -3598,12 +3465,7 @@ class JarvisCFID(BaseFeaturizer):
         binrng = np.arange(0, cutoff + intvl, intvl)
         # equivalent to bond-order
         dist_hist, dist_bins = np.histogram(all_distances, bins=binrng, density=False)
-        shell_vol = (
-            4.0
-            / 3.0
-            * math.pi
-            * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
-        )
+        shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
         number_density = structure.num_sites / structure.volume
         rdf = dist_hist / shell_vol / number_density / len(neighbors_lst)
         bins = dist_bins[:-1]
@@ -3745,10 +3607,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             return False
 
         if len(struct) > 200:
-            warnings.warn(
-                "Computing bond valence sums for over 200 sites. "
-                "Featurization might be very slow!"
-            )
+            warnings.warn("Computing bond valence sums for over 200 sites. " "Featurization might be very slow!")
 
         # Check that all cation-anion pairs are tabulated
         specs = struct.composition.elements.copy()
@@ -3780,8 +3639,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             gii = self.calc_gii_iucr(struct)
             if gii > 0.6:
                 warnings.warn(
-                    "GII extremely large. Table parameters may "
-                    "not be suitable or structure may be unusual."
+                    "GII extremely large. Table parameters may " "not be suitable or structure may be unusual."
                 )
 
         else:
@@ -3789,8 +3647,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                 gii = self.calc_gii_pymatgen(struct, scale_factor=0.965)
                 if gii > 0.6:
                     warnings.warn(
-                        "GII extremely large. Pymatgen method may not be "
-                        "suitable or structure may be unusual."
+                        "GII extremely large. Pymatgen method may not be " "suitable or structure may be unusual."
                     )
                 return [gii]
             else:
@@ -3942,9 +3799,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         else:
             for site in struct:
                 nn = struct.get_neighbors(site, r=cutoff)
-                bvs = bond_valence.calculate_bv_sum_unordered(
-                    site, nn, scale_factor=scale_factor
-                )
+                bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=scale_factor)
                 min_diff = min([bvs - spec.oxi_state for spec in site.species.elements])
                 deviations.append(min_diff)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
