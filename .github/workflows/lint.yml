@@ -21,6 +21,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt --quiet
+    - name: black
+      run: |
+        black --version
+        black --check --diff --color matminer
+    - name: pylint
+      run: |
+        pylint matminer
     - name: mypy
       run: |
         mypy --version
@@ -29,13 +36,6 @@ jobs:
     - name: pydocstyle
       run: |
         pydocstyle --count matminer
-    - name: pylint
-      run: |
-        pylint matminer
-    - name: black
-      run: |
-        black --version
-        black --check --diff --color matminer
     - name: flake8
       run: |
         flake8 --version
