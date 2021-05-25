@@ -9,7 +9,7 @@ jobs:
 
   test:
     strategy:
-      max-parallel: 20
+      max-parallel: 4
       matrix:
         python-version: [3.7, 3.8]
 
@@ -31,4 +31,4 @@ jobs:
         pip install -e .
     - name: Run tests
       run: |
-        pytest matminer
+        python setup.py test
