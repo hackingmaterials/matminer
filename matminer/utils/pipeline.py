@@ -13,6 +13,7 @@ class ItemSelector(BaseEstimator, TransformerMixin):
     Args:
         label : The label of the column to select.
     """
+
     def __init__(self, label):
         self.label = label
 

@@ -4,9 +4,11 @@ from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from pymatgen.ext.matproj import MPRester
 from pymatgen.ext.matproj import MPRestError
 
-__author__ = ['Saurabh Bajaj <sbajaj@lbl.gov>',
-             'Alireza Faghaninia <alireza.faghaninia@gmail.com>',
-             'Anubhav Jain <ajain@lbl.gov>']
+__author__ = [
+    "Saurabh Bajaj <sbajaj@lbl.gov>",
+    "Alireza Faghaninia <alireza.faghaninia@gmail.com>",
+    "Anubhav Jain <ajain@lbl.gov>",
+]
 
 
 class MPDataRetrieval(BaseDataRetrieval):
@@ -52,24 +54,27 @@ class MPDataRetrieval(BaseDataRetrieval):
 
         Returns (pandas.Dataframe):
         """
-        data = self.get_data(criteria=criteria, properties=properties,
-                             index_mpid=index_mpid, **kwargs)
+        data = self.get_data(
+            criteria=criteria, properties=properties, index_mpid=index_mpid, **kwargs
+        )
         df = pd.DataFrame(data, columns=properties)
-        for prop in ["dos", "phonon_dos",
-                     "phonon_bandstructure", "phonon_ddb"]:
+        for prop in ["dos", "phonon_dos", "phonon_bandstructure", "phonon_ddb"]:
             if prop in properties:
                 df[prop] = self.try_get_prop_by_material_id(
-                    prop=prop, material_id_list=df["material_id"].values)
+                    prop=prop, material_id_list=df["material_id"].values
+                )
         if "bandstructure" in properties:
             df["bandstructure"] = self.try_get_prop_by_material_id(
                 prop="bandstructure",
                 material_id_list=df["material_id"].values,
-                line_mode=True)
+                line_mode=True,
+            )
         if "bandstructure_uniform" in properties:
             df["bandstructure_uniform"] = self.try_get_prop_by_material_id(
                 prop="bandstructure",
                 material_id_list=df["material_id"].values,
-                line_mode=False)
+                line_mode=False,
+            )
         if index_mpid:
             df = df.set_index("material_id")
         return df
@@ -124,5 +129,5 @@ class MPDataRetrieval(BaseDataRetrieval):
             try:
                 props.append(method(material_id=material_id, **kwargs))
             except MPRestError:
-                props.append(float('NaN'))
+                props.append(float("NaN"))
         return props

@@ -36,8 +36,8 @@ class SiteDOS(BaseFeaturizer):
             this is useful information when comparing the relative
             contributions from multiples sites
     """
-    def __init__(self, decay_length=0.1, sampling_resolution=100,
-                 gaussian_smear=0.05):
+
+    def __init__(self, decay_length=0.1, sampling_resolution=100, gaussian_smear=0.05):
         self.decay_length = decay_length
         self.sampling_resolution = sampling_resolution
         self.gaussian_smear = gaussian_smear
@@ -54,15 +54,15 @@ class SiteDOS(BaseFeaturizer):
         if isinstance(dos, dict):
             dos = CompleteDos.from_dict(dos)
         if dos.structure is None:
-            raise ValueError('The input dos must contain the structure.')
+            raise ValueError("The input dos must contain the structure.")
 
-        orbscores = get_site_dos_scores(dos, idx, self.decay_length,
-                                        self.sampling_resolution,
-                                        self.gaussian_smear)
+        orbscores = get_site_dos_scores(
+            dos, idx, self.decay_length, self.sampling_resolution, self.gaussian_smear
+        )
 
         features = []
-        for edge in ['cbm', 'vbm']:
-            for score in ['s', 'p', 'd', 'f', 'total']:
+        for edge in ["cbm", "vbm"]:
+            for score in ["s", "p", "d", "f", "total"]:
                 features.append(orbscores[edge][score])
         return features
 
@@ -72,16 +72,18 @@ class SiteDOS(BaseFeaturizer):
             the featurizer class for more information.
         """
         labels = []
-        for edge in ['cbm', 'vbm']:
-            for score in ['s', 'p', 'd', 'f', 'total']:
-                labels.append('{}_{}'.format(edge, score))
+        for edge in ["cbm", "vbm"]:
+            for score in ["s", "p", "d", "f", "total"]:
+                labels.append("{}_{}".format(edge, score))
         return labels
 
     def citations(self):
-        return ["@article{dylla2020machine,"
-        "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
-        "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
-        "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"]
+        return [
+            "@article{dylla2020machine,"
+            "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
+            "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
+            "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"
+        ]
 
     def implementors(self):
         return ["Max Dylla"]
@@ -117,8 +119,14 @@ class DOSFeaturizer(BaseFeaturizer):
             characterized by an entropy score (x ln x). the hybridization score
             is larger for a greater number of significant contributors
     """
-    def __init__(self, contributors=1, decay_length=0.1,
-                 sampling_resolution=100, gaussian_smear=0.05):
+
+    def __init__(
+        self,
+        contributors=1,
+        decay_length=0.1,
+        sampling_resolution=100,
+        gaussian_smear=0.05,
+    ):
         self.contributors = contributors
         self.decay_length = decay_length
         self.sampling_resolution = sampling_resolution
@@ -135,34 +143,35 @@ class DOSFeaturizer(BaseFeaturizer):
         if isinstance(dos, dict):
             dos = CompleteDos.from_dict(dos)
         if dos.structure is None:
-            raise ValueError('The input dos must contain the structure.')
+            raise ValueError("The input dos must contain the structure.")
 
-        orbscores = get_cbm_vbm_scores(dos, self.decay_length,
-                                       self.sampling_resolution,
-                                       self.gaussian_smear)
+        orbscores = get_cbm_vbm_scores(
+            dos, self.decay_length, self.sampling_resolution, self.gaussian_smear
+        )
 
         feat = OrderedDict()
-        for ex in ['cbm', 'vbm']:
-            orbscores.sort(key=lambda x: x['{}_score'.format(ex)],
-                           reverse=True)
-            scores = np.array([s['{}_score'.format(ex)] for s in orbscores])
-            feat['{}_hybridization'.format(ex)] = - np.sum(
-                scores * np.log(scores + 1e-10))  # avoid log(0)
+        for ex in ["cbm", "vbm"]:
+            orbscores.sort(key=lambda x: x["{}_score".format(ex)], reverse=True)
+            scores = np.array([s["{}_score".format(ex)] for s in orbscores])
+            feat["{}_hybridization".format(ex)] = -np.sum(
+                scores * np.log(scores + 1e-10)
+            )  # avoid log(0)
 
             i = 0
             while i < self.contributors:
                 sd = orbscores[i]
                 if i < len(orbscores):
-                    for p in ['character', 'specie']:
-                        feat['{}_{}_{}'.format(ex, p, i + 1)] = sd[p]
-                    feat['{}_location_{}'.format(ex, i + 1)] =\
-                        '{};{};{}'.format(sd['location'][0], sd['location'][1],
-                                          sd['location'][2])
-                    feat['{}_score_{}'.format(ex, i + 1)] =\
-                        float(sd['{}_score'.format(ex)])
+                    for p in ["character", "specie"]:
+                        feat["{}_{}_{}".format(ex, p, i + 1)] = sd[p]
+                    feat["{}_location_{}".format(ex, i + 1)] = "{};{};{}".format(
+                        sd["location"][0], sd["location"][1], sd["location"][2]
+                    )
+                    feat["{}_score_{}".format(ex, i + 1)] = float(
+                        sd["{}_score".format(ex)]
+                    )
                 else:
-                    for p in ['character', 'specie', 'location', 'score']:
-                        feat['{}_{}_{}'.format(ex, p, i + 1)] = float('NaN')
+                    for p in ["character", "specie", "location", "score"]:
+                        feat["{}_{}_{}".format(ex, p, i + 1)] = float("NaN")
                 i += 1
 
         return list(feat.values())
@@ -173,24 +182,26 @@ class DOSFeaturizer(BaseFeaturizer):
             featurize method for more information.
         """
         labels = []
-        for ex in ['cbm', 'vbm']:
-            labels.append('{}_hybridization'.format(ex))
+        for ex in ["cbm", "vbm"]:
+            labels.append("{}_hybridization".format(ex))
             i = 0
             while i < self.contributors:
-                for p in ['character', 'specie', 'location', 'score']:
-                    labels.append('{}_{}_{}'.format(ex, p, i + 1))
+                for p in ["character", "specie", "location", "score"]:
+                    labels.append("{}_{}_{}".format(ex, p, i + 1))
                 i += 1
 
         return labels
 
     def citations(self):
-        return ["@article{dylla2020machine,"
-                "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
-                "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
-                "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"]
+        return [
+            "@article{dylla2020machine,"
+            "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
+            "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
+            "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"
+        ]
 
     def implementors(self):
-        return ['Maxwell Dylla', 'Alireza Faghaninia', 'Anubhav Jain']
+        return ["Maxwell Dylla", "Alireza Faghaninia", "Anubhav Jain"]
 
 
 class DopingFermi(BaseFeaturizer):
@@ -221,6 +232,7 @@ class DopingFermi(BaseFeaturizer):
                 energy is returned. In this case, fermi levels are absolute as
                 opposed to relative to eref (i.e. if not return_eref)
     """
+
     def __init__(self, dopings=None, eref="midgap", T=300, return_eref=False):
         self.dopings = dopings or [-1e20, 1e20]
         self.eref = eref
@@ -315,8 +327,14 @@ class Hybridization(BaseFeaturizer):
                 maximum hybridization (i.e. vbm_s==0.5, vbm_p==0.5)
             cbm_Si_p (float): p-orbital character of Si
     """
-    def __init__(self, decay_length=0.1, sampling_resolution=100,
-                 gaussian_smear=0.05, species=None):
+
+    def __init__(
+        self,
+        decay_length=0.1,
+        sampling_resolution=100,
+        gaussian_smear=0.05,
+        species=None,
+    ):
         self.decay_length = decay_length
         self.sampling_resolution = sampling_resolution
         self.gaussian_smear = gaussian_smear
@@ -338,37 +356,34 @@ class Hybridization(BaseFeaturizer):
         if isinstance(dos, dict):
             dos = CompleteDos.from_dict(dos)
         if dos.structure is None:
-            raise ValueError('The input dos must contain the structure.')
+            raise ValueError("The input dos must contain the structure.")
 
-        orbscores = get_cbm_vbm_scores(dos,
-                                       decay_length,
-                                       self.sampling_resolution,
-                                       self.gaussian_smear)
+        orbscores = get_cbm_vbm_scores(
+            dos, decay_length, self.sampling_resolution, self.gaussian_smear
+        )
         feat = OrderedDict()
-        for ex in ['cbm', 'vbm']:
-            for orbital in ['s', 'p', 'd', 'f']:
-                feat['{}_{}'.format(ex, orbital)] = 0.0
+        for ex in ["cbm", "vbm"]:
+            for orbital in ["s", "p", "d", "f"]:
+                feat["{}_{}".format(ex, orbital)] = 0.0
                 for specie in self.species:
-                    feat['{}_{}_{}'.format(ex, specie, orbital)] = 0.0
-            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
-                feat['{}_{}'.format(ex, hybrid)] = 0.0
+                    feat["{}_{}_{}".format(ex, specie, orbital)] = 0.0
+            for hybrid in ["sp", "sd", "sf", "pd", "pf", "df"]:
+                feat["{}_{}".format(ex, hybrid)] = 0.0
 
         for contrib in orbscores:
-            character = contrib['character']
-            feat['cbm_{}'.format(character)] += contrib['cbm_score']
-            feat['vbm_{}'.format(character)] += contrib['vbm_score']
+            character = contrib["character"]
+            feat["cbm_{}".format(character)] += contrib["cbm_score"]
+            feat["vbm_{}".format(character)] += contrib["vbm_score"]
             for specie in self.species:
-                if contrib['specie'] == specie:
-                    feat['cbm_{}_{}'.format(specie, character)] += contrib[
-                        'cbm_score']
-                    feat['vbm_{}_{}'.format(specie, character)] += contrib[
-                        'vbm_score']
+                if contrib["specie"] == specie:
+                    feat["cbm_{}_{}".format(specie, character)] += contrib["cbm_score"]
+                    feat["vbm_{}_{}".format(specie, character)] += contrib["vbm_score"]
 
-        for ex in ['cbm', 'vbm']:
-            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
-                orb1 = feat['{}_{}'.format(ex, hybrid[0])]
-                orb2 = feat['{}_{}'.format(ex, hybrid[1])]
-                feat['{}_{}'.format(ex, hybrid)] = (orb1 * orb2) * 4.0  # 4x so max=1.0
+        for ex in ["cbm", "vbm"]:
+            for hybrid in ["sp", "sd", "sf", "pd", "pf", "df"]:
+                orb1 = feat["{}_{}".format(ex, hybrid[0])]
+                orb2 = feat["{}_{}".format(ex, hybrid[1])]
+                feat["{}_{}".format(ex, hybrid)] = (orb1 * orb2) * 4.0  # 4x so max=1.0
         return list(feat.values())
 
     def feature_labels(self):
@@ -379,23 +394,25 @@ class Hybridization(BaseFeaturizer):
         See the class docs for examples.
         """
         labels = []
-        for ex in ['cbm', 'vbm']:
-            for orbital in ['s', 'p', 'd', 'f']:
-                labels.append('{}_{}'.format(ex, orbital))
+        for ex in ["cbm", "vbm"]:
+            for orbital in ["s", "p", "d", "f"]:
+                labels.append("{}_{}".format(ex, orbital))
                 for specie in self.species:
-                    labels.append('{}_{}_{}'.format(ex, specie, orbital))
-            for hybrid in ['sp', 'sd', 'sf', 'pd', 'pf', 'df']:
-                labels.append('{}_{}'.format(ex, hybrid))
+                    labels.append("{}_{}_{}".format(ex, specie, orbital))
+            for hybrid in ["sp", "sd", "sf", "pd", "pf", "df"]:
+                labels.append("{}_{}".format(ex, hybrid))
         return labels
 
     def citations(self):
-        return ["@article{dylla2020machine,"
-        "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
-        "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
-        "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"]
+        return [
+            "@article{dylla2020machine,"
+            "title={Machine Learning Chemical Guidelines for Engineering Electronic Structures in Half-Heusler Thermoelectric Materials},"
+            "author={Dylla, Maxwell T and Dunn, Alexander and Anand, Shashwat and Jain, Anubhav and Snyder, G Jeffrey and others},"
+            "journal={Research}, volume={2020}, pages={6375171}, year={2020}, publisher={AAAS}}"
+        ]
 
     def implementors(self):
-        return ['Alireza Faghaninia', 'Anubhav Jain', 'Maxwell Dylla']
+        return ["Alireza Faghaninia", "Anubhav Jain", "Maxwell Dylla"]
 
 
 class DosAsymmetry(BaseFeaturizer):
@@ -419,8 +436,8 @@ class DosAsymmetry(BaseFeaturizer):
         gaussian_smear (float in eV):
             Gaussian smearing (sigma) around each sampled point in the DOS
     """
-    def __init__(self, decay_length=0.5, sampling_resolution=100,
-                 gaussian_smear=0.05):
+
+    def __init__(self, decay_length=0.5, sampling_resolution=100, gaussian_smear=0.05):
         self.decay_length = decay_length
         self.sampling_resolution = sampling_resolution
         self.gaussian_smear = gaussian_smear
@@ -438,41 +455,47 @@ class DosAsymmetry(BaseFeaturizer):
         # smears dos for spin up and down
         smear_dos = dos.get_smeared_densities(self.gaussian_smear)
         dos_up = smear_dos[Spin.up]
-        dos_down = smear_dos[Spin.down] if Spin.down in smear_dos \
-            else smear_dos[Spin.up]
+        dos_down = (
+            smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
+        )
         dos_total = [sum(id) for id in zip(dos_up, dos_down)]
 
         # determines energy range to sample
         energies = [e for e in dos.energies]
-        vbm_space = np.linspace(dos.efermi,
-                                dos.efermi - (5. * self.decay_length),
-                                num=self.sampling_resolution)
-        cbm_space = np.linspace(dos.efermi,
-                                dos.efermi + (5. * self.decay_length),
-                                num=self.sampling_resolution)
+        vbm_space = np.linspace(
+            dos.efermi,
+            dos.efermi - (5.0 * self.decay_length),
+            num=self.sampling_resolution,
+        )
+        cbm_space = np.linspace(
+            dos.efermi,
+            dos.efermi + (5.0 * self.decay_length),
+            num=self.sampling_resolution,
+        )
 
         # accumulates dos score over energy ranges
         vbm_score = 0
         for e in vbm_space:
-            vbm_score += (np.interp(e, energies, dos_total) *
-                          np.exp(-(dos.efermi - e) * self.decay_length))
+            vbm_score += np.interp(e, energies, dos_total) * np.exp(
+                -(dos.efermi - e) * self.decay_length
+            )
         cbm_score = 0
         for e in cbm_space:
-            cbm_score += (np.interp(e, energies, dos_total) *
-                          np.exp(-(e - dos.efermi) * self.decay_length))
+            cbm_score += np.interp(e, energies, dos_total) * np.exp(
+                -(e - dos.efermi) * self.decay_length
+            )
 
         return np.log(cbm_score / vbm_score)
 
     def feature_labels(self):
-        """Returns the labels for each of the features.
-        """
-        return ['dos_asymmetry']
+        """Returns the labels for each of the features."""
+        return ["dos_asymmetry"]
 
     def citations(self):
         return []
 
     def implementors(self):
-        return ['Maxwell Dylla']
+        return ["Maxwell Dylla"]
 
 
 def get_cbm_vbm_scores(dos, decay_length, sampling_resolution, gaussian_smear):
@@ -519,44 +542,51 @@ def get_cbm_vbm_scores(dos, decay_length, sampling_resolution, gaussian_smear):
             energies = [e for e in proj[orb].energies]
             smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
             dos_up = smear_dos[Spin.up]
-            dos_down = smear_dos[Spin.down] if Spin.down in smear_dos \
-                else smear_dos[Spin.up]
+            dos_down = (
+                smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
+            )
             dos_total = [sum(id) for id in zip(dos_up, dos_down)]
             vbm_score = 0
-            vbm_space = np.linspace(vbm, vbm - (5. * decay_length),
-                                    num=sampling_resolution)
+            vbm_space = np.linspace(
+                vbm, vbm - (5.0 * decay_length), num=sampling_resolution
+            )
             for e in vbm_space:
-                vbm_score += (np.interp(e, energies, dos_total) *
-                              np.exp(-(vbm - e) * decay_length))
+                vbm_score += np.interp(e, energies, dos_total) * np.exp(
+                    -(vbm - e) * decay_length
+                )
             cbm_score = 0
-            cbm_space = np.linspace(cbm, cbm + (5. * decay_length),
-                                    num=sampling_resolution)
+            cbm_space = np.linspace(
+                cbm, cbm + (5.0 * decay_length), num=sampling_resolution
+            )
             for e in cbm_space:
-                cbm_score += (np.interp(e, energies, dos_total) *
-                              np.exp(-(e - cbm) * decay_length))
+                cbm_score += np.interp(e, energies, dos_total) * np.exp(
+                    -(e - cbm) * decay_length
+                )
 
             # add orbital scores to list
             orbital_score = {
-                'cbm_score': cbm_score,
-                'vbm_score': vbm_score,
-                'specie': str(site.specie),
-                'character': str(orb),
-                'location': list(site.frac_coords)}
+                "cbm_score": cbm_score,
+                "vbm_score": vbm_score,
+                "specie": str(site.specie),
+                "character": str(orb),
+                "location": list(site.frac_coords),
+            }
             orbital_scores.append(orbital_score)
 
     # normalize by total contribution
-    total_cbm = sum([orbital_scores[i]['cbm_score'] for i in
-                     range(0, len(orbital_scores))])
-    total_vbm = sum([orbital_scores[i]['vbm_score'] for i in
-                     range(0, len(orbital_scores))])
+    total_cbm = sum(
+        [orbital_scores[i]["cbm_score"] for i in range(0, len(orbital_scores))]
+    )
+    total_vbm = sum(
+        [orbital_scores[i]["vbm_score"] for i in range(0, len(orbital_scores))]
+    )
     for orbital in orbital_scores:
-        orbital['cbm_score'] /= total_cbm
-        orbital['vbm_score'] /= total_vbm
+        orbital["cbm_score"] /= total_cbm
+        orbital["vbm_score"] /= total_vbm
     return orbital_scores
 
 
-def get_site_dos_scores(dos, idx, decay_length, sampling_resolution,
-                        gaussian_smear):
+def get_site_dos_scores(dos, idx, decay_length, sampling_resolution, gaussian_smear):
     """
     Quantifies the contribution of all atomic orbitals (s/p/d/f) from a
     particular crystal site to the conduction band minimum (CBM) and the
@@ -599,37 +629,42 @@ def get_site_dos_scores(dos, idx, decay_length, sampling_resolution,
         # smear dos for spin up and down
         smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
         dos_up = smear_dos[Spin.up]
-        dos_down = smear_dos[Spin.down] if Spin.down in smear_dos \
-            else smear_dos[Spin.up]
+        dos_down = (
+            smear_dos[Spin.down] if Spin.down in smear_dos else smear_dos[Spin.up]
+        )
         dos_total = [sum(id) for id in zip(dos_up, dos_down)]
 
         # determine energy range to sample
         energies = [e for e in proj[orb].energies]
-        vbm_space = np.linspace(vbm, vbm - (5. * decay_length),
-                                num=sampling_resolution)
-        cbm_space = np.linspace(cbm, cbm + (5. * decay_length),
-                                num=sampling_resolution)
+        vbm_space = np.linspace(
+            vbm, vbm - (5.0 * decay_length), num=sampling_resolution
+        )
+        cbm_space = np.linspace(
+            cbm, cbm + (5.0 * decay_length), num=sampling_resolution
+        )
 
         # accumulate dos score over energy range
         vbm_score = 0
         for e in vbm_space:
-            vbm_score += (np.interp(e, energies, dos_total) *
-                          np.exp(-(vbm - e) * decay_length))
+            vbm_score += np.interp(e, energies, dos_total) * np.exp(
+                -(vbm - e) * decay_length
+            )
         cbm_score = 0
         for e in cbm_space:
-            cbm_score += (np.interp(e, energies, dos_total) *
-                          np.exp(-(e - cbm) * decay_length))
-        orbital_scores[str(orb)] = {'cbm': cbm_score, 'vbm': vbm_score}
+            cbm_score += np.interp(e, energies, dos_total) * np.exp(
+                -(e - cbm) * decay_length
+            )
+        orbital_scores[str(orb)] = {"cbm": cbm_score, "vbm": vbm_score}
 
     # ensure that f-orbitals are represented as zero contribution if none
-    if not ('f' in orbital_scores.keys()):
-        orbital_scores['f'] = {'cbm': 0.0, 'vbm': 0.0}
+    if not ("f" in orbital_scores.keys()):
+        orbital_scores["f"] = {"cbm": 0.0, "vbm": 0.0}
 
     # reorder scores so band edge is first followed by orbital
     reordered_scores = {}
-    for band in ['cbm', 'vbm']:
+    for band in ["cbm", "vbm"]:
         reordered_scores[band] = {}
-        for orb in ['s', 'p', 'd', 'f']:
+        for orb in ["s", "p", "d", "f"]:
             reordered_scores[band][orb] = orbital_scores[orb][band]
 
     # normalize by total cbm/vbm edge contribution from site
@@ -637,5 +672,5 @@ def get_site_dos_scores(dos, idx, decay_length, sampling_resolution,
         total_score = sum(reordered_scores[edge].values())
         for orb in reordered_scores[edge].keys():
             reordered_scores[edge][orb] /= total_score
-        reordered_scores[edge]['total'] = total_score
+        reordered_scores[edge]["total"] = total_score
     return reordered_scores

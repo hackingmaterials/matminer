@@ -10,8 +10,10 @@ import warnings
 from copy import deepcopy
 from pandas.api.types import is_numeric_dtype
 
-__authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
-              'Alireza Faghaninia  <alireza.faghaninia@gmail.com>'
+__authors__ = (
+    "Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, "
+    "Alireza Faghaninia  <alireza.faghaninia@gmail.com>"
+)
 
 
 # todo: common function for if then checking data types + automatically ignore non-numerical data
@@ -20,14 +22,36 @@ __authors__ = 'Saurabh Bajaj <sbajaj@lbl.gov>, Alex Dunn <ardunn@lbl.gov>, ' \
 
 
 class PlotlyFig:
-    def __init__(self, df=None, mode='offline', title=None, x_title=None,
-                 y_title=None, colorbar_title='auto', x_scale='linear',
-                 y_scale='linear', ticksize=25, fontscale=1, fontsize=25,
-                 fontfamily='Courier', bgcolor="white", fontcolor=None,
-                 colorscale='Viridis', height=None, width=None,
-                 resolution_scale=None, margins=100, pad=0, username=None,
-                 api_key=None, filename='temp-plot', show_offline_plot=True,
-                 hovermode='closest', hoverinfo='x+y+text', hovercolor=None):
+    def __init__(
+        self,
+        df=None,
+        mode="offline",
+        title=None,
+        x_title=None,
+        y_title=None,
+        colorbar_title="auto",
+        x_scale="linear",
+        y_scale="linear",
+        ticksize=25,
+        fontscale=1,
+        fontsize=25,
+        fontfamily="Courier",
+        bgcolor="white",
+        fontcolor=None,
+        colorscale="Viridis",
+        height=None,
+        width=None,
+        resolution_scale=None,
+        margins=100,
+        pad=0,
+        username=None,
+        api_key=None,
+        filename="temp-plot",
+        show_offline_plot=True,
+        hovermode="closest",
+        hoverinfo="x+y+text",
+        hovercolor=None,
+    ):
         """
         Class for making Plotly plots
 
@@ -132,21 +156,24 @@ class PlotlyFig:
         """
 
         # Plotly offline latex does not work (a Plotly issue).
-        if mode == 'offline':
+        if mode == "offline":
             for s in [title, x_title, y_title]:
-                if s is not None and s.count('$') > 1:
-                    warnings.warn("Plotly currently does not support LaTeX in"
-                                  "offline plotting mode. To render LaTeX, please"
-                                  "use Plotly online by setting changing the mode"
-                                  "of PlotlyFig, or by clicking 'Export to Plotly'"
-                                  "in the opened broswer window.")
-            if fontfamily not in ['Courier', 'Times New Roman', 'Arial']:
-                warnings.warn("The font family selected may not render "
-                              "correctly in offline mode. To render more fonts,"
-                              " use Plotly online by setting changing the mode"
-                              "of PlotlyFig, or by clicking 'Export to Plotly' "
-                              "in the opened broswer window.")
-
+                if s is not None and s.count("$") > 1:
+                    warnings.warn(
+                        "Plotly currently does not support LaTeX in"
+                        "offline plotting mode. To render LaTeX, please"
+                        "use Plotly online by setting changing the mode"
+                        "of PlotlyFig, or by clicking 'Export to Plotly'"
+                        "in the opened broswer window."
+                    )
+            if fontfamily not in ["Courier", "Times New Roman", "Arial"]:
+                warnings.warn(
+                    "The font family selected may not render "
+                    "correctly in offline mode. To render more fonts,"
+                    " use Plotly online by setting changing the mode"
+                    "of PlotlyFig, or by clicking 'Export to Plotly' "
+                    "in the opened broswer window."
+                )
 
         # Fix fonts
         fontsize = float(fontsize) * float(fontscale)
@@ -158,73 +185,93 @@ class PlotlyFig:
         # Fix margins
         if not isinstance(margins, (list, tuple, np.ndarray)):
             margins = [margins] * 4
-        margins = {'t': margins[0],
-                   'b': margins[1] + ticksize + fontsize,
-                   'r': margins[2],
-                   'l': margins[3] + ticksize + fontsize,
-                   'pad': pad}
+        margins = {
+            "t": margins[0],
+            "b": margins[1] + ticksize + fontsize,
+            "r": margins[2],
+            "l": margins[3] + ticksize + fontsize,
+            "pad": pad,
+        }
 
         # kwargs which can be directly used in Plotly layout
-        kwargs = {'y_scale': y_scale,
-                  'x_scale': x_scale,
-                  'font_size': fontsize,
-                  'fontfamily': fontfamily,
-                  'fontcolor': fontcolor,
-                  'hovermode': hovermode,
-                  'hovercolor': hovercolor,
-                  'margin': margins,
-                  'pad': pad,
-                  'width': width,
-                  'height': height,
-                  'fontscale': fontscale,
-                  'x_title': x_title,
-                  'y_title': y_title,
-                  'title': title,
-                  'bgcolor': bgcolor}
+        kwargs = {
+            "y_scale": y_scale,
+            "x_scale": x_scale,
+            "font_size": fontsize,
+            "fontfamily": fontfamily,
+            "fontcolor": fontcolor,
+            "hovermode": hovermode,
+            "hovercolor": hovercolor,
+            "margin": margins,
+            "pad": pad,
+            "width": width,
+            "height": height,
+            "fontscale": fontscale,
+            "x_title": x_title,
+            "y_title": y_title,
+            "title": title,
+            "bgcolor": bgcolor,
+        }
 
         # Remove None entries to prevent Plotly silent errors
         kwargs = {k: v for (k, v) in kwargs.items() if v is not None}
 
         # Set all attr dictionary entries which can be None
-        pfkwargs = {'df': df,
-                    'mode': mode,
-                    'filename': filename,
-                    'show_offline_plot': show_offline_plot,
-                    'username': username,
-                    'api_key': api_key,
-                    'resolution_scale': resolution_scale,
-                    'colorscale': colorscale,
-                    'colorbar_title': colorbar_title,
-                    'hoverinfo': hoverinfo,
-                    'ticksize': ticksize,
-                    }
+        pfkwargs = {
+            "df": df,
+            "mode": mode,
+            "filename": filename,
+            "show_offline_plot": show_offline_plot,
+            "username": username,
+            "api_key": api_key,
+            "resolution_scale": resolution_scale,
+            "colorscale": colorscale,
+            "colorbar_title": colorbar_title,
+            "hoverinfo": hoverinfo,
+            "ticksize": ticksize,
+        }
 
         # Fix attributes of PlotlyFig object
         for k, v in pfkwargs.items():
             setattr(self, k, v)
 
         self.layout = {}
-        font_style = {'size': fontsize, 'family': fontfamily}
+        font_style = {"size": fontsize, "family": fontfamily}
 
         if fontcolor:
-            font_style['color'] = fontcolor
+            font_style["color"] = fontcolor
 
-        self.layout['titlefont'] = font_style
-        self.layout['legend'] = {'font': font_style}
-        self.layout['xaxis'] = {'title': x_title, 'type': x_scale,
-                                'titlefont': font_style, 'tickfont': font_style}
-        self.layout['yaxis'] = {'title': y_title, 'type': y_scale,
-                                'titlefont': font_style, 'tickfont': font_style}
-        self.layout['plot_bgcolor'] = bgcolor
-        self.layout['paper_bgcolor'] = bgcolor
-        self.layout['hoverlabel'] = {'font': font_style}
-        self.layout['title'] = title
+        self.layout["titlefont"] = font_style
+        self.layout["legend"] = {"font": font_style}
+        self.layout["xaxis"] = {
+            "title": x_title,
+            "type": x_scale,
+            "titlefont": font_style,
+            "tickfont": font_style,
+        }
+        self.layout["yaxis"] = {
+            "title": y_title,
+            "type": y_scale,
+            "titlefont": font_style,
+            "tickfont": font_style,
+        }
+        self.layout["plot_bgcolor"] = bgcolor
+        self.layout["paper_bgcolor"] = bgcolor
+        self.layout["hoverlabel"] = {"font": font_style}
+        self.layout["title"] = title
 
-        if 'hovercolor' in kwargs:
-            self.layout['hoverlabel']['bgcolor'] = hovercolor
+        if "hovercolor" in kwargs:
+            self.layout["hoverlabel"]["bgcolor"] = hovercolor
 
-        optional_fields = ['hovermode', 'margin', 'autosize', 'width', 'height',
-                           'hoverinfo', 'ticksize']
+        optional_fields = [
+            "hovermode",
+            "margin",
+            "autosize",
+            "width",
+            "height",
+            "hoverinfo",
+            "ticksize",
+        ]
         for k in optional_fields:
             if k in kwargs.keys():
                 self.layout[k] = kwargs[k]
@@ -245,14 +292,20 @@ class PlotlyFig:
         Returns: None
         """
         for kw in kwargs:
-            if kw in ['x_title', 'y_title']:
-                self.layout['{}axis'.format(kw[0])]['title'] = kwargs[kw]
-            elif kw == 'title':
+            if kw in ["x_title", "y_title"]:
+                self.layout["{}axis".format(kw[0])]["title"] = kwargs[kw]
+            elif kw == "title":
                 self.layout[kw] = kwargs[kw]
-            elif kw in ['filename', 'mode', 'api_key', 'username',
-                        'show_offline_plot', 'colorbar_title']:
+            elif kw in [
+                "filename",
+                "mode",
+                "api_key",
+                "username",
+                "show_offline_plot",
+                "colorbar_title",
+            ]:
                 setattr(self, kw, kwargs[kw])
-                if kw in ['filename', 'mode']:
+                if kw in ["filename", "mode"]:
                     self.plot_counter = 0
             else:
                 raise ValueError('changing "{}" is not supported!'.format(kw))
@@ -280,62 +333,71 @@ class PlotlyFig:
         if return_plot:
             return fig
         if self.plot_counter > 0:
-            filename = '{}_{}'.format(self.filename, self.plot_counter)
+            filename = "{}_{}".format(self.filename, self.plot_counter)
         else:
             filename = self.filename
 
-        if self.mode in ['online', 'static']:
-            plotly.tools.set_credentials_file(username=self.username,
-                                              api_key=self.api_key)
+        if self.mode in ["online", "static"]:
+            plotly.tools.set_credentials_file(
+                username=self.username, api_key=self.api_key
+            )
 
-            if not os.path.isfile('~/.plotly/.credentials'):
+            if not os.path.isfile("~/.plotly/.credentials"):
                 if self.username is None:
                     raise ValueError(
                         'Field "username" must be filled in online and static '
-                        'plotting modes.')
+                        "plotting modes."
+                    )
                 if self.api_key is None:
                     raise ValueError(
                         'Field "api_key" must be filled in online and static'
-                        'plotting modes.')
+                        "plotting modes."
+                    )
 
-        if self.mode == 'offline':
-            if not filename.endswith('.html'):
-                filename += '.html'
-            plotly.offline.plot(fig, filename=filename,
-                                auto_open=self.show_offline_plot)
-        elif self.mode == 'notebook':
+        if self.mode == "offline":
+            if not filename.endswith(".html"):
+                filename += ".html"
+            plotly.offline.plot(
+                fig, filename=filename, auto_open=self.show_offline_plot
+            )
+        elif self.mode == "notebook":
             plotly.offline.init_notebook_mode()
             plotly.offline.iplot(fig)
 
-        elif self.mode == 'online':
+        elif self.mode == "online":
             if filename:
-                plotly.plotly.plot(fig, filename=filename, sharing='public')
+                plotly.plotly.plot(fig, filename=filename, sharing="public")
             else:
-                plotly.plotly.plot(fig, sharing='public')
+                plotly.plotly.plot(fig, sharing="public")
 
-        elif self.mode == 'static':
-            if 'height' in self.layout.keys():
-                height = self.layout['height']
+        elif self.mode == "static":
+            if "height" in self.layout.keys():
+                height = self.layout["height"]
             else:
                 height = 1080
 
-            if 'width' in self.layout.keys():
-                width = self.layout['width']
+            if "width" in self.layout.keys():
+                width = self.layout["width"]
             else:
                 width = 1920
 
-            allowed_extensions = ('.png', '.svg', '.jpeg', '.pdf')
+            allowed_extensions = (".png", ".svg", ".jpeg", ".pdf")
             if not self.filename or not self.filename.lower().endswith(
-                    allowed_extensions):
+                allowed_extensions
+            ):
                 raise ValueError(
                     'field "filename" must be filled in static plotting '
-                    'mode and must have an extension ending in '
-                    '{}'.format(allowed_extensions))
+                    "mode and must have an extension ending in "
+                    "{}".format(allowed_extensions)
+                )
 
-            plotly.plotly.image.save_as(fig, filename=filename,
-                                        height=height,
-                                        width=width,
-                                        scale=self.resolution_scale)
+            plotly.plotly.image.save_as(
+                fig,
+                filename=filename,
+                height=height,
+                width=width,
+                scale=self.resolution_scale,
+            )
 
         self.plot_counter += 1
 
@@ -363,10 +425,25 @@ class PlotlyFig:
         else:
             return col
 
-    def xy(self, xy_pairs, colors=None, color_range=None, labels=None,
-           limits=None, names=None, sizes=None, modes='markers', markers=None,
-           marker_scale=1.0, lines=None, colorscale=None, showlegends=None,
-           error_bars=None, normalize_size=True, return_plot=False):
+    def xy(
+        self,
+        xy_pairs,
+        colors=None,
+        color_range=None,
+        labels=None,
+        limits=None,
+        names=None,
+        sizes=None,
+        modes="markers",
+        markers=None,
+        marker_scale=1.0,
+        lines=None,
+        colorscale=None,
+        showlegends=None,
+        error_bars=None,
+        normalize_size=True,
+        return_plot=False,
+    ):
         """
         Make an XY scatter plot, either using arrays of values, or a dataframe.
 
@@ -450,11 +527,10 @@ class PlotlyFig:
         elif isinstance(sizes, str):
             sizes = [self._data_from_str(sizes)] * len(xy_pairs)
         elif isinstance(sizes, (int, float)):
-            sizes = [sizes]*len(xy_pairs)
+            sizes = [sizes] * len(xy_pairs)
         else:
             if len(sizes) != len(xy_pairs):
-                raise ValueError(
-                    '"sizes" must be the same length as "xy_pairs"')
+                raise ValueError('"sizes" must be the same length as "xy_pairs"')
             for i, _ in enumerate(sizes):
                 sizes[i] = self._data_from_str(sizes[i])
 
@@ -463,15 +539,17 @@ class PlotlyFig:
                 error_bars = [error_bars] * len(xy_pairs)
             error_bars = [self._data_from_str(ebar) for ebar in error_bars]
             if len(error_bars) != len(xy_pairs):
-                raise ValueError(
-                    '"error_bars" must be the same length as "xy_pairs"')
+                raise ValueError('"error_bars" must be the same length as "xy_pairs"')
 
         if normalize_size:
             for i, size in enumerate(sizes):
                 if isinstance(sizes[i], (list, np.ndarray, pd.Series)):
                     size = pd.Series(size).fillna(size.min())
-                    sizes[i] = ((size - size.min()) / (
-                            size.max() - size.min()) + 0.05) * 30 * marker_scale
+                    sizes[i] = (
+                        ((size - size.min()) / (size.max() - size.min()) + 0.05)
+                        * 30
+                        * marker_scale
+                    )
 
         if isinstance(modes, str):
             modes = [modes] * len(xy_pairs)
@@ -481,14 +559,18 @@ class PlotlyFig:
         data = []
         for pair in xy_pairs:
             if len(pair) != 2:
-                raise ValueError('each xy within xy_pairs must have only 2 axes'
-                                 ' : x and y (hence the "pair"); e.g. (x, y)')
+                raise ValueError(
+                    "each xy within xy_pairs must have only 2 axes"
+                    ' : x and y (hence the "pair"); e.g. (x, y)'
+                )
             current_trace_x = self._data_from_str(pair[0])
             current_trace_y = self._data_from_str(pair[1])
             data.append((current_trace_x, current_trace_y))
             if len(list(current_trace_x)) != len(list(current_trace_y)):
-                warnings.warn('inequal number of points in x and y: part of the'
-                              ' data not plotted!')
+                warnings.warn(
+                    "inequal number of points in x and y: part of the"
+                    " data not plotted!"
+                )
             if isinstance(pair[1], str):
                 names.append(pair[1])
             else:
@@ -506,77 +588,88 @@ class PlotlyFig:
             if isinstance(colors, str):
                 colors = [colors] * len(data)
             colorbar = colors
-            if len(list(colors)) == len(data) and any([isinstance(c, str) for c in colors]):
+            if len(list(colors)) == len(data) and any(
+                [isinstance(c, str) for c in colors]
+            ):
                 for itrace, color in enumerate(colors):
                     trace_color = self._data_from_str(color, is_color=True)
-                    if not isinstance(trace_color, (str, int, float)) and \
-                            len(trace_color) == len(data[itrace][0]) and \
-                            not any([isinstance(c, str) for c in trace_color]):
+                    if (
+                        not isinstance(trace_color, (str, int, float))
+                        and len(trace_color) == len(data[itrace][0])
+                        and not any([isinstance(c, str) for c in trace_color])
+                    ):
                         colorbar = trace_color
                         showscale[itrace] = True
                         colors_list.append(trace_color)
                     else:
                         colors_list.append(trace_color)
             elif not any([isinstance(c, str) for c in colorbar]):
-                showscale[0] = True # in this case all traces use one colorbar
+                showscale[0] = True  # in this case all traces use one colorbar
 
             if not isinstance(colorbar, (list, np.ndarray, pd.Series)):
-                raise ValueError('"colors" must be a dataframe column name, '
-                                 'list, np.ndarray or pd.Series')
+                raise ValueError(
+                    '"colors" must be a dataframe column name, '
+                    "list, np.ndarray or pd.Series"
+                )
             if color_range:
                 colorbar = pd.Series(colorbar)
                 colorbar[colorbar < color_range[0]] = color_range[0]
                 colorbar[colorbar > color_range[1]] = color_range[1]
 
-        labels = self.setup_labels(labels=labels,
-                                   data=None,
-                                   expected_length=len(data[0][0]))
+        labels = self.setup_labels(
+            labels=labels, data=None, expected_length=len(data[0][0])
+        )
 
-        markers = markers or [{'symbol': 'circle',
-                               'line': {'width': 1,'color': 'black'}
-                               } for _ in data]
+        markers = markers or [
+            {"symbol": "circle", "line": {"width": 1, "color": "black"}} for _ in data
+        ]
         if isinstance(markers, dict):
             markers = [deepcopy(markers) for _ in data]
 
-        if self.colorbar_title == 'auto':
+        if self.colorbar_title == "auto":
             colorbar_title = pd.Series(colorbar).name
         else:
             colorbar_title = self.colorbar_title
 
         for im, _ in enumerate(markers):
-            markers[im]['showscale'] = showscale[im]
-            if markers[im].get('size', None) is None:
-                markers[im]['size'] = sizes[im]
+            markers[im]["showscale"] = showscale[im]
+            if markers[im].get("size", None) is None:
+                markers[im]["size"] = sizes[im]
             else:
-                raise ValueError('"size" must not be set in markers, '
-                                 'use sizes argument instead')
+                raise ValueError(
+                    '"size" must not be set in markers, ' "use sizes argument instead"
+                )
             if colorbar is not None:
                 if len(colors_list) > 0 and isinstance(colors_list[im], str):
-                    markers[im]['color'] = colors_list[im]
+                    markers[im]["color"] = colors_list[im]
                 else:
-                    markers[im]['color'] = colorbar
-                fontd = {'family': self.font_style['family'],
-                         'size': 0.75 * self.font_style['size']}
-                if 'color' in self.font_style.keys():
-                    fontd['color'] = self.font_style['color']
-                markers[im]['colorbar'] = {'title': colorbar_title,
-                                           'titleside': 'right',
-                                           'tickfont': fontd,
-                                           'titlefont': fontd}
+                    markers[im]["color"] = colorbar
+                fontd = {
+                    "family": self.font_style["family"],
+                    "size": 0.75 * self.font_style["size"],
+                }
+                if "color" in self.font_style.keys():
+                    fontd["color"] = self.font_style["color"]
+                markers[im]["colorbar"] = {
+                    "title": colorbar_title,
+                    "titleside": "right",
+                    "tickfont": fontd,
+                    "titlefont": fontd,
+                }
                 if color_range is not None:
                     tickvals = np.linspace(color_range[0], color_range[1], 6)
                     ticktext = [str(round(tick, 1)) for tick in tickvals]
-                    ticktext[0] = '-' + ticktext[0]
-                    ticktext[-1] = ticktext[-1] + '+'
-                    markers[im]['colorbar']['tickvals'] = tickvals
-                    markers[im]['colorbar']['ticktext'] = ticktext
-            if markers[im].get('colorscale') is None:
-                markers[im]['colorscale'] = colorscale or self.colorscale
+                    ticktext[0] = "-" + ticktext[0]
+                    ticktext[-1] = ticktext[-1] + "+"
+                    markers[im]["colorbar"]["tickvals"] = tickvals
+                    markers[im]["colorbar"]["ticktext"] = ticktext
+            if markers[im].get("colorscale") is None:
+                markers[im]["colorscale"] = colorscale or self.colorscale
 
         if not lines:
             lines = []
             for i, _ in enumerate(data):
-                linedict = {'dash': 'solid', 'width': 2}
+                linedict = {"dash": "solid", "width": 2}
                 lines.append(linedict)
 
         if isinstance(lines, dict):
@@ -585,46 +678,66 @@ class PlotlyFig:
         # for var in [labels, markers, lines]:
         for var in [markers, lines]:
             if len(list(var)) != len(data):
-                raise ValueError('"labels", "markers" or "lines" length does'
-                                 ' not match with that of xy_pairs')
+                raise ValueError(
+                    '"labels", "markers" or "lines" length does'
+                    " not match with that of xy_pairs"
+                )
         layout = deepcopy(self.layout)
 
         traces = []
 
         for i, xy_pair in enumerate(data):
-            traces.append(go.Scatter(x=xy_pair[0], y=xy_pair[1], mode=modes[i],
-                                     marker=markers[i], line=lines[i],
-                                     text=labels,
-                                     hoverinfo=self.hoverinfo,
-                                     hoverlabel=layout['hoverlabel'],
-                                     name=names[i], showlegend=showlegends[i],
-                                     ))
-        if layout['xaxis'].get('title') is None and len(data) == 1:
-            layout['xaxis']['title'] = pd.Series(data[0][0]).name
-        if layout['yaxis'].get('title') is None and len(data) == 1:
-            layout['yaxis']['title'] = pd.Series(data[0][1]).name
+            traces.append(
+                go.Scatter(
+                    x=xy_pair[0],
+                    y=xy_pair[1],
+                    mode=modes[i],
+                    marker=markers[i],
+                    line=lines[i],
+                    text=labels,
+                    hoverinfo=self.hoverinfo,
+                    hoverlabel=layout["hoverlabel"],
+                    name=names[i],
+                    showlegend=showlegends[i],
+                )
+            )
+        if layout["xaxis"].get("title") is None and len(data) == 1:
+            layout["xaxis"]["title"] = pd.Series(data[0][0]).name
+        if layout["yaxis"].get("title") is None and len(data) == 1:
+            layout["yaxis"]["title"] = pd.Series(data[0][1]).name
 
-        if limits and 'x' in limits:
-            layout['xaxis']['range'] = limits['x']
-        if limits and 'y' in limits:
-            layout['yaxis']['range'] = limits['y']
+        if limits and "x" in limits:
+            layout["xaxis"]["range"] = limits["x"]
+        if limits and "y" in limits:
+            layout["yaxis"]["range"] = limits["y"]
 
         if error_bars is not None:
             for i, _ in enumerate(traces):
-                traces[i].error_y = {'type': 'data', 'array': error_bars[i],
-                                     'visible': True}
+                traces[i].error_y = {
+                    "type": "data",
+                    "array": error_bars[i],
+                    "visible": True,
+                }
 
-        fig = {'data': traces, 'layout': layout}
+        fig = {"data": traces, "layout": layout}
         if any([show for show in showscale]):
-            fig['layout']['legend']['x'] = 0.1
-            fig['layout']['legend']['y'] = 1.1
-            fig['layout']['legend']['orientation'] = 'h'
+            fig["layout"]["legend"]["x"] = 0.1
+            fig["layout"]["legend"]["y"] = 1.1
+            fig["layout"]["legend"]["orientation"] = "h"
         return self.create_plot(fig, return_plot)
 
-
-    def scatter_matrix(self, data=None, cols=None, colors=None, marker=None,
-                       labels=None, marker_scale=1.0, return_plot=False,
-                       default_color='#98AFC7', **kwargs):
+    def scatter_matrix(
+        self,
+        data=None,
+        cols=None,
+        colors=None,
+        marker=None,
+        labels=None,
+        marker_scale=1.0,
+        return_plot=False,
+        default_color="#98AFC7",
+        **kwargs
+    ):
         """
         Create a Plotly scatter matrix plot from dataframes using Plotly.
         Args:
@@ -656,19 +769,20 @@ class PlotlyFig:
                 'color': 'black'}}, colormap='Viridis',
                 title='Elastic Properties Scatter Matrix')
         """
-        if 'colorscale' in kwargs.keys():
-            kwargs['colormap'] = kwargs['colorscale']
-            kwargs.pop('colorscale')
+        if "colorscale" in kwargs.keys():
+            kwargs["colormap"] = kwargs["colorscale"]
+            kwargs.pop("colorscale")
 
-        height = 1000 if not 'height' in self.layout else self.layout['height']
-        width = 1300 if not 'width' in self.layout else self.layout['width']
+        height = 1000 if not "height" in self.layout else self.layout["height"]
+        width = 1300 if not "width" in self.layout else self.layout["width"]
 
         # making sure the combination of input args make sense
         if data is None:
             if self.df is None:
                 raise ValueError(
                     "scatter_matrix requires either dataframe labels and a "
-                    "dataframe or a list of numerical values.")
+                    "dataframe or a list of numerical values."
+                )
             elif cols is None:
                 data = self.df
             else:
@@ -676,67 +790,94 @@ class PlotlyFig:
         elif isinstance(data, (np.ndarray, list)):
             data = pd.DataFrame(data, columns=cols)
 
-        data = data.select_dtypes(include=['float', 'int', 'bool'])
+        data = data.select_dtypes(include=["float", "int", "bool"])
         labels = self._data_from_str(labels, data)
-        if self.colorbar_title == 'auto':
+        if self.colorbar_title == "auto":
             colors_ = self._data_from_str(colors, data)
             colorbar_title = pd.Series(colors_).name
         else:
             colorbar_title = self.colorbar_title
 
         # actual ploting:
-        marker = marker or {'symbol': 'circle',
-                            'line': {'width': 0.5, 'color': 'black'},
-                            'colorbar': {'title': colorbar_title,
-                                         'titleside': 'right',
-                                         'tickfont': self.font_style,
-                                         'titlefont': self.font_style}
-                            }
+        marker = marker or {
+            "symbol": "circle",
+            "line": {"width": 0.5, "color": "black"},
+            "colorbar": {
+                "title": colorbar_title,
+                "titleside": "right",
+                "tickfont": self.font_style,
+                "titlefont": self.font_style,
+            },
+        }
         if colors is None:
-            marker['color'] = default_color
-            marker['showscale'] = False
+            marker["color"] = default_color
+            marker["showscale"] = False
 
         nplots = len(data.columns) - int(colors is not None)
-        marker_size = marker.get('size') or 5.0 * marker_scale
+        marker_size = marker.get("size") or 5.0 * marker_scale
         text_scale = 1.0 / (nplots ** 0.2)
         tick_scale = 0.9 / (nplots ** 0.3)
-        fig = FF.create_scatterplotmatrix(data, index=colors, diag='histogram',
-                                          size=marker_size, height=height,
-                                          width=width, **kwargs)
-        badf = ['xaxis', 'yaxis']
+        fig = FF.create_scatterplotmatrix(
+            data,
+            index=colors,
+            diag="histogram",
+            size=marker_size,
+            height=height,
+            width=width,
+            **kwargs
+        )
+        badf = ["xaxis", "yaxis"]
         layout = deepcopy(self.layout)
         scatter_layout = {k: v for (k, v) in layout.items() if k not in badf}
-        fig.update({'layout': scatter_layout})
+        fig.update({"layout": scatter_layout})
 
         # update each plot; we don't update the histograms markers as it causes issues:
         for iplot in range(nplots ** 2):
-            fig['data'][iplot].update(hoverinfo=self.hoverinfo)
-            for ax in ['x', 'y']:
-                fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'] = \
-                    self.font_style
-                fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'] = \
-                    self.font_style
-                fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'][
-                    'family'] = self.font_style['family']
-                fig['layout']['{}axis{}'.format(ax, iplot + 1)]['titlefont'][
-                    'size'] = self.font_style['size'] * text_scale
-                fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
-                    'family'] = self.font_style['family']
-                fig['layout']['{}axis{}'.format(ax, iplot + 1)]['tickfont'][
-                    'size'] = self.font_style['size'] * tick_scale
+            fig["data"][iplot].update(hoverinfo=self.hoverinfo)
+            for ax in ["x", "y"]:
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)][
+                    "titlefont"
+                ] = self.font_style
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)][
+                    "tickfont"
+                ] = self.font_style
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["titlefont"][
+                    "family"
+                ] = self.font_style["family"]
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["titlefont"]["size"] = (
+                    self.font_style["size"] * text_scale
+                )
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["tickfont"][
+                    "family"
+                ] = self.font_style["family"]
+                fig["layout"]["{}axis{}".format(ax, iplot + 1)]["tickfont"]["size"] = (
+                    self.font_style["size"] * tick_scale
+                )
             if iplot % (nplots + 1) != 0:
-                fig['data'][iplot].update(marker=marker, text=labels)
+                fig["data"][iplot].update(marker=marker, text=labels)
             else:
-                fig['data'][iplot].update(marker={'color': default_color,
-                                                  'line': {'width': 0.5,
-                                                           'color': 'black'}})
-        if (default_color in ['grey', 'black']) and colors is None:
-            fig['layout']['hoverlabel']['font']['color'] = 'white'
+                fig["data"][iplot].update(
+                    marker={
+                        "color": default_color,
+                        "line": {"width": 0.5, "color": "black"},
+                    }
+                )
+        if (default_color in ["grey", "black"]) and colors is None:
+            fig["layout"]["hoverlabel"]["font"]["color"] = "white"
         return self.create_plot(fig, return_plot)
 
-    def histogram(self, data=None, cols=None, orientation="vertical",
-                  histnorm="", n_bins=None, bins=None, colors=None,
-                  bargap=0, return_plot=False):
+    def histogram(
+        self,
+        data=None,
+        cols=None,
+        orientation="vertical",
+        histnorm="",
+        n_bins=None,
+        bins=None,
+        colors=None,
+        bargap=0,
+        return_plot=False,
+    ):
         """
         Creates a Plotly histogram. If multiple series of data are available,
         will create an overlaid histogram.
@@ -783,7 +924,8 @@ class PlotlyFig:
             if cols is None and self.df is None:
                 raise ValueError(
                     "Histogram requires either dataframe labels and a dataframe"
-                    " or a list of numerical values.")
+                    " or a list of numerical values."
+                )
             elif self.df is not None and cols is None:
                 cols = self.df.columns.values
             data = self.df[cols]
@@ -799,92 +941,116 @@ class PlotlyFig:
             elif isinstance(data, pd.DataFrame):
                 cols = data.columns.values
             elif isinstance(data[0], dtypes):
-                data=pd.DataFrame({'trace{}'.format(i): pd.Series(data[i])
-                                   for i, _ in enumerate(data)})
+                data = pd.DataFrame(
+                    {
+                        "trace{}".format(i): pd.Series(data[i])
+                        for i, _ in enumerate(data)
+                    }
+                )
                 cols = list(data.keys())
             else:
-                data = {'trace1': data}
-                cols = ['trace1']
+                data = {"trace1": data}
+                cols = ["trace1"]
 
         # Transform all entries to listlike, if given as single entries
-        attrdict = {'colors': colors, 'n_bins': n_bins, 'bins': bins}
+        attrdict = {"colors": colors, "n_bins": n_bins, "bins": bins}
         for k, v in attrdict.items():
             if v is None:
                 attrdict[k] = [None for _ in cols]
             elif not isinstance(v, dtypes):
                 attrdict[k] = [v for _ in cols]
-        colors = attrdict['colors']
-        n_bins = attrdict['n_bins']
-        bins = attrdict['bins']
+        colors = attrdict["colors"]
+        n_bins = attrdict["n_bins"]
+        bins = attrdict["bins"]
 
         hgrams = []
         for i, col in enumerate(cols):
             if bins[i] is None:
                 bins[i] = {}
             else:
-                if bins[i].get('size'):
+                if bins[i].get("size"):
                     if n_bins[i] is not None:
                         raise ValueError('Either set "n_bins" or "bins".')
-                    if not bins[i].get('start') or not bins[i].get('end'):
-                        warnings.warn('"size" key in bins ignored when "start" '
-                                      'or "end" not specified')
+                    if not bins[i].get("start") or not bins[i].get("end"):
+                        warnings.warn(
+                            '"size" key in bins ignored when "start" '
+                            'or "end" not specified'
+                        )
                 elif n_bins[i] is not None:
-                    warnings.warn('"size" not specified in "bins", "n_bins" is '
-                                  'ignored. Either set "bins" or "n_bins"')
-                if bins[i].get('start') is None != bins[i].get('end') is None:
-                    warnings.warn('Both "start" and "end" must be present in '
-                                  'bins; otherwise, it is ignored.')
+                    warnings.warn(
+                        '"size" not specified in "bins", "n_bins" is '
+                        'ignored. Either set "bins" or "n_bins"'
+                    )
+                if bins[i].get("start") is None != bins[i].get("end") is None:
+                    warnings.warn(
+                        'Both "start" and "end" must be present in '
+                        "bins; otherwise, it is ignored."
+                    )
 
             d = data[col]
             if isinstance(d, np.ndarray):
                 if len(d.shape) == 2:
                     d = d.reshape((len(d),))
 
-            if orientation == 'vertical':
-                h = go.Histogram(x=d, histnorm=histnorm,
-                                 xbins=bins[i],
-                                 nbinsx=n_bins[i],
-                                 marker=dict(color=colors[i]),
-                                 name=col,
-                                 hoverinfo=self.hoverinfo,
-                                 hoverlabel=self.layout['hoverlabel'])
+            if orientation == "vertical":
+                h = go.Histogram(
+                    x=d,
+                    histnorm=histnorm,
+                    xbins=bins[i],
+                    nbinsx=n_bins[i],
+                    marker=dict(color=colors[i]),
+                    name=col,
+                    hoverinfo=self.hoverinfo,
+                    hoverlabel=self.layout["hoverlabel"],
+                )
 
-            elif orientation == 'horizontal':
-                h = go.Histogram(y=d, histnorm=histnorm,
-                                 ybins=bins[i],
-                                 nbinsy=n_bins[i],
-                                 marker=dict(color=colors[i]),
-                                 name=col,
-                                 hoverinfo=self.hoverinfo,
-                                 hoverlabel=self.layout['hoverlabel']
-                                 )
+            elif orientation == "horizontal":
+                h = go.Histogram(
+                    y=d,
+                    histnorm=histnorm,
+                    ybins=bins[i],
+                    nbinsy=n_bins[i],
+                    marker=dict(color=colors[i]),
+                    name=col,
+                    hoverinfo=self.hoverinfo,
+                    hoverlabel=self.layout["hoverlabel"],
+                )
             else:
-                raise ValueError(
-                    "The orientation must be 'horizontal' or 'vertical'.")
+                raise ValueError("The orientation must be 'horizontal' or 'vertical'.")
             hgrams.append(h)
 
         layout = deepcopy(self.layout)
 
-        layout['hovermode'] = 'x' if orientation == 'vertical' else 'y'
-        layout['bargap'] = bargap
+        layout["hovermode"] = "x" if orientation == "vertical" else "y"
+        layout["bargap"] = bargap
 
-        if orientation == 'vertical':
-            if not layout['yaxis']['title']:
-                layout['yaxis']['title'] = histnorm
-        elif orientation == 'horizontal':
-            if not layout['xaxis']['title']:
-                layout['xaxis']['title'] = histnorm
+        if orientation == "vertical":
+            if not layout["yaxis"]["title"]:
+                layout["yaxis"]["title"] = histnorm
+        elif orientation == "horizontal":
+            if not layout["xaxis"]["title"]:
+                layout["xaxis"]["title"] = histnorm
 
         if len(hgrams) > 1:
-            layout['barmode'] = 'overlay'
+            layout["barmode"] = "overlay"
             for h in hgrams:
-                h['opacity'] = 1.0 / float(len(hgrams)) + 0.2
+                h["opacity"] = 1.0 / float(len(hgrams)) + 0.2
 
-        fig = {'data': hgrams, 'layout': layout}
+        fig = {"data": hgrams, "layout": layout}
         return self.create_plot(fig, return_plot)
 
-    def bar(self, data=None, cols=None, x=None, y=None, labels=None,
-            barmode='group', colors=None, bargap=None, return_plot=False):
+    def bar(
+        self,
+        data=None,
+        cols=None,
+        x=None,
+        y=None,
+        labels=None,
+        barmode="group",
+        colors=None,
+        bargap=None,
+        return_plot=False,
+    ):
         """
         Create a bar chart using Plotly.
 
@@ -928,7 +1094,8 @@ class PlotlyFig:
                     if x is None and y is None:
                         raise ValueError(
                             "Bar chart requires either dataframe labels and a "
-                            "dataframe or lists of values for x and y.")
+                            "dataframe or lists of values for x and y."
+                        )
             else:
                 # Default to having all columns represented.
                 if cols is None:
@@ -940,8 +1107,9 @@ class PlotlyFig:
         # If data is passed in as a dataframe, not as x,y
         if data is not None and x is None and y is None:
             if not isinstance(data, pd.DataFrame):
-                raise TypeError("'data' input type invalid. Valid types are"
-                                "DataFrames.")
+                raise TypeError(
+                    "'data' input type invalid. Valid types are" "DataFrames."
+                )
 
             if isinstance(labels, str):
                 strlabel = deepcopy(labels)
@@ -952,7 +1120,7 @@ class PlotlyFig:
 
         if x is not None and y is not None:
             if len(x) != len(y):
-                raise ValueError('x and y must be of the same length')
+                raise ValueError("x and y must be of the same length")
             if not isinstance(y[0], (list, tuple, np.ndarray)):
                 y = [y]
             if not isinstance(x[0], (list, tuple, np.ndarray)):
@@ -968,28 +1136,43 @@ class PlotlyFig:
                 if isinstance(colors, str):
                     colors = [colors] * len(y)
                 else:
-                    raise ValueError("Invalid data type for 'colors.' Please "
-                                     "use a list-like object or pandas Series.")
+                    raise ValueError(
+                        "Invalid data type for 'colors.' Please "
+                        "use a list-like object or pandas Series."
+                    )
         else:
             colors = [None] * len(y)
 
         barplots = []
         for i, _ in enumerate(x):
-            barplot = go.Bar(x=x[i], y=y[i], name=labels[i],
-                             marker=dict(color=colors[i]),
-                             hoverinfo=self.hoverinfo)
+            barplot = go.Bar(
+                x=x[i],
+                y=y[i],
+                name=labels[i],
+                marker=dict(color=colors[i]),
+                hoverinfo=self.hoverinfo,
+            )
             barplots.append(barplot)
 
         layout = deepcopy(self.layout)
         # Prevent linear default from altering categorical bar plot
-        layout['xaxis']['type'] = None
-        layout['barmode'] = barmode
-        layout['bargap'] = bargap
-        fig = {'data': barplots, 'layout': layout}
+        layout["xaxis"]["type"] = None
+        layout["barmode"] = barmode
+        layout["bargap"] = bargap
+        fig = {"data": barplots, "layout": layout}
         return self.create_plot(fig, return_plot)
 
-    def violin(self, data=None, cols=None, use_colorscale=False, rugplot=False,
-               group_col=None, groups=None, colorscale=None, return_plot=False):
+    def violin(
+        self,
+        data=None,
+        cols=None,
+        use_colorscale=False,
+        rugplot=False,
+        group_col=None,
+        groups=None,
+        colorscale=None,
+        return_plot=False,
+    ):
         """
         Create a violin plot using Plotly.
 
@@ -1028,7 +1211,8 @@ class PlotlyFig:
             if self.df is None:
                 raise ValueError(
                     "Violin plot requires either dataframe labels and a "
-                    "dataframe or a list of numerical values.")
+                    "dataframe or a list of numerical values."
+                )
             data = self.df
 
         # No matter the data type, data is converted into a dataframe
@@ -1043,37 +1227,39 @@ class PlotlyFig:
                 data = np.array([data])
 
             if not cols:
-                cols = ['data{}'.format(i) for i in range(data.shape[1])]
+                cols = ["data{}".format(i) for i in range(data.shape[1])]
             data = pd.DataFrame(data=data, columns=cols)
         elif not isinstance(data, pd.DataFrame):
-            raise ValueError('"data" was set to an unknown datatype. Please'
-                             'use a list, a list of lists/numpy array, a series'
-                             ' or a DataFrame.')
+            raise ValueError(
+                '"data" was set to an unknown datatype. Please'
+                "use a list, a list of lists/numpy array, a series"
+                " or a DataFrame."
+            )
 
         if isinstance(data, pd.DataFrame):
             if groups is None:
                 if group_col is None:
-                    grouped = pd.DataFrame({'data': [], 'group': []})
+                    grouped = pd.DataFrame({"data": [], "group": []})
 
                     if cols is None:
                         cols = data.columns.values
 
                     for col in cols:
                         d = data[col].tolist()
-                        temp_df = pd.DataFrame(
-                            {'data': d, 'group': [col] * len(d)})
+                        temp_df = pd.DataFrame({"data": d, "group": [col] * len(d)})
                         grouped = grouped.append(temp_df)
                     data = grouped
-                    group_col = 'group'
+                    group_col = "group"
                     groups = cols
-                    cols = ['data']
+                    cols = ["data"]
                 else:
                     groups = data[group_col].unique()
             else:
                 if group_col is None:
                     raise ValueError(
                         "Please specify group_col, the label of the column "
-                        "containing the groups for each row.")
+                        "containing the groups for each row."
+                    )
 
             group_stats = {}
 
@@ -1088,48 +1274,62 @@ class PlotlyFig:
                 if group_value_counts[j] == 1:
                     data = data[data[group_col] != j]
                     warnings.warn(
-                        'Omitting rows with group = {} which have only one row '
-                        'in the dataframe.'.format(j))
+                        "Omitting rows with group = {} which have only one row "
+                        "in the dataframe.".format(j)
+                    )
 
         if use_colorscale:
             colorscale = colorscale or self.colorscale
         else:
-            colorscale = ['rgb(105,105,105)'] * len(data)
+            colorscale = ["rgb(105,105,105)"] * len(data)
 
-        fig = FF.create_violin(data=data, data_header=cols[0],
-                               group_header=group_col,
-                               title=self.layout['title'],
-                               colors=colorscale, use_colorscale=use_colorscale,
-                               group_stats=group_stats, rugplot=rugplot)
+        fig = FF.create_violin(
+            data=data,
+            data_header=cols[0],
+            group_header=group_col,
+            title=self.layout["title"],
+            colors=colorscale,
+            use_colorscale=use_colorscale,
+            group_stats=group_stats,
+            rugplot=rugplot,
+        )
         layout = deepcopy(self.layout)
         font_style = deepcopy(self.font_style)
-        font_style['size'] = 0.65 * font_style['size']
+        font_style["size"] = 0.65 * font_style["size"]
 
-        violin_layout = {k: v for (k, v) in layout.items() if k != 'xaxis'}
-        if 'color' in violin_layout['hoverlabel']['font']:
-            violin_layout['hoverlabel']['font'].pop('color')
+        violin_layout = {k: v for (k, v) in layout.items() if k != "xaxis"}
+        if "color" in violin_layout["hoverlabel"]["font"]:
+            violin_layout["hoverlabel"]["font"].pop("color")
 
-        if 'bgcolor' in violin_layout['hoverlabel']:
-            violin_layout['hoverlabel'].pop('bgcolor')
+        if "bgcolor" in violin_layout["hoverlabel"]:
+            violin_layout["hoverlabel"].pop("bgcolor")
 
-        fig.update({'layout': violin_layout})
+        fig.update({"layout": violin_layout})
 
         # Change sizes in all x-axis
-        for item in fig['layout']:
-            if item.startswith('xaxis'):
-                fig['layout'][item].update({'titlefont': self.font_style,
-                                            'tickfont': self.font_style})
+        for item in fig["layout"]:
+            if item.startswith("xaxis"):
+                fig["layout"][item].update(
+                    {"titlefont": self.font_style, "tickfont": self.font_style}
+                )
 
-        if not hasattr(self, 'width'):
-            fig['layout']['width'] = 1400
-        if not hasattr(self, 'height'):
-            fig['layout']['height'] = 1000
+        if not hasattr(self, "width"):
+            fig["layout"]["width"] = 1400
+        if not hasattr(self, "height"):
+            fig["layout"]["height"] = 1000
 
-        fig['layout']['font'] = font_style
+        fig["layout"]["font"] = font_style
         return self.create_plot(fig, return_plot)
 
-    def parallel_coordinates(self, data=None, cols=None, line=None, precision=2,
-                             colors=None, return_plot=False):
+    def parallel_coordinates(
+        self,
+        data=None,
+        cols=None,
+        line=None,
+        precision=2,
+        colors=None,
+        return_plot=False,
+    ):
         """
         Create a Plotly Parcoords plot from dataframes.
 
@@ -1154,9 +1354,10 @@ class PlotlyFig:
             if self.df is None:
                 raise ValueError(
                     "Parallel coordinates requires either dataframe labels and a"
-                    "dataframe or a list of numerical values.")
+                    "dataframe or a list of numerical values."
+                )
             elif cols is None:
-                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+                data = self.df.select_dtypes(include=["float", "int", "bool"])
             else:
                 data = self.df[cols]
         elif isinstance(data, (np.ndarray, list)):
@@ -1166,10 +1367,10 @@ class PlotlyFig:
             cols = data.columns.values
 
         if colors is None:
-            colors = 'blue'
+            colors = "blue"
         else:
             colors = self._data_from_str(colors, data)
-        if self.colorbar_title == 'auto':
+        if self.colorbar_title == "auto":
             colorbar_title = pd.Series(colors).name
         else:
             colorbar_title = self.colorbar_title
@@ -1180,34 +1381,44 @@ class PlotlyFig:
 
         dimensions = []
         for col in cols:
-            if is_numeric_dtype(data[col]) and 'int' not in str(
-                    data[col].dtype):
+            if is_numeric_dtype(data[col]) and "int" not in str(data[col].dtype):
                 values = data[col].apply(lambda x: round(x, precision))
             else:
                 values = data[col]
-            dimensions.append({'label': col, 'values': values.tolist()})
+            dimensions.append({"label": col, "values": values.tolist()})
 
         font_style = deepcopy(self.font_style)
-        font_style['size'] = 0.7 * font_style['size']
-        line = line or {'color': colors,
-                        'colorscale': self.colorscale,
-                        'colorbar': {'title': colorbar_title,
-                                     'titleside': 'right',
-                                     'tickfont': font_style,
-                                     'titlefont': font_style,
-                                     }}
+        font_style["size"] = 0.7 * font_style["size"]
+        line = line or {
+            "color": colors,
+            "colorscale": self.colorscale,
+            "colorbar": {
+                "title": colorbar_title,
+                "titleside": "right",
+                "tickfont": font_style,
+                "titlefont": font_style,
+            },
+        }
         par_coords = go.Parcoords(line=line, dimensions=dimensions)
 
         par_coords.tickfont = font_style
         par_coords.labelfont = font_style
         par_coords.rangefont = font_style
-        fig = {'data': [par_coords], 'layout': self.layout}
+        fig = {"data": [par_coords], "layout": self.layout}
         return self.create_plot(fig, return_plot)
 
-    def heatmap_basic(self, data=None, x_labels=None, y_labels=None,
-                      colorscale=None, colorscale_range=None,
-                      annotations_text=None, annotations_font_size=20,
-                      annotations_color='white', return_plot=False):
+    def heatmap_basic(
+        self,
+        data=None,
+        x_labels=None,
+        y_labels=None,
+        colorscale=None,
+        colorscale_range=None,
+        annotations_text=None,
+        annotations_font_size=20,
+        annotations_color="white",
+        return_plot=False,
+    ):
         """
         Make a heatmap plot, either using 2D arrays of values, or a dataframe.
 
@@ -1231,8 +1442,9 @@ class PlotlyFig:
 
         if not data:
             if not self.df:
-                raise ValueError("Either data or self.df (set in initializer)"
-                                 "must be defined.")
+                raise ValueError(
+                    "Either data or self.df (set in initializer)" "must be defined."
+                )
             else:
                 data = self.df.as_matrix()
                 x_labels = self.df.columns.values.tolist()
@@ -1249,10 +1461,11 @@ class PlotlyFig:
             colorscale_max = colorscale_range[1]
         else:
             raise ValueError(
-                "The field 'colorscale_range' must be a list with two values.")
+                "The field 'colorscale_range' must be a list with two values."
+            )
 
-        font_family = self.font_style['family']
-        font_size = self.font_style['size']
+        font_family = self.font_style["family"]
+        font_size = self.font_style["size"]
 
         if annotations_text:
             annotations = []
@@ -1263,17 +1476,22 @@ class PlotlyFig:
                     annotations.append(
                         dict(
                             text=str(var),
-                            x=x_labels[m], y=y_labels[n],
-                            xref='x1', yref='y1',
-                            font=dict(color=annotations_color,
-                                      size=annotations_font_size,
-                                      family=font_family),
-                            showarrow=False)
+                            x=x_labels[m],
+                            y=y_labels[n],
+                            xref="x1",
+                            yref="y1",
+                            font=dict(
+                                color=annotations_color,
+                                size=annotations_font_size,
+                                family=font_family,
+                            ),
+                            showarrow=False,
+                        )
                     )
         else:
             annotations = []
 
-        if self.colorbar_title == 'auto':
+        if self.colorbar_title == "auto":
             colorbar_title = pd.Series(data).name
         else:
             colorbar_title = self.colorbar_title
@@ -1287,30 +1505,41 @@ class PlotlyFig:
             colorscale=colorscale or self.colorscale,
             hoverinfo=self.hoverinfo,
             colorbar={
-                'title': colorbar_title, 'titleside': 'right',
-                'tickfont': {'size': 0.75 * self.ticksize,
-                             'family': font_family},
-                'titlefont': {'size': font_size,
-                              'family': font_family}}
+                "title": colorbar_title,
+                "titleside": "right",
+                "tickfont": {"size": 0.75 * self.ticksize, "family": font_family},
+                "titlefont": {"size": font_size, "family": font_family},
+            },
         )
 
         layout = deepcopy(self.layout)
 
         # heatmap specific formatting:
-        for ax in ['x', 'y']:
-            if 'type' in layout['{}axis'.format(ax)]:
-                layout['{}axis'.format(ax)].pop('type')
-        layout['annotations'] = annotations
-        if 'bgcolor' not in layout['hoverlabel']:
-            layout['hoverlabel']['bgcolor'] = 'white'
-        fig = {'data': [data], 'layout': layout}
+        for ax in ["x", "y"]:
+            if "type" in layout["{}axis".format(ax)]:
+                layout["{}axis".format(ax)].pop("type")
+        layout["annotations"] = annotations
+        if "bgcolor" not in layout["hoverlabel"]:
+            layout["hoverlabel"]["bgcolor"] = "white"
+        fig = {"data": [data], "layout": layout}
 
         return self.create_plot(fig, return_plot)
 
-    def heatmap_df(self, data=None, cols=None, x_labels=None, x_nqs=6,
-                   y_labels=None, y_nqs=4, precision=1, annotation='count',
-                   annotation_color='black', colorscale=None, color_range=None,
-                   return_plot=False):
+    def heatmap_df(
+        self,
+        data=None,
+        cols=None,
+        x_labels=None,
+        x_nqs=6,
+        y_labels=None,
+        y_nqs=4,
+        precision=1,
+        annotation="count",
+        annotation_color="black",
+        colorscale=None,
+        color_range=None,
+        return_plot=False,
+    ):
         """
         A heatmap which can accept a dataframe as input directly.
 
@@ -1347,12 +1576,14 @@ class PlotlyFig:
             if self.df is None:
                 raise ValueError("heatmap_df requires dataframe input.")
             elif cols is None:
-                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+                data = self.df.select_dtypes(include=["float", "int", "bool"])
             else:
                 data = self.df[cols]
         elif not isinstance(data, pd.DataFrame):
-            raise ValueError('"heatmap_df" only supports dataframes with '
-                             'numerical columns. Please use heatmap instead.')
+            raise ValueError(
+                '"heatmap_df" only supports dataframes with '
+                "numerical columns. Please use heatmap instead."
+            )
         cols = data.columns.values
         x_prop = cols[0]
         y_prop = cols[1]
@@ -1365,69 +1596,75 @@ class PlotlyFig:
         data = data.sort_values(y_prop, ascending=True)
         if y_nqs is None or len(data[y_prop].unique()) > y_nqs:
             try:
-                data['y_bin'] = pd.qcut(data[y_prop], y_nqs, labels=y_labels,
-                                        precision=precision).astype(str)
-                y_groups = data['y_bin'].unique()
+                data["y_bin"] = pd.qcut(
+                    data[y_prop], y_nqs, labels=y_labels, precision=precision
+                ).astype(str)
+                y_groups = data["y_bin"].unique()
             except BaseException:
-                warnings.warn('pd.qcut failed! categorizing on unique values')
+                warnings.warn("pd.qcut failed! categorizing on unique values")
                 y_groups = data[y_prop].unique()
-                data['y_bin'] = data[y_prop]
+                data["y_bin"] = data[y_prop]
         else:
             y_groups = data[y_prop].unique()
-            data['y_bin'] = data[y_prop]
+            data["y_bin"] = data[y_prop]
 
         data = data.sort_values(x_prop, ascending=True)
         if x_nqs is None or len(data[x_prop].unique()) > x_nqs:
             try:
-                data['x_bin'] = pd.qcut(data[x_prop], x_nqs, labels=x_labels,
-                                        precision=precision).astype(str)
-                x_groups = data['x_bin'].unique()
+                data["x_bin"] = pd.qcut(
+                    data[x_prop], x_nqs, labels=x_labels, precision=precision
+                ).astype(str)
+                x_groups = data["x_bin"].unique()
             except BaseException:
-                warnings.warn('pd.qcut failed! categorizing on unique values')
+                warnings.warn("pd.qcut failed! categorizing on unique values")
                 x_groups = data[x_prop].unique()
-                data['x_bin'] = data[x_prop]
+                data["x_bin"] = data[x_prop]
         else:
             x_groups = data[x_prop].unique()
-            data['x_bin'] = data[x_prop]
+            data["x_bin"] = data[x_prop]
 
         data_ = []
         annotations = []
-        annotation_template = {'font': {'color': annotation_color,
-                                        'size': 0.7 * self.font_style['size'],
-                                        'family': self.font_style['family']},
-                               'showarrow': False}
+        annotation_template = {
+            "font": {
+                "color": annotation_color,
+                "size": 0.7 * self.font_style["size"],
+                "family": self.font_style["family"],
+            },
+            "showarrow": False,
+        }
         for y in y_groups:
-            temp = data[data['y_bin'].values == y]
-            grpd = temp.groupby('x_bin').mean().reset_index()
-            gcnt = temp.groupby('x_bin').count().reset_index()
+            temp = data[data["y_bin"].values == y]
+            grpd = temp.groupby("x_bin").mean().reset_index()
+            gcnt = temp.groupby("x_bin").count().reset_index()
             x_data = []
             for x in x_groups:
-                if x in grpd['x_bin'].values:
-                    val = grpd[grpd['x_bin'].values == x][col_prop].values[0]
-                    count = gcnt[gcnt['x_bin'].values == x][col_prop].values[0]
+                if x in grpd["x_bin"].values:
+                    val = grpd[grpd["x_bin"].values == x][col_prop].values[0]
+                    count = gcnt[gcnt["x_bin"].values == x][col_prop].values[0]
                     val = str(round(val, precision))
                 else:
                     count = 0
-                    val = 'N/A'
+                    val = "N/A"
                 x_data.append(val)
                 a_d = deepcopy(annotation_template)
-                a_d['x'] = x
-                a_d['y'] = y
+                a_d["x"] = x
+                a_d["y"] = y
                 if annotation is None:
-                    a_d['text'] = ''
-                elif annotation == 'value':
-                    a_d['text'] = val
-                elif annotation == 'count':
-                    a_d['text'] = count
+                    a_d["text"] = ""
+                elif annotation == "value":
+                    a_d["text"] = val
+                elif annotation == "count":
+                    a_d["text"] = count
                 else:
-                    a_d['text'] = annotation
+                    a_d["text"] = annotation
                 annotations.append(a_d)
             data_.append(x_data)
 
         x_labels = x_labels or x_groups
         y_labels = y_labels or y_groups
 
-        if self.colorbar_title == 'auto':
+        if self.colorbar_title == "auto":
             colorbar_title = col_prop
         else:
             colorbar_title = self.colorbar_title
@@ -1437,36 +1674,46 @@ class PlotlyFig:
         if color_range is not None:
             zmin = color_range[0]
             zmax = color_range[1]
-        trace = go.Heatmap(z=data_, x=x_labels, y=y_labels, zmin=zmin, zmax=zmax,
-                           colorscale=colorscale or self.colorscale,
-                           hoverinfo=self.hoverinfo, colorbar={
-                'title': colorbar_title, 'titleside': 'right',
-                'tickfont': {'size': 0.75 * self.ticksize,
-                             'family': self.font_style['family']},
-                'titlefont': {'size': self.font_style['size'],
-                              'family': self.font_style['family']}
-            })
+        trace = go.Heatmap(
+            z=data_,
+            x=x_labels,
+            y=y_labels,
+            zmin=zmin,
+            zmax=zmax,
+            colorscale=colorscale or self.colorscale,
+            hoverinfo=self.hoverinfo,
+            colorbar={
+                "title": colorbar_title,
+                "titleside": "right",
+                "tickfont": {
+                    "size": 0.75 * self.ticksize,
+                    "family": self.font_style["family"],
+                },
+                "titlefont": {
+                    "size": self.font_style["size"],
+                    "family": self.font_style["family"],
+                },
+            },
+        )
 
         layout = deepcopy(self.layout)
 
         # heatmap specific formatting:
-        for ax in ['x', 'y']:
-            if 'type' in layout['{}axis'.format(ax)]:
-                layout['{}axis'.format(ax)].pop('type')
-        layout['margin']['l'] += self.ticksize * \
-                                 (2 + precision / 10.0) + 35
-        if not layout['xaxis'].get('title'):
-            warnings.warn('xaxis title was automatically set to x_prop value')
-            layout['xaxis']['title'] = x_prop
-        if not layout['yaxis'].get('title'):
-            warnings.warn('yaxis title was automatically set to y_prop value')
-            layout['yaxis']['title'] = y_prop
-        layout['annotations'] = annotations
-        if 'bgcolor' not in layout['hoverlabel']:
-            layout['hoverlabel']['bgcolor'] = 'white'
-        fig = {'data': [trace], 'layout': layout}
+        for ax in ["x", "y"]:
+            if "type" in layout["{}axis".format(ax)]:
+                layout["{}axis".format(ax)].pop("type")
+        layout["margin"]["l"] += self.ticksize * (2 + precision / 10.0) + 35
+        if not layout["xaxis"].get("title"):
+            warnings.warn("xaxis title was automatically set to x_prop value")
+            layout["xaxis"]["title"] = x_prop
+        if not layout["yaxis"].get("title"):
+            warnings.warn("yaxis title was automatically set to y_prop value")
+            layout["yaxis"]["title"] = y_prop
+        layout["annotations"] = annotations
+        if "bgcolor" not in layout["hoverlabel"]:
+            layout["hoverlabel"]["bgcolor"] = "white"
+        fig = {"data": [trace], "layout": layout}
         return self.create_plot(fig, return_plot)
-
 
     def setup_labels(self, labels, data, expected_length=None):
         """
@@ -1490,8 +1737,9 @@ class PlotlyFig:
         elif not isinstance(labels, (list, np.ndarray, pd.Series, pd.Index)):
             labels = [self._data_from_str(labels, data)]
         else:
-            if len(list(labels)) ==expected_length and \
-                    isinstance(labels[0], (str, tuple)):
+            if len(list(labels)) == expected_length and isinstance(
+                labels[0], (str, tuple)
+            ):
                 labels = [labels]
             else:
                 labels = [self._data_from_str(l) for l in labels]
@@ -1500,14 +1748,23 @@ class PlotlyFig:
         if labels is not None:
             for label in labels:
                 if len(list(label)) != expected_length:
-                    raise ValueError('the length of this label is not equal to '
-                                     'the expected length:\n{}'.format(label))
-            labels = ['</br>'.join([str(t) for t in l]) for l in zip(*labels)]
+                    raise ValueError(
+                        "the length of this label is not equal to "
+                        "the expected length:\n{}".format(label)
+                    )
+            labels = ["</br>".join([str(t) for t in l]) for l in zip(*labels)]
         return labels
 
-
-    def triangle(self, data=None, cols=None, sum_of_3=1.0, axes_titles=None,
-                 labels=None, markers=None, return_plot=False):
+    def triangle(
+        self,
+        data=None,
+        cols=None,
+        sum_of_3=1.0,
+        axes_titles=None,
+        labels=None,
+        markers=None,
+        return_plot=False,
+    ):
         """
         Phase diagram type plot for 3 (and only 3) variables that always add
         to a certain number (e.g. 1 or 100%); regardless the rows are separately
@@ -1538,14 +1795,14 @@ class PlotlyFig:
 
         Returns: A Plotly triangle plot Figure object.
         """
-        #TODO: on a big monitor, if the window size is expanded, the ticks fly to the corner of the screen, see why?! and fix
-        #TODO: add sizes and colors to follow the same logic in xy (add a setup_sizes similar to setup_labels)
-        #TODO: add sizes and colors to follow the same logic in xy (add a setup_colors similar to setup_labels)
+        # TODO: on a big monitor, if the window size is expanded, the ticks fly to the corner of the screen, see why?! and fix
+        # TODO: add sizes and colors to follow the same logic in xy (add a setup_sizes similar to setup_labels)
+        # TODO: add sizes and colors to follow the same logic in xy (add a setup_colors similar to setup_labels)
         if data is None:
             if self.df is None:
                 raise ValueError("triangle requires dataframe input.")
             elif cols is None:
-                data = self.df.select_dtypes(include=['float', 'int', 'bool'])
+                data = self.df.select_dtypes(include=["float", "int", "bool"])
             else:
                 data = self.df[cols]
         elif not isinstance(data, pd.DataFrame):
@@ -1553,23 +1810,24 @@ class PlotlyFig:
         if cols is None:
             cols = data.columns.values[:3]
         if len(list(cols)) != 3:
-            raise ValueError('triangle plot requires 3 and only 3 columns!')
+            raise ValueError("triangle plot requires 3 and only 3 columns!")
 
         labels = self.setup_labels(labels, data)
 
         data = {
-            'type': 'scatterternary',
-            'mode': 'markers',
-            'a': list(data[cols[0]]), # list() to ensure JSON serializable
-            'b': list(data[cols[1]]),
-            'c': list(data[cols[2]]),
-            'text': labels,
-            'marker': markers or {
-                'symbol': 'circle-open',
-                'color': '#DB7365',
-                'size': 14,
-                'line': {'width': 2}
-            }
+            "type": "scatterternary",
+            "mode": "markers",
+            "a": list(data[cols[0]]),  # list() to ensure JSON serializable
+            "b": list(data[cols[1]]),
+            "c": list(data[cols[2]]),
+            "text": labels,
+            "marker": markers
+            or {
+                "symbol": "circle-open",
+                "color": "#DB7365",
+                "size": 14,
+                "line": {"width": 2},
+            },
         }
 
         axes_titles = axes_titles or cols
@@ -1577,23 +1835,24 @@ class PlotlyFig:
         axes = []
         angles = [0, 45, -45]
         for iax in range(3):
-            ax = deepcopy(self.layout['xaxis'])
-            ax.pop('type', None)
-            ax['title'] = axes_titles[iax]
+            ax = deepcopy(self.layout["xaxis"])
+            ax.pop("type", None)
+            ax["title"] = axes_titles[iax]
             if iax > 0:
-                ax['title'] = '<br>'+ax['title'] # not to overlap w/ axis ticks
-            ax['showline'] = True
-            ax['showgrid'] = True
-            ax['tickangle'] = angles[iax]
+                ax["title"] = "<br>" + ax["title"]  # not to overlap w/ axis ticks
+            ax["showline"] = True
+            ax["showgrid"] = True
+            ax["tickangle"] = angles[iax]
             axes.append(ax)
 
         layout = deepcopy(self.layout)
-        layout['ternary'] = {'sum': sum_of_3,
-                             'aaxis': axes[0],
-                             'baxis': axes[1],
-                             'caxis': axes[2]
-                             }
-        fig = {'data': [data], 'layout': layout}
+        layout["ternary"] = {
+            "sum": sum_of_3,
+            "aaxis": axes[0],
+            "baxis": axes[1],
+            "caxis": axes[2],
+        }
+        fig = {"data": [data], "layout": layout}
 
         return self.create_plot(fig, return_plot)
 

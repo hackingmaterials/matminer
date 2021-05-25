@@ -17,11 +17,20 @@ from sklearn.neighbors import NearestNeighbors
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
-from matminer.utils.data import DemlData, MagpieData, PymatgenData, \
-    CohesiveEnergyData, MixingEnthalpy, MatscholarElementData, MEGNetElementData
+from matminer.utils.data import (
+    DemlData,
+    MagpieData,
+    PymatgenData,
+    CohesiveEnergyData,
+    MixingEnthalpy,
+    MatscholarElementData,
+    MEGNetElementData,
+)
 
-__author__ = 'Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, ' \
-             'Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain'
+__author__ = (
+    "Logan Ward, Jiming Chen, Ashwin Aggarwal, Kiran Mathew, "
+    "Saurabh Bajaj, Qi Wang, Maxwell Dylla, Anubhav Jain"
+)
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(module_dir, "..", "utils", "data_files")
@@ -130,35 +139,72 @@ class ElementProperty(BaseFeaturizer):
         """
         if preset_name == "magpie":
             data_source = "magpie"
-            features = ["Number", "MendeleevNumber", "AtomicWeight",
-                        "MeltingT",
-                        "Column", "Row", "CovalentRadius",
-                        "Electronegativity", "NsValence", "NpValence",
-                        "NdValence", "NfValence", "NValence",
-                        "NsUnfilled", "NpUnfilled", "NdUnfilled", "NfUnfilled",
-                        "NUnfilled", "GSvolume_pa",
-                        "GSbandgap", "GSmagmom", "SpaceGroupNumber"]
+            features = [
+                "Number",
+                "MendeleevNumber",
+                "AtomicWeight",
+                "MeltingT",
+                "Column",
+                "Row",
+                "CovalentRadius",
+                "Electronegativity",
+                "NsValence",
+                "NpValence",
+                "NdValence",
+                "NfValence",
+                "NValence",
+                "NsUnfilled",
+                "NpUnfilled",
+                "NdUnfilled",
+                "NfUnfilled",
+                "NUnfilled",
+                "GSvolume_pa",
+                "GSbandgap",
+                "GSmagmom",
+                "SpaceGroupNumber",
+            ]
             stats = ["minimum", "maximum", "range", "mean", "avg_dev", "mode"]
 
         elif preset_name == "deml":
             data_source = "deml"
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
-            features = ["atom_num", "atom_mass", "row_num", "col_num",
-                        "atom_radius", "molar_vol", "heat_fusion",
-                        "melting_point", "boiling_point", "heat_cap",
-                        "first_ioniz", "electronegativity",
-                        "electric_pol", "GGAU_Etot", "mus_fere",
-                        "FERE correction"]
+            features = [
+                "atom_num",
+                "atom_mass",
+                "row_num",
+                "col_num",
+                "atom_radius",
+                "molar_vol",
+                "heat_fusion",
+                "melting_point",
+                "boiling_point",
+                "heat_cap",
+                "first_ioniz",
+                "electronegativity",
+                "electric_pol",
+                "GGAU_Etot",
+                "mus_fere",
+                "FERE correction",
+            ]
 
         elif preset_name == "matminer":
             data_source = "pymatgen"
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
-            features = ["X", "row", "group", "block", "atomic_mass",
-                        "atomic_radius", "mendeleev_no",
-                        "electrical_resistivity", "velocity_of_sound",
-                        "thermal_conductivity", "melting_point",
-                        "bulk_modulus",
-                        "coefficient_of_linear_thermal_expansion"]
+            features = [
+                "X",
+                "row",
+                "group",
+                "block",
+                "atomic_mass",
+                "atomic_radius",
+                "mendeleev_no",
+                "electrical_resistivity",
+                "velocity_of_sound",
+                "thermal_conductivity",
+                "melting_point",
+                "bulk_modulus",
+                "coefficient_of_linear_thermal_expansion",
+            ]
 
         elif preset_name == "matscholar_el":
             data_source = "matscholar_el"
@@ -192,7 +238,9 @@ class ElementProperty(BaseFeaturizer):
         elements, fractions = zip(*comp.element_composition.items())
 
         for attr in self.features:
-            elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
+            elem_data = [
+                self.data_source.get_elemental_property(e, attr) for e in elements
+            ]
 
             for stat in self.stats:
                 all_attributes.append(self.pstats.calc_stat(elem_data, stat, fractions))
@@ -214,14 +262,16 @@ class ElementProperty(BaseFeaturizer):
                 "machine learning framework for predicting properties of inorganic materials}, "
                 "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
                 "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-                "Alok and Wolverton, Christopher}, year={2016}}"]
+                "Alok and Wolverton, Christopher}, year={2016}}"
+            ]
         elif self.data_source.__class__.__name__ == "DemlData":
             citation = [
                 "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
                 "functional theory total energies and enthalpies of formation of metal-nonmetal "
                 "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
                 "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+                "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"
+            ]
         elif self.data_source.__class__.__name__ == "PymatgenData":
             citation = [
                 "@article{Ong2013, author = {Ong, Shyue Ping and Richards, William Davidson and Jain, Anubhav and Hautier, "
@@ -230,7 +280,8 @@ class ElementProperty(BaseFeaturizer):
                 "journal = {Computational Materials Science}, month = {feb}, pages = {314--319}, "
                 "publisher = {Elsevier B.V.}, title = {{Python Materials Genomics (pymatgen): A robust, open-source python "
                 "library for materials analysis}}, url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
-                "volume = {68}, year = {2013} } "]
+                "volume = {68}, year = {2013} } "
+            ]
         elif self.data_source.__class__.__name__ == "MEGNetElementData":
             # TODO: Cite MEGNet publication (not preprint) once released!
             citation = [
@@ -247,13 +298,15 @@ class ElementProperty(BaseFeaturizer):
                 "eprint = {1812.05055},"
                 "primaryClass = {cond-mat.mtrl-sci},"
                 "adsurl = {https://ui.adsabs.harvard.edu/\#abs/2018arXiv181205055C},"
-                "adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"]
+                "adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"
+            ]
         else:
             citation = []
         return citation
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn"]
+
 
 class Meredig(BaseFeaturizer):
     """
@@ -275,9 +328,18 @@ class Meredig(BaseFeaturizer):
     def __init__(self):
         self.data_source = MagpieData()
 
-        #The labels for statistics on element properties
-        self._element_property_feature_labels = ["mean AtomicWeight", "mean Column", "mean Row", "range Number", "mean Number",
-        "range AtomicRadius", "mean AtomicRadius", "range Electronegativity", "mean Electronegativity"]
+        # The labels for statistics on element properties
+        self._element_property_feature_labels = [
+            "mean AtomicWeight",
+            "mean Column",
+            "mean Row",
+            "range Number",
+            "mean Number",
+            "range AtomicRadius",
+            "mean AtomicRadius",
+            "range Electronegativity",
+            "mean Electronegativity",
+        ]
         # Initialize stats computer
         self.pstats = PropertyStats()
 
@@ -292,31 +354,46 @@ class Meredig(BaseFeaturizer):
             all_attributes: Specified property statistics of features
         """
 
-        #First 103 features are element fractions, we can get these from the ElementFraction featurizer
+        # First 103 features are element fractions, we can get these from the ElementFraction featurizer
         element_fraction_features = ElementFraction().featurize(comp)
 
-
-        #Next 9 features are statistics on elemental properties
+        # Next 9 features are statistics on elemental properties
         elements, fractions = zip(*comp.element_composition.items())
         element_property_features = [0] * len(self._element_property_feature_labels)
 
-        for i,feat in enumerate(self._element_property_feature_labels):
+        for i, feat in enumerate(self._element_property_feature_labels):
             stat = feat.split(" ")[0]
             attr = " ".join(feat.split(" ")[1:])
 
-            elem_data = [self.data_source.get_elemental_property(e, attr) for e in elements]
-            element_property_features[i] = self.pstats.calc_stat(elem_data, stat, fractions)
+            elem_data = [
+                self.data_source.get_elemental_property(e, attr) for e in elements
+            ]
+            element_property_features[i] = self.pstats.calc_stat(
+                elem_data, stat, fractions
+            )
 
-        #Final 8 features are statistics on valence orbitals, available from the ValenceOrbital featurizer
-        valence_orbital_features = ValenceOrbital(orbitals=("s", "p", "d", "f"), props=("avg", "frac")).featurize(comp)
+        # Final 8 features are statistics on valence orbitals, available from the ValenceOrbital featurizer
+        valence_orbital_features = ValenceOrbital(
+            orbitals=("s", "p", "d", "f"), props=("avg", "frac")
+        ).featurize(comp)
 
-        return element_fraction_features+element_property_features+valence_orbital_features
+        return (
+            element_fraction_features
+            + element_property_features
+            + valence_orbital_features
+        )
 
     def feature_labels(self):
-        #Since we have more features than just element fractions, append 'fraction' to element symbols for clarity
-        element_fraction_features = [e + " fraction" for e in ElementFraction().feature_labels()]
+        # Since we have more features than just element fractions, append 'fraction' to element symbols for clarity
+        element_fraction_features = [
+            e + " fraction" for e in ElementFraction().feature_labels()
+        ]
         valence_orbital_features = ValenceOrbital().feature_labels()
-        return element_fraction_features+self._element_property_feature_labels+valence_orbital_features
+        return (
+            element_fraction_features
+            + self._element_property_feature_labels
+            + valence_orbital_features
+        )
 
     def citations(self):
         citation = [
@@ -324,7 +401,8 @@ class Meredig(BaseFeaturizer):
             "screening for new materials in unconstrained composition space with machine learning}, "
             "volume={89}, DOI={10.1103/PhysRevB.89.094104}, number={1}, journal={Physical "
             "Review B}, author={B. Meredig, A. Agrawal, S. Kirklin, J. E. Saal, J. W. Doak, A. Thompson, "
-            "K. Zhang, A. Choudhary, and C. Wolverton}, year={2014}}"]
+            "K. Zhang, A. Choudhary, and C. Wolverton}, year={2014}}"
+        ]
         return citation
 
     def implementors(self):
@@ -357,8 +435,13 @@ class CationProperty(ElementProperty):
     def from_preset(cls, preset_name):
         if preset_name == "deml":
             data_source = "deml"
-            features = ["total_ioniz", "xtal_field_split", "magn_moment",
-                        "so_coupling", "sat_magn"]
+            features = [
+                "total_ioniz",
+                "xtal_field_split",
+                "magn_moment",
+                "so_coupling",
+                "sat_magn",
+            ]
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
             raise ValueError('Preset "%s" not found' % preset_name)
@@ -370,9 +453,9 @@ class CationProperty(ElementProperty):
     def featurize(self, comp):
         # Check if oxidation states are present
         if not has_oxidation_states(comp):
-            raise ValueError('Oxidation states have not been determined')
+            raise ValueError("Oxidation states have not been determined")
         if not is_ionic(comp):
-            raise ValueError('Composition is not ionic')
+            raise ValueError("Composition is not ionic")
 
         # Prepare to store the attributes
         all_attributes = []
@@ -384,8 +467,10 @@ class CationProperty(ElementProperty):
         cations, fractions = zip(*[(s, f) for s, f in comp.items() if s.oxi_state > 0])
 
         for attr in self.features:
-            elem_data = [self.data_source.get_charge_dependent_property_from_specie(c, attr)
-                         for c in cations]
+            elem_data = [
+                self.data_source.get_charge_dependent_property_from_specie(c, attr)
+                for c in cations
+            ]
 
             for stat in self.stats:
                 all_attributes.append(pstats.calc_stat(elem_data, stat, fractions))
@@ -398,7 +483,8 @@ class CationProperty(ElementProperty):
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"
+        ]
 
 
 class OxidationStates(BaseFeaturizer):
@@ -426,7 +512,7 @@ class OxidationStates(BaseFeaturizer):
     def featurize(self, comp):
         # Check if oxidation states are present
         if not has_oxidation_states(comp):
-            raise ValueError('Oxidation states have not been determined')
+            raise ValueError("Oxidation states have not been determined")
 
         # Get the oxidation states and their proportions
         oxid_states, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
@@ -435,17 +521,19 @@ class OxidationStates(BaseFeaturizer):
         return [PropertyStats.calc_stat(oxid_states, s, fractions) for s in self.stats]
 
     def feature_labels(self):
-        return ["%s oxidation state"%s for s in self.stats]
+        return ["%s oxidation state" % s for s in self.stats]
 
     def citations(self):
-        return ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        return [
+            "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"
+        ]
 
     def implementors(self):
-        return ['Logan Ward']
+        return ["Logan Ward"]
 
 
 class AtomicOrbitals(BaseFeaturizer):
@@ -486,28 +574,32 @@ class AtomicOrbitals(BaseFeaturizer):
         integer_comp, factor = comp.get_integer_formula_and_factor()
 
         # warning message if composition is dilute and truncated
-        if not (len(Composition(comp).elements) ==
-                len(Composition(integer_comp).elements)):
-            warn('AtomicOrbitals: {} truncated to {}'.format(comp,
-                                                             integer_comp))
+        if not (
+            len(Composition(comp).elements) == len(Composition(integer_comp).elements)
+        ):
+            warn("AtomicOrbitals: {} truncated to {}".format(comp, integer_comp))
 
         homo_lumo = MolecularOrbitals(integer_comp).band_edges
 
         feat = collections.OrderedDict()
-        for edge in ['HOMO', 'LUMO']:
-            feat['{}_character'.format(edge)] = homo_lumo[edge][1][-1]
-            feat['{}_element'.format(edge)] = homo_lumo[edge][0]
-            feat['{}_energy'.format(edge)] = homo_lumo[edge][2]
-        feat['gap_AO'] = feat['LUMO_energy'] - feat['HOMO_energy']
+        for edge in ["HOMO", "LUMO"]:
+            feat["{}_character".format(edge)] = homo_lumo[edge][1][-1]
+            feat["{}_element".format(edge)] = homo_lumo[edge][0]
+            feat["{}_energy".format(edge)] = homo_lumo[edge][2]
+        feat["gap_AO"] = feat["LUMO_energy"] - feat["HOMO_energy"]
 
         return list(feat.values())
 
     def feature_labels(self):
         feat = []
-        for edge in ['HOMO', 'LUMO']:
-            feat.extend(['{}_character'.format(edge),
-                         '{}_element'.format(edge),
-                         '{}_energy'.format(edge)])
+        for edge in ["HOMO", "LUMO"]:
+            feat.extend(
+                [
+                    "{}_character".format(edge),
+                    "{}_element".format(edge),
+                    "{}_energy".format(edge),
+                ]
+            )
         feat.append("gap_AO")
         return feat
 
@@ -520,10 +612,11 @@ class AtomicOrbitals(BaseFeaturizer):
             "journal = {Phys. Rev. A}, volume = {55}, issue = {1}, pages = {191--199},"
             "year = {1997}, month = {Jan}, publisher = {American Physical Society},"
             "doi = {10.1103/PhysRevA.55.191}, "
-            "url = {https://link.aps.org/doi/10.1103/PhysRevA.55.191}}"]
+            "url = {https://link.aps.org/doi/10.1103/PhysRevA.55.191}}"
+        ]
 
     def implementors(self):
-        return ['Maxwell Dylla', 'Anubhav Jain']
+        return ["Maxwell Dylla", "Anubhav Jain"]
 
 
 class BandCenter(BaseFeaturizer):
@@ -549,7 +642,7 @@ class BandCenter(BaseFeaturizer):
         gmean = 1.0
         sumamt = sum(comp.get_el_amt_dict().values())
         for el, amt in comp.get_el_amt_dict().items():
-            gmean *= Element(el).X**(amt/sumamt)
+            gmean *= Element(el).X ** (amt / sumamt)
         return [-gmean]
 
     def feature_labels(self):
@@ -564,7 +657,8 @@ class BandCenter(BaseFeaturizer):
             "Flatband Potentials at Semiconductor-Electrolyte Interfaces from "
             "Atomic Electronegativities}}, url = "
             "{http://jes.ecsdl.org/content/125/2/228}, volume = {125}, "
-            "year = {1978} } "]
+            "year = {1978} } "
+        ]
 
     def implementors(self):
         return ["Anubhav Jain"]
@@ -608,34 +702,39 @@ class ElectronegativityDiff(BaseFeaturizer):
 
         # Check if oxidation states have been determined
         if not has_oxidation_states(comp):
-            raise ValueError('Oxidation states have not yet been determined')
+            raise ValueError("Oxidation states have not yet been determined")
         if not is_ionic(comp):
-            raise ValueError('Composition is not ionic')
+            raise ValueError("Composition is not ionic")
 
         # Determine the average anion EN
-        anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
+        anions, anion_fractions = zip(
+            *[(s, x) for s, x in comp.items() if s.oxi_state < 0]
+        )
 
         # If there are no anions, raise an Exception
         if len(anions) == 0:
-            raise Exception('Features not applicable: Compound contains no anions')
+            raise Exception("Features not applicable: Compound contains no anions")
 
         anion_en = [s.element.X for s in anions]
         mean_anion_en = PropertyStats.mean(anion_en, anion_fractions)
 
         # Determine the EN difference for each cation
-        cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
+        cations, cation_fractions = zip(
+            *[(s, x) for s, x in comp.items() if s.oxi_state > 0]
+        )
 
         # If there are no cations, raise an Exception
         #  It is possible to construct a non-charge-balanced Composition,
         #    so we have to check for both the presence of anions and cations
         if len(cations) == 0:
-            raise Exception('Features not applicable: Compound contains no cations')
+            raise Exception("Features not applicable: Compound contains no cations")
 
         en_difference = [mean_anion_en - s.element.X for s in cations]
 
         # Compute the statistics
         return [
-            PropertyStats.calc_stat(en_difference, stat, cation_fractions) for stat in self.stats
+            PropertyStats.calc_stat(en_difference, stat, cation_fractions)
+            for stat in self.stats
         ]
 
     def feature_labels(self):
@@ -645,11 +744,13 @@ class ElectronegativityDiff(BaseFeaturizer):
         return labels
 
     def citations(self):
-        citation = ["@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
+        citation = [
+            "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"
+        ]
         return citation
 
     def implementors(self):
@@ -677,17 +778,20 @@ class ElectronAffinity(BaseFeaturizer):
 
         # Check if oxidation states have been computed
         if not has_oxidation_states(comp):
-            raise ValueError('Composition lacks oxidation states')
+            raise ValueError("Composition lacks oxidation states")
 
         # Get the species and fractions
         species, fractions = zip(*comp.items())
 
         # Determine which species are anions
-        anions, fractions = zip(*[(s, f) for s, f in zip(species, fractions) if s.oxi_state < 0])
+        anions, fractions = zip(
+            *[(s, f) for s, f in zip(species, fractions) if s.oxi_state < 0]
+        )
 
         # Compute the electron_affinity*formal_charge for each anion
         electron_affin = [
-            self.data_source.get_elemental_property(s.element, "electron_affin") * s.oxi_state
+            self.data_source.get_elemental_property(s.element, "electron_affin")
+            * s.oxi_state
             for s in anions
         ]
 
@@ -705,7 +809,8 @@ class ElectronAffinity(BaseFeaturizer):
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"
+        ]
         return citation
 
     def implementors(self):
@@ -740,8 +845,7 @@ class Stoichiometry(BaseFeaturizer):
         el_amt = comp.get_el_amt_dict()
 
         # Compute the number of atoms per formula unit
-        n_atoms_per_unit = comp.num_atoms / \
-                           comp.get_integer_formula_and_factor()[1]
+        n_atoms_per_unit = comp.num_atoms / comp.get_integer_formula_and_factor()[1]
 
         if self.p_list is None:
             stoich_attr = [n_atoms_per_unit]  # return num atoms if no norms specified
@@ -783,7 +887,8 @@ class Stoichiometry(BaseFeaturizer):
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-            "Alok and Wolverton, Christopher}, year={2016}}"]
+            "Alok and Wolverton, Christopher}, year={2016}}"
+        ]
         return citation
 
     def implementors(self):
@@ -792,13 +897,13 @@ class Stoichiometry(BaseFeaturizer):
 
 class ValenceOrbital(BaseFeaturizer):
     """
-        Attributes of valence orbital shells
+    Attributes of valence orbital shells
 
-        Args:
-            data_source (data object): source from which to retrieve element data
-            orbitals (list): orbitals to calculate
-            props (list): specifies whether to return average number of electrons in each orbital,
-                fraction of electrons in each orbital, or both
+    Args:
+        data_source (data object): source from which to retrieve element data
+        orbitals (list): orbitals to calculate
+        props (list): specifies whether to return average number of electrons in each orbital,
+            fraction of electrons in each orbital, or both
     """
 
     def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac")):
@@ -809,12 +914,12 @@ class ValenceOrbital(BaseFeaturizer):
     def featurize(self, comp):
         """Weighted fraction of valence electrons in each orbital
 
-           Args:
-                comp: Pymatgen composition object
+        Args:
+             comp: Pymatgen composition object
 
-           Returns:
-                valence_attributes (list of floats): Average number and/or
-                    fraction of valence electrons in specfied orbitals
+        Returns:
+             valence_attributes (list of floats): Average number and/or
+                 fraction of valence electrons in specfied orbitals
         """
 
         elements, fractions = zip(*comp.element_composition.items())
@@ -823,7 +928,8 @@ class ValenceOrbital(BaseFeaturizer):
         avg = [
             PropertyStats.mean(
                 self.data_source.get_elemental_properties(elements, "N%sValence" % orb),
-                weights=fractions)
+                weights=fractions,
+            )
             for orb in self.orbitals
         ]
 
@@ -831,7 +937,8 @@ class ValenceOrbital(BaseFeaturizer):
         if "frac" in self.props:
             avg_total_valence = PropertyStats.mean(
                 self.data_source.get_elemental_properties(elements, "NValence"),
-                weights=fractions)
+                weights=fractions,
+            )
             frac = [a / avg_total_valence for a in avg]
 
         # Get the desired attributes
@@ -855,13 +962,15 @@ class ValenceOrbital(BaseFeaturizer):
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-            "Alok and Wolverton, Christopher}, year={2016}}")
+            "Alok and Wolverton, Christopher}, year={2016}}"
+        )
         deml_citation = (
             "@article{deml_ohayre_wolverton_stevanovic_2016, title={Predicting density "
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}")
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"
+        )
         citations = [ward_citation, deml_citation]
         return citations
 
@@ -915,7 +1024,9 @@ class IonProperty(BaseFeaturizer):
                 charges, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
                 cpd_possible = np.isclose(np.dot(charges, fractions), 0)
             else:
-                oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
+                oxidation_states = [
+                    self.data_source.get_oxidation_states(e) for e in elements
+                ]
                 if self.fast:
                     # Assume each element can have only 1 oxidation state
                     cpd_possible = False
@@ -926,9 +1037,13 @@ class IonProperty(BaseFeaturizer):
                 else:
                     #  Use pymatgen's oxidation state checker which
                     #   can detect whether an takes >1 oxidation state (as in Fe3O4)
-                    oxi_state_dict = dict(zip([e.symbol for e in elements],
-                                              oxidation_states))
-                    cpd_possible = len(comp.oxi_state_guesses(oxi_states_override=oxi_state_dict)) > 0
+                    oxi_state_dict = dict(
+                        zip([e.symbol for e in elements], oxidation_states)
+                    )
+                    cpd_possible = (
+                        len(comp.oxi_state_guesses(oxi_states_override=oxi_state_dict))
+                        > 0
+                    )
 
             # Ionic character attributes
             atom_pairs = itertools.combinations(range(len(elements)), 2)
@@ -941,8 +1056,7 @@ class IonProperty(BaseFeaturizer):
                 XA = elec[pair[0]]
                 XB = elec[pair[1]]
                 ionic_char.append(1.0 - np.exp(-0.25 * ((XA - XB) ** 2)))
-                avg_ionic_char += el_frac[pair[0]] * el_frac[pair[1]] * \
-                                  ionic_char[-1]
+                avg_ionic_char += el_frac[pair[0]] * el_frac[pair[1]] * ionic_char[-1]
 
             max_ionic_char = np.max(ionic_char)
 
@@ -958,7 +1072,8 @@ class IonProperty(BaseFeaturizer):
             "machine learning framework for predicting properties of inorganic materials}, "
             "volume={2}, DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit and Choudhary, "
-            "Alok and Wolverton, Christopher}, year={2016}}"]
+            "Alok and Wolverton, Christopher}, year={2016}}"
+        ]
         return citation
 
     def implementors(self):
@@ -1016,9 +1131,29 @@ class TMetalFraction(BaseFeaturizer):
     """
 
     def __init__(self):
-        self.magn_elem = ['Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Nb',
-                          'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Ta', 'W', 'Re',
-                          'Os', 'Ir', 'Pt']
+        self.magn_elem = [
+            "Ti",
+            "V",
+            "Cr",
+            "Mn",
+            "Fe",
+            "Co",
+            "Ni",
+            "Cu",
+            "Nb",
+            "Mo",
+            "Tc",
+            "Ru",
+            "Rh",
+            "Pd",
+            "Ag",
+            "Ta",
+            "W",
+            "Re",
+            "Os",
+            "Ir",
+            "Pt",
+        ]
 
     def featurize(self, comp):
         """
@@ -1050,7 +1185,8 @@ class TMetalFraction(BaseFeaturizer):
             "functional theory total energies and enthalpies of formation of metal-nonmetal "
             "compounds by linear regression}, volume={47}, DOI={10.1002/chin.201644254}, "
             "number={44}, journal={ChemInform}, author={Deml, Ann M. and Ohayre, Ryan and "
-            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"]
+            "Wolverton, Chris and Stevanovic, Vladan}, year={2016}}"
+        ]
         return citation
 
     def implementors(self):
@@ -1093,16 +1229,21 @@ class CohesiveEnergy(BaseFeaturizer):
             # Get formation energy of most stable structure from MP
             struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(struct_lst, key=lambda e: e['energy_per_atom'])[0]
-                formation_energy_per_atom = most_stable_entry['formation_energy_per_atom']
+                most_stable_entry = sorted(
+                    struct_lst, key=lambda e: e["energy_per_atom"]
+                )[0]
+                formation_energy_per_atom = most_stable_entry[
+                    "formation_energy_per_atom"
+                ]
             else:
-                raise ValueError('No structure found in MP for {}'.format(comp))
+                raise ValueError("No structure found in MP for {}".format(comp))
 
         # Subtract elemental cohesive energies from formation energy
         cohesive_energy = -formation_energy_per_atom * comp.num_atoms
         for el in el_amt_dict:
-            cohesive_energy += el_amt_dict[el] * \
-                               CohesiveEnergyData().get_elemental_property(el)
+            cohesive_energy += el_amt_dict[
+                el
+            ] * CohesiveEnergyData().get_elemental_property(el)
 
         cohesive_energy_per_atom = cohesive_energy / comp.num_atoms
 
@@ -1123,7 +1264,8 @@ class CohesiveEnergy(BaseFeaturizer):
             "url = {http://www.knowledgedoor.com/2/elements{\_}handbook/cohesive{\_}energy.html}}",
             "@book{Kittel, author = {Kittel, C}, isbn = {978-0-471-41526-8}, "
             "publisher = {Wiley}, title = {{Introduction to Solid State "
-            "Physics, 8th Edition}}, year = {2005}}"]
+            "Physics, 8th Edition}}, year = {2005}}",
+        ]
 
 
 class CohesiveEnergyMP(BaseFeaturizer):
@@ -1149,13 +1291,23 @@ class CohesiveEnergyMP(BaseFeaturizer):
         with MPRester(self.mapi_key) as mpr:
             struct_lst = mpr.get_data(comp.reduced_formula)
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(struct_lst, key=lambda e: e['energy_per_atom'])[0]
+                most_stable_entry = sorted(
+                    struct_lst, key=lambda e: e["energy_per_atom"]
+                )[0]
                 try:
-                    return [mpr.get_cohesive_energy(most_stable_entry["material_id"], per_atom=True)]
+                    return [
+                        mpr.get_cohesive_energy(
+                            most_stable_entry["material_id"], per_atom=True
+                        )
+                    ]
                 except:
-                    raise ValueError("No cohesive energy can be determined for material_id: {}".format(most_stable_entry["material_id"]))
+                    raise ValueError(
+                        "No cohesive energy can be determined for material_id: {}".format(
+                            most_stable_entry["material_id"]
+                        )
+                    )
             else:
-                raise ValueError('No structure found in MP for {}'.format(comp))
+                raise ValueError("No structure found in MP for {}".format(comp))
 
     def feature_labels(self):
         return ["cohesive energy (MP)"]
@@ -1185,7 +1337,9 @@ class CohesiveEnergyMP(BaseFeaturizer):
             "flexible and efficient API for materials data based on "
             "REpresentational State Transfer (REST) principles}}, "
             "url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025614007113}, "
-            "volume = {97}, year = {2015} } "]
+            "volume = {97}, year = {2015} } ",
+        ]
+
 
 class Miedema(BaseFeaturizer):
     """
@@ -1231,31 +1385,32 @@ class Miedema(BaseFeaturizer):
             -Miedema_deltaH_amor: for amorphous phase
     """
 
-    def __init__(self, struct_types='all', ss_types='min',
-                 data_source='Miedema'):
+    def __init__(self, struct_types="all", ss_types="min", data_source="Miedema"):
         if isinstance(struct_types, list):
             self.struct_types = struct_types
         else:
-            if struct_types == 'all':
-                self.struct_types = ['inter', 'amor', 'ss']
+            if struct_types == "all":
+                self.struct_types = ["inter", "amor", "ss"]
             else:
                 self.struct_types = [struct_types]
 
         if isinstance(ss_types, list):
             self.ss_types = ss_types
         else:
-            if ss_types == 'all':
-                self.ss_types = ['fcc', 'bcc', 'hcp', 'no_latt']
+            if ss_types == "all":
+                self.ss_types = ["fcc", "bcc", "hcp", "no_latt"]
             else:
                 self.ss_types = [ss_types]
 
         self.data_source = data_source
-        if self.data_source == 'Miedema':
+        if self.data_source == "Miedema":
             self.df_dataset = pd.read_csv(
-                os.path.join(data_dir, 'Miedema.csv'), index_col='element')
+                os.path.join(data_dir, "Miedema.csv"), index_col="element"
+            )
         else:
-            raise NotImplementedError('data_source {} not implemented yet'.
-                                      format(self, data_source))
+            raise NotImplementedError(
+                "data_source {} not implemented yet".format(self, data_source)
+            )
 
         self.element_list = [Element(estr) for estr in self.df_dataset.index]
 
@@ -1273,8 +1428,7 @@ class Miedema(BaseFeaturizer):
         Returns:
             (bool): If True, s passed the precheck; otherwise, it failed.
         """
-        return all([e in self.element_list
-                    for e in c.element_composition.elements])
+        return all([e in self.element_list for e in c.element_composition.elements])
 
     def deltaH_chem(self, elements, fracs, struct):
         """
@@ -1289,48 +1443,57 @@ class Miedema(BaseFeaturizer):
         if any([el not in self.df_dataset.index for el in elements]):
             return np.nan
         df_el = self.df_dataset.loc[elements]
-        v_molar = np.array(df_el['molar_volume'])
-        n_ws = np.array(df_el['electron_density'])
-        elec = np.array(df_el['electronegativity'])
-        val = np.array(df_el['valence_electrons'])
-        a = np.array(df_el['a_const'])
-        r = np.array(df_el['R_const'])
-        h_trans = np.array(df_el['H_trans'])
+        v_molar = np.array(df_el["molar_volume"])
+        n_ws = np.array(df_el["electron_density"])
+        elec = np.array(df_el["electronegativity"])
+        val = np.array(df_el["valence_electrons"])
+        a = np.array(df_el["a_const"])
+        r = np.array(df_el["R_const"])
+        h_trans = np.array(df_el["H_trans"])
 
-        if struct == 'inter':
+        if struct == "inter":
             gamma = 8
-        elif struct == 'amor':
+        elif struct == "amor":
             gamma = 5
         else:
             gamma = 0
 
-        c_sf = (fracs * np.power(v_molar, 2 / 3) / np.dot(fracs, np.power(v_molar, 2 / 3)))
+        c_sf = (
+            fracs * np.power(v_molar, 2 / 3) / np.dot(fracs, np.power(v_molar, 2 / 3))
+        )
         f = (c_sf * (1 + gamma * np.power(np.multiply.reduce(c_sf, 0), 2)))[::-1]
-        v_a = np.array([np.power(v_molar[0], 2 / 3) * (1 + a[0] * f[0] * (elec[0] - elec[1])),
-                        np.power(v_molar[1], 2 / 3) * (1 + a[1] * f[1] * (elec[1] - elec[0]))])
+        v_a = np.array(
+            [
+                np.power(v_molar[0], 2 / 3) * (1 + a[0] * f[0] * (elec[0] - elec[1])),
+                np.power(v_molar[1], 2 / 3) * (1 + a[1] * f[1] * (elec[1] - elec[0])),
+            ]
+        )
         c_sf_a = fracs * v_a / np.dot(fracs, v_a)
-        f_a = (c_sf_a * (1 + gamma * np.power(np.multiply.reduce
-                                              (c_sf_a, 0), 2)))[::-1]
+        f_a = (c_sf_a * (1 + gamma * np.power(np.multiply.reduce(c_sf_a, 0), 2)))[::-1]
 
         threshold = range(3, 12)
         if (val[0] in threshold) and (val[1] in threshold):
             p = 14.1
-            r = 0.
+            r = 0.0
         elif (val[0] not in threshold) and (val[1] not in threshold):
             p = 10.7
-            r = 0.
+            r = 0.0
         else:
             p = 12.35
             r = np.multiply.reduce(r, 0) * p
         q = p * 9.4
 
-        eta_ab = (2 * (-p * np.power(elec[0] - elec[1], 2) - r +
-                       q * np.power(np.power(n_ws[0], 1 / 3) -
-                                    np.power(n_ws[1], 1 / 3), 2)) /
-                  reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)))
+        eta_ab = (
+            2
+            * (
+                -p * np.power(elec[0] - elec[1], 2)
+                - r
+                + q * np.power(np.power(n_ws[0], 1 / 3) - np.power(n_ws[1], 1 / 3), 2)
+            )
+            / reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3))
+        )
 
-        deltaH_chem = (f_a[0] * fracs[0] * v_a[0] * eta_ab +
-                       np.dot(fracs, h_trans))
+        deltaH_chem = f_a[0] * fracs[0] * v_a[0] * eta_ab + np.dot(fracs, h_trans)
         return deltaH_chem
 
     def deltaH_elast(self, elements, fracs):
@@ -1345,40 +1508,51 @@ class Miedema(BaseFeaturizer):
         if any([el not in self.df_dataset.index for el in elements]):
             return np.nan
         df_el = self.df_dataset.loc[elements]
-        v_molar = np.array(df_el['molar_volume'])
-        n_ws = np.array(df_el['electron_density'])
-        elec = np.array(df_el['electronegativity'])
-        compr = np.array(df_el['compressibility'])
-        shear_mod = np.array(df_el['shear_modulus'])
+        v_molar = np.array(df_el["molar_volume"])
+        n_ws = np.array(df_el["electron_density"])
+        elec = np.array(df_el["electronegativity"])
+        compr = np.array(df_el["compressibility"])
+        shear_mod = np.array(df_el["shear_modulus"])
 
-        alp = (np.multiply(1.5, np.power(v_molar, 2 / 3)) /
-               reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)))
-        v_a = (v_molar + np.array([alp[0] * (elec[0] - elec[1]) / n_ws[0],
-                                   alp[1] * (elec[1] - elec[0]) / n_ws[1]]))
-        alp_a = (np.multiply(1.5, np.power(v_a, 2 / 3)) /
-                 reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)))
+        alp = np.multiply(1.5, np.power(v_molar, 2 / 3)) / reduce(
+            lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)
+        )
+        v_a = v_molar + np.array(
+            [
+                alp[0] * (elec[0] - elec[1]) / n_ws[0],
+                alp[1] * (elec[1] - elec[0]) / n_ws[1],
+            ]
+        )
+        alp_a = np.multiply(1.5, np.power(v_a, 2 / 3)) / reduce(
+            lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)
+        )
 
         # effective volume in alloy
-        vab_a = (v_molar[0] +
-                 np.array([alp_a[0] * (elec[0] - elec[1]) / n_ws[0],
-                           alp_a[1] * (elec[1] - elec[0]) / n_ws[0]]))
-        vba_a = (v_molar[1] +
-                 np.array([alp_a[0] * (elec[0] - elec[1]) / n_ws[1],
-                           alp_a[1] * (elec[1] - elec[0]) / n_ws[1]]))
+        vab_a = v_molar[0] + np.array(
+            [
+                alp_a[0] * (elec[0] - elec[1]) / n_ws[0],
+                alp_a[1] * (elec[1] - elec[0]) / n_ws[0],
+            ]
+        )
+        vba_a = v_molar[1] + np.array(
+            [
+                alp_a[0] * (elec[0] - elec[1]) / n_ws[1],
+                alp_a[1] * (elec[1] - elec[0]) / n_ws[1],
+            ]
+        )
 
         # H_elast A in B
-        hab_elast = ((2 * compr[0] * shear_mod[1] *
-                      np.power((vab_a[0] - vba_a[0]), 2)) /
-                     (4 * shear_mod[1] * vab_a[0] +
-                      3 * compr[0] * vba_a[0]))
+        hab_elast = (
+            2 * compr[0] * shear_mod[1] * np.power((vab_a[0] - vba_a[0]), 2)
+        ) / (4 * shear_mod[1] * vab_a[0] + 3 * compr[0] * vba_a[0])
         # H_elast B in A
-        hba_elast = ((2 * compr[1] * shear_mod[0] *
-                      np.power((vba_a[1] - vab_a[1]), 2)) /
-                     (4 * shear_mod[0] * vba_a[1] +
-                      3 * compr[1] * vab_a[1]))
+        hba_elast = (
+            2 * compr[1] * shear_mod[0] * np.power((vba_a[1] - vab_a[1]), 2)
+        ) / (4 * shear_mod[0] * vba_a[1] + 3 * compr[1] * vab_a[1])
 
-        deltaH_elast = (np.multiply.reduce(fracs, 0) *
-                        (fracs[1] * hab_elast + fracs[0] * hba_elast))
+        deltaH_elast = np.multiply.reduce(fracs, 0) * (
+            fracs[1] * hab_elast + fracs[0] * hba_elast
+        )
         return deltaH_elast
 
     def deltaH_struct(self, elements, fracs, latt):
@@ -1394,28 +1568,77 @@ class Miedema(BaseFeaturizer):
         if any([el not in self.df_dataset.index for el in elements]):
             return np.nan
         df_el = self.df_dataset.loc[elements]
-        val = np.array(df_el['valence_electrons'])
-        struct_stab = np.array(df_el['structural_stability'])
+        val = np.array(df_el["valence_electrons"])
+        struct_stab = np.array(df_el["structural_stability"])
 
-        if latt == 'fcc':
-            latt_stab_dict = {0.: 0., 1.: 0, 2.: 0, 3.: -2, 4.: -1.5,
-                              5.: 9., 5.5: 14., 6.: 11., 7.: -3., 8.: -9.5,
-                              8.5: -11., 9.: -9., 10.: -2., 11.: 1.5,
-                              12.: 0., 13.: 0., 14.: 0., 15.: 0.}
-        elif latt == 'bcc':
-            latt_stab_dict = {0.: 0., 1.: 0., 2.: 0., 3.: 2.2, 4.: 2.,
-                              5.: -9.5, 5.5: -14.5, 6.: -12., 7.: 4.,
-                              8.: 10., 8.5: 11., 9.: 8.5, 10.: 1.5,
-                              11.: 1.5, 12.: 0., 13.: 0., 14.: 0., 15.: 0.}
-        elif latt == 'hcp':
-            latt_stab_dict = {0.: 0., 1.: 0., 2.: 0., 3.: -2.5, 4.: -2.5,
-                              5.: 10., 5.5: 15., 6.: 13., 7.: -5.,
-                              8.: -10.5, 8.5: -11., 9.: -8., 10.: -1.,
-                              11.: 2.5, 12.: 0., 13.: 0., 14.: 0., 15.: 0.}
+        if latt == "fcc":
+            latt_stab_dict = {
+                0.0: 0.0,
+                1.0: 0,
+                2.0: 0,
+                3.0: -2,
+                4.0: -1.5,
+                5.0: 9.0,
+                5.5: 14.0,
+                6.0: 11.0,
+                7.0: -3.0,
+                8.0: -9.5,
+                8.5: -11.0,
+                9.0: -9.0,
+                10.0: -2.0,
+                11.0: 1.5,
+                12.0: 0.0,
+                13.0: 0.0,
+                14.0: 0.0,
+                15.0: 0.0,
+            }
+        elif latt == "bcc":
+            latt_stab_dict = {
+                0.0: 0.0,
+                1.0: 0.0,
+                2.0: 0.0,
+                3.0: 2.2,
+                4.0: 2.0,
+                5.0: -9.5,
+                5.5: -14.5,
+                6.0: -12.0,
+                7.0: 4.0,
+                8.0: 10.0,
+                8.5: 11.0,
+                9.0: 8.5,
+                10.0: 1.5,
+                11.0: 1.5,
+                12.0: 0.0,
+                13.0: 0.0,
+                14.0: 0.0,
+                15.0: 0.0,
+            }
+        elif latt == "hcp":
+            latt_stab_dict = {
+                0.0: 0.0,
+                1.0: 0.0,
+                2.0: 0.0,
+                3.0: -2.5,
+                4.0: -2.5,
+                5.0: 10.0,
+                5.5: 15.0,
+                6.0: 13.0,
+                7.0: -5.0,
+                8.0: -10.5,
+                8.5: -11.0,
+                9.0: -8.0,
+                10.0: -1.0,
+                11.0: 2.5,
+                12.0: 0.0,
+                13.0: 0.0,
+                14.0: 0.0,
+                15.0: 0.0,
+            }
         else:
             return 0
-        latt_stab_dict = collections.OrderedDict(sorted(latt_stab_dict.items(),
-                                                        key=lambda t: t[0]))
+        latt_stab_dict = collections.OrderedDict(
+            sorted(latt_stab_dict.items(), key=lambda t: t[0])
+        )
         # lattice stability of different lattice_types
         val_avg = np.dot(fracs, val)
         val_bd_lower, val_bd_upper = 0, 0
@@ -1426,10 +1649,11 @@ class Miedema(BaseFeaturizer):
             else:
                 val_bd_lower = key
 
-        latt_stab = ((val_avg - val_bd_lower) * latt_stab_dict[val_bd_upper] /
-                     (val_bd_upper - val_bd_lower) +
-                     (val_bd_upper - val_avg) * latt_stab_dict[val_bd_lower] /
-                     (val_bd_upper - val_bd_lower))
+        latt_stab = (val_avg - val_bd_lower) * latt_stab_dict[val_bd_upper] / (
+            val_bd_upper - val_bd_lower
+        ) + (val_bd_upper - val_avg) * latt_stab_dict[val_bd_lower] / (
+            val_bd_upper - val_bd_lower
+        )
 
         deltaH_struct = latt_stab - np.dot(fracs, struct_stab)
         return deltaH_struct
@@ -1446,7 +1670,7 @@ class Miedema(BaseFeaturizer):
         if any([el not in self.df_dataset.index for el in elements]):
             return np.nan
         df_el = self.df_dataset.loc[elements]
-        melt_point = np.array(df_el['melting_point'])
+        melt_point = np.array(df_el["melting_point"])
 
         deltaH_topo = 3.5 * np.dot(fracs, melt_point) / 1000
         return deltaH_topo
@@ -1476,43 +1700,45 @@ class Miedema(BaseFeaturizer):
         miedema = []
         for struct_type in self.struct_types:
             # inter: intermetallic compound
-            if struct_type == 'inter':
+            if struct_type == "inter":
                 deltaH_chem_inter = 0
                 for i_inter, el_bin in enumerate(el_bins):
-                    deltaH_chem_inter += self.deltaH_chem(el_bin,
-                                                          frac_bins[i_inter],
-                                                          'inter')
+                    deltaH_chem_inter += self.deltaH_chem(
+                        el_bin, frac_bins[i_inter], "inter"
+                    )
                 miedema.append(deltaH_chem_inter)
             # ss: solid solution
-            elif struct_type == 'ss':
+            elif struct_type == "ss":
                 deltaH_chem_ss = 0
                 deltaH_elast_ss = 0
                 for sub_bin, el_bin in enumerate(el_bins):
-                    deltaH_chem_ss += self.deltaH_chem(el_bin, frac_bins[sub_bin], 'ss')
+                    deltaH_chem_ss += self.deltaH_chem(el_bin, frac_bins[sub_bin], "ss")
                     deltaH_elast_ss += self.deltaH_elast(el_bin, frac_bins[sub_bin])
 
                 for ss_type in self.ss_types:
-                    if ss_type == 'min':
+                    if ss_type == "min":
                         deltaH_ss_all = []
-                        for latt in ['fcc', 'bcc', 'hcp', 'no_latt']:
+                        for latt in ["fcc", "bcc", "hcp", "no_latt"]:
                             deltaH_ss_all.append(
-                                deltaH_chem_ss + deltaH_elast_ss +
-                                self.deltaH_struct(elements, fracs, latt))
+                                deltaH_chem_ss
+                                + deltaH_elast_ss
+                                + self.deltaH_struct(elements, fracs, latt)
+                            )
                         deltaH_ss_min = min(deltaH_ss_all)
                         miedema.append(deltaH_ss_min)
                     else:
-                        deltaH_struct_ss = self.deltaH_struct(elements,
-                                                              fracs, ss_type)
-                        miedema.append(deltaH_chem_ss + deltaH_elast_ss +
-                                       deltaH_struct_ss)
+                        deltaH_struct_ss = self.deltaH_struct(elements, fracs, ss_type)
+                        miedema.append(
+                            deltaH_chem_ss + deltaH_elast_ss + deltaH_struct_ss
+                        )
             # amor: amorphous phase
-            elif struct_type == 'amor':
+            elif struct_type == "amor":
                 deltaH_chem_amor = 0
                 deltaH_topo_amor = self.deltaH_topo(elements, fracs)
                 for sub_bin, el_bin in enumerate(el_bins):
-                    deltaH_chem_amor += self.deltaH_chem(el_bin,
-                                                         frac_bins[sub_bin],
-                                                         'amor')
+                    deltaH_chem_amor += self.deltaH_chem(
+                        el_bin, frac_bins[sub_bin], "amor"
+                    )
                 miedema.append(deltaH_chem_amor + deltaH_topo_amor)
 
         # convert kJ/mol to eV/atom. The original Miedema model is in kJ/mol.
@@ -1522,38 +1748,41 @@ class Miedema(BaseFeaturizer):
     def feature_labels(self):
         labels = []
         for struct_type in self.struct_types:
-            if struct_type == 'ss':
+            if struct_type == "ss":
                 for ss_type in self.ss_types:
-                    labels.append('Miedema_deltaH_ss_' + ss_type)
+                    labels.append("Miedema_deltaH_ss_" + ss_type)
             else:
-                labels.append('Miedema_deltaH_' + struct_type)
+                labels.append("Miedema_deltaH_" + struct_type)
         return labels
 
     def citations(self):
         miedema_citation = (
-            '@article{miedema_1988, '
-            'title={Cohesion in metals},'
-            'author={De Boer, Frank R and Mattens, WCM '
-            'and Boom, R and Miedema, AR and Niessen, AK},'
-            'year={1988}}')
+            "@article{miedema_1988, "
+            "title={Cohesion in metals},"
+            "author={De Boer, Frank R and Mattens, WCM "
+            "and Boom, R and Miedema, AR and Niessen, AK},"
+            "year={1988}}"
+        )
         zhang_citation = (
-            '@article{miedema_zhang_2016, '
-            'title={Miedema Calculator: A thermodynamic platform '
-            'for predicting formation enthalpies of alloys within '
-            'framework of Miedema\'s Theory},'
-            'author={R.F. Zhang, S.H. Zhang, Z.J. He, J. Jing and S.H. Sheng},'
-            'journal={Computer Physics Communications}'
-            'year={2016}}')
+            "@article{miedema_zhang_2016, "
+            "title={Miedema Calculator: A thermodynamic platform "
+            "for predicting formation enthalpies of alloys within "
+            "framework of Miedema's Theory},"
+            "author={R.F. Zhang, S.H. Zhang, Z.J. He, J. Jing and S.H. Sheng},"
+            "journal={Computer Physics Communications}"
+            "year={2016}}"
+        )
         ternary_citation = (
-            '@article{miedema_alonso_1990, '
-            'title={Glass formation in ternary transition metal alloys},'
-            'author={L J Gallego, J A Somoza and J A Alonso},'
-            'journal={Journal of Physics: Condensed Matter}'
-            'year={1990}}')
+            "@article{miedema_alonso_1990, "
+            "title={Glass formation in ternary transition metal alloys},"
+            "author={L J Gallego, J A Somoza and J A Alonso},"
+            "journal={Journal of Physics: Condensed Matter}"
+            "year={1990}}"
+        )
         return [miedema_citation, zhang_citation, ternary_citation]
 
     def implementors(self):
-        return ['Qi Wang', 'Alireza Faghaninia']
+        return ["Qi Wang", "Alireza Faghaninia"]
 
 
 class YangSolidSolution(BaseFeaturizer):
@@ -1601,8 +1830,12 @@ class YangSolidSolution(BaseFeaturizer):
         Returns:
             (bool): If True, s passed the precheck; otherwise, it failed.
         """
-        return all([e in self.dhf_mix.valid_element_list
-                    for e in c.element_composition.elements])
+        return all(
+            [
+                e in self.dhf_mix.valid_element_list
+                for e in c.element_composition.elements
+            ]
+        )
 
     def featurize(self, comp):
         return [self.compute_omega(comp), self.compute_delta(comp)]
@@ -1628,12 +1861,13 @@ class YangSolidSolution(BaseFeaturizer):
             return 0
 
         # Get the element names and fractions
-        elements, fractions = zip(*comp.element_composition.fractional_composition.items())
+        elements, fractions = zip(
+            *comp.element_composition.fractional_composition.items()
+        )
 
         # Get the mean melting temperature
         mean_Tm = PropertyStats.mean(
-            self.elem_data.get_elemental_properties(elements, "MeltingT"),
-            fractions
+            self.elem_data.get_elemental_properties(elements, "MeltingT"), fractions
         )
 
         # Get the mixing entropy
@@ -1673,8 +1907,7 @@ class YangSolidSolution(BaseFeaturizer):
         elements, fractions = zip(*comp.element_composition.items())
 
         # Get the radii of elements
-        radii = self.elem_data.get_elemental_properties(elements,
-                                                        "MiracleRadius")
+        radii = self.elem_data.get_elemental_properties(elements, "MiracleRadius")
         mean_r = PropertyStats.mean(radii, fractions)
 
         # Compute the mean (1 - r/\\bar{r})^2
@@ -1682,21 +1915,23 @@ class YangSolidSolution(BaseFeaturizer):
         return np.sqrt(PropertyStats.mean(r_dev, fractions))
 
     def feature_labels(self):
-        return ['Yang omega', 'Yang delta']
+        return ["Yang omega", "Yang delta"]
 
     def citations(self):
-        return ["@article{Yang2012,"
-                "author = {Yang, X. and Zhang, Y.},"
-                "doi = {10.1016/j.matchemphys.2011.11.021},"
-                "journal = {Materials Chemistry and Physics},"
-                "number = {2-3},"
-                "pages = {233--238},"
-                "title = {{Prediction of high-entropy stabilized solid-solution in multi-component alloys}},"
-                "url = {http://dx.doi.org/10.1016/j.matchemphys.2011.11.021},"
-                "volume = {132},year = {2012}}"]
+        return [
+            "@article{Yang2012,"
+            "author = {Yang, X. and Zhang, Y.},"
+            "doi = {10.1016/j.matchemphys.2011.11.021},"
+            "journal = {Materials Chemistry and Physics},"
+            "number = {2-3},"
+            "pages = {233--238},"
+            "title = {{Prediction of high-entropy stabilized solid-solution in multi-component alloys}},"
+            "url = {http://dx.doi.org/10.1016/j.matchemphys.2011.11.021},"
+            "volume = {132},year = {2012}}"
+        ]
 
     def implementors(self):
-        return ['Logan Ward']
+        return ["Logan Ward"]
 
 
 class AtomicPackingEfficiency(BaseFeaturizer):
@@ -1755,19 +1990,38 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         self._el_frac = ElementFraction()
 
         # Get the number of elements in the output of `_el_frac`
-        self._n_elems = len(self._el_frac.featurize(Composition('H')))
+        self._n_elems = len(self._el_frac.featurize(Composition("H")))
 
         # Tool for looking up radii
         self._data_source = MagpieData()
 
         # Lookup table of ideal radius ratios
         self.ideal_ratio = dict(
-            [(3, 0.154701), (4, 0.224745), (5, 0.361654), (6, 0.414214),
-             (7, 0.518145), (8, 0.616517), (9, 0.709914), (10, 0.798907),
-             (11, 0.884003), (12, 0.902113), (13, 0.976006), (14, 1.04733),
-             (15, 1.11632), (16, 1.18318), (17, 1.2481), (18, 1.31123),
-             (19, 1.37271), (20, 1.43267), (21, 1.49119), (22, 1.5484),
-             (23, 1.60436), (24, 1.65915)])
+            [
+                (3, 0.154701),
+                (4, 0.224745),
+                (5, 0.361654),
+                (6, 0.414214),
+                (7, 0.518145),
+                (8, 0.616517),
+                (9, 0.709914),
+                (10, 0.798907),
+                (11, 0.884003),
+                (12, 0.902113),
+                (13, 0.976006),
+                (14, 1.04733),
+                (15, 1.11632),
+                (16, 1.18318),
+                (17, 1.2481),
+                (18, 1.31123),
+                (19, 1.37271),
+                (20, 1.43267),
+                (21, 1.49119),
+                (22, 1.5484),
+                (23, 1.60436),
+                (24, 1.65915),
+            ]
+        )
 
     def __hash__(self):
         return hash(self.threshold)
@@ -1777,29 +2031,34 @@ class AtomicPackingEfficiency(BaseFeaturizer):
             return self.get_params() == other.get_params()
 
     def featurize(self, comp):
-        return list(self.compute_simultaneous_packing_efficiency(comp)) + \
-               self.compute_nearest_cluster_distance(comp)
+        return list(
+            self.compute_simultaneous_packing_efficiency(comp)
+        ) + self.compute_nearest_cluster_distance(comp)
 
     def feature_labels(self):
-        return ['mean simul. packing efficiency',
-                'mean abs simul. packing efficiency'] + [
-                   'dist from {} clusters |APE| < {:.3f}'.format(k,
-                                                                 self.threshold)
-                   for k in self.n_nearest]
+        return [
+            "mean simul. packing efficiency",
+            "mean abs simul. packing efficiency",
+        ] + [
+            "dist from {} clusters |APE| < {:.3f}".format(k, self.threshold)
+            for k in self.n_nearest
+        ]
 
     def citations(self):
-        return ["@article{Laws2015,"
-                "author = {Laws, K. J. and Miracle, D. B. and Ferry, M.},"
-                "doi = {10.1038/ncomms9123},"
-                "journal = {Nature Communications},"
-                "pages = {8123},"
-                "title = {{A predictive structural model for bulk metallic glasses}},"
-                "url = {http://www.nature.com/doifinder/10.1038/ncomms9123},"
-                "volume = {6},"
-                "year = {2015}"]
+        return [
+            "@article{Laws2015,"
+            "author = {Laws, K. J. and Miracle, D. B. and Ferry, M.},"
+            "doi = {10.1038/ncomms9123},"
+            "journal = {Nature Communications},"
+            "pages = {8123},"
+            "title = {{A predictive structural model for bulk metallic glasses}},"
+            "url = {http://www.nature.com/doifinder/10.1038/ncomms9123},"
+            "volume = {6},"
+            "year = {2015}"
+        ]
 
     def implementors(self):
-        return ['Logan Ward']
+        return ["Logan Ward"]
 
     def compute_simultaneous_packing_efficiency(self, comp):
         """Compute the packing efficiency of the system when the neighbor
@@ -1816,18 +2075,16 @@ class AtomicPackingEfficiency(BaseFeaturizer):
 
         # Compute the average atomic radius of the system
         elements, fractions = zip(*comp.element_composition.items())
-        radii = self._data_source.get_elemental_properties(elements,
-                                                           'MiracleRadius')
+        radii = self._data_source.get_elemental_properties(elements, "MiracleRadius")
         mean_radius = PropertyStats.mean(radii, fractions)
 
         # Compute the APE for each cluster
-        best_ape = [
-            self.find_ideal_cluster_size(r / mean_radius)[1] for r in radii
-        ]
+        best_ape = [self.find_ideal_cluster_size(r / mean_radius)[1] for r in radii]
 
         # Return the averages
-        return PropertyStats.mean(best_ape, fractions), \
-               PropertyStats.mean(np.abs(best_ape), fractions)
+        return PropertyStats.mean(best_ape, fractions), PropertyStats.mean(
+            np.abs(best_ape), fractions
+        )
 
     def compute_nearest_cluster_distance(self, comp):
         """Compute the distance between a composition and that the nearest
@@ -1849,13 +2106,12 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         """
 
         # Get the most common elements
-        elems, _ = zip(*sorted(comp.element_composition.items(),
-                                   key=lambda x: x[1], reverse=True))
+        elems, _ = zip(
+            *sorted(comp.element_composition.items(), key=lambda x: x[1], reverse=True)
+        )
 
         # Get the cluster lookup tool using the most common elements
-        cluster_lookup = self.create_cluster_lookup_tool(
-            elems[:self.max_types]
-        )
+        cluster_lookup = self.create_cluster_lookup_tool(elems[: self.max_types])
 
         # Compute the composition vector
         comp_vec = self._el_frac.featurize(comp)
@@ -1872,7 +2128,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
                 dists, _ = cluster_lookup.kneighbors([comp_vec], to_lookup)
 
             # Pad the list with 1's
-            dists = dists[0].tolist() + [1]*(k - to_lookup)
+            dists = dists[0].tolist() + [1] * (k - to_lookup)
 
             # Compute the average
             means.append(np.mean(dists))
@@ -1907,8 +2163,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         """
 
         # Get the radii
-        radii = self._data_source.get_elemental_properties(elements,
-                                                           "MiracleRadius")
+        radii = self._data_source.get_elemental_properties(elements, "MiracleRadius")
 
         # Get the maximum and minimum cluster sizes
         max_size = self.find_ideal_cluster_size(max(radii) / min(radii))[0]
@@ -1935,8 +2190,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
             #  within `self.threshold` of 1
             for center_radius, center_elem in zip(radii, elements):
                 # Compute the APE of each cluster
-                ape = 1 - np.divide(ideal_ratio, np.divide(center_radius,
-                                                           mean_radii))
+                ape = 1 - np.divide(ideal_ratio, np.divide(center_radius, mean_radii))
 
                 # Get those which are within the threshold of 0
                 #  and add their composition to the list of OK elements

@@ -78,8 +78,8 @@ class ConversionFeaturizer(BaseFeaturizer):
         # now the col_id is known, we check if we need to update target_col_id
         # for multiindexes it is the last index that is updated
         target = self._target_col_id
-        if isinstance(target, str) and target[0] == '_':
-            if 'multiindex' in kwargs and kwargs['multiindex']:
+        if isinstance(target, str) and target[0] == "_":
+            if "multiindex" in kwargs and kwargs["multiindex"]:
                 self._target_col_id = "{}_{}".format(col_id[-1], target[1:])
             else:
                 self._target_col_id = "{}_{}".format(col_id, target[1:])
@@ -125,8 +125,7 @@ class StrToComposition(ConversionFeaturizer):
             exists.
     """
 
-    def __init__(self, reduce=False, target_col_id='composition',
-                 overwrite_data=False):
+    def __init__(self, reduce=False, target_col_id="composition", overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
         self.reduce = reduce
         self._chunksize = 30
@@ -154,7 +153,8 @@ class StrToComposition(ConversionFeaturizer):
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"
+        ]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -183,8 +183,7 @@ class StructureToComposition(ConversionFeaturizer):
             exists.
     """
 
-    def __init__(self, reduce=False, target_col_id='composition',
-                 overwrite_data=False):
+    def __init__(self, reduce=False, target_col_id="composition", overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
         self.reduce = reduce
         self._overwrite = overwrite_data
@@ -212,7 +211,8 @@ class StructureToComposition(ConversionFeaturizer):
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"
+        ]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -242,7 +242,7 @@ class StructureToIStructure(ConversionFeaturizer):
             exists.
     """
 
-    def __init__(self, target_col_id='istructure', overwrite_data=False):
+    def __init__(self, target_col_id="istructure", overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
         self._overwrite = overwrite_data
         self._chunksize = 30
@@ -266,7 +266,8 @@ class StructureToIStructure(ConversionFeaturizer):
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"
+        ]
 
     def implementors(self):
         return ["Logan Ward", "Alex Ganose"]
@@ -292,7 +293,7 @@ class DictToObject(ConversionFeaturizer):
             exists.
     """
 
-    def __init__(self, target_col_id='_object', overwrite_data=False):
+    def __init__(self, target_col_id="_object", overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
         self._chunksize = 30
 
@@ -316,7 +317,8 @@ class DictToObject(ConversionFeaturizer):
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"
+        ]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -342,7 +344,7 @@ class JsonToObject(ConversionFeaturizer):
             exists.
     """
 
-    def __init__(self, target_col_id='_object', overwrite_data=False):
+    def __init__(self, target_col_id="_object", overwrite_data=False):
         super().__init__(target_col_id, overwrite_data)
         self._chunksize = 30
 
@@ -365,7 +367,8 @@ class JsonToObject(ConversionFeaturizer):
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"
+        ]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -399,8 +402,13 @@ class StructureToOxidStructure(ConversionFeaturizer):
             `pymatgen.io.structure.Structure.add_oxidation_state_by_guess()`.
     """
 
-    def __init__(self, target_col_id='structure_oxid', overwrite_data=False,
-                 return_original_on_error=False, **kwargs):
+    def __init__(
+        self,
+        target_col_id="structure_oxid",
+        overwrite_data=False,
+        return_original_on_error=False,
+        **kwargs
+    ):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
         self.return_original_on_error = return_original_on_error
@@ -415,8 +423,9 @@ class StructureToOxidStructure(ConversionFeaturizer):
             (`pymatgen.core.structure.Structure`): A Structure object decorated
                 with oxidation states.
         """
-        els_have_oxi_states = [hasattr(s, "oxi_state") for s in
-                               structure.composition.elements]
+        els_have_oxi_states = [
+            hasattr(s, "oxi_state") for s in structure.composition.elements
+        ]
         if all(els_have_oxi_states):
             return [structure]
 
@@ -435,7 +444,8 @@ class StructureToOxidStructure(ConversionFeaturizer):
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"
+        ]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -473,9 +483,14 @@ class CompositionToOxidComposition(ConversionFeaturizer):
 
     """
 
-    def __init__(self, target_col_id='composition_oxid', overwrite_data=False,
-                 coerce_mixed=True, return_original_on_error=False,
-                 **kwargs):
+    def __init__(
+        self,
+        target_col_id="composition_oxid",
+        overwrite_data=False,
+        coerce_mixed=True,
+        return_original_on_error=False,
+        **kwargs
+    ):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
         self.coerce_mixed = coerce_mixed
@@ -500,13 +515,14 @@ class CompositionToOxidComposition(ConversionFeaturizer):
             if self.coerce_mixed:
                 comp = comp.element_composition
             else:
-                raise ValueError("Composition {} has a mix of species with "
-                                 "and without oxidation states. Please enable "
-                                 "coercion to all oxidation states with "
-                                 "coerce_mixed.".format(comp))
+                raise ValueError(
+                    "Composition {} has a mix of species with "
+                    "and without oxidation states. Please enable "
+                    "coercion to all oxidation states with "
+                    "coerce_mixed.".format(comp)
+                )
         try:
-            comp = comp.add_charges_from_oxi_state_guesses(
-                **self.oxi_guess_params)
+            comp = comp.add_charges_from_oxi_state_guesses(**self.oxi_guess_params)
         except ValueError as e:
             if not self.return_original_on_error:
                 raise e
@@ -519,7 +535,8 @@ class CompositionToOxidComposition(ConversionFeaturizer):
             "properties of inorganic materials}, volume={2}, "
             "DOI={10.1038/npjcompumats.2017.28}, number={1}, journal={npj "
             "Computational Materials}, author={Ward, Logan and Agrawal, Ankit "
-            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"]
+            "and Choudhary, Alok and Wolverton, Christopher}, year={2016}}"
+        ]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose", "Alex Dunn"]
@@ -546,8 +563,7 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
 
     """
 
-    def __init__(self, target_col_id='structure', overwrite_data=False,
-                 mapi_key=None):
+    def __init__(self, target_col_id="structure", overwrite_data=False, mapi_key=None):
         super().__init__(target_col_id, overwrite_data)
         self.mpr = MPRester(mapi_key)
         self.set_n_jobs(1)
@@ -564,12 +580,10 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
 
         entries = self.mpr.get_data(comp.reduced_formula, prop="energy_per_atom")
         if len(entries) > 0:
-            most_stable_entry = \
-            sorted(entries, key=lambda e: e['energy_per_atom'])[0]
-            s = self.mpr.get_structure_by_material_id(
-                most_stable_entry["material_id"])
-            return[s]
-        
+            most_stable_entry = sorted(entries, key=lambda e: e["energy_per_atom"])[0]
+            s = self.mpr.get_structure_by_material_id(most_stable_entry["material_id"])
+            return [s]
+
         return [float("nan")]
 
     def citations(self):
@@ -594,7 +608,8 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
             "flexible and efficient API for materials data based on "
             "REpresentational State Transfer (REST) principles}}, "
             "url = {http://linkinghub.elsevier.com/retrieve/pii/S0927025614007113}, "
-            "volume = {97}, year = {2015} } "]
+            "volume = {97}, year = {2015} } ",
+        ]
 
     def implementors(self):
         return ["Anubhav Jain"]

@@ -31,12 +31,20 @@ from pymatgen.symmetry.structure import SymmetrizedStructure
 import pymatgen.analysis.local_env as pmg_le
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import OPSiteFingerprint, \
-    CoordinationNumber, LocalPropertyDifference, CrystalNNFingerprint, \
-    AverageBondAngle, AverageBondLength
+from matminer.featurizers.site import (
+    OPSiteFingerprint,
+    CoordinationNumber,
+    LocalPropertyDifference,
+    CrystalNNFingerprint,
+    AverageBondAngle,
+    AverageBondLength,
+)
 from matminer.featurizers.utils.stats import PropertyStats
-from matminer.featurizers.utils.cgcnn import appropriate_kwargs, \
-    CrystalGraphConvNetWrapper, CIFDataWrapper
+from matminer.featurizers.utils.cgcnn import (
+    appropriate_kwargs,
+    CrystalGraphConvNetWrapper,
+    CIFDataWrapper,
+)
 from matminer.utils.caching import get_all_nearest_neighbors
 from matminer.utils.data import IUCrBondValenceData
 
@@ -51,12 +59,14 @@ except ImportError:
     torch, optim, Variable = None, None, None
     cgcnn, cgcnn_data = None, None
 
-__authors__ = 'Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, '\
-              'Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, ' \
-              'Alex Dunn <ardunn@lbl.gov>, Qi Wang <wqthu11@gmail.com>'
+__authors__ = (
+    "Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, "
+    "Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, "
+    "Alex Dunn <ardunn@lbl.gov>, Qi Wang <wqthu11@gmail.com>"
+)
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
-ANG_TO_BOHR = const.value('Angstrom star') / const.value('Bohr radius')
+ANG_TO_BOHR = const.value("Angstrom star") / const.value("Bohr radius")
 
 
 class DensityFeatures(BaseFeaturizer):
@@ -75,8 +85,11 @@ class DensityFeatures(BaseFeaturizer):
             desired_features: [str] - choose from "density", "vpa",
                 "packing fraction"
         """
-        self.features = ["density", "vpa", "packing fraction"] if not \
-            desired_features else desired_features
+        self.features = (
+            ["density", "vpa", "packing fraction"]
+            if not desired_features
+            else desired_features
+        )
 
     def precheck(self, s: Structure) -> bool:
         """
@@ -135,19 +148,27 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         - Centrosymmetry (has inversion symmetry)
     """
 
-    crystal_idx = {"triclinic": 7,
-                   "monoclinic": 6,
-                   "orthorhombic": 5,
-                   "tetragonal": 4,
-                   "trigonal": 3,
-                   "hexagonal": 2,
-                   "cubic": 1
-                   }
+    crystal_idx = {
+        "triclinic": 7,
+        "monoclinic": 6,
+        "orthorhombic": 5,
+        "tetragonal": 4,
+        "trigonal": 3,
+        "hexagonal": 2,
+        "cubic": 1,
+    }
 
     def __init__(self, desired_features=None):
-        self.features = ["spacegroup_num", "crystal_system",
-                         "crystal_system_int", "is_centrosymmetric"] if not \
-            desired_features else desired_features
+        self.features = (
+            [
+                "spacegroup_num",
+                "crystal_system",
+                "crystal_system_int",
+                "is_centrosymmetric",
+            ]
+            if not desired_features
+            else desired_features
+        )
 
     def featurize(self, s):
         sga = SpacegroupAnalyzer(s)
@@ -160,8 +181,7 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
             output.append(sga.get_crystal_system())
 
         if "crystal_system_int" in self.features:
-            output.append(GlobalSymmetryFeatures.crystal_idx[
-                              sga.get_crystal_system()])
+            output.append(GlobalSymmetryFeatures.crystal_idx[sga.get_crystal_system()])
 
         if "is_centrosymmetric" in self.features:
             output.append(sga.is_laue())
@@ -169,9 +189,12 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         return output
 
     def feature_labels(self):
-        all_features = ["spacegroup_num", "crystal_system",
-                        "crystal_system_int",
-                        "is_centrosymmetric"]  # enforce order
+        all_features = [
+            "spacegroup_num",
+            "crystal_system",
+            "crystal_system_int",
+            "is_centrosymmetric",
+        ]  # enforce order
         return [x for x in all_features if x in self.features]
 
     def citations(self):
@@ -205,12 +228,14 @@ class Dimensionality(BaseFeaturizer):
         return ["dimensionality"]
 
     def citations(self):
-        return ["@article{larsen2019definition, title={Definition of a scoring "
-                "parameter to identify low-dimensional materials components},"
-                "author={Larsen, Peter Mahler and Pandey, Mohnish and Strange, "
-                "Mikkel and Jacobsen, Karsten Wedel}, journal={Physical Review "
-                "Materials}, volume={3}, number={3}, pages={034003}, "
-                "year={2019}, publisher={APS} }"]
+        return [
+            "@article{larsen2019definition, title={Definition of a scoring "
+            "parameter to identify low-dimensional materials components},"
+            "author={Larsen, Peter Mahler and Pandey, Mohnish and Strange, "
+            "Mikkel and Jacobsen, Karsten Wedel}, journal={Physical Review "
+            "Materials}, volume={3}, number={3}, pages={034003}, "
+            "year={2019}, publisher={APS} }"
+        ]
 
     def implementors(self):
         return ["Anubhav Jain", "Alex Ganose"]
@@ -249,19 +274,26 @@ class RadialDistributionFunction(BaseFeaturizer):
         # Get the distances between all atoms
         neighbors_lst = s.get_all_neighbors(self.cutoff)
         all_distances = np.concatenate(
-            tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst)))
+            tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_lst))
+        )
 
         # Compute a histogram
         dist_hist, dist_bins = np.histogram(
-            all_distances, bins=np.arange(
-                0, self.cutoff + self.bin_size, self.bin_size), density=False)
+            all_distances,
+            bins=np.arange(0, self.cutoff + self.bin_size, self.bin_size),
+            density=False,
+        )
 
         # Normalize counts
-        shell_vol = 4.0 / 3.0 * math.pi * (np.power(
-            dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        shell_vol = (
+            4.0
+            / 3.0
+            * math.pi
+            * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        )
         number_density = s.num_sites / s.volume
         rdf = dist_hist / shell_vol / number_density
-        return [{'distances': dist_bins[:-1], 'distribution': rdf}]
+        return [{"distances": dist_bins[:-1], "distribution": rdf}]
 
     def feature_labels(self):
         return ["radial distribution function"]
@@ -296,13 +328,13 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
            By default, this featurizer generates RDFs for each pair
            of elements in the training set."""
 
-    def __init__(self, cutoff=20.0, bin_size=0.1, include_elems=(),
-                 exclude_elems=()):
+    def __init__(self, cutoff=20.0, bin_size=0.1, include_elems=(), exclude_elems=()):
         self.cutoff = cutoff
         self.bin_size = bin_size
         self.elements_ = None
         self.include_elems = list(
-            include_elems)  # Makes sure the element lists are ordered
+            include_elems
+        )  # Makes sure the element lists are ordered
         self.exclude_elems = list(exclude_elems)
 
     def fit(self, X, y=None):
@@ -324,8 +356,12 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         # Get all of elements that appaer
         for strc in X:
-            elements.update([e.element if isinstance(e, Specie) else e for e in
-                             strc.composition.keys()])
+            elements.update(
+                [
+                    e.element if isinstance(e, Specie) else e
+                    for e in strc.composition.keys()
+                ]
+            )
 
         # Remove the elements excluded by the user
         elements.difference_update([Element(e) for e in self.exclude_elems])
@@ -352,8 +388,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         if self.elements_ is None:
             raise Exception("You must run 'fit' first!")
 
-        dist_bins, prdf = self.compute_prdf(
-            s)  # Assemble the PRDF for each pair
+        dist_bins, prdf = self.compute_prdf(s)  # Assemble the PRDF for each pair
 
         # Convert the PRDF into a feature array
         zeros = np.zeros_like(dist_bins)  # Zeros if elements don't appear
@@ -388,11 +423,15 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             distances_by_type[p] = []
 
         def get_symbol(site):
-            return site.specie.symbol if isinstance(site.specie,
-                                                    Element) else site.specie.element.symbol
+            return (
+                site.specie.symbol
+                if isinstance(site.specie, Element)
+                else site.specie.element.symbol
+            )
 
-        for site, nlst in zip(s.sites,
-                              neighbors_lst):  # Each list is a list for each site
+        for site, nlst in zip(
+            s.sites, neighbors_lst
+        ):  # Each list is a list for each site
             my_elem = get_symbol(site)
 
             for neighbor in nlst:
@@ -404,12 +443,17 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         # Compute and normalize the prdfs
         prdf = {}
         dist_bins = self._make_bins()
-        shell_volume = 4.0 / 3.0 * math.pi * (
-                np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        shell_volume = (
+            4.0
+            / 3.0
+            * math.pi
+            * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        )
         for key, distances in distances_by_type.items():
             # Compute histogram of distances
-            dist_hist, dist_bins = np.histogram(distances, bins=dist_bins,
-                                                density=False)
+            dist_hist, dist_bins = np.histogram(
+                distances, bins=dist_bins, density=False
+            )
             # Normalize
             n_alpha = composition[key[0]] * s.num_sites
             rdf = dist_hist / shell_volume / n_alpha
@@ -423,7 +467,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
 
         Returns:
             [list of float], edges of the bins
-            """
+        """
         return np.arange(0, self.cutoff + self.bin_size, self.bin_size)
 
     def feature_labels(self):
@@ -431,25 +475,27 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
             raise Exception("You must run 'fit' first!")
         bin_edges = self._make_bins()
         labels = []
-        for e1, e2 in itertools.combinations_with_replacement(self.elements_,
-                                                              2):
+        for e1, e2 in itertools.combinations_with_replacement(self.elements_, 2):
             for r_start, r_end in zip(bin_edges, bin_edges[1:]):
-                labels.append("{}-{} PRDF r={:.2f}-{:.2f}".format(
-                    e1, e2, r_start, r_end
-                ))
+                labels.append(
+                    "{}-{} PRDF r={:.2f}-{:.2f}".format(e1, e2, r_start, r_end)
+                )
         return labels
 
     def citations(self):
-        return ["@article{Schutt2014,"
-                "author = {Sch{\"{u}}tt, K. T. and Glawe, H. and Brockherde, F. "
-                "and Sanna, A. and M{\"{u}}ller, K. R. and Gross, E. K. U.},"
-                "doi = {10.1103/PhysRevB.89.205118},"
-                "journal = {Physical Review B},"
-                "month = {may},number = {20},pages = {205118},"
-                "title = {{How to represent crystal structures for machine learning:"
-                " Towards fast prediction of electronic properties}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.89.205118},"
-                "volume = {89},""year = {2014}}"]
+        return [
+            "@article{Schutt2014,"
+            'author = {Sch{"{u}}tt, K. T. and Glawe, H. and Brockherde, F. '
+            'and Sanna, A. and M{"{u}}ller, K. R. and Gross, E. K. U.},'
+            "doi = {10.1103/PhysRevB.89.205118},"
+            "journal = {Physical Review B},"
+            "month = {may},number = {20},pages = {205118},"
+            "title = {{How to represent crystal structures for machine learning:"
+            " Towards fast prediction of electronic properties}},"
+            "url = {http://link.aps.org/doi/10.1103/PhysRevB.89.205118},"
+            "volume = {89},"
+            "year = {2014}}"
+        ]
 
     def implementors(self):
         return ["Logan Ward", "Saurabh Bajaj"]
@@ -507,13 +553,19 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             b = struct.lattice.matrix[1]
             c = struct.lattice.matrix[2]
             self.cutoff = max(
-                [np.linalg.norm(a + b + c), np.linalg.norm(-a + b + c),
-                 np.linalg.norm(a - b + c), np.linalg.norm(a + b - c)])
+                [
+                    np.linalg.norm(a + b + c),
+                    np.linalg.norm(-a + b + c),
+                    np.linalg.norm(a - b + c),
+                    np.linalg.norm(a + b - c),
+                ]
+            )
 
         nbins = int(self.cutoff / self.dr) + 1
-        redf_dict = {"distances": np.array(
-            [(i + 0.5) * self.dr for i in range(nbins)]),
-            "distribution": np.zeros(nbins, dtype=np.float)}
+        redf_dict = {
+            "distances": np.array([(i + 0.5) * self.dr for i in range(nbins)]),
+            "distribution": np.zeros(nbins, dtype=np.float),
+        }
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
@@ -521,8 +573,9 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             for nnsite, dist, *_ in neighbors:
                 neigh_charge = float(nnsite.specie.oxi_state)
                 bin_index = int(dist / self.dr)
-                redf_dict["distribution"][bin_index] \
-                    += (this_charge * neigh_charge) / (struct.num_sites * dist)
+                redf_dict["distribution"][bin_index] += (this_charge * neigh_charge) / (
+                    struct.num_sites * dist
+                )
 
         return [redf_dict]
 
@@ -530,12 +583,14 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         return ["electronic radial distribution function"]
 
     def citations(self):
-        return ["@article{title={Method for the computational comparison"
-                " of crystal structures}, volume={B61}, pages={29-36},"
-                " DOI={10.1107/S0108768104028344},"
-                " journal={Acta Crystallographica Section B},"
-                " author={Willighagen, E. L. and Wehrens, R. and Verwer,"
-                " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}"]
+        return [
+            "@article{title={Method for the computational comparison"
+            " of crystal structures}, volume={B61}, pages={29-36},"
+            " DOI={10.1107/S0108768104028344},"
+            " journal={Acta Crystallographica Section B},"
+            " author={Willighagen, E. L. and Wehrens, R. and Verwer,"
+            " P. and de Gelder R. and Buydens, L. M. C.}, year={2005}}"
+        ]
 
     def implementors(self):
         return ["Nils E. R. Zimmermann"]
@@ -571,8 +626,10 @@ class CoulombMatrix(BaseFeaturizer):
 
     def _check_fitted(self):
         if self.flatten and not self._max_eigs:
-            raise NotFittedError("Please fit the CoulombMatrix before "
-                                 "featurizing if using flatten=True.")
+            raise NotFittedError(
+                "Please fit the CoulombMatrix before "
+                "featurizing if using flatten=True."
+            )
 
     def fit(self, X, y=None):
         """
@@ -624,7 +681,7 @@ class CoulombMatrix(BaseFeaturizer):
         if self.flatten:
             eigs, _ = np.linalg.eig(cm)
             zeros = np.zeros((self._max_eigs,))
-            zeros[:len(eigs)] = eigs
+            zeros[: len(eigs)] = eigs
             return zeros
         else:
             return [cm]
@@ -632,19 +689,20 @@ class CoulombMatrix(BaseFeaturizer):
     def feature_labels(self):
         self._check_fitted()
         if self.flatten:
-            return ["coulomb matrix eig {}".format(i) for i in
-                    range(self._max_eigs)]
+            return ["coulomb matrix eig {}".format(i) for i in range(self._max_eigs)]
         else:
             return ["coulomb matrix"]
 
     def citations(self):
-        return ["@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
-                "Fast and accurate modeling of molecular atomization energies"
-                " with machine learning}, volume={108},"
-                " DOI={10.1103/PhysRevLett.108.058301}, number={5},"
-                " pages={058301}, journal={Physical Review Letters}, author={"
-                "Rupp, Matthias and Tkatchenko, Alexandre and M\"uller,"
-                " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}"]
+        return [
+            "@article{rupp_tkatchenko_muller_vonlilienfeld_2012, title={"
+            "Fast and accurate modeling of molecular atomization energies"
+            " with machine learning}, volume={108},"
+            " DOI={10.1103/PhysRevLett.108.058301}, number={5},"
+            " pages={058301}, journal={Physical Review Letters}, author={"
+            'Rupp, Matthias and Tkatchenko, Alexandre and M"uller,'
+            " Klaus-Robert and von Lilienfeld, O. Anatole}, year={2012}}"
+        ]
 
     def implementors(self):
         return ["Nils E. R. Zimmermann", "Alex Dunn"]
@@ -681,8 +739,10 @@ class SineCoulombMatrix(BaseFeaturizer):
 
     def _check_fitted(self):
         if self.flatten and not self._max_eigs:
-            raise NotFittedError("Please fit the SineCoulombMatrix before "
-                                 "featurizing if using flatten=True.")
+            raise NotFittedError(
+                "Please fit the SineCoulombMatrix before "
+                "featurizing if using flatten=True."
+            )
 
     def fit(self, X, y=None):
         """
@@ -723,16 +783,17 @@ class SineCoulombMatrix(BaseFeaturizer):
                 elif i < j:
                     vec = coords[i] - coords[j]
                     coord_vec = np.sin(np.pi * vec) ** 2
-                    trig_dist = np.linalg.norm(
-                        (np.matrix(coord_vec) * lattice).A1) * ANG_TO_BOHR
-                    sin_mat[i][j] = atomic_numbers[i] * atomic_numbers[j] / \
-                                    trig_dist
+                    trig_dist = (
+                        np.linalg.norm((np.matrix(coord_vec) * lattice).A1)
+                        * ANG_TO_BOHR
+                    )
+                    sin_mat[i][j] = atomic_numbers[i] * atomic_numbers[j] / trig_dist
                 else:
                     sin_mat[i][j] = sin_mat[j][i]
         if self.flatten:
             eigs, _ = np.linalg.eig(sin_mat)
             zeros = np.zeros((self._max_eigs,))
-            zeros[:len(eigs)] = eigs
+            zeros[: len(eigs)] = eigs
             return zeros
         else:
             return [sin_mat]
@@ -740,28 +801,31 @@ class SineCoulombMatrix(BaseFeaturizer):
     def feature_labels(self):
         self._check_fitted()
         if self.flatten:
-            return ["sine coulomb matrix eig {}".format(i) for i in
-                    range(self._max_eigs)]
+            return [
+                "sine coulomb matrix eig {}".format(i) for i in range(self._max_eigs)
+            ]
         else:
             return ["sine coulomb matrix"]
 
     def citations(self):
-        return ["@article {QUA:QUA24917,"
-                "author = {Faber, Felix and Lindmaa, Alexander and von "
-                "Lilienfeld, O. Anatole and Armiento, Rickard},"
-                "title = {Crystal structure representations for machine "
-                "learning models of formation energies},"
-                "journal = {International Journal of Quantum Chemistry},"
-                "volume = {115},"
-                "number = {16},"
-                "issn = {1097-461X},"
-                "url = {http://dx.doi.org/10.1002/qua.24917},"
-                "doi = {10.1002/qua.24917},"
-                "pages = {1094--1101},"
-                "keywords = {machine learning, formation energies, "
-                "representations, crystal structure, periodic systems},"
-                "year = {2015},"
-                "}"]
+        return [
+            "@article {QUA:QUA24917,"
+            "author = {Faber, Felix and Lindmaa, Alexander and von "
+            "Lilienfeld, O. Anatole and Armiento, Rickard},"
+            "title = {Crystal structure representations for machine "
+            "learning models of formation energies},"
+            "journal = {International Journal of Quantum Chemistry},"
+            "volume = {115},"
+            "number = {16},"
+            "issn = {1097-461X},"
+            "url = {http://dx.doi.org/10.1002/qua.24917},"
+            "doi = {10.1002/qua.24917},"
+            "pages = {1094--1101},"
+            "keywords = {machine learning, formation energies, "
+            "representations, crystal structure, periodic systems},"
+            "year = {2015},"
+            "}"
+        ]
 
     def implementors(self):
         return ["Kyle Bystrom", "Alex Dunn"]
@@ -843,23 +907,26 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             if el_struct[-1 - shell_num][0] < max_n - 2:
                 shell_num += 1
                 continue
-            elif el_struct[-1 - shell_num][0] < max_n - 1 and \
-                    el_struct[-1 - shell_num][1] != u'f':
+            elif (
+                el_struct[-1 - shell_num][0] < max_n - 1
+                and el_struct[-1 - shell_num][1] != "f"
+            ):
                 shell_num += 1
                 continue
             elif el_struct[-1 - shell_num][0] < max_n and (
-                    el_struct[-1 - shell_num][1] != u'd' and
-                    el_struct[-1 - shell_num][1] != u'f'):
+                el_struct[-1 - shell_num][1] != "d"
+                and el_struct[-1 - shell_num][1] != "f"
+            ):
                 shell_num += 1
                 continue
             curr_shell = el_struct[-1 - shell_num]
-            if curr_shell[1] == u's':
+            if curr_shell[1] == "s":
                 l = 0
-            elif curr_shell[1] == u'p':
+            elif curr_shell[1] == "p":
                 l = 1
-            elif curr_shell[1] == u'd':
+            elif curr_shell[1] == "d":
                 l = 2
-            elif curr_shell[1] == u'f':
+            elif curr_shell[1] == "f":
                 l = 3
             ohd[l][curr_shell[2]] = 1
             nume += curr_shell[2]
@@ -895,10 +962,15 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         atom_ofm = np.matrix(np.zeros((self.size, self.size)))
         ref_atom = ohvs[site.specie.Z]
         for other_site in site_dict:
-            scale = other_site['weight']
-            other_atom = ohvs[other_site['site'].specie.Z]
-            atom_ofm += other_atom.T * ref_atom * scale / site.distance(
-                other_site['site']) / ANG_TO_BOHR
+            scale = other_site["weight"]
+            other_atom = ohvs[other_site["site"].specie.Z]
+            atom_ofm += (
+                other_atom.T
+                * ref_atom
+                * scale
+                / site.distance(other_site["site"])
+                / ANG_TO_BOHR
+            )
         return atom_ofm
 
     def get_atom_ofms(self, struct, symm=False):
@@ -929,8 +1001,9 @@ class OrbitalFieldMatrix(BaseFeaturizer):
         else:
             indices = [i for i in range(len(struct.sites))]
         for index in indices:
-            ofms.append(self.get_single_ofm(struct.sites[index],
-                                            vnn.get_nn_info(struct, index)))
+            ofms.append(
+                self.get_single_ofm(struct.sites[index], vnn.get_nn_info(struct, index))
+            )
         if symm:
             return ofms, counts
         return ofms
@@ -988,26 +1061,28 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             labelset_2D = []
             for l1 in labelset_1D:
                 for l2 in labelset_1D:
-                    labelset_2D.append('OFM: ' + l1 + ' - ' + l2)
+                    labelset_2D.append("OFM: " + l1 + " - " + l2)
             return labelset_2D
         else:
             return ["orbital field matrix"]
 
     def citations(self):
-        return ["@article{LamPham2017,"
-                "author = {{Lam Pham}, Tien and Kino, Hiori and Terakura, Kiyoyuki and "
-                "Miyake, Takashi and Tsuda, Koji and Takigawa, Ichigaku and {Chi Dam}, Hieu},"
-                "doi = {10.1080/14686996.2017.1378060},"
-                "journal = {Science and Technology of Advanced Materials},"
-                "month = {dec},"
-                "number = {1},"
-                "pages = {756--765},"
-                "publisher = {Taylor {\&} Francis},"
-                "title = {{Machine learning reveals orbital interaction in materials}},"
-                "url = {https://www.tandfonline.com/doi/full/10.1080/14686996.2017.1378060},"
-                "volume = {18},"
-                "year = {2017}"
-                "}"]
+        return [
+            "@article{LamPham2017,"
+            "author = {{Lam Pham}, Tien and Kino, Hiori and Terakura, Kiyoyuki and "
+            "Miyake, Takashi and Tsuda, Koji and Takigawa, Ichigaku and {Chi Dam}, Hieu},"
+            "doi = {10.1080/14686996.2017.1378060},"
+            "journal = {Science and Technology of Advanced Materials},"
+            "month = {dec},"
+            "number = {1},"
+            "pages = {756--765},"
+            "publisher = {Taylor {\&} Francis},"
+            "title = {{Machine learning reveals orbital interaction in materials}},"
+            "url = {https://www.tandfonline.com/doi/full/10.1080/14686996.2017.1378060},"
+            "volume = {18},"
+            "year = {2017}"
+            "}"
+        ]
 
     def implementors(self):
         return ["Kyle Bystrom", "Alex Dunn"]
@@ -1059,19 +1134,21 @@ class MinimumRelativeDistances(BaseFeaturizer):
         return ["minimum relative distance of each site"]
 
     def citations(self):
-        return ["@article{Zimmermann2017,"
-                "author = {Zimmermann, Nils E. R. and Horton, Matthew K."
-                " and Jain, Anubhav and Haranczyk, Maciej},"
-                "doi = {10.3389/fmats.2017.00034},"
-                "journal = {Frontiers in Materials},"
-                "pages = {34},"
-                "title = {{Assessing Local Structure Motifs Using Order"
-                " Parameters for Motif Recognition, Interstitial"
-                " Identification, and Diffusion Path Characterization}},"
-                "url = {https://www.frontiersin.org/articles/10.3389/fmats.2017.00034},"
-                "volume = {4},"
-                "year = {2017}"
-                "}"]
+        return [
+            "@article{Zimmermann2017,"
+            "author = {Zimmermann, Nils E. R. and Horton, Matthew K."
+            " and Jain, Anubhav and Haranczyk, Maciej},"
+            "doi = {10.3389/fmats.2017.00034},"
+            "journal = {Frontiers in Materials},"
+            "pages = {34},"
+            "title = {{Assessing Local Structure Motifs Using Order"
+            " Parameters for Motif Recognition, Interstitial"
+            " Identification, and Diffusion Path Characterization}},"
+            "url = {https://www.frontiersin.org/articles/10.3389/fmats.2017.00034},"
+            "volume = {4},"
+            "year = {2017}"
+            "}"
+        ]
 
     def implementors(self):
         return ["Nils E. R. Zimmermann", "Alex Dunn"]
@@ -1091,8 +1168,14 @@ class SiteStatsFingerprint(BaseFeaturizer):
         - Returns each statistic of each site feature
     """
 
-    def __init__(self, site_featurizer, stats=('mean', 'std_dev'), min_oxi=None,
-                 max_oxi=None, covariance=False):
+    def __init__(
+        self,
+        site_featurizer,
+        stats=("mean", "std_dev"),
+        min_oxi=None,
+        max_oxi=None,
+        covariance=False,
+    ):
         """
         Args:
             site_featurizer (BaseFeaturizer): a site-based featurizer
@@ -1109,10 +1192,10 @@ class SiteStatsFingerprint(BaseFeaturizer):
 
         self.site_featurizer = site_featurizer
         self.stats = tuple([stats]) if type(stats) == str else stats
-        if self.stats and '_mode' in ''.join(self.stats):
+        if self.stats and "_mode" in "".join(self.stats):
             nmodes = 0
             for stat in self.stats:
-                if '_mode' in stat and int(stat[0]) > nmodes:
+                if "_mode" in stat and int(stat[0]) > nmodes:
                     nmodes = int(stat[0])
             self.nmodes = nmodes
 
@@ -1128,9 +1211,9 @@ class SiteStatsFingerprint(BaseFeaturizer):
         # Get each feature for each site
         vals = [[] for t in self._site_labels]
         for i, site in enumerate(s.sites):
-            if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) \
-                    and (
-                    self.max_oxi is None or site.specie.oxi_state >= self.max_oxi):
+            if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) and (
+                self.max_oxi is None or site.specie.oxi_state >= self.max_oxi
+            ):
                 opvalstmp = self.site_featurizer.featurize(s, i)
                 for j, opval in enumerate(opvalstmp):
                     if opval is None:
@@ -1165,14 +1248,14 @@ class SiteStatsFingerprint(BaseFeaturizer):
             # Make labels associated with the statistics
             for attr in self._site_labels:
                 for stat in self.stats:
-                    labels.append('%s %s' % (stat, attr))
+                    labels.append("%s %s" % (stat, attr))
 
             # Make labels associated with the site labels
             if self.covariance:
                 sl = self._site_labels
                 for i, sa in enumerate(sl):
-                    for sb in sl[(i + 1):]:
-                        labels.append('covariance %s-%s' % (sa, sb))
+                    for sb in sl[(i + 1) :]:
+                        labels.append("covariance %s-%s" % (sa, sb))
             return labels
         else:
             return self._site_labels
@@ -1181,8 +1264,12 @@ class SiteStatsFingerprint(BaseFeaturizer):
         return self.site_featurizer.citations()
 
     def implementors(self):
-        return ['Nils E. R. Zimmermann', 'Alireza Faghaninia',
-                'Anubhav Jain', 'Logan Ward']
+        return [
+            "Nils E. R. Zimmermann",
+            "Alireza Faghaninia",
+            "Anubhav Jain",
+            "Logan Ward",
+        ]
 
     @staticmethod
     def from_preset(preset, **kwargs):
@@ -1196,23 +1283,23 @@ class SiteStatsFingerprint(BaseFeaturizer):
 
         if preset == "CrystalNNFingerprint_cn":
             return SiteStatsFingerprint(
-                CrystalNNFingerprint.from_preset("cn", cation_anion=False),
-                **kwargs)
+                CrystalNNFingerprint.from_preset("cn", cation_anion=False), **kwargs
+            )
 
         elif preset == "CrystalNNFingerprint_cn_cation_anion":
             return SiteStatsFingerprint(
-                CrystalNNFingerprint.from_preset("cn", cation_anion=True),
-                **kwargs)
+                CrystalNNFingerprint.from_preset("cn", cation_anion=True), **kwargs
+            )
 
         elif preset == "CrystalNNFingerprint_ops":
             return SiteStatsFingerprint(
-                CrystalNNFingerprint.from_preset("ops", cation_anion=False),
-                **kwargs)
+                CrystalNNFingerprint.from_preset("ops", cation_anion=False), **kwargs
+            )
 
         elif preset == "CrystalNNFingerprint_ops_cation_anion":
             return SiteStatsFingerprint(
-                CrystalNNFingerprint.from_preset("ops", cation_anion=True),
-                **kwargs)
+                CrystalNNFingerprint.from_preset("ops", cation_anion=True), **kwargs
+            )
 
         elif preset == "OPSiteFingerprint":
             return SiteStatsFingerprint(OPSiteFingerprint(), **kwargs)
@@ -1220,44 +1307,62 @@ class SiteStatsFingerprint(BaseFeaturizer):
         elif preset == "LocalPropertyDifference_ward-prb-2017":
             return SiteStatsFingerprint(
                 LocalPropertyDifference.from_preset("ward-prb-2017"),
-                stats=["minimum", "maximum", "range", "mean", "avg_dev"]
+                stats=["minimum", "maximum", "range", "mean", "avg_dev"],
             )
 
         elif preset == "CoordinationNumber_ward-prb-2017":
             return SiteStatsFingerprint(
-                CoordinationNumber(nn=VoronoiNN(weight='area'),
-                                   use_weights="effective"),
-                stats=["minimum", "maximum", "range", "mean", "avg_dev"]
+                CoordinationNumber(
+                    nn=VoronoiNN(weight="area"), use_weights="effective"
+                ),
+                stats=["minimum", "maximum", "range", "mean", "avg_dev"],
             )
 
         elif preset == "Composition-dejong2016_AD":
-            return SiteStatsFingerprint(LocalPropertyDifference(
-                properties=["Number", "AtomicWeight",
-                            "Column", "Row", "CovalentRadius",
-                            "Electronegativity"], signed=False),
-                stats=['holder_mean::%d' % d for d in range(0, 4 + 1)] + [
-                    'std_dev'],
+            return SiteStatsFingerprint(
+                LocalPropertyDifference(
+                    properties=[
+                        "Number",
+                        "AtomicWeight",
+                        "Column",
+                        "Row",
+                        "CovalentRadius",
+                        "Electronegativity",
+                    ],
+                    signed=False,
+                ),
+                stats=["holder_mean::%d" % d for d in range(0, 4 + 1)] + ["std_dev"],
             )
 
         elif preset == "Composition-dejong2016_SD":
-            return SiteStatsFingerprint(LocalPropertyDifference(
-                properties=["Number", "AtomicWeight",
-                            "Column", "Row", "CovalentRadius",
-                            "Electronegativity"], signed=True),
-                stats=['holder_mean::%d' % d for d in [1, 2, 4]] + ['std_dev'],
+            return SiteStatsFingerprint(
+                LocalPropertyDifference(
+                    properties=[
+                        "Number",
+                        "AtomicWeight",
+                        "Column",
+                        "Row",
+                        "CovalentRadius",
+                        "Electronegativity",
+                    ],
+                    signed=True,
+                ),
+                stats=["holder_mean::%d" % d for d in [1, 2, 4]] + ["std_dev"],
             )
 
         elif preset == "BondLength-dejong2016":
-            return SiteStatsFingerprint(AverageBondLength(VoronoiNN()),
-                                        stats=['holder_mean::%d' % d for d in
-                                               range(-4, 4 + 1)]
-                                              + ['std_dev', 'geom_std_dev'])
+            return SiteStatsFingerprint(
+                AverageBondLength(VoronoiNN()),
+                stats=["holder_mean::%d" % d for d in range(-4, 4 + 1)]
+                + ["std_dev", "geom_std_dev"],
+            )
 
         elif preset == "BondAngle-dejong2016":
-            return SiteStatsFingerprint(AverageBondAngle(VoronoiNN()),
-                                        stats=['holder_mean::%d' % d for d in
-                                               range(-4, 4 + 1)]
-                                              + ['std_dev', 'geom_std_dev'])
+            return SiteStatsFingerprint(
+                AverageBondAngle(VoronoiNN()),
+                stats=["holder_mean::%d" % d for d in range(-4, 4 + 1)]
+                + ["std_dev", "geom_std_dev"],
+            )
 
         else:
             # TODO: Why assume coordination number? Should this just raise an error? - lw
@@ -1265,7 +1370,8 @@ class SiteStatsFingerprint(BaseFeaturizer):
             # MinimumVIRENN, MinimumDistanceNN, JmolNN, VoronoiNN, etc.
             try:
                 return SiteStatsFingerprint(
-                    CoordinationNumber.from_preset(preset), **kwargs)
+                    CoordinationNumber.from_preset(preset), **kwargs
+                )
             except:
                 pass
 
@@ -1299,8 +1405,9 @@ class EwaldEnergy(BaseFeaturizer):
         """
         # Compute the total energy
         ewald = EwaldSummation(strc, acc_factor=self.accuracy)
-        return [ewald.total_energy / len(strc)] if self.per_atom \
-            else [ewald.total_energy]
+        return (
+            [ewald.total_energy / len(strc)] if self.per_atom else [ewald.total_energy]
+        )
 
     def feature_labels(self):
         return ["ewald_energy_per_atom"] if self.per_atom else ["ewald_energy"]
@@ -1309,19 +1416,21 @@ class EwaldEnergy(BaseFeaturizer):
         return ["Logan Ward", "Anubhav Jain"]
 
     def citations(self):
-        return ["@Article{Ewald1921,"
-                "author = {Ewald, P. P.},"
-                "doi = {10.1002/andp.19213690304},"
-                "issn = {00033804},"
-                "journal = {Annalen der Physik},"
-                "number = {3},"
-                "pages = {253--287},"
-                "title = {{Die Berechnung optischer und elektrostatischer "
-                "Gitterpotentiale}},"
-                "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
-                "volume = {369},"
-                "year = {1921}"
-                "}"]
+        return [
+            "@Article{Ewald1921,"
+            "author = {Ewald, P. P.},"
+            "doi = {10.1002/andp.19213690304},"
+            "issn = {00033804},"
+            "journal = {Annalen der Physik},"
+            "number = {3},"
+            "pages = {253--287},"
+            "title = {{Die Berechnung optischer und elektrostatischer "
+            "Gitterpotentiale}},"
+            "url = {http://doi.wiley.com/10.1002/andp.19213690304},"
+            "volume = {369},"
+            "year = {1921}"
+            "}"
+        ]
 
 
 class BondFractions(BaseFeaturizer):
@@ -1382,8 +1491,15 @@ class BondFractions(BaseFeaturizer):
             token specified.
     """
 
-    def __init__(self, nn=pmg_le.CrystalNN(), bbv=0, no_oxi=False,
-                 approx_bonds=False, token=' - ', allowed_bonds=None):
+    def __init__(
+        self,
+        nn=pmg_le.CrystalNN(),
+        bbv=0,
+        no_oxi=False,
+        approx_bonds=False,
+        token=" - ",
+        allowed_bonds=None,
+    ):
         self.nn = nn
         self.bbv = bbv
         self.no_oxi = no_oxi
@@ -1393,13 +1509,14 @@ class BondFractions(BaseFeaturizer):
             raise ValueError("A space must be present in the token.")
 
         if any([str.isalnum(i) for i in token]):
-            raise ValueError("The token cannot have any alphanumeric "
-                             "characters.")
+            raise ValueError("The token cannot have any alphanumeric " "characters.")
 
         token_els = token.split(" ")
         if len(token_els) != 3 and token != " ":
-            raise ValueError("The token must either be a space or be padded by"
-                             "single spaces with no spaces in between.")
+            raise ValueError(
+                "The token must either be a space or be padded by"
+                "single spaces with no spaces in between."
+            )
 
         self.token = token
 
@@ -1452,20 +1569,20 @@ class BondFractions(BaseFeaturizer):
         X = X.values if isinstance(X, pd.Series) else X
 
         if not all([isinstance(x, Structure) for x in X]):
-            raise ValueError("Each structure must be a pymatgen Structure "
-                             "object.")
+            raise ValueError("Each structure must be a pymatgen Structure " "object.")
 
         sanitized = self._sanitize_bonds(self.enumerate_all_bonds(X))
 
         if self.allowed_bonds is None:
             self.fitted_bonds_ = sanitized
         else:
-            self.fitted_bonds_ = [b for b in sanitized if
-                                  b in self.allowed_bonds]
+            self.fitted_bonds_ = [b for b in sanitized if b in self.allowed_bonds]
             if len(self.fitted_bonds_) == 0:
-                warnings.warn("The intersection between the allowed bonds "
-                              "and the fitted bonds is zero. There's no bonds"
-                              "to be featurized!")
+                warnings.warn(
+                    "The intersection between the allowed bonds "
+                    "and the fitted bonds is zero. There's no bonds"
+                    "to be featurized!"
+                )
 
         return self
 
@@ -1574,11 +1691,12 @@ class BondFractions(BaseFeaturizer):
         """
         if self.fitted_bonds_ is None:
             raise NotFittedError(
-                'BondFractions must have a list of allowed bonds.'
-                ' Either pass in a list of bonds to the '
+                "BondFractions must have a list of allowed bonds."
+                " Either pass in a list of bonds to the "
                 'initializer with allowed_bonds, use "fit" with'
-                ' a list of structures, or do both to sets the '
-                'intersection of the two as the allowed list.')
+                " a list of structures, or do both to sets the "
+                "intersection of the two as the allowed list."
+            )
 
     def _sanitize_bonds(self, bonds):
         """
@@ -1610,12 +1728,15 @@ class BondFractions(BaseFeaturizer):
 
         for i, bond in enumerate(bonds):
             if not isinstance(bond, str):
-                raise TypeError("Bonds must be specified as strings between "
-                                "elements or species with the token in between, "
-                                "for example Cl - Cs")
+                raise TypeError(
+                    "Bonds must be specified as strings between "
+                    "elements or species with the token in between, "
+                    "for example Cl - Cs"
+                )
             if not self.token in bond:
-                raise ValueError('Token "{}" not found in bond: {}'.format(
-                    self.token, bond))
+                raise ValueError(
+                    'Token "{}" not found in bond: {}'.format(self.token, bond)
+                )
             bond = bond.replace(" bond frac.", "")
             species = sorted(bond.split(self.token))
 
@@ -1649,7 +1770,7 @@ class BondFractions(BaseFeaturizer):
             try:
                 species.append(Specie.from_string(ss))
             except ValueError:
-                d = {'element': ss, 'oxidation_state': 0}
+                d = {"element": ss, "oxidation_state": 0}
                 species.append(Specie.from_dict(d))
         return tuple(species)
 
@@ -1688,8 +1809,7 @@ class BondFractions(BaseFeaturizer):
         abonds_species = {v: k for k, v in abonds_species.items()}
 
         for lb in local_bonds.keys():
-            local_bonds[lb] = 0.0 if np.isnan(local_bonds[lb]) else local_bonds[
-                lb]
+            local_bonds[lb] = 0.0 if np.isnan(local_bonds[lb]) else local_bonds[lb]
 
             if lb in self.fitted_bonds_:
                 abonds_data[lb] += local_bonds[lb]
@@ -1741,22 +1861,24 @@ class BondFractions(BaseFeaturizer):
         return ["Alex Dunn"]
 
     def citations(self):
-        return ["@article{doi:10.1021/acs.jpclett.5b00831, "
-                "author = {Hansen, Katja and Biegler, "
-                "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor"
-                "and von Lilienfeld, O. Anatole and Muller, Klaus-Robert and"
-                "Tkatchenko, Alexandre},"
-                "title = {Machine Learning Predictions of Molecular Properties: "
-                "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
-                "journal = {The Journal of Physical Chemistry Letters},"
-                "volume = {6},"
-                "number = {12},"
-                "pages = {2326-2331},"
-                "year = {2015},"
-                "doi = {10.1021/acs.jpclett.5b00831}, "
-                "note ={PMID: 26113956},"
-                "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
-                "}"]
+        return [
+            "@article{doi:10.1021/acs.jpclett.5b00831, "
+            "author = {Hansen, Katja and Biegler, "
+            "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor"
+            "and von Lilienfeld, O. Anatole and Muller, Klaus-Robert and"
+            "Tkatchenko, Alexandre},"
+            "title = {Machine Learning Predictions of Molecular Properties: "
+            "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
+            "journal = {The Journal of Physical Chemistry Letters},"
+            "volume = {6},"
+            "number = {12},"
+            "pages = {2326-2331},"
+            "year = {2015},"
+            "doi = {10.1021/acs.jpclett.5b00831}, "
+            "note ={PMID: 26113956},"
+            "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
+            "}"
+        ]
 
 
 class BagofBonds(BaseFeaturizer):
@@ -1792,8 +1914,7 @@ class BagofBonds(BaseFeaturizer):
 
     """
 
-    def __init__(self, coulomb_matrix=SineCoulombMatrix(flatten=False),
-                 token=' - '):
+    def __init__(self, coulomb_matrix=SineCoulombMatrix(flatten=False), token=" - "):
         self.coulomb_matrix = coulomb_matrix
         self.token = token
         self.bag_lens = None
@@ -1801,9 +1922,11 @@ class BagofBonds(BaseFeaturizer):
 
     def _check_fitted(self):
         if not self.bag_lens or not self.ordered_bonds:
-            raise NotFittedError("BagofBonds not fitted to any list of "
-                                 "structures! Use the 'fit' method to define "
-                                 "the bags and the maximum length of each bag.")
+            raise NotFittedError(
+                "BagofBonds not fitted to any list of "
+                "structures! Use the 'fit' method to define "
+                "the bags and the maximum length of each bag."
+            )
 
     def fit(self, X, y=None):
         """
@@ -1833,8 +1956,9 @@ class BagofBonds(BaseFeaturizer):
                     baglens[i] = max((baglens[i], baglen))
         self.bag_lens = dict(zip(bonds, baglens))
         # Sort the bags by bag length, with the shortest coming first.
-        self.ordered_bonds = [b[0] for b in sorted(self.bag_lens.items(),
-                                                   key=lambda bl: bl[1])]
+        self.ordered_bonds = [
+            b[0] for b in sorted(self.bag_lens.items(), key=lambda bl: bl[1])
+        ]
         return self
 
     def bag(self, s, return_baglens=False):
@@ -1910,25 +2034,23 @@ class BagofBonds(BaseFeaturizer):
         """
         self._check_fitted()
         unpadded_bob = self.bag(s)
-        padded_bob = {bag: [0.0] * int(length) for bag, length in
-                      self.bag_lens.items()}
+        padded_bob = {bag: [0.0] * int(length) for bag, length in self.bag_lens.items()}
 
         for bond in unpadded_bob:
             if bond not in list(self.bag_lens.keys()):
-                raise ValueError("{} is not in the fitted "
-                                 "bonds/sites!".format(bond))
+                raise ValueError("{} is not in the fitted " "bonds/sites!".format(bond))
             baglen_s = len(unpadded_bob[bond])
             baglen_fit = self.bag_lens[bond]
 
             if baglen_s > baglen_fit:
-                raise ValueError("The bond {} has more entries than was "
-                                 "fitted for (i.e., there are more {} bonds"
-                                 " in structure {} ({}) than the fitted set"
-                                 " allows ({}).".format(bond, bond, s, baglen_s,
-                                                        baglen_fit))
+                raise ValueError(
+                    "The bond {} has more entries than was "
+                    "fitted for (i.e., there are more {} bonds"
+                    " in structure {} ({}) than the fitted set"
+                    " allows ({}).".format(bond, bond, s, baglen_s, baglen_fit)
+                )
             elif baglen_s < baglen_fit:
-                padded_bob[bond] = unpadded_bob[bond] + \
-                                   [0.0] * (baglen_fit - baglen_s)
+                padded_bob[bond] = unpadded_bob[bond] + [0.0] * (baglen_fit - baglen_s)
             else:
                 padded_bob[bond] = unpadded_bob[bond]
 
@@ -1952,22 +2074,24 @@ class BagofBonds(BaseFeaturizer):
         return ["Alex Dunn"]
 
     def citations(self):
-        return ["@article{doi:10.1021/acs.jpclett.5b00831, "
-                "author = {Hansen, Katja and Biegler, "
-                "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor"
-                "and von Lilienfeld, O. Anatole and Muller, Klaus-Robert and"
-                "Tkatchenko, Alexandre},"
-                "title = {Machine Learning Predictions of Molecular Properties: "
-                "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
-                "journal = {The Journal of Physical Chemistry Letters},"
-                "volume = {6},"
-                "number = {12},"
-                "pages = {2326-2331},"
-                "year = {2015},"
-                "doi = {10.1021/acs.jpclett.5b00831}, "
-                "note ={PMID: 26113956},"
-                "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
-                "}"]
+        return [
+            "@article{doi:10.1021/acs.jpclett.5b00831, "
+            "author = {Hansen, Katja and Biegler, "
+            "Franziska and Ramakrishnan, Raghunathan and Pronobis, Wiktor"
+            "and von Lilienfeld, O. Anatole and Muller, Klaus-Robert and"
+            "Tkatchenko, Alexandre},"
+            "title = {Machine Learning Predictions of Molecular Properties: "
+            "Accurate Many-Body Potentials and Nonlocality in Chemical Space},"
+            "journal = {The Journal of Physical Chemistry Letters},"
+            "volume = {6},"
+            "number = {12},"
+            "pages = {2326-2331},"
+            "year = {2015},"
+            "doi = {10.1021/acs.jpclett.5b00831}, "
+            "note ={PMID: 26113956},"
+            "URL = {http://dx.doi.org/10.1021/acs.jpclett.5b00831}"
+            "}"
+        ]
 
 
 class StructuralHeterogeneity(BaseFeaturizer):
@@ -2009,8 +2133,9 @@ class StructuralHeterogeneity(BaseFeaturizer):
          `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.024104>`_
     """
 
-    def __init__(self, weight='area',
-                 stats=("minimum", "maximum", "range", "mean", "avg_dev")):
+    def __init__(
+        self, weight="area", stats=("minimum", "maximum", "range", "mean", "avg_dev")
+    ):
         self.weight = weight
         self.stats = stats
 
@@ -2024,28 +2149,32 @@ class StructuralHeterogeneity(BaseFeaturizer):
         mean_bond_lengths = np.zeros((len(strc),))
         bond_length_var = np.zeros_like(mean_bond_lengths)
         for i, nn in enumerate(nns):
-            weights = [n['weight'] for n in nn]
-            lengths = [n['poly_info']['face_dist'] * 2 for n in nn]
+            weights = [n["weight"] for n in nn]
+            lengths = [n["poly_info"]["face_dist"] * 2 for n in nn]
             mean_bond_lengths[i] = PropertyStats.mean(lengths, weights)
 
             # Compute the mean absolute deviation of the bond lengths
-            bond_length_var[i] = PropertyStats.avg_dev(lengths, weights) / \
-                                 mean_bond_lengths[i]
+            bond_length_var[i] = (
+                PropertyStats.avg_dev(lengths, weights) / mean_bond_lengths[i]
+            )
 
         # Normalize the bond lengths by the average of the whole structure
         #   This is done to make the attributes length-scale-invariant
         mean_bond_lengths /= mean_bond_lengths.mean()
 
         # Compute statistics related to bond lengths
-        features = [PropertyStats.avg_dev(mean_bond_lengths),
-                    mean_bond_lengths.max(), mean_bond_lengths.min()]
-        features += [PropertyStats.calc_stat(bond_length_var, stat)
-                     for stat in self.stats]
+        features = [
+            PropertyStats.avg_dev(mean_bond_lengths),
+            mean_bond_lengths.max(),
+            mean_bond_lengths.min(),
+        ]
+        features += [
+            PropertyStats.calc_stat(bond_length_var, stat) for stat in self.stats
+        ]
 
         # Compute the variance in volume
-        cell_volumes = [sum(x['poly_info']['volume'] for x in nn) for nn in nns]
-        features.append(
-            PropertyStats.avg_dev(cell_volumes) / np.mean(cell_volumes))
+        cell_volumes = [sum(x["poly_info"]["volume"] for x in nn) for nn in nns]
+        features.append(PropertyStats.avg_dev(cell_volumes) / np.mean(cell_volumes))
 
         return features
 
@@ -2053,29 +2182,31 @@ class StructuralHeterogeneity(BaseFeaturizer):
         fl = [
             "mean absolute deviation in relative bond length",
             "max relative bond length",
-            "min relative bond length"
+            "min relative bond length",
         ]
         fl += [stat + " neighbor distance variation" for stat in self.stats]
         fl.append("mean absolute deviation in relative cell size")
         return fl
 
     def citations(self):
-        return ["@article{Ward2017,"
-                "author = {Ward, Logan and Liu, Ruoqian "
-                "and Krishna, Amar and Hegde, Vinay I. "
-                "and Agrawal, Ankit and Choudhary, Alok "
-                "and Wolverton, Chris},"
-                "doi = {10.1103/PhysRevB.96.024104},"
-                "journal = {Physical Review B},"
-                "pages = {024104},"
-                "title = {{Including crystal structure attributes "
-                "in machine learning models of formation energies "
-                "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
-                "volume = {96},year = {2017}}"]
+        return [
+            "@article{Ward2017,"
+            "author = {Ward, Logan and Liu, Ruoqian "
+            "and Krishna, Amar and Hegde, Vinay I. "
+            "and Agrawal, Ankit and Choudhary, Alok "
+            "and Wolverton, Chris},"
+            "doi = {10.1103/PhysRevB.96.024104},"
+            "journal = {Physical Review B},"
+            "pages = {024104},"
+            "title = {{Including crystal structure attributes "
+            "in machine learning models of formation energies "
+            "via Voronoi tessellations}},"
+            "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
+            "volume = {96},year = {2017}}"
+        ]
 
     def implementors(self):
-        return ['Logan Ward']
+        return ["Logan Ward"]
 
 
 class MaximumPackingEfficiency(BaseFeaturizer):
@@ -2099,31 +2230,33 @@ class MaximumPackingEfficiency(BaseFeaturizer):
         # Compute the radius of largest possible atom for each site
         #  The largest radius is equal to the distance from the center of the
         #   cell to the closest Voronoi face
-        max_r = [min(x['face_dist'] for x in nn.values()) for nn in nns]
+        max_r = [min(x["face_dist"] for x in nn.values()) for nn in nns]
 
         # Compute the packing efficiency
-        return [4. / 3. * np.pi * np.power(max_r, 3).sum() / strc.volume]
+        return [4.0 / 3.0 * np.pi * np.power(max_r, 3).sum() / strc.volume]
 
     def feature_labels(self):
-        return ['max packing efficiency']
+        return ["max packing efficiency"]
 
     def citations(self):
-        return ["@article{Ward2017,"
-                "author = {Ward, Logan and Liu, Ruoqian "
-                "and Krishna, Amar and Hegde, Vinay I. "
-                "and Agrawal, Ankit and Choudhary, Alok "
-                "and Wolverton, Chris},"
-                "doi = {10.1103/PhysRevB.96.024104},"
-                "journal = {Physical Review B},"
-                "pages = {024104},"
-                "title = {{Including crystal structure attributes "
-                "in machine learning models of formation energies "
-                "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
-                "volume = {96},year = {2017}}"]
+        return [
+            "@article{Ward2017,"
+            "author = {Ward, Logan and Liu, Ruoqian "
+            "and Krishna, Amar and Hegde, Vinay I. "
+            "and Agrawal, Ankit and Choudhary, Alok "
+            "and Wolverton, Chris},"
+            "doi = {10.1103/PhysRevB.96.024104},"
+            "journal = {Physical Review B},"
+            "pages = {024104},"
+            "title = {{Including crystal structure attributes "
+            "in machine learning models of formation energies "
+            "via Voronoi tessellations}},"
+            "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
+            "volume = {96},year = {2017}}"
+        ]
 
     def implementors(self):
-        return ['Logan Ward']
+        return ["Logan Ward"]
 
 
 class ChemicalOrdering(BaseFeaturizer):
@@ -2155,13 +2288,13 @@ class ChemicalOrdering(BaseFeaturizer):
     References:
          `Ward et al. _PRB_ 2017 <http://link.aps.org/doi/10.1103/PhysRevB.96.024104>`_"""
 
-    def __init__(self, shells=(1, 2, 3), weight='area'):
+    def __init__(self, shells=(1, 2, 3), weight="area"):
         """Initialize the featurizer
 
         Args:
             shells ([int]) - Which neighbor shells to evaluate
             weight (str) - Attribute used to weigh neighbor contributions
-            """
+        """
         self.shells = shells
         self.weight = weight
 
@@ -2172,7 +2305,8 @@ class ChemicalOrdering(BaseFeaturizer):
 
         # Get a list of types
         elems, fracs = zip(
-            *strc.composition.element_composition.fractional_composition.items())
+            *strc.composition.element_composition.fractional_composition.items()
+        )
 
         # Precompute the list of NNs in the structure
         voro = VoronoiNN(weight=self.weight)
@@ -2189,20 +2323,21 @@ class ChemicalOrdering(BaseFeaturizer):
                 nns = voro._get_nn_shell_info(strc, all_nn, site_idx, shell)
 
                 # Sum up the weights
-                total_weight = sum(x['weight'] for x in nns)
+                total_weight = sum(x["weight"] for x in nns)
 
                 # Get weight by type
                 for nn in nns:
-                    site_elem = nn['site'].specie
+                    site_elem = nn["site"].specie
                     if hasattr(site_elem, "element"):
                         site_elem = getattr(site_elem, "element")
 
                     elem_idx = elems.index(site_elem)
-                    ordering[site_idx, elem_idx] += nn['weight']
+                    ordering[site_idx, elem_idx] += nn["weight"]
 
                 # Compute the ordering parameter
-                ordering[site_idx, :] = 1 - ordering[site_idx, :] / \
-                                        total_weight / np.array(fracs)
+                ordering[site_idx, :] = 1 - ordering[
+                    site_idx, :
+                ] / total_weight / np.array(fracs)
 
             # Compute the average ordering for the entire structure
             output.append(np.abs(ordering).mean())
@@ -2210,26 +2345,27 @@ class ChemicalOrdering(BaseFeaturizer):
         return output
 
     def feature_labels(self):
-        return ["mean ordering parameter shell {}".format(n) for n in
-                self.shells]
+        return ["mean ordering parameter shell {}".format(n) for n in self.shells]
 
     def citations(self):
-        return ["@article{Ward2017,"
-                "author = {Ward, Logan and Liu, Ruoqian "
-                "and Krishna, Amar and Hegde, Vinay I. "
-                "and Agrawal, Ankit and Choudhary, Alok "
-                "and Wolverton, Chris},"
-                "doi = {10.1103/PhysRevB.96.024104},"
-                "journal = {Physical Review B},"
-                "pages = {024104},"
-                "title = {{Including crystal structure attributes "
-                "in machine learning models of formation energies "
-                "via Voronoi tessellations}},"
-                "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
-                "volume = {96},year = {2017}}"]
+        return [
+            "@article{Ward2017,"
+            "author = {Ward, Logan and Liu, Ruoqian "
+            "and Krishna, Amar and Hegde, Vinay I. "
+            "and Agrawal, Ankit and Choudhary, Alok "
+            "and Wolverton, Chris},"
+            "doi = {10.1103/PhysRevB.96.024104},"
+            "journal = {Physical Review B},"
+            "pages = {024104},"
+            "title = {{Including crystal structure attributes "
+            "in machine learning models of formation energies "
+            "via Voronoi tessellations}},"
+            "url = {http://link.aps.org/doi/10.1103/PhysRevB.96.024104},"
+            "volume = {96},year = {2017}}"
+        ]
 
     def implementors(self):
-        return ['Logan Ward']
+        return ["Logan Ward"]
 
 
 class StructureComposition(BaseFeaturizer):
@@ -2278,8 +2414,9 @@ class XRDPowderPattern(BaseFeaturizer):
     pymatgen. The powder is smeared / normalized according to gaussian_kde.
     """
 
-    def __init__(self, two_theta_range=(0, 127), bw_method=0.05,
-                 pattern_length=None, **kwargs):
+    def __init__(
+        self, two_theta_range=(0, 127), bw_method=0.05, pattern_length=None, **kwargs
+    ):
         """
         Initialize the featurizer.
 
@@ -2296,13 +2433,13 @@ class XRDPowderPattern(BaseFeaturizer):
         """
         self.two_theta_range = two_theta_range
         self.bw_method = bw_method
-        self.pattern_length = pattern_length or two_theta_range[1] - \
-                              two_theta_range[0] + 1
+        self.pattern_length = (
+            pattern_length or two_theta_range[1] - two_theta_range[0] + 1
+        )
         self.xrd_calc = XRDCalculator(**kwargs)
 
     def featurize(self, strc):
-        pattern = self.xrd_calc.get_pattern(
-            strc, two_theta_range=self.two_theta_range)
+        pattern = self.xrd_calc.get_pattern(strc, two_theta_range=self.two_theta_range)
         x, y = pattern.x, pattern.y
         hist = []
         for x1, y1 in zip(x, y):
@@ -2310,32 +2447,35 @@ class XRDPowderPattern(BaseFeaturizer):
             hist += [x1] * num
 
         kernel = gaussian_kde(hist, bw_method=self.bw_method)
-        x = np.linspace(self.two_theta_range[0], self.two_theta_range[1],
-                        self.pattern_length)
+        x = np.linspace(
+            self.two_theta_range[0], self.two_theta_range[1], self.pattern_length
+        )
         y = kernel(x)
 
         return y
 
     def feature_labels(self):
-        return ['xrd_{}'.format(x) for x in range(self.pattern_length)]
+        return ["xrd_{}".format(x) for x in range(self.pattern_length)]
 
     def citations(self):
-        return ["@article{Ong2013, author = {Ong, Shyue Ping and Richards, "
-                "William Davidson and Jain, Anubhav and Hautier, "
-                "Geoffroy and Kocher, Michael and Cholia, Shreyas and Gunter, "
-                "Dan and Chevrier, Vincent L. and Persson, "
-                "Kristin A. and Ceder, Gerbrand}, "
-                "doi = {10.1016/j.commatsci.2012.10.028}, issn = {09270256}, "
-                "journal = {Computational Materials Science}, month = {feb}, "
-                "pages = {314--319}, "
-                "publisher = {Elsevier B.V.}, title = {{Python Materials "
-                "Genomics (pymatgen): A robust, open-source python "
-                "library for materials analysis}}, url = "
-                "{http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
-                "volume = {68}, year = {2013} } "]
+        return [
+            "@article{Ong2013, author = {Ong, Shyue Ping and Richards, "
+            "William Davidson and Jain, Anubhav and Hautier, "
+            "Geoffroy and Kocher, Michael and Cholia, Shreyas and Gunter, "
+            "Dan and Chevrier, Vincent L. and Persson, "
+            "Kristin A. and Ceder, Gerbrand}, "
+            "doi = {10.1016/j.commatsci.2012.10.028}, issn = {09270256}, "
+            "journal = {Computational Materials Science}, month = {feb}, "
+            "pages = {314--319}, "
+            "publisher = {Elsevier B.V.}, title = {{Python Materials "
+            "Genomics (pymatgen): A robust, open-source python "
+            "library for materials analysis}}, url = "
+            "{http://linkinghub.elsevier.com/retrieve/pii/S0927025612006295}, "
+            "volume = {68}, year = {2013} } "
+        ]
 
     def implementors(self):
-        return ['Anubhav Jain', 'Matthew Horton']
+        return ["Anubhav Jain", "Matthew Horton"]
 
 
 class CGCNNFeaturizer(BaseFeaturizer):
@@ -2362,15 +2502,26 @@ class CGCNNFeaturizer(BaseFeaturizer):
     Features:
         - Features for the structures extracted from CGCNN model after pooling.
     """
-    @requires(torch and cgcnn,
-              "CGCNNFeaturizer requires pytorch and cgcnn to be installed with "
-              "Python bindings. Please refer to http://pytorch.org and "
-              "https://github.com/txie-93/cgcnn.")
-    def __init__(self, task='classification', atom_init_fea=None,
-                 pretrained_name=None, warm_start_file=None,
-                 warm_start_latest=False, save_model_to_dir=None,
-                 save_checkpoint_to_dir=None, checkpoint_interval=100,
-                 del_checkpoint=True, **cgcnn_kwargs):
+
+    @requires(
+        torch and cgcnn,
+        "CGCNNFeaturizer requires pytorch and cgcnn to be installed with "
+        "Python bindings. Please refer to http://pytorch.org and "
+        "https://github.com/txie-93/cgcnn.",
+    )
+    def __init__(
+        self,
+        task="classification",
+        atom_init_fea=None,
+        pretrained_name=None,
+        warm_start_file=None,
+        warm_start_latest=False,
+        save_model_to_dir=None,
+        save_checkpoint_to_dir=None,
+        checkpoint_interval=100,
+        del_checkpoint=True,
+        **cgcnn_kwargs
+    ):
         """
         Args:
             task (str):
@@ -2459,8 +2610,9 @@ class CGCNNFeaturizer(BaseFeaturizer):
 
         # Set atom_init_fea
         if atom_init_fea is None:
-            atom_file = os.path.join(module_dir, "..", "utils", "data_files",
-                                     "cgcnn_atom_feature.json")
+            atom_file = os.path.join(
+                module_dir, "..", "utils", "data_files", "cgcnn_atom_feature.json"
+            )
             with open(atom_file) as f:
                 self.atom_init_fea = json.load(f)
         else:
@@ -2498,21 +2650,20 @@ class CGCNNFeaturizer(BaseFeaturizer):
             return self
 
         # If checkpoint_interval > num_epochs, set it as num_epochs/2
-        if self.save_checkpoint_to_dir and \
-                self.checkpoint_interval >= self._num_epochs:
+        if self.save_checkpoint_to_dir and self.checkpoint_interval >= self._num_epochs:
             self.checkpoint_interval = math.ceil(self._num_epochs / 2)
 
         # Initialize CGCNN's train, validate function and Normalizer class
         train, validate, Normalizer = self._initialize_cgcnn()
 
         if self._test:
-            train_loader, val_loader, _ = \
-                cgcnn_data.get_train_val_test_loader(
-                    dataset=self.dataset, **self._dataloader_kwargs)
+            train_loader, val_loader, _ = cgcnn_data.get_train_val_test_loader(
+                dataset=self.dataset, **self._dataloader_kwargs
+            )
         else:
-            train_loader, val_loader = \
-                cgcnn_data.get_train_val_test_loader(
-                    dataset=self.dataset, **self._dataloader_kwargs)
+            train_loader, val_loader = cgcnn_data.get_train_val_test_loader(
+                dataset=self.dataset, **self._dataloader_kwargs
+            )
 
         # Initialize normalizer and optimizer
         normalizer = self._initialize_normalizer(Normalizer)
@@ -2522,12 +2673,13 @@ class CGCNNFeaturizer(BaseFeaturizer):
             model.cuda()
 
         # Define loss func
-        criterion = torch.nn.NLLLoss() if self.task == 'classification' \
-            else torch.nn.MSELoss()
+        criterion = (
+            torch.nn.NLLLoss() if self.task == "classification" else torch.nn.MSELoss()
+        )
 
         # Initialize epochs parameters
         start_epoch, best_epoch = 0, 0
-        best_score = 1e10 if self.task == 'regression' else 0.
+        best_score = 1e10 if self.task == "regression" else 0.0
 
         # Optionally resume from a checkpoint
         if self.warm_start_file is not None:
@@ -2536,48 +2688,62 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 if self.warm_start_latest:
                     # Load and set best model. If checkpoint doesn't
                     # have the best_state_dict, then load the state_dict
-                    if 'best_state_dict' in checkpoint.keys():
-                        model.load_state_dict(checkpoint['best_state_dict'])
+                    if "best_state_dict" in checkpoint.keys():
+                        model.load_state_dict(checkpoint["best_state_dict"])
                     else:
-                        model.load_state_dict(checkpoint['state_dict'])
+                        model.load_state_dict(checkpoint["state_dict"])
 
                     # Use copy to avoid best_model being affected by changes
                     self._best_model = copy(model)
 
                     # Warm start from latest model
-                    model.load_state_dict(checkpoint['state_dict'])
-                    start_epoch = checkpoint['epoch']
+                    model.load_state_dict(checkpoint["state_dict"])
+                    start_epoch = checkpoint["epoch"]
                 else:
-                    start_epoch = checkpoint['best_epoch'] + 1
-                    model.load_state_dict(checkpoint['best_state_dict'])
+                    start_epoch = checkpoint["best_epoch"] + 1
+                    model.load_state_dict(checkpoint["best_state_dict"])
                     self._best_model = copy(model)
-                best_epoch = checkpoint['best_epoch']
+                best_epoch = checkpoint["best_epoch"]
                 # We use 'best_mae_error' for compatible with the cgcnn
                 # project's pre-trained model.
-                best_score = checkpoint['best_mae_error']
-                optimizer.load_state_dict(checkpoint['optimizer'])
-                normalizer.load_state_dict(checkpoint['normalizer'])
-                print("Warm start from '{}' (epoch {})."
-                      .format(self.warm_start_file, checkpoint['epoch']))
+                best_score = checkpoint["best_mae_error"]
+                optimizer.load_state_dict(checkpoint["optimizer"])
+                normalizer.load_state_dict(checkpoint["normalizer"])
+                print(
+                    "Warm start from '{}' (epoch {}).".format(
+                        self.warm_start_file, checkpoint["epoch"]
+                    )
+                )
             else:
                 warnings.warn("Warm start file not found.")
-        scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
-                                                   **self._scheduler_kwargs)
+        scheduler = optim.lr_scheduler.MultiStepLR(
+            optimizer=optimizer, **self._scheduler_kwargs
+        )
         # Save checkpoint
         if self.save_checkpoint_to_dir is not None:
             if not os.path.exists(self.save_checkpoint_to_dir):
                 os.makedirs(self.save_checkpoint_to_dir)
-            checkpoint_file = os.path.join(self.save_checkpoint_to_dir,
-                                           'cgcnn_checkpoint.pth.tar')
+            checkpoint_file = os.path.join(
+                self.save_checkpoint_to_dir, "cgcnn_checkpoint.pth.tar"
+            )
 
         for epoch in range(start_epoch, self._num_epochs):
-            train(train_loader=train_loader, model=model,
-                  criterion=criterion, optimizer=optimizer,
-                  epoch=epoch, normalizer=normalizer)
+            train(
+                train_loader=train_loader,
+                model=model,
+                criterion=criterion,
+                optimizer=optimizer,
+                epoch=epoch,
+                normalizer=normalizer,
+            )
 
-            score = validate(val_loader=val_loader, model=model,
-                             criterion=criterion, normalizer=normalizer,
-                             test=self._test)
+            score = validate(
+                val_loader=val_loader,
+                model=model,
+                criterion=criterion,
+                normalizer=normalizer,
+                test=self._test,
+            )
 
             if score is np.nan:
                 raise ValueError("Exit due to mae_error is NaN")
@@ -2585,7 +2751,7 @@ class CGCNNFeaturizer(BaseFeaturizer):
             scheduler.step()
 
             # Calculate best score
-            if self.task == 'regression':
+            if self.task == "regression":
                 is_best = score < best_score
                 best_score = min(score, best_score)
             else:
@@ -2597,23 +2763,39 @@ class CGCNNFeaturizer(BaseFeaturizer):
             self._latest_model = model
 
             # Save checkpoint
-            if self.save_checkpoint_to_dir is not None and \
-                    epoch % self.checkpoint_interval == 0:
-                self._save_model(epoch, best_epoch, best_score,
-                                 optimizer, normalizer, checkpoint_file)
+            if (
+                self.save_checkpoint_to_dir is not None
+                and epoch % self.checkpoint_interval == 0
+            ):
+                self._save_model(
+                    epoch,
+                    best_epoch,
+                    best_score,
+                    optimizer,
+                    normalizer,
+                    checkpoint_file,
+                )
 
         # Save model
         if self.save_model_to_dir is not None:
             if not os.path.exists(self.save_model_to_dir):
                 os.makedirs(self.save_model_to_dir)
-            model_file = os.path.join(self.save_model_to_dir,
-                                      'cgcnn_model.pth.tar')
-            self._save_model(self._num_epochs, best_epoch, best_score,
-                             optimizer, normalizer, model_file)
+            model_file = os.path.join(self.save_model_to_dir, "cgcnn_model.pth.tar")
+            self._save_model(
+                self._num_epochs,
+                best_epoch,
+                best_score,
+                optimizer,
+                normalizer,
+                model_file,
+            )
 
         # Delete checkpoint
-        if self.save_checkpoint_to_dir is not None and self.del_checkpoint and \
-                os.path.exists(checkpoint_file):
+        if (
+            self.save_checkpoint_to_dir is not None
+            and self.del_checkpoint
+            and os.path.exists(checkpoint_file)
+        ):
             os.remove(checkpoint_file)
         return self
 
@@ -2633,19 +2815,21 @@ class CGCNNFeaturizer(BaseFeaturizer):
             atom_fea = Variable(input_[0].cuda(non_blocking=True), volatile=True)
             nbr_fea = Variable(input_[1].cuda(non_blocking=True), volatile=True)
             nbr_fea_idx = input_[2].cuda(non_blocking=True)
-            crystal_atom_idx = [crys_idx.cuda(non_blocking=True)
-                                for crys_idx in input_[3]]
+            crystal_atom_idx = [
+                crys_idx.cuda(non_blocking=True) for crys_idx in input_[3]
+            ]
         else:
             atom_fea = Variable(input_[0], volatile=True)
             nbr_fea = Variable(input_[1], volatile=True)
             nbr_fea_idx = input_[2]
             crystal_atom_idx = input_[3]
         features = self._best_model.extract_feature(
-            atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx).tolist()[0]
+            atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx
+        ).tolist()[0]
         return features
 
     def feature_labels(self):
-        return ['CGCNN_feature_{}'.format(x) for x in range(self._atom_fea_len)]
+        return ["CGCNN_feature_{}".format(x) for x in range(self._atom_fea_len)]
 
     @property
     def model(self):
@@ -2666,51 +2850,57 @@ class CGCNNFeaturizer(BaseFeaturizer):
         """
 
         # Initialize some common-purpose kwargs
-        self._test = cgcnn_kwargs.get('test', False)
+        self._test = cgcnn_kwargs.get("test", False)
         self._num_epochs = cgcnn_kwargs.get("num_epochs", 30)
-        self._print_freq = cgcnn_kwargs.get('print_freq', 10)
-        self._cuda = torch.cuda.is_available() and \
-                     not cgcnn_kwargs.get("disable_cuda", True)
+        self._print_freq = cgcnn_kwargs.get("print_freq", 10)
+        self._cuda = torch.cuda.is_available() and not cgcnn_kwargs.get(
+            "disable_cuda", True
+        )
 
         # Initialize CrystalGraphConvNet model kwargs
         self._atom_fea_len = cgcnn_kwargs.get("atom_fea_len", 64)
-        self._model_kwargs = \
-            {"atom_fea_len": self._atom_fea_len,
-             "n_conv": cgcnn_kwargs.get("n_conv", 3),
-             "h_fea_len": cgcnn_kwargs.get("h_fea_len", 128),
-             "n_h": cgcnn_kwargs.get("n_h", 1)}
+        self._model_kwargs = {
+            "atom_fea_len": self._atom_fea_len,
+            "n_conv": cgcnn_kwargs.get("n_conv", 3),
+            "h_fea_len": cgcnn_kwargs.get("h_fea_len", 128),
+            "n_h": cgcnn_kwargs.get("n_h", 1),
+        }
 
         # Initialize CIFDataWrapper (pytorch dataset) kwargs
-        self._dataset_kwargs = \
-            {"atom_init_fea": self.atom_init_fea,
-             "max_num_nbr": cgcnn_kwargs.get("max_num_nbr", 12),
-             "radius": cgcnn_kwargs.get("radius", 8),
-             "dmin": cgcnn_kwargs.get("dmin", 0),
-             "step": cgcnn_kwargs.get("step", 0.2),
-             "random_seed": cgcnn_kwargs.get("random_seed", 123)}
+        self._dataset_kwargs = {
+            "atom_init_fea": self.atom_init_fea,
+            "max_num_nbr": cgcnn_kwargs.get("max_num_nbr", 12),
+            "radius": cgcnn_kwargs.get("radius", 8),
+            "dmin": cgcnn_kwargs.get("dmin", 0),
+            "step": cgcnn_kwargs.get("step", 0.2),
+            "random_seed": cgcnn_kwargs.get("random_seed", 123),
+        }
 
         # Initialize dataloader kwargs
-        self._dataloader_kwargs = \
-            {"batch_size": cgcnn_kwargs.get("batch_size", 256),
-             "num_workers": cgcnn_kwargs.get("num_workers", 0),
-             "train_size": cgcnn_kwargs.get("train_size", None),
-             "val_size": cgcnn_kwargs.get("val_size", 1000),
-             "test_size": cgcnn_kwargs.get("test_size", 1000),
-             "return_test": self._test,
-             "collate_fn": cgcnn_data.collate_pool,
-             "pin_memory": self._cuda}
+        self._dataloader_kwargs = {
+            "batch_size": cgcnn_kwargs.get("batch_size", 256),
+            "num_workers": cgcnn_kwargs.get("num_workers", 0),
+            "train_size": cgcnn_kwargs.get("train_size", None),
+            "val_size": cgcnn_kwargs.get("val_size", 1000),
+            "test_size": cgcnn_kwargs.get("test_size", 1000),
+            "return_test": self._test,
+            "collate_fn": cgcnn_data.collate_pool,
+            "pin_memory": self._cuda,
+        }
 
         # Initialize optimizer kwargs
-        self._optimizer_name = cgcnn_kwargs.get("optim", 'SGD')
-        self._optimizer_kwargs = \
-            {"lr": cgcnn_kwargs.get("lr", 0.01),
-             "momentum": cgcnn_kwargs.get("momentum", 0.9),
-             "weight_decay": cgcnn_kwargs.get("weight_decay", 0)}
+        self._optimizer_name = cgcnn_kwargs.get("optim", "SGD")
+        self._optimizer_kwargs = {
+            "lr": cgcnn_kwargs.get("lr", 0.01),
+            "momentum": cgcnn_kwargs.get("momentum", 0.9),
+            "weight_decay": cgcnn_kwargs.get("weight_decay", 0),
+        }
 
         # Initialize scheduler kwargs
-        self._scheduler_kwargs = \
-            {"gamma": cgcnn_kwargs.get("gamma", 0.1),
-             "milestones": cgcnn_kwargs.get("lr_milestones", [100])}
+        self._scheduler_kwargs = {
+            "gamma": cgcnn_kwargs.get("gamma", 0.1),
+            "milestones": cgcnn_kwargs.get("lr_milestones", [100]),
+        }
 
     def _initialize_cgcnn(self):
         """
@@ -2730,11 +2920,9 @@ class CGCNNFeaturizer(BaseFeaturizer):
         # we have to add the required arguments to sys.argv.
         # "_" is a place holder to hold the place of folder name as required by
         # cgcnn repo yet is not needed here as we have wrapped the CIFData class
-        sys.argv += ['_',
-                     '--task', self.task,
-                     '--print-freq', str(self._print_freq)]
+        sys.argv += ["_", "--task", self.task, "--print-freq", str(self._print_freq)]
         if not self._cuda:
-            sys.argv += ['--disable-cuda']
+            sys.argv += ["--disable-cuda"]
 
         # If import one model multiply times, python just load it in memory,
         # then we can't set the command-line arguments when import it again, so
@@ -2761,8 +2949,9 @@ class CGCNNFeaturizer(BaseFeaturizer):
         model = CrystalGraphConvNetWrapper(
             orig_atom_fea_len=orig_atom_fea_len,
             nbr_fea_len=nbr_fea_len,
-            classification=True if self.task == 'classification' else False,
-            **self._model_kwargs)
+            classification=True if self.task == "classification" else False,
+            **self._model_kwargs
+        )
         # Initialize _best_model and _latest_model
         self._best_model = copy(model)
         self._latest_model = model
@@ -2777,18 +2966,20 @@ class CGCNNFeaturizer(BaseFeaturizer):
             normalizer (Normalizer): Initialized normalizer object
         """
 
-        if self.task == 'classification':
+        if self.task == "classification":
             normalizer = Normalizer(torch.zeros(2))
-            normalizer.load_state_dict({'mean': 0., 'std': 1.})
+            normalizer.load_state_dict({"mean": 0.0, "std": 1.0})
         else:
             if len(self.dataset) < 500:
-                warnings.warn('Dataset has less than 500 data points. '
-                              'Lower accuracy is expected. ')
-                sample_data_list = [self.dataset[i] for i in
-                                    range(len(self.dataset))]
+                warnings.warn(
+                    "Dataset has less than 500 data points. "
+                    "Lower accuracy is expected. "
+                )
+                sample_data_list = [self.dataset[i] for i in range(len(self.dataset))]
             else:
-                sample_data_list = [self.dataset[i] for i in
-                                    sample(range(len(self.dataset)), 500)]
+                sample_data_list = [
+                    self.dataset[i] for i in sample(range(len(self.dataset)), 500)
+                ]
             _, sample_target, _ = cgcnn_data.collate_pool(sample_data_list)
             normalizer = Normalizer(sample_target)
         return normalizer
@@ -2802,19 +2993,20 @@ class CGCNNFeaturizer(BaseFeaturizer):
             optimizer (optim.SGD/optim.Adam): Initialized optimizer object
         """
 
-        if self._optimizer_name == 'SGD':
+        if self._optimizer_name == "SGD":
             sgd_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.SGD)
             optimizer = optim.SGD(model.parameters(), **sgd_kwargs)
-        elif self._optimizer_name == 'Adam':
+        elif self._optimizer_name == "Adam":
             adam_kwargs = appropriate_kwargs(self._optimizer_kwargs, optim.Adam)
             optimizer = optim.Adam(model.parameters(), **adam_kwargs)
         else:
-            raise ValueError('Only SGD or Adam is allowed as optim')
+            raise ValueError("Only SGD or Adam is allowed as optim")
 
         return optimizer
 
-    def _save_model(self, epoch, best_epoch, best_score, optimizer,
-                    normalizer, output_file):
+    def _save_model(
+        self, epoch, best_epoch, best_score, optimizer, normalizer, output_file
+    ):
         """
         Save CGCNN model to disk if save_model=True.
         Args:
@@ -2828,14 +3020,18 @@ class CGCNNFeaturizer(BaseFeaturizer):
 
         # The best key for best_score is 'best_score', we use 'best_mae_error'
         # to be compatible with the CGCNN repo's pre-trained models.
-        torch.save({'epoch': epoch + 1,
-                    'state_dict': self._latest_model.state_dict(),
-                    'best_epoch': best_epoch,
-                    'best_state_dict': self._best_model.state_dict(),
-                    'best_mae_error': best_score,
-                    'optimizer': optimizer.state_dict(),
-                    'normalizer': normalizer.state_dict()},
-                   output_file)
+        torch.save(
+            {
+                "epoch": epoch + 1,
+                "state_dict": self._latest_model.state_dict(),
+                "best_epoch": best_epoch,
+                "best_state_dict": self._best_model.state_dict(),
+                "best_mae_error": best_score,
+                "optimizer": optimizer.state_dict(),
+                "normalizer": normalizer.state_dict(),
+            },
+            output_file,
+        )
 
     def _use_pretrained_model(self, model, pretrained_name):
         """
@@ -2846,16 +3042,21 @@ class CGCNNFeaturizer(BaseFeaturizer):
                 only supports the models from the CGCNN repo.
         """
 
-        pre_trained_path = os.path.join(os.path.dirname(cgcnn.__file__),
-                                        "..", "pre-trained")
-        if os.path.isfile(os.path.join(pre_trained_path,
-                                       pretrained_name + ".pth.tar")):
+        pre_trained_path = os.path.join(
+            os.path.dirname(cgcnn.__file__), "..", "pre-trained"
+        )
+        if os.path.isfile(os.path.join(pre_trained_path, pretrained_name + ".pth.tar")):
             checkpoint = torch.load(
-                os.path.join(os.path.dirname(cgcnn.__file__), "..",
-                             "pre-trained", pretrained_name + ".pth.tar"),
-                map_location=lambda storage, loc: storage)
+                os.path.join(
+                    os.path.dirname(cgcnn.__file__),
+                    "..",
+                    "pre-trained",
+                    pretrained_name + ".pth.tar",
+                ),
+                map_location=lambda storage, loc: storage,
+            )
 
-            model.load_state_dict(checkpoint['state_dict'])
+            model.load_state_dict(checkpoint["state_dict"])
             self._best_model = model
             self._latest_model = model
         else:
@@ -2863,24 +3064,27 @@ class CGCNNFeaturizer(BaseFeaturizer):
             for file in os.listdir(pre_trained_path):
                 if file.endswith(".pth.tar"):
                     pretrained_list.append(file[:-8])
-            raise ValueError("The given pre-trained model {} is unknown! "
-                             "Possible models are {}.".format(pretrained_name,
-                                                              pretrained_list))
+            raise ValueError(
+                "The given pre-trained model {} is unknown! "
+                "Possible models are {}.".format(pretrained_name, pretrained_list)
+            )
 
     def citations(self):
-        return ["@article{cgcnn,"
-                "title = {Crystal Graph Convolutional Neural Networks for an "
-                "Accurate and Interpretable Prediction of Material Properties},"
-                "author = {Xie, Tian and Grossman, Jeffrey C.},"
-                "journal = {Phys. Rev. Lett.},"
-                "volume = {120}, issue = {14}, pages = {145301},"
-                "numpages = {6}, year = {2018}, month = {Apr},"
-                "publisher = {American Physical Society},"
-                "doi = {10.1103/PhysRevLett.120.145301}, url = "
-                "{https://link.aps.org/doi/10.1103/PhysRevLett.120.145301}}"]
+        return [
+            "@article{cgcnn,"
+            "title = {Crystal Graph Convolutional Neural Networks for an "
+            "Accurate and Interpretable Prediction of Material Properties},"
+            "author = {Xie, Tian and Grossman, Jeffrey C.},"
+            "journal = {Phys. Rev. Lett.},"
+            "volume = {120}, issue = {14}, pages = {145301},"
+            "numpages = {6}, year = {2018}, month = {Apr},"
+            "publisher = {American Physical Society},"
+            "doi = {10.1103/PhysRevLett.120.145301}, url = "
+            "{https://link.aps.org/doi/10.1103/PhysRevLett.120.145301}}"
+        ]
 
     def implementors(self):
-        return ['Qi Wang', 'Tian Xie']
+        return ["Qi Wang", "Tian Xie"]
 
 
 class JarvisCFID(BaseFeaturizer):
@@ -2910,8 +3114,16 @@ class JarvisCFID(BaseFeaturizer):
         use_nn (bool): Use nearest neighbors (100 descriptors)
     """
 
-    def __init__(self, use_cell=True, use_chem=True, use_chg=True, use_rdf=True,
-                 use_adf=True, use_ddf=True, use_nn=True):
+    def __init__(
+        self,
+        use_cell=True,
+        use_chem=True,
+        use_chg=True,
+        use_rdf=True,
+        use_adf=True,
+        use_ddf=True,
+        use_nn=True,
+    ):
 
         self.use_cell = use_cell
         self.use_chem = use_chem
@@ -2973,10 +3185,11 @@ class JarvisCFID(BaseFeaturizer):
 
         if self.use_cell:
             log_vpa = round(
-                math.log(float(s.volume) / float(s.composition.num_atoms)), 5)
-            dffer = DensityFeatures(desired_features=["packing fraction",
-                                                      "vpa",
-                                                      "density"])
+                math.log(float(s.volume) / float(s.composition.num_atoms)), 5
+            )
+            dffer = DensityFeatures(
+                desired_features=["packing fraction", "vpa", "density"]
+            )
             feats = dffer.featurize(s)
             cell = np.array([log_vpa] + feats)
             descriptors.append(cell)
@@ -3037,7 +3250,7 @@ class JarvisCFID(BaseFeaturizer):
         rcut_buffer = 0.11
         io1, io2, io3 = 0, 1, 2
         delta = arr[io2] - arr[io1]
-        while (delta < rcut_buffer and arr[io2] < max_cut):
+        while delta < rcut_buffer and arr[io2] < max_cut:
             io1 = io1 + 1
             io2 = io2 + 1
             io3 = io3 + 1
@@ -3045,8 +3258,7 @@ class JarvisCFID(BaseFeaturizer):
         rcut1 = (arr[io2] + arr[io1]) / float(2.0)
         rcut = self._cutoff_from_combinations(structure=structure)
         delta = arr[io3] - arr[io2]
-        while (delta < rcut_buffer and arr[io3] < max_cut and arr[
-            io2] < max_cut):
+        while delta < rcut_buffer and arr[io3] < max_cut and arr[io2] < max_cut:
             io2 = io2 + 1
             io3 = io3 + 1
             delta = arr[io3] - arr[io2]
@@ -3077,25 +3289,22 @@ class JarvisCFID(BaseFeaturizer):
             for j in range(dim[0]):
                 for k in range(dim[1]):
                     for l in range(dim[2]):
-                        new_coords[count][0] = (coords[i][0] + j) / float(
-                            dim[0])
-                        new_coords[count][1] = (coords[i][1] + k) / float(
-                            dim[1])
-                        new_coords[count][2] = (coords[i][2] + l) / float(
-                            dim[2])
+                        new_coords[count][0] = (coords[i][0] + j) / float(dim[0])
+                        new_coords[count][1] = (coords[i][1] + k) / float(dim[1])
+                        new_coords[count][2] = (coords[i][2] + l) / float(dim[2])
                         new_symbs.append(all_symbs[i])
                         count = count + 1
         nat = new_nat
         coords = new_coords
         znm = 0
-        nn = np.zeros((nat), dtype='int')
+        nn = np.zeros((nat), dtype="int")
         max_n = 500  # maximum number of neighbors
         dist = np.zeros((max_n, nat))
-        nn_id = np.zeros((max_n, nat), dtype='int')
+        nn_id = np.zeros((max_n, nat), dtype="int")
         bondx = np.zeros((max_n, nat))
         bondy = np.zeros((max_n, nat))
         bondz = np.zeros((max_n, nat))
-        dim05 = [float(1 / 2.) for i in dim]
+        dim05 = [float(1 / 2.0) for i in dim]
         for i in range(nat):
             for j in range(i + 1, nat):
                 diff = coords[i] - coords[j]
@@ -3138,20 +3347,18 @@ class JarvisCFID(BaseFeaturizer):
                     else:
                         znm = znm + 1
         angs = np.array([float(i) for i in ang_at.keys()])
-        norm = np.array(
-            [float(len(i)) / float(len(set(i))) for i in ang_at.values()])
+        norm = np.array([float(len(i)) / float(len(set(i))) for i in ang_at.values()])
         binrng = np.arange(1, 181.0, 1)
-        ang_hist1, _ = np.histogram(angs, weights=norm, bins=binrng,
-                                    density=False)
+        ang_hist1, _ = np.histogram(angs, weights=norm, bins=binrng, density=False)
         # 1st neighbors
-        nn = np.zeros((nat), dtype='int')
+        nn = np.zeros((nat), dtype="int")
         max_n = 500  # maximum number of neighbors
         dist = np.zeros((max_n, nat))
-        nn_id = np.zeros((max_n, nat), dtype='int')
+        nn_id = np.zeros((max_n, nat), dtype="int")
         bondx = np.zeros((max_n, nat))
         bondy = np.zeros((max_n, nat))
         bondz = np.zeros((max_n, nat))
-        dim05 = [float(1 / 2.) for i in dim]
+        dim05 = [float(1 / 2.0) for i in dim]
         for i in range(nat):
             for j in range(i + 1, nat):
                 diff = coords[i] - coords[j]
@@ -3188,7 +3395,7 @@ class JarvisCFID(BaseFeaturizer):
                             # all other nn of j that are not i
                             for in3 in range(nn[j1]):
                                 j3 = nn_id[in3][j1]
-                                if (j3 != i):
+                                if j3 != i:
                                     v1, v2, v3 = [], [], []
                                     v1.append(bondx[in2][i])
                                     v1.append(bondy[in2][i])
@@ -3201,28 +3408,28 @@ class JarvisCFID(BaseFeaturizer):
                                     v3.append(-bondz[in3][j1])
                                     v23 = np.cross(v2, v3)
                                     v12 = np.cross(v1, v2)
-                                    theta = math.degrees(math.atan2(
-                                        np.linalg.norm(v2) * np.dot(v1, v23),
-                                        np.dot(v12, v23)))
+                                    theta = math.degrees(
+                                        math.atan2(
+                                            np.linalg.norm(v2) * np.dot(v1, v23),
+                                            np.dot(v12, v23),
+                                        )
+                                    )
                                     if theta < 0.00001:
-                                        theta = - theta
-                                    dih_at.setdefault(round(theta, 3),
-                                                      []).append(i)
+                                        theta = -theta
+                                    dih_at.setdefault(round(theta, 3), []).append(i)
         dih = np.array([float(i) for i in dih_at.keys()])
-        norm = np.array(
-            [float(len(i)) / float(len(set(i))) for i in dih_at.values()])
-        dih_hist1, _ = np.histogram(dih, weights=norm, bins=binrng,
-                                    density=False)
+        norm = np.array([float(len(i)) / float(len(set(i))) for i in dih_at.values()])
+        dih_hist1, _ = np.histogram(dih, weights=norm, bins=binrng, density=False)
         # 2nd neighbors
         znm = 0
-        nn = np.zeros((nat), dtype='int')
+        nn = np.zeros((nat), dtype="int")
         max_n = 250  # maximum number of neighbors
         dist = np.zeros((max_n, nat))
-        nn_id = np.zeros((max_n, nat), dtype='int')
+        nn_id = np.zeros((max_n, nat), dtype="int")
         bondx = np.zeros((max_n, nat))
         bondy = np.zeros((max_n, nat))
         bondz = np.zeros((max_n, nat))
-        dim05 = [float(1 / 2.) for _ in dim]
+        dim05 = [float(1 / 2.0) for _ in dim]
         for i in range(nat):
             for j in range(i + 1, nat):
                 diff = coords[i] - coords[j]
@@ -3265,10 +3472,8 @@ class JarvisCFID(BaseFeaturizer):
                     else:
                         znm = znm + 1
         angs = np.array([float(i) for i in ang_at.keys()])
-        norm = np.array(
-            [float(len(i)) / float(len(set(i))) for i in ang_at.values()])
-        ang_hist2, _ = np.histogram(angs, weights=norm, bins=binrng,
-                                    density=False)
+        norm = np.array([float(len(i)) / float(len(set(i))) for i in ang_at.values()])
+        ang_hist2, _ = np.histogram(angs, weights=norm, bins=binrng, density=False)
         # adf_1, adf_2, ddf, rdf, bond-order/nn
         return ang_hist1, ang_hist2, dih_hist1, y, z
 
@@ -3307,23 +3512,25 @@ class JarvisCFID(BaseFeaturizer):
         return arr
 
     def citations(self):
-        return ["@article{PhysRevMaterials.2.083801, "
-                "title = {Machine learning with force-field-inspired "
-                "descriptors for materials: Fast screening and mapping "
-                "energy landscape},"
-                "author = {Choudhary, Kamal and DeCost, Brian and Tavazza, "
-                "Francesca},"
-                "journal = {Phys. Rev. Materials},"
-                "volume = {2},"
-                "issue = {8},"
-                "pages = {083801},"
-                "numpages = {8},"
-                "year = {2018},"
-                "month = {Aug},"
-                "publisher = {American Physical Society},"
-                "doi = {10.1103/PhysRevMaterials.2.083801}, "
-                "url = "
-                "{https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}}"]
+        return [
+            "@article{PhysRevMaterials.2.083801, "
+            "title = {Machine learning with force-field-inspired "
+            "descriptors for materials: Fast screening and mapping "
+            "energy landscape},"
+            "author = {Choudhary, Kamal and DeCost, Brian and Tavazza, "
+            "Francesca},"
+            "journal = {Phys. Rev. Materials},"
+            "volume = {2},"
+            "issue = {8},"
+            "pages = {083801},"
+            "numpages = {8},"
+            "year = {2018},"
+            "month = {Aug},"
+            "publisher = {American Physical Society},"
+            "doi = {10.1103/PhysRevMaterials.2.083801}, "
+            "url = "
+            "{https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}}"
+        ]
 
     def implementors(self):
         return ["Alex Dunn", "Kamal Choudhary"]
@@ -3345,10 +3552,8 @@ class JarvisCFID(BaseFeaturizer):
         for c in comb:
             for i, ii in enumerate(neighbors_lst):
                 for j in ii:
-                    comb1 = str(structure[i].specie) + str('-') + \
-                            str(j[0].specie)
-                    comb2 = str(j[0].specie) + str('-') + \
-                            str(structure[i].specie)
+                    comb1 = str(structure[i].specie) + str("-") + str(j[0].specie)
+                    comb2 = str(j[0].specie) + str("-") + str(structure[i].specie)
                     if comb1 == c or comb2 == c:
                         info.setdefault(c, []).append(j[1])
         for i in info.items():
@@ -3367,10 +3572,10 @@ class JarvisCFID(BaseFeaturizer):
             structure: Structure object
         Returns:
                comb: combinations
-          """
+        """
         sym = structure.symbol_set
-        tmp = map('-'.join, itertools.product(sym, repeat=2))
-        comb = list(set([str('-'.join(sorted(i.split('-')))) for i in tmp]))
+        tmp = map("-".join, itertools.product(sym, repeat=2))
+        comb = list(set([str("-".join(sorted(i.split("-")))) for i in tmp]))
         return comb
 
     @staticmethod
@@ -3392,10 +3597,13 @@ class JarvisCFID(BaseFeaturizer):
         all_distances = np.concatenate(tuple(mapper))
         binrng = np.arange(0, cutoff + intvl, intvl)
         # equivalent to bond-order
-        dist_hist, dist_bins = np.histogram(all_distances, bins=binrng,
-                                            density=False)
-        shell_vol = 4.0 / 3.0 * math.pi * (np.power(dist_bins[1:], 3)
-                                           - np.power(dist_bins[:-1], 3))
+        dist_hist, dist_bins = np.histogram(all_distances, bins=binrng, density=False)
+        shell_vol = (
+            4.0
+            / 3.0
+            * math.pi
+            * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        )
         number_density = structure.num_sites / structure.volume
         rdf = dist_hist / shell_vol / number_density / len(neighbors_lst)
         bins = dist_bins[:-1]
@@ -3446,12 +3654,19 @@ class JarvisCFID(BaseFeaturizer):
         a = s.lattice.matrix[0][0]
         b = s.lattice.matrix[1][1]
         c = s.lattice.matrix[2][2]
-        if abs(a - range_x) > tol: a = range_x + tol
-        if abs(b - range_y) > tol: b = range_y + tol
-        if abs(c - range_z) > tol: c = range_z + tol
-        arr = Lattice([[a, s.lattice.matrix[0][1], s.lattice.matrix[0][2]],
-                       [s.lattice.matrix[1][0], b, s.lattice.matrix[1][2]],
-                       [s.lattice.matrix[2][0], s.lattice.matrix[2][1], c]])
+        if abs(a - range_x) > tol:
+            a = range_x + tol
+        if abs(b - range_y) > tol:
+            b = range_y + tol
+        if abs(c - range_z) > tol:
+            c = range_z + tol
+        arr = Lattice(
+            [
+                [a, s.lattice.matrix[0][1], s.lattice.matrix[0][2]],
+                [s.lattice.matrix[1][0], b, s.lattice.matrix[1][2]],
+                [s.lattice.matrix[2][0], s.lattice.matrix[2][1], c],
+            ]
+        )
         s = Structure(arr, s.species, coords, coords_are_cartesian=True)
         s.remove_oxidation_states()
         return s
@@ -3509,10 +3724,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             struct: Pymatgen Structure
         """
 
-        anions = [
-            "O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"
-        ]
-
+        anions = ["O", "N", "F", "Cl", "Br", "S", "Se", "I", "Te", "P", "H", "As"]
 
         for site in struct:
             # Fail if site doesn't have either attribute
@@ -3547,7 +3759,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             for spec2 in specs:
                 elem2 = str(spec2.element)
                 val_2 = spec2.oxi_state
-                if np.sign(val_1) == -1 and  np.sign(val_2) == 1:
+                if np.sign(val_1) == -1 and np.sign(val_2) == 1:
                     try:
                         self.get_bv_params(elem2, elem1, val_2, val_1)
                     except IndexError:
@@ -3567,8 +3779,10 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         if struct.is_ordered:
             gii = self.calc_gii_iucr(struct)
             if gii > 0.6:
-                warnings.warn("GII extremely large. Table parameters may "
-                                "not be suitable or structure may be unusual.")
+                warnings.warn(
+                    "GII extremely large. Table parameters may "
+                    "not be suitable or structure may be unusual."
+                )
 
         else:
             if self.disordered_pymatgen:
@@ -3580,9 +3794,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                     )
                 return [gii]
             else:
-                raise ValueError(
-                    'Structure must be ordered for table lookup method.'
-                )
+                raise ValueError("Structure must be ordered for table lookup method.")
 
         return [gii]
 
@@ -3609,31 +3821,32 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             neighbor = neighbor_info[0]
             dist = neighbor_info[1]
             neighbor_val = neighbor.species.elements[0].oxi_state
-            neighbor_el = str(
-                    neighbor.species.element_composition.elements[0])
+            neighbor_el = str(neighbor.species.element_composition.elements[0])
             if neighbor_val % 1 != 0 or site_val % 1 != 0:
-                raise ValueError('Some sites have non-integer valences.')
+                raise ValueError("Some sites have non-integer valences.")
             try:
                 if np.sign(site_val) == 1 and np.sign(neighbor_val) == -1:
-                    params = self.get_bv_params(cation=site_el,
-                                               anion=neighbor_el,
-                                               cat_val=site_val,
-                                               an_val=neighbor_val)
+                    params = self.get_bv_params(
+                        cation=site_el,
+                        anion=neighbor_el,
+                        cat_val=site_val,
+                        an_val=neighbor_val,
+                    )
                     bvs += self.compute_bv(params, dist)
                 elif np.sign(site_val) == -1 and np.sign(neighbor_val) == 1:
-                    params = self.get_bv_params(cation=neighbor_el,
-                                               anion=site_el,
-                                               cat_val=neighbor_val,
-                                               an_val=site_val)
+                    params = self.get_bv_params(
+                        cation=neighbor_el,
+                        anion=site_el,
+                        cat_val=neighbor_val,
+                        an_val=site_val,
+                    )
                     bvs -= self.compute_bv(params, dist)
             except:
                 raise ValueError(
-                    'BV parameters for {} with valence {} and {} {} not '
-                    'found in table'
-                    ''.format(site_el,
-                              site_val,
-                              neighbor_el,
-                              neighbor_val))
+                    "BV parameters for {} with valence {} and {} {} not "
+                    "found in table"
+                    "".format(site_el, site_val, neighbor_el, neighbor_val)
+                )
         return bvs
 
     def calc_gii_iucr(self, s):
@@ -3651,7 +3864,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         bond_valence_sums = []
         cutoff = self.r_cut
         pairs = s.get_all_neighbors(r=cutoff)
-        site_val_sums = {} # Cache bond valence deviations
+        site_val_sums = {}  # Cache bond valence deviations
 
         for i, neighbor_list in enumerate(pairs):
             site = s[i]
@@ -3673,8 +3886,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             bvs = self.calc_bv_sum(site_val, site_el, neighbor_list)
 
             site_val_sums[site] = bvs - site_val
-        gii = np.linalg.norm(list(site_val_sums.values())) /\
-              np.sqrt(len(site_val_sums))
+        gii = np.linalg.norm(list(site_val_sums.values())) / np.sqrt(len(site_val_sums))
         return gii
 
     # Cache bond valence parameters
@@ -3690,10 +3902,12 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             bond_val_list: dataframe of bond valence parameters
         """
         bv_data = self.bv_values
-        bond_val_list = bv_data[(bv_data['Atom1'] == cation) &
-                                (bv_data['Atom1_valence'] == cat_val) &
-                                (bv_data['Atom2'] == anion) &
-                                (bv_data['Atom2_valence'] == an_val)]
+        bond_val_list = bv_data[
+            (bv_data["Atom1"] == cation)
+            & (bv_data["Atom1_valence"] == cat_val)
+            & (bv_data["Atom2"] == anion)
+            & (bv_data["Atom2_valence"] == an_val)
+        ]
         # If multiple values exist, take first one
         return bond_val_list.iloc[0]
 
@@ -3706,7 +3920,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         Returns:
             bv: Float, bond valence
         """
-        bv = np.exp((params['Ro'] - dist)/params['B'])
+        bv = np.exp((params["Ro"] - dist) / params["B"])
         return bv
 
     def calc_gii_pymatgen(self, struct, scale_factor=0.965):
@@ -3718,24 +3932,20 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             gii: Float, global instability index
         """
         deviations = []
-        cutoff=self.r_cut
+        cutoff = self.r_cut
         if struct.is_ordered:
             for site in struct:
-                nn = struct.get_neighbors(site,r=cutoff)
-                bvs = bond_valence.calculate_bv_sum(site,
-                                                    nn,
-                                                    scale_factor=scale_factor)
+                nn = struct.get_neighbors(site, r=cutoff)
+                bvs = bond_valence.calculate_bv_sum(site, nn, scale_factor=scale_factor)
                 deviations.append(bvs - site.species.elements[0].oxi_state)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
         else:
             for site in struct:
-                nn = struct.get_neighbors(site,r=cutoff)
-                bvs = bond_valence.calculate_bv_sum_unordered(site,
-                                                              nn,
-                                                              scale_factor=scale_factor)
-                min_diff = min(
-                    [bvs - spec.oxi_state for spec in site.species.elements]
+                nn = struct.get_neighbors(site, r=cutoff)
+                bvs = bond_valence.calculate_bv_sum_unordered(
+                    site, nn, scale_factor=scale_factor
                 )
+                min_diff = min([bvs - spec.oxi_state for spec in site.species.elements])
                 deviations.append(min_diff)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
         return gii
@@ -3747,19 +3957,20 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         return ["Nicholas Wagner", "Nenian Charles", "Alex Dunn"]
 
     def citations(self):
-        return ["@article{PhysRevB.87.184115,"
-                "title = {Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho,"
-                " Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction},"
-                "author = {Salinas-Sanchez, A. and Garcia-Muñoz, J.L. and Rodriguez-Carvajal, "
-                "J. and Saez-Puche, R. and Martinez, J.L.},"
-                "journal = {Journal of Solid State Chemistry},"
-                "volume = {100},"
-                "issue = {2},"
-                "pages = {201-211},"
-                "year = {1992},"
-                "doi = {10.1016/0022-4596(92)90094-C},"
-                "url = {https://doi.org/10.1016/0022-4596(92)90094-C}}",
-                ]
+        return [
+            "@article{PhysRevB.87.184115,"
+            "title = {Structural characterization of R2BaCuO5 (R = Y, Lu, Yb, Tm, Er, Ho,"
+            " Dy, Gd, Eu and Sm) oxides by X-ray and neutron diffraction},"
+            "author = {Salinas-Sanchez, A. and Garcia-Muñoz, J.L. and Rodriguez-Carvajal, "
+            "J. and Saez-Puche, R. and Martinez, J.L.},"
+            "journal = {Journal of Solid State Chemistry},"
+            "volume = {100},"
+            "issue = {2},"
+            "pages = {201-211},"
+            "year = {1992},"
+            "doi = {10.1016/0022-4596(92)90094-C},"
+            "url = {https://doi.org/10.1016/0022-4596(92)90094-C}}",
+        ]
 
 
 class StructuralComplexity(BaseFeaturizer):
@@ -3807,16 +4018,13 @@ class StructuralComplexity(BaseFeaturizer):
 
         iG_total = iG * n_of_atoms
 
-        return(iG, iG_total)
+        return (iG, iG_total)
 
     def implementors(self):
         return ["Koki Muraoka"]
 
     def feature_labels(self):
-        return [
-            "structural complexity per atom",
-            "structural complexity per cell"
-        ]
+        return ["structural complexity per atom", "structural complexity per cell"]
 
     def citations(self):
         return [

@@ -4,7 +4,7 @@ from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from tqdm import tqdm
 from functools import reduce
 
-__author__ = 'Anubhav Jain <ajain@lbl.gov>'
+__author__ = "Anubhav Jain <ajain@lbl.gov>"
 
 
 class MongoDataRetrieval(BaseDataRetrieval):
@@ -20,8 +20,15 @@ class MongoDataRetrieval(BaseDataRetrieval):
     def api_link(self):
         return "data from\n{}".format(self.coll)
 
-    def get_dataframe(self, criteria, properties=None, limit=0,
-                      sort=None, idx_field=None, strict=False):
+    def get_dataframe(
+        self,
+        criteria,
+        properties=None,
+        limit=0,
+        sort=None,
+        idx_field=None,
+        strict=False,
+    ):
         """
         Args:
             criteria: (dict) - a pymongo-style query to filter data records
@@ -54,7 +61,7 @@ class MongoDataRetrieval(BaseDataRetrieval):
             # split up dot-notation keys
             for key in properties:
                 try:
-                    vals = key.split('.')
+                    vals = key.split(".")
                     vals = [int(v) if is_int(v) else v for v in vals]
                     data = reduce(lambda e, k: e[k], vals, d)
                     row_data.append(data)
@@ -82,7 +89,7 @@ def clean_projection(projection):
     """
     all_proj = []
     for group in groupby(sorted(projection), key=lambda p: p.split(".", 1)[0]):
-        common = ''
+        common = ""
         derivs = list(group[1])
         smallest_deriv = derivs[0]
         buffer = ""
@@ -93,9 +100,9 @@ def clean_projection(projection):
                     all_match = False
                     break
             if all_match:
-                if smallest_deriv[i] == '.':
+                if smallest_deriv[i] == ".":
                     common += buffer
-                    buffer = ''
+                    buffer = ""
                 buffer += smallest_deriv[i]
                 if i == len(smallest_deriv) - 1:
                     common += buffer
@@ -104,12 +111,14 @@ def clean_projection(projection):
         all_proj.append(common)
     return all_proj
 
+
 def is_int(x):
     try:
         int(x)
         return True
     except:
         return False
+
 
 def remove_ints(projection):
     """

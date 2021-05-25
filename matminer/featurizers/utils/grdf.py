@@ -21,14 +21,14 @@ def initialize_pairwise_function(name, **options):
     try:
         cls = globals()[name]
     except:
-        raise ValueError('No such class: {}'.format(name))
+        raise ValueError("No such class: {}".format(name))
 
     # Instantiate it
     output = cls(**options)
 
     # Check types
     if not isinstance(output, AbstractPairwise):
-        raise ValueError('Not a pairwise measure: {}'.format(name))
+        raise ValueError("Not a pairwise measure: {}".format(name))
     return output
 
 
@@ -42,8 +42,9 @@ class AbstractPairwise(object):
             (string) Label for the function
         """
         params = sorted(self.__dict__.items(), key=lambda x: x[0])
-        return '{} {}'.format(self.__class__.__name__,
-                              ' '.join('{}={}'.format(k, v) for k, v in params))
+        return "{} {}".format(
+            self.__class__.__name__, " ".join("{}={}".format(k, v) for k, v in params)
+        )
 
     def __call__(self, r_ij):
         """Compute the pairwise sum for a series of radii
@@ -66,10 +67,12 @@ class AbstractPairwise(object):
             (float): Volume of bin
         """
 
-        results = integrate.quad(lambda x: 4. * pi * self(x) * x ** 2., 0, cutoff)
+        results = integrate.quad(lambda x: 4.0 * pi * self(x) * x ** 2.0, 0, cutoff)
         if results[1] > 1e-5:
-            raise ValueError('Numerical integration fails for this function.'
-                             ' Please implement analytic integral')
+            raise ValueError(
+                "Numerical integration fails for this function."
+                " Please implement analytic integral"
+            )
         return results[0]
 
 
@@ -87,11 +90,19 @@ class Histogram(AbstractPairwise):
         self.width = width
 
     def __call__(self, r_ij):
-        return np.logical_and(np.greater_equal(r_ij, self.start),
-                              np.less(r_ij, self.start + self.width), dtype=np.float)
+        return np.logical_and(
+            np.greater_equal(r_ij, self.start),
+            np.less(r_ij, self.start + self.width),
+            dtype=np.float,
+        )
 
     def volume(self, cutoff):
-        return 4. / 3 * np.pi * (min(self.start + self.width, cutoff) ** 3 - self.start ** 3)
+        return (
+            4.0
+            / 3
+            * np.pi
+            * (min(self.start + self.width, cutoff) ** 3 - self.start ** 3)
+        )
 
 
 class Gaussian(AbstractPairwise):
@@ -111,10 +122,20 @@ class Gaussian(AbstractPairwise):
         return np.exp(-1 * np.power(np.subtract(r_ij, self.center) / self.width, 2))
 
     def volume(self, cutoff):
-        return pi * self.width * (
-            np.sqrt(pi) * (2 * self.center ** 2 + self.width ** 2) * (
-                erf((cutoff - self.center) / self.width) + erf(self.center / self.width)
-            ) + 2 * self.width * (self.center * self(0) - (self.center + cutoff) * self(cutoff))
+        return (
+            pi
+            * self.width
+            * (
+                np.sqrt(pi)
+                * (2 * self.center ** 2 + self.width ** 2)
+                * (
+                    erf((cutoff - self.center) / self.width)
+                    + erf(self.center / self.width)
+                )
+                + 2
+                * self.width
+                * (self.center * self(0) - (self.center + cutoff) * self(cutoff))
+            )
         )
 
 
@@ -126,15 +147,22 @@ class Cosine(AbstractPairwise):
 
         Args:
             a (float): Frequency factor for cosine function
-            """
+        """
         self.a = a
 
     def __call__(self, r_ij):
         return np.cos(np.multiply(r_ij, self.a))
 
     def volume(self, cutoff):
-        return 4 * pi * (((self.a * cutoff) ** 2 - 2) * np.sin(self.a * cutoff)
-                         + 2 * self.a * cutoff * np.cos(self.a * cutoff)) / self.a ** 3
+        return (
+            4
+            * pi
+            * (
+                ((self.a * cutoff) ** 2 - 2) * np.sin(self.a * cutoff)
+                + 2 * self.a * cutoff * np.cos(self.a * cutoff)
+            )
+            / self.a ** 3
+        )
 
 
 class Sine(AbstractPairwise):
@@ -145,15 +173,23 @@ class Sine(AbstractPairwise):
 
         Args:
             a (float): Frequency factor for sine function
-            """
+        """
         self.a = a
 
     def __call__(self, r_ij):
         return np.sin(np.multiply(r_ij, self.a))
 
     def volume(self, cutoff):
-        return 4 * pi * ((2 - (self.a * cutoff) ** 2) * np.cos(self.a * cutoff)
-                         + 2 * self.a * cutoff * np.sin(self.a * cutoff) - 2) / self.a ** 3
+        return (
+            4
+            * pi
+            * (
+                (2 - (self.a * cutoff) ** 2) * np.cos(self.a * cutoff)
+                + 2 * self.a * cutoff * np.sin(self.a * cutoff)
+                - 2
+            )
+            / self.a ** 3
+        )
 
 
 class Bessel(AbstractPairwise):

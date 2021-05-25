@@ -11,7 +11,7 @@ from aflow.caster import cast
 from aflow.control import Query
 from aflow.entries import AflowFile
 
-__author__ = ['Maxwell Dylla <280mtd@gmail.com>']
+__author__ = ["Maxwell Dylla <280mtd@gmail.com>"]
 
 
 class AFLOWDataRetrieval(BaseDataRetrieval):
@@ -34,8 +34,15 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
     def api_link(self):
         return "https://rosenbrockc.github.io/aflow/index.html"
 
-    def get_dataframe(self, criteria, properties, files=None,
-                      request_size=10000, request_limit=0, index_auid=True):
+    def get_dataframe(
+        self,
+        criteria,
+        properties,
+        files=None,
+        request_size=10000,
+        request_limit=0,
+        index_auid=True,
+    ):
         """Retrieves data from AFLOW in a DataFrame format.
 
         The method builds an AFLUX API query from pymongo-like filter criteria
@@ -73,8 +80,8 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         """
 
         # ensures that 'auid' is in requested properties if desired for index
-        if index_auid and ('auid' not in properties):
-            properties.append('auid')
+        if index_auid and ("auid" not in properties):
+            properties.append("auid")
 
         # generates a query for submitting HTTP requests to AFLOW servers
         query = RetrievalQuery.from_pymongo(criteria, properties, request_size)
@@ -87,13 +94,14 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
             df[keyword] = self._cast_series(df[keyword])
 
         # collects the relaxed structures if requested
-        if 'structure' in files:
-            df['structure'] = [self.get_relaxed_structure(url) for url in
-                               df['aurl'].values]
+        if "structure" in files:
+            df["structure"] = [
+                self.get_relaxed_structure(url) for url in df["aurl"].values
+            ]
 
         # sets the auid as the index if desired
         if index_auid:
-            df.set_index('auid', inplace=True)
+            df.set_index("auid", inplace=True)
 
         return df
 
@@ -108,10 +116,10 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         """
 
         # downloads the file as a string
-        file = AflowFile(aurl, 'CONTCAR.relax.vasp')()  # calling induces dwnld
+        file = AflowFile(aurl, "CONTCAR.relax.vasp")()  # calling induces dwnld
 
         # returns the python object
-        return Structure.from_str(file, fmt='poscar')
+        return Structure.from_str(file, fmt="poscar")
 
     @staticmethod
     def _cast_series(series):
@@ -152,12 +160,11 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
         records = {}
         for page in range(1, page_limit + 1):
             records.update(query.responses[page])
-        return DataFrame.from_dict(data=records, orient='index')
+        return DataFrame.from_dict(data=records, orient="index")
 
 
 class RetrievalQuery(Query):
-    """Provides instance constructors for pymongo-like queries.
-    """
+    """Provides instance constructors for pymongo-like queries."""
 
     @classmethod
     def from_pymongo(cls, criteria, properties, request_size):
@@ -203,23 +210,25 @@ class RetrievalQuery(Query):
             if isinstance(value, dict):  # handles special operators
                 for inner_key, inner_value in value.items():
 
-                    if inner_key == '$in':
+                    if inner_key == "$in":
                         self.filter(
-                            reduce(lambda x, y: (x | y),
-                                   map(lambda z: (keyword == z), inner_value)))
+                            reduce(
+                                lambda x, y: (x | y),
+                                map(lambda z: (keyword == z), inner_value),
+                            )
+                        )
 
-                    elif inner_key == '$gt':
+                    elif inner_key == "$gt":
                         self.filter((keyword > inner_value))
 
-                    elif inner_key == '$lt':
+                    elif inner_key == "$lt":
                         self.filter((keyword < inner_value))
 
-                    elif inner_key == '$not':
+                    elif inner_key == "$not":
                         self.filter((~(keyword == inner_value)))
 
                     else:
-                        raise Exception(
-                            'Only $in, $gt, $lt, and $not are supported!')
+                        raise Exception("Only $in, $gt, $lt, and $not are supported!")
 
             else:  # handles simple equivalence
                 self.filter(keyword == value)

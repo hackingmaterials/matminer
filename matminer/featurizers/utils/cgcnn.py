@@ -26,12 +26,24 @@ class CIFDataWrapper(Dataset):
     As we already have X as an iterable of pymatgen Structure objects, we can
     use this wrapper instead of CIFData.
     """
-    @requires(torch and cgcnn,
-              "CIFDataWrapper requires pytorch and cgcnn to be installed with "
-              "Python bindings. Please get it at http://pytorch.org and "
-              "https://github.com/txie-93/cgcnn.")
-    def __init__(self, X, y, atom_init_fea, max_num_nbr=12, radius=8,
-                 dmin=0, step=0.2, random_seed=123):
+
+    @requires(
+        torch and cgcnn,
+        "CIFDataWrapper requires pytorch and cgcnn to be installed with "
+        "Python bindings. Please get it at http://pytorch.org and "
+        "https://github.com/txie-93/cgcnn.",
+    )
+    def __init__(
+        self,
+        X,
+        y,
+        atom_init_fea,
+        max_num_nbr=12,
+        radius=8,
+        dmin=0,
+        step=0.2,
+        random_seed=123,
+    ):
         """
         Args:
             X (Series/list): An iterable of pymatgen Structure objects.
@@ -50,8 +62,7 @@ class CIFDataWrapper(Dataset):
         random.shuffle(self.target_data)
         self.structures = X
         self.ari = AtomCustomArrayInitializer(atom_init_fea)
-        self.gdf = \
-            cgcnn_data.GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
+        self.gdf = cgcnn_data.GaussianDistance(dmin=dmin, dmax=self.radius, step=step)
 
     def __len__(self):
         return len(self.target_data)
@@ -61,29 +72,32 @@ class CIFDataWrapper(Dataset):
         atom_idx, target = self.target_data[idx]
         crystal = self.structures[atom_idx]
         atom_fea = np.vstack(
-            [self.ari.get_atom_fea(crystal[i].specie.number)
-             for i in range(len(crystal))])
+            [
+                self.ari.get_atom_fea(crystal[i].specie.number)
+                for i in range(len(crystal))
+            ]
+        )
         atom_fea = torch.Tensor(atom_fea)
-        all_nbrs = crystal.get_all_neighbors(self.radius,
-                                             include_index=True)
+        all_nbrs = crystal.get_all_neighbors(self.radius, include_index=True)
         all_nbrs = [sorted(nbrs, key=lambda x: x[1]) for nbrs in all_nbrs]
         nbr_fea_idx, nbr_fea = [], []
         for nbr in all_nbrs:
             if len(nbr) < self.max_num_nbr:
                 warnings.warn(
-                    '{} not find enough neighbors to build graph. '
-                    'If it happens frequently, consider increase '
-                    'radius.'.format(atom_idx))
-                nbr_fea_idx.append(list(map(lambda x: x[2], nbr)) +
-                                   [0] * (self.max_num_nbr - len(nbr)))
-                nbr_fea.append(list(map(lambda x: x[1], nbr)) +
-                               [self.radius + 1.] * (self.max_num_nbr -
-                                                     len(nbr)))
+                    "{} not find enough neighbors to build graph. "
+                    "If it happens frequently, consider increase "
+                    "radius.".format(atom_idx)
+                )
+                nbr_fea_idx.append(
+                    list(map(lambda x: x[2], nbr)) + [0] * (self.max_num_nbr - len(nbr))
+                )
+                nbr_fea.append(
+                    list(map(lambda x: x[1], nbr))
+                    + [self.radius + 1.0] * (self.max_num_nbr - len(nbr))
+                )
             else:
-                nbr_fea_idx.append(list(map(lambda x: x[2],
-                                            nbr[:self.max_num_nbr])))
-                nbr_fea.append(list(map(lambda x: x[1],
-                                        nbr[:self.max_num_nbr])))
+                nbr_fea_idx.append(list(map(lambda x: x[2], nbr[: self.max_num_nbr])))
+                nbr_fea.append(list(map(lambda x: x[1], nbr[: self.max_num_nbr])))
         nbr_fea_idx, nbr_fea = np.array(nbr_fea_idx), np.array(nbr_fea)
         nbr_fea = self.gdf.expand(nbr_fea)
         atom_fea = torch.Tensor(atom_fea)
@@ -100,13 +114,23 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
     as features for the structures.
     Please see the CrystalGraphConvNet in the CGCNN repo for more details
     """
-    @requires(torch and cgcnn,
-              "CrystalGraphConvNetWrapper requires pytorch and cgcnn to be "
-              "installed with Python bindings. Please get it at "
-              "http://pytorch.org and https://github.com/txie-93/cgcnn.")
-    def __init__(self, orig_atom_fea_len, nbr_fea_len,
-                 atom_fea_len=64, n_conv=3, h_fea_len=128, n_h=1,
-                 classification=False):
+
+    @requires(
+        torch and cgcnn,
+        "CrystalGraphConvNetWrapper requires pytorch and cgcnn to be "
+        "installed with Python bindings. Please get it at "
+        "http://pytorch.org and https://github.com/txie-93/cgcnn.",
+    )
+    def __init__(
+        self,
+        orig_atom_fea_len,
+        nbr_fea_len,
+        atom_fea_len=64,
+        n_conv=3,
+        h_fea_len=128,
+        n_h=1,
+        classification=False,
+    ):
         """
         Args:
             orig_atom_fea_len (int): Number of atom features in the input.
@@ -119,9 +143,14 @@ class CrystalGraphConvNetWrapper(CrystalGraphConvNet):
             classification (bool): Classification task or regression task.
         """
         super(CrystalGraphConvNetWrapper, self).__init__(
-            orig_atom_fea_len=orig_atom_fea_len, nbr_fea_len=nbr_fea_len,
-            atom_fea_len=atom_fea_len, n_conv=n_conv, h_fea_len=h_fea_len,
-            n_h=n_h, classification=classification)
+            orig_atom_fea_len=orig_atom_fea_len,
+            nbr_fea_len=nbr_fea_len,
+            atom_fea_len=atom_fea_len,
+            n_conv=n_conv,
+            h_fea_len=h_fea_len,
+            n_h=n_h,
+            classification=classification,
+        )
 
     def extract_feature(self, atom_fea, nbr_fea, nbr_fea_idx, crystal_atom_idx):
         """
@@ -158,13 +187,15 @@ class AtomCustomArrayInitializer(AtomInitializer):
     Args:
         elem_embedding_file (str): The path to the .json file
     """
-    @requires(torch and cgcnn,
-              "AtomCustomArrayInitializer requires pytorch and cgcnn to be "
-              "installed with Python bindings. Please get it at "
-              "http://pytorch.org and https://github.com/txie-93/cgcnn.")
+
+    @requires(
+        torch and cgcnn,
+        "AtomCustomArrayInitializer requires pytorch and cgcnn to be "
+        "installed with Python bindings. Please get it at "
+        "http://pytorch.org and https://github.com/txie-93/cgcnn.",
+    )
     def __init__(self, elem_embedding):
-        elem_embedding = {int(key): value for key, value
-                          in elem_embedding.items()}
+        elem_embedding = {int(key): value for key, value in elem_embedding.items()}
         atom_types = set(elem_embedding.keys())
         super(AtomCustomArrayInitializer, self).__init__(atom_types)
         for key, value in elem_embedding.items():
@@ -183,9 +214,10 @@ def appropriate_kwargs(kwargs, func):
 
     """
     sig = inspect.signature(func)
-    filter_keys = [param.name for param in sig.parameters.values()
-                   if param.kind == param.POSITIONAL_OR_KEYWORD and
-                   param.name in kwargs.keys()]
-    appropriate_dict = {filter_key: kwargs[filter_key]
-                        for filter_key in filter_keys}
+    filter_keys = [
+        param.name
+        for param in sig.parameters.values()
+        if param.kind == param.POSITIONAL_OR_KEYWORD and param.name in kwargs.keys()
+    ]
+    appropriate_dict = {filter_key: kwargs[filter_key] for filter_key in filter_keys}
     return appropriate_dict

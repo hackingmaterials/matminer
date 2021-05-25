@@ -4,7 +4,7 @@ from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from mdf_forge.forge import Forge
 from matminer.utils.flatten_dict import flatten_dict
 
-__author__ = 'Joseph Montoya <montoyjh@lbl.gov>'
+__author__ = "Joseph Montoya <montoyjh@lbl.gov>"
 
 
 class MDFDataRetrieval(BaseDataRetrieval):
@@ -80,8 +80,7 @@ class MDFDataRetrieval(BaseDataRetrieval):
                 fn(criteria.get(key))
 
         # Each of these requires unpacking a dictionary and sometimes a range
-        for key in ["match_fields", "exclude_fields", "match_ranges",
-                            "exclude_ranges"]:
+        for key in ["match_fields", "exclude_fields", "match_ranges", "exclude_ranges"]:
             qvalue = criteria.get(key)
             if qvalue:
                 fn = getattr(self.forge, key[:-1])  # remove 's' at end
@@ -112,8 +111,8 @@ class MDFDataRetrieval(BaseDataRetrieval):
         return make_dataframe(results, unwind_arrays=unwind_arrays)
 
 
-#TODO: could add parallel functionality, but doesn't seem to be too slow
-#TODO: also might be useful to handle units more intelligently
+# TODO: could add parallel functionality, but doesn't seem to be too slow
+# TODO: also might be useful to handle units more intelligently
 def make_dataframe(docs, unwind_arrays=True):
     """
     Formats raw docs returned from MDF API search into a dataframe
@@ -125,12 +124,6 @@ def make_dataframe(docs, unwind_arrays=True):
     Returns: DataFrame corresponding to formatted docs
 
     """
-    flattened_docs = [flatten_dict(doc, unwind_arrays=unwind_arrays)
-                      for doc in docs]
+    flattened_docs = [flatten_dict(doc, unwind_arrays=unwind_arrays) for doc in docs]
     df = pd.DataFrame(flattened_docs)
     return df
-
-
-
-
-

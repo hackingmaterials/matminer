@@ -10,11 +10,13 @@ from scipy.interpolate import griddata
 
 from matminer.featurizers.base import BaseFeaturizer
 from pymatgen.electronic_structure.core import Spin
-from pymatgen.electronic_structure.bandstructure import BandStructure, \
-    BandStructureSymmLine
+from pymatgen.electronic_structure.bandstructure import (
+    BandStructure,
+    BandStructureSymmLine,
+)
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
-__author__ = 'Anubhav Jain <ajain@lbl.gov>'
+__author__ = "Anubhav Jain <ajain@lbl.gov>"
 
 
 class BranchPointEnergy(BaseFeaturizer):
@@ -32,6 +34,7 @@ class BranchPointEnergy(BaseFeaturizer):
         atol (float): absolute tolerance when finding equivalent fractional
             k-points in irreducible brillouin zone (IBZ) when weights is None
     """
+
     def __init__(self, n_vb=1, n_cb=1, calculate_band_edges=True, atol=1e-5):
         self.n_vb = n_vb
         self.n_cb = n_cb
@@ -42,9 +45,11 @@ class BranchPointEnergy(BaseFeaturizer):
         # of band structures with multiprocessing on Python < 3.8 can result in
         # an error. See https://github.com/hackingmaterials/matminer/issues/417
         if sys.version_info.major == 3 and sys.version_info.minor < 8:
-            warnings.warn("Multiprocessing for band structure featurizers "
-                          "is not recommended for Python versions < 3.8. "
-                          "Setting n_jobs to 1.")
+            warnings.warn(
+                "Multiprocessing for band structure featurizers "
+                "is not recommended for Python versions < 3.8. "
+                "Setting n_jobs to 1."
+            )
             self.set_n_jobs(1)
 
     def featurize(self, bs, target_gap=None, weights=None):
@@ -63,8 +68,10 @@ class BranchPointEnergy(BaseFeaturizer):
             raise ValueError("Cannot define a branch point energy for metals!")
 
         if isinstance(bs, BandStructureSymmLine):
-            raise ValueError("BranchPointEnergy works only with uniform (not "
-                             "line mode) band structures!")
+            raise ValueError(
+                "BranchPointEnergy works only with uniform (not "
+                "line mode) band structures!"
+            )
         vbm = bs.get_vbm()["energy"]
         cbm = bs.get_cbm()["energy"]
         shift = 0.0
@@ -77,7 +84,8 @@ class BranchPointEnergy(BaseFeaturizer):
             kpt_wts = weights
         else:
             kpt_wts = SpacegroupAnalyzer(bs.structure).get_kpoint_weights(
-                [k.frac_coords for k in bs.kpoints], atol=self.atol)
+                [k.frac_coords for k in bs.kpoints], atol=self.atol
+            )
 
         for spin in bs.bands:
             for kpt_idx in range(len(bs.kpoints)):
@@ -91,10 +99,14 @@ class BranchPointEnergy(BaseFeaturizer):
                         vb_energies.append(e - shift)
                 vb_energies.sort(reverse=True)
                 cb_energies.sort()
-                total_sum_energies += (sum(
-                    vb_energies[0:self.n_vb]) / self.n_vb + sum(
-                    cb_energies[0:self.n_cb]) / self.n_cb) * kpt_wts[
-                                          kpt_idx] / 2.0
+                total_sum_energies += (
+                    (
+                        sum(vb_energies[0 : self.n_vb]) / self.n_vb
+                        + sum(cb_energies[0 : self.n_cb]) / self.n_cb
+                    )
+                    * kpt_wts[kpt_idx]
+                    / 2.0
+                )
 
                 num_points += kpt_wts[kpt_idx]
 
@@ -102,7 +114,7 @@ class BranchPointEnergy(BaseFeaturizer):
 
         if not self.calculate_band_edges:
             return [bpe]
-        return [bpe, vbm-shift, cbm+shift]
+        return [bpe, vbm - shift, cbm + shift]
 
     def feature_labels(self):
         """
@@ -110,19 +122,23 @@ class BranchPointEnergy(BaseFeaturizer):
             BandStructure. "absolute" means no reference energy is subtracted
             from branch_point_energy, vbm or cbm.
         """
-        return ["branch_point_energy", "vbm_absolute",
-                "cbm_absolute"] if self.calculate_band_edges else [
-            "branch_point_energy"]
+        return (
+            ["branch_point_energy", "vbm_absolute", "cbm_absolute"]
+            if self.calculate_band_edges
+            else ["branch_point_energy"]
+        )
 
     def citations(self):
-        return ["@article{Schleife2009, author = {Schleife, A. and Fuchs, F. "
-                "and R{\"{o}}dl, C. and Furthm{\"{u}}ller, J. and Bechstedt, "
-                "F.}, doi = {10.1063/1.3059569}, isbn = {0003-6951}, issn = "
-                "{00036951}, journal = {Applied Physics Letters}, number = {1},"
-                " pages = {2009--2011}, title = {{Branch-point energies and "
-                "band discontinuities of III-nitrides and III-/II-oxides "
-                "from quasiparticle band-structure calculations}}, volume = "
-                "{94}, year = {2009}}"]
+        return [
+            "@article{Schleife2009, author = {Schleife, A. and Fuchs, F. "
+            'and R{"{o}}dl, C. and Furthm{"{u}}ller, J. and Bechstedt, '
+            "F.}, doi = {10.1063/1.3059569}, isbn = {0003-6951}, issn = "
+            "{00036951}, journal = {Applied Physics Letters}, number = {1},"
+            " pages = {2009--2011}, title = {{Branch-point energies and "
+            "band discontinuities of III-nitrides and III-/II-oxides "
+            "from quasiparticle band-structure calculations}}, volume = "
+            "{94}, year = {2009}}"
+        ]
 
     def implementors(self):
         return ["Anubhav Jain"]
@@ -145,7 +161,7 @@ class BandFeaturizer(BaseFeaturizer):
         nbands (int): the number of valence/conduction bands to be featurized
     """
 
-    def __init__(self, kpoints=None, find_method='nearest', nbands = 2):
+    def __init__(self, kpoints=None, find_method="nearest", nbands=2):
         self.kpoints = kpoints
         self.find_method = find_method
         self.nbands = nbands
@@ -154,9 +170,11 @@ class BandFeaturizer(BaseFeaturizer):
         # of band structures with multiprocessing on Python < 3.8 can result in
         # an error. See https://github.com/hackingmaterials/matminer/issues/417
         if sys.version_info.major == 3 and sys.version_info.minor < 8:
-            warnings.warn("Multiprocessing for band structure featurizers "
-                          "is not recommended for Python versions < 3.8."
-                          "Setting n_jobs to 1.")
+            warnings.warn(
+                "Multiprocessing for band structure featurizers "
+                "is not recommended for Python versions < 3.8."
+                "Setting n_jobs to 1."
+            )
             self.set_n_jobs(1)
 
     def featurize(self, bs):
@@ -191,61 +209,75 @@ class BandFeaturizer(BaseFeaturizer):
         if bs.is_metal():
             raise ValueError("Cannot featurize a metallic band structure!")
         bs_kpts = [k.frac_coords for k in bs.kpoints]
-        cvd = {'p': bs.get_vbm(), 'n': bs.get_cbm()}
-        for itp, tp in enumerate(['p', 'n']):
-            cvd[tp]['k'] = bs.kpoints[cvd[tp]['kpoint_index'][0]].frac_coords
-            cvd[tp]['bidx'], cvd[tp]['sidx'] = \
-                self.get_bindex_bspin(cvd[tp], is_cbm=bool(itp))
-            cvd[tp]['Es'] = np.array(bs.bands[cvd[tp]['sidx']][cvd[tp]['bidx']])
+        cvd = {"p": bs.get_vbm(), "n": bs.get_cbm()}
+        for itp, tp in enumerate(["p", "n"]):
+            cvd[tp]["k"] = bs.kpoints[cvd[tp]["kpoint_index"][0]].frac_coords
+            cvd[tp]["bidx"], cvd[tp]["sidx"] = self.get_bindex_bspin(
+                cvd[tp], is_cbm=bool(itp)
+            )
+            cvd[tp]["Es"] = np.array(bs.bands[cvd[tp]["sidx"]][cvd[tp]["bidx"]])
         band_gap = bs.get_band_gap()
 
         # featurize
         feat = OrderedDict()
-        feat['band_gap'] = band_gap['energy']
-        feat['is_gap_direct'] = band_gap['direct']
-        feat['direct_gap'] = min(cvd['n']['Es'] - cvd['p']['Es'])
-        for tp in ['p', 'n']:
-            feat['{}_ex1_norm'.format(tp)] = norm(cvd[tp]['k'])
+        feat["band_gap"] = band_gap["energy"]
+        feat["is_gap_direct"] = band_gap["direct"]
+        feat["direct_gap"] = min(cvd["n"]["Es"] - cvd["p"]["Es"])
+        for tp in ["p", "n"]:
+            feat["{}_ex1_norm".format(tp)] = norm(cvd[tp]["k"])
             if bs.structure:
-                feat['{}_ex1_degen'.format(tp)] = bs.get_kpoint_degeneracy(cvd[tp]['k'])
+                feat["{}_ex1_degen".format(tp)] = bs.get_kpoint_degeneracy(cvd[tp]["k"])
             else:
-                feat['{}_ex1_degen'.format(tp)] = float('NaN')
+                feat["{}_ex1_degen".format(tp)] = float("NaN")
 
         if self.kpoints:
-            obands = {'n': [], 'p': []}
+            obands = {"n": [], "p": []}
             for spin in bs.bands:
                 for band_idx in range(bs.nb_bands):
                     if max(bs.bands[spin][band_idx]) < bs.efermi:
-                        obands['p'].append(bs.bands[spin][band_idx])
+                        obands["p"].append(bs.bands[spin][band_idx])
                     if min(bs.bands[spin][band_idx]) > bs.efermi:
-                        obands['n'].append(bs.bands[spin][band_idx])
-            bands = {tp: np.zeros((len(obands[tp]), len(self.kpoints))) for tp in ['p', 'n']}
-            for tp in ['p', 'n']:
+                        obands["n"].append(bs.bands[spin][band_idx])
+            bands = {
+                tp: np.zeros((len(obands[tp]), len(self.kpoints))) for tp in ["p", "n"]
+            }
+            for tp in ["p", "n"]:
                 for ib, ob in enumerate(obands[tp]):
-                    bands[tp][ib, :] = griddata(points=np.array(bs_kpts),
-                                   values=np.array(ob) - cvd[tp]['energy'],
-                                   xi=self.kpoints, method=self.find_method)
+                    bands[tp][ib, :] = griddata(
+                        points=np.array(bs_kpts),
+                        values=np.array(ob) - cvd[tp]["energy"],
+                        xi=self.kpoints,
+                        method=self.find_method,
+                    )
                 for ik, k in enumerate(self.kpoints):
                     sorted_band = np.sort(bands[tp][:, ik])
-                    if tp == 'p':
+                    if tp == "p":
                         sorted_band = sorted_band[::-1]
                     for ib in range(self.nbands):
-                        k_name = '{}_{};{};{}_en{}'.format(tp, k[0], k[1], k[2], ib+1)
+                        k_name = "{}_{};{};{}_en{}".format(tp, k[0], k[1], k[2], ib + 1)
                         try:
                             feat[k_name] = sorted_band[ib]
                         except IndexError:
-                            feat[k_name] = float('NaN')
+                            feat[k_name] = float("NaN")
         return list(feat.values())
 
     def feature_labels(self):
-        labels = ['band_gap', 'is_gap_direct', 'direct_gap',
-                  'p_ex1_norm', 'p_ex1_degen', 'n_ex1_norm', 'n_ex1_degen']
+        labels = [
+            "band_gap",
+            "is_gap_direct",
+            "direct_gap",
+            "p_ex1_norm",
+            "p_ex1_degen",
+            "n_ex1_norm",
+            "n_ex1_degen",
+        ]
         if self.kpoints:
-            for tp in ['p', 'n']:
+            for tp in ["p", "n"]:
                 for k in self.kpoints:
                     for ib in range(self.nbands):
-                        labels.append('{}_{};{};{}_en{}'.format(
-                                tp, k[0], k[1], k[2], ib + 1))
+                        labels.append(
+                            "{}_{};{};{}_en{}".format(tp, k[0], k[1], k[2], ib + 1)
+                        )
         return labels
 
     @staticmethod
@@ -269,8 +301,7 @@ class BandFeaturizer(BaseFeaturizer):
         return bidx, bspin
 
     def citations(self):
-        return ['@article{in_progress, title={{In progress}} year={2017}}']
+        return ["@article{in_progress, title={{In progress}} year={2017}}"]
 
     def implementors(self):
-        return ['Alireza Faghaninia', 'Anubhav Jain']
-
+        return ["Alireza Faghaninia", "Anubhav Jain"]
