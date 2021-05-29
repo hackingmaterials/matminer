@@ -4,6 +4,9 @@
 ==================
 matminer Changelog
 ==================
+
+.. caution:: Starting v0.6.6 onwards, the changelog is no longer maintained. Please check the Github commit log for a record of changes.
+
 **v0.6.5**
 
 * update BV parameters to 2020 version; the existing 2016 version included errors including Rh4+

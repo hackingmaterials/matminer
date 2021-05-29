@@ -9,6 +9,8 @@ matminer is a library for performing data mining in the field of materials scien
 
 If you like matminer, you might also try [automatminer](https://github.com/hackingmaterials/automatminer).
 
+If you are interested in furthering development of datasets in matminer, you may be interested in [matbench](https://github.com/hackingmaterials/matbench).
+
 If you find matminer useful, please encourage its development by citing the following paper in your research:
 ```
 Ward, L., Dunn, A., Faghaninia, A., Zimmermann, N. E. R., Bajaj, S., Wang, Q.,
@@ -19,5 +21,6 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 
 Matminer helps users apply methods and data sets developed by the community. Please also cite the original sources, as this will add clarity to your article and credit the original authors:
 
+- If you use one or more **datasets** accessed through matminer, check the dataset info for relevant citations on the original datasets.
 - If you use one or more **data retrieval methods**, check the code documentation on the relevant paper(s) to cite.
 - If you use one or more **featurizers**, please take advantage of the ```citations()``` function present for every featurizer in matminer. This function will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.

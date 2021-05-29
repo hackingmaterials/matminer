@@ -543,6 +543,68 @@
     "reference": "de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.\nA database to enable discovery and design of piezoelectric materials.\nSci. Data 2, 150053 (2015)",
     "url": "https://ndownloader.figshare.com/files/13220621"
   },
+  "ricci_boltztrap_mp_tabular": {
+    "bibtex_refs":[
+      "@Article{Ricci2017,\nauthor={Ricci, Francesco\nand Chen, Wei\nand Aydemir, Umut\nand Snyder, G. Jeffrey\nand Rignanese, Gian-Marco\nand Jain, Anubhav\nand Hautier, Geoffroy},\ntitle={An ab initio electronic transport database for inorganic materials},\njournal={Scientific Data},\nyear={2017},\nmonth={Jul},\nday={04},\npublisher={The Author(s)},\nvolume={4},\npages={170085},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2017.85}\n}",
+      "@misc{dryad_gn001,\ntitle = {Data from: An ab initio electronic transport database for inorganic materials},\nauthor = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G},\nyear = {2017},\njournal = {Scientific Data},\nURL = {https://doi.org/10.5061/dryad.gn001},\ndoi = {doi:10.5061/dryad.gn001},\npublisher = {Dryad Digital Repository}\n}"
+  ],
+    "columns": {
+      "task": "Materials project task_id.",
+      "functional": "Type of DFT functional (GGA=generalized gradient approximation, GGA+U=GGA + U approximation)",
+      "is_metal": "If True, crystal is a metal.",
+      "ΔE [eV]": "Band gap, in eV.",
+      "V [Å³]": "Unit cell volume, in cubic angstrom.",
+      "S.p [µV/K]": "Average eigenvalue of the Seebeck coefficient with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K, in microVolts/Kelvin.",
+      "S.n [µV/K]": "Average eigenvalue of the Seebeck coefficient with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K, in microVolts/Kelvin.",
+      "Sᵉ.p.v [µV/K]": "Value of p-type Seebeck coefficient at maximum average eigenvalue of Seebeck coefficient chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.",
+      "Sᵉ.p.T [K]": "Temperature corresponding to Sᵉ.p.v [µV/K] (max p-type Seebeck), in Kelvin.",
+      "Sᵉ.p.c [cm⁻³]": "Carrier concentration corresponding to Sᵉ.p.v [µV/K] (max p-type Seebeck), in cm^-3",
+      "Sᵉ.n.v [µV/K]": "Value of n-type Seebeck coefficient at maximum average eigenvalue of Seebeck coefficient chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.",
+      "Sᵉ.n.T [K]": "Temperature corresponding to Sᵉ.n.v [µV/K] (max n-type Seebeck), in Kelvin.",
+      "Sᵉ.n.c [cm⁻³]": "Carrier concentration corresponding to Sᵉ.n.v [µV/K] (max n-type Seebeck), in cm^-3",
+      "σ.p [1/Ω/m/s]": "Average eigenvalue of the conductivity with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K, in 1/Ω/m/s.",
+      "σ.n [1/Ω/m/s]": "Average eigenvalue of the conductivity with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K, in 1/Ω/m/s.",
+      "PF.p [µW/cm/K²/s]": "Average eigenvalue of the power factor with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K, in µW/cm/K²/s.",
+      "PF.n [µW/cm/K²/s]": "Average eigenvalue of the power factor with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K, in µW/cm/K²/s.",
+      "σᵉ.p.v [1/Ω/m/s]": "Value of p-type conductivity at maximum average eigenvalue of conductivity chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.",
+      "σᵉ.p.T [K]": "Temperature corresponding to σᵉ.p.T [1/Ω/m/s], in Kelvin.",
+      "σᵉ.p.c [cm⁻³]": "Carrier concentration corresponding to σᵉ.p.T [1/Ω/m/s], in cm^-3.",
+      "σᵉ.n.v [1/Ω/m/s]": "Value of n-type conductivity at maximum average eigenvalue of conductivity chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.",
+      "σᵉ.n.T [K]": "Temperature corresponding to σᵉ.n.T [1/Ω/m/s], in Kelvin.",
+      "σᵉ.n.c [cm⁻³]": "Carrier concentration corresponding to σᵉ.n.T [1/Ω/m/s], in cm^-3.",
+      "PFᵉ.p.v [µW/cm/K²/s]": "Value of p-type power factor at maximum average eigenvalue of power factor chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.",
+      "PFᵉ.p.T [K]": "Temperature corresponding to PFᵉ.p.v [µW/cm/K²/s], in Kelvin.",
+      "PFᵉ.p.c [cm⁻³]": "Carrier concentration corresponding to PFᵉ.p.v [µW/cm/K²/s], in cm^-3.",
+      "PFᵉ.n.v [µW/cm/K²/s]": "Value of n-type power factor at maximum average eigenvalue of power factor chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.",
+      "PFᵉ.n.T [K]": "Temperature corresponding to PFᵉ.n.v [µW/cm/K²/s], in Kelvin.",
+      "PFᵉ.n.c [cm⁻³]": "Carrier concentration corresponding to PFᵉ.n.v [µW/cm/K²/s], in cm^-3.",
+      "κₑ.p [W/K/m/s]": "Average eigenvalue of electrical thermal conductivity with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K, in [W/K/m/s].",
+      "κₑ.n [W/K/m/s]": "Average eigenvalue of electrical thermal conductivity with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K, in [W/K/m/s].",
+      "κₑᵉ.p.v [W/K/m/s]": "Value of p-type electrical thermal conductivity at maximum average eigenvalue of electrical thermal conductivity chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.",
+      "κₑᵉ.p.T [K]": "Temperature corresponding to κₑᵉ.p.v [W/K/m/s], in Kelvin.",
+      "κₑᵉ.p.c [cm⁻³]": "Carrier concentration corresponding to κₑᵉ.p.v [W/K/m/s], in cm^-3.",
+      "κₑᵉ.n.v [W/K/m/s]": "Value of n-type electrical thermal conductivity at maximum average eigenvalue of electrical thermal conductivity chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.",
+      "κₑᵉ.n.T [K]": "Temperature corresponding to κₑᵉ.n.v [W/K/m/s], in Kelvin.",
+      "κₑᵉ.n.c [cm⁻³]": "Carrier concentration corresponding to κₑᵉ.n.v [W/K/m/s], in cm^-3.",
+      "mₑᶜ.p.ε̄ [mₑ]": "Average (ε̄) eigenvalue of conductivity effective mass with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K.",
+      "mₑᶜ.p.ε₁ [mₑ]": "1st eigenvalue of conductivity effective mass with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K.",
+      "mₑᶜ.p.ε₂ [mₑ]": "2nd eigenvalue of conductivity effective mass with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K.",
+      "mₑᶜ.p.ε₃ [mₑ]": "3rd eigenvalue of conductivity effective mass with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K.",
+      "mₑᶜ.n.ε̄ [mₑ]": "Average (ε̄) eigenvalue of conductivity effective mass with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K.",
+      "mₑᶜ.n.ε₁ [mₑ]": "1st eigenvalue of conductivity effective mass with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K.",
+      "mₑᶜ.n.ε₂ [mₑ]": "2nd eigenvalue of conductivity effective mass with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K.",
+      "mₑᶜ.n.ε₃ [mₑ]": "3rd eigenvalue of conductivity effective mass with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K.",
+      "structure": "Pymatgen structure, taken from Materials Project April 2021",
+      "pretty_formula": "Formula for composition corresponding to MPID."
+    },
+    "description": "Ab-initio electronic transport database for inorganic materials. Complex multivariable BoltzTraP simulation data is condensed down into tabular form of two main motifs: average eigenvalues at set moderate carrier concentrations and temperatures, and optimal values among all carrier concentrations and temperatures within certain ranges. Here are reported the average of the eigenvalues of conductivity effective mass (mₑᶜᵒⁿᵈ), the Seebeck coefficient (S), the conductivity (σ), the electronic thermal conductivity (κₑ), and the Power Factor (PF) at a doping level of 10¹⁸ cm⁻³ and at a temperature of 300 K for n- and p-type. Also, the maximum values for S, σ, PF, and the minimum value for κₑ chosen among the temperatures [100, 1300] K, the doping levels [10¹⁶, 10²¹] cm⁻³, and doping types are reported. The properties that depend on the relaxation time are reported divided by the constant value 10⁻¹⁴. The average of the eigenvalues for all the properties at all the temperatures, doping levels, and doping types are reported in the tables for each entry. Data is indexed by materials project id (mpid)",
+    "file_type": "json.gz",
+    "hash": "b45b0806d4ee5e027323bb8021b157c1e91f8b19083342f83d2c84acaee356ef",
+    "num_entries": 47737,
+    "reference": "Ricci, F. et al. An ab initio electronic transport database for inorganic materials. Sci. Data 4:170085 doi: 10.1038/sdata.2017.85 (2017).\nRicci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data from: An ab initio electronic transport database for inorganic materials. Dryad Digital Repository. https://doi.org/10.5061/dryad.gn001",
+    "url": "https://ndownloader.figshare.com/files/28231785"
+
+  },
   "steel_strength": {
     "bibtex_refs": [
       "@misc{Citrine Informatics,\ntitle = {Mechanical properties of some steels},\nhowpublished = {\\url{https://citrination.com/datasets/153092/},\n}"
@@ -644,7 +706,7 @@
       "e_form": "Target variable. Formation energy in eV as calculated by the Materials Project.",
       "structure": "Pymatgen Structure of the material."
     },
-    "description": "Matbench v0.1 test dataset for predicting DFT formation energy from structure. Adapted from Materials Project database. Removed entries having formation energy more than 3.0eV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
+    "description": "Matbench v0.1 test dataset for predicting DFT formation energy from structure. Adapted from Materials Project database. Removed entries having formation energy more than 2.5eV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
     "num_entries": 132752,
     "reference": "A. Jain*, S.P. Ong*, G. Hautier, W. Chen, W.D. Richards, S. Dacek, S. Cholia, D. Gunter, D. Skinner, G. Ceder, K.A. Persson (*=equal contributions)\nThe Materials Project: A materials genome approach to accelerating materials innovation\nAPL Materials, 2013, 1(1), 011002.\ndoi:10.1063/1.4812323",
@@ -772,9 +834,9 @@
     "description": "Dataset containing experimental standard formation enthalpies for solids. Formation enthalpies were compiled primarily from Kim et al., Kubaschewski, and the NIST JANAF tables (see references). Elements, liquids, and gases were excluded. Data were deduplicated such that each material is associated with a single formation enthalpy value. Refer to Wang et al. (see references) for a complete desciption of the methods used. Materials Project database IDs (mp-ids) were assigned to materials from among computed materials in the Materials Project database (version 2021.03.22) that were 1) not marked 'theoretical', 2) had structures matching at least one ICSD material, and 3) were within 200 meV of the DFT-computed stable energy hull (e_above_hull < 0.2 eV). Among these candidates, we chose the mp-id with the lowest e_above_hull that matched the reported spacegroup (where available).",
     "file_type": "json.gz",
     "num_entries": 2135,
-    "reference": "Wang, A., Kingsbury, R., McDermott, M., Horton, M., Jain. A., Ong, S.P., Dwaraknath, S., Persson, K. A framework for quantifying uncertainty in DFT energy corrections. ChemRxiv. Preprint.",
-    "url": "https://doi.org/10.26434/chemrxiv.14593476.v1",
-    "hash": ""
+    "reference": "Wang, A., Kingsbury, R., McDermott, M., Horton, M., Jain. A., Ong, S.P., Dwaraknath, S., Persson, K. A framework for quantifying uncertainty in DFT energy corrections. ChemRxiv. Preprint. https://doi.org/10.26434/chemrxiv.14593476.v1",
+    "url": "https://ndownloader.figshare.com/files/28232538",
+    "hash": "a2d2ced98d40349abd2041f169d9ed9c7f49453e86a77f82cab8c61c70dcb7ca"
   },
   "expt_gap_kingsbury": {
     "bibtex_refs": [
@@ -790,8 +852,8 @@
     "file_type": "json.gz",
     "num_entries": 4604,
     "reference": "Kingsbury, R., Bartel., C., Dwaraknath, S., Gupta, A., Horton, M., Munro, J., Jain. A., Ong, S.P., Persson, K. Comparison of r$^2$SCAN and SCAN metaGGA functionals via an automated, high-throughput computational workflow. In preparation.",
-    "url": "",
-    "hash": ""
+    "url": "https://ndownloader.figshare.com/files/28232598",
+    "hash": "b36bf5bfe3782c2a2372422c64b8a86fd1d30709559a6dc0c30e4c8ac5ab3e96"
   },
   "matbench_expt_gap": {
     "bibtex_refs": [
@@ -800,7 +862,7 @@
     ],
     "columns": {
       "composition": "Chemical formula.",
-      "gap expt": "Target variable. Experimentally measured gap, in eV.",
+      "gap expt": "Target variable. Experimentally measured gap, in eV."
     },
     "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
