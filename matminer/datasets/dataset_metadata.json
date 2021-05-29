@@ -544,9 +544,10 @@
     "url": "https://ndownloader.figshare.com/files/13220621"
   },
   "ricci_boltztrap_mp_tabular": {
-    "bibtex_refs": {
-
-    },
+    "bibtex_refs":[
+      "@Article{Ricci2017,\nauthor={Ricci, Francesco\nand Chen, Wei\nand Aydemir, Umut\nand Snyder, G. Jeffrey\nand Rignanese, Gian-Marco\nand Jain, Anubhav\nand Hautier, Geoffroy},\ntitle={An ab initio electronic transport database for inorganic materials},\njournal={Scientific Data},\nyear={2017},\nmonth={Jul},\nday={04},\npublisher={The Author(s)},\nvolume={4},\npages={170085},\nnote={Data Descriptor},\nurl={http://dx.doi.org/10.1038/sdata.2017.85}\n}",
+      "@misc{dryad_gn001,\ntitle = {Data from: An ab initio electronic transport database for inorganic materials},\nauthor = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G},\nyear = {2017},\njournal = {Scientific Data},\nURL = {https://doi.org/10.5061/dryad.gn001},\ndoi = {doi:10.5061/dryad.gn001},\npublisher = {Dryad Digital Repository}\n}"
+  ],
     "columns": {
       "task": "Materials project task_id.",
       "functional": "Type of DFT functional (GGA=generalized gradient approximation, GGA+U=GGA + U approximation)",
@@ -598,10 +599,10 @@
     },
     "description": "Ab-initio electronic transport database for inorganic materials. Complex multivariable BoltzTraP simulation data is condensed down into tabular form of two main motifs: average eigenvalues at set moderate carrier concentrations and temperatures, and optimal values among all carrier concentrations and temperatures within certain ranges. Here are reported the average of the eigenvalues of conductivity effective mass (mₑᶜᵒⁿᵈ), the Seebeck coefficient (S), the conductivity (σ), the electronic thermal conductivity (κₑ), and the Power Factor (PF) at a doping level of 10¹⁸ cm⁻³ and at a temperature of 300 K for n- and p-type. Also, the maximum values for S, σ, PF, and the minimum value for κₑ chosen among the temperatures [100, 1300] K, the doping levels [10¹⁶, 10²¹] cm⁻³, and doping types are reported. The properties that depend on the relaxation time are reported divided by the constant value 10⁻¹⁴. The average of the eigenvalues for all the properties at all the temperatures, doping levels, and doping types are reported in the tables for each entry. Data is indexed by materials project id (mpid)",
     "file_type": "json.gz",
-    "hash": "",
+    "hash": "b45b0806d4ee5e027323bb8021b157c1e91f8b19083342f83d2c84acaee356ef",
     "num_entries": 47737,
-    "reference": "",
-    "url": ""
+    "reference": "Ricci, F. et al. An ab initio electronic transport database for inorganic materials. Sci. Data 4:170085 doi: 10.1038/sdata.2017.85 (2017).\nRicci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data from: An ab initio electronic transport database for inorganic materials. Dryad Digital Repository. https://doi.org/10.5061/dryad.gn001",
+    "url": "https://ndownloader.figshare.com/files/28231785"
 
   },
   "steel_strength": {
@@ -861,7 +862,7 @@
     ],
     "columns": {
       "composition": "Chemical formula.",
-      "gap expt": "Target variable. Experimentally measured gap, in eV.",
+      "gap expt": "Target variable. Experimentally measured gap, in eV."
     },
     "description": "Matbench v0.1 test dataset for predicting experimental band gap from composition alone. Retrieved from Zhuo et al. supplementary information. Deduplicated according to composition, removing compositions with reported band gaps spanning more than a 0.1eV range; remaining compositions were assigned values based on the closest experimental value to the mean experimental value for that composition among all reports. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
