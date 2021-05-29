@@ -7,6 +7,8 @@
 matminer Contributors
 =====================
 
+.. caution:: Starting v0.6.6 onwards, the contributors list is no longer maintained. the contributors list is no longer maintained. Please check the Github contributors list instead.
+
 Matminer is led by `Anubhav Jain <http://www.anubhavjain.net/>`_ and the HackingMaterials research group at Lawrence Berkeley National Lab.
 
 

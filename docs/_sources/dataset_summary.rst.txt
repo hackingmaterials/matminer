@@ -14,7 +14,9 @@ double_perovskites_gap
 double_perovskites_gap_lumo
 elastic_tensor_2015
 expt_formation_enthalpy
+expt_formation_enthalpy_kingsbury
 expt_gap
+expt_gap_kingsbury
 flla
 glass_binary
 glass_binary_v2
@@ -42,6 +44,7 @@ mp_all_20181018
 mp_nostruct_20181018
 phonon_dielectric_mp
 piezoelectric_tensor
+ricci_boltztrap_mp_tabular
 steel_strength
 wolverton_oxides
 
@@ -651,6 +654,62 @@ url={https://doi.org/10.1038/sdata.2017.162}}
 
 
 
+---------------------------------
+expt_formation_enthalpy_kingsbury
+---------------------------------
+Dataset containing experimental standard formation enthalpies for solids. Formation enthalpies were compiled primarily from Kim et al., Kubaschewski, and the NIST JANAF tables (see references). Elements, liquids, and gases were excluded. Data were deduplicated such that each material is associated with a single formation enthalpy value. Refer to Wang et al. (see references) for a complete desciption of the methods used. Materials Project database IDs (mp-ids) were assigned to materials from among computed materials in the Materials Project database (version 2021.03.22) that were 1) not marked 'theoretical', 2) had structures matching at least one ICSD material, and 3) were within 200 meV of the DFT-computed stable energy hull (e_above_hull < 0.2 eV). Among these candidates, we chose the mp-id with the lowest e_above_hull that matched the reported spacegroup (where available).
+
+**Number of entries:** 2135
+
+.. list-table::
+   :align: left
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Column
+     - Description
+   * - :code:`formula`
+     - Chemical formula.
+   * - :code:`expt_form_e`
+     - Experimental standard formation enthalpy (298 K), in eV/atom.
+   * - :code:`uncertainty`
+     - Uncertainty reported in the experimental formation energy, in eV/atom.
+   * - :code:`phaseinfo`
+     - Description of the material's crystal structure or space group.
+   * - :code:`reference`
+     - Reference to the original data source.
+   * - :code:`likely_mpid`
+     - Materials Project database ID (mp-id) most likely associated with each material.
+
+
+
+**Reference**
+
+Wang, A., Kingsbury, R., McDermott, M., Horton, M., Jain. A., Ong, S.P., Dwaraknath, S., Persson, K. A framework for quantifying uncertainty in DFT energy corrections. ChemRxiv. Preprint. https://doi.org/10.26434/chemrxiv.14593476.v1
+
+
+
+**Bibtex Formatted Citations**
+
+@article{Kim2017,doi={10.1038/sdata.2017.162},url={https://doi.org/10.1038/sdata.2017.162},year={2017},month=oct,publisher={Springer Science and Business Media {LLC}}, volume = {4},  number = {1},  author = {George Kim and S. V. Meschel and Philip Nash and Wei Chen},title ={Experimental formation enthalpies for intermetallic phases and other inorganic compounds},journal={Scientific Data}}
+
+@misc{kim_meschel_nash_chen_2017, title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds}, url={https://springernature.figshare.com/collections/Experimental_formation_enthalpies_for_intermetallic_phases_and_other_inorganic_compounds/3822835/1}, DOI={10.6084/m9.figshare.c.3822835.v1}, publisher={figshare},author={Kim, George and Meschel, Susan and Nash, Philip and Chen, Wei}, year={2017}, month={Oct} }
+
+@article{Kim2017, doi = {10.1038/sdata.2017.162}, url = {https://doi.org/10.1038/sdata.2017.162}, year = {2017}, month = oct, publisher = {Springer Science and Business Media LLC}}, volume = {4}, number = {1},author = {George Kim and S. V. Meschel and Philip Nash and Wei Chen},title = {Experimental formation enthalpies for intermetallic phases and other inorganic compounds},journal = {Scientific Data}}
+
+@book{Kubaschewski1993,author={Kubaschewski, O. and Alcock, C.B. and Spencer, P.J.},edition={6th},isbn={0080418880},publisher={Pergamon Press},title={{Materials Thermochemistry}},year = {1993}}
+
+@misc{NIST,doi = {10.18434/T42S31},url = {http://kinetics.nist.gov/janaf/},author = {Malcolm W. Chase}, title = {NIST-JANAF Thermochemical Tables}, publisher = {National Institute of Standards and Technology},  year = {1998},  url={https://janaf.nist.org}}
+
+@article{RZYMAN2000309,title = {Enthalpies of formation of AlFe: Experiment versus theory},journal = {Calphad},volume = {24},number = {3},pages = {309-318},year = {2000},      issn = {0364-5916},doi = {https://doi.org/10.1016/S0364-5916(01)00007-4}, url = {https://www.sciencedirect.com/science/article/pii/S0364591601000074}, author = {K. Rzyman and Z. Moser and A.P. Miodownik and L. Kaufman and R.E. Watson and M. Weinert}}
+
+@book{CRC2007,asin = {0849304881},author = {{CRC Handbook}},dewey = {530},ean = {9780849304880},edition = 88,interhash = {da6394e1a9c5f450ed705c32ec82bb08},intrahash = {5ff8f541915536461697300e8727f265},isbn = {0849304881},keywords = {crc_handbook},publisher = {CRC Press},title = {CRC Handbook of Chemistry and Physics, 88th Edition},        year = 2007}
+
+@article{Grindy2013,author = {Grindy, Scott and Meredig, Bryce and Kirklin, Scott and Saal, James E. and Wolverton, C.},doi = {10.1103/PhysRevB.87.075150},issn = {10980121},journal = {Physical Review B - Condensed Matter and Materials Physics},number = {7},pages = {1--8},title = {{Approaching chemical accuracy with density functional calculations: Diatomic energy corrections}},volume = {87},year = {2013}}
+
+
+
+
 --------
 expt_gap
 --------
@@ -679,6 +738,76 @@ https://pubs.acs.org/doi/suppl/10.1021/acs.jpclett.8b00124
 
 
 **Bibtex Formatted Citations**
+
+@article{doi:10.1021/acs.jpclett.8b00124,
+author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
+title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
+journal = {The Journal of Physical Chemistry Letters},
+volume = {9},
+number = {7},
+pages = {1668-1673},
+year = {2018},
+doi = {10.1021/acs.jpclett.8b00124},
+note ={PMID: 29532658},
+eprint = {
+https://doi.org/10.1021/acs.jpclett.8b00124
+
+}}
+
+
+
+
+------------------
+expt_gap_kingsbury
+------------------
+Identical to the matbench_expt_gap dataset, except that Materials Project database IDs (mp-ids) have been associated with each material using the same method as described for the expt_formation_enthalpy_kingsbury dataset. Columns have also been renamed for consistency with the formation enthalpy data.
+
+**Number of entries:** 4604
+
+.. list-table::
+   :align: left
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Column
+     - Description
+   * - :code:`formula`
+     - Chemical formula.
+   * - :code:`expt_gap`
+     - Experimentally measured bandgap, in eV.
+   * - :code:`likely_mpid`
+     - Materials Project database ID (mp-id) most likely associated with each material.
+
+
+
+**Reference**
+
+Kingsbury, R., Bartel., C., Dwaraknath, S., Gupta, A., Horton, M., Munro, J., Jain. A., Ong, S.P., Persson, K. Comparison of r$^2$SCAN and SCAN metaGGA functionals via an automated, high-throughput computational workflow. In preparation.
+
+
+
+**Bibtex Formatted Citations**
+
+@Article{Dunn2020,
+author={Dunn, Alexander
+and Wang, Qi
+and Ganose, Alex
+and Dopp, Daniel
+and Jain, Anubhav},
+title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
+journal={npj Computational Materials},
+year={2020},
+month={Sep},
+day={15},
+volume={6},
+number={1},
+pages={138},
+abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
+issn={2057-3960},
+doi={10.1038/s41524-020-00406-3},
+url={https://doi.org/10.1038/s41524-020-00406-3}
+}
+
 
 @article{doi:10.1021/acs.jpclett.8b00124,
 author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
@@ -1602,7 +1731,7 @@ url={https://doi.org/10.1038/s41524-020-00406-3}
 
 @article{doi:10.1021/acs.jpclett.8b00124,
 author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
-title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
+title= {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
 journal = {The Journal of Physical Chemistry Letters},
 volume = {9},
 number = {7},
@@ -1723,7 +1852,7 @@ Matbench v0.1 test dataset for predicting exfoliation energies from crystal stru
    * - Column
      - Description
    * - :code:`exfoliation_en`
-     - Target variable. Exfoliation energy (meV).
+     - Target variable. Exfoliation energy (meV/atom).
    * - :code:`structure`
      - Pymatgen Structure of the material.
 
@@ -1940,7 +2069,7 @@ url={http://dx.doi.org/10.1038/sdata.2015.9}
 ------------------
 matbench_mp_e_form
 ------------------
-Matbench v0.1 test dataset for predicting DFT formation energy from structure. Adapted from Materials Project database. Removed entries having formation energy more than 3.0eV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.
+Matbench v0.1 test dataset for predicting DFT formation energy from structure. Adapted from Materials Project database. Removed entries having formation energy more than 2.5eV and those containing noble gases. Retrieved April 2, 2019. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.
 
 **Number of entries:** 132752
 
@@ -2608,6 +2737,159 @@ volume={2},
 pages={150053},
 note={Data Descriptor},
 url={http://dx.doi.org/10.1038/sdata.2015.53}
+}
+
+
+
+
+--------------------------
+ricci_boltztrap_mp_tabular
+--------------------------
+Ab-initio electronic transport database for inorganic materials. Complex multivariable BoltzTraP simulation data is condensed down into tabular form of two main motifs: average eigenvalues at set moderate carrier concentrations and temperatures, and optimal values among all carrier concentrations and temperatures within certain ranges. Here are reported the average of the eigenvalues of conductivity effective mass (mₑᶜᵒⁿᵈ), the Seebeck coefficient (S), the conductivity (σ), the electronic thermal conductivity (κₑ), and the Power Factor (PF) at a doping level of 10¹⁸ cm⁻³ and at a temperature of 300 K for n- and p-type. Also, the maximum values for S, σ, PF, and the minimum value for κₑ chosen among the temperatures [100, 1300] K, the doping levels [10¹⁶, 10²¹] cm⁻³, and doping types are reported. The properties that depend on the relaxation time are reported divided by the constant value 10⁻¹⁴. The average of the eigenvalues for all the properties at all the temperatures, doping levels, and doping types are reported in the tables for each entry. Data is indexed by materials project id (mpid)
+
+**Number of entries:** 47737
+
+.. list-table::
+   :align: left
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Column
+     - Description
+   * - :code:`task`
+     - Materials project task_id.
+   * - :code:`functional`
+     - Type of DFT functional (GGA=generalized gradient approximation, GGA+U=GGA + U approximation)
+   * - :code:`is_metal`
+     - If True, crystal is a metal.
+   * - :code:`ΔE [eV]`
+     - Band gap, in eV.
+   * - :code:`V [Å³]`
+     - Unit cell volume, in cubic angstrom.
+   * - :code:`S.p [µV/K]`
+     - Average eigenvalue of the Seebeck coefficient with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K, in microVolts/Kelvin.
+   * - :code:`S.n [µV/K]`
+     - Average eigenvalue of the Seebeck coefficient with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K, in microVolts/Kelvin.
+   * - :code:`Sᵉ.p.v [µV/K]`
+     - Value of p-type Seebeck coefficient at maximum average eigenvalue of Seebeck coefficient chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.
+   * - :code:`Sᵉ.p.T [K]`
+     - Temperature corresponding to Sᵉ.p.v [µV/K] (max p-type Seebeck), in Kelvin.
+   * - :code:`Sᵉ.p.c [cm⁻³]`
+     - Carrier concentration corresponding to Sᵉ.p.v [µV/K] (max p-type Seebeck), in cm^-3
+   * - :code:`Sᵉ.n.v [µV/K]`
+     - Value of n-type Seebeck coefficient at maximum average eigenvalue of Seebeck coefficient chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.
+   * - :code:`Sᵉ.n.T [K]`
+     - Temperature corresponding to Sᵉ.n.v [µV/K] (max n-type Seebeck), in Kelvin.
+   * - :code:`Sᵉ.n.c [cm⁻³]`
+     - Carrier concentration corresponding to Sᵉ.n.v [µV/K] (max n-type Seebeck), in cm^-3
+   * - :code:`σ.p [1/Ω/m/s]`
+     - Average eigenvalue of the conductivity with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K, in 1/Ω/m/s.
+   * - :code:`σ.n [1/Ω/m/s]`
+     - Average eigenvalue of the conductivity with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K, in 1/Ω/m/s.
+   * - :code:`PF.p [µW/cm/K²/s]`
+     - Average eigenvalue of the power factor with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K, in µW/cm/K²/s.
+   * - :code:`PF.n [µW/cm/K²/s]`
+     - Average eigenvalue of the power factor with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K, in µW/cm/K²/s.
+   * - :code:`σᵉ.p.v [1/Ω/m/s]`
+     - Value of p-type conductivity at maximum average eigenvalue of conductivity chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.
+   * - :code:`σᵉ.p.T [K]`
+     - Temperature corresponding to σᵉ.p.T [1/Ω/m/s], in Kelvin.
+   * - :code:`σᵉ.p.c [cm⁻³]`
+     - Carrier concentration corresponding to σᵉ.p.T [1/Ω/m/s], in cm^-3.
+   * - :code:`σᵉ.n.v [1/Ω/m/s]`
+     - Value of n-type conductivity at maximum average eigenvalue of conductivity chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.
+   * - :code:`σᵉ.n.T [K]`
+     - Temperature corresponding to σᵉ.n.T [1/Ω/m/s], in Kelvin.
+   * - :code:`σᵉ.n.c [cm⁻³]`
+     - Carrier concentration corresponding to σᵉ.n.T [1/Ω/m/s], in cm^-3.
+   * - :code:`PFᵉ.p.v [µW/cm/K²/s]`
+     - Value of p-type power factor at maximum average eigenvalue of power factor chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.
+   * - :code:`PFᵉ.p.T [K]`
+     - Temperature corresponding to PFᵉ.p.v [µW/cm/K²/s], in Kelvin.
+   * - :code:`PFᵉ.p.c [cm⁻³]`
+     - Carrier concentration corresponding to PFᵉ.p.v [µW/cm/K²/s], in cm^-3.
+   * - :code:`PFᵉ.n.v [µW/cm/K²/s]`
+     - Value of n-type power factor at maximum average eigenvalue of power factor chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.
+   * - :code:`PFᵉ.n.T [K]`
+     - Temperature corresponding to PFᵉ.n.v [µW/cm/K²/s], in Kelvin.
+   * - :code:`PFᵉ.n.c [cm⁻³]`
+     - Carrier concentration corresponding to PFᵉ.n.v [µW/cm/K²/s], in cm^-3.
+   * - :code:`κₑ.p [W/K/m/s]`
+     - Average eigenvalue of electrical thermal conductivity with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K, in [W/K/m/s].
+   * - :code:`κₑ.n [W/K/m/s]`
+     - Average eigenvalue of electrical thermal conductivity with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K, in [W/K/m/s].
+   * - :code:`κₑᵉ.p.v [W/K/m/s]`
+     - Value of p-type electrical thermal conductivity at maximum average eigenvalue of electrical thermal conductivity chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.
+   * - :code:`κₑᵉ.p.T [K]`
+     - Temperature corresponding to κₑᵉ.p.v [W/K/m/s], in Kelvin.
+   * - :code:`κₑᵉ.p.c [cm⁻³]`
+     - Carrier concentration corresponding to κₑᵉ.p.v [W/K/m/s], in cm^-3.
+   * - :code:`κₑᵉ.n.v [W/K/m/s]`
+     - Value of n-type electrical thermal conductivity at maximum average eigenvalue of electrical thermal conductivity chosen among temperatures 100-1300K, doping levels 10^16-10^21cm^-3.
+   * - :code:`κₑᵉ.n.T [K]`
+     - Temperature corresponding to κₑᵉ.n.v [W/K/m/s], in Kelvin.
+   * - :code:`κₑᵉ.n.c [cm⁻³]`
+     - Carrier concentration corresponding to κₑᵉ.n.v [W/K/m/s], in cm^-3.
+   * - :code:`mₑᶜ.p.ε̄ [mₑ]`
+     - Average (ε̄) eigenvalue of conductivity effective mass with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K.
+   * - :code:`mₑᶜ.p.ε₁ [mₑ]`
+     - 1st eigenvalue of conductivity effective mass with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K.
+   * - :code:`mₑᶜ.p.ε₂ [mₑ]`
+     - 2nd eigenvalue of conductivity effective mass with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K.
+   * - :code:`mₑᶜ.p.ε₃ [mₑ]`
+     - 3rd eigenvalue of conductivity effective mass with hole concentration of 10^-18 carriers/cm^-3 (p-type) at 300K.
+   * - :code:`mₑᶜ.n.ε̄ [mₑ]`
+     - Average (ε̄) eigenvalue of conductivity effective mass with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K.
+   * - :code:`mₑᶜ.n.ε₁ [mₑ]`
+     - 1st eigenvalue of conductivity effective mass with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K.
+   * - :code:`mₑᶜ.n.ε₂ [mₑ]`
+     - 2nd eigenvalue of conductivity effective mass with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K.
+   * - :code:`mₑᶜ.n.ε₃ [mₑ]`
+     - 3rd eigenvalue of conductivity effective mass with electron concentration of 10^-18 carriers/cm^-3 (n-type) at 300K.
+   * - :code:`structure`
+     - Pymatgen structure, taken from Materials Project April 2021
+   * - :code:`pretty_formula`
+     - Formula for composition corresponding to MPID.
+
+
+
+**Reference**
+
+Ricci, F. et al. An ab initio electronic transport database for inorganic materials. Sci. Data 4:170085 doi: 10.1038/sdata.2017.85 (2017).
+Ricci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data from: An ab initio electronic transport database for inorganic materials. Dryad Digital Repository. https://doi.org/10.5061/dryad.gn001
+
+
+
+**Bibtex Formatted Citations**
+
+@Article{Ricci2017,
+author={Ricci, Francesco
+and Chen, Wei
+and Aydemir, Umut
+and Snyder, G. Jeffrey
+and Rignanese, Gian-Marco
+and Jain, Anubhav
+and Hautier, Geoffroy},
+title={An ab initio electronic transport database for inorganic materials},
+journal={Scientific Data},
+year={2017},
+month={Jul},
+day={04},
+publisher={The Author(s)},
+volume={4},
+pages={170085},
+note={Data Descriptor},
+url={http://dx.doi.org/10.1038/sdata.2017.85}
+}
+
+@misc{dryad_gn001,
+title = {Data from: An ab initio electronic transport database for inorganic materials},
+author = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G},
+year = {2017},
+journal = {Scientific Data},
+URL = {https://doi.org/10.5061/dryad.gn001},
+doi = {doi:10.5061/dryad.gn001},
+publisher = {Dryad Digital Repository}
 }
 
 

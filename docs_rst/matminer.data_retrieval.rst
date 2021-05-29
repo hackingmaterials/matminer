@@ -5,7 +5,6 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
 
    matminer.data_retrieval.tests
 
@@ -67,6 +66,7 @@ matminer.data\_retrieval.retrieve\_base module
    :members:
    :undoc-members:
    :show-inheritance:
+
 
 Module contents
 ---------------
