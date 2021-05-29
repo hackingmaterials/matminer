@@ -834,9 +834,9 @@
     "description": "Dataset containing experimental standard formation enthalpies for solids. Formation enthalpies were compiled primarily from Kim et al., Kubaschewski, and the NIST JANAF tables (see references). Elements, liquids, and gases were excluded. Data were deduplicated such that each material is associated with a single formation enthalpy value. Refer to Wang et al. (see references) for a complete desciption of the methods used. Materials Project database IDs (mp-ids) were assigned to materials from among computed materials in the Materials Project database (version 2021.03.22) that were 1) not marked 'theoretical', 2) had structures matching at least one ICSD material, and 3) were within 200 meV of the DFT-computed stable energy hull (e_above_hull < 0.2 eV). Among these candidates, we chose the mp-id with the lowest e_above_hull that matched the reported spacegroup (where available).",
     "file_type": "json.gz",
     "num_entries": 2135,
-    "reference": "Wang, A., Kingsbury, R., McDermott, M., Horton, M., Jain. A., Ong, S.P., Dwaraknath, S., Persson, K. A framework for quantifying uncertainty in DFT energy corrections. ChemRxiv. Preprint.",
-    "url": "https://doi.org/10.26434/chemrxiv.14593476.v1",
-    "hash": ""
+    "reference": "Wang, A., Kingsbury, R., McDermott, M., Horton, M., Jain. A., Ong, S.P., Dwaraknath, S., Persson, K. A framework for quantifying uncertainty in DFT energy corrections. ChemRxiv. Preprint. https://doi.org/10.26434/chemrxiv.14593476.v1",
+    "url": "https://ndownloader.figshare.com/files/28232538",
+    "hash": "a2d2ced98d40349abd2041f169d9ed9c7f49453e86a77f82cab8c61c70dcb7ca"
   },
   "expt_gap_kingsbury": {
     "bibtex_refs": [
@@ -852,8 +852,8 @@
     "file_type": "json.gz",
     "num_entries": 4604,
     "reference": "Kingsbury, R., Bartel., C., Dwaraknath, S., Gupta, A., Horton, M., Munro, J., Jain. A., Ong, S.P., Persson, K. Comparison of r$^2$SCAN and SCAN metaGGA functionals via an automated, high-throughput computational workflow. In preparation.",
-    "url": "",
-    "hash": ""
+    "url": "https://ndownloader.figshare.com/files/28232598",
+    "hash": "b36bf5bfe3782c2a2372422c64b8a86fd1d30709559a6dc0c30e4c8ac5ab3e96"
   },
   "matbench_expt_gap": {
     "bibtex_refs": [
