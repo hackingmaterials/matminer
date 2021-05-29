@@ -543,6 +543,21 @@
     "reference": "de Jong, M., Chen, W., Geerlings, H., Asta, M. & Persson, K. A.\nA database to enable discovery and design of piezoelectric materials.\nSci. Data 2, 150053 (2015)",
     "url": "https://ndownloader.figshare.com/files/13220621"
   },
+  "ricci_boltztrap_tabular": {
+    "bibtex_refs": {
+
+    },
+    "columns": {
+
+    },
+    "description": "",
+    "file_type": "json.gz",
+    "hash": "",
+    "num_entries": 47737,
+    "reference": "",
+    "url": ""
+
+  },
   "steel_strength": {
     "bibtex_refs": [
       "@misc{Citrine Informatics,\ntitle = {Mechanical properties of some steels},\nhowpublished = {\\url{https://citrination.com/datasets/153092/},\n}"
