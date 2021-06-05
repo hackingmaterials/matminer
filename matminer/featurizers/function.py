@@ -1,4 +1,3 @@
-from __future__ import division
 
 import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
@@ -14,8 +13,20 @@ from sklearn.exceptions import NotFittedError
 
 
 # Default expressions to include in function featurizer
-default_exps = ["x", "1/x", "sqrt(x)", "1/sqrt(x)", "x**2", "x**-2", "x**3",
-                "x**-3", "log(x)", "1/log(x)", "exp(x)", "exp(-x)"]
+default_exps = [
+    "x",
+    "1/x",
+    "sqrt(x)",
+    "1/sqrt(x)",
+    "x**2",
+    "x**-2",
+    "x**3",
+    "x**-3",
+    "log(x)",
+    "1/log(x)",
+    "exp(x)",
+    "exp(-x)",
+]
 
 
 class FunctionFeaturizer(BaseFeaturizer):
@@ -54,9 +65,14 @@ class FunctionFeaturizer(BaseFeaturizer):
             defaults to False
     """
 
-    def __init__(self, expressions=None, multi_feature_depth=1,
-                 postprocess=None, combo_function=None,
-                 latexify_labels=False):
+    def __init__(
+        self,
+        expressions=None,
+        multi_feature_depth=1,
+        postprocess=None,
+        combo_function=None,
+        latexify_labels=False,
+    ):
 
         self.expressions = expressions or default_exps
         self.multi_feature_depth = multi_feature_depth
@@ -76,9 +92,14 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         # Generate lists of sympy expressions keyed by number of features
         return OrderedDict(
-            [(n, generate_expressions_combinations(self.expressions, n,
-                                                   self.combo_function))
-             for n in range(1, self.multi_feature_depth+1)])
+            [
+                (
+                    n,
+                    generate_expressions_combinations(self.expressions, n, self.combo_function),
+                )
+                for n in range(1, self.multi_feature_depth + 1)
+            ]
+        )
 
     def featurize(self, *args):
         """
@@ -101,8 +122,7 @@ class FunctionFeaturizer(BaseFeaturizer):
             Set of feature labels corresponding to expressions
         """
         if not self._feature_labels:
-            raise NotFittedError("Feature labels is only set if data is fitted"
-                                 " to a dataframe")
+            raise NotFittedError("Feature labels is only set if data is fitted" " to a dataframe")
         return self._feature_labels
 
     def fit(self, X, y=None, **fit_kwargs):
@@ -138,8 +158,7 @@ class FunctionFeaturizer(BaseFeaturizer):
         if isinstance(input_variable_names, string_types):
             input_variable_names = [input_variable_names]
         postprocess = sp.latex if self.latexify_labels else str
-        return list(self._exp_iter(*input_variable_names,
-                                   postprocess=postprocess))
+        return list(self._exp_iter(*input_variable_names, postprocess=postprocess))
 
     def _exp_iter(self, *args, postprocess=None):
         """
@@ -160,8 +179,7 @@ class FunctionFeaturizer(BaseFeaturizer):
         postprocess = postprocess or (lambda x: x)
         for n in range(1, self.multi_feature_depth + 1):
             for arg_combo in itertools.combinations(args, n):
-                subs_dict = {"x{}".format(m): arg
-                             for m, arg in enumerate(arg_combo)}
+                subs_dict = {"x{}".format(m): arg for m, arg in enumerate(arg_combo)}
                 for exp in self.exp_dict[n]:
                     # TODO: this is a workaround for the problem
                     # TODO: postprocessing functional incompatility,
@@ -172,24 +190,25 @@ class FunctionFeaturizer(BaseFeaturizer):
                         yield None
 
     def citations(self):
-        return ["@article{Ramprasad2017,"
-                "author = {Ramprasad, Rampi and Batra, Rohit and "
-                           "Pilania, Ghanshyam and Mannodi-Kanakkithodi, Arun "
-                           "and Kim, Chiho},"
-                "doi = {10.1038/s41524-017-0056-5},"
-                "journal = {npj Computational Materials},"
-                "title = {Machine learning in materials informatics: recent "
-                          "applications and prospects},"
-                "volume = {3},number={1}, pages={54}, year={2017}}"]
+        return [
+            "@article{Ramprasad2017,"
+            "author = {Ramprasad, Rampi and Batra, Rohit and "
+            "Pilania, Ghanshyam and Mannodi-Kanakkithodi, Arun "
+            "and Kim, Chiho},"
+            "doi = {10.1038/s41524-017-0056-5},"
+            "journal = {npj Computational Materials},"
+            "title = {Machine learning in materials informatics: recent "
+            "applications and prospects},"
+            "volume = {3},number={1}, pages={54}, year={2017}}"
+        ]
 
     def implementors(self):
-        return ['Joseph Montoya']
+        return ["Joseph Montoya"]
 
 
 # TODO: Have this filter expressions that evaluate to things without vars,
 # TODO:      # e. g. floats/ints
-def generate_expressions_combinations(expressions, combo_depth=2,
-                                      combo_function=np.prod):
+def generate_expressions_combinations(expressions, combo_depth=2, combo_function=np.prod):
     """
     This function takes a list of strings representing functions
     of x, converts them to sympy expressions, and combines
@@ -215,8 +234,7 @@ def generate_expressions_combinations(expressions, combo_depth=2,
 
     # Generate all of the combinations
     combo_exps = []
-    all_arrays = [exp_array.subs({"x": "x{}".format(n)})
-                  for n in range(combo_depth)]
+    all_arrays = [exp_array.subs({"x": "x{}".format(n)}) for n in range(combo_depth)]
     # Get all sets of expressions
     for exp_set in itertools.product(*all_arrays):
         # Get all permutations of each set
@@ -224,7 +242,7 @@ def generate_expressions_combinations(expressions, combo_depth=2,
             combo_exps.append(combo_function(exp_perm))
 
     # Filter for unique combinations, also remove identity
-    unique_exps = list(set(combo_exps) - {parse_expr('x0')})
+    unique_exps = list(set(combo_exps) - {parse_expr("x0")})
     # Sort to keep ordering
     unique_exps = sorted(unique_exps, key=lambda x: combo_exps.index(x))
     return unique_exps

@@ -1,0 +1,37 @@
+# This workflow runs only on Ubuntu and aims to be more complete than the Mac and Windows workflows.
+# In particular, Openbabel and many of the external command line dependencies are included for testing.defaults:
+# The ext package is also only tested in this workflow. Coverage is also computed based on this platform.
+name: Testing
+
+on: [ push, pull_request ]
+
+jobs:
+
+  test:
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.7, 3.8]
+        mongodb-version: [4.4]
+
+    runs-on: ubuntu-latest
+
+    env:
+      PMG_MAPI_KEY: ${{ secrets.PMG_MAPI_KEY }}
+      MATMINER_DATASET_FULL_TEST: True
+      MPLBACKEND: "Agg"
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Run tests
+      run: |
+        python3 -m venv test_env
+        . test_env/bin/activate
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt -r requirements-optional.txt -r requirements-dev.txt
+        pip install -e .
+        pytest matminer

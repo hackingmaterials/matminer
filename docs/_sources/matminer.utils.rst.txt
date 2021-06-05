@@ -5,7 +5,6 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
 
    matminer.utils.data_files
    matminer.utils.tests
@@ -76,6 +75,7 @@ matminer.utils.utils module
    :members:
    :undoc-members:
    :show-inheritance:
+
 
 Module contents
 ---------------

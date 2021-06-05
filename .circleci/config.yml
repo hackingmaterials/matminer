@@ -1,24 +1,5 @@
 version: 2.1
 jobs:
-  py367:
-    working_directory: ~/matminer
-    docker:
-      - image: circleci/python:3.6.7
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - py367-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - py367-dependencies-
-      - run:
-          name: Set up env via pip
-          command: |
-            source dev_scripts/run_circleci_tests.sh
-      - save_cache:
-          paths:
-          - ./test_env
-          key: py367-dependencies-{{ checksum "requirements.txt" }}
   py371:
     working_directory: ~/matminer
     docker:
@@ -38,17 +19,36 @@ jobs:
           paths:
             - ./test_env
           key: py371-dependencies-{{ checksum "requirements.txt" }}
-  py371_expensive:
+  py388:
     working_directory: ~/matminer
     docker:
-      - image: circleci/python:3.7.1
+      - image: circleci/python:3.8.8
     steps:
       - checkout
       - restore_cache:
           keys:
-            - py371-dependencies-{{ checksum "requirements.txt" }}
+            - py388-dependencies-{{ checksum "requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
-            - py371-dependencies-
+            - py388-dependencies-
+      - run:
+          name: Set up env via pip
+          command: |
+            source dev_scripts/run_circleci_tests.sh
+      - save_cache:
+          paths:
+            - ./test_env
+          key: py388-dependencies-{{ checksum "requirements.txt" }}
+  py388_expensive:
+    working_directory: ~/matminer
+    docker:
+      - image: circleci/python:3.8.8
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - py388-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - py388-dependencies-
       - run:
           name: Set up env via pip
           command: |
@@ -57,15 +57,15 @@ jobs:
       - save_cache:
           paths:
             - ./test_env
-          key: py371-dependencies-{{ checksum "requirements.txt" }}
+          key: py388-dependencies-{{ checksum "requirements.txt" }}
 
 
 workflows:
   version: 2.1
   build_and_test:
     jobs:
-      - py367
       - py371
+      - py388
 # Bimonthly full dataset tests
 #  full_tests_datasets:
 #    triggers:

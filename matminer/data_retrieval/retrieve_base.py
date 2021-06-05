@@ -1,6 +1,8 @@
+__author__ = [
+    "Alexander Dunn <ardunn@lbl.gov>",
+    "Alireza Faghaninia <alireza.faghaninia@gmail.com>",
+]
 
-__author__ = ["Alexander Dunn <ardunn@lbl.gov>",
-             "Alireza Faghaninia <alireza.faghaninia@gmail.com>"]
 
 class BaseDataRetrieval:
     """
@@ -58,6 +60,7 @@ class BaseDataRetrieval:
     function of the class, and we recommend documenting them using the
     [Google style](https://google.github.io/styleguide/pyguide.html).
     """
+
     def api_link(self):
         """
         The link to comprehensive API documentation or data source.

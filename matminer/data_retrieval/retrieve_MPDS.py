@@ -1,4 +1,3 @@
-from __future__ import division
 
 import os
 import sys
@@ -36,9 +35,9 @@ except ImportError as ex:
     warnings.warn(str(ex))
 
 
-__author__ = 'Evgeny Blokhin <eb@tilde.pro>'
-__copyright__ = 'Copyright (c) 2017, Evgeny Blokhin, Tilde Materials Informatics'
-__license__ = 'MIT'
+__author__ = "Evgeny Blokhin <eb@tilde.pro>"
+__copyright__ = "Copyright (c) 2017, Evgeny Blokhin, Tilde Materials Informatics"
+__license__ = "MIT"
 
 
 class APIError(Exception):
@@ -83,8 +82,16 @@ class MPDSDataRetrieval(BaseDataRetrieval):
     pp. 1–26. https://doi.org/10.1007/978-3-319-42913-7_62-1
 
     """
-    default_properties = ('Phase', 'Formula', 'SG',
-                          'Entry', 'Property', 'Units', 'Value')
+
+    default_properties = (
+        "Phase",
+        "Formula",
+        "SG",
+        "Entry",
+        "Property",
+        "Units",
+        "Value",
+    )
 
     endpoint = "https://api.mpds.io/v0/download/facet"
 
@@ -102,7 +109,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
 
         Returns: None
         """
-        self.api_key = api_key if api_key else os.environ['MPDS_KEY']
+        self.api_key = api_key if api_key else os.environ["MPDS_KEY"]
         self.network = httplib2.Http()
         self.endpoint = endpoint or MPDSDataRetrieval.endpoint
 
@@ -110,29 +117,36 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         return "http://developer.mpds.io"
 
     def _request(self, query, phases=None, page=0):
-        phases = ','.join([str(int(x)) for x in phases]) if phases else ''
+        phases = ",".join([str(int(x)) for x in phases]) if phases else ""
 
         response, content = self.network.request(
-            uri=self.endpoint + '?' + urlencode({
-                'q': json.dumps(query),
-                'phases': phases,
-                'page': page,
-                'pagesize': MPDSDataRetrieval.pagesize
-            }),
-            method='GET',
-            headers={'Key': self.api_key}
+            uri=self.endpoint
+            + "?"
+            + urlencode(
+                {
+                    "q": json.dumps(query),
+                    "phases": phases,
+                    "page": page,
+                    "pagesize": MPDSDataRetrieval.pagesize,
+                }
+            ),
+            method="GET",
+            headers={"Key": self.api_key},
         )
 
         if response.status != 200:
-            return {'error': 'HTTP error code %s' % response.status, 'code': response.status}
+            return {
+                "error": "HTTP error code %s" % response.status,
+                "code": response.status,
+            }
         try:
             content = json.loads(content)
         except:
-            return {'error': 'Unreadable data obtained'}
-        if content.get('error'):
-            return {'error': content['error']}
-        if not content['out']:
-            return {'error': 'No hits', 'code': 1}
+            return {"error": "Unreadable data obtained"}
+        if content.get("error"):
+            return {"error": content["error"]}
+        if not content["out"]:
+            return {"error": "No hits", "code": 1}
 
         return content
 
@@ -143,8 +157,8 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         output = []
         for item in array:
             filtered = []
-            for object_type in ['S', 'P', 'C']:
-                if item['object_type'] == object_type:
+            for object_type in ["S", "P", "C"]:
+                if item["object_type"] == object_type:
                     for expr in fields.get(object_type, []):
                         if isinstance(expr, jmespath.parser.ParsedResult):
                             filtered.append(expr.search(item))
@@ -178,32 +192,32 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         """
 
         default_fields = {
-            'S': [
-                'phase_id',
-                'chemical_formula',
-                'sg_n',
-                'entry',
-                lambda: 'crystal structure',
-                lambda: 'A'
+            "S": [
+                "phase_id",
+                "chemical_formula",
+                "sg_n",
+                "entry",
+                lambda: "crystal structure",
+                lambda: "A",
             ],
-            'P': [
-                'sample.material.phase_id',
-                'sample.material.chemical_formula',
-                'sample.material.condition[0].scalar[0].value',
-                'sample.material.entry',
-                'sample.measurement[0].property.name',
-                'sample.measurement[0].property.units',
-                'sample.measurement[0].property.scalar'
+            "P": [
+                "sample.material.phase_id",
+                "sample.material.chemical_formula",
+                "sample.material.condition[0].scalar[0].value",
+                "sample.material.entry",
+                "sample.measurement[0].property.name",
+                "sample.measurement[0].property.units",
+                "sample.measurement[0].property.scalar",
             ],
-            'C': [
+            "C": [
                 lambda: None,
-                'title',
+                "title",
                 lambda: None,
-                'entry',
-                lambda: 'phase diagram',
-                'naxes',
-                'arity'
-            ]
+                "entry",
+                lambda: "phase diagram",
+                "naxes",
+                "arity",
+            ],
         }
 
         fields = default_fields if fields is None else fields
@@ -211,37 +225,44 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         output = []
         phases = phases or []
         counter, hits_count = 0, 0
-        fields = {
-            key: [jmespath.compile(item) if isinstance(item, six.string_types) else item() for item in value]
-            for key, value in fields.items()
-        } if fields else None
+        fields = (
+            {
+                key: [jmespath.compile(item) if isinstance(item, six.string_types) else item() for item in value]
+                for key, value in fields.items()
+            }
+            if fields
+            else None
+        )
 
         while True:
             result = self._request(criteria, phases=phases, page=counter)
-            if result['error']:
-                raise APIError(result['error'], result.get('code', 0))
+            if result["error"]:
+                raise APIError(result["error"], result.get("code", 0))
 
-            if result['npages'] > MPDSDataRetrieval.maxnpages:
+            if result["npages"] > MPDSDataRetrieval.maxnpages:
                 raise APIError(
-                    "Too much hits (%s > %s), please, be more specific" % \
-                    (result['count'], MPDSDataRetrieval.maxnpages * MPDSDataRetrieval.pagesize),
-                    1
+                    "Too much hits (%s > %s), please, be more specific"
+                    % (
+                        result["count"],
+                        MPDSDataRetrieval.maxnpages * MPDSDataRetrieval.pagesize,
+                    ),
+                    1,
                 )
-            assert result['npages'] > 0
+            assert result["npages"] > 0
 
-            output.extend(self._massage(result['out'], fields))
+            output.extend(self._massage(result["out"], fields))
 
-            if hits_count and hits_count != result['count']:
+            if hits_count and hits_count != result["count"]:
                 raise APIError("API error: hits count has been changed during the query")
-            hits_count = result['count']
+            hits_count = result["count"]
 
-            if counter == result['npages'] - 1:
+            if counter == result["npages"] - 1:
                 break
 
             counter += 1
             time.sleep(MPDSDataRetrieval.chillouttime)
 
-            sys.stdout.write("\r\t%d%%" % ((counter / result['npages']) * 100))
+            sys.stdout.write("\r\t%d%%" % ((counter / result["npages"]) * 100))
             sys.stdout.flush()
 
         if len(output) != hits_count:
@@ -265,7 +286,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         return pd.DataFrame(self.get_data(criteria=criteria, **kwargs), columns=properties)
 
     @staticmethod
-    def compile_crystal(datarow, flavor='pmg'):
+    def compile_crystal(datarow, flavor="pmg"):
         """
         Helper method for representing the MPDS crystal structures in two flavors:
         either as a Pymatgen Structure object, or as an ASE Atoms object.
@@ -296,20 +317,20 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         if not datarow or not datarow[-1]:
             return None
 
-        cell_abc, sg_n, setting, basis_noneq, els_noneq = \
-            datarow[-5], int(datarow[-4]), datarow[-3], datarow[-2], datarow[-1]
+        cell_abc, sg_n, setting, basis_noneq, els_noneq = (
+            datarow[-5],
+            int(datarow[-4]),
+            datarow[-3],
+            datarow[-2],
+            datarow[-1],
+        )
 
-        if flavor == 'pmg':
-            return Structure.from_spacegroup(
-                sg_n,
-                Lattice.from_parameters(*cell_abc),
-                els_noneq,
-                basis_noneq
-            )
+        if flavor == "pmg":
+            return Structure.from_spacegroup(sg_n, Lattice.from_parameters(*cell_abc), els_noneq, basis_noneq)
 
-        elif flavor == 'ase' and use_ase:
+        elif flavor == "ase" and use_ase:
             atom_data = []
-            setting = 2 if setting == '2' else 1
+            setting = 2 if setting == "2" else 1
 
             for num, i in enumerate(basis_noneq):
                 atom_data.append(Atom(els_noneq[num], tuple(i)))
@@ -320,7 +341,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
                 cellpar=cell_abc,
                 primitive_cell=True,
                 setting=setting,
-                onduplicates='replace'
+                onduplicates="replace",
             )
 
         else:

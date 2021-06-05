@@ -26,12 +26,10 @@ for req in extras_raw:
 extras_list = list(extras_dict)
 extras_list = [r for d in extras_dict.values() for r in d]
 
-
-
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.6.4',
+        version='0.6.5',
         description='matminer is a library that contains tools for data '
                     'mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
@@ -49,17 +47,19 @@ if __name__ == "__main__":
         zip_safe=False,
         install_requires=reqs_list,
         extras_require=extras_dict,
-        classifiers=['Programming Language :: Python :: 2.7',
-                     'Programming Language :: Python :: 3.6',
-                     'Development Status :: 4 - Beta',
-                     'Intended Audience :: Science/Research',
-                     'Intended Audience :: System Administrators',
-                     'Intended Audience :: Information Technology',
-                     'Operating System :: OS Independent',
-                     'Topic :: Other/Nonlisted Topic',
-                     'Topic :: Scientific/Engineering'],
+        classifiers=[
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+            'Development Status :: 4 - Beta',
+            'Intended Audience :: Science/Research',
+            'Intended Audience :: System Administrators',
+            'Intended Audience :: Information Technology',
+            'Operating System :: OS Independent',
+            'Topic :: Other/Nonlisted Topic',
+            'Topic :: Scientific/Engineering'],
         test_suite='matminer',
         tests_require=extras_list,
         scripts=[]
         # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
-)
+    )

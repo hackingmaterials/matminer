@@ -9,8 +9,7 @@ from monty.io import zopen
 from monty.json import MontyEncoder, MontyDecoder
 
 
-def store_dataframe_as_json(dataframe, filename, compression=None,
-                            orient='split'):
+def store_dataframe_as_json(dataframe, filename, compression=None, orient="split"):
     """Store pandas dataframe as a json file.
 
     Automatically encodes pymatgen objects as dictionaries.
@@ -54,12 +53,12 @@ def load_dataframe_from_json(filename):
     Returns:
         (Pandas.DataFrame): A pandas dataframe.
     """
-    with zopen(filename, 'rb') as f:
+    with zopen(filename, "rb") as f:
         dataframe_data = json.load(f, cls=MontyDecoder)
 
     # if only keys are data, columns, index then orient=split
     if isinstance(dataframe_data, dict):
-        if set(dataframe_data.keys()) == {'data', 'columns', 'index'}:
+        if set(dataframe_data.keys()) == {"data", "columns", "index"}:
             return pandas.DataFrame(**dataframe_data)
     else:
         return pandas.DataFrame(dataframe_data)
