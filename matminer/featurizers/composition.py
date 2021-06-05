@@ -2164,3 +2164,281 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         n = max(3, min(n_neighbors, 24))
 
         return self.ideal_ratio[n]
+
+
+class WenAlloys(BaseFeaturizer):
+    """
+    Copyright 2020 Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+    Class to calculate features for alloy properties.
+    Features:
+        Yang omega
+        Yang delta
+        Radii local mismatch
+        Radii gamma
+        Configuration entropy
+        Lambda entropy
+        Electronegativity delta
+        Electronegativity local mismatch
+        VEC mean
+        Mixing enthalpy structure #Mixing enthalpy elastic Mixing enthalpy chemistry
+        Mean cohesive energy
+        Interant electrons
+        Shear modulus mean
+        Shear modulus delta
+        Shear modulus local mismatch
+        Shear modulus strength model
+        Copyright 2020 Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+    """
+
+    def __init__(self):
+        # Use of Miedema to retrieve the shear modulus
+        self.data_source_miedema = Miedema(data_source = "Miedema")
+        self.data_source_magpie = MagpieData().all_elemental_props
+        self.data_source_cohesive_energy = CohesiveEnergyData()
+        self.data_source_enthalpy = MixingEnthalpy()
+        self.element_feature_labels = []
+        self.element_feature_labels.append('Weight Fraction')
+        self.element_feature_labels.append('Atomic Fraction')
+        self.element_feature_labels.append('Yang delta')
+        self.element_feature_labels.append('Yang omega')
+        self.element_feature_labels.append('APE mean')
+        self.element_feature_labels.append('Radii local mismatch')
+        self.element_feature_labels.append('Radii gamma')
+        self.element_feature_labels.append('Configuration entropy')
+        self.element_feature_labels.append('Atomic weight mean')
+        self.element_feature_labels.append('Total weight')
+        self.element_feature_labels.append('Lambda entropy')
+        self.element_feature_labels.append('Electronegtivity delta')
+        self.element_feature_labels.append('Electronegativity local mismatch')
+        self.element_feature_labels.append('VEC mean')   
+        self.element_feature_labels.append('Mixing enthalpy')        
+        self.element_feature_labels.append('Mean cohesive energy')        
+        self.element_feature_labels.append('Interant electrons')        
+        self.element_feature_labels.append('Interant s electrons')        
+        self.element_feature_labels.append('Interant p electrons')
+        self.element_feature_labels.append('Interant d electrons')        
+        self.element_feature_labels.append('Interant f electrons')
+        self.element_feature_labels.append('Shear modulus mean')
+        self.element_feature_labels.append('Shear modulus delta')        
+        self.element_feature_labels.append('Shear modulus local mismatch')        
+        self.element_feature_labels.append('Shear modulus strength model')
+
+
+    def featurize(self, comp):
+        """
+        Get elemental property attributes
+        Args:
+            comp: Pymatgen composition object
+        Returns:
+            all_attributes: Specified property statistics of features
+        """
+        self.composition = comp
+        self.generate_properties(comp)
+        
+        element_property_features = []
+        element_property_features.append(self.compute_weight_fraction())
+        element_property_features.append(self.compute_atomic_fraction())
+        element_property_features.append(YangSolidSolution().compute_delta(comp))
+        element_property_features.append(YangSolidSolution().compute_omega(comp))
+        element_property_features.append(AtomicPackingEfficiency().compute_simultaneous_packing_efficiency(comp)[0])
+        element_property_features.append(self.compute_local_mismatch(self.MiracleRadius, self.fractions))
+        element_property_features.append(self.compute_gamma_radii())
+        element_property_features.append(self.compute_configuration_entropy())
+        element_property_features.append(self.AtomicWeight_mean)
+        element_property_features.append(comp.weight)
+        element_property_features.append(self.compute_lambda(YangSolidSolution().compute_delta(comp), self.compute_configuration_entropy()))
+        element_property_features.append(self.compute_delta(self.electronegativity, self.fractions))
+        element_property_features.append(self.compute_local_mismatch(self.electronegativity, self.fractions))
+        element_property_features.append(self.mean_VEC)
+        element_property_features.append(self.compute_enthalpy())
+        element_property_features.append(self.mean_cohesive_energy)
+        element_property_features.append(self.interant_electrons)
+        element_property_features.append(self.s_unfilled)
+        element_property_features.append(self.p_unfilled)
+        element_property_features.append(self.d_unfilled)
+        element_property_features.append(self.f_unfilled)
+        element_property_features.append(self.mean_shear_modulus)
+        element_property_features.append(self.compute_delta(self.shear_modulus, self.fractions))
+        element_property_features.append(self.compute_local_mismatch(self.shear_modulus, self.fractions))
+        element_property_features.append(self.compute_strength_local_mismatch_shear())
+
+        return element_property_features
+
+
+    @staticmethod
+    def compute_local_mismatch(variable, fractions):
+        """Compute local mismatch of a given variable.
+        
+        :math:`\sum^n_{i=1} \sum^n_{j=1,i \neq j}  c_i c_j | v_i - v_j |^2`
+        
+        where :math:`c_{i,j}` and :math:`v_{i,j}` are the fraction and variable of
+        element :math:`i,j`. 
+        Args:
+            variable (list) - List of properties to asses
+            fractions (list) - List of fractions to asses
+        Returns:
+            (float) local mismatch
+        """
+
+        array_variable = np.array(variable)
+        array_fractions = np.array(fractions)
+        variable_upper_triangle = abs((array_variable[:, None] - array_variable)[np.triu_indices(len(variable), k=1)])
+        fractions_upper_triangle = (array_fractions[:, None] * array_fractions)[np.triu_indices(len(fractions), k=1)]
+        return sum(variable_upper_triangle * fractions_upper_triangle)
+
+    @staticmethod
+    def compute_delta(variable, fractions):
+        """Compute Yang's delta parameter for a generic variable.
+        
+        :math:`\sqrt{\sum^n_{i=1} c_i \left( 1 - \\frac{v_i}{\\bar{v}} \\right)^2 }`
+        
+        where :math:`c_i` and :math:`v_i` are the fraction and variable of
+        element :math:`i`, and :math:`\\bar{v}` is the fraction-weighted
+        average of the variable. 
+        Args:
+            variable (list) - List of properties to asses
+            fractions (list) - List of fractions to asses
+        Returns:
+            (float) delta
+        """
+
+        mean_variable = PropertyStats.mean(variable, fractions)
+        dev_variable = np.power(1.0 - np.divide(variable, mean_variable), 2)
+        return np.sqrt(PropertyStats.mean(dev_variable, fractions))
+
+    @staticmethod
+    def compute_lambda(yang_delta, entropy):
+        if yang_delta != 0:
+            return entropy / yang_delta**2
+        else:
+            return 0
+
+    
+    def compute_weight_fraction(self):
+        weight_fraction = ''
+        for single_element in self.elements:
+            weight_fraction += single_element + str(self.composition.get_wt_fraction(single_element))
+        
+        return weight_fraction
+
+    def compute_enthalpy(self):
+        enthalpy = 0
+        for i, e1 in enumerate(self.elements):
+            for j, e2 in enumerate(self.elements[:i]):
+                enthalpy += self.fractions[i] * self.fractions[j] * self.data_source_enthalpy.get_mixing_enthalpy(Element(e1), Element(e2))
+        enthalpy *= 4
+        # Make sure the enthalpy is nonzero
+        #  The limit as dH->0 of omega is +\inf. A very small positive dH will approximate
+        #  this limit without causing issues with infinite features
+        enthalpy = max(1e-6, abs(enthalpy))
+        return abs(enthalpy)
+        
+
+    def compute_atomic_fraction(self):
+        atomic_fraction = ''
+        for single_element in self.elements:
+            atomic_fraction += single_element + str(self.composition.get_atomic_fraction(single_element))
+
+        return atomic_fraction
+
+    def compute_magpie_summary(self, attribute_name):
+        attribute = [self.data_source_magpie[attribute_name][e] for e in self.elements]
+        setattr(self, attribute_name, attribute)
+        setattr(self, attribute_name + '_mean', PropertyStats.mean(attribute, self.fractions))
+        setattr(self, attribute_name + '_min', PropertyStats.minimum(attribute, self.fractions))
+        setattr(self, attribute_name + '_max', PropertyStats.maximum(attribute, self.fractions))
+
+    def generate_properties(self, comp):
+        composition_dict = comp.fractional_composition.get_el_amt_dict()
+        self.elements = list(composition_dict.keys())
+        self.fractions = list(composition_dict.values())
+
+        self.compute_magpie_summary('MiracleRadius')
+        self.compute_magpie_summary('AtomicWeight')
+        self.compute_magpie_summary('Density')
+        self.compute_magpie_summary('Number')
+
+        self.electronegativity = [self.data_source_miedema.df_dataset.loc[str(e)]['electronegativity'] for e in self.elements]
+
+        self.single_VEC = [self.data_source_miedema.df_dataset.loc[str(e)]['valence_electrons'] for e in self.elements]
+        self.mean_VEC = PropertyStats.mean(self.single_VEC, self.fractions)
+
+        self.cohesive_energy = [self.data_source_cohesive_energy.cohesive_energy_data[str(e)] for e in self.elements]
+        self.mean_cohesive_energy = PropertyStats.mean(self.cohesive_energy, self.fractions)
+
+        self.shear_modulus = [self.data_source_miedema.df_dataset.loc[str(e)]['shear_modulus'] for e in self.elements]
+        self.mean_shear_modulus = PropertyStats.mean(self.shear_modulus, self.fractions)
+
+        self.s_unfilled = sum([2 - self.data_source_magpie['NsUnfilled'][e] for e in self.elements if self.data_source_magpie['NsUnfilled'][e] != 0])
+        self.p_unfilled = sum([6 - self.data_source_magpie['NpUnfilled'][e] for e in self.elements if self.data_source_magpie['NpUnfilled'][e] != 0])
+        self.d_unfilled = sum([10 - self.data_source_magpie['NdUnfilled'][e] for e in self.elements if self.data_source_magpie['NdUnfilled'][e] != 0])
+        self.f_unfilled = sum([14 - self.data_source_magpie['NfUnfilled'][e] for e in self.elements if self.data_source_magpie['NfUnfilled'][e] != 0])
+        self.interant_electrons = self.s_unfilled + self.p_unfilled + self.d_unfilled + self.f_unfilled
+
+    def compute_gamma_radii(self):
+        """Compute Gamma of the radii. The solid angles of the
+        atomic packing for the elements with the most significant
+        and smallest atomic sizes.
+        
+        :math:`\frac{1 - \sqrt{ \frac{((r + r_{min})^2 - r^2)}{(r + r_{min})^2}}}{1 - \sqrt{ \frac{((r + r_{max})^2 - r^2)}{(r + r_{max})^2}}}`
+        
+        where :math:`r`, :math:`r_{min}` and :math:`r_{max}` are the mean radii
+        min radii and max radii.
+        Args:
+            self (HighEntropyAlloys) - High Entropy Alloys Object
+        Returns:
+            (float) gamma
+        """
+
+        numerator = 1 - np.sqrt((self.MiracleRadius_mean * self.MiracleRadius_min + self.MiracleRadius_min**2) / (self.MiracleRadius_mean + self.MiracleRadius_min)**2) 
+        denominator = 1 - np.sqrt((self.MiracleRadius_mean * self.MiracleRadius_max + self.MiracleRadius_max**2) / (self.MiracleRadius_mean + self.MiracleRadius_max)**2)
+        return numerator / denominator
+
+    def compute_configuration_entropy(self):
+        """Compute the configuration entropy.
+        
+        :math:`R \sum^n_{i=1} c_i \ln{c_i}`
+        
+        where :math:`c_i` are the fraction of each element :math:`i`
+        and :math:`R` is the ideal gas constant
+        Args:
+            self (HighEntropyAlloys) - High Entropy Alloys Object
+        Returns:
+            (float) gamma
+        """
+
+        return np.dot(self.fractions, np.log(self.fractions)) * 8.314 / 1000
+
+    def compute_strength_local_mismatch_shear(self):
+        """The local mismatch of the shear values.
+        
+        :math:`\sum^n_{i=1} \frac{c_i \frac{2(G_i - G)}{G_i + G} }{\left(1 + 0.5 |c_i \frac{2(G_i - G)}{G_i + G} \right)|}`
+        
+        where :math:`c_{i}`, :math:'G' and :math:`G_{i}` are the fraction, mean shear modulus and shear modulus of
+        element :math:`i`. 
+        Args:
+            self (HighEntropyAlloys) - High Entropy Alloys Object
+        Returns:
+            (float) strengthening local mismatch
+        """
+
+        array_shear = np.array(self.shear_modulus)
+        array_fractions = np.array(self.fractions)
+        modulus_combination = 2 * array_fractions * (array_shear - self.mean_shear_modulus) / (array_shear + self.mean_shear_modulus) 
+        return sum(modulus_combination / (1 + 0.5 * abs(modulus_combination)))
+
+    def feature_labels(self):
+        return self.element_feature_labels
+
+    def citations(self):
+        return ["@article{wen2019machine,"
+                "author={Wen, Cheng and Zhang, Yan and Wang, Changxin and Xue, Dezhen and Bai, Yang and Antonov, Stoichko and Dai, Lanhong and Lookman, Turab and Su, Yanjing},"
+                "doi = {10.1016/j.actamat.2019.03.010},"
+                "journal={Acta Materialia},"
+                "pages={109--117},"
+                "title={Machine learning assisted design of high entropy alloys with desired property},"
+                "url = {https://doi.org/10.1016/j.actamat.2019.03.010},"
+                "volume={170},year={2019}"]
+
+    def implementors(self):
+        return ['M. Ross Kunz','Jeffery Aguiar']
