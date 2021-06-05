@@ -7,9 +7,14 @@ matminer is a library for performing data mining in the field of materials scien
 - **Help/Support:** https://discuss.matsci.org
 - **Source:** https://github.com/hackingmaterials/matminer
 
-If you like matminer, you might also try [automatminer](https://github.com/hackingmaterials/automatminer).
+#### Related packages:
 
-If you are interested in furthering development of datasets in matminer, you may be interested in [matbench](https://github.com/hackingmaterials/matbench).
+- If you like matminer, you might also try [automatminer](https://github.com/hackingmaterials/automatminer).
+- If you are interested in furthering development of datasets in matminer, you may be interested in [matbench](https://github.com/hackingmaterials/matbench).
+- If you are looking for figrecipes, it is now in its [own repo](https://github.com/hackingmaterials/figrecipes).
+
+
+#### Citation
 
 If you find matminer useful, please encourage its development by citing the following paper in your research:
 ```
