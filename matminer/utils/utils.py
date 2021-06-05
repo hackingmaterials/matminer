@@ -33,7 +33,8 @@ def homogenize_multiindex(df, default_key, coerce=False):
         df.columns = cols
         return df
     else:
-        raise IndexError("An input dataframe of 2+ levels cannot be used for"
-                         "multiindexed Matminer featurization without coercion "
-                         "to 2 levels.")
-
+        raise IndexError(
+            "An input dataframe of 2+ levels cannot be used for"
+            "multiindexed Matminer featurization without coercion "
+            "to 2 levels."
+        )

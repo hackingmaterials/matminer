@@ -1,18 +1,17 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>matminer.figrecipes package &#8212; matminer 0.6.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -28,8 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.5 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">matminer.figrecipes package</a></li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -58,13 +56,13 @@
 </div>
 <div class="section" id="module-matminer.figrecipes.plot">
 <span id="matminer-figrecipes-plot-module"></span><h2>matminer.figrecipes.plot module<a class="headerlink" href="#module-matminer.figrecipes.plot" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="matminer.figrecipes.plot.PlotlyFig">
-<em class="property">class </em><code class="sig-prename descclassname">matminer.figrecipes.plot.</code><code class="sig-name descname">PlotlyFig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'offline'</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colorbar_title</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">x_scale</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">y_scale</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">ticksize</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">fontscale</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">fontsize</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">fontfamily</span><span class="o">=</span><span class="default_value">'Courier'</span></em>, <em class="sig-param"><span class="n">bgcolor</span><span class="o">=</span><span class="default_value">'white'</span></em>, <em class="sig-param"><span class="n">fontcolor</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colorscale</span><span class="o">=</span><span class="default_value">'Viridis'</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resolution_scale</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">margins</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">pad</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">username</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">api_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'temp-plot'</span></em>, <em class="sig-param"><span class="n">show_offline_plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">hovermode</span><span class="o">=</span><span class="default_value">'closest'</span></em>, <em class="sig-param"><span class="n">hoverinfo</span><span class="o">=</span><span class="default_value">'x+y+text'</span></em>, <em class="sig-param"><span class="n">hovercolor</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">matminer.figrecipes.plot.</code><code class="sig-name descname">PlotlyFig</code><span class="sig-paren">(</span><em class="sig-param">df=None</em>, <em class="sig-param">mode='offline'</em>, <em class="sig-param">title=None</em>, <em class="sig-param">x_title=None</em>, <em class="sig-param">y_title=None</em>, <em class="sig-param">colorbar_title='auto'</em>, <em class="sig-param">x_scale='linear'</em>, <em class="sig-param">y_scale='linear'</em>, <em class="sig-param">ticksize=25</em>, <em class="sig-param">fontscale=1</em>, <em class="sig-param">fontsize=25</em>, <em class="sig-param">fontfamily='Courier'</em>, <em class="sig-param">bgcolor='white'</em>, <em class="sig-param">fontcolor=None</em>, <em class="sig-param">colorscale='Viridis'</em>, <em class="sig-param">height=None</em>, <em class="sig-param">width=None</em>, <em class="sig-param">resolution_scale=None</em>, <em class="sig-param">margins=100</em>, <em class="sig-param">pad=0</em>, <em class="sig-param">username=None</em>, <em class="sig-param">api_key=None</em>, <em class="sig-param">filename='temp-plot'</em>, <em class="sig-param">show_offline_plot=True</em>, <em class="sig-param">hovermode='closest'</em>, <em class="sig-param">hoverinfo='x+y+text'</em>, <em class="sig-param">hovercolor=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'offline'</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colorbar_title</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">x_scale</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">y_scale</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">ticksize</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">fontscale</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">fontsize</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">fontfamily</span><span class="o">=</span><span class="default_value">'Courier'</span></em>, <em class="sig-param"><span class="n">bgcolor</span><span class="o">=</span><span class="default_value">'white'</span></em>, <em class="sig-param"><span class="n">fontcolor</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colorscale</span><span class="o">=</span><span class="default_value">'Viridis'</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resolution_scale</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">margins</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">pad</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">username</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">api_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'temp-plot'</span></em>, <em class="sig-param"><span class="n">show_offline_plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">hovermode</span><span class="o">=</span><span class="default_value">'closest'</span></em>, <em class="sig-param"><span class="n">hoverinfo</span><span class="o">=</span><span class="default_value">'x+y+text'</span></em>, <em class="sig-param"><span class="n">hovercolor</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">df=None</em>, <em class="sig-param">mode='offline'</em>, <em class="sig-param">title=None</em>, <em class="sig-param">x_title=None</em>, <em class="sig-param">y_title=None</em>, <em class="sig-param">colorbar_title='auto'</em>, <em class="sig-param">x_scale='linear'</em>, <em class="sig-param">y_scale='linear'</em>, <em class="sig-param">ticksize=25</em>, <em class="sig-param">fontscale=1</em>, <em class="sig-param">fontsize=25</em>, <em class="sig-param">fontfamily='Courier'</em>, <em class="sig-param">bgcolor='white'</em>, <em class="sig-param">fontcolor=None</em>, <em class="sig-param">colorscale='Viridis'</em>, <em class="sig-param">height=None</em>, <em class="sig-param">width=None</em>, <em class="sig-param">resolution_scale=None</em>, <em class="sig-param">margins=100</em>, <em class="sig-param">pad=0</em>, <em class="sig-param">username=None</em>, <em class="sig-param">api_key=None</em>, <em class="sig-param">filename='temp-plot'</em>, <em class="sig-param">show_offline_plot=True</em>, <em class="sig-param">hovermode='closest'</em>, <em class="sig-param">hoverinfo='x+y+text'</em>, <em class="sig-param">hovercolor=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for making Plotly plots</p>
 <p>Args:</p>
 <blockquote>
@@ -185,9 +183,9 @@ ticksize (int): See argument documentation above.</p>
 </div></blockquote>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.bar">
-<code class="sig-name descname">bar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">barmode</span><span class="o">=</span><span class="default_value">'group'</span></em>, <em class="sig-param"><span class="n">colors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bargap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.bar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bar</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">barmode='group'</em>, <em class="sig-param">colors=None</em>, <em class="sig-param">bargap=None</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.bar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a bar chart using Plotly.</p>
 <p>Can be used with x and y arguments or with a dataframe (passed as ‘data’
 or taken from constructor).</p>
@@ -227,9 +225,9 @@ with mode in __init__).</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.create_plot">
-<code class="sig-name descname">create_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fig</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.create_plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_plot</code><span class="sig-paren">(</span><em class="sig-param">fig</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.create_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plotly plot based on its dictionary representation.
 The modes of plotting are:</p>
 <blockquote>
@@ -254,9 +252,9 @@ with mode in __init__).</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.heatmap_basic">
-<code class="sig-name descname">heatmap_basic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colorscale</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colorscale_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">annotations_text</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">annotations_font_size</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">annotations_color</span><span class="o">=</span><span class="default_value">'white'</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.heatmap_basic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">heatmap_basic</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">x_labels=None</em>, <em class="sig-param">y_labels=None</em>, <em class="sig-param">colorscale=None</em>, <em class="sig-param">colorscale_range=None</em>, <em class="sig-param">annotations_text=None</em>, <em class="sig-param">annotations_font_size=20</em>, <em class="sig-param">annotations_color='white'</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.heatmap_basic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a heatmap plot, either using 2D arrays of values, or a dataframe.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
@@ -285,9 +283,9 @@ annotations_color: (str/array) color of annotation text - accepts</p>
 <p>Returns: A Plotly heatmap plot Figure object.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.heatmap_df">
-<code class="sig-name descname">heatmap_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_nqs</span><span class="o">=</span><span class="default_value">6</span></em>, <em class="sig-param"><span class="n">y_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_nqs</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">annotation</span><span class="o">=</span><span class="default_value">'count'</span></em>, <em class="sig-param"><span class="n">annotation_color</span><span class="o">=</span><span class="default_value">'black'</span></em>, <em class="sig-param"><span class="n">colorscale</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.heatmap_df" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">heatmap_df</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">x_labels=None</em>, <em class="sig-param">x_nqs=6</em>, <em class="sig-param">y_labels=None</em>, <em class="sig-param">y_nqs=4</em>, <em class="sig-param">precision=1</em>, <em class="sig-param">annotation='count'</em>, <em class="sig-param">annotation_color='black'</em>, <em class="sig-param">colorscale=None</em>, <em class="sig-param">color_range=None</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.heatmap_df" title="Permalink to this definition">¶</a></dt>
 <dd><p>A heatmap which can accept a dataframe as input directly.</p>
 <dl>
 <dt>Args:</dt><dd><p>data: (dataframe): only the first 3 numerical columns considered
@@ -330,9 +328,9 @@ with mode in __init__).</p>
 <p>Returns: A Plotly heatmap plot Figure object.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.histogram">
-<code class="sig-name descname">histogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">orientation</span><span class="o">=</span><span class="default_value">'vertical'</span></em>, <em class="sig-param"><span class="n">histnorm</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">n_bins</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bins</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bargap</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.histogram" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">histogram</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">orientation='vertical'</em>, <em class="sig-param">histnorm=''</em>, <em class="sig-param">n_bins=None</em>, <em class="sig-param">bins=None</em>, <em class="sig-param">colors=None</em>, <em class="sig-param">bargap=0</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a Plotly histogram. If multiple series of data are available,
 will create an overlaid histogram.</p>
 <p>For n_bins, start, end, size, colors, and bargaps, all defaults are
@@ -374,9 +372,9 @@ with mode in __init__).</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.parallel_coordinates">
-<code class="sig-name descname">parallel_coordinates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">line</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">colors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.parallel_coordinates" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">parallel_coordinates</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">line=None</em>, <em class="sig-param">precision=2</em>, <em class="sig-param">colors=None</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.parallel_coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Plotly Parcoords plot from dataframes.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
@@ -403,9 +401,9 @@ with mode in __init__).</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.scatter_matrix">
-<code class="sig-name descname">scatter_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">marker</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">marker_scale</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">default_color</span><span class="o">=</span><span class="default_value">'#98AFC7'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.scatter_matrix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">scatter_matrix</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">colors=None</em>, <em class="sig-param">marker=None</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">marker_scale=1.0</em>, <em class="sig-param">return_plot=False</em>, <em class="sig-param">default_color='#98AFC7'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.scatter_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Plotly scatter matrix plot from dataframes using Plotly.
 Args:</p>
 <blockquote>
@@ -448,9 +446,9 @@ title=’Elastic Properties Scatter Matrix’)</p>
 </div></blockquote>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.set_arguments">
-<code class="sig-name descname">set_arguments</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.set_arguments" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_arguments</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.set_arguments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to modify some of the layout and PlotlyFig arguments after
 instantiation.</p>
 <p>Allowed arguments: title, x_title, y_title, colorbar_title, filename,
@@ -462,9 +460,9 @@ mode, api_key, username, show_offline_plot</p>
 <p>Returns: None</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.setup_labels">
-<code class="sig-name descname">setup_labels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">labels</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">expected_length</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.setup_labels" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setup_labels</code><span class="sig-paren">(</span><em class="sig-param">labels</em>, <em class="sig-param">data</em>, <em class="sig-param">expected_length=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.setup_labels" title="Permalink to this definition">¶</a></dt>
 <dd><dl>
 <dt>Set the input labels to the appropriate format to support labeling of</dt><dd><p>each data point with one or multiple labels that shows upon hovering
 over the point (Plotly default behavior).</p>
@@ -484,9 +482,9 @@ If None, uses the dataframe passed into the constructor.</p>
 <p>Returns ([list]): list of labels each with the expected length</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.triangle">
-<code class="sig-name descname">triangle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sum_of_3</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">axes_titles</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">markers</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.triangle" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">triangle</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">sum_of_3=1.0</em>, <em class="sig-param">axes_titles=None</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">markers=None</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.triangle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Phase diagram type plot for 3 (and only 3) variables that always add
 to a certain number (e.g. 1 or 100%); regardless the rows are separately
 normalized inside plotly so that they add to 1 as otherwise, triangle
@@ -525,9 +523,9 @@ traces have the same length as the same labels are assigned to</p>
 <p>Returns: A Plotly triangle plot Figure object.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.violin">
-<code class="sig-name descname">violin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_colorscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">rugplot</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">group_col</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">groups</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colorscale</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.violin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">violin</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">use_colorscale=False</em>, <em class="sig-param">rugplot=False</em>, <em class="sig-param">group_col=None</em>, <em class="sig-param">groups=None</em>, <em class="sig-param">colorscale=None</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.violin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a violin plot using Plotly.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -563,9 +561,9 @@ with mode in __init__).</p>
 <p>Returns: A Plotly violin plot Figure object.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="matminer.figrecipes.plot.PlotlyFig.xy">
-<code class="sig-name descname">xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xy_pairs</span></em>, <em class="sig-param"><span class="n">colors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">limits</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sizes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">modes</span><span class="o">=</span><span class="default_value">'markers'</span></em>, <em class="sig-param"><span class="n">markers</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">marker_scale</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">lines</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colorscale</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">showlegends</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">error_bars</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">normalize_size</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">return_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.xy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">xy</code><span class="sig-paren">(</span><em class="sig-param">xy_pairs</em>, <em class="sig-param">colors=None</em>, <em class="sig-param">color_range=None</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">limits=None</em>, <em class="sig-param">names=None</em>, <em class="sig-param">sizes=None</em>, <em class="sig-param">modes='markers'</em>, <em class="sig-param">markers=None</em>, <em class="sig-param">marker_scale=1.0</em>, <em class="sig-param">lines=None</em>, <em class="sig-param">colorscale=None</em>, <em class="sig-param">showlegends=None</em>, <em class="sig-param">error_bars=None</em>, <em class="sig-param">normalize_size=True</em>, <em class="sig-param">return_plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.figrecipes.plot.PlotlyFig.xy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make an XY scatter plot, either using arrays of values, or a dataframe.</p>
 <dl>
 <dt>Args:</dt><dd><dl>
@@ -657,7 +655,6 @@ with mode in __init__).</p>
 </div>
 
 
-            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -690,7 +687,7 @@ with mode in __init__).</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -704,14 +701,13 @@ with mode in __init__).</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.5 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">matminer.figrecipes package</a></li> 
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
 
   </body>

@@ -1,6 +1,7 @@
 import os
 
 import httplib2
+
 try:
     import ujson as json
 except ImportError:
@@ -17,18 +18,18 @@ class MPDSDataRetrievalTest(unittest.TestCase):
             "elements": "K-Ag",
             "classes": "iodide",
             "props": "heat capacity",
-            "lattices": "cubic"
+            "lattices": "cubic",
         }
 
         network = httplib2.Http()
 
-        response, content = network.request('http://developer.mpds.io/mpds.schema.json')
+        response, content = network.request("http://developer.mpds.io/mpds.schema.json")
         assert response.status == 200
 
         self.schema = json.loads(content)
         Draft4Validator.check_schema(self.schema)
 
-    @unittest.skipIf('MPDS_KEY' not in os.environ, "MPDS_KEY env var not set")
+    @unittest.skipIf("MPDS_KEY" not in os.environ, "MPDS_KEY env var not set")
     def test_valid_answer(self):
 
         client = MPDSDataRetrieval()
@@ -37,11 +38,7 @@ class MPDSDataRetrievalTest(unittest.TestCase):
         try:
             validate(answer, self.schema)
         except ValidationError as e:
-            self.fail(
-                "The item: \r\n\r\n %s \r\n\r\n has an issue: \r\n\r\n %s" % (
-                    e.instance, e.context
-                )
-            )
+            self.fail("The item: \r\n\r\n %s \r\n\r\n has an issue: \r\n\r\n %s" % (e.instance, e.context))
 
 
 if __name__ == "__main__":

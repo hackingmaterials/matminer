@@ -1,5 +1,6 @@
 import numpy as np
 
+
 @staticmethod
 def laplacian_kernel(arr0, arr1, SIGMA):
     """

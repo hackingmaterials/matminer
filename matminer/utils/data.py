@@ -1,4 +1,3 @@
-from __future__ import division, unicode_literals, print_function
 
 """
 Utility classes for retrieving elemental properties. Provides
@@ -17,7 +16,7 @@ from glob import glob
 from pymatgen.core import Element
 from pymatgen.core.periodic_table import _pt_data
 
-__author__ = 'Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn'
+__author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -94,9 +93,7 @@ class OxidationStateDependentData(AbstractData):
             (float) - Value of property
         """
 
-        return self.get_charge_dependent_property(specie.element,
-                                                  specie.oxi_state,
-                                                  property_name)
+        return self.get_charge_dependent_property(specie.element, specie.oxi_state, property_name)
 
 
 class CohesiveEnergyData(AbstractData):
@@ -110,11 +107,10 @@ class CohesiveEnergyData(AbstractData):
 
     def __init__(self):
         # Load elemental cohesive energy data from json file
-        with open(os.path.join(module_dir, 'data_files',
-                               'cohesive_energies.json'), 'r') as f:
+        with open(os.path.join(module_dir, "data_files", "cohesive_energies.json"), "r") as f:
             self.cohesive_energy_data = json.load(f)
 
-    def get_elemental_property(self, elem, property_name='cohesive energy'):
+    def get_elemental_property(self, elem, property_name="cohesive energy"):
         """
         Args:
             elem: (Element) Element of interest
@@ -140,10 +136,16 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
 
     def __init__(self):
         from matminer.utils.data_files.deml_elementdata import properties
+
         self.all_props = properties
-        self.available_props = list(self.all_props.keys()) + \
-                               ["formal_charge", "valence_s", "valence_p",
-                                "valence_d", "first_ioniz", "total_ioniz"]
+        self.available_props = list(self.all_props.keys()) + [
+            "formal_charge",
+            "valence_s",
+            "valence_p",
+            "valence_d",
+            "first_ioniz",
+            "total_ioniz",
+        ]
 
         # Compute the FERE correction energy
         fere_corr = {}
@@ -152,13 +154,16 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
         self.all_props["FERE correction"] = fere_corr
 
         # List out the available charge-dependent properties
-        self.charge_dependent_properties = ["xtal_field_split", "magn_moment",
-                                            "so_coupling", "sat_magn"]
+        self.charge_dependent_properties = [
+            "xtal_field_split",
+            "magn_moment",
+            "so_coupling",
+            "sat_magn",
+        ]
 
     def get_elemental_property(self, elem, property_name):
         if "valence" in property_name:
-            valence_dict = self.all_props["valence_e"][
-                self.all_props["col_num"][elem.symbol]]
+            valence_dict = self.all_props["valence_e"][self.all_props["col_num"][elem.symbol]]
             if property_name[-1] in ["s", "p", "d"]:
                 # Return one of the shells
                 return valence_dict[property_name[-1]]
@@ -175,12 +180,10 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
     def get_charge_dependent_property(self, element, charge, property_name):
         if property_name == "total_ioniz":
             if charge < 0:
-                raise ValueError(
-                    "total ionization energy only defined for charge > 0")
+                raise ValueError("total ionization energy only defined for charge > 0")
             return sum(self.all_props["ionization_en"][element.symbol][:charge])
         else:
-            return self.all_props[property_name].get(element.symbol, {}).get(
-                charge, np.nan)
+            return self.all_props[property_name].get(element.symbol, {}).get(charge, np.nan)
 
 
 class MagpieData(AbstractData, OxidationStatesMixin):
@@ -198,32 +201,26 @@ class MagpieData(AbstractData, OxidationStatesMixin):
     def __init__(self):
         self.all_elemental_props = dict()
         available_props = []
-        self.data_dir = os.path.join(module_dir, "data_files",
-                                     'magpie_elementdata')
+        self.data_dir = os.path.join(module_dir, "data_files", "magpie_elementdata")
 
         # Make a list of available properties
         for datafile in glob(os.path.join(self.data_dir, "*.table")):
-            available_props.append(
-                os.path.basename(datafile).replace('.table', ''))
+            available_props.append(os.path.basename(datafile).replace(".table", ""))
 
         # parse and store elemental properties
         for descriptor_name in available_props:
-            with open(os.path.join(self.data_dir,
-                                   '{}.table'.format(descriptor_name)),
-                      'r') as f:
+            with open(os.path.join(self.data_dir, "{}.table".format(descriptor_name)), "r") as f:
                 self.all_elemental_props[descriptor_name] = dict()
                 lines = f.readlines()
                 for atomic_no in range(1, len(_pt_data) + 1):  # max Z=103
                     try:
                         if descriptor_name in ["OxidationStates"]:
-                            prop_value = [float(i) for i in
-                                          lines[atomic_no - 1].split()]
+                            prop_value = [float(i) for i in lines[atomic_no - 1].split()]
                         else:
                             prop_value = float(lines[atomic_no - 1])
                     except (ValueError, IndexError):
                         prop_value = float("NaN")
-                    self.all_elemental_props[descriptor_name][
-                        Element.from_Z(atomic_no).symbol] = prop_value
+                    self.all_elemental_props[descriptor_name][Element.from_Z(atomic_no).symbol] = prop_value
 
     def get_elemental_property(self, elem, property_name):
         return self.all_elemental_props[property_name][elem.symbol]
@@ -263,9 +260,8 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
                 or all known oxidation states
         Returns:
             [int] list of oxidation states
-            """
-        return elem.common_oxidation_states if self.use_common_oxi_states \
-            else elem.oxidation_states
+        """
+        return elem.common_oxidation_states if self.use_common_oxi_states else elem.oxidation_states
 
     def get_charge_dependent_property(self, element, charge, property_name):
         return getattr(element, property_name)[charge]
@@ -288,21 +284,91 @@ class MixingEnthalpy:
     """
 
     def __init__(self):
-        mixing_dataset = pd.read_csv(os.path.join(module_dir, 'data_files',
-                                                  'MiedemaLiquidDeltaHf.tsv'),
-                                     delim_whitespace=True)
+        mixing_dataset = pd.read_csv(
+            os.path.join(module_dir, "data_files", "MiedemaLiquidDeltaHf.tsv"),
+            delim_whitespace=True,
+        )
         self.mixing_data = {}
         for a, b, dHf in mixing_dataset.itertuples(index=False):
             key = tuple(sorted((a, b)))
             self.mixing_data[key] = dHf
         valid_elements = [
-            "Dy", "Mn", "Y", "Nd", "Ag", "Cs", "Tm", "Pd", "Sn", "Rh", "Pr",
-            "Er", "K", "In", "Tb", "Rb", "H", "N", "Ni", "Hg", "Ca", "Mo", "Li",
-            "Th", "U", "At", "Ga", "La", "Ru", "Lu", "Eu", "Si", "B", "Zr",
-            "Ce", "Pm", "Ge", "Sm", "Ta", "Ti", "Po", "Sc", "Mg", "Sr", "P",
-            "C", "Ir", "Pa", "V", "Zn", "Sb", "Na", "W", "Re", "Tl", "Pt", "Gd",
-            "Cr", "Co", "Ba", "Os", "Hf", "Pb", "Cu", "Tc", "Al", "As", "Ho",
-            "Yb", "Au", "Be", "Nb", "Cd", "Fe", "Bi"]
+            "Dy",
+            "Mn",
+            "Y",
+            "Nd",
+            "Ag",
+            "Cs",
+            "Tm",
+            "Pd",
+            "Sn",
+            "Rh",
+            "Pr",
+            "Er",
+            "K",
+            "In",
+            "Tb",
+            "Rb",
+            "H",
+            "N",
+            "Ni",
+            "Hg",
+            "Ca",
+            "Mo",
+            "Li",
+            "Th",
+            "U",
+            "At",
+            "Ga",
+            "La",
+            "Ru",
+            "Lu",
+            "Eu",
+            "Si",
+            "B",
+            "Zr",
+            "Ce",
+            "Pm",
+            "Ge",
+            "Sm",
+            "Ta",
+            "Ti",
+            "Po",
+            "Sc",
+            "Mg",
+            "Sr",
+            "P",
+            "C",
+            "Ir",
+            "Pa",
+            "V",
+            "Zn",
+            "Sb",
+            "Na",
+            "W",
+            "Re",
+            "Tl",
+            "Pt",
+            "Gd",
+            "Cr",
+            "Co",
+            "Ba",
+            "Os",
+            "Hf",
+            "Pb",
+            "Cu",
+            "Tc",
+            "Al",
+            "As",
+            "Ho",
+            "Yb",
+            "Au",
+            "Be",
+            "Nb",
+            "Cd",
+            "Fe",
+            "Bi",
+        ]
         self.valid_element_list = [Element(e) for e in valid_elements]
 
     def get_mixing_enthalpy(self, elemA, elemB):
@@ -335,8 +401,7 @@ class MatscholarElementData(AbstractData):
     """
 
     def __init__(self):
-        dfile = os.path.join(module_dir,
-                             "data_files/matscholar_els.json")
+        dfile = os.path.join(module_dir, "data_files/matscholar_els.json")
         with open(dfile, "r") as fp:
             embeddings = json.load(fp)
         self.prop_names = ["embedding {}".format(i) for i in range(1, 201)]
@@ -373,8 +438,7 @@ class MEGNetElementData(AbstractData):
     """
 
     def __init__(self):
-        dfile = os.path.join(module_dir,
-                             "data_files/megnet_elemental_embedding.json")
+        dfile = os.path.join(module_dir, "data_files/megnet_elemental_embedding.json")
         self._dummy = "Dummy"
         with open(dfile, "r") as fp:
             embeddings = json.load(fp)
@@ -441,46 +505,54 @@ class IUCrBondValenceData:
         is usually provided for those less electronegative anions in a 9+
         oxidation state, indicating they can be used with all oxidation states.
         """
-        filepath = os.path.join(
-            module_dir,
-            "data_files",
-            "bvparm2020.cif")
-        self.params = pd.read_csv(filepath, sep='\s+',
-                                  header=None,
-                                  names=['Atom1', 'Atom1_valence',
-                                         'Atom2', 'Atom2_valence',
-                                         'Ro', 'B',
-                                         'ref_id', 'details'],
-                                  skiprows=172,
-                                  skipfooter=1,
-                                  index_col=False,
-                                  engine="python")
+        filepath = os.path.join(module_dir, "data_files", "bvparm2020.cif")
+        self.params = pd.read_csv(
+            filepath,
+            sep="\s+",
+            header=None,
+            names=[
+                "Atom1",
+                "Atom1_valence",
+                "Atom2",
+                "Atom2_valence",
+                "Ro",
+                "B",
+                "ref_id",
+                "details",
+            ],
+            skiprows=172,
+            skipfooter=1,
+            index_col=False,
+            engine="python",
+        )
         if interpolate_soft:
             self.params = self.interpolate_soft_anions()
 
     def interpolate_soft_anions(self):
         """Fill in missing parameters for oxidation states of soft anions."""
-        high_electroneg = '|'.join(['O', 'Cl', 'F'])
-        has_high = self.params['Atom2'].str.contains(high_electroneg)
+        high_electroneg = "|".join(["O", "Cl", "F"])
+        has_high = self.params["Atom2"].str.contains(high_electroneg)
         has_high[pd.isnull(has_high)] = False
-        subset = self.params.loc[(self.params['Atom1_valence'] == 9) & (~has_high)]
-        cation_subset = subset['Atom1'].unique()
+        subset = self.params.loc[(self.params["Atom1_valence"] == 9) & (~has_high)]
+        cation_subset = subset["Atom1"].unique()
         data = []
         for cation in cation_subset:
-            anions = subset.loc[subset['Atom1'] == cation]['Atom2'].unique()
+            anions = subset.loc[subset["Atom1"] == cation]["Atom2"].unique()
             for anion in anions:
-                an_val, Ro, b, ref_id = subset.loc[(subset['Atom1'] == cation)
-                        & (subset['Atom2']==anion)][['Atom2_valence', 'Ro', 'B', 'ref_id']].values[0]
+                an_val, Ro, b, ref_id = subset.loc[(subset["Atom1"] == cation) & (subset["Atom2"] == anion)][
+                    ["Atom2_valence", "Ro", "B", "ref_id"]
+                ].values[0]
                 for n in range(1, 7):
-                    entry = {'Atom1': cation,
-                             'Atom1_valence': n,
-                             'Atom2': anion,
-                             'Atom2_valence': an_val,
-                             'Ro': Ro,
-                             'B': b,
-                             'ref_id': ref_id,
-                             'details': 'Interpolated'
-                            }
+                    entry = {
+                        "Atom1": cation,
+                        "Atom1_valence": n,
+                        "Atom2": anion,
+                        "Atom2_valence": an_val,
+                        "Ro": Ro,
+                        "B": b,
+                        "ref_id": ref_id,
+                        "details": "Interpolated",
+                    }
                     data.append(entry)
         new_data = pd.DataFrame(data)
         new_params = self.params.append(new_data, sort=True, ignore_index=True)
@@ -498,10 +570,11 @@ class IUCrBondValenceData:
         """
 
         bv_data = self.params
-        bond_val_list = self.params.loc[(bv_data['Atom1'] == str(cation)) \
-                                & (bv_data['Atom1_valence'] == cat_val) \
-                                & (bv_data['Atom2'] == str(anion)) \
-                                & (bv_data['Atom2_valence'] == an_val)]
-        return bond_val_list.iloc[0] # If multiple values exist, take first one
-                                     # as recommended for reliability.
-
+        bond_val_list = self.params.loc[
+            (bv_data["Atom1"] == str(cation))
+            & (bv_data["Atom1_valence"] == cat_val)
+            & (bv_data["Atom2"] == str(anion))
+            & (bv_data["Atom2_valence"] == an_val)
+        ]
+        return bond_val_list.iloc[0]  # If multiple values exist, take first one
+        # as recommended for reliability.

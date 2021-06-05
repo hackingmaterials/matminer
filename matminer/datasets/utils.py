@@ -14,8 +14,7 @@ def _load_dataset_dict():
 
     Returns: (dict)
     """
-    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                           'dataset_metadata.json')) as infile:
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "dataset_metadata.json")) as infile:
         dataset_dict = json.load(infile)
 
     return dataset_dict
@@ -34,16 +33,14 @@ def _get_data_home(data_home=None):
     # If user doesn't specify a dataset directory: first check for env var,
     # then default to the "matminer/datasets/" package folder
     if data_home is None:
-        data_home = os.environ.get("MATMINER_DATA",
-                                   os.path.dirname(os.path.abspath(__file__)))
+        data_home = os.environ.get("MATMINER_DATA", os.path.dirname(os.path.abspath(__file__)))
 
     data_home = os.path.expanduser(data_home)
 
     return data_home
 
 
-def _validate_dataset(data_path, url=None, file_hash=None,
-                      download_if_missing=True):
+def _validate_dataset(data_path, url=None, file_hash=None, download_if_missing=True):
     """
     Checks to see if a dataset is on the local machine,
     if not tries to download if download_if_missing is set to true,
@@ -72,15 +69,13 @@ def _validate_dataset(data_path, url=None, file_hash=None,
         if not download_if_missing:
             raise IOError("Data not found and download_if_missing set to False")
         elif url is None:
-            raise ValueError("To download an external dataset, the url "
-                             "metadata must be provided")
+            raise ValueError("To download an external dataset, the url " "metadata must be provided")
 
         # Ensure storage location exists
         data_home = os.path.dirname(data_path)
 
         if not os.path.exists(data_home):
-            print("Making dataset storage folder at {}".format(data_home),
-                  flush=True)
+            print("Making dataset storage folder at {}".format(data_home), flush=True)
             os.makedirs(data_home)
 
         _fetch_external_dataset(url, data_path)
@@ -107,8 +102,10 @@ def _fetch_external_dataset(url, file_path):
     """
 
     # Fetch data from given url
-    print("Fetching {} from {} to {}".format(os.path.basename(file_path),
-                                             url, file_path), flush=True)
+    print(
+        "Fetching {} from {} to {}".format(os.path.basename(file_path), url, file_path),
+        flush=True,
+    )
 
     r = requests.get(url, stream=True)
 
