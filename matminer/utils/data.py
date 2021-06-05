@@ -13,8 +13,7 @@ import numpy as np
 import pandas as pd
 from glob import glob
 
-from pymatgen.core import Element
-from pymatgen.core.periodic_table import _pt_data
+from pymatgen.core.periodic_table import Element, _pt_data
 
 __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 
