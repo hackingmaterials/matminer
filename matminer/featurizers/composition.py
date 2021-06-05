@@ -617,8 +617,10 @@ class BandCenter(BaseFeaturizer):
         gmean = 1.0
         sumamt = sum(comp.get_el_amt_dict().values())
         for el, amt in comp.get_el_amt_dict().items():
-            gmean *= Element(el).X ** (amt / sumamt)
-        return [-gmean]
+            first_ioniz = DemlData().get_elemental_property(Element(el), "first_ioniz") / 1000
+            elec_aff = MagpieData().get_elemental_property(Element(el), "ElectronAffinity")
+            gmean *= (0.5 * (first_ioniz + elec_aff) / 96.48)**(amt/sumamt)
+        return [gmean]
 
     def feature_labels(self):
         return ["band center"]
