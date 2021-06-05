@@ -148,19 +148,19 @@ Examples
 
 Check out some examples of how to use matminer!
 
-0. Examples index. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/index.ipynb>`_)
+0. Examples index. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/main/matminer_examples/index.ipynb>`_)
 
-1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/machine_learning-nb/bulk_modulus.ipynb>`_)
+1. Use matminer and scikit-learn to create a model that predicts bulk modulus of materials. (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/main/matminer_examples/machine_learning-nb/bulk_modulus.ipynb>`_)
 
-2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/expt_vs_comp_bandgap.ipynb>`_)
+2. Compare and plot experimentally band gaps from Citrine with computed values from the Materials Project (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/main/matminer_examples/data_retrieval-nb/expt_vs_comp_bandgap.ipynb>`_)
 
-3. Compare and plot U-O bond lengths in various compounds from the MPDS (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/mpds.ipynb>`_)
+3. Compare and plot U-O bond lengths in various compounds from the MPDS (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/main/matminer_examples/data_retrieval-nb/mpds.ipynb>`_)
 
-4. Retrieve data from various online materials repositories (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/data_retrieval-nb/data_retrieval_basics.ipynb>`_)
+4. Retrieve data from various online materials repositories (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/main/matminer_examples/data_retrieval-nb/data_retrieval_basics.ipynb>`_)
 
-5. Basic Visualization using FigRecipes (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/figrecipes-nb/figrecipes_basics.ipynb>`_)
+5. Basic Visualization using FigRecipes (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/main/matminer_examples/figrecipes-nb/figrecipes_basics.ipynb>`_)
 
-6. Advanced Visualization (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/master/matminer_examples/figrecipes-nb/figrecipes_advanced.ipynb>`_)
+6. Advanced Visualization (`Jupyter Notebook <https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/main/matminer_examples/figrecipes-nb/figrecipes_advanced.ipynb>`_)
 
 7. Many more examples! See the `matminer_examples <https://github.com/hackingmaterials/matminer_examples>`_ repo for details.
 

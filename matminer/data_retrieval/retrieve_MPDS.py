@@ -1,3 +1,10 @@
+"""
+Warning:
+This retrieval class is to be deprecated in favor of the *mpds_client* library
+`pip install mpds_client` (https://pypi.org/project/mpds-client),
+which is fully compatible with matminer
+"""
+from __future__ import division
 
 import os
 import sys
@@ -67,19 +74,19 @@ class MPDSDataRetrieval(BaseDataRetrieval):
     jsonobj = client.get_data(
         {"formula":"SrTiO3", "sgs": 99, "props":"atomic properties"},
         fields={
-            'S':["entry", "cell_abc", "sg_n", "setting", "basis_noneq", "els_noneq"]
+            'S':["entry", "cell_abc", "sg_n", "basis_noneq", "els_noneq"]
         }
     )
 
     *or*
-    jsonobj = client.get_data({"formula":"SrTiO3"}, fields=[])
+    jsonobj = client.get_data({"formula":"SrTiO3"}, fields={})
 
     If you use this data retrieval class, please additionally cite:
     Blokhin, E., Villars, P., 2018. The PAULING FILE Project and Materials
     Platform for Data Science: From Big Data Toward Materials Genome,
-    in: Andreoni, W., Yip, S. (Eds.), Handbook of Materials Modeling :
+    in: Andreoni, W., Yip, S. (Eds.), Handbook of Materials Modeling:
     Methods: Theory and Modeling. Springer International Publishing, Cham,
-    pp. 1–26. https://doi.org/10.1007/978-3-319-42913-7_62-1
+    pp. 1-26. https://doi.org/10.1007/978-3-319-42913-7_62-2
 
     """
 
@@ -97,7 +104,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
 
     pagesize = 1000
     maxnpages = 100  # NB one hit may reach 50kB in RAM, consider pagesize*maxnpages*50kB free RAM
-    chillouttime = 3  # NB please, do not use values < 3, because the server may burn out
+    chillouttime = 2  # NB please, do not use values < 2
 
     def __init__(self, api_key=None, endpoint=None):
         """
@@ -293,45 +300,36 @@ class MPDSDataRetrieval(BaseDataRetrieval):
 
         Attention! These two flavors are not compatible, e.g.
         primitive vs. crystallographic cell is defaulted,
-        atoms wrapped or non-wrapped into the unit cell etc.
+        atoms wrapped or non-wrapped into the unit cell, etc.
 
         Note, that the crystal structures are not retrieved by default,
         so one needs to specify the fields while retrieval:
             - cell_abc
             - sg_n
-            - setting
             - basis_noneq
             - els_noneq
-        e.g. like this: {'S':['cell_abc', 'sg_n', 'setting', 'basis_noneq', 'els_noneq']}
+        e.g. like this: {'S':['cell_abc', 'sg_n', 'basis_noneq', 'els_noneq']}
         NB. occupancies are not considered.
 
         Args:
             datarow: (list) Required data to construct crystal structure:
-                [cell_abc, sg_n, setting, basis_noneq, els_noneq]
+                [cell_abc, sg_n, basis_noneq, els_noneq]
             flavor: (str) Either "pmg", or "ase"
 
         Returns:
-            - if flavor is pmg, returns Pymatgen Structure object
-            - if flavor is ase, returns ASE Atoms object
+            - if flavor is pmg, Pymatgen Structure object
+            - if flavor is ase, ASE Atoms object
         """
         if not datarow or not datarow[-1]:
             return None
-
-        cell_abc, sg_n, setting, basis_noneq, els_noneq = (
-            datarow[-5],
-            int(datarow[-4]),
-            datarow[-3],
-            datarow[-2],
-            datarow[-1],
-        )
+        cell_abc, sg_n, basis_noneq, els_noneq = \
+            datarow[-4], int(datarow[-3]), datarow[-2], datarow[-1]
 
         if flavor == "pmg":
             return Structure.from_spacegroup(sg_n, Lattice.from_parameters(*cell_abc), els_noneq, basis_noneq)
 
         elif flavor == "ase" and use_ase:
             atom_data = []
-            setting = 2 if setting == "2" else 1
-
             for num, i in enumerate(basis_noneq):
                 atom_data.append(Atom(els_noneq[num], tuple(i)))
 
@@ -340,7 +338,6 @@ class MPDSDataRetrieval(BaseDataRetrieval):
                 spacegroup=sg_n,
                 cellpar=cell_abc,
                 primitive_cell=True,
-                setting=setting,
                 onduplicates="replace",
             )
 
