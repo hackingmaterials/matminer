@@ -39,6 +39,16 @@ def store_dataframe_as_json(dataframe, filename, compression=None,
     write_type = "wb" if compression else "w"
 
     def is_encodable(obj):
+        """
+        Determine if an object likely is encodable by monty and, consequently,
+        will eat compute in encoding.
+
+        Args:
+            obj (object): An object which may or may not be converted by monty.
+
+        Returns:
+            (bool)
+        """
         try:
             m = obj.__module__
             if "pymatgen" in m or "matminer" in m:
@@ -58,17 +68,22 @@ def store_dataframe_as_json(dataframe, filename, compression=None,
         leave=True,
         ascii=True,
         disable=not pbar,
-        total= count
+        total=count
     )
 
     class MontyEncoderPbar(MontyEncoder):
+        """
+        A pbar-friendly version of MontyEncoder.
+        """
+
         def default(self, o) -> dict:
             if is_encodable(o):
                 pbar1.update(1)
             return super().default(o)
 
     with zopen(filename, write_type) as f:
-        data = json.dumps(dataframe.to_dict(orient=orient), cls=MontyEncoderPbar)
+        data = json.dumps(dataframe.to_dict(orient=orient),
+                          cls=MontyEncoderPbar)
         if compression:
             data = data.encode()
         f.write(data)
@@ -97,12 +112,34 @@ def load_dataframe_from_json(filename, pbar=True):
     )
 
     def is_monty_object(o):
+        """
+        Determine if an object can be decoded into json
+        by monty.
+
+        Args:
+            o (object): An object in dict-form.
+
+        Returns:
+            (bool)
+
+        """
         if isinstance(o, dict) and "@class" in o:
             return True
         else:
             return False
 
     def pbar_hook(obj):
+        """
+        A hook for a pbar reading the raw data from json, not
+        using monty decoding to decode the object.
+
+        Args:
+            obj (object): A dict-like
+
+        Returns:
+            obj (object)
+
+        """
         if is_monty_object(obj):
             pbar1.update(1)
         return obj
@@ -117,8 +154,13 @@ def load_dataframe_from_json(filename, pbar=True):
     )
 
     class MontyDecoderPbar(MontyDecoder):
+        """
+        A pbar-friendly version of MontyDecoder.
+        """
+
         def process_decoded(self, d):
-            if isinstance(d, dict) and "data" in d and "index" in d and "columns" in d:
+            if isinstance(d, dict) \
+                    and "data" in d and "index" in d and "columns" in d:
                 # total number of objects to decode
                 # is the number of @class mentions
                 pbar2.total = str(d).count("@class")
