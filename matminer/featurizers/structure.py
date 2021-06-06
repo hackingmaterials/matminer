@@ -36,6 +36,7 @@ from matminer.featurizers.site import (
     CrystalNNFingerprint,
     AverageBondAngle,
     AverageBondLength,
+    SOAP
 )
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.featurizers.utils.cgcnn import (
@@ -43,6 +44,7 @@ from matminer.featurizers.utils.cgcnn import (
     CrystalGraphConvNetWrapper,
     CIFDataWrapper,
 )
+from matminer.featurizers.utils.oxidation import has_oxidation_states
 from matminer.utils.caching import get_all_nearest_neighbors
 from matminer.utils.data import IUCrBondValenceData
 
@@ -140,6 +142,7 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         - Spacegroup number
         - Crystal system (1 of 7)
         - Centrosymmetry (has inversion symmetry)
+        - Number of symmetry ops, obtained from the spacegroup
     """
 
     crystal_idx = {
@@ -149,20 +152,20 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         "tetragonal": 4,
         "trigonal": 3,
         "hexagonal": 2,
-        "cubic": 1,
+        "cubic": 1
     }
 
+    all_features = [
+        "spacegroup_num",
+        "crystal_system",
+        "crystal_system_int",
+        "is_centrosymmetric",
+        "n_symmetry_ops"
+    ]
+
     def __init__(self, desired_features=None):
-        self.features = (
-            [
-                "spacegroup_num",
-                "crystal_system",
-                "crystal_system_int",
-                "is_centrosymmetric",
-            ]
-            if not desired_features
-            else desired_features
-        )
+        self.features = \
+            desired_features if desired_features else self.all_features
 
     def featurize(self, s):
         sga = SpacegroupAnalyzer(s)
@@ -180,22 +183,19 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         if "is_centrosymmetric" in self.features:
             output.append(sga.is_laue())
 
+        if "n_symmetry_ops" in self.features:
+            output.append(len(sga.get_symmetry_operations()))
+
         return output
 
     def feature_labels(self):
-        all_features = [
-            "spacegroup_num",
-            "crystal_system",
-            "crystal_system_int",
-            "is_centrosymmetric",
-        ]  # enforce order
-        return [x for x in all_features if x in self.features]
+        return [x for x in self.all_features if x in self.features]
 
     def citations(self):
         return []
 
     def implementors(self):
-        return ["Anubhav Jain"]
+        return ["Anubhav Jain", "Alex Dunn"]
 
 
 class Dimensionality(BaseFeaturizer):
