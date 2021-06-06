@@ -24,6 +24,7 @@ jobs:
       PMG_MAPI_KEY: ${{ secrets.PMG_MAPI_KEY }}
       MPDS_KEY: ${{ secrets.MPDS_KEY }}
       CITRINATION_API_KEY: ${{ secrets.CITRINATION_API_KEY }}
+      RUNNING_ON_GHACTIONS: "True"
       MATMINER_DATASET_FULL_TEST: True
       MPLBACKEND: "Agg"
 

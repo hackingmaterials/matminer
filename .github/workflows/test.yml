@@ -20,6 +20,7 @@ jobs:
       MPDS_KEY: ${{ secrets.MPDS_KEY }}
       CITRINATION_API_KEY: ${{ secrets.CITRINATION_API_KEY }}
       MATMINER_DATASET_FULL_TEST: False
+      RUNNING_ON_GHACTIONS: "True"
       MPLBACKEND: "Agg"
 
     steps:
