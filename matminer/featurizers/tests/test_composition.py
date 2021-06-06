@@ -237,8 +237,10 @@ class CompositionFeaturesTest(PymatgenTest):
 
     def test_band_center(self):
         df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_band_center["band center"][0], -2.672486385)
-        self.assertAlmostEqual(BandCenter().featurize(Composition("Ag33O500V200"))[0], -2.7337150991)
+
+        print(df_band_center)
+        self.assertAlmostEqual(df_band_center["band center"][0], 5.870418816395603)
+        self.assertAlmostEqual(BandCenter().featurize(Composition("Ag33O500V200"))[0], 6.033480099340539)
 
     def test_oxidation_states(self):
         featurizer = OxidationStates.from_preset("deml")
