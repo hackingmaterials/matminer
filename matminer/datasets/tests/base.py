@@ -12,6 +12,9 @@ do_complete_test = _dataset_test_env_var.upper() == "TRUE"
 class DatasetTest(unittest.TestCase):
     def setUp(self):
         self.dataset_names = [
+            "ricci_boltztrap_mp_tabular",
+            "expt_formation_enthalpy_kingsbury",
+            "expt_gap_kingsbury",
             "flla",
             "elastic_tensor_2015",
             "piezoelectric_tensor",
@@ -51,6 +54,7 @@ class DatasetTest(unittest.TestCase):
             "matbench_expt_is_metal",
             "matbench_phonons",
             "matbench_steels",
+
         ]
         self.dataset_attributes = [
             "file_type",
