@@ -589,7 +589,7 @@ class MatminerDatasetsTest(DataSetsTest):
         )
 
     def test_ricci_boltztrap_mp_tabular(self):
-        object_headers = ["structure", "task", "functional", "pretty_formula"]
+        object_headers = ["structure", "task", "functional", "pretty_formula", "is_metal"]
 
         numeric_headers = [
             "ΔE [eV]",
@@ -636,9 +636,7 @@ class MatminerDatasetsTest(DataSetsTest):
             "mₑᶜ.n.ε₃ [mₑ]",
         ]
 
-        bool_headers = ["is_metal"]
-
-        self.universal_dataset_check("ricci_boltztrap_mp_tabular", object_headers, numeric_headers, bool_headers)
+        self.universal_dataset_check("ricci_boltztrap_mp_tabular", object_headers, numeric_headers)
 
 
 class MatbenchDatasetsTest(DataSetsTest):
