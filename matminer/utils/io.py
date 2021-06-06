@@ -57,7 +57,8 @@ def store_dataframe_as_json(dataframe, filename, compression=None,
         position=0,
         leave=True,
         ascii=True,
-        disable=not pbar
+        disable=not pbar,
+        total= count
     )
 
     class MontyEncoderPbar(MontyEncoder):
