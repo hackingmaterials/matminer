@@ -2677,7 +2677,7 @@ class SOAP(BaseFeaturizer):
             rbf=self.rbf,
             periodic=self.periodic,
             crossover=self.crossover,
-            average=False,
+            average="off",
             sparse=False,
         )
 
@@ -2687,20 +2687,11 @@ class SOAP(BaseFeaturizer):
     def featurize(self, struct, idx):
         self._check_fitted()
         s_ase = self.adaptor.get_atoms(struct)
-        return self.soap.create(s_ase, positions=[idx]).tolist()[0]
+        return self.soap.create(s_ase, positions=[idx], n_jobs=self.n_jobs).tolist()[0]
 
     def feature_labels(self):
         self._check_fitted()
-        labels = []
-        for zi in self.elements_sorted:
-            for zj in self.elements_sorted:
-                for l in range(self.lmax + 1):
-                    for ni in range(self.nmax):
-                        for nj in range(self.nmax):
-                            if nj >= ni and zj >= zi:
-                                labels.append("Z={},Z'={},l={},n={},n'={}".format(zi, zj, l, ni, nj))
-
-        return labels
+        return [f"SOAP_{i}" for i in range(self.length)]
 
     def citations(self):
         return [

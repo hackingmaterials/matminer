@@ -934,12 +934,7 @@ class FingerprintTests(PymatgenTest):
 
     def test_SOAP(self):
         def n_soap_feat(soaper):
-            n_elems = len(soaper.elements_sorted)
-            lmax = soap.lmax
-            nmax = soap.nmax
-            n_blocks = n_elems * (n_elems + 1) / 2
-            n_element_features = int((lmax + 1) * nmax * (nmax + 1) / 2)
-            return int(n_element_features * n_blocks)
+            return soaper.soap.get_number_of_features()
 
         # Test individual samples
         soap = SOAP(rcut=3.0, nmax=4, lmax=2, sigma=1, periodic=True)
@@ -958,7 +953,7 @@ class FingerprintTests(PymatgenTest):
         self.assertTupleEqual(df.shape, (3, n_soap_feat(soap) + 2))
 
         # Check that only the first has carbon features
-        carbon_label = df["Z=6,Z'=6,l=0,n=0,n'=0"]
+        carbon_label = df["SOAP_29"]
         self.assertTrue(carbon_label[0] != 0)
         self.assertTrue(carbon_label[1] == 0)
         self.assertTrue(carbon_label[2] == 0)
