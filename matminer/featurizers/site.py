@@ -2639,6 +2639,22 @@ class SOAP(BaseFeaturizer):
         self.soap = None
         self.n_elements = None
 
+    @classmethod
+    def from_preset(cls, preset):
+        """
+        Create a SOAP featurizer object from sensible or published presets.
+        Args:
+            preset (str): Choose from:
+                "formation energy": Preset used for formation energy prediction
+                    in the original Dscribe paper.
+        Returns:
+        """
+        valid_presets = ["formation_energy"]
+        if preset == "formation_energy":
+            return cls(6, 8, 8, 0.4, True, "gto", True)
+        else:
+            raise ValueError(f"'{preset}' is not a valid preset. Choose from {valid_presets}")
+
     def _check_fitted(self):
         if not self.soap:
             raise NotFittedError("Please fit SOAP before featurizing.")

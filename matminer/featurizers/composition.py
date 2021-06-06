@@ -15,6 +15,7 @@ from sklearn.neighbors import NearestNeighbors
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
+from matminer.featurizers.oxidation import has_oxidation_states
 from matminer.utils.data import (
     DemlData,
     MagpieData,
@@ -31,23 +32,6 @@ __author__ = (
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(module_dir, "..", "utils", "data_files")
-
-
-# Utility operations
-def has_oxidation_states(comp):
-    """Check if a composition object has oxidation states for each element
-
-    TODO: Does this make sense to add to pymatgen? -wardlt
-
-    Args:
-        comp (Composition): Composition to check
-    Returns:
-        (boolean) Whether this composition object contains oxidation states
-    """
-    for el in comp.elements:
-        if not hasattr(el, "oxi_state") or el.oxi_state is None:
-            return False
-    return True
 
 
 def is_ionic(comp):
