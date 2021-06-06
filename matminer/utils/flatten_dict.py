@@ -1,7 +1,6 @@
 # coding: utf-8
 
 
-
 def flatten_dict(nested_dict, lead_key=None, unwind_arrays=True):
     """
     Helper function to flatten nested dictionary, recursively

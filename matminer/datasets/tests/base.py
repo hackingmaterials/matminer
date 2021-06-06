@@ -54,7 +54,6 @@ class DatasetTest(unittest.TestCase):
             "matbench_expt_is_metal",
             "matbench_phonons",
             "matbench_steels",
-
         ]
         self.dataset_attributes = [
             "file_type",
