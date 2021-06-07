@@ -1,3 +1,22 @@
+"""
+Structure featurizers based on aggregating site features.
+"""
+
+import numpy as np
+from pymatgen.analysis.local_env import VoronoiNN
+
+from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.site import (
+    OPSiteFingerprint,
+    CoordinationNumber,
+    LocalPropertyDifference,
+    CrystalNNFingerprint,
+    AverageBondAngle,
+    AverageBondLength,
+    SOAP
+)
+from matminer.featurizers.utils.stats import PropertyStats
+
 class SiteStatsFingerprint(BaseFeaturizer):
     """
     Computes statistics of properties across all sites in a structure.
@@ -130,6 +149,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
             "Alireza Faghaninia",
             "Anubhav Jain",
             "Logan Ward",
+            "Alex Dunn"
         ]
 
     @staticmethod
