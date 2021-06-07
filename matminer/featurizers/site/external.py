@@ -1,18 +1,12 @@
-import copy
-from functools import lru_cache
-from monty.dev import requires
-from pymatgen.io.ase import AseAtomsAdaptor
-from sklearn.exceptions import NotFittedError
-
-from matminer.featurizers.utils.grdf import Gaussian, Histogram
-from matminer.utils.caching import get_nearest_neighbors
-from matminer.utils.data import MagpieData
-
 """
 Site featurizers requiring external libraries for core functionality.
 """
-from matminer.featurizers.base import BaseFeaturizer
+from monty.dev import requires
+from pymatgen.io.ase import AseAtomsAdaptor
+from sklearn.exceptions import NotFittedError
 from pymatgen.core import Structure
+
+from matminer.featurizers.base import BaseFeaturizer
 
 # SOAPFeaturizer
 try:
