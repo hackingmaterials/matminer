@@ -1,3 +1,5 @@
+import unittest
+
 import numpy as np
 from pymatgen.analysis.local_env import VoronoiNN, CrystalNN
 
@@ -82,6 +84,4 @@ class BondingTest(SiteFeaturizerTest):
 
 
 if __name__ == "__main__":
-    import unittest
-
     unittest.main()
