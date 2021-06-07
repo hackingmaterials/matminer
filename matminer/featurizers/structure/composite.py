@@ -1,3 +1,19 @@
+"""
+Structure featurizers producing more than one kind of structue feature data.
+"""
+import os
+import math
+import json
+import itertools
+from operator import itemgetter
+
+import numpy as np
+from pymatgen.core import Structure, Lattice
+
+from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.structure.order import DensityFeatures
+
+
 class JarvisCFID(BaseFeaturizer):
     """
     Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML.
@@ -45,7 +61,7 @@ class JarvisCFID(BaseFeaturizer):
         self.use_nn = use_nn
 
         basedir = os.path.dirname(os.path.realpath(__file__))
-        jdir = os.path.join(basedir, "../utils/data_files/jarvis/")
+        jdir = os.path.join(basedir, "../../utils/data_files/jarvis/")
         chgfile = os.path.join(jdir, "element_charges.json")
         chemfile = os.path.join(jdir, "element_chem.json")
 
