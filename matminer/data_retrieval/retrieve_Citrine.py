@@ -280,3 +280,20 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                 break
             time.sleep(refresh_time)
         return json_data
+
+    def citations(self):
+        return [
+            "@article{OMara2016,"
+            "doi = {10.1007/s11837-016-1984-0},"
+            "url = {https://doi.org/10.1007/s11837-016-1984-0},"
+            "year = {2016},"
+            "month = jun,"
+            "publisher = {Springer Science and Business Media {LLC}},"
+            "volume = {68},"
+            "number = {8},"
+            "pages = {2031--2034},"
+            "author = {Jordan O'Mara and Bryce Meredig and Kyle Michel},"
+            "title = {Materials Data Infrastructure: A Case Study of the Citrination Platform to Examine Data Import,  Storage,  and Access},"
+            "journal = {{JOM}}"
+            "}"
+        ]
