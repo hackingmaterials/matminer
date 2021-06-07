@@ -30,6 +30,7 @@ from matminer.featurizers.composition import (
     is_ionic,
     Meredig,
     CohesiveEnergyMP,
+    WenAlloys
 )
 from matminer.featurizers.conversions import CompositionToOxidComposition
 
@@ -448,6 +449,78 @@ class CompositionFeaturesTest(PymatgenTest):
         # Make sure it works with composition that do not match any efficient clusters
         feat = f.compute_nearest_cluster_distance(Composition("Al"))
         self.assertArrayAlmostEqual([1] * 3, feat)
+
+
+    def test_WenAlloys(self):
+
+        wa = WenAlloys()
+
+        c1 = "Fe0.62C0.000953Mn0.000521Si0.00102Cr0.00011Ni0.192" \
+             "Mo0.0176V0.000112Nb6.16e-05Co0.146Al0.00318Ti0.0185"
+
+        c2 = "Fe0.623C0.00854Mn0.000104Si0.000203Cr0.147Ni9.71e-05" \
+             "Mo0.0179V0.00515N0.00163Nb6.14e-05Co0.188W0.00729Al0.000845"
+
+        comp = Composition(c1)
+        f = wa.featurize(comp)
+
+        d = dict(zip(wa.feature_labels(), f))
+        correct = {
+            'APE mean': 0.018915555593392162,
+            'Atomic Fraction': 'Fe0.6199642900568927C0.0009529451103616431Mn0.0005209699921284533Si0.0010199412513839203Cr0.00010999366436493258Ni0.1919889414369732Mo0.017598986298389213V0.0001119935491715677Nb6.159645204436224e-05Co0.14599159088436503Al0.003179816842549869Ti0.018498934461375023',
+            'Atomic weight mean': 57.24008321450784,
+            'Configuration entropy': -0.008958911485121818,
+            'Electronegativity delta': 0.042327487126447516,
+            'Electronegativity local mismatch': 0.08262466022141576,
+            'Interant d electrons': 45.0,
+            'Interant electrons': 53.0,
+            'Interant f electrons': 0,
+            'Interant p electrons': 5.0,
+            'Interant s electrons': 3.0,
+            'Lambda entropy': -12.084431980055149,
+            'Mean cohesive energy': 4.382084353941212,
+            'Mixing enthalpy': 3.6650695863166347,
+            'Radii gamma': 1.4183511064895242,
+            'Radii local mismatch': 0.7953797741513383,
+            'Shear modulus delta': 0.1794147729878139,
+            'Shear modulus local mismatch': 3.192861083726266,
+            'Shear modulus mean': 79.48600137832061,
+            'Shear modulus strength model': -0.009636621848440554,
+            'Total weight': 57.243028243301005,
+            'VEC mean': 8.447250438374748,
+            'Weight Fraction': 'Fe0.6048579375087819 C0.00019995792415715736 '
+                            'Mn0.0005000210911858884 Si0.0005004488909678273 '
+                            'Cr9.991733798026916e-05 Ni0.19686472127404955 '
+                            'Mo0.029497810507563525 V9.967061797901463e-05 '
+                            'Nb9.997781710071831e-05 Co0.15031081922202344 '
+                            'Al0.0014988950686416751 Ti0.015469822739568852 ',
+            'Yang delta': 0.027227922269552986,
+            'Yang omega': 4.4226005659658725
+        }
+
+        for flabel, fvalue in d.items():
+            correct_value = correct[flabel]
+            if isinstance(correct_value, str):
+                self.assertEqual(correct_value, fvalue)
+            else:
+                self.assertAlmostEqual(correct_value, fvalue, places=8)
+
+        self.assertEqual(len(wa.feature_labels()), 25)
+
+        df = pd.DataFrame(
+            {
+                "composition": [
+                    comp,
+                    Composition(c2)
+                ]
+            }
+        )
+
+        df = wa.featurize_dataframe(df, "composition")
+        self.assertTupleEqual(df.shape, (2, 26))
+        self.assertAlmostEqual(df["Configuration entropy"].iloc[0], -0.008959, places=5)
+        self.assertAlmostEqual(df["Configuration entropy"].iloc[1], -0.009039, places=5)
+
 
 
 if __name__ == "__main__":

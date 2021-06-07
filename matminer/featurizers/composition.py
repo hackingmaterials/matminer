@@ -2151,8 +2151,10 @@ class AtomicPackingEfficiency(BaseFeaturizer):
 
 class WenAlloys(BaseFeaturizer):
     """
+    Calculate features for alloy properties.
+
     Copyright 2020 Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
-    Class to calculate features for alloy properties.
+
     Features:
         Yang omega
         Yang delta
@@ -2170,7 +2172,8 @@ class WenAlloys(BaseFeaturizer):
         Shear modulus delta
         Shear modulus local mismatch
         Shear modulus strength model
-        Copyright 2020 Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+
+    Copyright 2020 Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
     """
 
     def __init__(self):
@@ -2179,32 +2182,40 @@ class WenAlloys(BaseFeaturizer):
         self.data_source_magpie = MagpieData().all_elemental_props
         self.data_source_cohesive_energy = CohesiveEnergyData()
         self.data_source_enthalpy = MixingEnthalpy()
-        self.element_feature_labels = []
-        self.element_feature_labels.append("Weight Fraction")
-        self.element_feature_labels.append("Atomic Fraction")
-        self.element_feature_labels.append("Yang delta")
-        self.element_feature_labels.append("Yang omega")
-        self.element_feature_labels.append("APE mean")
-        self.element_feature_labels.append("Radii local mismatch")
-        self.element_feature_labels.append("Radii gamma")
-        self.element_feature_labels.append("Configuration entropy")
-        self.element_feature_labels.append("Atomic weight mean")
-        self.element_feature_labels.append("Total weight")
-        self.element_feature_labels.append("Lambda entropy")
-        self.element_feature_labels.append("Electronegtivity delta")
-        self.element_feature_labels.append("Electronegativity local mismatch")
-        self.element_feature_labels.append("VEC mean")
-        self.element_feature_labels.append("Mixing enthalpy")
-        self.element_feature_labels.append("Mean cohesive energy")
-        self.element_feature_labels.append("Interant electrons")
-        self.element_feature_labels.append("Interant s electrons")
-        self.element_feature_labels.append("Interant p electrons")
-        self.element_feature_labels.append("Interant d electrons")
-        self.element_feature_labels.append("Interant f electrons")
-        self.element_feature_labels.append("Shear modulus mean")
-        self.element_feature_labels.append("Shear modulus delta")
-        self.element_feature_labels.append("Shear modulus local mismatch")
-        self.element_feature_labels.append("Shear modulus strength model")
+        self.element_feature_labels = [
+            "Weight Fraction",
+            "Atomic Fraction",
+            "Yang delta",
+            "Yang omega",
+            "APE mean",
+            "Radii local mismatch",
+            "Radii gamma",
+            "Configuration entropy",
+            "Atomic weight mean",
+            "Total weight",
+            "Lambda entropy",
+            "Electronegativity delta",
+            "Electronegativity local mismatch",
+            "VEC mean",
+            "Mixing enthalpy",
+            "Mean cohesive energy",
+            "Interant electrons",
+            "Interant s electrons",
+            "Interant p electrons",
+            "Interant d electrons",
+            "Interant f electrons",
+            "Shear modulus mean",
+            "Shear modulus delta",
+            "Shear modulus local mismatch",
+            "Shear modulus strength model"
+        ]
+
+        self.electronegativity = None
+        self.interant_electrons = None
+        self.s_unfilled = None
+        self.f_unfilled = None
+        self.p_unfilled = None
+        self.d_unfilled = None
 
     def featurize(self, comp):
         """
