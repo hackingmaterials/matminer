@@ -1,3 +1,17 @@
+import itertools
+from functools import lru_cache
+
+import numpy as np
+from pymatgen.core.composition import Composition
+from sklearn.neighbors import NearestNeighbors
+
+from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.utils.stats import PropertyStats
+from matminer.utils.data import (
+    MagpieData,
+)
+from matminer.featurizers.composition.element import ElementFraction
+
 
 class AtomicPackingEfficiency(BaseFeaturizer):
     """
