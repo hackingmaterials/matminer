@@ -1,3 +1,14 @@
+import collections
+from warnings import warn
+
+from pymatgen.core.composition import Composition
+from pymatgen.core.molecular_orbitals import MolecularOrbitals
+
+from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.utils.stats import PropertyStats
+from matminer.utils.data import (
+    MagpieData,
+)
 
 
 class AtomicOrbitals(BaseFeaturizer):
@@ -38,7 +49,8 @@ class AtomicOrbitals(BaseFeaturizer):
         integer_comp, factor = comp.get_integer_formula_and_factor()
 
         # warning message if composition is dilute and truncated
-        if not (len(Composition(comp).elements) == len(Composition(integer_comp).elements)):
+        if not (len(Composition(comp).elements) ==
+                len(Composition(integer_comp).elements)):
             warn("AtomicOrbitals: {} truncated to {}".format(comp, integer_comp))
 
         homo_lumo = MolecularOrbitals(integer_comp).band_edges

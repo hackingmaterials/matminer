@@ -1,3 +1,16 @@
+import itertools
+
+import numpy as np
+from pymatgen.core.composition import Composition
+
+from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.utils.stats import PropertyStats
+from matminer.featurizers.utils.oxidation import has_oxidation_states
+from matminer.utils.data import (
+    DemlData,
+    PymatgenData,
+)
+from matminer.featurizers.composition.element import ElementProperty
 
 
 class CationProperty(ElementProperty):
@@ -290,7 +303,6 @@ class ElectronegativityDiff(BaseFeaturizer):
     the mean electronegativity difference over all the anions.
 
     Parameters:
-        data_source (data class): source from which to retrieve element data
         stats: Property statistics to compute
 
     Generates average electronegativity difference between cations and anions
@@ -359,3 +371,27 @@ class ElectronegativityDiff(BaseFeaturizer):
 
     def implementors(self):
         return ["Jiming Chen", "Logan Ward"]
+
+
+def is_ionic(comp):
+    """Determines whether a compound is an ionic compound.
+
+    Looks at the oxidation states of each site and checks if both anions and cations exist
+
+    Args:
+        comp (Composition): Composition to check
+    Returns:
+        (bool) Whether the composition describes an ionic compound
+    """
+
+    has_cations = False
+    has_anions = False
+
+    for el in comp.elements:
+        if el.oxi_state < 0:
+            has_anions = True
+        if el.oxi_state > 0:
+            has_cations = True
+        if has_anions and has_cations:
+            return True
+    return False
