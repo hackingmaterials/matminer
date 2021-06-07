@@ -90,7 +90,7 @@ class Miedema(BaseFeaturizer):
         if self.data_source == "Miedema":
             self.df_dataset = pd.read_csv(os.path.join(data_dir, "Miedema.csv"), index_col="element")
         else:
-            raise NotImplementedError("data_source {} not implemented yet".format(self, data_source))
+            raise NotImplementedError("data_source {} not implemented yet".format(data_source))
 
         self.element_list = [Element(estr) for estr in self.df_dataset.index]
 

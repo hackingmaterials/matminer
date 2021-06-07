@@ -4,6 +4,7 @@ import warnings
 from abc import ABC, abstractmethod
 from functools import partial
 from multiprocessing import Pool, cpu_count
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -154,7 +155,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
     def chunksize(self):
         return self._chunksize if hasattr(self, "_chunksize") else None
 
-    def precheck_dataframe(self, df, col_id, return_frac=True, inplace=False) -> [float, pd.DataFrame]:
+    def precheck_dataframe(self, df, col_id, return_frac=True, inplace=False) -> Union[float, pd.DataFrame]:
         """
         Precheck an entire dataframe. Subclasses wanting to use precheck
         functionality should not override this method, they should override
