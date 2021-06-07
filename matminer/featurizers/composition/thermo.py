@@ -1,3 +1,9 @@
+from pymatgen.ext.matproj import MPRester
+
+from matminer.featurizers.base import BaseFeaturizer
+from matminer.utils.data import (
+    CohesiveEnergyData,
+)
 
 
 class CohesiveEnergy(BaseFeaturizer):
@@ -20,9 +26,8 @@ class CohesiveEnergy(BaseFeaturizer):
 
     def featurize(self, comp, formation_energy_per_atom=None):
         """
-
         Args:
-            comp: (str) compound composition, eg: "NaCl"
+            comp: (pymatgen.Composition): A composition
             formation_energy_per_atom: (float) the formation energy per atom of
                 your compound. If not set, will look up the most stable
                 formation energy from the Materials Project database.
