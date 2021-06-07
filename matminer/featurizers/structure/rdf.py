@@ -1,3 +1,18 @@
+import math
+import itertools
+from operator import itemgetter
+from copy import copy
+
+import numpy as np
+from pymatgen.core import Structure
+from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
+from pymatgen.core.periodic_table import Specie, Element
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+
+from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.utils.oxidation import has_oxidation_states
+
+
 class RadialDistributionFunction(BaseFeaturizer):
     """
     Calculate the radial distribution function (RDF) of a crystal structure.
@@ -306,11 +321,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         Args:
             s: input Structure object.
 
-        Returns: (dict) a copy of the electronic radial distribution
-                functions (ReDF) as a dictionary. The distance list
-                ("x"-axis values of ReDF) can be accessed via key
-                'distances'; the ReDF itself is accessible via key
-                'redf'.
+        Returns: (list) the ReDF
 
         """
 
@@ -329,10 +340,6 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
 
         distribution = np.zeros(self.nbins, dtype=np.float)
         nbins = int(self.cutoff / self.dr) + 1
-        redf_dict = {
-            "distances": np.array([(i + 0.5) * self.dr for i in range(nbins)]),
-            "distribution": np.zeros(nbins, dtype=np.float),
-        }
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
@@ -340,7 +347,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
             for nnsite, dist, *_ in neighbors:
                 neigh_charge = float(nnsite.specie.oxi_state)
                 bin_index = int(dist / self.dr)
-                distribution[bin_index]  += (this_charge * neigh_charge) / (struct.num_sites * dist)
+                distribution[bin_index] += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
         return distribution
 
@@ -360,8 +367,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         ]
 
     def implementors(self):
-        return ["Nils E. R. Zimmermann"]
-
+        return ["Nils E. R. Zimmermann", "Alex Dunn"]
 
 
 def get_rdf_bin_labels(bin_distances, cutoff):
