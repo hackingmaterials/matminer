@@ -13,7 +13,7 @@ from matminer.utils.data import (
     DemlData,
     PymatgenData,
 )
-from matminer.featurizers.composition.element import ElementProperty
+from matminer.featurizers.composition.composite import ElementProperty
 
 
 class CationProperty(ElementProperty):
