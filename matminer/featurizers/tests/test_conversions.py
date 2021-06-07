@@ -3,7 +3,6 @@ import math
 import unittest
 
 from monty.json import MontyEncoder
-from unittest import TestCase
 from pandas import DataFrame, MultiIndex
 
 from pymatgen.core.structure import IStructure
@@ -20,7 +19,14 @@ from matminer.featurizers.conversions import (
     CompositionToOxidComposition,
     CompositionToStructureFromMP,
     PymatgenFunctionApplicator,
+    ASEAtomstoStructure
 )
+
+try:
+    from ase import Atoms
+    ase_loaded = True
+except ImportError:
+    ase_loaded = False
 
 
 class TestConversions(PymatgenTest):
@@ -333,3 +339,17 @@ class TestConversions(PymatgenTest):
 
         df = pfa2.featurize_dataframe(df, "structure")
         self.assertArrayEqual(df["anonymous formula"].tolist(), ["A0.5B1.5", "AB"])
+
+    @unittest.skipIf(not ase_loaded, "ASE must be installed for test_ase_conversion to run!")
+    def test_ase_conversion(self):
+        a2s = ASEAtomstoStructure()
+        d = 2.9
+        L = 10.0
+        wire = Atoms('Au',
+                     positions=[[0, L / 2, L / 2]],
+                     cell=[d, L, L],
+                     pbc=[1, 0, 0])
+        df = DataFrame({"atoms": [wire]})
+
+        df = a2s.featurize_dataframe(df, "atoms")
+        print(df)

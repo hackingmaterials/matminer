@@ -14,9 +14,7 @@ from monty.json import MontyDecoder
 from pymatgen.ext.matproj import MPRester
 from pymatgen.core.structure import IStructure
 from pymatgen.core.composition import Composition
-from pymatgen.core.structure import Structure
-from pymatgen.electronic_structure.bandstructure import BandStructure
-from pymatgen.electronic_structure.dos import DOS
+from pymatgen.io.ase import AseAtomsAdaptor
 
 from matminer.featurizers.base import BaseFeaturizer
 
@@ -651,6 +649,28 @@ class PymatgenFunctionApplicator(ConversionFeaturizer):
 
     def featurize(self, obj):
         return self.func(obj, *self.func_args, **self.func_kwargs)
+
+    def implementors(self):
+        return ["Alex Dunn"]
+
+
+class ASEAtomstoStructure(ConversionFeaturizer):
+    """
+    Convert dataframes of ase structures to pymatgen structures for further use with
+    matminer.
+
+    Args:
+        target_col_id (str): Column to place PMG structures.
+        overwrite_data (bool): If True, will overwrite target_col_id even if there is
+            data currently in that column
+    """
+
+    def __init__(self, target_col_id="PMG Structure from ASE Atoms", overwrite_data=False):
+        super().__init__(target_col_id, overwrite_data)
+        self.aaa = AseAtomsAdaptor()
+
+    def featurize(self, ase_atoms):
+        return self.aaa.get_structure(ase_atoms)
 
     def implementors(self):
         return ["Alex Dunn"]
