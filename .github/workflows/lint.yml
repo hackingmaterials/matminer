@@ -30,7 +30,6 @@ jobs:
     - name: pylint
       run: |
         pylint --fail-under=9 matminer
-        python dev_scripts/check_pylint.py
     - name: flake8
       run: |
         flake8 --version
