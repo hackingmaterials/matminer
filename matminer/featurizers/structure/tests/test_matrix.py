@@ -6,7 +6,7 @@ from sklearn.exceptions import NotFittedError
 
 from pymatgen.core import Molecule
 
-from matminer.featurizers.structure.misc import (
+from matminer.featurizers.structure.matrix import (
     CoulombMatrix,
     SineCoulombMatrix,
     OrbitalFieldMatrix,
