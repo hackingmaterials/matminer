@@ -23,11 +23,16 @@ jobs:
         pip install -r requirements-dev.txt --quiet
     - name: black
       run: |
+
+        # Black step should fail if there are any errors
         black --version
         black --check --diff --color matminer
     - name: pylint
       run: |
-        pylint matminer
+        pylint matminer > pylint.txt 2>&1
+        cat pylint.txt
+        # Check pylint against threshold
+        python dev_scripts/check_pylint.py
     - name: mypy
       run: |
         mypy --version
