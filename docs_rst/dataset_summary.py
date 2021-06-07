@@ -21,14 +21,38 @@ def make_rst_subsection(string):
 
 
 if __name__ == "__main__":
-    # Print out page title header and description of the page
-    print(make_rst_doc_title("Datasets Available in Matminer"))
-    print("\nBelow you will find descriptions and reference data on each "
-          "available dataset, ordered by load_dataset() keyword argument\n\n")
+    # make a big table of datasets
+
+    datasets = get_available_datasets(print_format=None)
+
+
+    print(make_rst_doc_title("Table of Datasets"))
+    print(f"Find a table of all {len(datasets)} datasets available in matminer here.")
+
+
+    print("\n.. list-table::")
+    print("   :align: left")
+    print("   :widths: 20 70 10")
+    # print("   :width: 70%")
+    print("   :header-rows: 1\n")
+    print("   * - Name")
+    print("     - Description")
+    print("     - Entries")
+
+    for dataset in datasets:
+        info = get_dataset_description(dataset)
+        sentences = info.split(". ")
+        sentence1 = sentences[0]
+        n_entries = get_dataset_num_entries(dataset)
+        print(f"   * - :code:`{dataset}`")
+        print(f"     - {sentence1}")
+        print(f"     - {n_entries}")
+
+    print(make_rst_doc_title("Dataset info"))
 
     # For each dataset give the name, description,
     # num_entries, columns, and reference string
-    for dataset in get_available_datasets(print_format="short"):
+    for dataset in get_available_datasets(print_format=None):
         # Name, description, and number of entries output
         print(make_rst_subtitle(dataset))
         print(get_dataset_description(dataset))

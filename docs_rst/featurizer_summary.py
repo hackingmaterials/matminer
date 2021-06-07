@@ -73,7 +73,7 @@ def generate_tables():
             scdict["subtype"] = ".".join((module_tree[-2], module_tree[-1]))
             m = importlib.import_module(scdict["module"])
             if m.__doc__:
-                scdict["subdoc"] = m.__doc__.replace("\n", "")
+                scdict["subdoc"] = m.__doc__.replace("\n", " ")
             else:
                 raise ValueError("no doc for submodule ", scdict["module"])
         else:
@@ -107,6 +107,8 @@ def generate_tables():
 def generate_table(dftable, big_header=None, little_header=None):
     dftable['codename'] = [":code:`" + n + "`" for n in dftable['name']]
 
+    mod = ":code:`" + dftable['module'].iloc[0] + "`"
+
     if big_header:
         ftype_border = "-" * len(big_header)
         des_border = "-" * len(mod_summs[big_header])
@@ -116,14 +118,17 @@ def generate_table(dftable, big_header=None, little_header=None):
         print(mod_summs[big_header])
         print(des_border + "\n")
 
-    if little_header:
-        mod = ":code:`" + dftable['module'].iloc[0] + "`"
+        if not little_header:
+            print(mod)
 
-        printable_little_header = little_header.split(".")[-1] + " - " + mod
+    if little_header:
+
+        printable_little_header = little_header.split(".")[-1]
         fsubtype_border = "_" * len(printable_little_header)
 
         print(printable_little_header)
         print(fsubtype_border)
+        print(mod +"\n\n")
         print(dftable["subdoc"].iloc[0])
 
     print("\n.. list-table::")
