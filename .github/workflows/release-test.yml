@@ -41,4 +41,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt -r requirements-optional.txt -r requirements-dev.txt
         pip install -e .
-        pytest matminer
+        pytest --cov=matminer matminer
