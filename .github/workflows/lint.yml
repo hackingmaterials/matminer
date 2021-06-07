@@ -29,18 +29,8 @@ jobs:
         black --check --diff --color matminer
     - name: pylint
       run: |
-        pylint matminer > pylint.txt 2>&1
-        cat pylint.txt
-        # Check pylint against threshold
+        pylint --fail-under=9 matminer
         python dev_scripts/check_pylint.py
-    - name: mypy
-      run: |
-        mypy --version
-        rm -rf .mypy_cache
-        mypy matminer
-    - name: pydocstyle
-      run: |
-        pydocstyle --count matminer
     - name: flake8
       run: |
         flake8 --version
