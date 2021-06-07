@@ -2,8 +2,6 @@
 def has_oxidation_states(comp):
     """Check if a composition object has oxidation states for each element
 
-    TODO: Does this make sense to add to pymatgen? -wardlt
-
     Args:
         comp (Composition): Composition to check
     Returns:
