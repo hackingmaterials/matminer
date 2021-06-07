@@ -1,0 +1,2212 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>matminer.featurizers.site package &#8212; matminer 0.6.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+ 
+<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">matminer.featurizers.site package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="matminer-featurizers-site-package">
+<h1>matminer.featurizers.site package<a class="headerlink" href="#matminer-featurizers-site-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="matminer.featurizers.site.tests.html">matminer.featurizers.site.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#module-matminer.featurizers.site.tests.base">matminer.featurizers.site.tests.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#module-matminer.featurizers.site.tests.test_bonding">matminer.featurizers.site.tests.test_bonding module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#module-matminer.featurizers.site.tests.test_chemical">matminer.featurizers.site.tests.test_chemical module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#module-matminer.featurizers.site.tests.test_external">matminer.featurizers.site.tests.test_external module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#module-matminer.featurizers.site.tests.test_fingerprint">matminer.featurizers.site.tests.test_fingerprint module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#module-matminer.featurizers.site.tests.test_misc">matminer.featurizers.site.tests.test_misc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#module-matminer.featurizers.site.tests.test_rdf">matminer.featurizers.site.tests.test_rdf module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.site.tests.html#module-matminer.featurizers.site.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-matminer.featurizers.site.bonding">
+<span id="matminer-featurizers-site-bonding-module"></span><h2>matminer.featurizers.site.bonding module<a class="headerlink" href="#module-matminer.featurizers.site.bonding" title="Permalink to this headline">¶</a></h2>
+<p>Site featurizers based on bonding.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondAngle">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.bonding.</span></span><span class="sig-name descname"><span class="pre">AverageBondAngle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondAngle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Determines the average bond angles of a specific site with
+its nearest neighbors using one of pymatgen’s NearNeighbor
+classes. Neighbors that are adjacent to each other are stored
+and angle between them are computed. ‘Average bond angle’ of
+a site is the mean bond angle between all its nearest neighbors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondAngle.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondAngle.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize featurizer</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>method (NearNeighbor) - subclass under NearNeighbor used to compute nearest</dt><dd><p>neighbors</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondAngle.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondAngle.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondAngle.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondAngle.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondAngle.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondAngle.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get average bond length of a site and all its nearest
+neighbors.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>strc (Structure): Pymatgen Structure object
+idx (int): index of target site in structure object</p>
+</dd>
+<dt>Returns:</dt><dd><p>average bond length (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondAngle.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondAngle.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondLength">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.bonding.</span></span><span class="sig-name descname"><span class="pre">AverageBondLength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondLength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Determines the average bond length between one specific site
+and all its nearest neighbors using one of pymatgen’s NearNeighbor
+classes. These nearest neighbor calculators return weights related
+to the proximity of each neighbor to this site. ‘Average bond
+length’ of a site is the weighted average of the distance between
+site and all its nearest neighbors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondLength.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondLength.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize featurizer</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>method (NearNeighbor) - subclass under NearNeighbor used to compute nearest neighbors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondLength.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondLength.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondLength.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondLength.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondLength.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondLength.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get weighted average bond length of a site and all its nearest
+neighbors.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>strc (Structure): Pymatgen Structure object
+idx (int): index of target site in structure object</p>
+</dd>
+<dt>Returns:</dt><dd><p>average bond length (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.AverageBondLength.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.AverageBondLength.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.BondOrientationalParameter">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.bonding.</span></span><span class="sig-name descname"><span class="pre">BondOrientationalParameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_w_hat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.BondOrientationalParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Averages of spherical harmonics of local neighbors</p>
+<p>Bond Orientational Parameters (BOPs) describe the local environment around an atom by
+considering the local symmetry of the bonds as computed using spherical harmonics.
+To create descriptors that are invariant to rotating the coordinate system, we use the
+average of all spherical harmonics of a certain degree - following the approach of
+<a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al.</a>.
+We weigh the contributions of each neighbor with the solid angle of the Voronoi tessellation
+(see <cite>Mickel et al. &lt;https://aip.scitation.org/doi/abs/10.1063/1.4774084&gt;_</cite> for further
+discussion). The weighing scheme makes these descriptors vary smoothly with small distortions
+of a crystal structure.</p>
+<p>In addition to the average spherical harmonics, this class can also compute the <img class="math" src="_images/math/1fbee781f84569077719a167b64e12064360fac1.png" alt="W"/> and
+<img class="math" src="_images/math/a6c088a730612710750ee31f9cc780d5f94f9989.png" alt="\hat{W}"/> parameters proposed by <a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al.</a>.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>BOOP Q l=&lt;n&gt; - Average spherical harmonic for a certain degree, n.
+BOOP W l=&lt;n&gt; - W parameter for a certain degree of spherical harmonic, n.
+BOOP What l=&lt;n&gt; - <img class="math" src="_images/math/a6c088a730612710750ee31f9cc780d5f94f9989.png" alt="\hat{W}"/> parameter for a certain degree of spherical harmonic, n.</p>
+</dd>
+<dt>References:</dt><dd><p><a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.28.784">Steinhardt et al., _PRB_ (1983)</a>
+<a class="reference external" href="http://link.aps.org/doi/10.1103/PhysRevB.95.144110">Seko et al., _PRB_ (2017)</a></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.BondOrientationalParameter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_w_hat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.BondOrientationalParameter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the featurizer</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>max_l (int) - Maximum spherical harmonic to consider
+compute_w (bool) - Whether to compute Ws as well
+compute_w_hat (bool) - Whether to compute What</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.BondOrientationalParameter.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.BondOrientationalParameter.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.BondOrientationalParameter.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.BondOrientationalParameter.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.BondOrientationalParameter.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.BondOrientationalParameter.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.BondOrientationalParameter.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.BondOrientationalParameter.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="matminer.featurizers.site.bonding.get_wigner_coeffs">
+<span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.bonding.</span></span><span class="sig-name descname"><span class="pre">get_wigner_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.bonding.get_wigner_coeffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of non-zero Wigner 3j triplets
+Args:</p>
+<blockquote>
+<div><p>l (int): Desired l</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List of tuples that contain:</dt><dd><ul class="simple">
+<li><p>((int)) m coordinates of the triplet</p></li>
+<li><p>(float) Wigner coefficient</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-matminer.featurizers.site.chemical">
+<span id="matminer-featurizers-site-chemical-module"></span><h2>matminer.featurizers.site.chemical module<a class="headerlink" href="#module-matminer.featurizers.site.chemical" title="Permalink to this headline">¶</a></h2>
+<p>Site featurizers based on local chemical information, rather than geometry alone.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.ChemicalSRO">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.chemical.</span></span><span class="sig-name descname"><span class="pre">ChemicalSRO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">includes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.ChemicalSRO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Chemical short range ordering, deviation of local site and nominal structure compositions</p>
+<p>Chemical SRO features to evaluate the deviation
+of local chemistry with the nominal composition of the structure.</p>
+<p>A local bonding preference is computed using
+f_el = N_el/(sum of N_el) - c_el,
+where N_el is the number of each element type in the neighbors around
+the target site, sum of N_el is the sum of all possible element types
+(coordination number), and c_el is the composition of the specific
+element in the entire structure.
+A positive f_el indicates the “bonding” with the specific element
+is favored, at least in the target site;
+A negative f_el indicates the “bonding” is not favored, at least
+in the target site.</p>
+<p>Note that ChemicalSRO is only featurized for elements identified by
+“fit” (see following), thus “fit” must be called before “featurize”,
+or else an error will be raised.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><dl class="simple">
+<dt>CSRO__[nn method]_[element] - The Chemical SRO of a site computed based</dt><dd><p>on neighbors determined with a certain  NN-detection method for
+a certain element.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.ChemicalSRO.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">includes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.ChemicalSRO.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the featurizer</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>nn (NearestNeighbor): instance of one of pymatgen’s NearestNeighbor</dt><dd><p>classes.</p>
+</dd>
+</dl>
+<p>includes (array-like or str): elements included to calculate CSRO.
+excludes (array-like or str): elements excluded to calculate CSRO.
+sort (bool): whether to sort elements by mendeleev number.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.ChemicalSRO.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.ChemicalSRO.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.ChemicalSRO.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.ChemicalSRO.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.ChemicalSRO.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.ChemicalSRO.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get CSRO features of site with given index in input structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(list of floats): Chemical SRO features for each element.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.ChemicalSRO.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.ChemicalSRO.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify elements to be included in the following featurization,
+by intersecting the elements present in the passed structures with
+those explicitly included (or excluded) in __init__. Only elements
+in the <a href="#id12"><span class="problematic" id="id13">self.el_list_</span></a> will be featurized.
+Besides, compositions of the passed structures will also be “stored”
+in a dict of <a href="#id14"><span class="problematic" id="id15">self.el_amt_dict_</span></a>, avoiding repeated calculation of
+composition when featurizing multiple sites in the same structure.
+Args:</p>
+<blockquote>
+<div><dl>
+<dt>X (array-like): containing Pymatgen structures and sites, supports</dt><dd><p>multiple choices:
+-2D array-like object:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>e.g. [[struct, site], [struct, site], …]</dt><dd><p>np.array([[struct, site], [struct, site], …])</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>-Pandas dataframe:</dt><dd><p>e.g. df[[‘struct’, ‘site’]]</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>y : unused (added for consistency with overridden method signature)</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.ChemicalSRO.from_preset">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.ChemicalSRO.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use one of the standard instances of a given NearNeighbor class.
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>preset (str): preset type (“VoronoiNN”, “JmolNN”,</dt><dd><p>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
+or “MinimumVIRENN”).</p>
+</dd>
+</dl>
+<p><a href="#id2"><span class="problematic" id="id3">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ChemicalSRO from a preset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.ChemicalSRO.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.ChemicalSRO.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.EwaldSiteEnergy">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.chemical.</span></span><span class="sig-name descname"><span class="pre">EwaldSiteEnergy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accuracy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.EwaldSiteEnergy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Compute site energy from Coulombic interactions</p>
+<dl class="simple">
+<dt>User notes:</dt><dd><ul class="simple">
+<li><p>This class uses that <cite>charges that are already-defined for the structure</cite>.</p></li>
+<li><p>Ewald summations can be expensive. If you evaluating every site in many
+large structures, run all of the sites for each structure at the same time.
+We cache the Ewald result for the structure that was run last, so looping
+over sites and then structures is faster than structures than sites.</p></li>
+</ul>
+</dd>
+<dt>Features:</dt><dd><p>ewald_site_energy - Energy for the site computed from Coulombic interactions</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.EwaldSiteEnergy.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accuracy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.EwaldSiteEnergy.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><p>accuracy (int): Accuracy of Ewald summation, number of decimal places</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.EwaldSiteEnergy.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.EwaldSiteEnergy.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.EwaldSiteEnergy.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.EwaldSiteEnergy.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.EwaldSiteEnergy.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.EwaldSiteEnergy.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</p>
+</dd>
+<dt>Returns:</dt><dd><p>([float]) - Electrostatic energy of the site</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.EwaldSiteEnergy.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.EwaldSiteEnergy.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.LocalPropertyDifference">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.chemical.</span></span><span class="sig-name descname"><span class="pre">LocalPropertyDifference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data_source=&lt;matminer.utils.data.MagpieData</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">weight='area'</span></em>, <em class="sig-param"><span class="pre">properties=('Electronegativity'</span></em>, <em class="sig-param"><span class="pre">)</span></em>, <em class="sig-param"><span class="pre">signed=False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.LocalPropertyDifference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Differences in elemental properties between site and its neighboring sites.</p>
+<p>Uses the Voronoi tessellation of the structure to determine the
+neighbors of the site, and assigns each neighbor (<img class="math" src="_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/>) a
+weight (<img class="math" src="_images/math/da96c58cf8c1bcc132a2252a23859c4ceaadf9f9.png" alt="A_n"/>) that corresponds to the area of the facet
+on the tessellation corresponding to that neighbor.
+The local property difference is then computed by
+<img class="math" src="_images/math/44b79d2c935cf226fc2707938207c023c1351cb0.png" alt="\frac{\sum_n {A_n |p_n - p_0|}}{\sum_n {A_n}}"/>
+where <img class="math" src="_images/math/3fd88e5561f4bce2bf17dc50624a4756051bf38a.png" alt="p_n"/> is the property (e.g., atomic number) of a neighbor
+and <img class="math" src="_images/math/8968e4fd6ebe2d668010ed37e2172340daaefa2d.png" alt="p_0"/> is the property of a site. If signed parameter is assigned
+True, signed difference of the properties is returned instead of absolute
+difference.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>“local property difference in [property]” - Weighted average</dt><dd><p>of differences between an elemental property of a site and
+that of each of its neighbors, weighted by size of face on
+Voronoi tessellation</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>References:</dt><dd><p><a class="reference external" href="http://link.aps.org/doi/10.1103/PhysRevB.96.024104">Ward et al. _PRB_ 2017</a></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.LocalPropertyDifference.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data_source=&lt;matminer.utils.data.MagpieData</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">weight='area'</span></em>, <em class="sig-param"><span class="pre">properties=('Electronegativity'</span></em>, <em class="sig-param"><span class="pre">)</span></em>, <em class="sig-param"><span class="pre">signed=False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.LocalPropertyDifference.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the featurizer</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data_source (AbstractData) - Class from which to retrieve</dt><dd><p>elemental properties</p>
+</dd>
+<dt>weight (str) - What aspect of each voronoi facet to use to</dt><dd><p>weigh each neighbor (see VoronoiNN)</p>
+</dd>
+</dl>
+<p>properties ([str]) - List of properties to use (default=[‘Electronegativity’])
+signed (bool) - whether to return absolute difference or signed difference of</p>
+<blockquote>
+<div><p>properties(default=False (absolute difference))</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.LocalPropertyDifference.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.LocalPropertyDifference.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.LocalPropertyDifference.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.LocalPropertyDifference.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.LocalPropertyDifference.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.LocalPropertyDifference.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.LocalPropertyDifference.from_preset">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.LocalPropertyDifference.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new LocalPropertyDifference class according to a preset</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>preset (str) - Name of preset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.LocalPropertyDifference.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.LocalPropertyDifference.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.SiteElementalProperty">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.chemical.</span></span><span class="sig-name descname"><span class="pre">SiteElementalProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('Number')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.SiteElementalProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Elemental properties of atom on a certain site</p>
+<dl class="simple">
+<dt>Features:</dt><dd><p>site [property] - Elemental property for this site</p>
+</dd>
+<dt>References:</dt><dd><p><a class="reference external" href="http://link.aps.org/doi/10.1103/PhysRevB.95.144110">Seko et al., _PRB_ (2017)</a>
+<a class="reference external" href="http://dx.doi.org/10.1021/acs.chemmater.7b00156">Schmidt et al., _Chem Mater_. (2017)</a></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.SiteElementalProperty.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('Number')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.SiteElementalProperty.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the featurizer</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_source (AbstractData): Tool used to look up elemental properties
+properties ([string]): List of properties to use for features</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.SiteElementalProperty.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.SiteElementalProperty.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.SiteElementalProperty.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.SiteElementalProperty.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.SiteElementalProperty.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.SiteElementalProperty.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.SiteElementalProperty.from_preset">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.SiteElementalProperty.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the class with pre-defined settings</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>preset (string): Desired preset</p>
+</dd>
+<dt>Returns:</dt><dd><p>SiteElementalProperty initialized with desired settings</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.chemical.SiteElementalProperty.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.chemical.SiteElementalProperty.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-matminer.featurizers.site.external">
+<span id="matminer-featurizers-site-external-module"></span><h2>matminer.featurizers.site.external module<a class="headerlink" href="#module-matminer.featurizers.site.external" title="Permalink to this headline">¶</a></h2>
+<p>Site featurizers requiring external libraries for core functionality.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.external.SOAP">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.external.</span></span><span class="sig-name descname"><span class="pre">SOAP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rbf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crossover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.external.SOAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Smooth overlap of atomic positions (interface via DScribe).</p>
+<p>Class for generating a partial power spectrum from Smooth Overlap of Atomic
+Orbitals (SOAP). This implementation uses real (tesseral) spherical
+harmonics as the angular basis set and provides two orthonormalized
+alternatives for the radial basis functions: spherical primitive gaussian
+type orbitals (“gto”) or the polynomial basis set (“polynomial”). By
+default the faster gto-basis is used. Please see the DScribe SOAP
+documentation for more details.</p>
+<p>Note that SOAP is only featurized for elements identified by “fit” (see
+following), thus “fit” must be called before “featurize”, or else an error
+will be raised.</p>
+<p>Based originally on the following publications:</p>
+<dl class="simple">
+<dt>“On representing chemical environments, Albert P. Bartók, Risi</dt><dd><p>Kondor, and Gábor Csányi, Phys. Rev. B 87, 184115, (2013),
+<a class="reference external" href="https://doi.org/10.1103/PhysRevB.87.184115">https://doi.org/10.1103/PhysRevB.87.184115</a></p>
+</dd>
+<dt>“Comparing molecules and solids across structural and alchemical</dt><dd><p>space”, Sandip De, Albert P. Bartók, Gábor Csányi and Michele Ceriotti,
+Phys.  Chem. Chem. Phys. 18, 13754 (2016),
+<a class="reference external" href="https://doi.org/10.1039/c6cp00415f">https://doi.org/10.1039/c6cp00415f</a></p>
+</dd>
+</dl>
+<p>Implementation (and some documentation) originally based on DScribe:
+<a class="reference external" href="https://github.com/SINGROUP/dscribe">https://github.com/SINGROUP/dscribe</a>.</p>
+<dl>
+<dt>“DScribe: Library of descriptors for machine learning in materials science”,</dt><dd><p>Himanen, L., J{“a}ger, M. O.J., Morooka, E. V., Federici
+Canova, F., Ranawat, Y. S., Gao, D. Z., Rinke, P. and Foster, A. S.
+Computer Physics Communications, 106949 (2019),
+<a class="reference external" href="https://doi.org/10.1016/j.cpc.2019.106949">https://doi.org/10.1016/j.cpc.2019.106949</a></p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>rcut (float): A cutoff for local region in angstroms. Should be</dt><dd><p>bigger than 1 angstrom.</p>
+</dd>
+</dl>
+<p>nmax (int): The number of radial basis functions.
+lmax (int): The maximum degree of spherical harmonics.
+sigma (float): The standard deviation of the gaussians used to expand the</p>
+<blockquote>
+<div><p>atomic density.</p>
+</div></blockquote>
+<p>rbf (str): The radial basis functions to use. The available options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“gto”: Spherical gaussian type orbitals defined as <img class="math" src="_images/math/9c175e2552d4e2d9c682055a2ce7d1fbb538116d.png" alt="g_{nl}(r) = \sum_{n'=1}^{n_\mathrm{max}}\,\beta_{nn'l} r^l e^{-\alpha_{n'l}r^2}"/></p></li>
+<li><p>“polynomial”: Polynomial basis defined as <img class="math" src="_images/math/b7fdf13f2e4d24f9f2d55a77dcebbf52c8ad19c7.png" alt="g_{n}(r) = \sum_{n'=1}^{n_\mathrm{max}}\,\beta_{nn'} (r-r_\mathrm{cut})^{n'+2}"/></p></li>
+</ul>
+</div></blockquote>
+<dl class="simple">
+<dt>periodic (bool): Determines whether the system is considered to be</dt><dd><p>periodic.</p>
+</dd>
+<dt>crossover (bool): Determines if crossover of atomic types should</dt><dd><p>be included in the power spectrum. If enabled, the power
+spectrum is calculated over all unique species combinations Z
+and Z’. If disabled, the power spectrum does not contain
+cross-species information and is only run over each unique
+species Z. Turned on by default to correspond to the original
+definition</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.external.SOAP.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rbf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crossover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.external.SOAP.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.external.SOAP.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.external.SOAP.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.external.SOAP.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.external.SOAP.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.external.SOAP.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.external.SOAP.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.external.SOAP.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.external.SOAP.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the SOAP featurizer to a dataframe.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X ([SiteCollection]): For example, a list of pymatgen Structures.
+y : unused (added for consistency with overridden method signature)</p>
+</dd>
+<dt>Returns:</dt><dd><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.external.SOAP.from_preset">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.external.SOAP.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a SOAP featurizer object from sensible or published presets.
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>preset (str): Choose from:</dt><dd><dl class="simple">
+<dt>“formation energy”: Preset used for formation energy prediction</dt><dd><p>in the original Dscribe paper.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.external.SOAP.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.external.SOAP.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-matminer.featurizers.site.fingerprint">
+<span id="matminer-featurizers-site-fingerprint-module"></span><h2>matminer.featurizers.site.fingerprint module<a class="headerlink" href="#module-matminer.featurizers.site.fingerprint" title="Permalink to this headline">¶</a></h2>
+<p>Site featurizers that fingerprint a site using local geometry.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.AGNIFingerprints">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.fingerprint.</span></span><span class="sig-name descname"><span class="pre">AGNIFingerprints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">'x',</span> <span class="pre">'y',</span> <span class="pre">'z')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">etas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.AGNIFingerprints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Product integral of RDF and Gaussian window function, from <a class="reference external" href="http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908">Botu et al</a>.</p>
+<p>Integral of the product of the radial distribution function and a
+Gaussian window function. Originally used by
+<a class="reference external" href="http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.6b10908">Botu et al</a> to fit empiricial
+potentials. These features come in two forms: atomic fingerprints and
+direction-resolved fingerprints.
+Atomic fingerprints describe the local environment of an atom and are
+computed using the function:
+<img class="math" src="_images/math/c833e66a1aa68dba7be89cbcaed7e749967ab5c9.png" alt="A_i(\eta) = \sum\limits_{i \ne j} e^{-(\frac{r_{ij}}{\eta})^2} f(r_{ij})"/>
+where <img class="math" src="_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> is the index of the atom, <img class="math" src="_images/math/e3fc28292267f066fee7718c64f4bbfece521f24.png" alt="j"/> is the index of a neighboring atom, <img class="math" src="_images/math/97db043c7cba573ac389b71add78b048077e8a13.png" alt="\eta"/> is a scaling function,
+<img class="math" src="_images/math/774df2c68904c92b7c0db636d12ca2ca6ee21263.png" alt="r_{ij}"/> is the distance between atoms <img class="math" src="_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> and <img class="math" src="_images/math/e3fc28292267f066fee7718c64f4bbfece521f24.png" alt="j"/>, and <img class="math" src="_images/math/079ba1f3373823268ba0e33b400423434ca7c0a6.png" alt="f(r)"/> is a cutoff function where
+<img class="math" src="_images/math/e8c0d853d9741d1d80356648c449808dd3fdeb3c.png" alt="f(r) = 0.5[\cos(\frac{\pi r_{ij}}{R_c}) + 1]"/> if <img class="math" src="_images/math/0239bb38c93a6213c5ac6ba1dabd3e0a003ed371.png" alt="r &lt; R_c"/> and <img class="math" src="_images/math/31fdf41b39df23c95e52c5aef07f59d9adf82f3c.png" alt="0"/> otherwise.
+The direction-resolved fingerprints are computed using
+<img class="math" src="_images/math/cfca9af3a86afde1b9efe235bfc3e48f90890d82.png" alt="V_i^k(\eta) = \sum\limits_{i \ne j} \frac{r_{ij}^k}{r_{ij}} e^{-(\frac{r_{ij}}{\eta})^2} f(r_{ij})"/>
+where <img class="math" src="_images/math/a9bb86de6492860286fd9038b2070f5870e63cb6.png" alt="r_{ij}^k"/> is the <img class="math" src="_images/math/c279824074ed8acc9cd963e930735f542462edec.png" alt="k^{th}"/> component of <img class="math" src="_images/math/5a53aff7886e588bf17ff209a8fa05351cda8798.png" alt="\bold{r}_i - \bold{r}_j"/>.
+Parameters:
+TODO: Differentiate between different atom types (maybe as another class)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.AGNIFingerprints.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">'x',</span> <span class="pre">'y',</span> <span class="pre">'z')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">etas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.AGNIFingerprints.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>directions (iterable): List of directions for the fingerprints. Can</dt><dd><p>be one or more of ‘None`, ‘x’, ‘y’, or ‘z’</p>
+</dd>
+</dl>
+<p>etas (iterable of floats): List of which window widths to compute
+cutoff (float): Cutoff distance (Angstroms)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.AGNIFingerprints.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.AGNIFingerprints.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.AGNIFingerprints.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.AGNIFingerprints.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.AGNIFingerprints.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.AGNIFingerprints.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main featurizer function, which has to be implemented
+in any derived featurizer subclass.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x: input data to featurize (type depends on featurizer).</p>
+</dd>
+<dt>Returns:</dt><dd><p>(list) one or more features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.AGNIFingerprints.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.AGNIFingerprints.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.fingerprint.</span></span><span class="sig-name descname"><span class="pre">ChemEnvSiteFingerprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cetypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geom_finder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_csm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dist_fac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.41</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Resemblance of given sites to ideal environments</p>
+<p>Site fingerprint computed from pymatgen’s ChemEnv package
+that provides resemblance percentages of a given site
+to ideal environments.
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>cetypes ([str]): chemical environments (CEs) to be</dt><dd><p>considered.</p>
+</dd>
+</dl>
+<p>strategy (ChemenvStrategy): ChemEnv neighbor-finding strategy.
+geom_finder (LocalGeometryFinder): ChemEnv local geometry finder.
+max_csm (float): maximum continuous symmetry measure (CSM;</p>
+<blockquote>
+<div><p>default of 8 taken from chemenv). Note that any CSM
+larger than max_csm will be set to max_csm in order
+to avoid negative values (i.e., all features are
+constrained to be between 0 and 1).</p>
+</div></blockquote>
+<p>max_dist_fac (float): maximum distance factor (default: 1.41).</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cetypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geom_finder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_csm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dist_fac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.41</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ChemEnv fingerprint of site with given index in input
+structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure struct.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(numpy array): resemblance fraction of target site to ideal</dt><dd><p>local environments.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.from_preset">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a standard collection of CE types and
+choose your ChemEnv neighbor-finding strategy.
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>preset (str): preset types (“simple” or</dt><dd><p>“multi_weights”).</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ChemEnvSiteFingerprint object from a preset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.ChemEnvSiteFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.CrystalNNFingerprint">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.fingerprint.</span></span><span class="sig-name descname"><span class="pre">CrystalNNFingerprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chem_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.CrystalNNFingerprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>A local order parameter fingerprint for periodic crystals.</p>
+<p>The fingerprint represents the value of various order parameters for the
+site. The “wt” order parameter describes how consistent a site is with a
+certain coordination number. The remaining order parameters are computed
+by multiplying the “wt” for that coordination number with the OP value.</p>
+<p>The chem_info parameter can be used to also get chemical descriptors that
+describe differences in some chemical parameter (e.g., electronegativity)
+between the central site and the site neighbors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.CrystalNNFingerprint.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chem_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.CrystalNNFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the CrystalNNFingerprint. Use the from_preset() function to
+use default params.
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>op_types (dict): a dict of coordination number (int) to a list of str</dt><dd><p>representing the order parameter types</p>
+</dd>
+<dt>chem_info (dict): a dict of chemical properties (e.g., atomic mass)</dt><dd><p>to dictionaries that map an element to a value
+(e.g., chem_info[“Pauling scale”][“O”] = 3.44)</p>
+</dd>
+</dl>
+<p><a href="#id6"><span class="problematic" id="id7">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.CrystalNNFingerprint.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.CrystalNNFingerprint.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.CrystalNNFingerprint.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.CrystalNNFingerprint.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.CrystalNNFingerprint.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.CrystalNNFingerprint.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get crystal fingerprint of site with given index in input
+structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list of weighted order parameters of target site.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.CrystalNNFingerprint.from_preset">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.CrystalNNFingerprint.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use preset parameters to get the fingerprint
+Args:</p>
+<blockquote>
+<div><p>preset (str): name of preset (“cn” or “ops”)
+<a href="#id8"><span class="problematic" id="id9">**</span></a>kwargs: other settings to be passed into CrystalNN class</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.CrystalNNFingerprint.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.CrystalNNFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.OPSiteFingerprint">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.fingerprint.</span></span><span class="sig-name descname"><span class="pre">OPSiteFingerprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_motifs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.OPSiteFingerprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Local structure order parameters computed from a site’s neighbor env.</p>
+<p>For each order parameter, we determine
+the neighbor shell that complies with the expected
+coordination number. For example, we find the 4 nearest
+neighbors for the tetrahedral OP, the 6 nearest for the
+octahedral OP, and the 8 nearest neighbors for the bcc OP.
+If we don’t find such a shell, the OP is either set to zero
+or evaluated with the shell of the next largest observed
+coordination number.
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>target_motifs (dict): target op or motif type where keys</dt><dd><p>are corresponding coordination numbers
+(e.g., {4: “tetrahedral”}).</p>
+</dd>
+<dt>dr (float): width for binning neighbors in unit of relative</dt><dd><p>distances (= distance/nearest neighbor
+distance).  The binning is necessary to make the
+neighbor-finding step robust against small numerical
+variations in neighbor distances (default: 0.1).</p>
+</dd>
+</dl>
+<p>ddr (float): variation of width for finding stable OP values.
+ndr (int): number of width variations for each variation direction</p>
+<blockquote>
+<div><p>(e.g., ndr = 0 only uses the input dr, whereas
+ndr=1 tests dr = dr - ddr, dr, and dr + ddr.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>dop (float): binning width to compute histogram for each OP</dt><dd><p>if ndr &gt; 0.</p>
+</dd>
+<dt>dist_exp (boolean): exponent for distance factor to multiply</dt><dd><p>order parameters with that penalizes (large)
+variations in distances in a given motif.
+0 will switch the option off
+(default: 2).</p>
+</dd>
+<dt>zero_ops (boolean): set an OP to zero if there is no neighbor</dt><dd><p>shell that complies with the expected
+coordination number of a given OP
+(e.g., CN=4 for tetrahedron;
+default: True).</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.OPSiteFingerprint.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_motifs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.OPSiteFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.OPSiteFingerprint.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.OPSiteFingerprint.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.OPSiteFingerprint.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.OPSiteFingerprint.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.OPSiteFingerprint.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.OPSiteFingerprint.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get OP fingerprint of site with given index in input
+structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>opvals (numpy array): order parameters of target site.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.OPSiteFingerprint.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.OPSiteFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.VoronoiFingerprint">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.fingerprint.</span></span><span class="sig-name descname"><span class="pre">VoronoiFingerprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_symm_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symm_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'solid_angle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_vol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.VoronoiFingerprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Voronoi tessellation-based features around target site.</p>
+<p>Calculate the following sets of features based on Voronoi tessellation
+analysis around the target site:
+Voronoi indices</p>
+<blockquote>
+<div><p>n_i denotes the number of i-edged facets, and i is in the range of 3-10.
+e.g.
+for bcc lattice, the Voronoi indices are [0,6,0,8,…];
+for fcc/hcp lattice, the Voronoi indices are [0,12,0,0,…];
+for icosahedra, the Voronoi indices are [0,0,12,0,…];</p>
+</div></blockquote>
+<dl>
+<dt>i-fold symmetry indices</dt><dd><p>computed as n_i/sum(n_i), and i is in the range of 3-10.
+reflect the strength of i-fold symmetry in local sites.
+e.g.
+for bcc lattice, the i-fold symmetry indices are [0,6/14,0,8/14,…]</p>
+<blockquote>
+<div><p>indicating both 4-fold and a stronger 6-fold symmetries are present;</p>
+</div></blockquote>
+<dl class="simple">
+<dt>for fcc/hcp lattice, the i-fold symmetry factors are [0,1,0,0,…],</dt><dd><p>indicating only 4-fold symmetry is present;</p>
+</dd>
+<dt>for icosahedra, the Voronoi indices are [0,0,1,0,…],</dt><dd><p>indicating only 5-fold symmetry is present;</p>
+</dd>
+</dl>
+</dd>
+<dt>Weighted i-fold symmetry indices</dt><dd><p>if use_weights = True</p>
+</dd>
+<dt>Voronoi volume</dt><dd><p>total volume of the Voronoi polyhedron around the target site</p>
+</dd>
+<dt>Voronoi volume statistics of sub_polyhedra formed by each facet + center</dt><dd><p>stats_vol = [‘mean’, ‘std_dev’, ‘minimum’, ‘maximum’]</p>
+</dd>
+<dt>Voronoi area</dt><dd><p>total area of the Voronoi polyhedron around the target site</p>
+</dd>
+<dt>Voronoi area statistics of the facets</dt><dd><p>stats_area = [‘mean’, ‘std_dev’, ‘minimum’, ‘maximum’]</p>
+</dd>
+<dt>Voronoi nearest-neighboring distance statistics</dt><dd><p>stats_dist = [‘mean’, ‘std_dev’, ‘minimum’, ‘maximum’]</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>cutoff (float): cutoff distance in determining the potential</dt><dd><p>neighbors for Voronoi tessellation analysis.
+(default: 6.5)</p>
+</dd>
+<dt>use_symm_weights(bool): whether to use weights to derive weighted</dt><dd><p>i-fold symmetry indices.</p>
+</dd>
+<dt>symm_weights(str): weights to be used in weighted i-fold symmetry</dt><dd><p>indices.
+Supported options: ‘solid_angle’, ‘area’, ‘volume’,
+‘face_dist’. (default: ‘solid_angle’)</p>
+</dd>
+</dl>
+<p>stats_vol (list of str): volume statistics types.
+stats_area (list of str): area statistics types.
+stats_dist (list of str): neighboring distance statistics types.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.VoronoiFingerprint.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_symm_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symm_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'solid_angle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_vol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.VoronoiFingerprint.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.VoronoiFingerprint.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.VoronoiFingerprint.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.VoronoiFingerprint.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.VoronoiFingerprint.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.VoronoiFingerprint.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.VoronoiFingerprint.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Voronoi fingerprints of site with given index in input structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list of floats): Voronoi fingerprints.</dt><dd><p>-Voronoi indices
+-i-fold symmetry indices
+-weighted i-fold symmetry indices (if use_symm_weights = True)
+-Voronoi volume
+-Voronoi volume statistics
+-Voronoi area
+-Voronoi area statistics
+-Voronoi dist statistics</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.fingerprint.VoronoiFingerprint.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.fingerprint.VoronoiFingerprint.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-matminer.featurizers.site.misc">
+<span id="matminer-featurizers-site-misc-module"></span><h2>matminer.featurizers.site.misc module<a class="headerlink" href="#module-matminer.featurizers.site.misc" title="Permalink to this headline">¶</a></h2>
+<p>Miscellaneous site featurizers.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.CoordinationNumber">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.misc.</span></span><span class="sig-name descname"><span class="pre">CoordinationNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.CoordinationNumber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Number of first nearest neighbors of a site.</p>
+<p>Determines the number of nearest neighbors of a site using one of
+pymatgen’s NearNeighbor classes. These nearest neighbor calculators
+can return weights related to the proximity of each neighbor to this
+site. It is possible to take these weights into account to prevent
+the coordination number from changing discontinuously with small
+perturbations of a structure, either by summing the total weights
+or using the normalization method presented by
+[Ward et al.](<a class="reference external" href="http://link.aps.org/doi/10.1103/PhysRevB.96.014107">http://link.aps.org/doi/10.1103/PhysRevB.96.014107</a>)</p>
+<dl class="simple">
+<dt>Features:</dt><dd><dl class="simple">
+<dt>CN_[method] - Coordination number computed using a certain method</dt><dd><p>for calculating nearest neighbors.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.CoordinationNumber.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.CoordinationNumber.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the featurizer</p>
+<dl>
+<dt>Args:</dt><dd><p>nn (NearestNeighbor) - Method used to determine coordination number
+use_weights (string) - Method used to account for weights of neighbors:</p>
+<blockquote>
+<div><p>‘none’ - Do not use weights when computing coordination number
+‘sum’ - Use sum of weights as the coordination number
+‘effective’ - Compute the ‘effective coordination number’, which</p>
+<blockquote>
+<div><p>is computed as <img class="math" src="_images/math/d188c978e0d95e667be9c33955b35c80ec4c786f.png" alt="\frac{(\sum_n w_n)^2)}{\sum_n w_n^2}"/></p>
+</div></blockquote>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.CoordinationNumber.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.CoordinationNumber.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.CoordinationNumber.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.CoordinationNumber.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.CoordinationNumber.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.CoordinationNumber.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get coordintion number of site with given index in input
+structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure struct.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>[float] - Coordination number</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.CoordinationNumber.from_preset">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.CoordinationNumber.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use one of the standard instances of a given NearNeighbor class.
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>preset (str): preset type (“VoronoiNN”, “JmolNN”,</dt><dd><p>“MiniumDistanceNN”, “MinimumOKeeffeNN”,
+or “MinimumVIRENN”).</p>
+</dd>
+</dl>
+<p><a href="#id10"><span class="problematic" id="id11">**</span></a>kwargs: allow to pass args to the NearNeighbor class.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>CoordinationNumber from a preset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.CoordinationNumber.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.CoordinationNumber.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.misc.</span></span><span class="sig-name descname"><span class="pre">IntersticeDistribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interstice_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MiracleRadius'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Interstice distribution in the neighboring cluster around an atom site.</p>
+<p>The interstices are categorized to distance, area and volume interstices.
+Each of these metrics is a measures of the relative amount of empty space
+around each atom as determined using atomic sphere models. The distance
+interstice is the fraction of a bonding line unoccupied by the atom spheres;
+The area interstice is the unoccupied area within the triangulated surface
+formed by atom triplets in convex hull formed by neighbors, and the volume
+interstice is the unoccupied portion of a tetrahedron formed between the
+central atom and neighbor atom triplets. Please refer to the original paper
+for more details (Wang et al. Nat Commun 10, 5537 (2019))</p>
+<p>For amorphous alloys (metallic glasses), the coordination environments are
+anisotropic, which can be reflected in the inequality of the interstices
+present around an atom. To describe the anisotropy, here we derive statistics
+of the interstices to featurize the interstice distribution around the atom.
+Other methods can be grouping the interstices into histogram grids of fixed
+bins and the features are then a vector of the values of the histograms.</p>
+<p>User note:
+This class is particularly designed for featuring the site-specific packing
+heterogeneity in metallic glasses, especially the all-metallic-element ones.
+If non-metallic-elements are present in the structures, the interstice
+estimates may have larger deviation from actual values (despite this
+deviation is systematic and thus the interstice estimates can still be
+used to represent the packing heterogeneity).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>cutoff (float): cutoff distance in determining the potential</dt><dd><p>neighbors for Voronoi tessellation analysis. (default: 6.5)</p>
+</dd>
+<dt>interstice_types (str or [str]): interstice distribution types,</dt><dd><p>support sub-list of [‘dist’, ‘area’, ‘vol’].</p>
+</dd>
+</dl>
+<p>stats ([str]): statistics of distance/area/volume interstices.
+radius_type (str): source of radius estimate. (default: “MiracleRadius”)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interstice_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MiracleRadius'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution.analyze_area_interstice">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">analyze_area_interstice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nn_rs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convex_hull_simplices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution.analyze_area_interstice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze the area interstices in the neighbor convex hull facets.
+Args:</p>
+<blockquote>
+<div><p>nn_coords (array-like, shape (N, 3)): Nearest Neighbors’ coordinates
+nn_rs ([float]): Nearest Neighbors’ radii.
+convex_hull_simplices (array-like, shape (M, 3)): Indices of points</p>
+<blockquote>
+<div><p>forming the simplicial facets of convex hull.</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>area_interstice_list ([float]): Area interstice list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution.analyze_dist_interstices">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">analyze_dist_interstices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center_r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nn_rs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nn_dists</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution.analyze_dist_interstices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze the distance interstices between center atom and neighbors.
+Args:</p>
+<blockquote>
+<div><p>center_r (float): central atom’s radius.
+nn_rs ([float]): Nearest Neighbors’ radii.
+nn_dists ([float]): Nearest Neighbors’ distances.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dist_interstice_list ([float]): Distance interstice list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution.analyze_vol_interstice">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">analyze_vol_interstice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nn_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nn_rs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convex_hull_simplices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution.analyze_vol_interstice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze the volume interstices in the tetrahedra formed by center
+atom and neighbor convex hull triplets.
+Args:</p>
+<blockquote>
+<div><p>center_coords ([float]): Central atomic coordinates.
+nn_coords (array-like, shape (N, 3)): Nearest Neighbors’ coordinates
+center_r (float): central atom’s radius.
+nn_rs ([float]): Nearest Neighbors’ radii.
+convex_hull_simplices (array-like, shape (M, 3)): Indices of points</p>
+<blockquote>
+<div><p>forming the simplicial facets of convex hull.</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>volume_interstice_list ([float]): Volume interstice list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get interstice distribution fingerprints of site with given index in
+input structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>interstice_fps ([float]): Interstice distribution fingerprints.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.misc.IntersticeDistribution.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.misc.IntersticeDistribution.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-matminer.featurizers.site.rdf">
+<span id="matminer-featurizers-site-rdf-module"></span><h2>matminer.featurizers.site.rdf module<a class="headerlink" href="#module-matminer.featurizers.site.rdf" title="Permalink to this headline">¶</a></h2>
+<p>Site featurizers based on distribution functions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.AngularFourierSeries">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.rdf.</span></span><span class="sig-name descname"><span class="pre">AngularFourierSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.AngularFourierSeries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Compute the angular Fourier series (AFS), including both angular and radial info</p>
+<p>The AFS is the product of pairwise distance function (g_n, g_n’) between two pairs
+of atoms (sharing the common central site) and the cosine of the angle
+between the two pairs. The AFS is a 2-dimensional feature (the axes are g_n,
+g_n’).</p>
+<p>Examples of distance functionals are square functions, Gaussian, trig
+functions, and Bessel functions. An example for Gaussian:</p>
+<blockquote>
+<div><p>lambda d: exp( -(d - d_n)**2 ), where d_n is the coefficient for g_n</p>
+</div></blockquote>
+<p>See <a class="reference internal" href="matminer.featurizers.utils.html#module-matminer.featurizers.utils.grdf" title="matminer.featurizers.utils.grdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">grdf()</span></code></a> for a full list of available binning functions.</p>
+<dl class="simple">
+<dt>There are two preset conditions:</dt><dd><p>gaussian: bin functions are gaussians
+histogram: bin functions are rectangular functions</p>
+</dd>
+<dt>Features:</dt><dd><p>AFS ([gn], [gn’]) - Angular Fourier Series between binning functions (g1 and g2)</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>bins:   ([AbstractPairwise]) a list of binning functions that</dt><dd><p>implement the AbstractPairwise base class</p>
+</dd>
+<dt>cutoff: (float) maximum distance to look for neighbors. The</dt><dd><p>featurizer will run slowly for large distance cutoffs
+because of the number of neighbor pairs scales as
+the square of the number of neighbors</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.AngularFourierSeries.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.AngularFourierSeries.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.AngularFourierSeries.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.AngularFourierSeries.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.AngularFourierSeries.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.AngularFourierSeries.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.AngularFourierSeries.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.AngularFourierSeries.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get AFS of the input structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure struct.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Flattened list of AFS values. the list order is:</dt><dd><p>g_n g_n’</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.AngularFourierSeries.from_preset">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.AngularFourierSeries.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Preset bin functions for this featurizer. Example use:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AFS</span> <span class="o">=</span> <span class="n">AngularFourierSeries</span><span class="o">.</span><span class="n">from_preset</span><span class="p">(</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AFS</span><span class="o">.</span><span class="n">featurize</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Args:</dt><dd><p>preset (str): shape of bin (either ‘gaussian’ or ‘histogram’)
+width (float): bin width. std dev for gaussian, width for histogram
+spacing (float): the spacing between bin centers
+cutoff (float): maximum distance to look for neighbors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.AngularFourierSeries.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.AngularFourierSeries.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.rdf.</span></span><span class="sig-name descname"><span class="pre">GaussianSymmFunc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">etas_g2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">etas_g4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zetas_g4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gammas_g4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Gaussian symmetry function features suggested by Behler et al.</p>
+<p>The function is based on pair distances and angles, to approximate the functional
+dependence of local energies, originally used in the fitting of
+machine-learning potentials.
+The symmetry functions can be divided to a set of radial functions
+(g2 function), and a set of angular functions (g4 function).
+The number of symmetry functions returned are based on parameters
+of etas_g2, etas_g4, zetas_g4 and gammas_g4.
+See the original papers for more details:
+“Atom-centered symmetry functions for constructing high-dimensional
+neural network potentials”, J Behler, J Chem Phys 134, 074106 (2011).
+The cutoff function is taken as the polynomial form (cosine_cutoff)
+to give a smoothed truncation.
+A Fortran and a different Python version can be found in the code
+Amp: Atomistic Machine-learning Package
+(<a class="reference external" href="https://bitbucket.org/andrewpeterson/amp">https://bitbucket.org/andrewpeterson/amp</a>).
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>etas_g2 (list of floats): etas used in radial functions.</dt><dd><p>(default: [0.05, 4., 20., 80.])</p>
+</dd>
+<dt>etas_g4 (list of floats): etas used in angular functions.</dt><dd><p>(default: [0.005])</p>
+</dd>
+<dt>zetas_g4 (list of floats): zetas used in angular functions.</dt><dd><p>(default: [1., 4.])</p>
+</dd>
+<dt>gammas_g4 (list of floats): gammas used in angular functions.</dt><dd><p>(default: [+1., -1.])</p>
+</dd>
+</dl>
+<p>cutoff (float): cutoff distance. (default: 6.5)</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">etas_g2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">etas_g4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zetas_g4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gammas_g4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc.cosine_cutoff">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">cosine_cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc.cosine_cutoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Polynomial cutoff function to give a smoothed truncation of the Gaussian
+symmetry functions.
+Args:</p>
+<blockquote>
+<div><p>rs (ndarray): distances to elements
+cutoff (float): cutoff distance.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(ndarray) cutoff function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Gaussian symmetry function features of site with given index
+in input structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(list of floats): Gaussian symmetry function features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc.g2">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">g2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc.g2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian radial symmetry function of the center atom,
+given an eta parameter.
+Args:</p>
+<blockquote>
+<div><p>eta: radial function parameter.
+rs: distances from the central atom to each neighbor
+cutoff (float): cutoff distance.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(float) Gaussian radial symmetry function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc.g4">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">g4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">etas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zetas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gammas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neigh_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neigh_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc.g4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian angular symmetry function of the center atom,
+given a set of eta, zeta and gamma parameters.
+Args:</p>
+<blockquote>
+<div><p>etas ([float]): angular function parameters.
+zetas ([float]): angular function parameters.
+gammas ([float]): angular function parameters.
+neigh_dist (list of [floats]): coordinates of neighboring atoms, with respect</p>
+<blockquote>
+<div><p>to the central atom</p>
+</div></blockquote>
+<p>cutoff (float): cutoff parameter.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(float) Gaussian angular symmetry function for all combinations of eta, zeta, gamma</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GaussianSymmFunc.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GaussianSymmFunc.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.site.rdf.</span></span><span class="sig-name descname"><span class="pre">GeneralizedRadialDistributionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRDF'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
+<p>Compute the general radial distribution function (GRDF) for a site.</p>
+<p>The GRDF is a radial measure of crystal order around a site. There are two
+featurizing modes:</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>GRDF: (recommended) - n_bins length vector</dt><dd><p>In GRDF mode, The GRDF is computed by considering all sites around a
+central site (i.e., no sites are omitted when computing the GRDF). The
+features output from this mode will be vectors with length n_bins.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>pairwise GRDF: (advanced users) - n_bins x n_sites matrix</dt><dd><p>In this mode, GRDFs are are still computed around a central site, but
+only one other site (and their translational equivalents) are used to
+compute a GRDF (e.g. site 1 with site 2 and the translational
+equivalents of site 2). This results in a a n_sites x n_bins matrix of
+features. Requires <cite>fit</cite> for determining the max number of sites for</p>
+</dd>
+</dl>
+</li>
+</ol>
+<p>The GRDF is a generalization of the partial radial distribution function
+(PRDF). In contrast with the PRDF, the bins of the GRDF are not mutually-
+exclusive and need not carry a constant weight of 1. The PRDF is a case of
+the GRDF when the bins are rectangular functions. Examples of other
+functions to use with the GRDF are Gaussian, trig, and Bessel functions.</p>
+<p>See <a class="reference internal" href="matminer.featurizers.utils.html#module-matminer.featurizers.utils.grdf" title="matminer.featurizers.utils.grdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">grdf()</span></code></a> for a full list of available binning functions.</p>
+<dl>
+<dt>There are two preset conditions:</dt><dd><p>gaussian: bin functions are gaussians
+histogram: bin functions are rectangular functions</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>bins:   ([AbstractPairwise]) List of pairwise binning functions. Each of these functions</dt><dd><p>must implement the AbstractPairwise class.</p>
+</dd>
+</dl>
+<p>cutoff: (float) maximum distance to look for neighbors
+mode:   (str) the featurizing mode. supported options are:</p>
+<blockquote>
+<div><p>‘GRDF’ and ‘pairwise_GRDF’</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRDF'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.citations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citation(s) and reference(s) for this feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should be a string citation,</dt><dd><p>ideally in BibTeX format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.feature_labels">
+<span class="sig-name descname"><span class="pre">feature_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.feature_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attribute names.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>([str]) attribute labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.featurize">
+<span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.featurize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get GRDF of the input structure.
+Args:</p>
+<blockquote>
+<div><p>struct (Structure): Pymatgen Structure object.
+idx (int): index of target site in structure struct.</p>
+</div></blockquote>
+<dl>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Flattened list of GRDF values. For each run mode the list order is:</dt><dd><p>GRDF:          bin#
+pairwise GRDF: site2# bin#</p>
+</dd>
+</dl>
+<p>The site2# corresponds to a pymatgen site index and bin#
+corresponds to one of the bin functions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the maximum number of sites in X to assign correct feature
+labels</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>X - [list of tuples], training data</dt><dd><p>tuple values should be (struc, idx)</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.from_preset">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRDF'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.from_preset" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Preset bin functions for this featurizer. Example use:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GRDF</span> <span class="o">=</span> <span class="n">GeneralizedRadialDistributionFunction</span><span class="o">.</span><span class="n">from_preset</span><span class="p">(</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GRDF</span><span class="o">.</span><span class="n">featurize</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Args:</dt><dd><p>preset (str): shape of bin (either ‘gaussian’ or ‘histogram’)
+width (float): bin width. std dev for gaussian, width for histogram
+spacing (float): the spacing between bin centers
+cutoff (float): maximum distance to look for neighbors
+mode (str): featurizing mode. either ‘GRDF’ or ‘pairwise_GRDF’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.implementors">
+<span class="sig-name descname"><span class="pre">implementors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.site.rdf.GeneralizedRadialDistributionFunction.implementors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of implementors of the feature.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>(list) each element should either be a string with author name (e.g.,</dt><dd><p>“Anubhav Jain”) or a dictionary  with required key “name” and other
+keys like “email” or “institution” (e.g., {“name”: “Anubhav
+Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#52;&#48;lbl&#46;gov">ajain<span>&#64;</span>lbl<span>&#46;</span>gov</a>”, “institution”: “LBNL”}).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-matminer.featurizers.site">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matminer.featurizers.site" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">matminer.featurizers.site package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.site.bonding">matminer.featurizers.site.bonding module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.site.chemical">matminer.featurizers.site.chemical module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.site.external">matminer.featurizers.site.external module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.site.fingerprint">matminer.featurizers.site.fingerprint module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.site.misc">matminer.featurizers.site.misc module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.site.rdf">matminer.featurizers.site.rdf module</a></li>
+<li><a class="reference internal" href="#module-matminer.featurizers.site">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/matminer.featurizers.site.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">matminer.featurizers.site package</a></li> 
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+
+  </body>
+</html>

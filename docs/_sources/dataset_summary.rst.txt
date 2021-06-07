@@ -1,53 +1,145 @@
-==============================
-Datasets Available in Matminer
-==============================
+=================
+Table of Datasets
+=================
+Find a table of all 42 datasets available in matminer here.
 
-Below you will find descriptions and reference data on each available dataset, ordered by load_dataset() keyword argument
+.. list-table::
+   :align: left
+   :widths: 20 70 10
+   :header-rows: 1
 
-
-boltztrap_mp
-brgoch_superhard_training
-castelli_perovskites
-citrine_thermal_conductivity
-dielectric_constant
-double_perovskites_gap
-double_perovskites_gap_lumo
-elastic_tensor_2015
-expt_formation_enthalpy
-expt_formation_enthalpy_kingsbury
-expt_gap
-expt_gap_kingsbury
-flla
-glass_binary
-glass_binary_v2
-glass_ternary_hipt
-glass_ternary_landolt
-heusler_magnetic
-jarvis_dft_2d
-jarvis_dft_3d
-jarvis_ml_dft_training
-m2ax
-matbench_dielectric
-matbench_expt_gap
-matbench_expt_is_metal
-matbench_glass
-matbench_jdft2d
-matbench_log_gvrh
-matbench_log_kvrh
-matbench_mp_e_form
-matbench_mp_gap
-matbench_mp_is_metal
-matbench_perovskites
-matbench_phonons
-matbench_steels
-mp_all_20181018
-mp_nostruct_20181018
-phonon_dielectric_mp
-piezoelectric_tensor
-ricci_boltztrap_mp_tabular
-steel_strength
-wolverton_oxides
-
+   * - Name
+     - Description
+     - Entries
+   * - :code:`boltztrap_mp`
+     - Effective mass and thermoelectric properties of 8924 compounds in The  Materials Project database that are calculated by the BoltzTraP software package run on the GGA-PBE or GGA+U density functional theory calculation results
+     - 8924
+   * - :code:`brgoch_superhard_training`
+     - 2574 materials used for training regressors that predict shear and bulk modulus.
+     - 2574
+   * - :code:`castelli_perovskites`
+     - 18,928 perovskites generated with ABX combinatorics, calculating gllbsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.
+     - 18928
+   * - :code:`citrine_thermal_conductivity`
+     - Thermal conductivity of 872 compounds measured experimentally and retrieved from Citrine database from various references
+     - 872
+   * - :code:`dielectric_constant`
+     - 1,056 structures with dielectric properties, calculated with DFPT-PBE.
+     - 1056
+   * - :code:`double_perovskites_gap`
+     - Band gap of 1306 double perovskites (a_1-b_1-a_2-b_2-O6) calculated using ﻿Gritsenko, van Leeuwen, van Lenthe and Baerends potential (gllbsc) in GPAW.
+     - 1306
+   * - :code:`double_perovskites_gap_lumo`
+     - Supplementary lumo data of 55 atoms for the double_perovskites_gap dataset.
+     - 55
+   * - :code:`elastic_tensor_2015`
+     - 1,181 structures with elastic properties calculated with DFT-PBE.
+     - 1181
+   * - :code:`expt_formation_enthalpy`
+     - Experimental formation enthalpies for inorganic compounds, collected from years of calorimetric experiments
+     - 1276
+   * - :code:`expt_formation_enthalpy_kingsbury`
+     - Dataset containing experimental standard formation enthalpies for solids
+     - 2135
+   * - :code:`expt_gap`
+     - Experimental band gap of 6354 inorganic semiconductors.
+     - 6354
+   * - :code:`expt_gap_kingsbury`
+     - Identical to the matbench_expt_gap dataset, except that Materials Project database IDs (mp-ids) have been associated with each material using the same method as described for the expt_formation_enthalpy_kingsbury dataset
+     - 4604
+   * - :code:`flla`
+     - 3938 structures and computed formation energies from "Crystal Structure Representations for Machine Learning Models of Formation Energies."
+     - 3938
+   * - :code:`glass_binary`
+     - Metallic glass formation data for binary alloys, collected from various experimental techniques such as melt-spinning or mechanical alloying
+     - 5959
+   * - :code:`glass_binary_v2`
+     - Identical to glass_binary dataset, but with duplicate entries merged
+     - 5483
+   * - :code:`glass_ternary_hipt`
+     - Metallic glass formation dataset for ternary alloys, collected from the high-throughput sputtering experiments measuring whether it is possible to form a glass using sputtering
+     - 5170
+   * - :code:`glass_ternary_landolt`
+     - Metallic glass formation dataset for ternary alloys, collected from the "Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,’ a volume of the Landolt– Börnstein collection
+     - 7191
+   * - :code:`heusler_magnetic`
+     - 1153 Heusler alloys with DFT-calculated magnetic and electronic properties
+     - 1153
+   * - :code:`jarvis_dft_2d`
+     - Various properties of 636 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.
+     - 636
+   * - :code:`jarvis_dft_3d`
+     - Various properties of 25,923 bulk materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.
+     - 25923
+   * - :code:`jarvis_ml_dft_training`
+     - Various properties of 24,759 bulk and 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.
+     - 24759
+   * - :code:`m2ax`
+     - Elastic properties of 223 stable M2AX compounds from "A comprehensive survey of M2AX phase elastic properties" by Cover et al
+     - 223
+   * - :code:`matbench_dielectric`
+     - Matbench v0.1 test dataset for predicting refractive index from structure
+     - 4764
+   * - :code:`matbench_expt_gap`
+     - Matbench v0.1 test dataset for predicting experimental band gap from composition alone
+     - 4604
+   * - :code:`matbench_expt_is_metal`
+     - Matbench v0.1 test dataset for classifying metallicity from composition alone
+     - 4921
+   * - :code:`matbench_glass`
+     - Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula
+     - 5680
+   * - :code:`matbench_jdft2d`
+     - Matbench v0.1 test dataset for predicting exfoliation energies from crystal structure (computed with the OptB88vdW and TBmBJ functionals)
+     - 636
+   * - :code:`matbench_log_gvrh`
+     - Matbench v0.1 test dataset for predicting DFT log10 VRH-average shear modulus from structure
+     - 10987
+   * - :code:`matbench_log_kvrh`
+     - Matbench v0.1 test dataset for predicting DFT log10 VRH-average bulk modulus from structure
+     - 10987
+   * - :code:`matbench_mp_e_form`
+     - Matbench v0.1 test dataset for predicting DFT formation energy from structure
+     - 132752
+   * - :code:`matbench_mp_gap`
+     - Matbench v0.1 test dataset for predicting DFT PBE band gap from structure
+     - 106113
+   * - :code:`matbench_mp_is_metal`
+     - Matbench v0.1 test dataset for predicting DFT metallicity from structure
+     - 106113
+   * - :code:`matbench_perovskites`
+     - Matbench v0.1 test dataset for predicting formation energy from crystal structure
+     - 18928
+   * - :code:`matbench_phonons`
+     - Matbench v0.1 test dataset for predicting vibration properties from crystal structure
+     - 1265
+   * - :code:`matbench_steels`
+     - Matbench v0.1 test dataset for predicting steel yield strengths from chemical composition alone
+     - 312
+   * - :code:`mp_all_20181018`
+     - A complete copy of the Materials Project database as of 10/18/2018
+     - 83989
+   * - :code:`mp_nostruct_20181018`
+     - A complete copy of the Materials Project database as of 10/18/2018
+     - 83989
+   * - :code:`phonon_dielectric_mp`
+     - Phonon (lattice/atoms vibrations) and dielectric properties of 1296 compounds computed via ABINIT software package in the harmonic approximation based on density functional perturbation theory.
+     - 1296
+   * - :code:`piezoelectric_tensor`
+     - 941 structures with piezoelectric properties, calculated with DFT-PBE.
+     - 941
+   * - :code:`ricci_boltztrap_mp_tabular`
+     - Ab-initio electronic transport database for inorganic materials
+     - 47737
+   * - :code:`steel_strength`
+     - 312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.
+     - 312
+   * - :code:`wolverton_oxides`
+     - 4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies
+     - 4914
+============
+Dataset info
+============
 ------------
 boltztrap_mp
 ------------

@@ -1,67 +1,12 @@
-Composition featurizers for elemental data and stoichiometry.
-Composition featurizers for elemental data and stoichiometry.
-Composition featurizers for elemental data and stoichiometry.
-Composition featurizers for elemental data and stoichiometry.
-Composition featurizers for orbital data.
-Composition featurizers for orbital data.
-Composition featurizers for composite features containing more than 1 category of general-purpose data.
-Composition featurizers for composite features containing more than 1 category of general-purpose data.
-Composition featurizers for determining packing characteristics.
-Composition featurizers specialized for use with alloys.
-Composition featurizers specialized for use with alloys.
-Composition featurizers specialized for use with alloys.
-Composition featurizers for compositions with ionic data.
-Composition featurizers for compositions with ionic data.
-Composition featurizers for compositions with ionic data.
-Composition featurizers for compositions with ionic data.
-Composition featurizers for thermodynamic properties.
-Composition featurizers for thermodynamic properties.
-Site featurizers based on bonding.
-Site featurizers based on bonding.
-Site featurizers based on bonding.
-Site featurizers based on local chemical information, rather than geometry alone.
-Site featurizers based on local chemical information, rather than geometry alone.
-Site featurizers based on local chemical information, rather than geometry alone.
-Site featurizers based on local chemical information, rather than geometry alone.
-Site featurizers requiring external libraries for core functionality.
-Site featurizers that fingerprint a site using local geometry.
-Site featurizers that fingerprint a site using local geometry.
-Site featurizers that fingerprint a site using local geometry.
-Site featurizers that fingerprint a site using local geometry.
-Site featurizers that fingerprint a site using local geometry.
-Miscellaneous site featurizers.
-Miscellaneous site featurizers.
-Site featurizers based on distribution functions.
-Site featurizers based on distribution functions.
-Site featurizers based on distribution functions.
-Structure featurizers generating a matrix for each structure.Most matrix structure featurizers contain the ability to flatten matrices to be dataframe-friendly.
-Structure featurizers generating a matrix for each structure.Most matrix structure featurizers contain the ability to flatten matrices to be dataframe-friendly.
-Structure featurizers generating a matrix for each structure.Most matrix structure featurizers contain the ability to flatten matrices to be dataframe-friendly.
-Structure featurizers based on bonding.
-Structure featurizers based on bonding.
-Structure featurizers based on bonding.
-Structure featurizers based on bonding.
-Structure featurizers based on bonding.
-Structure featurizers based on packing or ordering.
-Structure featurizers based on packing or ordering.
-Structure featurizers based on packing or ordering.
-Structure featurizers based on packing or ordering.
-Structure featurizers producing more than one kind of structue feature data.
-Miscellaneous structure featurizers.
-Miscellaneous structure featurizers.
-Miscellaneous structure featurizers.
-Structure featurizers implementing radial distribution functions.
-Structure featurizers implementing radial distribution functions.
-Structure featurizers implementing radial distribution functions.
-Structure featurizers based on aggregating site features.
-Structure featurizers based on symmetry.
-Structure featurizers based on symmetry.
+Below, you will find a description of each featurizer, listed in tables grouped by module.
+
 -------------
 bandstructure
 -------------
 Features derived from a material's electronic bandstructure.
 ------------------------------------------------------------
 
+:code:`matminer.featurizers.bandstructure`
 
 .. list-table::
    :align: left
@@ -83,6 +28,7 @@ base
 Parent classes and meta-featurizers.
 ------------------------------------
 
+:code:`matminer.featurizers.base`
 
 .. list-table::
    :align: left
@@ -106,9 +52,12 @@ composition
 Features based on a material's composition.
 -------------------------------------------
 
-alloy - :code:`matminer.featurizers.composition.alloy`
-______________________________________________________
-Composition featurizers specialized for use with alloys.
+alloy
+_____
+:code:`matminer.featurizers.composition.alloy`
+
+
+ Composition featurizers specialized for use with alloys. 
 
 .. list-table::
    :align: left
@@ -126,9 +75,12 @@ Composition featurizers specialized for use with alloys.
 
 
 
-composite - :code:`matminer.featurizers.composition.composite`
-______________________________________________________________
-Composition featurizers for composite features containing more than 1 category of general-purpose data.
+composite
+_________
+:code:`matminer.featurizers.composition.composite`
+
+
+ Composition featurizers for composite features containing more than 1 category of general-purpose data. 
 
 .. list-table::
    :align: left
@@ -144,9 +96,12 @@ Composition featurizers for composite features containing more than 1 category o
 
 
 
-element - :code:`matminer.featurizers.composition.element`
-__________________________________________________________
-Composition featurizers for elemental data and stoichiometry.
+element
+_______
+:code:`matminer.featurizers.composition.element`
+
+
+ Composition featurizers for elemental data and stoichiometry. 
 
 .. list-table::
    :align: left
@@ -166,9 +121,12 @@ Composition featurizers for elemental data and stoichiometry.
 
 
 
-ion - :code:`matminer.featurizers.composition.ion`
-__________________________________________________
-Composition featurizers for compositions with ionic data.
+ion
+___
+:code:`matminer.featurizers.composition.ion`
+
+
+ Composition featurizers for compositions with ionic data. 
 
 .. list-table::
    :align: left
@@ -188,9 +146,12 @@ Composition featurizers for compositions with ionic data.
 
 
 
-orbital - :code:`matminer.featurizers.composition.orbital`
-__________________________________________________________
-Composition featurizers for orbital data.
+orbital
+_______
+:code:`matminer.featurizers.composition.orbital`
+
+
+ Composition featurizers for orbital data. 
 
 .. list-table::
    :align: left
@@ -206,9 +167,12 @@ Composition featurizers for orbital data.
 
 
 
-packing - :code:`matminer.featurizers.composition.packing`
-__________________________________________________________
-Composition featurizers for determining packing characteristics.
+packing
+_______
+:code:`matminer.featurizers.composition.packing`
+
+
+ Composition featurizers for determining packing characteristics. 
 
 .. list-table::
    :align: left
@@ -222,9 +186,12 @@ Composition featurizers for determining packing characteristics.
 
 
 
-thermo - :code:`matminer.featurizers.composition.thermo`
-________________________________________________________
-Composition featurizers for thermodynamic properties.
+thermo
+______
+:code:`matminer.featurizers.composition.thermo`
+
+
+ Composition featurizers for thermodynamic properties. 
 
 .. list-table::
    :align: left
@@ -246,6 +213,7 @@ conversions
 Conversion utilities.
 ---------------------
 
+:code:`matminer.featurizers.conversions`
 
 .. list-table::
    :align: left
@@ -285,6 +253,7 @@ dos
 Features based on a material's electronic density of states.
 ------------------------------------------------------------
 
+:code:`matminer.featurizers.dos`
 
 .. list-table::
    :align: left
@@ -312,6 +281,7 @@ function
 Classes for expanding sets of features calculated with other featurizers.
 -------------------------------------------------------------------------
 
+:code:`matminer.featurizers.function`
 
 .. list-table::
    :align: left
@@ -331,9 +301,12 @@ site
 Features from individual sites in a material's crystal structure.
 -----------------------------------------------------------------
 
-bonding - :code:`matminer.featurizers.site.bonding`
-___________________________________________________
-Site featurizers based on bonding.
+bonding
+_______
+:code:`matminer.featurizers.site.bonding`
+
+
+ Site featurizers based on bonding. 
 
 .. list-table::
    :align: left
@@ -351,9 +324,12 @@ Site featurizers based on bonding.
 
 
 
-chemical - :code:`matminer.featurizers.site.chemical`
-_____________________________________________________
-Site featurizers based on local chemical information, rather than geometry alone.
+chemical
+________
+:code:`matminer.featurizers.site.chemical`
+
+
+ Site featurizers based on local chemical information, rather than geometry alone. 
 
 .. list-table::
    :align: left
@@ -373,9 +349,12 @@ Site featurizers based on local chemical information, rather than geometry alone
 
 
 
-external - :code:`matminer.featurizers.site.external`
-_____________________________________________________
-Site featurizers requiring external libraries for core functionality.
+external
+________
+:code:`matminer.featurizers.site.external`
+
+
+ Site featurizers requiring external libraries for core functionality. 
 
 .. list-table::
    :align: left
@@ -389,9 +368,12 @@ Site featurizers requiring external libraries for core functionality.
 
 
 
-fingerprint - :code:`matminer.featurizers.site.fingerprint`
-___________________________________________________________
-Site featurizers that fingerprint a site using local geometry.
+fingerprint
+___________
+:code:`matminer.featurizers.site.fingerprint`
+
+
+ Site featurizers that fingerprint a site using local geometry. 
 
 .. list-table::
    :align: left
@@ -413,9 +395,12 @@ Site featurizers that fingerprint a site using local geometry.
 
 
 
-misc - :code:`matminer.featurizers.site.misc`
-_____________________________________________
-Miscellaneous site featurizers.
+misc
+____
+:code:`matminer.featurizers.site.misc`
+
+
+ Miscellaneous site featurizers. 
 
 .. list-table::
    :align: left
@@ -431,9 +416,12 @@ Miscellaneous site featurizers.
 
 
 
-rdf - :code:`matminer.featurizers.site.rdf`
-___________________________________________
-Site featurizers based on distribution functions.
+rdf
+___
+:code:`matminer.featurizers.site.rdf`
+
+
+ Site featurizers based on distribution functions. 
 
 .. list-table::
    :align: left
@@ -457,9 +445,12 @@ structure
 Generating features based on a material's crystal structure.
 ------------------------------------------------------------
 
-bonding - :code:`matminer.featurizers.structure.bonding`
-________________________________________________________
-Structure featurizers based on bonding.
+bonding
+_______
+:code:`matminer.featurizers.structure.bonding`
+
+
+ Structure featurizers based on bonding. 
 
 .. list-table::
    :align: left
@@ -481,9 +472,12 @@ Structure featurizers based on bonding.
 
 
 
-composite - :code:`matminer.featurizers.structure.composite`
-____________________________________________________________
-Structure featurizers producing more than one kind of structue feature data.
+composite
+_________
+:code:`matminer.featurizers.structure.composite`
+
+
+ Structure featurizers producing more than one kind of structue feature data. 
 
 .. list-table::
    :align: left
@@ -497,9 +491,12 @@ Structure featurizers producing more than one kind of structue feature data.
 
 
 
-matrix - :code:`matminer.featurizers.structure.matrix`
-______________________________________________________
-Structure featurizers generating a matrix for each structure.Most matrix structure featurizers contain the ability to flatten matrices to be dataframe-friendly.
+matrix
+______
+:code:`matminer.featurizers.structure.matrix`
+
+
+ Structure featurizers generating a matrix for each structure.  Most matrix structure featurizers contain the ability to flatten matrices to be dataframe-friendly. 
 
 .. list-table::
    :align: left
@@ -517,9 +514,12 @@ Structure featurizers generating a matrix for each structure.Most matrix structu
 
 
 
-misc - :code:`matminer.featurizers.structure.misc`
-__________________________________________________
-Miscellaneous structure featurizers.
+misc
+____
+:code:`matminer.featurizers.structure.misc`
+
+
+ Miscellaneous structure featurizers. 
 
 .. list-table::
    :align: left
@@ -537,9 +537,12 @@ Miscellaneous structure featurizers.
 
 
 
-order - :code:`matminer.featurizers.structure.order`
-____________________________________________________
-Structure featurizers based on packing or ordering.
+order
+_____
+:code:`matminer.featurizers.structure.order`
+
+
+ Structure featurizers based on packing or ordering. 
 
 .. list-table::
    :align: left
@@ -559,9 +562,12 @@ Structure featurizers based on packing or ordering.
 
 
 
-rdf - :code:`matminer.featurizers.structure.rdf`
-________________________________________________
-Structure featurizers implementing radial distribution functions.
+rdf
+___
+:code:`matminer.featurizers.structure.rdf`
+
+
+ Structure featurizers implementing radial distribution functions. 
 
 .. list-table::
    :align: left
@@ -579,9 +585,12 @@ Structure featurizers implementing radial distribution functions.
 
 
 
-sites - :code:`matminer.featurizers.structure.sites`
-____________________________________________________
-Structure featurizers based on aggregating site features.
+sites
+_____
+:code:`matminer.featurizers.structure.sites`
+
+
+ Structure featurizers based on aggregating site features. 
 
 .. list-table::
    :align: left
@@ -595,9 +604,12 @@ Structure featurizers based on aggregating site features.
 
 
 
-symmetry - :code:`matminer.featurizers.structure.symmetry`
-__________________________________________________________
-Structure featurizers based on symmetry.
+symmetry
+________
+:code:`matminer.featurizers.structure.symmetry`
+
+
+ Structure featurizers based on symmetry. 
 
 .. list-table::
    :align: left

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Datasets Available in Matminer &#8212; matminer 0.6.5 documentation</title>
+    <title>Table of Datasets &#8212; matminer 0.6.5 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -29,7 +29,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.5 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Datasets Available in Matminer</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Table of Datasets</a></li> 
       </ul>
     </div>  
 
@@ -38,51 +38,195 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="datasets-available-in-matminer">
-<h1>Datasets Available in Matminer<a class="headerlink" href="#datasets-available-in-matminer" title="Permalink to this headline">¶</a></h1>
-<p>Below you will find descriptions and reference data on each available dataset, ordered by load_dataset() keyword argument</p>
-<p>boltztrap_mp
-brgoch_superhard_training
-castelli_perovskites
-citrine_thermal_conductivity
-dielectric_constant
-double_perovskites_gap
-double_perovskites_gap_lumo
-elastic_tensor_2015
-expt_formation_enthalpy
-expt_formation_enthalpy_kingsbury
-expt_gap
-expt_gap_kingsbury
-flla
-glass_binary
-glass_binary_v2
-glass_ternary_hipt
-glass_ternary_landolt
-heusler_magnetic
-jarvis_dft_2d
-jarvis_dft_3d
-jarvis_ml_dft_training
-m2ax
-matbench_dielectric
-matbench_expt_gap
-matbench_expt_is_metal
-matbench_glass
-matbench_jdft2d
-matbench_log_gvrh
-matbench_log_kvrh
-matbench_mp_e_form
-matbench_mp_gap
-matbench_mp_is_metal
-matbench_perovskites
-matbench_phonons
-matbench_steels
-mp_all_20181018
-mp_nostruct_20181018
-phonon_dielectric_mp
-piezoelectric_tensor
-ricci_boltztrap_mp_tabular
-steel_strength
-wolverton_oxides</p>
+  <section id="table-of-datasets">
+<h1>Table of Datasets<a class="headerlink" href="#table-of-datasets" title="Permalink to this headline">¶</a></h1>
+<p>Find a table of all 42 datasets available in matminer here.</p>
+<table class="colwidths-given docutils align-left">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 70%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Entries</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">boltztrap_mp</span></code></p></td>
+<td><p>Effective mass and thermoelectric properties of 8924 compounds in The  Materials Project database that are calculated by the BoltzTraP software package run on the GGA-PBE or GGA+U density functional theory calculation results</p></td>
+<td><p>8924</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">brgoch_superhard_training</span></code></p></td>
+<td><p>2574 materials used for training regressors that predict shear and bulk modulus.</p></td>
+<td><p>2574</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">castelli_perovskites</span></code></p></td>
+<td><p>18,928 perovskites generated with ABX combinatorics, calculating gllbsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.</p></td>
+<td><p>18928</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">citrine_thermal_conductivity</span></code></p></td>
+<td><p>Thermal conductivity of 872 compounds measured experimentally and retrieved from Citrine database from various references</p></td>
+<td><p>872</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">dielectric_constant</span></code></p></td>
+<td><p>1,056 structures with dielectric properties, calculated with DFPT-PBE.</p></td>
+<td><p>1056</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">double_perovskites_gap</span></code></p></td>
+<td><p>Band gap of 1306 double perovskites (a_1-b_1-a_2-b_2-O6) calculated using ﻿Gritsenko, van Leeuwen, van Lenthe and Baerends potential (gllbsc) in GPAW.</p></td>
+<td><p>1306</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">double_perovskites_gap_lumo</span></code></p></td>
+<td><p>Supplementary lumo data of 55 atoms for the double_perovskites_gap dataset.</p></td>
+<td><p>55</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">elastic_tensor_2015</span></code></p></td>
+<td><p>1,181 structures with elastic properties calculated with DFT-PBE.</p></td>
+<td><p>1181</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">expt_formation_enthalpy</span></code></p></td>
+<td><p>Experimental formation enthalpies for inorganic compounds, collected from years of calorimetric experiments</p></td>
+<td><p>1276</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">expt_formation_enthalpy_kingsbury</span></code></p></td>
+<td><p>Dataset containing experimental standard formation enthalpies for solids</p></td>
+<td><p>2135</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">expt_gap</span></code></p></td>
+<td><p>Experimental band gap of 6354 inorganic semiconductors.</p></td>
+<td><p>6354</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">expt_gap_kingsbury</span></code></p></td>
+<td><p>Identical to the matbench_expt_gap dataset, except that Materials Project database IDs (mp-ids) have been associated with each material using the same method as described for the expt_formation_enthalpy_kingsbury dataset</p></td>
+<td><p>4604</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">flla</span></code></p></td>
+<td><p>3938 structures and computed formation energies from “Crystal Structure Representations for Machine Learning Models of Formation Energies.”</p></td>
+<td><p>3938</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">glass_binary</span></code></p></td>
+<td><p>Metallic glass formation data for binary alloys, collected from various experimental techniques such as melt-spinning or mechanical alloying</p></td>
+<td><p>5959</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">glass_binary_v2</span></code></p></td>
+<td><p>Identical to glass_binary dataset, but with duplicate entries merged</p></td>
+<td><p>5483</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">glass_ternary_hipt</span></code></p></td>
+<td><p>Metallic glass formation dataset for ternary alloys, collected from the high-throughput sputtering experiments measuring whether it is possible to form a glass using sputtering</p></td>
+<td><p>5170</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">glass_ternary_landolt</span></code></p></td>
+<td><p>Metallic glass formation dataset for ternary alloys, collected from the “Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,’ a volume of the Landolt– Börnstein collection</p></td>
+<td><p>7191</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">heusler_magnetic</span></code></p></td>
+<td><p>1153 Heusler alloys with DFT-calculated magnetic and electronic properties</p></td>
+<td><p>1153</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">jarvis_dft_2d</span></code></p></td>
+<td><p>Various properties of 636 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.</p></td>
+<td><p>636</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">jarvis_dft_3d</span></code></p></td>
+<td><p>Various properties of 25,923 bulk materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.</p></td>
+<td><p>25923</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">jarvis_ml_dft_training</span></code></p></td>
+<td><p>Various properties of 24,759 bulk and 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.</p></td>
+<td><p>24759</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">m2ax</span></code></p></td>
+<td><p>Elastic properties of 223 stable M2AX compounds from “A comprehensive survey of M2AX phase elastic properties” by Cover et al</p></td>
+<td><p>223</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_dielectric</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting refractive index from structure</p></td>
+<td><p>4764</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_expt_gap</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting experimental band gap from composition alone</p></td>
+<td><p>4604</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_expt_is_metal</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for classifying metallicity from composition alone</p></td>
+<td><p>4921</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_glass</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula</p></td>
+<td><p>5680</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_jdft2d</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting exfoliation energies from crystal structure (computed with the OptB88vdW and TBmBJ functionals)</p></td>
+<td><p>636</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_log_gvrh</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting DFT log10 VRH-average shear modulus from structure</p></td>
+<td><p>10987</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_log_kvrh</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting DFT log10 VRH-average bulk modulus from structure</p></td>
+<td><p>10987</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_mp_e_form</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting DFT formation energy from structure</p></td>
+<td><p>132752</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_mp_gap</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting DFT PBE band gap from structure</p></td>
+<td><p>106113</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_mp_is_metal</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting DFT metallicity from structure</p></td>
+<td><p>106113</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_perovskites</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting formation energy from crystal structure</p></td>
+<td><p>18928</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_phonons</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting vibration properties from crystal structure</p></td>
+<td><p>1265</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">matbench_steels</span></code></p></td>
+<td><p>Matbench v0.1 test dataset for predicting steel yield strengths from chemical composition alone</p></td>
+<td><p>312</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">mp_all_20181018</span></code></p></td>
+<td><p>A complete copy of the Materials Project database as of 10/18/2018</p></td>
+<td><p>83989</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">mp_nostruct_20181018</span></code></p></td>
+<td><p>A complete copy of the Materials Project database as of 10/18/2018</p></td>
+<td><p>83989</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">phonon_dielectric_mp</span></code></p></td>
+<td><p>Phonon (lattice/atoms vibrations) and dielectric properties of 1296 compounds computed via ABINIT software package in the harmonic approximation based on density functional perturbation theory.</p></td>
+<td><p>1296</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">piezoelectric_tensor</span></code></p></td>
+<td><p>941 structures with piezoelectric properties, calculated with DFT-PBE.</p></td>
+<td><p>941</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">ricci_boltztrap_mp_tabular</span></code></p></td>
+<td><p>Ab-initio electronic transport database for inorganic materials</p></td>
+<td><p>47737</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">steel_strength</span></code></p></td>
+<td><p>312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.</p></td>
+<td><p>312</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">wolverton_oxides</span></code></p></td>
+<td><p>4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies</p></td>
+<td><p>4914</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dataset-info">
+<h1>Dataset info<a class="headerlink" href="#dataset-info" title="Permalink to this headline">¶</a></h1>
 <section id="boltztrap-mp">
 <h2>boltztrap_mp<a class="headerlink" href="#boltztrap-mp" title="Permalink to this headline">¶</a></h2>
 <p>Effective mass and thermoelectric properties of 8924 compounds in The  Materials Project database that are calculated by the BoltzTraP software package run on the GGA-PBE or GGA+U density functional theory calculation results. The properties are reported at the temperature of 300 Kelvin and the carrier concentration of 1e18 1/cm3.</p>
@@ -3036,7 +3180,8 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Datasets Available in Matminer</a><ul>
+<li><a class="reference internal" href="#">Table of Datasets</a></li>
+<li><a class="reference internal" href="#dataset-info">Dataset info</a><ul>
 <li><a class="reference internal" href="#boltztrap-mp">boltztrap_mp</a></li>
 <li><a class="reference internal" href="#brgoch-superhard-training">brgoch_superhard_training</a></li>
 <li><a class="reference internal" href="#castelli-perovskites">castelli_perovskites</a></li>
@@ -3114,7 +3259,7 @@ url={<a class="reference external" href="http://dx.doi.org/10.1038/sdata.2017.15
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">matminer 0.6.5 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Datasets Available in Matminer</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Table of Datasets</a></li> 
       </ul>
     </div>
 
