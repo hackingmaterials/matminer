@@ -110,6 +110,39 @@ class MDFDataRetrieval(BaseDataRetrieval):
         results = self.forge.aggregate(q=squery, **kwargs)
         return make_dataframe(results, unwind_arrays=unwind_arrays)
 
+    def citations(self):
+        return [
+            "@article{Blaiszik2019,"
+            "doi = {10.1557/mrc.2019.118},"
+            "url = {https://doi.org/10.1557/mrc.2019.118},"
+            "year = {2019},"
+            "month = sep,"
+            "publisher = {Springer Science and Business Media {LLC}},"
+            "volume = {9},"
+            "number = {4},"
+            "pages = {1125--1133},"
+            "author = {Ben Blaiszik and Logan Ward and Marcus Schwarting and Jonathon Gaff "
+            "and Ryan Chard and Daniel Pike and Kyle Chard and Ian Foster},"
+            "title = {A data ecosystem to support machine learning in materials science},"
+            "journal = {{MRS} Communications}"
+            "}",
+            "@article{Blaiszik2016,"
+            "doi = {10.1007/s11837-016-2001-3},"
+            "url = {https://doi.org/10.1007/s11837-016-2001-3},"
+            "year = {2016},"
+            "month = jul,"
+            "publisher = {Springer Science and Business Media {LLC}},"
+            "volume = {68},"
+            "number = {8},"
+            "pages = {2045--2052},"
+            "author = {B. Blaiszik and K. Chard and J. Pruyne and R. Ananthakrishnan and "
+            "S. Tuecke and I. Foster},"
+            "title = {The Materials Data Facility: Data Services to Advance Materials "
+            "Science Research},"
+            "journal = {{JOM}}"
+            "}"
+        ]
+
 
 # TODO: could add parallel functionality, but doesn't seem to be too slow
 # TODO: also might be useful to handle units more intelligently
