@@ -578,7 +578,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
                 bin_index = int(dist / self.dr)
                 distribution[bin_index]  += (this_charge * neigh_charge) / (struct.num_sites * dist)
 
-        return [redf_dict]
+        return distribution
 
     def feature_labels(self):
         bin_labels = get_rdf_bin_labels(self.distances, self.cutoff)

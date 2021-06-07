@@ -15,7 +15,7 @@ from sklearn.neighbors import NearestNeighbors
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
-from matminer.featurizers.oxidation import has_oxidation_states
+from matminer.featurizers.utils.oxidation import has_oxidation_states
 from matminer.utils.data import (
     DemlData,
     MagpieData,
