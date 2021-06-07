@@ -127,3 +127,39 @@ class MPDataRetrieval(BaseDataRetrieval):
             except MPRestError:
                 props.append(float("NaN"))
         return props
+
+    def citations(self):
+        return [
+            "@article{Jain2013,"
+            "doi = {10.1063/1.4812323},"
+            "url = {https://doi.org/10.1063/1.4812323},"
+            "year = {2013},"
+            "month = jul,"
+            "publisher = {{AIP} Publishing},"
+            "volume = {1},"
+            "number = {1},"
+            "pages = {011002},"
+            "author = {Anubhav Jain and Shyue Ping Ong and Geoffroy Hautier and Wei "
+            "Chen and William Davidson Richards and Stephen Dacek and "
+            "Shreyas Cholia and Dan Gunter and David Skinner and "
+            "Gerbrand Ceder and Kristin A. Persson},"
+            "title = {Commentary: The Materials Project: A materials genome "
+            "approach to accelerating materials innovation},"
+            "journal = {{APL} Materials}"
+            "}",
+            "@article{Ong2015,"
+            "doi = {10.1016/j.commatsci.2014.10.037},"
+            "url = {https://doi.org/10.1016/j.commatsci.2014.10.037},"
+            "year = {2015},"
+            "month = feb,"
+            "publisher = {Elsevier {BV}},"
+            "volume = {97},"
+            "pages = {209--215},"
+            "author = {Shyue Ping Ong and Shreyas Cholia and Anubhav Jain "
+            "and Miriam Brafman and Dan Gunter and Gerbrand Ceder and Kristin A. Persson},"
+            "title = {The Materials Application Programming Interface ({API}): "
+            "A simple,  flexible and efficient {API} for materials data based on "
+            "{REpresentational} State Transfer ({REST}) principles},"
+            "journal = {Computational Materials Science}"
+            "}",
+        ]

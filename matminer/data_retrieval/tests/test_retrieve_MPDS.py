@@ -9,7 +9,9 @@ except ImportError:
 import unittest
 from jsonschema import validate, Draft4Validator
 from jsonschema.exceptions import ValidationError
+
 from matminer.data_retrieval.retrieve_MPDS import MPDSDataRetrieval
+from matminer.data_retrieval.tests.base import on_ci
 
 
 class MPDSDataRetrievalTest(unittest.TestCase):
@@ -29,6 +31,7 @@ class MPDSDataRetrievalTest(unittest.TestCase):
         self.schema = json.loads(content)
         Draft4Validator.check_schema(self.schema)
 
+    @unittest.skipIf(on_ci.upper() == "TRUE", "Bad Datasource-GHActions pipeline")
     @unittest.skipIf("MPDS_KEY" not in os.environ, "MPDS_KEY env var not set")
     def test_valid_answer(self):
 

@@ -23,7 +23,6 @@ for req in extras_raw:
     dependency_name = items[0].strip()
     dependency_reqs = [i.strip() for i in items[1:] if i.strip()]
     extras_dict[dependency_name] = dependency_reqs
-extras_list = list(extras_dict)
 extras_list = [r for d in extras_dict.values() for r in d]
 
 if __name__ == "__main__":

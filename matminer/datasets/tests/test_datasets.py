@@ -570,6 +570,74 @@ class MatminerDatasetsTest(DataSetsTest):
             test_func=_unique_tests,
         )
 
+    def test_expt_gap_kingsbury(self):
+        object_headers = ["formula", "likely_mpid"]
+
+        numeric_headers = ["expt_gap"]
+        self.universal_dataset_check("expt_gap_kingsbury", object_headers, numeric_headers)
+
+    def test_expt_formation_enthalpy_kingsbury(self):
+
+        object_headers = ["formula", "likely_mpid", "phaseinfo", "reference"]
+
+        numeric_headers = ["expt_form_e", "uncertainty"]
+
+        self.universal_dataset_check(
+            "expt_formation_enthalpy_kingsbury",
+            object_headers,
+            numeric_headers,
+        )
+
+    def test_ricci_boltztrap_mp_tabular(self):
+        object_headers = ["structure", "task", "functional", "pretty_formula", "is_metal"]
+
+        numeric_headers = [
+            "ΔE [eV]",
+            "V [Å³]",
+            "S.p [µV/K]",
+            "S.n [µV/K]",
+            "Sᵉ.p.v [µV/K]",
+            "Sᵉ.p.T [K]",
+            "Sᵉ.p.c [cm⁻³]",
+            "Sᵉ.n.v [µV/K]",
+            "Sᵉ.n.T [K]",
+            "Sᵉ.n.c [cm⁻³]",
+            "σ.p [1/Ω/m/s]",
+            "σ.n [1/Ω/m/s]",
+            "PF.p [µW/cm/K²/s]",
+            "PF.n [µW/cm/K²/s]",
+            "σᵉ.p.v [1/Ω/m/s]",
+            "σᵉ.p.T [K]",
+            "σᵉ.p.c [cm⁻³]",
+            "σᵉ.n.v [1/Ω/m/s]",
+            "σᵉ.n.T [K]",
+            "σᵉ.n.c [cm⁻³]",
+            "PFᵉ.p.v [µW/cm/K²/s]",
+            "PFᵉ.p.T [K]",
+            "PFᵉ.p.c [cm⁻³]",
+            "PFᵉ.n.v [µW/cm/K²/s]",
+            "PFᵉ.n.T [K]",
+            "PFᵉ.n.c [cm⁻³]",
+            "κₑ.p [W/K/m/s]",
+            "κₑ.n [W/K/m/s]",
+            "κₑᵉ.p.v [W/K/m/s]",
+            "κₑᵉ.p.T [K]",
+            "κₑᵉ.p.c [cm⁻³]",
+            "κₑᵉ.n.v [W/K/m/s]",
+            "κₑᵉ.n.T [K]",
+            "κₑᵉ.n.c [cm⁻³]",
+            "mₑᶜ.p.ε̄ [mₑ]",
+            "mₑᶜ.p.ε₁ [mₑ]",
+            "mₑᶜ.p.ε₂ [mₑ]",
+            "mₑᶜ.p.ε₃ [mₑ]",
+            "mₑᶜ.n.ε̄ [mₑ]",
+            "mₑᶜ.n.ε₁ [mₑ]",
+            "mₑᶜ.n.ε₂ [mₑ]",
+            "mₑᶜ.n.ε₃ [mₑ]",
+        ]
+
+        self.universal_dataset_check("ricci_boltztrap_mp_tabular", object_headers, numeric_headers)
+
 
 class MatbenchDatasetsTest(DataSetsTest):
     """

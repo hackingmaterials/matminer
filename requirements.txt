@@ -6,7 +6,6 @@ tqdm==4.61.0
 pymongo==3.11.4
 pint==0.17
 six==1.16.0
-plotly==4.14.3
 future==0.18.2
 sympy==1.8
 scikit_learn==0.24.2

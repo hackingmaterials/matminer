@@ -1,17 +1,15 @@
 # coding: utf-8
 
 import os
-import pandas as pd
 import unittest
-from matminer.data_retrieval.retrieve_Citrine import CitrineDataRetrieval
 
-pd.set_option("display.width", 1000)
-pd.set_option("display.max_columns", None)
-pd.set_option("display.max_rows", None)
+from matminer.data_retrieval.retrieve_Citrine import CitrineDataRetrieval
+from matminer.data_retrieval.tests.base import on_ci
 
 citrine_key = os.environ.get("CITRINATION_API_KEY", None)
 
 
+@unittest.skipIf(on_ci.upper() == "TRUE", "Bad Citrination-GHActions pipeline")
 @unittest.skipIf(citrine_key is None, "CITRINATION_API_KEY env variable not set.")
 class CitrineDataRetrievalTest(unittest.TestCase):
     def setUp(self):

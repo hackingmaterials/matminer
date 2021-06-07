@@ -1,7 +1,6 @@
 import numpy as np
 
 
-@staticmethod
 def laplacian_kernel(arr0, arr1, SIGMA):
     """
     Returns a Laplacian kernel of the two arrays
@@ -12,7 +11,6 @@ def laplacian_kernel(arr0, arr1, SIGMA):
     return np.exp(-np.linalg.norm(diff.A1, ord=1) / SIGMA)
 
 
-@staticmethod
 def gaussian_kernel(arr0, arr1, SIGMA):
     """
     Returns a Gaussian kernel of the two arrays

@@ -12,7 +12,6 @@ matminer.utils.data\_files.deml\_elementdata module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

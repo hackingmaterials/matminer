@@ -1,9 +1,10 @@
 import os
 import hashlib
 import json
-import pandas as pd
-
 import requests
+
+import tqdm
+import pandas as pd
 
 __author__ = "Daniel Dopp <dbdopp@lbl.gov>"
 
@@ -102,15 +103,24 @@ def _fetch_external_dataset(url, file_path):
     """
 
     # Fetch data from given url
-    print(
-        "Fetching {} from {} to {}".format(os.path.basename(file_path), url, file_path),
-        flush=True,
-    )
+    msg = "Fetching {} from {} to {}".format(os.path.basename(file_path), url, file_path)
+    print(msg, flush=True)
 
     r = requests.get(url, stream=True)
 
+    pbar = tqdm.tqdm(
+        desc=f"Fetching {url} in MB",
+        position=0,
+        leave=True,
+        ascii=True,
+        total=len(r.content),
+        unit="MB",
+        unit_scale=1e-6,
+    )
+    chunk_size = 2048
     with open(file_path, "wb") as file_out:
-        for chunk in r.iter_content(chunk_size=2048):
+        for chunk in r.iter_content(chunk_size=chunk_size):
+            pbar.update(chunk_size)
             file_out.write(chunk)
 
     r.close()

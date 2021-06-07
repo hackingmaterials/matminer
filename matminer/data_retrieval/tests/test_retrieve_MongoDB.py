@@ -7,8 +7,6 @@ from matminer.data_retrieval.retrieve_MongoDB import clean_projection, remove_in
 
 
 class MongoDataRetrievalTest(unittest.TestCase):
-
-    @unittest.skipIf(True, "Disable test for now")
     def test_cleaned_projection(self):
         p = ["n.o.e", "n.o.e.l", "a.b", "a.b.c", "m", "m.b"]
         result = clean_projection(p)
@@ -18,7 +16,6 @@ class MongoDataRetrievalTest(unittest.TestCase):
         result = clean_projection(p)
         self.assertEqual(set(result), {"d", "a.b", "m"})
 
-    @unittest.skipIf(True, "Disable test for now")
     def test_remove_ints(self):
         self.assertEqual(remove_ints("a.1"), "a")
         self.assertEqual(remove_ints("a.1.x"), "a.x")

@@ -68,7 +68,7 @@ def load_dataset(name, data_home=None, download_if_missing=True):
         download_if_missing,
     )
 
-    df = load_dataframe_from_json(data_path)
+    df = load_dataframe_from_json(data_path, pbar=True)
 
     return df
 

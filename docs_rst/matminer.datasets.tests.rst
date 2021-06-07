@@ -44,7 +44,6 @@ matminer.datasets.tests.test\_utils module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

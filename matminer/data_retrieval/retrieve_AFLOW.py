@@ -103,6 +103,25 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
 
         return df
 
+    def citations(self):
+        return [
+            "@article{Curtarolo2012,"
+            "doi = {10.1016/j.commatsci.2012.02.005},"
+            "url = {https://doi.org/10.1016/j.commatsci.2012.02.005},"
+            "year = {2012},"
+            "month = jun,"
+            "publisher = {Elsevier {BV}},"
+            "volume = {58},"
+            "pages = {218--226},"
+            "author = {Stefano Curtarolo and Wahyu Setyawan and Gus L.W. Hart and Michal "
+            "Jahnatek and Roman V. Chepulskii and Richard H. Taylor and Shidong Wang and "
+            "Junkai Xue and Kesong Yang and Ohad Levy and Michael J. Mehl and Harold T. "
+            "Stokes and Denis O. Demchenko and Dane Morgan},"
+            "title = {{AFLOW}: An automatic framework for high-throughput materials discovery},"
+            "journal = {Computational Materials Science}"
+            "}"
+        ]
+
     @staticmethod
     def get_relaxed_structure(aurl):
         """Collects the relaxed structure as a pymatgen.Structure.

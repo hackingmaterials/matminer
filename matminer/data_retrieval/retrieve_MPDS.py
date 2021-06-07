@@ -322,8 +322,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         """
         if not datarow or not datarow[-1]:
             return None
-        cell_abc, sg_n, basis_noneq, els_noneq = \
-            datarow[-4], int(datarow[-3]), datarow[-2], datarow[-1]
+        cell_abc, sg_n, basis_noneq, els_noneq = datarow[-4], int(datarow[-3]), datarow[-2], datarow[-1]
 
         if flavor == "pmg":
             return Structure.from_spacegroup(sg_n, Lattice.from_parameters(*cell_abc), els_noneq, basis_noneq)
@@ -343,3 +342,6 @@ class MPDSDataRetrieval(BaseDataRetrieval):
 
         else:
             raise APIError("Crystal structure treatment unavailable")
+
+    def citations(self):
+        return []

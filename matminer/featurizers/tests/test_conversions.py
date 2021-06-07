@@ -3,11 +3,11 @@ import math
 import unittest
 
 from monty.json import MontyEncoder
-from unittest import TestCase
 from pandas import DataFrame, MultiIndex
 
 from pymatgen.core.structure import IStructure
 from pymatgen.core import Composition, Lattice, Structure, Element, SETTINGS
+from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.conversions import (
     StrToComposition,
@@ -18,10 +18,19 @@ from matminer.featurizers.conversions import (
     StructureToOxidStructure,
     CompositionToOxidComposition,
     CompositionToStructureFromMP,
+    PymatgenFunctionApplicator,
+    ASEAtomstoStructure,
 )
 
+try:
+    from ase import Atoms
 
-class TestConversions(TestCase):
+    ase_loaded = True
+except ImportError:
+    ase_loaded = False
+
+
+class TestConversions(PymatgenTest):
     def test_conversion_overwrite(self):
         # Test with overwrite
         d = {"comp_str": ["Fe2", "MnO2"]}
@@ -66,8 +75,8 @@ class TestConversions(TestCase):
             ]
         )
         struct = Structure(lattice, ["Si"] * 2, coords)
-        df = DataFrame(data={"structure": [struct]})
 
+        df = DataFrame(data={"structure": [struct]})
         stc = StructureToComposition()
         df = stc.featurize_dataframe(df, "structure")
         self.assertEqual(df["composition"].tolist()[0], Composition("Si2"))
@@ -297,3 +306,48 @@ class TestConversions(TestCase):
         self.assertTrue(isinstance(structures[0], Structure))
         self.assertGreaterEqual(len(structures[0]), 5)  # has at least 5 sites
         self.assertTrue(math.isnan(structures[1]))
+
+    def test_pymatgen_general_converter(self):
+        cscl = Structure(
+            Lattice([[4.209, 0, 0], [0, 4.209, 0], [0, 0, 4.209]]),
+            ["Cl", "Cs"],
+            [[0.45, 0.5, 0.5], [0, 0, 0]],
+        )
+
+        coords = [[0, 0, 0], [0.75, 0.5, 0.75]]
+        lattice = Lattice(
+            [
+                [3.8401979337, 0.00, 0.00],
+                [1.9200989668, 3.3257101909, 0.00],
+                [0.00, -2.2171384943, 3.1355090603],
+            ]
+        )
+        si = Structure(lattice, ["Si"] * 2, coords)
+        si.replace_species({Element("Si"): {Element("Ge"): 0.75, Element("C"): 0.25}})
+
+        df = DataFrame(data={"structure": [si, cscl]})
+
+        # Try a conversion with no args
+        pfa = PymatgenFunctionApplicator(func=lambda s: s.is_ordered, target_col_id="is_ordered")
+
+        df = pfa.featurize_dataframe(df, "structure")
+        self.assertArrayEqual(df["is_ordered"].tolist(), [False, True])
+
+        # Try a conversion with args
+        pfa2 = PymatgenFunctionApplicator(
+            func=lambda s: s.composition.anonymized_formula, target_col_id="anonymous formula"
+        )
+
+        df = pfa2.featurize_dataframe(df, "structure")
+        self.assertArrayEqual(df["anonymous formula"].tolist(), ["A0.5B1.5", "AB"])
+
+    @unittest.skipIf(not ase_loaded, "ASE must be installed for test_ase_conversion to run!")
+    def test_ase_conversion(self):
+        a2s = ASEAtomstoStructure()
+        d = 2.9
+        L = 10.0
+        wire = Atoms("Au", positions=[[0, L / 2, L / 2]], cell=[d, L, L], pbc=[1, 0, 0])
+        df = DataFrame({"atoms": [wire]})
+
+        df = a2s.featurize_dataframe(df, "atoms")
+        print(df)

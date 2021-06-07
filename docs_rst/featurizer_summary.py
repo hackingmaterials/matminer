@@ -1,6 +1,8 @@
 """
 Functions used for auto-generating featurizer tables.
 """
+import importlib
+
 import numpy as np
 import pandas as pd
 from matminer.featurizers import base
@@ -29,6 +31,9 @@ mod_summs = {
 
 url_base = " `[more] <https://hackingmaterials.github.io/matminer/matminer.featurizers.html#"
 
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
 
 def generate_tables():
     """
@@ -48,48 +53,100 @@ def generate_tables():
     subclasses = []
     scnames = BaseFeaturizer.__subclasses__() + [BaseFeaturizer]
     scnames += conversions.ConversionFeaturizer.__subclasses__()
+
+    allowable_types = ["base", "composition", "site", "structure", "bandstructure", "dos", "function", "conversions"]
     for sc in scnames:
         scdict = {"name": sc.__name__}
         scdict["doc"] = sc.__doc__.splitlines()[1].lstrip()
         scdict["module"] = sc.__module__
-        scdict["type"] = sc.__module__.split(".")[-1]
+
+        module_tree = sc.__module__.split(".")
+        for t in allowable_types:
+            if t in module_tree:
+                scdict["type"] = t
+                break
+        else:
+            raise ValueError(f"Module {module_tree} does not contain any allowable module types!")
+
+
+        if len(module_tree) == 4:
+            scdict["subtype"] = ".".join((module_tree[-2], module_tree[-1]))
+            m = importlib.import_module(scdict["module"])
+            if m.__doc__:
+                scdict["subdoc"] = m.__doc__.replace("\n", " ")
+            else:
+                raise ValueError("no doc for submodule ", scdict["module"])
+        else:
+            scdict["subtype"] = None
+            scdict["subdoc"] = None
+
         subclasses.append(scdict)
 
+
     df = pd.DataFrame(subclasses)
-    print(mmfeat)
+    # print(mmfeat)
     print(mmdes)
+
 
     for ftype in np.unique(df['type']):
         dftable = df[df['type'] == ftype]
-        dftable['codename'] = [":code:`" + n + "`" for n in dftable['name']]
+        if not dftable["subtype"].isna().any():
+            for i, subtype in enumerate(np.unique(dftable["subtype"])):
+                dfsubtable = dftable[df["subtype"] == subtype]
+                if i == 0:
+                    big_header = ftype
+                else:
+                    big_header = None
 
-        ftype_border = "-" * len(ftype)
-        mod = "(" + dftable['module'].iloc[0] + ")"
-        des_border = "-" * len(mod_summs[ftype])
+                generate_table(dfsubtable, big_header=big_header, little_header=subtype)
+        else:
+            generate_table(dftable, big_header=ftype)
 
+
+
+def generate_table(dftable, big_header=None, little_header=None):
+    dftable['codename'] = [":code:`" + n + "`" for n in dftable['name']]
+
+    mod = ":code:`" + dftable['module'].iloc[0] + "`"
+
+    if big_header:
+        ftype_border = "-" * len(big_header)
+        des_border = "-" * len(mod_summs[big_header])
         print(ftype_border)
-        print(ftype)
+        print(big_header)
         print(ftype_border)
-        print(mod_summs[ftype])
+        print(mod_summs[big_header])
         print(des_border + "\n")
-        print(mod)
 
-        print("\n.. list-table::")
-        print("   :align: left")
-        print("   :widths: 30 70")
-        # print("   :width: 70%")
-        print("   :header-rows: 1\n")
-        print("   * - Name")
-        print("     - Description")
-        for i, n in enumerate(dftable['codename']):
-            # url = url_base + dftable["module"].iloc[0] + "." + \
-            #       dftable["name"].iloc[i] + ">`_"
-            url = ""
+        if not little_header:
+            print(mod)
 
-            print(f"   * - {n}")
-            description = dftable["doc"].iloc[i]
-            print(f"     - {description} {url}    ")
-        print("\n\n")
+    if little_header:
+
+        printable_little_header = little_header.split(".")[-1]
+        fsubtype_border = "_" * len(printable_little_header)
+
+        print(printable_little_header)
+        print(fsubtype_border)
+        print(mod +"\n\n")
+        print(dftable["subdoc"].iloc[0])
+
+    print("\n.. list-table::")
+    print("   :align: left")
+    print("   :widths: 30 70")
+    # print("   :width: 70%")
+    print("   :header-rows: 1\n")
+    print("   * - Name")
+    print("     - Description")
+    for i, n in enumerate(dftable['codename']):
+        # url = url_base + dftable["module"].iloc[0] + "." + \
+        #       dftable["name"].iloc[i] + ">`_"
+        url = ""
+
+        print(f"   * - {n}")
+        description = dftable["doc"].iloc[i]
+        print(f"     - {description} {url}    ")
+    print("\n\n")
 
 
 if __name__ == "__main__":

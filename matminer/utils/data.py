@@ -1,4 +1,3 @@
-
 """
 Utility classes for retrieving elemental properties. Provides
 a uniform interface to several different elemental property resources

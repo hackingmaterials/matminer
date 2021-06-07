@@ -88,3 +88,13 @@ class BaseDataRetrieval:
 
         """
         raise NotImplementedError("get_dataframe() is not defined!")
+
+    def citations(self):
+        """
+        Retrieve a list of formatted strings of bibtex citations which
+        should be cited when using a data retrieval method.
+
+        Returns:
+            ([str]): Bibtext formatted entries
+        """
+        raise NotImplementedError

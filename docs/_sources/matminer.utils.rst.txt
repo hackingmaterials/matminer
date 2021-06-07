@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    matminer.utils.data_files
    matminer.utils.tests
@@ -16,14 +17,6 @@ matminer.utils.caching module
 -----------------------------
 
 .. automodule:: matminer.utils.caching
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-matminer.utils.conversions module
----------------------------------
-
-.. automodule:: matminer.utils.conversions
    :members:
    :undoc-members:
    :show-inheritance:
@@ -75,7 +68,6 @@ matminer.utils.utils module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

@@ -23,22 +23,15 @@ jobs:
         pip install -r requirements-dev.txt --quiet
     - name: black
       run: |
+
+        # Black step should fail if there are any errors
         black --version
         black --check --diff --color matminer
     - name: pylint
       run: |
-        pylint matminer
-    - name: mypy
-      run: |
-        mypy --version
-        rm -rf .mypy_cache
-        mypy matminer
-    - name: pydocstyle
-      run: |
-        pydocstyle --count matminer
+        pylint --fail-under=9 matminer
     - name: flake8
       run: |
         flake8 --version
-        flake8 --count --show-source --statistics matminer
         # exit-zero treats all errors as warnings.
         flake8 --count --exit-zero --max-complexity=20 --statistics matminer

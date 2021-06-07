@@ -14,6 +14,7 @@ from monty.json import MontyDecoder
 from pymatgen.ext.matproj import MPRester
 from pymatgen.core.structure import IStructure
 from pymatgen.core.composition import Composition
+from pymatgen.io.ase import AseAtomsAdaptor
 
 from matminer.featurizers.base import BaseFeaturizer
 
@@ -605,3 +606,71 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
 
     def implementors(self):
         return ["Anubhav Jain"]
+
+
+class PymatgenFunctionApplicator(ConversionFeaturizer):
+    """
+    Featurizer to run any function using on/from pymatgen primitives.
+
+    For example, apply
+
+        lambda structure: structure.composition.anonymized_formula
+
+    To all rows in a dataframe.
+
+    And return the results in the specified column.
+
+    Args:
+        func (function): Function object or lambda to pass the pmg primitive objects to.
+        func_args (list): List of args to pass along with the pmg object to func.
+        func_kwargs (dict): Dict of kwargs to pass along with the pmg object to func,
+        target_col_id (str): Output column for the results. If not provided, the func name
+            will be used.
+        overwrite_data (bool): If True, will overwrite target_col_id even if there is
+            data currently in that column
+    """
+
+    def __init__(self, func, func_args=None, func_kwargs=None, target_col_id=None, overwrite_data=False):
+
+        if not callable(func):
+            raise TypeError(f"Function {func} is not callable!")
+
+        if not target_col_id:
+            target_col_id = func.__name__
+
+        super().__init__(target_col_id, overwrite_data)
+
+        self.func = func
+        self.func_args = func_args if func_args else []
+        self.func_kwargs = func_kwargs if func_kwargs else {}
+
+        # n_jobs must be set to 1 to avoid pickling errors
+        self.set_n_jobs(1)
+
+    def featurize(self, obj):
+        return self.func(obj, *self.func_args, **self.func_kwargs)
+
+    def implementors(self):
+        return ["Alex Dunn"]
+
+
+class ASEAtomstoStructure(ConversionFeaturizer):
+    """
+    Convert dataframes of ase structures to pymatgen structures for further use with
+    matminer.
+
+    Args:
+        target_col_id (str): Column to place PMG structures.
+        overwrite_data (bool): If True, will overwrite target_col_id even if there is
+            data currently in that column
+    """
+
+    def __init__(self, target_col_id="PMG Structure from ASE Atoms", overwrite_data=False):
+        super().__init__(target_col_id, overwrite_data)
+        self.aaa = AseAtomsAdaptor()
+
+    def featurize(self, ase_atoms):
+        return self.aaa.get_structure(ase_atoms)
+
+    def implementors(self):
+        return ["Alex Dunn"]

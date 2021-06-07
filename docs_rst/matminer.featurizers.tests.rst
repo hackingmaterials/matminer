@@ -20,14 +20,6 @@ matminer.featurizers.tests.test\_base module
    :undoc-members:
    :show-inheritance:
 
-matminer.featurizers.tests.test\_composition module
----------------------------------------------------
-
-.. automodule:: matminer.featurizers.tests.test_composition
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 matminer.featurizers.tests.test\_conversions module
 ---------------------------------------------------
 
@@ -51,23 +43,6 @@ matminer.featurizers.tests.test\_function module
    :members:
    :undoc-members:
    :show-inheritance:
-
-matminer.featurizers.tests.test\_site module
---------------------------------------------
-
-.. automodule:: matminer.featurizers.tests.test_site
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-matminer.featurizers.tests.test\_structure module
--------------------------------------------------
-
-.. automodule:: matminer.featurizers.tests.test_structure
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 Module contents
 ---------------

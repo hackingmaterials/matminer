@@ -1,53 +1,145 @@
-==============================
-Datasets Available in Matminer
-==============================
+=================
+Table of Datasets
+=================
+Find a table of all 42 datasets available in matminer here.
 
-Below you will find descriptions and reference data on each available dataset, ordered by load_dataset() keyword argument
+.. list-table::
+   :align: left
+   :widths: 20 70 10
+   :header-rows: 1
 
-
-boltztrap_mp
-brgoch_superhard_training
-castelli_perovskites
-citrine_thermal_conductivity
-dielectric_constant
-double_perovskites_gap
-double_perovskites_gap_lumo
-elastic_tensor_2015
-expt_formation_enthalpy
-expt_formation_enthalpy_kingsbury
-expt_gap
-expt_gap_kingsbury
-flla
-glass_binary
-glass_binary_v2
-glass_ternary_hipt
-glass_ternary_landolt
-heusler_magnetic
-jarvis_dft_2d
-jarvis_dft_3d
-jarvis_ml_dft_training
-m2ax
-matbench_dielectric
-matbench_expt_gap
-matbench_expt_is_metal
-matbench_glass
-matbench_jdft2d
-matbench_log_gvrh
-matbench_log_kvrh
-matbench_mp_e_form
-matbench_mp_gap
-matbench_mp_is_metal
-matbench_perovskites
-matbench_phonons
-matbench_steels
-mp_all_20181018
-mp_nostruct_20181018
-phonon_dielectric_mp
-piezoelectric_tensor
-ricci_boltztrap_mp_tabular
-steel_strength
-wolverton_oxides
-
+   * - Name
+     - Description
+     - Entries
+   * - :code:`boltztrap_mp`
+     - Effective mass and thermoelectric properties of 8924 compounds in The  Materials Project database that are calculated by the BoltzTraP software package run on the GGA-PBE or GGA+U density functional theory calculation results
+     - 8924
+   * - :code:`brgoch_superhard_training`
+     - 2574 materials used for training regressors that predict shear and bulk modulus.
+     - 2574
+   * - :code:`castelli_perovskites`
+     - 18,928 perovskites generated with ABX combinatorics, calculating gllbsc band gap and pbe structure, and also reporting absolute band edge positions and heat of formation.
+     - 18928
+   * - :code:`citrine_thermal_conductivity`
+     - Thermal conductivity of 872 compounds measured experimentally and retrieved from Citrine database from various references
+     - 872
+   * - :code:`dielectric_constant`
+     - 1,056 structures with dielectric properties, calculated with DFPT-PBE.
+     - 1056
+   * - :code:`double_perovskites_gap`
+     - Band gap of 1306 double perovskites (a_1-b_1-a_2-b_2-O6) calculated using ﻿Gritsenko, van Leeuwen, van Lenthe and Baerends potential (gllbsc) in GPAW.
+     - 1306
+   * - :code:`double_perovskites_gap_lumo`
+     - Supplementary lumo data of 55 atoms for the double_perovskites_gap dataset.
+     - 55
+   * - :code:`elastic_tensor_2015`
+     - 1,181 structures with elastic properties calculated with DFT-PBE.
+     - 1181
+   * - :code:`expt_formation_enthalpy`
+     - Experimental formation enthalpies for inorganic compounds, collected from years of calorimetric experiments
+     - 1276
+   * - :code:`expt_formation_enthalpy_kingsbury`
+     - Dataset containing experimental standard formation enthalpies for solids
+     - 2135
+   * - :code:`expt_gap`
+     - Experimental band gap of 6354 inorganic semiconductors.
+     - 6354
+   * - :code:`expt_gap_kingsbury`
+     - Identical to the matbench_expt_gap dataset, except that Materials Project database IDs (mp-ids) have been associated with each material using the same method as described for the expt_formation_enthalpy_kingsbury dataset
+     - 4604
+   * - :code:`flla`
+     - 3938 structures and computed formation energies from "Crystal Structure Representations for Machine Learning Models of Formation Energies."
+     - 3938
+   * - :code:`glass_binary`
+     - Metallic glass formation data for binary alloys, collected from various experimental techniques such as melt-spinning or mechanical alloying
+     - 5959
+   * - :code:`glass_binary_v2`
+     - Identical to glass_binary dataset, but with duplicate entries merged
+     - 5483
+   * - :code:`glass_ternary_hipt`
+     - Metallic glass formation dataset for ternary alloys, collected from the high-throughput sputtering experiments measuring whether it is possible to form a glass using sputtering
+     - 5170
+   * - :code:`glass_ternary_landolt`
+     - Metallic glass formation dataset for ternary alloys, collected from the "Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys,’ a volume of the Landolt– Börnstein collection
+     - 7191
+   * - :code:`heusler_magnetic`
+     - 1153 Heusler alloys with DFT-calculated magnetic and electronic properties
+     - 1153
+   * - :code:`jarvis_dft_2d`
+     - Various properties of 636 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.
+     - 636
+   * - :code:`jarvis_dft_3d`
+     - Various properties of 25,923 bulk materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.
+     - 25923
+   * - :code:`jarvis_ml_dft_training`
+     - Various properties of 24,759 bulk and 2D materials computed with the OptB88vdW and TBmBJ functionals taken from the JARVIS DFT database.
+     - 24759
+   * - :code:`m2ax`
+     - Elastic properties of 223 stable M2AX compounds from "A comprehensive survey of M2AX phase elastic properties" by Cover et al
+     - 223
+   * - :code:`matbench_dielectric`
+     - Matbench v0.1 test dataset for predicting refractive index from structure
+     - 4764
+   * - :code:`matbench_expt_gap`
+     - Matbench v0.1 test dataset for predicting experimental band gap from composition alone
+     - 4604
+   * - :code:`matbench_expt_is_metal`
+     - Matbench v0.1 test dataset for classifying metallicity from composition alone
+     - 4921
+   * - :code:`matbench_glass`
+     - Matbench v0.1 test dataset for predicting full bulk metallic glass formation ability from chemical formula
+     - 5680
+   * - :code:`matbench_jdft2d`
+     - Matbench v0.1 test dataset for predicting exfoliation energies from crystal structure (computed with the OptB88vdW and TBmBJ functionals)
+     - 636
+   * - :code:`matbench_log_gvrh`
+     - Matbench v0.1 test dataset for predicting DFT log10 VRH-average shear modulus from structure
+     - 10987
+   * - :code:`matbench_log_kvrh`
+     - Matbench v0.1 test dataset for predicting DFT log10 VRH-average bulk modulus from structure
+     - 10987
+   * - :code:`matbench_mp_e_form`
+     - Matbench v0.1 test dataset for predicting DFT formation energy from structure
+     - 132752
+   * - :code:`matbench_mp_gap`
+     - Matbench v0.1 test dataset for predicting DFT PBE band gap from structure
+     - 106113
+   * - :code:`matbench_mp_is_metal`
+     - Matbench v0.1 test dataset for predicting DFT metallicity from structure
+     - 106113
+   * - :code:`matbench_perovskites`
+     - Matbench v0.1 test dataset for predicting formation energy from crystal structure
+     - 18928
+   * - :code:`matbench_phonons`
+     - Matbench v0.1 test dataset for predicting vibration properties from crystal structure
+     - 1265
+   * - :code:`matbench_steels`
+     - Matbench v0.1 test dataset for predicting steel yield strengths from chemical composition alone
+     - 312
+   * - :code:`mp_all_20181018`
+     - A complete copy of the Materials Project database as of 10/18/2018
+     - 83989
+   * - :code:`mp_nostruct_20181018`
+     - A complete copy of the Materials Project database as of 10/18/2018
+     - 83989
+   * - :code:`phonon_dielectric_mp`
+     - Phonon (lattice/atoms vibrations) and dielectric properties of 1296 compounds computed via ABINIT software package in the harmonic approximation based on density functional perturbation theory.
+     - 1296
+   * - :code:`piezoelectric_tensor`
+     - 941 structures with piezoelectric properties, calculated with DFT-PBE.
+     - 941
+   * - :code:`ricci_boltztrap_mp_tabular`
+     - Ab-initio electronic transport database for inorganic materials
+     - 47737
+   * - :code:`steel_strength`
+     - 312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.
+     - 312
+   * - :code:`wolverton_oxides`
+     - 4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies
+     - 4914
+============
+Dataset info
+============
 ------------
 boltztrap_mp
 ------------
@@ -92,35 +184,12 @@ Ricci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data
 
 **Bibtex Formatted Citations**
 
-@Article{Ricci2017,
-author={Ricci, Francesco
-and Chen, Wei
-and Aydemir, Umut
-and Snyder, G. Jeffrey
-and Rignanese, Gian-Marco
-and Jain, Anubhav
-and Hautier, Geoffroy},
-title={An ab initio electronic transport database for inorganic materials},
-journal={Scientific Data},
-year={2017},
-month={Jul},
-day={04},
-publisher={The Author(s)},
-volume={4},
-pages={170085},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2017.85}
-}
+.. code-block:: text
 
-@misc{dryad_gn001,
-title = {Data from: An ab initio electronic transport database for inorganic materials},
-author = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G},
-year = {2017},
-journal = {Scientific Data},
-URL = {https://doi.org/10.5061/dryad.gn001},
-doi = {doi:10.5061/dryad.gn001},
-publisher = {Dryad Digital Repository}
-}
+
+	@Article{Ricci2017, author={Ricci, Francesco and Chen, Wei and Aydemir, Umut and Snyder, G. Jeffrey and Rignanese, Gian-Marco and Jain, Anubhav and Hautier, Geoffroy}, title={An ab initio electronic transport database for inorganic materials}, journal={Scientific Data}, year={2017}, month={Jul}, day={04}, publisher={The Author(s)}, volume={4}, pages={170085}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2017.85} }
+
+	@misc{dryad_gn001, title = {Data from: An ab initio electronic transport database for inorganic materials}, author = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G}, year = {2017}, journal = {Scientific Data}, URL = {https://doi.org/10.5061/dryad.gn001}, doi = {doi:10.5061/dryad.gn001}, publisher = {Dryad Digital Repository} }
 
 
 
@@ -169,23 +238,10 @@ DOI: 10.1021/jacs.8b02717
 
 **Bibtex Formatted Citations**
 
-@article{doi:10.1021/jacs.8b02717,
-author = {Mansouri Tehrani, Aria and Oliynyk, Anton O. and Parry, Marcus and Rizvi, Zeshan and Couper, Samantha and Lin, Feng and Miyagi, Lowell and Sparks, Taylor D. and Brgoch, Jakoah},
-title = {Machine Learning Directed Search for Ultraincompressible, Superhard Materials},
-journal = {Journal of the American Chemical Society},
-volume = {140},
-number = {31},
-pages = {9844-9853},
-year = {2018},
-doi = {10.1021/jacs.8b02717},
-note ={PMID: 30010335},
-URL = {
-https://doi.org/10.1021/jacs.8b02717
-},
-eprint = {
-https://doi.org/10.1021/jacs.8b02717
-}
-}
+.. code-block:: text
+
+
+	@article{doi:10.1021/jacs.8b02717, author = {Mansouri Tehrani, Aria and Oliynyk, Anton O. and Parry, Marcus and Rizvi, Zeshan and Couper, Samantha and Lin, Feng and Miyagi, Lowell and Sparks, Taylor D. and Brgoch, Jakoah}, title = {Machine Learning Directed Search for Ultraincompressible, Superhard Materials}, journal = {Journal of the American Chemical Society}, volume = {140}, number = {31}, pages = {9844-9853}, year = {2018}, doi = {10.1021/jacs.8b02717}, note ={PMID: 30010335}, URL = { https://doi.org/10.1021/jacs.8b02717 }, eprint = { https://doi.org/10.1021/jacs.8b02717 } }
 
 
 
@@ -235,18 +291,10 @@ Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, Søren Dahl, Ib Chorke
 
 **Bibtex Formatted Citations**
 
-@Article{C2EE22341D,
-author ="Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, Søren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.",
-title  ="New cubic perovskites for one- and two-photon water splitting using the computational materials repository",
-journal  ="Energy Environ. Sci.",
-year  ="2012",
-volume  ="5",
-issue  ="10",
-pages  ="9034-9043",
-publisher  ="The Royal Society of Chemistry",
-doi  ="10.1039/C2EE22341D",
-url  ="http://dx.doi.org/10.1039/C2EE22341D",
-abstract  ="A new efficient photoelectrochemical cell (PEC) is one of the possible solutions to the energy and climate problems of our time. Such a device requires development of new semiconducting materials with tailored properties with respect to stability and light absorption. Here we perform computational screening of around 19 000 oxides{,} oxynitrides{,} oxysulfides{,} oxyfluorides{,} and oxyfluoronitrides in the cubic perovskite structure with PEC applications in mind. We address three main applications: light absorbers for one- and two-photon water splitting and high-stability transparent shields to protect against corrosion. We end up with 20{,} 12{,} and 15 different combinations of oxides{,} oxynitrides and oxyfluorides{,} respectively{,} inviting further experimental investigation."}
+.. code-block:: text
+
+
+	@Article{C2EE22341D, author ="Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, Søren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.", title  ="New cubic perovskites for one- and two-photon water splitting using the computational materials repository", journal  ="Energy Environ. Sci.", year  ="2012", volume  ="5", issue  ="10", pages  ="9034-9043", publisher  ="The Royal Society of Chemistry", doi  ="10.1039/C2EE22341D", url  ="http://dx.doi.org/10.1039/C2EE22341D", abstract  ="A new efficient photoelectrochemical cell (PEC) is one of the possible solutions to the energy and climate problems of our time. Such a device requires development of new semiconducting materials with tailored properties with respect to stability and light absorption. Here we perform computational screening of around 19 000 oxides{,} oxynitrides{,} oxysulfides{,} oxyfluorides{,} and oxyfluoronitrides in the cubic perovskite structure with PEC applications in mind. We address three main applications: light absorbers for one- and two-photon water splitting and high-stability transparent shields to protect against corrosion. We end up with 20{,} 12{,} and 15 different combinations of oxides{,} oxynitrides and oxyfluorides{,} respectively{,} inviting further experimental investigation."}
 
 
 
@@ -286,10 +334,10 @@ https://www.citrination.com
 
 **Bibtex Formatted Citations**
 
-@misc{Citrine Informatics,
-title = {Citrination},
-howpublished = {\url{https://www.citrination.com/}},
-}
+.. code-block:: text
+
+
+	@misc{Citrine Informatics, title = {Citrination}, howpublished = {\url{https://www.citrination.com/}}, }
 
 
 
@@ -354,22 +402,10 @@ of novel dielectric and optical materials. Sci. Data 4, 160134 (2017).
 
 **Bibtex Formatted Citations**
 
-@Article{Petousis2017,
-author={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric
-and Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja
-and Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},
-title={High-throughput screening of inorganic compounds for the
-discovery of novel dielectric and optical materials},
-journal={Scientific Data},
-year={2017},
-month={Jan},
-day={31},
-publisher={The Author(s)},
-volume={4},
-pages={160134},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2016.134}
-}
+.. code-block:: text
+
+
+	@Article{Petousis2017, author={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric and Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja and Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.}, title={High-throughput screening of inorganic compounds for the discovery of novel dielectric and optical materials}, journal={Scientific Data}, year={2017}, month={Jan}, day={31}, publisher={The Author(s)}, volume={4}, pages={160134}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2016.134} }
 
 
 
@@ -414,29 +450,12 @@ https://cmr.fysik.dtu.dk/
 
 **Bibtex Formatted Citations**
 
-@Article{Pilania2016,
-author={Pilania, G.
-and Mannodi-Kanakkithodi, A.
-and Uberuaga, B. P.
-and Ramprasad, R.
-and Gubernatis, J. E.
-and Lookman, T.},
-title={Machine learning bandgaps of double perovskites},
-journal={Scientific Reports},
-year={2016},
-month={Jan},
-day={19},
-publisher={The Author(s)},
-volume={6},
-pages={19375},
-note={Article},
-url={http://dx.doi.org/10.1038/srep19375}
-}
+.. code-block:: text
 
-@misc{Computational Materials Repository,
-title = {Computational Materials Repository},
-howpublished = {\url{https://cmr.fysik.dtu.dk/}},
-}
+
+	@Article{Pilania2016, author={Pilania, G. and Mannodi-Kanakkithodi, A. and Uberuaga, B. P. and Ramprasad, R. and Gubernatis, J. E. and Lookman, T.}, title={Machine learning bandgaps of double perovskites}, journal={Scientific Reports}, year={2016}, month={Jan}, day={19}, publisher={The Author(s)}, volume={6}, pages={19375}, note={Article}, url={http://dx.doi.org/10.1038/srep19375} }
+
+	@misc{Computational Materials Repository, title = {Computational Materials Repository}, howpublished = {\url{https://cmr.fysik.dtu.dk/}}, }
 
 
 
@@ -473,29 +492,12 @@ https://cmr.fysik.dtu.dk/
 
 **Bibtex Formatted Citations**
 
-@Article{Pilania2016,
-author={Pilania, G.
-and Mannodi-Kanakkithodi, A.
-and Uberuaga, B. P.
-and Ramprasad, R.
-and Gubernatis, J. E.
-and Lookman, T.},
-title={Machine learning bandgaps of double perovskites},
-journal={Scientific Reports},
-year={2016},
-month={Jan},
-day={19},
-publisher={The Author(s)},
-volume={6},
-pages={19375},
-note={Article},
-url={http://dx.doi.org/10.1038/srep19375}
-}
+.. code-block:: text
 
-@misc{Computational Materials Repository,
-title = {Computational Materials Repository},
-howpublished = {\url{https://cmr.fysik.dtu.dk/}},
-}
+
+	@Article{Pilania2016, author={Pilania, G. and Mannodi-Kanakkithodi, A. and Uberuaga, B. P. and Ramprasad, R. and Gubernatis, J. E. and Lookman, T.}, title={Machine learning bandgaps of double perovskites}, journal={Scientific Reports}, year={2016}, month={Jan}, day={19}, publisher={The Author(s)}, volume={6}, pages={19375}, note={Article}, url={http://dx.doi.org/10.1038/srep19375} }
+
+	@misc{Computational Materials Repository, title = {Computational Materials Repository}, howpublished = {\url{https://cmr.fysik.dtu.dk/}}, }
 
 
 
@@ -569,25 +571,10 @@ Scientific Data volume 2, Article number: 150009 (2015)
 
 **Bibtex Formatted Citations**
 
-@Article{deJong2015,
-author={de Jong, Maarten and Chen, Wei and Angsten, Thomas
-and Jain, Anubhav and Notestine, Randy and Gamst, Anthony
-and Sluiter, Marcel and Krishna Ande, Chaitanya
-and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac
-and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.
-and Asta, Mark},
-title={Charting the complete elastic properties
-of inorganic crystalline compounds},
-journal={Scientific Data},
-year={2015},
-month={Mar},
-day={17},
-publisher={The Author(s)},
-volume={2},
-pages={150009},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2015.9}
-}
+.. code-block:: text
+
+
+	@Article{deJong2015, author={de Jong, Maarten and Chen, Wei and Angsten, Thomas and Jain, Anubhav and Notestine, Randy and Gamst, Anthony and Sluiter, Marcel and Krishna Ande, Chaitanya and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A. and Asta, Mark}, title={Charting the complete elastic properties of inorganic crystalline compounds}, journal={Scientific Data}, year={2015}, month={Mar}, day={17}, publisher={The Author(s)}, volume={2}, pages={150009}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2015.9} }
 
 
 
@@ -633,23 +620,12 @@ https://www.nature.com/articles/sdata2017162
 
 **Bibtex Formatted Citations**
 
-@Article{Kim2017,
-author={Kim, George
-and Meschel, S. V.
-and Nash, Philip
-and Chen, Wei},
-title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds},
-journal={Scientific Data},
-year={2017},
-month={Oct},
-day={24},
-publisher={The Author(s)},
-volume={4},
-pages={170162},
-note={Data Descriptor},
-url={https://doi.org/10.1038/sdata.2017.162}}
+.. code-block:: text
 
- @misc{kim_meschel_nash_chen_2017, title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds}, url={https://figshare.com/collections/Experimental_formation_enthalpies_for_intermetallic_phases_and_other_inorganic_compounds/3822835/1}, DOI={10.6084/m9.figshare.c.3822835.v1}, abstractNote={The standard enthalpy of formation of a compound is the energy associated with the reaction to form the compound from its component elements. The standard enthalpy of formation is a fundamental thermodynamic property that determines its phase stability, which can be coupled with other thermodynamic data to calculate phase diagrams. Calorimetry provides the only direct method by which the standard enthalpy of formation is experimentally measured. However, the measurement is often a time and energy intensive process. We present a dataset of enthalpies of formation measured by high-temperature calorimetry. The phases measured in this dataset include intermetallic compounds with transition metal and rare-earth elements, metal borides, metal carbides, and metallic silicides. These measurements were collected from over 50 years of calorimetric experiments. The dataset contains 1,276 entries on experimental enthalpy of formation values and structural information. Most of the entries are for binary compounds but ternary and quaternary compounds are being added as they become available. The dataset also contains predictions of enthalpy of formation from first-principles calculations for comparison.}, publisher={figshare}, author={Kim, George and Meschel, Susan and Nash, Philip and Chen, Wei}, year={2017}, month={Oct}}
+
+	@Article{Kim2017, author={Kim, George and Meschel, S. V. and Nash, Philip and Chen, Wei}, title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds}, journal={Scientific Data}, year={2017}, month={Oct}, day={24}, publisher={The Author(s)}, volume={4}, pages={170162}, note={Data Descriptor}, url={https://doi.org/10.1038/sdata.2017.162}}
+
+	 @misc{kim_meschel_nash_chen_2017, title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds}, url={https://figshare.com/collections/Experimental_formation_enthalpies_for_intermetallic_phases_and_other_inorganic_compounds/3822835/1}, DOI={10.6084/m9.figshare.c.3822835.v1}, abstractNote={The standard enthalpy of formation of a compound is the energy associated with the reaction to form the compound from its component elements. The standard enthalpy of formation is a fundamental thermodynamic property that determines its phase stability, which can be coupled with other thermodynamic data to calculate phase diagrams. Calorimetry provides the only direct method by which the standard enthalpy of formation is experimentally measured. However, the measurement is often a time and energy intensive process. We present a dataset of enthalpies of formation measured by high-temperature calorimetry. The phases measured in this dataset include intermetallic compounds with transition metal and rare-earth elements, metal borides, metal carbides, and metallic silicides. These measurements were collected from over 50 years of calorimetric experiments. The dataset contains 1,276 entries on experimental enthalpy of formation values and structural information. Most of the entries are for binary compounds but ternary and quaternary compounds are being added as they become available. The dataset also contains predictions of enthalpy of formation from first-principles calculations for comparison.}, publisher={figshare}, author={Kim, George and Meschel, Susan and Nash, Philip and Chen, Wei}, year={2017}, month={Oct}}
 
 
 
@@ -691,21 +667,24 @@ Wang, A., Kingsbury, R., McDermott, M., Horton, M., Jain. A., Ong, S.P., Dwarakn
 
 **Bibtex Formatted Citations**
 
-@article{Kim2017,doi={10.1038/sdata.2017.162},url={https://doi.org/10.1038/sdata.2017.162},year={2017},month=oct,publisher={Springer Science and Business Media {LLC}}, volume = {4},  number = {1},  author = {George Kim and S. V. Meschel and Philip Nash and Wei Chen},title ={Experimental formation enthalpies for intermetallic phases and other inorganic compounds},journal={Scientific Data}}
+.. code-block:: text
 
-@misc{kim_meschel_nash_chen_2017, title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds}, url={https://springernature.figshare.com/collections/Experimental_formation_enthalpies_for_intermetallic_phases_and_other_inorganic_compounds/3822835/1}, DOI={10.6084/m9.figshare.c.3822835.v1}, publisher={figshare},author={Kim, George and Meschel, Susan and Nash, Philip and Chen, Wei}, year={2017}, month={Oct} }
 
-@article{Kim2017, doi = {10.1038/sdata.2017.162}, url = {https://doi.org/10.1038/sdata.2017.162}, year = {2017}, month = oct, publisher = {Springer Science and Business Media LLC}}, volume = {4}, number = {1},author = {George Kim and S. V. Meschel and Philip Nash and Wei Chen},title = {Experimental formation enthalpies for intermetallic phases and other inorganic compounds},journal = {Scientific Data}}
+	@article{Kim2017,doi={10.1038/sdata.2017.162},url={https://doi.org/10.1038/sdata.2017.162},year={2017},month=oct,publisher={Springer Science and Business Media {LLC}}, volume = {4},  number = {1},  author = {George Kim and S. V. Meschel and Philip Nash and Wei Chen},title ={Experimental formation enthalpies for intermetallic phases and other inorganic compounds},journal={Scientific Data}}
 
-@book{Kubaschewski1993,author={Kubaschewski, O. and Alcock, C.B. and Spencer, P.J.},edition={6th},isbn={0080418880},publisher={Pergamon Press},title={{Materials Thermochemistry}},year = {1993}}
+	@misc{kim_meschel_nash_chen_2017, title={Experimental formation enthalpies for intermetallic phases and other inorganic compounds}, url={https://springernature.figshare.com/collections/Experimental_formation_enthalpies_for_intermetallic_phases_and_other_inorganic_compounds/3822835/1}, DOI={10.6084/m9.figshare.c.3822835.v1}, publisher={figshare},author={Kim, George and Meschel, Susan and Nash, Philip and Chen, Wei}, year={2017}, month={Oct} }
 
-@misc{NIST,doi = {10.18434/T42S31},url = {http://kinetics.nist.gov/janaf/},author = {Malcolm W. Chase}, title = {NIST-JANAF Thermochemical Tables}, publisher = {National Institute of Standards and Technology},  year = {1998},  url={https://janaf.nist.org}}
+	@article{Kim2017, doi = {10.1038/sdata.2017.162}, url = {https://doi.org/10.1038/sdata.2017.162}, year = {2017}, month = oct, publisher = {Springer Science and Business Media LLC}}, volume = {4}, number = {1},author = {George Kim and S. V. Meschel and Philip Nash and Wei Chen},title = {Experimental formation enthalpies for intermetallic phases and other inorganic compounds},journal = {Scientific Data}}
 
-@article{RZYMAN2000309,title = {Enthalpies of formation of AlFe: Experiment versus theory},journal = {Calphad},volume = {24},number = {3},pages = {309-318},year = {2000},      issn = {0364-5916},doi = {https://doi.org/10.1016/S0364-5916(01)00007-4}, url = {https://www.sciencedirect.com/science/article/pii/S0364591601000074}, author = {K. Rzyman and Z. Moser and A.P. Miodownik and L. Kaufman and R.E. Watson and M. Weinert}}
+	@book{Kubaschewski1993,author={Kubaschewski, O. and Alcock, C.B. and Spencer, P.J.},edition={6th},isbn={0080418880},publisher={Pergamon Press},title={{Materials Thermochemistry}},year = {1993}}
 
-@book{CRC2007,asin = {0849304881},author = {{CRC Handbook}},dewey = {530},ean = {9780849304880},edition = 88,interhash = {da6394e1a9c5f450ed705c32ec82bb08},intrahash = {5ff8f541915536461697300e8727f265},isbn = {0849304881},keywords = {crc_handbook},publisher = {CRC Press},title = {CRC Handbook of Chemistry and Physics, 88th Edition},        year = 2007}
+	@misc{NIST,doi = {10.18434/T42S31},url = {http://kinetics.nist.gov/janaf/},author = {Malcolm W. Chase}, title = {NIST-JANAF Thermochemical Tables}, publisher = {National Institute of Standards and Technology},  year = {1998},  url={https://janaf.nist.org}}
 
-@article{Grindy2013,author = {Grindy, Scott and Meredig, Bryce and Kirklin, Scott and Saal, James E. and Wolverton, C.},doi = {10.1103/PhysRevB.87.075150},issn = {10980121},journal = {Physical Review B - Condensed Matter and Materials Physics},number = {7},pages = {1--8},title = {{Approaching chemical accuracy with density functional calculations: Diatomic energy corrections}},volume = {87},year = {2013}}
+	@article{RZYMAN2000309,title = {Enthalpies of formation of AlFe: Experiment versus theory},journal = {Calphad},volume = {24},number = {3},pages = {309-318},year = {2000},      issn = {0364-5916},doi = {https://doi.org/10.1016/S0364-5916(01)00007-4}, url = {https://www.sciencedirect.com/science/article/pii/S0364591601000074}, author = {K. Rzyman and Z. Moser and A.P. Miodownik and L. Kaufman and R.E. Watson and M. Weinert}}
+
+	@book{CRC2007,asin = {0849304881},author = {{CRC Handbook}},dewey = {530},ean = {9780849304880},edition = 88,interhash = {da6394e1a9c5f450ed705c32ec82bb08},intrahash = {5ff8f541915536461697300e8727f265},isbn = {0849304881},keywords = {crc_handbook},publisher = {CRC Press},title = {CRC Handbook of Chemistry and Physics, 88th Edition},        year = 2007}
+
+	@article{Grindy2013,author = {Grindy, Scott and Meredig, Bryce and Kirklin, Scott and Saal, James E. and Wolverton, C.},doi = {10.1103/PhysRevB.87.075150},issn = {10980121},journal = {Physical Review B - Condensed Matter and Materials Physics},number = {7},pages = {1--8},title = {{Approaching chemical accuracy with density functional calculations: Diatomic energy corrections}},volume = {87},year = {2013}}
 
 
 
@@ -739,20 +718,10 @@ https://pubs.acs.org/doi/suppl/10.1021/acs.jpclett.8b00124
 
 **Bibtex Formatted Citations**
 
-@article{doi:10.1021/acs.jpclett.8b00124,
-author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
-title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
-journal = {The Journal of Physical Chemistry Letters},
-volume = {9},
-number = {7},
-pages = {1668-1673},
-year = {2018},
-doi = {10.1021/acs.jpclett.8b00124},
-note ={PMID: 29532658},
-eprint = {
-https://doi.org/10.1021/acs.jpclett.8b00124
+.. code-block:: text
 
-}}
+
+	@article{doi:10.1021/acs.jpclett.8b00124, author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah}, title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning}, journal = {The Journal of Physical Chemistry Letters}, volume = {9}, number = {7}, pages = {1668-1673}, year = {2018}, doi = {10.1021/acs.jpclett.8b00124}, note ={PMID: 29532658}, eprint = { https://doi.org/10.1021/acs.jpclett.8b00124  }}
 
 
 
@@ -788,41 +757,12 @@ Kingsbury, R., Bartel., C., Dwaraknath, S., Gupta, A., Horton, M., Munro, J., Ja
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@article{doi:10.1021/acs.jpclett.8b00124,
-author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
-title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
-journal = {The Journal of Physical Chemistry Letters},
-volume = {9},
-number = {7},
-pages = {1668-1673},
-year = {2018},
-doi = {10.1021/acs.jpclett.8b00124},
-note ={PMID: 29532658},
-eprint = {
-https://doi.org/10.1021/acs.jpclett.8b00124
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
 
-}}
+	@article{doi:10.1021/acs.jpclett.8b00124, author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah}, title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning}, journal = {The Journal of Physical Chemistry Letters}, volume = {9}, number = {7}, pages = {1668-1673}, year = {2018}, doi = {10.1021/acs.jpclett.8b00124}, note ={PMID: 29532658}, eprint = { https://doi.org/10.1021/acs.jpclett.8b00124  }}
 
 
 
@@ -875,56 +815,12 @@ to accelerating materials innovation. APL Mater. 1, 11002 (2013).
 
 **Bibtex Formatted Citations**
 
-@article{doi:10.1002/qua.24917,
-author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard},
-title = {Crystal structure representations for machine learning models of formation energies},
-journal = {International Journal of Quantum Chemistry},
-volume = {115},
-number = {16},
-pages = {1094-1101},
-keywords = {machine learning, formation energies, representations,
-crystal structure, periodic systems},
-doi = {10.1002/qua.24917},
-url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/qua.24917},
-eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/qua.24917},
-abstract = {We introduce and evaluate a set of feature vector
-representations of crystal structures for machine learning (ML)
-models of formation energies of solids. ML models of atomization
-energies of organic molecules have been successful using a Coulomb
-matrix representation of the molecule. We consider three ways to
-generalize such representations to periodic systems: (i) a matrix
-where each element is related to the Ewald sum of the electrostatic
-interaction between two different atoms in the unit cell repeated
-over the lattice; (ii) an extended Coulomb-like matrix that takes
-into account a number of neighboring unit cells; and (iii) an
-ansatz that mimics the periodicity and the basic features of the
-elements in the Ewald sum matrix using a sine function of the
-crystal coordinates of the atoms. The representations are compared
-for a Laplacian kernel with Manhattan norm, trained to reproduce
-formation energies using a dataset of 3938 crystal structures
-obtained from the Materials Project. For training sets consisting
-of 3000 crystals, the generalization error in predicting formation
-energies of new structures corresponds to (i) 0.49, (ii) 0.64, and
-(iii) for the respective representations. © 2015 Wiley Periodicals,
-Inc.}
-}
+.. code-block:: text
 
-@article{doi:10.1063/1.4812323,
-author = {Jain,Anubhav  and Ong,Shyue Ping  and Hautier,Geoffroy
-and Chen,Wei  and Richards,William Davidson  and Dacek,Stephen
-and Cholia,Shreyas  and Gunter,Dan  and Skinner,David
-and Ceder,Gerbrand  and Persson,Kristin A. },
-title = {Commentary: The Materials Project: A materials genome
-approach to accelerating materials innovation},
-journal = {APL Materials},
-volume = {1},
-number = {1},
-pages = {011002},
-year = {2013},
-doi = {10.1063/1.4812323},
-URL = {https://doi.org/10.1063/1.4812323},
-eprint = {https://doi.org/10.1063/1.4812323}
-}
+
+	@article{doi:10.1002/qua.24917, author = {Faber, Felix and Lindmaa, Alexander and von Lilienfeld, O. Anatole and Armiento, Rickard}, title = {Crystal structure representations for machine learning models of formation energies}, journal = {International Journal of Quantum Chemistry}, volume = {115}, number = {16}, pages = {1094-1101}, keywords = {machine learning, formation energies, representations, crystal structure, periodic systems}, doi = {10.1002/qua.24917}, url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/qua.24917}, eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/qua.24917}, abstract = {We introduce and evaluate a set of feature vector representations of crystal structures for machine learning (ML) models of formation energies of solids. ML models of atomization energies of organic molecules have been successful using a Coulomb matrix representation of the molecule. We consider three ways to generalize such representations to periodic systems: (i) a matrix where each element is related to the Ewald sum of the electrostatic interaction between two different atoms in the unit cell repeated over the lattice; (ii) an extended Coulomb-like matrix that takes into account a number of neighboring unit cells; and (iii) an ansatz that mimics the periodicity and the basic features of the elements in the Ewald sum matrix using a sine function of the crystal coordinates of the atoms. The representations are compared for a Laplacian kernel with Manhattan norm, trained to reproduce formation energies using a dataset of 3938 crystal structures obtained from the Materials Project. For training sets consisting of 3000 crystals, the generalization error in predicting formation energies of new structures corresponds to (i) 0.49, (ii) 0.64, and (iii) for the respective representations. © 2015 Wiley Periodicals, Inc.} }
+
+	@article{doi:10.1063/1.4812323, author = {Jain,Anubhav  and Ong,Shyue Ping  and Hautier,Geoffroy and Chen,Wei  and Richards,William Davidson  and Dacek,Stephen and Cholia,Shreyas  and Gunter,Dan  and Skinner,David and Ceder,Gerbrand  and Persson,Kristin A. }, title = {Commentary: The Materials Project: A materials genome approach to accelerating materials innovation}, journal = {APL Materials}, volume = {1}, number = {1}, pages = {011002}, year = {2013}, doi = {10.1063/1.4812323}, URL = {https://doi.org/10.1063/1.4812323}, eprint = {https://doi.org/10.1063/1.4812323} }
 
 
 
@@ -958,20 +854,10 @@ https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046
 
 **Bibtex Formatted Citations**
 
-@article{doi:10.1021/acs.jpclett.7b01046,
-author = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},
-title = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},
-journal = {The Journal of Physical Chemistry Letters},
-volume = {8},
-number = {14},
-pages = {3434-3439},
-year = {2017},
-doi = {10.1021/acs.jpclett.7b01046},
-note ={PMID: 28697303},
-eprint = {
-https://doi.org/10.1021/acs.jpclett.7b01046
+.. code-block:: text
 
-}}
+
+	@article{doi:10.1021/acs.jpclett.7b01046, author = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.}, title = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability}, journal = {The Journal of Physical Chemistry Letters}, volume = {8}, number = {14}, pages = {3434-3439}, year = {2017}, doi = {10.1021/acs.jpclett.7b01046}, note ={PMID: 28697303}, eprint = { https://doi.org/10.1021/acs.jpclett.7b01046  }}
 
 
 
@@ -1005,20 +891,10 @@ https://pubs.acs.org/doi/10.1021/acs.jpclett.7b01046
 
 **Bibtex Formatted Citations**
 
-@article{doi:10.1021/acs.jpclett.7b01046,
-author = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.},
-title = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability},
-journal = {The Journal of Physical Chemistry Letters},
-volume = {8},
-number = {14},
-pages = {3434-3439},
-year = {2017},
-doi = {10.1021/acs.jpclett.7b01046},
-note ={PMID: 28697303},
-eprint = {
-https://doi.org/10.1021/acs.jpclett.7b01046
+.. code-block:: text
 
-}}
+
+	@article{doi:10.1021/acs.jpclett.7b01046, author = {Sun, Y. T. and Bai, H. Y. and Li, M. Z. and Wang, W. H.}, title = {Machine Learning Approach for Prediction and Understanding of Glass-Forming Ability}, journal = {The Journal of Physical Chemistry Letters}, volume = {8}, number = {14}, pages = {3434-3439}, year = {2017}, doi = {10.1021/acs.jpclett.7b01046}, note ={PMID: 28697303}, eprint = { https://doi.org/10.1021/acs.jpclett.7b01046  }}
 
 
 
@@ -1060,19 +936,10 @@ Science Advances 13 Apr 2018 : eaaq1566
 
 **Bibtex Formatted Citations**
 
-@article {Reneaaq1566,
-author = {Ren, Fang and Ward, Logan and Williams, Travis and Laws, Kevin J. and Wolverton, Christopher and Hattrick-Simpers, Jason and Mehta, Apurva},
-title = {Accelerated discovery of metallic glasses through iteration of machine learning and high-throughput experiments},
-volume = {4},
-number = {4},
-year = {2018},
-doi = {10.1126/sciadv.aaq1566},
-publisher = {American Association for the Advancement of Science},
-abstract = {With more than a hundred elements in the periodic table, a large number of potential new materials exist to address the technological and societal challenges we face today; however, without some guidance, searching through this vast combinatorial space is frustratingly slow and expensive, especially for materials strongly influenced by processing. We train a machine learning (ML) model on previously reported observations, parameters from physiochemical theories, and make it synthesis method{\textendash}dependent to guide high-throughput (HiTp) experiments to find a new system of metallic glasses in the Co-V-Zr ternary. Experimental observations are in good agreement with the predictions of the model, but there are quantitative discrepancies in the precise compositions predicted. We use these discrepancies to retrain the ML model. The refined model has significantly improved accuracy not only for the Co-V-Zr system but also across all other available validation data. We then use the refined model to guide the discovery of metallic glasses in two additional previously unreported ternaries. Although our approach of iterative use of ML and HiTp experiments has guided us to rapid discovery of three new glass-forming systems, it has also provided us with a quantitatively accurate, synthesis method{\textendash}sensitive predictor for metallic glasses that improves performance with use and thus promises to greatly accelerate discovery of many new metallic glasses. We believe that this discovery paradigm is applicable to a wider range of materials and should prove equally powerful for other materials and properties that are synthesis path{\textendash}dependent and that current physiochemical theories find challenging to predict.},
-URL = {http://advances.sciencemag.org/content/4/4/eaaq1566},
-eprint = {http://advances.sciencemag.org/content/4/4/eaaq1566.full.pdf},
-journal = {Science Advances}
-}
+.. code-block:: text
+
+
+	@article {Reneaaq1566, author = {Ren, Fang and Ward, Logan and Williams, Travis and Laws, Kevin J. and Wolverton, Christopher and Hattrick-Simpers, Jason and Mehta, Apurva}, title = {Accelerated discovery of metallic glasses through iteration of machine learning and high-throughput experiments}, volume = {4}, number = {4}, year = {2018}, doi = {10.1126/sciadv.aaq1566}, publisher = {American Association for the Advancement of Science}, abstract = {With more than a hundred elements in the periodic table, a large number of potential new materials exist to address the technological and societal challenges we face today; however, without some guidance, searching through this vast combinatorial space is frustratingly slow and expensive, especially for materials strongly influenced by processing. We train a machine learning (ML) model on previously reported observations, parameters from physiochemical theories, and make it synthesis method{\textendash}dependent to guide high-throughput (HiTp) experiments to find a new system of metallic glasses in the Co-V-Zr ternary. Experimental observations are in good agreement with the predictions of the model, but there are quantitative discrepancies in the precise compositions predicted. We use these discrepancies to retrain the ML model. The refined model has significantly improved accuracy not only for the Co-V-Zr system but also across all other available validation data. We then use the refined model to guide the discovery of metallic glasses in two additional previously unreported ternaries. Although our approach of iterative use of ML and HiTp experiments has guided us to rapid discovery of three new glass-forming systems, it has also provided us with a quantitatively accurate, synthesis method{\textendash}sensitive predictor for metallic glasses that improves performance with use and thus promises to greatly accelerate discovery of many new metallic glasses. We believe that this discovery paradigm is applicable to a wider range of materials and should prove equally powerful for other materials and properties that are synthesis path{\textendash}dependent and that current physiochemical theories find challenging to predict.}, URL = {http://advances.sciencemag.org/content/4/4/eaaq1566}, eprint = {http://advances.sciencemag.org/content/4/4/eaaq1566.full.pdf}, journal = {Science Advances} }
 
 
 
@@ -1111,41 +978,12 @@ Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys · 1 Introduction Land
 
 **Bibtex Formatted Citations**
 
-@Misc{LandoltBornstein1997:sm_lbs_978-3-540-47679-5_2,
-author="Kawazoe, Y.
-and Masumoto, T.
-and Tsai, A.-P.
-and Yu, J.-Z.
-and Aihara Jr., T.",
-editor="Kawazoe, Y.
-and Yu, J.-Z.
-and Tsai, A.-P.
-and Masumoto, T.",
-title="Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {\textperiodcentered} 1 Introduction: Datasheet from Landolt-B{\"o}rnstein - Group III Condensed Matter {\textperiodcentered} Volume 37A: ``Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys'' in SpringerMaterials (https://dx.doi.org/10.1007/10510374{\_}2)",
-publisher="Springer-Verlag Berlin Heidelberg",
-note="Copyright 1997 Springer-Verlag Berlin Heidelberg",
-note="Part of SpringerMaterials",
-note="accessed 2018-10-23",
-doi="10.1007/10510374_2",
-url="https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2"
-}
+.. code-block:: text
 
-@Article{Ward2016,
-author={Ward, Logan
-and Agrawal, Ankit
-and Choudhary, Alok
-and Wolverton, Christopher},
-title={A general-purpose machine learning framework for predicting properties of inorganic materials},
-journal={Npj Computational Materials},
-year={2016},
-month={Aug},
-day={26},
-publisher={The Author(s)},
-volume={2},
-pages={16028},
-note={Article},
-url={http://dx.doi.org/10.1038/npjcompumats.2016.28}
-}
+
+	@Misc{LandoltBornstein1997:sm_lbs_978-3-540-47679-5_2, author="Kawazoe, Y. and Masumoto, T. and Tsai, A.-P. and Yu, J.-Z. and Aihara Jr., T.", editor="Kawazoe, Y. and Yu, J.-Z. and Tsai, A.-P. and Masumoto, T.", title="Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {\textperiodcentered} 1 Introduction: Datasheet from Landolt-B{\"o}rnstein - Group III Condensed Matter {\textperiodcentered} Volume 37A: ``Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys'' in SpringerMaterials (https://dx.doi.org/10.1007/10510374{\_}2)", publisher="Springer-Verlag Berlin Heidelberg", note="Copyright 1997 Springer-Verlag Berlin Heidelberg", note="Part of SpringerMaterials", note="accessed 2018-10-23", doi="10.1007/10510374_2", url="https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2" }
+
+	@Article{Ward2016, author={Ward, Logan and Agrawal, Ankit and Choudhary, Alok and Wolverton, Christopher}, title={A general-purpose machine learning framework for predicting properties of inorganic materials}, journal={Npj Computational Materials}, year={2016}, month={Aug}, day={26}, publisher={The Author(s)}, volume={2}, pages={16028}, note={Article}, url={http://dx.doi.org/10.1038/npjcompumats.2016.28} }
 
 
 
@@ -1195,10 +1033,10 @@ https://citrination.com/datasets/150561/
 
 **Bibtex Formatted Citations**
 
-@misc{Citrine Informatics,
-title = {University of Alabama Heusler database},
-howpublished = {\url{https://citrination.com/datasets/150561/}},
-}
+.. code-block:: text
+
+
+	@misc{Citrine Informatics, title = {University of Alabama Heusler database}, howpublished = {\url{https://citrination.com/datasets/150561/}}, }
 
 
 
@@ -1261,24 +1099,12 @@ choudhary, kamal; https://orcid.org/0000-0001-9737-8074 (2018): jdft_2d-7-7-2018
 
 **Bibtex Formatted Citations**
 
-@Article{Choudhary2017,
-author={Choudhary, Kamal
-and Kalish, Irina
-and Beams, Ryan
-and Tavazza, Francesca},
-title={High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory},
-journal={Scientific Reports},
-year={2017},
-volume={7},
-number={1},
-pages={5179},
-abstract={We introduce a simple criterion to identify two-dimensional (2D) materials based on the comparison between experimental lattice constants and lattice constants mainly obtained from Materials-Project (MP) density functional theory (DFT) calculation repository. Specifically, if the relative difference between the two lattice constants for a specific material is greater than or equal to 5%, we predict them to be good candidates for 2D materials. We have predicted at least 1356 such 2D materials. For all the systems satisfying our criterion, we manually create single layer systems and calculate their energetics, structural, electronic, and elastic properties for both the bulk and the single layer cases. Currently the database consists of 1012 bulk and 430 single layer materials, of which 371 systems are common to bulk and single layer. The rest of calculations are underway. To validate our criterion, we calculated the exfoliation energy of the suggested layered materials, and we found that in 88.9% of the cases the currently accepted criterion for exfoliation was satisfied. Also, using molybdenum telluride as a test case, we performed X-ray diffraction and Raman scattering experiments to benchmark our calculations and understand their applicability and limitations. The data is publicly available at the website http://www.ctcms.nist.gov/{	extasciitilde}knc6/JVASP.html.},
-issn={2045-2322},
-doi={10.1038/s41598-017-05402-0},
-url={https://doi.org/10.1038/s41598-017-05402-0}
-}
+.. code-block:: text
 
-@misc{choudhary__2018, title={jdft_2d-7-7-2018.json}, url={https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1}, DOI={10.6084/m9.figshare.6815705.v1}, abstractNote={2D materials}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}
+
+	@Article{Choudhary2017, author={Choudhary, Kamal and Kalish, Irina and Beams, Ryan and Tavazza, Francesca}, title={High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory}, journal={Scientific Reports}, year={2017}, volume={7}, number={1}, pages={5179}, abstract={We introduce a simple criterion to identify two-dimensional (2D) materials based on the comparison between experimental lattice constants and lattice constants mainly obtained from Materials-Project (MP) density functional theory (DFT) calculation repository. Specifically, if the relative difference between the two lattice constants for a specific material is greater than or equal to 5%, we predict them to be good candidates for 2D materials. We have predicted at least 1356 such 2D materials. For all the systems satisfying our criterion, we manually create single layer systems and calculate their energetics, structural, electronic, and elastic properties for both the bulk and the single layer cases. Currently the database consists of 1012 bulk and 430 single layer materials, of which 371 systems are common to bulk and single layer. The rest of calculations are underway. To validate our criterion, we calculated the exfoliation energy of the suggested layered materials, and we found that in 88.9% of the cases the currently accepted criterion for exfoliation was satisfied. Also, using molybdenum telluride as a test case, we performed X-ray diffraction and Raman scattering experiments to benchmark our calculations and understand their applicability and limitations. The data is publicly available at the website http://www.ctcms.nist.gov/{	extasciitilde}knc6/JVASP.html.}, issn={2045-2322}, doi={10.1038/s41598-017-05402-0}, url={https://doi.org/10.1038/s41598-017-05402-0} }
+
+	@misc{choudhary__2018, title={jdft_2d-7-7-2018.json}, url={https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1}, DOI={10.6084/m9.figshare.6815705.v1}, abstractNote={2D materials}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}
 
 
 
@@ -1343,23 +1169,12 @@ choudhary, kamal; https://orcid.org/0000-0001-9737-8074 (2018): jdft_3d.json. fi
 
 **Bibtex Formatted Citations**
 
-@article{PhysRevB.98.014107,
-title = {Elastic properties of bulk and low-dimensional materials using van der Waals density functional},
-author = {Choudhary, Kamal and Cheon, Gowoon and Reed, Evan and Tavazza, Francesca},
-journal = {Phys. Rev. B},
-volume = {98},
-issue = {1},
-pages = {014107},
-numpages = {12},
-year = {2018},
-month = {Jul},
-publisher = {American Physical Society},
-doi = {10.1103/PhysRevB.98.014107},
-url = {https://link.aps.org/doi/10.1103/PhysRevB.98.014107}
-}
+.. code-block:: text
 
-@misc{choudhary__2018, title={jdft_3d.json}, url={https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699/2}, DOI={10.6084/m9.figshare.6815699.v2}, abstractNote={https://jarvis.nist.gov/
-The Density functional theory section of JARVIS (JARVIS-DFT) consists of thousands of VASP based calculations for 3D-bulk, single layer (2D), nanowire (1D) and molecular (0D) systems. Most of the calculations are carried out with optB88vDW functional. JARVIS-DFT includes materials data such as: energetics, diffraction pattern, radial distribution function, band-structure, density of states, carrier effective mass, temperature and carrier concentration dependent thermoelectric properties, elastic constants and gamma-point phonons.}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}
+
+	@article{PhysRevB.98.014107, title = {Elastic properties of bulk and low-dimensional materials using van der Waals density functional}, author = {Choudhary, Kamal and Cheon, Gowoon and Reed, Evan and Tavazza, Francesca}, journal = {Phys. Rev. B}, volume = {98}, issue = {1}, pages = {014107}, numpages = {12}, year = {2018}, month = {Jul}, publisher = {American Physical Society}, doi = {10.1103/PhysRevB.98.014107}, url = {https://link.aps.org/doi/10.1103/PhysRevB.98.014107} }
+
+	@misc{choudhary__2018, title={jdft_3d.json}, url={https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699/2}, DOI={10.6084/m9.figshare.6815699.v2}, abstractNote={https://jarvis.nist.gov/ The Density functional theory section of JARVIS (JARVIS-DFT) consists of thousands of VASP based calculations for 3D-bulk, single layer (2D), nanowire (1D) and molecular (0D) systems. Most of the calculations are carried out with optB88vDW functional. JARVIS-DFT includes materials data such as: energetics, diffraction pattern, radial distribution function, band-structure, density of states, carrier effective mass, temperature and carrier concentration dependent thermoelectric properties, elastic constants and gamma-point phonons.}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}
 
 
 
@@ -1439,22 +1254,12 @@ choudhary, kamal (2018): JARVIS-ML-CFID-descriptors and material properties. fig
 
 **Bibtex Formatted Citations**
 
-@article{PhysRevMaterials.2.083801,
-title = {Machine learning with force-field-inspired descriptors for materials: Fast screening and mapping energy landscape},
-author = {Choudhary, Kamal and DeCost, Brian and Tavazza, Francesca},
-journal = {Phys. Rev. Materials},
-volume = {2},
-issue = {8},
-pages = {083801},
-numpages = {8},
-year = {2018},
-month = {Aug},
-publisher = {American Physical Society},
-doi = {10.1103/PhysRevMaterials.2.083801},
-url = {https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801}
-}
+.. code-block:: text
 
-@misc{choudhary_2018, title={JARVIS-ML-CFID-descriptors and material properties}, url={https://figshare.com/articles/JARVIS-ML-CFID-descriptors_and_material_properties/6870101/1}, DOI={10.6084/m9.figshare.6870101.v1}, abstractNote={Classical force-field inspired descriptors (CFID) for more than 25000 materials and their material properties such as bandgap, formation energies, modulus of elasticity etc. See JARVIS-ML: https://jarvis.nist.gov/}, publisher={figshare}, author={choudhary, kamal}, year={2018}, month={Jul}}
+
+	@article{PhysRevMaterials.2.083801, title = {Machine learning with force-field-inspired descriptors for materials: Fast screening and mapping energy landscape}, author = {Choudhary, Kamal and DeCost, Brian and Tavazza, Francesca}, journal = {Phys. Rev. Materials}, volume = {2}, issue = {8}, pages = {083801}, numpages = {8}, year = {2018}, month = {Aug}, publisher = {American Physical Society}, doi = {10.1103/PhysRevMaterials.2.083801}, url = {https://link.aps.org/doi/10.1103/PhysRevMaterials.2.083801} }
+
+	@misc{choudhary_2018, title={JARVIS-ML-CFID-descriptors and material properties}, url={https://figshare.com/articles/JARVIS-ML-CFID-descriptors_and_material_properties/6870101/1}, DOI={10.6084/m9.figshare.6870101.v1}, abstractNote={Classical force-field inspired descriptors (CFID) for more than 25000 materials and their material properties such as bandgap, formation energies, modulus of elasticity etc. See JARVIS-ML: https://jarvis.nist.gov/}, publisher={figshare}, author={choudhary, kamal}, year={2018}, month={Jul}}
 
 
 
@@ -1510,16 +1315,10 @@ http://iopscience.iop.org/article/10.1088/0953-8984/21/30/305403/meta
 
 **Bibtex Formatted Citations**
 
-@article{M F Cover,
-author={M F Cover and O Warschkow and M M M Bilek and D R McKenzie},
-title={A comprehensive survey of M 2 AX phase elastic properties},
-journal={Journal of Physics: Condensed Matter},
-volume={21},
-number={30},
-pages={305403},
-url={http://stacks.iop.org/0953-8984/21/i=30/a=305403},
-year={2009},
-abstract={M 2 AX phases are a family of nanolaminate, ternary alloys that are composed of slabs of transition metal carbide or nitride (M 2 X) separated by single atomic layers of a main group element. In this combination, they manifest many of the beneficial properties of both ceramic and metallic compounds, making them attractive for many technological applications. We report here the results of a large scale computational survey of the elastic properties of all 240 elemental combinations using first-principles density functional theory calculations. We found correlations revealing the governing role of the A element and its interaction with the M element on the c axis compressibility and shearability of the material. The role of the X element is relatively minor, with the strongest effect seen in the in-plane constants C 11 and C 12 . We identify several elemental compositions with extremal properties such as W 2 SnC, which has by far the lowest value of C 44 , suggesting potential applications as a...}}
+.. code-block:: text
+
+
+	@article{M F Cover, author={M F Cover and O Warschkow and M M M Bilek and D R McKenzie}, title={A comprehensive survey of M 2 AX phase elastic properties}, journal={Journal of Physics: Condensed Matter}, volume={21}, number={30}, pages={305403}, url={http://stacks.iop.org/0953-8984/21/i=30/a=305403}, year={2009}, abstract={M 2 AX phases are a family of nanolaminate, ternary alloys that are composed of slabs of transition metal carbide or nitride (M 2 X) separated by single atomic layers of a main group element. In this combination, they manifest many of the beneficial properties of both ceramic and metallic compounds, making them attractive for many technological applications. We report here the results of a large scale computational survey of the elastic properties of all 240 elemental combinations using first-principles density functional theory calculations. We found correlations revealing the governing role of the A element and its interaction with the M element on the c axis compressibility and shearability of the material. The role of the X element is relatively minor, with the strongest effect seen in the in-plane constants C 11 and C 12 . We identify several elemental compositions with extremal properties such as W 2 SnC, which has by far the lowest value of C 44 , suggesting potential applications as a...}}
 
 
 
@@ -1556,56 +1355,14 @@ of novel dielectric and optical materials. Sci. Data 4, 160134 (2017).
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@article{Jain2013,
-author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
-doi = {10.1063/1.4812323},
-issn = {2166532X},
-journal = {APL Materials},
-number = {1},
-pages = {011002},
-title = {{The Materials Project: A materials genome approach to accelerating materials innovation}},
-url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi},
-volume = {1},
-year = {2013}
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
 
-@article{Petousis2017,
-author={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric
-and Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja
-and Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.},
-title={High-throughput screening of inorganic compounds for the
-discovery of novel dielectric and optical materials},
-journal={Scientific Data},
-year={2017},
-month={Jan},
-day={31},
-publisher={The Author(s)},
-volume={4},
-pages={160134},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2016.134}
-}
+	@article{Jain2013, author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.}, doi = {10.1063/1.4812323}, issn = {2166532X}, journal = {APL Materials}, number = {1}, pages = {011002}, title = {{The Materials Project: A materials genome approach to accelerating materials innovation}}, url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi}, volume = {1}, year = {2013} }
+
+	@article{Petousis2017, author={Petousis, Ioannis and Mrdjenovich, David and Ballouz, Eric and Liu, Miao and Winston, Donald and Chen, Wei and Graf, Tanja and Schladt, Thomas D. and Persson, Kristin A. and Prinz, Fritz B.}, title={High-throughput screening of inorganic compounds for the discovery of novel dielectric and optical materials}, journal={Scientific Data}, year={2017}, month={Jan}, day={31}, publisher={The Author(s)}, volume={4}, pages={160134}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2016.134} }
 
 
 
@@ -1639,41 +1396,12 @@ Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorga
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@article{doi:10.1021/acs.jpclett.8b00124,
-author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
-title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
-journal = {The Journal of Physical Chemistry Letters},
-volume = {9},
-number = {7},
-pages = {1668-1673},
-year = {2018},
-doi = {10.1021/acs.jpclett.8b00124},
-note ={PMID: 29532658},
-eprint = {
-https://doi.org/10.1021/acs.jpclett.8b00124
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
 
-}}
+	@article{doi:10.1021/acs.jpclett.8b00124, author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah}, title = {Predicting the Band Gaps of Inorganic Solids by Machine Learning}, journal = {The Journal of Physical Chemistry Letters}, volume = {9}, number = {7}, pages = {1668-1673}, year = {2018}, doi = {10.1021/acs.jpclett.8b00124}, note ={PMID: 29532658}, eprint = { https://doi.org/10.1021/acs.jpclett.8b00124  }}
 
 
 
@@ -1708,41 +1436,12 @@ Y. Zhuo, A. Masouri Tehrani, J. Brgoch (2018) Predicting the Band Gaps of Inorga
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@article{doi:10.1021/acs.jpclett.8b00124,
-author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah},
-title= {Predicting the Band Gaps of Inorganic Solids by Machine Learning},
-journal = {The Journal of Physical Chemistry Letters},
-volume = {9},
-number = {7},
-pages = {1668-1673},
-year = {2018},
-doi = {10.1021/acs.jpclett.8b00124},
-note ={PMID: 29532658},
-eprint = {
-https://doi.org/10.1021/acs.jpclett.8b00124
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
 
-}}
+	@article{doi:10.1021/acs.jpclett.8b00124, author = {Zhuo, Ya and Mansouri Tehrani, Aria and Brgoch, Jakoah}, title= {Predicting the Band Gaps of Inorganic Solids by Machine Learning}, journal = {The Journal of Physical Chemistry Letters}, volume = {9}, number = {7}, pages = {1668-1673}, year = {2018}, doi = {10.1021/acs.jpclett.8b00124}, note ={PMID: 29532658}, eprint = { https://doi.org/10.1021/acs.jpclett.8b00124  }}
 
 
 
@@ -1777,62 +1476,14 @@ Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys · 1 Introduction Land
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@Misc{LandoltBornstein1997:sm_lbs_978-3-540-47679-5_2,
-author="Kawazoe, Y.
-and Masumoto, T.
-and Tsai, A.-P.
-and Yu, J.-Z.
-and Aihara Jr., T.",
-editor="Kawazoe, Y.
-and Yu, J.-Z.
-and Tsai, A.-P.
-and Masumoto, T.",
-title="Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {\textperiodcentered} 1 Introduction: Datasheet from Landolt-B{\"o}rnstein - Group III Condensed Matter {\textperiodcentered} Volume 37A: ``Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys'' in SpringerMaterials (https://dx.doi.org/10.1007/10510374{\_}2)",
-publisher="Springer-Verlag Berlin Heidelberg",
-note="Copyright 1997 Springer-Verlag Berlin Heidelberg",
-note="Part of SpringerMaterials",
-note="accessed 2018-10-23",
-doi="10.1007/10510374_2",
-url="https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2"
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
 
-@Article{Ward2016,
-author={Ward, Logan
-and Agrawal, Ankit
-and Choudhary, Alok
-and Wolverton, Christopher},
-title={A general-purpose machine learning framework for predicting properties of inorganic materials},
-journal={Npj Computational Materials},
-year={2016},
-month={Aug},
-day={26},
-publisher={The Author(s)},
-volume={2},
-pages={16028},
-note={Article},
-url={http://dx.doi.org/10.1038/npjcompumats.2016.28}
-}
+	@Misc{LandoltBornstein1997:sm_lbs_978-3-540-47679-5_2, author="Kawazoe, Y. and Masumoto, T. and Tsai, A.-P. and Yu, J.-Z. and Aihara Jr., T.", editor="Kawazoe, Y. and Yu, J.-Z. and Tsai, A.-P. and Masumoto, T.", title="Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys {\textperiodcentered} 1 Introduction: Datasheet from Landolt-B{\"o}rnstein - Group III Condensed Matter {\textperiodcentered} Volume 37A: ``Nonequilibrium Phase Diagrams of Ternary Amorphous Alloys'' in SpringerMaterials (https://dx.doi.org/10.1007/10510374{\_}2)", publisher="Springer-Verlag Berlin Heidelberg", note="Copyright 1997 Springer-Verlag Berlin Heidelberg", note="Part of SpringerMaterials", note="accessed 2018-10-23", doi="10.1007/10510374_2", url="https://materials.springer.com/lb/docs/sm_lbs_978-3-540-47679-5_2" }
+
+	@Article{Ward2016, author={Ward, Logan and Agrawal, Ankit and Choudhary, Alok and Wolverton, Christopher}, title={A general-purpose machine learning framework for predicting properties of inorganic materials}, journal={Npj Computational Materials}, year={2016}, month={Aug}, day={26}, publisher={The Author(s)}, volume={2}, pages={16028}, note={Article}, url={http://dx.doi.org/10.1038/npjcompumats.2016.28} }
 
 
 
@@ -1869,45 +1520,14 @@ choudhary, kamal; https://orcid.org/0000-0001-9737-8074 (2018): jdft_2d-7-7-2018
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@Article{Choudhary2017,
-author={Choudhary, Kamal
-and Kalish, Irina
-and Beams, Ryan
-and Tavazza, Francesca},
-title={High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory},
-journal={Scientific Reports},
-year={2017},
-volume={7},
-number={1},
-pages={5179},
-abstract={We introduce a simple criterion to identify two-dimensional (2D) materials based on the comparison between experimental lattice constants and lattice constants mainly obtained from Materials-Project (MP) density functional theory (DFT) calculation repository. Specifically, if the relative difference between the two lattice constants for a specific material is greater than or equal to 5%, we predict them to be good candidates for 2D materials. We have predicted at least 1356 such 2D materials. For all the systems satisfying our criterion, we manually create single layer systems and calculate their energetics, structural, electronic, and elastic properties for both the bulk and the single layer cases. Currently the database consists of 1012 bulk and 430 single layer materials, of which 371 systems are common to bulk and single layer. The rest of calculations are underway. To validate our criterion, we calculated the exfoliation energy of the suggested layered materials, and we found that in 88.9% of the cases the currently accepted criterion for exfoliation was satisfied. Also, using molybdenum telluride as a test case, we performed X-ray diffraction and Raman scattering experiments to benchmark our calculations and understand their applicability and limitations. The data is publicly available at the website http://www.ctcms.nist.gov/{	extasciitilde}knc6/JVASP.html.},
-issn={2045-2322},
-doi={10.1038/s41598-017-05402-0},
-url={https://doi.org/10.1038/s41598-017-05402-0}
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
 
-@misc{choudhary__2018, title={jdft_2d-7-7-2018.json}, url={https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1}, DOI={10.6084/m9.figshare.6815705.v1}, abstractNote={2D materials}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}
+	@Article{Choudhary2017, author={Choudhary, Kamal and Kalish, Irina and Beams, Ryan and Tavazza, Francesca}, title={High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory}, journal={Scientific Reports}, year={2017}, volume={7}, number={1}, pages={5179}, abstract={We introduce a simple criterion to identify two-dimensional (2D) materials based on the comparison between experimental lattice constants and lattice constants mainly obtained from Materials-Project (MP) density functional theory (DFT) calculation repository. Specifically, if the relative difference between the two lattice constants for a specific material is greater than or equal to 5%, we predict them to be good candidates for 2D materials. We have predicted at least 1356 such 2D materials. For all the systems satisfying our criterion, we manually create single layer systems and calculate their energetics, structural, electronic, and elastic properties for both the bulk and the single layer cases. Currently the database consists of 1012 bulk and 430 single layer materials, of which 371 systems are common to bulk and single layer. The rest of calculations are underway. To validate our criterion, we calculated the exfoliation energy of the suggested layered materials, and we found that in 88.9% of the cases the currently accepted criterion for exfoliation was satisfied. Also, using molybdenum telluride as a test case, we performed X-ray diffraction and Raman scattering experiments to benchmark our calculations and understand their applicability and limitations. The data is publicly available at the website http://www.ctcms.nist.gov/{	extasciitilde}knc6/JVASP.html.}, issn={2045-2322}, doi={10.1038/s41598-017-05402-0}, url={https://doi.org/10.1038/s41598-017-05402-0} }
+
+	@misc{choudhary__2018, title={jdft_2d-7-7-2018.json}, url={https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705/1}, DOI={10.6084/m9.figshare.6815705.v1}, abstractNote={2D materials}, publisher={figshare}, author={choudhary, kamal and https://orcid.org/0000-0001-9737-8074}, year={2018}, month={Jul}}
 
 
 
@@ -1945,46 +1565,12 @@ Scientific Data volume 2, Article number: 150009 (2015)
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@Article{deJong2015,
-author={de Jong, Maarten and Chen, Wei and Angsten, Thomas
-and Jain, Anubhav and Notestine, Randy and Gamst, Anthony
-and Sluiter, Marcel and Krishna Ande, Chaitanya
-and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac
-and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.
-and Asta, Mark},
-title={Charting the complete elastic properties
-of inorganic crystalline compounds},
-journal={Scientific Data},
-year={2015},
-month={Mar},
-day={17},
-publisher={The Author(s)},
-volume={2},
-pages={150009},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2015.9}
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
+
+	@Article{deJong2015, author={de Jong, Maarten and Chen, Wei and Angsten, Thomas and Jain, Anubhav and Notestine, Randy and Gamst, Anthony and Sluiter, Marcel and Krishna Ande, Chaitanya and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A. and Asta, Mark}, title={Charting the complete elastic properties of inorganic crystalline compounds}, journal={Scientific Data}, year={2015}, month={Mar}, day={17}, publisher={The Author(s)}, volume={2}, pages={150009}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2015.9} }
 
 
 
@@ -2022,46 +1608,12 @@ Scientific Data volume 2, Article number: 150009 (2015)
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@Article{deJong2015,
-author={de Jong, Maarten and Chen, Wei and Angsten, Thomas
-and Jain, Anubhav and Notestine, Randy and Gamst, Anthony
-and Sluiter, Marcel and Krishna Ande, Chaitanya
-and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac
-and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A.
-and Asta, Mark},
-title={Charting the complete elastic properties
-of inorganic crystalline compounds},
-journal={Scientific Data},
-year={2015},
-month={Mar},
-day={17},
-publisher={The Author(s)},
-volume={2},
-pages={150009},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2015.9}
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
+
+	@Article{deJong2015, author={de Jong, Maarten and Chen, Wei and Angsten, Thomas and Jain, Anubhav and Notestine, Randy and Gamst, Anthony and Sluiter, Marcel and Krishna Ande, Chaitanya and van der Zwaag, Sybrand and Plata, Jose J. and Toher, Cormac and Curtarolo, Stefano and Ceder, Gerbrand and Persson, Kristin A. and Asta, Mark}, title={Charting the complete elastic properties of inorganic crystalline compounds}, journal={Scientific Data}, year={2015}, month={Mar}, day={17}, publisher={The Author(s)}, volume={2}, pages={150009}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2015.9} }
 
 
 
@@ -2098,39 +1650,12 @@ doi:10.1063/1.4812323
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@article{Jain2013,
-author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
-doi = {10.1063/1.4812323},
-issn = {2166532X},
-journal = {APL Materials},
-number = {1},
-pages = {011002},
-title = {{The Materials Project: A materials genome approach to accelerating materials innovation}},
-url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi},
-volume = {1},
-year = {2013}
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
+
+	@article{Jain2013, author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.}, doi = {10.1063/1.4812323}, issn = {2166532X}, journal = {APL Materials}, number = {1}, pages = {011002}, title = {{The Materials Project: A materials genome approach to accelerating materials innovation}}, url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi}, volume = {1}, year = {2013} }
 
 
 
@@ -2167,39 +1692,12 @@ doi:10.1063/1.4812323
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@article{Jain2013,
-author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
-doi = {10.1063/1.4812323},
-issn = {2166532X},
-journal = {APL Materials},
-number = {1},
-pages = {011002},
-title = {{The Materials Project: A materials genome approach to accelerating materials innovation}},
-url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi},
-volume = {1},
-year = {2013}
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
+
+	@article{Jain2013, author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.}, doi = {10.1063/1.4812323}, issn = {2166532X}, journal = {APL Materials}, number = {1}, pages = {011002}, title = {{The Materials Project: A materials genome approach to accelerating materials innovation}}, url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi}, volume = {1}, year = {2013} }
 
 
 
@@ -2236,39 +1734,12 @@ doi:10.1063/1.4812323
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@article{Jain2013,
-author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
-doi = {10.1063/1.4812323},
-issn = {2166532X},
-journal = {APL Materials},
-number = {1},
-pages = {011002},
-title = {{The Materials Project: A materials genome approach to accelerating materials innovation}},
-url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi},
-volume = {1},
-year = {2013}
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
+
+	@article{Jain2013, author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.}, doi = {10.1063/1.4812323}, issn = {2166532X}, journal = {APL Materials}, number = {1}, pages = {011002}, title = {{The Materials Project: A materials genome approach to accelerating materials innovation}}, url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi}, volume = {1}, year = {2013} }
 
 
 
@@ -2302,39 +1773,12 @@ Ivano E. Castelli, David D. Landis, Kristian S. Thygesen, Søren Dahl, Ib Chorke
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@Article{C2EE22341D,
-author ="Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, Søren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.",
-title  ="New cubic perovskites for one- and two-photon water splitting using the computational materials repository",
-journal  ="Energy Environ. Sci.",
-year  ="2012",
-volume  ="5",
-issue  ="10",
-pages  ="9034-9043",
-publisher  ="The Royal Society of Chemistry",
-doi  ="10.1039/C2EE22341D",
-url  ="http://dx.doi.org/10.1039/C2EE22341D",
-abstract  ="A new efficient photoelectrochemical cell (PEC) is one of the possible solutions to the energy and climate problems of our time. Such a device requires development of new semiconducting materials with tailored properties with respect to stability and light absorption. Here we perform computational screening of around 19 000 oxides{,} oxynitrides{,} oxysulfides{,} oxyfluorides{,} and oxyfluoronitrides in the cubic perovskite structure with PEC applications in mind. We address three main applications: light absorbers for one- and two-photon water splitting and high-stability transparent shields to protect against corrosion. We end up with 20{,} 12{,} and 15 different combinations of oxides{,} oxynitrides and oxyfluorides{,} respectively{,} inviting further experimental investigation."}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
+
+	@Article{C2EE22341D, author ="Castelli, Ivano E. and Landis, David D. and Thygesen, Kristian S. and Dahl, Søren and Chorkendorff, Ib and Jaramillo, Thomas F. and Jacobsen, Karsten W.", title  ="New cubic perovskites for one- and two-photon water splitting using the computational materials repository", journal  ="Energy Environ. Sci.", year  ="2012", volume  ="5", issue  ="10", pages  ="9034-9043", publisher  ="The Royal Society of Chemistry", doi  ="10.1039/C2EE22341D", url  ="http://dx.doi.org/10.1039/C2EE22341D", abstract  ="A new efficient photoelectrochemical cell (PEC) is one of the possible solutions to the energy and climate problems of our time. Such a device requires development of new semiconducting materials with tailored properties with respect to stability and light absorption. Here we perform computational screening of around 19 000 oxides{,} oxynitrides{,} oxysulfides{,} oxyfluorides{,} and oxyfluoronitrides in the cubic perovskite structure with PEC applications in mind. We address three main applications: light absorbers for one- and two-photon water splitting and high-stability transparent shields to protect against corrosion. We end up with 20{,} 12{,} and 15 different combinations of oxides{,} oxynitrides and oxyfluorides{,} respectively{,} inviting further experimental investigation."}
 
 
 
@@ -2369,51 +1813,14 @@ Petretto, G. et al. High-throughput density functional perturbation theory phono
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@Article{Petretto2018,
-author={Petretto, Guido
-and Dwaraknath, Shyam
-and P.C. Miranda, Henrique
-and Winston, Donald
-and Giantomassi, Matteo
-and van Setten, Michiel J.
-and Gonze, Xavier
-and Persson, Kristin A.
-and Hautier, Geoffroy
-and Rignanese, Gian-Marco},
-title={High-throughput density-functional perturbation theory phonons for inorganic materials},
-journal={Scientific Data},
-year={2018},
-month={May},
-day={01},
-publisher={The Author(s)},
-volume={5},
-pages={180065},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2018.65}
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
 
-@misc{petretto_dwaraknath_miranda_winston_giantomassi_rignanese_van setten_gonze_persson_hautier_2018, title={High-throughput Density-Functional Perturbation Theory phonons for inorganic materials}, url={https://figshare.com/collections/High-throughput_Density-Functional_Perturbation_Theory_phonons_for_inorganic_materials/3938023/1}, DOI={10.6084/m9.figshare.c.3938023.v1}, abstractNote={The knowledge of the vibrational properties of a material is of key importance to understand physical phenomena such as thermal conductivity, superconductivity, and ferroelectricity among others. However, detailed experimental phonon spectra are available only for a limited number of materials which hinders the large-scale analysis of vibrational properties and their derived quantities. In this work, we perform ab initio calculations of the full phonon dispersion and vibrational density of states for 1521 semiconductor compounds in the harmonic approximation based on density functional perturbation theory. The data is collected along with derived dielectric and thermodynamic properties. We present the procedure used to obtain the results, the details of the provided database and a validation based on the comparison with experimental data.}, publisher={figshare}, author={Petretto, Guido and Dwaraknath, Shyam and Miranda, Henrique P. C. and Winston, Donald and Giantomassi, Matteo and Rignanese, Gian-Marco and Van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A and Hautier, Geoffroy}, year={2018}, month={Apr}}
+	@Article{Petretto2018, author={Petretto, Guido and Dwaraknath, Shyam and P.C. Miranda, Henrique and Winston, Donald and Giantomassi, Matteo and van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A. and Hautier, Geoffroy and Rignanese, Gian-Marco}, title={High-throughput density-functional perturbation theory phonons for inorganic materials}, journal={Scientific Data}, year={2018}, month={May}, day={01}, publisher={The Author(s)}, volume={5}, pages={180065}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2018.65} }
+
+	@misc{petretto_dwaraknath_miranda_winston_giantomassi_rignanese_van setten_gonze_persson_hautier_2018, title={High-throughput Density-Functional Perturbation Theory phonons for inorganic materials}, url={https://figshare.com/collections/High-throughput_Density-Functional_Perturbation_Theory_phonons_for_inorganic_materials/3938023/1}, DOI={10.6084/m9.figshare.c.3938023.v1}, abstractNote={The knowledge of the vibrational properties of a material is of key importance to understand physical phenomena such as thermal conductivity, superconductivity, and ferroelectricity among others. However, detailed experimental phonon spectra are available only for a limited number of materials which hinders the large-scale analysis of vibrational properties and their derived quantities. In this work, we perform ab initio calculations of the full phonon dispersion and vibrational density of states for 1521 semiconductor compounds in the harmonic approximation based on density functional perturbation theory. The data is collected along with derived dielectric and thermodynamic properties. We present the procedure used to obtain the results, the details of the provided database and a validation based on the comparison with experimental data.}, publisher={figshare}, author={Petretto, Guido and Dwaraknath, Shyam and Miranda, Henrique P. C. and Winston, Donald and Giantomassi, Matteo and Rignanese, Gian-Marco and Van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A and Hautier, Geoffroy}, year={2018}, month={Apr}}
 
 
 
@@ -2447,31 +1854,12 @@ https://citrination.com/datasets/153092/
 
 **Bibtex Formatted Citations**
 
-@Article{Dunn2020,
-author={Dunn, Alexander
-and Wang, Qi
-and Ganose, Alex
-and Dopp, Daniel
-and Jain, Anubhav},
-title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm},
-journal={npj Computational Materials},
-year={2020},
-month={Sep},
-day={15},
-volume={6},
-number={1},
-pages={138},
-abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.},
-issn={2057-3960},
-doi={10.1038/s41524-020-00406-3},
-url={https://doi.org/10.1038/s41524-020-00406-3}
-}
+.. code-block:: text
 
 
-@misc{Citrine Informatics,
-title = {Mechanical properties of some steels},
-howpublished = {\url{https://citrination.com/datasets/153092/},
-}
+	@Article{Dunn2020, author={Dunn, Alexander and Wang, Qi and Ganose, Alex and Dopp, Daniel and Jain, Anubhav}, title={Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm}, journal={npj Computational Materials}, year={2020}, month={Sep}, day={15}, volume={6}, number={1}, pages={138}, abstract={We present a benchmark test suite and an automated machine learning procedure for evaluating supervised machine learning (ML) models for predicting properties of inorganic bulk materials. The test suite, Matbench, is a set of 13{\thinspace}ML tasks that range in size from 312 to 132k samples and contain data from 10 density functional theory-derived and experimental sources. Tasks include predicting optical, thermal, electronic, thermodynamic, tensile, and elastic properties given a material's composition and/or crystal structure. The reference algorithm, Automatminer, is a highly-extensible, fully automated ML pipeline for predicting materials properties from materials primitives (such as composition and crystal structure) without user intervention or hyperparameter tuning. We test Automatminer on the Matbench test suite and compare its predictive power with state-of-the-art crystal graph neural networks and a traditional descriptor-based Random Forest model. We find Automatminer achieves the best performance on 8 of 13 tasks in the benchmark. We also show our test suite is capable of exposing predictive advantages of each algorithm---namely, that crystal graph methods appear to outperform traditional machine learning methods given {\textasciitilde}104 or greater data points. We encourage evaluating materials ML algorithms on the Matbench benchmark and comparing them against the latest version of Automatminer.}, issn={2057-3960}, doi={10.1038/s41524-020-00406-3}, url={https://doi.org/10.1038/s41524-020-00406-3} } 
+
+	@misc{Citrine Informatics, title = {Mechanical properties of some steels}, howpublished = {\url{https://citrination.com/datasets/153092/}, }
 
 
 
@@ -2526,18 +1914,10 @@ doi:10.1063/1.4812323
 
 **Bibtex Formatted Citations**
 
-@article{Jain2013,
-author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
-doi = {10.1063/1.4812323},
-issn = {2166532X},
-journal = {APL Materials},
-number = {1},
-pages = {011002},
-title = {{The Materials Project: A materials genome approach to accelerating materials innovation}},
-url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi},
-volume = {1},
-year = {2013}
-}
+.. code-block:: text
+
+
+	@article{Jain2013, author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.}, doi = {10.1063/1.4812323}, issn = {2166532X}, journal = {APL Materials}, number = {1}, pages = {011002}, title = {{The Materials Project: A materials genome approach to accelerating materials innovation}}, url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi}, volume = {1}, year = {2013} }
 
 
 
@@ -2588,18 +1968,10 @@ doi:10.1063/1.4812323
 
 **Bibtex Formatted Citations**
 
-@article{Jain2013,
-author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.},
-doi = {10.1063/1.4812323},
-issn = {2166532X},
-journal = {APL Materials},
-number = {1},
-pages = {011002},
-title = {{The Materials Project: A materials genome approach to accelerating materials innovation}},
-url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi},
-volume = {1},
-year = {2013}
-}
+.. code-block:: text
+
+
+	@article{Jain2013, author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin a.}, doi = {10.1063/1.4812323}, issn = {2166532X}, journal = {APL Materials}, number = {1}, pages = {011002}, title = {{The Materials Project: A materials genome approach to accelerating materials innovation}}, url = {http://link.aip.org/link/AMPADS/v1/i1/p011002/s1\&Agg=doi}, volume = {1}, year = {2013} }
 
 
 
@@ -2642,30 +2014,12 @@ Petretto, G. et al. High-throughput density functional perturbation theory phono
 
 **Bibtex Formatted Citations**
 
-@Article{Petretto2018,
-author={Petretto, Guido
-and Dwaraknath, Shyam
-and P.C. Miranda, Henrique
-and Winston, Donald
-and Giantomassi, Matteo
-and van Setten, Michiel J.
-and Gonze, Xavier
-and Persson, Kristin A.
-and Hautier, Geoffroy
-and Rignanese, Gian-Marco},
-title={High-throughput density-functional perturbation theory phonons for inorganic materials},
-journal={Scientific Data},
-year={2018},
-month={May},
-day={01},
-publisher={The Author(s)},
-volume={5},
-pages={180065},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2018.65}
-}
+.. code-block:: text
 
-@misc{petretto_dwaraknath_miranda_winston_giantomassi_rignanese_van setten_gonze_persson_hautier_2018, title={High-throughput Density-Functional Perturbation Theory phonons for inorganic materials}, url={https://figshare.com/collections/High-throughput_Density-Functional_Perturbation_Theory_phonons_for_inorganic_materials/3938023/1}, DOI={10.6084/m9.figshare.c.3938023.v1}, abstractNote={The knowledge of the vibrational properties of a material is of key importance to understand physical phenomena such as thermal conductivity, superconductivity, and ferroelectricity among others. However, detailed experimental phonon spectra are available only for a limited number of materials which hinders the large-scale analysis of vibrational properties and their derived quantities. In this work, we perform ab initio calculations of the full phonon dispersion and vibrational density of states for 1521 semiconductor compounds in the harmonic approximation based on density functional perturbation theory. The data is collected along with derived dielectric and thermodynamic properties. We present the procedure used to obtain the results, the details of the provided database and a validation based on the comparison with experimental data.}, publisher={figshare}, author={Petretto, Guido and Dwaraknath, Shyam and Miranda, Henrique P. C. and Winston, Donald and Giantomassi, Matteo and Rignanese, Gian-Marco and Van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A and Hautier, Geoffroy}, year={2018}, month={Apr}}
+
+	@Article{Petretto2018, author={Petretto, Guido and Dwaraknath, Shyam and P.C. Miranda, Henrique and Winston, Donald and Giantomassi, Matteo and van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A. and Hautier, Geoffroy and Rignanese, Gian-Marco}, title={High-throughput density-functional perturbation theory phonons for inorganic materials}, journal={Scientific Data}, year={2018}, month={May}, day={01}, publisher={The Author(s)}, volume={5}, pages={180065}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2018.65} }
+
+	@misc{petretto_dwaraknath_miranda_winston_giantomassi_rignanese_van setten_gonze_persson_hautier_2018, title={High-throughput Density-Functional Perturbation Theory phonons for inorganic materials}, url={https://figshare.com/collections/High-throughput_Density-Functional_Perturbation_Theory_phonons_for_inorganic_materials/3938023/1}, DOI={10.6084/m9.figshare.c.3938023.v1}, abstractNote={The knowledge of the vibrational properties of a material is of key importance to understand physical phenomena such as thermal conductivity, superconductivity, and ferroelectricity among others. However, detailed experimental phonon spectra are available only for a limited number of materials which hinders the large-scale analysis of vibrational properties and their derived quantities. In this work, we perform ab initio calculations of the full phonon dispersion and vibrational density of states for 1521 semiconductor compounds in the harmonic approximation based on density functional perturbation theory. The data is collected along with derived dielectric and thermodynamic properties. We present the procedure used to obtain the results, the details of the provided database and a validation based on the comparison with experimental data.}, publisher={figshare}, author={Petretto, Guido and Dwaraknath, Shyam and Miranda, Henrique P. C. and Winston, Donald and Giantomassi, Matteo and Rignanese, Gian-Marco and Van Setten, Michiel J. and Gonze, Xavier and Persson, Kristin A and Hautier, Geoffroy}, year={2018}, month={Apr}}
 
 
 
@@ -2723,21 +2077,10 @@ Sci. Data 2, 150053 (2015)
 
 **Bibtex Formatted Citations**
 
-@Article{deJong2015,
-author={de Jong, Maarten and Chen, Wei and Geerlings, Henry
-and Asta, Mark and Persson, Kristin Aslaug},
-title={A database to enable discovery and design of piezoelectric
-materials},
-journal={Scientific Data},
-year={2015},
-month={Sep},
-day={29},
-publisher={The Author(s)},
-volume={2},
-pages={150053},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2015.53}
-}
+.. code-block:: text
+
+
+	@Article{deJong2015, author={de Jong, Maarten and Chen, Wei and Geerlings, Henry and Asta, Mark and Persson, Kristin Aslaug}, title={A database to enable discovery and design of piezoelectric materials}, journal={Scientific Data}, year={2015}, month={Sep}, day={29}, publisher={The Author(s)}, volume={2}, pages={150053}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2015.53} }
 
 
 
@@ -2862,35 +2205,12 @@ Ricci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data
 
 **Bibtex Formatted Citations**
 
-@Article{Ricci2017,
-author={Ricci, Francesco
-and Chen, Wei
-and Aydemir, Umut
-and Snyder, G. Jeffrey
-and Rignanese, Gian-Marco
-and Jain, Anubhav
-and Hautier, Geoffroy},
-title={An ab initio electronic transport database for inorganic materials},
-journal={Scientific Data},
-year={2017},
-month={Jul},
-day={04},
-publisher={The Author(s)},
-volume={4},
-pages={170085},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2017.85}
-}
+.. code-block:: text
 
-@misc{dryad_gn001,
-title = {Data from: An ab initio electronic transport database for inorganic materials},
-author = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G},
-year = {2017},
-journal = {Scientific Data},
-URL = {https://doi.org/10.5061/dryad.gn001},
-doi = {doi:10.5061/dryad.gn001},
-publisher = {Dryad Digital Repository}
-}
+
+	@Article{Ricci2017, author={Ricci, Francesco and Chen, Wei and Aydemir, Umut and Snyder, G. Jeffrey and Rignanese, Gian-Marco and Jain, Anubhav and Hautier, Geoffroy}, title={An ab initio electronic transport database for inorganic materials}, journal={Scientific Data}, year={2017}, month={Jul}, day={04}, publisher={The Author(s)}, volume={4}, pages={170085}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2017.85} }
+
+	@misc{dryad_gn001, title = {Data from: An ab initio electronic transport database for inorganic materials}, author = {Ricci, F and Chen, W and Aydemir, U and Snyder, J and Rignanese, G and Jain, A and Hautier, G}, year = {2017}, journal = {Scientific Data}, URL = {https://doi.org/10.5061/dryad.gn001}, doi = {doi:10.5061/dryad.gn001}, publisher = {Dryad Digital Repository} }
 
 
 
@@ -2954,10 +2274,10 @@ https://citrination.com/datasets/153092/
 
 **Bibtex Formatted Citations**
 
-@misc{Citrine Informatics,
-title = {Mechanical properties of some steels},
-howpublished = {\url{https://citrination.com/datasets/153092/},
-}
+.. code-block:: text
+
+
+	@misc{Citrine Informatics, title = {Mechanical properties of some steels}, howpublished = {\url{https://citrination.com/datasets/153092/}, }
 
 
 
@@ -3020,22 +2340,12 @@ Emery, A. A., & Wolverton, C. Figshare http://dx.doi.org/10.6084/m9.figshare.533
 
 **Bibtex Formatted Citations**
 
-@Article{Emery2017,
-author={Emery, Antoine A.
-and Wolverton, Chris},
-title={High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites},
-journal={Scientific Data},
-year={2017},
-month={Oct},
-day={17},
-publisher={The Author(s)},
-volume={4},
-pages={170153},
-note={Data Descriptor},
-url={http://dx.doi.org/10.1038/sdata.2017.153}
-}
+.. code-block:: text
 
-@misc{emery_2017, title={High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites}, url={https://figshare.com/articles/High-throughput_DFT_calculations_of_formation_energy_stability_and_oxygen_vacancy_formation_energy_of_ABO3_perovskites/5334142/1}, DOI={10.6084/m9.figshare.5334142.v1}, abstractNote={ABO3 perovskites are oxide materials that are used for a variety of applications such as solid oxide fuel cells, piezo-, ferro-electricity and water splitting. Due to their remarkable stability with respect to cation substitution, new compounds for such applications potentially await discovery. In this work, we present an exhaustive dataset of formation energies of 5,329 cubic and distorted perovskites that were calculated using first-principles density functional theory. In addition to formation energies, several additional properties such as oxidation states, band gap, oxygen vacancy formation energy, and thermodynamic stability with respect to all phases in the Open Quantum Materials Database are also made publicly available. This large dataset for this ubiquitous crystal structure type contains 395 perovskites that are predicted to be thermodynamically stable, of which many have not yet been experimentally reported, and therefore represent theoretical predictions. The dataset thus opens avenues for future use, including materials discovery in many research-active areas.}, publisher={figshare}, author={Emery, Antoine}, year={2017}, month={Aug}}
+
+	@Article{Emery2017, author={Emery, Antoine A. and Wolverton, Chris}, title={High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites}, journal={Scientific Data}, year={2017}, month={Oct}, day={17}, publisher={The Author(s)}, volume={4}, pages={170153}, note={Data Descriptor}, url={http://dx.doi.org/10.1038/sdata.2017.153} }
+
+	@misc{emery_2017, title={High-throughput DFT calculations of formation energy, stability and oxygen vacancy formation energy of ABO3 perovskites}, url={https://figshare.com/articles/High-throughput_DFT_calculations_of_formation_energy_stability_and_oxygen_vacancy_formation_energy_of_ABO3_perovskites/5334142/1}, DOI={10.6084/m9.figshare.5334142.v1}, abstractNote={ABO3 perovskites are oxide materials that are used for a variety of applications such as solid oxide fuel cells, piezo-, ferro-electricity and water splitting. Due to their remarkable stability with respect to cation substitution, new compounds for such applications potentially await discovery. In this work, we present an exhaustive dataset of formation energies of 5,329 cubic and distorted perovskites that were calculated using first-principles density functional theory. In addition to formation energies, several additional properties such as oxidation states, band gap, oxygen vacancy formation energy, and thermodynamic stability with respect to all phases in the Open Quantum Materials Database are also made publicly available. This large dataset for this ubiquitous crystal structure type contains 395 perovskites that are predicted to be thermodynamically stable, of which many have not yet been experimentally reported, and therefore represent theoretical predictions. The dataset thus opens avenues for future use, including materials discovery in many research-active areas.}, publisher={figshare}, author={Emery, Antoine}, year={2017}, month={Aug}}
 
 
 
