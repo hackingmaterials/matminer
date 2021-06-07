@@ -1,3 +1,6 @@
+"""
+Composition featurizers for compositions with ionic data.
+"""
 import itertools
 
 import numpy as np

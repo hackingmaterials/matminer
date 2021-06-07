@@ -1,3 +1,7 @@
+"""
+Composition featurizers for thermodynamic properties.
+"""
+
 from pymatgen.ext.matproj import MPRester
 
 from matminer.featurizers.base import BaseFeaturizer

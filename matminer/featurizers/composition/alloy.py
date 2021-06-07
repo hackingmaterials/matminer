@@ -1,3 +1,6 @@
+"""
+Composition featurizers specialized for use with alloys.
+"""
 
 import collections
 import os

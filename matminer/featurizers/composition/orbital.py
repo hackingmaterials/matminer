@@ -1,3 +1,7 @@
+"""
+Composition featurizers for orbital data.
+"""
+
 import collections
 from warnings import warn
 

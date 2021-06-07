@@ -1,3 +1,7 @@
+"""
+Composition featurizers for determining packing characteristics.
+"""
+
 import itertools
 from functools import lru_cache
 
