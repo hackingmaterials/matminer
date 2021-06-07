@@ -252,8 +252,9 @@ If you find matminer useful, please encourage its development by citing the foll
 
 Matminer helps users apply methods and data sets developed by the community. Please also cite the original sources, as this will add clarity to your article and credit the original authors:
 
-* If you use one or more **data retrieval methods**, check the code documentation on the relevant paper(s) to cite.
-* If you use one or more **featurizers**, please take advantage of the ``citations()`` function present for every featurizer in matminer. This function will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.
+* If you use one or more **data retrieval methods**, use the ``citations()`` method present for every data_retrieval class in matminer. This function will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.
+* If you use one or more **featurizers**, please take advantage of the ``citations()`` method present for every featurizer in matminer.
+* If you use one or more **datasets**, please check the metadata of the dataset for a comprehensive list of BibTex formatted citations to use.
 
 ---------
 Changelog
