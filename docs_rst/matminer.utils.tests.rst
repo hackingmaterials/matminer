@@ -12,14 +12,6 @@ matminer.utils.tests.test\_caching module
    :undoc-members:
    :show-inheritance:
 
-matminer.utils.tests.test\_conversions module
----------------------------------------------
-
-.. automodule:: matminer.utils.tests.test_conversions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 matminer.utils.tests.test\_data module
 --------------------------------------
 

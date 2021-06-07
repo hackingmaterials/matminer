@@ -88,7 +88,10 @@ if __name__ == "__main__":
 
         # Give bibtex citations
         print("**Bibtex Formatted Citations**\n")
+
+        print(".. code-block:: text")
+        print("\n")
         for citation in get_dataset_citations(dataset):
-            print(citation)
+            print("\t" + citation.replace("\n"," "))
             print()
         print("\n\n")
