@@ -40,16 +40,19 @@ class IonFeaturesTest(CompositionFeaturesTest):
             featurizer.featurize(Composition({Specie("Fe", 2): 1, Specie("Fe", 3): 2, Specie("O", -2): 4}))[0],
         )
 
-    def test_cation(self):
-        cp = CationProperty.from_preset("deml")
-        c = Composition("Fe2O3")
-        c = c.add_charges_from_oxi_state_guesses()
-        f = cp.featurize(c)
-        truth_arr = [5281400, 5281400, 0, 5281400.0, 0, 14, 14, 0, 14.0, 0, 5.2,
-                     5.2, 0.0, 5.2, 0, 460, 460, 0, 460.0, 0, 3, 3, 0, 3.0, 0]
-
-        self.assertArrayAlmostEqual(truth_arr, f, decimal=4)
-        self.assertEqual(len(truth_arr), len(cp.feature_labels()))
+    def test_cation_properties(self):
+        featurizer = CationProperty.from_preset("deml")
+        features = dict(
+            zip(
+                featurizer.feature_labels(),
+                featurizer.featurize(self.df["composition"][1]),
+            )
+        )
+        self.assertAlmostEqual(features["DemlData minimum magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["DemlData maximum magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["DemlData range magn_moment of cations"], 0)
+        self.assertAlmostEqual(features["DemlData mean magn_moment of cations"], 5.48)
+        self.assertAlmostEqual(features["DemlData std_dev magn_moment of cations"], 0)
 
     def test_elec_affin(self):
         featurizer = ElectronAffinity()
