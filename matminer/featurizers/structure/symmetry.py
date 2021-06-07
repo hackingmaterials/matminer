@@ -1,3 +1,13 @@
+"""
+Structure featurizers based on symmetry.
+"""
+from pymatgen.analysis.dimensionality import get_dimensionality_larsen
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+import pymatgen.analysis.local_env as pmg_le
+
+from matminer.featurizers.base import BaseFeaturizer
+
+
 class GlobalSymmetryFeatures(BaseFeaturizer):
     """
     Determines symmetry features, e.g. spacegroup number and  crystal system
