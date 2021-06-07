@@ -232,6 +232,7 @@ class MaximumPackingEfficiency(BaseFeaturizer):
     def implementors(self):
         return ["Logan Ward"]
 
+
 class StructuralComplexity(BaseFeaturizer):
     """
     Shannon information entropy of a structure.

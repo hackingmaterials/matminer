@@ -931,7 +931,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         """Calculates global instability index using Pymatgen's bond valence sum
         Args:
             struct: Pymatgen Structure object
-            scale: Float, tunable scale factor for bond valence
+            scale_factor: Float, tunable scale factor for bond valence
         Returns:
             gii: Float, global instability index
         """
