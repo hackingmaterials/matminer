@@ -1,121 +1,13 @@
-import os
-import sys
-import math
-import json
-import itertools
-import warnings
-from collections import OrderedDict
-from operator import itemgetter
-from random import sample
-from copy import copy
-from functools import lru_cache
+"""
+Miscellaneous structure featurizers.
+"""
 
 import numpy as np
-import pandas as pd
-import scipy.constants as const
 from scipy.stats import gaussian_kde
-from sklearn.exceptions import NotFittedError
-from monty.dev import requires
-from pymatgen.core import Structure, Lattice
-from pymatgen.analysis import bond_valence
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
-from pymatgen.analysis.dimensionality import get_dimensionality_larsen
 from pymatgen.analysis.ewald import EwaldSummation
-from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
-from pymatgen.analysis.local_env import VoronoiNN
-from pymatgen.core.periodic_table import Specie, Element
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from pymatgen.symmetry.structure import SymmetrizedStructure
-import pymatgen.analysis.local_env as pmg_le
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.site import (
-    OPSiteFingerprint,
-    CoordinationNumber,
-    LocalPropertyDifference,
-    CrystalNNFingerprint,
-    AverageBondAngle,
-    AverageBondLength,
-    SOAP
-)
-from matminer.featurizers.utils.stats import PropertyStats
-from matminer.featurizers.utils.oxidation import has_oxidation_states
-from matminer.utils.caching import get_all_nearest_neighbors
-from matminer.utils.data import IUCrBondValenceData
-
-__authors__ = (
-    "Anubhav Jain <ajain@lbl.gov>, Saurabh Bajaj <sbajaj@lbl.gov>, "
-    "Nils E.R. Zimmerman <nils.e.r.zimmermann@gmail.com>, "
-    "Alex Dunn <ardunn@lbl.gov>, Qi Wang <wqthu11@gmail.com>"
-)
-
-module_dir = os.path.dirname(os.path.abspath(__file__))
-ANG_TO_BOHR = const.value("Angstrom star") / const.value("Bohr radius")
-
-
-class DensityFeatures(BaseFeaturizer):
-    """
-    Calculates density and density-like features
-
-    Features:
-        - density
-        - volume per atom
-        - ("vpa"), and packing fraction
-    """
-
-    def __init__(self, desired_features=None):
-        """
-        Args:
-            desired_features: [str] - choose from "density", "vpa",
-                "packing fraction"
-        """
-        self.features = ["density", "vpa", "packing fraction"] if not desired_features else desired_features
-
-    def precheck(self, s: Structure) -> bool:
-        """
-        Precheck a single entry. DensityFeatures does not work for disordered
-        structures. To precheck an entire dataframe (qnd automatically gather
-        the fraction of structures that will pass the precheck), please use
-        precheck_dataframe.
-
-        Args:
-            s (pymatgen.Structure): The structure to precheck.
-
-        Returns:
-            (bool): If True, s passed the precheck; otherwise, it failed.
-        """
-        return s.is_ordered
-
-    def featurize(self, s):
-        output = []
-
-        if "density" in self.features:
-            output.append(s.density)
-
-        if "vpa" in self.features:
-            if not s.is_ordered:
-                raise ValueError("Disordered structure support not built yet.")
-            output.append(s.volume / len(s))
-
-        if "packing fraction" in self.features:
-            if not s.is_ordered:
-                raise ValueError("Disordered structure support not built yet.")
-            total_rad = 0
-            for site in s:
-                total_rad += site.specie.atomic_radius ** 3
-            output.append(4 * math.pi * total_rad / (3 * s.volume))
-
-        return output
-
-    def feature_labels(self):
-        all_features = ["density", "vpa", "packing fraction"]  # enforce order
-        return [x for x in all_features if x in self.features]
-
-    def citations(self):
-        return []
-
-    def implementors(self):
-        return ["Saurabh Bajaj", "Anubhav Jain"]
 
 
 class EwaldEnergy(BaseFeaturizer):
@@ -169,8 +61,6 @@ class EwaldEnergy(BaseFeaturizer):
             "year = {1921}"
             "}"
         ]
-
-
 
 
 class StructureComposition(BaseFeaturizer):
