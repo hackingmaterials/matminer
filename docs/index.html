@@ -173,9 +173,9 @@ mining. A full <a class="reference internal" href="featurizer_summary.html"><spa
 datasets available within matminer. If you would like to contribute a dataset to matminer’s
 repository see <a class="reference internal" href="dataset_addition_guide.html"><span class="doc">the dataset addition guide</span></a>.</p>
 </section>
-<section id="data-munging-with-conversionfeaturizers">
-<h3>Data munging with ConversionFeaturizers<a class="headerlink" href="#data-munging-with-conversionfeaturizers" title="Permalink to this headline">¶</a></h3>
-<p>Matminer’s multiprocessing-parallelized and error-tolerant featurizer structure makes transforming materials objects into correct formats quick and easy.</p>
+<section id="data-munging-with-conversion-featurizers">
+<h3>Data munging with Conversion Featurizers<a class="headerlink" href="#data-munging-with-conversion-featurizers" title="Permalink to this headline">¶</a></h3>
+<p>Matminer’s multiprocessing-parallelized and error-tolerant featurizer structure makes transforming materials objects into other formats quick and easy.</p>
 <p>For example, here is code that robustly transforms a dataframe of 10k ASE (atomic simulation environment) structures in the “ase atoms” column - some of which contain errors - to Pymatgen structures to use with matminer:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.featurizer.conversions</span> <span class="kn">import</span> <span class="n">ASEAtomstoStructure</span>
 
@@ -234,8 +234,9 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 </div>
 <p>Matminer helps users apply methods and data sets developed by the community. Please also cite the original sources, as this will add clarity to your article and credit the original authors:</p>
 <ul class="simple">
-<li><p>If you use one or more <strong>data retrieval methods</strong>, check the code documentation on the relevant paper(s) to cite.</p></li>
-<li><p>If you use one or more <strong>featurizers</strong>, please take advantage of the <code class="docutils literal notranslate"><span class="pre">citations()</span></code> function present for every featurizer in matminer. This function will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.</p></li>
+<li><p>If you use one or more <strong>data retrieval methods</strong>, use the <code class="docutils literal notranslate"><span class="pre">citations()</span></code> method present for every data_retrieval class in matminer. This function will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.</p></li>
+<li><p>If you use one or more <strong>featurizers</strong>, please take advantage of the <code class="docutils literal notranslate"><span class="pre">citations()</span></code> method present for every featurizer in matminer.</p></li>
+<li><p>If you use one or more <strong>datasets</strong>, please check the metadata of the dataset for a comprehensive list of BibTex formatted citations to use.</p></li>
 </ul>
 </section>
 <section id="changelog">
@@ -274,7 +275,7 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 <li><a class="reference internal" href="#featurizers-generate-descriptors-for-materials">Featurizers generate descriptors for materials</a></li>
 <li><a class="reference internal" href="#data-retrieval-easily-puts-complex-online-data-into-dataframes">Data retrieval easily puts complex online data into dataframes</a></li>
 <li><a class="reference internal" href="#access-ready-made-datasets-in-one-line">Access ready-made datasets in one line</a></li>
-<li><a class="reference internal" href="#data-munging-with-conversionfeaturizers">Data munging with ConversionFeaturizers</a></li>
+<li><a class="reference internal" href="#data-munging-with-conversion-featurizers">Data munging with Conversion Featurizers</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#examples">Examples</a></li>
