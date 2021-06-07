@@ -1,3 +1,6 @@
+"""
+Structure featurizers implementing radial distribution functions.
+"""
 import math
 import itertools
 from operator import itemgetter

@@ -4,6 +4,14 @@ matminer.data\_retrieval.tests package
 Submodules
 ----------
 
+matminer.data\_retrieval.tests.base module
+------------------------------------------
+
+.. automodule:: matminer.data_retrieval.tests.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 matminer.data\_retrieval.tests.test\_retrieve\_AFLOW module
 -----------------------------------------------------------
 
@@ -51,7 +59,6 @@ matminer.data\_retrieval.tests.test\_retrieve\_MongoDB module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------
