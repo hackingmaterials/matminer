@@ -10,7 +10,6 @@ from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 
 class MiscStructureFeaturesTest(StructureFeaturesTest):
-
     def test_ewald(self):
         # Add oxidation states to all of the structures
         for s in [self.nacl, self.cscl, self.diamond]:

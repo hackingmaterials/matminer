@@ -140,7 +140,7 @@ class MDFDataRetrieval(BaseDataRetrieval):
             "title = {The Materials Data Facility: Data Services to Advance Materials "
             "Science Research},"
             "journal = {{JOM}}"
-            "}"
+            "}",
         ]
 
 

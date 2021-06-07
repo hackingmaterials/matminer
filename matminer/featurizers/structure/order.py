@@ -284,8 +284,7 @@ class StructuralComplexity(BaseFeaturizer):
         return ["Koki Muraoka"]
 
     def feature_labels(self):
-        return ["structural complexity per atom",
-                "structural complexity per cell"]
+        return ["structural complexity per atom", "structural complexity per cell"]
 
     def citations(self):
         return [

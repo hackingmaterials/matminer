@@ -10,11 +10,9 @@ from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 
 class StructureSymmetryFeaturesTest(StructureFeaturesTest):
-
     def test_global_symmetry(self):
         gsf = GlobalSymmetryFeatures()
-        self.assertEqual(gsf.featurize(self.diamond),
-                         [227, "cubic", 1, True, 48])
+        self.assertEqual(gsf.featurize(self.diamond), [227, "cubic", 1, True, 48])
 
     def test_dimensionality(self):
         cscl = PymatgenTest.get_structure("CsCl")

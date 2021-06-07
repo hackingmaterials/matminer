@@ -1,4 +1,3 @@
-
 # Utility operations
 def has_oxidation_states(comp):
     """Check if a composition object has oxidation states for each element

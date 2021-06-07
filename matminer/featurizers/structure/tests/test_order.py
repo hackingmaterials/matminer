@@ -17,7 +17,6 @@ test_dir = os.path.join(os.path.dirname(__file__))
 
 
 class OrderStructureFeaturesTest(StructureFeaturesTest):
-
     def test_density_features(self):
         df = DensityFeatures()
         f = df.featurize(self.diamond)

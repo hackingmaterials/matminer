@@ -165,11 +165,3 @@ class XRDPowderPattern(BaseFeaturizer):
 
     def implementors(self):
         return ["Anubhav Jain", "Matthew Horton"]
-
-
-
-
-
-
-
-

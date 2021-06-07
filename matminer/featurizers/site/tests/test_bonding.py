@@ -12,7 +12,6 @@ from matminer.featurizers.site.tests.base import SiteFeaturizerTest
 
 
 class BondingTest(SiteFeaturizerTest):
-
     def test_bop(self):
         f = BondOrientationalParameter(max_l=10, compute_w=True, compute_w_hat=True)
 

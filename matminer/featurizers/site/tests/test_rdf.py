@@ -22,11 +22,9 @@ class RDFTests(SiteFeaturizerTest):
         self.assertAlmostEqual(gsfs["G2_20.0"][0], 0.00696)
         self.assertAlmostEqual(gsfs["G2_80.0"][0], 0.0)
         self.assertAlmostEqual(gsfs["G4_0.005_1.0_1.0"][0], 2.6399416897128658)
-        self.assertAlmostEqual(gsfs["G4_0.005_1.0_-1.0"][0],
-                               0.90049182882301426)
+        self.assertAlmostEqual(gsfs["G4_0.005_1.0_-1.0"][0], 0.90049182882301426)
         self.assertAlmostEqual(gsfs["G4_0.005_4.0_1.0"][0], 1.1810690738596332)
-        self.assertAlmostEqual(gsfs["G4_0.005_4.0_-1.0"][0],
-                               0.033850556557100071)
+        self.assertAlmostEqual(gsfs["G4_0.005_4.0_-1.0"][0], 0.033850556557100071)
 
     def test_grdf(self):
         f1 = Gaussian(1, 0)
@@ -35,8 +33,7 @@ class RDFTests(SiteFeaturizerTest):
         s_tuples = [(self.sc, 0), (self.cscl, 0)]
 
         # test fit, transform, and featurize dataframe for both run modes GRDF mode
-        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
-                                                     mode="GRDF")
+        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3], mode="GRDF")
         grdf.fit(s_tuples)
         features = grdf.transform(s_tuples)
         self.assertArrayAlmostEqual(
@@ -57,12 +54,10 @@ class RDFTests(SiteFeaturizerTest):
         )
 
         # pairwise GRDF mode
-        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3],
-                                                     mode="pairwise_GRDF")
+        grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3], mode="pairwise_GRDF")
         grdf.fit(s_tuples)
         features = grdf.transform(s_tuples)
-        self.assertArrayAlmostEqual(features[0],
-                                    [4.4807e-06, 3.1661e-04, 0.0267], 3)
+        self.assertArrayAlmostEqual(features[0], [4.4807e-06, 3.1661e-04, 0.0267], 3)
         self.assertArrayAlmostEqual(
             features[1],
             [2.1807e-08, 6.1119e-06, 0.0142, 3.3085e-06, 2.5898e-04, 0.0032],
@@ -151,16 +146,14 @@ class RDFTests(SiteFeaturizerTest):
         afs.featurize(self.sc, 0)
         self.assertArrayEqual(
             [bin.name() for bin in afs.bins],
-            ["Gaussian center={} width=0.5".format(i) for i in
-             np.arange(0, 10, 0.5)],
+            ["Gaussian center={} width=0.5".format(i) for i in np.arange(0, 10, 0.5)],
         )
 
         afs = AngularFourierSeries.from_preset("histogram")
         afs.featurize(self.sc, 0)
         self.assertArrayEqual(
             [bin.name() for bin in afs.bins],
-            ["Histogram start={} width=0.5".format(i) for i in
-             np.arange(0, 10, 0.5)],
+            ["Histogram start={} width=0.5".format(i) for i in np.arange(0, 10, 0.5)],
         )
 
 

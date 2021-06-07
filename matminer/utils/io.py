@@ -10,8 +10,7 @@ from monty.io import zopen
 from monty.json import MontyEncoder, MontyDecoder
 
 
-def store_dataframe_as_json(dataframe, filename, compression=None,
-                            orient="split", pbar=True):
+def store_dataframe_as_json(dataframe, filename, compression=None, orient="split", pbar=True):
     """Store pandas dataframe as a json file.
 
     Automatically encodes pymatgen objects as dictionaries.
@@ -63,12 +62,7 @@ def store_dataframe_as_json(dataframe, filename, compression=None,
             count += 1
 
     pbar1 = tqdm(
-        desc=f"Encoding objects into {filename}",
-        position=0,
-        leave=True,
-        ascii=True,
-        disable=not pbar,
-        total=count
+        desc=f"Encoding objects into {filename}", position=0, leave=True, ascii=True, disable=not pbar, total=count
     )
 
     class MontyEncoderPbar(MontyEncoder):
@@ -82,8 +76,7 @@ def store_dataframe_as_json(dataframe, filename, compression=None,
             return super().default(o)
 
     with zopen(filename, write_type) as f:
-        data = json.dumps(dataframe.to_dict(orient=orient),
-                          cls=MontyEncoderPbar)
+        data = json.dumps(dataframe.to_dict(orient=orient), cls=MontyEncoderPbar)
         if compression:
             data = data.encode()
         f.write(data)
@@ -103,13 +96,7 @@ def load_dataframe_from_json(filename, pbar=True):
         (Pandas.DataFrame): A pandas dataframe.
     """
     # Progress bar for reading file with hook
-    pbar1 = tqdm(
-        desc=f"Reading file {filename}",
-        position=0,
-        leave=True,
-        ascii=True,
-        disable=not pbar
-    )
+    pbar1 = tqdm(desc=f"Reading file {filename}", position=0, leave=True, ascii=True, disable=not pbar)
 
     def is_monty_object(o):
         """
@@ -145,13 +132,7 @@ def load_dataframe_from_json(filename, pbar=True):
         return obj
 
     # Progress bar for decoding objects
-    pbar2 = tqdm(
-        desc=f"Decoding objects from {filename}",
-        position=0,
-        leave=True,
-        ascii=True,
-        disable=not pbar
-    )
+    pbar2 = tqdm(desc=f"Decoding objects from {filename}", position=0, leave=True, ascii=True, disable=not pbar)
 
     class MontyDecoderPbar(MontyDecoder):
         """
@@ -159,8 +140,7 @@ def load_dataframe_from_json(filename, pbar=True):
         """
 
         def process_decoded(self, d):
-            if isinstance(d, dict) \
-                    and "data" in d and "index" in d and "columns" in d:
+            if isinstance(d, dict) and "data" in d and "index" in d and "columns" in d:
                 # total number of objects to decode
                 # is the number of @class mentions
                 pbar2.total = str(d).count("@class")
@@ -172,11 +152,7 @@ def load_dataframe_from_json(filename, pbar=True):
     hook = pbar_hook if pbar else lambda x: x
 
     with zopen(filename, "rb") as f:
-        dataframe_data = json.load(
-            f,
-            cls=decoder,
-            object_hook=hook
-        )
+        dataframe_data = json.load(f, cls=decoder, object_hook=hook)
 
     # if only keys are data, columns, index then orient=split
     if isinstance(dataframe_data, dict):

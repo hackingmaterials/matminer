@@ -13,15 +13,11 @@ from matminer.featurizers.structure.bonding import (
     StructuralHeterogeneity,
     GlobalInstabilityIndex,
 )
-from matminer.featurizers.structure.matrix import (
-    SineCoulombMatrix,
-    CoulombMatrix
-)
+from matminer.featurizers.structure.matrix import SineCoulombMatrix, CoulombMatrix
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 
 class BondingStructureTest(StructureFeaturesTest):
-
     def test_bondfractions(self):
 
         # Test individual structures with featurize
@@ -197,12 +193,10 @@ class BondingStructureTest(StructureFeaturesTest):
 
     def test_min_relative_distances(self):
         with self.assertRaises(ValueError):
-            MinimumRelativeDistances(include_species=False,
-                                     include_distances=False)
+            MinimumRelativeDistances(include_species=False, include_distances=False)
 
         mrd_nonuniform = MinimumRelativeDistances(flatten=False)
-        self.assertAlmostEqual(
-            mrd_nonuniform.featurize(self.diamond_no_oxi)[0][0], 1.1052576)
+        self.assertAlmostEqual(mrd_nonuniform.featurize(self.diamond_no_oxi)[0][0], 1.1052576)
         self.assertAlmostEqual(mrd_nonuniform.featurize(self.nacl)[0][0], 0.8891443)
         self.assertAlmostEqual(mrd_nonuniform.featurize(self.cscl)[0][0], 0.9877540)
 

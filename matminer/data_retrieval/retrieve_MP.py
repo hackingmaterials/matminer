@@ -161,5 +161,5 @@ class MPDataRetrieval(BaseDataRetrieval):
             "A simple,  flexible and efficient {API} for materials data based on "
             "{REpresentational} State Transfer ({REST}) principles},"
             "journal = {Computational Materials Science}"
-            "}"
+            "}",
         ]

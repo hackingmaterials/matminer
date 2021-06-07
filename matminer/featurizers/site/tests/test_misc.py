@@ -12,7 +12,6 @@ from matminer.featurizers.site.tests.base import SiteFeaturizerTest
 
 
 class MiscSiteTests(SiteFeaturizerTest):
-
     def test_interstice_distribution_of_crystal(self):
         bcc_li = Structure(
             Lattice([[3.51, 0, 0], [0, 3.51, 0], [0, 0, 3.51]]),

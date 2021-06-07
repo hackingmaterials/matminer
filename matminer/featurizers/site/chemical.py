@@ -522,5 +522,3 @@ class SiteElementalProperty(BaseFeaturizer):
             return output
         else:
             raise ValueError("Unrecognized preset: {}".format(preset))
-
-

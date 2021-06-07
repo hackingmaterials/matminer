@@ -26,10 +26,9 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies impo
 )
 
 with open(
-    os.path.join(
-        os.path.dirname(
-            pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"
-    ), "r", ) as f:
+    os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"),
+    "r",
+) as f:
     cn_motif_op_params = yaml.safe_load(f)
 with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml"), "r") as f:
     cn_target_motif_op = yaml.safe_load(f)

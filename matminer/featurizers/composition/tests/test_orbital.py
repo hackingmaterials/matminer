@@ -10,7 +10,6 @@ from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 
 class OrbitalFeaturesTest(CompositionFeaturesTest):
-
     def test_valence(self):
         df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_val["avg s valence electrons"][0], 2.0)

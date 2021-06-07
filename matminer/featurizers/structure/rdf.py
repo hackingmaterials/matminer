@@ -85,7 +85,7 @@ class RadialDistributionFunction(BaseFeaturizer):
         return []
 
     def implementors(self):
-        return["Saurabh Bajaj", "Alex Dunn"]
+        return ["Saurabh Bajaj", "Alex Dunn"]
 
 
 class PartialRadialDistributionFunction(BaseFeaturizer):

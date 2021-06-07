@@ -1,15 +1,11 @@
 import math
 import unittest
 
-from matminer.featurizers.composition.composite import (
-    Meredig,
-    ElementProperty
-)
+from matminer.featurizers.composition.composite import Meredig, ElementProperty
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 
 class CompositeFeaturesTest(CompositionFeaturesTest):
-
     def test_elem(self):
         df_elem = ElementProperty.from_preset("magpie").featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_elem["MagpieData minimum Number"][0], 8)

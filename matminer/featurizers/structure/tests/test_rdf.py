@@ -6,7 +6,7 @@ from matminer.featurizers.structure.rdf import (
     RadialDistributionFunction,
     PartialRadialDistributionFunction,
     ElectronicRadialDistributionFunction,
-    get_rdf_bin_labels
+    get_rdf_bin_labels,
 )
 
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest

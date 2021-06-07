@@ -122,7 +122,6 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
             "}"
         ]
 
-
     @staticmethod
     def get_relaxed_structure(aurl):
         """Collects the relaxed structure as a pymatgen.Structure.

@@ -12,7 +12,6 @@ from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 
 class ElementFeaturesTest(CompositionFeaturesTest):
-
     def test_stoich(self):
         featurizer = Stoichiometry(num_atoms=True)
         df_stoich = Stoichiometry(num_atoms=True).featurize_dataframe(self.df, col_id="composition")

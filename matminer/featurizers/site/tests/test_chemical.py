@@ -13,7 +13,6 @@ from matminer.featurizers.site.tests.base import SiteFeaturizerTest
 
 
 class ChemicalSiteTests(SiteFeaturizerTest):
-
     def test_chemicalSRO(self):
         df_sc = pd.DataFrame({"struct": [self.sc], "site": [0]})
         df_cscl = pd.DataFrame({"struct": [self.cscl], "site": [0]})

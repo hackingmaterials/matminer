@@ -1,4 +1,3 @@
-
 import unittest
 
 import numpy as np
@@ -14,8 +13,8 @@ from matminer.featurizers.site.fingerprint import (
 )
 from matminer.featurizers.site.tests.base import SiteFeaturizerTest
 
-class FingerprintTests(SiteFeaturizerTest):
 
+class FingerprintTests(SiteFeaturizerTest):
     def test_simple_cubic(self):
         """Test with an easy structure"""
 

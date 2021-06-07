@@ -16,7 +16,6 @@ from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 
 class MatrixStructureFeaturesTest(StructureFeaturesTest):
-
     def test_coulomb_matrix(self):
         # flat
         cm = CoulombMatrix(flatten=True)

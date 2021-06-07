@@ -11,7 +11,6 @@ from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 
 class ThermoFeaturesTest(CompositionFeaturesTest):
-
     def test_cohesive_energy(self):
         mpr = MPRester()
         if not mpr.api_key:

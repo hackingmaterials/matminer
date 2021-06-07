@@ -65,7 +65,5 @@ class StructureFeaturesTest(PymatgenTest):
         self.bond_angles = range(5, 180, 5)
 
         diamond_copy = copy.deepcopy(self.diamond)
-        diamond_copy.replace_species(
-            {Species("C", 0.0): {Species("C", 0.0): 0.99, Species("Si", 0.0): 0.01}}
-        )
+        diamond_copy.replace_species({Species("C", 0.0): {Species("C", 0.0): 0.99, Species("Si", 0.0): 0.01}})
         self.disordered_diamond = diamond_copy

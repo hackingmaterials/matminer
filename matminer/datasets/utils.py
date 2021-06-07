@@ -115,7 +115,7 @@ def _fetch_external_dataset(url, file_path):
         ascii=True,
         total=len(r.content),
         unit="MB",
-        unit_scale=1e-6
+        unit_scale=1e-6,
     )
     chunk_size = 2048
     with open(file_path, "wb") as file_out:

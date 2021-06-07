@@ -53,8 +53,7 @@ class AtomicOrbitals(BaseFeaturizer):
         integer_comp, factor = comp.get_integer_formula_and_factor()
 
         # warning message if composition is dilute and truncated
-        if not (len(Composition(comp).elements) ==
-                len(Composition(integer_comp).elements)):
+        if not (len(Composition(comp).elements) == len(Composition(integer_comp).elements)):
             warn("AtomicOrbitals: {} truncated to {}".format(comp, integer_comp))
 
         homo_lumo = MolecularOrbitals(integer_comp).band_edges

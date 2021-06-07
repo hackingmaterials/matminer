@@ -631,8 +631,8 @@ class PymatgenFunctionApplicator(ConversionFeaturizer):
         overwrite_data (bool): If True, will overwrite target_col_id even if there is
             data currently in that column
     """
-    def __init__(self, func, func_args=None,
-                 func_kwargs=None, target_col_id=None, overwrite_data=False):
+
+    def __init__(self, func, func_args=None, func_kwargs=None, target_col_id=None, overwrite_data=False):
 
         if not callable(func):
             raise TypeError(f"Function {func} is not callable!")
@@ -654,4 +654,3 @@ class PymatgenFunctionApplicator(ConversionFeaturizer):
 
     def implementors(self):
         return ["Alex Dunn"]
-

@@ -13,7 +13,7 @@ from matminer.featurizers.site import (
     CrystalNNFingerprint,
     AverageBondAngle,
     AverageBondLength,
-    SOAP
+    SOAP,
 )
 from matminer.featurizers.utils.stats import PropertyStats
 
@@ -145,13 +145,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         return self.site_featurizer.citations()
 
     def implementors(self):
-        return [
-            "Nils E. R. Zimmermann",
-            "Alireza Faghaninia",
-            "Anubhav Jain",
-            "Logan Ward",
-            "Alex Dunn"
-        ]
+        return ["Nils E. R. Zimmermann", "Alireza Faghaninia", "Anubhav Jain", "Logan Ward", "Alex Dunn"]
 
     @staticmethod
     def from_preset(preset, **kwargs):
@@ -164,10 +158,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         """
 
         if preset == "SOAP_formation_energy":
-            return SiteStatsFingerprint(
-                SOAP.from_preset("formation_energy"),
-                **kwargs
-            )
+            return SiteStatsFingerprint(SOAP.from_preset("formation_energy"), **kwargs)
 
         elif preset == "CrystalNNFingerprint_cn":
             return SiteStatsFingerprint(CrystalNNFingerprint.from_preset("cn", cation_anion=False), **kwargs)

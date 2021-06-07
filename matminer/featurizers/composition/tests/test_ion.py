@@ -15,7 +15,6 @@ from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 
 class IonFeaturesTest(CompositionFeaturesTest):
-
     def test_is_ionic(self):
         """Test checking whether a compound is ionic"""
 

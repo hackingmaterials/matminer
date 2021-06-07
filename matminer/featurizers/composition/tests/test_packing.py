@@ -12,7 +12,6 @@ from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 
 class PackingFeaturesTest(CompositionFeaturesTest):
-
     def test_ape(self):
         f = AtomicPackingEfficiency()
         ef = ElementFraction()

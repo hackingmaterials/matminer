@@ -88,10 +88,7 @@ class Miedema(BaseFeaturizer):
 
         self.data_source = data_source
         if self.data_source == "Miedema":
-            self.df_dataset = pd.read_csv(
-                os.path.join(data_dir, "Miedema.csv"),
-                index_col="element"
-            )
+            self.df_dataset = pd.read_csv(os.path.join(data_dir, "Miedema.csv"), index_col="element")
         else:
             raise NotImplementedError("data_source {} not implemented yet".format(self, data_source))
 
@@ -620,6 +617,7 @@ class WenAlloys(BaseFeaturizer):
 
     Copyright 2020 Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
     """
+
     def __init__(self):
         # Use of Miedema to retrieve the shear modulus
         self.data_source_miedema = Miedema(data_source="Miedema")
@@ -644,9 +642,7 @@ class WenAlloys(BaseFeaturizer):
         fractions = list(composition_dict.values())
         miracle_radius_stats = self.compute_magpie_summary("MiracleRadius", elements, fractions)
         atomic_weight_stats = self.compute_magpie_summary("AtomicWeight", elements, fractions)
-        electronegativity = [
-            self.data_source_miedema.df_dataset.loc[str(e)]["electronegativity"] for e in elements
-        ]
+        electronegativity = [self.data_source_miedema.df_dataset.loc[str(e)]["electronegativity"] for e in elements]
         single_VEC = [self.data_source_miedema.df_dataset.loc[str(e)]["valence_electrons"] for e in elements]
         mean_VEC = PropertyStats.mean(single_VEC, fractions)
         cohesive_energy = [self.data_source_cohesive_energy.cohesive_energy_data[str(e)] for e in elements]
@@ -700,9 +696,7 @@ class WenAlloys(BaseFeaturizer):
         shear_modulus_delta = self.compute_delta(shear_modulus, fractions)
         shear_modulus_local_mismatch = self.compute_local_mismatch(shear_modulus, fractions)
         shear_modulus_strength_model = self.compute_strength_local_mismatch_shear(
-            shear_modulus=shear_modulus,
-            mean_shear_modulus=mean_shear_modulus,
-            fractions=fractions
+            shear_modulus=shear_modulus, mean_shear_modulus=mean_shear_modulus, fractions=fractions
         )
 
         return [
@@ -730,7 +724,7 @@ class WenAlloys(BaseFeaturizer):
             mean_shear_modulus,
             shear_modulus_delta,
             shear_modulus_local_mismatch,
-            shear_modulus_strength_model
+            shear_modulus_strength_model,
         ]
 
     @staticmethod
@@ -809,12 +803,8 @@ class WenAlloys(BaseFeaturizer):
         mrmin = miracle_radius_stats["min"]
         mrmax = miracle_radius_stats["max"]
 
-        numerator = 1 - np.sqrt(
-            (mrmean * mrmin + mrmin ** 2) / (mrmean + mrmin) ** 2
-        )
-        denominator = 1 - np.sqrt(
-            (mrmean * mrmax + mrmax ** 2) / (mrmean + mrmax) ** 2
-        )
+        numerator = 1 - np.sqrt((mrmean * mrmin + mrmin ** 2) / (mrmean + mrmin) ** 2)
+        denominator = 1 - np.sqrt((mrmean * mrmax + mrmax ** 2) / (mrmean + mrmax) ** 2)
         return numerator / denominator
 
     @staticmethod
@@ -846,8 +836,7 @@ class WenAlloys(BaseFeaturizer):
         """
         weight_fraction = ""
         for single_element in elements:
-            weight_fraction += single_element + str(
-                composition.get_wt_fraction(single_element))
+            weight_fraction += single_element + str(composition.get_wt_fraction(single_element))
 
         return weight_fraction
 
@@ -864,8 +853,7 @@ class WenAlloys(BaseFeaturizer):
         """
         atomic_fraction = ""
         for single_element in elements:
-            atomic_fraction += single_element + str(
-                composition.get_atomic_fraction(single_element))
+            atomic_fraction += single_element + str(composition.get_atomic_fraction(single_element))
 
         return atomic_fraction
 
@@ -904,13 +892,12 @@ class WenAlloys(BaseFeaturizer):
         Returns:
             (dict) Dictionary of element-fraction weighted statistics for attribute.
         """
-        attribute = [self.data_source_magpie[attribute_name][e] for e in
-                     elements]
+        attribute = [self.data_source_magpie[attribute_name][e] for e in elements]
         return {
             "array": attribute,
             "mean": PropertyStats.mean(attribute, fractions),
             "min": PropertyStats.minimum(attribute, fractions),
-            "max": PropertyStats.maximum(attribute, fractions)
+            "max": PropertyStats.maximum(attribute, fractions),
         }
 
     def compute_enthalpy(self, elements, fractions):
@@ -964,7 +951,7 @@ class WenAlloys(BaseFeaturizer):
             "Shear modulus mean",
             "Shear modulus delta",
             "Shear modulus local mismatch",
-            "Shear modulus strength model"
+            "Shear modulus strength model",
         ]
 
     def citations(self):

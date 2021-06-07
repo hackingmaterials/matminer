@@ -19,7 +19,7 @@ from matminer.featurizers.conversions import (
     StructureToOxidStructure,
     CompositionToOxidComposition,
     CompositionToStructureFromMP,
-    PymatgenFunctionApplicator
+    PymatgenFunctionApplicator,
 )
 
 
@@ -316,30 +316,19 @@ class TestConversions(PymatgenTest):
             ]
         )
         si = Structure(lattice, ["Si"] * 2, coords)
-        si.replace_species(
-            {
-                Element("Si"): {
-                    Element('Ge'):0.75,
-                    Element('C'):0.25
-                }
-            }
-        )
+        si.replace_species({Element("Si"): {Element("Ge"): 0.75, Element("C"): 0.25}})
 
         df = DataFrame(data={"structure": [si, cscl]})
 
         # Try a conversion with no args
-        pfa = PymatgenFunctionApplicator(
-            func=lambda s: s.is_ordered,
-            target_col_id="is_ordered"
-        )
+        pfa = PymatgenFunctionApplicator(func=lambda s: s.is_ordered, target_col_id="is_ordered")
 
         df = pfa.featurize_dataframe(df, "structure")
         self.assertArrayEqual(df["is_ordered"].tolist(), [False, True])
 
         # Try a conversion with args
         pfa2 = PymatgenFunctionApplicator(
-            func=lambda s: s.composition.anonymized_formula,
-            target_col_id="anonymous formula"
+            func=lambda s: s.composition.anonymized_formula, target_col_id="anonymous formula"
         )
 
         df = pfa2.featurize_dataframe(df, "structure")

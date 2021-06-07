@@ -26,20 +26,13 @@ class GlobalSymmetryFeatures(BaseFeaturizer):
         "tetragonal": 4,
         "trigonal": 3,
         "hexagonal": 2,
-        "cubic": 1
+        "cubic": 1,
     }
 
-    all_features = [
-        "spacegroup_num",
-        "crystal_system",
-        "crystal_system_int",
-        "is_centrosymmetric",
-        "n_symmetry_ops"
-    ]
+    all_features = ["spacegroup_num", "crystal_system", "crystal_system_int", "is_centrosymmetric", "n_symmetry_ops"]
 
     def __init__(self, desired_features=None):
-        self.features = \
-            desired_features if desired_features else self.all_features
+        self.features = desired_features if desired_features else self.all_features
 
     def featurize(self, s):
         sga = SpacegroupAnalyzer(s)
