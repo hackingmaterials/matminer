@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from pymatgen.core import Structure
-from matminer.featurizers.structure import (
+from matminer.featurizers.structure.order import (
     DensityFeatures,
     MaximumPackingEfficiency,
     ChemicalOrdering,

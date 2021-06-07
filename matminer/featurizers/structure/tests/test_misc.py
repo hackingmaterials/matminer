@@ -1,7 +1,7 @@
 import unittest
 
 from matminer.featurizers.composition import ElementProperty
-from matminer.featurizers.structure import (
+from matminer.featurizers.structure.misc import (
     EwaldEnergy,
     StructureComposition,
     XRDPowderPattern,

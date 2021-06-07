@@ -1,6 +1,6 @@
 import unittest
 
-from matminer.featurizers.structure import JarvisCFID
+from matminer.featurizers.structure.composite import JarvisCFID
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 
