@@ -19,11 +19,12 @@ from matminer.featurizers.conversions import (
     CompositionToOxidComposition,
     CompositionToStructureFromMP,
     PymatgenFunctionApplicator,
-    ASEAtomstoStructure
+    ASEAtomstoStructure,
 )
 
 try:
     from ase import Atoms
+
     ase_loaded = True
 except ImportError:
     ase_loaded = False
@@ -345,10 +346,7 @@ class TestConversions(PymatgenTest):
         a2s = ASEAtomstoStructure()
         d = 2.9
         L = 10.0
-        wire = Atoms('Au',
-                     positions=[[0, L / 2, L / 2]],
-                     cell=[d, L, L],
-                     pbc=[1, 0, 0])
+        wire = Atoms("Au", positions=[[0, L / 2, L / 2]], cell=[d, L, L], pbc=[1, 0, 0])
         df = DataFrame({"atoms": [wire]})
 
         df = a2s.featurize_dataframe(df, "atoms")
