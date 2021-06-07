@@ -1,3 +1,7 @@
+"""
+Composition featurizers for composite features containing more than 1 category of general-purpose data.
+"""
+
 from matminer.featurizers.composition.element import ElementFraction
 from matminer.featurizers.composition.orbital import ValenceOrbital
 from matminer.featurizers.base import BaseFeaturizer
