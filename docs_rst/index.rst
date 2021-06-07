@@ -170,7 +170,7 @@ repository see :doc:`the dataset addition guide </dataset_addition_guide>`.
 Data munging with ConversionFeaturizers
 -----------------------------------------------
 
-Matminer's multiprocessing-parallelized and error-tolerant featurizer structure makes transforming materials objects into correct formats quick and easy.
+Matminer's multiprocessing-parallelized and error-tolerant featurizer structure makes transforming materials objects into other formats quick and easy.
 
 For example, here is code that robustly transforms a dataframe of 10k ASE (atomic simulation environment) structures in the "ase atoms" column - some of which contain errors - to Pymatgen structures to use with matminer:
 
