@@ -17,6 +17,7 @@ from matminer.featurizers.site import (
 )
 from matminer.featurizers.utils.stats import PropertyStats
 
+
 class SiteStatsFingerprint(BaseFeaturizer):
     """
     Computes statistics of properties across all sites in a structure.
