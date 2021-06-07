@@ -16,7 +16,6 @@ from matminer.featurizers.composition.alloy import (
     WenAlloys
 )
 
-
 class AlloyFeaturizersTest(CompositionFeaturesTest):
     def test_miedema_all(self):
         df = pd.DataFrame(

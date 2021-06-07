@@ -2,7 +2,7 @@ import unittest
 
 import pandas as pd
 from pymatgen.core import Composition
-from pymatgen.core.periodic_table import Specie, Element
+from pymatgen.core.periodic_table import Specie
 from pymatgen.util.testing import PymatgenTest
 
 
