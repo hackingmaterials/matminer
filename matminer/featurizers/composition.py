@@ -2187,6 +2187,10 @@ class WenAlloys(BaseFeaturizer):
         self.data_source_magpie = MagpieData().all_elemental_props
         self.data_source_cohesive_energy = CohesiveEnergyData()
         self.data_source_enthalpy = MixingEnthalpy()
+        self.yss = YangSolidSolution()
+
+    def precheck(self, comp):
+        return self.yss.precheck(comp)
 
     def featurize(self, comp):
         """
@@ -2242,8 +2246,8 @@ class WenAlloys(BaseFeaturizer):
         interant_electrons = s_unfilled + p_unfilled + d_unfilled + f_unfilled
         weight_fraction = self.compute_weight_fraction(elements, comp)
         atomic_fraction = self.compute_atomic_fraction(elements, comp)
-        yang_delta = YangSolidSolution().compute_delta(comp)
-        yang_omega = YangSolidSolution().compute_omega(comp)
+        yang_delta = self.yss.compute_delta(comp)
+        yang_omega = self.yss.compute_omega(comp)
         ape = AtomicPackingEfficiency().compute_simultaneous_packing_efficiency(comp)[0]
         radii_local_mismatch = self.compute_local_mismatch(miracle_radius_stats["array"], fractions)
         radii_gamma = self.compute_gamma_radii(miracle_radius_stats)
