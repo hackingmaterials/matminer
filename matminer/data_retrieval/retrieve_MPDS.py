@@ -342,3 +342,6 @@ class MPDSDataRetrieval(BaseDataRetrieval):
 
         else:
             raise APIError("Crystal structure treatment unavailable")
+
+    def citations(self):
+        return []
