@@ -1,15 +1,10 @@
 # coding: utf-8
-# Copyright (c) Pymatgen Development Team.
-# Distributed under the terms of the MIT License.
 
 import os
 import copy
 import unittest
-import csv
-import json
 import numpy as np
 import pandas as pd
-from multiprocessing import set_start_method
 from sklearn.exceptions import NotFittedError
 
 from pymatgen.core import Structure, Lattice, Molecule, Species
@@ -37,19 +32,11 @@ from matminer.featurizers.structure import (
     StructureComposition,
     Dimensionality,
     XRDPowderPattern,
-    CGCNNFeaturizer,
     JarvisCFID,
     GlobalInstabilityIndex,
     StructuralComplexity,
     get_rdf_bin_labels
 )
-
-# For the CGCNNFeaturizer
-try:
-    import torch
-    import cgcnn
-except ImportError:
-    torch, cgcnn = None, None
 
 test_dir = os.path.join(os.path.dirname(__file__))
 
@@ -772,206 +759,6 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(pattern[44], 0.4083, places=2)
         self.assertEqual(len(pattern), 91)
         self.assertEqual(len(xpp.feature_labels()), 91)
-
-    @unittest.skipIf(not (torch and cgcnn), "pytorch or cgcnn not installed.")
-    def test_cgcnn_featurizer(self):
-        # Test regular classification.
-        cla_props, cla_atom_features, cla_structs = self._get_cgcnn_data()
-        atom_fea_len = 64
-        cgcnn_featurizer = CGCNNFeaturizer(
-            atom_init_fea=cla_atom_features,
-            train_size=5,
-            val_size=2,
-            test_size=3,
-            atom_fea_len=atom_fea_len,
-        )
-
-        cgcnn_featurizer.fit(X=cla_structs, y=cla_props)
-        self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
-        state_dict = cgcnn_featurizer.model.state_dict()
-        self.assertEqual(state_dict["embedding.weight"].size(), torch.Size([64, 92]))
-        self.assertEqual(state_dict["embedding.bias"].size(), torch.Size([64]))
-        self.assertEqual(state_dict["convs.0.fc_full.weight"].size(), torch.Size([128, 169]))
-        self.assertEqual(state_dict["convs.1.bn1.weight"].size(), torch.Size([128]))
-        self.assertEqual(state_dict["convs.2.bn2.bias"].size(), torch.Size([64]))
-        self.assertEqual(state_dict["conv_to_fc.weight"].size(), torch.Size([128, 64]))
-        self.assertEqual(state_dict["fc_out.weight"].size(), torch.Size([2, 128]))
-
-        for struct in cla_structs:
-            result = cgcnn_featurizer.featurize(struct)
-            self.assertEqual(len(result), atom_fea_len)
-
-        # Test regular regression and default atom_init_fea and featurize_many.
-        reg_props, reg_atom_features, reg_structs = self._get_cgcnn_data("regression")
-        cgcnn_featurizer = CGCNNFeaturizer(
-            task="regression",
-            atom_fea_len=atom_fea_len,
-            train_size=6,
-            val_size=2,
-            test_size=2,
-        )
-
-        cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
-        cgcnn_featurizer.set_n_jobs(1)
-
-        result = cgcnn_featurizer.featurize_many(entries=reg_structs)
-        self.assertEqual(np.array(result).shape, (len(reg_structs), atom_fea_len))
-
-        # Test classification from pre-trained model.
-        cgcnn_featurizer = CGCNNFeaturizer(
-            h_fea_len=32,
-            n_conv=4,
-            pretrained_name="semi-metal-classification",
-            atom_init_fea=cla_atom_features,
-            train_size=5,
-            val_size=2,
-            test_size=3,
-            atom_fea_len=atom_fea_len,
-        )
-        cgcnn_featurizer.fit(X=cla_structs, y=cla_props)
-        self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
-
-        validate_features = [
-            2.1295,
-            2.1288,
-            1.8504,
-            1.9175,
-            2.1094,
-            1.7770,
-            2.0471,
-            1.7426,
-            1.7288,
-            1.7770,
-        ]
-        for struct, validate_feature in zip(cla_structs, validate_features):
-            result = cgcnn_featurizer.featurize(struct)
-            self.assertEqual(len(result), atom_fea_len)
-            self.assertAlmostEqual(result[0], validate_feature, 4)
-
-        # Test regression from pre-trained model.
-        cgcnn_featurizer = CGCNNFeaturizer(
-            task="regression",
-            h_fea_len=32,
-            n_conv=4,
-            pretrained_name="formation-energy-per-atom",
-            atom_init_fea=reg_atom_features,
-            train_size=5,
-            val_size=2,
-            test_size=3,
-            atom_fea_len=atom_fea_len,
-        )
-        cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
-        self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
-
-        validate_features = [
-            1.6871,
-            1.5679,
-            1.5316,
-            1.6419,
-            1.6031,
-            1.4333,
-            1.5709,
-            1.5070,
-            1.5038,
-            1.4333,
-        ]
-
-        for struct, validate_feature in zip(reg_structs, validate_features):
-            result = cgcnn_featurizer.featurize(struct)
-            self.assertEqual(len(result), atom_fea_len)
-            self.assertAlmostEqual(result[-1], validate_feature, 4)
-
-        # Test warm start regression.
-        warm_start_file = os.path.join(test_dir, "cgcnn_test_regression_model.pth.tar")
-        warm_start_model = torch.load(warm_start_file)
-        self.assertEqual(warm_start_model["epoch"], 31)
-        self.assertEqual(warm_start_model["best_epoch"], 9)
-        self.assertAlmostEqual(warm_start_model["best_mae_error"].numpy(), 2.3700, 4)
-
-        cgcnn_featurizer = CGCNNFeaturizer(
-            task="regression",
-            warm_start_file=warm_start_file,
-            epochs=100,
-            atom_fea_len=atom_fea_len,
-            atom_init_fea=reg_atom_features,
-            train_size=6,
-            val_size=2,
-            test_size=2,
-        )
-        cgcnn_featurizer.fit(X=reg_structs, y=reg_props)
-
-        # If use CGCNN featurize_many(), you should change the multiprocessing
-        # start_method to 'spawn', because Gloo (that uses Infiniband) and
-        # NCCL2 are not fork safe, pytorch don't support them or just
-        # set n_jobs = 1 to avoid multiprocessing as follows.
-        set_start_method("spawn", force=True)
-        result = cgcnn_featurizer.featurize_many(entries=reg_structs)
-        self.assertEqual(np.array(result).shape, (len(reg_structs), atom_fea_len))
-
-        # Test featurize_dataframe.
-        df = pd.DataFrame.from_dict({"structure": cla_structs})
-        cgcnn_featurizer = CGCNNFeaturizer(
-            atom_init_fea=cla_atom_features,
-            train_size=5,
-            val_size=2,
-            test_size=3,
-            atom_fea_len=atom_fea_len,
-        )
-        cgcnn_featurizer.fit(X=df["structure"], y=cla_props)
-        self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
-        cgcnn_featurizer.set_n_jobs(1)
-        result = cgcnn_featurizer.featurize_dataframe(df, "structure")
-        self.assertTrue("CGCNN_feature_{}".format(atom_fea_len - 1) in result.columns)
-        self.assertEqual(np.array(result).shape, (len(reg_structs), atom_fea_len + 1))
-
-        # Test fit_featurize_dataframe.
-        df = pd.DataFrame.from_dict({"structure": cla_structs})
-        cgcnn_featurizer = CGCNNFeaturizer(
-            atom_init_fea=cla_atom_features,
-            train_size=5,
-            val_size=2,
-            test_size=3,
-            atom_fea_len=atom_fea_len,
-        )
-        result = cgcnn_featurizer.fit_featurize_dataframe(df, "structure", fit_args=[cla_props])
-        self.assertEqual(len(cgcnn_featurizer.feature_labels()), atom_fea_len)
-        self.assertTrue("CGCNN_feature_{}".format(atom_fea_len - 1) in result.columns)
-        self.assertEqual(np.array(result).shape, (len(reg_structs), atom_fea_len + 1))
-
-    @staticmethod
-    def _get_cgcnn_data(task="classification"):
-        """
-        Get cgcnn sample data.
-        Args:
-            task (str): Classification or regression,
-                        decided which sample data to return.
-
-        Returns:
-            id_prop_data (list): List of property data.
-            elem_embedding (list): List of element features.
-            struct_list (list): List of structure object.
-        """
-        if task == "classification":
-            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..", "data", "sample-classification")
-        else:
-            cgcnn_data_path = os.path.join(os.path.dirname(cgcnn.__file__), "..", "data", "sample-regression")
-
-        struct_list = list()
-        cif_list = list()
-        with open(os.path.join(cgcnn_data_path, "id_prop.csv")) as f:
-            reader = csv.reader(f)
-            id_prop_data = [row[1] for row in reader]
-        with open(os.path.join(cgcnn_data_path, "atom_init.json")) as f:
-            elem_embedding = json.load(f)
-
-        for file in os.listdir(cgcnn_data_path):
-            if file.endswith(".cif"):
-                cif_list.append(int(file[:-4]))
-                cif_list = sorted(cif_list)
-        for cif_name in cif_list:
-            crystal = Structure.from_file(os.path.join(cgcnn_data_path, "{}.cif".format(cif_name)))
-            struct_list.append(crystal)
-        return id_prop_data, elem_embedding, struct_list
 
     def test_jarvisCFID(self):
 
