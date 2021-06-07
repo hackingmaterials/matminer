@@ -33,6 +33,5 @@ jobs:
     - name: flake8
       run: |
         flake8 --version
-        flake8 --count --show-source --statistics matminer
         # exit-zero treats all errors as warnings.
         flake8 --count --exit-zero --max-complexity=20 --statistics matminer

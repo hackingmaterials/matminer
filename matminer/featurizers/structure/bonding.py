@@ -324,7 +324,7 @@ class BondFractions(BaseFeaturizer):
                     "elements or species with the token in between, "
                     "for example Cl - Cs"
                 )
-            if not self.token in bond:
+            if self.token not in bond:
                 raise ValueError('Token "{}" not found in bond: {}'.format(self.token, bond))
             bond = bond.replace(" bond frac.", "")
             species = sorted(bond.split(self.token))
