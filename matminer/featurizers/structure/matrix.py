@@ -1,3 +1,21 @@
+"""
+Structure featurizers generating a matrix for each structure.
+
+Most matrix structure featurizers contain the ability to flatten matrices to be dataframe-friendly.
+"""
+import numpy as np
+import scipy.constants as const
+from sklearn.exceptions import NotFittedError
+from pymatgen.core import Structure
+from pymatgen.core.periodic_table import Element
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+import pymatgen.analysis.local_env as pmg_le
+
+from matminer.featurizers.base import BaseFeaturizer
+
+ANG_TO_BOHR = const.value("Angstrom star") / const.value("Bohr radius")
+
+
 class CoulombMatrix(BaseFeaturizer):
     """
     The Coulomb matrix, a representation of nuclear coulombic interaction.
