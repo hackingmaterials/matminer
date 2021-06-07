@@ -500,6 +500,9 @@ class CompositionFeaturesTest(PymatgenTest):
 
         for flabel, fvalue in d.items():
             correct_value = correct[flabel]
+
+            print(flabel, fvalue, correct_value)
+
             if isinstance(correct_value, str):
                 self.assertEqual(correct_value, fvalue)
             else:
