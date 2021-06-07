@@ -817,7 +817,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(gii_pymat.featurize(nacl_disordered)[0], 0.39766464)
 
     def test_structural_complexity(self):
-        s = Structure.from_file(os.path.join(test_dir, "Dy2HfS5_mp-1198001_computed.cif"))
+        s = Structure.from_file(os.path.join(test_dir,
+                                             "../structure/tests/Dy2HfS5_mp-1198001_computed.cif"))
 
         featurizer = StructuralComplexity()
         ig, igbits = featurizer.featurize(s)
@@ -825,7 +826,8 @@ class StructureFeaturesTest(PymatgenTest):
         self.assertAlmostEqual(2.5, ig, places=3)
         self.assertAlmostEqual(80, igbits, places=3)
 
-        s = Structure.from_file(os.path.join(test_dir, "Cs2CeN5O17_mp-1198000_computed.cif"))
+        s = Structure.from_file(os.path.join(test_dir,
+                                             "../structure/tests/Cs2CeN5O17_mp-1198000_computed.cif"))
 
         featurizer = StructuralComplexity()
         ig, igbits = featurizer.featurize(s)
