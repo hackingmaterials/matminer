@@ -1,14 +1,10 @@
-# This workflow runs only on Ubuntu and aims to be more complete than the Mac and Windows workflows.
-# In particular, Openbabel and many of the external command line dependencies are included for testing.defaults:
-# The ext package is also only tested in this workflow. Coverage is also computed based on this platform.
-name: Release
+name: Full test
 
 
 # Run this workflow only on release
 on:
-  release:
-    types:
-      - created
+  - release
+  - workflow_dispatch
 
 jobs:
 
