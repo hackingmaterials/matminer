@@ -639,6 +639,22 @@ class MatminerDatasetsTest(DataSetsTest):
         self.universal_dataset_check("ricci_boltztrap_mp_tabular", object_headers, numeric_headers)
 
 
+    def test_ucsb_thermoelectrics(self):
+        object_headers = ["composition", "crystallinity", "synthesis", "src"]
+
+        numeric_headers = [
+            "spacegroup",
+            "rho (ohm.cm)",
+            "S [muV/K]",
+            "PF [W/mK^2]",
+            "zT",
+            "kappa [W/mK]",
+            "sigma [S/cm]",
+            "T [K]",
+        ]
+        self.universal_dataset_check("ucsb_thermoelectrics", object_headers, numeric_headers)
+
+
 class MatbenchDatasetsTest(DataSetsTest):
     """
     Matbench datasets are tested here.
