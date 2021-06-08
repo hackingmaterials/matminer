@@ -638,7 +638,6 @@ class MatminerDatasetsTest(DataSetsTest):
 
         self.universal_dataset_check("ricci_boltztrap_mp_tabular", object_headers, numeric_headers)
 
-
     def test_ucsb_thermoelectrics(self):
         object_headers = ["composition", "crystallinity", "synthesis", "src"]
 
