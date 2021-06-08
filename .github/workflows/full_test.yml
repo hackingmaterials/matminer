@@ -5,7 +5,12 @@ name: Full test
 on:
   - release:
     types: [published, created, released]
-  - workflow_dispatch
+  - workflow_dispatch:
+    inputs:
+      name:
+        description: 'Person to greet'
+        required: true
+        default: 'Mona the Octocat'
 #  - release
 #  - schedule
 #    - cron
