@@ -915,10 +915,35 @@
     },
     "description": "Matbench v0.1 test dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
-    "hash": "",
     "num_entries": 312,
     "reference": "https://citrination.com/datasets/153092/",
     "url": "https://ml.materialsproject.org/projects/matbench_steels.json.gz",
     "hash": "473bc4957b2ea5e6465aef84bc29bb48ac34db27d69ea4ec5f508745c6fae252"
+  },
+    "ucsb_thermoelectrics": {
+    "bibtex_refs": [
+      "@article{Gaultois2013,\n  doi = {10.1021/cm400893e},\n  url = {https://doi.org/10.1021/cm400893e},\n  year = {2013},\n  month = may,\n  publisher = {American Chemical Society ({ACS})},\n  volume = {25},\n  number = {15},\n  pages = {2911--2920},\n  author = {Michael W. Gaultois and Taylor D. Sparks and Christopher K. H. Borg and Ram Seshadri and William D. Bonificio and David R. Clarke},\n  title = {Data-Driven Review of Thermoelectric Materials: Performance and Resource Considerations},\n  journal = {Chemistry of Materials}\n}",
+      "@misc{Citrine Informatics,\ntitle = {UCSB Thermoelectrics Database},\nhowpublished = {\\url{https://citrination.com/datasets/150557/},\n}"
+    ],
+    "columns": {
+      "composition": "Chemical formula.",
+      "crystallinity": "Either single crystal, polycrystalline, or nanoparticles.",
+      "synthesis": "Brief string describing the synthesis method",
+      "spacegroup": "Spacegroup number, if available",
+      "rho (ohm.cm)": "Electrical resistivity, in ohm.cm",
+      "S [muV/K]": "Seebeck coefficient, in microVolts/K, if available",
+      "PF [W/mK^2]": "Thermoelectric power factor, conductivity * Seebeck^2, in [W/mK^2] if available",
+      "zT": "Thermoelectric figure of merit, PF * T/K, unitless, if available",
+      "kappa [W/mK]": "Thermal conductivity in Watt/ meter * Kelvin, if available",
+      "sigma [S/cm]": "Electrical conductivity, in Siemens/cm, if available",
+      "T [K]": "Temperature in Kelvin at which these properties were obtained, if available",
+      "src": "Original source of the recording. To cite the aggregator of the data, see the bibtext_refs section of this metadata."
+    },
+    "description": "Database of ~1,100 experimental thermoelectric materials from UCSB aggregated from 108 source publications and personal communications. Downloaded from Citrine. Source UCSB webpage is http://www.mrl.ucsb.edu:8080/datamine/thermoelectric.jsp. See reference for more information on original data aggregation. No duplicate entries are present, but each src may result in multiple measurements of the same materials' properties at different temperatures or conditions.",
+    "file_type": "json.gz",
+    "num_entries": 1093,
+    "reference": "https://citrination.com/datasets/150557/",
+    "url": "https://ndownloader.figshare.com/files/28333845",
+    "hash": "7d0c9c74fd52995b876bd251a7732b5498314702441fa463197fb492be68ecc0"
   }
 }
