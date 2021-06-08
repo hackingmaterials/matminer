@@ -4,15 +4,15 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>matminer (Materials Data Mining) &#8212; matminer 0.7.0 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -39,7 +39,7 @@
           <div class="body" role="main">
             
   <img alt="matminer logo" src="_images/matminer_logo_small.png" />
-<div class="section" id="matminer">
+<section id="matminer">
 <h1>matminer<a class="headerlink" href="#matminer" title="Permalink to this headline">¶</a></h1>
 <p>matminer is a Python library for data mining the properties of materials.</p>
 <p>Matminer contains routines for:</p>
@@ -92,7 +92,7 @@
 <div class="line"><br /></div>
 </div>
 <p>Take a tour of matminer’s features by scrolling down!</p>
-<div class="section" id="related-software">
+<section id="related-software">
 <h2>Related software<a class="headerlink" href="#related-software" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/hackingmaterials/matminer_examples">matminer_examples</a> is a repository of example notebooks showing how to use matminer.</p></li>
@@ -100,8 +100,8 @@
 <li><p><a class="reference external" href="https://github.com/hackingmaterials/figrecipes">figrecipes</a> is a Plotly-based code for quickly generating interactive plots from dataframes</p></li>
 <li><p><a class="reference external" href="https://github.com/hackingmaterials/matbench">matbench</a> is an ImageNet for materials properties - a reproducible benchmarking package and dynamic leaderboard for comparing ML algorithms</p></li>
 </ul>
-</div>
-<div class="section" id="quick-links">
+</section>
+<section id="quick-links">
 <h2>Quick Links<a class="headerlink" href="#quick-links" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="dataset_summary.html"><span class="doc">Table of Datasets</span></a></p></li>
@@ -113,14 +113,14 @@
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</div>
-<div class="section" id="installation">
+</section>
+<section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>To install matminer, follow the short <a class="reference internal" href="installation.html"><span class="doc">installation tutorial.</span></a></p>
-</div>
-<div class="section" id="overview">
+</section>
+<section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="featurizers-generate-descriptors-for-materials">
+<section id="featurizers-generate-descriptors-for-materials">
 <h3>Featurizers generate descriptors for materials<a class="headerlink" href="#featurizers-generate-descriptors-for-materials" title="Permalink to this headline">¶</a></h3>
 <p>Matminer can turn materials objects - for example, a composition such as “Fe3O4” - into arrays of numbers representing things like average electronegativity or
 difference in ionic radii of the substituent elements. Matminer also contains sophisticated crystal structure and site featurizers (e.g.,
@@ -130,8 +130,8 @@ band structures and density of states.</p>
 try different types of materials descriptors for an analysis and to transform materials science objects into physically-relevant numbers for data
 mining. A full <a class="reference internal" href="featurizer_summary.html"><span class="doc">Table of Featurizers</span></a> is available.</p>
 <a class="reference internal image-reference" href="_images/featurizer_diagram.png"><img alt="Diagram of featurizers" class="align-center" src="_images/featurizer_diagram.png" style="width: 1000px;" /></a>
-</div>
-<div class="section" id="data-retrieval-easily-puts-complex-online-data-into-dataframes">
+</section>
+<section id="data-retrieval-easily-puts-complex-online-data-into-dataframes">
 <h3>Data retrieval easily puts complex online data into dataframes<a class="headerlink" href="#data-retrieval-easily-puts-complex-online-data-into-dataframes" title="Permalink to this headline">¶</a></h3>
 <p><strong>Retrieve data from the biggest materials databases, such as the Materials Project and Citrine’s databases, in a Pandas dataframe format</strong></p>
 <p>The <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MP.py">MPDataRetrieval</a> and <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_Citrine.py">CitrineDataRetrieval</a> classes can be used to retrieve data from the biggest open-source materials database collections of the <a class="reference external" href="https://www.materialsproject.org/">Materials Project</a> and <a class="reference external" href="https://citrination.com/">Citrine Informatics</a>, respectively, in a <a class="reference external" href="http://pandas.pydata.org/">Pandas</a> dataframe format. The data contained in these databases are a variety of material properties, obtained in-house or from other external databases, that are either calculated, measured from experiments, or learned from trained algorithms. The <code class="code docutils literal notranslate"><span class="pre">get_dataframe</span></code> method of these classes executes the data retrieval by searching the respective database using user-specified filters, such as compound/material, property type, etc , extracting the selected data in a JSON/dictionary format through the API, parsing it and output the result to a Pandas dataframe with columns as properties/features measured or calculated and rows as data points.</p>
@@ -144,8 +144,8 @@ mining. A full <a class="reference internal" href="featurizer_summary.html"><spa
 </pre></div>
 </div>
 <p><a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/matminer/data_retrieval/retrieve_MongoDB.py">MongoDataRetrieval</a> is another data retrieval tool developed that allows for the parsing of any <a class="reference external" href="https://www.mongodb.com/">MongoDB</a> collection (which follows a flexible JSON schema), into a Pandas dataframe that has a format similar to the output dataframe from the above data retrieval tools. The arguments of the <code class="code docutils literal notranslate"><span class="pre">get_dataframe</span></code> method allow to utilize MongoDB’s rich and powerful query/aggregation syntax structure. More information on customization of queries can be found in the <a class="reference external" href="https://docs.mongodb.com/manual/">MongoDB documentation</a>.</p>
-</div>
-<div class="section" id="access-ready-made-datasets-in-one-line">
+</section>
+<section id="access-ready-made-datasets-in-one-line">
 <h3>Access ready-made datasets in one line<a class="headerlink" href="#access-ready-made-datasets-in-one-line" title="Permalink to this headline">¶</a></h3>
 <p><strong>Explore datasets for analysis, benchmarking, and testing without ever leaving the Python interpreter</strong></p>
 <p>The datasets module provides an ever growing collection of materials science datasets that have been collected, formatted as pandas dataframes, and made available through a unified interface.</p>
@@ -172,8 +172,8 @@ mining. A full <a class="reference internal" href="featurizer_summary.html"><spa
 <iframe src="_static/bulk_shear_moduli.html" height="1000px" width=90%" align="center" frameBorder="0">Browser not compatible.</iframe><p>See <a class="reference internal" href="dataset_summary.html"><span class="doc">the dataset summary page</span></a> for a comprehensive summary of
 datasets available within matminer. If you would like to contribute a dataset to matminer’s
 repository see <a class="reference internal" href="dataset_addition_guide.html"><span class="doc">the dataset addition guide</span></a>.</p>
-</div>
-<div class="section" id="data-munging-with-conversion-featurizers">
+</section>
+<section id="data-munging-with-conversion-featurizers">
 <h3>Data munging with Conversion Featurizers<a class="headerlink" href="#data-munging-with-conversion-featurizers" title="Permalink to this headline">¶</a></h3>
 <p>Matminer’s multiprocessing-parallelized and error-tolerant featurizer structure makes transforming materials objects into other formats quick and easy.</p>
 <p>For example, here is code that robustly transforms a dataframe of 10k ASE (atomic simulation environment) structures in the “ase atoms” column - some of which contain errors - to Pymatgen structures to use with matminer:</p>
@@ -205,9 +205,9 @@ repository see <a class="reference internal" href="dataset_addition_guide.html">
 <li><p>converting objects to/from json representation</p></li>
 <li><p>Accessing arbitrary methods and attributes of pymatgen classes with <code class="code docutils literal notranslate"><span class="pre">PymatgenFunctionApplicator</span></code></p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="examples">
+</section>
+</section>
+<section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>Check out some examples of how to use matminer!</p>
 <ol class="arabic simple" start="0">
@@ -220,10 +220,10 @@ repository see <a class="reference internal" href="dataset_addition_guide.html">
 <li><p>Advanced Visualization (<a class="reference external" href="https://nbviewer.jupyter.org/github/hackingmaterials/matminer_examples/blob/main/matminer_examples/figrecipes-nb/figrecipes_advanced.ipynb">Jupyter Notebook</a>)</p></li>
 <li><p>Many more examples! See the <a class="reference external" href="https://github.com/hackingmaterials/matminer_examples">matminer_examples</a> repo for details.</p></li>
 </ol>
-</div>
-<div class="section" id="citations-and-changelog">
+</section>
+<section id="citations-and-changelog">
 <h2>Citations and Changelog<a class="headerlink" href="#citations-and-changelog" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="citing-matminer">
+<section id="citing-matminer">
 <h3>Citing matminer<a class="headerlink" href="#citing-matminer" title="Permalink to this headline">¶</a></h3>
 <p>If you find matminer useful, please encourage its development by citing the following paper in your research</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Ward, L., Dunn, A., Faghaninia, A., Zimmermann, N. E. R., Bajaj, S., Wang, Q.,
@@ -238,12 +238,12 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 <li><p>If you use one or more <strong>featurizers</strong>, please take advantage of the <code class="docutils literal notranslate"><span class="pre">citations()</span></code> method present for every featurizer in matminer.</p></li>
 <li><p>If you use one or more <strong>datasets</strong>, please check the metadata of the dataset for a comprehensive list of BibTex formatted citations to use.</p></li>
 </ul>
-</div>
-<div class="section" id="changelog">
+</section>
+<section id="changelog">
 <h3>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h3>
 <p>Check out our full changelog <a class="reference internal" href="changelog.html"><span class="doc">here.</span></a></p>
-</div>
-<div class="section" id="contributions-and-support">
+</section>
+<section id="contributions-and-support">
 <h3>Contributions and Support<a class="headerlink" href="#contributions-and-support" title="Permalink to this headline">¶</a></h3>
 <p>Want to see something added or changed? Here’s a few ways you can!</p>
 <ul class="simple">
@@ -254,9 +254,9 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 <p>Submit all questions and contact to the <a class="reference external" href="https://discuss.matsci.org/c/matminer">Discourse forum</a></p>
 <p>A comprehensive guide to contributions can be found <a class="reference external" href="https://github.com/hackingmaterials/matminer/blob/master/CONTRIBUTING.md">here.</a></p>
 <p>A full list of contributors can be found <a class="reference internal" href="contributors.html"><span class="doc">here.</span></a></p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -326,7 +326,7 @@ materials data mining. Comput. Mater. Sci. 152, 60-69 (2018).
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
     </div>
 
   </body>

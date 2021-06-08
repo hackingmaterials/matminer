@@ -1,7 +1,7 @@
 =================
 Table of Datasets
 =================
-Find a table of all 42 datasets available in matminer here.
+Find a table of all 43 datasets available in matminer here.
 
 .. list-table::
    :align: left
@@ -134,6 +134,9 @@ Find a table of all 42 datasets available in matminer here.
    * - :code:`steel_strength`
      - 312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.
      - 312
+   * - :code:`ucsb_thermoelectrics`
+     - Database of ~1,100 experimental thermoelectric materials from UCSB aggregated from 108 source publications and personal communications
+     - 1093
    * - :code:`wolverton_oxides`
      - 4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies
      - 4914
@@ -2278,6 +2281,65 @@ https://citrination.com/datasets/153092/
 
 
 	@misc{Citrine Informatics, title = {Mechanical properties of some steels}, howpublished = {\url{https://citrination.com/datasets/153092/}, }
+
+
+
+
+--------------------
+ucsb_thermoelectrics
+--------------------
+Database of ~1,100 experimental thermoelectric materials from UCSB aggregated from 108 source publications and personal communications. Downloaded from Citrine. Source UCSB webpage is http://www.mrl.ucsb.edu:8080/datamine/thermoelectric.jsp. See reference for more information on original data aggregation. No duplicate entries are present, but each src may result in multiple measurements of the same materials' properties at different temperatures or conditions.
+
+**Number of entries:** 1093
+
+.. list-table::
+   :align: left
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Column
+     - Description
+   * - :code:`composition`
+     - Chemical formula.
+   * - :code:`crystallinity`
+     - Either single crystal, polycrystalline, or nanoparticles.
+   * - :code:`synthesis`
+     - Brief string describing the synthesis method
+   * - :code:`spacegroup`
+     - Spacegroup number, if available
+   * - :code:`rho (ohm.cm)`
+     - Electrical resistivity, in ohm.cm
+   * - :code:`S [muV/K]`
+     - Seebeck coefficient, in microVolts/K, if available
+   * - :code:`PF [W/mK^2]`
+     - Thermoelectric power factor, conductivity * Seebeck^2, in [W/mK^2] if available
+   * - :code:`zT`
+     - Thermoelectric figure of merit, PF * T/K, unitless, if available
+   * - :code:`kappa [W/mK]`
+     - Thermal conductivity in Watt/ meter * Kelvin, if available
+   * - :code:`sigma [S/cm]`
+     - Electrical conductivity, in Siemens/cm, if available
+   * - :code:`T [K]`
+     - Temperature in Kelvin at which these properties were obtained, if available
+   * - :code:`src`
+     - Original source of the recording. To cite the aggregator of the data, see the bibtext_refs section of this metadata.
+
+
+
+**Reference**
+
+https://citrination.com/datasets/150557/
+
+
+
+**Bibtex Formatted Citations**
+
+.. code-block:: text
+
+
+	@article{Gaultois2013,   doi = {10.1021/cm400893e},   url = {https://doi.org/10.1021/cm400893e},   year = {2013},   month = may,   publisher = {American Chemical Society ({ACS})},   volume = {25},   number = {15},   pages = {2911--2920},   author = {Michael W. Gaultois and Taylor D. Sparks and Christopher K. H. Borg and Ram Seshadri and William D. Bonificio and David R. Clarke},   title = {Data-Driven Review of Thermoelectric Materials: Performance and Resource Considerations},   journal = {Chemistry of Materials} }
+
+	@misc{Citrine Informatics, title = {UCSB Thermoelectrics Database}, howpublished = {\url{https://citrination.com/datasets/150557/}, }
 
 
 
