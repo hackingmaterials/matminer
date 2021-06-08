@@ -3,11 +3,11 @@ name: Full test
 
 # Run this workflow only on release
 on:
-  - release:
-    types: [published, created, released]
+#  - release:
+#    types: [published, created, released]
   - workflow_dispatch
-  - schedule:
-    - cron: '0 12 1 * *'
+#  - schedule:
+#    - cron: '0 12 1 * *'
 
 jobs:
 
