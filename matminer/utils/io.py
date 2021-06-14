@@ -82,7 +82,7 @@ def store_dataframe_as_json(dataframe, filename, compression=None, orient="split
         f.write(data)
 
 
-def load_dataframe_from_json(filename, pbar=True):
+def load_dataframe_from_json(filename, pbar=True, decode=True):
     """Load pandas dataframe from a json file.
 
     Automatically decodes and instantiates pymatgen objects in the dataframe.
@@ -91,6 +91,8 @@ def load_dataframe_from_json(filename, pbar=True):
         filename (str): Path to json file. Can be a compressed file (gz and bz2)
             are supported.
         pbar (bool): If true, shows an ASCII progress bar for loading data from disk.
+        decode (bool): If true, will automatically decode objects (slow, convenient).
+            If false, will return json representations of the objects (fast, inconvenient).
 
     Returns:
         (Pandas.DataFrame): A pandas dataframe.
@@ -148,7 +150,11 @@ def load_dataframe_from_json(filename, pbar=True):
                 pbar2.update(1)
             return super().process_decoded(d)
 
-    decoder = MontyDecoderPbar if pbar else MontyDecoder
+    if decode:
+        decoder = MontyDecoderPbar if pbar else MontyDecoder
+    else:
+        decoder = None
+
     hook = pbar_hook if pbar else lambda x: x
 
     with zopen(filename, "rb") as f:
