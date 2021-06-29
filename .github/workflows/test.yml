@@ -38,6 +38,7 @@ jobs:
 
     - name: Run tests
       run: |
+        mongo --eval 'db.createUser({user: "admin",pwd: "password",roles: [ { role: "root", db: "admin" } ]})'
         python3 -m venv test_env
         . test_env/bin/activate
         python -m pip install --upgrade pip
