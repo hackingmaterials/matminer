@@ -38,11 +38,13 @@ jobs:
 
     - name: Run tests
       run: |
+        # Sleeping to allow mongo a bit more time to boot, avoiding connect errors
         sleep 10
         mongo localhost/admin --eval 'db.createUser({user: "admin",pwd: "password",roles: [ { role: "root", db: "admin" } ]})'
         python3 -m venv test_env
         . test_env/bin/activate
         python -m pip install --upgrade pip
         pip install -r requirements.txt -r requirements-dev.txt -r requirements-optional.txt
+        # Using non-editable install for testing building of MANIFEST files
         pip install .
         pytest --cov=matminer matminer
