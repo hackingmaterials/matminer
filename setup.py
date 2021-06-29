@@ -37,12 +37,6 @@ if __name__ == "__main__":
         author_email='anubhavster@gmail.com',
         license='modified BSD',
         packages=find_packages(),
-        package_data={
-            'matminer.datasets': ['*.json'],
-            'matminer.featurizers': ["*/*.yaml"],
-            'matminer.utils.data_files': ['*.cif', '*.csv', '*.tsv', '*.json',
-                                          'magpie_elementdata/*.table',
-                                          'jarvis/*.json', '*.txt']},
         include_package_data=True,
         zip_safe=False,
         install_requires=reqs_list,
@@ -61,5 +55,4 @@ if __name__ == "__main__":
         test_suite='matminer',
         tests_require=extras_list,
         scripts=[]
-        # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
     )
