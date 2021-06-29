@@ -13,7 +13,6 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7, 3.8]
-        mongodb-version: ['4.0', '4.2']
 
     runs-on: ubuntu-latest
 
@@ -32,10 +31,12 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Start MongoDB ${{ matrix.mongodb-version }}
-      uses: supercharge/mongodb-github-action@1.6.0
-      with:
-        mongodb-version: ${{ matrix.mongodb-version }}
+#    - name: Start MongoDB ${{ matrix.mongodb-version }}
+#      uses: supercharge/mongodb-github-action@1.6.0
+#      with:
+#        mongodb-version: ${{ matrix.mongodb-version }}
+    - name: Start mongodb server - the nuclear option
+      run: sudo docker run --name mongo -d -p 27017:27017 mongo
 
     - name: Run full tests including dataset downloads
       run: |
