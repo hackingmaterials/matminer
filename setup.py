@@ -55,5 +55,4 @@ if __name__ == "__main__":
         test_suite='matminer',
         tests_require=extras_list,
         scripts=[]
-        # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
     )

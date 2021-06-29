@@ -48,7 +48,7 @@ def update_doc(ctx):
 
 @task
 def publish(ctx):
-    ctx.run("python setup.py release")
+    ctx.run("twine upload dist/* --verbose")
 
 
 @task
@@ -72,9 +72,12 @@ def release_github(ctx):
 
 
 @task
-def release(ctx, nosetest=False):
-    if nosetest:
-        ctx.run("nosetests")
+def release(ctx, test=False):
+    if test:
+        ctx.run("python setup.py test")
+    ctx.run("rm -r build dist", warn=True)
+    ctx.run("python setup.py sdist bdist_wheel")
+
     publish(ctx)
     update_doc(ctx)
     release_github(ctx)
