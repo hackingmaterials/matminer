@@ -13,14 +13,9 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7, 3.8]
+        mongodb-version: ['4.0']
 
     runs-on: ubuntu-latest
-
-    services:
-      mongodb:
-        image: mongo
-        ports:
-          - 27017:27017
 
     env:
       PMG_MAPI_KEY: ${{ secrets.PMG_MAPI_KEY }}
@@ -32,6 +27,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.6.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
