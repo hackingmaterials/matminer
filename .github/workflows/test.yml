@@ -38,6 +38,7 @@ jobs:
 
     - name: Run tests
       run: |
+        sleep 10
         mongo localhost/admin --eval 'db.createUser({user: "admin",pwd: "password",roles: [ { role: "root", db: "admin" } ]})'
         python3 -m venv test_env
         . test_env/bin/activate
