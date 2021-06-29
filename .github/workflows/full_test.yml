@@ -26,6 +26,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Start mongodb server - the nuclear option
+      run: sudo docker run --name mongo -d -p 27017:27017 mongo
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -35,8 +39,6 @@ jobs:
 #      uses: supercharge/mongodb-github-action@1.6.0
 #      with:
 #        mongodb-version: ${{ matrix.mongodb-version }}
-    - name: Start mongodb server - the nuclear option
-      run: sudo docker run --name mongo -d -p 27017:27017 mongo
 
     - name: Run full tests including dataset downloads
       run: |
