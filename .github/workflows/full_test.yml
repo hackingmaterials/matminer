@@ -16,6 +16,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
     env:
       PMG_MAPI_KEY: ${{ secrets.PMG_MAPI_KEY }}
       MPDS_KEY: ${{ secrets.MPDS_KEY }}
@@ -26,19 +32,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Start mongodb server - the nuclear option
-      run: sudo docker run --name mongo -d -p 27017:27017 mongo
-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-
-#    - name: Start MongoDB ${{ matrix.mongodb-version }}
-#      uses: supercharge/mongodb-github-action@1.6.0
-#      with:
-#        mongodb-version: ${{ matrix.mongodb-version }}
 
     - name: Run full tests including dataset downloads
       run: |
