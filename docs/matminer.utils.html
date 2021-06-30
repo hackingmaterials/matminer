@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>matminer.utils package &#8212; matminer 0.7.2 documentation</title>
+    <title>matminer.utils package &#8212; matminer 0.7.3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.utils package</a></li> 
       </ul>
     </div>  
@@ -598,7 +598,7 @@ unwind_arrays (bool): whether to flatten lists/tuples</p>
 <p>This module defines functions for writing and reading matminer related objects</p>
 <dl class="py function">
 <dt id="matminer.utils.io.load_dataframe_from_json">
-<code class="sig-prename descclassname">matminer.utils.io.</code><code class="sig-name descname">load_dataframe_from_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">pbar</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.io.load_dataframe_from_json" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.utils.io.</code><code class="sig-name descname">load_dataframe_from_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">pbar</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">decode</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.io.load_dataframe_from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load pandas dataframe from a json file.</p>
 <p>Automatically decodes and instantiates pymatgen objects in the dataframe.</p>
 <dl>
@@ -606,7 +606,11 @@ unwind_arrays (bool): whether to flatten lists/tuples</p>
 <dt>filename (str): Path to json file. Can be a compressed file (gz and bz2)</dt><dd><p>are supported.</p>
 </dd>
 </dl>
-<p>pbar (bool): If true, shows an ASCII progress bar for loading data from disk.</p>
+<p>pbar (bool): If true, shows an ASCII progress bar for loading data from disk.
+decode (bool): If true, will automatically decode objects (slow, convenient).</p>
+<blockquote>
+<div><p>If false, will return json representations of the objects (fast, inconvenient).</p>
+</div></blockquote>
 </dd>
 <dt>Returns:</dt><dd><p>(Pandas.DataFrame): A pandas dataframe.</p>
 </dd>
@@ -804,7 +808,7 @@ keys present in the original 1-level index.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.utils package</a></li> 
       </ul>
     </div>

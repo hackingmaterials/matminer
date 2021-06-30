@@ -28,7 +28,7 @@ extras_list = [r for d in extras_dict.values() for r in d]
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.7.2',
+        version='0.7.3',
         description='matminer is a library that contains tools for data '
                     'mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
@@ -37,12 +37,6 @@ if __name__ == "__main__":
         author_email='anubhavster@gmail.com',
         license='modified BSD',
         packages=find_packages(),
-        package_data={
-            'matminer.datasets': ['*.json'],
-            'matminer.featurizers': ["*/*.yaml"],
-            'matminer.utils.data_files': ['*.cif', '*.csv', '*.tsv', '*.json',
-                                          'magpie_elementdata/*.table',
-                                          'jarvis/*.json', '*.txt']},
         include_package_data=True,
         zip_safe=False,
         install_requires=reqs_list,
@@ -61,5 +55,4 @@ if __name__ == "__main__":
         test_suite='matminer',
         tests_require=extras_list,
         scripts=[]
-        # scripts=[os.path.join('scripts', f) for f in os.listdir(os.path.join(module_dir, 'scripts'))]
     )
