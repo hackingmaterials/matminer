@@ -17,7 +17,7 @@ __author__ = (
 _dataset_dict = None
 
 
-def load_dataset(name, data_home=None, download_if_missing=True):
+def load_dataset(name, data_home=None, download_if_missing=True, pbar=False):
     """
     Loads a dataframe containing the dataset specified with the 'name' field.
 
@@ -33,6 +33,8 @@ def load_dataset(name, data_home=None, download_if_missing=True):
 
         download_if_missing (bool): whether to download the dataset if is not
             found on disk
+
+        pbar (bool): If true, show progress bar for loading dataset.
 
     Returns: (pd.DataFrame,
               tuple -> (pd.DataFrame, pd.DataFrame) if return_lumo = True)
@@ -68,7 +70,7 @@ def load_dataset(name, data_home=None, download_if_missing=True):
         download_if_missing,
     )
 
-    df = load_dataframe_from_json(data_path, pbar=True)
+    df = load_dataframe_from_json(data_path, pbar=pbar)
 
     return df
 
