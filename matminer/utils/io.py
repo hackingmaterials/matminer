@@ -3,6 +3,7 @@ This module defines functions for writing and reading matminer related objects
 """
 
 import json
+import sys
 
 import pandas
 from tqdm import tqdm
@@ -131,6 +132,7 @@ def load_dataframe_from_json(filename, pbar=True, decode=True):
         """
         if is_monty_object(obj):
             pbar1.update(1)
+            sys.stderr.flush()
         return obj
 
     # Progress bar for decoding objects
@@ -148,6 +150,7 @@ def load_dataframe_from_json(filename, pbar=True, decode=True):
                 pbar2.total = str(d).count("@class")
             elif is_monty_object(d):
                 pbar2.update(1)
+                sys.stderr.flush()
             return super().process_decoded(d)
 
     if decode:
@@ -159,6 +162,9 @@ def load_dataframe_from_json(filename, pbar=True, decode=True):
 
     with zopen(filename, "rb") as f:
         dataframe_data = json.load(f, cls=decoder, object_hook=hook)
+
+    pbar1.close()
+    pbar2.close()
 
     # if only keys are data, columns, index then orient=split
     if isinstance(dataframe_data, dict):
