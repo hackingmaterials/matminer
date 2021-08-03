@@ -348,7 +348,6 @@ class TestConversions(PymatgenTest):
         self.assertEqual(df["anonymous formula"].tolist()[:2], ["A0.5B1.5", "AB"])
         self.assertTrue(math.isnan(df["anonymous formula"].iloc[-1]))
 
-
     @unittest.skipIf(not ase_loaded, "ASE must be installed for test_ase_conversion to run!")
     def test_ase_conversion(self):
         a2s = ASEAtomstoStructure()
