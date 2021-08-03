@@ -341,6 +341,14 @@ class TestConversions(PymatgenTest):
         df = pfa2.featurize_dataframe(df, "structure")
         self.assertArrayEqual(df["anonymous formula"].tolist(), ["A0.5B1.5", "AB"])
 
+        # Test for compatibility with return_errors
+        df = DataFrame(data={"structure": [si, cscl, float("nan")]})
+
+        df = pfa2.featurize_dataframe(df, "structure", return_errors=True, ignore_errors=True)
+        self.assertEqual(df["anonymous formula"].tolist()[:2], ["A0.5B1.5", "AB"])
+        self.assertTrue(math.isnan(df["anonymous formula"].iloc[-1]))
+
+
     @unittest.skipIf(not ase_loaded, "ASE must be installed for test_ase_conversion to run!")
     def test_ase_conversion(self):
         a2s = ASEAtomstoStructure()
