@@ -71,7 +71,7 @@ class ConversionFeaturizer(BaseFeaturizer):
                 featurize. Can be multiple labels if the featurize function
                 requires multiple inputs.
             **kwargs: Additional keyword arguments that will be passed through
-                to `BseFeaturizer.featurize_dataframe()`.
+                to `BaseFeaturizer.featurize_dataframe()`.
 
         Returns:
             (Pandas.Dataframe): The updated dataframe.
@@ -648,7 +648,7 @@ class PymatgenFunctionApplicator(ConversionFeaturizer):
         self.set_n_jobs(1)
 
     def featurize(self, obj):
-        return self.func(obj, *self.func_args, **self.func_kwargs)
+        return (self.func(obj, *self.func_args, **self.func_kwargs),)
 
     def implementors(self):
         return ["Alex Dunn"]
@@ -670,7 +670,7 @@ class ASEAtomstoStructure(ConversionFeaturizer):
         self.aaa = AseAtomsAdaptor()
 
     def featurize(self, ase_atoms):
-        return self.aaa.get_structure(ase_atoms)
+        return (self.aaa.get_structure(ase_atoms),)
 
     def implementors(self):
         return ["Alex Dunn"]
