@@ -15,7 +15,9 @@ def _load_dataset_dict():
 
     Returns: (dict)
     """
-    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "dataset_metadata.json")) as infile:
+    with open(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "dataset_metadata.json"), encoding="utf-8"
+    ) as infile:
         dataset_dict = json.load(infile)
 
     return dataset_dict

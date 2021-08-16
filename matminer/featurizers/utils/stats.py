@@ -1,13 +1,11 @@
-import scipy
-
 """
 General methods for computing property statistics from a list of values
 """
-
-import numpy as np
-from scipy import stats
-
 from six import string_types
+
+
+import scipy
+import numpy as np
 
 
 class PropertyStats(object):
@@ -166,7 +164,7 @@ class PropertyStats(object):
             return 0
 
         if weights is None:
-            return stats.skew(data_lst)
+            return scipy.stats.skew(data_lst)
         else:
             # Compute the mean
             mean = PropertyStats.mean(data_lst, weights)
@@ -196,7 +194,7 @@ class PropertyStats(object):
             return 0
 
         if weights is None:
-            return stats.kurtosis(data_lst, fisher=False)
+            return scipy.stats.kurtosis(data_lst, fisher=False)
         else:
             # Compute the mean
             mean = PropertyStats.mean(data_lst, weights)
@@ -247,7 +245,7 @@ class PropertyStats(object):
             mode
         """
         if weights is None:
-            return stats.mode(data_lst).mode[0]
+            return scipy.stats.mode(data_lst).mode[0]
         else:
             # Find the entry(s) with the largest weight
             data_lst = np.array(data_lst)
@@ -275,7 +273,7 @@ class PropertyStats(object):
             if power == -1:
                 return scipy.stats.hmean(data_lst)
             elif power == 0:
-                return stats.mstats.gmean(data_lst)
+                return scipy.stats.mstats.gmean(data_lst)
             else:
                 return np.power(np.mean(np.power(data_lst, power)), 1.0 / power)
         else:

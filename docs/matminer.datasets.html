@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>matminer.datasets package &#8212; matminer 0.7.3 documentation</title>
+    <title>matminer.datasets package &#8212; matminer 0.7.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.datasets package</a></li> 
       </ul>
     </div>  
@@ -606,7 +606,7 @@ dataset_column (str): name of the column to get description from</p>
 
 <dl class="py function">
 <dt id="matminer.datasets.dataset_retrieval.load_dataset">
-<code class="sig-prename descclassname">matminer.datasets.dataset_retrieval.</code><code class="sig-name descname">load_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">data_home</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">download_if_missing</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.load_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">matminer.datasets.dataset_retrieval.</code><code class="sig-name descname">load_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">data_home</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">download_if_missing</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">pbar</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.datasets.dataset_retrieval.load_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a dataframe containing the dataset specified with the ‘name’ field.</p>
 <p>Dataset file is stored/loaded from data_home if specified, otherwise at
 the MATMINER_DATA environment variable if set or at matminer/datasets
@@ -621,6 +621,7 @@ by default.</p>
 <dt>download_if_missing (bool): whether to download the dataset if is not</dt><dd><p>found on disk</p>
 </dd>
 </dl>
+<p>pbar (bool): If true, show progress bar for loading dataset.</p>
 </dd>
 <dt>Returns: (pd.DataFrame,</dt><dd><p>tuple -&gt; (pd.DataFrame, pd.DataFrame) if return_lumo = True)</p>
 </dd>
@@ -686,7 +687,7 @@ by default.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.datasets package</a></li> 
       </ul>
     </div>
