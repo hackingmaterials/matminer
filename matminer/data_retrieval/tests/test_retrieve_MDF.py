@@ -10,7 +10,8 @@ class MDFDataRetrievalTest(unittest.TestCase):
     # There's a weird bug where invoking MDFDR in setUp
     # seems to screw up anonymous functionality, so it's
     # in setUpClass instead
-    mdf_dr = MDFDataRetrieval(anonymous=True)
+    def setUpClass(cls) -> None:
+        cls.mdf_dr = MDFDataRetrieval(anonymous=True)
 
     def test_get_dataframe(self):
         results = self.mdf_dr.get_dataframe(
