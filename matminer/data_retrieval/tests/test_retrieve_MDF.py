@@ -6,12 +6,13 @@ import os
 from matminer.data_retrieval.retrieve_MDF import MDFDataRetrieval, make_dataframe
 
 
+@unittest.skip(reason="MDF Anonymous API calls not working")
 class MDFDataRetrievalTest(unittest.TestCase):
     # There's a weird bug where invoking MDFDR in setUp
     # seems to screw up anonymous functionality, so it's
     # in setUpClass instead
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.mdf_dr = MDFDataRetrieval(anonymous=True)
 
     def test_get_dataframe(self):
