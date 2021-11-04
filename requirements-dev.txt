@@ -1,6 +1,6 @@
 pytest==6.2.5
 pytest-cov==3.0.0
-coverage==5.5
+coverage==6.1.1
 coveralls==3.3.0
 flake8==4.0.1
 pylint==2.11.1
