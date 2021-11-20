@@ -18,7 +18,7 @@ import scipy.constants as const
 from scipy.stats import gaussian_kde
 from sklearn.exceptions import NotFittedError
 from monty.dev import requires
-from pymatgen import Structure, Lattice
+from pymatgen.core import Structure, Lattice
 from pymatgen.analysis import bond_valence
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.dimensionality import get_dimensionality_larsen

@@ -8,7 +8,8 @@ from warnings import warn
 
 import numpy as np
 import pandas as pd
-from pymatgen import Element, MPRester
+from pymatgen.core import Element
+from pymatgen.ext.matproj import MPRester
 from pymatgen.core.composition import Composition
 from pymatgen.core.molecular_orbitals import MolecularOrbitals
 from pymatgen.core.periodic_table import get_el_sp

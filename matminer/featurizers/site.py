@@ -40,7 +40,7 @@ from math import pi
 from scipy.special import sph_harm
 from scipy.spatial import ConvexHull
 from sympy.physics.wigner import wigner_3j
-from pymatgen import Structure
+from pymatgen.core import Structure
 from pymatgen.core.periodic_table import Element
 from pymatgen.analysis.local_env import LocalStructOrderParams, \
     VoronoiNN, CrystalNN, solid_angle, vol_tetra

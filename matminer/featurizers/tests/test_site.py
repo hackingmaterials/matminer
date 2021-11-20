@@ -2,7 +2,7 @@ from __future__ import unicode_literals, division, print_function
 
 import numpy as np
 import pandas as pd
-from pymatgen import Structure, Lattice
+from pymatgen.core import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 from pymatgen.analysis.local_env import VoronoiNN, JmolNN, CrystalNN
 

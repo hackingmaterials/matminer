@@ -8,7 +8,7 @@ import pandas as pd
 
 from monty.io import zopen
 
-from pymatgen import Structure, Lattice
+from pymatgen.core import Structure, Lattice
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.utils.io import load_dataframe_from_json, store_dataframe_as_json

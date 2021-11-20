@@ -13,7 +13,7 @@ import pandas as pd
 from multiprocessing import set_start_method
 from sklearn.exceptions import NotFittedError
 
-from pymatgen import Structure, Lattice, Molecule
+from pymatgen.core import Structure, Lattice, Molecule
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.composition import ElementProperty

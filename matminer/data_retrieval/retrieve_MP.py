@@ -1,7 +1,7 @@
 import pandas as pd
 from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 
-from pymatgen import MPRester
+from pymatgen.ext.matproj import MPRester
 from pymatgen.ext.matproj import MPRestError
 
 __author__ = ['Saurabh Bajaj <sbajaj@lbl.gov>',

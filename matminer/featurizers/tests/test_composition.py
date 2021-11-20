@@ -7,7 +7,8 @@ from unittest import SkipTest
 
 import pandas as pd
 import numpy as np
-from pymatgen import Composition, MPRester
+from pymatgen.core import Composition
+from pymatgen.ext.matproj import MPRester
 from pymatgen.core.periodic_table import Specie, Element
 from pymatgen.util.testing import PymatgenTest
 
