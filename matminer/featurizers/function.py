@@ -45,7 +45,16 @@ class FunctionFeaturizer(BaseFeaturizer):
     of symbolic redundancy, which sympy is well-suited for.
 
 
-    Note orginal
+    Note original feature names in the resulting feature set
+    will have their sympy-illegal characters substituted with
+    underscores. For example:
+
+    "exp(-MagpieData_avg_dev_NfValence)/sqrt(MagpieData_range_Number)"
+
+    Where the original feature names were
+
+    "MagpieData avg_dev NfValence"  and "MagpieData range Number"
+
 
     Args:
         expressions ([str]): list of sympy-parseable expressions
