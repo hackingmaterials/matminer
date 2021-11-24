@@ -44,6 +44,18 @@ class FunctionFeaturizer(BaseFeaturizer):
     (e. g. with feature labels), substitution, and elimination
     of symbolic redundancy, which sympy is well-suited for.
 
+
+    Note original feature names in the resulting feature set
+    will have their sympy-illegal characters substituted with
+    underscores. For example:
+
+    "exp(-MagpieData_avg_dev_NfValence)/sqrt(MagpieData_range_Number)"
+
+    Where the original feature names were
+
+    "MagpieData avg_dev NfValence"  and "MagpieData range Number"
+
+
     Args:
         expressions ([str]): list of sympy-parseable expressions
             representing a function of a single variable x, e. g.
@@ -156,7 +168,9 @@ class FunctionFeaturizer(BaseFeaturizer):
         """
         if isinstance(input_variable_names, string_types):
             input_variable_names = [input_variable_names]
+
         postprocess = sp.latex if self.latexify_labels else str
+        input_variable_names = [i.replace(" ", "_") for i in input_variable_names]
         return list(self._exp_iter(*input_variable_names, postprocess=postprocess))
 
     def _exp_iter(self, *args, postprocess=None):
@@ -167,7 +181,7 @@ class FunctionFeaturizer(BaseFeaturizer):
         replicated code in featurize and feature labels
 
         Args:
-            *args: args to loop over combinations and substitions for
+            *args: args to loop over combinations and substitutions for
             postprocess (function): postprocessing function, e. g.
                 to cast to another type, float, str
 
