@@ -76,6 +76,8 @@ class FunctionFeaturizer(BaseFeaturizer):
             defaults to False
     """
 
+    ILLEGAL_CHARACTERS = ["|", " ", "/", "\\", "?", "@", "#", "$", "%"]
+
     def __init__(
         self,
         expressions=None,
@@ -170,7 +172,13 @@ class FunctionFeaturizer(BaseFeaturizer):
             input_variable_names = [input_variable_names]
 
         postprocess = sp.latex if self.latexify_labels else str
-        input_variable_names = [i.replace(" ", "_") for i in input_variable_names]
+
+        input_variable_names_clean = [None]*len(input_variable_names)
+        for i, n in enumerate(input_variable_names):
+            for ic in self.ILLEGAL_CHARACTERS:
+                n = n.replace(ic, "_")
+            input_variable_names_clean[i] = n
+
         return list(self._exp_iter(*input_variable_names, postprocess=postprocess))
 
     def _exp_iter(self, *args, postprocess=None):
