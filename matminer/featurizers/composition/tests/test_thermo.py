@@ -16,7 +16,7 @@ class ThermoFeaturesTest(CompositionFeaturesTest):
         if not mpr.api_key:
             raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
         df_cohesive_energy = CohesiveEnergy().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 4.979, 2)
+        self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 5.179358342, 2)
 
     def test_cohesive_energy_mp(self):
         mpr = MPRester()
