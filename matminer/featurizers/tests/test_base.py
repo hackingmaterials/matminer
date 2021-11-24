@@ -306,7 +306,7 @@ class TestBaseClass(PymatgenTest):
         self.assertEqual(["ML prediction"], f.feature_labels())
 
         # Test classifier
-        model = DummyClassifier("prior")
+        model = DummyClassifier(strategy="prior")
         data["y"] = [0, 0, 1]
         model.fit(self.multi.featurize_many(data["x"]), data["y"])
 
