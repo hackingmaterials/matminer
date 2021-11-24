@@ -173,7 +173,7 @@ class FunctionFeaturizer(BaseFeaturizer):
 
         postprocess = sp.latex if self.latexify_labels else str
 
-        input_variable_names_clean = [None]*len(input_variable_names)
+        input_variable_names_clean = [None] * len(input_variable_names)
         for i, n in enumerate(input_variable_names):
             for ic in self.ILLEGAL_CHARACTERS:
                 n = n.replace(ic, "_")
