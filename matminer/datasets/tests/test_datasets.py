@@ -638,6 +638,12 @@ class MatminerDatasetsTest(DataSetsTest):
 
         self.universal_dataset_check("ricci_boltztrap_mp_tabular", object_headers, numeric_headers)
 
+    def test_superconductivity2018(self):
+        object_headers = ["composition"]
+        numeric_headers = ["Tc"]
+
+        self.universal_dataset_check("superconductivity2018", object_headers, numeric_headers)
+
 
 class MatbenchDatasetsTest(DataSetsTest):
     """
