@@ -915,10 +915,25 @@
     },
     "description": "Matbench v0.1 test dataset for predicting steel yield strengths from chemical composition alone. Retrieved from Citrine informatics. Deduplicated. For benchmarking w/ nested cross validation, the order of the dataset must be identical to the retrieved data; refer to the Automatminer/Matbench publication for more details.",
     "file_type": "json.gz",
-    "hash": "",
     "num_entries": 312,
     "reference": "https://citrination.com/datasets/153092/",
     "url": "https://ml.materialsproject.org/projects/matbench_steels.json.gz",
     "hash": "473bc4957b2ea5e6465aef84bc29bb48ac34db27d69ea4ec5f508745c6fae252"
+  },
+  "superconductivity2018": {
+    "bibtex_refs": [
+      "@article{Stanev2018,\n  doi = {10.1038/s41524-018-0085-8},\n  url = {https://doi.org/10.1038/s41524-018-0085-8},\n  year = {2018},\n  month = jun,\n  publisher = {Springer Science and Business Media {LLC}},\n  volume = {4},\n  number = {1},\n  author = {Valentin Stanev and Corey Oses and A. Gilad Kusne and Efrain Rodriguez and Johnpierre Paglione and Stefano Curtarolo and Ichiro Takeuchi},\n  title = {Machine learning modeling of superconducting critical temperature},\n  journal = {npj Computational Materials}\n}",
+      "@misc{NIMSSuperCon,\nhowpublished={http://supercon.nims.go.jp/index_en.html}, \ntitle={SuperCon},\nauthor={National Institute of Materials Science, Materials Information Station}}\n"
+    ],
+    "columns": {
+      "composition": "Chemical formula.",
+      "Tc": "Experimental superconducting temperature, in K."
+    },
+    "description": "Dataset of ~16,000 experimental superconductivity records (critical temperatures) from Stanev et al., originally from the Japanese National Institute for Materials Science. Does not include structural data. Includes ~300 measurements from materials found without superconductivity (Tc=0). No modifications were made to the core dataset, aside from basic file type change to json for (un)packaging with matminer. Reproduced under the Creative Commons 4.0 license, which can be found here: http://creativecommons.org/licenses/by/4.0/.",
+    "file_type": "json.gz",
+    "num_entries": 16414,
+    "reference": "https://doi.org/10.1038/s41524-018-0085-8",
+    "url": "https://figshare.com/ndownloader/files/31614956",
+    "hash": "03976fc80f39b3d9c7bf2c12f4d045513cdad17a3a2e559f6290fc7245154418"
   }
 }
