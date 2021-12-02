@@ -29,6 +29,7 @@ class DatasetTest(unittest.TestCase):
             "mp_nostruct_20181018",
             "glass_ternary_landolt",
             "citrine_thermal_conductivity",
+            "superconductivity2018",
             "wolverton_oxides",
             "heusler_magnetic",
             "steel_strength",
