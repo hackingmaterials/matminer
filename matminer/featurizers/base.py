@@ -468,7 +468,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
                     return_errors=return_errors,
                     ignore_errors=ignore_errors,
                 )
-                return p.map(func, entries, chunksize=self.chunksize)
+                res = p.map(func, entries, chunksize=self.chunksize)
+                p.close()
+                p.join()
+                return res
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         """
