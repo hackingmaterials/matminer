@@ -6,9 +6,9 @@ import json
 import sys
 
 import pandas
-from tqdm import tqdm
 from monty.io import zopen
-from monty.json import MontyEncoder, MontyDecoder
+from monty.json import MontyDecoder, MontyEncoder
+from tqdm import tqdm
 
 
 def store_dataframe_as_json(dataframe, filename, compression=None, orient="split", pbar=True):
@@ -30,11 +30,14 @@ def store_dataframe_as_json(dataframe, filename, compression=None, orient="split
         pbar (bool): If True, shows a progress bar for encoding objects to
             compatible json format (normally the rate-limiting step).
     """
-    if compression not in ["gz", "bz2", None]:
-        raise ValueError("Supported compression formats are 'gz' and 'bz2'.")
+    if filename.lower().endswith((".gz", ".bz2")):
+        compression = filename.split(".")[-1]
 
-    if compression and not filename.lower().endswith(".{}".format(compression)):
-        filename = "{}.{}".format(filename, compression)
+    if compression not in ["gz", "bz2", None]:
+        raise ValueError(f"Supported compression formats are 'gz' and 'bz2', got '{compression}'.")
+
+    if compression and not filename.lower().endswith(f".{compression}"):
+        filename = f"{filename}.{compression}"
 
     write_type = "wb" if compression else "w"
 
