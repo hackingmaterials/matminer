@@ -31,7 +31,7 @@ class AbstractData(metaclass=abc.ABCMeta):
 
         Args:
             elem - (Element) element to be assessed
-            property_name - (str) property to be retreived
+            property_name - (str) property to be retrieved
         Returns:
             float, property of that element
         """

@@ -42,7 +42,7 @@ class RadialDistributionFunction(BaseFeaturizer):
         """
         Precheck the structure is ordered.
         Args:
-            s: (pymatgen.Struture)
+            s: (pymatgen.Structure)
         Returns:
             (bool): True if passing precheck, false if failing
         """
@@ -95,7 +95,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     """
     Compute the partial radial distribution function (PRDF) of an xtal structure
 
-    The PRDF of a crystal structure is the radial distibution function broken
+    The PRDF of a crystal structure is the radial distribution function broken
     down for each pair of atom types.  The PRDF was proposed as a structural
     descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
@@ -104,7 +104,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
         include_elems: (list of string), list of elements that must be included in PRDF
-        exclude_elems: (list of string), list of elmeents that should not be included in PRDF
+        exclude_elems: (list of string), list of elements that should not be included in PRDF
 
     Features:
         Each feature corresponds to the density of number of bonds
@@ -127,7 +127,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         """
         Precheck the structure is ordered.
         Args:
-            s: (pymatgen.Struture)
+            s: (pymatgen.Structure)
         Returns:
             (bool): True if passing precheck, false if failing
         """

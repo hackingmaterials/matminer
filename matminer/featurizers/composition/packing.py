@@ -172,7 +172,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         numbers defined in the "n_nearest" parameter of this class.
 
         If there are less than `k` efficient clusters in the system, we use
-        the maximum distance betweeen any two compositions (1) for the
+        the maximum distance between any two compositions (1) for the
         unmatched neighbors.
 
         Args:

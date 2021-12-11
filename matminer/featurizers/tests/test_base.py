@@ -193,7 +193,7 @@ class TestBaseClass(PymatgenTest):
             self.assertIn("Them", implementors)
             self.assertEqual(2, len(implementors))
 
-            # Ensure BaseFeaturizer operation without overriden featurize_dataframe
+            # Ensure BaseFeaturizer operation without overridden featurize_dataframe
             with warnings.catch_warnings(record=True) as w:
                 data = multi_f.featurize_dataframe(data, "x")
                 self.assertEqual(len(w), 0)
@@ -447,7 +447,7 @@ class TestBaseClass(PymatgenTest):
         # Make sure multiplefeaturizer returns the correct sub-featurizer multiindex keys
 
         # Iterate through many tests: single/parallel, returning errors or not,
-        # multiindex or not, and interation over entires/featurizers
+        # multiindex or not, and interaction over entries/featurizers
 
         for mi, re, n, iter_entries in product([True, False], [True, False], [1, 2], [True, False]):
 

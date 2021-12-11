@@ -250,7 +250,7 @@ def generate_expressions_combinations(expressions, combo_depth=2, combo_function
         list of unique non-trivial expressions for featurization
             of inputs
     """
-    # Convert to array for simpler subsitution
+    # Convert to array for simpler substitution
     exp_array = sp.Array([parse_expr(exp) for exp in expressions])
 
     # Generate all of the combinations

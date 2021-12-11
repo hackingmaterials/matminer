@@ -96,8 +96,8 @@ class Miedema(BaseFeaturizer):
 
     def precheck(self, c: Composition) -> bool:
         """
-        Precheck a single entry. Miedema does not work for compositons
-        containing any elments for which the Miedema model has no parameters.
+        Precheck a single entry. Miedema does not work for compositions
+        containing any elements for which the Miedema model has no parameters.
         To precheck an entire dataframe (qnd automatically gather
         the fraction of structures that will pass the precheck), please use
         precheck_dataframe.
@@ -475,8 +475,8 @@ class YangSolidSolution(BaseFeaturizer):
 
     def precheck(self, c: Composition) -> bool:
         """
-        Precheck a single entry. YangSolidSolution does not work for compositons
-        containing any binary elment combinations for which the model has no
+        Precheck a single entry. YangSolidSolution does not work for compositions
+        containing any binary element combinations for which the model has no
         parameters. We can nearly equivalently approximate this by checking
         against the unary element list.
 

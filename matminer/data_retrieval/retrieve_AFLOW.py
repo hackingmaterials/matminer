@@ -62,9 +62,9 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
                     {'auid': {'$not': {'$in': ['aflow:a17a2da2f3d3953a']}}}
             properties: (list of str) Properties returned  in the DataFrame.
                 See the api link for a list of supported properties.
-            files: (list of str) For convienience, specific files may also be
+            files: (list of str) For convenience, specific files may also be
                 downloaded as pymatgen objects. Each file download is collected
-                by a seperate HTTP request (read slow). The default behavior is
+                by a separate HTTP request (read slow). The default behavior is
                 to return none of these objects. Supported files:
                     "prototype_structure" - the prototype structure
                     "input_structure" - the input structure

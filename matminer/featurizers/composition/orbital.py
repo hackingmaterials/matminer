@@ -120,7 +120,7 @@ class ValenceOrbital(BaseFeaturizer):
 
         Returns:
              valence_attributes (list of floats): Average number and/or
-                 fraction of valence electrons in specfied orbitals
+                 fraction of valence electrons in specified orbitals
         """
 
         elements, fractions = zip(*comp.element_composition.items())

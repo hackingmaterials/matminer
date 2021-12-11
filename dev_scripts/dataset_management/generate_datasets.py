@@ -251,16 +251,12 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=False,
                        'pretty_formula': 'composition'},
               index=str, inplace=True)
 
-    tqdm.write("There are {} elastic entries on MP".format(
-        df['K_VRH'].count()
-    ))
+    tqdm.write(f"There are {df['K_VRH'].count()} elastic entries on MP")
 
     df = df[~(df["elasticity.warnings"].apply(bool))]
     df = df.drop(["elasticity.warnings"], axis=1)
 
-    tqdm.write("There are {} elastic entries on MP with no warnings".format(
-        df['K_VRH'].count()
-    ))
+    tqdm.write(f"There are {df['K_VRH'].count()} elastic entries on MP with no warnings")
 
     print(df.columns)
 

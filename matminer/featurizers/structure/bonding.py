@@ -411,7 +411,7 @@ class BondFractions(BaseFeaturizer):
 
                     # The distance between bonds is euclidean. To get a good
                     # measure of the coordinate between mendeleev numbers for
-                    # each specie, we use the minumum difference. ie, for
+                    # each specie, we use the minimum difference. ie, for
                     # finding the distance between Na-O and O-Li, we would
                     # not want the distance between (Na and O) and (O and Li),
                     # we want the distance between (Na and Li) and (O and O).

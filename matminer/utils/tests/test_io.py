@@ -67,7 +67,7 @@ class IOTest(PymatgenTest):
         with zopen(test_file, "rb") as f:
             test_data = json.load(f)
 
-        # remove version otherwise this will have to be updated everytime
+        # remove version otherwise this will have to be updated every time
         # the pymatgen version changes
         temp_data["data"][0][0].pop("@version")
         test_data["data"][0][0].pop("@version")

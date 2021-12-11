@@ -310,7 +310,7 @@ class PropertyStats:
         Args:
             data_lst: (matrix-like) of values
             symm: whether to assume the matrix is symmetric
-            sort: wheter to sort the eigenvalues
+            sort: whether to sort the eigenvalues
         Returns: eigenvalues
         """
         eigs = np.linalg.eigvalsh(data_lst) if symm else np.linalg.eigvals(data_lst)
