@@ -2,18 +2,11 @@
 Miscellaneous site featurizers.
 """
 import numpy as np
+import pymatgen.analysis.local_env
+from pymatgen.analysis.local_env import VoronoiNN, solid_angle, vol_tetra
+from scipy.spatial import ConvexHull
 
 from matminer.featurizers.base import BaseFeaturizer
-from scipy.spatial import ConvexHull
-from pymatgen.core import Structure
-from pymatgen.analysis.local_env import (
-    LocalStructOrderParams,
-    VoronoiNN,
-    solid_angle,
-    vol_tetra,
-)
-import pymatgen.analysis.local_env
-
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_nearest_neighbors
 from matminer.utils.data import MagpieData

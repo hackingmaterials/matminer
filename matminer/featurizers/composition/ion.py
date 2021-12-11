@@ -4,16 +4,12 @@ Composition featurizers for compositions with ionic data.
 import itertools
 
 import numpy as np
-from pymatgen.core.composition import Composition
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.utils.stats import PropertyStats
-from matminer.featurizers.utils.oxidation import has_oxidation_states
-from matminer.utils.data import (
-    DemlData,
-    PymatgenData,
-)
 from matminer.featurizers.composition.composite import ElementProperty
+from matminer.featurizers.utils.oxidation import has_oxidation_states
+from matminer.featurizers.utils.stats import PropertyStats
+from matminer.utils.data import DemlData, PymatgenData
 
 
 class CationProperty(ElementProperty):
@@ -312,7 +308,7 @@ class ElectronegativityDiff(BaseFeaturizer):
     """
 
     def __init__(self, stats=None):
-        if stats == None:
+        if stats is None:
             self.stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
             self.stats = stats

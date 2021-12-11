@@ -104,7 +104,7 @@ class CohesiveEnergyMP(BaseFeaturizer):
                 most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
                 try:
                     return [mpr.get_cohesive_energy(most_stable_entry["material_id"], per_atom=True)]
-                except:
+                except Exception:
                     raise ValueError(
                         "No cohesive energy can be determined for material_id: {}".format(
                             most_stable_entry["material_id"]

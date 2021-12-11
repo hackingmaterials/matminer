@@ -5,7 +5,6 @@ from functools import lru_cache
 import numpy as np
 from sympy.physics.wigner import wigner_3j
 from scipy.special import sph_harm
-from pymatgen.core import Structure
 from pymatgen.analysis.local_env import VoronoiNN
 
 from matminer.featurizers.base import BaseFeaturizer

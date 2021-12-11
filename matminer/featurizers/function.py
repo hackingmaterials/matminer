@@ -2,7 +2,6 @@ import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
 import sympy as sp
 import itertools
-from six import string_types
 from pandas import DataFrame, Series
 
 from collections import OrderedDict

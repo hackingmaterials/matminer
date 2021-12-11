@@ -10,11 +10,9 @@ import sys
 import time
 import warnings
 
-import six
+import httplib2
 from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from six.moves.urllib_parse import urlencode
-
-import httplib2
 
 try:
     import ujson as json
@@ -22,9 +20,8 @@ except ImportError:
     import json
 
 import pandas as pd
-
-from pymatgen.core.structure import Structure
 from pymatgen.core.lattice import Lattice
+from pymatgen.core.structure import Structure
 
 try:
     import jmespath
@@ -147,7 +144,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
             }
         try:
             content = json.loads(content)
-        except:
+        except Exception:
             return {"error": "Unreadable data obtained"}
         if content.get("error"):
             return {"error": content["error"]}

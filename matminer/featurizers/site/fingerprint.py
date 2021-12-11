@@ -6,7 +6,6 @@ import copy
 
 import ruamel.yaml as yaml
 import numpy as np
-from pymatgen.core import Structure
 from pymatgen.analysis.local_env import (
     LocalStructOrderParams,
     VoronoiNN,

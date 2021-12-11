@@ -5,7 +5,6 @@ import itertools
 import numpy as np
 
 from matminer.featurizers.base import BaseFeaturizer
-from pymatgen.core import Structure
 from matminer.featurizers.utils.grdf import Gaussian, Histogram
 
 

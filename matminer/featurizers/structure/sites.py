@@ -237,7 +237,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
             # MinimumVIRENN, MinimumDistanceNN, JmolNN, VoronoiNN, etc.
             try:
                 return SiteStatsFingerprint(CoordinationNumber.from_preset(preset), **kwargs)
-            except:
+            except Exception:
                 pass
 
         raise ValueError("Unrecognized preset!")

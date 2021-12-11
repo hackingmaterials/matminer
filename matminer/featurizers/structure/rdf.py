@@ -1,15 +1,14 @@
 """
 Structure featurizers implementing radial distribution functions.
 """
-import math
 import itertools
-from operator import itemgetter
+import math
 from copy import copy
+from operator import itemgetter
 
 import numpy as np
-from pymatgen.core import Structure
 from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
-from pymatgen.core.periodic_table import Specie, Element
+from pymatgen.core.periodic_table import Element, Specie
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
@@ -342,7 +341,6 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         struct = ValenceIonicRadiusEvaluator(struct).structure
 
         distribution = np.zeros(self.nbins, dtype=np.float)
-        nbins = int(self.cutoff / self.dr) + 1
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)

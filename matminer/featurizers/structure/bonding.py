@@ -313,7 +313,7 @@ class BondFractions(BaseFeaturizer):
             single = False
             try:
                 bonds = list(bonds)
-            except:
+            except Exception:
                 # In the case of a series object
                 bonds = bonds.tolist()
 
@@ -845,7 +845,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                         an_val=site_val,
                     )
                     bvs -= self.compute_bv(params, dist)
-            except:
+            except Exception:
                 raise ValueError(
                     "BV parameters for {} with valence {} and {} {} not "
                     "found in table"

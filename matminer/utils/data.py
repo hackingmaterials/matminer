@@ -6,7 +6,6 @@ including ``pymatgen`` and ``Magpie``.
 
 import os
 import json
-import six
 import abc
 import numpy as np
 import pandas as pd

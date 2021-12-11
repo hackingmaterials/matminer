@@ -20,7 +20,7 @@ def initialize_pairwise_function(name, **options):
     # Get the desired class
     try:
         cls = globals()[name]
-    except:
+    except Exception:
         raise ValueError(f"No such class: {name}")
 
     # Instantiate it

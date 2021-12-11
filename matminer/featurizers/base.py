@@ -8,7 +8,6 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
-from six import reraise, string_types
 from sklearn.base import BaseEstimator, TransformerMixin, is_classifier
 from tqdm.auto import tqdm
 
@@ -626,9 +625,7 @@ class MultipleFeaturizer(BaseFeaturizer):
                 for feature in f.featurize_wrapper(x, return_errors=return_errors, ignore_errors=ignore_errors)
             ]
         else:
-            return super().featurize_wrapper(
-                x, return_errors=return_errors, ignore_errors=ignore_errors
-            )
+            return super().featurize_wrapper(x, return_errors=return_errors, ignore_errors=ignore_errors)
 
     def citations(self):
         return list(set(sum((f.citations() for f in self.featurizers), [])))

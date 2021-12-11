@@ -3,16 +3,12 @@ Site featurizers based on local chemical information, rather than geometry alone
 """
 
 import numpy as np
-from sklearn.utils.validation import check_is_fitted
-from pymatgen.core import Structure
-from pymatgen.core.periodic_table import Element
-from pymatgen.analysis.local_env import (
-    LocalStructOrderParams,
-    VoronoiNN,
-)
 import pymatgen.analysis.local_env
 from pymatgen.analysis.ewald import EwaldSummation
-
+from pymatgen.analysis.local_env import VoronoiNN
+from pymatgen.core import Structure
+from pymatgen.core.periodic_table import Element
+from sklearn.utils.validation import check_is_fitted
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.caching import get_nearest_neighbors
@@ -387,7 +383,7 @@ class LocalPropertyDifference(BaseFeaturizer):
         for i, p in enumerate(self.properties):
             my_prop = self.data_source.get_elemental_property(my_site.specie, p)
             n_props = self.data_source.get_elemental_properties(elems, p)
-            if self.signed == False:
+            if self.signed is False:
                 output[i] = np.dot(weights, np.abs(np.subtract(n_props, my_prop))) / total_weight
             else:
                 output[i] = np.dot(weights, np.subtract(n_props, my_prop)) / total_weight
@@ -395,7 +391,7 @@ class LocalPropertyDifference(BaseFeaturizer):
         return output
 
     def feature_labels(self):
-        if self.signed == False:
+        if self.signed is False:
             return ["local difference in " + p for p in self.properties]
         else:
             return ["local signed difference in " + p for p in self.properties]

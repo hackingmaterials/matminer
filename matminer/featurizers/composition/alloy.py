@@ -651,32 +651,24 @@ class WenAlloys(BaseFeaturizer):
         mean_shear_modulus = PropertyStats.mean(shear_modulus, fractions)
 
         s_unfilled = sum(
-            
-                2 - self.data_source_magpie["NsUnfilled"][e]
-                for e in elements
-                if self.data_source_magpie["NsUnfilled"][e] != 0
-            
+            2 - self.data_source_magpie["NsUnfilled"][e]
+            for e in elements
+            if self.data_source_magpie["NsUnfilled"][e] != 0
         )
         p_unfilled = sum(
-            
-                6 - self.data_source_magpie["NpUnfilled"][e]
-                for e in elements
-                if self.data_source_magpie["NpUnfilled"][e] != 0
-            
+            6 - self.data_source_magpie["NpUnfilled"][e]
+            for e in elements
+            if self.data_source_magpie["NpUnfilled"][e] != 0
         )
         d_unfilled = sum(
-            
-                10 - self.data_source_magpie["NdUnfilled"][e]
-                for e in elements
-                if self.data_source_magpie["NdUnfilled"][e] != 0
-            
+            10 - self.data_source_magpie["NdUnfilled"][e]
+            for e in elements
+            if self.data_source_magpie["NdUnfilled"][e] != 0
         )
         f_unfilled = sum(
-            
-                14 - self.data_source_magpie["NfUnfilled"][e]
-                for e in elements
-                if self.data_source_magpie["NfUnfilled"][e] != 0
-            
+            14 - self.data_source_magpie["NfUnfilled"][e]
+            for e in elements
+            if self.data_source_magpie["NfUnfilled"][e] != 0
         )
         interant_electrons = s_unfilled + p_unfilled + d_unfilled + f_unfilled
         weight_fraction = self.compute_weight_fraction(elements, comp)

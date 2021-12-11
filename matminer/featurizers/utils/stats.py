@@ -1,9 +1,6 @@
 """
 General methods for computing property statistics from a list of values
 """
-from six import string_types
-
-
 import scipy
 import numpy as np
 

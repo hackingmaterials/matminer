@@ -65,7 +65,7 @@ class MongoDataRetrieval(BaseDataRetrieval):
                     vals = [int(v) if is_int(v) else v for v in vals]
                     data = reduce(lambda e, k: e[k], vals, d)
                     row_data.append(data)
-                except:
+                except Exception:
                     if not strict:
                         row_data.append(float("nan"))
                     else:
@@ -116,7 +116,7 @@ def is_int(x):
     try:
         int(x)
         return True
-    except:
+    except Exception:
         return False
 
 
