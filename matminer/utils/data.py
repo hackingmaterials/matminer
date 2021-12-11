@@ -19,7 +19,7 @@ __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-class AbstractData(six.with_metaclass(abc.ABCMeta)):
+class AbstractData(metaclass=abc.ABCMeta):
     """Abstract class for retrieving elemental properties
 
     All classes must implement the `get_elemental_property` operation. These operations
@@ -49,7 +49,7 @@ class AbstractData(six.with_metaclass(abc.ABCMeta)):
         return [self.get_elemental_property(e, property_name) for e in elems]
 
 
-class OxidationStatesMixin(six.with_metaclass(abc.ABCMeta)):
+class OxidationStatesMixin(metaclass=abc.ABCMeta):
     """Abstract class interface for retrieving the oxidation states
     of each element"""
 
@@ -105,7 +105,7 @@ class CohesiveEnergyData(AbstractData):
 
     def __init__(self):
         # Load elemental cohesive energy data from json file
-        with open(os.path.join(module_dir, "data_files", "cohesive_energies.json"), "r") as f:
+        with open(os.path.join(module_dir, "data_files", "cohesive_energies.json")) as f:
             self.cohesive_energy_data = json.load(f)
 
     def get_elemental_property(self, elem, property_name="cohesive energy"):
@@ -207,7 +207,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
 
         # parse and store elemental properties
         for descriptor_name in available_props:
-            with open(os.path.join(self.data_dir, "{}.table".format(descriptor_name)), "r") as f:
+            with open(os.path.join(self.data_dir, f"{descriptor_name}.table")) as f:
                 self.all_elemental_props[descriptor_name] = dict()
                 lines = f.readlines()
                 for atomic_no in range(1, len(_pt_data) + 1):  # max Z=103
@@ -266,7 +266,7 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
 
 
 class MixingEnthalpy:
-    """
+    r"""
     Values of :math:`\Delta H^{max}_{AB}` for different pairs of elements.
 
     Based on the Miedema model. Tabulated by:
@@ -400,9 +400,9 @@ class MatscholarElementData(AbstractData):
 
     def __init__(self):
         dfile = os.path.join(module_dir, "data_files/matscholar_els.json")
-        with open(dfile, "r") as fp:
+        with open(dfile) as fp:
             embeddings = json.load(fp)
-        self.prop_names = ["embedding {}".format(i) for i in range(1, 201)]
+        self.prop_names = [f"embedding {i}" for i in range(1, 201)]
         all_element_data = {}
         for el, embedding in embeddings.items():
             all_element_data[el] = dict(zip(self.prop_names, embedding))
@@ -438,9 +438,9 @@ class MEGNetElementData(AbstractData):
     def __init__(self):
         dfile = os.path.join(module_dir, "data_files/megnet_elemental_embedding.json")
         self._dummy = "Dummy"
-        with open(dfile, "r") as fp:
+        with open(dfile) as fp:
             embeddings = json.load(fp)
-        self.prop_names = ["embedding {}".format(i) for i in range(1, 17)]
+        self.prop_names = [f"embedding {i}" for i in range(1, 17)]
         self.all_element_data = {}
         for i in range(95):
             embedding_dict = dict(zip(self.prop_names, embeddings[i]))
@@ -506,7 +506,7 @@ class IUCrBondValenceData:
         filepath = os.path.join(module_dir, "data_files", "bvparm2020.cif")
         self.params = pd.read_csv(
             filepath,
-            sep="\s+",
+            sep=r"\s+",
             header=None,
             names=[
                 "Atom1",

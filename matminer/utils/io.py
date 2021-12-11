@@ -33,8 +33,8 @@ def store_dataframe_as_json(dataframe, filename, compression=None, orient="split
     if compression not in ["gz", "bz2", None]:
         raise ValueError("Supported compression formats are 'gz' and 'bz2'.")
 
-    if compression and not filename.lower().endswith(".{}".format(compression)):
-        filename = "{}.{}".format(filename, compression)
+    if compression and not filename.lower().endswith(f".{compression}"):
+        filename = f"{filename}.{compression}"
 
     write_type = "wb" if compression else "w"
 

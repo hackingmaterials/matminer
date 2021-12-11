@@ -8,7 +8,7 @@ import scipy
 import numpy as np
 
 
-class PropertyStats(object):
+class PropertyStats:
     """This class contains statistical operations that are commonly employed
     when computing features.
 
@@ -266,7 +266,7 @@ class PropertyStats(object):
         Returns: Holder mean
         """
 
-        if isinstance(power, string_types):
+        if isinstance(power, str):
             power = float(power)
 
         if weights is None:

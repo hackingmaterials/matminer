@@ -197,8 +197,8 @@ class CitrineDataRetrieval(BaseDataRetrieval):
             if col in df:
                 df = df.drop(col, axis=1)
         if print_properties_options:
-            print("all available fields:\n{}".format(list(set(all_fields))))
-            print("\nsuggested common fields:\n{}".format(optcomcols))
+            print(f"all available fields:\n{list(set(all_fields))}")
+            print(f"\nsuggested common fields:\n{optcomcols}")
         return df
 
     def get_data(

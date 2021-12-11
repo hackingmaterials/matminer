@@ -148,7 +148,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         """
 
         # Initialize list with included elements
-        elements = set([Element(e) for e in self.include_elems])
+        elements = {Element(e) for e in self.include_elems}
 
         # Get all of elements that appaer
         for strc in X:
@@ -255,7 +255,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         labels = []
         for e1, e2 in itertools.combinations_with_replacement(self.elements_, 2):
             for r_start, r_end in zip(bin_edges, bin_edges[1:]):
-                labels.append("{}-{} PRDF r={:.2f}-{:.2f}".format(e1, e2, r_start, r_end))
+                labels.append(f"{e1}-{e2} PRDF r={r_start:.2f}-{r_end:.2f}")
         return labels
 
     def citations(self):
@@ -386,7 +386,7 @@ def get_rdf_bin_labels(bin_distances, cutoff):
     bin_dists_complete = np.concatenate((bin_distances, np.asarray([cutoff])))
     flabels = [""] * len(bin_distances)
     for i, _ in enumerate(bin_distances):
-        lower = "{:.5f}".format(bin_dists_complete[i])
-        higher = "{:.5f}".format(bin_dists_complete[i + 1])
+        lower = f"{bin_dists_complete[i]:.5f}"
+        higher = f"{bin_dists_complete[i + 1]:.5f}"
         flabels[i] = f"[{lower} - {higher}]"
     return flabels

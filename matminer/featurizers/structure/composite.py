@@ -65,27 +65,27 @@ class JarvisCFID(BaseFeaturizer):
         chgfile = os.path.join(jdir, "element_charges.json")
         chemfile = os.path.join(jdir, "element_chem.json")
 
-        with open(chgfile, "r") as f:
+        with open(chgfile) as f:
             self.el_chrg_json = json.load(f)
-        with open(chemfile, "r") as f:
+        with open(chemfile) as f:
             self.el_chem_json = json.load(f)
 
         labels = []
         if self.use_chem:
-            labels += list(["jml_" + s for s in self.el_chem_json["Al"].keys()])
+            labels += list("jml_" + s for s in self.el_chem_json["Al"].keys())
         if self.use_cell:
             labels += ["jml_pack_frac", "jml_vpa", "jml_density", "jml_log_vpa"]
         if self.use_chg:
-            labels += ["jml_mean_charge_{}".format(i) for i in range(1, 379)]
+            labels += [f"jml_mean_charge_{i}" for i in range(1, 379)]
         if self.use_rdf:
-            labels += ["jml_rdf_{}".format(i) for i in range(1, 101)]
+            labels += [f"jml_rdf_{i}" for i in range(1, 101)]
         if self.use_adf:
             for lvl in [1, 2]:
-                labels += ["jml_adf{}_{}".format(lvl, i) for i in range(1, 180)]
+                labels += [f"jml_adf{lvl}_{i}" for i in range(1, 180)]
         if self.use_ddf:
-            labels += ["jml_ddf_{}".format(i) for i in range(1, 180)]
+            labels += [f"jml_ddf_{i}" for i in range(1, 180)]
         if self.use_nn:
-            labels += ["jml_nn_{}".format(i) for i in range(1, 101)]
+            labels += [f"jml_nn_{i}" for i in range(1, 101)]
         self.labels = labels
 
     def featurize(self, s):
@@ -475,8 +475,8 @@ class JarvisCFID(BaseFeaturizer):
         for c in comb:
             for i, ii in enumerate(neighbors_lst):
                 for j in ii:
-                    comb1 = str(structure[i].specie) + str("-") + str(j[0].specie)
-                    comb2 = str(j[0].specie) + str("-") + str(structure[i].specie)
+                    comb1 = str(structure[i].specie) + "-" + str(j[0].specie)
+                    comb2 = str(j[0].specie) + "-" + str(structure[i].specie)
                     if comb1 == c or comb2 == c:
                         info.setdefault(c, []).append(j[1])
         for i in info.items():
@@ -498,7 +498,7 @@ class JarvisCFID(BaseFeaturizer):
         """
         sym = structure.symbol_set
         tmp = map("-".join, itertools.product(sym, repeat=2))
-        comb = list(set([str("-".join(sorted(i.split("-")))) for i in tmp]))
+        comb = list({str("-".join(sorted(i.split("-")))) for i in tmp})
         return comb
 
     @staticmethod

@@ -165,8 +165,8 @@ class GaussianSymmFunc(BaseFeaturizer):
         return gaussian_funcs
 
     def feature_labels(self):
-        return ["G2_{}".format(eta_g2) for eta_g2 in self.etas_g2] + [
-            "G4_{}_{}_{}".format(eta_g4, zeta_g4, gamma_g4)
+        return [f"G2_{eta_g2}" for eta_g2 in self.etas_g2] + [
+            f"G4_{eta_g4}_{zeta_g4}_{gamma_g4}"
             for eta_g4 in self.etas_g4
             for zeta_g4 in self.zetas_g4
             for gamma_g4 in self.gammas_g4
@@ -258,8 +258,8 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
             self
         """
 
-        max_sites = max([len(X[i][0]._sites) for i in range(len(X))])
-        self.fit_labels = ["site2 {} {}".format(i, bin.name()) for bin in self.bins for i in range(max_sites)]
+        max_sites = max(len(X[i][0]._sites) for i in range(len(X)))
+        self.fit_labels = [f"site2 {i} {bin.name()}" for bin in self.bins for i in range(max_sites)]
         return self
 
     def featurize(self, struct, idx):
@@ -460,7 +460,7 @@ class AngularFourierSeries(BaseFeaturizer):
 
     def feature_labels(self):
         bin_combos = list(itertools.product(self.bins, repeat=2))
-        return ["AFS ({}, {})".format(combo[0].name(), combo[1].name()) for combo in bin_combos]
+        return [f"AFS ({combo[0].name()}, {combo[1].name()})" for combo in bin_combos]
 
     @staticmethod
     def from_preset(preset, width=0.5, spacing=0.5, cutoff=10):

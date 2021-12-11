@@ -106,7 +106,7 @@ class CoulombMatrix(BaseFeaturizer):
     def feature_labels(self):
         self._check_fitted()
         if self.flatten:
-            return ["coulomb matrix eig {}".format(i) for i in range(self._max_eigs)]
+            return [f"coulomb matrix eig {i}" for i in range(self._max_eigs)]
         else:
             return ["coulomb matrix"]
 
@@ -212,7 +212,7 @@ class SineCoulombMatrix(BaseFeaturizer):
     def feature_labels(self):
         self._check_fitted()
         if self.flatten:
-            return ["sine coulomb matrix eig {}".format(i) for i in range(self._max_eigs)]
+            return [f"sine coulomb matrix eig {i}" for i in range(self._max_eigs)]
         else:
             return ["sine coulomb matrix"]
 
@@ -444,15 +444,15 @@ class OrbitalFieldMatrix(BaseFeaturizer):
 
     def feature_labels(self):
         if self.flatten:
-            slabels = ["s^{}".format(i) for i in range(1, 3)]
-            plabels = ["p^{}".format(i) for i in range(1, 7)]
-            dlabels = ["d^{}".format(i) for i in range(1, 11)]
-            flabels = ["f^{}".format(i) for i in range(1, 15)]
+            slabels = [f"s^{i}" for i in range(1, 3)]
+            plabels = [f"p^{i}" for i in range(1, 7)]
+            dlabels = [f"d^{i}" for i in range(1, 11)]
+            flabels = [f"f^{i}" for i in range(1, 15)]
             labelset_1D = slabels + plabels + dlabels + flabels
 
             # account for period tags
             if self.size == 39:
-                period_labels = ["period {}".format(i) for i in range(1, 8)]
+                period_labels = [f"period {i}" for i in range(1, 8)]
                 labelset_1D += period_labels
 
             labelset_2D = []
@@ -473,7 +473,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             "month = {dec},"
             "number = {1},"
             "pages = {756--765},"
-            "publisher = {Taylor {\&} Francis},"
+            r"publisher = {Taylor {\&} Francis},"
             "title = {{Machine learning reveals orbital interaction in materials}},"
             "url = {https://www.tandfonline.com/doi/full/10.1080/14686996.2017.1378060},"
             "volume = {18},"

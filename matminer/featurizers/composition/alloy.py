@@ -90,7 +90,7 @@ class Miedema(BaseFeaturizer):
         if self.data_source == "Miedema":
             self.df_dataset = pd.read_csv(os.path.join(data_dir, "Miedema.csv"), index_col="element")
         else:
-            raise NotImplementedError("data_source {} not implemented yet".format(data_source))
+            raise NotImplementedError(f"data_source {data_source} not implemented yet")
 
         self.element_list = [Element(estr) for estr in self.df_dataset.index]
 
@@ -498,11 +498,11 @@ class YangSolidSolution(BaseFeaturizer):
     def compute_omega(self, comp):
         """Compute Yang's mixing thermodynamics descriptor
 
-        :math:`\\frac{T_m \Delta S_{mix}}{ |  \Delta H_{mix} | }`
+        :math:`\\frac{T_m \\Delta S_{mix}}{ |  \\Delta H_{mix} | }`
 
         Where :math:`T_m` is average melting temperature,
-        :math:`\Delta S_{mix}` is the ideal mixing entropy,
-        and :math:`\Delta H_{mix}` is the average mixing enthalpies
+        :math:`\\Delta S_{mix}` is the ideal mixing entropy,
+        and :math:`\\Delta H_{mix}` is the average mixing enthalpies
         of all pairs of elements in the alloy
 
         Args:
@@ -541,7 +541,7 @@ class YangSolidSolution(BaseFeaturizer):
     def compute_delta(self, comp):
         """Compute Yang's delta parameter
 
-        :math:`\sqrt{\sum^n_{i=1} c_i \left( 1 - \\frac{r_i}{\\bar{r}} \\right)^2 }`
+        :math:`\\sqrt{\\sum^n_{i=1} c_i \\left( 1 - \\frac{r_i}{\\bar{r}} \\right)^2 }`
 
         where :math:`c_i` and :math:`r_i` are the fraction and radius of
         element :math:`i`, and :math:`\\bar{r}` is the fraction-weighted
@@ -651,32 +651,32 @@ class WenAlloys(BaseFeaturizer):
         mean_shear_modulus = PropertyStats.mean(shear_modulus, fractions)
 
         s_unfilled = sum(
-            [
+            
                 2 - self.data_source_magpie["NsUnfilled"][e]
                 for e in elements
                 if self.data_source_magpie["NsUnfilled"][e] != 0
-            ]
+            
         )
         p_unfilled = sum(
-            [
+            
                 6 - self.data_source_magpie["NpUnfilled"][e]
                 for e in elements
                 if self.data_source_magpie["NpUnfilled"][e] != 0
-            ]
+            
         )
         d_unfilled = sum(
-            [
+            
                 10 - self.data_source_magpie["NdUnfilled"][e]
                 for e in elements
                 if self.data_source_magpie["NdUnfilled"][e] != 0
-            ]
+            
         )
         f_unfilled = sum(
-            [
+            
                 14 - self.data_source_magpie["NfUnfilled"][e]
                 for e in elements
                 if self.data_source_magpie["NfUnfilled"][e] != 0
-            ]
+            
         )
         interant_electrons = s_unfilled + p_unfilled + d_unfilled + f_unfilled
         weight_fraction = self.compute_weight_fraction(elements, comp)
@@ -731,7 +731,7 @@ class WenAlloys(BaseFeaturizer):
     def compute_local_mismatch(variable, fractions):
         """Compute local mismatch of a given variable.
 
-        :math:`\sum^n_{i=1} \sum^n_{j=1,i \neq j}  c_i c_j | v_i - v_j |^2`
+        :math:`\\sum^n_{i=1} \\sum^n_{j=1,i \neq j}  c_i c_j | v_i - v_j |^2`
 
         where :math:`c_{i,j}` and :math:`v_{i,j}` are the fraction and variable of
         element :math:`i,j`.
@@ -752,7 +752,7 @@ class WenAlloys(BaseFeaturizer):
     def compute_delta(variable, fractions):
         """Compute Yang's delta parameter for a generic variable.
 
-        :math:`\sqrt{\sum^n_{i=1} c_i \left( 1 - \\frac{v_i}{\\bar{v}} \\right)^2 }`
+        :math:`\\sqrt{\\sum^n_{i=1} c_i \\left( 1 - \\frac{v_i}{\\bar{v}} \\right)^2 }`
 
         where :math:`c_i` and :math:`v_i` are the fraction and variable of
         element :math:`i`, and :math:`\\bar{v}` is the fraction-weighted
@@ -788,7 +788,7 @@ class WenAlloys(BaseFeaturizer):
         atomic packing for the elements with the most significant
         and smallest atomic sizes.
 
-        :math:`\frac{1 - \sqrt{ \frac{((r + r_{min})^2 - r^2)}{(r + r_{min})^2}}}{1 - \sqrt{ \frac{((r + r_{max})^2 - r^2)}{(r + r_{max})^2}}}`
+        :math:`\frac{1 - \\sqrt{ \frac{((r + r_{min})^2 - r^2)}{(r + r_{min})^2}}}{1 - \\sqrt{ \frac{((r + r_{max})^2 - r^2)}{(r + r_{max})^2}}}`
 
         where :math:`r`, :math:`r_{min}` and :math:`r_{max}` are the mean radii
         min radii and max radii.
@@ -809,7 +809,7 @@ class WenAlloys(BaseFeaturizer):
 
     @staticmethod
     def compute_configuration_entropy(fractions):
-        """Compute the configuration entropy.
+        r"""Compute the configuration entropy.
 
         :math:`R \sum^n_{i=1} c_i \ln{c_i}`
 
@@ -861,7 +861,7 @@ class WenAlloys(BaseFeaturizer):
     def compute_strength_local_mismatch_shear(shear_modulus, mean_shear_modulus, fractions):
         """The local mismatch of the shear values.
 
-        :math:`\sum^n_{i=1} \frac{c_i \frac{2(G_i - G)}{G_i + G} }{\left(1 + 0.5 |c_i \frac{2(G_i - G)}{G_i + G} \right)|}`
+        :math:`\\sum^n_{i=1} \frac{c_i \frac{2(G_i - G)}{G_i + G} }{\\left(1 + 0.5 |c_i \frac{2(G_i - G)}{G_i + G} \right)|}`
 
         where :math:`c_{i}`, :math:'G' and :math:`G_{i}` are the fraction, mean shear modulus and shear modulus of
         element :math:`i`.

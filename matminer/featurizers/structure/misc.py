@@ -144,7 +144,7 @@ class XRDPowderPattern(BaseFeaturizer):
         return y
 
     def feature_labels(self):
-        return ["xrd_{}".format(x) for x in range(self.pattern_length)]
+        return [f"xrd_{x}" for x in range(self.pattern_length)]
 
     def citations(self):
         return [

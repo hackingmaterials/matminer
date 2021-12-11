@@ -202,12 +202,12 @@ class RetrievalQuery(Query):
         query._add_filters(criteria)
 
         # determines properties returned by query
-        query.select(*[getattr(K, i) for i in properties])
+        query.select(*(getattr(K, i) for i in properties))
 
         # suppresses properties that may have been included as search criteria
         # but are not requested properties, which the user wants returned
         excluded_keywords = set(criteria.keys()) - set(properties)
-        query.exclude(*[getattr(K, i) for i in excluded_keywords])
+        query.exclude(*(getattr(K, i) for i in excluded_keywords))
 
         return query
 
@@ -236,13 +236,13 @@ class RetrievalQuery(Query):
                         )
 
                     elif inner_key == "$gt":
-                        self.filter((keyword > inner_value))
+                        self.filter(keyword > inner_value)
 
                     elif inner_key == "$lt":
-                        self.filter((keyword < inner_value))
+                        self.filter(keyword < inner_value)
 
                     elif inner_key == "$not":
-                        self.filter((~(keyword == inner_value)))
+                        self.filter(~(keyword == inner_value))
 
                     else:
                         raise Exception("Only $in, $gt, $lt, and $not are supported!")

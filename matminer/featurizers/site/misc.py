@@ -280,7 +280,7 @@ class CoordinationNumber(BaseFeaturizer):
                 'none' - Do not use weights when computing coordination number
                 'sum' - Use sum of weights as the coordination number
                 'effective' - Compute the 'effective coordination number', which
-                    is computed as :math:`\\frac{(\sum_n w_n)^2)}{\sum_n w_n^2}`
+                    is computed as :math:`\\frac{(\\sum_n w_n)^2)}{\\sum_n w_n^2}`
         """
         self.nn = nn or VoronoiNN()
         self.use_weights = use_weights
@@ -309,7 +309,7 @@ class CoordinationNumber(BaseFeaturizer):
 
     def feature_labels(self):
         # TODO: Should names contain weighting scheme? -lw
-        return ["CN_{}".format(self.nn.__class__.__name__)]
+        return [f"CN_{self.nn.__class__.__name__}"]
 
     def citations(self):
         citations = []

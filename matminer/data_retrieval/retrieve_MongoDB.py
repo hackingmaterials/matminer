@@ -18,7 +18,7 @@ class MongoDataRetrieval(BaseDataRetrieval):
         self.coll = coll
 
     def api_link(self):
-        return "data from\n{}".format(self.coll)
+        return f"data from\n{self.coll}"
 
     def get_dataframe(
         self,

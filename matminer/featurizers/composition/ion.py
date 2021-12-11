@@ -71,7 +71,7 @@ class CationProperty(ElementProperty):
         pstats = PropertyStats()
 
         # Get the cation species and fractions
-        cations, fractions = zip(*[(s, f) for s, f in comp.items() if s.oxi_state > 0])
+        cations, fractions = zip(*((s, f) for s, f in comp.items() if s.oxi_state > 0))
 
         for attr in self.features:
             elem_data = [self.data_source.get_charge_dependent_property_from_specie(c, attr) for c in cations]
@@ -119,7 +119,7 @@ class OxidationStates(BaseFeaturizer):
             raise ValueError("Oxidation states have not been determined")
 
         # Get the oxidation states and their proportions
-        oxid_states, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
+        oxid_states, fractions = zip(*((s.oxi_state, f) for s, f in comp.items()))
 
         # Compute statistics
         return [PropertyStats.calc_stat(oxid_states, s, fractions) for s in self.stats]
@@ -183,7 +183,7 @@ class IonProperty(BaseFeaturizer):
 
             # Determine if neutral compound is possible
             if has_oxidation_states(comp):
-                charges, fractions = zip(*[(s.oxi_state, f) for s, f in comp.items()])
+                charges, fractions = zip(*((s.oxi_state, f) for s, f in comp.items()))
                 cpd_possible = np.isclose(np.dot(charges, fractions), 0)
             else:
                 oxidation_states = [self.data_source.get_oxidation_states(e) for e in elements]
@@ -262,7 +262,7 @@ class ElectronAffinity(BaseFeaturizer):
         species, fractions = zip(*comp.items())
 
         # Determine which species are anions
-        anions, fractions = zip(*[(s, f) for s, f in zip(species, fractions) if s.oxi_state < 0])
+        anions, fractions = zip(*((s, f) for s, f in zip(species, fractions) if s.oxi_state < 0))
 
         # Compute the electron_affinity*formal_charge for each anion
         electron_affin = [
@@ -333,7 +333,7 @@ class ElectronegativityDiff(BaseFeaturizer):
             raise ValueError("Composition is not ionic")
 
         # Determine the average anion EN
-        anions, anion_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state < 0])
+        anions, anion_fractions = zip(*((s, x) for s, x in comp.items() if s.oxi_state < 0))
 
         # If there are no anions, raise an Exception
         if len(anions) == 0:
@@ -343,7 +343,7 @@ class ElectronegativityDiff(BaseFeaturizer):
         mean_anion_en = PropertyStats.mean(anion_en, anion_fractions)
 
         # Determine the EN difference for each cation
-        cations, cation_fractions = zip(*[(s, x) for s, x in comp.items() if s.oxi_state > 0])
+        cations, cation_fractions = zip(*((s, x) for s, x in comp.items() if s.oxi_state > 0))
 
         # If there are no cations, raise an Exception
         #  It is possible to construct a non-charge-balanced Composition,

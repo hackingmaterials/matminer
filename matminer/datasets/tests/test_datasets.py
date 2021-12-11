@@ -45,7 +45,7 @@ class DataSetsTest(DatasetTest):
             # Test all columns are there
             self.assertEqual(
                 sorted(list(df)),
-                sorted([header for header in self.dataset_dict[dataset_name]["columns"].keys()]),
+                sorted(header for header in self.dataset_dict[dataset_name]["columns"].keys()),
             )
 
             # Test each column for appropriate type

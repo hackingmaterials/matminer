@@ -18,11 +18,11 @@ test_dir = os.path.join(os.path.dirname(__file__))
 
 class DOSFeaturesTest(PymatgenTest):
     def setUp(self):
-        with open(os.path.join(test_dir, "si_dos.json"), "r") as sDOS:
+        with open(os.path.join(test_dir, "si_dos.json")) as sDOS:
             si_dos = CompleteDos.from_dict(json.load(sDOS))
         self.df = pd.DataFrame({"dos": [si_dos], "site": [0]})
 
-        with open(os.path.join(test_dir, "nb3sn_dos.json"), "r") as sDOS:
+        with open(os.path.join(test_dir, "nb3sn_dos.json")) as sDOS:
             nb3sn_dos = CompleteDos.from_dict(json.load(sDOS))
         self.nb3sn_df = pd.DataFrame({"dos": [nb3sn_dos]})
 

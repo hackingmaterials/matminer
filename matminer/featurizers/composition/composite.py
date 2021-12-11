@@ -188,7 +188,7 @@ class ElementProperty(BaseFeaturizer):
         for attr in self.features:
             src = self.data_source.__class__.__name__
             for stat in self.stats:
-                labels.append("{} {} {}".format(src, stat, attr))
+                labels.append(f"{src} {stat} {attr}")
         return labels
 
     def citations(self):
@@ -233,7 +233,7 @@ class ElementProperty(BaseFeaturizer):
                 "archivePrefix = {arXiv},"
                 "eprint = {1812.05055},"
                 "primaryClass = {cond-mat.mtrl-sci},"
-                "adsurl = {https://ui.adsabs.harvard.edu/\#abs/2018arXiv181205055C},"
+                r"adsurl = {https://ui.adsabs.harvard.edu/\#abs/2018arXiv181205055C},"
                 "adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"
             ]
         else:

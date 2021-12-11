@@ -14,7 +14,7 @@ from matminer.utils.caching import get_nearest_neighbors
 
 
 class BondOrientationalParameter(BaseFeaturizer):
-    """
+    r"""
     Averages of spherical harmonics of local neighbors
 
     Bond Orientational Parameters (BOPs) describe the local environment around an atom by
@@ -74,7 +74,7 @@ class BondOrientationalParameter(BaseFeaturizer):
         Ws = []
         for l in range(1, self.max_l + 1):
             # Average the spherical harmonic over each neighbor, weighted by solid angle
-            qlm = dict((m, np.dot(weights, sph_harm(m, l, theta, phi))) for m in range(-l, l + 1))
+            qlm = {m: np.dot(weights, sph_harm(m, l, theta, phi)) for m in range(-l, l + 1)}
 
             # Compute the average over all m's
             Qs.append(np.sqrt(np.pi * 4 / (2 * l + 1) * np.sum(np.abs(list(qlm.values())) ** 2)))
@@ -102,11 +102,11 @@ class BondOrientationalParameter(BaseFeaturizer):
         return Qs
 
     def feature_labels(self):
-        q_labels = ["BOOP Q l={}".format(l) for l in range(1, self.max_l + 1)]
+        q_labels = [f"BOOP Q l={l}" for l in range(1, self.max_l + 1)]
         if self.compute_W:
-            q_labels += ["BOOP W l={}".format(l) for l in range(1, self.max_l + 1)]
+            q_labels += [f"BOOP W l={l}" for l in range(1, self.max_l + 1)]
         if self.compute_What:
-            q_labels += ["BOOP What l={}".format(l) for l in range(1, self.max_l + 1)]
+            q_labels += [f"BOOP What l={l}" for l in range(1, self.max_l + 1)]
         return q_labels
 
     def citations(self):

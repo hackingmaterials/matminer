@@ -54,15 +54,15 @@ class AtomicOrbitals(BaseFeaturizer):
 
         # warning message if composition is dilute and truncated
         if not (len(Composition(comp).elements) == len(Composition(integer_comp).elements)):
-            warn("AtomicOrbitals: {} truncated to {}".format(comp, integer_comp))
+            warn(f"AtomicOrbitals: {comp} truncated to {integer_comp}")
 
         homo_lumo = MolecularOrbitals(integer_comp).band_edges
 
         feat = collections.OrderedDict()
         for edge in ["HOMO", "LUMO"]:
-            feat["{}_character".format(edge)] = homo_lumo[edge][1][-1]
-            feat["{}_element".format(edge)] = homo_lumo[edge][0]
-            feat["{}_energy".format(edge)] = homo_lumo[edge][2]
+            feat[f"{edge}_character"] = homo_lumo[edge][1][-1]
+            feat[f"{edge}_element"] = homo_lumo[edge][0]
+            feat[f"{edge}_energy"] = homo_lumo[edge][2]
         feat["gap_AO"] = feat["LUMO_energy"] - feat["HOMO_energy"]
 
         return list(feat.values())
@@ -72,9 +72,9 @@ class AtomicOrbitals(BaseFeaturizer):
         for edge in ["HOMO", "LUMO"]:
             feat.extend(
                 [
-                    "{}_character".format(edge),
-                    "{}_element".format(edge),
-                    "{}_energy".format(edge),
+                    f"{edge}_character",
+                    f"{edge}_element",
+                    f"{edge}_energy",
                 ]
             )
         feat.append("gap_AO")
@@ -153,7 +153,7 @@ class ValenceOrbital(BaseFeaturizer):
         labels = []
         for prop in self.props:
             for orb in self.orbitals:
-                labels.append("%s %s valence electrons" % (prop, orb))
+                labels.append(f"{prop} {orb} valence electrons")
 
         return labels
 

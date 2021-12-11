@@ -176,7 +176,7 @@ def generate_mp(max_nsites=None, properties=None, write_to_csv=False,
         df = convert_to_oxide_structure(df)
         df = convert_to_oxide_composition(df)
 
-    tqdm.write("DataFrame with {} entries created".format(len(df)))
+    tqdm.write(f"DataFrame with {len(df)} entries created")
 
     # Write data out to file if user so chooses
     if write_to_csv:
