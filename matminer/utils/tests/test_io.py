@@ -1,14 +1,11 @@
+import json
 import os
 import shutil
-import filecmp
 import unittest
-import json
 
 import pandas as pd
-
 from monty.io import zopen
-
-from pymatgen.core import Structure, Lattice
+from pymatgen.core import Lattice, Structure
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.utils.io import load_dataframe_from_json, store_dataframe_as_json
@@ -74,8 +71,8 @@ class IOTest(PymatgenTest):
 
         self.assertDictsAlmostEqual(temp_data, test_data)
 
-        # check writing gzipped json (comparing hashes doesn't work) so have to
-        # compare contents
+        # check writing gzipped json (comparing hashes doesn't work so have to
+        # compare contents)
         temp_file = os.path.join(self.temp_folder, "test_dataframe.json.gz")
         test_file = os.path.join(test_dir, "dataframe.json.gz")
         store_dataframe_as_json(self.df, temp_file, compression="gz")
@@ -91,12 +88,26 @@ class IOTest(PymatgenTest):
 
         self.assertDictsAlmostEqual(temp_data, test_data)
 
-        # check writing bz2 compressed json (comparing hashes doesn't work)
-        # check writing gzipped json (comparing hashes doesn't work) so have to
-        # compare contents
+        # check writing bz2 compressed json
         temp_file = os.path.join(self.temp_folder, "test_dataframe.json.bz2")
         test_file = os.path.join(test_dir, "dataframe.json.bz2")
         store_dataframe_as_json(self.df, temp_file, compression="bz2")
+
+        with zopen(temp_file, "rb") as f:
+            temp_data = json.load(f)
+
+        with zopen(test_file, "rb") as f:
+            test_data = json.load(f)
+
+        temp_data["data"][0][0].pop("@version")
+        test_data["data"][0][0].pop("@version")
+
+        self.assertDictsAlmostEqual(temp_data, test_data)
+
+        # check store_dataframe_as_json can infer compression from file name
+        temp_file = os.path.join(self.temp_folder, "test_dataframe.json.gz")
+        test_file = os.path.join(test_dir, "dataframe.json.gz")
+        store_dataframe_as_json(self.df, temp_file)
 
         with zopen(temp_file, "rb") as f:
             temp_data = json.load(f)
