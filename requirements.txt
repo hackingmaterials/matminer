@@ -9,4 +9,4 @@ future==0.18.2
 scikit_learn==1.0.1
 sympy==1.9
 monty==2021.12.1
-jsonschema==4.2.1
+jsonschema==4.3.3
