@@ -14,7 +14,7 @@ ase==3.22.1
 dscribe==1.2.0
 
 ## MDF-forge
-mdf-forge==0.7.6
+mdf-forge==0.7.7
 
 ## AFLOW
 aflow==0.0.11
