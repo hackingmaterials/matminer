@@ -1,22 +1,21 @@
-import os
 import copy
 import unittest
 import warnings
 from itertools import product
 
-import pandas as pd
 import numpy as np
-from sklearn.dummy import DummyRegressor, DummyClassifier
+import pandas as pd
 from pymatgen.core.structure import Structure
 from pymatgen.util.testing import PymatgenTest
+from sklearn.dummy import DummyClassifier, DummyRegressor
 
-from matminer.utils.caching import _get_all_nearest_neighbors
 from matminer.featurizers.base import (
     BaseFeaturizer,
     MultipleFeaturizer,
     StackedFeaturizer,
 )
 from matminer.featurizers.structure import SiteStatsFingerprint
+from matminer.utils.caching import _get_all_nearest_neighbors
 
 
 class SingleFeaturizer(BaseFeaturizer):

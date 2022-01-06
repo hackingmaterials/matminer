@@ -3,9 +3,7 @@ import unittest
 import numpy as np
 
 from matminer.featurizers.site import SiteElementalProperty
-from matminer.featurizers.structure.sites import (
-    SiteStatsFingerprint,
-)
+from matminer.featurizers.structure.sites import SiteStatsFingerprint
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 
@@ -14,7 +12,7 @@ class StructureSitesFeaturesTest(StructureFeaturesTest):
         # Test matrix.
         op_struct_fp = SiteStatsFingerprint.from_preset("OPSiteFingerprint", stats=None)
         opvals = op_struct_fp.featurize(self.diamond)
-        oplabels = op_struct_fp.feature_labels()
+        _ = op_struct_fp.feature_labels()
         self.assertAlmostEqual(opvals[10][0], 0.9995, places=7)
         self.assertAlmostEqual(opvals[10][1], 0.9995, places=7)
         opvals = op_struct_fp.featurize(self.nacl)

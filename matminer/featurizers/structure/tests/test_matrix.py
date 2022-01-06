@@ -1,17 +1,15 @@
-import os
 import unittest
+
 import numpy as np
 import pandas as pd
-from sklearn.exceptions import NotFittedError
-
 from pymatgen.core import Molecule
+from sklearn.exceptions import NotFittedError
 
 from matminer.featurizers.structure.matrix import (
     CoulombMatrix,
-    SineCoulombMatrix,
     OrbitalFieldMatrix,
+    SineCoulombMatrix,
 )
-
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 
@@ -82,7 +80,7 @@ class MatrixStructureFeaturesTest(StructureFeaturesTest):
         mtarget[3][3] = 1.4789015  # 1.3675444 if for a coord# of exactly 4
         for i in range(32):
             for j in range(32):
-                if not i in [1, 3] and not j in [1, 3]:
+                if i not in [1, 3] and j not in [1, 3]:
                     self.assertEqual(ofm[i, j], 0.0)
         mtarget = np.matrix(mtarget)
         self.assertAlmostEqual(np.linalg.norm(ofm - mtarget), 0.0, places=4)

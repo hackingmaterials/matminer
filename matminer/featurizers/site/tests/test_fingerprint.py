@@ -2,14 +2,13 @@ import unittest
 
 import numpy as np
 import pandas as pd
-from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.site.fingerprint import (
     AGNIFingerprints,
-    OPSiteFingerprint,
-    CrystalNNFingerprint,
-    VoronoiFingerprint,
     ChemEnvSiteFingerprint,
+    CrystalNNFingerprint,
+    OPSiteFingerprint,
+    VoronoiFingerprint,
 )
 from matminer.featurizers.site.tests.base import SiteFeaturizerTest
 
@@ -155,7 +154,7 @@ class FingerprintTests(SiteFeaturizerTest):
 
         # The following test aims at ensuring the copying of the OP dictionaries work.
         opsfp = OPSiteFingerprint()
-        cnnfp = CrystalNNFingerprint.from_preset("ops")
+        _ = CrystalNNFingerprint.from_preset("ops")
         self.assertEqual(len([1 for l in opsfp.feature_labels() if l.split()[0] == "wt"]), 0)
 
     def test_crystal_nn_fingerprint(self):
