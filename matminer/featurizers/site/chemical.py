@@ -3,16 +3,12 @@ Site featurizers based on local chemical information, rather than geometry alone
 """
 
 import numpy as np
-from sklearn.utils.validation import check_is_fitted
-from pymatgen.core import Structure
-from pymatgen.core.periodic_table import Element
-from pymatgen.analysis.local_env import (
-    LocalStructOrderParams,
-    VoronoiNN,
-)
 import pymatgen.analysis.local_env
 from pymatgen.analysis.ewald import EwaldSummation
-
+from pymatgen.analysis.local_env import VoronoiNN
+from pymatgen.core import Structure
+from pymatgen.core.periodic_table import Element
+from sklearn.utils.validation import check_is_fitted
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.caching import get_nearest_neighbors
@@ -115,7 +111,7 @@ class ChemicalSRO(BaseFeaturizer):
                 els_ = (
                     set(el_amt_.keys())
                     if self.includes is None
-                    else set([el for el in el_amt_.keys() if el in self.includes])
+                    else {el for el in el_amt_.keys() if el in self.includes}
                 )
                 els_ = els_ if self.excludes is None else els_ - set(self.excludes)
                 if els_:
@@ -152,7 +148,7 @@ class ChemicalSRO(BaseFeaturizer):
     def feature_labels(self):
         check_is_fitted(self, ["el_amt_dict_", "el_list_"])
 
-        return ["CSRO_{}_{}".format(el, self.nn.__class__.__name__) for el in self.el_list_]
+        return [f"CSRO_{el}_{self.nn.__class__.__name__}" for el in self.el_list_]
 
     def citations(self):
         citations = []
@@ -291,7 +287,7 @@ class LocalPropertyDifference(BaseFeaturizer):
     weight (:math:`A_n`) that corresponds to the area of the facet
     on the tessellation corresponding to that neighbor.
     The local property difference is then computed by
-    :math:`\\frac{\sum_n {A_n |p_n - p_0|}}{\sum_n {A_n}}`
+    :math:`\\frac{\\sum_n {A_n |p_n - p_0|}}{\\sum_n {A_n}}`
     where :math:`p_n` is the property (e.g., atomic number) of a neighbor
     and :math:`p_0` is the property of a site. If signed parameter is assigned
     True, signed difference of the properties is returned instead of absolute
@@ -387,7 +383,7 @@ class LocalPropertyDifference(BaseFeaturizer):
         for i, p in enumerate(self.properties):
             my_prop = self.data_source.get_elemental_property(my_site.specie, p)
             n_props = self.data_source.get_elemental_properties(elems, p)
-            if self.signed == False:
+            if self.signed is False:
                 output[i] = np.dot(weights, np.abs(np.subtract(n_props, my_prop))) / total_weight
             else:
                 output[i] = np.dot(weights, np.subtract(n_props, my_prop)) / total_weight
@@ -395,7 +391,7 @@ class LocalPropertyDifference(BaseFeaturizer):
         return output
 
     def feature_labels(self):
-        if self.signed == False:
+        if self.signed is False:
             return ["local difference in " + p for p in self.properties]
         else:
             return ["local signed difference in " + p for p in self.properties]
@@ -462,7 +458,7 @@ class SiteElementalProperty(BaseFeaturizer):
         return props
 
     def feature_labels(self):
-        return ["site {}".format(p) for p in self.properties]
+        return [f"site {p}" for p in self.properties]
 
     def citations(self):
         return self._preset_citations
@@ -521,4 +517,4 @@ class SiteElementalProperty(BaseFeaturizer):
             )
             return output
         else:
-            raise ValueError("Unrecognized preset: {}".format(preset))
+            raise ValueError(f"Unrecognized preset: {preset}")

@@ -2,18 +2,11 @@
 Miscellaneous site featurizers.
 """
 import numpy as np
+import pymatgen.analysis.local_env
+from pymatgen.analysis.local_env import VoronoiNN, solid_angle, vol_tetra
+from scipy.spatial import ConvexHull
 
 from matminer.featurizers.base import BaseFeaturizer
-from scipy.spatial import ConvexHull
-from pymatgen.core import Structure
-from pymatgen.analysis.local_env import (
-    LocalStructOrderParams,
-    VoronoiNN,
-    solid_angle,
-    vol_tetra,
-)
-import pymatgen.analysis.local_env
-
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_nearest_neighbors
 from matminer.utils.data import MagpieData
@@ -280,7 +273,7 @@ class CoordinationNumber(BaseFeaturizer):
                 'none' - Do not use weights when computing coordination number
                 'sum' - Use sum of weights as the coordination number
                 'effective' - Compute the 'effective coordination number', which
-                    is computed as :math:`\\frac{(\sum_n w_n)^2)}{\sum_n w_n^2}`
+                    is computed as :math:`\\frac{(\\sum_n w_n)^2)}{\\sum_n w_n^2}`
         """
         self.nn = nn or VoronoiNN()
         self.use_weights = use_weights
@@ -309,7 +302,7 @@ class CoordinationNumber(BaseFeaturizer):
 
     def feature_labels(self):
         # TODO: Should names contain weighting scheme? -lw
-        return ["CN_{}".format(self.nn.__class__.__name__)]
+        return [f"CN_{self.nn.__class__.__name__}"]
 
     def citations(self):
         citations = []

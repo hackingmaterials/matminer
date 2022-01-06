@@ -1,15 +1,14 @@
 """
 Structure featurizers implementing radial distribution functions.
 """
-import math
 import itertools
-from operator import itemgetter
+import math
 from copy import copy
+from operator import itemgetter
 
 import numpy as np
-from pymatgen.core import Structure
 from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
-from pymatgen.core.periodic_table import Specie, Element
+from pymatgen.core.periodic_table import Element, Specie
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer
@@ -42,7 +41,7 @@ class RadialDistributionFunction(BaseFeaturizer):
         """
         Precheck the structure is ordered.
         Args:
-            s: (pymatgen.Struture)
+            s: (pymatgen.Structure)
         Returns:
             (bool): True if passing precheck, false if failing
         """
@@ -95,7 +94,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
     """
     Compute the partial radial distribution function (PRDF) of an xtal structure
 
-    The PRDF of a crystal structure is the radial distibution function broken
+    The PRDF of a crystal structure is the radial distribution function broken
     down for each pair of atom types.  The PRDF was proposed as a structural
     descriptor by [Schutt *et al.*]
     (https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118)
@@ -104,7 +103,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         cutoff: (float) distance up to which to calculate the RDF.
         bin_size: (float) size of each bin of the (discrete) RDF.
         include_elems: (list of string), list of elements that must be included in PRDF
-        exclude_elems: (list of string), list of elmeents that should not be included in PRDF
+        exclude_elems: (list of string), list of elements that should not be included in PRDF
 
     Features:
         Each feature corresponds to the density of number of bonds
@@ -127,7 +126,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         """
         Precheck the structure is ordered.
         Args:
-            s: (pymatgen.Struture)
+            s: (pymatgen.Structure)
         Returns:
             (bool): True if passing precheck, false if failing
         """
@@ -148,7 +147,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         """
 
         # Initialize list with included elements
-        elements = set([Element(e) for e in self.include_elems])
+        elements = {Element(e) for e in self.include_elems}
 
         # Get all of elements that appaer
         for strc in X:
@@ -255,7 +254,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         labels = []
         for e1, e2 in itertools.combinations_with_replacement(self.elements_, 2):
             for r_start, r_end in zip(bin_edges, bin_edges[1:]):
-                labels.append("{}-{} PRDF r={:.2f}-{:.2f}".format(e1, e2, r_start, r_end))
+                labels.append(f"{e1}-{e2} PRDF r={r_start:.2f}-{r_end:.2f}")
         return labels
 
     def citations(self):
@@ -342,7 +341,6 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         struct = ValenceIonicRadiusEvaluator(struct).structure
 
         distribution = np.zeros(self.nbins, dtype=np.float)
-        nbins = int(self.cutoff / self.dr) + 1
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)
@@ -386,7 +384,7 @@ def get_rdf_bin_labels(bin_distances, cutoff):
     bin_dists_complete = np.concatenate((bin_distances, np.asarray([cutoff])))
     flabels = [""] * len(bin_distances)
     for i, _ in enumerate(bin_distances):
-        lower = "{:.5f}".format(bin_dists_complete[i])
-        higher = "{:.5f}".format(bin_dists_complete[i + 1])
+        lower = f"{bin_dists_complete[i]:.5f}"
+        higher = f"{bin_dists_complete[i + 1]:.5f}"
         flabels[i] = f"[{lower} - {higher}]"
     return flabels

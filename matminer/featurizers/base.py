@@ -8,7 +8,6 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
-from six import reraise, string_types
 from sklearn.base import BaseEstimator, TransformerMixin, is_classifier
 from tqdm.auto import tqdm
 
@@ -192,13 +191,13 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
                 an extra boolean column added for the precheck.
 
         """
-        col_id = [col_id] if isinstance(col_id, string_types) else col_id
+        col_id = [col_id] if isinstance(col_id, str) else col_id
         prechecks = [self.precheck(*entries) for entries in df[col_id].values]
 
         if return_frac:
             return np.sum(prechecks) / len(prechecks)
         else:
-            precheck_col = "{} precheck pass".format(self.__class__.__name__)
+            precheck_col = f"{self.__class__.__name__} precheck pass"
             if inplace:
                 df[precheck_col] = prechecks
             else:
@@ -310,7 +309,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         """
 
         # If only one column and user provided a string, put it inside a list
-        col_id = [col_id] if isinstance(col_id, string_types) else col_id
+        col_id = [col_id] if isinstance(col_id, str) else col_id
 
         # Multiindexing doesn't play nice with other options!
         if multiindex:
@@ -333,7 +332,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         if not overwrite:
             for col in df.columns.values:
                 if col in labels:
-                    raise ValueError('"{}" exists in input dataframe'.format(col))
+                    raise ValueError(f'"{col}" exists in input dataframe')
 
         # Compute the features
         features = self.featurize_many(
@@ -511,7 +510,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
                     "the batch featurize() operation (e.g., "
                     "featurize_many(), featurize_dataframe(), etc.)."
                 )
-                reraise(type(e), type(e)(msg), sys.exc_info()[2])
+                raise type(e)(msg).with_traceback(sys.exc_info()[2])
 
     @abstractmethod
     def featurize(self, *x):
@@ -591,7 +590,7 @@ class MultipleFeaturizer(BaseFeaturizer):
         return [feature for f in self.featurizers for feature in f.featurize(*x)]
 
     def feature_labels(self):
-        return sum([f.feature_labels() for f in self.featurizers], [])
+        return sum((f.feature_labels() for f in self.featurizers), [])
 
     def fit(self, X, y=None, **fit_kwargs):
         for f in self.featurizers:
@@ -600,7 +599,7 @@ class MultipleFeaturizer(BaseFeaturizer):
 
     def featurize_many(self, entries, ignore_errors=False, return_errors=False, pbar=True):
         if self.iterate_over_entries:
-            return super(MultipleFeaturizer, self).featurize_many(
+            return super().featurize_many(
                 entries,
                 ignore_errors=ignore_errors,
                 return_errors=return_errors,
@@ -626,21 +625,19 @@ class MultipleFeaturizer(BaseFeaturizer):
                 for feature in f.featurize_wrapper(x, return_errors=return_errors, ignore_errors=ignore_errors)
             ]
         else:
-            return super(MultipleFeaturizer, self).featurize_wrapper(
-                x, return_errors=return_errors, ignore_errors=ignore_errors
-            )
+            return super().featurize_wrapper(x, return_errors=return_errors, ignore_errors=ignore_errors)
 
     def citations(self):
-        return list(set(sum([f.citations() for f in self.featurizers], [])))
+        return list(set(sum((f.citations() for f in self.featurizers), [])))
 
     def implementors(self):
-        return list(set(sum([f.implementors() for f in self.featurizers], [])))
+        return list(set(sum((f.implementors() for f in self.featurizers), [])))
 
     def _generate_column_labels(self, multiindex, return_errors):
         return np.hstack([f._generate_column_labels(multiindex, return_errors) for f in self.featurizers])
 
     def set_n_jobs(self, n_jobs):
-        super(MultipleFeaturizer, self).set_n_jobs(n_jobs)
+        super().set_n_jobs(n_jobs)
         for featurizer in self.featurizers:
             featurizer.set_n_jobs(n_jobs)
 
@@ -703,9 +700,9 @@ class StackedFeaturizer(BaseFeaturizer):
         if self._is_classifier():
             if self.class_names is None:
                 raise ValueError("Class names are required for classification models")
-            return ["{} P({})".format(name, cn).lstrip() for cn in self.class_names[:-1]]
+            return [f"{name} P({cn})".lstrip() for cn in self.class_names[:-1]]
         else:
-            return ["{} prediction".format(name).lstrip()]
+            return [f"{name} prediction".lstrip()]
 
     def implementors(self):
         return ["Logan Ward"]

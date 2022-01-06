@@ -76,7 +76,7 @@ class MDFDataRetrieval(BaseDataRetrieval):
         # Each of these fields has a "match_X" method in forge, do these first
         for key in ["source_names", "elements", "titles", "tags", "resource_types"]:
             if criteria.get(key):
-                fn = getattr(self.forge, "match_{}".format(key))
+                fn = getattr(self.forge, f"match_{key}")
                 fn(criteria.get(key))
 
         # Each of these requires unpacking a dictionary and sometimes a range

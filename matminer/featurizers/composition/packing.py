@@ -120,7 +120,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         return [
             "mean simul. packing efficiency",
             "mean abs simul. packing efficiency",
-        ] + ["dist from {} clusters |APE| < {:.3f}".format(k, self.threshold) for k in self.n_nearest]
+        ] + [f"dist from {k} clusters |APE| < {self.threshold:.3f}" for k in self.n_nearest]
 
     def citations(self):
         return [
@@ -172,7 +172,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         numbers defined in the "n_nearest" parameter of this class.
 
         If there are less than `k` efficient clusters in the system, we use
-        the maximum distance betweeen any two compositions (1) for the
+        the maximum distance between any two compositions (1) for the
         unmatched neighbors.
 
         Args:

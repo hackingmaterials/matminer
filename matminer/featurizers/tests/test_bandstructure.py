@@ -18,20 +18,20 @@ test_dir = os.path.join(os.path.dirname(__file__))
 
 class BandstructureFeaturesTest(PymatgenTest):
     def setUp(self):
-        with open(os.path.join(test_dir, "si_structure.json"), "r") as sth:
+        with open(os.path.join(test_dir, "si_structure.json")) as sth:
             si_str = Structure.from_dict(json.load(sth))
 
-        with open(os.path.join(test_dir, "si_bandstructure_line.json"), "r") as bsh:
+        with open(os.path.join(test_dir, "si_bandstructure_line.json")) as bsh:
             si_bs_line = BandStructureSymmLine.from_dict(json.load(bsh))
         si_bs_line.structure = si_str
 
-        with open(os.path.join(test_dir, "si_bandstructure_uniform.json"), "r") as bsh:
+        with open(os.path.join(test_dir, "si_bandstructure_uniform.json")) as bsh:
             si_bs_uniform = BandStructure.from_dict(json.load(bsh))
         si_bs_uniform.structure = si_str
         self.si_kpts = list(HighSymmKpath(si_str).kpath["kpoints"].values())
         self.df = pd.DataFrame({"bs_line": [si_bs_line], "bs_uniform": [si_bs_uniform]})
 
-        with open(os.path.join(test_dir, "VBr2_971787_bandstructure.json"), "r") as bsh:
+        with open(os.path.join(test_dir, "VBr2_971787_bandstructure.json")) as bsh:
             vbr2_uniform = BandStructure.from_dict(json.load(bsh))
 
         self.vbr2kpts = [k.frac_coords for k in vbr2_uniform.labels_dict.values()]

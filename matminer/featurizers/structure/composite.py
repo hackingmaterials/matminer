@@ -1,5 +1,5 @@
 """
-Structure featurizers producing more than one kind of structue feature data.
+Structure featurizers producing more than one kind of structure feature data.
 """
 import os
 import math
@@ -18,7 +18,7 @@ class JarvisCFID(BaseFeaturizer):
     """
     Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML.
 
-    Chemo-structural descriptors from five different sub-methods,cincluding
+    Chemo-structural descriptors from five different sub-methods, including
     pairwise radial, nearest neighbor, bond-angle, dihedral-angle and
     core-charge distributions. With all descriptors enabled, there are 1,557
     features per structure.
@@ -65,32 +65,32 @@ class JarvisCFID(BaseFeaturizer):
         chgfile = os.path.join(jdir, "element_charges.json")
         chemfile = os.path.join(jdir, "element_chem.json")
 
-        with open(chgfile, "r") as f:
+        with open(chgfile) as f:
             self.el_chrg_json = json.load(f)
-        with open(chemfile, "r") as f:
+        with open(chemfile) as f:
             self.el_chem_json = json.load(f)
 
         labels = []
         if self.use_chem:
-            labels += list(["jml_" + s for s in self.el_chem_json["Al"].keys()])
+            labels += list("jml_" + s for s in self.el_chem_json["Al"].keys())
         if self.use_cell:
             labels += ["jml_pack_frac", "jml_vpa", "jml_density", "jml_log_vpa"]
         if self.use_chg:
-            labels += ["jml_mean_charge_{}".format(i) for i in range(1, 379)]
+            labels += [f"jml_mean_charge_{i}" for i in range(1, 379)]
         if self.use_rdf:
-            labels += ["jml_rdf_{}".format(i) for i in range(1, 101)]
+            labels += [f"jml_rdf_{i}" for i in range(1, 101)]
         if self.use_adf:
             for lvl in [1, 2]:
-                labels += ["jml_adf{}_{}".format(lvl, i) for i in range(1, 180)]
+                labels += [f"jml_adf{lvl}_{i}" for i in range(1, 180)]
         if self.use_ddf:
-            labels += ["jml_ddf_{}".format(i) for i in range(1, 180)]
+            labels += [f"jml_ddf_{i}" for i in range(1, 180)]
         if self.use_nn:
-            labels += ["jml_nn_{}".format(i) for i in range(1, 101)]
+            labels += [f"jml_nn_{i}" for i in range(1, 101)]
         self.labels = labels
 
     def featurize(self, s):
         """
-        Get chemo-structural CFID decriptors
+        Get chemo-structural CFID descriptors
 
         Args:
             s: Structure object
@@ -156,12 +156,12 @@ class JarvisCFID(BaseFeaturizer):
             structure: Structure object
             c_size: max. cell size
             max_cut: max. bond cut-off for angular distribution
-        Retruns:
+        Returns:
              adfa, adfb, ddf, rdf, bondo
-             Angular distribution upto first cut-off
-             Angular distribution upto second cut-off
-             Dihedral angle distribution upto first cut-off
-             Radial distribution funcion
+             Angular distribution up to first cut-off
+             Angular distribution up to second cut-off
+             Dihedral angle distribution up to first cut-off
+             Radial distribution function
              Bond order distribution
         """
         x, y, z = self._get_rdf(structure)
@@ -475,8 +475,8 @@ class JarvisCFID(BaseFeaturizer):
         for c in comb:
             for i, ii in enumerate(neighbors_lst):
                 for j in ii:
-                    comb1 = str(structure[i].specie) + str("-") + str(j[0].specie)
-                    comb2 = str(j[0].specie) + str("-") + str(structure[i].specie)
+                    comb1 = str(structure[i].specie) + "-" + str(j[0].specie)
+                    comb2 = str(j[0].specie) + "-" + str(structure[i].specie)
                     if comb1 == c or comb2 == c:
                         info.setdefault(c, []).append(j[1])
         for i in info.items():
@@ -498,7 +498,7 @@ class JarvisCFID(BaseFeaturizer):
         """
         sym = structure.symbol_set
         tmp = map("-".join, itertools.product(sym, repeat=2))
-        comb = list(set([str("-".join(sorted(i.split("-")))) for i in tmp]))
+        comb = list({str("-".join(sorted(i.split("-")))) for i in tmp})
         return comb
 
     @staticmethod
@@ -556,7 +556,7 @@ class JarvisCFID(BaseFeaturizer):
     def _clean_structure(s=None, tol=8.0):
         """
         Check if there is vacuum, if so get actual size of the structure
-        and the add vaccum of size tol to make sure structures
+        and the add vacuum of size tol to make sure structures
         are independent of user defined vacuum
 
         Args:

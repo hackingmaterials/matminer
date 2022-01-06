@@ -129,14 +129,14 @@ class SiteStatsFingerprint(BaseFeaturizer):
             # Make labels associated with the statistics
             for attr in self._site_labels:
                 for stat in self.stats:
-                    labels.append("%s %s" % (stat, attr))
+                    labels.append(f"{stat} {attr}")
 
             # Make labels associated with the site labels
             if self.covariance:
                 sl = self._site_labels
                 for i, sa in enumerate(sl):
                     for sb in sl[(i + 1) :]:
-                        labels.append("covariance %s-%s" % (sa, sb))
+                        labels.append(f"covariance {sa}-{sb}")
             return labels
         else:
             return self._site_labels
@@ -237,7 +237,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
             # MinimumVIRENN, MinimumDistanceNN, JmolNN, VoronoiNN, etc.
             try:
                 return SiteStatsFingerprint(CoordinationNumber.from_preset(preset), **kwargs)
-            except:
+            except Exception:
                 pass
 
         raise ValueError("Unrecognized preset!")

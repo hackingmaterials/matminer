@@ -41,7 +41,7 @@ class MPDSDataRetrievalTest(unittest.TestCase):
         try:
             validate(answer, self.schema)
         except ValidationError as e:
-            self.fail("The item: \r\n\r\n %s \r\n\r\n has an issue: \r\n\r\n %s" % (e.instance, e.context))
+            self.fail(f"The item: \r\n\r\n {e.instance} \r\n\r\n has an issue: \r\n\r\n {e.context}")
 
 
 if __name__ == "__main__":

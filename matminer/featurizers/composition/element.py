@@ -182,7 +182,7 @@ class Stoichiometry(BaseFeaturizer):
         if self.num_atoms:
             labels.append("num atoms")
 
-        if self.p_list != None:
+        if self.p_list is not None:
             for p in self.p_list:
                 labels.append("%d-norm" % p)
 

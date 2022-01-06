@@ -2188,7 +2188,7 @@ charge_states = {
     "W": [2, 3, 4, 5, 6],
 }
 
-##Dictionary of properties
+# Dictionary of properties
 properties = {
     "magn_elem": magn_elem,
     "atom_num": atom_num,

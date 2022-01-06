@@ -83,7 +83,7 @@ class RDFTests(SiteFeaturizerTest):
         grdf.featurize(self.sc, 0)
         self.assertArrayEqual(
             [bin.name() for bin in grdf.bins],
-            ["Gaussian center={} width=1.0".format(i) for i in np.arange(10.0)],
+            [f"Gaussian center={i} width=1.0" for i in np.arange(10.0)],
         )
 
     def test_afs(self):
@@ -146,14 +146,14 @@ class RDFTests(SiteFeaturizerTest):
         afs.featurize(self.sc, 0)
         self.assertArrayEqual(
             [bin.name() for bin in afs.bins],
-            ["Gaussian center={} width=0.5".format(i) for i in np.arange(0, 10, 0.5)],
+            [f"Gaussian center={i} width=0.5" for i in np.arange(0, 10, 0.5)],
         )
 
         afs = AngularFourierSeries.from_preset("histogram")
         afs.featurize(self.sc, 0)
         self.assertArrayEqual(
             [bin.name() for bin in afs.bins],
-            ["Histogram start={} width=0.5".format(i) for i in np.arange(0, 10, 0.5)],
+            [f"Histogram start={i} width=0.5" for i in np.arange(0, 10, 0.5)],
         )
 
 

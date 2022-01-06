@@ -1,14 +1,11 @@
 """
 General methods for computing property statistics from a list of values
 """
-from six import string_types
-
-
 import scipy
 import numpy as np
 
 
-class PropertyStats(object):
+class PropertyStats:
     """This class contains statistical operations that are commonly employed
     when computing features.
 
@@ -266,7 +263,7 @@ class PropertyStats(object):
         Returns: Holder mean
         """
 
-        if isinstance(power, string_types):
+        if isinstance(power, str):
             power = float(power)
 
         if weights is None:
@@ -310,7 +307,7 @@ class PropertyStats(object):
         Args:
             data_lst: (matrix-like) of values
             symm: whether to assume the matrix is symmetric
-            sort: wheter to sort the eigenvalues
+            sort: whether to sort the eigenvalues
         Returns: eigenvalues
         """
         eigs = np.linalg.eigvalsh(data_lst) if symm else np.linalg.eigvals(data_lst)

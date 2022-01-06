@@ -6,7 +6,6 @@ import copy
 
 import ruamel.yaml as yaml
 import numpy as np
-from pymatgen.core import Structure
 from pymatgen.analysis.local_env import (
     LocalStructOrderParams,
     VoronoiNN,
@@ -27,10 +26,9 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies impo
 
 with open(
     os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"),
-    "r",
 ) as f:
     cn_motif_op_params = yaml.safe_load(f)
-with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml"), "r") as f:
+with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml")) as f:
     cn_target_motif_op = yaml.safe_load(f)
 
 
@@ -45,12 +43,12 @@ class AGNIFingerprints(BaseFeaturizer):
     direction-resolved fingerprints.
     Atomic fingerprints describe the local environment of an atom and are
     computed using the function:
-    :math:`A_i(\eta) = \sum\limits_{i \\ne j} e^{-(\\frac{r_{ij}}{\eta})^2} f(r_{ij})`
-    where :math:`i` is the index of the atom, :math:`j` is the index of a neighboring atom, :math:`\eta` is a scaling function,
+    :math:`A_i(\\eta) = \\sum\\limits_{i \\ne j} e^{-(\\frac{r_{ij}}{\\eta})^2} f(r_{ij})`
+    where :math:`i` is the index of the atom, :math:`j` is the index of a neighboring atom, :math:`\\eta` is a scaling function,
     :math:`r_{ij}` is the distance between atoms :math:`i` and :math:`j`, and :math:`f(r)` is a cutoff function where
-    :math:`f(r) = 0.5[\cos(\\frac{\pi r_{ij}}{R_c}) + 1]` if :math:`r < R_c` and :math:`0` otherwise.
+    :math:`f(r) = 0.5[\\cos(\\frac{\\pi r_{ij}}{R_c}) + 1]` if :math:`r < R_c` and :math:`0` otherwise.
     The direction-resolved fingerprints are computed using
-    :math:`V_i^k(\eta) = \sum\limits_{i \\ne j} \\frac{r_{ij}^k}{r_{ij}} e^{-(\\frac{r_{ij}}{\eta})^2} f(r_{ij})`
+    :math:`V_i^k(\\eta) = \\sum\\limits_{i \\ne j} \\frac{r_{ij}^k}{r_{ij}} e^{-(\\frac{r_{ij}}{\\eta})^2} f(r_{ij})`
     where :math:`r_{ij}^k` is the :math:`k^{th}` component of :math:`\\bold{r}_i - \\bold{r}_j`.
     Parameters:
     TODO: Differentiate between different atom types (maybe as another class)
@@ -115,7 +113,7 @@ class AGNIFingerprints(BaseFeaturizer):
                 if d is None:
                     labels.append("AGNI eta=%.2e" % e)
                 else:
-                    labels.append("AGNI dir=%s eta=%.2e" % (d, e))
+                    labels.append(f"AGNI dir={d} eta={e:.2e}")
         return labels
 
     def citations(self):
@@ -222,7 +220,7 @@ class OPSiteFingerprint(BaseFeaturizer):
             neighbors = struct.get_neighbors(s, r)
 
         # Smoothen distance, but use relative distances.
-        dmin = min([n[1] for n in neighbors])
+        dmin = min(n[1] for n in neighbors)
         neigh_dist = [[n[0], n[1] / dmin] for n in neighbors]
 
         neigh_dist_alldrs = {}
@@ -352,7 +350,7 @@ class OPSiteFingerprint(BaseFeaturizer):
         labels = []
         for cn, li in self.cn_target_motif_op.items():
             for e in li:
-                labels.append("{} CN_{}".format(e, cn))
+                labels.append(f"{e} CN_{cn}")
         return labels
 
     def citations(self):
@@ -389,7 +387,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
             **kwargs: other settings to be passed into CrystalNN class
         """
         if preset == "cn":
-            op_types = dict([(k + 1, ["wt"]) for k in range(24)])
+            op_types = {k + 1: ["wt"] for k in range(24)}
             return CrystalNNFingerprint(op_types, **kwargs)
 
         elif preset == "ops":
@@ -523,10 +521,10 @@ class CrystalNNFingerprint(BaseFeaturizer):
             cn = k + 1
             if cn in list(self.ops.keys()):
                 for op in self.op_types[cn]:
-                    labels.append("{} CN_{}".format(op, cn))
+                    labels.append(f"{op} CN_{cn}")
         if self.chem_info is not None:
             for prop in self.chem_props:
-                labels.append("{} local diff".format(prop))
+                labels.append(f"{prop} local diff")
         return labels
 
     def citations(self):

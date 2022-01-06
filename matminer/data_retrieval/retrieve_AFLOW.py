@@ -62,9 +62,9 @@ class AFLOWDataRetrieval(BaseDataRetrieval):
                     {'auid': {'$not': {'$in': ['aflow:a17a2da2f3d3953a']}}}
             properties: (list of str) Properties returned  in the DataFrame.
                 See the api link for a list of supported properties.
-            files: (list of str) For convienience, specific files may also be
+            files: (list of str) For convenience, specific files may also be
                 downloaded as pymatgen objects. Each file download is collected
-                by a seperate HTTP request (read slow). The default behavior is
+                by a separate HTTP request (read slow). The default behavior is
                 to return none of these objects. Supported files:
                     "prototype_structure" - the prototype structure
                     "input_structure" - the input structure
@@ -202,12 +202,12 @@ class RetrievalQuery(Query):
         query._add_filters(criteria)
 
         # determines properties returned by query
-        query.select(*[getattr(K, i) for i in properties])
+        query.select(*(getattr(K, i) for i in properties))
 
         # suppresses properties that may have been included as search criteria
         # but are not requested properties, which the user wants returned
         excluded_keywords = set(criteria.keys()) - set(properties)
-        query.exclude(*[getattr(K, i) for i in excluded_keywords])
+        query.exclude(*(getattr(K, i) for i in excluded_keywords))
 
         return query
 
@@ -236,13 +236,13 @@ class RetrievalQuery(Query):
                         )
 
                     elif inner_key == "$gt":
-                        self.filter((keyword > inner_value))
+                        self.filter(keyword > inner_value)
 
                     elif inner_key == "$lt":
-                        self.filter((keyword < inner_value))
+                        self.filter(keyword < inner_value)
 
                     elif inner_key == "$not":
-                        self.filter((~(keyword == inner_value)))
+                        self.filter(~(keyword == inner_value))
 
                     else:
                         raise Exception("Only $in, $gt, $lt, and $not are supported!")

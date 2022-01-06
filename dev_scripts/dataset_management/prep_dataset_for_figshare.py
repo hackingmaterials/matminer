@@ -198,10 +198,8 @@ def _preprocess_brgoch_superhard_training(file_path):
 
         # Throw out entry if no hits on MP
         if len(mp_query) == 0:
-            error_msg = "\nNo valid materials found for entry with formula " \
-                        "{} and space group {}. Data point will be marked as " \
-                        "suspect\n".format(material['formula'],
-                                           material['space_group_number'])
+            error_msg = f"\nNo valid materials found for entry with formula {material['space_group_number']} " \
+                        f"and space group {material['formula']}. Data point will be marked as suspect\n"
             logging.warning(error_msg)
             df.loc[material_index, "suspect_value"] = True
 

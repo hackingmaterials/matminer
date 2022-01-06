@@ -48,7 +48,7 @@ class CohesiveEnergy(BaseFeaturizer):
                 most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
                 formation_energy_per_atom = most_stable_entry["formation_energy_per_atom"]
             else:
-                raise ValueError("No structure found in MP for {}".format(comp))
+                raise ValueError(f"No structure found in MP for {comp}")
 
         # Subtract elemental cohesive energies from formation energy
         cohesive_energy = -formation_energy_per_atom * comp.num_atoms
@@ -71,7 +71,7 @@ class CohesiveEnergy(BaseFeaturizer):
         # We include both citations.
         return [
             "@misc{, title = {{Knowledgedoor Cohesive energy handbook}}, "
-            "url = {http://www.knowledgedoor.com/2/elements{\_}handbook/cohesive{\_}energy.html}}",
+            r"url = {http://www.knowledgedoor.com/2/elements{\_}handbook/cohesive{\_}energy.html}}",
             "@book{Kittel, author = {Kittel, C}, isbn = {978-0-471-41526-8}, "
             "publisher = {Wiley}, title = {{Introduction to Solid State "
             "Physics, 8th Edition}}, year = {2005}}",
@@ -104,14 +104,14 @@ class CohesiveEnergyMP(BaseFeaturizer):
                 most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
                 try:
                     return [mpr.get_cohesive_energy(most_stable_entry["material_id"], per_atom=True)]
-                except:
+                except Exception:
                     raise ValueError(
                         "No cohesive energy can be determined for material_id: {}".format(
                             most_stable_entry["material_id"]
                         )
                     )
             else:
-                raise ValueError("No structure found in MP for {}".format(comp))
+                raise ValueError(f"No structure found in MP for {comp}")
 
     def feature_labels(self):
         return ["cohesive energy (MP)"]
