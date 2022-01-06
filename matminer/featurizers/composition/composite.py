@@ -2,16 +2,16 @@
 Composition featurizers for composite features containing more than 1 category of general-purpose data.
 """
 
+from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.composition.element import ElementFraction
 from matminer.featurizers.composition.orbital import ValenceOrbital
-from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import (
     DemlData,
     MagpieData,
-    PymatgenData,
     MatscholarElementData,
     MEGNetElementData,
+    PymatgenData,
 )
 
 

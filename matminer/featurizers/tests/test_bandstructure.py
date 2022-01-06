@@ -1,17 +1,18 @@
 import json
 import math
 import os
-import pandas as pd
 import unittest
 
-from matminer.featurizers.bandstructure import BandFeaturizer, BranchPointEnergy
+import pandas as pd
 from pymatgen.core import Structure
 from pymatgen.electronic_structure.bandstructure import (
-    BandStructureSymmLine,
     BandStructure,
+    BandStructureSymmLine,
 )
 from pymatgen.symmetry.bandstructure import HighSymmKpath
 from pymatgen.util.testing import PymatgenTest
+
+from matminer.featurizers.bandstructure import BandFeaturizer, BranchPointEnergy
 
 test_dir = os.path.join(os.path.dirname(__file__))
 

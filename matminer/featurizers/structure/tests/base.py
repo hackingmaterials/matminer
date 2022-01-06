@@ -1,6 +1,6 @@
 import copy
 
-from pymatgen.core import Structure, Lattice, Species
+from pymatgen.core import Lattice, Species, Structure
 from pymatgen.util.testing import PymatgenTest
 
 

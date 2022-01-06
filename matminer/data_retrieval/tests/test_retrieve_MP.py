@@ -1,12 +1,13 @@
 import unittest
 
-from matminer.data_retrieval.retrieve_MP import MPDataRetrieval
 from pymatgen.core import SETTINGS
 from pymatgen.electronic_structure.bandstructure import (
-    BandStructureSymmLine,
     BandStructure,
+    BandStructureSymmLine,
 )
 from pymatgen.electronic_structure.dos import CompleteDos
+
+from matminer.data_retrieval.retrieve_MP import MPDataRetrieval
 
 
 @unittest.skipIf(not SETTINGS.get("PMG_MAPI_KEY", ""), "PMG_MAPI_KEY not in environment variables.")

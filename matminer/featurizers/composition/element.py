@@ -5,10 +5,7 @@ Composition featurizers for elemental data and stoichiometry.
 from pymatgen.core import Element
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.utils.data import (
-    DemlData,
-    MagpieData,
-)
+from matminer.utils.data import DemlData, MagpieData
 
 
 class ElementFraction(BaseFeaturizer):

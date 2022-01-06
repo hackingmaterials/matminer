@@ -2,9 +2,9 @@
 Site featurizers requiring external libraries for core functionality.
 """
 from monty.dev import requires
+from pymatgen.core import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
 from sklearn.exceptions import NotFittedError
-from pymatgen.core import Structure
 
 from matminer.featurizers.base import BaseFeaturizer
 

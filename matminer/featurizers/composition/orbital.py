@@ -10,9 +10,7 @@ from pymatgen.core.molecular_orbitals import MolecularOrbitals
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
-from matminer.utils.data import (
-    MagpieData,
-)
+from matminer.utils.data import MagpieData
 
 
 class AtomicOrbitals(BaseFeaturizer):

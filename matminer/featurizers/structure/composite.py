@@ -1,14 +1,14 @@
 """
 Structure featurizers producing more than one kind of structure feature data.
 """
-import os
-import math
-import json
 import itertools
+import json
+import math
+import os
 from operator import itemgetter
 
 import numpy as np
-from pymatgen.core import Structure, Lattice
+from pymatgen.core import Lattice, Structure
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.structure.order import DensityFeatures

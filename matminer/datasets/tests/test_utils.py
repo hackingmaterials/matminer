@@ -1,15 +1,16 @@
-import unittest
 import os
+import unittest
+
 import pandas as pd
 
 from matminer.datasets.tests.base import DatasetTest
 from matminer.datasets.utils import (
-    _load_dataset_dict,
-    _get_file_sha256_hash,
     _fetch_external_dataset,
-    _validate_dataset,
     _get_data_home,
+    _get_file_sha256_hash,
+    _load_dataset_dict,
     _read_dataframe_from_file,
+    _validate_dataset,
 )
 
 

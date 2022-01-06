@@ -4,11 +4,11 @@ Structure featurizers generating a matrix for each structure.
 Most matrix structure featurizers contain the ability to flatten matrices to be dataframe-friendly.
 """
 import numpy as np
+import pymatgen.analysis.local_env as pmg_le
 import scipy.constants as const
-from sklearn.exceptions import NotFittedError
 from pymatgen.core.periodic_table import Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-import pymatgen.analysis.local_env as pmg_le
+from sklearn.exceptions import NotFittedError
 
 from matminer.featurizers.base import BaseFeaturizer
 

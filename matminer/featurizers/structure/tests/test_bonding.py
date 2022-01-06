@@ -1,19 +1,19 @@
 import copy
 import unittest
+
 import numpy as np
 import pandas as pd
+from pymatgen.core import Lattice, Structure
 from sklearn.exceptions import NotFittedError
 
-from pymatgen.core import Structure, Lattice
-
 from matminer.featurizers.structure.bonding import (
-    MinimumRelativeDistances,
-    BondFractions,
     BagofBonds,
-    StructuralHeterogeneity,
+    BondFractions,
     GlobalInstabilityIndex,
+    MinimumRelativeDistances,
+    StructuralHeterogeneity,
 )
-from matminer.featurizers.structure.matrix import SineCoulombMatrix, CoulombMatrix
+from matminer.featurizers.structure.matrix import CoulombMatrix, SineCoulombMatrix
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 

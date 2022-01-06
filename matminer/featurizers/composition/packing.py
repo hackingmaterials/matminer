@@ -10,11 +10,9 @@ from pymatgen.core.composition import Composition
 from sklearn.neighbors import NearestNeighbors
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.utils.stats import PropertyStats
-from matminer.utils.data import (
-    MagpieData,
-)
 from matminer.featurizers.composition.element import ElementFraction
+from matminer.featurizers.utils.stats import PropertyStats
+from matminer.utils.data import MagpieData
 
 
 class AtomicPackingEfficiency(BaseFeaturizer):

@@ -1,8 +1,10 @@
-import pandas as pd
-from itertools import groupby
-from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
-from tqdm import tqdm
 from functools import reduce
+from itertools import groupby
+
+import pandas as pd
+from tqdm import tqdm
+
+from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 
 __author__ = "Anubhav Jain <ajain@lbl.gov>"
 

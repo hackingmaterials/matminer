@@ -1,7 +1,7 @@
 import pandas as pd
-from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
-
 from mdf_forge.forge import Forge
+
+from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from matminer.utils.flatten_dict import flatten_dict
 
 __author__ = "Joseph Montoya <montoyjh@lbl.gov>"

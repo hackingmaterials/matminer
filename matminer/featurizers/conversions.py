@@ -10,10 +10,9 @@ transformation or as part of a Pipeline.
 import json
 
 from monty.json import MontyDecoder
-
-from pymatgen.ext.matproj import MPRester
-from pymatgen.core.structure import IStructure
 from pymatgen.core.composition import Composition
+from pymatgen.core.structure import IStructure
+from pymatgen.ext.matproj import MPRester
 from pymatgen.io.ase import AseAtomsAdaptor
 
 from matminer.featurizers.base import BaseFeaturizer

@@ -1,9 +1,13 @@
 import unittest
 
-from pymongo import MongoClient
 from pymatgen.util.testing import PymatgenTest
+from pymongo import MongoClient
 
-from matminer.data_retrieval.retrieve_MongoDB import clean_projection, remove_ints, MongoDataRetrieval
+from matminer.data_retrieval.retrieve_MongoDB import (
+    MongoDataRetrieval,
+    clean_projection,
+    remove_ints,
+)
 from matminer.data_retrieval.tests.base import on_ci
 
 
