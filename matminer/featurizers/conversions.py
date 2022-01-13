@@ -403,13 +403,7 @@ class StructureToOxidStructure(ConversionFeaturizer):
             `pymatgen.io.structure.Structure.add_oxidation_state_by_guess()`.
     """
 
-    def __init__(
-            self,
-            target_col_id="structure_oxid",
-            overwrite_data=False,
-            return_original_on_error=False,
-            **kwargs
-    ):
+    def __init__(self, target_col_id="structure_oxid", overwrite_data=False, return_original_on_error=False, **kwargs):
         super().__init__(target_col_id, overwrite_data)
         self.oxi_guess_params = kwargs
 
