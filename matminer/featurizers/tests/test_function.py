@@ -71,7 +71,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
         # Test latexification
         ff = FunctionFeaturizer(latexify_labels=True)
         new_df = ff.fit_featurize_dataframe(self.test_df, "a", inplace=False)
-        self.assertTrue("\sqrt{a}" in new_df.columns)
+        self.assertTrue(r"\sqrt{a}" in new_df.columns)
         # Ensure error is thrown with no labels
         ff = FunctionFeaturizer(latexify_labels=False)
         self.assertRaises(NotFittedError, ff.feature_labels)

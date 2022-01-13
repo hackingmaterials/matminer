@@ -214,11 +214,11 @@ class BandFeaturizer(BaseFeaturizer):
         feat["is_gap_direct"] = band_gap["direct"]
         feat["direct_gap"] = min(cvd["n"]["Es"] - cvd["p"]["Es"])
         for tp in ["p", "n"]:
-            feat["{}_ex1_norm".format(tp)] = norm(cvd[tp]["k"])
+            feat[f"{tp}_ex1_norm"] = norm(cvd[tp]["k"])
             if bs.structure:
-                feat["{}_ex1_degen".format(tp)] = bs.get_kpoint_degeneracy(cvd[tp]["k"])
+                feat[f"{tp}_ex1_degen"] = bs.get_kpoint_degeneracy(cvd[tp]["k"])
             else:
-                feat["{}_ex1_degen".format(tp)] = float("NaN")
+                feat[f"{tp}_ex1_degen"] = float("NaN")
 
         if self.kpoints:
             obands = {"n": [], "p": []}
@@ -242,7 +242,7 @@ class BandFeaturizer(BaseFeaturizer):
                     if tp == "p":
                         sorted_band = sorted_band[::-1]
                     for ib in range(self.nbands):
-                        k_name = "{}_{};{};{}_en{}".format(tp, k[0], k[1], k[2], ib + 1)
+                        k_name = f"{tp}_{k[0]};{k[1]};{k[2]}_en{ib + 1}"
                         try:
                             feat[k_name] = sorted_band[ib]
                         except IndexError:
@@ -263,7 +263,7 @@ class BandFeaturizer(BaseFeaturizer):
             for tp in ["p", "n"]:
                 for k in self.kpoints:
                     for ib in range(self.nbands):
-                        labels.append("{}_{};{};{}_en{}".format(tp, k[0], k[1], k[2], ib + 1))
+                        labels.append(f"{tp}_{k[0]};{k[1]};{k[2]}_en{ib + 1}")
         return labels
 
     @staticmethod

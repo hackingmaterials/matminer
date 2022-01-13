@@ -70,7 +70,7 @@ def _validate_dataset(data_path, url=None, file_hash=None, download_if_missing=T
 
         # Ensure proper arguments for download
         if not download_if_missing:
-            raise IOError("Data not found and download_if_missing set to False")
+            raise OSError("Data not found and download_if_missing set to False")
         elif url is None:
             raise ValueError("To download an external dataset, the url " "metadata must be provided")
 
@@ -78,7 +78,7 @@ def _validate_dataset(data_path, url=None, file_hash=None, download_if_missing=T
         data_home = os.path.dirname(data_path)
 
         if not os.path.exists(data_home):
-            print("Making dataset storage folder at {}".format(data_home), flush=True)
+            print(f"Making dataset storage folder at {data_home}", flush=True)
             os.makedirs(data_home)
 
         _fetch_external_dataset(url, data_path)
@@ -105,7 +105,7 @@ def _fetch_external_dataset(url, file_path):
     """
 
     # Fetch data from given url
-    msg = "Fetching {} from {} to {}".format(os.path.basename(file_path), url, file_path)
+    msg = f"Fetching {os.path.basename(file_path)} from {url} to {file_path}"
     print(msg, flush=True)
 
     r = requests.get(url, stream=True)
@@ -167,6 +167,6 @@ def _read_dataframe_from_file(file_path, **kwargs):
     elif file_path.endswith(".json"):
         df = pd.read_json(file_path, **kwargs)
     else:
-        raise ValueError("File type of {} unsupported".format(file_path))
+        raise ValueError(f"File type of {file_path} unsupported")
 
     return df

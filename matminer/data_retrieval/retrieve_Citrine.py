@@ -61,7 +61,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
                 """Citrine API key not found.
 
             You need to get an API key from Citrination, and either supply it as an argument to 
-            this class or set it as the value of the CITRINATION_API_KEY enviornmental variable
+            this class or set it as the value of the CITRINATION_API_KEY environment variable
 
             See https://citrineinformatics.github.io/api-documentation/quickstart/index.html
             for details on how to get an API key"""
@@ -197,8 +197,8 @@ class CitrineDataRetrieval(BaseDataRetrieval):
             if col in df:
                 df = df.drop(col, axis=1)
         if print_properties_options:
-            print("all available fields:\n{}".format(list(set(all_fields))))
-            print("\nsuggested common fields:\n{}".format(optcomcols))
+            print(f"all available fields:\n{list(set(all_fields))}")
+            print(f"\nsuggested common fields:\n{optcomcols}")
         return df
 
     def get_data(

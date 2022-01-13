@@ -20,19 +20,19 @@ def initialize_pairwise_function(name, **options):
     # Get the desired class
     try:
         cls = globals()[name]
-    except:
-        raise ValueError("No such class: {}".format(name))
+    except Exception:
+        raise ValueError(f"No such class: {name}")
 
     # Instantiate it
     output = cls(**options)
 
     # Check types
     if not isinstance(output, AbstractPairwise):
-        raise ValueError("Not a pairwise measure: {}".format(name))
+        raise ValueError(f"Not a pairwise measure: {name}")
     return output
 
 
-class AbstractPairwise(object):
+class AbstractPairwise:
     """Abstract class for pairwise functions used in Generalized Radial Distribution Function"""
 
     def name(self):
@@ -42,7 +42,7 @@ class AbstractPairwise(object):
             (string) Label for the function
         """
         params = sorted(self.__dict__.items(), key=lambda x: x[0])
-        return "{} {}".format(self.__class__.__name__, " ".join("{}={}".format(k, v) for k, v in params))
+        return "{} {}".format(self.__class__.__name__, " ".join(f"{k}={v}" for k, v in params))
 
     def __call__(self, r_ij):
         """Compute the pairwise sum for a series of radii

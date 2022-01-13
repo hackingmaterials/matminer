@@ -190,7 +190,7 @@ class BondFractions(BaseFeaturizer):
         """
         els = s.composition.elements
         het_bonds = list(itertools.combinations(els, 2))
-        het_bonds = [tuple(sorted([str(i) for i in j])) for j in het_bonds]
+        het_bonds = [tuple(sorted(str(i) for i in j)) for j in het_bonds]
         hom_bonds = [(str(el), str(el)) for el in els]
         bond_types = [k[0] + self.token + k[1] for k in het_bonds + hom_bonds]
         return sorted(bond_types)
@@ -313,7 +313,7 @@ class BondFractions(BaseFeaturizer):
             single = False
             try:
                 bonds = list(bonds)
-            except:
+            except Exception:
                 # In the case of a series object
                 bonds = bonds.tolist()
 
@@ -325,7 +325,7 @@ class BondFractions(BaseFeaturizer):
                     "for example Cl - Cs"
                 )
             if self.token not in bond:
-                raise ValueError('Token "{}" not found in bond: {}'.format(self.token, bond))
+                raise ValueError(f'Token "{self.token}" not found in bond: {bond}')
             bond = bond.replace(" bond frac.", "")
             species = sorted(bond.split(self.token))
 
@@ -411,13 +411,13 @@ class BondFractions(BaseFeaturizer):
 
                     # The distance between bonds is euclidean. To get a good
                     # measure of the coordinate between mendeleev numbers for
-                    # each specie, we use the minumum difference. ie, for
+                    # each specie, we use the minimum difference. ie, for
                     # finding the distance between Na-O and O-Li, we would
                     # not want the distance between (Na and O) and (O and Li),
                     # we want the distance between (Na and Li) and (O and O).
 
-                    u_mends = sorted([j.element.mendeleev_no for j in abss])
-                    l_mends = sorted([j.element.mendeleev_no for j in lbs])
+                    u_mends = sorted(j.element.mendeleev_no for j in abss)
+                    l_mends = sorted(j.element.mendeleev_no for j in lbs)
 
                     d0 = u_mends[0] - l_mends[0]
                     d1 = u_mends[1] - l_mends[1]
@@ -845,7 +845,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
                         an_val=site_val,
                     )
                     bvs -= self.compute_bv(params, dist)
-            except:
+            except Exception:
                 raise ValueError(
                     "BV parameters for {} with valence {} and {} {} not "
                     "found in table"
@@ -947,7 +947,7 @@ class GlobalInstabilityIndex(BaseFeaturizer):
             for site in struct:
                 nn = struct.get_neighbors(site, r=cutoff)
                 bvs = bond_valence.calculate_bv_sum_unordered(site, nn, scale_factor=scale_factor)
-                min_diff = min([bvs - spec.oxi_state for spec in site.species.elements])
+                min_diff = min(bvs - spec.oxi_state for spec in site.species.elements)
                 deviations.append(min_diff)
             gii = np.linalg.norm(deviations) / np.sqrt(len(deviations))
         return gii
@@ -1154,7 +1154,7 @@ class MinimumRelativeDistances(BaseFeaturizer):
         Returns:
             self
         """
-        self._max_sites = max([len(s.sites) for s in X])
+        self._max_sites = max(len(s.sites) for s in X)
         return self
 
     def featurize(self, s):

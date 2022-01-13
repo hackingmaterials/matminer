@@ -72,7 +72,7 @@ class SiteDOS(BaseFeaturizer):
         labels = []
         for edge in ["cbm", "vbm"]:
             for score in ["s", "p", "d", "f", "total"]:
-                labels.append("{}_{}".format(edge, score))
+                labels.append(f"{edge}_{score}")
         return labels
 
     def citations(self):
@@ -147,23 +147,23 @@ class DOSFeaturizer(BaseFeaturizer):
 
         feat = OrderedDict()
         for ex in ["cbm", "vbm"]:
-            orbscores.sort(key=lambda x: x["{}_score".format(ex)], reverse=True)
-            scores = np.array([s["{}_score".format(ex)] for s in orbscores])
-            feat["{}_hybridization".format(ex)] = -np.sum(scores * np.log(scores + 1e-10))  # avoid log(0)
+            orbscores.sort(key=lambda x: x[f"{ex}_score"], reverse=True)
+            scores = np.array([s[f"{ex}_score"] for s in orbscores])
+            feat[f"{ex}_hybridization"] = -np.sum(scores * np.log(scores + 1e-10))  # avoid log(0)
 
             i = 0
             while i < self.contributors:
                 sd = orbscores[i]
                 if i < len(orbscores):
                     for p in ["character", "specie"]:
-                        feat["{}_{}_{}".format(ex, p, i + 1)] = sd[p]
-                    feat["{}_location_{}".format(ex, i + 1)] = "{};{};{}".format(
+                        feat[f"{ex}_{p}_{i + 1}"] = sd[p]
+                    feat[f"{ex}_location_{i + 1}"] = "{};{};{}".format(
                         sd["location"][0], sd["location"][1], sd["location"][2]
                     )
-                    feat["{}_score_{}".format(ex, i + 1)] = float(sd["{}_score".format(ex)])
+                    feat[f"{ex}_score_{i + 1}"] = float(sd[f"{ex}_score"])
                 else:
                     for p in ["character", "specie", "location", "score"]:
-                        feat["{}_{}_{}".format(ex, p, i + 1)] = float("NaN")
+                        feat[f"{ex}_{p}_{i + 1}"] = float("NaN")
                 i += 1
 
         return list(feat.values())
@@ -175,11 +175,11 @@ class DOSFeaturizer(BaseFeaturizer):
         """
         labels = []
         for ex in ["cbm", "vbm"]:
-            labels.append("{}_hybridization".format(ex))
+            labels.append(f"{ex}_hybridization")
             i = 0
             while i < self.contributors:
                 for p in ["character", "specie", "location", "score"]:
-                    labels.append("{}_{}_{}".format(ex, p, i + 1))
+                    labels.append(f"{ex}_{p}_{i + 1}")
                 i += 1
 
         return labels
@@ -263,7 +263,7 @@ class DopingFermi(BaseFeaturizer):
                 elif self.eref == "band center":
                     eref = self.BC.featurize(dos.structure.composition)[0]
                 else:
-                    raise ValueError('Unsupported "eref": {}'.format(self.eref))
+                    raise ValueError(f'Unsupported "eref": {self.eref}')
             else:
                 eref = self.eref
             if not self.return_eref:
@@ -281,9 +281,9 @@ class DopingFermi(BaseFeaturizer):
         """
         labels = []
         for c in self.dopings:
-            labels.append("fermi_c{}T{}".format(c, self.T))
+            labels.append(f"fermi_c{c}T{self.T}")
         if self.return_eref:
-            labels.append("{} eref".format(self.eref))
+            labels.append(f"{self.eref} eref")
         return labels
 
     def implementors(self):
@@ -354,26 +354,26 @@ class Hybridization(BaseFeaturizer):
         feat = OrderedDict()
         for ex in ["cbm", "vbm"]:
             for orbital in ["s", "p", "d", "f"]:
-                feat["{}_{}".format(ex, orbital)] = 0.0
+                feat[f"{ex}_{orbital}"] = 0.0
                 for specie in self.species:
-                    feat["{}_{}_{}".format(ex, specie, orbital)] = 0.0
+                    feat[f"{ex}_{specie}_{orbital}"] = 0.0
             for hybrid in ["sp", "sd", "sf", "pd", "pf", "df"]:
-                feat["{}_{}".format(ex, hybrid)] = 0.0
+                feat[f"{ex}_{hybrid}"] = 0.0
 
         for contrib in orbscores:
             character = contrib["character"]
-            feat["cbm_{}".format(character)] += contrib["cbm_score"]
-            feat["vbm_{}".format(character)] += contrib["vbm_score"]
+            feat[f"cbm_{character}"] += contrib["cbm_score"]
+            feat[f"vbm_{character}"] += contrib["vbm_score"]
             for specie in self.species:
                 if contrib["specie"] == specie:
-                    feat["cbm_{}_{}".format(specie, character)] += contrib["cbm_score"]
-                    feat["vbm_{}_{}".format(specie, character)] += contrib["vbm_score"]
+                    feat[f"cbm_{specie}_{character}"] += contrib["cbm_score"]
+                    feat[f"vbm_{specie}_{character}"] += contrib["vbm_score"]
 
         for ex in ["cbm", "vbm"]:
             for hybrid in ["sp", "sd", "sf", "pd", "pf", "df"]:
-                orb1 = feat["{}_{}".format(ex, hybrid[0])]
-                orb2 = feat["{}_{}".format(ex, hybrid[1])]
-                feat["{}_{}".format(ex, hybrid)] = (orb1 * orb2) * 4.0  # 4x so max=1.0
+                orb1 = feat[f"{ex}_{hybrid[0]}"]
+                orb2 = feat[f"{ex}_{hybrid[1]}"]
+                feat[f"{ex}_{hybrid}"] = (orb1 * orb2) * 4.0  # 4x so max=1.0
         return list(feat.values())
 
     def feature_labels(self):
@@ -386,11 +386,11 @@ class Hybridization(BaseFeaturizer):
         labels = []
         for ex in ["cbm", "vbm"]:
             for orbital in ["s", "p", "d", "f"]:
-                labels.append("{}_{}".format(ex, orbital))
+                labels.append(f"{ex}_{orbital}")
                 for specie in self.species:
-                    labels.append("{}_{}_{}".format(ex, specie, orbital))
+                    labels.append(f"{ex}_{specie}_{orbital}")
             for hybrid in ["sp", "sd", "sf", "pd", "pf", "df"]:
-                labels.append("{}_{}".format(ex, hybrid))
+                labels.append(f"{ex}_{hybrid}")
         return labels
 
     def citations(self):
@@ -548,8 +548,8 @@ def get_cbm_vbm_scores(dos, decay_length, sampling_resolution, gaussian_smear):
             orbital_scores.append(orbital_score)
 
     # normalize by total contribution
-    total_cbm = sum([orbital_scores[i]["cbm_score"] for i in range(0, len(orbital_scores))])
-    total_vbm = sum([orbital_scores[i]["vbm_score"] for i in range(0, len(orbital_scores))])
+    total_cbm = sum(orbital_scores[i]["cbm_score"] for i in range(0, len(orbital_scores)))
+    total_vbm = sum(orbital_scores[i]["vbm_score"] for i in range(0, len(orbital_scores)))
     for orbital in orbital_scores:
         orbital["cbm_score"] /= total_cbm
         orbital["vbm_score"] /= total_vbm

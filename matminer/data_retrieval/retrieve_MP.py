@@ -119,7 +119,7 @@ class MPDataRetrieval(BaseDataRetrieval):
             If the target property is not available for a certain material_id,
             NaN is returned.
         """
-        method = getattr(self.mprester, "get_{}_by_material_id".format(prop))
+        method = getattr(self.mprester, f"get_{prop}_by_material_id")
         props = []
         for material_id in material_id_list:
             try:

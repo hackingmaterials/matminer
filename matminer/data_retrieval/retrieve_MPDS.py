@@ -4,18 +4,15 @@ This retrieval class is to be deprecated in favor of the *mpds_client* library
 `pip install mpds_client` (https://pypi.org/project/mpds-client),
 which is fully compatible with matminer
 """
-from __future__ import division
 
 import os
 import sys
 import time
 import warnings
 
-import six
+import httplib2
 from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from six.moves.urllib_parse import urlencode
-
-import httplib2
 
 try:
     import ujson as json
@@ -23,9 +20,8 @@ except ImportError:
     import json
 
 import pandas as pd
-
-from pymatgen.core.structure import Structure
 from pymatgen.core.lattice import Lattice
+from pymatgen.core.structure import Structure
 
 try:
     import jmespath
@@ -148,7 +144,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
             }
         try:
             content = json.loads(content)
-        except:
+        except Exception:
             return {"error": "Unreadable data obtained"}
         if content.get("error"):
             return {"error": content["error"]}
@@ -234,7 +230,7 @@ class MPDSDataRetrieval(BaseDataRetrieval):
         counter, hits_count = 0, 0
         fields = (
             {
-                key: [jmespath.compile(item) if isinstance(item, six.string_types) else item() for item in value]
+                key: [jmespath.compile(item) if isinstance(item, str) else item() for item in value]
                 for key, value in fields.items()
             }
             if fields

@@ -81,9 +81,9 @@ class ConversionFeaturizer(BaseFeaturizer):
         target = self._target_col_id
         if isinstance(target, str) and target[0] == "_":
             if "multiindex" in kwargs and kwargs["multiindex"]:
-                self._target_col_id = "{}_{}".format(col_id[-1], target[1:])
+                self._target_col_id = f"{col_id[-1]}_{target[1:]}"
             else:
-                self._target_col_id = "{}_{}".format(col_id, target[1:])
+                self._target_col_id = f"{col_id}_{target[1:]}"
         elif target is None:
             self._target_col_id = col_id
 

@@ -176,7 +176,7 @@ def generate_mp(max_nsites=None, properties=None, write_to_csv=False,
         df = convert_to_oxide_structure(df)
         df = convert_to_oxide_composition(df)
 
-    tqdm.write("DataFrame with {} entries created".format(len(df)))
+    tqdm.write(f"DataFrame with {len(df)} entries created")
 
     # Write data out to file if user so chooses
     if write_to_csv:
@@ -251,16 +251,12 @@ def generate_elastic_tensor(write_to_csv=False, write_to_compressed_json=False,
                        'pretty_formula': 'composition'},
               index=str, inplace=True)
 
-    tqdm.write("There are {} elastic entries on MP".format(
-        df['K_VRH'].count()
-    ))
+    tqdm.write(f"There are {df['K_VRH'].count()} elastic entries on MP")
 
     df = df[~(df["elasticity.warnings"].apply(bool))]
     df = df.drop(["elasticity.warnings"], axis=1)
 
-    tqdm.write("There are {} elastic entries on MP with no warnings".format(
-        df['K_VRH'].count()
-    ))
+    tqdm.write(f"There are {df['K_VRH'].count()} elastic entries on MP with no warnings")
 
     print(df.columns)
 

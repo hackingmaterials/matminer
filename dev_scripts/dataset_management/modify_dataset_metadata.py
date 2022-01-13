@@ -84,9 +84,7 @@ def generate_new_dataset(dataset):
             map(lambda x: not x, [value for value in current_entry.values()])))
 
         if needed_attribs:
-            print("Still needed elements are: {}".format(
-                ", ".join(needed_attribs)
-            ))
+            print(f"Still needed elements are: {', '.join(needed_attribs)}")
         else:
             end_choice = input("All attributes filled, "
                                "would you like to finish (Y/n)").strip().lower()
@@ -193,9 +191,7 @@ if __name__ == '__main__':
             pprint(_temp_dataset, width=150)
         # Remove a dataset
         elif command == "2":
-            print("Current datasets are: {}".format(
-                ", ".join([thing for thing in _temp_dataset.keys()])
-            ))
+            print(f"Current datasets are: {', '.join([thing for thing in _temp_dataset.keys()])}")
             print("What would you like to remove? (hit return to cancel):")
             removal_dataset = input(">>> ")
             if removal_dataset and removal_dataset in _temp_dataset:

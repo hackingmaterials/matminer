@@ -2,19 +2,19 @@
 
 import os
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Requirements
 reqs_file = os.path.join(module_dir, "requirements.txt")
-with open(reqs_file, "r") as f:
+with open(reqs_file) as f:
     reqs_raw = f.read()
 reqs_list = [r.replace("==", ">=") for r in reqs_raw.split("\n")]
 
 # Optional requirements
 extras_file = os.path.join(module_dir, "requirements-optional.txt")
-with open(extras_file, "r") as f:
+with open(extras_file) as f:
     extras_raw = f.read()
 extras_raw = [r for r in extras_raw.split("##") if r.strip() and "#" not in r]
 extras_dict = {}

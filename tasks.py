@@ -1,4 +1,3 @@
-# coding: utf-8
 # Copyright (c) Pymatgen Development Team.
 # Distributed under the terms of the MIT License.
 
@@ -43,7 +42,7 @@ def update_doc(ctx):
     make_doc(ctx)
     with cd("docs"):
         ctx.run("git add .")
-        ctx.run("git commit -a -m \"Update to v{}\"".format(__version__))
+        ctx.run(f"git commit -a -m \"Update to v{__version__}\"")
         ctx.run("git push")
 
 @task

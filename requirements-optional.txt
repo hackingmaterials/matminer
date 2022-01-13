@@ -5,16 +5,16 @@
 # Generally, don't mess with this file unless you know what you are doing.
 
 ## MPDS
-ujson==4.2.0
+ujson==4.3.0
 jmespath==0.10.0
 httplib2==0.20.2
-ase==3.22.0
+ase==3.22.1
 
 ## dscribe
 dscribe==1.2.0
 
 ## MDF-forge
-mdf-forge==0.7.6
+mdf-forge==0.7.7
 
 ## AFLOW
 aflow==0.0.11
