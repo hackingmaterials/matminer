@@ -5,7 +5,7 @@
 # Generally, don't mess with this file unless you know what you are doing.
 
 ## MPDS
-ujson==4.3.0
+ujson==5.1.0
 jmespath==0.10.0
 httplib2==0.20.2
 ase==3.22.1
