@@ -945,7 +945,7 @@
       "hardness": "Vicker's load-dependent hardness, in GPa.",
       "load": "Applied load, in N."
     },
-    "description": "Dataset of 1061 experimentally measured load-dependent Vicker's hardness measurements. Multiple measurements may correspond to one composition.",
+    "description": "Dataset of 1061 experimentally measured load-dependent Vicker's hardness measurements. Multiple measurements may correspond to one composition. Collated by Zhang et al.",
     "file_type": "json.gz",
     "num_entries": 1061,
     "reference": "https://doi.org/10.1002/adma.202005112",
