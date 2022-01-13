@@ -152,7 +152,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
 
     @property
     def chunksize(self):
-        return self._chunksize if hasattr(self, "_chunksize") else None
+        return self._chunksize if hasattr(self, "_chunksize") else 10
 
     def precheck_dataframe(self, df, col_id, return_frac=True, inplace=False) -> Union[float, pd.DataFrame]:
         """
@@ -461,7 +461,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
                     return_errors=return_errors,
                     pbar=pbar,
                 )
-            with Pool(self.n_jobs) as p:
+            with Pool(self.n_jobs, maxtasksperchild=1) as p:
                 func = partial(
                     self.featurize_wrapper,
                     return_errors=return_errors,
