@@ -1,13 +1,13 @@
-import unittest
 import os
+import unittest
 
-import requests
 import numpy as np
-from pandas.api.types import is_numeric_dtype, is_object_dtype, is_bool_dtype
-from pymatgen.core.structure import Structure, Composition
+import requests
+from pandas.api.types import is_bool_dtype, is_numeric_dtype, is_object_dtype
+from pymatgen.core.structure import Composition, Structure
 
-from matminer.datasets.tests.base import DatasetTest, do_complete_test
 from matminer.datasets.dataset_retrieval import load_dataset
+from matminer.datasets.tests.base import DatasetTest, do_complete_test
 
 
 class DataSetsTest(DatasetTest):

@@ -11,8 +11,9 @@ import time
 import warnings
 
 import httplib2
-from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 from six.moves.urllib_parse import urlencode
+
+from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 
 try:
     import ujson as json

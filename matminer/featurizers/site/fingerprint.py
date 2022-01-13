@@ -1,28 +1,24 @@
 """
 Site featurizers that fingerprint a site using local geometry.
 """
-import os
 import copy
+import os
 
-import ruamel.yaml as yaml
 import numpy as np
-from pymatgen.analysis.local_env import (
-    LocalStructOrderParams,
-    VoronoiNN,
-    CrystalNN,
-)
 import pymatgen.analysis.local_env
+import ruamel.yaml as yaml
+from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies import (
+    MultiWeightsChemenvStrategy,
+    SimplestChemenvStrategy,
+)
+from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder import (
+    LocalGeometryFinder,
+)
+from pymatgen.analysis.local_env import CrystalNN, LocalStructOrderParams, VoronoiNN
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_nearest_neighbors
-from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_finder import (
-    LocalGeometryFinder,
-)
-from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies import (
-    SimplestChemenvStrategy,
-    MultiWeightsChemenvStrategy,
-)
 
 
 class AGNIFingerprints(BaseFeaturizer):

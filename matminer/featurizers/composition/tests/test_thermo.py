@@ -3,11 +3,8 @@ from unittest import SkipTest
 
 from pymatgen.ext.matproj import MPRester
 
-from matminer.featurizers.composition.thermo import (
-    CohesiveEnergy,
-    CohesiveEnergyMP,
-)
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
+from matminer.featurizers.composition.thermo import CohesiveEnergy, CohesiveEnergyMP
 
 
 class ThermoFeaturesTest(CompositionFeaturesTest):

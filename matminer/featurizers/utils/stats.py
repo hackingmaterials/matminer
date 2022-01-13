@@ -1,8 +1,8 @@
 """
 General methods for computing property statistics from a list of values
 """
-import scipy
 import numpy as np
+import scipy
 
 
 class PropertyStats:

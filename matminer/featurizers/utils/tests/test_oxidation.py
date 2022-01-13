@@ -1,5 +1,5 @@
-from pymatgen.util.testing import PymatgenTest
 from pymatgen.core.composition import Composition, Species
+from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.utils.oxidation import has_oxidation_states
 

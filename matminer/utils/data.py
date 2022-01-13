@@ -4,13 +4,13 @@ a uniform interface to several different elemental property resources
 including ``pymatgen`` and ``Magpie``.
 """
 
-import os
-import json
 import abc
-import numpy as np
-import pandas as pd
+import json
+import os
 from glob import glob
 
+import numpy as np
+import pandas as pd
 from pymatgen.core.periodic_table import Element, _pt_data
 
 __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"

@@ -3,8 +3,8 @@ import unittest
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.structure.symmetry import (
-    GlobalSymmetryFeatures,
     Dimensionality,
+    GlobalSymmetryFeatures,
 )
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 

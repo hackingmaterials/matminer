@@ -1,17 +1,17 @@
-from pymatgen.util.testing import PymatgenTest
-
-from matminer.featurizers.utils.grdf import (
-    initialize_pairwise_function,
-    Gaussian,
-    Histogram,
-    Cosine,
-    Bessel,
-    Sine,
-)
+import unittest
 
 import numpy as np
-import unittest
+from pymatgen.util.testing import PymatgenTest
 from scipy.special import jv
+
+from matminer.featurizers.utils.grdf import (
+    Bessel,
+    Cosine,
+    Gaussian,
+    Histogram,
+    Sine,
+    initialize_pairwise_function,
+)
 
 
 class GRDFTests(PymatgenTest):

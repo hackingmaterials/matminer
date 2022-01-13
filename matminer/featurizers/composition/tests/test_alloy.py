@@ -1,16 +1,13 @@
 import math
 import unittest
-from unittest import SkipTest
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from pymatgen.core import Composition
-from pymatgen.ext.matproj import MPRester
-from pymatgen.core.periodic_table import Specie, Element
 
+from matminer.featurizers.composition.alloy import Miedema, WenAlloys, YangSolidSolution
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 from matminer.featurizers.conversions import CompositionToOxidComposition
-from matminer.featurizers.composition.alloy import YangSolidSolution, Miedema, WenAlloys
 
 
 class AlloyFeaturizersTest(CompositionFeaturesTest):

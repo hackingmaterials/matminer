@@ -3,10 +3,10 @@ import unittest
 from pymatgen.core import Composition
 
 from matminer.featurizers.composition.element import (
-    Stoichiometry,
-    ElementFraction,
-    TMetalFraction,
     BandCenter,
+    ElementFraction,
+    Stoichiometry,
+    TMetalFraction,
 )
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 

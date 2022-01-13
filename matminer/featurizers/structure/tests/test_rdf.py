@@ -1,20 +1,20 @@
 import unittest
+
 import numpy as np
 import pandas as pd
 
 from matminer.featurizers.structure.rdf import (
-    RadialDistributionFunction,
-    PartialRadialDistributionFunction,
     ElectronicRadialDistributionFunction,
+    PartialRadialDistributionFunction,
+    RadialDistributionFunction,
     get_rdf_bin_labels,
 )
-
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 
 class StructureRDFTest(StructureFeaturesTest):
     def test_rdf_and_peaks(self):
-        ## Test diamond
+        # Test diamond
         rdf = RadialDistributionFunction()
         diamond_rdf = rdf.featurize(self.diamond)
 

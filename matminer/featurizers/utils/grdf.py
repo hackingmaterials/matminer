@@ -1,11 +1,11 @@
 """Functions designed to work with General Radial Distribution Function"""
 
 from functools import lru_cache
-from scipy.special import erf, jv
-from scipy import integrate
 from math import pi
 
 import numpy as np
+from scipy import integrate
+from scipy.special import erf, jv
 
 
 def initialize_pairwise_function(name, **options):

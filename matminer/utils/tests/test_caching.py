@@ -1,9 +1,9 @@
-from matminer.utils.caching import get_nearest_neighbors, _get_all_nearest_neighbors
-
 from pymatgen.analysis.local_env import VoronoiNN
+from pymatgen.core import Structure
 from pymatgen.core.lattice import Lattice
 from pymatgen.util.testing import PymatgenTest
-from pymatgen.core import Structure
+
+from matminer.utils.caching import _get_all_nearest_neighbors, get_nearest_neighbors
 
 
 class TestCaching(PymatgenTest):

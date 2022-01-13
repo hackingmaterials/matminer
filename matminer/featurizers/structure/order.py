@@ -5,8 +5,8 @@ Structure featurizers based on packing or ordering.
 import math
 
 import numpy as np
-from pymatgen.core import Structure
 from pymatgen.analysis.local_env import VoronoiNN
+from pymatgen.core import Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from matminer.featurizers.base import BaseFeaturizer

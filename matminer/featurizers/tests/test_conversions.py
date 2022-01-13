@@ -4,22 +4,21 @@ import unittest
 
 from monty.json import MontyEncoder
 from pandas import DataFrame, MultiIndex
-
+from pymatgen.core import SETTINGS, Composition, Element, Lattice, Structure
 from pymatgen.core.structure import IStructure
-from pymatgen.core import Composition, Lattice, Structure, Element, SETTINGS
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.conversions import (
+    ASEAtomstoStructure,
+    CompositionToOxidComposition,
+    CompositionToStructureFromMP,
+    DictToObject,
+    JsonToObject,
+    PymatgenFunctionApplicator,
     StrToComposition,
     StructureToComposition,
     StructureToIStructure,
-    DictToObject,
-    JsonToObject,
     StructureToOxidStructure,
-    CompositionToOxidComposition,
-    CompositionToStructureFromMP,
-    PymatgenFunctionApplicator,
-    ASEAtomstoStructure,
 )
 
 try:

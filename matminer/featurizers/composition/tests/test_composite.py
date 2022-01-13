@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from matminer.featurizers.composition.composite import Meredig, ElementProperty
+from matminer.featurizers.composition.composite import ElementProperty, Meredig
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 

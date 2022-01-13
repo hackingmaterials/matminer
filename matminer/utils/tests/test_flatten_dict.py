@@ -1,4 +1,5 @@
 import unittest
+
 from matminer.utils.flatten_dict import flatten_dict
 
 

@@ -1,17 +1,25 @@
-from matminer.featurizers.site.bonding import BondOrientationalParameter, AverageBondLength, AverageBondAngle
+from matminer.featurizers.site.bonding import (
+    AverageBondAngle,
+    AverageBondLength,
+    BondOrientationalParameter,
+)
 from matminer.featurizers.site.chemical import (
     ChemicalSRO,
+    EwaldSiteEnergy,
     LocalPropertyDifference,
     SiteElementalProperty,
-    EwaldSiteEnergy,
 )
 from matminer.featurizers.site.external import SOAP
 from matminer.featurizers.site.fingerprint import (
-    OPSiteFingerprint,
-    CrystalNNFingerprint,
-    VoronoiFingerprint,
     AGNIFingerprints,
     ChemEnvSiteFingerprint,
+    CrystalNNFingerprint,
+    OPSiteFingerprint,
+    VoronoiFingerprint,
 )
-from matminer.featurizers.site.misc import IntersticeDistribution, CoordinationNumber
-from matminer.featurizers.site.rdf import GeneralizedRadialDistributionFunction, AngularFourierSeries, GaussianSymmFunc
+from matminer.featurizers.site.misc import CoordinationNumber, IntersticeDistribution
+from matminer.featurizers.site.rdf import (
+    AngularFourierSeries,
+    GaussianSymmFunc,
+    GeneralizedRadialDistributionFunction,
+)

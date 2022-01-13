@@ -1,8 +1,8 @@
 import os
 
 from matminer.datasets.utils import (
-    _load_dataset_dict,
     _get_data_home,
+    _load_dataset_dict,
     _validate_dataset,
 )
 from matminer.utils.io import load_dataframe_from_json

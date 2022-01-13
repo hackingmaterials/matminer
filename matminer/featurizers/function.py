@@ -1,14 +1,13 @@
-import numpy as np
-from sympy.parsing.sympy_parser import parse_expr
-import sympy as sp
 import itertools
-from pandas import DataFrame, Series
-
 from collections import OrderedDict
 
-from matminer.featurizers.base import BaseFeaturizer
+import numpy as np
+import sympy as sp
+from pandas import DataFrame, Series
 from sklearn.exceptions import NotFittedError
+from sympy.parsing.sympy_parser import parse_expr
 
+from matminer.featurizers.base import BaseFeaturizer
 
 # Default expressions to include in function featurizer
 default_exps = [

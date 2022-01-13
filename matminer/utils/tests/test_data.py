@@ -1,19 +1,19 @@
 import unittest
+from math import isnan
 from unittest import TestCase
 
-from math import isnan
+from pymatgen.core import Element
 from pymatgen.core.periodic_table import Specie
 
 from matminer.utils.data import (
     DemlData,
+    IUCrBondValenceData,
     MagpieData,
-    PymatgenData,
-    MixingEnthalpy,
     MatscholarElementData,
     MEGNetElementData,
-    IUCrBondValenceData,
+    MixingEnthalpy,
+    PymatgenData,
 )
-from pymatgen.core import Element
 
 
 class TestDemlData(TestCase):

@@ -8,21 +8,20 @@ from functools import lru_cache
 
 import numpy as np
 import pandas as pd
-from sklearn.exceptions import NotFittedError
-from pymatgen.core import Structure
+import pymatgen.analysis.local_env as pmg_le
 from pymatgen.analysis import bond_valence
-from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
-from pymatgen.analysis.local_env import VoronoiNN
-from pymatgen.core.periodic_table import Specie, Element
+from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator, VoronoiNN
+from pymatgen.core import Structure
+from pymatgen.core.periodic_table import Element, Specie
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.structure import SymmetrizedStructure
-import pymatgen.analysis.local_env as pmg_le
+from sklearn.exceptions import NotFittedError
 
 from matminer.featurizers.base import BaseFeaturizer
+from matminer.featurizers.structure.matrix import SineCoulombMatrix
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_all_nearest_neighbors
 from matminer.utils.data import IUCrBondValenceData
-from matminer.featurizers.structure.matrix import SineCoulombMatrix
 
 
 class BondFractions(BaseFeaturizer):

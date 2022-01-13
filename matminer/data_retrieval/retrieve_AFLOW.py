@@ -1,15 +1,13 @@
 from functools import reduce
 
-from pandas import DataFrame
-
-from pymatgen.core.structure import Structure
-
-from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
-
 from aflow import K  # module of aflow Keyword properties
 from aflow.caster import cast
 from aflow.control import Query
 from aflow.entries import AflowFile
+from pandas import DataFrame
+from pymatgen.core.structure import Structure
+
+from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 
 __author__ = ["Maxwell Dylla <280mtd@gmail.com>"]
 
