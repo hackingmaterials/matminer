@@ -24,13 +24,6 @@ from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies impo
     MultiWeightsChemenvStrategy,
 )
 
-with open(
-    os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"),
-) as f:
-    cn_motif_op_params = yaml.safe_load(f)
-with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml")) as f:
-    cn_target_motif_op = yaml.safe_load(f)
-
 
 class AGNIFingerprints(BaseFeaturizer):
     """
@@ -177,6 +170,10 @@ class OPSiteFingerprint(BaseFeaturizer):
         dist_exp=2,
         zero_ops=True,
     ):
+
+        cn_target_motif_op = load_cn_target_motif_op()
+        cn_motif_op_params = load_cn_motif_op_params()
+
         self.cn_target_motif_op = (
             copy.deepcopy(cn_target_motif_op) if target_motifs is None else copy.deepcopy(target_motifs)
         )
@@ -391,6 +388,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
             return CrystalNNFingerprint(op_types, **kwargs)
 
         elif preset == "ops":
+            cn_target_motif_op = load_cn_target_motif_op()
             op_types = copy.deepcopy(cn_target_motif_op)
             for k in range(24):
                 if k + 1 in op_types:
@@ -423,6 +421,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
             self.chem_props = list(chem_info.keys())
         else:
             self.chem_info = None
+        cn_motif_op_params = load_cn_motif_op_params()
 
         self.ops = {}  # load order parameter objects & paramaters
         for cn, t_list in self.op_types.items():
@@ -865,3 +864,27 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
 
     def implementors(self):
         return ["Nils E. R. Zimmermann"]
+
+
+def load_cn_motif_op_params():
+    """
+    Load the file for the local env motif parameters into a dictionary.
+
+    Returns:
+        (dict)
+    """
+    with open(
+        os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"),
+    ) as f:
+        return yaml.safe_load(f)
+
+
+def load_cn_target_motif_op():
+    """
+    Load the file fpor the
+
+    Returns:
+        (dict)
+    """
+    with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml")) as f:
+        return yaml.safe_load(f)
