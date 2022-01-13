@@ -7,6 +7,8 @@ matminer is a library for performing data mining in the field of materials scien
 - **[Help/Support Forum](https://discuss.matsci.org)** 
 - **[Source Repository](https://github.com/hackingmaterials/matminer)** 
 
+matminer supports Python 3.8+.
+
 #### Related packages:
 
 - If you like matminer, you might also try [automatminer](https://github.com/hackingmaterials/automatminer).
