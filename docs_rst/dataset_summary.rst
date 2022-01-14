@@ -1,7 +1,7 @@
 =================
 Table of Datasets
 =================
-Find a table of all 42 datasets available in matminer here.
+Find a table of all 43 datasets available in matminer here.
 
 .. list-table::
    :align: left
@@ -134,6 +134,9 @@ Find a table of all 42 datasets available in matminer here.
    * - :code:`steel_strength`
      - 312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.
      - 312
+   * - :code:`superconductivity2018`
+     - Dataset of ~16,000 experimental superconductivity records (critical temperatures) from Stanev et al., originally from the Japanese National Institute for Materials Science
+     - 16414
    * - :code:`wolverton_oxides`
      - 4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies
      - 4914
@@ -2278,6 +2281,45 @@ https://citrination.com/datasets/153092/
 
 
 	@misc{Citrine Informatics, title = {Mechanical properties of some steels}, howpublished = {\url{https://citrination.com/datasets/153092/}, }
+
+
+
+
+---------------------
+superconductivity2018
+---------------------
+Dataset of ~16,000 experimental superconductivity records (critical temperatures) from Stanev et al., originally from the Japanese National Institute for Materials Science. Does not include structural data. Includes ~300 measurements from materials found without superconductivity (Tc=0). No modifications were made to the core dataset, aside from basic file type change to json for (un)packaging with matminer. Reproduced under the Creative Commons 4.0 license, which can be found here: http://creativecommons.org/licenses/by/4.0/.
+
+**Number of entries:** 16414
+
+.. list-table::
+   :align: left
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Column
+     - Description
+   * - :code:`composition`
+     - Chemical formula.
+   * - :code:`Tc`
+     - Experimental superconducting temperature, in K.
+
+
+
+**Reference**
+
+https://doi.org/10.1038/s41524-018-0085-8
+
+
+
+**Bibtex Formatted Citations**
+
+.. code-block:: text
+
+
+	@article{Stanev2018,   doi = {10.1038/s41524-018-0085-8},   url = {https://doi.org/10.1038/s41524-018-0085-8},   year = {2018},   month = jun,   publisher = {Springer Science and Business Media {LLC}},   volume = {4},   number = {1},   author = {Valentin Stanev and Corey Oses and A. Gilad Kusne and Efrain Rodriguez and Johnpierre Paglione and Stefano Curtarolo and Ichiro Takeuchi},   title = {Machine learning modeling of superconducting critical temperature},   journal = {npj Computational Materials} }
+
+	@misc{NIMSSuperCon, howpublished={http://supercon.nims.go.jp/index_en.html},  title={SuperCon}, author={National Institute of Materials Science, Materials Information Station}} 
 
 
 

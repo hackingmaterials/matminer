@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>matminer.featurizers package &#8212; matminer 0.7.4 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.7.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.5 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers package</a></li> 
       </ul>
     </div>  
@@ -386,7 +386,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dl class="py class">
 <dt id="matminer.featurizers.base.BaseFeaturizer">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.base.</code><code class="sig-name descname">BaseFeaturizer</code><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abstract class to calculate features from raw materials input data
 such a compound formula or a pymatgen crystal structure or
 bandstructure object.</p>
@@ -677,7 +677,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="py method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.precheck">
-<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">x</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.precheck" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">x</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.precheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Precheck (provide an estimate of whether a featurizer will work or not)
 for a single entry (e.g., a single composition). If the entry fails the
 precheck, it will most likely fail featurization; if it passes, it is
@@ -712,7 +712,7 @@ nearest neighbors computations on a structure with many thousand sites).</p>
 
 <dl class="py method">
 <dt id="matminer.featurizers.base.BaseFeaturizer.precheck_dataframe">
-<code class="sig-name descname">precheck_dataframe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">col_id</span></em>, <em class="sig-param"><span class="n">return_frac</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a><span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.precheck_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">precheck_dataframe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">col_id</span></em>, <em class="sig-param"><span class="n">return_frac</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a><span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.precheck_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Precheck an entire dataframe. Subclasses wanting to use precheck
 functionality should not override this method, they should override
 precheck (unless the entire df determines whether single entries pass
@@ -2407,6 +2407,12 @@ python functions.  The primary reason this has been
 done is to provide for better support for book-keeping
 (e. g. with feature labels), substitution, and elimination
 of symbolic redundancy, which sympy is well-suited for.</p>
+<p>Note original feature names in the resulting feature set
+will have their sympy-illegal characters substituted with
+underscores. For example:</p>
+<p>“exp(-MagpieData_avg_dev_NfValence)/sqrt(MagpieData_range_Number)”</p>
+<p>Where the original feature names were</p>
+<p>“MagpieData avg_dev NfValence”  and “MagpieData range Number”</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
 <dt>expressions ([str]): list of sympy-parseable expressions</dt><dd><p>representing a function of a single variable x, e. g.
@@ -2429,6 +2435,11 @@ other options include np.sum</p>
 </dl>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt id="matminer.featurizers.function.FunctionFeaturizer.ILLEGAL_CHARACTERS">
+<code class="sig-name descname">ILLEGAL_CHARACTERS</code><em class="property"> = ['|', ' ', '/', '\\', '?', '&#64;', '#', '$', '%']</em><a class="headerlink" href="#matminer.featurizers.function.FunctionFeaturizer.ILLEGAL_CHARACTERS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt id="matminer.featurizers.function.FunctionFeaturizer.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expressions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multi_feature_depth</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">postprocess</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">combo_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">latexify_labels</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.function.FunctionFeaturizer.__init__" title="Permalink to this definition">¶</a></dt>
@@ -2619,7 +2630,7 @@ i. e. the cumulative product of the expressions</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.5 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers package</a></li> 
       </ul>
     </div>

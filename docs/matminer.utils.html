@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>matminer.utils package &#8212; matminer 0.7.4 documentation</title>
+    <title>matminer.utils package &#8212; matminer 0.7.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.5 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.utils package</a></li> 
       </ul>
     </div>  
@@ -105,7 +105,7 @@ including <code class="docutils literal notranslate"><span class="pre">pymatgen<
 <dl class="py class">
 <dt id="matminer.utils.data.AbstractData">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.utils.data.</code><code class="sig-name descname">AbstractData</code><a class="headerlink" href="#matminer.utils.data.AbstractData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract class for retrieving elemental properties</p>
 <p>All classes must implement the <cite>get_elemental_property</cite> operation. These operations
 should return scalar values (ideally floats) and <cite>nan</cite> if a property does not exist</p>
@@ -128,7 +128,7 @@ property_name - (str) property to be retrieved</p>
 <dd><p>Get a certain elemental property for a certain element.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>elem - (Element) element to be assessed
-property_name - (str) property to be retreived</p>
+property_name - (str) property to be retrieved</p>
 </dd>
 <dt>Returns:</dt><dd><p>float, property of that element</p>
 </dd>
@@ -203,7 +203,7 @@ property_name - (string), name of property</p>
 <dd><p>Get a certain elemental property for a certain element.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>elem - (Element) element to be assessed
-property_name - (str) property to be retreived</p>
+property_name - (str) property to be retrieved</p>
 </dd>
 <dt>Returns:</dt><dd><p>float, property of that element</p>
 </dd>
@@ -227,7 +227,7 @@ property_name - (str) property to be retreived</p>
 <dl class="py class">
 <dt id="matminer.utils.data.IUCrBondValenceData">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.utils.data.</code><code class="sig-name descname">IUCrBondValenceData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">interpolate_soft</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.utils.data.IUCrBondValenceData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Get empirical bond valence parameters.</p>
 <p>Data come from International Union of Crystallography 2016 tables.
 (<a class="reference external" href="https://www.iucr.org/resources/data/datasets/bond-valence-parameters">https://www.iucr.org/resources/data/datasets/bond-valence-parameters</a>)
@@ -327,7 +327,7 @@ property, though they may be useful for a range of properties.</p>
 <dd><p>Get a certain elemental property for a certain element.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>elem - (Element) element to be assessed
-property_name - (str) property to be retreived</p>
+property_name - (str) property to be retrieved</p>
 </dd>
 <dt>Returns:</dt><dd><p>float, property of that element</p>
 </dd>
@@ -358,7 +358,7 @@ Reproduced in ./data_files/magpie_elementdata_feature_descriptions.txt.</p>
 <dd><p>Get a certain elemental property for a certain element.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>elem - (Element) element to be assessed
-property_name - (str) property to be retreived</p>
+property_name - (str) property to be retrieved</p>
 </dd>
 <dt>Returns:</dt><dd><p>float, property of that element</p>
 </dd>
@@ -403,7 +403,7 @@ capture latent knowledge from materials science literature. Nature 571,
 <dd><p>Get a certain elemental property for a certain element.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>elem - (Element) element to be assessed
-property_name - (str) property to be retreived</p>
+property_name - (str) property to be retrieved</p>
 </dd>
 <dt>Returns:</dt><dd><p>float, property of that element</p>
 </dd>
@@ -415,7 +415,7 @@ property_name - (str) property to be retreived</p>
 <dl class="py class">
 <dt id="matminer.utils.data.MixingEnthalpy">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.utils.data.</code><code class="sig-name descname">MixingEnthalpy</code><a class="headerlink" href="#matminer.utils.data.MixingEnthalpy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Values of <img class="math" src="_images/math/f81750957860f8838122955a5d011e73e7962d55.png" alt="\Delta H^{max}_{AB}"/> for different pairs of elements.</p>
 <dl class="simple">
 <dt>Based on the Miedema model. Tabulated by:</dt><dd><p>A. Takeuchi, A. Inoue, Classification of Bulk Metallic Glasses by Atomic
@@ -488,7 +488,7 @@ property_name - (string), name of property</p>
 <dl class="py class">
 <dt id="matminer.utils.data.OxidationStatesMixin">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.utils.data.</code><code class="sig-name descname">OxidationStatesMixin</code><a class="headerlink" href="#matminer.utils.data.OxidationStatesMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract class interface for retrieving the oxidation states
 of each element</p>
 <dl class="py method">
@@ -541,7 +541,7 @@ property_name - (string), name of property</p>
 <dd><p>Get a certain elemental property for a certain element.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>elem - (Element) element to be assessed
-property_name - (str) property to be retreived</p>
+property_name - (str) property to be retrieved</p>
 </dd>
 <dt>Returns:</dt><dd><p>float, property of that element</p>
 </dd>
@@ -808,7 +808,7 @@ keys present in the original 1-level index.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.5 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.utils package</a></li> 
       </ul>
     </div>

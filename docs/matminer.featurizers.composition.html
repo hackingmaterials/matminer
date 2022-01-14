@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>matminer.featurizers.composition package &#8212; matminer 0.7.4 documentation</title>
+    <title>matminer.featurizers.composition package &#8212; matminer 0.7.5 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.5 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers.composition package</a></li> 
       </ul>
     </div>  
@@ -239,9 +239,9 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="py method">
 <dt id="matminer.featurizers.composition.alloy.Miedema.precheck">
-<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span><span class="p">:</span> <span class="n">pymatgen.core.composition.Composition</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a><a class="headerlink" href="#matminer.featurizers.composition.alloy.Miedema.precheck" title="Permalink to this definition">¶</a></dt>
-<dd><p>Precheck a single entry. Miedema does not work for compositons
-containing any elments for which the Miedema model has no parameters.
+<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span><span class="p">:</span> <span class="n">pymatgen.core.composition.Composition</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a><a class="headerlink" href="#matminer.featurizers.composition.alloy.Miedema.precheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck a single entry. Miedema does not work for compositions
+containing any elements for which the Miedema model has no parameters.
 To precheck an entire dataframe (qnd automatically gather
 the fraction of structures that will pass the precheck), please use
 precheck_dataframe.</p>
@@ -666,9 +666,9 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="py method">
 <dt id="matminer.featurizers.composition.alloy.YangSolidSolution.precheck">
-<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span><span class="p">:</span> <span class="n">pymatgen.core.composition.Composition</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a><a class="headerlink" href="#matminer.featurizers.composition.alloy.YangSolidSolution.precheck" title="Permalink to this definition">¶</a></dt>
-<dd><p>Precheck a single entry. YangSolidSolution does not work for compositons
-containing any binary elment combinations for which the model has no
+<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span><span class="p">:</span> <span class="n">pymatgen.core.composition.Composition</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a><a class="headerlink" href="#matminer.featurizers.composition.alloy.YangSolidSolution.precheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precheck a single entry. YangSolidSolution does not work for compositions
+containing any binary element combinations for which the model has no
 parameters. We can nearly equivalently approximate this by checking
 against the unary element list.</p>
 <p>To precheck an entire dataframe (qnd automatically gather
@@ -1650,7 +1650,7 @@ props (list): specifies whether to return average number of electrons in each or
 <dt>Args:</dt><dd><p>comp: Pymatgen composition object</p>
 </dd>
 <dt>Returns:</dt><dd><dl class="simple">
-<dt>valence_attributes (list of floats): Average number and/or</dt><dd><p>fraction of valence electrons in specfied orbitals</p>
+<dt>valence_attributes (list of floats): Average number and/or</dt><dd><p>fraction of valence electrons in specified orbitals</p>
 </dd>
 </dl>
 </dd>
@@ -1754,7 +1754,7 @@ and the <img class="math" src="_images/math/9630132210b904754c9ab272b61cb527d122
 within the user-specified tolerance of 1. <img class="math" src="_images/math/9630132210b904754c9ab272b61cb527d12263ca.png" alt="k"/> is any of the
 numbers defined in the “n_nearest” parameter of this class.</p>
 <p>If there are less than <cite>k</cite> efficient clusters in the system, we use
-the maximum distance betweeen any two compositions (1) for the
+the maximum distance between any two compositions (1) for the
 unmatched neighbors.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>comp (Composition): Composition of material to evaluate</p>
@@ -2075,7 +2075,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.5 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers.composition package</a></li> 
       </ul>
     </div>
