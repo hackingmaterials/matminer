@@ -1,4 +1,4 @@
-numpy==1.22.0
+numpy==1.22.1
 requests==2.27.1
 pandas==1.4.0
 tqdm==4.62.3
