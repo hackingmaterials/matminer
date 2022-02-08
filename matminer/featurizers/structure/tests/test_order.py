@@ -1,14 +1,15 @@
-import os
 import copy
+import os
 import unittest
+
 import numpy as np
 import pandas as pd
-
 from pymatgen.core import Structure
+
 from matminer.featurizers.structure.order import (
+    ChemicalOrdering,
     DensityFeatures,
     MaximumPackingEfficiency,
-    ChemicalOrdering,
     StructuralComplexity,
 )
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest

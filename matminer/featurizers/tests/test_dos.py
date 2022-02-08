@@ -1,17 +1,18 @@
 import json
 import os
-import pandas as pd
 import unittest
 
-from matminer.featurizers.dos import (
-    DOSFeaturizer,
-    DopingFermi,
-    Hybridization,
-    SiteDOS,
-    DosAsymmetry,
-)
+import pandas as pd
 from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.util.testing import PymatgenTest
+
+from matminer.featurizers.dos import (
+    DopingFermi,
+    DosAsymmetry,
+    DOSFeaturizer,
+    Hybridization,
+    SiteDOS,
+)
 
 test_dir = os.path.join(os.path.dirname(__file__))
 

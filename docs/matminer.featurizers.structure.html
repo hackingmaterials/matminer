@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>matminer.featurizers.structure package &#8212; matminer 0.7.4 documentation</title>
+    <title>matminer.featurizers.structure package &#8212; matminer 0.7.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.6 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers.structure package</a></li> 
       </ul>
     </div>  
@@ -792,13 +792,13 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </div>
 <div class="section" id="module-matminer.featurizers.structure.composite">
 <span id="matminer-featurizers-structure-composite-module"></span><h2>matminer.featurizers.structure.composite module<a class="headerlink" href="#module-matminer.featurizers.structure.composite" title="Permalink to this headline">¶</a></h2>
-<p>Structure featurizers producing more than one kind of structue feature data.</p>
+<p>Structure featurizers producing more than one kind of structure feature data.</p>
 <dl class="py class">
 <dt id="matminer.featurizers.structure.composite.JarvisCFID">
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.structure.composite.</code><code class="sig-name descname">JarvisCFID</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_cell</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_chem</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_chg</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_rdf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_adf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_ddf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_nn</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.composite.JarvisCFID" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Classical Force-Field Inspired Descriptors (CFID) from Jarvis-ML.</p>
-<p>Chemo-structural descriptors from five different sub-methods,cincluding
+<p>Chemo-structural descriptors from five different sub-methods, including
 pairwise radial, nearest neighbor, bond-angle, dihedral-angle and
 core-charge distributions. With all descriptors enabled, there are 1,557
 features per structure.</p>
@@ -854,7 +854,7 @@ use_nn (bool): Use nearest neighbors (100 descriptors)</p>
 <dl class="py method">
 <dt id="matminer.featurizers.structure.composite.JarvisCFID.featurize">
 <code class="sig-name descname">featurize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.composite.JarvisCFID.featurize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get chemo-structural CFID decriptors</p>
+<dd><p>Get chemo-structural CFID descriptors</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>s: Structure object</p>
 </dd>
@@ -896,11 +896,11 @@ use_nn (bool): Use nearest neighbors (100 descriptors)</p>
 c_size: max. cell size
 max_cut: max. bond cut-off for angular distribution</p>
 </dd>
-<dt>Retruns:</dt><dd><p>adfa, adfb, ddf, rdf, bondo
-Angular distribution upto first cut-off
-Angular distribution upto second cut-off
-Dihedral angle distribution upto first cut-off
-Radial distribution funcion
+<dt>Returns:</dt><dd><p>adfa, adfb, ddf, rdf, bondo
+Angular distribution up to first cut-off
+Angular distribution up to second cut-off
+Dihedral angle distribution up to first cut-off
+Radial distribution function
 Bond order distribution</p>
 </dd>
 </dl>
@@ -1721,7 +1721,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="py method">
 <dt id="matminer.featurizers.structure.order.DensityFeatures.precheck">
-<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span><span class="p">:</span> <span class="n">pymatgen.core.structure.Structure</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a><a class="headerlink" href="#matminer.featurizers.structure.order.DensityFeatures.precheck" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span><span class="p">:</span> <span class="n">pymatgen.core.structure.Structure</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a><a class="headerlink" href="#matminer.featurizers.structure.order.DensityFeatures.precheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Precheck a single entry. DensityFeatures does not work for disordered
 structures. To precheck an entire dataframe (qnd automatically gather
 the fraction of structures that will pass the precheck), please use
@@ -1969,7 +1969,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="py method">
 <dt id="matminer.featurizers.structure.rdf.ElectronicRadialDistributionFunction.precheck">
-<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a><a class="headerlink" href="#matminer.featurizers.structure.rdf.ElectronicRadialDistributionFunction.precheck" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">precheck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a><a class="headerlink" href="#matminer.featurizers.structure.rdf.ElectronicRadialDistributionFunction.precheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the structure to ensure the ReDF can be run.
 Args:</p>
 <blockquote>
@@ -1988,7 +1988,7 @@ Args:</p>
 <em class="property">class </em><code class="sig-prename descclassname">matminer.featurizers.structure.rdf.</code><code class="sig-name descname">PartialRadialDistributionFunction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">20.0</span></em>, <em class="sig-param"><span class="n">bin_size</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">include_elems</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">exclude_elems</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.structure.rdf.PartialRadialDistributionFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">matminer.featurizers.base.BaseFeaturizer</span></code></a></p>
 <p>Compute the partial radial distribution function (PRDF) of an xtal structure</p>
-<p>The PRDF of a crystal structure is the radial distibution function broken
+<p>The PRDF of a crystal structure is the radial distribution function broken
 down for each pair of atom types.  The PRDF was proposed as a structural
 descriptor by [Schutt <em>et al.</em>]
 (<a class="reference external" href="https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118">https://journals.aps.org/prb/abstract/10.1103/PhysRevB.89.205118</a>)</p>
@@ -1996,7 +1996,7 @@ descriptor by [Schutt <em>et al.</em>]
 <dt>Args:</dt><dd><p>cutoff: (float) distance up to which to calculate the RDF.
 bin_size: (float) size of each bin of the (discrete) RDF.
 include_elems: (list of string), list of elements that must be included in PRDF
-exclude_elems: (list of string), list of elmeents that should not be included in PRDF</p>
+exclude_elems: (list of string), list of elements that should not be included in PRDF</p>
 </dd>
 <dt>Features:</dt><dd><p>Each feature corresponds to the density of number of bonds
 for a certain pair of elements at a certain range of
@@ -2108,7 +2108,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dd><p>Precheck the structure is ordered.
 Args:</p>
 <blockquote>
-<div><p>s: (pymatgen.Struture)</p>
+<div><p>s: (pymatgen.Structure)</p>
 </div></blockquote>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>(bool): True if passing precheck, false if failing</p>
@@ -2206,7 +2206,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dd><p>Precheck the structure is ordered.
 Args:</p>
 <blockquote>
-<div><p>s: (pymatgen.Struture)</p>
+<div><p>s: (pymatgen.Structure)</p>
 </div></blockquote>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>(bool): True if passing precheck, false if failing</p>
@@ -2580,7 +2580,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.6 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers.structure package</a></li> 
       </ul>
     </div>

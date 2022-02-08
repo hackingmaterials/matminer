@@ -7,13 +7,13 @@ from pymatgen.analysis.local_env import VoronoiNN
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.site import (
-    OPSiteFingerprint,
-    CoordinationNumber,
-    LocalPropertyDifference,
-    CrystalNNFingerprint,
+    SOAP,
     AverageBondAngle,
     AverageBondLength,
-    SOAP,
+    CoordinationNumber,
+    CrystalNNFingerprint,
+    LocalPropertyDifference,
+    OPSiteFingerprint,
 )
 from matminer.featurizers.utils.stats import PropertyStats
 

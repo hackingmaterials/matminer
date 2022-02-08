@@ -2,10 +2,11 @@
 Site featurizers based on bonding.
 """
 from functools import lru_cache
+
 import numpy as np
-from sympy.physics.wigner import wigner_3j
-from scipy.special import sph_harm
 from pymatgen.analysis.local_env import VoronoiNN
+from scipy.special import sph_harm
+from sympy.physics.wigner import wigner_3j
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats

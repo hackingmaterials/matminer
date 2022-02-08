@@ -2,6 +2,7 @@
 Site featurizers based on distribution functions.
 """
 import itertools
+
 import numpy as np
 
 from matminer.featurizers.base import BaseFeaturizer

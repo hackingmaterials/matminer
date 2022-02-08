@@ -1,5 +1,5 @@
-import unittest
 import os
+import unittest
 
 from matminer.datasets.utils import _load_dataset_dict
 

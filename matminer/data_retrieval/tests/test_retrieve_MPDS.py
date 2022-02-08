@@ -6,8 +6,10 @@ try:
     import ujson as json
 except ImportError:
     import json
+
 import unittest
-from jsonschema import validate, Draft4Validator
+
+from jsonschema import Draft4Validator, validate
 from jsonschema.exceptions import ValidationError
 
 from matminer.data_retrieval.retrieve_MPDS import MPDSDataRetrieval

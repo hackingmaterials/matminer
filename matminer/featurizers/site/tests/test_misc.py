@@ -1,13 +1,10 @@
 import unittest
 
 import pandas as pd
-from pymatgen.core import Structure, Lattice
-from pymatgen.analysis.local_env import VoronoiNN, JmolNN, CrystalNN
+from pymatgen.analysis.local_env import JmolNN, VoronoiNN
+from pymatgen.core import Lattice, Structure
 
-from matminer.featurizers.site.misc import (
-    IntersticeDistribution,
-    CoordinationNumber,
-)
+from matminer.featurizers.site.misc import CoordinationNumber, IntersticeDistribution
 from matminer.featurizers.site.tests.base import SiteFeaturizerTest
 
 

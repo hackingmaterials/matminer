@@ -1,24 +1,26 @@
-from citrination_client import (
-    CitrinationClient,
-    ChemicalFieldQuery,
-    ChemicalFilter,
-    FieldQuery,
-    PropertyQuery,
-    Filter,
-    ReferenceQuery,
-    PifSystemQuery,
-    DatasetQuery,
-    DataQuery,
-    PifSystemReturningQuery,
-)
 import os
 import time
-import pandas as pd
-from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
-from tqdm import tqdm
-from pandas.io.json import json_normalize
-import numpy as np
 from collections import Counter
+
+import numpy as np
+import pandas as pd
+from citrination_client import (
+    ChemicalFieldQuery,
+    ChemicalFilter,
+    CitrinationClient,
+    DataQuery,
+    DatasetQuery,
+    FieldQuery,
+    Filter,
+    PifSystemQuery,
+    PifSystemReturningQuery,
+    PropertyQuery,
+    ReferenceQuery,
+)
+from pandas.io.json import json_normalize
+from tqdm import tqdm
+
+from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 
 __author__ = [
     "Saurabh Bajaj <sbajaj@lbl.gov>",

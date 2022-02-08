@@ -1,33 +1,34 @@
-import pandas as pd
 import unittest
 
-from matminer.datasets.tests.base import DatasetTest, do_complete_test
+import pandas as pd
+
 from matminer.datasets.convenience_loaders import (
-    load_glass_ternary_hipt,
-    load_castelli_perovskites,
-    load_flla,
     load_boltztrap_mp,
+    load_brgoch_superhard_training,
+    load_castelli_perovskites,
     load_citrine_thermal_conductivity,
     load_dielectric_constant,
     load_double_perovskites_gap,
     load_double_perovskites_gap_lumo,
     load_elastic_tensor,
-    load_glass_ternary_landolt,
-    load_phonon_dielectric_mp,
-    load_piezoelectric_tensor,
-    load_mp,
-    load_wolverton_oxides,
-    load_heusler_magnetic,
-    load_steel_strength,
-    load_jarvis_ml_dft_training,
-    load_jarvis_dft_2d,
-    load_jarvis_dft_3d,
     load_expt_formation_enthalpy,
     load_expt_gap,
+    load_flla,
     load_glass_binary,
+    load_glass_ternary_hipt,
+    load_glass_ternary_landolt,
+    load_heusler_magnetic,
+    load_jarvis_dft_2d,
+    load_jarvis_dft_3d,
+    load_jarvis_ml_dft_training,
     load_m2ax,
-    load_brgoch_superhard_training,
+    load_mp,
+    load_phonon_dielectric_mp,
+    load_piezoelectric_tensor,
+    load_steel_strength,
+    load_wolverton_oxides,
 )
+from matminer.datasets.tests.base import DatasetTest, do_complete_test
 
 if do_complete_test:
 

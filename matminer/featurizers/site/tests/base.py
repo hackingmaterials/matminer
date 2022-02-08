@@ -1,4 +1,4 @@
-from pymatgen.core import Structure, Lattice
+from pymatgen.core import Lattice, Structure
 from pymatgen.util.testing import PymatgenTest
 
 

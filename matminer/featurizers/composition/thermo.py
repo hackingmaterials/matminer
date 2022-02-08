@@ -5,9 +5,7 @@ Composition featurizers for thermodynamic properties.
 from pymatgen.ext.matproj import MPRester
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.utils.data import (
-    CohesiveEnergyData,
-)
+from matminer.utils.data import CohesiveEnergyData
 
 
 class CohesiveEnergy(BaseFeaturizer):

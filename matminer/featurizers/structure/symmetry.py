@@ -1,9 +1,9 @@
 """
 Structure featurizers based on symmetry.
 """
+import pymatgen.analysis.local_env as pmg_le
 from pymatgen.analysis.dimensionality import get_dimensionality_larsen
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-import pymatgen.analysis.local_env as pmg_le
 
 from matminer.featurizers.base import BaseFeaturizer
 

@@ -1,5 +1,5 @@
-import unittest
 import os
+import unittest
 
 from matminer.data_retrieval.retrieve_MDF import MDFDataRetrieval, make_dataframe
 

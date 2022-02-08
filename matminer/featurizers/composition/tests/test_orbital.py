@@ -2,10 +2,7 @@ import unittest
 
 from pymatgen.core import Composition
 
-from matminer.featurizers.composition.orbital import (
-    ValenceOrbital,
-    AtomicOrbitals,
-)
+from matminer.featurizers.composition.orbital import AtomicOrbitals, ValenceOrbital
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 

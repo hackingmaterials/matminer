@@ -4,10 +4,8 @@ import pandas as pd
 from pymatgen.core import Composition
 from pymatgen.core.periodic_table import Element
 
-from matminer.featurizers.composition.packing import (
-    AtomicPackingEfficiency,
-)
 from matminer.featurizers.composition.element import ElementFraction
+from matminer.featurizers.composition.packing import AtomicPackingEfficiency
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 

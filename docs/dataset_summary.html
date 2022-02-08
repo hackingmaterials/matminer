@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Table of Datasets &#8212; matminer 0.7.4 documentation</title>
+    <title>Table of Datasets &#8212; matminer 0.7.6 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.6 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Table of Datasets</a></li> 
       </ul>
     </div>  
@@ -40,7 +40,7 @@
             
   <div class="section" id="table-of-datasets">
 <h1>Table of Datasets<a class="headerlink" href="#table-of-datasets" title="Permalink to this headline">¶</a></h1>
-<p>Find a table of all 42 datasets available in matminer here.</p>
+<p>Find a table of all 43 datasets available in matminer here.</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
 <col style="width: 20%" />
@@ -218,7 +218,11 @@
 <td><p>312 steels with experimental yield strength and ultimate tensile strength, extracted and cleaned (including de-duplicating) from Citrine.</p></td>
 <td><p>312</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">wolverton_oxides</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">superconductivity2018</span></code></p></td>
+<td><p>Dataset of ~16,000 experimental superconductivity records (critical temperatures) from Stanev et al., originally from the Japanese National Institute for Materials Science</p></td>
+<td><p>16414</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">wolverton_oxides</span></code></p></td>
 <td><p>4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies</p></td>
 <td><p>4914</p></td>
 </tr>
@@ -2325,6 +2329,38 @@ Ricci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data
 </pre></div>
 </div>
 </div>
+<div class="section" id="superconductivity2018">
+<h2>superconductivity2018<a class="headerlink" href="#superconductivity2018" title="Permalink to this headline">¶</a></h2>
+<p>Dataset of ~16,000 experimental superconductivity records (critical temperatures) from Stanev et al., originally from the Japanese National Institute for Materials Science. Does not include structural data. Includes ~300 measurements from materials found without superconductivity (Tc=0). No modifications were made to the core dataset, aside from basic file type change to json for (un)packaging with matminer. Reproduced under the Creative Commons 4.0 license, which can be found here: <a class="reference external" href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</a>.</p>
+<p><strong>Number of entries:</strong> 16414</p>
+<table class="colwidths-given docutils align-left">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">composition</span></code></p></td>
+<td><p>Chemical formula.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">Tc</span></code></p></td>
+<td><p>Experimental superconducting temperature, in K.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://doi.org/10.1038/s41524-018-0085-8">https://doi.org/10.1038/s41524-018-0085-8</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>@article{Stanev2018,   doi = {10.1038/s41524-018-0085-8},   url = {https://doi.org/10.1038/s41524-018-0085-8},   year = {2018},   month = jun,   publisher = {Springer Science and Business Media {LLC}},   volume = {4},   number = {1},   author = {Valentin Stanev and Corey Oses and A. Gilad Kusne and Efrain Rodriguez and Johnpierre Paglione and Stefano Curtarolo and Ichiro Takeuchi},   title = {Machine learning modeling of superconducting critical temperature},   journal = {npj Computational Materials} }
+
+@misc{NIMSSuperCon, howpublished={http://supercon.nims.go.jp/index_en.html},  title={SuperCon}, author={National Institute of Materials Science, Materials Information Station}}
+</pre></div>
+</div>
+</div>
 <div class="section" id="wolverton-oxides">
 <h2>wolverton_oxides<a class="headerlink" href="#wolverton-oxides" title="Permalink to this headline">¶</a></h2>
 <p>4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies. All perovskites are of the form ABO3. Adapted from a dataset presented by Emery and Wolverton.</p>
@@ -2454,6 +2490,7 @@ Emery, A. A., &amp; Wolverton, C. Figshare <a class="reference external" href="h
 <li><a class="reference internal" href="#piezoelectric-tensor">piezoelectric_tensor</a></li>
 <li><a class="reference internal" href="#ricci-boltztrap-mp-tabular">ricci_boltztrap_mp_tabular</a></li>
 <li><a class="reference internal" href="#steel-strength">steel_strength</a></li>
+<li><a class="reference internal" href="#superconductivity2018">superconductivity2018</a></li>
 <li><a class="reference internal" href="#wolverton-oxides">wolverton_oxides</a></li>
 </ul>
 </li>
@@ -2489,7 +2526,7 @@ Emery, A. A., &amp; Wolverton, C. Figshare <a class="reference external" href="h
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.6 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Table of Datasets</a></li> 
       </ul>
     </div>

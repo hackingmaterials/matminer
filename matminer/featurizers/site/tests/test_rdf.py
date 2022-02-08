@@ -4,12 +4,12 @@ import numpy as np
 import pandas as pd
 
 from matminer.featurizers.site.rdf import (
+    AngularFourierSeries,
     GaussianSymmFunc,
     GeneralizedRadialDistributionFunction,
-    AngularFourierSeries,
 )
-from matminer.featurizers.utils.grdf import Gaussian
 from matminer.featurizers.site.tests.base import SiteFeaturizerTest
+from matminer.featurizers.utils.grdf import Gaussian
 
 
 class RDFTests(SiteFeaturizerTest):

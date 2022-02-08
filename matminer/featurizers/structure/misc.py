@@ -3,9 +3,9 @@ Miscellaneous structure featurizers.
 """
 
 import numpy as np
-from scipy.stats import gaussian_kde
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 from pymatgen.analysis.ewald import EwaldSummation
+from scipy.stats import gaussian_kde
 
 from matminer.featurizers.base import BaseFeaturizer
 

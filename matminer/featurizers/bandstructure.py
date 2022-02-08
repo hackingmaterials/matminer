@@ -1,18 +1,18 @@
 import sys
 import warnings
+from collections import OrderedDict
 
 import numpy as np
-from collections import OrderedDict
 from numpy.linalg import norm
-from scipy.interpolate import griddata
-
-from matminer.featurizers.base import BaseFeaturizer
-from pymatgen.electronic_structure.core import Spin
 from pymatgen.electronic_structure.bandstructure import (
     BandStructure,
     BandStructureSymmLine,
 )
+from pymatgen.electronic_structure.core import Spin
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from scipy.interpolate import griddata
+
+from matminer.featurizers.base import BaseFeaturizer
 
 __author__ = "Anubhav Jain <ajain@lbl.gov>"
 

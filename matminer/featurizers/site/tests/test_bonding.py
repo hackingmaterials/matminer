@@ -1,12 +1,12 @@
 import unittest
 
 import numpy as np
-from pymatgen.analysis.local_env import VoronoiNN, CrystalNN
+from pymatgen.analysis.local_env import CrystalNN, VoronoiNN
 
 from matminer.featurizers.site.bonding import (
-    BondOrientationalParameter,
-    AverageBondLength,
     AverageBondAngle,
+    AverageBondLength,
+    BondOrientationalParameter,
 )
 from matminer.featurizers.site.tests.base import SiteFeaturizerTest
 

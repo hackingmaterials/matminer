@@ -1,14 +1,15 @@
 import unittest
-import pandas as pd
 
+import numpy as np
+import pandas as pd
+from sklearn.exceptions import NotFittedError
+from sympy.parsing.sympy_parser import parse_expr
+
+from matminer.featurizers.base import MultipleFeaturizer
 from matminer.featurizers.function import (
     FunctionFeaturizer,
     generate_expressions_combinations,
 )
-from matminer.featurizers.base import MultipleFeaturizer
-import numpy as np
-from sympy.parsing.sympy_parser import parse_expr
-from sklearn.exceptions import NotFittedError
 
 
 class TestFunctionFeaturizer(unittest.TestCase):

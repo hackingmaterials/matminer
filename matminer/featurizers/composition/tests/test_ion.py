@@ -1,13 +1,13 @@
 import unittest
 
 from pymatgen.core import Composition
-from pymatgen.core.periodic_table import Specie, Element
+from pymatgen.core.periodic_table import Specie
 
 from matminer.featurizers.composition.ion import (
-    IonProperty,
+    CationProperty,
     ElectronAffinity,
     ElectronegativityDiff,
-    CationProperty,
+    IonProperty,
     OxidationStates,
     is_ionic,
 )

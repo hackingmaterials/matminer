@@ -1,11 +1,11 @@
 import unittest
 
 import pandas as pd
-from pymatgen.analysis.local_env import VoronoiNN, JmolNN, CrystalNN
+from pymatgen.analysis.local_env import VoronoiNN
 
 from matminer.featurizers.site.chemical import (
-    EwaldSiteEnergy,
     ChemicalSRO,
+    EwaldSiteEnergy,
     LocalPropertyDifference,
     SiteElementalProperty,
 )

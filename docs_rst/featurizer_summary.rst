@@ -477,7 +477,7 @@ _________
 :code:`matminer.featurizers.structure.composite`
 
 
- Structure featurizers producing more than one kind of structue feature data. 
+ Structure featurizers producing more than one kind of structure feature data. 
 
 .. list-table::
    :align: left

@@ -13,13 +13,9 @@ from pymatgen.core.composition import Composition
 from pymatgen.core.periodic_table import get_el_sp
 
 from matminer.featurizers.base import BaseFeaturizer
-from matminer.featurizers.utils.stats import PropertyStats
-from matminer.utils.data import (
-    MagpieData,
-    CohesiveEnergyData,
-    MixingEnthalpy,
-)
 from matminer.featurizers.composition.packing import AtomicPackingEfficiency
+from matminer.featurizers.utils.stats import PropertyStats
+from matminer.utils.data import CohesiveEnergyData, MagpieData, MixingEnthalpy
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(module_dir, "..", "..", "utils", "data_files")
